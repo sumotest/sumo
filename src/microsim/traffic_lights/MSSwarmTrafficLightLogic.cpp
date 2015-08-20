@@ -1044,7 +1044,7 @@ void MSSwarmTrafficLightLogic::choosePolicy(double phero_in, double phero_out, d
 	// Compute a random value between 0 and the sum of the thetaSum
 //	double r = RandHelper::rand(RAND_MAX);
 //	r = r / RAND_MAX * thetaSum;
-	double r = RandHelper::rand(thetaSum);
+	double r = RandHelper::rand((SUMOReal)thetaSum);
 
 	double partialSum = 0;
 	for (unsigned int i = 0; i < getPolicies().size(); i++) {
