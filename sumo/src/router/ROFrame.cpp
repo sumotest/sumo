@@ -129,6 +129,12 @@ ROFrame::fillOptions(OptionsCont& oc, bool forDuarouter) {
     oc.doRegister("repair", new Option_Bool(false));
     oc.addDescription("repair", "Processing", "Tries to correct a false route");
 
+    oc.doRegister("repair.from", new Option_Bool(false));
+    oc.addDescription("repair.from", "Processing", "Tries to correct an invalid starting edge by using the first usable edge instead");
+
+    oc.doRegister("repair.to", new Option_Bool(false));
+    oc.addDescription("repair.to", "Processing", "Tries to correct an invalid destination edge by using the last usable edge instead");
+
     oc.doRegister("weights.interpolate", new Option_Bool(false));
     oc.addSynonyme("weights.interpolate", "interpolate", true);
     oc.addDescription("weights.interpolate", "Processing", "Interpolate edge weights at interval boundaries");
@@ -138,11 +144,14 @@ ROFrame::fillOptions(OptionsCont& oc, bool forDuarouter) {
 
     if (forDuarouter) {
         oc.doRegister("routing-algorithm", new Option_String("dijkstra"));
-        oc.addDescription("routing-algorithm", "Processing", "Select among routing algorithms ['dijkstra', 'astar', 'bulkstar', 'CH', 'CHWrapper']");
+        oc.addDescription("routing-algorithm", "Processing", "Select among routing algorithms ['dijkstra', 'astar', 'CH', 'CHWrapper']");
 
         oc.doRegister("weight-period", new Option_String("3600", "TIME"));
         oc.addDescription("weight-period", "Processing", "Aggregation period for the given weight files; triggers rebuilding of Contraction Hierarchy");
     }
+
+    oc.doRegister("bulk-routing", new Option_Bool(false));
+    oc.addDescription("bulk-routing", "Processing", "Aggregate routing queries with the same origin");
 
 #ifdef HAVE_FOX
     oc.doRegister("routing-threads", new Option_Integer(0));

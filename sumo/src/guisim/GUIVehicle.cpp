@@ -322,7 +322,7 @@ GUIParameterTableWindow*
 GUIVehicle::getParameterWindow(GUIMainWindow& app,
                                GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 36);
+        new GUIParameterTableWindow(app, *this, 40);
     // add items
     ret->mkItem("lane [id]", false, myLane->getID());
     ret->mkItem("position [m]", true,
@@ -376,6 +376,11 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
         str << (*i)->getID().substr(0, (*i)->getID().find(getID()));
     }
     ret->mkItem("devices", false, str.str());
+    ret->mkItem("persons", true,
+                new FunctionBinding<GUIVehicle, unsigned int>(this, &GUIVehicle::getPersonNumber));
+    ret->mkItem("containers", true,
+                new FunctionBinding<GUIVehicle, unsigned int>(this, &GUIVehicle::getContainerNumber));
+
     ret->mkItem("parameters [key:val]", false, toString(getParameter().getMap()));
     ret->mkItem("", false, "");
     ret->mkItem("Type Information:", false, "");
@@ -389,6 +394,9 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("maximum deceleration [m/s^2]", false, getCarFollowModel().getMaxDecel());
     ret->mkItem("imperfection (sigma)", false, getCarFollowModel().getImperfection());
     ret->mkItem("reaction time (tau)", false, getCarFollowModel().getHeadwayTime());
+    ret->mkItem("person capacity", false, myType->getPersonCapacity());
+    ret->mkItem("container capacity", false, myType->getContainerCapacity());
+
     ret->mkItem("type parameters [key:val]", false, toString(myType->getParameter().getMap()));
     // close building
     ret->closeBuilding();
@@ -1090,9 +1098,9 @@ GUIVehicle::drawGL(const GUIVisualizationSettings& s) const {
     }
     glPopName();
     if (myPersonDevice != 0) {
-        const std::vector<MSPerson*>& ps = myPersonDevice->getPersons();
+        const std::vector<MSTransportable*>& ps = myPersonDevice->getPersons();
         size_t personIndex = 0;
-        for (std::vector<MSPerson*>::const_iterator i = ps.begin(); i != ps.end(); ++i) {
+        for (std::vector<MSTransportable*>::const_iterator i = ps.begin(); i != ps.end(); ++i) {
             GUIPerson* person = dynamic_cast<GUIPerson*>(*i);
             assert(person != 0);
             person->setPositionInVehicle(getSeatPosition(personIndex++));
@@ -1100,9 +1108,9 @@ GUIVehicle::drawGL(const GUIVisualizationSettings& s) const {
         }
     }
     if (myContainerDevice != 0) {
-        const std::vector<MSContainer*>& cs = myContainerDevice->getContainers();
+        const std::vector<MSTransportable*>& cs = myContainerDevice->getContainers();
         size_t containerIndex = 0;
-        for (std::vector<MSContainer*>::const_iterator i = cs.begin(); i != cs.end(); ++i) {
+        for (std::vector<MSTransportable*>::const_iterator i = cs.begin(); i != cs.end(); ++i) {
             GUIContainer* container = dynamic_cast<GUIContainer*>(*i);
             assert(container != 0);
             container->setPositionInVehicle(getSeatPosition(containerIndex++));
@@ -1272,7 +1280,7 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
         case 10:
             return getLastLaneChangeOffset();
         case 11:
-            return MIN2(getMaxSpeed(), getLane()->getVehicleMaxSpeed(this));
+            return getLane()->getVehicleMaxSpeed(this);
         case 12:
             return getCO2Emissions();
         case 13:

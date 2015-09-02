@@ -61,6 +61,8 @@ enum SumoXMLTag {
     SUMO_TAG_POLY,
     /** begin/end of the description of a junction */
     SUMO_TAG_JUNCTION,
+    /** begin/end of the description of an edge restriction */
+    SUMO_TAG_RESTRICTION,
     /** an e1 detector */
     SUMO_TAG_E1DETECTOR,
     SUMO_TAG_INDUCTION_LOOP,
@@ -92,6 +94,8 @@ enum SumoXMLTag {
     SUMO_TAG_BUS_STOP,
     /// @brief A container stop
     SUMO_TAG_CONTAINER_STOP,
+    /// @brief A Charging Station
+    SUMO_TAG_CHRG_STN,
     /** a vtypeprobe detector */
     SUMO_TAG_VTYPEPROBE,
     /** a routeprobe detector */
@@ -278,6 +282,7 @@ enum SumoXMLAttr {
     SUMO_ATTR_ONEWAY,
     SUMO_ATTR_WIDTH,
     SUMO_ATTR_SIDEWALKWIDTH,
+    SUMO_ATTR_BIKELANEWIDTH,
     SUMO_ATTR_REMOVE,
     SUMO_ATTR_LENGTH,
     SUMO_ATTR_X,
@@ -319,9 +324,15 @@ enum SumoXMLAttr {
     SUMO_ATTR_SPEEDFACTOR,
     SUMO_ATTR_SPEEDDEV,
     SUMO_ATTR_LANE_CHANGE_MODEL,
+    SUMO_ATTR_CAR_FOLLOW_MODEL,
     SUMO_ATTR_MINGAP,
     SUMO_ATTR_BOARDING_DURATION,
     SUMO_ATTR_LOADING_DURATION,
+    /* Charging Station */
+    SUMO_ATTR_CHRGPOWER,    // charge in W of the Charging Stations
+    SUMO_ATTR_EFFICIENCY,    // Eficiency of the charge inCharging Stations
+    SUMO_ATTR_CHRGINTRANSIT,// Allow/disallow charge in transit in Charging Stations
+    SUMO_ATTR_CHRGDELAY,    // Delay in the charge of charging stations
     /* Car following model attributes */
     SUMO_ATTR_SIGMA,    // used by: Krauss
     SUMO_ATTR_TAU,      // Krauss
@@ -381,6 +392,8 @@ enum SumoXMLAttr {
     SUMO_ATTR_SPREADTYPE,
     /// The turning radius at an intersection in m
     SUMO_ATTR_RADIUS,
+    /// Whether vehicles must keep the junction clear
+    SUMO_ATTR_KEEP_CLEAR,
     /// whether a given shape is user-defined
     SUMO_ATTR_CUSTOMSHAPE,
     /// A color information
@@ -685,6 +698,8 @@ enum LinkDirection {
     LINKDIR_STRAIGHT = 0,
     /// The link is a 180 degree turn
     LINKDIR_TURN,
+    /// The link is a 180 degree turn (left-hand network)
+    LINKDIR_TURN_LEFTHAND,
     /// The link is a (hard) left direction
     LINKDIR_LEFT,
     /// The link is a (hard) right direction
@@ -755,6 +770,8 @@ public:
     static StringBijection<TrafficLightType> TrafficLightTypes;
 
     static StringBijection<LaneChangeModel> LaneChangeModels;
+
+    static StringBijection<SumoXMLTag> CarFollowModels;
     //@}
 
     /// @name Helper functions for ID-string manipulations
@@ -783,6 +800,8 @@ private:
     static StringBijection<TrafficLightType>::Entry trafficLightTypesVales[];
 
     static StringBijection<LaneChangeModel>::Entry laneChangeModelValues[];
+
+    static StringBijection<SumoXMLTag>::Entry carFollowModelValues[];
 
 };
 

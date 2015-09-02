@@ -70,15 +70,35 @@ class OutputDevice;
  * @todo Vehicle ids are not tracked; it may happen that the same id is added twice...
  */
 class RONet {
-    friend class RORouteAggregator;
-
 public:
     /// @brief Constructor
     RONet();
 
 
+    /** @brief Returns the pointer to the unique instance of RONet (singleton).
+     * @return Pointer to the unique RONet-instance
+     */
+    static RONet* getInstance();
+
+
     /// @brief Destructor
     virtual ~RONet();
+
+
+    /** @brief Adds a restriction for an edge type
+     * @param[in] id The id of the type
+     * @param[in] svc The vehicle class the restriction refers to
+     * @param[in] speed The restricted speed
+     */
+    void addRestriction(const std::string& id, const SUMOVehicleClass svc, const SUMOReal speed);
+
+
+    /** @brief Returns the restrictions for an edge type
+     * If no restrictions are present, 0 is returned.
+     * @param[in] id The id of the type
+     * @return The mapping of vehicle classes to maximum speeds
+     */
+    const std::map<SUMOVehicleClass, SUMOReal>* getRestrictions(const std::string& id) const;
 
 
     /// @name Insertion and retrieval of graph parts
@@ -258,16 +278,13 @@ public:
      *
      * If the name is "" the default type is returned.
      * If the named vehicle type (or typeDistribution) was not added to the net before
-     * the behavior depends on the value of defaultIfMissing
-     * If defaultIfMissing is true, the default type is returned,
-     * otherwise 0 is returned
+     * 0 is returned
      *
      * @param[in] id The id of the vehicle type to return
-     * @param[in] default Whether to return the default type in case of an unknown type
      * @return The named vehicle type
      * @todo Check whether a const pointer may be returned
      */
-    SUMOVTypeParameter* getVehicleTypeSecure(const std::string& id, bool defaultIfMissing = false);
+    SUMOVTypeParameter* getVehicleTypeSecure(const std::string& id);
 
 
     /* @brief Adds a route definition to the network
@@ -390,9 +407,9 @@ public:
 
     const std::map<std::string, ROEdge*>& getEdgeMap() const;
 
-    bool hasRestrictions() const;
+    bool hasPermissions() const;
 
-    void setRestrictionFound();
+    void setPermissionsFound();
 
     OutputDevice* getRouteOutput(const bool alternative = false) {
         if (alternative) {
@@ -401,7 +418,18 @@ public:
         return myRoutesOutput;
     }
 
-protected:
+#ifdef HAVE_FOX
+    void lock() {
+        myThreadPool.lock();
+    }
+
+    void unlock() {
+        myThreadPool.unlock();
+    }
+#endif
+
+
+private:
     static bool computeRoute(SUMOAbstractRouter<ROEdge, ROVehicle>& router,
                              const ROVehicle* const veh, const bool removeLoops,
                              MsgHandler* errorHandler);
@@ -414,8 +442,12 @@ protected:
 
     void checkFlows(SUMOTime time);
 
+    void createBulkRouteRequests(SUMOAbstractRouter<ROEdge, ROVehicle>& router, const SUMOTime time, const bool removeLoops, const std::map<std::string, ROVehicle*>& mmap);
 
-protected:
+private:
+    /// @brief Unique instance of RONet
+    static RONet* myInstance;
+
     /// @brief Known vehicle ids
     std::set<std::string> myVehIDs;
 
@@ -484,7 +516,10 @@ protected:
     unsigned int myWrittenRouteNo;
 
     /// @brief Whether the network contains edges which not all vehicles may pass
-    bool myHaveRestrictions;
+    bool myHavePermissions;
+
+    /// @brief The vehicle class specific speed restrictions
+    std::map<std::string, std::map<SUMOVehicleClass, SUMOReal> > myRestrictions;
 
     /// @brief The number of internal edges in the dictionary
     int myNumInternalEdges;
@@ -493,8 +528,6 @@ protected:
     MsgHandler* myErrorHandler;
 
 #ifdef HAVE_FOX
-    FXWorkerThread::Pool myThreadPool;
-
 private:
     class WorkerThread : public FXWorkerThread {
     public:
@@ -525,6 +558,24 @@ private:
         /// @brief Invalidated assignment operator.
         RoutingTask& operator=(const RoutingTask&);
     };
+
+    class BulkmodeTask : public FXWorkerThread::Task {
+    public:
+        BulkmodeTask(const bool value) : myValue(value) {}
+        void run(FXWorkerThread* context) {
+            static_cast<WorkerThread*>(context)->getRouter().setBulkMode(myValue);
+        }
+    private:
+        const bool myValue;
+    private:
+        /// @brief Invalidated assignment operator.
+        BulkmodeTask& operator=(const BulkmodeTask&);
+    };
+
+
+private:
+    /// @brief for multi threaded routing
+    FXWorkerThread::Pool myThreadPool;
 #endif
 
 private:

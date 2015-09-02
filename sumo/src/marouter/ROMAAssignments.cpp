@@ -51,16 +51,16 @@
 // static member variables
 // ===========================================================================
 std::map<const ROEdge* const, SUMOReal> ROMAAssignments::myPenalties;
-ROVehicle* ROMAAssignments::myDefaultVehicle = 0;
 
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
 
-ROMAAssignments::ROMAAssignments(const SUMOTime begin, const SUMOTime end,
+ROMAAssignments::ROMAAssignments(const SUMOTime begin, const SUMOTime end, const bool timeSplit,
                                  RONet& net, ODMatrix& matrix,
-                                 SUMOAbstractRouter<ROEdge, ROVehicle>& router) : myBegin(begin), myEnd(end), myNet(net), myMatrix(matrix), myRouter(router) {
+                                 SUMOAbstractRouter<ROEdge, ROVehicle>& router)
+    : myBegin(begin), myEnd(end), myTimeSplit(timeSplit), myNet(net), myMatrix(matrix), myRouter(router) {
     myDefaultVehicle = new ROVehicle(SUMOVehicleParameter(), 0, net.getVehicleTypeSecure(DEFAULT_VTYPE_ID), &net);
 }
 
@@ -72,7 +72,7 @@ ROMAAssignments::~ROMAAssignments() {
 // based on the definitions in PTV-Validate and in the VISUM-Köln network
 SUMOReal
 ROMAAssignments::capacityConstraintFunction(const ROEdge* edge, const SUMOReal flow) const {
-    if (edge->getType() == ROEdge::ET_DISTRICT) {
+    if (edge->getFunc() == ROEdge::ET_DISTRICT) {
         return 0;
     }
     const int roadClass = -edge->getPriority();
@@ -158,19 +158,32 @@ ROMAAssignments::getKPaths(const int kPaths, const SUMOReal penalty) {
 
 
 void
+ROMAAssignments::resetFlows() {
+    for (std::map<std::string, ROEdge*>::const_iterator i = myNet.getEdgeMap().begin(); i != myNet.getEdgeMap().end(); ++i) {
+        ROMAEdge* edge = static_cast<ROMAEdge*>(i->second);
+        edge->setFlow(STEPS2TIME(myBegin), STEPS2TIME(myEnd), 0.);
+        edge->setHelpFlow(STEPS2TIME(myBegin), STEPS2TIME(myEnd), 0.);
+    }
+}
+
+
+void
 ROMAAssignments::incremental(const int numIter) {
     for (int t = 0; t < numIter; t++) {
         for (std::vector<ODCell*>::const_iterator i = myMatrix.getCells().begin(); i != myMatrix.getCells().end(); i++) {
             ODCell* c = *i;
             ConstROEdgeVector edges;
-            SUMOReal linkFlow = c->vehicleNumber / numIter;
-            myRouter.compute(myNet.getEdge(c->origin + "-source"), myNet.getEdge(c->destination + "-sink"), myDefaultVehicle, 0, edges);
+            const SUMOReal linkFlow = c->vehicleNumber / numIter;
+            const SUMOTime begin = myTimeSplit ? c->begin : myBegin;
+            const SUMOTime end = myTimeSplit ? c->end : myEnd;
+            myRouter.compute(myNet.getEdge(c->origin + "-source"), myNet.getEdge(c->destination + "-sink"), myDefaultVehicle, begin, edges);
             SUMOReal costs = 0.;
             for (ConstROEdgeVector::iterator e = edges.begin(); e != edges.end(); e++) {
-                ROEdge* edge = myNet.getEdge((*e)->getID());
-                edge->addEffort(linkFlow, STEPS2TIME(myBegin), STEPS2TIME(myEnd));
-                const SUMOReal travelTime = capacityConstraintFunction(edge, linkFlow);
-                edge->addTravelTime(travelTime, STEPS2TIME(myBegin), STEPS2TIME(myEnd));
+                ROMAEdge* edge = static_cast<ROMAEdge*>(myNet.getEdge((*e)->getID()));
+                const SUMOReal newFlow = edge->getFlow(STEPS2TIME(begin)) + linkFlow;
+                edge->setFlow(STEPS2TIME(begin), STEPS2TIME(end), newFlow);
+                const SUMOReal travelTime = capacityConstraintFunction(edge, newFlow);
+                edge->addTravelTime(travelTime, STEPS2TIME(begin), STEPS2TIME(end));
                 costs += travelTime;
             }
             addRoute(edges, c->pathsVector, c->origin + c->destination + toString(c->pathsVector.size()), costs, linkFlow);
@@ -201,7 +214,7 @@ ROMAAssignments::sue(const int maxOuterIteration, const int maxInnerIteration, c
                     // assign edge flow deltas
                     for (ConstROEdgeVector::const_iterator e = r->getEdgeVector().begin(); e != r->getEdgeVector().end(); e++) {
                         ROMAEdge* edge = static_cast<ROMAEdge*>(myNet.getEdge((*e)->getID()));
-                        edge->setHelpFlow(edge->getHelpFlow() + pathFlow);
+                        edge->setHelpFlow(STEPS2TIME(myBegin), STEPS2TIME(myEnd), edge->getHelpFlow(STEPS2TIME(myBegin)) + pathFlow);
                     }
                 }
             }
@@ -209,12 +222,12 @@ ROMAAssignments::sue(const int maxOuterIteration, const int maxInnerIteration, c
             int unstableEdges = 0;
             for (std::map<std::string, ROEdge*>::const_iterator i = myNet.getEdgeMap().begin(); i != myNet.getEdgeMap().end(); ++i) {
                 ROMAEdge* edge = static_cast<ROMAEdge*>((*i).second);
-                const SUMOReal oldFlow = edge->getEffort(myDefaultVehicle, 0.);
+                const SUMOReal oldFlow = edge->getFlow(STEPS2TIME(myBegin));
                 SUMOReal newFlow = oldFlow;
                 if (inner == 0 && outer == 0) {
-                    newFlow += edge->getHelpFlow();
+                    newFlow += edge->getHelpFlow(STEPS2TIME(myBegin));
                 } else {
-                    newFlow += (edge->getHelpFlow() - oldFlow) / (inner + 1);
+                    newFlow += (edge->getHelpFlow(STEPS2TIME(myBegin)) - oldFlow) / (inner + 1);
                 }
 //                if not lohse:
                 if (newFlow > 0.) {
@@ -229,10 +242,10 @@ ROMAAssignments::sue(const int maxOuterIteration, const int maxInnerIteration, c
                     unstableEdges++;
                     newFlow = 0.;
                 }
-                edge->addEffort(newFlow, STEPS2TIME(myBegin), STEPS2TIME(myEnd));
+                edge->setFlow(STEPS2TIME(myBegin), STEPS2TIME(myEnd), newFlow);
                 const SUMOReal travelTime = capacityConstraintFunction(edge, newFlow);
                 edge->addTravelTime(travelTime, STEPS2TIME(myBegin), STEPS2TIME(myEnd));
-                edge->setHelpFlow(0.);
+                edge->setHelpFlow(STEPS2TIME(myBegin), STEPS2TIME(myEnd), 0.);
             }
             // if stable break
             if (unstableEdges == 0) {

@@ -93,9 +93,8 @@ NBOwnTLDef::getDirectionalWeight(LinkDirection dir) {
         case LINKDIR_LEFT:
         case LINKDIR_RIGHT:
             return .5;
-        case LINKDIR_NODIR:
-        case LINKDIR_TURN:
-            return 0;
+        default:
+            break;
     }
     return 0;
 }
@@ -245,7 +244,7 @@ NBOwnTLDef::computeLogicAndConts(unsigned int brakingTimeSeconds, bool onlyConts
         if (incoming.size() == 2) {
             // if there are only 2 incoming edges we need to decide whether they are a crossing or a "continuation"
             // @node: this heuristic could be extended to also check the number of outgoing edges
-            SUMOReal angle = fabs(NBHelpers::relAngle(toProc[0]->getAngleAtNode(toProc[0]->getToNode()), toProc[1]->getAngleAtNode(toProc[1]->getToNode())));
+            SUMOReal angle = fabs(NBHelpers::relAngle(incoming[0]->getAngleAtNode(incoming[0]->getToNode()), incoming[1]->getAngleAtNode(incoming[1]->getToNode())));
             // angle would be 180 for straight opposing incoming edges
             if (angle < 135) {
                 chosen = std::pair<NBEdge*, NBEdge*>(toProc[0], static_cast<NBEdge*>(0));
@@ -303,7 +302,7 @@ NBOwnTLDef::computeLogicAndConts(unsigned int brakingTimeSeconds, bool onlyConts
             }
             for (unsigned int i2 = 0; i2 < pos; ++i2) {
                 if ((state[i2] == 'G' || state[i2] == 'g')) {
-                    if (fromEdges[i2]->getToNode()->rightTurnConflict(
+                    if (NBNode::rightTurnConflict(
                                 fromEdges[i1], toEdges[i1], fromLanes[i1], fromEdges[i2], toEdges[i2], fromLanes[i2])) {
                         rightTurnConflicts[i1] = true;
                     }

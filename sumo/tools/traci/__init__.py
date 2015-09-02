@@ -319,10 +319,10 @@ def _beginMessage(cmdID, varID, objID, length=0):
     length += 1 + 1 + 1 + 4 + len(objID)
     if length <= 255:
         _message.string += struct.pack("!BBBi", length,
-                                       cmdID, varID, len(objID)) + objID
+                                       cmdID, varID, len(objID)) + str(objID)
     else:
         _message.string += struct.pack("!BiBBi", 0, length + 4,
-                                       cmdID, varID, len(objID)) + objID
+                                       cmdID, varID, len(objID)) + str(objID)
 
 
 def _sendReadOneStringCmd(cmdID, varID, objID):
@@ -351,7 +351,7 @@ def _sendByteCmd(cmdID, varID, objID, value):
 def _sendStringCmd(cmdID, varID, objID, value):
     _beginMessage(cmdID, varID, objID, 1 + 4 + len(value))
     _message.string += struct.pack("!Bi", constants.TYPE_STRING,
-                                   len(value)) + value
+                                   len(value)) + str(value)
     _sendExact()
 
 
@@ -471,7 +471,9 @@ def init(port=8813, numRetries=10, host="localhost", label="default"):
 
 def simulationStep(step=0):
     """
-    Make simulation step and simulate up to "step" second in sim time.
+    Make a simulation step and simulate up to the given millisecond in sim time.
+    If the given value is 0 or absent, exactly one step is performed.
+    Values smaller than or equal to the current sim time result in no action.
     """
     _message.queue.append(constants.CMD_SIMSTEP2)
     _message.string += struct.pack("!BBi", 1 +

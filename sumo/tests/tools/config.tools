@@ -101,8 +101,15 @@ source_weights:weights.src.xml
 dest_weights:weights.dst.xml
 via_weights:weights.via.xml
 selection:selection.txt
+selection0:selection.comp0.txt
+selection1:selection.comp1.txt
+selection2:selection.comp2.txt
 histogram:histogram.dat
 fullstats:fullstats.dat
+osmimport:*/osm.net.xml
+osmbatch:*/build.bat
+osmtrips:*/trips.trips.xml
+districts:districts.xml
 
 [run_dependent_text]
 output:Begin time
@@ -112,10 +119,11 @@ output:<!-- generated on
 output:.* files checked{REPLACE <number> files checked}
 output:^calling.*duarouter
 output:Parsing network projection
-output:Parsing types from
+output:Parsing types from '.*sumo[\\/]data[\\/]typemap[\\/]{REPLACE Parsing types from 'sumo/data/typemap/}
 output:^Performance:{->}^Vehicles:
 output:instance at 0x[0-9A-Fa-f]+{REPLACE instance at <ADDRESS>}
 trips:<!-- generated on
+osmtrips:<!-- generated on
 pois:<!--
 routes:<!-- generated on
 errors:Execution of .*duarouter.*'{REPLACE Execution of <path-to>duarouter'}
@@ -130,6 +138,9 @@ errors:No imaging
 omnet:<!-- generated on
 shawn:<!-- generated on
 net:<!--{[->]}-->
+osmimport:<!--{[->]}-->
+osmbatch:python.*randomTrips\.py{REPLACE python /path/to/randomTrips.py}
+osmbatch:python.*route2trips\.py{REPLACE python /path/to/route2trips.py}
 
 [floating_point_tolerance]
 net:0.0101

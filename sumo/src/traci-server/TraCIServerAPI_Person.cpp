@@ -60,6 +60,7 @@ TraCIServerAPI_Person::processGet(TraCIServer& server, tcpip::Storage& inputStor
             && variable != VAR_WIDTH && variable != VAR_LENGTH && variable != VAR_MINGAP
             && variable != VAR_TYPE && variable != VAR_SHAPECLASS && variable != VAR_COLOR
             && variable != VAR_WAITING_TIME && variable != VAR_PARAMETER
+            && variable != VAR_NEXT_EDGE
        ) {
         return server.writeErrorStatusCmd(CMD_GET_PERSON_VARIABLE, "Get Person Variable: unsupported variable specified", outputStorage);
     }
@@ -83,7 +84,7 @@ TraCIServerAPI_Person::processGet(TraCIServer& server, tcpip::Storage& inputStor
             tempMsg.writeInt((int) c.size());
         }
     } else {
-        MSPerson* p = c.get(id);
+        MSTransportable* p = c.get(id);
         if (p == 0) {
             return server.writeErrorStatusCmd(CMD_GET_PERSON_VARIABLE, "Person '" + id + "' is not known", outputStorage);
         }
@@ -131,6 +132,10 @@ TraCIServerAPI_Person::processGet(TraCIServer& server, tcpip::Storage& inputStor
                 tempMsg.writeUnsignedByte(TYPE_STRING);
                 tempMsg.writeString(p->getVehicleType().getID());
                 break;
+            case VAR_NEXT_EDGE:
+                tempMsg.writeUnsignedByte(TYPE_STRING);
+                tempMsg.writeString(dynamic_cast<MSPerson*>(p)->getNextEdge());
+                break;
             case VAR_PARAMETER: {
                 std::string paramName = "";
                 if (!server.readTypeCheckingString(inputStorage, paramName)) {
@@ -163,7 +168,7 @@ TraCIServerAPI_Person::processSet(TraCIServer& server, tcpip::Storage& inputStor
     // id
     MSPersonControl& c = MSNet::getInstance()->getPersonControl();
     std::string id = inputStorage.readString();
-    MSPerson* p = c.get(id);
+    MSTransportable* p = c.get(id);
     if (p == 0) {
         return server.writeErrorStatusCmd(CMD_SET_PERSON_VARIABLE, "Person '" + id + "' is not known", outputStorage);
     }

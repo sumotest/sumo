@@ -44,7 +44,6 @@
 #include <router/RONet.h>
 #include <router/ROLoader.h>
 #include <router/RONetHandler.h>
-#include <duarouter/RODUAEdgeBuilder.h>
 #include <utils/options/OptionsIO.h>
 #include <utils/common/MsgHandler.h>
 #include <utils/common/ToString.h>
@@ -110,7 +109,8 @@ main(int argc, char* argv[]) {
         // Initialise subsystems and process options
         XMLSubSys::init();
         AGFrame::fillOptions();
-        OptionsIO::getOptions(true, argc, argv);
+        OptionsIO::setArgs(argc, argv);
+        OptionsIO::getOptions();
         if (oc.processMetaOptions(argc < 2)) {
             SystemFrame::close();
             return 0;

@@ -52,6 +52,7 @@
 #include "GUIApplicationWindow.h"
 #include "GUIEvent_SimulationLoaded.h"
 #include "GUIEvent_SimulationEnded.h"
+#include "GUIEvent_Screenshot.h"
 
 #include <utils/common/ToString.h>
 #include <utils/common/RandHelper.h>
@@ -152,6 +153,8 @@ FXDEFMAP(GUIApplicationWindow) GUIApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_LOCATEADD,      GUIApplicationWindow::onUpdNeedsSimulation),
     FXMAPFUNC(SEL_UPDATE,   MID_LOCATEPOI,      GUIApplicationWindow::onUpdNeedsSimulation),
     FXMAPFUNC(SEL_UPDATE,   MID_LOCATEPOLY,     GUIApplicationWindow::onUpdNeedsSimulation),
+    FXMAPFUNC(SEL_KEYPRESS,              0,     GUIApplicationWindow::onKeyPress),
+    FXMAPFUNC(SEL_KEYRELEASE,            0,     GUIApplicationWindow::onKeyRelease),
 
     FXMAPFUNC(SEL_CLIPBOARD_REQUEST, 0, GUIApplicationWindow::onClipboardRequest),
 
@@ -192,8 +195,8 @@ GUIApplicationWindow::GUIApplicationWindow(FXApp* a,
 
 
 void
-GUIApplicationWindow::dependentBuild(bool game) {
-    // do this not twice
+GUIApplicationWindow::dependentBuild() {
+    // don't do this twice
     if (hadDependentBuild) {
         return;
     }
@@ -247,12 +250,8 @@ GUIApplicationWindow::dependentBuild(bool game) {
     myMessageWindow = new GUIMessageWindow(myMainSplitter);
     // fill menu and tool bar
     fillMenuBar();
-    if (game) {
-        onCmdGaming(0, 0, 0);
-    } else {
-        myToolBar6->hide();
-        myToolBar7->hide();
-    }
+    myToolBar6->hide();
+    myToolBar7->hide();
     // build additional threads
     myLoadThread = new GUILoadThread(getApp(), this, myEvents, myLoadThreadEvent);
     myRunThread = new GUIRunThread(getApp(), this, *mySimDelayTarget, myEvents,
@@ -366,7 +365,7 @@ GUIApplicationWindow::fillMenuBar() {
                       GUIIconSubSys::getIcon(ICON_RELOAD), this, MID_RELOAD);
     new FXMenuSeparator(myFileMenu);
     new FXMenuCommand(myFileMenu,
-                      "&Close\tCtl-W\tClose the simulation.",
+                      "Close\tCtl-W\tClose the simulation.",
                       GUIIconSubSys::getIcon(ICON_CLOSE), this, MID_CLOSE);
     // Recent files
     FXMenuSeparator* sep1 = new FXMenuSeparator(myFileMenu);
@@ -770,6 +769,7 @@ GUIApplicationWindow::onCmdOpenShapes(FXObject*, FXSelector, void*) {
         if (!XMLSubSys::runParser(handler, file, false)) {
             WRITE_MESSAGE("Loading of " + file + " failed.");
         }
+        update();
     }
     return 1;
 }
@@ -777,7 +777,12 @@ GUIApplicationWindow::onCmdOpenShapes(FXObject*, FXSelector, void*) {
 
 long
 GUIApplicationWindow::onCmdReload(FXObject*, FXSelector, void*) {
-    loadConfigOrNet("", false, true);
+    getApp()->beginWaitCursor();
+    myAmLoading = true;
+    closeAllWindows();
+    myLoadThread->start();
+    setStatusBarText("Reloading.");
+    update();
     return 1;
 }
 
@@ -813,7 +818,7 @@ GUIApplicationWindow::onUpdOpen(FXObject* sender, FXSelector, void* ptr) {
 long
 GUIApplicationWindow::onUpdReload(FXObject* sender, FXSelector, void* ptr) {
     sender->handle(this,
-                   myAmLoading || !myRunThread->simulationAvailable()
+                   myAmLoading || myLoadThread->getFileName() == ""
                    ? FXSEL(SEL_COMMAND, ID_DISABLE) : FXSEL(SEL_COMMAND, ID_ENABLE),
                    ptr);
     return 1;
@@ -852,6 +857,7 @@ GUIApplicationWindow::onCmdStart(FXObject*, FXSelector, void*) {
         myWasStarted = true;
     }
     myRunThread->resume();
+    getApp()->forceRefresh(); // only callking myToolBar2->forceRefresh somehow loses keyboard focus
     return 1;
 }
 
@@ -859,6 +865,7 @@ GUIApplicationWindow::onCmdStart(FXObject*, FXSelector, void*) {
 long
 GUIApplicationWindow::onCmdStop(FXObject*, FXSelector, void*) {
     myRunThread->stop();
+    getApp()->forceRefresh(); // only callking myToolBar2->forceRefresh somehow loses keyboard focus
     return 1;
 }
 
@@ -1130,6 +1137,9 @@ GUIApplicationWindow::eventOccured() {
             case EVENT_SIMULATION_ENDED:
                 handleEvent_SimulationEnded(e);
                 break;
+            case EVENT_SCREENSHOT:
+                handleEvent_Screenshot(e);
+                break;
             default:
                 break;
         }
@@ -1230,6 +1240,9 @@ GUIApplicationWindow::handleEvent_SimulationStep(GUIEvent*) {
     if (myAmGaming) {
         checkGamingEvents();
     }
+    if (myRunThread->simulationIsStartable()) {
+        getApp()->forceRefresh(); // restores keyboard focus
+    }
     update();
 }
 
@@ -1251,10 +1264,27 @@ GUIApplicationWindow::handleEvent_SimulationEnded(GUIEvent* e) {
     } else if (!myHaveNotifiedAboutSimEnd) {
         // build the text
         const std::string text = "Simulation ended at time: " + time2string(ec->getTimeStep()) +
-                                 ".\nReason: " + MSNet::getStateMessage(ec->getReason());
-        FXMessageBox::warning(this, MBOX_OK, "Simulation ended", "%s", text.c_str());
+                                 ".\nReason: " + MSNet::getStateMessage(ec->getReason()) +
+                                 "\nDo you want to close all open files and views?";
+        FXuint answer = FXMessageBox::question(this, MBOX_YES_NO, "Simulation ended", "%s", text.c_str());
+        if (answer == 1) { //1:yes, 2:no, 4:esc
+            closeAllWindows();
+        }
         myHaveNotifiedAboutSimEnd = true;
     }
+}
+
+
+void
+GUIApplicationWindow::handleEvent_Screenshot(GUIEvent* e) {
+    GUIEvent_Screenshot* ec = static_cast<GUIEvent_Screenshot*>(e);
+    myEventMutex.lock();
+    const std::string error = ec->myView->makeSnapshot(ec->myFile);
+    if (error != "") {
+        WRITE_WARNING(error);
+    }
+    myEventCondition.signal();
+    myEventMutex.unlock();
 }
 
 
@@ -1280,36 +1310,32 @@ GUIApplicationWindow::checkGamingEvents() {
         }
     }
 #endif
-    // updated peformance indicators
 
+    // update performance indicators
     for (it = vc.loadedVehBegin(); it != end; ++it) {
         const MSVehicle* veh = dynamic_cast<MSVehicle*>(it->second);
         assert(veh != 0);
-        const SUMOReal vmax = MIN2(veh->getVehicleType().getMaxSpeed(), veh->getEdge()->getSpeedLimit());
-        if (veh->isOnRoad() && veh->getSpeed() < SUMO_const_haltingSpeed) {
-            myWaitingTime += DELTA_T;
+        if (veh->isOnRoad()) {
+            const SUMOReal vmax = MIN2(veh->getVehicleType().getMaxSpeed(), veh->getEdge()->getSpeedLimit());
+            if (veh->getSpeed() < SUMO_const_haltingSpeed) {
+                myWaitingTime += DELTA_T;
+            }
+            myTimeLoss += TS * TIME2STEPS(vmax - veh->getSpeed()) / vmax; // may be negative with speedFactor > 1
         }
-        myTimeLoss += TS * TIME2STEPS(vmax - veh->getSpeed()) / vmax; // may be negative with speedFactor > 1
-        myWaitingTimeLabel->setText(time2string(myWaitingTime).c_str());
-        myTimeLossLabel->setText(time2string(myTimeLoss).c_str());
     }
-
+    myWaitingTimeLabel->setText(time2string(myWaitingTime).c_str());
+    myTimeLossLabel->setText(time2string(myTimeLoss).c_str());
 }
 
 
 void
-GUIApplicationWindow::loadConfigOrNet(const std::string& file, bool isNet, bool isReload) {
+GUIApplicationWindow::loadConfigOrNet(const std::string& file, bool isNet) {
     getApp()->beginWaitCursor();
     myAmLoading = true;
     closeAllWindows();
-    if (isReload) {
-        myLoadThread->reloadConfigOrNet();
-        setStatusBarText("Reloading.");
-    } else {
-        gSchemeStorage.saveViewport(0, 0, -1); // recenter view
-        myLoadThread->loadConfigOrNet(file, isNet);
-        setStatusBarText("Loading '" + file + "'.");
-    }
+    gSchemeStorage.saveViewport(0, 0, -1); // recenter view
+    myLoadThread->loadConfigOrNet(file, isNet);
+    setStatusBarText("Loading '" + file + "'.");
     update();
 }
 
@@ -1436,5 +1462,41 @@ GUIApplicationWindow::updateTimeLCD(SUMOTime time) {
     myLCDLabel->setText(buffer);
 }
 
-/****************************************************************************/
 
+long
+GUIApplicationWindow::onKeyPress(FXObject* o, FXSelector sel, void* data) {
+    const long handled = FXMainWindow::onKeyPress(o, sel, data);
+    if (handled == 0 && myMDIClient->numChildren() > 0) {
+        GUISUMOViewParent* w = dynamic_cast<GUISUMOViewParent*>(myMDIClient->getActiveChild());
+        if (w != 0) {
+            w->onKeyPress(0, sel, data);
+        }
+    }
+    return 0;
+}
+
+
+long
+GUIApplicationWindow::onKeyRelease(FXObject* o, FXSelector sel, void* data) {
+    const long handled = FXMainWindow::onKeyRelease(o, sel, data);
+    if (handled == 0 && myMDIClient->numChildren() > 0) {
+        GUISUMOViewParent* w = dynamic_cast<GUISUMOViewParent*>(myMDIClient->getActiveChild());
+        if (w != 0) {
+            w->onKeyRelease(0, sel, data);
+        }
+    }
+    return 0;
+}
+
+
+void
+GUIApplicationWindow::sendBlockingEvent(GUIEvent* event) {
+    myEventMutex.lock();
+    myEvents.add(event);
+    myRunThreadEvent.signal();
+    myEventCondition.wait(myEventMutex);
+    myEventMutex.unlock();
+}
+
+
+/****************************************************************************/

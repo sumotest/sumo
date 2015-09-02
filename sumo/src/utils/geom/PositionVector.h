@@ -210,6 +210,9 @@ public:
 
     void add(SUMOReal xoff, SUMOReal yoff, SUMOReal zoff);
 
+    /// @brief mirror coordinates along the x-axis
+    void mirrorX();
+
     void reshiftRotate(SUMOReal xoff, SUMOReal yoff, SUMOReal rot);
 
     PositionVector convexHull() const;
@@ -316,6 +319,9 @@ public:
     void removeDoublePoints(SUMOReal minDist = POSITION_EPS, bool assertLength = false);
 
     void removeColinearPoints();
+
+    /// @brief return whether two positions differ in z-coordinate
+    bool hasElevation() const;
 
 };
 

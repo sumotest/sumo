@@ -202,6 +202,10 @@ TraCIServer::close() {
     if (myInstance == 0) {
         return;
     }
+    if (myDoCloseConnection) {
+        myInstance->writeStatusCmd(CMD_CLOSE, RTYPE_OK, "");
+        myInstance->mySocket->sendExact(myInstance->myOutputStorage);
+    }
     delete myInstance;
     myInstance = 0;
     myDoCloseConnection = true;
@@ -299,11 +303,6 @@ TraCIServer::processCommandsUntilSimStep(SUMOTime step) {
         throw ProcessError(e.what());
     } catch (tcpip::SocketException& e) {
         throw ProcessError(e.what());
-    }
-    if (myInstance != NULL) {
-        delete myInstance;
-        myInstance = 0;
-        myDoCloseConnection = true;
     }
 }
 
@@ -433,9 +432,11 @@ TraCIServer::dispatchCommand() {
                 return commandId;
             }
             case CMD_CLOSE:
-                success = commandCloseConnection();
+                myDoCloseConnection = true;
+                success = true;
                 break;
             case CMD_SUBSCRIBE_INDUCTIONLOOP_VARIABLE:
+            case CMD_SUBSCRIBE_AREAL_DETECTOR_VARIABLE:
             case CMD_SUBSCRIBE_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE:
             case CMD_SUBSCRIBE_TL_VARIABLE:
             case CMD_SUBSCRIBE_LANE_VARIABLE:
@@ -452,6 +453,7 @@ TraCIServer::dispatchCommand() {
                 success = addObjectVariableSubscription(commandId, false);
                 break;
             case CMD_SUBSCRIBE_INDUCTIONLOOP_CONTEXT:
+            case CMD_SUBSCRIBE_AREAL_DETECTOR_CONTEXT:
             case CMD_SUBSCRIBE_MULTI_ENTRY_EXIT_DETECTOR_CONTEXT:
             case CMD_SUBSCRIBE_TL_CONTEXT:
             case CMD_SUBSCRIBE_LANE_CONTEXT:
@@ -504,15 +506,6 @@ TraCIServer::commandGetVersion() {
     myOutputStorage.writeUnsignedByte(CMD_GETVERSION);
     // and the parameter dependant part
     myOutputStorage.writeStorage(answerTmp);
-    return true;
-}
-
-
-bool
-TraCIServer::commandCloseConnection() {
-    myDoCloseConnection = true;
-    // write answer
-    writeStatusCmd(CMD_CLOSE, RTYPE_OK, "");
     return true;
 }
 

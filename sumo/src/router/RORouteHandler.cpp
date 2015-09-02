@@ -201,7 +201,7 @@ RORouteHandler::myStartElement(int element,
             break;
     }
     // parse embedded vtype information
-    if (myCurrentVType != 0 && element != SUMO_TAG_VTYPE) {
+    if (myCurrentVType != 0 && element != SUMO_TAG_VTYPE && element != SUMO_TAG_PARAM) {
         SUMOVehicleParserHelper::parseVTypeEmbedded(*myCurrentVType, element, attrs);
         return;
     }
@@ -335,7 +335,7 @@ RORouteHandler::closeRoute(const bool mayBeDisconnected) {
         myActiveRouteStops.clear();
         return;
     }
-    if (myActiveRoute.size() == 1 && myActiveRoute.front()->getType() == ROEdge::ET_DISTRICT) {
+    if (myActiveRoute.size() == 1 && myActiveRoute.front()->getFunc() == ROEdge::ET_DISTRICT) {
         myErrorOutput->inform("The routing information for vehicle '" + myVehicleParameter->id + "' is insufficient.");
         myActiveRouteID = "";
         myActiveRouteStops.clear();
@@ -388,7 +388,7 @@ RORouteHandler::openRouteDistribution(const SUMOSAXAttributes& attrs) {
         }
     }
     // try to get the index of the last element
-    int index = attrs.get<int>(SUMO_ATTR_LAST, id.c_str(), ok);
+    int index = attrs.getOpt<int>(SUMO_ATTR_LAST, id.c_str(), ok, 0);
     if (ok && index < 0) {
         myErrorOutput->inform("Negative index of a route alternative (id='" + id + "').");
         return;
@@ -437,6 +437,9 @@ RORouteHandler::closeVehicle() {
     if (type == 0) {
         myErrorOutput->inform("The vehicle type '" + myVehicleParameter->vtypeid + "' for vehicle '" + myVehicleParameter->id + "' is not known.");
         type = myNet.getVehicleTypeSecure(DEFAULT_VTYPE_ID);
+    } else {
+        // fix the type id in case we used a distribution
+        myVehicleParameter->vtypeid = type->id;
     }
     // get the route
     RORouteDef* route = myNet.getRouteDef(myVehicleParameter->routeid);

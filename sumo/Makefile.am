@@ -27,6 +27,7 @@ man:
 	help2man -N -n "Builds vehicle routes for SUMO using detector values" bin/dfrouter > docs/man/dfrouter.1
 	help2man -N -n "Shortest path router and DUE computer for the microscopic road traffic simulation SUMO" bin/duarouter > docs/man/duarouter.1
 	help2man -N -n "Router for the microscopic road traffic simulation SUMO based on junction turning ratios" bin/jtrrouter > docs/man/jtrrouter.1
+	help2man -N -n "Import O/D-matrices for macroscopic traffic assignment" bin/marouter > docs/man/marouter.1
 	help2man -N -n "Generates routes of persons throughout a day for the microscopic road traffic simulation SUMO" bin/activitygen > docs/man/activitygen.1
 	help2man -N -n "Importer of O/D-matrices for the road traffic simulation SUMO" bin/od2trips > docs/man/od2trips.1
 	help2man -N -n "Road network importer / builder for the road traffic simulation SUMO" bin/netconvert > docs/man/netconvert.1
@@ -43,11 +44,11 @@ dist-hook:
 	    find tests/complex/tutorial -regex ".*\.\(xml\|txt\|sumocfg\|netccfg\|py\)" -print0 | xargs -0 cp -v --parents --target-directory $(abs_distdir) ; \
 	    mv -v ${abs_distdir}/tests/complex/tutorial $(abs_distdir)/docs ; \
 	    rm -rf $(abs_distdir)/tests ; \
-	    tests/extractTest.py -i -f tests/examples.txt -o $(abs_distdir)/docs ; \
+	    tools/extractTest.py -i -f tests/examples.txt -o $(abs_distdir)/docs ; \
 	    find build -regex ".*\.\(vcxproj\|vcxproj\.filters\|props\|sln\|spec\)" -print0 | xargs -0 cp --parents --target-directory $(abs_distdir) ; \
 	    find data -regex ".*\.\(xsd\|xml\|csv\|veh\)" -print0 | xargs -0 cp --parents --target-directory $(abs_distdir) ; \
-	    ( svn export --force tools $(distdir)/tools && cd $(distdir) && find tools -type f > ../tools_filelist; true ) ; \
-	    xargs cp --parents --target-directory $(abs_distdir) < tools_filelist ; \
+	    ( svn export --force tools $(distdir)/tools && cd $(distdir) && find tools -type f -print0 > ../tools_filelist; true ) ; \
+	    xargs -0 cp --parents --target-directory $(abs_distdir) < tools_filelist ; \
 	    find $(abs_distdir)/tools -name  "*.jar" | xargs rm ; \
 	    cp tools_filelist $(abs_distdir) ; \
 	fi;
@@ -61,7 +62,7 @@ dist-doc: doc
 	rmdir $(distdir)/tests/complex
 	rmdir $(distdir)/tests
 	cp -r docs/pydoc docs/doxygen docs/userdoc $(distdir)/docs
-	tests/extractTest.py -i -f tests/examples.txt -o $(distdir)/docs
+	tools/extractTest.py -i -f tests/examples.txt -o $(distdir)/docs
 	tar -czf $(PACKAGE)-doc-$(VERSION).tar.gz $(distdir)
 	rm -f $(PACKAGE)-doc-$(VERSION).zip
 	zip -r $(PACKAGE)-doc-$(VERSION).zip $(distdir)
@@ -88,7 +89,7 @@ dist-complete: dist dist-doc dist-tests traas traci4j trafficmodeler
 	$(am__remove_distdir)
 
 examples:
-	tests/extractTest.py -x -f tests/examples.txt
+	tools/extractTest.py -x -f tests/examples.txt
 
 traas:
 	ant -f tools/contributed/traas/build.xml clean release

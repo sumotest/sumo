@@ -1,4 +1,4 @@
-/****************************************************************************/
+﻿/****************************************************************************/
 /// @file    MSFrame.cpp
 /// @author  Daniel Krajzewicz
 /// @author  Eric Nicolay
@@ -106,7 +106,7 @@ MSFrame::fillOptions() {
     oc.doRegister("load-state", new Option_FileName());//!!! check, describe
     oc.addDescription("load-state", "Input", "Loads a network state from FILE");
     oc.doRegister("load-state.offset", new Option_String("0", "TIME"));//!!! check, describe
-    oc.addDescription("load-state.offset", "Input", "Sets the time offset for vehicle segment exit times");
+    oc.addDescription("load-state.offset", "Input", "Shifts all times loaded from a saved state by the given offset");
 
     //  register output options
     oc.doRegister("netstate-dump", new Option_FileName());
@@ -128,6 +128,12 @@ MSFrame::fillOptions() {
 
     oc.doRegister("emission-output", new Option_FileName());
     oc.addDescription("emission-output", "Output", "Save the emission values of each vehicle");
+
+    oc.doRegister("battery-output", new Option_FileName());
+    oc.addDescription("battery-output", "Output", "Save the battery values of each vehicle");
+    oc.doRegister("battery-output.precision", new Option_Integer(OUTPUT_ACCURACY));
+    oc.addDescription("battery-output.precision", "Output", "Write battery values with the given precision (default 2)");
+
     oc.doRegister("fcd-output", new Option_FileName());
     oc.addDescription("fcd-output", "Output", "Save the Floating Car Data");
     oc.doRegister("fcd-output.geo", new Option_Bool(false));
@@ -178,6 +184,10 @@ MSFrame::fillOptions() {
     oc.doRegister("vehroute-output.intended-depart", new Option_Bool(false));
     oc.addSynonyme("vehroute-output.intended-depart", "vehroutes.intended-depart");
     oc.addDescription("vehroute-output.intended-depart", "Output", "Write the output with the intended instead of the real departure time");
+
+    oc.doRegister("vehroute-output.route-length", new Option_Bool(false));
+    oc.addSynonyme("vehroute-output.route-length", "vehroutes.route-length");
+    oc.addDescription("vehroute-output.route-length", "Output", "Include total route length in the output");
 
     oc.doRegister("vehroute-output.write-unfinished", new Option_Bool(false));
     oc.addDescription("vehroute-output.write-unfinished", "Output", "Write vehroute output for vehicles which have not arrived at simulation end");
@@ -239,7 +249,7 @@ MSFrame::fillOptions() {
     oc.addDescription("max-num-vehicles", "Processing", "Quit simulation if this number of vehicles is exceeded");
 
     oc.doRegister("scale", new Option_Float());
-    oc.addDescription("scale", "Processing", "Scale demand by the given factor (0..1)");
+    oc.addDescription("scale", "Processing", "Scale demand by the given factor (by discarding or duplicating vehicles)");
 
     oc.doRegister("time-to-teleport", new Option_String("300", "TIME"));
     oc.addDescription("time-to-teleport", "Processing", "Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting");
@@ -284,8 +294,8 @@ MSFrame::fillOptions() {
     oc.doRegister("routing-algorithm", new Option_String("dijkstra"));
     oc.addDescription("routing-algorithm", "Routing",
                       "Select among routing algorithms ['dijkstra', 'astar', 'CH', 'CHWrapper']");
-    oc.doRegister("weights.random-factor", new Option_Float());
-    oc.addDescription("weights.random-factor", "Routing", "Edge weights for routing are dynamically disturbed by a random factor between [1-FLOAT,1+FLOAT]");
+    oc.doRegister("weights.random-factor", new Option_Float(1.));
+    oc.addDescription("weights.random-factor", "Routing", "Edge weights for routing are dynamically disturbed by a random factor drawn uniformly from [1,FLOAT)");
 
     // devices
     oc.addOptionSubTopic("Emissions");
@@ -293,6 +303,7 @@ MSFrame::fillOptions() {
     oc.addDescription("phemlight-path", "Emissions", "Determines where to load PHEMlight definitions from.");
 
     oc.addOptionSubTopic("Communication");
+    oc.addOptionSubTopic("Battery");
     MSDevice::insertOptions(oc);
 
     // register report options
@@ -381,6 +392,7 @@ MSFrame::buildStreams() {
     //extended
     OutputDevice::createDeviceByOption("fcd-output", "fcd-export", "fcd_file.xsd");
     OutputDevice::createDeviceByOption("emission-output", "emission-export", "emission_file.xsd");
+    OutputDevice::createDeviceByOption("battery-output", "battery-export");
     OutputDevice::createDeviceByOption("full-output", "full-export", "full_file.xsd");
     OutputDevice::createDeviceByOption("queue-output", "queue-export", "queue_file.xsd");
     OutputDevice::createDeviceByOption("amitran-output", "trajectories", "amitran/trajectories.xsd\" timeStepSize=\"" + toString(STEPS2MS(DELTA_T)));

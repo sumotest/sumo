@@ -7,7 +7,7 @@
 /// @date    Sept 2002
 /// @version $Id$
 ///
-// Sets and checks options for dua-routing
+// Sets and checks options for ma-routing
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
@@ -115,6 +115,12 @@ ROMAFrame::addImportOptions() {
     oc.addSynonyme("od-amitran-files", "amitran");
     oc.addDescription("od-amitran-files", "Input", "Loads O/D-matrix in Amitran format from FILE(s)");
 
+    oc.doRegister("route-files", 'r', new Option_FileName());
+    oc.addSynonyme("route-files", "routes");
+    oc.addSynonyme("route-files", "trips");
+    oc.addSynonyme("route-files", "trip-files");
+    oc.addDescription("route-files", "Input", "Read sumo-routes or trips from FILE(s)");
+
     oc.doRegister("weight-files", 'w', new Option_FileName());
     oc.addSynonyme("weight-files", "weights");
     oc.addDescription("weight-files", "Input", "Read network weights from FILE(s)");
@@ -134,6 +140,9 @@ ROMAFrame::addImportOptions() {
     oc.addDescription("end", "Time", "Defines the end time; Later trips will be discarded; Defaults to the maximum time that SUMO can represent");
 
     // register the processing options
+    oc.doRegister("aggregation-interval", new Option_String("3600", "TIME"));
+    oc.addDescription("aggregation-interval", "Processing", "Defines the time interval when aggregating single vehicle input; Defaults to one hour");
+
     oc.doRegister("ignore-errors", new Option_Bool(false));
     oc.addSynonyme("ignore-errors", "continue-on-unbuild", true);
     oc.addSynonyme("ignore-errors", "dismiss-loading-errors", true);
@@ -151,7 +160,7 @@ ROMAFrame::addImportOptions() {
     oc.addDescription("weights.expand", "Processing", "Expand weights behind the simulation's end");
 
     oc.doRegister("routing-algorithm", new Option_String("dijkstra"));
-    oc.addDescription("routing-algorithm", "Processing", "Select among routing algorithms ['dijkstra', 'astar', 'bulkstar', 'CH', 'CHWrapper']");
+    oc.addDescription("routing-algorithm", "Processing", "Select among routing algorithms ['dijkstra', 'astar', 'CH', 'CHWrapper']");
 
     oc.doRegister("weight-period", new Option_String("3600", "TIME"));
     oc.addDescription("weight-period", "Processing", "Aggregation period for the given weight files; triggers rebuilding of Contraction Hierarchy");
@@ -202,6 +211,9 @@ ROMAFrame::addAssignmentOptions() {
 
     oc.doRegister("timeline.day-in-hours", new Option_Bool(false));
     oc.addDescription("timeline.day-in-hours", "Processing", "Uses STR as a 24h-timeline definition");
+
+    oc.doRegister("timesplit", new Option_Bool(false));
+    oc.addDescription("timesplit", "Processing", "Do separate assignments for each time slot");
 
     // register macroscopic SUE-settings
     oc.doRegister("assignment-method", new Option_String("incremental"));

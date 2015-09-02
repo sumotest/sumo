@@ -413,6 +413,9 @@ PositionVector::length2D() const {
 
 SUMOReal
 PositionVector::area() const {
+    if (size() < 3) {
+        return 0;
+    }
     SUMOReal area = 0;
     PositionVector tmp = *this;
     if (!isClosed()) { // make sure its closed
@@ -511,6 +514,14 @@ void
 PositionVector::add(SUMOReal xoff, SUMOReal yoff, SUMOReal zoff) {
     for (int i = 0; i < static_cast<int>(size()); i++) {
         (*this)[i].add(xoff, yoff, zoff);
+    }
+}
+
+
+void
+PositionVector::mirrorX() {
+    for (int i = 0; i < static_cast<int>(size()); i++) {
+        (*this)[i].mul(1, -1);
     }
 }
 
@@ -824,7 +835,7 @@ PositionVector::eraseAt(int i) {
 SUMOReal
 PositionVector::nearest_offset_to_point2D(const Position& p, bool perpendicular) const {
     SUMOReal minDist = std::numeric_limits<SUMOReal>::max();
-    SUMOReal nearestPos = -1;
+    SUMOReal nearestPos = GeomHelper::INVALID_OFFSET;
     SUMOReal seen = 0;
     for (const_iterator i = begin(); i != end() - 1; i++) {
         const SUMOReal pos =
@@ -1103,7 +1114,7 @@ PositionVector::getEndLine() const {
 
 void
 PositionVector::closePolygon() {
-    if ((*this)[0] == back()) {
+    if (size() == 0 || (*this)[0] == back()) {
         return;
     }
     push_back((*this)[0]);
@@ -1237,6 +1248,18 @@ PositionVector::operator==(const PositionVector& v2) const {
 }
 
 
+bool
+PositionVector::hasElevation() const {
+    if (size() > 2) {
+        return false;
+    }
+    for (const_iterator i = begin(); i != end() - 1; i++) {
+        if ((*i).z() != (*(i + 1)).z()) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /****************************************************************************/
 

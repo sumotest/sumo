@@ -184,7 +184,7 @@ NIImporter_SUMO::_loadNetwork(OptionsCont& oc) {
                 }
                 nbe->addLane2LaneConnection(
                     fromLaneIndex, toEdge, c.toLaneIdx, NBEdge::L2L_VALIDATED,
-                    true, c.mayDefinitelyPass);
+                    true, c.mayDefinitelyPass, c.keepClear);
 
                 // maybe we have a tls-controlled connection
                 if (c.tlID != "" && myRailSignals.count(c.tlID) == 0) {
@@ -231,8 +231,8 @@ NIImporter_SUMO::_loadNetwork(OptionsCont& oc) {
                 NBConnection(prohibitedFrom, myEdges[it->prohibitedTo]->builtEdge));
         }
     }
-    if (!myHaveSeenInternalEdge && oc.isDefault("no-internal-links")) {
-        oc.set("no-internal-links", "true");
+    if (!myHaveSeenInternalEdge) {
+        myNetBuilder.haveLoadedNetworkWithoutInternalEdges();
     }
     if (!deprecatedVehicleClassesSeen.empty()) {
         WRITE_WARNING("Deprecated vehicle class(es) '" + toString(deprecatedVehicleClassesSeen) + "' in input network.");
@@ -252,7 +252,7 @@ NIImporter_SUMO::_loadNetwork(OptionsCont& oc) {
                 }
             }
             if (edges.size() > 0) {
-                node->addCrossing(edges, crossing.width, crossing.priority);
+                node->addCrossing(edges, crossing.width, crossing.priority, true);
             }
         }
     }
@@ -551,6 +551,7 @@ NIImporter_SUMO::addConnection(const SUMOSAXAttributes& attrs) {
     conn.toLaneIdx = attrs.get<int>(SUMO_ATTR_TO_LANE, 0, ok);
     conn.tlID = attrs.getOpt<std::string>(SUMO_ATTR_TLID, 0, ok, "");
     conn.mayDefinitelyPass = attrs.getOpt<bool>(SUMO_ATTR_PASS, 0, ok, false);
+    conn.keepClear = attrs.getOpt<bool>(SUMO_ATTR_KEEP_CLEAR, 0, ok, true);
     if (conn.tlID != "") {
         conn.tlLinkNo = attrs.get<int>(SUMO_ATTR_TLLINKINDEX, 0, ok);
     }
@@ -681,8 +682,8 @@ NIImporter_SUMO::reconstructEdgeShape(const EdgeAttrs* edge, const Position& fro
         Position from = firstLane[i - 1];
         Position me = firstLane[i];
         Position to = firstLane[i + 1];
-        std::pair<SUMOReal, SUMOReal> offsets = NBEdge::laneOffset(from, me, offset, false);
-        std::pair<SUMOReal, SUMOReal> offsets2 = NBEdge::laneOffset(me, to, offset, false);
+        std::pair<SUMOReal, SUMOReal> offsets = NBEdge::laneOffset(from, me, offset);
+        std::pair<SUMOReal, SUMOReal> offsets2 = NBEdge::laneOffset(me, to, offset);
 
         Line l1(
             Position(from.x() + offsets.first, from.y() + offsets.second),

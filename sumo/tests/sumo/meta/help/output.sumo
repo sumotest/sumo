@@ -1,5 +1,5 @@
-SUMO Version dev-SVN-r18076
- Copyright (C) 2001-2014 DLR and contributors; http://sumo.dlr.de
+SUMO Version dev-SVN-r18677
+ Copyright (C) 2001-2015 DLR and contributors; http://sumo.dlr.de
 A microscopic road traffic simulation.
 
 Usage: sumo [OPTION]*
@@ -21,11 +21,11 @@ Input Options:
   -x, --weight-attribute STR           Name of the xml attribute which gives
                                          the edge weight
   --load-state FILE                    Loads a network state from FILE
-  --load-state.offset TIME             Sets the time offset for vehicle segment
-                                         exit times
+  --load-state.offset TIME             Shifts all times loaded from a saved
+                                         state by the given offset
 
 Output Options:
-  --output-prefix FILE                 Prefix which is applied to all output
+  --output-prefix STR                  Prefix which is applied to all output
                                          files. The special string 'TIME' is
                                          replaced by the current time.
   --netstate-dump FILE                 Save complete network states into FILE
@@ -34,6 +34,9 @@ Output Options:
   --netstate-dump.precision INT        Write positions and speeds with the
                                          given precision (default 2)
   --emission-output FILE               Save the emission values of each vehicle
+  --battery-output FILE                Save the battery values of each vehicle
+  --battery-output.precision INT       Write battery values with the given
+                                         precision (default 2)
   --fcd-output FILE                    Save the Floating Car Data
   --fcd-output.geo                     Save the Floating Car Data using
                                          geo-coordinates (lon/lat)
@@ -62,6 +65,7 @@ Output Options:
                                          alternatives style
   --vehroute-output.intended-depart    Write the output with the intended
                                          instead of the real departure time
+  --vehroute-output.route-length       Include total route length in the output
   --vehroute-output.write-unfinished   Write vehroute output for vehicles which
                                          have not arrived at simulation end
   --link-output FILE                   Save links states into FILE
@@ -90,7 +94,8 @@ Processing Options:
                                          connected
   --max-num-vehicles INT               Quit simulation if this number of
                                          vehicles is exceeded
-  --scale FLOAT                        Scale demand by the given factor (0..1)
+  --scale FLOAT                        Scale demand by the given factor (by
+                                         discarding or duplicating vehicles)
   --time-to-teleport TIME              Specify how long a vehicle may wait
                                          until being teleported, defaults to
                                          300, non-positive values disable
@@ -132,8 +137,8 @@ Routing Options:
                                          ['dijkstra', 'astar', 'CH',
                                          'CHWrapper']
   --weights.random-factor FLOAT        Edge weights for routing are dynamically
-                                         disturbed by a random factor between
-                                         [1-FLOAT,1+FLOAT]
+                                         disturbed by a random factor drawn
+                                         uniformly from [1,FLOAT)
   --device.rerouting.probability FLOAT  The probability for a vehicle to have a
                                          'rerouting' device
   --device.rerouting.explicit STR      Assign a 'rerouting' device to named
@@ -206,8 +211,21 @@ Communication Options:
   --device.btsender.deterministic      The 'btsender' devices are set
                                          deterministic using a fraction of 1000
 
+Battery Options:
+  --device.battery.probability FLOAT   The probability for a vehicle to have a
+                                         'battery' device
+  --device.battery.explicit STR        Assign a 'battery' device to named
+                                         vehicles
+  --device.battery.deterministic       The 'battery' devices are set
+                                         deterministic using a fraction of 1000
+
 Example Device Options:
-  --device.example.explicit STR        Assign a device to named vehicles
+  --device.example.probability FLOAT   The probability for a vehicle to have a
+                                         'example' device
+  --device.example.explicit STR        Assign a 'example' device to named
+                                         vehicles
+  --device.example.deterministic       The 'example' devices are set
+                                         deterministic using a fraction of 1000
   --device.example.parameter FLOAT     An exemplary parameter which can be used
                                          by all instances of the example device
 

@@ -58,13 +58,21 @@ class ROVehicle;
 class ROMAAssignments {
 public:
     /// Constructor
-    ROMAAssignments(const SUMOTime begin, const SUMOTime end, RONet& net, ODMatrix& matrix, SUMOAbstractRouter<ROEdge, ROVehicle>& router);
+    ROMAAssignments(const SUMOTime begin, const SUMOTime end, const bool timeSplit,
+                    RONet& net, ODMatrix& matrix, SUMOAbstractRouter<ROEdge, ROVehicle>& router);
 
     /// Destructor
     ~ROMAAssignments();
 
+    ROVehicle* getDefaultVehicle() {
+        return myDefaultVehicle;
+    }
+
     // @brief calculate edge travel time with the given road class and max link speed
     SUMOReal capacityConstraintFunction(const ROEdge* edge, const SUMOReal flow) const;
+
+    // @brief clear effort storage
+    void resetFlows();
 
     // @brief incremental method
     void incremental(const int numIter);
@@ -124,11 +132,12 @@ private:
 private:
     const SUMOTime myBegin;
     const SUMOTime myEnd;
+    const bool myTimeSplit;
     RONet& myNet;
     ODMatrix& myMatrix;
     SUMOAbstractRouter<ROEdge, ROVehicle>& myRouter;
     static std::map<const ROEdge* const, SUMOReal> myPenalties;
-    static ROVehicle* myDefaultVehicle;
+    ROVehicle* myDefaultVehicle;
 
 private:
     /// @brief Invalidated assignment operator

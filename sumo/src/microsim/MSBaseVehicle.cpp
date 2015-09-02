@@ -169,7 +169,7 @@ MSBaseVehicle::reroute(SUMOTime t, SUMOAbstractRouter<MSEdge, SUMOVehicle>& rout
 bool
 MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
     if (edges.empty()) {
-        WRITE_WARNING("No route for vehicle '" + getID() + "' found.");
+        WRITE_WARNING("No route for vehicle '" + getID() + "' found" + (onInit ? " (skipping vehicle)." : "."));
         return false;
     }
     // build a new id, first
@@ -182,13 +182,20 @@ MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
     } else {
         id = id + "!var#1";
     }
-    const MSEdge* const origin = getRerouteOrigin();
-    if (origin != *myCurrEdge && edges.front() == origin) {
-        edges.insert(edges.begin(), *myCurrEdge);
+    int oldSize = (int)edges.size();
+    if (!onInit) {
+        const MSEdge* const origin = getRerouteOrigin();
+        if (origin != *myCurrEdge && edges.front() == origin) {
+            edges.insert(edges.begin(), *myCurrEdge);
+            oldSize = (int)edges.size();
+        }
+        edges.insert(edges.begin(), myRoute->begin(), myCurrEdge);
     }
-    const int oldSize = (int)edges.size();
-    edges.insert(edges.begin(), myRoute->begin(), myCurrEdge);
     if (edges == myRoute->getEdges()) {
+        if (onInit) {
+            // if edges = 'from to' we still need to calculate the arrivalPos once
+            calculateArrivalPos();
+        }
         return true;
     }
     const RGBColor& c = myRoute->getColor();
@@ -217,6 +224,7 @@ MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
 #endif
         return false;
     }
+    calculateArrivalPos();
     return true;
 }
 
@@ -252,11 +260,11 @@ MSBaseVehicle::hasArrived() const {
 }
 
 void
-MSBaseVehicle::addPerson(MSPerson* /*person*/) {
+MSBaseVehicle::addPerson(MSTransportable* /*person*/) {
 }
 
 void
-MSBaseVehicle::addContainer(MSContainer* /*container*/) {
+MSBaseVehicle::addContainer(MSTransportable* /*container*/) {
 }
 
 bool
@@ -375,7 +383,7 @@ MSBaseVehicle::getDevice(const std::type_info& type) const {
 void
 MSBaseVehicle::saveState(OutputDevice& out) {
     out.openTag(SUMO_TAG_VEHICLE).writeAttr(SUMO_ATTR_ID, myParameter->id);
-    out.writeAttr(SUMO_ATTR_DEPART, myParameter->depart);
+    out.writeAttr(SUMO_ATTR_DEPART, time2string(myParameter->depart));
     out.writeAttr(SUMO_ATTR_ROUTE, myRoute->getID());
     out.writeAttr(SUMO_ATTR_TYPE, myType->getID());
     // here starts the vehicle internal part (see loading)

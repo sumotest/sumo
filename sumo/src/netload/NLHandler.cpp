@@ -158,6 +158,9 @@ NLHandler::myStartElement(int element,
             case SUMO_TAG_CONTAINER_STOP:
                 myTriggerBuilder.parseAndBuildContainerStop(myNet, attrs);
                 break;
+            case SUMO_TAG_CHRG_STN:
+                myTriggerBuilder.parseAndBuildChrgStn(myNet, attrs);
+                break;
             case SUMO_TAG_VTYPEPROBE:
                 addVTypeProbeDetector(attrs);
                 break;
@@ -191,6 +194,20 @@ NLHandler::myStartElement(int element,
             case SUMO_TAG_ROUNDABOUT:
                 addRoundabout(attrs);
                 break;
+            case SUMO_TAG_TYPE: {
+                bool ok = true;
+                myCurrentTypeID = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
+                break;
+            }
+            case SUMO_TAG_RESTRICTION: {
+                bool ok = true;
+                const SUMOVehicleClass svc = getVehicleClassID(attrs.get<std::string>(SUMO_ATTR_VCLASS, myCurrentTypeID.c_str(), ok));
+                const SUMOReal speed = attrs.get<SUMOReal>(SUMO_ATTR_SPEED, myCurrentTypeID.c_str(), ok);
+                if (ok) {
+                    myNet.addRestriction(myCurrentTypeID, svc, speed);
+                }
+                break;
+            }
             default:
                 break;
         }
@@ -321,7 +338,7 @@ NLHandler::beginEdgeParsing(const SUMOSAXAttributes& attrs) {
     }
     // get the street name
     const std::string streetName = attrs.getOpt<std::string>(SUMO_ATTR_NAME, id.c_str(), ok, "");
-    // get the edge type (only for visualization)
+    // get the edge type
     const std::string edgeType = attrs.getOpt<std::string>(SUMO_ATTR_TYPE, id.c_str(), ok, "");
     // get the edge priority (only for visualization)
     const int priority = attrs.getOpt<int>(SUMO_ATTR_PRIORITY, id.c_str(), ok, -1); // default taken from netbuild/NBFrame option 'default.priority'
@@ -381,7 +398,7 @@ NLHandler::addLane(const SUMOSAXAttributes& attrs) {
     }
     const SVCPermissions permissions = parseVehicleClasses(allow, disallow);
     if (permissions != SVCAll) {
-        myNet.setRestrictionFound();
+        myNet.setPermissionsFound();
     }
     myCurrentIsBroken |= !ok;
     if (!myCurrentIsBroken) {
@@ -895,6 +912,7 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
         const int toLaneIdx = attrs.get<int>(SUMO_ATTR_TO_LANE, 0, ok);
         LinkDirection dir = parseLinkDir(attrs.get<std::string>(SUMO_ATTR_DIR, 0, ok));
         LinkState state = parseLinkState(attrs.get<std::string>(SUMO_ATTR_STATE, 0, ok));
+        bool keepClear = attrs.getOpt<bool>(SUMO_ATTR_KEEP_CLEAR, 0, ok, true);
         std::string tlID = attrs.getOpt<std::string>(SUMO_ATTR_TLID, 0, ok, "");
 #ifdef HAVE_INTERNAL_LANES
         std::string viaID = attrs.getOpt<std::string>(SUMO_ATTR_VIA, 0, ok, "");
@@ -950,14 +968,14 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
             }
             length = via->getLength();
         }
-        link = new MSLink(toLane, via, dir, state, length);
+        link = new MSLink(toLane, via, dir, state, length, keepClear);
         if (via != 0) {
             via->addIncomingLane(fromLane, link);
         } else {
             toLane->addIncomingLane(fromLane, link);
         }
 #else
-        link = new MSLink(toLane, dir, state, length);
+        link = new MSLink(toLane, dir, state, length, keepClear);
         toLane->addIncomingLane(fromLane, link);
 #endif
         toLane->addApproachingLane(fromLane);

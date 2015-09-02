@@ -84,7 +84,6 @@ else
     AC_DEFINE([SUMOReal], [float], [defines the precision of floats])
     ac_disabled="$ac_disabled DoublePrecision"
 fi
-AC_DEFINE([SUMOLong], [long long int], [defines a long])
 
 AC_ARG_ENABLE([subsecond], [AS_HELP_STRING([--disable-subsecond],[Disable subsecond timesteps.])])
 if test x$enable_subsecond != xno; then
@@ -98,7 +97,6 @@ AC_DEFINE([POSITION_EPS], [(SUMOReal)0.1], [defines the epsilon to use on positi
 AC_DEFINE([NUMERICAL_EPS], [(SUMOReal)0.001], [defines the epsilon to use on general floating point comparison])
 AC_DEFINE([OUTPUT_ACCURACY], [2], [defines the number of digits after the comma in output])
 AC_DEFINE([GEO_OUTPUT_ACCURACY], [6], [defines the number of digits after the comma in geo-coordinates output])
-AC_DEFINE([SUMOLong], [long long int], [defines the type for very long integers])
 
 dnl   ... for xerces 3.0
 PKG_CHECK_MODULES([XERCES], [xerces-c >= 3.0],
@@ -129,7 +127,7 @@ else
 fi
 
 AM_CONDITIONAL([WITH_VERSION_H], test -d .svn)
-if test -d .svn; then
+if test -d .svn || test x$PACKAGE_VERSION == xsvn -a -f src/version.h; then
    AC_DEFINE([HAVE_VERSION_H], [1], [Define if auto-generated version.h should be used.])
 else
    AC_DEFINE_UNQUOTED(VERSION_STRING, "$PACKAGE_VERSION", [Defined if auto-generated version.h is unavailable.])

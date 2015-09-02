@@ -53,24 +53,34 @@
 // NBTurningDirectionsComputer
 // ---------------------------------------------------------------------------
 void
-NBTurningDirectionsComputer::computeTurnDirections(NBNodeCont& nc) {
+NBTurningDirectionsComputer::computeTurnDirections(NBNodeCont& nc, bool warn) {
     for (std::map<std::string, NBNode*>::const_iterator i = nc.begin(); i != nc.end(); ++i) {
-        computeTurnDirectionsForNode(i->second);
+        computeTurnDirectionsForNode(i->second, warn);
     }
 }
 
 void
-NBTurningDirectionsComputer::computeTurnDirectionsForNode(NBNode* node) {
+NBTurningDirectionsComputer::computeTurnDirectionsForNode(NBNode* node, bool warn) {
     const std::vector<NBEdge*>& incoming = node->getIncomingEdges();
     const std::vector<NBEdge*>& outgoing = node->getOutgoingEdges();
+    // reset turning directions since this may be called multiple times
+    for (std::vector<NBEdge*>::const_iterator k = incoming.begin(); k != incoming.end(); ++k) {
+        (*k)->setTurningDestination(0);
+    }
     std::vector<Combination> combinations;
     for (std::vector<NBEdge*>::const_iterator j = outgoing.begin(); j != outgoing.end(); ++j) {
         NBEdge* outedge = *j;
         for (std::vector<NBEdge*>::const_iterator k = incoming.begin(); k != incoming.end(); ++k) {
             NBEdge* e = *k;
             // @todo: check whether NBHelpers::relAngle is properly defined and whether it should really be used, here
-            SUMOReal angle = fabs(NBHelpers::relAngle(e->getAngleAtNode(node), outedge->getAngleAtNode(node)));
-            //std::cout << "incoming=" << e->getID() << " outgoing=" << outedge->getID() << " angle=" << angle << "\n";
+            const SUMOReal signedAngle = NBHelpers::normRelAngle(e->getAngleAtNode(node), outedge->getAngleAtNode(node));
+            if (signedAngle > 0 && signedAngle < 177 && e->getGeometry().back().distanceTo2D(outedge->getGeometry().front()) < POSITION_EPS) {
+                // backwards curving edges can only be turnaround when there are
+                // non-default endpoints
+                continue;
+            }
+            SUMOReal angle = fabs(signedAngle);
+            // std::cout << "incoming=" << e->getID() << " outgoing=" << outedge->getID() << " relAngle=" << NBHelpers::relAngle(e->getAngleAtNode(node), outedge->getAngleAtNode(node)) << "\n";
             if (e->getFromNode() == outedge->getToNode() && angle > 120) {
                 // they connect the same nodes; should be the turnaround direction
                 // we'll assign a maximum number
@@ -97,13 +107,12 @@ NBTurningDirectionsComputer::computeTurnDirectionsForNode(NBNode* node) {
     // sort combinations so that the ones with the highest angle are at the begin
     std::sort(combinations.begin(), combinations.end(), combination_by_angle_sorter());
     std::set<NBEdge*> seen;
-    bool haveWarned = false;
     for (std::vector<Combination>::const_iterator j = combinations.begin(); j != combinations.end(); ++j) {
         if (seen.find((*j).from) != seen.end() || seen.find((*j).to) != seen.end()) {
             // do not regard already set edges
-            if ((*j).angle > 360 && !haveWarned) {
+            if ((*j).angle > 360 && warn) {
                 WRITE_WARNING("Ambiguity in turnarounds computation at node '" + node->getID() + "'.");
-                haveWarned = true;
+                warn = false;
             }
             continue;
         }
@@ -122,19 +131,18 @@ NBTurningDirectionsComputer::computeTurnDirectionsForNode(NBNode* node) {
 // NBNodesEdgesSorter
 // ---------------------------------------------------------------------------
 void
-NBNodesEdgesSorter::sortNodesEdges(NBNodeCont& nc, bool leftHand, bool useNodeShape) {
+NBNodesEdgesSorter::sortNodesEdges(NBNodeCont& nc, bool useNodeShape) {
     for (std::map<std::string, NBNode*>::const_iterator i = nc.begin(); i != nc.end(); ++i) {
-        NBNode* n = (*i).second;
+        NBNode* const n = i->second;
         if (n->myAllEdges.size() == 0) {
             continue;
         }
-        EdgeVector& allEdges = (*i).second->myAllEdges;
-        EdgeVector& incoming = (*i).second->myIncomingEdges;
-        EdgeVector& outgoing = (*i).second->myOutgoingEdges;
-        std::vector<NBNode::Crossing>& crossings = (*i).second->myCrossings;
-
+        EdgeVector& allEdges = n->myAllEdges;
+        EdgeVector& incoming = n->myIncomingEdges;
+        EdgeVector& outgoing = n->myOutgoingEdges;
+        std::vector<NBNode::Crossing>& crossings = n->myCrossings;
         if (!useNodeShape || n->getShape().area() < 1) {
-            // if the area is to small (i.e. for simple-continuation nodes) we better not use it
+            // if the area is too small (i.e. for simple-continuation nodes) we better not use it
             // sort by the angle of the adjoining line segment of the edge geometry
             // sort the edges
             std::sort(allEdges.begin(), allEdges.end(), edge_by_junction_angle_sorter(n));
@@ -142,16 +150,16 @@ NBNodesEdgesSorter::sortNodesEdges(NBNodeCont& nc, bool leftHand, bool useNodeSh
             std::sort(outgoing.begin(), outgoing.end(), edge_by_junction_angle_sorter(n));
             std::vector<NBEdge*>::iterator j;
             for (j = allEdges.begin(); j != allEdges.end() - 1 && j != allEdges.end(); ++j) {
-                swapWhenReversed(n, leftHand, j, j + 1);
+                swapWhenReversed(n, j, j + 1);
             }
             if (allEdges.size() > 1 && j != allEdges.end()) {
-                swapWhenReversed(n, leftHand, allEdges.end() - 1, allEdges.begin());
+                swapWhenReversed(n, allEdges.end() - 1, allEdges.begin());
             }
         } else {
             NBEdge* firstOfAll = allEdges.front();
             NBEdge* firstOfIncoming = incoming.size() > 0 ? incoming.front() : 0;
             NBEdge* firstOfOutgoing = outgoing.size() > 0 ? outgoing.front() : 0;
-            // sort by the angle between the node shape center and the point where the edge meeds the node shape
+            // sort by the angle between the node shape center and the point where the edge meets the node shape
             sort(allEdges.begin(), allEdges.end(), NBContHelper::edge_by_angle_to_nodeShapeCentroid_sorter(n));
             sort(incoming.begin(), incoming.end(), NBContHelper::edge_by_angle_to_nodeShapeCentroid_sorter(n));
             sort(outgoing.begin(), outgoing.end(), NBContHelper::edge_by_angle_to_nodeShapeCentroid_sorter(n));
@@ -164,7 +172,23 @@ NBNodesEdgesSorter::sortNodesEdges(NBNodeCont& nc, bool leftHand, bool useNodeSh
                 rotate(outgoing.begin(), std::find(outgoing.begin(), outgoing.end(), firstOfOutgoing), outgoing.end());
             }
         }
-
+        // fixing some pathological all edges orderings
+        // if every of the edges a,b,c has a turning edge a',b',c' the all edges ordering should be a,a',b,b',c,c'
+        if (incoming.size() == outgoing.size() && incoming.front() == allEdges.front()) {
+            std::vector<NBEdge*>::const_iterator in, out;
+            std::vector<NBEdge*> allTmp;
+            for (in = incoming.begin(), out = outgoing.begin(); in != incoming.end(); ++in, ++out) {
+                if ((*in)->isTurningDirectionAt(*out)) {
+                    allTmp.push_back(*in);
+                    allTmp.push_back(*out);
+                } else {
+                    break;
+                }
+            }
+            if (allTmp.size() == allEdges.size()) {
+                allEdges = allTmp;
+            }
+        }
         // sort the crossings
         std::sort(crossings.begin(), crossings.end(), crossing_by_junction_angle_sorter(n, allEdges));
         // DEBUG
@@ -181,15 +205,11 @@ NBNodesEdgesSorter::sortNodesEdges(NBNodeCont& nc, bool leftHand, bool useNodeSh
 
 
 void
-NBNodesEdgesSorter::swapWhenReversed(const NBNode* const n, bool leftHand,
+NBNodesEdgesSorter::swapWhenReversed(const NBNode* const n,
                                      const std::vector<NBEdge*>::iterator& i1,
                                      const std::vector<NBEdge*>::iterator& i2) {
     NBEdge* e1 = *i1;
     NBEdge* e2 = *i2;
-    if (leftHand) {
-        // @todo: check this; shouldn't it be "swap(*e1, *e2)"?
-        std::swap(e1, e2);
-    }
     // @todo: The difference between "isTurningDirectionAt" and "isTurnaround"
     //  is not nice. Maybe we could get rid of it if we would always mark edges
     //  as turnarounds, even if they do not have to be added, as mentioned in
@@ -211,6 +231,19 @@ NBNodeTypeComputer::computeNodeTypes(NBNodeCont& nc) {
         if (n->myType != NODETYPE_UNKNOWN) {
             continue;
         }
+        // check whether the node is a waterway node. Set to unregulated by default
+        bool waterway = true;
+        for (EdgeVector::const_iterator i = n->getEdges().begin(); i != n->getEdges().end(); ++i) {
+            if (!isWaterway((*i)->getPermissions())) {
+                waterway = false;
+                break;
+            }
+        }
+        if (waterway && n->myType == NODETYPE_UNKNOWN) {
+            n->myType = NODETYPE_NOJUNCTION;
+            continue;
+        }
+
         // check whether the junction is not a real junction
         if (n->myIncomingEdges.size() == 1) {
             n->myType = NODETYPE_PRIORITY;
@@ -356,13 +389,13 @@ NBEdgePriorityComputer::setPriorityJunctionPriorities(NBNode& n) {
     for (i = bestIncoming.begin(); i != bestIncoming.end(); ++i) {
         EdgeVector::iterator j;
         NBEdge* t1 = *i;
-        SUMOReal angle1 = t1->getTotalAngle() + 180;
+        SUMOReal angle1 = t1->getAngleAtNode(&n) + 180;
         if (angle1 >= 360) {
             angle1 -= 360;
         }
         for (j = i + 1; j != bestIncoming.end(); ++j) {
             NBEdge* t2 = *j;
-            SUMOReal angle2 = t2->getTotalAngle() + 180;
+            SUMOReal angle2 = t2->getAngleAtNode(&n) + 180;
             if (angle2 >= 360) {
                 angle2 -= 360;
             }

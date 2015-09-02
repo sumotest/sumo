@@ -44,6 +44,7 @@
 #include <utils/common/MsgHandler.h>
 #include <utils/common/ToString.h>
 #include <utils/common/TplConvert.h>
+#include <utils/common/StringUtils.h>
 #include <utils/options/OptionsCont.h>
 #include "NBNetBuilder.h"
 #include "NBEdgeCont.h"
@@ -82,11 +83,10 @@ NBEdgeCont::~NBEdgeCont() {
 
 void
 NBEdgeCont::applyOptions(OptionsCont& oc) {
-    myAmLeftHanded = oc.getBool("lefthand");
     // set edges dismiss/accept options
     myEdgesMinSpeed = oc.isSet("keep-edges.min-speed") ? oc.getFloat("keep-edges.min-speed") : -1;
     myRemoveEdgesAfterJoining = oc.exists("keep-edges.postload") && oc.getBool("keep-edges.postload");
-    // we possibly have to load the edges to keep
+    // we possibly have to load the edges to keep/remove
     if (oc.isSet("keep-edges.input-file")) {
         std::ifstream strm(oc.getString("keep-edges.input-file").c_str());
         if (!strm.good()) {
@@ -96,6 +96,25 @@ NBEdgeCont::applyOptions(OptionsCont& oc) {
             std::string name;
             strm >> name;
             myEdges2Keep.insert(name);
+            // maybe we're loading an edge-selection
+            if (StringUtils::startsWith(name, "edge:")) {
+                myEdges2Keep.insert(name.substr(5));
+            }
+        }
+    }
+    if (oc.isSet("remove-edges.input-file")) {
+        std::ifstream strm(oc.getString("remove-edges.input-file").c_str());
+        if (!strm.good()) {
+            throw ProcessError("Could not load names of edges too remove from '" + oc.getString("remove-edges.input-file") + "'.");
+        }
+        while (strm.good()) {
+            std::string name;
+            strm >> name;
+            myEdges2Remove.insert(name);
+            // maybe we're loading an edge-selection
+            if (StringUtils::startsWith(name, "edge:")) {
+                myEdges2Remove.insert(name.substr(5));
+            }
         }
     }
     if (oc.isSet("keep-edges.explicit")) {
@@ -168,9 +187,6 @@ NBEdgeCont::clear() {
 // ----- edge access methods
 bool
 NBEdgeCont::insert(NBEdge* edge, bool ignorePrunning) {
-    if (myAmLeftHanded) {
-        edge->setLeftHanded();
-    }
     if (myEdges.count(edge->getID())) {
         return false;
     }
@@ -241,6 +257,7 @@ NBEdgeCont::ignoreFilterMatch(NBEdge* edge) {
             } else {
                 WRITE_ERROR("Cannot prune edges using a geo-boundary because no projection has been loaded");
             }
+            myNeedGeoTransformedPrunningBoundary = false;
         }
         if (!(edge->getGeometry().getBoxBoundary().grow((SUMOReal) POSITION_EPS).overlapsWith(myPrunningBoundary))) {
             return true;
@@ -269,7 +286,8 @@ NBEdgeCont::retrieve(const std::string& id, bool retrieveExtracted) const {
     return (*i).second;
 }
 
-
+// FIXME: This can't work
+/*
 NBEdge*
 NBEdgeCont::retrievePossiblySplit(const std::string& id, bool downstream) const {
     NBEdge* edge = retrieve(id);
@@ -284,6 +302,24 @@ NBEdgeCont::retrievePossiblySplit(const std::string& id, bool downstream) const 
         }
         edge = candidates->front();
         candidates = downstream ? &edge->getToNode()->getOutgoingEdges() : &edge->getFromNode()->getIncomingEdges();
+    }
+    return edge;
+}*/
+
+NBEdge*
+NBEdgeCont::retrievePossiblySplit(const std::string& id, bool downstream) const {
+    NBEdge* edge = retrieve(id);
+    if (edge != 0) {
+        return edge;
+    }
+    // NOTE: (TODO) for multiply split edges (e.g. 15[0][0]) one could try recursion
+    if ((retrieve(id + "[0]") != 0) && (retrieve(id + "[1]") != 0)) {
+        // Edge was split during the netbuilding process
+        if (downstream == true) {
+            return retrieve(id + "[1]");
+        } else {
+            return retrieve(id + "[0]");
+        }
     }
     return edge;
 }
@@ -582,17 +618,17 @@ NBEdgeCont::computeEdge2Edges(bool noLeftMovers) {
 
 
 void
-NBEdgeCont::computeLanes2Edges(const bool buildCrossingsAndWalkingAreas) {
+NBEdgeCont::computeLanes2Edges() {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); i++) {
-        (*i).second->computeLanes2Edges(buildCrossingsAndWalkingAreas);
+        (*i).second->computeLanes2Edges();
     }
 }
 
 
 void
-NBEdgeCont::recheckLanes(const bool buildCrossingsAndWalkingAreas) {
+NBEdgeCont::recheckLanes() {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); i++) {
-        (*i).second->recheckLanes(buildCrossingsAndWalkingAreas);
+        (*i).second->recheckLanes();
     }
 }
 
@@ -694,7 +730,7 @@ NBEdgeCont::joinSameNodeConnectingEdges(NBDistrictCont& dc,
             newEdge->addEdge2EdgeConnection(*j);
         }
     }
-    //  move lane2lane-connections
+    //  copy outgoing connections to the new edge
     unsigned int currLane = 0;
     for (i = edges.begin(); i != edges.end(); i++) {
         newEdge->moveOutgoingConnectionsFrom(*i, currLane);
@@ -738,8 +774,8 @@ NBEdgeCont::recheckLaneSpread() {
 
 // ----- other
 void
-NBEdgeCont::addPostProcessConnection(const std::string& from, int fromLane, const std::string& to, int toLane, bool mayDefinitelyPass) {
-    myConnections.push_back(PostProcessConnection(from, fromLane, to, toLane, mayDefinitelyPass));
+NBEdgeCont::addPostProcessConnection(const std::string& from, int fromLane, const std::string& to, int toLane, bool mayDefinitelyPass, bool keepClear) {
+    myConnections.push_back(PostProcessConnection(from, fromLane, to, toLane, mayDefinitelyPass, keepClear));
 }
 
 
@@ -749,7 +785,7 @@ NBEdgeCont::recheckPostProcessConnections() {
         NBEdge* from = retrievePossiblySplit((*i).from, true);
         NBEdge* to = retrievePossiblySplit((*i).to, false);
         if (from != 0 && to != 0) {
-            if (!from->addLane2LaneConnection((*i).fromLane, to, (*i).toLane, NBEdge::L2L_USER, false, (*i).mayDefinitelyPass)) {
+            if (!from->addLane2LaneConnection((*i).fromLane, to, (*i).toLane, NBEdge::L2L_USER, false, (*i).mayDefinitelyPass, (*i).keepClear)) {
                 WRITE_WARNING("Could not insert connection between '" + (*i).from + "' and '" + (*i).to + "' after build.");
             }
         }

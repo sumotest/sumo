@@ -53,6 +53,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "poi",              SUMO_TAG_POI },
     { "poly",             SUMO_TAG_POLY },
     { "junction",         SUMO_TAG_JUNCTION },
+    { "restriction",      SUMO_TAG_RESTRICTION },
     { "e1Detector",       SUMO_TAG_E1DETECTOR },
     { "inductionLoop",    SUMO_TAG_INDUCTION_LOOP },
     { "e2Detector",       SUMO_TAG_E2DETECTOR },
@@ -71,6 +72,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "rerouter",         SUMO_TAG_REROUTER },
     { "busStop",          SUMO_TAG_BUS_STOP },
     { "containerStop",    SUMO_TAG_CONTAINER_STOP },
+    { "chargingStation",  SUMO_TAG_CHRG_STN },
     { "vTypeProbe",       SUMO_TAG_VTYPEPROBE },
     { "routeProbe",       SUMO_TAG_ROUTEPROBE },
     { "routes",           SUMO_TAG_ROUTES },
@@ -213,6 +215,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "oneway",         SUMO_ATTR_ONEWAY },
     { "width",          SUMO_ATTR_WIDTH },
     { "sidewalkWidth",  SUMO_ATTR_SIDEWALKWIDTH },
+    { "bikeLaneWidth",  SUMO_ATTR_BIKELANEWIDTH },
     { "remove",         SUMO_ATTR_REMOVE },
 
     { "length",         SUMO_ATTR_LENGTH },
@@ -255,9 +258,15 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "speedFactor",    SUMO_ATTR_SPEEDFACTOR },
     { "speedDev",       SUMO_ATTR_SPEEDDEV },
     { "laneChangeModel", SUMO_ATTR_LANE_CHANGE_MODEL },
+    { "carFollowModel", SUMO_ATTR_CAR_FOLLOW_MODEL },
     { "minGap",         SUMO_ATTR_MINGAP },
     { "boardingDuration", SUMO_ATTR_BOARDING_DURATION },
     { "loadingDuration", SUMO_ATTR_LOADING_DURATION },
+
+    { "chrgpower",      SUMO_ATTR_CHRGPOWER },
+    { "efficiency",     SUMO_ATTR_EFFICIENCY },
+    { "chargeInTransit", SUMO_ATTR_CHRGINTRANSIT },
+    { "chargeDelay",    SUMO_ATTR_CHRGDELAY},
 
     { "sigma",          SUMO_ATTR_SIGMA },
     { "tau",            SUMO_ATTR_TAU },
@@ -309,6 +318,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "spreadType",     SUMO_ATTR_SPREADTYPE },
     { "radius",         SUMO_ATTR_RADIUS },
     { "customShape",    SUMO_ATTR_CUSTOMSHAPE },
+    { "keepClear",      SUMO_ATTR_KEEP_CLEAR },
     { "color",          SUMO_ATTR_COLOR },
     { "dir",            SUMO_ATTR_DIR },
     { "state",          SUMO_ATTR_STATE },
@@ -523,6 +533,7 @@ StringBijection<LinkState>::Entry SUMOXMLDefinitions::linkStateValues[] = {
 StringBijection<LinkDirection>::Entry SUMOXMLDefinitions::linkDirectionValues[] = {
     { "s", LINKDIR_STRAIGHT },
     { "t", LINKDIR_TURN },
+    { "T", LINKDIR_TURN_LEFTHAND },
     { "l", LINKDIR_LEFT },
     { "r", LINKDIR_RIGHT },
     { "L", LINKDIR_PARTLEFT },
@@ -542,6 +553,20 @@ StringBijection<LaneChangeModel>::Entry SUMOXMLDefinitions::laneChangeModelValue
     { "DK2008", LCM_DK2008 },
     { "LC2013", LCM_LC2013 },
     { "JE2013", LCM_JE2013 },
+};
+
+StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = {
+    { "IDM",         SUMO_TAG_CF_IDM },
+    { "IDMM",        SUMO_TAG_CF_IDMM },
+    { "Krauss",      SUMO_TAG_CF_KRAUSS },
+    { "KraussPS",    SUMO_TAG_CF_KRAUSS_PLUS_SLOPE },
+    { "KraussAB",    SUMO_TAG_CF_KRAUSS_ACCEL_BOUND },
+    { "KraussOrig1", SUMO_TAG_CF_KRAUSS_ORIG1 },
+    { "SmartSK",     SUMO_TAG_CF_SMART_SK },
+    { "Daniel1",     SUMO_TAG_CF_DANIEL1 },
+    { "PWagner2009", SUMO_TAG_CF_PWAGNER2009 },
+    { "BKerner",     SUMO_TAG_CF_BKERNER },
+    { "Wiedemann",   SUMO_TAG_CF_WIEDEMANN },
 };
 
 StringBijection<int> SUMOXMLDefinitions::Tags(
@@ -570,6 +595,9 @@ StringBijection<TrafficLightType> SUMOXMLDefinitions::TrafficLightTypes(
 
 StringBijection<LaneChangeModel> SUMOXMLDefinitions::LaneChangeModels(
     SUMOXMLDefinitions::laneChangeModelValues, LCM_JE2013);
+
+StringBijection<SumoXMLTag> SUMOXMLDefinitions::CarFollowModels(
+    SUMOXMLDefinitions::carFollowModelValues, SUMO_TAG_CF_WIEDEMANN);
 
 
 std::string

@@ -39,14 +39,14 @@
         <!-- Loads a network state from FILE -->
         <load-state value="" type="FILE"/>
 
-        <!-- Sets the time offset for vehicle segment exit times -->
+        <!-- Shifts all times loaded from a saved state by the given offset -->
         <load-state.offset value="0" type="TIME"/>
 
     </input>
 
     <output>
         <!-- Prefix which is applied to all output files. The special string &apos;TIME&apos; is replaced by the current time. -->
-        <output-prefix value="" type="FILE"/>
+        <output-prefix value="" type="STR"/>
 
         <!-- Save complete network states into FILE -->
         <netstate-dump value="" synonymes="ndump netstate netstate-output" type="FILE"/>
@@ -59,6 +59,12 @@
 
         <!-- Save the emission values of each vehicle -->
         <emission-output value="" type="FILE"/>
+
+        <!-- Save the battery values of each vehicle -->
+        <battery-output value="" type="FILE"/>
+
+        <!-- Write battery values with the given precision (default 2) -->
+        <battery-output.precision value="2" type="INT"/>
 
         <!-- Save the Floating Car Data -->
         <fcd-output value="" type="FILE"/>
@@ -108,6 +114,9 @@
         <!-- Write the output with the intended instead of the real departure time -->
         <vehroute-output.intended-depart value="false" synonymes="vehroutes.intended-depart" type="BOOL"/>
 
+        <!-- Include total route length in the output -->
+        <vehroute-output.route-length value="false" synonymes="vehroutes.route-length" type="BOOL"/>
+
         <!-- Write vehroute output for vehicles which have not arrived at simulation end -->
         <vehroute-output.write-unfinished value="false" type="BOOL"/>
 
@@ -116,12 +125,6 @@
 
         <!-- Save bt visibilities into FILE -->
         <bt-output value="" type="FILE"/>
-
-        <!-- Save movereminder states of selected vehicles into FILE -->
-        <movereminder-output value="" type="FILE"/>
-
-        <!-- List of vehicle ids which shall save their movereminder states -->
-        <movereminder-output.vehicles value="" type="STR"/>
 
         <!-- Use INT[] as times at which a network state written -->
         <save-state.times value="" type="INT[]"/>
@@ -165,7 +168,7 @@
         <!-- Quit simulation if this number of vehicles is exceeded -->
         <max-num-vehicles value="-1" synonymes="too-many-vehicles" type="INT"/>
 
-        <!-- Scale demand by the given factor (0..1) -->
+        <!-- Scale demand by the given factor (by discarding or duplicating vehicles) -->
         <scale value="" type="FLOAT"/>
 
         <!-- Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting -->
@@ -213,8 +216,8 @@
         <!-- Select among routing algorithms [&apos;dijkstra&apos;, &apos;astar&apos;, &apos;CH&apos;, &apos;CHWrapper&apos;] -->
         <routing-algorithm value="dijkstra" type="STR"/>
 
-        <!-- Edge weights for routing are dynamically disturbed by a random factor between [1-FLOAT,1+FLOAT] -->
-        <weights.random-factor value="" type="FLOAT"/>
+        <!-- Edge weights for routing are dynamically disturbed by a random factor drawn uniformly from [1,FLOAT) -->
+        <weights.random-factor value="1" type="FLOAT"/>
 
         <!-- The probability for a vehicle to have a &apos;rerouting&apos; device -->
         <device.rerouting.probability value="0" type="FLOAT"/>
@@ -248,6 +251,9 @@
 
         <!-- The number of parallel execution threads used for rerouting -->
         <device.rerouting.threads value="0" type="INT"/>
+
+        <!-- Save adapting weights to FILE -->
+        <device.rerouting.output value="" type="FILE"/>
 
     </routing>
 
@@ -335,9 +341,27 @@
 
     </communication>
 
+    <battery>
+        <!-- The probability for a vehicle to have a &apos;battery&apos; device -->
+        <device.battery.probability value="0" type="FLOAT"/>
+
+        <!-- Assign a &apos;battery&apos; device to named vehicles -->
+        <device.battery.explicit value="" synonymes="device.battery.knownveh" type="STR"/>
+
+        <!-- The &apos;battery&apos; devices are set deterministic using a fraction of 1000 -->
+        <device.battery.deterministic value="false" type="BOOL"/>
+
+    </battery>
+
     <example_device>
-        <!-- Assign a device to named vehicles -->
-        <device.example.explicit value="" type="STR"/>
+        <!-- The probability for a vehicle to have a &apos;example&apos; device -->
+        <device.example.probability value="0" type="FLOAT"/>
+
+        <!-- Assign a &apos;example&apos; device to named vehicles -->
+        <device.example.explicit value="" synonymes="device.example.knownveh" type="STR"/>
+
+        <!-- The &apos;example&apos; devices are set deterministic using a fraction of 1000 -->
+        <device.example.deterministic value="false" type="BOOL"/>
 
         <!-- An exemplary parameter which can be used by all instances of the example device -->
         <device.example.parameter value="0" type="FLOAT"/>
@@ -347,9 +371,6 @@
     <traci_server>
         <!-- Enables TraCI Server if set -->
         <remote-port value="0" type="INT"/>
-
-        <!-- Runs TraCI script with embedded python -->
-        <python-script value="" type="STR"/>
 
     </traci_server>
 

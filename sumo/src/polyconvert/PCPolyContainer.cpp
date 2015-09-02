@@ -42,6 +42,7 @@
 #include <utils/shapes/Polygon.h>
 #include <utils/iodevices/OutputDevice.h>
 #include <utils/xml/SUMOSAXAttributes.h>
+#include <utils/options/OptionsCont.h>
 #include "PCPolyContainer.h"
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -172,13 +173,14 @@ PCPolyContainer::save(const std::string& file, bool useGeo) {
         i->second->writeXML(out, useGeo);
     }
     // write pois
+    const SUMOReal zOffset = OptionsCont::getOptions().getFloat("poi-layer-offset");
     for (POICont::iterator i = myPOICont.begin(); i != myPOICont.end(); ++i) {
         PointOfInterest* p = i->second;
         out.openTag(SUMO_TAG_POI);
         out.writeAttr(SUMO_ATTR_ID, StringUtils::escapeXML(p->getID()));
         out.writeAttr(SUMO_ATTR_TYPE, StringUtils::escapeXML(p->getType()));
         out.writeAttr(SUMO_ATTR_COLOR, p->getColor());
-        out.writeAttr(SUMO_ATTR_LAYER, p->getLayer());
+        out.writeAttr(SUMO_ATTR_LAYER, p->getLayer() + zOffset);
         if (useGeo) {
             Position pos(*p);
             gch.cartesian2geo(pos);
@@ -200,14 +202,11 @@ PCPolyContainer::save(const std::string& file, bool useGeo) {
         if (p->getHeight() != Shape::DEFAULT_IMG_HEIGHT) {
             out.writeAttr(SUMO_ATTR_HEIGHT, p->getHeight());
         }
-        const std::map<std::string, std::string>& attrs = p->getMap();
-        if (attrs.size() != 0) {
-            for (std::map<std::string, std::string>::const_iterator j = attrs.begin(); j != attrs.end(); ++j) {
-                out.openTag(SUMO_TAG_PARAM);
-                out.writeAttr(SUMO_ATTR_KEY, (*j).first);
-                out.writeAttr(SUMO_ATTR_VALUE, (*j).second);
-                out.closeTag();
-            }
+        for (std::map<std::string, std::string>::const_iterator j = p->getMap().begin(); j != p->getMap().end(); ++j) {
+            out.openTag(SUMO_TAG_PARAM);
+            out.writeAttr(SUMO_ATTR_KEY, (*j).first);
+            out.writeAttr(SUMO_ATTR_VALUE, (*j).second);
+            out.closeTag();
         }
         out.closeTag();
     }

@@ -208,6 +208,12 @@ public:
         return myArrivalPos;
     }
 
+    /** @brief Sets this vehicle's desired arrivalPos for its current route
+     */
+    virtual void setArrivalPos(SUMOReal arrivalPos) {
+        myArrivalPos = arrivalPos;
+    }
+
     /** @brief Returns whether this vehicle has already departed
      */
     bool hasDeparted() const;
@@ -241,16 +247,16 @@ public:
      *
      * @param[in] person The person to add
      */
-    virtual void addPerson(MSPerson* person);
+    virtual void addPerson(MSTransportable* person);
 
 
     /** @brief Adds a container to this vehicle
      *
      * The default implementation does nothing since containers are not supported by default
      *
-     * @param[in] container The person to add
+     * @param[in] container The container to add
      */
-    virtual void addContainer(MSContainer* container);
+    virtual void addContainer(MSTransportable* container);
 
     /** @brief Validates the current route
      * @param[out] msg Description why the route is not valid (if it is the case)

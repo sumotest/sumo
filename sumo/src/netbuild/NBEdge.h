@@ -153,7 +153,7 @@ public:
          */
         Connection(int fromLane_, NBEdge* toEdge_, int toLane_)
             : fromLane(fromLane_), toEdge(toEdge_), toLane(toLane_),
-              mayDefinitelyPass(false), haveVia(false) { }
+              mayDefinitelyPass(false), keepClear(true), haveVia(false) { }
 
         ~Connection() { }
 
@@ -170,6 +170,8 @@ public:
         unsigned int tlLinkNo;
         /// @brief Information about being definitely free to drive (on-ramps)
         bool mayDefinitelyPass;
+        /// @brief whether the junction must be kept clear when using this connection
+        bool keepClear;
 
 
         std::string origID;
@@ -195,7 +197,7 @@ public:
 
     /// Computes the offset from the edge shape on the current segment
     static std::pair<SUMOReal, SUMOReal> laneOffset(const Position& from,
-            const Position& to, SUMOReal laneCenterOffset, bool leftHand);
+            const Position& to, SUMOReal laneCenterOffset);
 
     /// @brief unspecified lane width
     static const SUMOReal UNSPECIFIED_WIDTH;
@@ -327,16 +329,10 @@ public:
      * @param[in] yoff The y-offset to apply
      */
     void reshiftPosition(SUMOReal xoff, SUMOReal yoff);
+
+    /// @brief mirror coordinates along the x-axis
+    void mirrorX();
     /// @}
-
-
-
-    /** @brief Marks this edge to be left-handed
-     */
-    void setLeftHanded() {
-        myAmLeftHand = true;
-    }
-
 
     /// @name Atomar getter methods
     //@{
@@ -495,14 +491,6 @@ public:
     void setSignalOffset(SUMOReal offset) {
         mySignalOffset = offset;
     }
-
-    /** @brief Returns the type name
-     * @return The name of this edge's type
-     */
-    const std::string& getTypeName() const {
-        return myType;
-    }
-
 
     /** @brief Returns the lane definitions
      * @return The stored lane definitions
@@ -680,7 +668,8 @@ public:
     bool addLane2LaneConnection(unsigned int fromLane, NBEdge* dest,
                                 unsigned int toLane, Lane2LaneInfoType type,
                                 bool mayUseSameDestination = false,
-                                bool mayDefinitelyPass = false);
+                                bool mayDefinitelyPass = false,
+                                bool keepClear = true);
 
 
     /** @brief Builds no connections starting at the given lanes
@@ -720,7 +709,8 @@ public:
                        unsigned int destLane,
                        Lane2LaneInfoType type,
                        bool mayUseSameDestination = false,
-                       bool mayDefinitelyPass = false);
+                       bool mayDefinitelyPass = false,
+                       bool keepClear = true);
 
 
 
@@ -910,7 +900,7 @@ public:
     bool needsLaneSpecificOutput() const;
 
     /// @brief whether at least one lane has restrictions
-    bool hasRestrictions() const;
+    bool hasPermissions() const;
 
     /// @brief whether lanes differ in allowed vehicle classes
     bool hasLaneSpecificPermissions() const;
@@ -928,11 +918,11 @@ public:
     bool computeEdge2Edges(bool noLeftMovers);
 
     /// computes the edge, step2: computation of which lanes approach the edges)
-    bool computeLanes2Edges(const bool buildCrossingsAndWalkingAreas);
+    bool computeLanes2Edges();
 
     /** recheck whether all lanes within the edge are all right and
         optimises the connections once again */
-    bool recheckLanes(const bool buildCrossingsAndWalkingAreas);
+    bool recheckLanes();
 
     /** @brief Add a connection to the previously computed turnaround, if wished
      *
@@ -1026,6 +1016,9 @@ public:
     /// add a pedestrian sidewalk of the given width and shift existing connctions
     void addSidewalk(SUMOReal width);
 
+    /// add a bicycle lane of the given width and shift existing connctions
+    void addBikeLane(SUMOReal width);
+
     /// @brief set allowed/disallowed classes for the given lane or for all lanes if -1 is given
     void setPermissions(SVCPermissions permissions, int lane = -1);
 
@@ -1086,6 +1079,8 @@ public:
         mySigns.push_back(sign);
     }
 
+    /// @brief cut shape at the intersection shapes
+    PositionVector cutAtIntersection(const PositionVector& old) const;
 
 private:
     /**
@@ -1168,7 +1163,7 @@ private:
     };
 
     /// Computes the shape for the given lane
-    PositionVector computeLaneShape(unsigned int lane, SUMOReal offset);
+    PositionVector computeLaneShape(unsigned int lane, SUMOReal offset) const;
 
     /// Computes the offset from the edge shape on the current segment
     //std::pair<SUMOReal, SUMOReal> laneOffset(const Position& from, const Position& to, SUMOReal laneCenterOffset);
@@ -1197,7 +1192,9 @@ private:
 
 
     /** divides the lanes on the outgoing edges */
-    void divideOnEdges(const EdgeVector* outgoing, const bool buildCrossingsAndWalkingAreas);
+    void divideOnEdges(const EdgeVector* outgoing);
+    void divideSelectedLanesOnEdges(const EdgeVector* outgoing, const std::vector<int>& availableLanes,
+                                    const std::vector<unsigned int>* priorities);
 
     /** recomputes the edge priorities and manipulates them for a distribution
         of lanes on edges which is more like in real-life */
@@ -1205,7 +1202,7 @@ private:
         const EdgeVector* outgoing);
 
     /** computes the sum of the given list's entries (sic!) */
-    unsigned int computePrioritySum(std::vector<unsigned int>* priorities);
+    static unsigned int computePrioritySum(const std::vector<unsigned int>& priorities);
 
 
     /// @name Setting and getting connections
@@ -1213,14 +1210,14 @@ private:
 
     /** moves a connection one place to the left;
         Attention! no checking for field validity */
-    void moveConnectionToLeft(unsigned int lane, const bool buildCrossingsAndWalkingAreas);
+    void moveConnectionToLeft(unsigned int lane);
 
     /** moves a connection one place to the right;
         Attention! no checking for field validity */
-    void moveConnectionToRight(unsigned int lane, const bool buildCrossingsAndWalkingAreas);
+    void moveConnectionToRight(unsigned int lane);
 
     /// @brief whether the connection can originate on newFromLane
-    bool canMoveConnection(const Connection& con, unsigned int newFromLane, const bool buildCrossingsAndWalkingAreas) const;
+    bool canMoveConnection(const Connection& con, unsigned int newFromLane) const;
     /// @}
 
 
@@ -1237,6 +1234,10 @@ private:
     /* @brief compute the first intersection point between the given lane
      * geometries considering their rspective widths */
     static SUMOReal firstIntersection(const PositionVector& v1, const PositionVector& v2, SUMOReal width2);
+
+
+    /// add a lane of the given width, restricted to the given class and shift existing connctions
+    void addRestrictedLane(SUMOReal width, SUMOVehicleClass vclass);
 
 private:
     /** @brief The building step
@@ -1304,10 +1305,6 @@ private:
     /// @brief An optional length to use (-1 if not valid)
     SUMOReal myLoadedLength;
 
-    /// @brief Whether this edge is a left-hand edge
-    bool myAmLeftHand;
-
-
     /// @brief Information whether this is a junction-inner edge
     bool myAmInnerEdge;
 
@@ -1372,13 +1369,16 @@ public:
     class connections_toedge_finder {
     public:
         /// constructor
-        connections_toedge_finder(NBEdge* const edge2find) : myEdge2Find(edge2find) { }
+        connections_toedge_finder(NBEdge* const edge2find, bool hasFromLane = false) :
+            myHasFromLane(hasFromLane),
+            myEdge2Find(edge2find) { }
 
         bool operator()(const Connection& c) const {
-            return c.toEdge == myEdge2Find;
+            return c.toEdge == myEdge2Find && (!myHasFromLane || c.fromLane != -1);
         }
 
     private:
+        const bool myHasFromLane;
         NBEdge* const myEdge2Find;
 
     private:

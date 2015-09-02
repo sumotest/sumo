@@ -77,6 +77,9 @@
 #include <utils/iodevices/OutputDevice_File.h>
 #include "output/MSFCDExport.h"
 #include "output/MSEmissionExport.h"
+
+#include "output/MSBatteryExport.h"
+
 #include "output/MSFullExport.h"
 #include "output/MSQueueExport.h"
 #include "output/MSVTKExport.h"
@@ -168,8 +171,9 @@ MSNet::MSNet(MSVehicleControl* vc, MSEventControl* beginOfTimestepEvents,
              MSEventControl* endOfTimestepEvents, MSEventControl* insertionEvents,
              ShapeContainer* shapeCont):
     myVehiclesMoved(0),
-    myHaveRestrictions(false),
+    myHavePermissions(false),
     myHasInternalLinks(false),
+    myHasElevation(false),
     myRouterTTInitialized(false),
     myRouterTTDijkstra(0),
     myRouterTTAStar(0),
@@ -234,6 +238,7 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
         mySimBeginMillis = SysUtils::getCurrentMillis();
     }
     myHasInternalLinks = hasInternalLinks;
+    myHasElevation = checkElevation();
 }
 
 
@@ -273,6 +278,22 @@ MSNet::~MSNet() {
     }
 #endif
     myInstance = 0;
+}
+
+
+void
+MSNet::addRestriction(const std::string& id, const SUMOVehicleClass svc, const SUMOReal speed) {
+    myRestrictions[id][svc] = speed;
+}
+
+
+const std::map<SUMOVehicleClass, SUMOReal>*
+MSNet::getRestrictions(const std::string& id) const {
+    std::map<std::string, std::map<SUMOVehicleClass, SUMOReal> >::const_iterator i = myRestrictions.find(id);
+    if (i == myRestrictions.end()) {
+        return 0;
+    }
+    return &i->second;
 }
 
 
@@ -567,12 +588,18 @@ MSNet::writeOutput() {
 
     // check fcd dumps
     if (OptionsCont::getOptions().isSet("fcd-output")) {
-        MSFCDExport::write(OutputDevice::getDeviceByOption("fcd-output"), myStep);
+        MSFCDExport::write(OutputDevice::getDeviceByOption("fcd-output"), myStep, myHasElevation);
     }
 
     // check emission dumps
     if (OptionsCont::getOptions().isSet("emission-output")) {
         MSEmissionExport::write(OutputDevice::getDeviceByOption("emission-output"), myStep);
+    }
+
+    // battery dumps
+    if (OptionsCont::getOptions().isSet("battery-output")) {
+        MSBatteryExport::write(OutputDevice::getDeviceByOption("battery-output"), myStep,
+                               oc.getInt("battery-output.precision"));
     }
 
     // check full dumps
@@ -739,12 +766,12 @@ MSNet::informVehicleStateListener(const SUMOVehicle* const vehicle, VehicleState
 
 // ------ Insertion and retrieval of bus stops ------
 bool
-MSNet::addBusStop(MSBusStop* busStop) {
+MSNet::addBusStop(MSStoppingPlace* busStop) {
     return myBusStopDict.add(busStop->getID(), busStop);
 }
 
 
-MSBusStop*
+MSStoppingPlace*
 MSNet::getBusStop(const std::string& id) const {
     return myBusStopDict.get(id);
 }
@@ -752,9 +779,9 @@ MSNet::getBusStop(const std::string& id) const {
 
 std::string
 MSNet::getBusStopID(const MSLane* lane, const SUMOReal pos) const {
-    const std::map<std::string, MSBusStop*>& vals = myBusStopDict.getMyMap();
-    for (std::map<std::string, MSBusStop*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
-        MSBusStop* stop = it->second;
+    const std::map<std::string, MSStoppingPlace*>& vals = myBusStopDict.getMyMap();
+    for (std::map<std::string, MSStoppingPlace*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
+        MSStoppingPlace* stop = it->second;
         if (&stop->getLane() == lane && fabs(stop->getEndLanePosition() - pos) < POSITION_EPS) {
             return stop->getID();
         }
@@ -764,22 +791,47 @@ MSNet::getBusStopID(const MSLane* lane, const SUMOReal pos) const {
 
 // ------ Insertion and retrieval of container stops ------
 bool
-MSNet::addContainerStop(MSContainerStop* containerStop) {
+MSNet::addContainerStop(MSStoppingPlace* containerStop) {
     return myContainerStopDict.add(containerStop->getID(), containerStop);
 }
 
-MSContainerStop*
+MSStoppingPlace*
 MSNet::getContainerStop(const std::string& id) const {
     return myContainerStopDict.get(id);
 }
 
 std::string
 MSNet::getContainerStopID(const MSLane* lane, const SUMOReal pos) const {
-    const std::map<std::string, MSContainerStop*>& vals = myContainerStopDict.getMyMap();
-    for (std::map<std::string, MSContainerStop*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
-        MSContainerStop* stop = it->second;
+    const std::map<std::string, MSStoppingPlace*>& vals = myContainerStopDict.getMyMap();
+    for (std::map<std::string, MSStoppingPlace*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
+        MSStoppingPlace* stop = it->second;
         if (&stop->getLane() == lane && fabs(stop->getEndLanePosition() - pos) < POSITION_EPS) {
             return stop->getID();
+        }
+    }
+    return "";
+}
+
+
+bool
+MSNet::addChrgStn(MSChrgStn* chrgStn) {
+    return myChrgStnDict.add(chrgStn->getID(), chrgStn);
+}
+
+
+MSChrgStn*
+MSNet::getChrgStn(const std::string& id) const {
+    return myChrgStnDict.get(id);
+}
+
+
+std::string
+MSNet::getChrgStnID(const MSLane* lane, const SUMOReal pos) const {
+    const std::map<std::string, MSChrgStn*>& vals = myChrgStnDict.getMyMap();
+    for (std::map<std::string, MSChrgStn*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
+        MSChrgStn* chrgStn = it->second;
+        if (&chrgStn->getLane() == lane && chrgStn->getBeginLanePosition() <= pos && chrgStn->getEndLanePosition() >= pos) {
+            return chrgStn->getID();
         }
     }
     return "";
@@ -792,13 +844,13 @@ MSNet::getRouterTT(const MSEdgeVector& prohibited) const {
         myRouterTTInitialized = true;
         const std::string routingAlgorithm = OptionsCont::getOptions().getString("routing-algorithm");
         if (routingAlgorithm == "dijkstra") {
-            myRouterTTDijkstra = new DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >(
+            myRouterTTDijkstra = new DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
                 MSEdge::numericalDictSize(), true, &MSNet::getTravelTime);
         } else {
             if (routingAlgorithm != "astar") {
                 WRITE_WARNING("TraCI and Triggers cannot use routing algorithm '" + routingAlgorithm + "'. using 'astar' instead.");
             }
-            myRouterTTAStar = new AStarRouter<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >(
+            myRouterTTAStar = new AStarRouter<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
                 MSEdge::numericalDictSize(), true, &MSNet::getTravelTime);
         }
     }
@@ -816,7 +868,7 @@ MSNet::getRouterTT(const MSEdgeVector& prohibited) const {
 SUMOAbstractRouter<MSEdge, SUMOVehicle>&
 MSNet::getRouterEffort(const MSEdgeVector& prohibited) const {
     if (myRouterEffort == 0) {
-        myRouterEffort = new DijkstraRouterEffort<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >(
+        myRouterEffort = new DijkstraRouterEffort<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
             MSEdge::numericalDictSize(), true, &MSNet::getEffort, &MSNet::getTravelTime);
     }
     myRouterEffort->prohibit(prohibited);
@@ -843,5 +895,18 @@ MSNet::getLanesRTree() const {
     return myLanesRTree.second;
 }
 
+
+bool
+MSNet::checkElevation() {
+    const MSEdgeVector& edges = myEdges->getEdges();
+    for (MSEdgeVector::const_iterator e = edges.begin(); e != edges.end(); ++e) {
+        for (std::vector<MSLane*>::const_iterator i = (*e)->getLanes().begin(); i != (*e)->getLanes().end(); ++i) {
+            if ((*i)->getShape().hasElevation()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 /****************************************************************************/

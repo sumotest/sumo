@@ -21,6 +21,7 @@
     <xsd:complexType name="netType">
         <xsd:sequence>
             <xsd:element name="location" type="locationType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="type" type="typeType" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="edge" type="edgeType" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="tlLogic" type="tlLogicType" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="junction" type="junctionType" minOccurs="0" maxOccurs="unbounded"/>
@@ -150,6 +151,7 @@
         <xsd:attribute name="fromLane" type="xsd:nonNegativeInteger" use="required"/>
         <xsd:attribute name="toLane" type="xsd:nonNegativeInteger" use="required"/>
         <xsd:attribute name="pass" type="boolType" use="optional"/>
+        <xsd:attribute name="keepClear" type="boolType" use="optional"/>
         <xsd:attribute name="via" type="xsd:string" use="optional"/>
         <xsd:attribute name="tl" type="xsd:string" use="optional"/>
         <xsd:attribute name="linkIndex" type="xsd:nonNegativeInteger" use="optional"/>

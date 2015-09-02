@@ -28,6 +28,10 @@ def distance(p1, p2):
     return math.sqrt(dx * dx + dy * dy)
 
 
+def polyLength(polygon):
+    return sum([distance(a, b) for a, b in zip(polygon[:-1], polygon[1:])])
+
+
 def lineOffsetWithMinimumDistanceToPoint(point, line_start, line_end, perpendicular=False):
     """Return the offset from line (line_start, line_end) where the distance to
     point is minimal"""
@@ -127,3 +131,27 @@ def positionAtShapeOffset(shape, offset):
         seenLength += nextLength
         curr = next
     return shape[-1]
+
+
+def angle2D(p1, p2):
+    theta1 = math.atan2(p1[1], p1[0])
+    theta2 = math.atan2(p2[1], p2[0])
+    dtheta = theta2 - theta1
+    while dtheta > math.pi:
+        dtheta -= 2.0 * math.pi
+    while dtheta < -math.pi:
+        dtheta += 2.0 * math.pi
+    return dtheta
+
+
+def isWithin(pos, shape):
+    angle = 0.
+    for i in range(0, len(shape) - 1):
+        p1 = ((shape[i][0] - pos[0]), (shape[i][1] - pos[1]))
+        p2 = ((shape[i + 1][0] - pos[0]), (shape[i + 1][1] - pos[1]))
+        angle = angle + angle2D(p1, p2)
+    i = len(shape) - 1
+    p1 = ((shape[i][0] - pos[0]), (shape[i][1] - pos[1]))
+    p2 = ((shape[0][0] - pos[0]), (shape[0][1] - pos[1]))
+    angle = angle + angle2D(p1, p2)
+    return math.fabs(angle) >= math.pi

@@ -81,7 +81,7 @@ public:
     ~NBRequest();
 
     /** builds the bitset-representation of the logic */
-    void buildBitfieldLogic(bool leftHanded);
+    void buildBitfieldLogic();
 
     /** @brief returns the number of the junction's lanes and the number
         of the junction's links in respect. @note: only connected lanes are counted */
@@ -108,12 +108,13 @@ public:
     bool mustBrake(const NBEdge* const from, const NBEdge* const to, int fromLane, bool includePedCrossings) const;
 
     /** @brief Returns the information whether the described flow must brake for the given crossing
+     * @param[in] node The parent node of this request
      * @param[in] from The connection's start edge
      * @param[in] to The connection's end edge
      * @param[in] crossing The pedestrian crossing to check
      * @return Whether the described connection must brake (has higher priorised foes)
      */
-    bool mustBrakeForCrossing(const NBEdge* const from, const NBEdge* const to, const NBNode::Crossing& crossing) const;
+    static bool mustBrakeForCrossing(const NBNode* node, const NBEdge* const from, const NBEdge* const to, const NBNode::Crossing& crossing);
 
     /** @brief Returns the information whether the given flows cross
      * @param[in] from1 The starting edge of the first stream
@@ -145,10 +146,6 @@ public:
     /// prints the request
     friend std::ostream& operator<<(std::ostream& os, const NBRequest& r);
 
-    /** @brief return whether the given laneToLane connection is a right turn which must yield to a bicycle crossings
-     */
-    bool rightTurnConflict(const NBEdge* from, const NBEdge* to, int fromLane, const NBEdge* prohibitorFrom, const NBEdge* prohibitorTo, int prohibitorFromLane) const;
-
     /// reports warnings if any occured
     static void reportWarnings();
 
@@ -156,7 +153,7 @@ public:
 private:
     /** sets the information that the edge from1->to1 blocks the edge
         from2->to2 (is higher priorised than this) */
-    void setBlocking(bool leftHanded, NBEdge* from1, NBEdge* to1, NBEdge* from2, NBEdge* to2);
+    void setBlocking(NBEdge* from1, NBEdge* to1, NBEdge* from2, NBEdge* to2);
 
     /** @brief writes the response of a certain lane
         Returns the next link index within the junction */
@@ -211,11 +208,11 @@ private:
 
     /** computes the relationships between links outgoing right of the given
         link */
-    void computeRightOutgoingLinkCrossings(bool leftHanded, NBEdge* from, NBEdge* to);
+    void computeRightOutgoingLinkCrossings(NBEdge* from, NBEdge* to);
 
     /** computes the relationships between links outgoing left of the given
         link */
-    void computeLeftOutgoingLinkCrossings(bool leftHanded, NBEdge* from, NBEdge* to);
+    void computeLeftOutgoingLinkCrossings(NBEdge* from, NBEdge* to);
 
 
     void resetSignalised();

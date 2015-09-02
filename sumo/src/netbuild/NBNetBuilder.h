@@ -196,6 +196,11 @@ public:
     /// @}
 
 
+    /// @brief notify about style of loaded network
+    void haveLoadedNetworkWithoutInternalEdges() {
+        myHaveLoadedNetworkWithoutInternalEdges = true;
+    }
+
     /**
      * @brief transforms loaded coordinates
      * handles projections, offsets (using GeoConvHelper) and import of height data (using NBHeightMapper)
@@ -243,9 +248,15 @@ protected:
     /// @brief Map of joined edges
     NBJoinedEdgesMap myJoinedEdges;
 
+    /// @brief whether a .net.xml without internal edges was loaded
+    bool myHaveLoadedNetworkWithoutInternalEdges;
+
 private:
     /// @brief shift network so its lower left corner is at 0,0
     void moveToOrigin(GeoConvHelper& geoConvHelper);
+
+    /// @brief mirror the network along the X-axis
+    void mirrorX();
 
 private:
     /// @brief invalidated copy constructor

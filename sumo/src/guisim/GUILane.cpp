@@ -234,7 +234,7 @@ GUILane::drawTextAtEnd(const std::string& text, const PositionVector& shape, SUM
     const SUMOReal rot = RAD2DEG(atan2((end.x() - f.x()), (f.y() - end.y())));
     glTranslated(end.x(), end.y(), 0);
     glRotated(rot, 0, 0, 1);
-    GLHelper::drawText(text, Position(x, 0), 0, .6, RGBColor(128, 128, 255, 255), 180);
+    GLHelper::drawText(text, Position(x, 0.26), 0, .6, RGBColor(128, 128, 255, 255), 180);
     glPopMatrix();
 }
 
@@ -354,6 +354,12 @@ GUILane::drawArrows() const {
                 GLHelper::drawBoxLine(Position(0, 2.5), 90, .5, .05);
                 GLHelper::drawBoxLine(Position(0.5, 2.5), 180, 1, .05);
                 GLHelper::drawTriangleAtEnd(Line(Position(0.5, 2.5), Position(0.5, 4)), (SUMOReal) 1, (SUMOReal) .25);
+                break;
+            case LINKDIR_TURN_LEFTHAND:
+                GLHelper::drawBoxLine(Position(0, 4), 0, 1.5, .05);
+                GLHelper::drawBoxLine(Position(0, 2.5), -90, 1, .05);
+                GLHelper::drawBoxLine(Position(-0.5, 2.5), -180, 1, .05);
+                GLHelper::drawTriangleAtEnd(Line(Position(-0.5, 2.5), Position(-0.5, 4)), (SUMOReal) 1, (SUMOReal) .25);
                 break;
             case LINKDIR_LEFT:
                 GLHelper::drawBoxLine(Position(0, 4), 0, 1.5, .05);
@@ -566,10 +572,11 @@ GUILane::drawMarkings(const GUIVisualizationSettings& s, SUMOReal scale) const {
             glTranslated(getShape()[i].x(), getShape()[i].y(), 0.1);
             glRotated(myShapeRotations[i], 0, 0, 1);
             for (SUMOReal t = 0; t < myShapeLengths[i]; t += 6) {
+                const SUMOReal length = MIN2((SUMOReal)3, myShapeLengths[i] - t);
                 glBegin(GL_QUADS);
                 glVertex2d(-mw, -t);
-                glVertex2d(-mw, -t - 3.);
-                glVertex2d(myQuarterLaneWidth * scale, -t - 3.);
+                glVertex2d(-mw, -t - length);
+                glVertex2d(myQuarterLaneWidth * scale, -t - length);
                 glVertex2d(myQuarterLaneWidth * scale, -t);
                 glEnd();
             }
@@ -582,7 +589,7 @@ GUILane::drawMarkings(const GUIVisualizationSettings& s, SUMOReal scale) const {
         getShape(),
         getShapeRotations(),
         getShapeLengths(),
-        (getHalfWidth() + SUMO_const_laneOffset) * scale);
+        (myHalfLaneWidth + SUMO_const_laneOffset) * scale);
     glPopMatrix();
 }
 
@@ -785,7 +792,7 @@ GUILane::setMultiColor(const GUIColorer& c) const {
             return true;
         case 24: // color by inclination  at segment start
             for (int ii = 1; ii < (int)myShape.size(); ++ii) {
-                const SUMOReal inc = (myShape[ii].z() - myShape[ii - 1].z()) / myShape[ii].distanceTo2D(myShape[ii - 1]);
+                const SUMOReal inc = (myShape[ii].z() - myShape[ii - 1].z()) / MAX2(POSITION_EPS, myShape[ii].distanceTo2D(myShape[ii - 1]));
                 myShapeColors.push_back(c.getScheme().getColor(inc));
             }
             return true;
@@ -809,7 +816,12 @@ GUILane::getColorValue(size_t activeScheme) const {
                 case SVC_SHIP:
                     return 4;
                 default:
-                    return 0;
+                    break;
+            }
+            if ((myPermissions & SVC_PASSENGER) != 0 || isRailway(myPermissions)) {
+                return 0;
+            } else {
+                return 5;
             }
         case 1:
             return gSelected.isSelected(getType(), getGlID()) ||

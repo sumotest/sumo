@@ -45,9 +45,9 @@
 #include "MSLaneChanger.h"
 #include "MSGlobals.h"
 #include "MSVehicle.h"
-#include <microsim/pedestrians/MSPerson.h>
 #include "MSContainer.h"
 #include "MSEdgeWeightsStorage.h"
+#include <microsim/devices/MSDevice_Routing.h>
 
 #ifdef HAVE_INTERNAL
 #include <mesosim/MELoop.h>
@@ -237,7 +237,7 @@ MSEdge::getAllowedLanesWithDefault(const AllowedLanesCont& c, const MSEdge* dest
 
 const std::vector<MSLane*>*
 MSEdge::allowedLanes(const MSEdge* destination, SUMOVehicleClass vclass) const {
-    if ((myMinimumPermissions & vclass) == vclass) {
+    if (destination == 0 && (myMinimumPermissions & vclass) == vclass) {
         // all lanes allow vclass
         return getAllowedLanesWithDefault(myAllowed, destination);
     }
@@ -250,16 +250,33 @@ MSEdge::allowedLanes(const MSEdge* destination, SUMOVehicleClass vclass) const {
     } else {
         // this vclass is requested for the first time. rebuild all destinations
         // go through connected edges
+#ifdef HAVE_FOX
+        if (MSDevice_Routing::isParallel()) {
+            MSDevice_Routing::lock();
+        }
+#endif
         for (AllowedLanesCont::const_iterator i1 = myAllowed.begin(); i1 != myAllowed.end(); ++i1) {
             const MSEdge* edge = i1->first;
             const std::vector<MSLane*>* lanes = i1->second;
             myClassedAllowed[vclass][edge] = new std::vector<MSLane*>();
             // go through lanes approaching current edge
             for (std::vector<MSLane*>::const_iterator i2 = lanes->begin(); i2 != lanes->end(); ++i2) {
-                // allows the current vehicle class?
+                // origin lane allows the current vehicle class?
                 if ((*i2)->allowsVehicleClass(vclass)) {
-                    // -> may be used
-                    myClassedAllowed[vclass][edge]->push_back(*i2);
+                    if (edge == 0) {
+                        myClassedAllowed[vclass][edge]->push_back(*i2);
+                    } else {
+                        // target lane allows the current vehicle class?
+                        const MSLinkCont& lc = (*i2)->getLinkCont();
+                        for (MSLinkCont::const_iterator it_link = lc.begin(); it_link != lc.end(); ++it_link) {
+                            const MSLane* targetLane = (*it_link)->getLane();
+                            if ((&(targetLane->getEdge()) == edge) && targetLane->allowsVehicleClass(vclass)) {
+                                // -> may be used
+                                myClassedAllowed[vclass][edge]->push_back(*i2);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             // assert that 0 is returned if no connection is allowed for a class
@@ -268,6 +285,11 @@ MSEdge::allowedLanes(const MSEdge* destination, SUMOVehicleClass vclass) const {
                 myClassedAllowed[vclass][edge] = 0;
             }
         }
+#ifdef HAVE_FOX
+        if (MSDevice_Routing::isParallel()) {
+            MSDevice_Routing::unlock();
+        }
+#endif
         return myClassedAllowed[vclass][destination];
     }
 }
@@ -644,34 +666,24 @@ MSEdge::getVehicleMaxSpeed(const SUMOVehicle* const veh) const {
 }
 
 
-std::vector<MSPerson*>
+std::vector<MSTransportable*>
 MSEdge::getSortedPersons(SUMOTime timestep) const {
-    std::vector<MSPerson*> result(myPersons.begin(), myPersons.end());
-    sort(result.begin(), result.end(), person_by_offset_sorter(timestep));
+    std::vector<MSTransportable*> result(myPersons.begin(), myPersons.end());
+    sort(result.begin(), result.end(), transportable_by_position_sorter(timestep));
     return result;
 }
 
 
-std::vector<MSContainer*>
+std::vector<MSTransportable*>
 MSEdge::getSortedContainers(SUMOTime timestep) const {
-    std::vector<MSContainer*> result(myContainers.begin(), myContainers.end());
-    sort(result.begin(), result.end(), container_by_position_sorter(timestep));
+    std::vector<MSTransportable*> result(myContainers.begin(), myContainers.end());
+    sort(result.begin(), result.end(), transportable_by_position_sorter(timestep));
     return result;
 }
 
 
 int
-MSEdge::person_by_offset_sorter::operator()(const MSPerson* const p1, const MSPerson* const p2) const {
-    const SUMOReal pos1 = p1->getCurrentStage()->getEdgePos(myTime);
-    const SUMOReal pos2 = p2->getCurrentStage()->getEdgePos(myTime);
-    if (pos1 != pos2) {
-        return pos1 < pos2;
-    }
-    return p1->getID() < p2->getID();
-}
-
-int
-MSEdge::container_by_position_sorter::operator()(const MSContainer* const c1, const MSContainer* const c2) const {
+MSEdge::transportable_by_position_sorter::operator()(const MSTransportable* const c1, const MSTransportable* const c2) const {
     const SUMOReal pos1 = c1->getCurrentStage()->getEdgePos(myTime);
     const SUMOReal pos2 = c2->getCurrentStage()->getEdgePos(myTime);
     if (pos1 != pos2) {
@@ -682,21 +694,36 @@ MSEdge::container_by_position_sorter::operator()(const MSContainer* const c1, co
 
 const MSEdgeVector&
 MSEdge::getSuccessors(SUMOVehicleClass vClass) const {
-    if (vClass == SVC_IGNORING) {
+    if (vClass == SVC_IGNORING || !MSNet::getInstance()->hasPermissions()) {
         return mySuccessors;
     }
-    ClassesSuccesorMap::const_iterator i = myClassesSuccessorMap.find(vClass);
+#ifdef HAVE_FOX
+    if (MSDevice_Routing::isParallel()) {
+        MSDevice_Routing::lock();
+    }
+#endif
+    std::map<SUMOVehicleClass, MSEdgeVector>::const_iterator i = myClassesSuccessorMap.find(vClass);
     if (i != myClassesSuccessorMap.end()) {
         // can use cached value
+#ifdef HAVE_FOX
+        if (MSDevice_Routing::isParallel()) {
+            MSDevice_Routing::unlock();
+        }
+#endif
         return i->second;
     } else {
-        // this vClass is requested for the first time. rebuild all succesors
+        // this vClass is requested for the first time. rebuild all successors
         for (MSEdgeVector::const_iterator it = mySuccessors.begin(); it != mySuccessors.end(); ++it) {
             const std::vector<MSLane*>* allowed = allowedLanes(*it, vClass);
-            if (allowed == 0 || allowed->size() > 0) {
+            if (allowed != 0 && allowed->size() > 0) {
                 myClassesSuccessorMap[vClass].push_back(*it);
             }
         }
+#ifdef HAVE_FOX
+        if (MSDevice_Routing::isParallel()) {
+            MSDevice_Routing::unlock();
+        }
+#endif
         return myClassesSuccessorMap[vClass];
     }
 }

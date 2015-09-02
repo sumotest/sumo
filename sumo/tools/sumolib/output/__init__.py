@@ -48,6 +48,11 @@ def compound_object(element_name, attrnames):
         def hasAttribute(self, name):
             return name in self._fields
 
+        def setAttribute(self, name, value):
+            if name not in self._fields:
+                self._fields.append(name)
+            self.__dict__[name] = value
+
         def hasChild(self, name):
             return name in self._child_dict
 
@@ -66,7 +71,8 @@ def compound_object(element_name, attrnames):
             if name in self._child_dict:
                 del self._child_dict[name]
             else:
-                del self.__dict__[name]
+                if name in self.__dict__:
+                    del self.__dict__[name]
                 self._fields.remove(name)
 
         def __getitem__(self, name):

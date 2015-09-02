@@ -40,6 +40,13 @@
 #include <utils/common/StringBijection.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class OutputDevice;
+
+
 // ===========================================================================
 // enum definitions
 // ===========================================================================
@@ -183,8 +190,11 @@ enum SUMOVehicleClass {
     /// @brief is a user-defined type
     SVC_CUSTOM1 = 1 << 23,
     /// @brief is a user-defined type
-    SVC_CUSTOM2 = 1 << 24
-                  //@}
+    SVC_CUSTOM2 = 1 << 24,
+    //@}
+
+    /// @brief classes which (normally) do not drive on normal roads
+    SVC_NON_ROAD = SVC_TRAM | SVC_RAIL | SVC_RAIL_URBAN | SVC_RAIL_ELECTRIC | SVC_SHIP
 };
 
 extern const int SUMOVehicleClass_MAX;
@@ -214,14 +224,6 @@ typedef int SUMOEmissionClass;
 // ---------------------------------------------------------------------------
 // abstract vehicle class / purpose
 // ---------------------------------------------------------------------------
-/* @brief SUMOVehicleClass is meant to be OR'ed to combine information about vehicle
- * ownership and vehicle "size" into one int.
- * These OR'ed values cannot be translated directly into strings with toString().
- * The names of all base values are concatenated with '|' as a separator.
- */
-extern std::string getVehicleClassCompoundName(int id);
-
-
 /** @brief Returns the ids of the given classes, divided using a ' '
  * @param[in] the permissions to encode
  * @return The string representation of these classes
@@ -276,6 +278,12 @@ extern SVCPermissions parseVehicleClasses(const std::string& allowedS, const std
  */
 extern SVCPermissions parseVehicleClasses(const std::vector<std::string>& allowedS);
 
+
+/// @brief writes allowed disallowed attributes if needed;
+extern void writePermissions(OutputDevice& into, SVCPermissions permissions);
+
+/// @brief writes allowed disallowed attributes if needed;
+extern void writePreferences(OutputDevice& into, SVCPermissions preferred);
 
 // ---------------------------------------------------------------------------
 // vehicle shape class

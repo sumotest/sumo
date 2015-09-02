@@ -42,7 +42,6 @@
 #include <utils/common/StaticCommand.h>
 #include <utils/vehicle/DijkstraRouterTT.h>
 #include <utils/vehicle/AStarRouter.h>
-#include <utils/vehicle/BulkStarRouter.h>
 #include <utils/vehicle/CHRouter.h>
 #include <utils/vehicle/CHRouterWrapper.h>
 
@@ -150,7 +149,10 @@ MSDevice_Routing::buildVehicleDevices(SUMOVehicle& v, std::vector<MSDevice*>& in
                 }
             }
             myLastAdaptation = MSNet::getInstance()->getCurrentTimeStep();
-            myRandomizeWeightsFactor = oc.isSet("weights.random-factor") ? oc.getFloat("weights.random-factor") : 0;
+            myRandomizeWeightsFactor = oc.getFloat("weights.random-factor");
+            if (myRandomizeWeightsFactor < 1) {
+                WRITE_ERROR("weights.random-factor cannot be less than 1");
+            }
         }
         // make the weights be updated
         if (myAdaptationInterval == -1) {
@@ -252,8 +254,8 @@ MSDevice_Routing::getEffort(const MSEdge* const e, const SUMOVehicle* const v, S
     const int id = e->getNumericalID();
     if (id < (int)myEdgeEfforts.size()) {
         SUMOReal effort = MAX2(myEdgeEfforts[id], e->getMinimumTravelTime(v));
-        if (myRandomizeWeightsFactor != 0) {
-            effort *= RandHelper::rand(1 - myRandomizeWeightsFactor, 1 + myRandomizeWeightsFactor);
+        if (myRandomizeWeightsFactor != 1) {
+            effort *= RandHelper::rand((SUMOReal)1, myRandomizeWeightsFactor);
         }
         return effort;
     }
@@ -315,25 +317,25 @@ MSDevice_Routing::reroute(const SUMOTime currentTime, const bool onInit) {
     if (needThread && myRouter == 0) {
         OptionsCont& oc = OptionsCont::getOptions();
         const std::string routingAlgorithm = oc.getString("routing-algorithm");
-        const bool mayHaveRestrictions = MSNet::getInstance()->hasRestrictions() || oc.getInt("remote-port") != 0;
+        const bool mayHaveRestrictions = MSNet::getInstance()->hasPermissions() || oc.getInt("remote-port") != 0;
         if (routingAlgorithm == "dijkstra") {
             if (mayHaveRestrictions) {
-                myRouter = new DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >(
+                myRouter = new DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
                     MSEdge::numericalDictSize(), true, &MSDevice_Routing::getEffort);
             } else {
-                myRouter = new DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_noRestrictions<MSEdge, SUMOVehicle> >(
+                myRouter = new DijkstraRouterTT<MSEdge, SUMOVehicle, noProhibitions<MSEdge, SUMOVehicle> >(
                     MSEdge::numericalDictSize(), true, &MSDevice_Routing::getEffort);
             }
         } else if (routingAlgorithm == "astar") {
             if (mayHaveRestrictions) {
-                typedef AStarRouter<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> > AStar;
+                typedef AStarRouter<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> > AStar;
                 const AStar::LookupTable* lookup = 0;
                 if (oc.isSet("device.rerouting.shortest-path-file")) {
                     lookup = AStar::createLookupTable(oc.getString("device.rerouting.shortest-path-file"), (int)MSEdge::numericalDictSize());
                 }
                 myRouter = new AStar(MSEdge::numericalDictSize(), true, &MSDevice_Routing::getEffort, lookup);
             } else {
-                typedef AStarRouter<MSEdge, SUMOVehicle, prohibited_noRestrictions<MSEdge, SUMOVehicle> > AStar;
+                typedef AStarRouter<MSEdge, SUMOVehicle, noProhibitions<MSEdge, SUMOVehicle> > AStar;
                 const AStar::LookupTable* lookup = 0;
                 if (oc.isSet("device.rerouting.shortest-path-file")) {
                     lookup = AStar::createLookupTable(oc.getString("device.rerouting.shortest-path-file"), (int)MSEdge::numericalDictSize());
@@ -343,16 +345,16 @@ MSDevice_Routing::reroute(const SUMOTime currentTime, const bool onInit) {
         } else if (routingAlgorithm == "CH") {
             const SUMOTime weightPeriod = myAdaptationInterval > 0 ? myAdaptationInterval : std::numeric_limits<int>::max();
             if (mayHaveRestrictions) {
-                myRouter = new CHRouter<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >(
+                myRouter = new CHRouter<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
                     MSEdge::numericalDictSize(), true, &MSDevice_Routing::getEffort, myHolder.getVClass(), weightPeriod, true);
             } else {
-                myRouter = new CHRouter<MSEdge, SUMOVehicle, prohibited_noRestrictions<MSEdge, SUMOVehicle> >(
+                myRouter = new CHRouter<MSEdge, SUMOVehicle, noProhibitions<MSEdge, SUMOVehicle> >(
                     MSEdge::numericalDictSize(), true, &MSDevice_Routing::getEffort, myHolder.getVClass(), weightPeriod, false);
             }
         } else if (routingAlgorithm == "CHWrapper") {
             const SUMOTime begin = string2time(oc.getString("begin"));
             const SUMOTime weightPeriod = myAdaptationInterval > 0 ? myAdaptationInterval : std::numeric_limits<int>::max();
-            myRouter = new CHRouterWrapper<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >(
+            myRouter = new CHRouterWrapper<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
                 MSEdge::numericalDictSize(), true, &MSDevice_Routing::getEffort, begin, weightPeriod);
         } else {
             throw ProcessError("Unknown routing algorithm '" + routingAlgorithm + "'!");

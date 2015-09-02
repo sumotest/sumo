@@ -54,7 +54,7 @@
  * The template parameters are:
  * @param E The edge class to use (MSEdge/ROEdge)
  * @param V The vehicle class to use (MSVehicle/ROVehicle)
- * @param PF The prohibition function to use (prohibited_withRestrictions/prohibited_noRestrictions)
+ * @param PF The prohibition function to use (prohibited_withPermissions/noProhibitions)
  * @param EC The class to retrieve the effort for an edge from
  *
  * The router is edge-based. It must know the number of edges for internal reasons
@@ -154,13 +154,22 @@ public:
         assert(from != 0 && to != 0);
         this->startQuery();
         const SUMOVehicleClass vClass = vehicle == 0 ? SVC_IGNORING : vehicle->getVClass();
-        init();
-        // add begin node
-        EdgeInfo* const fromInfo = &(myEdgeInfos[from->getNumericalID()]);
-        fromInfo->effort = 0;
-        fromInfo->prev = 0;
-        fromInfo->leaveTime = STEPS2TIME(msTime);
-        myFrontierList.push_back(fromInfo);
+        if (this->myBulkMode) {
+            const EdgeInfo& toInfo = myEdgeInfos[to->getNumericalID()];
+            if (toInfo.visited) {
+                buildPathFrom(&toInfo, into);
+                this->endQuery(1);
+                return;
+            }
+        } else {
+            init();
+            // add begin node
+            EdgeInfo* const fromInfo = &(myEdgeInfos[from->getNumericalID()]);
+            fromInfo->effort = 0;
+            fromInfo->prev = 0;
+            fromInfo->leaveTime = STEPS2TIME(msTime);
+            myFrontierList.push_back(fromInfo);
+        }
         // loop
         int num_visited = 0;
         while (!myFrontierList.empty()) {
@@ -225,13 +234,13 @@ public:
 
 public:
     /// Builds the path from marked edges
-    void buildPathFrom(EdgeInfo* rbegin, std::vector<const E*>& edges) {
-        std::deque<const E*> tmp;
+    void buildPathFrom(const EdgeInfo* rbegin, std::vector<const E*>& edges) {
+        std::vector<const E*> tmp;
         while (rbegin != 0) {
-            tmp.push_front((E*) rbegin->edge);  // !!!
+            tmp.push_back(rbegin->edge);
             rbegin = rbegin->prev;
         }
-        std::copy(tmp.begin(), tmp.end(), std::back_inserter(edges));
+        std::copy(tmp.rbegin(), tmp.rend(), std::back_inserter(edges));
     }
 
 private:

@@ -58,8 +58,8 @@ class MSMoveReminder;
 class MSLaneChanger;
 class MSVehicleTransfer;
 class MSAbstractLaneChangeModel;
-class MSBusStop;
-class MSContainerStop;
+class MSStoppingPlace;
+class MSChrgStn;
 class MSPerson;
 class MSDevice;
 class MSEdgeWeightsStorage;
@@ -447,6 +447,10 @@ public:
     MSAbstractLaneChangeModel& getLaneChangeModel();
     const MSAbstractLaneChangeModel& getLaneChangeModel() const;
 
+    const std::vector<MSLane*>& getFurtherLanes() const {
+        return myFurtherLanes;
+    }
+
     /// @name strategical/tactical lane choosing methods
     /// @{
 
@@ -563,9 +567,11 @@ public:
         /// @brief The lane to stop at
         const MSLane* lane;
         /// @brief (Optional) bus stop if one is assigned to the stop
-        MSBusStop* busstop;
+        MSStoppingPlace* busstop;
         /// @brief (Optional) container stop if one is assigned to the stop
-        MSContainerStop* containerstop;
+        MSStoppingPlace* containerstop;
+        /// @brief (Optional) charging station if one is assigned to the stop
+        MSChrgStn* chrgStn;
         /// @brief The stopping position start
         SUMOReal startPos;
         /// @brief The stopping position end
@@ -650,8 +656,8 @@ public:
      * @return The velocity in dependance to the next/current stop
      * @todo Describe more detailed
      * @see Stop
-     * @see MSBusStop
-     * @see MSContainerStop
+     * @see MSStoppingPlace
+     * @see MSStoppingPlace
      */
     SUMOReal processNextStop(SUMOReal currentVelocity);
 
@@ -726,7 +732,7 @@ public:
     /** @brief Adds a passenger
      * @param[in] person The person to add
      */
-    void addPerson(MSPerson* person);
+    void addPerson(MSTransportable* person);
 
     /// @name Interaction with containers
     //@{
@@ -734,7 +740,7 @@ public:
     /** @brief Adds a container
      * @param[in] container The container to add
      */
-    void addContainer(MSContainer* container);
+    void addContainer(MSTransportable* container);
 
 
     /** @brief Returns the number of persons
@@ -854,16 +860,31 @@ public:
     /**
      * schedule a new stop for the vehicle; each time a stop is reached, the vehicle
      * will wait for the given duration before continuing on its route
-     * @param lane  lane on wich to stop
-     * @param pos   position on the given lane at wich to stop
-     * @param radius  the vehicle will stop if it is within the range [pos-radius, pos+radius]
-     * @param duration after waiting for the time period duration, the vehicle will
+     * @param lane     lane on wich to stop
+     * @param startPos start position on the given lane at wich to stop
+     * @param endPos   end position on the given lane at wich to stop
+     * @param duration waiting time duration
+     * @param until    time step at which the stop shall end
      * @param parking  a flag indicating whether the traci stop is used for parking or not
      * @param triggered a flag indicating whether the traci stop is triggered or not
      * @param containerTriggered a flag indicating whether the traci stop is triggered by a container or not
      */
-    bool addTraciStop(MSLane* lane, SUMOReal pos, SUMOReal radius, SUMOTime duration,
-                      bool parking, bool triggered, bool containerTriggered, std::string& errorMsg);
+    bool addTraciStop(MSLane* const lane, const SUMOReal startPos, const SUMOReal endPos, const SUMOTime duration, const SUMOTime until,
+                      const bool parking, const bool triggered, const bool containerTriggered, std::string& errorMsg);
+
+    /**
+     * schedule a new stop for the vehicle; each time a stop is reached, the vehicle
+     * will wait for the given duration before continuing on its route
+     * @param stopId    bus or container stop id
+     * @param duration waiting time duration
+     * @param until    time step at which the stop shall end
+     * @param parking   a flag indicating whether the traci stop is used for parking or not
+     * @param triggered a flag indicating whether the traci stop is triggered or not
+     * @param containerTriggered a flag indicating whether the traci stop is triggered by a container or not
+     * @param isContainerStop a flag indicating whether the stop is a container stop
+     */
+    bool addTraciBusOrContainerStop(const std::string& stopId, const SUMOTime duration, const SUMOTime until, const bool parking,
+                                    const bool triggered, const bool containerTriggered, const bool isContainerStop, std::string& errorMsg);
 
     /**
     * returns the next imminent stop in the stop queue

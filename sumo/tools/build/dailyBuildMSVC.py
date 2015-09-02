@@ -63,6 +63,9 @@ sys.path.append(os.path.join(options.rootDir, options.testsDir))
 import runInternalTests
 
 env = os.environ
+if "SUMO_HOME" not in env:
+    env["SUMO_HOME"] = os.path.dirname(
+        os.path.dirname(os.path.dirname(__file__)))
 env["SMTP_SERVER"] = "smtprelay.dlr.de"
 env["TEMP"] = env["TMP"] = r"D:\Delphi\texttesttmp"
 env["REMOTEDIR_BASE"] = 'O:/Daten/Sumo'
@@ -126,10 +129,9 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     if options.addSln:
         subprocess.call(compiler + " /rebuild Release|%s %s\\%s /out %s" %
                         (platform, options.rootDir, options.addSln, makeLog))
-    programSuffix = envSuffix = ""
+    envSuffix = ""
     if platform == "x64":
         envSuffix = "_64"
-        programSuffix = "64"
     # we need to use io.open here due to http://bugs.python.org/issue16273
     log = io.open(makeLog, 'a')
     try:
@@ -175,24 +177,21 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
                     print >> log, "I/O error(%s): %s" % (errno, strerror)
         zipf.close()
         shutil.copy2(binaryZip, options.remoteDir)
-        wix.buildMSI(binaryZip, binaryZip.replace(
-            ".zip", ".msi"), platformSuffix=programSuffix)
+        wix.buildMSI(binaryZip, binaryZip.replace(".zip", ".msi"))
         shutil.copy2(binaryZip.replace(".zip", ".msi"), options.remoteDir)
     except IOError, (errno, strerror):
         print >> log, "Warning: Could not zip to %s!" % binaryZip
         print >> log, "I/O error(%s): %s" % (errno, strerror)
     if platform == "Win32" and options.sumoExe == "sumo":
         try:
-            setup = os.path.join(
-                os.path.dirname(__file__), '..', 'game', 'setup.py')
+            setup = os.path.join(env["SUMO_HOME"], 'tools', 'game', 'setup.py')
             subprocess.call(
                 ['python', setup], stdout=log, stderr=subprocess.STDOUT)
         except Exception as e:
             print >> log, "Warning: Could not create nightly sumo-game.zip! (%s)" % e
     if platform == "x64" and options.sumoExe == "meso":
         try:
-            setup = os.path.join(
-                os.path.dirname(__file__), '..', 'game', 'setup.py')
+            setup = os.path.join(env["SUMO_HOME"], 'tools', 'game', 'setup.py')
             subprocess.call(
                 ['python', setup, 'internal'], stdout=log, stderr=subprocess.STDOUT)
         except Exception as e:
@@ -208,16 +207,13 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     env["TEXTTEST_TMP"] = os.path.join(
         options.rootDir, env["FILEPREFIX"] + "texttesttmp")
     env["TEXTTEST_HOME"] = os.path.join(options.rootDir, options.testsDir)
-    if "SUMO_HOME" not in env:
-        env["SUMO_HOME"] = os.path.join(os.path.dirname(__file__), '..', '..')
     shutil.rmtree(env["TEXTTEST_TMP"], True)
     if not os.path.exists(env["SUMO_REPORT"]):
         os.makedirs(env["SUMO_REPORT"])
     for name in ["dfrouter", "duarouter", "jtrrouter", "marouter", "netconvert", "netgenerate",
                  "od2trips", "sumo", "polyconvert", "sumo-gui", "activitygen",
                  "emissionsDrivingCycle", "emissionsMap"]:
-        binary = os.path.join(
-            options.rootDir, options.binDir, name + programSuffix + ".exe")
+        binary = os.path.join(options.rootDir, options.binDir, name + ".exe")
         if name == "sumo-gui":
             if os.path.exists(binary):
                 env["GUISIM_BINARY"] = binary
@@ -225,20 +221,22 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
             env[name.upper() + "_BINARY"] = binary
     log = open(testLog, 'w')
     # provide more information than just the date:
-    nameopt = " -name %sr%s" % (date.today().strftime("%d%b%y"), svnrev)
+    fullOpt = ["-b", env["FILEPREFIX"], "-name", "%sr%s" %
+               (date.today().strftime("%d%b%y"), svnrev)]
+    ttBin = "texttestc.py"
     if options.sumoExe == "meso":
-        runInternalTests.runInternal(
-            programSuffix, "-b " + env["FILEPREFIX"] + nameopt, log)
+        runInternalTests.runInternal("", fullOpt, log, console=True)
     else:
         subprocess.call(
-            "texttest.py -b " + env["FILEPREFIX"] + nameopt, stdout=log, stderr=subprocess.STDOUT, shell=True)
-    subprocess.call("texttest.py -a sumo.gui -b " +
-                    env["FILEPREFIX"] + nameopt, stdout=log, stderr=subprocess.STDOUT, shell=True)
-    subprocess.call(
-        "texttest.py -b " + env["FILEPREFIX"] + " -coll", stdout=log, stderr=subprocess.STDOUT, shell=True)
-    ago = datetime.datetime.now() - datetime.timedelta(50)
-    subprocess.call('texttest.py -s "batch.ArchiveRepository session=' + env["FILEPREFIX"] + ' before=%s"' % ago.strftime("%d%b%Y"),
+            [ttBin] + fullOpt, stdout=log, stderr=subprocess.STDOUT, shell=True)
+    subprocess.call([ttBin, "-a", "sumo.gui"] + fullOpt,
                     stdout=log, stderr=subprocess.STDOUT, shell=True)
+    subprocess.call([ttBin, "-b", env["FILEPREFIX"], "-coll"],
+                    stdout=log, stderr=subprocess.STDOUT, shell=True)
+    ago = datetime.datetime.now() - datetime.timedelta(50)
+    subprocess.call('%s -s "batch.ArchiveRepository session=%s before=%s"' % (
+        ttBin, env["FILEPREFIX"], ago.strftime("%d%b%Y")),
+        stdout=log, stderr=subprocess.STDOUT, shell=True)
     log.close()
     log = open(statusLog, 'w')
     status.printStatus(

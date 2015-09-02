@@ -8,11 +8,15 @@
             <xsd:element name="param" type="paramType" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:sequence minOccurs="0">
                 <xsd:choice>
-                    <xsd:element name="carFollowing-Krauss" type="cfKraussType"/>
-                    <xsd:element name="carFollowing-KraussPS" type="cfKraussType"/>
-                    <xsd:element name="carFollowing-KraussOrig1" type="cfKraussType"/>
                     <xsd:element name="carFollowing-IDM" type="cfIDMType"/>
                     <xsd:element name="carFollowing-IDMM" type="cfIDMMType"/>
+                    <xsd:element name="carFollowing-Krauss" type="cfKraussType"/>
+                    <xsd:element name="carFollowing-KraussPS" type="cfKraussType"/>
+                    <xsd:element name="carFollowing-KraussAB" type="cfKraussType"/>
+                    <xsd:element name="carFollowing-KraussOrig1" type="cfKraussType"/>
+                    <xsd:element name="carFollowing-SmartSK" type="cfSmartType"/>
+                    <xsd:element name="carFollowing-Daniel1" type="cfSmartType"/>
+                    <xsd:element name="carFollowing-PWagner2009" type="cfPWagType"/>
                     <xsd:element name="carFollowing-BKerner" type="cfBKernerType"/>
                     <xsd:element name="carFollowing-Wiedemann" type="cfWiedemannType"/>
                 </xsd:choice>
@@ -35,9 +39,7 @@
         <xsd:attribute name="accel" type="positiveFloatType"/>
         <xsd:attribute name="decel" type="positiveFloatType"/>
         <xsd:attribute name="personCapacity" type="xsd:nonNegativeInteger"/>
-        <xsd:attribute name="personNumber" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="containerCapacity" type="xsd:nonNegativeInteger"/>
-        <xsd:attribute name="containerNumber" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="boardingDuration" type="nonNegativeFloatType"/>
         <xsd:attribute name="loadingDuration" type="nonNegativeFloatType"/>
         <xsd:attribute name="sigma">
@@ -60,6 +62,17 @@
             </xsd:simpleType>
         </xsd:attribute>
         <xsd:attribute name="tau" type="positiveFloatType"/>
+        <xsd:attribute name="tmp1" type="xsd:float"/>
+        <xsd:attribute name="tmp2" type="xsd:float"/>
+        <xsd:attribute name="tmp3" type="xsd:float"/>
+        <xsd:attribute name="tmp4" type="xsd:float"/>
+        <xsd:attribute name="tmp5" type="xsd:float"/>
+        <xsd:attribute name="tauLast" type="xsd:float"/>
+        <xsd:attribute name="apProb" type="xsd:float"/>
+        <xsd:attribute name="k" type="xsd:float"/>
+        <xsd:attribute name="phi" type="xsd:float"/>
+        <xsd:attribute name="security" type="xsd:float"/>
+        <xsd:attribute name="estimation" type="xsd:float"/>
         <xsd:attribute name="carFollowModel" type="xsd:string"/>
         <xsd:attribute name="laneChangeModel">
             <xsd:simpleType>
@@ -72,22 +85,6 @@
         </xsd:attribute>
         <xsd:attribute name="imgFile" type="xsd:string"/>
         <xsd:attribute name="osgFile" type="xsd:string"/>
-    </xsd:complexType>
-
-    <xsd:complexType name="cfKraussType">
-        <xsd:attribute name="accel" type="positiveFloatType"/>
-        <xsd:attribute name="decel" type="positiveFloatType"/>
-        <xsd:attribute name="sigma">
-            <xsd:simpleType>
-                <xsd:restriction base="xsd:float">
-                    <xsd:maxInclusive value="1"/>
-                    <xsd:minInclusive value="0"/>
-                </xsd:restriction>
-            </xsd:simpleType>
-        </xsd:attribute>
-        <xsd:attribute name="tau" type="positiveFloatType"/>
-        <xsd:attribute name="delta" type="xsd:float"/>
-        <xsd:attribute name="stepping" type="positiveIntType"/>
     </xsd:complexType>
 
     <xsd:complexType name="cfIDMType">
@@ -121,6 +118,55 @@
         <xsd:attribute name="adaptTime" type="xsd:float"/>
         <xsd:attribute name="adaptFactor" type="xsd:float"/>
         <xsd:attribute name="stepping" type="positiveIntType"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="cfKraussType">
+        <xsd:attribute name="accel" type="positiveFloatType"/>
+        <xsd:attribute name="decel" type="positiveFloatType"/>
+        <xsd:attribute name="sigma">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:float">
+                    <xsd:maxInclusive value="1"/>
+                    <xsd:minInclusive value="0"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="tau" type="positiveFloatType"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="cfSmartType">
+        <xsd:attribute name="accel" type="positiveFloatType"/>
+        <xsd:attribute name="decel" type="positiveFloatType"/>
+        <xsd:attribute name="sigma">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:float">
+                    <xsd:maxInclusive value="1"/>
+                    <xsd:minInclusive value="0"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="tau" type="positiveFloatType"/>
+        <xsd:attribute name="tmp1" type="xsd:float"/>
+        <xsd:attribute name="tmp2" type="xsd:float"/>
+        <xsd:attribute name="tmp3" type="xsd:float"/>
+        <xsd:attribute name="tmp4" type="xsd:float"/>
+        <xsd:attribute name="tmp5" type="xsd:float"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="cfPWagType">
+        <xsd:attribute name="accel" type="positiveFloatType"/>
+        <xsd:attribute name="decel" type="positiveFloatType"/>
+        <xsd:attribute name="sigma">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:float">
+                    <xsd:maxInclusive value="1"/>
+                    <xsd:minInclusive value="0"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="tau" type="positiveFloatType"/>
+        <xsd:attribute name="tauLast" type="xsd:float"/>
+        <xsd:attribute name="apProb" type="xsd:float"/>
     </xsd:complexType>
 
     <xsd:complexType name="cfBKernerType">
@@ -184,8 +230,8 @@
         <xsd:attribute name="arrivalPos" type="arrivalPosType"/>
         <xsd:attribute name="arrivalSpeed" type="arrivalSpeedType"/>
         <xsd:attribute name="arrival" type="nonNegativeFloatType"/>
+        <xsd:attribute name="routeLength" type="nonNegativeFloatType"/>
         <xsd:attribute name="line" type="xsd:string"/>
-        <xsd:attribute name="personCapacity" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="personNumber" type="xsd:nonNegativeInteger"/>
     </xsd:complexType>
 
@@ -217,7 +263,6 @@
         <xsd:attribute name="arrivalPos" type="arrivalPosType"/>
         <xsd:attribute name="arrivalSpeed" type="arrivalSpeedType"/>
         <xsd:attribute name="line" type="xsd:string"/>
-        <xsd:attribute name="personCapacity" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="personNumber" type="xsd:nonNegativeInteger"/>
     </xsd:complexType>
 
@@ -430,8 +475,8 @@
                     <xsd:attribute name="to" type="xsd:string"/>
                     <xsd:attribute name="speed" type="positiveFloatType"/>
                     <xsd:attribute name="duration" type="positiveFloatType"/>
-                    <xsd:attribute name="departPos" type="xsd:float"/>
-                    <xsd:attribute name="arrivalPos" type="xsd:float"/>
+                    <xsd:attribute name="departPos" type="arrivalPosType"/>
+                    <xsd:attribute name="arrivalPos" type="arrivalPosType"/>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="stop" type="stopType"/>

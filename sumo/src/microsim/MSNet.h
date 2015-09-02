@@ -49,8 +49,8 @@
 #include <utils/geom/Boundary.h>
 #include <utils/geom/Position.h>
 #include <utils/common/SUMOTime.h>
-#include <microsim/trigger/MSBusStop.h>
-#include <microsim/trigger/MSContainerStop.h>
+#include <microsim/trigger/MSChrgStn.h>
+#include <microsim/MSStoppingPlace.h>
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/NamedObjectCont.h>
 #include <utils/vehicle/SUMOAbstractRouter.h>
@@ -165,18 +165,34 @@ public:
                        bool hasInternalLinks);
 
 
-    /** @brief Returns whether the network has vehicle class restrictions
-     * @return whether restrictions are present
+    /** @brief Returns whether the network has specific vehicle class permissions
+     * @return whether permissions are present
      */
-    bool hasRestrictions() const {
-        return myHaveRestrictions;
+    bool hasPermissions() const {
+        return myHavePermissions;
     }
 
 
-    /// @brief Labels the network to contain vehicle class restrictions
-    void setRestrictionFound() {
-        myHaveRestrictions = true;
+    /// @brief Labels the network to contain vehicle class permissions
+    void setPermissionsFound() {
+        myHavePermissions = true;
     }
+
+
+    /** @brief Adds a restriction for an edge type
+     * @param[in] id The id of the type
+     * @param[in] svc The vehicle class the restriction refers to
+     * @param[in] speed The restricted speed
+     */
+    void addRestriction(const std::string& id, const SUMOVehicleClass svc, const SUMOReal speed);
+
+
+    /** @brief Returns the restrictions for an edge type
+     * If no restrictions are present, 0 is returned.
+     * @param[in] id The id of the type
+     * @return The mapping of vehicle classes to maximum speeds
+     */
+    const std::map<SUMOVehicleClass, SUMOReal>* getRestrictions(const std::string& id) const;
 
 
     /** @brief Clears all dictionaries
@@ -400,7 +416,6 @@ public:
         return *myShapeContainer;
     }
 
-
     /** @brief Returns the net's internal edge travel times/efforts container
      *
      * If the net does not have such a container, it is built.
@@ -408,8 +423,6 @@ public:
      */
     MSEdgeWeightsStorage& getWeightsStorage();
     /// @}
-
-
 
     /// @name Insertion and retrieval of bus stops
     /// @{
@@ -425,14 +438,14 @@ public:
      * @param[in] busStop The bus stop to add
      * @return Whether the bus stop could be added
      */
-    bool addBusStop(MSBusStop* busStop);
+    bool addBusStop(MSStoppingPlace* busStop);
 
 
     /** @brief Returns the named bus stop
      * @param[in] id The id of the bus stop to return.
      * @return The named bus stop, or 0 if no such stop exists
      */
-    MSBusStop* getBusStop(const std::string& id) const;
+    MSStoppingPlace* getBusStop(const std::string& id) const;
 
 
     /** @brief Returns the bus stop close to the given position
@@ -458,13 +471,13 @@ public:
      * @param[in] containerStop The container stop to add
      * @return Whether the container stop could be added
      */
-    bool addContainerStop(MSContainerStop* containerStop);
+    bool addContainerStop(MSStoppingPlace* containerStop);
 
     /** @brief Returns the named container stop
      * @param[in] id The id of the container stop to return.
      * @return The named container stop, or 0 if no such stop exists
      */
-    MSContainerStop* getContainerStop(const std::string& id) const;
+    MSStoppingPlace* getContainerStop(const std::string& id) const;
 
     /** @brief Returns the container stop close to the given position
      * @param[in] lane the lane of the container stop to return.
@@ -474,6 +487,32 @@ public:
     std::string getContainerStopID(const MSLane* lane, const SUMOReal pos) const;
     /// @}
 
+    /** @brief Adds a chargingg station
+     *
+     * If another charging station with the same id exists, false is returned.
+     *  Otherwise, the charging station is added to the internal bus stop
+     *  container "myChrgStnDict".
+     *
+     * This control gets responsible for deletion of the added charging station.
+     *
+     * @param[in] chrgStn The charging station add
+     * @return Whether the charging station could be added
+     */
+    bool addChrgStn(MSChrgStn* chrgStn);
+
+    /** @brief Returns the named charging station
+     * @param[in] id The id of the charging station to return.
+     * @return The named charging station, or 0 if no such stop exists
+     */
+    MSChrgStn* getChrgStn(const std::string& id) const;
+
+    /** @brief Returns the charging station close to the given position
+     * @param[in] lane the lane of the charging station to return.
+     * @param[in] pos the position of the bus stop to return.
+     * @return The charging station id on the location, or "" if no such stop exists
+     */
+    std::string getChrgStnID(const MSLane* lane, const SUMOReal pos) const;
+    /// @}
 
 
     /// @name Notification about vehicle state changes
@@ -586,6 +625,15 @@ public:
         return myHasInternalLinks;
     }
 
+    /// @brief return whether the network contains internal links
+    bool hasElevation() const {
+        return myHasElevation;
+    }
+
+protected:
+    /// @brief check all lanes for elevation data
+    bool checkElevation();
+
 protected:
     /// @brief Unique instance of MSNet
     static MSNet* myInstance;
@@ -647,7 +695,7 @@ protected:
     long mySimBeginMillis;
 
     /// @brief The overall number of vehicle movements
-    SUMOLong myVehiclesMoved;
+    long long int myVehiclesMoved;
     //}
 
 
@@ -664,19 +712,28 @@ protected:
 
 
     /// @brief Whether the network contains edges which not all vehicles may pass
-    bool myHaveRestrictions;
+    bool myHavePermissions;
+
+    /// @brief The vehicle class specific speed restrictions
+    std::map<std::string, std::map<SUMOVehicleClass, SUMOReal> > myRestrictions;
 
     /// @brief Whether the network contains internal links/lanes/edges
     bool myHasInternalLinks;
+
+    /// @brief Whether the network contains elevation data
+    bool myHasElevation;
 
     /// @brief Storage for maximum vehicle number
     int myTooManyVehicles;
 
     /// @brief Dictionary of bus stops
-    NamedObjectCont<MSBusStop*> myBusStopDict;
+    NamedObjectCont<MSStoppingPlace*> myBusStopDict;
 
     /// @brief Dictionary of container stops
-    NamedObjectCont<MSContainerStop*> myContainerStopDict;
+    NamedObjectCont<MSStoppingPlace*> myContainerStopDict;
+
+    /// @brief Dictionary of charging Stations
+    NamedObjectCont<MSChrgStn*> myChrgStnDict;
 
     /// @brief Container for vehicle state listener
     std::vector<VehicleStateListener*> myVehicleStateListeners;
@@ -687,9 +744,9 @@ protected:
      * @note we provide one member for every switchable router type
      * because the class structure makes it inconvenient to use a superclass*/
     mutable bool myRouterTTInitialized;
-    mutable DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >* myRouterTTDijkstra;
-    mutable AStarRouter<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >* myRouterTTAStar;
-    mutable DijkstraRouterEffort<MSEdge, SUMOVehicle, prohibited_withRestrictions<MSEdge, SUMOVehicle> >* myRouterEffort;
+    mutable DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >* myRouterTTDijkstra;
+    mutable AStarRouter<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >* myRouterTTAStar;
+    mutable DijkstraRouterEffort<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >* myRouterEffort;
     mutable MSPedestrianRouterDijkstra* myPedestrianRouter;
 
 

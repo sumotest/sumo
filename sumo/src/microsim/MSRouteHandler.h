@@ -143,15 +143,21 @@ protected:
     /// Processing of a stop
     void addStop(const SUMOSAXAttributes& attrs);
 
+    ///@ brief parse depart- and arrival positions of a walk
+    void parseWalkPositions(const SUMOSAXAttributes& attrs, const std::string& personID,
+                            const MSEdge* fromEdge, const MSEdge* toEdge,
+                            SUMOReal& departPos, SUMOReal& arrivalPos, MSStoppingPlace*& bs, bool& ok);
+    SUMOReal parseWalkPos(SumoXMLAttr attr, const std::string& id, const MSEdge* edge, const std::string& val);
+
 protected:
     /// @brief The current route
     ConstMSEdgeVector myActiveRoute;
 
     /// @brief The plan of the current person
-    MSPerson::MSPersonPlan* myActivePlan;
+    MSTransportable::MSTransportablePlan* myActivePlan;
 
     /// @brief The plan of the current container
-    MSContainer::MSContainerPlan* myActiveContainerPlan;
+    MSTransportable::MSTransportablePlan* myActiveContainerPlan;
 
     /// @brief Information whether vehicles shall be directly added to the network or kept within the buffer
     bool myAddVehiclesDirectly;
