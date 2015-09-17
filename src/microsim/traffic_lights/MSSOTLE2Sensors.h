@@ -34,6 +34,7 @@ class MSSOTLE2Sensors :	public MSSOTLSensors
 protected :
 	void buildSensorForLane(MSLane* lane, NLDetectorBuilder &nb);
 	void buildSensorForLane(MSLane* lane, NLDetectorBuilder &nb, double sensorLength);
+	void buildContinueSensior(MSLane* lane, NLDetectorBuilder &nb, double sensorLength, MSLane* continueOnLane, double usedLength);
 	void buildSensorForOutLane(MSLane* lane, NLDetectorBuilder &nb);
 	void buildSensorForOutLane(MSLane* lane, NLDetectorBuilder &nb, double sensorLength);
 
@@ -117,15 +118,29 @@ public:
 	virtual double meanVehiclesSpeed(std::string laneId);
 
 protected:
-	MSLane_MSE2CollectorMap mySensorsMap_InLanes;
-	MSLaneID_MSE2CollectorMap mySensorsIDMap_InLanes;
-	MSLaneID_MaxSpeedMap myMaxSpeedMap_InLanes;
 
-	MSLane_MSE2CollectorMap mySensorsMap_OutLanes;
-	MSLaneID_MSE2CollectorMap mySensorsIDMap_OutLanes;
-	MSLaneID_MaxSpeedMap myMaxSpeedMap_OutLanes;
+	template<typename Method, typename ValueType>
+	bool getVelueFromSensor(std::string laneId, Method function, ValueType & value)
+	{
+	  if(m_sensorMap.find(laneId) != m_sensorMap.end())
+	  {
+	    value = (m_sensorMap[laneId]->*function)();
+	    return true;
+	  }
+	  return false;
+	}
+
+//	MSLane_MSE2CollectorMap m_sensorMap;
+	MSLaneID_MSE2CollectorMap m_sensorMap;
+	MSLaneID_MaxSpeedMap m_maxSpeedMap;
+
+//	MSLane_MSE2CollectorMap mySensorsMap_OutLanes;
+//	MSLaneID_MSE2CollectorMap mySensorsIDMap_OutLanes;
+//	MSLaneID_MaxSpeedMap myMaxSpeedMap_OutLanes;
 
 	double speedThresholdParam;
+
+	std::map<std::string, std::vector<std::string> > m_continueSensorOnLanes;
 };
 
 #endif

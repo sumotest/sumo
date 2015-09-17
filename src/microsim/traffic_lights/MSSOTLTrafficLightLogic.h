@@ -261,6 +261,14 @@ private:
 	//This helps to compute the timesteps to get the cars*timesteps value
 	map<size_t, SUMOTime> lastCheckForTargetPhase;
 
+	//Map to store how many selection rounds have been done from the last selection of the phase
+	map<size_t, unsigned int> targetPhasesLastSelection;
+
+	unsigned int getTargetPhaseMaxLastSelection()
+	{
+	  //return 2 * targetPhasesCTS.size() - 1;
+	  return targetPhasesCTS.size() - 1;
+	}
 
 	/*
 	 * This member keeps track which is the current steps chain, i.e.

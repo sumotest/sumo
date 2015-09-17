@@ -105,6 +105,7 @@ MSSOTLTrafficLightLogic::setupCTS() {
 		if (getPhase(phaseStep).isTarget()) {
 			targetPhasesCTS[phaseStep] = 0;
 			lastCheckForTargetPhase[phaseStep] = MSNet::getInstance()->getCurrentTimeStep();
+			targetPhasesLastSelection[phaseStep] = 0;
 		}
 	}
 }
@@ -237,7 +238,7 @@ MSSOTLTrafficLightLogic::updateCTS() {
 			targetPhasesCTS.begin(); mapIterator != targetPhasesCTS.end();
 			mapIterator++) {
 		unsigned int chain = mapIterator->first;
-
+		unsigned int oldVal = mapIterator->second;
 		if (chain != lastChain) {
 			//Get the number of timesteps since the last check for that phase
 			elapsedTimeSteps = now - lastCheckForTargetPhase[chain];
@@ -260,6 +261,9 @@ MSSOTLTrafficLightLogic::updateCTS() {
 			default:
 				WRITE_ERROR("Unrecognized traffic threshold calculation mode");
 			}
+			ostringstream oss;
+			oss << "MSSOTLTrafficLightLogic::updateCTS->TLC " << getID() << " chain " << chain << " oldVal " << oldVal << " newVal " << mapIterator->second;
+			WRITE_MESSAGE(oss.str());
 		}
 		if(isDecayThresholdActivated())
 			updateDecayThreshold();
@@ -372,15 +376,68 @@ MSSOTLTrafficLightLogic::getCurrentPhaseElapsed() {
 
 size_t
 MSSOTLTrafficLightLogic::getPhaseIndexWithMaxCTS() {
-	size_t bestIndex;
-	unsigned int maxCTS = 0;
-	for (map<size_t, unsigned int>::const_iterator iterator = targetPhasesCTS.begin(); iterator!= targetPhasesCTS.end(); iterator++) {
-		if ((iterator->first != lastChain) && (maxCTS <= iterator->second)) {
-			bestIndex = iterator->first;
-			maxCTS = iterator->second;
-		}
-	}
-	return bestIndex;
+    unsigned int maxCTS = 0;
+    unsigned int maxLastStep = getTargetPhaseMaxLastSelection();
+    bool usedMaxCTS = false;
+    std::vector<size_t> equalIndexes = std::vector<size_t>();
+    for (map<size_t, unsigned int>::const_iterator it = targetPhasesLastSelection.begin();
+        it != targetPhasesLastSelection.end(); ++it)
+    {
+      if (it->first != lastChain)
+      {
+        if (maxLastStep < it->second)
+        {
+          maxLastStep = it->second;
+          equalIndexes.clear();
+          equalIndexes.push_back(it->first);
+        } else if (maxLastStep == it->second)
+        {
+          equalIndexes.push_back(it->first);
+        }
+      }
+    }
+    if (equalIndexes.size() == 0)
+    {
+      usedMaxCTS = true;
+      for (map<size_t, unsigned int>::const_iterator iterator = targetPhasesCTS.begin();
+          iterator != targetPhasesCTS.end(); ++iterator)
+      {
+        if (iterator->first != lastChain)
+        {
+          if (maxCTS < iterator->second)
+          {
+            maxCTS = iterator->second;
+            equalIndexes.clear();
+            equalIndexes.push_back(iterator->first);
+          } else if (maxCTS == iterator->second)
+          {
+            equalIndexes.push_back(iterator->first);
+          }
+        }
+      }
+    }
+
+    ostringstream oss;
+    oss << "MSSOTLTrafficLightLogic::getPhaseIndexWithMaxCTS-> TLC " << getID();
+    if(usedMaxCTS)
+      oss << " maxCTS " << maxCTS;
+    else
+      oss << " forcing selection since not selected for " << maxLastStep;
+    if (equalIndexes.size() == 1)
+    {
+      oss << " phase " << equalIndexes[0];
+      WRITE_MESSAGE(oss.str());
+      return equalIndexes[0];
+    } else
+    {
+      int index = RandHelper::rand(equalIndexes.size());
+      oss << " phases [";
+      for (std::vector<size_t>::const_iterator it = equalIndexes.begin(); it != equalIndexes.end(); ++it)
+        oss << *it << ", ";
+      oss << "]. Random select " << equalIndexes[index];
+      WRITE_MESSAGE(oss.str());
+      return equalIndexes[index];
+    }
 }
 
 size_t
@@ -412,40 +469,58 @@ MSSOTLTrafficLightLogic::decideNextPhase() {
 
 SUMOTime 
 MSSOTLTrafficLightLogic::trySwitch() {
-	// To check if decideNextPhase changes the step
-	unsigned int previousStep = getCurrentPhaseIndex() ;
-	SUMOTime elapsed = getCurrentPhaseElapsed();
-	// Update CTS according to sensors
-	updateCTS();
+  if (MSNet::getInstance()->getCurrentTimeStep() % 1000 == 0)
+  {
+    WRITE_MESSAGE("MSSOTLTrafficLightLogic::trySwitch()")
+    // To check if decideNextPhase changes the step
+    unsigned int previousStep = getCurrentPhaseIndex() ;
+    SUMOTime elapsed = getCurrentPhaseElapsed();
+    // Update CTS according to sensors
+    updateCTS();
 
-	// Invoking the function member, specialized for each SOTL logic
-	setStep(decideNextPhase());
-	MSPhaseDefinition currentPhase = getCurrentPhaseDef();
+    // Invoking the function member, specialized for each SOTL logic
+    setStep(decideNextPhase());
+    MSPhaseDefinition currentPhase = getCurrentPhaseDef();
 
-	//At the end, check if new step started
-	if (getCurrentPhaseIndex() != previousStep) {
-		//Check if a new steps chain started
-		if (currentPhase.isTarget())  {
-			//Reset CTS for the ending steps chain
-			resetCTS(lastChain);
-			//Update lastTargetPhase
-			lastChain = getCurrentPhaseIndex();
-			if(isDecayThresholdActivated())
-				decayThreshold = 1;
-		}
-		//Inform the sensors logic
-		mySensors->stepChanged(getCurrentPhaseIndex());
-		//Store the time the new phase started
-		currentPhase.myLastSwitch = MSNet::getInstance()->getCurrentTimeStep();
-		if(isDecayThresholdActivated())
-			decayThreshold = 1;
-		ANALYSIS_DBG(
-			ostringstream oss;
-			oss<< getID() << " from "<<getPhase(previousStep).getState()<<" to " <<currentPhase.getState() <<" after " << time2string(elapsed);
-			WRITE_MESSAGE(time2string(MSNet::getInstance()->getCurrentTimeStep()) + "\tMSSOTLTrafficLightLogic::trySwitch " + oss.str());
-		)
-	}
-
+    //At the end, check if new step started
+    if (getCurrentPhaseIndex() != previousStep) {
+      //Check if a new steps chain started
+      if (currentPhase.isTarget())  {
+        //Reset CTS for the ending steps chain
+        resetCTS(lastChain);
+        //Update lastTargetPhase
+        lastChain = getCurrentPhaseIndex();
+        for(map<size_t, unsigned int>::iterator it = targetPhasesLastSelection.begin(); it != targetPhasesLastSelection.end(); ++ it)
+        {
+          if(it->first == lastChain)
+          {
+            if(it->second >= getTargetPhaseMaxLastSelection())
+            {
+              ostringstream oss;
+              oss << "Forced selection of the phase " << lastChain << " since its last selection was " << it->second << " changes ago";
+              WRITE_MESSAGE(oss.str())
+            }
+            it->second = 0;
+          }
+          else if(it->first != previousStep)
+            ++it->second;
+        }
+        if(isDecayThresholdActivated())
+          decayThreshold = 1;
+      }
+      //Inform the sensors logic
+      mySensors->stepChanged(getCurrentPhaseIndex());
+      //Store the time the new phase started
+      currentPhase.myLastSwitch = MSNet::getInstance()->getCurrentTimeStep();
+      if(isDecayThresholdActivated())
+        decayThreshold = 1;
+      ANALYSIS_DBG(
+        ostringstream oss;
+        oss<< getID() << " from "<<getPhase(previousStep).getState()<<" to " <<currentPhase.getState() <<" after " << time2string(elapsed);
+        WRITE_MESSAGE(time2string(MSNet::getInstance()->getCurrentTimeStep()) + "\tMSSOTLTrafficLightLogic::trySwitch " + oss.str());
+      )
+    }
+  }
 	return computeReturnTime();
 }
 
