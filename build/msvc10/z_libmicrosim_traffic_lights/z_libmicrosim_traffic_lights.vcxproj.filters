@@ -101,6 +101,9 @@
     <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSTLLogicControl.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSPushButton.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSActuatedTrafficLightLogic.h">
@@ -194,6 +197,9 @@
       <Filter>Header-Dateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSSOTLPolicy5DStimulus.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSPushButton.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>
