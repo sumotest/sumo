@@ -36,8 +36,15 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <utils/common/StdDefs.h>
 #include <utils/common/SUMOTime.h>
 #include <utils/foxtools/MFXMutex.h>
+
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class GUIEvent;
 
 
 // ===========================================================================
@@ -90,6 +97,13 @@ public:
      */
     virtual SUMOReal getDelay() const {
         return 0;
+    }
+
+    /** @brief Sends an event from the application thread to the GUI and waits until it is handled
+     * @param event the event to send
+     */
+    virtual void sendBlockingEvent(GUIEvent* event) {
+        UNUSED_PARAMETER(event);
     }
 
 protected:

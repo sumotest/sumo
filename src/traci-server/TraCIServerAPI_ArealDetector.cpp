@@ -52,17 +52,17 @@ TraCIServerAPI_ArealDetector::processGet(TraCIServer& server, tcpip::Storage& in
     int variable = inputStorage.readUnsignedByte();
     std::string id = inputStorage.readString();
     // check variable
-    if (variable != ID_LIST 
-            && variable != ID_COUNT 
-            && variable != JAM_LENGTH_VEHICLE 
-            && variable != JAM_LENGTH_METERS 
-            && variable != LAST_STEP_VEHICLE_NUMBER 
-            && variable != LAST_STEP_MEAN_SPEED 
+    if (variable != ID_LIST
+            && variable != ID_COUNT
+            && variable != JAM_LENGTH_VEHICLE
+            && variable != JAM_LENGTH_METERS
+            && variable != LAST_STEP_VEHICLE_NUMBER
+            && variable != LAST_STEP_MEAN_SPEED
             && variable != LAST_STEP_VEHICLE_ID_LIST
-            && variable != LAST_STEP_VEHICLE_HALTING_NUMBER 
-            && variable != ID_COUNT 
+            && variable != LAST_STEP_VEHICLE_HALTING_NUMBER
+            && variable != ID_COUNT
             && variable != LAST_STEP_OCCUPANCY
-            && variable != VAR_POSITION 
+            && variable != VAR_POSITION
             && variable != VAR_LANE_ID
             && variable != VAR_LENGTH) {
         return server.writeErrorStatusCmd(CMD_GET_AREAL_DETECTOR_VARIABLE, "Get Areal Detector Variable: unsupported variable specified", outputStorage);
@@ -85,7 +85,7 @@ TraCIServerAPI_ArealDetector::processGet(TraCIServer& server, tcpip::Storage& in
         tempMsg.writeUnsignedByte(TYPE_INTEGER);
         tempMsg.writeInt((int) ids.size());
     } else {
-        MSE2Collector* e2 = static_cast<MSE2Collector*>(MSNet::getInstance()->getDetectorControl().getTypedDetectors(SUMO_TAG_LANE_AREA_DETECTOR).get(id));
+        MSE2Collector* e2 = dynamic_cast<MSE2Collector*>(MSNet::getInstance()->getDetectorControl().getTypedDetectors(SUMO_TAG_LANE_AREA_DETECTOR).get(id));
         if (e2 == 0) {
             return server.writeErrorStatusCmd(CMD_GET_AREAL_DETECTOR_VARIABLE, "Areal detector '" + id + "' is not known", outputStorage);
         }

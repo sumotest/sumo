@@ -66,18 +66,25 @@ ROEdgeVector ROEdge::myEdges;
 // ===========================================================================
 // method definitions
 // ===========================================================================
-ROEdge::ROEdge(const std::string& id, RONode* from, RONode* to, unsigned int index, const int priority)
-    : Named(id), myFromNode(from), myToNode(to), myIndex(index), myPriority(priority),
-      mySpeed(-1), myLength(0),
-      myUsingTTTimeLine(false),
-      myUsingETimeLine(false),
-      myCombinedPermissions(0),
-      myFromJunction(0),
-      myToJunction(0) {
+ROEdge::ROEdge(const std::string& id, RONode* from, RONode* to, unsigned int index, const int priority) :
+    Named(id),
+    myFromJunction(from),
+    myToJunction(to),
+    myIndex(index),
+    myPriority(priority),
+    mySpeed(-1),
+    myLength(0),
+    myUsingTTTimeLine(false),
+    myUsingETimeLine(false),
+    myCombinedPermissions(0) {
     while (myEdges.size() <= index) {
         myEdges.push_back(0);
     }
     myEdges[index] = this;
+    if (from == 0 && to == 0) {
+        // TAZ edge, no lanes
+        myCombinedPermissions = SVCAll;
+    }
 }
 
 
@@ -136,8 +143,8 @@ ROEdge::getEffort(const ROVehicle* const veh, SUMOReal time) const {
 
 SUMOReal
 ROEdge::getDistanceTo(const ROEdge* other) const {
-    if (getToNode() != 0 && other->getFromNode() != 0) {
-        return getToNode()->getPosition().distanceTo2D(other->getFromNode()->getPosition());
+    if (getToJunction() != 0 && other->getFromJunction() != 0) {
+        return getToJunction()->getPosition().distanceTo2D(other->getFromJunction()->getPosition());
     } else {
         return 0; // optimism is just right for astar
     }
@@ -274,7 +281,7 @@ ROEdge::dictionary(size_t id) {
 
 const ROEdgeVector&
 ROEdge::getSuccessors(SUMOVehicleClass vClass) const {
-    if (vClass == SVC_IGNORING || !RONet::getInstance()->hasPermissions()) {
+    if (vClass == SVC_IGNORING || !RONet::getInstance()->hasPermissions() || myFunc == ET_DISTRICT) {
         return myFollowingEdges;
     }
 #ifdef HAVE_FOX
@@ -304,6 +311,12 @@ ROEdge::getSuccessors(SUMOVehicleClass vClass) const {
                         followers.insert(&next->getEdge());
                     }
                 }
+            }
+        }
+        // also add district edges (they are not connected at the lane level
+        for (ROEdgeVector::const_iterator it = myFollowingEdges.begin(); it != myFollowingEdges.end(); ++it) {
+            if ((*it)->getFunc() == ET_DISTRICT) {
+                followers.insert(*it);
             }
         }
         myClassesSuccessorMap[vClass].insert(myClassesSuccessorMap[vClass].begin(),

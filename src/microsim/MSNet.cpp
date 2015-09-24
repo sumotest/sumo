@@ -77,6 +77,9 @@
 #include <utils/iodevices/OutputDevice_File.h>
 #include "output/MSFCDExport.h"
 #include "output/MSEmissionExport.h"
+
+#include "output/MSBatteryExport.h"
+
 #include "output/MSFullExport.h"
 #include "output/MSQueueExport.h"
 #include "output/MSVTKExport.h"
@@ -175,8 +178,7 @@ MSNet::MSNet(MSVehicleControl* vc, MSEventControl* beginOfTimestepEvents,
     myRouterTTDijkstra(0),
     myRouterTTAStar(0),
     myRouterEffort(0),
-    myPedestrianRouter(0) 
-{
+    myPedestrianRouter(0) {
     if (myInstance != 0) {
         throw ProcessError("A network was already constructed.");
     }
@@ -387,6 +389,14 @@ MSNet::closeSimulation(SUMOTime start) {
         if (myVehicleControl->getEmergencyStops() > 0) {
             msg << "Emergency Stops: " << myVehicleControl->getEmergencyStops() << "\n";
         }
+        if (myPersonControl != 0 && myPersonControl->getLoadedPersonNumber() > 0) {
+            msg << "Persons: " << "\n"
+                << " Inserted: " << myPersonControl->getLoadedPersonNumber() << "\n"
+                << " Running: " << myPersonControl->getRunningPersonNumber() << "\n";
+            if (myPersonControl->getJammedPersonNumber() > 0) {
+                msg << " Jammed: " << myPersonControl->getJammedPersonNumber() << "\n";
+            }
+        }
         WRITE_MESSAGE(msg.str());
     }
     myDetectorControl->close(myStep);
@@ -592,6 +602,12 @@ MSNet::writeOutput() {
     // check emission dumps
     if (OptionsCont::getOptions().isSet("emission-output")) {
         MSEmissionExport::write(OutputDevice::getDeviceByOption("emission-output"), myStep);
+    }
+
+    // battery dumps
+    if (OptionsCont::getOptions().isSet("battery-output")) {
+        MSBatteryExport::write(OutputDevice::getDeviceByOption("battery-output"), myStep,
+                               oc.getInt("battery-output.precision"));
     }
 
     // check full dumps
@@ -805,6 +821,31 @@ MSNet::getContainerStopID(const MSLane* lane, const SUMOReal pos) const {
 }
 
 
+bool
+MSNet::addChrgStn(MSChrgStn* chrgStn) {
+    return myChrgStnDict.add(chrgStn->getID(), chrgStn);
+}
+
+
+MSChrgStn*
+MSNet::getChrgStn(const std::string& id) const {
+    return myChrgStnDict.get(id);
+}
+
+
+std::string
+MSNet::getChrgStnID(const MSLane* lane, const SUMOReal pos) const {
+    const std::map<std::string, MSChrgStn*>& vals = myChrgStnDict.getMyMap();
+    for (std::map<std::string, MSChrgStn*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
+        MSChrgStn* chrgStn = it->second;
+        if (&chrgStn->getLane() == lane && chrgStn->getBeginLanePosition() <= pos && chrgStn->getEndLanePosition() >= pos) {
+            return chrgStn->getID();
+        }
+    }
+    return "";
+}
+
+
 SUMOAbstractRouter<MSEdge, SUMOVehicle>&
 MSNet::getRouterTT(const MSEdgeVector& prohibited) const {
     if (!myRouterTTInitialized) {
@@ -863,7 +904,7 @@ MSNet::getLanesRTree() const {
 }
 
 
-bool 
+bool
 MSNet::checkElevation() {
     const MSEdgeVector& edges = myEdges->getEdges();
     for (MSEdgeVector::const_iterator e = edges.begin(); e != edges.end(); ++e) {

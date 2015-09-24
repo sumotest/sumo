@@ -23,8 +23,7 @@ import os
 import subprocess
 import sys
 import random
-sys.path.append(os.path.join(
-    os.path.dirname(sys.argv[0]), "..", "..", "..", "..", "..", "tools"))
+sys.path.append(os.path.join(os.environ['SUMO_HOME'], 'tools'))
 import traci
 import sumolib
 
@@ -32,9 +31,9 @@ sumoBinary = sumolib.checkBinary('sumo')
 
 PORT = sumolib.miscutils.getFreeSocketPort()
 sumoProcess = subprocess.Popen([sumoBinary,
-    '-c', 'sumo.sumocfg',
-    '--additional-files', 'input_additional.add.xml',
-    '--remote-port', str(PORT)], stdout=sys.stdout)
+                                '-c', 'sumo.sumocfg',
+                                '--additional-files', 'input_additional.add.xml',
+                                '--remote-port', str(PORT)], stdout=sys.stdout)
 traci.init(PORT)
 
 
@@ -92,6 +91,18 @@ def check(vehID):
     print "waiting time", traci.vehicle.getWaitingTime(vehID)
     print "driving dist", traci.vehicle.getDrivingDistance(vehID, "4fi", 2.)
     print "driving dist 2D", traci.vehicle.getDrivingDistance2D(vehID, 100., 100.)
+
+
+def checkOffRoad(vehID):
+    print ("veh", vehID,
+           "speed", traci.vehicle.getSpeed(vehID),
+           "pos", traci.vehicle.getPosition(vehID),
+           "angle", traci.vehicle.getAngle(vehID),
+           "road", traci.vehicle.getRoadID(vehID),
+           "lane", traci.vehicle.getLaneID(vehID),
+           "lanePos", traci.vehicle.getLanePosition(vehID),
+           "CO2", traci.vehicle.getCO2Emission(vehID)
+           )
 
 vehID = "horiz"
 check(vehID)
@@ -172,7 +183,8 @@ for i in range(9):
     print "step", step()
     print "vehicles", traci.vehicle.getIDList()
 # XXX this doesn't work. see #1721
-traci.vehicle.add("departTriggered", "horizontal", depart=traci.vehicle.DEPART_TRIGGERED)
+traci.vehicle.add(
+    "departTriggered", "horizontal", depart=traci.vehicle.DEPART_TRIGGERED)
 print "step", step()
 print "vehicles", traci.vehicle.getIDList()
 # test for setting a route with busstops
@@ -186,18 +198,22 @@ print "vehicle '%s' routeID=%s" % (routeTestVeh, traci.vehicle.getRouteID(routeT
 for i in range(14):
     print "step", step()
     print "vehicle '%s' lane=%s lanePos=%s stopped=%s" % (routeTestVeh,
-            traci.vehicle.getLaneID(routeTestVeh),
-            traci.vehicle.getLanePosition(routeTestVeh),
-            traci.vehicle.isStopped(routeTestVeh))
+                                                          traci.vehicle.getLaneID(
+                                                              routeTestVeh),
+                                                          traci.vehicle.getLanePosition(
+                                                              routeTestVeh),
+                                                          traci.vehicle.isStopped(routeTestVeh))
 # test for adding a new vehicle with a route with busstop
 routeTestVeh = "routeTest2"
 traci.vehicle.add(routeTestVeh, "withStop")
 for i in range(14):
     print "step", step()
     print "vehicle '%s' lane=%s lanePos=%s stopped=%s" % (routeTestVeh,
-            traci.vehicle.getLaneID(routeTestVeh),
-            traci.vehicle.getLanePosition(routeTestVeh),
-            traci.vehicle.isStopped(routeTestVeh))
+                                                          traci.vehicle.getLaneID(
+                                                              routeTestVeh),
+                                                          traci.vehicle.getLanePosition(
+                                                              routeTestVeh),
+                                                          traci.vehicle.isStopped(routeTestVeh))
 # test for adding a veh and a busstop
 busVeh = "bus"
 traci.vehicle.add(busVeh, "horizontal")
@@ -205,7 +221,63 @@ traci.vehicle.setBusStop(busVeh, "busstop1", duration=2000)
 for i in range(14):
     print "step", step()
     print "vehicle '%s' lane=%s lanePos=%s stopped=%s" % (busVeh,
-            traci.vehicle.getLaneID(busVeh),
-            traci.vehicle.getLanePosition(busVeh),
-            traci.vehicle.isStopped(busVeh))
+                                                          traci.vehicle.getLaneID(
+                                                              busVeh),
+                                                          traci.vehicle.getLanePosition(
+                                                              busVeh),
+                                                          traci.vehicle.isStopped(busVeh))
+# test for adding a trip
+traci.route.add("trip", ["3si"])
+traci.vehicle.add("triptest", "trip")
+traci.vehicle.changeTarget("triptest", "4si")
+print traci.vehicle.getRoute("triptest")
+# test returned values of parking vehicle
+parkingVeh = "parking"
+traci.vehicle.add(parkingVeh, "horizontal")
+traci.vehicle.setStop(parkingVeh, "2fi", pos=20.0, laneIndex=0, duration=10000,
+                      flags=traci.vehicle.STOP_PARKING)
+for i in range(20):
+    print "step", step()
+    checkOffRoad(parkingVeh)
+# test moveTo of parking vehicle
+parkingVeh = "parking2"
+traci.vehicle.add(parkingVeh, "horizontal")
+traci.vehicle.setStop(parkingVeh, "2fi", pos=20.0, laneIndex=0, duration=10000,
+                      flags=traci.vehicle.STOP_PARKING)
+for i in range(8):
+    print "step", step()
+traci.vehicle.moveTo(parkingVeh, "1o_0", 40)
+for i in range(8):
+    print "step", step()
+    checkOffRoad(parkingVeh)
+# test modifying a vehicle before insertion
+offRoad = "offRoad"
+traci.vehicle.add("blocker", "horizontal")
+traci.vehicle.add(offRoad, "horizontal")
+checkOffRoad(offRoad)
+traci.vehicle.setSpeedFactor(offRoad, 1.1)
+traci.vehicle.moveTo(offRoad, "1o_0", 40)
+for i in range(3):
+    print "step", step()
+    checkOffRoad(offRoad)
+# test modifying a teleporting vehicle
+tele = "collider"
+traci.vehicle.add("victim", "horizontal")
+traci.vehicle.setStop("victim", "2fi", pos=5.0, laneIndex=0, duration=10000)
+# block the next lane to avoid instant insertion after teleport
+traci.vehicle.add("block_2si", "horizontal")
+traci.vehicle.moveTo("block_2si", "2si_1", 205)
+traci.vehicle.setLength("block_2si", 200)
+# cause collision on insertion
+traci.vehicle.add(tele, "horizontal")
+traci.vehicle.moveTo(tele, "2fi_0", 3)
+for i in range(5):
+    checkOffRoad(tele)
+    print "step", step()
+traci.vehicle.moveTo(tele, "1o_0", 40)
+for i in range(3):
+    checkOffRoad(tele)
+    print "step", step()
+
+# done
 traci.close()

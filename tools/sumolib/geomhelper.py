@@ -28,6 +28,10 @@ def distance(p1, p2):
     return math.sqrt(dx * dx + dy * dy)
 
 
+def polyLength(polygon):
+    return sum([distance(a, b) for a, b in zip(polygon[:-1], polygon[1:])])
+
+
 def lineOffsetWithMinimumDistanceToPoint(point, line_start, line_end, perpendicular=False):
     """Return the offset from line (line_start, line_end) where the distance to
     point is minimal"""

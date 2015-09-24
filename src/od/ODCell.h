@@ -4,7 +4,7 @@
 /// @author  Daniel Krajzewicz
 /// @author  Yun-Pang Floetteroed
 /// @date    Sept 2002
-/// @version $Id: ODCell.h 18095 2015-03-17 09:39:00Z behrisch $
+/// @version $Id: ODCell.h 18534 2015-07-07 09:26:36Z behrisch $
 ///
 // A single O/D-matrix cell
 /****************************************************************************/
@@ -32,6 +32,10 @@
 #include <config.h>
 #endif
 
+#include <vector>
+#include <map>
+#include <utils/common/SUMOTime.h>
+
 
 // ===========================================================================
 // class declarations
@@ -50,8 +54,6 @@ class RORoute;
  *  and destination via string-ids of the district, the begin and the end time
  *  for which this cell is valid, the id of the vehicle type to use, and the
  *  amount of vehicles to insert during the described interval.
- *
- * @todo Check whether the vehicle type is used and makes sense herein
  */
 struct ODCell {
     /// @brief The number of vehicles
@@ -74,6 +76,9 @@ struct ODCell {
 
     /// @brief the list of paths / routes
     std::vector<RORoute*> pathsVector;  // path_id, string of edges?
+
+    /// @brief mapping of departure times to departing vehicles, if already fixed
+    std::map<SUMOTime, std::vector<std::string> > departures;
 };
 
 

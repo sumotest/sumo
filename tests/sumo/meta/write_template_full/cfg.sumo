@@ -26,6 +26,8 @@
         <netstate-dump.empty-edges value="false" synonymes="dump-empty-edges netstate-output.empty-edges netstate.empty-edges" type="BOOL" help="Write also empty edges completely when dumping"/>
         <netstate-dump.precision value="2" synonymes="dump-precision netstate-output.precision netstate.precision" type="INT" help="Write positions and speeds with the given precision (default 2)"/>
         <emission-output value="" type="FILE" help="Save the emission values of each vehicle"/>
+        <battery-output value="" type="FILE" help="Save the battery values of each vehicle"/>
+        <battery-output.precision value="2" type="INT" help="Write battery values with the given precision (default 2)"/>
         <fcd-output value="" type="FILE" help="Save the Floating Car Data"/>
         <fcd-output.geo value="false" type="BOOL" help="Save the Floating Car Data using geo-coordinates (lon/lat)"/>
         <fcd-output.signals value="false" type="BOOL" help="Add the vehicle signal state to the FCD output (brake lights etc.)"/>
@@ -45,7 +47,7 @@
         <vehroute-output.route-length value="false" synonymes="vehroutes.route-length" type="BOOL" help="Include total route length in the output"/>
         <vehroute-output.write-unfinished value="false" type="BOOL" help="Write vehroute output for vehicles which have not arrived at simulation end"/>
         <link-output value="" type="FILE" help="Save links states into FILE"/>
-        <bt-output value="" type="FILE" help="Save bt visibilities into FILE"/>
+        <bt-output value="" type="FILE" help="Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender)"/>
         <save-state.times value="" type="INT[]" help="Use INT[] as times at which a network state written"/>
         <save-state.prefix value="state" type="FILE" help="Prefix for network states"/>
         <save-state.files value="" type="FILE" help="Files for network states"/>
@@ -64,7 +66,7 @@
         <ignore-accidents value="false" type="BOOL" help="Do not check whether accidents occur"/>
         <ignore-route-errors value="false" type="BOOL" help="Do not check whether routes are connected"/>
         <max-num-vehicles value="-1" synonymes="too-many-vehicles" type="INT" help="Quit simulation if this number of vehicles is exceeded"/>
-        <scale value="" type="FLOAT" help="Scale demand by the given factor (0..1)"/>
+        <scale value="" type="FLOAT" help="Scale demand by the given factor (by discarding or duplicating vehicles)"/>
         <time-to-teleport value="300" type="TIME" help="Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting"/>
         <time-to-teleport.highways value="0" type="TIME" help="The waiting time after which vehicles on a fast road (speed &gt; 69m/s) are teleported if they are on a non-continuing lane"/>
         <max-depart-delay value="-1" type="TIME" help="How long vehicles wait for departure before being skipped, defaults to -1 which means vehicles are never skipped"/>
@@ -130,6 +132,12 @@
         <device.btsender.explicit value="" synonymes="device.btsender.knownveh" type="STR" help="Assign a &apos;btsender&apos; device to named vehicles"/>
         <device.btsender.deterministic value="false" type="BOOL" help="The &apos;btsender&apos; devices are set deterministic using a fraction of 1000"/>
     </communication>
+
+    <battery>
+        <device.battery.probability value="0" type="FLOAT" help="The probability for a vehicle to have a &apos;battery&apos; device"/>
+        <device.battery.explicit value="" synonymes="device.battery.knownveh" type="STR" help="Assign a &apos;battery&apos; device to named vehicles"/>
+        <device.battery.deterministic value="false" type="BOOL" help="The &apos;battery&apos; devices are set deterministic using a fraction of 1000"/>
+    </battery>
 
     <example_device>
         <device.example.probability value="0" type="FLOAT" help="The probability for a vehicle to have a &apos;example&apos; device"/>

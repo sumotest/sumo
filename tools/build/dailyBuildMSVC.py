@@ -64,7 +64,8 @@ import runInternalTests
 
 env = os.environ
 if "SUMO_HOME" not in env:
-    env["SUMO_HOME"] = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    env["SUMO_HOME"] = os.path.dirname(
+        os.path.dirname(os.path.dirname(__file__)))
 env["SMTP_SERVER"] = "smtprelay.dlr.de"
 env["TEMP"] = env["TMP"] = r"D:\Delphi\texttesttmp"
 env["REMOTEDIR_BASE"] = 'O:/Daten/Sumo'
@@ -87,10 +88,9 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     env["SUMO_BATCH_RESULT"] = os.path.join(
         options.rootDir, env["FILEPREFIX"] + "batch_result")
     env["SUMO_REPORT"] = prefix + "report"
-    binaryZip = os.path.join(nightlyDir, "sumo-%s-svn.zip" % env["FILEPREFIX"])
     binDir = "sumo-svn/bin/"
 
-    for f in [makeLog, makeAllLog, binaryZip] + glob.glob(os.path.join(options.rootDir, options.binDir, "*.exe")):
+    for f in [makeLog, makeAllLog] + glob.glob(os.path.join(options.rootDir, options.binDir, "*.exe")):
         try:
             os.remove(f)
         except WindowsError:
@@ -128,15 +128,14 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     if options.addSln:
         subprocess.call(compiler + " /rebuild Release|%s %s\\%s /out %s" %
                         (platform, options.rootDir, options.addSln, makeLog))
-    programSuffix = envSuffix = ""
+    envSuffix = ""
     if platform == "x64":
         envSuffix = "_64"
-        programSuffix = "64"
     # we need to use io.open here due to http://bugs.python.org/issue16273
     log = io.open(makeLog, 'a')
-    try:
-        if sumoAllZip:
-            binaryZip = sumoAllZip.replace("-all-", "-%s-" % env["FILEPREFIX"])
+    if sumoAllZip:
+        try:
+            binaryZip = sumoAllZip.replace("-all-", "-win32-" if platform == "Win32" else "-win64-")
             zipf = zipfile.ZipFile(binaryZip, 'w', zipfile.ZIP_DEFLATED)
             srcZip = zipfile.ZipFile(sumoAllZip)
             write = False
@@ -153,36 +152,33 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
                 elif write or os.path.basename(f) in ["COPYING", "README"]:
                     zipf.writestr(f, srcZip.read(f))
             srcZip.close()
-        else:
-            zipf = zipfile.ZipFile(binaryZip, 'w', zipfile.ZIP_DEFLATED)
-        files_to_zip = (
-            glob.glob(os.path.join(env["XERCES" + envSuffix], "bin", "xerces-c_?_?.dll")) +
-            glob.glob(os.path.join(env["PROJ_GDAL" + envSuffix], "bin", "*.dll")) +
-            glob.glob(os.path.join(env["FOX16" + envSuffix], "lib",
-                                   "FOXDLL-1.6.dll")) +
-            glob.glob(os.path.join(env["FOX16" + envSuffix], "lib",
-                                   "libpng*.dll")) +
-            glob.glob(os.path.join(nightlyDir, "msvc?100.dll")) +
-            glob.glob(os.path.join(options.rootDir, options.binDir, "*.exe")) +
-            glob.glob(os.path.join(options.rootDir, options.binDir, "*.jar")) +
-            glob.glob(os.path.join(options.rootDir, options.binDir, "*.bat")))
-        for f in files_to_zip:
-            zipf.write(f, os.path.join(binDir, os.path.basename(f)))
-            if not f.startswith(nightlyDir):
-                try:
-                    shutil.copy2(f, nightlyDir)
-                except IOError, (errno, strerror):
-                    print >> log, "Warning: Could not copy %s to %s!" % (
-                        f, nightlyDir)
-                    print >> log, "I/O error(%s): %s" % (errno, strerror)
-        zipf.close()
-        shutil.copy2(binaryZip, options.remoteDir)
-        wix.buildMSI(binaryZip, binaryZip.replace(
-            ".zip", ".msi"), platformSuffix=programSuffix)
-        shutil.copy2(binaryZip.replace(".zip", ".msi"), options.remoteDir)
-    except IOError, (errno, strerror):
-        print >> log, "Warning: Could not zip to %s!" % binaryZip
-        print >> log, "I/O error(%s): %s" % (errno, strerror)
+            files_to_zip = (
+                glob.glob(os.path.join(env["XERCES" + envSuffix], "bin", "xerces-c_?_?.dll")) +
+                glob.glob(os.path.join(env["PROJ_GDAL" + envSuffix], "bin", "*.dll")) +
+                glob.glob(os.path.join(env["FOX16" + envSuffix], "lib",
+                                       "FOXDLL-1.6.dll")) +
+                glob.glob(os.path.join(env["FOX16" + envSuffix], "lib",
+                                       "libpng*.dll")) +
+                glob.glob(os.path.join(nightlyDir, "msvc?100.dll")) +
+                glob.glob(os.path.join(options.rootDir, options.binDir, "*.exe")) +
+                glob.glob(os.path.join(options.rootDir, options.binDir, "*.jar")) +
+                glob.glob(os.path.join(options.rootDir, options.binDir, "*.bat")))
+            for f in files_to_zip:
+                zipf.write(f, os.path.join(binDir, os.path.basename(f)))
+                if not f.startswith(nightlyDir):
+                    try:
+                        shutil.copy2(f, nightlyDir)
+                    except IOError, (errno, strerror):
+                        print >> log, "Warning: Could not copy %s to %s!" % (
+                            f, nightlyDir)
+                        print >> log, "I/O error(%s): %s" % (errno, strerror)
+            zipf.close()
+            shutil.copy2(binaryZip, options.remoteDir)
+            wix.buildMSI(binaryZip, binaryZip.replace(".zip", ".msi"), log=log)
+            shutil.copy2(binaryZip.replace(".zip", ".msi"), options.remoteDir)
+        except IOError, (errno, strerror):
+            print >> log, "Warning: Could not zip to %s!" % binaryZip
+            print >> log, "I/O error(%s): %s" % (errno, strerror)
     if platform == "Win32" and options.sumoExe == "sumo":
         try:
             setup = os.path.join(env["SUMO_HOME"], 'tools', 'game', 'setup.py')
@@ -214,8 +210,7 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     for name in ["dfrouter", "duarouter", "jtrrouter", "marouter", "netconvert", "netgenerate",
                  "od2trips", "sumo", "polyconvert", "sumo-gui", "activitygen",
                  "emissionsDrivingCycle", "emissionsMap"]:
-        binary = os.path.join(
-            options.rootDir, options.binDir, name + programSuffix + ".exe")
+        binary = os.path.join(options.rootDir, options.binDir, name + ".exe")
         if name == "sumo-gui":
             if os.path.exists(binary):
                 env["GUISIM_BINARY"] = binary
@@ -223,20 +218,22 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
             env[name.upper() + "_BINARY"] = binary
     log = open(testLog, 'w')
     # provide more information than just the date:
-    nameopt = " -name %sr%s" % (date.today().strftime("%d%b%y"), svnrev)
+    fullOpt = ["-b", env["FILEPREFIX"], "-name", "%sr%s" %
+               (date.today().strftime("%d%b%y"), svnrev)]
+    ttBin = "texttestc.py"
     if options.sumoExe == "meso":
-        runInternalTests.runInternal(
-            programSuffix, "-b " + env["FILEPREFIX"] + nameopt, log)
+        runInternalTests.runInternal("", fullOpt, log, console=True)
     else:
         subprocess.call(
-            "texttest.py -b " + env["FILEPREFIX"] + nameopt, stdout=log, stderr=subprocess.STDOUT, shell=True)
-    subprocess.call("texttest.py -a sumo.gui -b " +
-                    env["FILEPREFIX"] + nameopt, stdout=log, stderr=subprocess.STDOUT, shell=True)
-    subprocess.call(
-        "texttest.py -b " + env["FILEPREFIX"] + " -coll", stdout=log, stderr=subprocess.STDOUT, shell=True)
-    ago = datetime.datetime.now() - datetime.timedelta(50)
-    subprocess.call('texttest.py -s "batch.ArchiveRepository session=' + env["FILEPREFIX"] + ' before=%s"' % ago.strftime("%d%b%Y"),
+            [ttBin] + fullOpt, stdout=log, stderr=subprocess.STDOUT, shell=True)
+    subprocess.call([ttBin, "-a", "sumo.gui"] + fullOpt,
                     stdout=log, stderr=subprocess.STDOUT, shell=True)
+    subprocess.call([ttBin, "-b", env["FILEPREFIX"], "-coll"],
+                    stdout=log, stderr=subprocess.STDOUT, shell=True)
+    ago = datetime.datetime.now() - datetime.timedelta(50)
+    subprocess.call('%s -s "batch.ArchiveRepository session=%s before=%s"' % (
+        ttBin, env["FILEPREFIX"], ago.strftime("%d%b%Y")),
+        stdout=log, stderr=subprocess.STDOUT, shell=True)
     log.close()
     log = open(statusLog, 'w')
     status.printStatus(

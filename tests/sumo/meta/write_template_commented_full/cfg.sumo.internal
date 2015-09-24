@@ -60,6 +60,12 @@
         <!-- Save the emission values of each vehicle -->
         <emission-output value="" type="FILE"/>
 
+        <!-- Save the battery values of each vehicle -->
+        <battery-output value="" type="FILE"/>
+
+        <!-- Write battery values with the given precision (default 2) -->
+        <battery-output.precision value="2" type="INT"/>
+
         <!-- Save the Floating Car Data -->
         <fcd-output value="" type="FILE"/>
 
@@ -117,7 +123,7 @@
         <!-- Save links states into FILE -->
         <link-output value="" type="FILE"/>
 
-        <!-- Save bt visibilities into FILE -->
+        <!-- Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender) -->
         <bt-output value="" type="FILE"/>
 
         <!-- Use INT[] as times at which a network state written -->
@@ -162,7 +168,7 @@
         <!-- Quit simulation if this number of vehicles is exceeded -->
         <max-num-vehicles value="-1" synonymes="too-many-vehicles" type="INT"/>
 
-        <!-- Scale demand by the given factor (0..1) -->
+        <!-- Scale demand by the given factor (by discarding or duplicating vehicles) -->
         <scale value="" type="FLOAT"/>
 
         <!-- Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting -->
@@ -334,6 +340,18 @@
         <device.btsender.deterministic value="false" type="BOOL"/>
 
     </communication>
+
+    <battery>
+        <!-- The probability for a vehicle to have a &apos;battery&apos; device -->
+        <device.battery.probability value="0" type="FLOAT"/>
+
+        <!-- Assign a &apos;battery&apos; device to named vehicles -->
+        <device.battery.explicit value="" synonymes="device.battery.knownveh" type="STR"/>
+
+        <!-- The &apos;battery&apos; devices are set deterministic using a fraction of 1000 -->
+        <device.battery.deterministic value="false" type="BOOL"/>
+
+    </battery>
 
     <example_device>
         <!-- The probability for a vehicle to have a &apos;example&apos; device -->

@@ -93,9 +93,10 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myPermissions(permissions),
     myLogicalPredecessorLane(0),
     myBruttoVehicleLengthSum(0), myNettoVehicleLengthSum(0), myInlappingVehicleEnd(10000), myInlappingVehicle(0),
-    myLengthGeometryFactor(myShape.length() / myLength) {
-        myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
-    }
+    myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength) // factor should not be 0
+{
+    myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
+}
 
 
 MSLane::~MSLane() {
@@ -356,7 +357,7 @@ MSLane::freeInsertion(MSVehicle& veh, SUMOReal mspeed,
 }
 
 
-SUMOReal 
+SUMOReal
 MSLane::getDepartSpeed(const MSVehicle& veh, bool& patchSpeed) {
     SUMOReal speed = 0;
     const SUMOVehicleParameter& pars = veh.getParameter();
@@ -750,7 +751,7 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
     const SUMOReal gap = victimRear - collider->getPositionOnLane() - collider->getVehicleType().getMinGap();
     if (gap < -NUMERICAL_EPS) {
         if (collider->getLane() == this) {
-            if (MSGlobals::gLaneChangeDuration > DELTA_T 
+            if (MSGlobals::gLaneChangeDuration > DELTA_T
                     && collider->getLaneChangeModel().isChangingLanes()
                     && victim->getLaneChangeModel().isChangingLanes()
                     && victim->getLane() != this) {
@@ -758,8 +759,8 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
                 return false;
             }
             WRITE_WARNING("Teleporting vehicle '" + collider->getID() + "'; collision with '"
-                    + victim->getID() + "', lane='" + getID() + "', gap=" + toString(gap)
-                    + ", time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " stage=" + stage + ".");
+                          + victim->getID() + "', lane='" + getID() + "', gap=" + toString(gap)
+                          + ", time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " stage=" + stage + ".");
             MSNet::getInstance()->getVehicleControl().registerCollision();
             myBruttoVehicleLengthSum -= collider->getVehicleType().getLengthWithGap();
             myNettoVehicleLengthSum -= collider->getVehicleType().getLength();
@@ -827,7 +828,7 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
             // for any reasons the vehicle is beyond its lane...
             // this should never happen because it is handled in MSVehicle::executeMove
             assert(false);
-            WRITE_WARNING("Teleporting vehicle '" + veh->getID() + "'; beyond end of lane, targetLane='" + getID() + "', time=" +
+            WRITE_WARNING("Teleporting vehicle '" + veh->getID() + "'; beyond end of lane, target lane='" + getID() + "', time=" +
                           time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
             MSNet::getInstance()->getVehicleControl().registerCollision();
             MSVehicleTransfer::getInstance()->add(t, veh);
@@ -1024,7 +1025,8 @@ MSLane::succLinkSec(const SUMOVehicle& veh, unsigned int nRouteSuccs,
     // if we are on an internal lane there should only be one link and it must be allowed
     if (succLinkSource.getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL) {
         assert(succLinkSource.myLinks.size() == 1);
-        assert(succLinkSource.myLinks[0]->getLane()->allowsVehicleClass(veh.getVehicleType().getVehicleClass()));
+        // could have been disallowed dynamically with a rerouter or via TraCI
+        // assert(succLinkSource.myLinks[0]->getLane()->allowsVehicleClass(veh.getVehicleType().getVehicleClass()));
         return succLinkSource.myLinks.begin();
     }
     // a link may be used if
@@ -1052,7 +1054,7 @@ MSLane::succLinkSec(const SUMOVehicle& veh, unsigned int nRouteSuccs,
     }
     // the only case where this should happen is for a disconnected route (deliberately ignored)
 #ifdef _DEBUG
-    WRITE_WARNING("Could not find connection between '" + succLinkSource.getID() + "' and '" + conts[nRouteSuccs]->getID() +
+    WRITE_WARNING("Could not find connection between lane '" + succLinkSource.getID() + "' and lane '" + conts[nRouteSuccs]->getID() +
                   "' for vehicle '" + veh.getID() + "' time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
 #endif
     return succLinkSource.myLinks.end();

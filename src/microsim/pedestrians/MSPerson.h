@@ -251,6 +251,11 @@ public:
         /// @brief Whether the person waits for a vehicle
         bool isWaiting4Vehicle() const;
 
+        /// @brief The vehicle the person is riding or 0
+        SUMOVehicle* getVehicle() const {
+            return myVehicle;
+        }
+
         /// @brief time spent waiting for a ride
         SUMOTime getWaitingTime(SUMOTime now) const;
 
@@ -412,7 +417,7 @@ public:
     void routeOutput(OutputDevice& os) const;
 
     /// @brief return the list of internal edges if this person is walking and the pedestrian model allows it
-    const std::string& getNextEdge() const; 
+    const std::string& getNextEdge() const;
 
     /// @brief returns the next edge ptr if this person is walking and the pedestrian model allows it
     const MSEdge * getNextEdgePtr() const;

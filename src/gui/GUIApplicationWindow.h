@@ -121,6 +121,7 @@ public:
     void handleEvent_SimulationStep(GUIEvent* e);
     void handleEvent_Message(GUIEvent* e);
     void handleEvent_SimulationEnded(GUIEvent* e);
+    void handleEvent_Screenshot(GUIEvent* e);
     /// @}
 
 
@@ -156,6 +157,12 @@ public:
 
     /// @brief Called on menu Edit->Edit Breakpoints
     long onCmdEditBreakpoints(FXObject*, FXSelector, void*);
+
+    /// @brief called if the user selects help->Documentation
+    long onCmdHelp(FXObject* sender, FXSelector sel, void* ptr);
+
+    /// @brief Called on menu Edit->Netedit
+    long onCmdNetedit(FXObject*, FXSelector, void*);
 
     /// @brief Opens the application settings menu (Settings->Application Settings...)
     long onCmdAppSettings(FXObject*, FXSelector, void*);
@@ -246,6 +253,11 @@ public:
     virtual SUMOReal getDelay() const {
         return mySimDelayTarget->getValue();
     }
+
+    /** @brief Sends an event from the application thread to the GUI and waits until it is handled
+     * @param event the event to send
+     */
+    virtual void sendBlockingEvent(GUIEvent* event);
 
 protected:
     virtual void addToWindowsMenu(FXMenuPane*) { }
@@ -357,6 +369,12 @@ protected:
 
     /// @brief whether the simulation end was already announced
     bool myHaveNotifiedAboutSimEnd;
+
+    /// @brief the mutex for the waiting semaphore
+    FXMutex myEventMutex;
+
+    /// @brief the semaphore when waiting for event completion
+    FXCondition myEventCondition;
 
     /// @name game related things
     /// {

@@ -109,9 +109,10 @@ selection1:selection.comp1.txt
 selection2:selection.comp2.txt
 histogram:histogram.dat
 fullstats:fullstats.dat
-osmimport:osm.net.xml
-osmbatch:osm.bat
-osmbatch:osm.sh
+osmimport:*/osm.net.xml
+osmbatch:*/build.bat
+osmtrips:*/osm.pedestrian.trips.xml
+districts:districts.xml
 
 [run_dependent_text]
 output:Begin time
@@ -121,10 +122,13 @@ output:<!-- generated on
 output:.* files checked{REPLACE <number> files checked}
 output:^calling.*duarouter
 output:Parsing network projection
-output:Parsing types from '.*sumo[\\/]data[\\/]typemap[\\/]{REPLACE Parsing types from 'sumo/data/typemap/}
+output:Parsing types from '.*[\\/]data[\\/]typemap[\\/]{REPLACE Parsing types from 'sumo/data/typemap/}
+output:Building scenario in.*{REPLACE Building scenario in <DIR>}
 output:^Performance:{->}^Vehicles:
 output:instance at 0x[0-9A-Fa-f]+{REPLACE instance at <ADDRESS>}
+output:Written configuration to .*{REPLACE Written configuration to <PATH>}
 trips:<!-- generated on
+osmtrips:<!-- generated on
 pois:<!--
 routes:<!-- generated on
 errors:Execution of .*duarouter.*'{REPLACE Execution of <path-to>duarouter'}
@@ -142,6 +146,7 @@ net:<!--{[->]}-->
 osmimport:<!--{[->]}-->
 osmbatch:python.*randomTrips\.py{REPLACE python /path/to/randomTrips.py}
 osmbatch:python.*route2trips\.py{REPLACE python /path/to/route2trips.py}
+osmbatch:--trip-attributes.*--{REPLACE --trip-attributes <attrs-with-os-dependent-quoting> --}
 
 [floating_point_tolerance]
 net:0.0101

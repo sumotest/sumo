@@ -35,6 +35,7 @@
 #include <microsim/MSEdge.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSJunction.h>
+#include <microsim/MSPersonControl.h>
 #include "MSPModel_Striping.h"
 
 
@@ -330,6 +331,8 @@ MSPModel_Striping::getNextLane(const PState& ped, const MSLane* currentLane, con
                               << "' to '" << (nextRouteEdge == 0 ? "NULL" : nextRouteEdge->getID())
                               << "\n";
                 }
+                WRITE_WARNING("Pedestrian '" + ped.myPerson->getID() + "' could not find route across junction '" + junction->getID() + "', time=" +
+                        time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
                 // error indicated by nextDir == UNDEFINED_DIRECTION
             }
         } else if (currentEdge == nextRouteEdge) {
@@ -814,7 +817,7 @@ MSPModel_Striping::PState::getLength() const {
 int
 MSPModel_Striping::PState::stripe(SUMOReal relY) const {
     const int max = numStripes(myLane) - 1;
-    return MIN2(MAX2(0, (int)floor((relY + 0.5 * stripeWidth) / stripeWidth)), max);
+    return MIN2(MAX2(0, (int)floor(relY / stripeWidth + 0.5)), max);
 }
 
 
@@ -871,9 +874,8 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
         //if (ped.myPerson->getID() == DEBUG1) {
         //    std::cout << SIMTIME << " addToLane x=" << ped.myRelX << " newDir=" << newDir << " newLane=" << newLane->getID() << " walkingAreaShape=" << walkingAreaShape << "\n";
         //}
-        //std::cout << " changing to " << newLane->getID() << " myRelY=" << ped.myRelY << " oldStripes=" << oldStripes << " newStripes=" << numStripes(newLane);
+        //std::cout << " changing to " << newLane->getID() << " myRelY=" << ped.myRelY << " oldStripes=" << numStripes(myLane) << " newStripes=" << numStripes(newLane);
         //std::cout << " newY=" << ped.myRelY << " myDir=" << ped.myDir << " newDir=" << newDir;
-        const int oldStripes = numStripes(myLane);
         const int oldDir = myDir;
         const MSLane* oldLane = myLane;
         myLane = myNLI.lane;
@@ -933,7 +935,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
                 myRelY = (numStripes(oldLane) - 1) * stripeWidth - myRelY;
             }
             // adjust to differences in sidewalk width
-            myRelY += 0.5 * stripeWidth * (numStripes(myLane) - oldStripes);
+            myRelY += 0.5 * (myLane->getWidth() - oldLane->getWidth());
         }
         return true;
     } else {
@@ -948,21 +950,20 @@ MSPModel_Striping::PState::walk(const Obstacles& obs, SUMOTime currentTime) {
     const int sMax =  stripes - 1;
     assert(stripes == numStripes(myLane));
     const SUMOReal vMax = myStage->getMaxSpeed();
-    // ultimate goal is to chose the prefered stripe (chosen)
+    // ultimate goal is to choose the prefered stripe (chosen)
     const int current = stripe();
     const int other = otherStripe();
     int chosen = current;
     // compute utility for all stripes
-    std::vector<SUMOReal> utility(stripes, 0);
-
+    std::vector<SUMOReal> utility(stripes);
     // penalize lateral movement (may increase jamming)
     for (int i = 0; i < stripes; ++i) {
-        utility[i] += abs(i - current) * LATERAL_PENALTY;
+        utility[i] = abs(i - current) * LATERAL_PENALTY;
     }
     // compute distances
     std::vector<SUMOReal> distance(stripes);
     for (int i = 0; i < stripes; ++i) {
-        distance[i] += myDir * (obs[i].x - myRelX);
+        distance[i] = myDir * (obs[i].x - myRelX);
     }
     // forbid stripes which are blocked and also all stripes behind them
     for (int i = 0; i < stripes; ++i) {
@@ -1052,7 +1053,13 @@ MSPModel_Striping::PState::walk(const Obstacles& obs, SUMOTime currentTime) {
     if (xSpeed == 0) {
         if (myWaitingTime > jamTime || myAmJammed) {
             // squeeze slowly through the crowd ignoring others
-            myAmJammed = true;
+            if (!myAmJammed) {
+                MSNet::getInstance()->getPersonControl().registerJammed();
+                WRITE_WARNING("Person '" + myPerson->getID() 
+                        + "' is jammed on edge '" + myStage->getEdge()->getID() 
+                        + "', time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
+                myAmJammed = true;
+            }
             xSpeed = vMax / 4;
         } else {
             myAmJammed = false;
@@ -1078,8 +1085,8 @@ MSPModel_Striping::PState::walk(const Obstacles& obs, SUMOTime currentTime) {
     const SUMOReal yDist = (chosen * stripeWidth) - myRelY;
     if (fabs(yDist) > NUMERICAL_EPS) {
         ySpeed = (yDist > 0 ?
-                  MIN2(maxYSpeed, yDist) :
-                  MAX2(-maxYSpeed, yDist));
+                  MIN2(maxYSpeed, DIST2SPEED(yDist)) :
+                  MAX2(-maxYSpeed, DIST2SPEED(yDist)));
     }
     // DEBUG
     if DEBUGCOND(myPerson->getID()) {
@@ -1175,7 +1182,7 @@ MSPModel_Striping::PState::getSpeed(const MSPerson::MSPersonStage_Walking&) cons
 }
 
 
-const MSEdge* 
+const MSEdge*
 MSPModel_Striping::PState::getNextEdge(const MSPerson::MSPersonStage_Walking&) const {
     return myNLI.lane == 0 ? 0 : &myNLI.lane->getEdge();
 }

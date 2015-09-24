@@ -190,6 +190,9 @@ private:
     /// @brief The width of the sidewalk that shall be added to the current edge
     SUMOReal mySidewalkWidth;
 
+    /// @brief The width of the bike lane that shall be added to the current edge
+    SUMOReal myBikeLaneWidth;
+
     /// @}
 
 
@@ -231,10 +234,8 @@ private:
         SUMOReal pos;
         /// @brief The speed after this change
         SUMOReal speed;
-        /// @brief A numerical id
-        int nameid;
-        /// @brief A 2D-position (for the node to insert at this place)
-        Position gpos;
+        /// @brief The new node that is created for this split
+        NBNode* node;
     };
 
     /// @brief The list of this edge's splits

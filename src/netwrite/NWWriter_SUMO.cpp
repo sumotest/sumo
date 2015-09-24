@@ -173,8 +173,8 @@ NWWriter_SUMO::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
                 device.writeAttr(SUMO_ATTR_TO, (*it).nextCrossing);
                 device.writeAttr(SUMO_ATTR_FROM_LANE, 0);
                 device.writeAttr(SUMO_ATTR_TO_LANE, 0);
-                if ((*it).tlID != "") {
-                    device.writeAttr(SUMO_ATTR_TLID, (*it).tlID);
+                if (node->isTLControlled()) {
+                    device.writeAttr(SUMO_ATTR_TLID, (*node->getControllingTLS().begin())->getID());
                     assert(nextCrossing.tlLinkNo >= 0);
                     device.writeAttr(SUMO_ATTR_TLLINKINDEX, nextCrossing.tlLinkNo);
                 }
@@ -320,8 +320,8 @@ NWWriter_SUMO::writeEdge(OutputDevice& into, const NBEdge& e, bool noNames, bool
         into.writeAttr(SUMO_ATTR_NAME, StringUtils::escapeXML(e.getStreetName()));
     }
     into.writeAttr(SUMO_ATTR_PRIORITY, e.getPriority());
-    if (e.getTypeName() != "") {
-        into.writeAttr(SUMO_ATTR_TYPE, e.getTypeName());
+    if (e.getTypeID() != "") {
+        into.writeAttr(SUMO_ATTR_TYPE, e.getTypeID());
     }
     if (e.isMacroscopicConnector()) {
         into.writeAttr(SUMO_ATTR_FUNCTION, EDGEFUNC_CONNECTOR);
@@ -342,7 +342,7 @@ NWWriter_SUMO::writeEdge(OutputDevice& into, const NBEdge& e, bool noNames, bool
     SUMOReal length = e.getLoadedLength();
     if (OptionsCont::getOptions().getBool("no-internal-links") && !e.hasLoadedLength()) {
         // use length to junction center even if a modified geometry was given
-        PositionVector geom = e.getGeometry();
+        PositionVector geom = e.cutAtIntersection(e.getGeometry());
         geom.push_back_noDoublePos(e.getToNode()->getCenter());
         geom.push_front_noDoublePos(e.getFromNode()->getCenter());
         length = geom.length();
@@ -372,7 +372,9 @@ NWWriter_SUMO::writeLane(OutputDevice& into, const std::string& eID, const std::
     // the first lane of an edge will be the depart lane
     into.writeAttr(SUMO_ATTR_INDEX, index);
     // write the list of allowed/disallowed vehicle classes
-    writePermissions(into, permissions);
+    if (permissions != SVC_UNSPECIFIED) {
+        writePermissions(into, permissions);
+    }
     writePreferences(into, preferred);
     // some further information
     if (speed == 0) {
@@ -558,7 +560,7 @@ NWWriter_SUMO::writeConnection(OutputDevice& into, const NBEdge& from, const NBE
         }
         if (style == SUMONET) {
             // write the direction information
-            LinkDirection dir = from.getToNode()->getDirection(&from, c.toEdge);
+            LinkDirection dir = from.getToNode()->getDirection(&from, c.toEdge, OptionsCont::getOptions().getBool("lefthand"));
             assert(dir != LINKDIR_NODIR);
             into.writeAttr(SUMO_ATTR_DIR, toString(dir));
             // write the state information

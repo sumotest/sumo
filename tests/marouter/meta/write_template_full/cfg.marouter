@@ -32,6 +32,7 @@
     </output>
 
     <processing>
+        <aggregation-interval value="3600" type="TIME" help="Defines the time interval when aggregating single vehicle input; Defaults to one hour"/>
         <ignore-errors value="false" synonymes="continue-on-unbuild dismiss-loading-errors" type="BOOL" help="Continue if a route could not be build"/>
         <max-alternatives value="5" type="INT" help="Prune the number of alternatives to INT"/>
         <weights.interpolate value="false" synonymes="interpolate" type="BOOL" help="Interpolate edge weights at interval boundaries"/>
@@ -43,6 +44,7 @@
         <prefix value="" type="STR" help="Defines the prefix for vehicle flow names"/>
         <timeline value="" type="STR" help="Uses STR as a timeline definition"/>
         <timeline.day-in-hours value="false" type="BOOL" help="Uses STR as a 24h-timeline definition"/>
+        <additive-traffic value="false" type="BOOL" help="Keep traffic flows of all time slots in the net"/>
         <assignment-method value="incremental" type="STR" help="Choose a assignment method: incremental, UE or SUE"/>
         <tolerance value="0.001" type="FLOAT" help="Use FLOAT as tolerance when checking for SUE stability"/>
         <left-turn-penalty value="0" type="FLOAT" help="Use left-turn penalty FLOAT to calculate link travel time when searching routes"/>

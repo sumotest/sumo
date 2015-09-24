@@ -109,8 +109,7 @@ public:
          * @param[in] approaching The list of the edges that approach the outgoing edge
          * @param[in] currentOutgoing The outgoing edge
          */
-        ApproachingDivider(EdgeVector* approaching,
-                           NBEdge* currentOutgoing, const bool buildCrossingsAndWalkingAreas);
+        ApproachingDivider(EdgeVector* approaching, NBEdge* currentOutgoing);
 
         /// @brief Destructor
         ~ApproachingDivider();
@@ -163,8 +162,7 @@ public:
         WalkingArea(const std::string& _id, SUMOReal _width) :
             id(_id),
             width(_width),
-            nextCrossing(""),
-            tlID("")
+            nextCrossing("")
         {}
         /// @brief the (edge)-id of this walkingArea
         std::string id;
@@ -176,8 +174,6 @@ public:
         PositionVector shape;
         /// @brief the lane-id of the next crossing
         std::string nextCrossing;
-        /// @brief the traffic light id of the next crossing or ""
-        std::string tlID;
         /// @brief the lane-id of the next sidewalk lane or ""
         std::vector<std::string> nextSidewalks;
         /// @brief the lane-id of the previous sidewalk lane or ""
@@ -365,6 +361,9 @@ public:
      * @param[in] yoff The y-offset to apply
      */
     void reshiftPosition(SUMOReal xoff, SUMOReal yoff);
+
+    /// @brief mirror coordinates along the x-axis
+    void mirrorX();
     /// @}
 
 
@@ -379,7 +378,7 @@ public:
 
 
     /// computes the connections of lanes to edges
-    void computeLanes2Lanes(const bool buildCrossingsAndWalkingAreas);
+    void computeLanes2Lanes();
 
     /// computes the node's type, logic and traffic light
     void computeLogic(const NBEdgeCont& ec, OptionsCont& oc);
@@ -457,7 +456,7 @@ public:
     /** @brief return whether the given laneToLane connection is a right turn which must yield to a bicycle crossings
      */
     static bool rightTurnConflict(const NBEdge* from, const NBEdge* to, int fromLane,
-                                  const NBEdge* prohibitorFrom, const NBEdge* prohibitorTo, int prohibitorFromLane);
+                                  const NBEdge* prohibitorFrom, const NBEdge* prohibitorTo, int prohibitorFromLane, bool lefthand = false);
 
     /** @brief Returns the information whether "prohibited" flow must let "prohibitor" flow pass
      * @param[in] possProhibitedFrom The maybe prohibited connection's begin
@@ -486,18 +485,18 @@ public:
     /** @brief Returns the representation of the described stream's direction
      * @param[in] incoming The edge the stream starts at
      * @param[in] outgoing The edge the stream ends at
+     * @param[in] leftHand Whether a lefthand network is being built. Should only be set at writing time
      * @return The direction of the stream
      */
-    LinkDirection getDirection(const NBEdge* const incoming, const NBEdge* const outgoing) const;
+    LinkDirection getDirection(const NBEdge* const incoming, const NBEdge* const outgoing, bool leftHand = false) const;
 
     LinkState getLinkState(const NBEdge* incoming, NBEdge* outgoing,
                            int fromLane, bool mayDefinitelyPass, const std::string& tlID) const;
 
     /** @brief Compute the junction shape for this node
-     * @param[in] lefhand Whether the network uses left-hand traffic
      * @param[in] mismatchThreshold The threshold for warning about shapes which are away from myPosition
      */
-    void computeNodeShape(bool leftHand, SUMOReal mismatchThreshold);
+    void computeNodeShape(SUMOReal mismatchThreshold);
 
     /// @brief retrieve the junction shape
     const PositionVector& getShape() const;
@@ -596,7 +595,7 @@ public:
     int checkCrossing(EdgeVector candidates);
 
     /// @brief build internal lanes, pedestrian crossings and walking areas
-    void buildInnerEdges(bool buildCrossingsAndWalkingAreas);
+    void buildInnerEdges();
 
     /* @brief build pedestrian crossings
      * @return The next index for creating internal lanes
@@ -607,6 +606,10 @@ public:
      * @param[in] cornerDetail The detail level when generating the inner curve
      * */
     void buildWalkingAreas(int cornerDetail);
+
+    /* @brief build crossings, and walkingareas. Also removes invalid loaded
+     * crossings*/
+    void buildCrossingsAndWalkingAreas();
 
     /// @brief return all edges that lie clockwise between the given edges
     EdgeVector edgesBetween(const NBEdge* e1, const NBEdge* e2) const;
@@ -626,7 +629,7 @@ public:
     void setRoundabout();
 
     /// @brief add a pedestrian crossing to this node
-    void addCrossing(EdgeVector edges, SUMOReal width, bool priority, bool fromSumoNet=false);
+    void addCrossing(EdgeVector edges, SUMOReal width, bool priority, bool fromSumoNet = false);
 
     /// @brief remove a pedestrian crossing from this node (identified by its edges)
     void removeCrossing(const EdgeVector& edges);
@@ -728,6 +731,8 @@ private:
 
     /// @brief returns the list of all edges sorted clockwise by getAngleAtNodeToCenter
     EdgeVector getEdgesSortedByAngleAtNodeCenter() const;
+
+    static bool isLongEnough(NBEdge* out, SUMOReal minLength);
 
 private:
     /// @brief The position the node lies at

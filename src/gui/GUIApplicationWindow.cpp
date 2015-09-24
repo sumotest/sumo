@@ -52,6 +52,7 @@
 #include "GUIApplicationWindow.h"
 #include "GUIEvent_SimulationLoaded.h"
 #include "GUIEvent_SimulationEnded.h"
+#include "GUIEvent_Screenshot.h"
 
 #include <utils/common/ToString.h>
 #include <utils/common/RandHelper.h>
@@ -59,10 +60,10 @@
 #include <utils/foxtools/FXLCDLabel.h>
 #include <utils/foxtools/FXRealSpinDial.h>
 #include <utils/foxtools/FXThreadEvent.h>
+#include <utils/foxtools/FXLinkLabel.h>
 
 #include <utils/xml/XMLSubSys.h>
 #include <utils/gui/images/GUITexturesHelper.h>
-#include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/events/GUIEvent_SimulationStep.h>
 #include <utils/gui/events/GUIEvent_Message.h>
 #include <utils/gui/div/GUIMessageWindow.h>
@@ -76,6 +77,9 @@
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/settings/GUISettingsHandler.h>
+#include <utils/gui/windows/GUIAppEnum.h>
+#include <utils/gui/windows/GUISUMOAbstractView.h>
+#include <utils/gui/windows/GUIPerspectiveChanger.h>
 #include "GUIGlobals.h"
 #include "dialogs/GUIDialog_AboutSUMO.h"
 #include "dialogs/GUIDialog_AppSettings.h"
@@ -102,6 +106,7 @@ FXDEFMAP(GUIApplicationWindow) GUIApplicationWindowMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_CLOSE,             GUIApplicationWindow::onCmdClose),
     FXMAPFUNC(SEL_COMMAND,  MID_EDITCHOSEN,        GUIApplicationWindow::onCmdEditChosen),
     FXMAPFUNC(SEL_COMMAND,  MID_EDIT_BREAKPOINTS,  GUIApplicationWindow::onCmdEditBreakpoints),
+    FXMAPFUNC(SEL_COMMAND,  MID_NETEDIT,           GUIApplicationWindow::onCmdNetedit),
 
     FXMAPFUNC(SEL_COMMAND,  MID_APPSETTINGS,        GUIApplicationWindow::onCmdAppSettings),
     FXMAPFUNC(SEL_COMMAND,  MID_GAMING,             GUIApplicationWindow::onCmdGaming),
@@ -134,6 +139,8 @@ FXDEFMAP(GUIApplicationWindow) GUIApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_STEP,              GUIApplicationWindow::onUpdStep),
     FXMAPFUNC(SEL_UPDATE,   MID_EDITCHOSEN,        GUIApplicationWindow::onUpdNeedsSimulation),
     FXMAPFUNC(SEL_UPDATE,   MID_EDIT_BREAKPOINTS,  GUIApplicationWindow::onUpdNeedsSimulation),
+    FXMAPFUNC(SEL_UPDATE,   MID_NETEDIT,           GUIApplicationWindow::onUpdNeedsSimulation),
+    FXMAPFUNC(SEL_COMMAND,  MID_HELP,              GUIApplicationWindow::onCmdHelp),
 
     // forward requests to the active view
     FXMAPFUNC(SEL_COMMAND,  MID_LOCATEJUNCTION, GUIApplicationWindow::onCmdLocate),
@@ -351,20 +358,20 @@ GUIApplicationWindow::fillMenuBar() {
     myFileMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "&File", NULL, myFileMenu);
     new FXMenuCommand(myFileMenu,
-                      "&Open Simulation...\tCtl-O\tOpen a simulation (Configuration file).",
+                      "&Open Simulation...\tCtrl+O\tOpen a simulation (Configuration file).",
                       GUIIconSubSys::getIcon(ICON_OPEN_CONFIG), this, MID_OPEN_CONFIG);
     new FXMenuCommand(myFileMenu,
-                      "Open &Network...\tCtl-N\tOpen a network.",
+                      "Open &Network...\tCtrl+N\tOpen a network.",
                       GUIIconSubSys::getIcon(ICON_OPEN_NET), this, MID_OPEN_NETWORK);
     new FXMenuCommand(myFileMenu,
-                      "Open Shapes \tCtl-P\tLoad POIs and Polygons for visualization.",
+                      "Open Shapes \tCtrl+P\tLoad POIs and Polygons for visualization.",
                       GUIIconSubSys::getIcon(ICON_OPEN_SHAPES), this, MID_OPEN_SHAPES);
     new FXMenuCommand(myFileMenu,
-                      "&Reload\tCtl-R\tReloads the simulation / the network.",
+                      "&Reload\tCtrl+R\tReloads the simulation / the network.",
                       GUIIconSubSys::getIcon(ICON_RELOAD), this, MID_RELOAD);
     new FXMenuSeparator(myFileMenu);
     new FXMenuCommand(myFileMenu,
-                      "Close\tCtl-W\tClose the simulation.",
+                      "Close\tCtrl+W\tClose the simulation.",
                       GUIIconSubSys::getIcon(ICON_CLOSE), this, MID_CLOSE);
     // Recent files
     FXMenuSeparator* sep1 = new FXMenuSeparator(myFileMenu);
@@ -401,7 +408,7 @@ GUIApplicationWindow::fillMenuBar() {
     myRecentNets.setSelector(MID_RECENTFILE);
     new FXMenuSeparator(myFileMenu);
     new FXMenuCommand(myFileMenu,
-                      "&Quit\tCtl-Q\tQuit the Application.",
+                      "&Quit\tCtrl+Q\tQuit the Application.",
                       0, this, MID_QUIT, 0);
 
     // build edit menu
@@ -415,15 +422,19 @@ GUIApplicationWindow::fillMenuBar() {
     myEditMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "&Edit", NULL, myEditMenu);
     new FXMenuCommand(myEditMenu,
-                      "Edit Selected...\tCtl-E\tOpens a Dialog for editing the List of Selected Items.",
+                      "Edit Selected...\tCtrl+E\tOpens a dialog for editing the list of selected items.",
                       GUIIconSubSys::getIcon(ICON_FLAG), this, MID_EDITCHOSEN);
     new FXMenuCascade(myEditMenu,
                       "Select lanes which allow...\t\tOpens a menu for selecting a vehicle class by which to selected lanes.",
                       GUIIconSubSys::getIcon(ICON_FLAG), mySelectByPermissions);
     new FXMenuSeparator(myEditMenu);
     new FXMenuCommand(myEditMenu,
-                      "Edit Breakpoints...\tCtl-B\tOpens a Dialog for editing breakpoints.",
+                      "Edit Breakpoints...\tCtrl+B\tOpens a dialog for editing breakpoints.",
                       0, this, MID_EDIT_BREAKPOINTS);
+    new FXMenuSeparator(myEditMenu);
+    new FXMenuCommand(myEditMenu,
+                      "Open in Netedit...\tCtrl+T\tOpens the netedit application with the current network.",
+                      0, this, MID_NETEDIT);
 
     // build settings menu
     mySettingsMenu = new FXMenuPane(this);
@@ -432,10 +443,10 @@ GUIApplicationWindow::fillMenuBar() {
                       "Application Settings...\t\tOpen a Dialog for Application Settings editing.",
                       NULL, this, MID_APPSETTINGS);
     new FXMenuCheck(mySettingsMenu,
-                    "Gaming Mode\tCtl-G\tToggle gaming mode on/off.",
+                    "Gaming Mode\tCtrl+G\tToggle gaming mode on/off.",
                     this, MID_GAMING);
     new FXMenuCheck(mySettingsMenu,
-                    "Full Screen Mode\tCtl-F\tToggle full screen mode on/off.",
+                    "Full Screen Mode\tCtrl+F\tToggle full screen mode on/off.",
                     this, MID_FULLSCREEN);
     // build Locate menu
     myLocatorMenu = new FXMenuPane(this);
@@ -474,13 +485,13 @@ GUIApplicationWindow::fillMenuBar() {
     myControlMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "Simulation", NULL, myControlMenu);
     new FXMenuCommand(myControlMenu,
-                      "Run\tCtl-A\tStart running the simulation.",
+                      "Run\tCtrl+A\tStart running the simulation.",
                       NULL, this, MID_START);
     new FXMenuCommand(myControlMenu,
-                      "Stop\tCtl-S\tStop running the simulation.",
+                      "Stop\tCtrl+S\tStop running the simulation.",
                       NULL, this, MID_STOP);
     new FXMenuCommand(myControlMenu,
-                      "Step\tCtl-D\tPerform one simulation step.",
+                      "Step\tCtrl+D\tPerform one simulation step.",
                       NULL, this, MID_STEP);
 
     // build windows menu
@@ -527,6 +538,7 @@ GUIApplicationWindow::fillMenuBar() {
     // build help menu
     myHelpMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "&Help", NULL, myHelpMenu);
+    new FXMenuCommand(myHelpMenu, "&Online Documentation", 0, this, MID_HELP);
     new FXMenuCommand(myHelpMenu, "&About", GUIIconSubSys::getIcon(ICON_APP),
                       this, MID_ABOUT);
 }
@@ -711,6 +723,47 @@ GUIApplicationWindow::onCmdEditBreakpoints(FXObject*, FXSelector, void*) {
 
 
 long
+GUIApplicationWindow::onCmdHelp(FXObject*, FXSelector, void*) {
+    FXLinkLabel::fxexecute("http://sumo.dlr.de/wiki/SUMO-GUI");
+    return 1;
+}
+
+
+long
+GUIApplicationWindow::onCmdNetedit(FXObject*, FXSelector, void*) {
+    if (mySubWindows.empty()) {
+        return 1;
+    }
+    FXRegistry reg("Netedit", "DLR");
+    reg.read();
+    const GUISUMOAbstractView* const v = static_cast<GUIGlChildWindow*>(mySubWindows[0])->getView();
+    reg.writeIntEntry("viewport", "x", v->getChanger().getXPos());
+    reg.writeIntEntry("viewport", "y", v->getChanger().getYPos());
+    reg.writeIntEntry("viewport", "z", v->getChanger().getZoom());
+    reg.write();
+    std::string netedit = "netedit";
+    const char* sumoPath = getenv("SUMO_HOME");
+    if (sumoPath != 0) {
+        std::string newPath = std::string(sumoPath) + "/bin/netedit";
+        if (FileHelpers::isReadable(newPath) || FileHelpers::isReadable(newPath + ".exe")) {
+            netedit = newPath;
+        }
+    }
+    std::string cmd = netedit + " --registry-viewport -s "  + OptionsCont::getOptions().getString("net-file");
+    // start in background
+#ifndef WIN32
+    cmd = cmd + " &";
+#else
+    cmd = "start " + cmd;
+#endif
+    WRITE_MESSAGE("Running " + cmd + ".");
+    // yay! fun with dangerous commands... Never use this over the internet
+    SysUtils::runHiddenCommand(cmd);
+    return 1;
+}
+
+
+long
 GUIApplicationWindow::onCmdOpenConfiguration(FXObject*, FXSelector, void*) {
     // get the new file name
     FXFileDialog opendialog(this, "Open Simulation Configuration");
@@ -856,6 +909,7 @@ GUIApplicationWindow::onCmdStart(FXObject*, FXSelector, void*) {
         myWasStarted = true;
     }
     myRunThread->resume();
+    getApp()->forceRefresh(); // only callking myToolBar2->forceRefresh somehow loses keyboard focus
     return 1;
 }
 
@@ -863,6 +917,7 @@ GUIApplicationWindow::onCmdStart(FXObject*, FXSelector, void*) {
 long
 GUIApplicationWindow::onCmdStop(FXObject*, FXSelector, void*) {
     myRunThread->stop();
+    getApp()->forceRefresh(); // only callking myToolBar2->forceRefresh somehow loses keyboard focus
     return 1;
 }
 
@@ -1134,6 +1189,9 @@ GUIApplicationWindow::eventOccured() {
             case EVENT_SIMULATION_ENDED:
                 handleEvent_SimulationEnded(e);
                 break;
+            case EVENT_SCREENSHOT:
+                handleEvent_Screenshot(e);
+                break;
             default:
                 break;
         }
@@ -1234,6 +1292,9 @@ GUIApplicationWindow::handleEvent_SimulationStep(GUIEvent*) {
     if (myAmGaming) {
         checkGamingEvents();
     }
+    if (myRunThread->simulationIsStartable()) {
+        getApp()->forceRefresh(); // restores keyboard focus
+    }
     update();
 }
 
@@ -1263,6 +1324,19 @@ GUIApplicationWindow::handleEvent_SimulationEnded(GUIEvent* e) {
         }
         myHaveNotifiedAboutSimEnd = true;
     }
+}
+
+
+void
+GUIApplicationWindow::handleEvent_Screenshot(GUIEvent* e) {
+    GUIEvent_Screenshot* ec = static_cast<GUIEvent_Screenshot*>(e);
+    myEventMutex.lock();
+    const std::string error = ec->myView->makeSnapshot(ec->myFile);
+    if (error != "") {
+        WRITE_WARNING(error);
+    }
+    myEventCondition.signal();
+    myEventMutex.unlock();
 }
 
 
@@ -1466,5 +1540,15 @@ GUIApplicationWindow::onKeyRelease(FXObject* o, FXSelector sel, void* data) {
     return 0;
 }
 
-/****************************************************************************/
 
+void
+GUIApplicationWindow::sendBlockingEvent(GUIEvent* event) {
+    myEventMutex.lock();
+    myEvents.add(event);
+    myRunThreadEvent.signal();
+    myEventCondition.wait(myEventMutex);
+    myEventMutex.unlock();
+}
+
+
+/****************************************************************************/

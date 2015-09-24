@@ -851,7 +851,7 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
     MSEdge* edge = 0;
     // try to parse the assigned bus stop
     if (stop.busstop != "") {
-        // ok, we have obviously a bus stop
+        // ok, we have a bus stop
         MSStoppingPlace* bs = MSNet::getInstance()->getBusStop(stop.busstop);
         if (bs == 0) {
             WRITE_ERROR("The bus stop '" + stop.busstop + "' is not known" + errorSuffix);
@@ -875,6 +875,18 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
         stop.endPos = cs->getEndLanePosition();
         stop.startPos = cs->getBeginLanePosition();
         edge = &l.getEdge();
+    } else if (stop.chrgStn != "") {
+        // ok, we have a Charging station
+        MSChrgStn* cs = MSNet::getInstance()->getChrgStn(stop.busstop);
+        if (cs != 0) {
+            const MSLane& l = cs->getLane();
+            stop.lane = l.getID();
+            stop.endPos = cs->getEndLanePosition();
+            stop.startPos = cs->getBeginLanePosition();
+        } else {
+            WRITE_ERROR("The charging station '" + stop.chrgStn + "' is not known" + errorSuffix);
+            return;
+        }
     } else {
         // no, the lane and the position should be given
         // get the lane
@@ -940,19 +952,19 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
 
 
 void
-MSRouteHandler::parseWalkPositions(const SUMOSAXAttributes& attrs, const std::string& personID, 
-        const MSEdge* fromEdge, const MSEdge* toEdge, 
-        SUMOReal& departPos, SUMOReal& arrivalPos, MSStoppingPlace*& bs, bool& ok) {
+MSRouteHandler::parseWalkPositions(const SUMOSAXAttributes& attrs, const std::string& personID,
+                                   const MSEdge* fromEdge, const MSEdge* toEdge,
+                                   SUMOReal& departPos, SUMOReal& arrivalPos, MSStoppingPlace*& bs, bool& ok) {
     const std::string description = "person '" + personID + "' walking from " + fromEdge->getID();
 
     departPos = parseWalkPos(SUMO_ATTR_DEPARTPOS, description, fromEdge,
-            attrs.getOpt<std::string>(SUMO_ATTR_DEPARTPOS, description.c_str(), ok, "0"));
+                             attrs.getOpt<std::string>(SUMO_ATTR_DEPARTPOS, description.c_str(), ok, "0"));
 
     std::string bsID = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");
     if (bsID != "") {
         if (attrs.hasAttribute(SUMO_ATTR_ARRIVALPOS)) {
-            WRITE_WARNING("Ignoring '" + toString(SUMO_ATTR_ARRIVALPOS) 
-                    + "' for " + description + " because '" + toString(SUMO_ATTR_BUS_STOP) + "' is given.");
+            WRITE_WARNING("Ignoring '" + toString(SUMO_ATTR_ARRIVALPOS)
+                          + "' for " + description + " because '" + toString(SUMO_ATTR_BUS_STOP) + "' is given.");
         }
         bs = MSNet::getInstance()->getBusStop(bsID);
         if (bs == 0) {
@@ -962,7 +974,7 @@ MSRouteHandler::parseWalkPositions(const SUMOSAXAttributes& attrs, const std::st
     } else {
         if (attrs.hasAttribute(SUMO_ATTR_ARRIVALPOS)) {
             arrivalPos = parseWalkPos(SUMO_ATTR_ARRIVALPOS, description, toEdge,
-                    attrs.getOpt<std::string>(SUMO_ATTR_ARRIVALPOS, description.c_str(), ok, toString(-POSITION_EPS)));
+                                      attrs.getOpt<std::string>(SUMO_ATTR_ARRIVALPOS, description.c_str(), ok, toString(-POSITION_EPS)));
         } else {
             arrivalPos = -NUMERICAL_EPS;
         }

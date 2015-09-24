@@ -262,7 +262,7 @@ public:
 
 
     /// divides the incoming lanes on outgoing lanes
-    void computeLanes2Lanes(const bool buildCrossingsAndWalkingAreas);
+    void computeLanes2Lanes();
 
     /// build the list of outgoing edges and lanes
     void computeLogics(const NBEdgeCont& ec, OptionsCont& oc);
@@ -282,10 +282,9 @@ public:
     std::string getFreeID();
 
     /** @brief Compute the junction shape for this node
-     * @param[in] lefhand Whether the network uses left-hand traffic
      * @param[in] mismatchThreshold The threshold for warning about shapes which are away from myPosition
      */
-    void computeNodeShapes(bool leftHand, SUMOReal mismatchThreshold = -1);
+    void computeNodeShapes(SUMOReal mismatchThreshold = -1);
 
     /** @brief Prints statistics about built nodes
      *
@@ -323,12 +322,18 @@ public:
      */
     void discardTrafficLights(NBTrafficLightLogicCont& tlc, bool geometryLike, bool guessSignals);
 
+    /// @brief mark a node as being created form a split
+    void markAsSplit(const NBNode* node) {
+        mySplit.insert(node);
+    }
+
 private:
     /// @name Helper methods for for joining nodes
     /// @{
 
     /// @brief Definition of a node cluster container
     typedef std::vector<std::set<NBNode*> > NodeClusters;
+    typedef std::pair<NBNode*, SUMOReal> NodeAndDist;
 
 
     /** @brief Builds node clusters
@@ -383,6 +388,9 @@ private:
 
     /// @brief ids found in loaded join clusters used for error checking
     std::set<std::string> myJoined;
+
+    /// @brief nodes that were created when splitting an edge
+    std::set<const NBNode*> mySplit;
 
     /// @brief node positions for faster lookup
     NamedRTree myRTree;

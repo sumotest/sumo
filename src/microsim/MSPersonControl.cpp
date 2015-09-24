@@ -49,7 +49,11 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-MSPersonControl::MSPersonControl() {}
+MSPersonControl::MSPersonControl():
+    myLoadedPersonNumber(0),
+    myRunningPersonNumber(0),
+    myJammedPersonNumber(0)
+{}
 
 
 MSPersonControl::~MSPersonControl() {
@@ -65,6 +69,8 @@ bool
 MSPersonControl::add(const std::string& id, MSPerson* person) {
     if (myPersons.find(id) == myPersons.end()) {
         myPersons[id] = person;
+        myLoadedPersonNumber++;
+        myRunningPersonNumber++;
         return true;
     }
     return false;
@@ -99,6 +105,7 @@ MSPersonControl::erase(MSTransportable* person) {
     }
     const std::map<std::string, MSTransportable*>::iterator i = myPersons.find(id);
     if (i != myPersons.end()) {
+        myRunningPersonNumber--;
         delete i->second;
         myPersons.erase(i);
     }
@@ -183,9 +190,9 @@ MSPersonControl::boardAnyWaiting(MSEdge* edge, MSVehicle* vehicle, MSVehicle::St
                     stop->duration = boardingDuration;
                 }
                 //update the time point at which the next person can board the vehicle
-                if (stop->timeToBoardNextPerson > currentTime - DELTA_T){
+                if (stop->timeToBoardNextPerson > currentTime - DELTA_T) {
                     stop->timeToBoardNextPerson += boardingDuration;
-                } else {    
+                } else {
                     stop->timeToBoardNextPerson = currentTime + boardingDuration;
                 }
 
@@ -238,7 +245,7 @@ MSPersonControl::abortWaiting() {
         for (PersonVector::const_iterator j = pv.begin(); j != pv.end(); ++j) {
             MSTransportable* p = (*j);
             edge->removePerson(p);
-            WRITE_WARNING("Person " + p->getID() + " aborted waiting for a ride that will never come.");
+            WRITE_WARNING("Person '" + p->getID() + "' aborted waiting for a ride that will never come.");
             erase(p);
         }
     }

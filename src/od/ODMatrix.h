@@ -4,7 +4,7 @@
 /// @author  Michael Behrisch
 /// @author  Yun-Pang Floetteroed
 /// @date    05. Apr. 2006
-/// @version $Id: ODMatrix.h 18515 2015-07-01 20:45:25Z behrisch $
+/// @version $Id: ODMatrix.h 18586 2015-08-03 06:44:47Z namdre $
 ///
 // An O/D (origin/destination) matrix
 /****************************************************************************/
@@ -51,6 +51,7 @@
 // class declarations
 // ===========================================================================
 class OutputDevice;
+class SUMOSAXHandler;
 
 
 // ===========================================================================
@@ -109,6 +110,21 @@ public:
              SUMOTime end, const std::string& origin, const std::string& destination,
              const std::string& vehicleType);
 
+    /** @brief Adds a single vehicle with departure time
+     *
+     * If there is no existing ODCell for the given parameters one is generated
+     * using add(...)
+     *
+     * @param[in] id The id of the vehicle
+     * @param[in] depart The departure time of the vehicle
+     * @param[in] origin The origin district to use for the cell's flows
+     * @param[in] destination The destination district to use for the cell's flows
+     * @param[in] vehicleType The vehicle type to use for the cell's flows
+     */
+    void add(const std::string& id, const SUMOTime depart,
+             const std::string& origin, const std::string& destination,
+             const std::string& vehicleType);
+
     /** @brief Helper function for flow and trip output writing the depart
      *   and arrival attributes
      *
@@ -139,12 +155,14 @@ public:
      * @param[in] end The end time to generate vehicles for
      * @param[in] dev The stream to write the generated vehicle trips to
      * @param[in] uniform Information whether departure times shallbe uniformly spread or random
+     * @param[in] differSourceSink whether source and sink shall be different edges
      * @param[in] noVtype Whether vtype information shall not be written
      * @param[in] prefix A prefix for the vehicle names
      * @param[in] stepLog Whether processed time shall be written
      */
     void write(SUMOTime begin, const SUMOTime end,
-               OutputDevice& dev, const bool uniform, const bool noVtype,
+               OutputDevice& dev, const bool uniform,
+               const bool differSourceSink, const bool noVtype,
                const std::string& prefix, const bool stepLog);
 
 
@@ -214,7 +232,7 @@ public:
     /** @brief read SUMO routes
      *  @todo Describe
      */
-    void loadRoutes(OptionsCont& oc);
+    void loadRoutes(OptionsCont& oc, SUMOSAXHandler& handler);
 
     /** @brief split the given timeline
      *  @todo Describe
@@ -266,11 +284,13 @@ protected:
      * @param[in,out] vehName An incremented index of the generated vehicle
      * @param[out] into The storage to put generated vehicles into
      * @param[in] uniform Information whether departure times shallbe uniformly spread or random
+     * @param[in] differSourceSink whether source and sink shall be different edges
      * @param[in] prefix A prefix for the vehicle names
      * @return The number of left vehicles to insert
      */
     SUMOReal computeDeparts(ODCell* cell,
-                            size_t& vehName, std::vector<ODVehicle>& into, bool uniform,
+                            size_t& vehName, std::vector<ODVehicle>& into,
+                            const bool uniform, const bool differSourceSink,
                             const std::string& prefix);
 
 

@@ -46,8 +46,17 @@ unsorted_time_typedefined
 # Test whether the vehicle class is processed
 increasing_time_typedefined_withclass
 
+# Test whether the cfmodel is processed
+increasing_time_typedefined_withmodel
+
+# Test whether the cfmodel is processed when nested
+increasing_time_typedefined_nestedmodel
+
 # using zones for start / end
 with_taz
+
+# use taz and vehicles with a vClass
+with_taz_vClass
 
 # using zones for start / end with no edge specified
 taz_noedge

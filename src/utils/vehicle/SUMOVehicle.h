@@ -1,4 +1,4 @@
-/****************************************************************************/
+﻿/****************************************************************************/
 /// @file    SUMOVehicle.h
 /// @author  Michael Behrisch
 /// @author  Daniel Krajzewicz
@@ -101,6 +101,11 @@ public:
      */
     virtual SUMOReal getSpeed() const = 0;
 
+    /** @brief Returns the lane the vehicle is on
+    * @return The vehicle's current lane
+    */
+    virtual MSLane* getLane() const = 0;
+
     /** @brief Returns the vehicle's type
      * @return The vehicle's type
      */
@@ -180,6 +185,11 @@ public:
      */
     virtual bool isOnRoad() const = 0;
 
+    /** @brief Returns the information whether the vehicle is parked
+     * @return Whether the vehicle is parked
+     */
+    virtual bool isParking() const = 0;
+
     /** @brief Returns this vehicle's real departure time
      * @return This vehicle's real departure time
      */
@@ -190,6 +200,10 @@ public:
      * @return This vehicle's real arrivalPos
      */
     virtual SUMOReal getArrivalPos() const = 0;
+
+    /** @brief Sets this vehicle's desired arrivalPos for its current route
+     */
+    virtual void setArrivalPos(SUMOReal arrivalPos) = 0;
 
     /** @brief Returns whether this vehicle has departed
      */

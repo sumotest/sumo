@@ -91,6 +91,13 @@ public:
     /// @brief Destructor
     ~GUILane();
 
+    /** @brief Returns the name of the parent object (if any)
+     * @note Inherited from GUIGlObject
+     * @return This object's parent id
+     */
+    const std::string& getParentName() const {
+        return getEdge().getID();
+    }
 
 
     /// @name Access to vehicles
@@ -202,11 +209,6 @@ public:
 
     /// @brief draw crossties for railroads or pedestrian crossings
     void drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) const;
-
-    SUMOReal getHalfWidth() const {
-        return myHalfLaneWidth;
-    }
-
 
     SUMOReal getEdgeLaneNumber() const;
 

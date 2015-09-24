@@ -6,7 +6,7 @@
 /// @author  Laura Bieker
 /// @author  Yun-Pang Floetteroed
 /// @date    Thu, 12 September 2002
-/// @version $Id: od2trips_main.cpp 18486 2015-06-11 11:10:09Z behrisch $
+/// @version $Id: od2trips_main.cpp 18586 2015-08-03 06:44:47Z namdre $
 ///
 // Main for OD2TRIPS
 /****************************************************************************/
@@ -132,6 +132,9 @@ fillOptions() {
 
     oc.doRegister("spread.uniform", new Option_Bool(false));
     oc.addDescription("spread.uniform", "Processing", "Spreads trips uniformly over each time period");
+
+    oc.doRegister("different-source-sink", new Option_Bool(false));
+    oc.addDescription("different-source-sink", "Processing", "Always choose source and sink edge which are not identical");
 
     oc.doRegister("vtype", new Option_String(""));
     oc.addDescription("vtype", "Processing", "Defines the name of the vehicle type to use");
@@ -281,7 +284,8 @@ main(int argc, char** argv) {
         if (OutputDevice::createDeviceByOption("output-file", "routes", "routes_file.xsd")) {
             matrix.write(string2time(oc.getString("begin")), string2time(oc.getString("end")),
                          OutputDevice::getDeviceByOption("output-file"),
-                         oc.getBool("spread.uniform"), oc.getBool("ignore-vehicle-type"),
+                         oc.getBool("spread.uniform"), oc.getBool("different-source-sink"),
+                         oc.getBool("ignore-vehicle-type"),
                          oc.getString("prefix"), !oc.getBool("no-step-log"));
             haveOutput = true;
         }

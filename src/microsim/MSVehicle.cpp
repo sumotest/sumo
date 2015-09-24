@@ -363,12 +363,11 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
  * MSVehicle-methods
  * ----------------------------------------------------------------------- */
 MSVehicle::~MSVehicle() {
-    delete myLaneChangeModel;
-    // other
     delete myEdgeWeights;
     for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
         (*i)->resetPartialOccupation(this);
     }
+    delete myLaneChangeModel; // still needed when calling resetPartialOccupation (getShadowLane)
     myFurtherLanes.clear();
     for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         if ((*i).myLink != 0) {
@@ -471,7 +470,7 @@ MSVehicle::replaceRoute(const MSRoute* newRoute, bool onInit, int offset) {
     myLastBestLanesInternalLane = 0;
     updateBestLanes(true, onInit ? (*myCurrEdge)->getLanes().front() : 0);
     // update arrival definition
-    calculateArrivalPos();
+    calculateArrivalParams();
     // save information that the vehicle was rerouted
     myNumberReroutes++;
     MSNet::getInstance()->informVehicleStateListener(this, MSNet::VEHICLE_STATE_NEWROUTE);
@@ -804,7 +803,7 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
 
 bool
 MSVehicle::isStopped() const {
-    return !myStops.empty() && myStops.begin()->reached;
+    return !myStops.empty() && myStops.begin()->reached /*&& myState.mySpeed < SUMO_const_haltingSpeed @todo #1864#*/;
 }
 
 
@@ -1102,7 +1101,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
 
         // - even if red, if we cannot break we should issue a request
         // - always issue a request to leave the intersection we are currently on
-        bool setRequest = v > 0 || (myLane->getEdge().isInternal() && lastLink == 0); 
+        bool setRequest = v > 0 || (myLane->getEdge().isInternal() && lastLink == 0);
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
         const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed) - myState.mySpeed * cfModel.getHeadwayTime();
         if (yellowOrRed && seen >= brakeDist) {
@@ -1453,6 +1452,9 @@ MSVehicle::executeMove() {
                     assert(myState.myPos > 0);
                     enterLaneAtMove(approachedLane);
                     myLane = approachedLane;
+                    if (hasArrived()) {
+                        break;
+                    }
                     if (getLaneChangeModel().isChangingLanes()) {
                         if (link->getDirection() == LINKDIR_LEFT || link->getDirection() == LINKDIR_RIGHT) {
                             // abort lane change
@@ -1491,7 +1493,7 @@ MSVehicle::executeMove() {
     if (!hasArrived() && !myLane->getEdge().isVaporizing()) {
         if (myState.myPos > myLane->getLength()) {
             WRITE_WARNING("Vehicle '" + getID() + "' performs emergency stop at the end of lane '" + myLane->getID()
-                          + emergencyReason
+                          + "'" + emergencyReason
                           + " (decel=" + toString(myAcceleration - myState.mySpeed)
                           + "), time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
             MSNet::getInstance()->getVehicleControl().registerEmergencyStop();
@@ -1619,7 +1621,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
         }
 #endif
         // check which links allow continuation and add pass available to the previous item
-        for (int i = (int)(lfLinks.size() - 1); i > 0; --i) {
+        for (int i = ((int)lfLinks.size() - 1); i > 0; --i) {
             DriveProcessItem& item = lfLinks[i - 1];
             const bool canLeaveJunction = item.myLink->getViaLane() == 0 || lfLinks[i].mySetRequest;
             const bool opened = item.myLink != 0 && canLeaveJunction && (item.myLink->havePriority() ||
@@ -1862,8 +1864,8 @@ MSVehicle::leaveLane(const MSMoveReminder::Notification reason) {
     }
     if (reason != MSMoveReminder::NOTIFICATION_PARKING && reason != MSMoveReminder::NOTIFICATION_LANE_CHANGE) {
         while (!myStops.empty() && myStops.front().edge == myCurrEdge) {
-            WRITE_WARNING("Vehicle '" + getID() + "' skips stop on lane '" + myStops.front().lane->getID() 
-                    + "' time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".")
+            WRITE_WARNING("Vehicle '" + getID() + "' skips stop on lane '" + myStops.front().lane->getID()
+                          + "' time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".")
             myStops.pop_front();
         }
     }
@@ -1978,7 +1980,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
     }
     if (myParameter->arrivalLaneProcedure == ARRIVAL_LANE_GIVEN && nextStopEdge == 0) {
         nextStopEdge = *(myRoute->end() - 1);
-        nextStopLane = nextStopEdge->getLanes()[myParameter->arrivalLane];
+        nextStopLane = nextStopEdge->getLanes()[myArrivalLane];
         nextStopPos = myArrivalPos;
     }
     if (nextStopEdge != 0) {

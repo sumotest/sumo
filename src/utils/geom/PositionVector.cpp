@@ -275,13 +275,16 @@ PositionVector::positionAtOffset(const Position& p1,
                                  const Position& p2,
                                  SUMOReal pos, SUMOReal lateralOffset) {
     const SUMOReal dist = p1.distanceTo(p2);
-    if (dist < pos) {
+    if (pos < 0 || dist < pos) {
         return Position::INVALID;
     }
     if (lateralOffset != 0) {
         Line l(p1, p2);
         l.move2side(-lateralOffset); // move in the same direction as Position::move2side
         return l.getPositionAtDistance(pos);
+    }
+    if (pos == 0.) {
+        return p1;
     }
     return p1 + (p2 - p1) * (pos / dist);
 }
@@ -292,13 +295,16 @@ PositionVector::positionAtOffset2D(const Position& p1,
                                    const Position& p2,
                                    SUMOReal pos, SUMOReal lateralOffset) {
     const SUMOReal dist = p1.distanceTo2D(p2);
-    if (dist < pos) {
+    if (pos < 0 || dist < pos) {
         return Position::INVALID;
     }
     if (lateralOffset != 0) {
         Line l(p1, p2);
         l.move2side(-lateralOffset); // move in the same direction as Position::move2side
         return l.getPositionAtDistance2D(pos);
+    }
+    if (pos == 0.) {
+        return p1;
     }
     return p1 + (p2 - p1) * (pos / dist);
 }
@@ -514,6 +520,14 @@ void
 PositionVector::add(SUMOReal xoff, SUMOReal yoff, SUMOReal zoff) {
     for (int i = 0; i < static_cast<int>(size()); i++) {
         (*this)[i].add(xoff, yoff, zoff);
+    }
+}
+
+
+void
+PositionVector::mirrorX() {
+    for (int i = 0; i < static_cast<int>(size()); i++) {
+        (*this)[i].mul(1, -1);
     }
 }
 
@@ -1240,7 +1254,7 @@ PositionVector::operator==(const PositionVector& v2) const {
 }
 
 
-bool 
+bool
 PositionVector::hasElevation() const {
     if (size() > 2) {
         return false;

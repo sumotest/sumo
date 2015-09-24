@@ -65,14 +65,23 @@ NBRampsComputer::computeRamps(NBNetBuilder& nb, OptionsCont& oc) {
     std::set<NBEdge*> incremented;
     // check whether on-off ramps shall be guessed
     if (oc.getBool("ramps.guess")) {
+        NBNodeCont& nc = nb.getNodeCont();
+        NBEdgeCont& ec = nb.getEdgeCont();
+        NBDistrictCont& dc = nb.getDistrictCont();
+        // collect join exclusions
         std::set<std::string> noramps;
         if (oc.isSet("ramps.unset")) {
             std::vector<std::string> edges = oc.getStringVector("ramps.unset");
             noramps.insert(edges.begin(), edges.end());
         }
-        NBNodeCont& nc = nb.getNodeCont();
-        NBEdgeCont& ec = nb.getEdgeCont();
-        NBDistrictCont& dc = nb.getDistrictCont();
+        // exclude roundabouts
+        const std::set<EdgeSet>& roundabouts = ec.getRoundabouts();
+        for (std::set<EdgeSet>::const_iterator it_round = roundabouts.begin();
+                it_round != roundabouts.end(); ++it_round) {
+            for (EdgeSet::const_iterator it_edge = it_round->begin(); it_edge != it_round->end(); ++it_edge) {
+                noramps.insert((*it_edge)->getID());
+            }
+        }
         // if an edge is part of two ramps, ordering is important
         std::set<NBNode*, Named::ComparatorIdLess> potOnRamps;
         std::set<NBNode*, Named::ComparatorIdLess> potOffRamps;
@@ -165,7 +174,7 @@ NBRampsComputer::buildOnRamp(NBNode* cur, NBNodeCont& nc, NBEdgeCont& ec, NBDist
                 curr->invalidateConnections(true);
                 incremented.insert(curr);
                 moveRampRight(curr, toAdd);
-                currLength += curr->getLength(); // !!! loaded length?
+                currLength += curr->getGeometry().length(); // !!! loaded length?
                 last = curr;
             }
             NBNode* nextN = curr->getToNode();
@@ -247,7 +256,7 @@ NBRampsComputer::buildOffRamp(NBNode* cur, NBNodeCont& nc, NBEdgeCont& ec, NBDis
                 curr->invalidateConnections(true);
                 incremented.insert(curr);
                 moveRampRight(curr, toAdd);
-                currLength += curr->getLength(); // !!! loaded length?
+                currLength += curr->getGeometry().length(); // !!! loaded length?
                 last = curr;
             }
             NBNode* prevN = curr->getFromNode();
@@ -409,10 +418,9 @@ NBRampsComputer::getOffRampEdges(NBNode* n, NBEdge** potHighway, NBEdge** potRam
 bool
 NBRampsComputer::fulfillsRampConstraints(
     NBEdge* potHighway, NBEdge* potRamp, NBEdge* other, SUMOReal minHighwaySpeed, SUMOReal maxRampSpeed,
-    const std::set<std::string>& noramps) 
-{
-    // do not build ramps on rail edges
-    if (isRailway(potHighway->getPermissions()) || isRailway(potRamp->getPermissions())) {
+    const std::set<std::string>& noramps) {
+    // check modes that are not appropriate for rampsdo not build ramps on rail edges
+    if (hasWrongMode(potHighway) || hasWrongMode(potRamp) || hasWrongMode(other)) {
         return false;
     }
     // do not build ramps on connectors
@@ -457,6 +465,21 @@ NBRampsComputer::fulfillsRampConstraints(
     return true;
 }
 
+
+bool 
+NBRampsComputer::hasWrongMode(NBEdge* edge) {
+    // must allow passenger vehicles
+    if ((edge->getPermissions() & SVC_PASSENGER) == 0) {
+        return true;
+    }
+    // must not have a green verge or a lane that is only for soft modes
+    for (int i = 0; i < (int)edge->getNumLanes(); ++i) {
+        if ((edge->getPermissions(i) & ~(SVC_PEDESTRIAN | SVC_BICYCLE)) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /****************************************************************************/
 

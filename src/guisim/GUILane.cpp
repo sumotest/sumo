@@ -44,6 +44,7 @@
 #include <utils/gui/windows/GUISUMOAbstractView.h>
 #include <utils/gui/div/GUIParameterTableWindow.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
+#include <utils/gui/windows/GUIAppEnum.h>
 #include <microsim/MSGlobals.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSVehicleControl.h>
@@ -355,6 +356,12 @@ GUILane::drawArrows() const {
                 GLHelper::drawBoxLine(Position(0.5, 2.5), 180, 1, .05);
                 GLHelper::drawTriangleAtEnd(Line(Position(0.5, 2.5), Position(0.5, 4)), (SUMOReal) 1, (SUMOReal) .25);
                 break;
+            case LINKDIR_TURN_LEFTHAND:
+                GLHelper::drawBoxLine(Position(0, 4), 0, 1.5, .05);
+                GLHelper::drawBoxLine(Position(0, 2.5), -90, 1, .05);
+                GLHelper::drawBoxLine(Position(-0.5, 2.5), -180, 1, .05);
+                GLHelper::drawTriangleAtEnd(Line(Position(-0.5, 2.5), Position(-0.5, 4)), (SUMOReal) 1, (SUMOReal) .25);
+                break;
             case LINKDIR_LEFT:
                 GLHelper::drawBoxLine(Position(0, 4), 0, 1.5, .05);
                 GLHelper::drawBoxLine(Position(0, 2.5), 90, 1, .05);
@@ -583,7 +590,7 @@ GUILane::drawMarkings(const GUIVisualizationSettings& s, SUMOReal scale) const {
         getShape(),
         getShapeRotations(),
         getShapeLengths(),
-        (getHalfWidth() + SUMO_const_laneOffset) * scale);
+        (myHalfLaneWidth + SUMO_const_laneOffset) * scale);
     glPopMatrix();
 }
 
@@ -644,6 +651,7 @@ GUILane::getPopUpMenu(GUIMainWindow& app,
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
     //
+    new FXMenuCommand(ret, "Copy edge name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
     buildNameCopyPopupEntry(ret);
     buildSelectionPopupEntry(ret);
     //

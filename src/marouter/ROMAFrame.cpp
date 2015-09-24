@@ -140,6 +140,9 @@ ROMAFrame::addImportOptions() {
     oc.addDescription("end", "Time", "Defines the end time; Later trips will be discarded; Defaults to the maximum time that SUMO can represent");
 
     // register the processing options
+    oc.doRegister("aggregation-interval", new Option_String("3600", "TIME"));
+    oc.addDescription("aggregation-interval", "Processing", "Defines the time interval when aggregating single vehicle input; Defaults to one hour");
+
     oc.doRegister("ignore-errors", new Option_Bool(false));
     oc.addSynonyme("ignore-errors", "continue-on-unbuild", true);
     oc.addSynonyme("ignore-errors", "dismiss-loading-errors", true);
@@ -208,6 +211,9 @@ ROMAFrame::addAssignmentOptions() {
 
     oc.doRegister("timeline.day-in-hours", new Option_Bool(false));
     oc.addDescription("timeline.day-in-hours", "Processing", "Uses STR as a 24h-timeline definition");
+
+    oc.doRegister("additive-traffic", new Option_Bool(false));
+    oc.addDescription("additive-traffic", "Processing", "Keep traffic flows of all time slots in the net");
 
     // register macroscopic SUE-settings
     oc.doRegister("assignment-method", new Option_String("incremental"));

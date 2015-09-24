@@ -371,7 +371,7 @@ public:
      * @todo Recheck whether a visitor-pattern should be used herefor
      * @see NBEdge::computeLanes2Edges
      */
-    void computeLanes2Edges(const bool buildCrossingsAndWalkingAreas);
+    void computeLanes2Edges();
 
 
     /** @brief Rechecks whether all lanes have a successor for each of the stored edges
@@ -381,7 +381,7 @@ public:
      * @todo Recheck whether a visitor-pattern should be used herefor
      * @see NBEdge::recheckLanes
      */
-    void recheckLanes(const bool buildCrossingsAndWalkingAreas);
+    void recheckLanes();
 
 
     /** @brief Appends turnarounds to all edges stored in the container
@@ -457,14 +457,6 @@ public:
     void guessRoundabouts();
 
 
-    /** @brief Returns whether the built edges are left-handed
-     * @return Whether this edge container is left-handed
-     */
-    bool isLeftHanded() const {
-        return myAmLeftHanded;
-    }
-
-
     /** @brief Returns whether the edge with the id was ignored during parsing
      * @return Whether the edge with the id was ignored during parsing
      */
@@ -535,6 +527,9 @@ private:
     /// @brief Returns true if this edge matches one of the removal criteria
     bool ignoreFilterMatch(NBEdge* edge);
 
+    /// @brief compute the form factor for a loop of edges
+    static SUMOReal formFactor(const EdgeVector& loopEdges);
+
 private:
     /// @brief The network builder; used to obtain type information
     NBTypeCont& myTypeCont;
@@ -586,10 +581,6 @@ private:
 
     /// @brief the number of splits of edges during the building
     unsigned int myEdgesSplit;
-
-    /// @brief Whether the network is left-handed
-    bool myAmLeftHanded;
-
 
     /// @name Settings for accepting/dismissing edges
     /// @{

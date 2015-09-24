@@ -1,4 +1,4 @@
-/****************************************************************************/
+﻿/****************************************************************************/
 /// @file    MSFrame.cpp
 /// @author  Daniel Krajzewicz
 /// @author  Eric Nicolay
@@ -128,6 +128,12 @@ MSFrame::fillOptions() {
 
     oc.doRegister("emission-output", new Option_FileName());
     oc.addDescription("emission-output", "Output", "Save the emission values of each vehicle");
+
+    oc.doRegister("battery-output", new Option_FileName());
+    oc.addDescription("battery-output", "Output", "Save the battery values of each vehicle");
+    oc.doRegister("battery-output.precision", new Option_Integer(OUTPUT_ACCURACY));
+    oc.addDescription("battery-output.precision", "Output", "Write battery values with the given precision (default 2)");
+
     oc.doRegister("fcd-output", new Option_FileName());
     oc.addDescription("fcd-output", "Output", "Save the Floating Car Data");
     oc.doRegister("fcd-output.geo", new Option_Bool(false));
@@ -190,7 +196,7 @@ MSFrame::fillOptions() {
     oc.addDescription("link-output", "Output", "Save links states into FILE");
 
     oc.doRegister("bt-output", new Option_FileName());
-    oc.addDescription("bt-output", "Output", "Save bt visibilities into FILE");
+    oc.addDescription("bt-output", "Output", "Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender)");
 
 
 #ifdef _DEBUG
@@ -243,7 +249,7 @@ MSFrame::fillOptions() {
     oc.addDescription("max-num-vehicles", "Processing", "Quit simulation if this number of vehicles is exceeded");
 
     oc.doRegister("scale", new Option_Float());
-    oc.addDescription("scale", "Processing", "Scale demand by the given factor (0..1)");
+    oc.addDescription("scale", "Processing", "Scale demand by the given factor (by discarding or duplicating vehicles)");
 
     oc.doRegister("time-to-teleport", new Option_String("300", "TIME"));
     oc.addDescription("time-to-teleport", "Processing", "Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting");
@@ -297,6 +303,7 @@ MSFrame::fillOptions() {
     oc.addDescription("phemlight-path", "Emissions", "Determines where to load PHEMlight definitions from.");
 
     oc.addOptionSubTopic("Communication");
+    oc.addOptionSubTopic("Battery");
     MSDevice::insertOptions(oc);
 
     // register report options
@@ -385,6 +392,7 @@ MSFrame::buildStreams() {
     //extended
     OutputDevice::createDeviceByOption("fcd-output", "fcd-export", "fcd_file.xsd");
     OutputDevice::createDeviceByOption("emission-output", "emission-export", "emission_file.xsd");
+    OutputDevice::createDeviceByOption("battery-output", "battery-export");
     OutputDevice::createDeviceByOption("full-output", "full-export", "full_file.xsd");
     OutputDevice::createDeviceByOption("queue-output", "queue-export", "queue_file.xsd");
     OutputDevice::createDeviceByOption("amitran-output", "trajectories", "amitran/trajectories.xsd\" timeStepSize=\"" + toString(STEPS2MS(DELTA_T)));

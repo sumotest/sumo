@@ -72,6 +72,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "rerouter",         SUMO_TAG_REROUTER },
     { "busStop",          SUMO_TAG_BUS_STOP },
     { "containerStop",    SUMO_TAG_CONTAINER_STOP },
+    { "chargingStation",  SUMO_TAG_CHRG_STN },
     { "vTypeProbe",       SUMO_TAG_VTYPEPROBE },
     { "routeProbe",       SUMO_TAG_ROUTEPROBE },
     { "routes",           SUMO_TAG_ROUTES },
@@ -214,6 +215,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "oneway",         SUMO_ATTR_ONEWAY },
     { "width",          SUMO_ATTR_WIDTH },
     { "sidewalkWidth",  SUMO_ATTR_SIDEWALKWIDTH },
+    { "bikeLaneWidth",  SUMO_ATTR_BIKELANEWIDTH },
     { "remove",         SUMO_ATTR_REMOVE },
 
     { "length",         SUMO_ATTR_LENGTH },
@@ -260,6 +262,11 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "minGap",         SUMO_ATTR_MINGAP },
     { "boardingDuration", SUMO_ATTR_BOARDING_DURATION },
     { "loadingDuration", SUMO_ATTR_LOADING_DURATION },
+
+    { "chrgpower",      SUMO_ATTR_CHRGPOWER },
+    { "efficiency",     SUMO_ATTR_EFFICIENCY },
+    { "chargeInTransit", SUMO_ATTR_CHRGINTRANSIT },
+    { "chargeDelay",    SUMO_ATTR_CHRGDELAY},
 
     { "sigma",          SUMO_ATTR_SIGMA },
     { "tau",            SUMO_ATTR_TAU },
@@ -528,6 +535,7 @@ StringBijection<LinkState>::Entry SUMOXMLDefinitions::linkStateValues[] = {
 StringBijection<LinkDirection>::Entry SUMOXMLDefinitions::linkDirectionValues[] = {
     { "s", LINKDIR_STRAIGHT },
     { "t", LINKDIR_TURN },
+    { "T", LINKDIR_TURN_LEFTHAND },
     { "l", LINKDIR_LEFT },
     { "r", LINKDIR_RIGHT },
     { "L", LINKDIR_PARTLEFT },
@@ -600,7 +608,7 @@ StringBijection<LaneChangeModel> SUMOXMLDefinitions::LaneChangeModels(
     SUMOXMLDefinitions::laneChangeModelValues, LCM_JE2013);
 
 StringBijection<SumoXMLTag> SUMOXMLDefinitions::CarFollowModels(
-    SUMOXMLDefinitions::carFollowModelValues, SUMO_TAG_CF_KRAUSS);
+    SUMOXMLDefinitions::carFollowModelValues, SUMO_TAG_CF_WIEDEMANN);
 
 
 std::string

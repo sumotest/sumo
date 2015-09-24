@@ -55,6 +55,7 @@ FXDEFMAP(GUIGLObjectPopupMenu) GUIGLObjectPopupMenuMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_CENTER,                  GUIGLObjectPopupMenu::onCmdCenter),
     FXMAPFUNC(SEL_COMMAND,  MID_COPY_NAME,               GUIGLObjectPopupMenu::onCmdCopyName),
     FXMAPFUNC(SEL_COMMAND,  MID_COPY_TYPED_NAME,         GUIGLObjectPopupMenu::onCmdCopyTypedName),
+    FXMAPFUNC(SEL_COMMAND,  MID_COPY_EDGE_NAME,          GUIGLObjectPopupMenu::onCmdCopyEdgeName),
     FXMAPFUNC(SEL_COMMAND,  MID_COPY_CURSOR_POSITION,    GUIGLObjectPopupMenu::onCmdCopyCursorPosition),
     FXMAPFUNC(SEL_COMMAND,  MID_COPY_CURSOR_GEOPOSITION, GUIGLObjectPopupMenu::onCmdCopyCursorGeoPosition),
     FXMAPFUNC(SEL_COMMAND,  MID_SHOWPARS,                GUIGLObjectPopupMenu::onCmdShowPars),
@@ -103,6 +104,14 @@ GUIGLObjectPopupMenu::onCmdCopyTypedName(FXObject*, FXSelector, void*) {
 
 
 long
+GUIGLObjectPopupMenu::onCmdCopyEdgeName(FXObject*, FXSelector, void*) {
+    assert(myObject->getType() == GLO_LANE);
+    GUIUserIO::copyToClipboard(*myParent->getApp(), myObject->getParentName());
+    return 1;
+}
+
+
+long
 GUIGLObjectPopupMenu::onCmdCopyCursorPosition(FXObject*, FXSelector, void*) {
     GUIUserIO::copyToClipboard(*myParent->getApp(), toString(myNetworkPosition));
     return 1;
@@ -133,7 +142,7 @@ GUIGLObjectPopupMenu::onCmdAddSelected(FXObject*, FXSelector, void*) {
     myParent->update();
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     gDebugSelectedVehicle = myObject->getMicrosimID();
-#endif 
+#endif
     return 1;
 }
 

@@ -1,4 +1,6 @@
-SUMO Version dev-SVN-r18422A microscopic road traffic simulation.
+SUMO Version dev-SVN-r18894I
+ Copyright (C) 2001-2015 DLR and contributors; http://sumo.dlr.de
+A microscopic road traffic simulation.
 
 Usage: sumo [OPTION]*
 Configuration Options:
@@ -32,6 +34,9 @@ Output Options:
   --netstate-dump.precision INT        Write positions and speeds with the
                                          given precision (default 2)
   --emission-output FILE               Save the emission values of each vehicle
+  --battery-output FILE                Save the battery values of each vehicle
+  --battery-output.precision INT       Write battery values with the given
+                                         precision (default 2)
   --fcd-output FILE                    Save the Floating Car Data
   --fcd-output.geo                     Save the Floating Car Data using
                                          geo-coordinates (lon/lat)
@@ -64,7 +69,9 @@ Output Options:
   --vehroute-output.write-unfinished   Write vehroute output for vehicles which
                                          have not arrived at simulation end
   --link-output FILE                   Save links states into FILE
-  --bt-output FILE                     Save bt visibilities into FILE
+  --bt-output FILE                     Save bluetooth visibilities into FILE
+                                         (in conjunction with device.btreceiver
+                                         and device.btsender)
   --save-state.times INT[]             Use INT[] as times at which a network
                                          state written
   --save-state.prefix FILE             Prefix for network states
@@ -89,7 +96,8 @@ Processing Options:
                                          connected
   --max-num-vehicles INT               Quit simulation if this number of
                                          vehicles is exceeded
-  --scale FLOAT                        Scale demand by the given factor (0..1)
+  --scale FLOAT                        Scale demand by the given factor (by
+                                         discarding or duplicating vehicles)
   --time-to-teleport TIME              Specify how long a vehicle may wait
                                          until being teleported, defaults to
                                          300, non-positive values disable
@@ -203,6 +211,14 @@ Communication Options:
   --device.btsender.explicit STR       Assign a 'btsender' device to named
                                          vehicles
   --device.btsender.deterministic      The 'btsender' devices are set
+                                         deterministic using a fraction of 1000
+
+Battery Options:
+  --device.battery.probability FLOAT   The probability for a vehicle to have a
+                                         'battery' device
+  --device.battery.explicit STR        Assign a 'battery' device to named
+                                         vehicles
+  --device.battery.deterministic       The 'battery' devices are set
                                          deterministic using a fraction of 1000
 
 Example Device Options:
