@@ -157,6 +157,8 @@ MSSOTLTrafficLightLogic::init(NLDetectorBuilder &nb) throw(ProcessError) {
                 mySensors = new MSSOTLE2Sensors(myID, &(getPhases()));
                 ((MSSOTLE2Sensors *)mySensors)->buildSensors(myLanes, nb,getInputSensorsLength());
                 mySensors->stepChanged(getCurrentPhaseIndex());
+                if (getParameter("USE_VEHICLE_TYPES_WEIGHTS", "0") == "1")
+                  ((MSSOTLE2Sensors *) mySensors)->setVehicleWeigths(getParameter("VEHICLE_TYPES_WEIGHTS", ""));
 
 				//threshold speed param for tuning with irace
 				((MSSOTLE2Sensors *)mySensors)->setSpeedThresholdParam(getSpeedThreshold());
@@ -526,7 +528,7 @@ MSSOTLTrafficLightLogic::trySwitch() {
 
 bool MSSOTLTrafficLightLogic::isPushButtonPressed()
 {
-    if (getParameter("USE_PUSH_BUTTON", "1") == "0")
+    if (getParameter("USE_PUSH_BUTTON", "0") == "0")
       return false;
     const MSPhaseDefinition currentPhase = getCurrentPhaseDef();
     if(m_pushButtons.find(currentPhase.getState()) == m_pushButtons.end())

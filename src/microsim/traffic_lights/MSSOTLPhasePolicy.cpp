@@ -18,6 +18,9 @@
 /****************************************************************************/
 
 #include "MSSOTLPhasePolicy.h"
+#include <math.h>
+#include "utils/common/RandHelper.h"
+
 
 MSSOTLPhasePolicy::MSSOTLPhasePolicy(const std::map<std::string, std::string>& parameters) :
 		MSSOTLPolicy("Phase", parameters)
@@ -43,16 +46,29 @@ MSSOTLPhasePolicy::MSSOTLPhasePolicy(MSSOTLPolicyDesirability *desirabilityAlgor
 bool MSSOTLPhasePolicy::canRelease(int elapsed, bool thresholdPassed, bool pushButtonPressed,
 		const MSPhaseDefinition* stage, int vehicleCount)
 {
-	if (elapsed >= stage->minDuration)
-	{
+//  DBG(
+      std::ostringstream str;
+      str <<"MSSOTLPhasePolicy::canRelease threshold " << thresholdPassed << " vehicle " << vehicleCount << " elapsed " << elapsed << " min " << stage->minDuration;
+      WRITE_MESSAGE(str.str());
+//          );
+      if (elapsed >= stage->minDuration)
+      {
         if (pushButtonLogic(elapsed, pushButtonPressed, stage))
           return true;
-		return thresholdPassed;
-	}
-	return false;
+        if (thresholdPassed)
+          return thresholdPassed;
+        else if(m_useVehicleTypesWeights)
+        {
+          if (sigmoidLogic(elapsed, stage, vehicleCount))
+            return true;
+        }
+      }
+      return false;
 }
 
 void MSSOTLPhasePolicy::init()
 {
   PushButtonLogic::init("MSSOTLPhasePolicy", this);
+  SigmoidLogic::init("MSSOTLPhasePolicy", this);
+  m_useVehicleTypesWeights = getParameter("USE_VEHICLE_TYPES_WEIGHTS", "0") == "1";
 }

@@ -85,7 +85,7 @@ public:
 	/**
 	 * \brief Returns the vector of the low-level policies used by this high-level tll.
 	 */
-	vector<MSSOTLPolicy*> getPolicies() {
+	vector<MSSOTLPolicy*>& getPolicies() {
 		return policies;
 	}
 	/**

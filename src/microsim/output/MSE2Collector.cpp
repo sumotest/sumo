@@ -592,5 +592,10 @@ MSE2Collector::getCurrentVehicleIDs() const {
     return ret;
 }
 
+const std::list<SUMOVehicle*>& MSE2Collector::getCurrentVehicles() const
+{
+  return myKnownVehicles;
+}
+
 /****************************************************************************/
 

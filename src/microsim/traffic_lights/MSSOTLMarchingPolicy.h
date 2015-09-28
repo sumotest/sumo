@@ -36,7 +36,7 @@
  * @brief Class for low-level marching policy.
  *
  */
-class MSSOTLMarchingPolicy: public MSSOTLPolicy {
+class MSSOTLMarchingPolicy: public MSSOTLPolicy, public PushButtonLogic{
 
 
 public:
@@ -49,6 +49,8 @@ public:
 	bool canRelease(int elapsed, bool thresholdPassed, bool pushButtonPressed,
 			const MSPhaseDefinition* stage, int vehicleCount);
 
+protected:
+	void init();
 
 };
 

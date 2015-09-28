@@ -21,6 +21,7 @@
 #include "MSSOTLE2Sensors.h"
 #include <microsim/output/MSDetectorControl.h>
 #include <microsim/MSEdge.h>
+#include <microsim/MSVehicleType.h>
 
 MSSOTLE2Sensors::MSSOTLE2Sensors(std::string tlLogicID,
 		const MSTrafficLightLogic::Phases *phases) :
@@ -468,17 +469,16 @@ unsigned int MSSOTLE2Sensors::countVehicles(std::string laneId)
       assert(0);
       return 0;
 	}
-	unsigned int additional = 0;
+    unsigned int additional = 0;
     if(m_continueSensorOnLanes.find(laneId) != m_continueSensorOnLanes.end())
     {
       for(std::vector<std::string>::iterator it = m_continueSensorOnLanes[laneId].begin(); it != m_continueSensorOnLanes[laneId].end(); ++ it)
       {
-        unsigned int tmp = 0;
-        if(getVelueFromSensor(*it, &MSE2Collector::getCurrentVehicleNumber, tmp))
-          additional += tmp;
+        if(m_sensorMap.find(*it) != m_sensorMap.end())
+          additional += count(m_sensorMap[*it]);
       }
     }
-	return sensorsIterator->second->getCurrentVehicleNumber() + additional;
+    return count(sensorsIterator->second) + additional;
 }
 
 double MSSOTLE2Sensors::getMaxSpeed(std::string laneId)
@@ -525,4 +525,79 @@ double MSSOTLE2Sensors::meanVehiclesSpeed(std::string laneId)
 	double mean = sensorsIteratorOut->second->getCurrentMeanSpeed();
 	meanSpeedAcc += mean * (double) number;
 	return totalCarNumer == 0 ? -1 : meanSpeedAcc / (double) totalCarNumer;
+}
+
+std::string trim(std::string& str)
+{
+  size_t first = str.find_first_not_of(' ');
+  size_t last = str.find_last_not_of(' ');
+  return str.substr(first, (last - first + 1));
+}
+
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems)
+{
+  std::stringstream ss(s);
+  std::string item;
+  while (std::getline(ss, item, delim))
+  {
+    if (!item.empty())
+      elems.push_back(item);
+  }
+  return elems;
+}
+
+double s2ui(std::string str)
+{
+  std::istringstream buffer(str);
+  unsigned int temp;
+  buffer >> temp;
+  return temp;
+}
+
+void MSSOTLE2Sensors::setVehicleWeigths(const std::string& weightString)
+{
+  std::vector<std::string> types;
+  split(weightString, ';', types);
+  std::ostringstream logstr;
+  logstr << "[MSSOTLE2Sensors::setVehicleWeigths] ";
+  for (std::vector<std::string>::iterator typesIt = types.begin(); typesIt != types.end(); ++typesIt)
+  {
+    std::vector<std::string> typeWeight;
+    split(*typesIt, '=', typeWeight);
+    if (typeWeight.size() == 2)
+    {
+      std::string type = trim(typeWeight[0]);
+      unsigned int value = s2ui(typeWeight[1]);
+      logstr << type << "=" << value << " ";
+      m_typeWeightMap[type] = value;
+    }
+  }
+  WRITE_MESSAGE(logstr.str());
+}
+
+unsigned int MSSOTLE2Sensors::count(MSE2Collector* sensor)
+{
+  int totCars = sensor->getCurrentVehicleNumber();
+  if(m_typeWeightMap.size() == 0)
+    return totCars;
+  unsigned int number = 0;
+  const std::list<SUMOVehicle*> vehicles = sensor->getCurrentVehicles();
+  std::ostringstream logstr;
+  logstr << "[MSSOTLE2Sensors::count]";
+  for (std::list<SUMOVehicle*>::const_iterator vit = vehicles.begin(); vit != vehicles.end(); ++vit)
+  {
+    const std::string vtype = vit.operator*()->getVehicleType().getID();
+    if (m_typeWeightMap.find(vtype) != m_typeWeightMap.end())
+    {
+      number += m_typeWeightMap[vtype];
+      DBG(logstr << " Added " << m_typeWeightMap[vtype] << " for vtype " << vtype;)
+    } else
+      ++number;
+  }
+  DBG(if(totCars != number)
+    {
+      logstr << ". Real number " << totCars << "; weighted " << number;
+      WRITE_MESSAGE(logstr.str());
+    })
+  return number;
 }

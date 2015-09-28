@@ -57,7 +57,9 @@ MSSwarmTrafficLightLogic::MSSwarmTrafficLightLogic(MSTLLogicControl &tlcontrol, 
 
 			WRITE_MESSAGE( "getMaxCongestionDuration " + d_str.str()); for (unsigned int i = 0; i < policies.size(); i++) { MSSOTLPolicy* policy = policies[i]; MSSOTLPolicyDesirability* stim = policy->getDesirabilityAlgorithm(); std::ostringstream _str; _str << policy->getName() << stim->getMessage() << " getThetaSensitivity " << policy->getThetaSensitivity() << " ."; WRITE_MESSAGE(_str.str()); })
 	congestion_steps = 0;
-
+	m_useVehicleTypesWeights = getParameter("USE_VEHICLE_TYPES_WEIGHTS", "0") == "1";
+	if(m_useVehicleTypesWeights && pols.find("phase") == -1)
+	  WRITE_ERROR("VEHICLE TYPES WEIGHT only works with phase policy, which is missing");
 }
 
 MSSwarmTrafficLightLogic::~MSSwarmTrafficLightLogic() {
@@ -1025,6 +1027,17 @@ void MSSwarmTrafficLightLogic::resetLaneCheck() {
 
 void MSSwarmTrafficLightLogic::choosePolicy(double phero_in, double phero_out, double dispersion_in,
 		double dispersion_out) {
+    if(m_useVehicleTypesWeights)
+    {
+      for(vector<MSSOTLPolicy*>::iterator it = getPolicies().begin(); it != getPolicies().end(); ++it)
+      {
+        if(it.operator *()->getName() == "Phase")
+        {
+          activate(*it);
+          return;
+        }
+      }
+    }
 	vector<double> thetaStimuli;
 	double thetaSum = 0.0;
 	// Compute stimulus for each policy

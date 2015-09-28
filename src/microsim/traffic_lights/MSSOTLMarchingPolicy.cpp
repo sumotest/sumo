@@ -23,12 +23,14 @@
 MSSOTLMarchingPolicy::MSSOTLMarchingPolicy(
 		const std::map<std::string, std::string>& parameters) :
 		MSSOTLPolicy("Marching", parameters) {
+  init();
 }
 
 MSSOTLMarchingPolicy::MSSOTLMarchingPolicy(
 		MSSOTLPolicyDesirability *desirabilityAlgorithm) :
 		MSSOTLPolicy("Marching", desirabilityAlgorithm) {
 	getDesirabilityAlgorithm()->setKeyPrefix("MARCHING");
+	init();
 }
 
 MSSOTLMarchingPolicy::MSSOTLMarchingPolicy(
@@ -36,9 +38,17 @@ MSSOTLMarchingPolicy::MSSOTLMarchingPolicy(
 		const std::map<std::string, std::string>& parameters) :
 		MSSOTLPolicy("Marching", desirabilityAlgorithm, parameters) {
 	getDesirabilityAlgorithm()->setKeyPrefix("MARCHING");
+	init();
 }
 
 bool MSSOTLMarchingPolicy::canRelease(int elapsed, bool thresholdPassed, bool pushButtonPressed,
 		const MSPhaseDefinition* stage, int vehicleCount) {
+    if (elapsed >= stage->minDuration && pushButtonLogic(elapsed, pushButtonPressed, stage))
+        return true;
 	return (elapsed >= stage->duration);
+}
+
+void MSSOTLMarchingPolicy::init()
+{
+  PushButtonLogic::init("MSSOTLMarchingPolicy", this);
 }

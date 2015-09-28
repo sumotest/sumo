@@ -29,12 +29,14 @@
 #endif
 
 #include "MSSOTLPolicy.h"
+#define SWARM_DEBUG
+#include <utils/common/SwarmDebug.h>
 /**
  * @class MSSOTLPhasePolicy
  * @brief Class for low-level phase policy.
  *
  */
-class MSSOTLPhasePolicy: public MSSOTLPolicy, public PushButtonLogic{
+class MSSOTLPhasePolicy: public MSSOTLPolicy, public PushButtonLogic, public SigmoidLogic{
 
 public:
 	MSSOTLPhasePolicy(const std::map<std::string, std::string>& parameters);
@@ -46,7 +48,8 @@ public:
 	bool canRelease(int elapsed, bool thresholdPassed, bool pushButtonPressed,
 			const MSPhaseDefinition* stage, int vehicleCount);
 protected:
-	void init();
+  void init();
+  bool m_useVehicleTypesWeights;
 };
 
 #endif

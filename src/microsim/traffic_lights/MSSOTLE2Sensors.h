@@ -20,7 +20,7 @@
 #define MSSOTLE2Sensors_h
 
 
-//#define SWARM_DEBUG
+#define SWARM_DEBUG
 #include <utils/common/SwarmDebug.h>
 #include "MSSOTLSensors.h"
 #include "MSSOTLDefinitions.h"
@@ -117,8 +117,14 @@ public:
 	 */
 	virtual double meanVehiclesSpeed(std::string laneId);
 
-protected:
+	/*
+	 * Set the weight of the vehicle types to be used by countVehicles
+	 * @param[in] the value of the param VEHICLE_TYPES_WEIGHTS. Format type1=value1; type2=value2 etc..
+	 */
+	virtual void setVehicleWeigths(const std::string& weightString);
 
+protected:
+	unsigned int count(MSE2Collector* sensor);
 	template<typename Method, typename ValueType>
 	bool getVelueFromSensor(std::string laneId, Method function, ValueType & value)
 	{
@@ -139,8 +145,9 @@ protected:
 //	MSLaneID_MaxSpeedMap myMaxSpeedMap_OutLanes;
 
 	double speedThresholdParam;
-
 	std::map<std::string, std::vector<std::string> > m_continueSensorOnLanes;
+    std::map<const std::string, unsigned int> m_typeWeightMap;
+
 };
 
 #endif

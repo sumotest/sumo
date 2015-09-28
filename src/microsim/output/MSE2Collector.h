@@ -282,6 +282,11 @@ public:
      * @return The IDs of the vehicles that have passed the entry, but not yet an exit point
      */
     std::vector<std::string> getCurrentVehicleIDs() const;
+    /** @brief Returns the vehicles within the area
+     *
+     * @return The vehicles that have passed the entry, but not yet an exit point
+     */
+    const std::list<SUMOVehicle*>& getCurrentVehicles() const;
     /// @}
 
     /** \brief Returns the number of vehicles passed over the sensor.

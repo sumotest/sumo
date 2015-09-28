@@ -537,6 +537,7 @@ protected:
 	double m_derivativeAlpha;
 	int m_losCounter;//los: loss of signal
 	int m_losMaxLimit;
+	bool m_useVehicleTypesWeights;
 
 //	double pheroBegin;
 };
