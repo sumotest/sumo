@@ -1,6 +1,7 @@
 /****************************************************************************/
 /// @file    MSSwarmTrafficLightLogic.h
 /// @author  Gianfilippo Slager
+/// @author  Federico Caselli
 /// @date    Mar 2010
 /// @version $Id: MSSwarmTrafficLightLogic.h 0 2010-03-04 12:40:00Z gslager $
 ///

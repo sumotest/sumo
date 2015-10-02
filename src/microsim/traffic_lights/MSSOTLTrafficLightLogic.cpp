@@ -2,6 +2,7 @@
 /// @file    MSSOTLTrafficLightLogic.cpp
 /// @author  Gianfilippo Slager
 /// @author  Anna Chiara Bellini
+/// @author  Federico Caselli
 /// @date    Apr 2013
 /// @version $Id: MSPhasedTrafficLightLogic.cpp 2 2010-03-03 15:00:00Z gslager $
 ///

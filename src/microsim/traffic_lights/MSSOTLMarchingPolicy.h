@@ -2,6 +2,7 @@
 /// @file    MSSOTLMarchingPolicy.h
 /// @author  Alessio Bonfietti
 /// @author  Riccardo Belletti
+/// @author  Federico Caselli
 /// @date    Feb 2014
 /// @version $Id: MSSOTLMarchingPolicy.h 0 2014-02-28 10:33:00Z riccardo_belletti $
 ///

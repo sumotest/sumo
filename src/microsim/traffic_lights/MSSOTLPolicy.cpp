@@ -2,6 +2,7 @@
 /// @file    MSSOTLPolicy.cpp
 /// @author  Alessio Bonfietti
 /// @author  Anna Chiara Bellini
+/// @author  Federico Caselli
 /// @date    Jun 2013
 /// @version $Id: MSSOTLPolicy.cpp 0  $
 ///

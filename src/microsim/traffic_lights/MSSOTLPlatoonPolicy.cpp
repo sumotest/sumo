@@ -1,6 +1,7 @@
 /****************************************************************************/
 /// @file    MSSOTLPlatoonPolicy.cpp
 /// @author  Gianfilippo Slager
+/// @author  Federico Caselli
 /// @date    Feb 2010
 /// @version $Id: MSSOTLPlatoonPolicy.cpp 0 2010-02-18 12:40:00Z gslager $
 ///

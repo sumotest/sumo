@@ -3,6 +3,7 @@
 /// @author  Alessio Bonfietti
 /// @author  Riccardo Belletti
 /// @author  Anna Chiara Bellini
+/// @author  Federico Caselli
 /// @date    Jun 2013
 /// @version $Id: MSSOTLHiLevelTrafficLightLogic.h 0  $
 ///

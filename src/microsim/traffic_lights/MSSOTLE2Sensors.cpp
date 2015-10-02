@@ -2,6 +2,7 @@
 /// @file    MSSOTLE2Sensors.cpp
 /// @author  Gianfilippo Slager
 /// @author  Alessio Bonfietti
+/// @author  Federico Caselli
 /// @date    Feb 2010
 /// @version $Id: MSSOTLE2Sensors.cpp 3 2010-03-03 15:00:00Z gslager $
 ///
