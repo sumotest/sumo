@@ -100,7 +100,7 @@ GUIParameterTableWindow*
 GUIVehicle::getParameterWindow(GUIMainWindow& app,
                                GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 41);
+        new GUIParameterTableWindow(app, *this, 42);
     // add items
     ret->mkItem("lane [id]", false, myLane->getID());
     ret->mkItem("position [m]", true,
@@ -166,6 +166,7 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("Type Information:", false, "");
     ret->mkItem("type [id]", false, myType->getID());
     ret->mkItem("length", false, myType->getLength());
+    ret->mkItem("width", false, myType->getWidth());
     ret->mkItem("minGap", false, myType->getMinGap());
     ret->mkItem("vehicle class", false, SumoVehicleClassStrings.getString(myType->getVehicleClass()));
     ret->mkItem("emission class", false, PollutantsInterface::getName(myType->getEmissionClass()));
