@@ -269,6 +269,14 @@ SUMOVehicleParserHelper::parseCommonAttributes(const SUMOSAXAttributes& attrs,
             throw ProcessError(error);
         }
     }
+    // parse lateral depart position information
+    if (attrs.hasAttribute(SUMO_ATTR_DEPARTPOS_LAT)) {
+        ret->setParameter |= VEHPARS_DEPARTPOSLAT_SET;
+        const std::string helper = attrs.get<std::string>(SUMO_ATTR_DEPARTPOS_LAT, ret->id.c_str(), ok);
+        if (!SUMOVehicleParameter::parseDepartPosLat(helper, element, ret->id, ret->departPosLat, ret->departPosLatProcedure, error)) {
+            throw ProcessError(error);
+        }
+    }
     // parse depart speed information
     if (attrs.hasAttribute(SUMO_ATTR_DEPARTSPEED)) {
         ret->setParameter |= VEHPARS_DEPARTSPEED_SET;

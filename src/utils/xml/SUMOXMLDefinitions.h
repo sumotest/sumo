@@ -311,12 +311,15 @@ enum SumoXMLAttr {
     SUMO_ATTR_DEPART,
     SUMO_ATTR_DEPARTLANE,
     SUMO_ATTR_DEPARTPOS,
+    SUMO_ATTR_DEPARTPOS_LAT,
     SUMO_ATTR_DEPARTSPEED,
     SUMO_ATTR_ARRIVALLANE,
     SUMO_ATTR_ARRIVALPOS,
     SUMO_ATTR_ARRIVALSPEED,
     SUMO_ATTR_ROUTE,
     SUMO_ATTR_MAXSPEED,
+    SUMO_ATTR_MAXSPEED_LAT,
+    SUMO_ATTR_LATAlIGNMENT,
     SUMO_ATTR_ACCEL,
     SUMO_ATTR_DECEL,
     SUMO_ATTR_VCLASS,
@@ -364,6 +367,7 @@ enum SumoXMLAttr {
     /* source definitions */
     SUMO_ATTR_FUNCTION,
     SUMO_ATTR_POSITION,
+    SUMO_ATTR_POSITION_LAT,
     SUMO_ATTR_FREQUENCY,
     SUMO_ATTR_STYLE,
     SUMO_ATTR_FILE,
@@ -734,6 +738,17 @@ enum LaneChangeModel {
 
 
 //@}
+//
+/**
+ * @enum LateralAlignment
+ * @brief Numbers representing special SUMO-XML-attribute values
+ * Information how vehicles align themselves within their lane by default
+ */
+enum LateralAlignment {
+    LATALIGN_RIGHT,
+    LATALIGN_CENTER,
+    LATALIGN_LEFT
+};
 
 /**
  * @class SUMOXMLDefinitions
@@ -772,6 +787,8 @@ public:
     static StringBijection<LaneChangeModel> LaneChangeModels;
 
     static StringBijection<SumoXMLTag> CarFollowModels;
+
+    static StringBijection<LateralAlignment> LateralAlignments;
     //@}
 
     /// @name Helper functions for ID-string manipulations
@@ -802,6 +819,8 @@ private:
     static StringBijection<LaneChangeModel>::Entry laneChangeModelValues[];
 
     static StringBijection<SumoXMLTag>::Entry carFollowModelValues[];
+
+    static StringBijection<LateralAlignment>::Entry lateralAlignmentValues[];
 
 };
 

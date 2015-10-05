@@ -103,11 +103,11 @@ GUILane::~GUILane() {
 
 // ------ Vehicle insertion ------
 void
-GUILane::incorporateVehicle(MSVehicle* veh, SUMOReal pos, SUMOReal speed,
+GUILane::incorporateVehicle(MSVehicle* veh, SUMOReal pos, SUMOReal speed, SUMOReal posLat,
                             const MSLane::VehCont::iterator& at,
                             MSMoveReminder::Notification notification) {
     AbstractMutex::ScopedLocker locker(myLock);
-    MSLane::incorporateVehicle(veh, pos, speed, at, notification);
+    MSLane::incorporateVehicle(veh, pos, speed, posLat, at, notification);
 }
 
 

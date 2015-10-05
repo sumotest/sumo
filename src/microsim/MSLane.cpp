@@ -125,10 +125,10 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 
 // ------ Vehicle emission ------
 void
-MSLane::incorporateVehicle(MSVehicle* veh, SUMOReal pos, SUMOReal speed, const MSLane::VehCont::iterator& at, MSMoveReminder::Notification notification) {
+MSLane::incorporateVehicle(MSVehicle* veh, SUMOReal pos, SUMOReal speed, SUMOReal posLat, const MSLane::VehCont::iterator& at, MSMoveReminder::Notification notification) {
     assert(pos <= myLength);
     bool wasInactive = myVehicles.size() == 0;
-    veh->enterLaneAtInsertion(this, pos, speed, notification);
+    veh->enterLaneAtInsertion(this, pos, speed, posLat, notification);
     if (at == myVehicles.end()) {
         // vehicle will be the first on the lane
         myVehicles.push_back(veh);
@@ -164,7 +164,7 @@ MSLane::pWagGenericInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, S
             vIn = leader.first->getSpeed();
             leaderDecel = leader.first->getCarFollowModel().getMaxDecel();
         } else {
-            incorporateVehicle(&veh, maxPos, mspeed, myVehicles.end());
+            incorporateVehicle(&veh, maxPos, mspeed, 0, myVehicles.end());
             return true;
         }
     }
@@ -187,7 +187,7 @@ MSLane::pWagGenericInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, S
     } else if (x > maxPos) {
         x = maxPos;
     }
-    incorporateVehicle(&veh, x, vHlp, myVehicles.begin());
+    incorporateVehicle(&veh, x, vHlp, 0, myVehicles.begin());
     return true;
 }
 
@@ -209,7 +209,7 @@ MSLane::pWagSimpleInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, SU
             xIn = getLength() + leader.second;
             vIn = leader.first->getSpeed();
         } else {
-            incorporateVehicle(&veh, maxPos, mspeed, myVehicles.end());
+            incorporateVehicle(&veh, maxPos, mspeed, 0, myVehicles.end());
             return true;
         }
     }
@@ -220,7 +220,7 @@ MSLane::pWagSimpleInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, SU
     } else if (xIn > maxPos) {
         xIn = maxPos;
     }
-    incorporateVehicle(&veh, xIn, vHlp, myVehicles.begin());
+    incorporateVehicle(&veh, xIn, vHlp, 0, myVehicles.begin());
     return true;
 }
 
@@ -228,7 +228,7 @@ MSLane::pWagSimpleInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, SU
 bool
 MSLane::maxSpeedGapInsertion(MSVehicle& veh, SUMOReal mspeed) {
     if (myVehicles.size() == 0) {
-        return isInsertionSuccess(&veh, mspeed, myLength / 2, true, MSMoveReminder::NOTIFICATION_DEPARTED);
+        return isInsertionSuccess(&veh, mspeed, myLength / 2, 0, true, MSMoveReminder::NOTIFICATION_DEPARTED);
     }
     // go through the lane, look for free positions (starting after the last vehicle)
     MSLane::VehCont::iterator predIt = myVehicles.begin();
@@ -267,7 +267,7 @@ MSLane::maxSpeedGapInsertion(MSVehicle& veh, SUMOReal mspeed) {
         ++predIt;
     }
     if (maxSpeed > 0) {
-        incorporateVehicle(&veh, maxPos, maxSpeed, maxIt);
+        incorporateVehicle(&veh, maxPos, maxSpeed, 0, maxIt);
         return true;
     }
     return false;
@@ -293,12 +293,12 @@ MSLane::freeInsertion(MSVehicle& veh, SUMOReal mspeed,
                 // still fail. Under the right combination of acceleration and
                 // deceleration values there might be another insertion
                 // positions that would be successful be we do not look for it.
-                return isInsertionSuccess(&veh, mspeed, minPos + missingRearGap, adaptableSpeed, notification);
+                return isInsertionSuccess(&veh, mspeed, minPos + missingRearGap, 0, adaptableSpeed, notification);
             } else {
                 return false;
             }
         } else {
-            return isInsertionSuccess(&veh, mspeed, minPos, adaptableSpeed, notification);
+            return isInsertionSuccess(&veh, mspeed, minPos, 0, adaptableSpeed, notification);
         }
 
     } else {
@@ -310,7 +310,7 @@ MSLane::freeInsertion(MSVehicle& veh, SUMOReal mspeed,
         if (leaderPos >= frontGapNeeded) {
             const SUMOReal tspeed = MIN2(veh.getCarFollowModel().insertionFollowSpeed(&veh, mspeed, frontGapNeeded, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()), mspeed);
             // check whether we can insert our vehicle behind the last vehicle on the lane
-            if (isInsertionSuccess(&veh, tspeed, minPos, adaptableSpeed, notification)) {
+            if (isInsertionSuccess(&veh, tspeed, minPos, 0, adaptableSpeed, notification)) {
                 return true;
             }
         }
@@ -346,7 +346,7 @@ MSLane::freeInsertion(MSVehicle& veh, SUMOReal mspeed,
         // check whether there is enough room (given some extra space for rounding errors)
         if (frontMax > minPos && backMin + POSITION_EPS < frontMax) {
             // try to insert vehicle (should be always ok)
-            if (isInsertionSuccess(&veh, speed, backMin + POSITION_EPS, adaptableSpeed, notification)) {
+            if (isInsertionSuccess(&veh, speed, backMin + POSITION_EPS, 0, adaptableSpeed, notification)) {
                 return true;
             }
         }
@@ -387,6 +387,7 @@ MSLane::getDepartSpeed(const MSVehicle& veh, bool& patchSpeed) {
 bool
 MSLane::insertVehicle(MSVehicle& veh) {
     SUMOReal pos = 0;
+    SUMOReal posLat = 0;
     bool patchSpeed = true; // whether the speed shall be adapted to infrastructure/traffic in front
     const SUMOVehicleParameter& pars = veh.getParameter();
     SUMOReal speed = getDepartSpeed(veh, patchSpeed);
@@ -406,7 +407,11 @@ MSLane::insertVehicle(MSVehicle& veh) {
             for (unsigned int i = 0; i < 10; i++) {
                 // we will try some random positions ...
                 pos = RandHelper::rand(getLength());
-                if (isInsertionSuccess(&veh, speed, pos, patchSpeed, MSMoveReminder::NOTIFICATION_DEPARTED)) {
+                if (pars.departPosLatProcedure == DEPART_POSLAT_RANDOM ||
+                        pars.departPosLatProcedure == DEPART_POSLAT_RANDOM_FREE) {
+                    posLat = RandHelper::rand(getWidth()) - getWidth() * 0.5;
+                }
+                if (isInsertionSuccess(&veh, speed, pos, posLat, patchSpeed, MSMoveReminder::NOTIFICATION_DEPARTED)) {
                     return true;
                 }
             }
@@ -428,8 +433,42 @@ MSLane::insertVehicle(MSVehicle& veh) {
             pos = MIN2(static_cast<SUMOReal>(veh.getVehicleType().getLength() + POSITION_EPS), myLength);
             break;
     }
+    // determine the lateral position
+    switch (pars.departPosLatProcedure) {
+        case DEPART_POSLAT_GIVEN:
+            posLat = pars.departPosLat;
+            break;
+        case DEPART_POSLAT_RANDOM:
+            posLat = RandHelper::rand(getWidth()) - getWidth() * 0.5;
+            break;
+        case DEPART_POSLAT_RANDOM_FREE: {
+            for (unsigned int i = 0; i < 10; i++) {
+                // we will try some random positions ...
+                posLat = RandHelper::rand(getWidth()) - getWidth() * 0.5;
+                if (isInsertionSuccess(&veh, speed, pos, posLat, patchSpeed, MSMoveReminder::NOTIFICATION_DEPARTED)) {
+                    return true;
+                }
+            }
+            // ... and if that doesn't work, we put the vehicle to the free position
+            return freeInsertion(veh, speed);
+        }
+        break;
+        case DEPART_POSLAT_FREE:
+            return freeInsertion(veh, speed);
+        case DEPART_POSLAT_RIGHT:
+            posLat = -getWidth() * 0.5 + veh.getVehicleType().getWidth() * 0.5;
+            break;
+        case DEPART_POSLAT_LEFT:
+            posLat = getWidth() * 0.5 - veh.getVehicleType().getWidth() * 0.5;
+            break;
+        case DEPART_POSLAT_CENTER:
+        case DEPART_POS_DEFAULT:
+        default:
+            posLat = 0;
+            break;
+    }
     // try to insert
-    return isInsertionSuccess(&veh, speed, pos, patchSpeed, MSMoveReminder::NOTIFICATION_DEPARTED);
+    return isInsertionSuccess(&veh, speed, pos, posLat, patchSpeed, MSMoveReminder::NOTIFICATION_DEPARTED);
 }
 
 
@@ -453,7 +492,7 @@ MSLane::checkFailure(MSVehicle* aVehicle, SUMOReal& speed, SUMOReal& dist, const
 
 bool
 MSLane::isInsertionSuccess(MSVehicle* aVehicle,
-                           SUMOReal speed, SUMOReal pos, bool patchSpeed,
+                           SUMOReal speed, SUMOReal pos, SUMOReal posLat, bool patchSpeed,
                            MSMoveReminder::Notification notification) {
     if (pos < 0 || pos > myLength) {
         // we may not start there
@@ -626,17 +665,17 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
         return false;
     }
     // enter
-    incorporateVehicle(aVehicle, pos, speed, predIt, notification);
+    incorporateVehicle(aVehicle, pos, speed, posLat, predIt, notification);
     return true;
 }
 
 
 void
-MSLane::forceVehicleInsertion(MSVehicle* veh, SUMOReal pos) {
+MSLane::forceVehicleInsertion(MSVehicle* veh, SUMOReal pos, SUMOReal posLat) {
     veh->updateBestLanes(true, this);
     bool dummy;
     const SUMOReal speed = veh->hasDeparted() ? veh->getSpeed() : getDepartSpeed(*veh, dummy);
-    incorporateVehicle(veh, pos, speed, find_if(myVehicles.begin(), myVehicles.end(), bind2nd(VehPosition(), pos)));
+    incorporateVehicle(veh, pos, speed, posLat, find_if(myVehicles.begin(), myVehicles.end(), bind2nd(VehPosition(), pos)));
 }
 
 
@@ -1708,7 +1747,7 @@ MSLane::loadState(std::vector<std::string>& vehIds, MSVehicleControl& vc) {
         MSVehicle* v = dynamic_cast<MSVehicle*>(vc.getVehicle(*it));
         assert(v != 0);
         v->updateBestLanes(false, this);
-        incorporateVehicle(v, v->getPositionOnLane(), v->getSpeed(), myVehicles.end(),
+        incorporateVehicle(v, v->getPositionOnLane(), v->getSpeed(), v->getLateralPositionOnLane(), myVehicles.end(),
                            MSMoveReminder::NOTIFICATION_JUNCTION);
     }
 }

@@ -93,7 +93,7 @@ public:
 
     public:
         /// Constructor.
-        State(SUMOReal pos, SUMOReal speed);
+        State(SUMOReal pos, SUMOReal speed, SUMOReal posLat);
 
         /// Copy constructor.
         State(const State& state);
@@ -105,12 +105,20 @@ public:
         bool operator!=(const State& state);
 
         /// Position of this state.
-        SUMOReal pos() const;
+        SUMOReal pos() const {
+            return myPos;
+        }
 
         /// Speed of this state
         SUMOReal speed() const {
             return mySpeed;
         };
+
+        /// Lateral Position of this state (m relative to the centerline of the lane).
+        SUMOReal posLat() const {
+            return myPosLat;
+        }
+
 
     private:
         /// the stored position
@@ -118,6 +126,9 @@ public:
 
         /// the stored speed
         SUMOReal mySpeed;
+
+        /// the stored lateral position
+        SUMOReal myPosLat;
 
     };
 
@@ -288,6 +299,14 @@ public:
     }
 
 
+    /** @brief Get the vehicle's lateral position on the lane
+     * @return The lateral position of the vehicle (in m relative to the
+     * centerline of the lane)
+     */
+    SUMOReal getLateralPositionOnLane() const {
+        return myState.myPosLat;
+    }
+
     /** @brief Returns the vehicle's current speed
      * @return The vehicle's speed
      */
@@ -422,9 +441,10 @@ public:
      * @param[in] enteredLane The lane the vehicle enters
      * @param[in] pos The position the vehicle was inserted into the lane
      * @param[in] speed The speed with which the vehicle was inserted into the lane
+     * @param[in] posLat The lateral position the vehicle was inserted into the lane
      * @param[in] notification The cause of insertion (i.e. departure, teleport, parking)
      */
-    void enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed,
+    void enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed, SUMOReal posLat,
                               MSMoveReminder::Notification notification);
 
     /** @brief set tentative lane and position during insertion to ensure that

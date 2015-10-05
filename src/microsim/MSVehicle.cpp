@@ -112,6 +112,7 @@ std::vector<MSLane*> MSVehicle::myEmptyLaneVector;
 MSVehicle::State::State(const State& state) {
     myPos = state.myPos;
     mySpeed = state.mySpeed;
+    myPosLat = state.myPosLat;
 }
 
 
@@ -119,25 +120,21 @@ MSVehicle::State&
 MSVehicle::State::operator=(const State& state) {
     myPos   = state.myPos;
     mySpeed = state.mySpeed;
+    myPosLat   = state.myPosLat;
     return *this;
 }
 
 
 bool
 MSVehicle::State::operator!=(const State& state) {
-    return (myPos   != state.myPos ||
-            mySpeed != state.mySpeed);
+    return (myPos    != state.myPos ||
+            mySpeed  != state.mySpeed ||
+            myPosLat != state.myPosLat);
 }
 
 
-SUMOReal
-MSVehicle::State::pos() const {
-    return myPos;
-}
-
-
-MSVehicle::State::State(SUMOReal pos, SUMOReal speed) :
-    myPos(pos), mySpeed(speed) {}
+MSVehicle::State::State(SUMOReal pos, SUMOReal speed, SUMOReal posLat) :
+    myPos(pos), mySpeed(speed), myPosLat(posLat) {}
 
 
 /* -------------------------------------------------------------------------
@@ -388,7 +385,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
                      const MSVehicleType* type, const SUMOReal speedFactor) :
     MSBaseVehicle(pars, route, type, speedFactor),
     myWaitingTime(0),
-    myState(0, 0), //
+    myState(0, 0, 0), //
     myLane(0),
     myLastBestLanesEdge(0),
     myLastBestLanesInternalLane(0),
@@ -606,11 +603,11 @@ MSVehicle::getPosition(const SUMOReal offset) const {
     const bool changingLanes = getLaneChangeModel().isChangingLanes();
     if (offset == 0. && !changingLanes) {
         if (myCachedPosition == Position::INVALID) {
-            myCachedPosition = myLane->geometryPositionAtOffset(myState.myPos);
+            myCachedPosition = myLane->geometryPositionAtOffset(myState.myPos, -myState.myPosLat);
         }
         return myCachedPosition;
     }
-    Position result = myLane->geometryPositionAtOffset(getPositionOnLane() + offset);
+    Position result = myLane->geometryPositionAtOffset(getPositionOnLane() + offset, -getLateralPositionOnLane());
     if (changingLanes) {
         const Position other = getLaneChangeModel().getShadowLane()->geometryPositionAtOffset(getPositionOnLane() + offset);
         Line line = getLaneChangeModel().isLaneChangeMidpointPassed() ?  Line(other, result) : Line(result, other);
@@ -640,25 +637,26 @@ SUMOReal
 MSVehicle::getAngle() const {
     Position p1;
     Position p2;
+    const SUMOReal posLat = -myState.myPosLat; // @todo get rid of the '-'
     if (isParking()) {
         return -myLane->getShape().rotationDegreeAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane()));
     }
     if (getLaneChangeModel().isChangingLanes()) {
         // cannot use getPosition() because it already includes the offset to the side and thus messes up the angle
-        p1 = myLane->geometryPositionAtOffset(myState.myPos);
+        p1 = myLane->geometryPositionAtOffset(myState.myPos, posLat);
     } else {
         p1 = getPosition();
     }
     if (myState.myPos >= myType->getLength()) {
         // vehicle is fully on the new lane
-        p2 = myLane->geometryPositionAtOffset(myState.myPos - myType->getLength());
+        p2 = myLane->geometryPositionAtOffset(myState.myPos - myType->getLength(), posLat);
     } else {
         p2 = myFurtherLanes.size() > 0
-             ? myFurtherLanes.back()->geometryPositionAtOffset(myFurtherLanes.back()->getPartialOccupatorEnd())
-             : myLane->getShape().front();
+             ? myFurtherLanes.back()->geometryPositionAtOffset(myFurtherLanes.back()->getPartialOccupatorEnd(), posLat)
+             : myLane->geometryPositionAtOffset(0, posLat);
         if (getLaneChangeModel().isChangingLanes() && myFurtherLanes.size() > 0 && getLaneChangeModel().getShadowLane(myFurtherLanes.back()) == 0) {
             // special case where there target lane has no predecessor
-            p2 = myLane->getShape().front();
+            p2 = myLane->geometryPositionAtOffset(0, posLat);
         }
     }
     SUMOReal result = (p1 != p2 ?
@@ -1798,8 +1796,8 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
 
 
 void
-MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed, MSMoveReminder::Notification notification) {
-    myState = State(pos, speed);
+MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed, SUMOReal posLat, MSMoveReminder::Notification notification) {
+    myState = State(pos, speed, posLat);
     myCachedPosition = Position::INVALID;
     assert(myState.myPos >= 0);
     assert(myState.mySpeed >= 0);
@@ -2590,6 +2588,7 @@ MSVehicle::saveState(OutputDevice& out) {
     out.writeAttr(SUMO_ATTR_STATE, toString(internals));
     out.writeAttr(SUMO_ATTR_POSITION, myState.myPos);
     out.writeAttr(SUMO_ATTR_SPEED, myState.mySpeed);
+    out.writeAttr(SUMO_ATTR_POSITION_LAT, myState.myPosLat);
     out.closeTag();
 }
 
@@ -2609,6 +2608,7 @@ MSVehicle::loadState(const SUMOSAXAttributes& attrs, const SUMOTime offset) {
     }
     myState.myPos = attrs.getFloat(SUMO_ATTR_POSITION);
     myState.mySpeed = attrs.getFloat(SUMO_ATTR_SPEED);
+    myState.myPosLat = attrs.getFloat(SUMO_ATTR_POSITION_LAT);
     // no need to reset myCachedPosition here since state loading happens directly after creation
 }
 

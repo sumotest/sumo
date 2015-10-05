@@ -245,12 +245,15 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "depart",         SUMO_ATTR_DEPART },
     { "departLane",     SUMO_ATTR_DEPARTLANE },
     { "departPos",      SUMO_ATTR_DEPARTPOS },
+    { "departPosLat",   SUMO_ATTR_DEPARTPOS_LAT },
     { "departSpeed",    SUMO_ATTR_DEPARTSPEED },
     { "arrivalLane",    SUMO_ATTR_ARRIVALLANE },
     { "arrivalPos",     SUMO_ATTR_ARRIVALPOS },
     { "arrivalSpeed",   SUMO_ATTR_ARRIVALSPEED },
     { "route",          SUMO_ATTR_ROUTE },
     { "maxSpeed",       SUMO_ATTR_MAXSPEED },
+    { "maxSpeedLat",    SUMO_ATTR_MAXSPEED_LAT },
+    { "latAlignment",   SUMO_ATTR_LATAlIGNMENT },
     { "accel",          SUMO_ATTR_ACCEL },
     { "decel",          SUMO_ATTR_DECEL },
     { "vClass",         SUMO_ATTR_VCLASS },
@@ -298,6 +301,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
 
     { "function",       SUMO_ATTR_FUNCTION },
     { "pos",            SUMO_ATTR_POSITION },
+    { "posLat",         SUMO_ATTR_POSITION_LAT },
     { "freq",           SUMO_ATTR_FREQUENCY },
     { "style",          SUMO_ATTR_STYLE },
     { "file",           SUMO_ATTR_FILE },
@@ -569,6 +573,12 @@ StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = 
     { "Wiedemann",   SUMO_TAG_CF_WIEDEMANN },
 };
 
+StringBijection<LateralAlignment>::Entry SUMOXMLDefinitions::lateralAlignmentValues[] = {
+    { "right",         LATALIGN_RIGHT },
+    { "center",        LATALIGN_CENTER },
+    { "left",          LATALIGN_LEFT }
+};
+
 StringBijection<int> SUMOXMLDefinitions::Tags(
     SUMOXMLDefinitions::tags, SUMO_TAG_NOTHING);
 
@@ -599,6 +609,8 @@ StringBijection<LaneChangeModel> SUMOXMLDefinitions::LaneChangeModels(
 StringBijection<SumoXMLTag> SUMOXMLDefinitions::CarFollowModels(
     SUMOXMLDefinitions::carFollowModelValues, SUMO_TAG_CF_WIEDEMANN);
 
+StringBijection<LateralAlignment> SUMOXMLDefinitions::LateralAlignments(
+    SUMOXMLDefinitions::lateralAlignmentValues, LATALIGN_LEFT);
 
 std::string
 SUMOXMLDefinitions::getJunctionIDFromInternalEdge(const std::string internalEdge) {

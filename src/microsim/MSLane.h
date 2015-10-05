@@ -187,12 +187,13 @@ public:
      * @param[in] vehicle The vehicle to insert
      * @param[in] speed The speed with which it shall be inserted
      * @param[in] pos The position at which it shall be inserted
+     * @param[in] posLat The lateral position at which it shall be inserted
      * @param[in] recheckNextLanes Forces patching the speed for not being too fast on next lanes
      * @param[in] notification The cause of insertion (i.e. departure, teleport, parking) defaults to departure
      * @return Whether the vehicle could be inserted
      * @see MSVehicle::enterLaneAtInsertion
      */
-    bool isInsertionSuccess(MSVehicle* vehicle, SUMOReal speed, SUMOReal pos,
+    bool isInsertionSuccess(MSVehicle* vehicle, SUMOReal speed, SUMOReal pos, SUMOReal posLat,
                             bool recheckNextLanes,
                             MSMoveReminder::Notification notification);
 
@@ -218,8 +219,9 @@ public:
      *  generate collisions (possibly delayed).
      * @param[in] veh The vehicle to insert
      * @param[in] pos The position at which the vehicle shall be inserted
+     * @param[in] posLat The lateral position at which the vehicle shall be inserted
      */
-    void forceVehicleInsertion(MSVehicle* veh, SUMOReal pos);
+    void forceVehicleInsertion(MSVehicle* veh, SUMOReal pos, SUMOReal posLat=0);
     /// @}
 
 
@@ -337,8 +339,8 @@ public:
 
     /* @brief fit the given lane position to a visibly suitable geometry position
      * and return the coordinates */
-    inline const Position geometryPositionAtOffset(SUMOReal offset) const {
-        return myShape.positionAtOffset(interpolateLanePosToGeometryPos(offset));
+    inline const Position geometryPositionAtOffset(SUMOReal offset, SUMOReal lateralOffset=0) const {
+        return myShape.positionAtOffset(interpolateLanePosToGeometryPos(offset), lateralOffset);
     }
 
     /* @brief fit the given geomtry position to a valid lane position
@@ -805,10 +807,11 @@ protected:
      * @param[in] veh The vehicle to be incorporated
      * @param[in] pos The position of the vehicle
      * @param[in] speed The speed of the vehicle
+     * @param[in] posLat The lateral position of the vehicle
      * @param[in] at
      * @param[in] notification The cause of insertion (i.e. departure, teleport, parking) defaults to departure
      */
-    virtual void incorporateVehicle(MSVehicle* veh, SUMOReal pos, SUMOReal speed,
+    virtual void incorporateVehicle(MSVehicle* veh, SUMOReal pos, SUMOReal speed, SUMOReal posLat,
                                     const MSLane::VehCont::iterator& at,
                                     MSMoveReminder::Notification notification = MSMoveReminder::NOTIFICATION_DEPARTED);
 
