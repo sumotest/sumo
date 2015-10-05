@@ -69,6 +69,7 @@ class MSDevice_Person;
 class MSDevice_Container;
 class MSContainer;
 class MSJunction;
+class MSLeaderInfo;
 
 // ===========================================================================
 // class definitions
@@ -267,10 +268,10 @@ public:
      * shall be passed
      *
      * @param[in] t The current timeStep
-     * @param[in] pred The leader (may be 0)
+     * @param[in] ahead The leaders (may be 0)
      * @param[in] lengthsInFront Sum of vehicle lengths in front of the vehicle
      */
-    void planMove(const SUMOTime t, const MSVehicle* pred, const SUMOReal lengthsInFront);
+    void planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront);
 
 
     /** @brief Executes planned vehicle movements with regards to right-of-way
@@ -1292,7 +1293,7 @@ protected:
     /// Container for used Links/visited Lanes during lookForward.
     DriveItemVector myLFLinkLanes;
 
-    void planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVector& lfLinks) const;
+    void planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks) const;
     void checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& lfLinks) const;
 
     /// @brief estimate leaving speed when accelerating across a link
@@ -1332,6 +1333,18 @@ protected:
                        const SUMOReal seen, DriveProcessItem* const lastLink,
                        const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass,
                        SUMOReal distToCrossing = -1) const;
+
+    /* @brief adapt safe velocity in accordance to multiple vehicles ahead:
+     * @param[in] ahead The leader information according to the current lateral-resolution
+     * @param[in] seen the distance to the end of the current lane
+     * @param[in] lastLink the lastLink index
+     * @param[in] lane The current Lane the vehicle is on
+     * @param[in,out] the safe velocity for driving
+     * @param[in,out] the safe velocity for arriving at the next link
+     */
+    void adaptToLeaders(const MSLeaderInfo& ahead,
+                       const SUMOReal seen, DriveProcessItem* const lastLink,
+                       const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const;
 
 #ifdef HAVE_INTERNAL_LANES
     /// @brief ids of vehicles being followed across a link (for resolving priority)

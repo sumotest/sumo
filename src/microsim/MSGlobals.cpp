@@ -54,6 +54,8 @@ bool MSGlobals::gCheckRoutes;
 
 SUMOTime MSGlobals::gLaneChangeDuration;
 
+SUMOReal MSGlobals::gLateralResolution;
+
 bool MSGlobals::gStateLoaded;
 #ifdef HAVE_INTERNAL
 bool MSGlobals::gUseMesoSim;

@@ -56,16 +56,16 @@
 #include <utils/iodevices/OutputDevice.h>
 #include <utils/iodevices/BinaryInputDevice.h>
 #include <utils/xml/SUMOSAXAttributes.h>
-#include <microsim/MSVehicleControl.h>
-#include <microsim/MSVehicleTransfer.h>
-#include <microsim/MSGlobals.h>
-#include "MSStoppingPlace.h"
-#include "devices/MSDevice_Person.h"
-#include "devices/MSDevice_Container.h"
-#include "MSEdgeWeightsStorage.h"
+#include <microsim/devices/MSDevice_Person.h>
+#include <microsim/devices/MSDevice_Container.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
-#include "MSMoveReminder.h"
 #include <microsim/pedestrians/MSPerson.h>
+#include "MSVehicleControl.h"
+#include "MSVehicleTransfer.h"
+#include "MSGlobals.h"
+#include "MSStoppingPlace.h"
+#include "MSEdgeWeightsStorage.h"
+#include "MSMoveReminder.h"
 #include "MSPersonControl.h"
 #include "MSContainer.h"
 #include "MSContainerControl.h"
@@ -76,6 +76,7 @@
 #include "MSNet.h"
 #include "MSRoute.h"
 #include "MSLinkCont.h"
+#include "MSLeaderInfo.h"
 
 #ifdef HAVE_INTERNAL
 #include <mesosim/MESegment.h>
@@ -949,15 +950,15 @@ MSVehicle::getStopEdges() const {
 
 
 void
-MSVehicle::planMove(const SUMOTime t, const MSVehicle* pred, const SUMOReal lengthsInFront) {
-    planMoveInternal(t, pred, myLFLinkLanes);
+MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
+    planMoveInternal(t, ahead, myLFLinkLanes);
     checkRewindLinkLanes(lengthsInFront, myLFLinkLanes);
     getLaneChangeModel().resetMoved();
 }
 
 
 void
-MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVector& lfLinks) const {
+MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks) const {
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == getID()) {
         int bla = 0;
@@ -1001,21 +1002,12 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
     SUMOReal vLinkPass = MIN2(estimateSpeedAfterDistance(seen, v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
     unsigned int view = 0;
     DriveProcessItem* lastLink = 0;
-    SUMOReal gap = 0;
-    if (pred != 0) {
-        if (pred == myLane->getPartialOccupator()) {
-            gap = myLane->getPartialOccupatorEnd() - myState.myPos - getVehicleType().getMinGap();
-        } else {
-            gap = pred->getPositionOnLane() - pred->getVehicleType().getLength() - myState.myPos - getVehicleType().getMinGap();
-        }
-    }
-    std::pair<const MSVehicle*, SUMOReal> leaderInfo = std::make_pair(pred, gap);
     // iterator over subsequent lanes and fill lfLinks until stopping distance or stopped
     const MSLane* lane = myLane;
     while (true) {
         // check leader on lane
         //  leader is given for the first edge only
-        adaptToLeader(leaderInfo, seen, lastLink, lane, v, vLinkPass);
+        adaptToLeaders(ahead, seen, lastLink, lane, v, vLinkPass);
         if (getLaneChangeModel().hasShadowVehicle()) {
             // also slow down for leaders on the shadowLane
             const MSLane* shadowLane = getLaneChangeModel().getShadowLane(lane);
@@ -1206,13 +1198,35 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
         const SUMOReal va = MAX2(laneMaxV, cfModel.freeSpeed(this, getSpeed(), seen, laneMaxV));
         v = MIN2(va, v);
         seenNonInternal += lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL ? 0 : lane->getLength();
+        ahead = lane->getLastVehicleInformation();
         seen += lane->getLength();
-        leaderInfo = lane->getLastVehicleInformation();
-        leaderInfo.second = leaderInfo.second + seen - lane->getLength() - getVehicleType().getMinGap();
         vLinkPass = MIN2(estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
 
+}
+
+
+void
+MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
+                         const SUMOReal seen, DriveProcessItem* const lastLink,
+                         const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const {
+    int rightmost;
+    int leftmost;
+    ahead.getSubLanes(this, rightmost, leftmost);
+    for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
+        const MSVehicle* pred = ahead[sublane];
+        if (pred != 0) {
+            // @todo avoid multiple adaptations to the same leader
+            const SUMOReal predBack = (pred == lane->getPartialOccupator() 
+                    ?  lane->getPartialOccupatorEnd() 
+                    : pred->getPositionOnLane() - pred->getVehicleType().getLength());
+            const SUMOReal gap = (lane == myLane
+                    ? predBack - myState.myPos - getVehicleType().getMinGap()
+                    : predBack + seen  - getVehicleType().getMinGap());
+            adaptToLeader(std::make_pair(pred, gap), seen, lastLink, lane, v, vLinkPass);
+        }
+    }
 }
 
 

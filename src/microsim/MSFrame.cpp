@@ -225,6 +225,8 @@ MSFrame::fillOptions() {
     oc.addDescription("step-length", "Time", "Defines the step duration");
 #endif
 
+    oc.doRegister("lateral-resolution", new Option_Float(-1));
+    oc.addDescription("lateral-resolution", "Processing", "Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane");
 
     // register the processing options
     oc.doRegister("route-steps", 's', new Option_String("200", "TIME"));
@@ -492,6 +494,7 @@ MSFrame::setMSGlobals(OptionsCont& oc) {
     MSGlobals::gCheck4Accidents = !oc.getBool("ignore-accidents");
     MSGlobals::gCheckRoutes = !oc.getBool("ignore-route-errors");
     MSGlobals::gLaneChangeDuration = string2time(oc.getString("lanechange.duration"));
+    MSGlobals::gLateralResolution = oc.getFloat("lateral-resolution");
     MSGlobals::gStateLoaded = oc.isSet("load-state");
 #ifdef HAVE_INTERNAL
     MSGlobals::gUseMesoSim = oc.getBool("mesosim");

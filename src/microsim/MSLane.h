@@ -46,6 +46,7 @@
 #include <utils/common/NamedRTree.h>
 #include <utils/geom/PositionVector.h>
 #include "MSLinkCont.h"
+#include "MSLeaderInfo.h"
 #include "MSMoveReminder.h"
 #ifndef NO_TRACI
 #include <traci-server/TraCIServerAPI_Lane.h>
@@ -62,6 +63,7 @@ class MSLink;
 class MSVehicleTransfer;
 class MSVehicleControl;
 class OutputDevice;
+class MSLeaderInfo;
 
 
 // ===========================================================================
@@ -265,15 +267,13 @@ public:
     }
 
 
-    /** @brief Returns the last vehicle which is still on the lane
+    /** @brief Returns the last vehicles on the lane
      *
-     * The information about the last vehicle in this lane's que is returned.
-     *  If there is no such vehicle, the information about the vehicle which
-     *  laps into this lane is returned. If there is no such vehicle, the first
-     *  returned member is 0.
-     * @return Information about the last vehicle and it's back position
+     * The information about the last vehicles in this lanes in all sublanes are
+     * returned. Partial occupators are included
+     * @return Information about the last vehicles
      */
-    std::pair<MSVehicle*, SUMOReal> getLastVehicleInformation() const;
+    const MSLeaderInfo& getLastVehicleInformation() const;
     /// @}
 
 
@@ -890,6 +890,11 @@ protected:
     MSLinkCont myLinks;
 
     std::map<MSEdge*, std::vector<MSLane*> > myApproachingLanes;
+
+    /// @brief leaders on all sublanes as seen by approaching vehicles (cached)
+    mutable MSLeaderInfo myLeaderInfo;
+    /// @brief time step for which myLeaderInfo was last updated
+    mutable SUMOTime myLeaderInfoTime;
 
     // precomputed myShape.length / myLength
     const SUMOReal myLengthGeometryFactor;

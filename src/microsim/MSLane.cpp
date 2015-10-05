@@ -35,9 +35,24 @@
 #include <config.h>
 #endif
 
+#include <cmath>
+#include <bitset>
+#include <iostream>
+#include <cassert>
+#include <functional>
+#include <algorithm>
+#include <iterator>
+#include <exception>
+#include <climits>
+#include <set>
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/StdDefs.h>
-#include "MSVehicle.h"
+#include <utils/common/MsgHandler.h>
+#include <utils/common/ToString.h>
+#include <utils/options/OptionsCont.h>
+#include <utils/emissions/HelpersHarmonoise.h>
+#include <utils/geom/Line.h>
+#include <utils/geom/GeomHelper.h>
 #include <microsim/pedestrians/MSPModel.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include "MSNet.h"
@@ -53,22 +68,8 @@
 #include "MSVehicleControl.h"
 #include "MSInsertionControl.h"
 #include "MSVehicleControl.h"
-#include <cmath>
-#include <bitset>
-#include <iostream>
-#include <cassert>
-#include <functional>
-#include <algorithm>
-#include <iterator>
-#include <exception>
-#include <climits>
-#include <set>
-#include <utils/common/MsgHandler.h>
-#include <utils/common/ToString.h>
-#include <utils/options/OptionsCont.h>
-#include <utils/emissions/HelpersHarmonoise.h>
-#include <utils/geom/Line.h>
-#include <utils/geom/GeomHelper.h>
+#include "MSLeaderInfo.h"
+#include "MSVehicle.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -93,6 +94,8 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myPermissions(permissions),
     myLogicalPredecessorLane(0),
     myBruttoVehicleLengthSum(0), myNettoVehicleLengthSum(0), myInlappingVehicleEnd(10000), myInlappingVehicle(0),
+    myLeaderInfo(width),
+    myLeaderInfoTime(SUMOTime_MIN),
     myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength) // factor should not be 0
 {
     myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
@@ -712,19 +715,22 @@ MSLane::resetPartialOccupation(MSVehicle* v) {
 }
 
 
-std::pair<MSVehicle*, SUMOReal>
+const MSLeaderInfo& 
 MSLane::getLastVehicleInformation() const {
-    if (myVehicles.size() != 0) {
-        // the last vehicle is the one in scheduled by this lane
-        MSVehicle* last = *myVehicles.begin();
-        const SUMOReal pos = last->getPositionOnLane() - last->getVehicleType().getLength();
-        return std::make_pair(last, pos);
+    if (myLeaderInfoTime < MSNet::getInstance()->getCurrentTimeStep()) {
+        myLeaderInfoTime = MSNet::getInstance()->getCurrentTimeStep();
+        // recompute myLeaderInfo
+        myLeaderInfo = MSLeaderInfo(myWidth);
+        VehCont::const_iterator last = myVehicles.begin();
+        while (myLeaderInfo.addLeader(*last, true) > 0 && last != myVehicles.end()) {
+            last++;
+        }
+        if (myLeaderInfo.numFreeSublanes() > 0) {
+            // @todo: there may be multiple inlapping vehicles
+            myLeaderInfo.addLeader(myInlappingVehicle, true);
+        }
     }
-    if (myInlappingVehicle != 0) {
-        // the last one is a vehicle extending into this lane
-        return std::make_pair(myInlappingVehicle, myInlappingVehicleEnd);
-    }
-    return std::make_pair<MSVehicle*, SUMOReal>(0, 0);
+    return myLeaderInfo;
 }
 
 
@@ -733,13 +739,14 @@ void
 MSLane::planMovements(SUMOTime t) {
     assert(myVehicles.size() != 0);
     SUMOReal cumulatedVehLength = 0.;
-    const MSVehicle* pred = getPartialOccupator();
+    MSLeaderInfo ahead(myWidth);
+    ahead.addLeader(getPartialOccupator(), false);
     for (VehCont::reverse_iterator veh = myVehicles.rbegin(); veh != myVehicles.rend(); ++veh) {
         if ((*veh)->getLane() == this) {
-            (*veh)->planMove(t, pred, cumulatedVehLength);
+            (*veh)->planMove(t, ahead, cumulatedVehLength);
         }
-        pred = *veh;
-        cumulatedVehLength += pred->getVehicleType().getLengthWithGap();
+        ahead.addLeader(*veh, false);
+        cumulatedVehLength += (*veh)->getVehicleType().getLengthWithGap();
     }
 }
 
