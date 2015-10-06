@@ -470,6 +470,9 @@ MSFrame::checkOptions() {
     if (oc.getBool("sloppy-insert")) {
         WRITE_WARNING("The option 'sloppy-insert' is deprecated, because it is now activated by default, see the new option 'eager-insert'.");
     }
+    if (string2time(oc.getString("lanechange.duration")) > 0 && oc.getFloat("lateral-resolution") > 0) {
+        WRITE_ERROR("Only one of the options 'lanechange.duration' or 'lateral-resolution' may be given.");
+    }
     return ok;
 }
 
