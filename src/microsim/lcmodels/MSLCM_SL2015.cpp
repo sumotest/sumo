@@ -1,13 +1,10 @@
 /****************************************************************************/
-/// @file    MSLCM_JE2013.h
+/// @file    MSLCM_SL2015.h
 /// @author  Jakob Erdmann
-/// @author  Michael Behrisch
-/// @author  Laura Bieker
-/// @date    Fri, 08.10.2013
-/// @version $Id$
+/// @date    Tue, 06.10.2015
+/// @version $Id: MSLCM_SL2015.h 18095 2015-03-17 09:39:00Z namdre $
 ///
-// A lane change model developed by J. Erdmann
-// based on the model of D. Krajzewicz developed between 2004 and 2011 (MSLCM_DK2004)
+// A lane change model for heterogeneous traffic (based on sub-lanes)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
@@ -36,7 +33,7 @@
 #include <microsim/MSEdge.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSNet.h>
-#include "MSLCM_JE2013.h"
+#include "MSLCM_SL2015.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -95,10 +92,11 @@
 //#define DEBUG_COND (myVehicle.getID() == "Costa_12_13") // test stops_overtaking
 #define DEBUG_COND false
 
+
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-MSLCM_JE2013::MSLCM_JE2013(MSVehicle& v) :
+MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
     MSAbstractLaneChangeModel(v),
     mySpeedGainProbability(0),
     myKeepRightProbability(0),
@@ -107,13 +105,13 @@ MSLCM_JE2013::MSLCM_JE2013(MSVehicle& v) :
     myLookAheadSpeed(LOOK_AHEAD_MIN_SPEED)
 {}
 
-MSLCM_JE2013::~MSLCM_JE2013() {
+MSLCM_SL2015::~MSLCM_SL2015() {
     changed(0);
 }
 
 
 int
-MSLCM_JE2013::wantsChange(
+MSLCM_SL2015::wantsChange(
     int laneOffset,
     MSAbstractLaneChangeModel::MSLCMessager& msgPass,
     int blocked,
@@ -160,7 +158,7 @@ MSLCM_JE2013::wantsChange(
 
 
 SUMOReal
-MSLCM_JE2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
+MSLCM_SL2015::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
     gDebugFlag1 = DEBUG_COND;
 
     const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
@@ -181,7 +179,7 @@ MSLCM_JE2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMORe
 
 
 SUMOReal
-MSLCM_JE2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
+MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
 
     const SUMOReal time = STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep());
 
@@ -328,7 +326,7 @@ MSLCM_JE2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
 
 
 void*
-MSLCM_JE2013::inform(void* info, MSVehicle* sender) {
+MSLCM_SL2015::inform(void* info, MSVehicle* sender) {
     Info* pinfo = (Info*) info;
     if (pinfo->first >= 0) {
         myVSafes.push_back(pinfo->first);
@@ -349,7 +347,7 @@ MSLCM_JE2013::inform(void* info, MSVehicle* sender) {
 
 
 SUMOReal
-MSLCM_JE2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
+MSLCM_SL2015::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                            int blocked,
                            int dir,
                            const std::pair<MSVehicle*, SUMOReal>& neighLead,
@@ -462,7 +460,7 @@ MSLCM_JE2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 
 
 void
-MSLCM_JE2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
+MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                              int blocked,
                              int dir,
                              const std::pair<MSVehicle*, SUMOReal>& neighFollow,
@@ -597,7 +595,7 @@ MSLCM_JE2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 
 
 void
-MSLCM_JE2013::prepareStep() {
+MSLCM_SL2015::prepareStep() {
     // keep information about strategic change direction
     myOwnState = (myOwnState & LCA_STRATEGIC) ? (myOwnState & LCA_WANTS_LANECHANGE) : 0;
     myLeadingBlockerLength = 0;
@@ -611,7 +609,7 @@ MSLCM_JE2013::prepareStep() {
 
 
 void
-MSLCM_JE2013::changed(int dir) {
+MSLCM_SL2015::changed(int dir) {
     myOwnState = 0;
     mySpeedGainProbability = 0;
     myKeepRightProbability = 0;
@@ -629,7 +627,7 @@ MSLCM_JE2013::changed(int dir) {
 
 
 int
-MSLCM_JE2013::_wantsChange(
+MSLCM_SL2015::_wantsChange(
     int laneOffset,
     MSAbstractLaneChangeModel::MSLCMessager& msgPass,
     int blocked,
@@ -1140,7 +1138,7 @@ MSLCM_JE2013::_wantsChange(
 
 
 int
-MSLCM_JE2013::slowDownForBlocked(MSVehicle** blocked, int state) {
+MSLCM_SL2015::slowDownForBlocked(MSVehicle** blocked, int state) {
     //  if this vehicle is blocking someone in front, we maybe decelerate to let him in
     if ((*blocked) != 0) {
         SUMOReal gap = (*blocked)->getPositionOnLane() - (*blocked)->getVehicleType().getLength() - myVehicle.getPositionOnLane() - myVehicle.getVehicleType().getMinGap();
@@ -1176,7 +1174,7 @@ MSLCM_JE2013::slowDownForBlocked(MSVehicle** blocked, int state) {
 
 
 void
-MSLCM_JE2013::saveBlockerLength(MSVehicle* blocker, int lcaCounter) {
+MSLCM_SL2015::saveBlockerLength(MSVehicle* blocker, int lcaCounter) {
     if (gDebugFlag2) {
         std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                   << " veh=" << myVehicle.getID()

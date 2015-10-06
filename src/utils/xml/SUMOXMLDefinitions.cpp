@@ -557,6 +557,8 @@ StringBijection<LaneChangeModel>::Entry SUMOXMLDefinitions::laneChangeModelValue
     { "DK2008", LCM_DK2008 },
     { "LC2013", LCM_LC2013 },
     { "JE2013", LCM_JE2013 },
+    { "SL2015", LCM_SL2015 },
+    { "default", LCM_DEFAULT },
 };
 
 StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = {
@@ -604,7 +606,7 @@ StringBijection<TrafficLightType> SUMOXMLDefinitions::TrafficLightTypes(
     SUMOXMLDefinitions::trafficLightTypesVales, TLTYPE_ACTUATED);
 
 StringBijection<LaneChangeModel> SUMOXMLDefinitions::LaneChangeModels(
-    SUMOXMLDefinitions::laneChangeModelValues, LCM_JE2013);
+    SUMOXMLDefinitions::laneChangeModelValues, LCM_DEFAULT);
 
 StringBijection<SumoXMLTag> SUMOXMLDefinitions::CarFollowModels(
     SUMOXMLDefinitions::carFollowModelValues, SUMO_TAG_CF_WIEDEMANN);

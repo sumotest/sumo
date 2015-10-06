@@ -33,13 +33,14 @@
 
 #include <utils/options/OptionsCont.h>
 #include "MSAbstractLaneChangeModel.h"
-#include "MSLCM_DK2008.h"
-#include "MSLCM_LC2013.h"
-#include "MSLCM_JE2013.h"
 #include <microsim/MSNet.h>
 #include <microsim/MSEdge.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSGlobals.h>
+#include "MSLCM_DK2008.h"
+#include "MSLCM_LC2013.h"
+#include "MSLCM_JE2013.h"
+#include "MSLCM_SL2015.h"
 
 /* -------------------------------------------------------------------------
  * static members
@@ -65,6 +66,14 @@ MSAbstractLaneChangeModel::build(LaneChangeModel lcm, MSVehicle& v) {
             return new MSLCM_LC2013(v);
         case LCM_JE2013:
             return new MSLCM_JE2013(v);
+        case LCM_SL2015:
+            return new MSLCM_SL2015(v);
+        case LCM_DEFAULT:
+            if (MSGlobals::gLateralResolution < 0) {
+                return new MSLCM_LC2013(v);
+            } else {
+                return new MSLCM_SL2015(v);
+            }
         default:
             throw ProcessError("Lane change model '" + toString(lcm) + "' not implemented");
     }
