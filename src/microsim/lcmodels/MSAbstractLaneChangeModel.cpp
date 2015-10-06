@@ -80,7 +80,7 @@ MSAbstractLaneChangeModel::build(LaneChangeModel lcm, MSVehicle& v) {
 }
 
 
-MSAbstractLaneChangeModel::MSAbstractLaneChangeModel(MSVehicle& v) :
+MSAbstractLaneChangeModel::MSAbstractLaneChangeModel(MSVehicle& v, const LaneChangeModel model) :
     myVehicle(v),
     myOwnState(0),
     myLaneChangeCompletion(1.0),
@@ -90,6 +90,7 @@ MSAbstractLaneChangeModel::MSAbstractLaneChangeModel(MSVehicle& v) :
     myShadowLane(0),
     myHaveShadow(false),
     myCarFollowModel(v.getCarFollowModel()),
+    myModel(model),
     myLastLaneChangeOffset(0) {
 }
 

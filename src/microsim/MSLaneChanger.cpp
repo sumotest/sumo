@@ -84,7 +84,7 @@ MSLaneChanger::laneChange(SUMOTime t) {
     // Finally, the change-result has to be given back to the lanes.
     initChanger();
     while (vehInChanger()) {
-        bool haveChanged = change();
+        bool haveChanged = MSGlobals::gLateralResolution < 0 ? change() : changeSublane();
         updateChanger(haveChanged);
     }
     updateLanes(t);
@@ -113,6 +113,16 @@ MSLaneChanger::initChanger() {
             continue;
         }
         ce->follow = *(vehicles.rbegin() + 1);
+    }
+}
+
+
+bool 
+MSLaneChanger::mayChange(int direction) const {
+    if (direction == -1) {
+        return (myCandi != myChanger.begin()    && (myCandi - 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass()));
+    } else {
+        return (myCandi + 1) != myChanger.end() && (myCandi + 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass()); 
     }
 }
 
@@ -151,7 +161,7 @@ MSLaneChanger::change() {
     std::pair<MSVehicle* const, SUMOReal> leader = getRealThisLeader(myCandi);
     // check whether the vehicle wants and is able to change to right lane
     int state1 = 0;
-    if (myCandi != myChanger.begin() && (myCandi - 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass())) {
+    if (mayChange(-1)) {
         state1 = checkChange(-1, leader, preb);
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
@@ -171,7 +181,7 @@ MSLaneChanger::change() {
 
     // check whether the vehicle wants and is able to change to left lane
     int state2 = 0;
-    if ((myCandi + 1) != myChanger.end() && (myCandi + 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass())) {
+    if (mayChange(1)) {
         state2 = checkChange(1, leader, preb);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
@@ -268,6 +278,85 @@ MSLaneChanger::change() {
 }
 
 
+bool
+MSLaneChanger::changeSublane() {
+    // variant of change() for the sublane case
+    myCandi = findCandidate();
+    MSVehicle* vehicle = veh(myCandi);
+#ifdef DEBUG_VEHICLE_GUI_SELECTION
+    if (gDebugSelectedVehicle == vehicle->getID()) {
+        int bla = 0;
+    }
+#endif
+    if (vehicle->getLane() != (*myCandi).lane || vehicle->getLaneChangeModel().isChangingLanes()) {
+        // vehicles shadows and changing vehicles are not eligible
+        registerUnchanged(vehicle);
+        return false;
+    }
+#ifndef NO_TRACI
+    if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
+        return false; // !!! temporary; just because it broke, here
+    }
+#endif
+    vehicle->updateBestLanes(); // needed?
+    for (int i = 0; i < (int) myChanger.size(); ++i) {
+        vehicle->adaptBestLanesOccupation(i, myChanger[i].dens);
+    }
+    const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
+    // XXX get leader(s)
+    std::pair<MSVehicle* const, SUMOReal> leader = getRealThisLeader(myCandi);
+    // check whether the vehicle wants and is able to change to right lane
+    int state1 = 0;
+    SUMOReal latDist = 0;
+    if (mayChange(-1) ||
+            vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() - 0.5 * vehicle->getVehicleType().getWidth() > 0) {
+        state1 = checkChangeSublane(mayChange(-1) ? -1 : 0, leader, preb, latDist);
+        bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
+        // change if the vehicle wants to and is allowed to change
+        if ((state1 & LCA_RIGHT) != 0 && changingAllowed1) {
+            startChangeSublane(vehicle, myCandi, latDist);
+            return true;
+        }
+        if ((state1 & LCA_RIGHT) != 0 && (state1 & LCA_URGENT) != 0) {
+            (myCandi - 1)->lastBlocked = vehicle;
+            if ((myCandi - 1)->firstBlocked == 0) {
+                (myCandi - 1)->firstBlocked = vehicle;
+            }
+        }
+    }
+
+
+    // check whether the vehicle wants and is able to change to left lane
+    int state2 = 0;
+    if (mayChange(1) ||
+            vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() + 0.5 * vehicle->getVehicleType().getWidth() < myCandi->lane->getWidth()) {
+        state2 = checkChangeSublane(mayChange(1) ? 1 : 0, leader, preb, latDist);
+        bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
+        // change if the vehicle wants to and is allowed to change
+        if ((state2 & LCA_LEFT) != 0 && changingAllowed2) {
+            startChangeSublane(vehicle, myCandi, latDist);
+            return true;
+        }
+        if ((state2 & LCA_LEFT) != 0 && (state2 & LCA_URGENT) != 0) {
+            (myCandi + 1)->lastBlocked = vehicle;
+            if ((myCandi + 1)->firstBlocked == 0) {
+                (myCandi + 1)->firstBlocked = vehicle;
+            }
+        }
+    }
+
+    if ((state1 & (LCA_URGENT)) != 0 && (state2 & (LCA_URGENT)) != 0) {
+        // ... wants to go to the left AND to the right
+        // just let them go to the right lane...
+        state2 = 0;
+    }
+    vehicle->getLaneChangeModel().setOwnState(state2 | state1);
+
+    registerUnchanged(vehicle);
+    return false;
+}
+
+
 void
 MSLaneChanger::registerUnchanged(MSVehicle* vehicle) {
     myCandi->lane->myTmpVehicles.insert(myCandi->lane->myTmpVehicles.begin(), veh(myCandi));
@@ -289,6 +378,24 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
         from->dens += vehicle->getVehicleType().getLengthWithGap();
     }
     to->dens += to->hoppedVeh->getVehicleType().getLengthWithGap();
+}
+
+
+void
+MSLaneChanger::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist) {
+    // 1) update vehicles lateral position according to latDist and target lane
+    vehicle->myState.myPosLat += latDist;
+
+    // 2) distinguish several cases 
+    //   a) vehicle moves completely within the same lane
+    //   b) vehicle intersects another lane
+    //      - vehicle must be moved to the lane where it's midpoint is (either old or new)
+    //      - shadow vehicle must be created/moved to the other lane if the vehicle intersects it
+    // 3) updated dens of all lanes that hold the vehicle or its shadow
+    
+
+    // XXX updated vehicles lane and handle the shadow vehicle
+    // XXX updated dens for affected lanes
 }
 
 
@@ -579,6 +686,66 @@ MSLaneChanger::checkChange(
             }
         }
     }
+#ifndef NO_TRACI
+    // let TraCI influence the wish to change lanes and the security to take
+    //const int oldstate = state;
+    state = vehicle->influenceChangeDecision(state);
+    //if (vehicle->getID() == "150_2_36000000") {
+    //    std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep()) << " veh=" << vehicle->getID() << " oldstate=" << oldstate << " newstate=" << state << "\n";
+    //}
+#endif
+    return state;
+}
+
+
+int 
+MSLaneChanger::checkChangeSublane(
+        int laneOffset,
+        const std::pair<MSVehicle* const, SUMOReal>& leader,
+        const std::vector<MSVehicle::LaneQ>& preb,
+        SUMOReal& latDist) const {
+    std::pair<MSVehicle* const, SUMOReal> neighLead;
+    std::pair<MSVehicle* const, SUMOReal> neighFollow;
+    MSVehicle* vehicle = veh(myCandi);
+    ChangerIt target = myCandi + laneOffset;
+    int blocked = 0;
+    int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
+    int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
+    // overlap
+    if (neighFollow.first != 0 && neighFollow.second < 0) {
+        blocked |= (blockedByFollower | LCA_OVERLAPPING);
+    }
+    if (neighLead.first != 0 && neighLead.second < 0) {
+        blocked |= (blockedByLeader | LCA_OVERLAPPING);
+    }
+    // safe back gap
+    if (neighFollow.first != 0) {
+        // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
+        if (neighFollow.second < neighFollow.first->getCarFollowModel().getSecureGap(neighFollow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
+            blocked |= blockedByFollower;
+        }
+    }
+
+    // safe front gap
+    if (neighLead.first != 0) {
+        // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
+        if (neighLead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())) {
+            blocked |= blockedByLeader;
+        }
+    }
+
+    MSAbstractLaneChangeModel::MSLCMessager msg(leader.first, neighLead.first, neighFollow.first);
+    int state = blocked | vehicle->getLaneChangeModel().wantsChangeSublane(
+                    laneOffset, msg, blocked, leader, neighLead, neighFollow, *(target->lane), preb, &(myCandi->lastBlocked), &(myCandi->firstBlocked), latDist);
+
+    // XXX
+    // do are more carefull (but expensive) check to ensure that a
+    // safety-critical leader is not being overloocked
+
+    // XXX
+    // ensure that a continuous lane change manoeuvre can be completed
+    // before the next turning movement
+
 #ifndef NO_TRACI
     // let TraCI influence the wish to change lanes and the security to take
     //const int oldstate = state;

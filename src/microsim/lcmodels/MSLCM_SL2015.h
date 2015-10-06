@@ -166,10 +166,15 @@ protected:
     typedef std::pair<SUMOReal, int> Info;
 
 
+    /// @brief XXX
+    void updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& preb);
 
 protected:
-    /// @brief a value for tracking the probability that a change to the offset with the same sign is beneficial
-    SUMOReal mySpeedGainProbability;
+    /// @brief a value for tracking the probability that a change to the right is beneficial
+    SUMOReal mySpeedGainProbabilityRight;
+    /// @brief a value for tracking the probability that a change to the left is beneficial
+    SUMOReal mySpeedGainProbabilityLeft;
+
     /* @brief a value for tracking the probability of following the/"Rechtsfahrgebot"
      * A larger negative value indicates higher probability for moving to the
      * right (as in mySpeedGainProbability) */
@@ -182,7 +187,15 @@ protected:
      * determining urgency of strategic lane changes */
     SUMOReal myLookAheadSpeed;
 
+    /// @brief speed adaptation requests by ego and surrounding vehicles 
     std::vector<SUMOReal> myVSafes;
+
+    /// @brief expected travel speeds on all sublanes on the current edge(!)
+    std::vector<SUMOReal> myExpectedSublaneSpeeds;
+    SUMOReal myLastEdgeWidth;
+
+
+    /// @brief flag to prevent speed adaptation by slowing down
     bool myDontBrake;
 
 };

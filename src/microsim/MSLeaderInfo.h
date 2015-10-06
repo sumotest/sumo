@@ -77,7 +77,11 @@ public:
     /// @brief return the vehicle for the given sublane
     const MSVehicle* operator[](int sublane) const;
 
-    const int numFreeSublanes() const {
+    int numSublanes() const {
+        return (int)myVehicles.size();
+    }
+
+    int numFreeSublanes() const {
         return myFreeSublanes;
     }
 private:

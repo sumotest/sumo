@@ -84,6 +84,7 @@ MSEdge::MSEdge(const std::string& id, int numericalID,
     myStreetName(streetName),
     myEdgeType(edgeType),
     myPriority(priority),
+    myWidth(0),
     myLength(-1.),
     myEmptyTraveltime(-1.),
     myAmDelayed(false),
@@ -117,6 +118,9 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     }
     if (myFunction == EDGEFUNCTION_DISTRICT) {
         myCombinedPermissions = SVCAll;
+    }
+    for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
+        myWidth += (*i)->getWidth();
     }
 }
 

@@ -130,6 +130,9 @@ protected:
     /** Find a new candidate and try to change it. */
     bool change();
 
+    /** Find a new candidate and try to let it change sub lanes. */
+    bool changeSublane();
+
     /** Update changer for vehicles that did not change */
     void registerUnchanged(MSVehicle* vehicle);
 
@@ -152,14 +155,33 @@ protected:
         const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb) const;
 
+    /** @brief check whether sub-lane changing in the given direction is desirable
+     * and possible
+     * @param[in] laneOffset The direction in which changing should be checked
+     * @param[in] leaders The candidate vehicle's leaders
+     * @param[in] preb The bestLanse of the candidaet vehicle
+     * @param[out] latDist The distance by which the vehicle changes laterally
+     */
+    int checkChangeSublane(
+        int laneOffset,
+        const std::pair<MSVehicle* const, SUMOReal>& leader,
+        const std::vector<MSVehicle::LaneQ>& preb,
+        SUMOReal& latDist) const;
+
     ///  @brief start the lane change maneuver (and finish it instantly if gLaneChangeDuration == 0)
     void startChange(MSVehicle* vehicle, ChangerIt& from, int direction);
+
+    ///  @brief change by the specified amount
+    void startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist);
 
     std::pair<MSVehicle* const, SUMOReal> getRealThisLeader(const ChangerIt& target) const;
 
     std::pair<MSVehicle* const, SUMOReal> getRealFollower(const ChangerIt& target) const;
 
     std::pair<MSVehicle* const, SUMOReal> getRealLeader(const ChangerIt& target) const;
+
+    /// @brief whether changing to the lane in the given direction should be considered
+    bool mayChange(int direction) const;
 
 protected:
     /// Container for ChangeElemements, one for every lane in the edge.

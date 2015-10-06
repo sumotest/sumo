@@ -191,8 +191,9 @@ public:
 
     /** @brief Constructor
      * @param[in] v The vehicle this lane-changer belongs to
+     * @param[in] model The type of lane change model
      */
-    MSAbstractLaneChangeModel(MSVehicle& v);
+    MSAbstractLaneChangeModel(MSVehicle& v, const LaneChangeModel model);
 
     /// @brief Destructor
     virtual ~MSAbstractLaneChangeModel();
@@ -220,7 +221,23 @@ public:
         const MSLane& neighLane,
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
-        MSVehicle** firstBlocked) = 0;
+        MSVehicle** firstBlocked) {
+        throw ProcessError("Method not implemented by model " + toString(myModel));
+    };
+
+    virtual int wantsChangeSublane(
+        int laneOffset,
+        MSAbstractLaneChangeModel::MSLCMessager& msgPass, int blocked,
+        const std::pair<MSVehicle*, SUMOReal>& leader,
+        const std::pair<MSVehicle*, SUMOReal>& neighLead,
+        const std::pair<MSVehicle*, SUMOReal>& neighFollow,
+        const MSLane& neighLane,
+        const std::vector<MSVehicle::LaneQ>& preb,
+        MSVehicle** lastBlocked,
+        MSVehicle** firstBlocked,
+        SUMOReal& latDist) {;
+        throw ProcessError("Method not implemented by model " + toString(myModel));
+    }
 
     virtual void* inform(void* info, MSVehicle* sender) = 0;
 
@@ -364,6 +381,9 @@ protected:
 
     /// @brief The vehicle's car following model
     const MSCFModel& myCarFollowModel;
+
+    /// @brief the type of this model
+    const LaneChangeModel myModel;
 
     /// @brief list of lanes where the shadow vehicle is partial occupator
     std::vector<MSLane*> myPartiallyOccupatedByShadow;

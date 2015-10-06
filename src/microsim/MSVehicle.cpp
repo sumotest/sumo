@@ -1535,7 +1535,6 @@ MSVehicle::executeMove() {
         // State needs to be reset for all vehicles before the next call to MSEdgeControl::changeLanes
         getLaneChangeModel().prepareStep();
     }
-    // State needs to be reset for all vehicles before the next call to MSEdgeControl::changeLanes
     return moved;
 }
 

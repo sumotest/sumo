@@ -519,6 +519,13 @@ public:
         return myCombinedPermissions;
     }
 
+    /** @brief Returns the edges's width (sum over all lanes)
+     * @return This edges's width
+     */
+    SUMOReal getWidth() const {
+        return myWidth;
+    }
+
     void rebuildAllowedLanes();
 
 
@@ -743,6 +750,9 @@ protected:
 
     /// @brief the priority of the edge (used during network creation)
     const int myPriority;
+    
+    /// Edge width [m]
+    SUMOReal myWidth;
 
     /// @brief the length of the edge (cached value for speedup)
     SUMOReal myLength;
