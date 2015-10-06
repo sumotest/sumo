@@ -94,8 +94,8 @@ MSLeaderInfo::getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) c
 
 const MSVehicle*
 MSLeaderInfo::operator[](int sublane) const {
-    assert(index >= 0);
-    assert(index < myVehicles.size());
+    assert(sublane >= 0);
+    assert(sublane < myVehicles.size());
     return myVehicles[sublane];
 }
 

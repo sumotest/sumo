@@ -722,7 +722,7 @@ MSLane::getLastVehicleInformation() const {
         // recompute myLeaderInfo
         myLeaderInfo = MSLeaderInfo(myWidth);
         VehCont::const_iterator last = myVehicles.begin();
-        while (myLeaderInfo.addLeader(*last, true) > 0 && last != myVehicles.end()) {
+        while (last != myVehicles.end() && myLeaderInfo.addLeader(*last, true) > 0) {
             last++;
         }
         if (myLeaderInfo.numFreeSublanes() > 0) {
