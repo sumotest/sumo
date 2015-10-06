@@ -98,7 +98,7 @@ MSLeaderInfo::getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) c
     const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     rightmost = (int)floor(rightVehSide / MSGlobals::gLateralResolution);
-    leftmost = (int)floor(leftVehSide / MSGlobals::gLateralResolution);
+    leftmost = MIN2((int)myVehicles.size() - 1,(int)floor(leftVehSide / MSGlobals::gLateralResolution));
 }
 
 
