@@ -1198,7 +1198,9 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         const SUMOReal va = MAX2(laneMaxV, cfModel.freeSpeed(this, getSpeed(), seen, laneMaxV));
         v = MIN2(va, v);
         seenNonInternal += lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL ? 0 : lane->getLength();
+        //gDebugFlag1 = getID() == "13";
         ahead = lane->getLastVehicleInformation();
+        //gDebugFlag1 = false;
         seen += lane->getLength();
         vLinkPass = MIN2(estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
@@ -1224,8 +1226,8 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
                     : pred->getPositionOnLane() - pred->getVehicleType().getLength());
             const SUMOReal gap = (lane == myLane
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
-                    : predBack + seen  - getVehicleType().getMinGap());
-            //std::cout << "     pred=" << pred->getID() << " gap=" << gap << "\n";
+                    : predBack + seen - lane->getLength() - getVehicleType().getMinGap());
+            //std::cout << "     pred=" << pred->getID() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << "\n";
             adaptToLeader(std::make_pair(pred, gap), seen, lastLink, lane, v, vLinkPass);
         }
     }
@@ -1238,6 +1240,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                          const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass,
                          SUMOReal distToCrossing) const {
     if (leaderInfo.first != 0) {
+        //std::cout << SIMTIME << " veh=" << getID() << " l=" << leaderInfo.first->getID() << " gap=" << leaderInfo.second << "\n";
         const SUMOReal vsafeLeader = getSafeFollowSpeed(leaderInfo, seen, lane, distToCrossing);
         if (lastLink != 0) {
             lastLink->adaptLeaveSpeed(vsafeLeader);

@@ -65,7 +65,10 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
     }
     if (myVehicles.size() == 1) {
         // speedup for the simple case
-        myVehicles[0] = veh;
+        if (!beyond || myVehicles[0] == 0) {
+            myVehicles[0] = veh;
+            myFreeSublanes = 0;
+        }
         return myFreeSublanes;
     } 
     // map center-line based coordinates into [0, myWidth] coordinates
