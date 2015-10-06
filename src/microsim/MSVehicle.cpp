@@ -1214,6 +1214,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
     int rightmost;
     int leftmost;
     ahead.getSubLanes(this, rightmost, leftmost);
+    //std::cout << SIMTIME << " veh=" << getID() << " rm=" << rightmost << " lm=" << leftmost << "\n";
     for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
         const MSVehicle* pred = ahead[sublane];
         if (pred != 0) {
@@ -1224,6 +1225,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
             const SUMOReal gap = (lane == myLane
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
                     : predBack + seen  - getVehicleType().getMinGap());
+            //std::cout << "     pred=" << pred->getID() << " gap=" << gap << "\n";
             adaptToLeader(std::make_pair(pred, gap), seen, lastLink, lane, v, vLinkPass);
         }
     }

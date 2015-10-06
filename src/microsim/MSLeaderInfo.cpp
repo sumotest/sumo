@@ -68,9 +68,11 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
         myVehicles[0] = veh;
         return myFreeSublanes;
     } 
-    const SUMOReal vehWidth = veh->getVehicleType().getWidth();
-    const SUMOReal rightVehSide = MAX2((SUMOReal)0, veh->getLateralPositionOnLane() - vehWidth);
-    const SUMOReal leftVehSide = MIN2(myWidth, veh->getLateralPositionOnLane() + vehWidth);
+    // map center-line based coordinates into [0, myWidth] coordinates
+    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
+    const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
+    const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
+    const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
         const int subLane = (int)floor(posLat / MSGlobals::gLateralResolution);
         if (!beyond || myVehicles[subLane] == 0) {
@@ -84,9 +86,17 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
 
 void 
 MSLeaderInfo::getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) const {
-    const SUMOReal vehWidth = veh->getVehicleType().getWidth();
-    const SUMOReal rightVehSide = MAX2((SUMOReal)0, veh->getLateralPositionOnLane() - vehWidth);
-    const SUMOReal leftVehSide = MIN2(myWidth, veh->getLateralPositionOnLane() + vehWidth);
+    if (myVehicles.size() == 1) {
+        // speedup for the simple case
+        rightmost = 0;
+        leftmost = 0;
+        return;
+    }
+    // map center-line based coordinates into [0, myWidth] coordinates
+    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
+    const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
+    const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
+    const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     rightmost = (int)floor(rightVehSide / MSGlobals::gLateralResolution);
     leftmost = (int)floor(leftVehSide / MSGlobals::gLateralResolution);
 }
