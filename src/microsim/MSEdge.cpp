@@ -47,6 +47,7 @@
 #include "MSGlobals.h"
 #include "MSNet.h"
 #include "MSVehicle.h"
+#include "MSLeaderInfo.h"
 #include "MSContainer.h"
 #include "MSEdgeWeightsStorage.h"
 #include <microsim/devices/MSDevice_Routing.h>
@@ -121,6 +122,16 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     }
     for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
         myWidth += (*i)->getWidth();
+    }
+    if (MSGlobals::gLateralResolution > 0) {
+        SUMOReal widthBefore = 0;
+        for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
+            MSLeaderInfo ahead((*i)->getWidth());
+            for (int j = 0; j < ahead.numSublanes(); ++j) {
+                mySublaneSides.push_back(widthBefore + j * MSGlobals::gLateralResolution);
+            }
+            widthBefore += (*i)->getWidth();
+        }
     }
 }
 

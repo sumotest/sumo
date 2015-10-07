@@ -526,6 +526,11 @@ public:
         return myWidth;
     }
 
+    /// @brief Returns the right side offsets of this edge's sublanes
+    const std::vector<SUMOReal> getSubLaneSides() const {
+        return mySublaneSides;
+    }
+
     void rebuildAllowedLanes();
 
 
@@ -592,6 +597,10 @@ public:
 
     void markDelayed() const {
         myAmDelayed = true;
+    }
+
+    bool hasLaneChanger() const {
+        return myLaneChanger != 0;
     }
 
     /** @brief Inserts edge into the static dictionary
@@ -765,6 +774,9 @@ protected:
 
     /// @brief whether this edge belongs to a roundabout
     bool myAmRoundabout;
+
+    /// @brief the right side for each sublane on this edge
+    std::vector<SUMOReal> mySublaneSides;
 
     /// @name Static edge container
     /// @{

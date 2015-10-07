@@ -68,7 +68,7 @@ public:
      * using the given laneOffset.
      * This method gets the information about the surrounding vehicles
      * and whether another lane may be more preferable */
-    int wantsChange(
+    int wantsChangeSublane(
         int laneOffset,
         MSAbstractLaneChangeModel::MSLCMessager& msgPass, int blocked,
         const std::pair<MSVehicle*, SUMOReal>& leader,
@@ -77,7 +77,8 @@ public:
         const MSLane& neighLane,
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
-        MSVehicle** firstBlocked);
+        MSVehicle** firstBlocked,
+        SUMOReal& latDist);
 
     void* inform(void* info, MSVehicle* sender);
 
@@ -112,7 +113,8 @@ protected:
         const MSLane& neighLane,
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
-        MSVehicle** firstBlocked);
+        MSVehicle** firstBlocked,
+        SUMOReal& latDist);
 
 
     /* @brief decide whether we will overtake or follow a blocking leader
@@ -192,6 +194,7 @@ protected:
 
     /// @brief expected travel speeds on all sublanes on the current edge(!)
     std::vector<SUMOReal> myExpectedSublaneSpeeds;
+
     SUMOReal myLastEdgeWidth;
 
 

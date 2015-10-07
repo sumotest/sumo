@@ -99,7 +99,7 @@
 // member method definitions
 // ===========================================================================
 MSLCM_JE2013::MSLCM_JE2013(MSVehicle& v) :
-    MSAbstractLaneChangeModel(v),
+    MSAbstractLaneChangeModel(v, LCM_JE2013),
     mySpeedGainProbability(0),
     myKeepRightProbability(0),
     myLeadingBlockerLength(0),

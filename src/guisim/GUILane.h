@@ -305,9 +305,6 @@ private:
     /// @brief Quarter of lane width, for speed-up
     SUMOReal myQuarterLaneWidth;
 
-    /// The lane index
-    unsigned int myIndex;
-
 #ifdef HAVE_OSG
     osg::Geometry* myGeom;
 #endif

@@ -107,11 +107,12 @@ public:
      * @param[in] shape The shape of the lane
      * @param[in] width The width of the lane
      * @param[in] permissions Encoding of the Vehicle classes that may drive on this lane
+     * @param[in] index The index of this lane within its parent edge
      * @see SUMOVehicleClass
      */
     MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge* const edge,
            unsigned int numericalID, const PositionVector& shape, SUMOReal width,
-           SVCPermissions permissions);
+           SVCPermissions permissions, int index);
 
 
     /// @brief Destructor
@@ -394,6 +395,13 @@ public:
     SUMOReal getWidth() const {
         return myWidth;
     }
+
+    /** @brief Returns the lane's index
+     * @return This lane's index
+     */
+    int getIndex() const {
+        return myIndex;
+    }
     /// @}
 
     /// @brief return the index of the link to the next crossing if this is walkingArea, else -1
@@ -555,11 +563,6 @@ public:
      * @param[notify] whether moveReminders of the vehicle shall be triggered
      */
     virtual MSVehicle* removeVehicle(MSVehicle* remVehicle, MSMoveReminder::Notification notification, bool notify = true);
-
-    /// The shape of the lane
-    PositionVector myShape;
-
-
 
     void leftByLaneChange(MSVehicle* v);
     void enteredByLaneChange(MSVehicle* v);
@@ -832,6 +835,12 @@ protected:
 protected:
     /// Unique numerical ID (set on reading by netload)
     size_t myNumericalID;
+
+    /// The lane index
+    int myIndex;
+
+    /// The shape of the lane
+    PositionVector myShape;
 
     /** @brief The lane's vehicles.
         The entering vehicles are inserted at the front

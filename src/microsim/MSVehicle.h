@@ -308,6 +308,12 @@ public:
         return myState.myPosLat;
     }
 
+    /** @brief Get the vehicle's lateral position on the edge:
+     * @return The lateral position of the vehicle (in m distance between right
+     * side of vehicle and ride side of edge
+     */
+    SUMOReal getRightSideOnEdge() const;
+
     /** @brief Returns the vehicle's current speed
      * @return The vehicle's speed
      */

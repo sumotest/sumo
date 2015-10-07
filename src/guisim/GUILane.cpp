@@ -73,7 +73,7 @@ GUILane::GUILane(const std::string& id, SUMOReal maxSpeed, SUMOReal length,
                  MSEdge* const edge, unsigned int numericalID,
                  const PositionVector& shape, SUMOReal width,
                  SVCPermissions permissions, unsigned int index) :
-    MSLane(id, maxSpeed, length, edge, numericalID, shape, width, permissions),
+    MSLane(id, maxSpeed, length, edge, numericalID, shape, width, permissions, index),
     GUIGlObject(GLO_LANE, id) 
 {
     myShapeRotations.reserve(myShape.size() - 1);

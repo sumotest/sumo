@@ -53,9 +53,7 @@
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowSwap)
-    : myAllowsSwap(allowSwap) {
-    assert(lanes->size() > 1);
+MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowSwap) : myAllowsSwap(allowSwap) {
 
     // Fill the changer with the lane-data.
     myChanger.reserve(lanes->size());
@@ -138,6 +136,7 @@ MSLaneChanger::change() {
     // priority.
     myCandi = findCandidate();
     MSVehicle* vehicle = veh(myCandi);
+    
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == vehicle->getID()) {
         int bla = 0;
@@ -396,6 +395,7 @@ MSLaneChanger::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal 
 
     // XXX updated vehicles lane and handle the shadow vehicle
     // XXX updated dens for affected lanes
+    registerUnchanged(vehicle);
 }
 
 

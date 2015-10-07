@@ -2437,6 +2437,24 @@ MSVehicle::setTentativeLaneAndPosition(MSLane* lane, const SUMOReal pos) {
 }
 
 
+SUMOReal 
+MSVehicle::getRightSideOnEdge() const {
+    SUMOReal result = 0;
+    const std::vector<MSLane*>& lanes = myLane->getEdge().getLanes();
+    for (int iLane = 0; iLane < (int)myLane->getIndex(); ++iLane) {
+        result += lanes[iLane]->getWidth();
+    }
+    //std::cout 
+        //<< "    result=" << result
+        //<< " posLat=" << myState.myPosLat
+        //<< " laneWidth=" << myLane->getWidth()
+        //<< " myWidth=" << getVehicleType().getWidth()
+        //<< "\n";
+    result += myState.myPosLat + 0.5 * myLane->getWidth() - 0.5 * getVehicleType().getWidth();
+    return result;
+}
+
+
 #ifndef NO_TRACI
 bool
 MSVehicle::addTraciStop(MSLane* const lane, const SUMOReal startPos, const SUMOReal endPos, const SUMOTime duration, const SUMOTime until,
