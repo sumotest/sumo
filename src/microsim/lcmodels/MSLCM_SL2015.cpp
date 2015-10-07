@@ -643,8 +643,8 @@ MSLCM_SL2015::prepareStep() {
                 }
             }
         }
+        myExpectedSublaneSpeeds = newExpectedSpeeds;
     }
-    myExpectedSublaneSpeeds = newExpectedSpeeds;
     assert(myExpectedSublaneSpeeds.size() == myVehicle.getLane()->getEdge().getSubLaneSides().size());
 }
 
@@ -753,11 +753,12 @@ MSLCM_SL2015::_wantsChange(
     }
     // direction specific constants
     const bool right = (laneOffset == -1);
+    const bool left = (laneOffset == 1);
     const int lca = (right ? LCA_RIGHT : LCA_LEFT);
     const int myLca = (right ? LCA_MRIGHT : LCA_MLEFT);
     const int lcaCounter = (right ? LCA_LEFT : LCA_RIGHT);
     const int myLcaCounter = (right ? LCA_MLEFT : LCA_MRIGHT);
-    const bool changeToBest = (right && bestLaneOffset < 0) || (!right && bestLaneOffset > 0);
+    const bool changeToBest = (right && bestLaneOffset < 0) || (left && bestLaneOffset > 0);
     // keep information about being a leader/follower
     int ret = (myOwnState & 0xffff0000);
     int req = 0; // the request to change or stay
@@ -896,7 +897,7 @@ MSLCM_SL2015::_wantsChange(
         ret = ret | lca | LCA_STRATEGIC | LCA_URGENT;
     } else {
         // VARIANT_20 (noOvertakeRight)
-        if (!myAllowOvertakingRight && !right && !myVehicle.congested() && neighLead.first != 0) {
+        if (!myAllowOvertakingRight && left && !myVehicle.congested() && neighLead.first != 0) {
             // check for slower leader on the left. we should not overtake but
             // rather move left ourselves (unless congested)
             MSVehicle* nv = neighLead.first;
@@ -1004,6 +1005,7 @@ MSLCM_SL2015::_wantsChange(
                       << " plannedSpeed=" << plannedSpeed
                       << "\n";
         }
+        latDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
         return ret;
     }
 
@@ -1017,6 +1019,7 @@ MSLCM_SL2015::_wantsChange(
             req = ret | LCA_STAY | LCA_COOPERATIVE;
         }
         if (!cancelRequest(req)) {
+            latDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
             return ret | req;
         }
     }
@@ -1058,6 +1061,7 @@ MSLCM_SL2015::_wantsChange(
         }
         req = ret | lca | LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
         if (!cancelRequest(req)) {
+            latDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
             return ret | req;
         }
     }
@@ -1098,7 +1102,7 @@ MSLCM_SL2015::_wantsChange(
     int subLanesBefore = 0;
     SUMOReal laneWidthBefore = 0;
     const SUMOReal speedGainProbabilityRightBefore = mySpeedGainProbabilityRight;
-    SUMOReal maxGain = 0;
+    SUMOReal maxGain = -std::numeric_limits<SUMOReal>::max(); 
     for (int i = 0; i < (int)sublaneSides.size(); ++i) {
         if (sublaneSides[i] + vehWidth < edge.getWidth()) {
             SUMOReal vMin = myExpectedSublaneSpeeds[i];
@@ -1112,8 +1116,11 @@ MSLCM_SL2015::_wantsChange(
             const SUMOReal relativeGain = (vMin - defaultNextSpeed) / MAX2(vMin, RELGAIN_NORMALIZATION_MIN_SPEED);
             if (relativeGain > maxGain) {
                 maxGain = relativeGain;
-                latDist = sublaneSides[i] - rightVehSide;
+                if (maxGain > 0) {
+                    latDist = sublaneSides[i] - rightVehSide;
+                }
             }
+            //std::cout << " sublaneSides[i]=" << sublaneSides[i] << " rightVehSide=" << rightVehSide << " relGain=" << relativeGain << "\n";
             if (sublaneSides[i] < rightVehSide) {
                 mySpeedGainProbabilityRight += relativeGain;
             } else {
@@ -1127,9 +1134,9 @@ MSLCM_SL2015::_wantsChange(
     //    << " latDist=" << latDist 
     //    << " maxGain=" << maxGain << "\n";
 
-    if (right) {
+    if (!left) {
         // ONLY FOR CHANGING TO THE RIGHT
-        if (latDist > 0) {
+        if (right && maxGain >= 0 && latDist <= 0) {
             // honor the obligation to keep right (Rechtsfahrgebot)
             // XXX consider fast approaching followers on the current lane
             //const SUMOReal vMax = myLookAheadSpeed;
@@ -1165,6 +1172,8 @@ MSLCM_SL2015::_wantsChange(
             }
             if (myKeepRightProbability < -CHANGE_PROB_THRESHOLD_RIGHT) {
                 req = ret | lca | LCA_KEEPRIGHT;
+                assert(myVehicle.getLane()->getIndex() > neighLane.getIndex());
+                latDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
                 if (!cancelRequest(req)) {
                     return ret | req;
                 }
@@ -1185,13 +1194,14 @@ MSLCM_SL2015::_wantsChange(
         }
 
         if (mySpeedGainProbabilityRight > CHANGE_PROB_THRESHOLD_RIGHT
-                && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { //./MAX2((SUMOReal) .1, myVehicle.getSpeed())) { // -.1
+                && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { 
             req = ret | lca | LCA_SPEEDGAIN;
             if (!cancelRequest(req)) {
                 return ret | req;
             }
         }
-    } else {
+    } 
+    if (!right) {
 
         if (gDebugFlag2) {
             std::cout << STEPS2TIME(currentTime)
@@ -1219,6 +1229,7 @@ MSLCM_SL2015::_wantsChange(
                 : mySpeedGainProbabilityLeft  > MAX2((SUMOReal)0, mySpeedGainProbabilityRight))) {
         // change towards the correct lane, speedwise it does not hurt
         req = ret | lca | LCA_STRATEGIC;
+        latDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
         if (!cancelRequest(req)) {
             return ret | req;
         }

@@ -391,11 +391,21 @@ MSLaneChanger::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal 
     //      - vehicle must be moved to the lane where it's midpoint is (either old or new)
     //      - shadow vehicle must be created/moved to the other lane if the vehicle intersects it
     // 3) updated dens of all lanes that hold the vehicle or its shadow
+    if (fabs(vehicle->getLateralPositionOnLane()) > 0.5 * vehicle->getLane()->getWidth()) {
+        const int direction = vehicle->getLateralPositionOnLane() < 0 ? -1 : 1;
+        ChangerIt to = from + direction;
+        vehicle->myState.myPosLat -= direction * 0.5 * (from->lane->getWidth() + to->lane->getWidth());
+        to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
+        to->dens += vehicle->getVehicleType().getLengthWithGap();
+        vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
+        // vehicle moved to a new lane
+    } else {
+        registerUnchanged(vehicle);
+    }
     
 
     // XXX updated vehicles lane and handle the shadow vehicle
     // XXX updated dens for affected lanes
-    registerUnchanged(vehicle);
 }
 
 
