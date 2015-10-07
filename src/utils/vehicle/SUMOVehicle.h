@@ -126,7 +126,7 @@ public:
      * @param[in] nSuccs The number of edge to look forward
      * @return The nSuccs'th following edge in the vehicle's route
      */
-    virtual const MSEdge* succEdge(unsigned int nSuccs) const = 0;
+    virtual const MSEdge* succEdge(int nSuccs) const = 0;
 
     /// Replaces the current route by the given edges
     virtual bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false) = 0;

@@ -115,7 +115,7 @@ public:
      * @param[in] nSuccs The number of edge to look forward
      * @return The nSuccs'th following edge in the vehicle's route
      */
-    const MSEdge* succEdge(unsigned int nSuccs) const;
+    const MSEdge* succEdge(int nSuccs) const;
 
     /** @brief Returns the edge the vehicle is currently at
      *

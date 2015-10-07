@@ -617,18 +617,66 @@ MSLCM_SL2015::prepareStep() {
     mySpeedGainProbabilityLeft = ceil(mySpeedGainProbabilityLeft * 100000.0) * 0.00001;
     myKeepRightProbability = ceil(myKeepRightProbability * 100000.0) * 0.00001;
     // updated myExpectedSublaneSpeeds
-    const std::vector<MSLane*>& lanes = myVehicle.getLane()->getEdge().getLanes();
-    if (myExpectedSublaneSpeeds.size() == 0) {
+    // XXX only do this when (sub)lane changing is possible
+    std::vector<SUMOReal> newExpectedSpeeds;
+    //std::cout << SIMTIME << " veh=" << myVehicle.getID() << " myExpectedSublaneSpeeds=" << toString(myExpectedSublaneSpeeds) << "\n";
+    if (myExpectedSublaneSpeeds.size() != myVehicle.getLane()->getEdge().getSubLaneSides().size()) {
         // initialize
+        const std::vector<MSLane*>& lanes = myVehicle.getLane()->getEdge().getLanes();
         for (std::vector<MSLane*>::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
             const int subLanes = MAX2(1, int(ceil((*it_lane)->getWidth() / MSGlobals::gLateralResolution)));
             for (int i = 0; i < subLanes; ++i) {
-                myExpectedSublaneSpeeds.push_back((*it_lane)->getVehicleMaxSpeed(&myVehicle));
+                newExpectedSpeeds.push_back((*it_lane)->getVehicleMaxSpeed(&myVehicle));
+            }
+        }
+        if (myExpectedSublaneSpeeds.size() > 0) {
+            // copy old values
+            const MSEdge* prevEdge = myVehicle.succEdge(-1);
+            assert(prevEdge != 0);
+            if (prevEdge->getSubLaneSides().size() == myExpectedSublaneSpeeds.size()) {
+                int subLaneShift = computeSublaneShift(prevEdge, myVehicle.succEdge(0));
+                for (int i = 0; i < myExpectedSublaneSpeeds.size(); ++i) {
+                    int newI = i + subLaneShift;
+                    if (newI > 0 && newI < newExpectedSpeeds.size()) {
+                        newExpectedSpeeds[newI] = myExpectedSublaneSpeeds[i];
+                    }
+                }
             }
         }
     }
-    // XXX update myExpectedSublaneSpeeds if the number of lanes or their width changes
-    // keep as much of the older values as possible
+    myExpectedSublaneSpeeds = newExpectedSpeeds;
+    assert(myExpectedSublaneSpeeds.size() == myVehicle.getLane()->getEdge().getSubLaneSides().size());
+}
+
+
+int
+MSLCM_SL2015::computeSublaneShift(const MSEdge* prevEdge, const MSEdge* curEdge) {
+    // find the first lane that targets the new edge
+    int shift = std::numeric_limits<int>::max(); 
+    int prevShift = 0;
+    const std::vector<MSLane*>& lanes = prevEdge->getLanes();
+    for (std::vector<MSLane*>::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
+        const MSLane* lane = *it_lane;
+        for (MSLinkCont::const_iterator it_link = lane->getLinkCont().begin(); it_link != lane->getLinkCont().end(); ++it_link) {
+            if (&((*it_link)->getLane()->getEdge()) == curEdge) {
+                int curShift = 0;
+                const MSLane* target = (*it_link)->getLane();
+                const std::vector<MSLane*>& lanes2 = curEdge->getLanes();
+                for (std::vector<MSLane*>::const_iterator it_lane2 = lanes2.begin(); it_lane2 != lanes2.end(); ++it_lane2) {
+                    const MSLane* lane2 = *it_lane2;
+                    if (lane2 == target) {
+                        return prevShift + curShift;
+                    }
+                    MSLeaderInfo ahead(lane2->getWidth());
+                    curShift += ahead.numSublanes();
+                }
+                assert(false);
+            }
+        }
+        MSLeaderInfo ahead(lane->getWidth());
+        prevShift -= ahead.numSublanes();
+    }
+    return shift;
 }
 
 
@@ -1266,7 +1314,8 @@ MSLCM_SL2015::saveBlockerLength(MSVehicle* blocker, int lcaCounter) {
 void
 MSLCM_SL2015::updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& preb) {
 
-    // XXX obtain LeaderInfo for all lanes from MSLaneChanger
+    // XXX obtain LeaderInfo for all lanes (of the current Edge) from MSLaneChanger (updated while handling each vehicle)
+    // XXX deal with leaders on subsequent lanes based on preb
     const std::vector<MSLane*>& lanes = myVehicle.getLane()->getEdge().getLanes();
     assert(preb.size() == lanes.size());
     int subLanesBefore = 0;

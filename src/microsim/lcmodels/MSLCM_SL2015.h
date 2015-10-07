@@ -171,6 +171,10 @@ protected:
     /// @brief XXX
     void updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& preb);
 
+
+    /// @brief compute shift so that prevSublane + shift = newSublane
+    int computeSublaneShift(const MSEdge* prevEdge, const MSEdge* curEdge);
+
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial
     SUMOReal mySpeedGainProbabilityRight;
@@ -196,7 +200,6 @@ protected:
     std::vector<SUMOReal> myExpectedSublaneSpeeds;
 
     SUMOReal myLastEdgeWidth;
-
 
     /// @brief flag to prevent speed adaptation by slowing down
     bool myDontBrake;
