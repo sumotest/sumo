@@ -128,8 +128,12 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 
 
 SUMOReal
-MSLane::setPartialOccupation(MSVehicle* v) {
-    myVehicles.push_back(v);
+MSLane::setPartialOccupation(MSVehicle* v, bool addToBuffer) {
+    if (addToBuffer) {
+        myVehBuffer.push_back(v);
+    } else {
+        myVehicles.push_back(v);
+    }
     /// XXX updated occupancy?
     return myLength;
 }
@@ -140,14 +144,19 @@ MSLane::resetPartialOccupation(MSVehicle* v) {
     for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend();) {
         if (v == *i) {
             ++i;
-            i = VehCont::reverse_iterator(myVehicles.erase(i.base()));
+            myVehicles.erase(i.base());
             return;
         } else if ((*i)->getLane() == this) {
-            // found the first vehicle that is not a partial occupator. There is
-            // nothing left to remove
-            assert(std::find(myVehicles.begin, myVehicles.end(), v) == myVehicles.end());
-            return;
-        }
+            // found the first vehicle that is not a partial occupator. The
+            // vehicle should not be in myVehicles
+            assert(std::find(myVehicles.begin(), myVehicles.end(), v) == myVehicles.end());
+            break;
+        }   
+    }   
+    // check the vehBuffer
+    VehCont::iterator i2 = std::find(myVehBuffer.begin(), myVehBuffer.end(), v);
+    if (i2 != myVehBuffer.end()) {
+        myVehBuffer.erase(i2);
     }
 }
 
@@ -778,7 +787,7 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
                 // synchroneous lane change maneuver
                 return false;
             }
-            WRITE_WARNING("Teleporting vehicle '" + collider->getID() + "'; collision with '"
+            WRITE_WARNING("Teleporting vehicle '" + collider->getID() + "'; collision with vehicle '"
                           + victim->getID() + "', lane='" + getID() + "', gap=" + toString(gap)
                           + ", time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " stage=" + stage + ".");
             MSNet::getInstance()->getVehicleControl().registerCollision();

@@ -1524,7 +1524,7 @@ MSVehicle::executeMove() {
             std::vector<MSLane*>::reverse_iterator i = passedLanes.rbegin() + 1;
             while (leftLength > 0 && i != passedLanes.rend()) {
                 myFurtherLanes.push_back(*i);
-                leftLength -= (*i)->setPartialOccupation(this);
+                leftLength -= (*i)->setPartialOccupation(this, true);
                 ++i;
             }
             myState.myBackPos = -leftLength;
@@ -1551,8 +1551,9 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
             ) {
         return myState.myBackPos;
     } else {
-        assert(myFurtherLanes.find(lane) != myFurtherLanes.end()
-                || getLaneChangeModel().getShadowFurtherLanes().find(lane) != getLaneChangeModel().getShadowFurtherLanes().end());
+        assert(std::find(myFurtherLanes.begin(), myFurtherLanes.end(), lane) != myFurtherLanes.end() 
+                || std::find(getLaneChangeModel().getShadowFurtherLanes().begin(),
+                    getLaneChangeModel().getShadowFurtherLanes().end(), lane) != getLaneChangeModel().getShadowFurtherLanes().end());
         return -1; // lane is fully occupied
     }
 }

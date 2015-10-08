@@ -237,9 +237,10 @@ public:
      * This vehicle is added to myVehicles and may be distinguished from regular
      * vehicles by the disparity between this lane and v->getLane()
      * @param[in] v The vehicle which laps into this lane
+     * @param[in] addToBuffer Whether the the vehicle should be added to the temporary buffer (necessary during executeMovements)
      * @return This lane's length
      */
-    SUMOReal setPartialOccupation(MSVehicle* v); 
+    SUMOReal setPartialOccupation(MSVehicle* v, bool addToBuffer=false); 
 
     /** @brief Removes the information about a vehicle lapping into this lane
      * @param[in] v The vehicle which laps into this lane
