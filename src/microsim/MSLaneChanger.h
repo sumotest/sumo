@@ -69,7 +69,10 @@ public:
         and leader. Further, information about the last vehicle that changed
         into this lane is needed */
     struct ChangeElem {
-        /// the vehicle following the current vehicle
+
+        ChangeElem(MSLane* _lane);
+
+        /// the vehicle following the current vehicle (@todo check: appeas to unused)
         MSVehicle*                follow;
         /// the vehicle in front of the current vehicle
         MSVehicle*                lead;
@@ -85,6 +88,15 @@ public:
         MSVehicle*                firstBlocked;
 
         SUMOReal dens;
+
+        /// @name Members which are used only by MSLaneChangerSublane 
+        /// @{
+        // the vehicles in from of the current vehicle
+        MSLeaderInfo ahead;
+
+
+        void addLink(MSLink* link);
+        ///@}
 
     };
 

@@ -49,6 +49,19 @@
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
+// ===========================================================================
+// ChangeElem member method definitions
+// ===========================================================================
+MSLaneChanger::ChangeElem::ChangeElem(MSLane* _lane) :
+    follow(0),
+    lead(0),
+    lane(_lane),
+    veh(lane->myVehicles.rbegin()),
+    hoppedVeh(0),
+    lastBlocked(0),
+    firstBlocked(0),
+    ahead(lane->getWidth())
+{ }
 
 // ===========================================================================
 // member method definitions
@@ -58,15 +71,7 @@ MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowSwap) 
     // Fill the changer with the lane-data.
     myChanger.reserve(lanes->size());
     for (std::vector<MSLane*>::const_iterator lane = lanes->begin(); lane != lanes->end(); ++lane) {
-        ChangeElem ce;
-        ce.follow    = 0;
-        ce.lead      = 0;
-        ce.lane      = *lane;
-        ce.veh       = (*lane)->myVehicles.rbegin();
-        ce.hoppedVeh = 0;
-        ce.lastBlocked = 0;
-        ce.firstBlocked = 0;
-        myChanger.push_back(ce);
+        myChanger.push_back(ChangeElem(*lane));
     }
 }
 
@@ -112,6 +117,74 @@ MSLaneChanger::initChanger() {
         }
         ce->follow = *(vehicles.rbegin() + 1);
     }
+}
+
+
+void
+MSLaneChanger::updateChanger(bool vehHasChanged) {
+    assert(myCandi->veh != myCandi->lane->myVehicles.rend());
+
+    // "Push" the vehicles to the back, i.e. follower becomes vehicle,
+    // vehicle becomes leader, and leader becomes predecessor of vehicle,
+    // if it exists.
+    if (!vehHasChanged || MSGlobals::gLaneChangeDuration > DELTA_T) {
+        myCandi->lead = veh(myCandi);
+    }
+    myCandi->veh    = myCandi->veh + 1;
+
+    if (veh(myCandi) == 0) {
+        assert(myCandi->follow == 0);
+        // leader already 0.
+        return;
+    }
+    if (myCandi->veh + 1 == myCandi->lane->myVehicles.rend()) {
+        myCandi->follow = 0;
+    } else {
+        myCandi->follow = *(myCandi->veh + 1);
+    }
+    return;
+}
+
+void
+MSLaneChanger::updateLanes(SUMOTime t) {
+
+    // Update the lane's vehicle-container.
+    // First: it is bad style to change other classes members, but for
+    // this release, other attempts were too time-consuming. In a next
+    // release we will change from this lane-centered design to a vehicle-
+    // centered. This will solve many problems.
+    // Second: this swap would be faster if vehicle-containers would have
+    // been pointers, but then I had to change too much of the MSLane code.
+    for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
+
+        ce->lane->swapAfterLaneChange(t);
+    }
+}
+
+
+MSLaneChanger::ChangerIt
+MSLaneChanger::findCandidate() {
+    // Find the vehicle in myChanger with the smallest position. If there
+    // is no vehicle in myChanger (shouldn't happen) , return
+    // myChanger.end().
+    ChangerIt max = myChanger.end();
+    for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
+        if (veh(ce) == 0) {
+            continue;
+        }
+        if (max == myChanger.end()) {
+            max = ce;
+            continue;
+        }
+        assert(veh(ce)  != 0);
+        assert(veh(max) != 0);
+        if (veh(max)->getPositionOnLane() < veh(ce)->getPositionOnLane()) {
+            max = ce;
+        }
+    }
+    assert(max != myChanger.end());
+    assert(veh(max) != 0);
+    return max;
 }
 
 
@@ -391,76 +464,6 @@ MSLaneChanger::getRealFollower(const ChangerIt& target) const {
     }
 }
 
-
-
-
-void
-MSLaneChanger::updateChanger(bool vehHasChanged) {
-    assert(myCandi->veh != myCandi->lane->myVehicles.rend());
-
-    // "Push" the vehicles to the back, i.e. follower becomes vehicle,
-    // vehicle becomes leader, and leader becomes predecessor of vehicle,
-    // if it exists.
-    if (!vehHasChanged || MSGlobals::gLaneChangeDuration > DELTA_T) {
-        myCandi->lead = veh(myCandi);
-    }
-    myCandi->veh    = myCandi->veh + 1;
-
-    if (veh(myCandi) == 0) {
-        assert(myCandi->follow == 0);
-        // leader already 0.
-        return;
-    }
-    if (myCandi->veh + 1 == myCandi->lane->myVehicles.rend()) {
-        myCandi->follow = 0;
-    } else {
-        myCandi->follow = *(myCandi->veh + 1);
-    }
-    return;
-}
-
-
-void
-MSLaneChanger::updateLanes(SUMOTime t) {
-
-    // Update the lane's vehicle-container.
-    // First: it is bad style to change other classes members, but for
-    // this release, other attempts were too time-consuming. In a next
-    // release we will change from this lane-centered design to a vehicle-
-    // centered. This will solve many problems.
-    // Second: this swap would be faster if vehicle-containers would have
-    // been pointers, but then I had to change too much of the MSLane code.
-    for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
-
-        ce->lane->swapAfterLaneChange(t);
-    }
-}
-
-
-MSLaneChanger::ChangerIt
-MSLaneChanger::findCandidate() {
-    // Find the vehicle in myChanger with the smallest position. If there
-    // is no vehicle in myChanger (shouldn't happen) , return
-    // myChanger.end().
-    ChangerIt max = myChanger.end();
-    for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
-        if (veh(ce) == 0) {
-            continue;
-        }
-        if (max == myChanger.end()) {
-            max = ce;
-            continue;
-        }
-        assert(veh(ce)  != 0);
-        assert(veh(max) != 0);
-        if (veh(max)->getPositionOnLane() < veh(ce)->getPositionOnLane()) {
-            max = ce;
-        }
-    }
-    assert(max != myChanger.end());
-    assert(veh(max) != 0);
-    return max;
-}
 
 int
 MSLaneChanger::checkChange(
