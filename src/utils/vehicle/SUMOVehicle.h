@@ -77,6 +77,11 @@ public:
      */
     virtual SUMOReal getPositionOnLane() const = 0;
 
+    /** @brief Get the vehicle's back position along the given lane
+     * @return The position of the vehicle (in m from the given lane's begin)
+     */
+    virtual SUMOReal getBackPositionOnLane(const MSLane* lane) const = 0;
+
     /** @brief Get the vehicle's angle
      * @return The angle of the vehicle (in degree)
      */
@@ -190,6 +195,11 @@ public:
      * @return Whether the vehicle is simulated
      */
     virtual bool isOnRoad() const = 0;
+
+    /** @brief Returns the information whether the front of the vehhicle is on the given lane 
+     * @return Whether the vehicle's front is on that lane
+     */
+    virtual bool isFrontOnLane(const MSLane*) const = 0;
 
     /** @brief Returns the information whether the vehicle is parked
      * @return Whether the vehicle is parked

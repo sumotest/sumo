@@ -41,6 +41,10 @@
 #include "MSMoveReminder.h"
 #include "MSVehicleType.h"
 
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class MSLane;
 
 // ===========================================================================
 // class definitions
@@ -128,6 +132,13 @@ public:
      * @return Whether the vehicle is simulated
      */
     virtual bool isOnRoad() const {
+        return true;
+    }
+
+    /** @brief Returns the information whether the front of the vehhicle is on the given lane 
+     * @return Whether the vehicle's front is on that lane
+     */
+    virtual bool isFrontOnLane(const MSLane*) const {
         return true;
     }
 

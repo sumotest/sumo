@@ -96,7 +96,7 @@ public:
 
     public:
         /// Constructor.
-        State(SUMOReal pos, SUMOReal speed, SUMOReal posLat);
+        State(SUMOReal pos, SUMOReal speed, SUMOReal posLat, SUMOReal backPos);
 
         /// Copy constructor.
         State(const State& state);
@@ -122,6 +122,11 @@ public:
             return myPosLat;
         }
 
+        /// back Position of this state 
+        SUMOReal backPos() const {
+            return myBackPos;
+        }
+
 
     private:
         /// the stored position
@@ -132,6 +137,9 @@ public:
 
         /// the stored lateral position
         SUMOReal myPosLat;
+
+        /// the stored back position
+        SUMOReal myBackPos;
 
     };
 
@@ -219,19 +227,6 @@ public:
     //@}
 
 
-    /** @brief Uses the given values to compute the brutto-gap
-     *
-     * @param[in] predPos Position of the leader
-     * @param[in] predLength Length of the leader
-     * @param[in] pos Position of the follower
-     * @return The gap between the leader and the follower
-     */
-    static inline SUMOReal gap(SUMOReal predPos, SUMOReal predLength, SUMOReal pos) {
-        return predPos - predLength - pos;
-    }
-
-
-
     /// @name Interaction with move reminders
     //@{
 
@@ -301,6 +296,11 @@ public:
         return myState.myPos;
     }
 
+    /** @brief Get the vehicle's position relative to the given lan
+     * @return The back position of the vehicle (in m from the given lane's begin)
+     */
+    SUMOReal getBackPositionOnLane(const MSLane* lane) const;
+
 
     /** @brief Get the vehicle's lateral position on the lane
      * @return The lateral position of the vehicle (in m relative to the
@@ -367,6 +367,12 @@ public:
     inline bool isOnRoad() const {
         return myAmOnNet;
     }
+
+
+    /** @brief Returns the information whether the front of the vehhicle is on the given lane 
+     * @return Whether the vehicle's front is on that lane
+     */
+    bool isFrontOnLane(const MSLane* lane) const;
 
 
     /** @brief Returns the starting point for reroutes (usually the current edge)

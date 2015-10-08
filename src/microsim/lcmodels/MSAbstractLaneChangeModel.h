@@ -275,6 +275,9 @@ public:
     /// @brief return the shadow lane for the given lane
     MSLane* getShadowLane(const MSLane* lane) const;
 
+    const std::vector<MSLane*>& getShadowFurtherLanes() const {
+        return myShadowFurtherLanes;
+    }
 
     inline SUMOTime getLastLaneChangeOffset() const {
         return myLastLaneChangeOffset;
@@ -375,6 +378,9 @@ protected:
 
     /// @brief The lane the vehicle shadow is on during a continuous lane change
     MSLane* myShadowLane;
+
+    /// @brief analogue to MSVehicle::myFurtherLanes for the shadow vehicle
+    std::vector<MSLane*> myShadowFurtherLanes;
 
     /// Wether a vehicle shadow exists
     bool myHaveShadow;

@@ -114,6 +114,7 @@ MSVehicle::State::State(const State& state) {
     myPos = state.myPos;
     mySpeed = state.mySpeed;
     myPosLat = state.myPosLat;
+    myBackPos = state.myBackPos;
 }
 
 
@@ -122,6 +123,7 @@ MSVehicle::State::operator=(const State& state) {
     myPos   = state.myPos;
     mySpeed = state.mySpeed;
     myPosLat   = state.myPosLat;
+    myBackPos = state.myBackPos;
     return *this;
 }
 
@@ -130,12 +132,13 @@ bool
 MSVehicle::State::operator!=(const State& state) {
     return (myPos    != state.myPos ||
             mySpeed  != state.mySpeed ||
-            myPosLat != state.myPosLat);
+            myPosLat != state.myPosLat ||
+            myBackPos != state.myBackPos);
 }
 
 
-MSVehicle::State::State(SUMOReal pos, SUMOReal speed, SUMOReal posLat) :
-    myPos(pos), mySpeed(speed), myPosLat(posLat) {}
+MSVehicle::State::State(SUMOReal pos, SUMOReal speed, SUMOReal posLat, SUMOReal backPos) :
+    myPos(pos), mySpeed(speed), myPosLat(posLat), myBackPos(backPos) {}
 
 
 /* -------------------------------------------------------------------------
@@ -360,33 +363,11 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
 /* -------------------------------------------------------------------------
  * MSVehicle-methods
  * ----------------------------------------------------------------------- */
-MSVehicle::~MSVehicle() {
-    delete myEdgeWeights;
-    for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
-        (*i)->resetPartialOccupation(this);
-    }
-    delete myLaneChangeModel; // still needed when calling resetPartialOccupation (getShadowLane)
-    myFurtherLanes.clear();
-    for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
-        if ((*i).myLink != 0) {
-            (*i).myLink->removeApproaching(this);
-        }
-    }
-    //
-    if (myType->amVehicleSpecific()) {
-        delete myType;
-    }
-#ifndef NO_TRACI
-    delete myInfluencer;
-#endif
-}
-
-
 MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
                      const MSVehicleType* type, const SUMOReal speedFactor) :
     MSBaseVehicle(pars, route, type, speedFactor),
     myWaitingTime(0),
-    myState(0, 0, 0), //
+    myState(0, 0, 0, 0), //
     myLane(0),
     myLastBestLanesEdge(0),
     myLastBestLanesInternalLane(0),
@@ -421,6 +402,28 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     }
     myLaneChangeModel = MSAbstractLaneChangeModel::build(type->getLaneChangeModel(), *this);
     myCFVariables = type->getCarFollowModel().createVehicleVariables();
+}
+
+
+MSVehicle::~MSVehicle() {
+    delete myEdgeWeights;
+    for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
+        (*i)->resetPartialOccupation(this);
+    }
+    delete myLaneChangeModel; // still needed when calling resetPartialOccupation (getShadowLane)
+    myFurtherLanes.clear();
+    for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
+        if ((*i).myLink != 0) {
+            (*i).myLink->removeApproaching(this);
+        }
+    }
+    //
+    if (myType->amVehicleSpecific()) {
+        delete myType;
+    }
+#ifndef NO_TRACI
+    delete myInfluencer;
+#endif
 }
 
 
@@ -653,7 +656,7 @@ MSVehicle::getAngle() const {
         p2 = myLane->geometryPositionAtOffset(myState.myPos - myType->getLength(), posLat);
     } else {
         p2 = myFurtherLanes.size() > 0
-             ? myFurtherLanes.back()->geometryPositionAtOffset(myFurtherLanes.back()->getPartialOccupatorEnd(), posLat)
+             ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), posLat)
              : myLane->geometryPositionAtOffset(0, posLat);
         if (getLaneChangeModel().isChangingLanes() && myFurtherLanes.size() > 0 && getLaneChangeModel().getShadowLane(myFurtherLanes.back()) == 0) {
             // special case where there target lane has no predecessor
@@ -1221,9 +1224,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
         const MSVehicle* pred = ahead[sublane];
         if (pred != 0) {
             // @todo avoid multiple adaptations to the same leader
-            const SUMOReal predBack = (pred == lane->getPartialOccupator() 
-                    ?  lane->getPartialOccupatorEnd() 
-                    : pred->getPositionOnLane() - pred->getVehicleType().getLength());
+            const SUMOReal predBack = pred->getBackPositionOnLane(lane);
             const SUMOReal gap = (lane == myLane
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
                     : predBack + seen - lane->getLength() - getVehicleType().getMinGap());
@@ -1517,14 +1518,16 @@ MSVehicle::executeMove() {
             myState.myPos = myLane->getLength();
             myState.mySpeed = 0;
         }
-        if (myState.myPos - getVehicleType().getLength() < 0 && passedLanes.size() > 0) {
+        myState.myBackPos = myState.myPos - getVehicleType().getLength();
+        if (myState.myBackPos < 0 && passedLanes.size() > 0) {
             SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
             std::vector<MSLane*>::reverse_iterator i = passedLanes.rbegin() + 1;
             while (leftLength > 0 && i != passedLanes.rend()) {
                 myFurtherLanes.push_back(*i);
-                leftLength -= (*i)->setPartialOccupation(this, leftLength);
+                leftLength -= (*i)->setPartialOccupation(this);
                 ++i;
             }
+            myState.myBackPos = -leftLength;
         }
         updateBestLanes();
         // bestLanes need to be updated before lane changing starts
@@ -1536,6 +1539,28 @@ MSVehicle::executeMove() {
         getLaneChangeModel().prepareStep();
     }
     return moved;
+}
+
+
+SUMOReal 
+MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
+    if (lane == myLane 
+            || (myFurtherLanes.size() > 0 && lane == myFurtherLanes.back())
+            || lane == getLaneChangeModel().getShadowLane()
+            || (getLaneChangeModel().getShadowFurtherLanes().size() > 0 && lane == getLaneChangeModel().getShadowFurtherLanes().back())
+            ) {
+        return myState.myBackPos;
+    } else {
+        assert(myFurtherLanes.find(lane) != myFurtherLanes.end()
+                || getLaneChangeModel().getShadowFurtherLanes().find(lane) != getLaneChangeModel().getShadowFurtherLanes().end());
+        return -1; // lane is fully occupied
+    }
+}
+
+
+bool 
+MSVehicle::isFrontOnLane(const MSLane* lane) const {
+    return lane == myLane || lane == getLaneChangeModel().getShadowLane();
 }
 
 
@@ -1597,25 +1622,12 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
             approachedLane = item.myLink->getLane();
             const MSVehicle* last = approachedLane->getLastVehicle();
             if (last == 0) {
-                last = approachedLane->getPartialOccupator();
-                if (last != 0) {
-                    /// XXX MAX2 redundant?
-                    item.availableSpace = MAX2(seenSpace, seenSpace + approachedLane->getPartialOccupatorEnd() + last->getCarFollowModel().brakeGap(last->getSpeed()));
-                    hadVehicle = true;
-                    /// XXX spaceTillLastStanding should already be covered by getPartialOccupatorEnd()
-                    seenSpace = seenSpace + getSpaceTillLastStanding(approachedLane, foundStopped);// - approachedLane->getBruttoVehLenSum() + approachedLane->getLength();
-                    /// XXX why not check BRAKELIGHT?
-                    if (last->myHaveToWaitOnNextLink) {
-                        foundStopped = true;
-                    }
-                } else {
-                    seenSpace += approachedLane->getLength();
-                    item.availableSpace = seenSpace;
-                }
+                seenSpace += approachedLane->getLength();
+                item.availableSpace = seenSpace;
             } else {
                 if (last->signalSet(VEH_SIGNAL_BRAKELIGHT)) {
                     const SUMOReal lastBrakeGap = last->getCarFollowModel().brakeGap(approachedLane->getLastVehicle()->getSpeed());
-                    const SUMOReal lastGap = last->getPositionOnLane() - last->getVehicleType().getLengthWithGap() + lastBrakeGap - last->getSpeed() * last->getCarFollowModel().getHeadwayTime();
+                    const SUMOReal lastGap = last->getBackPositionOnLane(approachedLane) + lastBrakeGap - last->getSpeed() * last->getCarFollowModel().getHeadwayTime();
                     item.availableSpace = MAX2(seenSpace, seenSpace + lastGap);
                     seenSpace += getSpaceTillLastStanding(approachedLane, foundStopped);// - approachedLane->getBruttoVehLenSum() + approachedLane->getLength();
                 } else {
@@ -1802,7 +1814,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
         if (lane != 0) {
             myFurtherLanes[i]->resetPartialOccupation(this);
             myFurtherLanes[i] = lane;
-            leftLength -= (lane)->setPartialOccupation(this, leftLength);
+            leftLength -= (lane)->setPartialOccupation(this);
         } else {
             // keep the old values, but ensure there is no shadow
             if (myLaneChangeModel->isChangingLanes()) {
@@ -1815,7 +1827,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
 
 void
 MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed, SUMOReal posLat, MSMoveReminder::Notification notification) {
-    myState = State(pos, speed, posLat);
+    myState = State(pos, speed, posLat, pos - getVehicleType().getLength());
     myCachedPosition = Position::INVALID;
     assert(myState.myPos >= 0);
     assert(myState.mySpeed >= 0);
@@ -1836,7 +1848,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
             break;
         }
         myFurtherLanes.push_back(clane);
-        leftLength -= (clane)->setPartialOccupation(this, leftLength);
+        leftLength -= (clane)->setPartialOccupation(this);
     }
 }
 
@@ -2262,7 +2274,7 @@ MSVehicle::getLeader(SUMOReal dist) const {
     }
     myLane->releaseVehicles();
     if (lead != 0) {
-        return std::make_pair(lead, lead->getPositionOnLane() - lead->getVehicleType().getLength() - getPositionOnLane() - getVehicleType().getMinGap());
+        return std::make_pair(lead, lead->getBackPositionOnLane(myLane) - getPositionOnLane() - getVehicleType().getMinGap());
     }
     const SUMOReal seen = myLane->getLength() - getPositionOnLane();
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(myLane);

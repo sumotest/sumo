@@ -141,13 +141,14 @@ MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* targe
     if (MSGlobals::gLaneChangeDuration > DELTA_T) {
         // initialize further lanes for shadow vehicle
         // (must come before myLaneChangeCompletion is initialized)
+        myShadowFurtherLanes.clear();
         const std::vector<MSLane*>& further = myVehicle.getFurtherLanes();
         SUMOReal leftLength = myVehicle.getVehicleType().getLength() - myVehicle.getPositionOnLane();
         MSLane* lane = target;
         for (int i = 0; i < (int)further.size(); i++) {
             lane = lane->getLogicalPredecessorLane(further[i]->getEdge());
             if (lane != 0) {
-                leftLength -= lane->setPartialOccupation(&myVehicle, leftLength);
+                leftLength -= lane->setPartialOccupation(&myVehicle);
                 setShadowPartialOccupator(lane);
             } else {
                 break;

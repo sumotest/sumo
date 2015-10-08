@@ -371,14 +371,9 @@ MSLink::maybeOccupied(MSLane* lane) {
     MSVehicle* veh = lane->getLastVehicle();
     SUMOReal distLeft = 0;
     if (veh == 0) {
-        veh = lane->getPartialOccupator();
-        distLeft = lane->getLength() - lane->getPartialOccupatorEnd();
-    } else {
-        distLeft = lane->getLength() - veh->getPositionOnLane() + veh->getVehicleType().getLength();
-    }
-    if (veh == 0) {
         return false;
     } else {
+        distLeft = lane->getLength() - veh->getBackPositionOnLane(lane);
         assert(distLeft > 0);
         // can we be sure that the vehicle leaves this lane in the next step?
         bool result = distLeft > (veh->getSpeed() - veh->getCarFollowModel().getMaxDecel());
@@ -395,7 +390,7 @@ MSLink::hasApproachingFoe(SUMOTime arrivalTime, SUMOTime leaveTime, SUMOReal spe
         }
     }
     for (std::vector<const MSLane*>::const_iterator i = myFoeLanes.begin(); i != myFoeLanes.end(); ++i) {
-        if ((*i)->getVehicleNumber() > 0 || (*i)->getPartialOccupator() != 0) {
+        if ((*i)->getVehicleNumber() > 0) {
             return true;
         }
     }
@@ -562,7 +557,7 @@ MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson
                     if (contLane && !sameSource) {
                         gap = -1; // always break for vehicles which are on a continuation lane
                     } else {
-                        const SUMOReal leaderBack = leader->getPositionOnLane() - leader->getVehicleType().getLength();
+                        const SUMOReal leaderBack = leader->getBackPositionOnLane(foeLane);
                         const SUMOReal leaderBackDist = foeDistToCrossing - leaderBack;
                         //if (gDebugFlag1) std::cout << " distToCrossing=" << distToCrossing << " leader back=" << leaderBack << " backDist=" << leaderBackDist << "\n";
                         if (leaderBackDist + foeCrossingWidth < 0) {
@@ -575,27 +570,6 @@ MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson
                     result.push_back(LinkLeader(leader, gap, cannotIgnore ? -1 : distToCrossing));
                 }
 
-            }
-            MSVehicle* leader = foeLane->getPartialOccupator();
-            if (leader != 0) {
-                if (cannotIgnore || leader->getWaitingTime() < MSGlobals::gIgnoreJunctionBlocker) {
-                    // compute distance between vehicles on the the superimposition of both lanes
-                    // where the crossing point is the common point
-                    SUMOReal gap;
-                    if (contLane && !sameSource) {
-                        gap = -1; // always break for vehicles which are on a continuation lane
-                    } else {
-                        const SUMOReal leaderBackDist = foeDistToCrossing - foeLane->getPartialOccupatorEnd();
-                        //if (gDebugFlag1) std::cout << " distToCrossing=" << distToCrossing << " leader (partialOccupator) backDist=" << leaderBackDist << "\n";
-                        if (leaderBackDist + foeCrossingWidth < 0) {
-                            // leader is completely past the crossing point
-                            // or there is no crossing point
-                            continue; // next lane
-                        }
-                        gap = distToCrossing - leaderBackDist - (sameTarget ? minGap : 0);
-                    }
-                    result.push_back(LinkLeader(leader, gap, sameTarget ? -1 : distToCrossing));
-                }
             }
             // check for crossing pedestrians (keep driving if already on top of the crossing
             const SUMOReal distToPeds = distToCrossing - MSPModel::SAFETY_GAP;

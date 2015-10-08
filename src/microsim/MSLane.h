@@ -232,42 +232,19 @@ public:
 
     /// @name Handling vehicles lapping into lanes
     /// @{
-
     /** @brief Sets the information about a vehicle lapping into this lane
      *
-     * The given left length of vehicle which laps into this lane is used
-     *  to determine the vehicle's end position in regard to this lane's length.
-     * This information is set into myInlappingVehicleState; additionally, the
-     *  vehicle pointer is stored in myInlappingVehicle;
-     * Returns this lane's length for subtracting it from the left vehicle length.
+     * This vehicle is added to myVehicles and may be distinguished from regular
+     * vehicles by the disparity between this lane and v->getLane()
      * @param[in] v The vehicle which laps into this lane
-     * @param[in] leftVehicleLength The distance the vehicle laps into this lane
      * @return This lane's length
      */
-    SUMOReal setPartialOccupation(MSVehicle* v, SUMOReal leftVehicleLength);
-
+    SUMOReal setPartialOccupation(MSVehicle* v); 
 
     /** @brief Removes the information about a vehicle lapping into this lane
      * @param[in] v The vehicle which laps into this lane
      */
     void resetPartialOccupation(MSVehicle* v);
-
-
-    /** @brief Returns the vehicle which laps into this lane
-     * @return The vehicle which laps into this lane, 0 if there is no such
-     */
-    MSVehicle* getPartialOccupator() const {
-        return myInlappingVehicle;
-    }
-
-
-    /** @brief Returns the position of the in-lapping vehicle's end
-     * @return Information about how far the vehicle laps into this lane
-     */
-    SUMOReal getPartialOccupatorEnd() const {
-        return myInlappingVehicleEnd;
-    }
-
 
     /** @brief Returns the last vehicles on the lane
      *
@@ -887,13 +864,6 @@ protected:
 
     /// @brief The current length of all vehicles on this lane, excluding their minGaps
     SUMOReal myNettoVehicleLengthSum;
-
-    /// @brief End position of a vehicle which laps into this lane
-    SUMOReal myInlappingVehicleEnd;
-
-    /// @brief The vehicle which laps into this lane
-    MSVehicle* myInlappingVehicle;
-
 
     /** The lane's Links to it's succeeding lanes and the default
         right-of-way rule, i.e. blocked or not blocked. */

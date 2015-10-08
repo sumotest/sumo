@@ -1334,8 +1334,7 @@ MSLCM_SL2015::updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& p
         const MSLane* lane = lanes[iLane];
         MSLeaderInfo ahead(lane->getWidth());
         if (lane->allowsVehicleClass(myVehicle.getVehicleType().getVehicleClass())) {
-            // lane allowed, find potential leaders and comptue safe speeds
-            ahead.addLeader(lane->getPartialOccupator(), false);
+            // lane allowed, find potential leaders and compute safe speeds
             const MSLane::VehCont& vehicles = lane->getVehiclesSecure();
             for (int i = (int)vehicles.size() - 1; i > 0; --i) {
                 if (vehicles[i]->getPositionOnLane() > myVehicle.getPositionOnLane()) {
@@ -1350,11 +1349,7 @@ MSLCM_SL2015::updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& p
                 if (leader == 0) {
                     vSafe = MIN2(vMax, myCarFollowModel.followSpeed(&myVehicle, myVehicle.getSpeed(), preb[iLane].length, 0, 0));
                 } else {
-                    // XXX duplicate code in regard to MSVehicle::adaptToLeaders
-                    const SUMOReal predBack = (leader == lane->getPartialOccupator() 
-                            ? lane->getPartialOccupatorEnd() 
-                            : leader->getPositionOnLane() - leader->getVehicleType().getLength());
-                    const SUMOReal gap = predBack - myVehicle.getPositionOnLane() - myVehicle.getVehicleType().getMinGap();
+                    const SUMOReal gap = leader->getBackPositionOnLane(lane) - myVehicle.getPositionOnLane() - myVehicle.getVehicleType().getMinGap();
                     vSafe = MIN2(vMax, myCarFollowModel.followSpeed(
                                 &myVehicle, myVehicle.getSpeed(), gap, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()));
                 }

@@ -190,8 +190,7 @@ MSE2Collector::detectorUpdate(const SUMOTime /* step */) {
         } else {
             // ok, the vehicle is only partially still on the detector, has already moved to the
             //  next lane; still, we do not know how far away it is
-            assert(veh == myLane->getPartialOccupator());
-            length = myEndPos - myLane->getPartialOccupatorEnd();
+            length = myEndPos - veh->getBackPositionOnLane(myLane);
         }
         assert(length >= 0);
 
@@ -282,11 +281,11 @@ MSE2Collector::detectorUpdate(const SUMOTime /* step */) {
             (*(*i)->firstStandingVehicle)->getPositionOnLane()
             - (*(*i)->lastStandingVehicle)->getPositionOnLane()
             + (*(*i)->lastStandingVehicle)->getVehicleType().getLengthWithGap();
-        const MSVehicle* const occ = myLane->getPartialOccupator();
-        if (occ && occ == *(*i)->firstStandingVehicle && occ != *(*i)->lastStandingVehicle) {
-            jamLengthInMeters = myLane->getPartialOccupatorEnd() + occ->getVehicleType().getLengthWithGap()
-                                - (*(*i)->lastStandingVehicle)->getPositionOnLane()
-                                + (*(*i)->lastStandingVehicle)->getVehicleType().getLengthWithGap();
+        if ((*(*i)->firstStandingVehicle)->getLane() != myLane) {
+            // vehicle is partial occupator, discount the length that is not on
+            // this lane
+            jamLengthInMeters -= ((*(*i)->firstStandingVehicle)->getVehicleType().getLengthWithGap() - 
+                    (myLane->getLength() - (*(*i)->firstStandingVehicle)->getBackPositionOnLane(myLane)));
         }
         unsigned jamLengthInVehicles = (unsigned) distance((*i)->firstStandingVehicle, (*i)->lastStandingVehicle) + 1;
         // apply them to the statistics
@@ -463,11 +462,10 @@ MSE2Collector::getCurrentStartedHalts() const {
 
 int
 MSE2Collector::by_vehicle_position_sorter::operator()(const SUMOVehicle* v1, const SUMOVehicle* v2) {
-    const MSVehicle* const occ = myLane->getPartialOccupator();
-    if (v1 == occ) {
+    if (!v1->isFrontOnLane(myLane)) {
         return true;
     }
-    if (v2 == occ) {
+    if (!v2->isFrontOnLane(myLane)) {
         return false;
     }
     return v1->getPositionOnLane() > v2->getPositionOnLane();

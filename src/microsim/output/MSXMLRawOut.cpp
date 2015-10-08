@@ -150,11 +150,15 @@ MSXMLRawOut::writeLane(OutputDevice& of, const MSLane& lane) {
     if (lane.getVehicleNumber() != 0) {
         for (std::vector<MSVehicle*>::const_iterator veh = lane.myVehBuffer.begin();
                 veh != lane.myVehBuffer.end(); ++veh) {
-            writeVehicle(of, **veh);
+            if ((*veh)->isFrontOnLane(&lane)) {
+                writeVehicle(of, **veh);
+            }
         }
         for (MSLane::VehCont::const_iterator veh = lane.myVehicles.begin();
                 veh != lane.myVehicles.end(); ++veh) {
-            writeVehicle(of, **veh);
+            if ((*veh)->isFrontOnLane(&lane)) {
+                writeVehicle(of, **veh);
+            }
         }
     }
     of.closeTag();
