@@ -89,11 +89,11 @@ MSLaneChangerSublane::change() {
     SUMOReal latDist = 0;
     if (mayChange(-1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() - 0.5 * vehicle->getVehicleType().getWidth() > 0) {
-        state1 = checkChange(mayChange(-1) ? -1 : 0, leader, preb, latDist);
+        state1 = checkChangeSublane(mayChange(-1) ? -1 : 0, leader, preb, latDist);
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state1 & LCA_RIGHT) != 0 && changingAllowed1) {
-            startChange(vehicle, myCandi, latDist);
+            startChangeSublane(vehicle, myCandi, latDist);
             return true;
         }
         if ((state1 & LCA_RIGHT) != 0 && (state1 & LCA_URGENT) != 0) {
@@ -109,11 +109,11 @@ MSLaneChangerSublane::change() {
     int state2 = 0;
     if (mayChange(1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() + 0.5 * vehicle->getVehicleType().getWidth() < myCandi->lane->getWidth()) {
-        state2 = checkChange(mayChange(1) ? 1 : 0, leader, preb, latDist);
+        state2 = checkChangeSublane(mayChange(1) ? 1 : 0, leader, preb, latDist);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_LEFT) != 0 && changingAllowed2) {
-            startChange(vehicle, myCandi, latDist);
+            startChangeSublane(vehicle, myCandi, latDist);
             return true;
         }
         if ((state2 & LCA_LEFT) != 0 && (state2 & LCA_URGENT) != 0) {
@@ -137,7 +137,7 @@ MSLaneChangerSublane::change() {
 
 
 void
-MSLaneChangerSublane::startChange(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist) {
+MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist) {
     // 1) update vehicles lateral position according to latDist and target lane
     vehicle->myState.myPosLat += latDist;
 
@@ -166,7 +166,7 @@ MSLaneChangerSublane::startChange(MSVehicle* vehicle, ChangerIt& from, SUMOReal 
 
 
 int 
-MSLaneChangerSublane::checkChange(
+MSLaneChangerSublane::checkChangeSublane(
         int laneOffset,
         const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb,

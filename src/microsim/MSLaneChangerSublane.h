@@ -56,7 +56,7 @@ public:
 protected:
 
     /** Find a new candidate and try to change it. */
-    bool change();
+    virtual bool change();
 
     /** @brief check whether sub-lane changing in the given direction is desirable
      * and possible
@@ -65,14 +65,14 @@ protected:
      * @param[in] preb The bestLanse of the candidaet vehicle
      * @param[out] latDist The distance by which the vehicle changes laterally
      */
-    int checkChange(
+    int checkChangeSublane(
         int laneOffset,
         const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb,
         SUMOReal& latDist) const;
 
     ///  @brief change by the specified amount
-    void startChange(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist);
+    void startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist);
 
 
 private:
