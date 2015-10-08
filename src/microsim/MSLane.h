@@ -80,6 +80,7 @@ class MSLane : public Named, public Parameterised {
 public:
     /// needs access to myTmpVehicles (this maybe should be done via double-buffering!!!)
     friend class MSLaneChanger;
+    friend class MSLaneChangerSublane;
 
     friend class MSXMLRawOut;
 

@@ -44,6 +44,7 @@
 #include "MSJunction.h"
 #include "MSLane.h"
 #include "MSLaneChanger.h"
+#include "MSLaneChangerSublane.h"
 #include "MSGlobals.h"
 #include "MSNet.h"
 #include "MSVehicle.h"
@@ -113,7 +114,9 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     myLanes = lanes;
     if (!lanes->empty()) {
         recalcCache();
-        if (myLanes->size() > 1 || MSGlobals::gLateralResolution > 0) {
+        if (MSGlobals::gLateralResolution > 0) {
+            myLaneChanger = new MSLaneChangerSublane(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
+        } else if (myLanes->size() > 1) {
             myLaneChanger = new MSLaneChanger(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
         }
     }

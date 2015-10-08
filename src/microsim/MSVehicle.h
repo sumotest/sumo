@@ -83,6 +83,7 @@ public:
 
     /// the lane changer sets myLastLaneChangeOffset
     friend class MSLaneChanger;
+    friend class MSLaneChangerSublane;
 
     /** @class State
      * @brief Container that holds the vehicles driving state (position+speed).
@@ -91,6 +92,7 @@ public:
         /// @brief vehicle sets states directly
         friend class MSVehicle;
         friend class MSLaneChanger;
+        friend class MSLaneChangerSublane;
 
     public:
         /// Constructor.
