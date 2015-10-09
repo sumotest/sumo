@@ -257,7 +257,7 @@ MSLCM_DK2008::wantsChangeToRight(MSAbstractLaneChangeModel::MSLCMessager& msgPas
     // --------
 
     // -------- higher speed
-    if ((congested(neighLead.first) && neighLead.second < 20) || predInteraction(leader.first)) { //!!!
+    if ((congested(neighLead.first) && neighLead.second < 20) || predInteraction(leader)) { //!!!
         return ret;
     }
     SUMOReal thisLaneVSafe = myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle);
@@ -476,7 +476,7 @@ MSLCM_DK2008::wantsChangeToLeft(MSAbstractLaneChangeModel::MSLCMessager& msgPass
     }
 
     // -------- higher speed
-    if ((congested(neighLead.first) && neighLead.second < 20) || predInteraction(leader.first)) { //!!!
+    if ((congested(neighLead.first) && neighLead.second < 20) || predInteraction(leader)) { //!!!
         return ret;
     }
     SUMOReal neighLaneVSafe = neighLane.getVehicleMaxSpeed(&myVehicle);

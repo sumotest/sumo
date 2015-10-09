@@ -121,17 +121,17 @@ MSAbstractLaneChangeModel::congested(const MSVehicle* const neighLeader) {
 }
 
 
+    
 bool
-MSAbstractLaneChangeModel::predInteraction(const MSVehicle* const leader) {
-    if (leader == 0) {
+MSAbstractLaneChangeModel::predInteraction(const std::pair<MSVehicle*, SUMOReal>& leader) {
+    if (leader.first == 0) {
         return false;
     }
     // let's check it on highways only
-    if (leader->getSpeed() < (80.0 / 3.6)) {
+    if (leader.first->getSpeed() < (80.0 / 3.6)) {
         return false;
     }
-    SUMOReal gap = leader->getPositionOnLane() - leader->getVehicleType().getLength() - myVehicle.getVehicleType().getMinGap() - myVehicle.getPositionOnLane();
-    return gap < myCarFollowModel.interactionGap(&myVehicle, leader->getSpeed());
+    return leader.second < myCarFollowModel.interactionGap(&myVehicle, leader.first->getSpeed());
 }
 
 

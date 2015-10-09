@@ -351,7 +351,7 @@ public:
 protected:
     virtual bool congested(const MSVehicle* const neighLeader);
 
-    virtual bool predInteraction(const MSVehicle* const leader);
+    virtual bool predInteraction(const std::pair<MSVehicle*, SUMOReal>& leader);
 
     /// @brief whether the influencer cancels the given request
     bool cancelRequest(int state);
