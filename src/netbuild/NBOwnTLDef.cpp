@@ -370,7 +370,7 @@ NBOwnTLDef::computeLogicAndConts(unsigned int brakingTimeSeconds, bool onlyConts
     }
     // fix pedestrian crossings that did not get the green light yet
     if (crossings.size() > 0) {
-        const int vehLinks = noLinksAll - crossings.size();
+        const int vehLinks = noLinksAll - (int)crossings.size();
         std::vector<bool> foundGreen(crossings.size(), false);
         const std::vector<NBTrafficLightLogic::PhaseDefinition>& phases = logic->getPhases();
         for (int i = 0; i < (int)phases.size(); ++i) {
@@ -399,8 +399,8 @@ NBOwnTLDef::computeLogicAndConts(unsigned int brakingTimeSeconds, bool onlyConts
         for (std::vector<int>::const_iterator it = greenPhases.begin(); it != greenPhases.end(); ++it) {
             greenPhaseTime += logic->getPhases()[*it].duration;
         }
-        const int patchSeconds = STEPS2TIME(cycleTime - totalDuration) / greenPhases.size();
-        const int patchSecondsRest = (int)(STEPS2TIME(cycleTime - totalDuration)) - patchSeconds * greenPhases.size();
+        const int patchSeconds = (int)(STEPS2TIME(cycleTime - totalDuration) / greenPhases.size());
+        const int patchSecondsRest = (int)(STEPS2TIME(cycleTime - totalDuration)) - patchSeconds * (int)greenPhases.size();
         //std::cout << "cT=" << cycleTime << " td=" << totalDuration << " pS=" << patchSeconds << " pSR=" << patchSecondsRest << "\n";
         if (greenTime + patchSeconds < MIN_GREEN_TIME || greenTime + patchSeconds + patchSecondsRest < MIN_GREEN_TIME) {
             WRITE_WARNING("The traffic light '" + getID() + "' cannot be adapted to a cycle time of " + time2string(cycleTime) + ".");
