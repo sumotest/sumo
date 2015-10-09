@@ -89,11 +89,11 @@
 #define TURN_LANE_DIST (SUMOReal)200.0 // the distance at which a lane leading elsewhere is considered to be a turn-lane that must be avoided
 
 //#define DEBUG_COND (myVehicle.getID() == "1501_27271428" || myVehicle.getID() == "1502_27270000")
-//#define DEBUG_COND (myVehicle.getID() == "overtaking")
+#define DEBUG_COND (myVehicle.getID() == "flow.21")
 //#define DEBUG_COND (myVehicle.getID() == "pkw150478" || myVehicle.getID() == "pkw150494" || myVehicle.getID() == "pkw150289")
 //#define DEBUG_COND (myVehicle.getID() == "A" || myVehicle.getID() == "B") // fail change to left
 //#define DEBUG_COND (myVehicle.getID() == "Costa_12_13") // test stops_overtaking
-#define DEBUG_COND false
+//#define DEBUG_COND false
 
 // ===========================================================================
 // member method definitions
@@ -709,6 +709,8 @@ MSLCM_JE2013::_wantsChange(
                   << " veh=" << myVehicle.getID()
                   << " firstBlocked=" << Named::getIDSecure(*firstBlocked)
                   << " lastBlocked=" << Named::getIDSecure(*lastBlocked)
+                  << " leader=" << Named::getIDSecure(leader.first)
+                  << " leaderGap=" << leader.second
                   << " neighLead=" << Named::getIDSecure(neighLead.first)
                   << " neighLeadGap=" << neighLead.second
                   << " neighFollow=" << Named::getIDSecure(neighFollow.first)

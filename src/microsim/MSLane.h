@@ -262,10 +262,11 @@ public:
     /// @{
 
     /** @brief Returns the number of vehicles on this lane
-     * @return The number of vehicles on this lane
+     * @return The number of vehicles with their front on this lane
      */
-    unsigned int getVehicleNumber() const {
-        return (unsigned int) myVehicles.size();
+    int getVehicleNumber() const {
+        assert(myVehicles.size() >= myNumPartialOccupators);
+        return (int)myVehicles.size() - myNumPartialOccupators;
     }
 
 
@@ -407,7 +408,7 @@ public:
      *
      * @see MSVehicle::executeMove
      */
-    virtual bool executeMovements(SUMOTime t, std::vector<MSLane*>& into);
+    virtual bool executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIntegrate);
 
     /// Insert buffered vehicle into the real lane.
     virtual bool integrateNewVehicle(SUMOTime t);
@@ -880,6 +881,9 @@ protected:
     // precomputed myShape.length / myLength
     const SUMOReal myLengthGeometryFactor;
 
+    // @brief the number of vehicles lapping into this lane
+    int myNumPartialOccupators;
+
     /// definition of the static dictionary type
     typedef std::map< std::string, MSLane* > DictType;
 
@@ -898,7 +902,9 @@ private:
     class vehicle_position_sorter {
     public:
         /// @brief Constructor
-        explicit vehicle_position_sorter() { }
+        explicit vehicle_position_sorter(const MSLane* lane) :
+            myLane(lane)
+        { }
 
 
         /** @brief Comparing operator
@@ -907,6 +913,8 @@ private:
          * @return Whether the first vehicle is further on the lane than the second
          */
         int operator()(MSVehicle* v1, MSVehicle* v2) const;
+
+        const MSLane* myLane;
 
     };
 

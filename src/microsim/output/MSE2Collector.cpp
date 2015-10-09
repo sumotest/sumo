@@ -119,7 +119,7 @@ MSE2Collector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason
         // vehicle is teleporting over the edge
         return false;
     }
-    if (veh.getPositionOnLane() - veh.getVehicleType().getLength() >= myEndPos) {
+    if (veh.getBackPositionOnLane(myLane) >= myEndPos) {
         // vehicle is beyond the detector
         return false;
     }
@@ -179,7 +179,7 @@ MSE2Collector::detectorUpdate(const SUMOTime /* step */) {
 
         SUMOReal length = veh->getVehicleType().getLength();
         if (veh->getLane() == getLane()) {
-            if (veh->getPositionOnLane() - veh->getVehicleType().getLength() < myStartPos) {
+            if (veh->getBackPositionOnLane(myLane) < myStartPos) {
                 // vehicle entered detector partially
                 length -= (veh->getVehicleType().getLength() - (veh->getPositionOnLane() - myStartPos));
             }

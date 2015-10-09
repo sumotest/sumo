@@ -97,7 +97,8 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myBruttoVehicleLengthSum(0), myNettoVehicleLengthSum(0),
     myLeaderInfo(width),
     myLeaderInfoTime(SUMOTime_MIN),
-    myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength) // factor should not be 0
+    myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength), // factor should not be 0
+    myNumPartialOccupators(0)
 {
     myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
 }
@@ -129,6 +130,8 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 
 SUMOReal
 MSLane::setPartialOccupation(MSVehicle* v, bool addToBuffer) {
+    ++myNumPartialOccupators;
+    //if (true || v->getID() == "always_right.9") std::cout << SIMTIME << " setPartialOccupation. lane=" << getID() << " veh=" << v->getID() << " addToBuffer=" << addToBuffer << "\n";
     if (addToBuffer) {
         myVehBuffer.push_back(v);
     } else {
@@ -141,14 +144,18 @@ MSLane::setPartialOccupation(MSVehicle* v, bool addToBuffer) {
 
 void
 MSLane::resetPartialOccupation(MSVehicle* v) {
+    //if (true || v->getID() == "always_right.9") std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
     for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend();) {
         if (v == *i) {
             ++i;
             myVehicles.erase(i.base());
+            --myNumPartialOccupators;
+            //std::cout << "    removed from myVehicles\n";
             return;
         } else if ((*i)->getLane() == this) {
             // found the first vehicle that is not a partial occupator. The
             // vehicle should not be in myVehicles
+            //std::cout << "    found veh=" << (*i)->getID() << " which is not a partial occupator\n";
             assert(std::find(myVehicles.begin(), myVehicles.end(), v) == myVehicles.end());
             break;
         }   
@@ -156,6 +163,8 @@ MSLane::resetPartialOccupation(MSVehicle* v) {
     // check the vehBuffer
     VehCont::iterator i2 = std::find(myVehBuffer.begin(), myVehBuffer.end(), v);
     if (i2 != myVehBuffer.end()) {
+        //std::cout << "    removed from buffer\n";
+        --myNumPartialOccupators;
         myVehBuffer.erase(i2);
     }
 }
@@ -191,7 +200,7 @@ MSLane::pWagGenericInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, S
     SUMOReal leaderDecel;
     if (myVehicles.size() != 0) {
         MSVehicle* leader = myVehicles.front();
-        xIn = leader->getPositionOnLane() - leader->getVehicleType().getLength() - veh.getVehicleType().getMinGap();
+        xIn = leader->getBackPositionOnLane(this) - veh.getVehicleType().getMinGap();
         vIn = leader->getSpeed();
         leaderDecel = leader->getCarFollowModel().getMaxDecel();
     } else {
@@ -238,7 +247,7 @@ MSLane::pWagSimpleInsertion(MSVehicle& veh, SUMOReal mspeed, SUMOReal maxPos, SU
     SUMOReal vIn = mspeed;
     if (myVehicles.size() != 0) {
         MSVehicle* leader = myVehicles.front();
-        xIn = leader->getPositionOnLane() - leader->getVehicleType().getLength() - veh.getVehicleType().getMinGap();
+        xIn = leader->getBackPositionOnLane(this) - veh.getVehicleType().getMinGap();
         vIn = leader->getSpeed();
     } else {
         SUMOReal brakeGap = veh.getCarFollowModel().brakeGap(mspeed);
@@ -339,7 +348,7 @@ MSLane::freeInsertion(MSVehicle& veh, SUMOReal mspeed,
     } else {
         // check whether the vehicle can be put behind the last one if there is such
         MSVehicle* leader = myVehicles.back();
-        const SUMOReal leaderPos = leader->getPositionOnLane() - leader->getVehicleType().getLength();
+        const SUMOReal leaderPos = leader->getBackPositionOnLane(this);
         const SUMOReal speed = adaptableSpeed ? leader->getSpeed() : mspeed;
         const SUMOReal frontGapNeeded = veh.getCarFollowModel().getSecureGap(speed, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()) + veh.getVehicleType().getMinGap();
         if (leaderPos >= frontGapNeeded) {
@@ -725,6 +734,7 @@ MSLane::planMovements(SUMOTime t) {
     SUMOReal cumulatedVehLength = 0.;
     MSLeaderInfo ahead(myWidth);
     for (VehCont::reverse_iterator veh = myVehicles.rbegin(); veh != myVehicles.rend(); ++veh) {
+        //if (getID() == "1si_2") std::cout << SIMTIME << " veh=" << (*veh)->getID() << " lane=" << (*veh)->getLane()->getID() << "\n";
         if ((*veh)->getLane() == this) {
             (*veh)->planMove(t, ahead, cumulatedVehLength);
         }
@@ -757,7 +767,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
             ++veh;
             continue;
         }
-        if (handleCollision(timestep, stage, *veh, *pred, (*pred)->getPositionOnLane() - (*pred)->getVehicleType().getLength())) {
+        if (handleCollision(timestep, stage, *veh, *pred, (*pred)->getBackPositionOnLane(this))) {
             veh = myVehicles.erase(veh); // remove current vehicle
             lastVeh = myVehicles.end() - 1;
             if (veh == myVehicles.end()) {
@@ -807,7 +817,7 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
 
 
 bool
-MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
+MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIntegrate) {
     // iteratate over vehicles in reverse so that move reminders will be called in the correct order
     for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend();) {
         MSVehicle* veh = *i;
@@ -841,11 +851,11 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
                 SUMOReal pspeed = veh->getSpeed();
                 SUMOReal oldPos = veh->getPositionOnLane() - SPEED2DIST(veh->getSpeed());
                 veh->workOnMoveReminders(oldPos, veh->getPositionOnLane(), pspeed);
-                into.push_back(target);
+                lanesWithVehiclesToIntegrate.push_back(target);
                 if (veh->getLaneChangeModel().hasShadowVehicle()) {
                     MSLane* shadowLane = veh->getLaneChangeModel().getShadowLane();
                     if (shadowLane != 0) {
-                        into.push_back(shadowLane);
+                        lanesWithVehiclesToIntegrate.push_back(shadowLane);
                         shadowLane->myVehBuffer.push_back(veh);
                     }
                 }
@@ -900,6 +910,11 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
                 }
             } // else look for a vehicle that isn't stopped?
         }
+    }
+    if (myVehBuffer.size() > 0) {
+        // partial occupators may have been added in this step so we need to
+        // integrate them
+        lanesWithVehiclesToIntegrate.push_back(this);
     }
     return myVehicles.size() == 0;
 }
@@ -994,11 +1009,19 @@ MSLane::appropriate(const MSVehicle* veh) {
 
 bool
 MSLane::integrateNewVehicle(SUMOTime) {
+    //std::cout << SIMTIME << " integrateNewVehicle lane=" << getID() << "\n";
     bool wasInactive = myVehicles.size() == 0;
-    sort(myVehBuffer.begin(), myVehBuffer.end(), vehicle_position_sorter());
+    sort(myVehBuffer.begin(), myVehBuffer.end(), vehicle_position_sorter(this));
     for (std::vector<MSVehicle*>::const_iterator i = myVehBuffer.begin(); i != myVehBuffer.end(); ++i) {
+
         MSVehicle* veh = *i;
-        myVehicles.insert(myVehicles.begin(), veh);
+        //if (getID() == "1si_2") std::cout << SIMTIME << " integrating veh=" << veh->getID() << " (on lane " << veh->getLane()->getID() << ") into lane=" << getID() << "\n";
+        if (veh->getLane() == this) {
+            myVehicles.insert(myVehicles.begin(), veh);
+        } else {
+            // insert partial occupators in front of the other vehicles
+            myVehicles.push_back(veh);
+        }
         myBruttoVehicleLengthSum += veh->getVehicleType().getLengthWithGap();
         myNettoVehicleLengthSum += veh->getVehicleType().getLength();
         myEdge->markDelayed();
@@ -1113,6 +1136,7 @@ MSLane::setLength(SUMOReal val) {
 
 void
 MSLane::swapAfterLaneChange(SUMOTime) {
+    //if (getID() == "beg_1") std::cout << SIMTIME << " swapAfterLaneChange lane=" << getID() << " myVehicles=" << toString(myVehicles) << " myTmpVehicles=" << toString(myTmpVehicles) << "\n";
     myVehicles = myTmpVehicles;
     myTmpVehicles.clear();
 }
@@ -1680,7 +1704,7 @@ MSLane::VehPosition::operator()(const MSVehicle* cmp, SUMOReal pos) const {
 
 int
 MSLane::vehicle_position_sorter::operator()(MSVehicle* v1, MSVehicle* v2) const {
-    return v1->getPositionOnLane() > v2->getPositionOnLane();
+    return v1->getBackPositionOnLane(myLane) > v2->getBackPositionOnLane(myLane);
 }
 
 MSLane::by_connections_to_sorter::by_connections_to_sorter(const MSEdge* const e) :

@@ -371,7 +371,7 @@ public:
     }
 
 
-    /** @brief Returns the information whether the front of the vehhicle is on the given lane 
+    /** @brief Returns the information whether the front of the vehicle is on the given lane 
      * @return Whether the vehicle's front is on that lane
      */
     bool isFrontOnLane(const MSLane* lane) const;

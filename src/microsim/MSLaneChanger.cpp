@@ -104,6 +104,8 @@ MSLaneChanger::initChanger() {
         ce->firstBlocked = 0;
         ce->dens = 0;
 
+        //std::cout << SIMTIME << " initChanger lane=" << ce->lane->getID() << " vehicles=" << toString(ce->lane->myVehicles) << "\n";
+
         MSLane::VehCont& vehicles = ce->lane->myVehicles;
         if (vehicles.empty()) {
             ce->veh  = vehicles.rend();
@@ -128,6 +130,7 @@ MSLaneChanger::updateChanger(bool vehHasChanged) {
     // vehicle becomes leader, and leader becomes predecessor of vehicle,
     // if it exists.
     if (!vehHasChanged || MSGlobals::gLaneChangeDuration > DELTA_T) {
+        //std::cout << SIMTIME << " updateChanger: lane=" << myCandi->lane->getID() << " has new lead=" << veh(myCandi)->getID() << "\n";
         myCandi->lead = veh(myCandi);
     }
     myCandi->veh    = myCandi->veh + 1;
@@ -173,12 +176,15 @@ MSLaneChanger::findCandidate() {
             continue;
         }
         if (max == myChanger.end()) {
+            //std::cout << SIMTIME << " new max vehicle=" << veh(ce)->getID() << " pos=" << veh(ce)->getPositionOnLane() << " lane=" << ce->lane->getID() << " isFrontOnLane=" << veh(ce)->isFrontOnLane(ce->lane)  << "\n";
             max = ce;
             continue;
         }
         assert(veh(ce)  != 0);
         assert(veh(max) != 0);
-        if (veh(max)->getPositionOnLane() < veh(ce)->getPositionOnLane()) {
+        if (veh(max)->isFrontOnLane(max->lane) 
+                && (veh(max)->getPositionOnLane() < veh(ce)->getPositionOnLane() || !veh(ce)->isFrontOnLane(ce->lane))) {
+            //std::cout << SIMTIME << " new max vehicle=" << veh(ce)->getID() << " pos=" << veh(ce)->getPositionOnLane() << " lane=" << ce->lane->getID() << " isFrontOnLane=" << veh(ce)->isFrontOnLane(ce->lane)  << " oldMaxPos=" << veh(max)->getPositionOnLane() << "\n";
             max = ce;
         }
     }
@@ -217,6 +223,7 @@ MSLaneChanger::change() {
 #endif
     if (vehicle->getLane() != (*myCandi).lane || vehicle->getLaneChangeModel().isChangingLanes()) {
         // vehicles shadows and changing vehicles are not eligible
+        //if ((*myCandi).lane->getID() == "beg_1") std::cout << SIMTIME << " change on lane=" << (*myCandi).lane->getID() << " unchanged veh=" << vehicle->getID() << "\n";
         registerUnchanged(vehicle);
         return false;
     }
@@ -355,7 +362,9 @@ void
 MSLaneChanger::registerUnchanged(MSVehicle* vehicle) {
     myCandi->lane->myTmpVehicles.insert(myCandi->lane->myTmpVehicles.begin(), veh(myCandi));
     vehicle->getLaneChangeModel().unchanged();
-    (myCandi)->dens += vehicle->getVehicleType().getLengthWithGap();
+    if (vehicle->isFrontOnLane(myCandi->lane)) {
+        (myCandi)->dens += vehicle->getVehicleType().getLengthWithGap();
+    }
 }
 
 
@@ -365,6 +374,7 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
     to->hoppedVeh = vehicle;
     // @todo delay entering the target lane until the vehicle intersects it
     //       physically (considering lane width and vehicle width)
+    //if (to->lane->getID() == "beg_1") std::cout << SIMTIME << " startChange to lane=" << to->lane->getID() << " myTmpVehiclesBefore=" << toString(to->lane->myTmpVehicles) << "\n";
     to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
     const bool continuous = vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
     if (continuous) {
@@ -411,11 +421,13 @@ std::pair<MSVehicle* const, SUMOReal>
 MSLaneChanger::getRealLeader(const ChangerIt& target) const {
     // get the leading vehicle on the lane to change to
     MSVehicle* neighLead = target->lead;
+    //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " neighLead=" << Named::getIDSecure(neighLead) << " (416)\n";
     // check whether the hopped vehicle became the leader
     if (target->hoppedVeh != 0) {
         SUMOReal hoppedPos = target->hoppedVeh->getPositionOnLane();
         if (hoppedPos > veh(myCandi)->getPositionOnLane() && (neighLead == 0 || neighLead->getPositionOnLane() > hoppedPos)) {
             neighLead = target->hoppedVeh;
+            //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " neighLead=" << Named::getIDSecure(neighLead) << " (422)\n";
         }
     }
     if (neighLead == 0) {
@@ -427,6 +439,7 @@ MSLaneChanger::getRealLeader(const ChangerIt& target) const {
             return std::pair<MSVehicle* const, SUMOReal>(static_cast<MSVehicle*>(0), -1);
         }
         const std::vector<MSLane*>& bestLaneConts = veh(myCandi)->getBestLanesContinuation(targetLane);
+        //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " calling getLeaderOnConsecutive (443)\n";
         return target->lane->getLeaderOnConsecutive(dist, seen, speed, *veh(myCandi), bestLaneConts);
     } else {
         MSVehicle* candi = veh(myCandi);

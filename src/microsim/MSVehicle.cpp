@@ -1228,7 +1228,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
             const SUMOReal gap = (lane == myLane
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
                     : predBack + seen - lane->getLength() - getVehicleType().getMinGap());
-            //if (getID() == "flow.20") std::cout << "     pred=" << pred->getID() << " predLane=" << pred->getLane()->getID() << " predPos=" << pred->getPositionOnLane() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << " lane=" << lane->getID() << " myLane=" << myLane->getID() << "\n";
+            //if (getID() == "always_right.10") std::cout << "     pred=" << pred->getID() << " predLane=" << pred->getLane()->getID() << " predPos=" << pred->getPositionOnLane() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << " lane=" << lane->getID() << " myLane=" << myLane->getID() << "\n";
             adaptToLeader(std::make_pair(pred, gap), seen, lastLink, lane, v, vLinkPass);
         }
     }
@@ -1241,7 +1241,19 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                          const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass,
                          SUMOReal distToCrossing) const {
     if (leaderInfo.first != 0) {
-        //if (getID() == "flow.20") std::cout << SIMTIME << " veh=" << getID() << " l=" << leaderInfo.first->getID() << " gap=" << leaderInfo.second << "\n";
+
+        //std::cout << std::setprecision(10);
+        //if (getID() == "always_right.10") std::cout 
+        //    << SIMTIME 
+        //        << " veh=" << getID() 
+        //        << " lead=" << leaderInfo.first->getID() 
+        //        << " gap=" << leaderInfo.second
+        //        << " leadLane=" << leaderInfo.first->getLane()->getID() 
+        //        << " predPos=" << leaderInfo.first->getPositionOnLane() 
+        //        << " seen=" << seen 
+        //        << " lane=" << lane->getID() 
+        //        << " myLane=" << myLane->getID() << "\n";
+
         const SUMOReal vsafeLeader = getSafeFollowSpeed(leaderInfo, seen, lane, distToCrossing);
         if (lastLink != 0) {
             lastLink->adaptLeaveSpeed(vsafeLeader);
@@ -1432,6 +1444,7 @@ MSVehicle::executeMove() {
     bool moved = false;
     std::string emergencyReason = " for unknown reasons";
     // move on lane(s)
+    const MSLane* oldLane = myLane;
     if (myState.myPos <= myLane->getLength()) {
         // we are staying at our lane
         //  there is no need to go over succeeding lanes
@@ -1524,7 +1537,10 @@ MSVehicle::executeMove() {
             std::vector<MSLane*>::reverse_iterator i = passedLanes.rbegin() + 1;
             while (leftLength > 0 && i != passedLanes.rend()) {
                 myFurtherLanes.push_back(*i);
-                leftLength -= (*i)->setPartialOccupation(this, true);
+                // do not put this vehicle into the lane that is currently being
+                // processed. But it into the buffer instead where it will be
+                // integrated later
+                leftLength -= (*i)->setPartialOccupation(this, (*i) == oldLane);
                 ++i;
             }
             myState.myBackPos = -leftLength;
