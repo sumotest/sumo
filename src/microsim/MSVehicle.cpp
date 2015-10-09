@@ -1228,7 +1228,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
             const SUMOReal gap = (lane == myLane
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
                     : predBack + seen - lane->getLength() - getVehicleType().getMinGap());
-            //std::cout << "     pred=" << pred->getID() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << "\n";
+            //if (getID() == "flow.20") std::cout << "     pred=" << pred->getID() << " predLane=" << pred->getLane()->getID() << " predPos=" << pred->getPositionOnLane() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << " lane=" << lane->getID() << " myLane=" << myLane->getID() << "\n";
             adaptToLeader(std::make_pair(pred, gap), seen, lastLink, lane, v, vLinkPass);
         }
     }
@@ -1241,7 +1241,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                          const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass,
                          SUMOReal distToCrossing) const {
     if (leaderInfo.first != 0) {
-        //std::cout << SIMTIME << " veh=" << getID() << " l=" << leaderInfo.first->getID() << " gap=" << leaderInfo.second << "\n";
+        //if (getID() == "flow.20") std::cout << SIMTIME << " veh=" << getID() << " l=" << leaderInfo.first->getID() << " gap=" << leaderInfo.second << "\n";
         const SUMOReal vsafeLeader = getSafeFollowSpeed(leaderInfo, seen, lane, distToCrossing);
         if (lastLink != 0) {
             lastLink->adaptLeaveSpeed(vsafeLeader);
@@ -1545,8 +1545,9 @@ MSVehicle::executeMove() {
 SUMOReal 
 MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
     if (lane == myLane 
-            || (myFurtherLanes.size() > 0 && lane == myFurtherLanes.back())
-            || lane == getLaneChangeModel().getShadowLane()
+            || lane == getLaneChangeModel().getShadowLane()) {
+        return myState.myPos - getVehicleType().getLength();
+    } else if ((myFurtherLanes.size() > 0 && lane == myFurtherLanes.back())
             || (getLaneChangeModel().getShadowFurtherLanes().size() > 0 && lane == getLaneChangeModel().getShadowFurtherLanes().back())
             ) {
         return myState.myBackPos;

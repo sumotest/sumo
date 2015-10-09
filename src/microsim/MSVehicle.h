@@ -138,7 +138,9 @@ public:
         /// the stored lateral position
         SUMOReal myPosLat;
 
-        /// the stored back position
+        /// @brief the stored back position
+        // if the vehicle occupies multiple lanes, this is the position relative
+        // to the lane occupied by its back
         SUMOReal myBackPos;
 
     };
