@@ -158,7 +158,9 @@ MSLane::resetPartialOccupation(MSVehicle* v) {
             //std::cout << "    found veh=" << (*i)->getID() << " which is not a partial occupator\n";
             assert(std::find(myVehicles.begin(), myVehicles.end(), v) == myVehicles.end());
             break;
-        }   
+        } else {
+            ++i;
+        }
     }   
     // check the vehBuffer
     VehCont::iterator i2 = std::find(myVehBuffer.begin(), myVehBuffer.end(), v);
@@ -741,9 +743,9 @@ MSLane::planMovements(SUMOTime t) {
         //if (getID() == "1si_2") std::cout << SIMTIME << " veh=" << (*veh)->getID() << " lane=" << (*veh)->getLane()->getID() << "\n";
         if ((*veh)->getLane() == this) {
             (*veh)->planMove(t, ahead, cumulatedVehLength);
+            cumulatedVehLength += (*veh)->getVehicleType().getLengthWithGap();
         }
         ahead.addLeader(*veh, false);
-        cumulatedVehLength += (*veh)->getVehicleType().getLengthWithGap();
     }
 }
 
@@ -1019,15 +1021,16 @@ MSLane::integrateNewVehicle(SUMOTime) {
     for (std::vector<MSVehicle*>::const_iterator i = myVehBuffer.begin(); i != myVehBuffer.end(); ++i) {
 
         MSVehicle* veh = *i;
-        //if (getID() == "1si_2") std::cout << SIMTIME << " integrating veh=" << veh->getID() << " (on lane " << veh->getLane()->getID() << ") into lane=" << getID() << "\n";
         if (veh->getLane() == this) {
             myVehicles.insert(myVehicles.begin(), veh);
+            myBruttoVehicleLengthSum += veh->getVehicleType().getLengthWithGap();
+            myNettoVehicleLengthSum += veh->getVehicleType().getLength();
         } else {
             // insert partial occupators in front of the other vehicles
             myVehicles.push_back(veh);
+            // @todo handle partial occupation
         }
-        myBruttoVehicleLengthSum += veh->getVehicleType().getLengthWithGap();
-        myNettoVehicleLengthSum += veh->getVehicleType().getLength();
+        //if (true) std::cout << SIMTIME << " integrateNewVehicle lane=" << getID() << " veh=" << veh->getID() << " (on lane " << veh->getLane()->getID() << ") into lane=" << getID() << " myBrutto=" << myBruttoVehicleLengthSum << "\n";
         myEdge->markDelayed();
     }
     myVehBuffer.clear();
@@ -1170,8 +1173,10 @@ MSLane::removeVehicle(MSVehicle* remVehicle, MSMoveReminder::Notification notifi
                 remVehicle->leaveLane(notification);
             }
             myVehicles.erase(it);
-            myBruttoVehicleLengthSum -= remVehicle->getVehicleType().getLengthWithGap();
-            myNettoVehicleLengthSum -= remVehicle->getVehicleType().getLength();
+            if (remVehicle->isFrontOnLane(this)) {
+                myBruttoVehicleLengthSum -= remVehicle->getVehicleType().getLengthWithGap();
+                myNettoVehicleLengthSum -= remVehicle->getVehicleType().getLength();
+            }
             break;
         }
     }
