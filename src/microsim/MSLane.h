@@ -534,9 +534,14 @@ public:
         partial occupation*/
     bool isEmpty() const;
 
-    /// returns the last vehicle
+    /// @brief returns the last vehicle or 0
     MSVehicle* getLastVehicle() const;
+
+    /// @brief returns the first vehicle or 0
     MSVehicle* getFirstVehicle() const;
+
+    /// @brief returns the last vehicle full on this lane or 0
+    MSVehicle* getLastFullVehicle() const;
 
 
     /* @brief remove the vehicle from this lane

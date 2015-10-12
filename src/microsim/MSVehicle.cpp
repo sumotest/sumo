@@ -1243,7 +1243,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
     if (leaderInfo.first != 0) {
 
         //std::cout << std::setprecision(10);
-        //if (getID() == "always_right.10") std::cout 
+        //if (getID() == "flow.26") std::cout 
         //    << SIMTIME 
         //        << " veh=" << getID() 
         //        << " lead=" << leaderInfo.first->getID() 
@@ -1571,7 +1571,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
         assert(std::find(myFurtherLanes.begin(), myFurtherLanes.end(), lane) != myFurtherLanes.end() 
                 || std::find(getLaneChangeModel().getShadowFurtherLanes().begin(),
                     getLaneChangeModel().getShadowFurtherLanes().end(), lane) != getLaneChangeModel().getShadowFurtherLanes().end());
-        return -1; // lane is fully occupied
+        return -NUMERICAL_EPS; // lane is fully occupied
     }
 }
 
