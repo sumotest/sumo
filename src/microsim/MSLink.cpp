@@ -368,7 +368,7 @@ MSLink::blockedAtTime(SUMOTime arrivalTime, SUMOTime leaveTime, SUMOReal arrival
 
 bool
 MSLink::maybeOccupied(MSLane* lane) {
-    MSVehicle* veh = lane->getLastVehicle();
+    MSVehicle* veh = lane->getLastAnyVehicle();
     SUMOReal distLeft = 0;
     if (veh == 0) {
         return false;
@@ -390,7 +390,7 @@ MSLink::hasApproachingFoe(SUMOTime arrivalTime, SUMOTime leaveTime, SUMOReal spe
         }
     }
     for (std::vector<const MSLane*>::const_iterator i = myFoeLanes.begin(); i != myFoeLanes.end(); ++i) {
-        if ((*i)->getVehicleNumber() > 0) {
+        if ((*i)->getVehicleNumberWithPartials() > 0) {
             return true;
         }
     }
@@ -543,10 +543,9 @@ MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson
             const bool contLane = (foeLane->getLinkCont()[0]->getViaLaneOrLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL);
             // vehicles on cont. lanes or on internal lanes with the same target as this link can never be ignored
             const bool cannotIgnore = contLane || sameTarget || sameSource;
-            const MSLane::VehCont& vehicles = foeLane->getVehiclesSecure();
-            foeLane->releaseVehicles();
-            for (MSLane::VehCont::const_iterator it_veh = vehicles.begin(); it_veh != vehicles.end(); ++it_veh) {
-                MSVehicle* leader = *it_veh;
+            MSLane::AnyVehicleIterator end = foeLane->anyVehiclesEnd();
+            for (MSLane::AnyVehicleIterator it_veh = foeLane->anyVehiclesBegin(); it_veh != end; ++it_veh) {
+                MSVehicle* leader = (MSVehicle*)*it_veh;
                 if (!cannotIgnore && !foeLane->getLinkCont()[0]->getApproaching(leader).willPass && leader->isFrontOnLane(foeLane)) {
                     continue;
                 }

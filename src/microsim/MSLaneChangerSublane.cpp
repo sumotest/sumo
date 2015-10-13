@@ -67,11 +67,8 @@ MSLaneChangerSublane::change() {
         int bla = 0;
     }
 #endif
-    if (vehicle->getLane() != (*myCandi).lane || vehicle->getLaneChangeModel().isChangingLanes()) {
-        // vehicles shadows and changing vehicles are not eligible
-        registerUnchanged(vehicle);
-        return false;
-    }
+    assert(vehicle->getLane() == (*myCandi).lane);
+    assert(!vehicle->getLaneChangeModel().isChangingLanes());
 #ifndef NO_TRACI
     if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
         return false; // !!! temporary; just because it broke, here

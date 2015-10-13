@@ -48,11 +48,20 @@
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-MSLeaderInfo::MSLeaderInfo(SUMOReal width) : 
+MSLeaderInfo::MSLeaderInfo(SUMOReal width, const MSVehicle* ego) : 
     myWidth(width),
     myVehicles(MAX2(1, int(ceil(width / MSGlobals::gLateralResolution))), (MSVehicle*)0),
-    myFreeSublanes((int)myVehicles.size())
-{ }
+    myFreeSublanes((int)myVehicles.size()),
+    egoRightMost(-1),
+    egoLeftMost(-1)
+{ 
+    if (ego != 0) {
+        getSubLanes(ego, egoRightMost, egoLeftMost);
+        // filter out sublanes not of interest to ego
+        myFreeSublanes -= egoRightMost;
+        myFreeSublanes -= (int)myVehicles.size() - 1 - egoLeftMost;
+    }
+}
 
 
 MSLeaderInfo::~MSLeaderInfo() { }
@@ -78,7 +87,8 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
         const int subLane = (int)floor(posLat / MSGlobals::gLateralResolution);
-        if (!beyond || myVehicles[subLane] == 0) {
+        if ((egoRightMost < 0 || (egoRightMost <= subLane && subLane <= egoLeftMost))
+                && (!beyond || myVehicles[subLane] == 0)) {
             myVehicles[subLane] = veh;
             myFreeSublanes--;
         }

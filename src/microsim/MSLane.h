@@ -86,9 +86,8 @@ public:
 
     friend class MSQueueExport;
 
-
     /// Container for vehicles.
-    typedef std::vector< MSVehicle* > VehCont;
+    typedef std::vector<MSVehicle*> VehCont;
 
     /** Function-object in order to find the vehicle, that has just
         passed the detector. */
@@ -96,6 +95,64 @@ public:
         /// compares vehicle position to the detector position
         bool operator()(const MSVehicle* cmp, SUMOReal pos) const;
     };
+
+    class AnyVehicleIterator {
+    public:
+        AnyVehicleIterator(
+                const MSLane* lane,
+                VehCont::const_iterator i1,
+                VehCont::const_iterator i2,
+                const VehCont::const_iterator i1End,
+                const VehCont::const_iterator i2End,
+                bool lastToFirst=true) :
+            myLane(lane),
+            myI1(i1),
+            myI2(i2),
+            myI1End(i1End),
+            myI2End(i2End),
+            myLastToFirst(lastToFirst)
+        {}
+
+        bool operator== (AnyVehicleIterator const& other) const {
+            return (myI1 == other.myI1
+                    && myI2 == other.myI2
+                    && myI1End == other.myI1End
+                    && myI2End == other.myI2End);
+        }
+
+        bool operator!= (AnyVehicleIterator const& other) const {
+            return !(*this == other);
+        }
+
+        const MSVehicle* operator*() { 
+            VehCont::const_iterator n = next();
+            if (n == myI1End) {
+                return 0;
+            } else {
+                return *n;
+            }
+        }
+
+        const MSVehicle* operator->() { return **this; }
+
+        AnyVehicleIterator& operator++() {
+            ++next();
+            return *this;
+        }
+
+    private:
+        VehCont::const_iterator& next();
+
+    private:
+        const MSLane* myLane;
+        VehCont::const_iterator myI1;
+        VehCont::const_iterator myI2;
+        VehCont::const_iterator myI1End;
+        VehCont::const_iterator myI2End;
+        bool myLastToFirst;
+
+    };            
+
 
 public:
     /** @brief Constructor
@@ -237,10 +294,9 @@ public:
      * This vehicle is added to myVehicles and may be distinguished from regular
      * vehicles by the disparity between this lane and v->getLane()
      * @param[in] v The vehicle which laps into this lane
-     * @param[in] addToBuffer Whether the the vehicle should be added to the temporary buffer (necessary during executeMovements)
      * @return This lane's length
      */
-    SUMOReal setPartialOccupation(MSVehicle* v, bool addToBuffer=false); 
+    SUMOReal setPartialOccupation(MSVehicle* v); 
 
     /** @brief Removes the information about a vehicle lapping into this lane
      * @param[in] v The vehicle which laps into this lane
@@ -249,11 +305,12 @@ public:
 
     /** @brief Returns the last vehicles on the lane
      *
-     * The information about the last vehicles in this lanes in all sublanes are
+     * The information about the last vehicles in this lanes in all sublanes
+     * occupied by ego are
      * returned. Partial occupators are included
      * @return Information about the last vehicles
      */
-    const MSLeaderInfo& getLastVehicleInformation() const;
+    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego) const;
     /// @}
 
 
@@ -261,12 +318,20 @@ public:
     /// @name Access to vehicles
     /// @{
 
-    /** @brief Returns the number of vehicles on this lane
+    /** @brief Returns the number of vehicles on this lane (for which this lane
+     * is responsible)
      * @return The number of vehicles with their front on this lane
      */
     int getVehicleNumber() const {
-        assert(myVehicles.size() >= myNumPartialOccupators);
-        return (int)myVehicles.size() - myNumPartialOccupators;
+        return (int)myVehicles.size();
+    }
+
+    /** @brief Returns the number of vehicles on this lane (including partial
+     * occupators)
+     * @return The number of vehicles with intersecting this lane
+     */
+    int getVehicleNumberWithPartials() const {
+        return (int)myVehicles.size() + (int)myPartialVehicles.size();
     }
 
 
@@ -278,6 +343,17 @@ public:
      */
     virtual const VehCont& getVehiclesSecure() const {
         return myVehicles;
+    }
+
+
+    /// @brief begin iterator for iterating over all vehicles touching this lane
+    AnyVehicleIterator anyVehiclesBegin() const {
+        return AnyVehicleIterator(this, myVehicles.begin(), myPartialVehicles.begin(), myVehicles.end(), myPartialVehicles.end(), true);
+    }
+
+    /// @brief end iterator for iterating over all vehicles touching this lane
+    AnyVehicleIterator anyVehiclesEnd() const {
+        return AnyVehicleIterator(this, myVehicles.end(), myPartialVehicles.end(), myVehicles.end(), myPartialVehicles.end(), true);
     }
 
 
@@ -534,15 +610,17 @@ public:
         partial occupation*/
     bool isEmpty() const;
 
-    /// @brief returns the last vehicle or 0
-    MSVehicle* getLastVehicle() const;
-
-    /// @brief returns the first vehicle or 0
-    MSVehicle* getFirstVehicle() const;
-
-    /// @brief returns the last vehicle full on this lane or 0
+    /// @brief returns the last vehicle for which this lane is responsible or 0
     MSVehicle* getLastFullVehicle() const;
 
+    /// @brief returns the first vehicle for which this lane is responsible or 0
+    MSVehicle* getFirstFullVehicle() const;
+
+    /// @brief returns the last vehicle that is fully or partially on this lane
+    MSVehicle* getLastAnyVehicle() const;
+
+    /// @brief returns the first vehicle that is fully or partially on this lane
+    MSVehicle* getFirstAnyVehicle() const;
 
     /* @brief remove the vehicle from this lane
      * @param[notify] whether moveReminders of the vehicle shall be triggered
@@ -805,7 +883,7 @@ protected:
 
 
     /// @brief detect whether there is a collision. then issue warning and add the vehicle to MSVehicleTransfer
-    bool handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* collider, MSVehicle* victim, const SUMOReal victimRear);
+    bool handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* collider, MSVehicle* victim);
 
     /// @brief compute maximum braking distance on this lane
     SUMOReal getMaximumBrakeDist() const;
@@ -828,6 +906,10 @@ protected:
     PositionVector myShape;
 
     /** @brief The lane's vehicles.
+        This container holds all vehicles that have their front (longitudinally) 
+        and their center (laterally) on this lane.
+        These are the vehicles that this lane is 'responsibly' for (i.e. when executing movements)
+
         The entering vehicles are inserted at the front
         of  this container and the leaving ones leave from the back, e.g. the
         vehicle in front of the junction (often called first) is
@@ -835,6 +917,27 @@ protected:
         vehicle, ++it points to the vehicle in front. This is the interaction
         vehicle. */
     VehCont myVehicles;
+
+    /** @brief The lane's partial vehicles.
+        This container holds all vehicles that are partially on this lane but which are 
+        in myVehicles of another lane.
+        Reasons for partial occupancie include the following
+        - the back is still on this lane during regular movement
+        - the vehicle is performing a continuous lane-change maneuver
+        - sub-lane simulation where vehicles can freely move laterally among the lanes of an edge
+
+        The entering vehicles are inserted at the front
+        of this container and the leaving ones leave from the back. */
+    VehCont myPartialVehicles;
+
+    /** @brief Container for lane-changing vehicles. After completion of lane-change-
+        process, the containers will be swapped with myVehicles. */
+    VehCont myTmpVehicles;
+
+    /** @brief Buffer for vehicles that moved from their previous lane onto this one.
+     * Integrated after all vehicles executed their moves*/
+    VehCont myVehBuffer;
+
 
     /// Lane length [m]
     SUMOReal myLength;
@@ -847,14 +950,6 @@ protected:
 
     /// Lane-wide speedlimit [m/s]
     SUMOReal myMaxSpeed;
-
-    /** Container for lane-changing vehicles. After completion of lane-change-
-        process, the two containers will be swapped. */
-    VehCont myTmpVehicles;
-
-
-    /** buffer for vehicles that moved from their previous lane onto this one*/
-    std::vector<MSVehicle*> myVehBuffer;
 
     /// The vClass permissions for this lane
     SVCPermissions myPermissions;
@@ -885,9 +980,6 @@ protected:
 
     // precomputed myShape.length / myLength
     const SUMOReal myLengthGeometryFactor;
-
-    // @brief the number of vehicles lapping into this lane
-    int myNumPartialOccupators;
 
     /// definition of the static dictionary type
     typedef std::map< std::string, MSLane* > DictType;

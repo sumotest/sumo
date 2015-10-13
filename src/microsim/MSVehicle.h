@@ -298,7 +298,12 @@ public:
         return myState.myPos;
     }
 
-    /** @brief Get the vehicle's position relative to the given lan
+    /** @brief Get the vehicle's front position relative to the given lane
+     * @return The front position of the vehicle (in m from the given lane's begin)
+     */
+    SUMOReal getPositionOnLane(const MSLane* lane) const;
+
+    /** @brief Get the vehicle's position relative to the given lane
      * @return The back position of the vehicle (in m from the given lane's begin)
      */
     SUMOReal getBackPositionOnLane(const MSLane* lane) const;

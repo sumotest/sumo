@@ -182,8 +182,7 @@ MSLaneChanger::findCandidate() {
         }
         assert(veh(ce)  != 0);
         assert(veh(max) != 0);
-        if (veh(max)->isFrontOnLane(max->lane) 
-                && (veh(max)->getPositionOnLane() < veh(ce)->getPositionOnLane() || !veh(ce)->isFrontOnLane(ce->lane))) {
+        if (veh(max)->getPositionOnLane() < veh(ce)->getPositionOnLane()) {
             //std::cout << SIMTIME << " new max vehicle=" << veh(ce)->getID() << " pos=" << veh(ce)->getPositionOnLane() << " lane=" << ce->lane->getID() << " isFrontOnLane=" << veh(ce)->isFrontOnLane(ce->lane)  << " oldMaxPos=" << veh(max)->getPositionOnLane() << "\n";
             max = ce;
         }
@@ -221,7 +220,7 @@ MSLaneChanger::change() {
         int bla = 0;
     }
 #endif
-    if (vehicle->getLane() != (*myCandi).lane || vehicle->getLaneChangeModel().isChangingLanes()) {
+    if (vehicle->getLaneChangeModel().isChangingLanes()) {
         // vehicles shadows and changing vehicles are not eligible
         //if ((*myCandi).lane->getID() == "beg_1") std::cout << SIMTIME << " change on lane=" << (*myCandi).lane->getID() << " unchanged veh=" << vehicle->getID() << "\n";
         registerUnchanged(vehicle);
@@ -362,9 +361,7 @@ void
 MSLaneChanger::registerUnchanged(MSVehicle* vehicle) {
     myCandi->lane->myTmpVehicles.insert(myCandi->lane->myTmpVehicles.begin(), veh(myCandi));
     vehicle->getLaneChangeModel().unchanged();
-    if (vehicle->isFrontOnLane(myCandi->lane)) {
-        (myCandi)->dens += vehicle->getVehicleType().getLengthWithGap();
-    }
+    (myCandi)->dens += vehicle->getVehicleType().getLengthWithGap();
 }
 
 
@@ -391,6 +388,10 @@ MSLaneChanger::getRealThisLeader(const ChangerIt& target) const {
     MSVehicle* leader = target->lead;
     if (leader == 0) {
         MSLane* targetLane = target->lane;
+        if (targetLane->myPartialVehicles.size() > 0) {
+            MSVehicle* leader = targetLane->myPartialVehicles.front();
+            return std::pair<MSVehicle*, SUMOReal>(leader, leader->getBackPositionOnLane(targetLane) - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap());
+        }
         const std::vector<MSLane*>& bestLaneConts = veh(myCandi)->getBestLanesContinuation();
         MSLinkCont::const_iterator link = MSLane::succLinkSec(*veh(myCandi), 1, *targetLane, bestLaneConts);
         if (targetLane->isLinkEnd(link)) {
@@ -400,7 +401,7 @@ MSLaneChanger::getRealThisLeader(const ChangerIt& target) const {
         if (nextLane == 0) {
             return std::pair<MSVehicle*, SUMOReal>(static_cast<MSVehicle*>(0), -1);
         }
-        leader = nextLane->getLastVehicle();
+        leader = nextLane->getLastFullVehicle();
         if (leader == 0) {
             return std::pair<MSVehicle*, SUMOReal>(static_cast<MSVehicle*>(0), -1);
         }
@@ -432,6 +433,10 @@ MSLaneChanger::getRealLeader(const ChangerIt& target) const {
     }
     if (neighLead == 0) {
         MSLane* targetLane = target->lane;
+        if (targetLane->myPartialVehicles.size() > 0) {
+            MSVehicle* leader = targetLane->myPartialVehicles.front();
+            return std::pair<MSVehicle*, SUMOReal>(leader, leader->getBackPositionOnLane(targetLane) - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap());
+        }
         SUMOReal seen = myCandi->lane->getLength() - veh(myCandi)->getPositionOnLane();
         SUMOReal speed = veh(myCandi)->getSpeed();
         SUMOReal dist = veh(myCandi)->getCarFollowModel().brakeGap(speed) + veh(myCandi)->getVehicleType().getMinGap();

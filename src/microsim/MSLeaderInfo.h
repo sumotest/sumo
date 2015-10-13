@@ -55,7 +55,7 @@ class MSLane;
 class MSLeaderInfo {
 public:
     /// Constructor
-    MSLeaderInfo(SUMOReal width);
+    MSLeaderInfo(SUMOReal width, const MSVehicle* ego=0);
 
     /// Destructor
     virtual ~MSLeaderInfo();
@@ -92,8 +92,14 @@ private:
 
     std::vector<const MSVehicle*> myVehicles;
 
-    /// @brief the number of free sublanes
+    /// @brief the number of free sublanes 
+    // if an ego vehicle is given in the constructor, the number of free
+    // sublanes of those covered by ego
     int myFreeSublanes;
+
+    /// @brief borders of the ego vehicle for filtering of free sublanes
+    int egoRightMost;
+    int egoLeftMost;
 
 };
 

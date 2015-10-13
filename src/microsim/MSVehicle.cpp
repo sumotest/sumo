@@ -1239,9 +1239,10 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         v = MIN2(va, v);
         seenNonInternal += lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL ? 0 : lane->getLength();
         //gDebugFlag1 = getID() == "13";
-        ahead = lane->getLastVehicleInformation();
+        ahead = lane->getLastVehicleInformation(this);
         //gDebugFlag1 = false;
         seen += lane->getLength();
+        //if (getID() == "from3.5") std::cout << SIMTIME << " seen=" << seen << " includes lane=" << lane->getID() << " with length " << lane->getLength() << "\n";
         vLinkPass = MIN2(estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
@@ -1286,7 +1287,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
         vLinkPass = MIN2(vLinkPass, vsafeLeader);
 
         //std::cout << std::setprecision(10);
-        //if (getID() == "ego") std::cout 
+        //if (getID() == "from3.5") std::cout 
         //    << SIMTIME 
         //        << " veh=" << getID() 
         //        << " lead=" << leaderInfo.first->getID() 
@@ -1496,7 +1497,6 @@ MSVehicle::executeMove() {
     bool moved = false;
     std::string emergencyReason = " for unknown reasons";
     // move on lane(s)
-    const MSLane* oldLane = myLane;
     if (myState.myPos <= myLane->getLength()) {
         // we are staying at our lane
         //  there is no need to go over succeeding lanes
@@ -1592,7 +1592,7 @@ MSVehicle::executeMove() {
                 // do not put this vehicle into the lane that is currently being
                 // processed. But it into the buffer instead where it will be
                 // integrated later
-                leftLength -= (*i)->setPartialOccupation(this, (*i) == oldLane);
+                leftLength -= (*i)->setPartialOccupation(this);
                 ++i;
             }
             myState.myBackPos = -leftLength;
@@ -1641,6 +1641,12 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
         assert(false);
         return -NUMERICAL_EPS; // lane is fully occupied
     }
+}
+
+
+SUMOReal 
+MSVehicle::getPositionOnLane(const MSLane* lane) const {
+    return getBackPositionOnLane(lane) + getVehicleType().getLength();
 }
 
 
@@ -1718,7 +1724,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
                 continue;
             }
             approachedLane = item.myLink->getLane();
-            const MSVehicle* last = approachedLane->getLastVehicle();
+            const MSVehicle* last = approachedLane->getLastAnyVehicle();
             if (gDebugFlag1) std::cout 
                 << SIMTIME 
                     << " veh=" << getID() 
@@ -1730,7 +1736,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
                 item.availableSpace = seenSpace;
             } else {
                 if (last->signalSet(VEH_SIGNAL_BRAKELIGHT)) {
-                    const SUMOReal lastBrakeGap = last->getCarFollowModel().brakeGap(approachedLane->getLastVehicle()->getSpeed());
+                    const SUMOReal lastBrakeGap = last->getCarFollowModel().brakeGap(last->getSpeed());
                     const SUMOReal lastGap = last->getBackPositionOnLane(approachedLane) + lastBrakeGap - last->getSpeed() * last->getCarFollowModel().getHeadwayTime();
                     item.availableSpace = MAX2(seenSpace, seenSpace + lastGap);
                     seenSpace += getSpaceTillLastStanding(approachedLane, foundStopped);// - approachedLane->getBruttoVehLenSum() + approachedLane->getLength();
