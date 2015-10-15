@@ -1971,6 +1971,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
         myFurtherLanes.push_back(clane);
         leftLength -= (clane)->setPartialOccupation(this);
     }
+    myState.myBackPos = -leftLength;
 }
 
 

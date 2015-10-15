@@ -819,6 +819,15 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
     }
     const SUMOReal gap = victim->getBackPositionOnLane(this) - collider->getPositionOnLane() - collider->getVehicleType().getMinGap();
     if (gap < -NUMERICAL_EPS) {
+        //std::cout << SIMTIME
+        //    << " thisLane=" << getID()
+        //    << " victim=" << victim->getID()
+        //    << " victimLane=" << victim->getLane()->getID()
+        //    << " victimBackPos=" << victim->getBackPositionOnLane(this)
+        //    << " collider=" << collider->getID()
+        //    << " colliderLane=" << collider->getLane()->getID()
+        //    << " colliderPos=" << collider->getPositionOnLane(this)
+        //    << "\n";
         if (MSGlobals::gLateralResolution > 0 
                 && fabs(victim->getLateralPositionOnLane() - collider->getLateralPositionOnLane()) + NUMERICAL_EPS
                 > 0.5 * fabs(victim->getVehicleType().getWidth() + collider->getVehicleType().getWidth())) {
