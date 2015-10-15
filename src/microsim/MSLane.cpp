@@ -1311,19 +1311,18 @@ MSLane::getFollowerOnConsecutive(
         for (std::vector<MSLane::IncomingLaneInfo>::iterator i = toExamine.begin(); i != toExamine.end(); ++i) {
             MSLane* next = (*i).lane;
             dist = MAX2(dist, next->getMaximumBrakeDist() - backOffset);
-            MSVehicle* v = 0;
+            MSVehicle* v = next->getFirstAnyVehicle();
             SUMOReal agap = 0;
-            if (v == 0 && next->getFirstFullVehicle() != 0) {
-                v = next->getFirstAnyVehicle();
-                // XXX handle the case where v is a partial occupator
-                //
+            if (v != 0) {
                 // the front of v is already on divergent trajectory from the ego vehicle
                 // for which this method is called (in the context of MSLaneChanger).
                 // Therefore, technically v is not a follower but only an obstruction and
                 // the gap is not between the front of v and the back of ego
                 // but rather between the flank of v and the back of ego.
                 if (v->getLane() != next) {
-                    agap = (*i).length - next->getLength() + backOffset;
+                    agap = (*i).length - next->getLength() + backOffset 
+                        /// XXX dubious term. here for backwards compatibility
+                        - v->getVehicleType().getMinGap();
                     if (agap > 0) {
                         // Only if ego overlaps we treat v as if it were a real follower
                         // Otherwise we ignore it
