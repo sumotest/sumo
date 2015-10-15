@@ -1325,8 +1325,11 @@ MSLane::getFollowerOnConsecutive(
                         - v->getVehicleType().getMinGap();
                     if (agap > 0) {
                         // Only if ego overlaps we treat v as if it were a real follower
-                        // Otherwise we ignore it
-                        v = 0;
+                        // Otherwise we ignore it and look for another follower
+                        v = next->getFirstFullVehicle();
+                        if (v != 0) {
+                            agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                        }
                     }
                 } else {
                     agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
