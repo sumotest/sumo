@@ -955,7 +955,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "horizontal.20");
+    //gDebugFlag1 = (getID() == "XXI_Aprile_1_452");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1328,6 +1328,7 @@ MSVehicle::getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leader
 
 bool
 MSVehicle::executeMove() {
+    //gDebugFlag1 = (getID() == "XXI_Aprile_1_452");
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == getID()) {
         int bla = 0;
@@ -1445,6 +1446,7 @@ MSVehicle::executeMove() {
     bool braking = vSafe < getSpeed();
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
+    if (gDebugFlag1) std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << vNext << "\n";
 
     // vNext may be higher than vSafe without implying a bug:
     //  - when approaching a green light that suddenly switches to yellow
@@ -1630,6 +1632,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
             if (*i == lane) {
                 return -leftLength;
             }
+            ++i;
         }
         leftLength = getVehicleType().getLength() - myState.myPos;
         i = getLaneChangeModel().getShadowFurtherLanes().begin();
@@ -1726,16 +1729,31 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
             }
             approachedLane = item.myLink->getLane();
             const MSVehicle* last = approachedLane->getLastAnyVehicle();
-            if (gDebugFlag1) std::cout 
-                << SIMTIME 
-                    << " veh=" << getID() 
-                    << " approached=" << approachedLane->getID()
-                    << " last=" << Named::getIDSecure(last)
-                    << "\n";
             if (last == 0) {
                 seenSpace += approachedLane->getLength();
                 item.availableSpace = seenSpace;
+            } else if (!last->isFrontOnLane(approachedLane)) {
+                /// XXX backward compatibility: why should partial occupators be treated differently here?
+                /// XXX MAX2 redundant?
+                item.availableSpace = MAX2(seenSpace, seenSpace + last->getBackPositionOnLane(approachedLane) + last->getCarFollowModel().brakeGap(last->getSpeed()));
+                hadVehicle = true;
+                /// XXX spaceTillLastStanding should already be covered by getPartialOccupatorEnd()
+                seenSpace = seenSpace + getSpaceTillLastStanding(approachedLane, foundStopped);// - approachedLane->getBruttoVehLenSum() + approachedLane->getLength();
+                /// XXX why not check BRAKELIGHT?
+                if (last->myHaveToWaitOnNextLink) {
+                    foundStopped = true;
+                }
+                if (gDebugFlag1) std::cout 
+                    << SIMTIME 
+                        << " veh=" << getID() 
+                        << " approached=" << approachedLane->getID()
+                        << " lastPoc=" << last->getID()
+                        << " avail=" << item.availableSpace
+                        << " seenSpace=" << seenSpace
+                        << " foundStopped=" << foundStopped
+                        << "\n";
             } else {
+
                 if (last->signalSet(VEH_SIGNAL_BRAKELIGHT)) {
                     const SUMOReal lastBrakeGap = last->getCarFollowModel().brakeGap(last->getSpeed());
                     const SUMOReal lastGap = last->getBackPositionOnLane(approachedLane) + lastBrakeGap - last->getSpeed() * last->getCarFollowModel().getHeadwayTime()
@@ -1754,6 +1772,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
                 if (gDebugFlag1) std::cout 
                     << SIMTIME 
                         << " veh=" << getID() 
+                        << " approached=" << approachedLane->getID()
                         << " last=" << last->getID()
                         << " avail=" << item.availableSpace
                         << " seenSpace=" << seenSpace
