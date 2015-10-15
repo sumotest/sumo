@@ -460,7 +460,7 @@ MSLane::insertVehicle(MSVehicle& veh) {
                 pos = RandHelper::rand(getLength());
                 if (pars.departPosLatProcedure == DEPART_POSLAT_RANDOM ||
                         pars.departPosLatProcedure == DEPART_POSLAT_RANDOM_FREE) {
-                    posLat = RandHelper::rand(getWidth()) - getWidth() * 0.5;
+                    posLat = RandHelper::rand(getWidth() - veh.getVehicleType().getWidth()) - getWidth() * 0.5 + veh.getVehicleType().getWidth() * 0.5;
                 }
                 if (isInsertionSuccess(&veh, speed, pos, posLat, patchSpeed, MSMoveReminder::NOTIFICATION_DEPARTED)) {
                     return true;
@@ -490,7 +490,7 @@ MSLane::insertVehicle(MSVehicle& veh) {
             posLat = pars.departPosLat;
             break;
         case DEPART_POSLAT_RANDOM:
-            posLat = RandHelper::rand(getWidth()) - getWidth() * 0.5;
+            posLat = RandHelper::rand(getWidth() - veh.getVehicleType().getWidth()) - getWidth() * 0.5 + veh.getVehicleType().getWidth() * 0.5;
             break;
         case DEPART_POSLAT_RANDOM_FREE: {
             for (unsigned int i = 0; i < 10; i++) {
