@@ -69,11 +69,13 @@ public:
      * This method gets the information about the surrounding vehicles
      * and whether another lane may be more preferable */
     int wantsChangeSublane(
-        int laneOffset,
-        MSAbstractLaneChangeModel::MSLCMessager& msgPass, int blocked,
-        const std::pair<MSVehicle*, SUMOReal>& leader,
-        const std::pair<MSVehicle*, SUMOReal>& neighLead,
-        const std::pair<MSVehicle*, SUMOReal>& neighFollow,
+        int laneOffset, int blocked,
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& neighLeaders,
+        const MSLeaderDistanceInfo& neighFollowers,
+        const MSLeaderDistanceInfo& neighBlockers,
         const MSLane& neighLane,
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
@@ -104,12 +106,14 @@ public:
 protected:
 
     /// @brief helper function for doing the actual work
-    int _wantsChange(
-        int laneOffset,
-        MSAbstractLaneChangeModel::MSLCMessager& msgPass, int blocked,
-        const std::pair<MSVehicle*, SUMOReal>& leader,
-        const std::pair<MSVehicle*, SUMOReal>& neighLead,
-        const std::pair<MSVehicle*, SUMOReal>& neighFollow,
+    int _wantsChangeSublane(
+        int laneOffset, int blocked,
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& neighLeaders,
+        const MSLeaderDistanceInfo& neighFollowers,
+        const MSLeaderDistanceInfo& neighBlockers,
         const MSLane& neighLane,
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,

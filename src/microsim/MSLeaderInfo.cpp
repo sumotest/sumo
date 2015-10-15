@@ -46,14 +46,15 @@
 
 
 // ===========================================================================
-// member method definitions
+// MSLeaderInfo member method definitions
 // ===========================================================================
 MSLeaderInfo::MSLeaderInfo(SUMOReal width, const MSVehicle* ego) : 
     myWidth(width),
     myVehicles(MAX2(1, int(ceil(width / MSGlobals::gLateralResolution))), (MSVehicle*)0),
     myFreeSublanes((int)myVehicles.size()),
     egoRightMost(-1),
-    egoLeftMost(-1)
+    egoLeftMost(-1),
+    myHasVehicles(false)
 { 
     if (ego != 0) {
         getSubLanes(ego, egoRightMost, egoLeftMost);
@@ -77,6 +78,7 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
         if (!beyond || myVehicles[0] == 0) {
             myVehicles[0] = veh;
             myFreeSublanes = 0;
+            myHasVehicles = true;
         }
         return myFreeSublanes;
     } 
@@ -91,6 +93,7 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
                 && (!beyond || myVehicles[subLane] == 0)) {
             myVehicles[subLane] = veh;
             myFreeSublanes--;
+            myHasVehicles = true;
         }
     }
     return myFreeSublanes;
@@ -122,6 +125,108 @@ MSLeaderInfo::operator[](int sublane) const {
     return myVehicles[sublane];
 }
 
+
+std::string
+MSLeaderInfo::toString() const {
+    std::ostringstream oss;
+    oss.setf(std::ios::fixed , std::ios::floatfield);
+    oss << std::setprecision(2);
+    for (int i = 0; i < (int)myVehicles.size(); ++i) {
+        oss << Named::getIDSecure(myVehicles[i]);
+        if (i < (int)myVehicles.size() - 1) {
+            oss << ", ";
+        }
+    }
+    return oss.str();
+}
+
+
+bool
+MSLeaderInfo::hasStoppedVehicle() const {
+    if (!myHasVehicles) {
+        return false;
+    }
+    for (int i = 0; i < (int)myVehicles.size(); ++i) {
+        if (myVehicles[0] != 0 && myVehicles[0]->isStopped()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// ===========================================================================
+// MSLeaderDistanceInfo member method definitions
+// ===========================================================================
+
+
+MSLeaderDistanceInfo::MSLeaderDistanceInfo(SUMOReal width, const MSVehicle* ego, bool recordLeaders) : 
+    MSLeaderInfo(width, ego),
+    myRecordLeaders(recordLeaders),
+    myDistances(myVehicles.size(), std::numeric_limits<SUMOReal>::max())
+{ }
+
+
+MSLeaderDistanceInfo::~MSLeaderDistanceInfo() { }
+
+
+int 
+MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist) {
+    if (veh == 0) {
+        return myFreeSublanes;
+    }
+    dist += myRecordLeaders 
+        ? dist + veh->getBackPositionOnLane()
+        : dist + veh->getPositionOnLane() + veh->getVehicleType().getMinGap();
+    if (myVehicles.size() == 1) {
+        // speedup for the simple case
+        if (dist < myDistances[0]) {
+            myVehicles[0] = veh;
+            myDistances[0] = dist;
+            myFreeSublanes = 0;
+            myHasVehicles = true;
+        }
+        return myFreeSublanes;
+    } 
+    // map center-line based coordinates into [0, myWidth] coordinates
+    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
+    const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
+    const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
+    const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
+    for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
+        const int subLane = (int)floor(posLat / MSGlobals::gLateralResolution);
+        if ((egoRightMost < 0 || (egoRightMost <= subLane && subLane <= egoLeftMost))
+                && dist < myDistances[0]) {
+            myVehicles[subLane] = veh;
+            myDistances[subLane] = dist;
+            myFreeSublanes--;
+            myHasVehicles = true;
+        }
+    }
+    return myFreeSublanes;
+}
+
+
+const std::pair<const MSVehicle*, SUMOReal> 
+MSLeaderDistanceInfo::operator[](int sublane) const {
+    assert(sublane >= 0);
+    assert(sublane < myVehicles.size());
+    return std::make_pair(myVehicles[sublane], myDistances[sublane]);
+}
+
+
+std::string
+MSLeaderDistanceInfo::toString() const {
+    std::ostringstream oss;
+    oss.setf(std::ios::fixed , std::ios::floatfield);
+    oss << std::setprecision(2);
+    for (int i = 0; i < (int)myVehicles.size(); ++i) {
+        oss << Named::getIDSecure(myVehicles[i]) << ":" << (myVehicles[i] == 0 ? "inf" : myDistances[i];
+        if (i < (int)myVehicles.size() - 1) {
+            oss << ", ";
+        }
+    }
+    return oss.str();
+}
 
 /****************************************************************************/
 

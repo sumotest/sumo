@@ -119,17 +119,18 @@ MSLCM_SL2015::~MSLCM_SL2015() {
 
 int
 MSLCM_SL2015::wantsChangeSublane(
-    int laneOffset,
-    MSAbstractLaneChangeModel::MSLCMessager& msgPass,
-    int blocked,
-    const std::pair<MSVehicle*, SUMOReal>& leader,
-    const std::pair<MSVehicle*, SUMOReal>& neighLead,
-    const std::pair<MSVehicle*, SUMOReal>& neighFollow,
-    const MSLane& neighLane,
-    const std::vector<MSVehicle::LaneQ>& preb,
-    MSVehicle** lastBlocked,
-    MSVehicle** firstBlocked,
-    SUMOReal& latDist) {
+        int laneOffset, int blocked,
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& neighLeaders,
+        const MSLeaderDistanceInfo& neighFollowers,
+        const MSLeaderDistanceInfo& neighBlockers,
+        const MSLane& neighLane,
+        const std::vector<MSVehicle::LaneQ>& preb,
+        MSVehicle** lastBlocked,
+        MSVehicle** firstBlocked,
+        SUMOReal& latDist) {
 
     gDebugFlag2 = DEBUG_COND;
 
@@ -143,7 +144,11 @@ MSLCM_SL2015::wantsChangeSublane(
                   << "\n";
     }
 
-    const int result = _wantsChange(laneOffset, msgPass, blocked, leader, neighLead, neighFollow, neighLane, preb, lastBlocked, firstBlocked, latDist);
+    const int result = _wantsChangeSublane(laneOffset, blocked,
+            leaders, followers, blockers,
+            neighLeaders, neighFollowers, neighBlockers,
+            neighLane, preb, 
+            lastBlocked, firstBlocked, latDist);
     if (gDebugFlag2) {
         if (result & LCA_WANTS_LANECHANGE) {
             std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
@@ -702,18 +707,19 @@ MSLCM_SL2015::changed(int dir) {
 
 
 int
-MSLCM_SL2015::_wantsChange(
-    int laneOffset,
-    MSAbstractLaneChangeModel::MSLCMessager& msgPass,
-    int blocked,
-    const std::pair<MSVehicle*, SUMOReal>& leader,
-    const std::pair<MSVehicle*, SUMOReal>& neighLead,
-    const std::pair<MSVehicle*, SUMOReal>& neighFollow,
-    const MSLane& neighLane,
-    const std::vector<MSVehicle::LaneQ>& preb,
-    MSVehicle** lastBlocked,
-    MSVehicle** firstBlocked,
-    SUMOReal& latDist) {
+MSLCM_SL2015::_wantsChangeSublane(
+        int laneOffset, int blocked,
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& neighLeaders,
+        const MSLeaderDistanceInfo& neighFollowers,
+        const MSLeaderDistanceInfo& neighBlockers,
+        const MSLane& neighLane,
+        const std::vector<MSVehicle::LaneQ>& preb,
+        MSVehicle** lastBlocked,
+        MSVehicle** firstBlocked,
+        SUMOReal& latDist) {
 
     const SUMOTime currentTime = MSNet::getInstance()->getCurrentTimeStep();
     // compute bestLaneOffset
@@ -787,10 +793,12 @@ MSLCM_SL2015::_wantsChange(
                   << " veh=" << myVehicle.getID()
                   << " firstBlocked=" << Named::getIDSecure(*firstBlocked)
                   << " lastBlocked=" << Named::getIDSecure(*lastBlocked)
-                  << " neighLead=" << Named::getIDSecure(neighLead.first)
-                  << " neighLeadGap=" << neighLead.second
-                  << " neighFollow=" << Named::getIDSecure(neighFollow.first)
-                  << " neighFollowGap=" << neighFollow.second
+                  << " leaders=" << leaders.toString()
+                  << " followers=" << followers.toString()
+                  << " blockers=" << blockers.toString()
+                  << " neighLeaders=" << neighLeaders.toString()
+                  << " neighFollowers=" << neighFollowers.toString()
+                  << " neighBlockers=" << neighBlockers.toString()
                   << " expectedSpeeds=" << toString(myExpectedSublaneSpeeds)
                   << "\n";
     }
@@ -830,10 +838,11 @@ MSLCM_SL2015::_wantsChange(
     laDist += myVehicle.getVehicleType().getLengthWithGap() * (SUMOReal) 2.;
 
     // react to a stopped leader on the current lane
-    if (bestLaneOffset == 0 && leader.first != 0 && leader.first->isStopped()) {
+    if (bestLaneOffset == 0 && leaders.hasStoppedVehicle()) {
         // value is doubled for the check since we change back and forth
-        laDist = 0.5 * (myVehicle.getVehicleType().getLengthWithGap()
-                        + leader.first->getVehicleType().getLengthWithGap());
+        // laDist = 0.5 * (myVehicle.getVehicleType().getLengthWithGap() + leader.first->getVehicleType().getLengthWithGap());
+        // XXX determine lenght of longest stopped vehicle
+        laDist = myVehicle.getVehicleType().getLengthWithGap();
     }
 
     // free space that is available for changing

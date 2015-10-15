@@ -308,6 +308,12 @@ public:
      */
     SUMOReal getBackPositionOnLane(const MSLane* lane) const;
 
+    /** @brief Get the vehicle's position relative to its current lane
+     * @return The back position of the vehicle (in m from the current lane's begin)
+     */
+    SUMOReal getBackPositionOnLane() const {
+        return getBackPositionOnLane(myLane);
+    }
 
     /** @brief Get the vehicle's lateral position on the lane
      * @return The lateral position of the vehicle (in m relative to the

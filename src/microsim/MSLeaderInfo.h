@@ -65,7 +65,7 @@ public:
      * @param[in] beyond Whether the vehicle is beyond the existing leaders (and thus may be shadowed by them)
      * @return The number of free sublanes
      */
-    int addLeader(const MSVehicle* veh, bool beyond);
+    virtual int addLeader(const MSVehicle* veh, bool beyond);
 
     /* @brief adds this vehicle as a leader in the appropriate sublanes
      * @param[in] veh The vehicle to check
@@ -84,7 +84,18 @@ public:
     int numFreeSublanes() const {
         return myFreeSublanes;
     }
-private:
+
+    bool hasVehicles() const {
+        return myHasVehicles;
+    }
+
+    /// @brief whether a stopped vehicle is leader
+    bool hasStoppedVehicle() const;
+
+    /// @brief print a debugging representation
+    virtual std::string toString() const;
+
+protected:
 
     /// @brief the width of the lane to which this instance applies
     // @note: not const to simplify assignment
@@ -101,8 +112,43 @@ private:
     int egoRightMost;
     int egoLeftMost;
 
+    bool myHasVehicles;
+
 };
 
+
+/// @brief saves leader/follower vehicles and their distances relative to an ego vehicle
+class MSLeaderDistanceInfo : public MSLeaderInfo {
+public:
+    /// Constructor
+    MSLeaderDistanceInfo(SUMOReal width, const MSVehicle* ego, bool recordLeaders=true);
+
+    /// Destructor
+    virtual ~MSLeaderDistanceInfo();
+
+    /* @brief adds this vehicle as a leader in the appropriate sublanes
+     * @param[in] veh The vehicle to add
+     * @param[in] seen The distance from the ego-front+minGap to the start of the lane of veh (myRecordLeaders=true) 
+     *   or from the back of ego to start of the lane of veh (myRecordLeaders=false)
+     * @return The number of free sublanes
+     */
+    int addLeader(const MSVehicle* veh, SUMOReal dist);
+
+    /// @brief return the vehicle and its distance for the given sublane
+    const std::pair<const MSVehicle*, SUMOReal> operator[](int sublane) const;
+
+    /// @brief print a debugging representation
+    std::string toString() const;
+
+private:
+
+    /// @brief whether we are recording leaders of followers
+    // @note: not const to simplify assignment
+    bool myRecordLeaders;
+
+    std::vector<SUMOReal> myDistances;
+
+};
 
 #endif
 

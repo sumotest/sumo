@@ -168,39 +168,30 @@ MSLaneChangerSublane::checkChangeSublane(
         const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb,
         SUMOReal& latDist) const {
-    std::pair<MSVehicle* const, SUMOReal> neighLead;
-    std::pair<MSVehicle* const, SUMOReal> neighFollow;
+
+    MSLeaderDistanceInfo neighLeaders;
+    MSLeaderDistanceInfo neighFollowers;
+    MSLeaderDistanceInfo neighBlockers;
+    MSLeaderDistanceInfo leaders;
+    MSLeaderDistanceInfo followers;
+    MSLeaderDistanceInfo blockers;
     MSVehicle* vehicle = veh(myCandi);
     ChangerIt target = myCandi + laneOffset;
     int blocked = 0;
     int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
     int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
+
     // overlap
-    if (neighFollow.first != 0 && neighFollow.second < 0) {
-        blocked |= (blockedByFollower | LCA_OVERLAPPING);
-    }
-    if (neighLead.first != 0 && neighLead.second < 0) {
-        blocked |= (blockedByLeader | LCA_OVERLAPPING);
-    }
-    // safe back gap
-    if (neighFollow.first != 0) {
-        // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
-        if (neighFollow.second < neighFollow.first->getCarFollowModel().getSecureGap(neighFollow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
-            blocked |= blockedByFollower;
-        }
+    if (neighBlockers.hasVehicles() || blockers.hasVehicles()) {
+        blocked |= LCA_OVERLAPPING;
     }
 
-    // safe front gap
-    if (neighLead.first != 0) {
-        // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
-        if (neighLead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())) {
-            blocked |= blockedByLeader;
-        }
-    }
-
-    MSAbstractLaneChangeModel::MSLCMessager msg(leader.first, neighLead.first, neighFollow.first);
     int state = blocked | vehicle->getLaneChangeModel().wantsChangeSublane(
-                    laneOffset, msg, blocked, leader, neighLead, neighFollow, *(target->lane), preb, &(myCandi->lastBlocked), &(myCandi->firstBlocked), latDist);
+                    laneOffset, blocked,
+                    leaders, followers, blockers,
+                    neighLeaders, neighFollowers, neighBlockers,
+                    *(target->lane), preb, 
+                    &(myCandi->lastBlocked), &(myCandi->firstBlocked), latDist);
 
     // XXX
     // do are more carefull (but expensive) check to ensure that a
