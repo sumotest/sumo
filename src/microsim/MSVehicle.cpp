@@ -955,7 +955,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "ego");
+    //gDebugFlag1 = (getID() == "horizontal.20");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1287,19 +1287,20 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
         vLinkPass = MIN2(vLinkPass, vsafeLeader);
 
         //std::cout << std::setprecision(10);
-        //if (getID() == "from3.5") std::cout 
-        //    << SIMTIME 
-        //        << " veh=" << getID() 
-        //        << " lead=" << leaderInfo.first->getID() 
-        //        << " gap=" << leaderInfo.second
-        //        << " leadLane=" << leaderInfo.first->getLane()->getID() 
-        //        << " predPos=" << leaderInfo.first->getPositionOnLane() 
-        //        << " seen=" << seen 
-        //        << " lane=" << lane->getID() 
-        //        << " myLane=" << myLane->getID() 
-        //        << " v=" << v
-        //        << " vLinkPass=" << vLinkPass
-        //        << "\n";
+        if (gDebugFlag1) std::cout 
+            << SIMTIME 
+                << " veh=" << getID() 
+                << " lead=" << leaderInfo.first->getID() 
+                << " gap=" << leaderInfo.second
+                << " leadLane=" << leaderInfo.first->getLane()->getID() 
+                << " predPos=" << leaderInfo.first->getPositionOnLane() 
+                << " seen=" << seen 
+                << " lane=" << lane->getID() 
+                << " myLane=" << myLane->getID() 
+                << " dTC=" << distToCrossing
+                << " v=" << v
+                << " vLinkPass=" << vLinkPass
+                << "\n";
     }
 }
 
@@ -1737,7 +1738,9 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
             } else {
                 if (last->signalSet(VEH_SIGNAL_BRAKELIGHT)) {
                     const SUMOReal lastBrakeGap = last->getCarFollowModel().brakeGap(last->getSpeed());
-                    const SUMOReal lastGap = last->getBackPositionOnLane(approachedLane) + lastBrakeGap - last->getSpeed() * last->getCarFollowModel().getHeadwayTime();
+                    const SUMOReal lastGap = last->getBackPositionOnLane(approachedLane) + lastBrakeGap - last->getSpeed() * last->getCarFollowModel().getHeadwayTime()
+                        // gap of last up to the next intersection
+                        - last->getVehicleType().getMinGap();
                     item.availableSpace = MAX2(seenSpace, seenSpace + lastGap);
                     seenSpace += getSpaceTillLastStanding(approachedLane, foundStopped);// - approachedLane->getBruttoVehLenSum() + approachedLane->getLength();
                 } else {
