@@ -84,12 +84,9 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
         return myFreeSublanes;
     } 
     // map center-line based coordinates into [0, myWidth] coordinates
-    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
-    const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
-    const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
-    const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
-    for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
-        const int sublane = (int)floor(posLat / MSGlobals::gLateralResolution);
+    int rightmost, leftmost;
+    getSubLanes(veh, rightmost, leftmost);
+    for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
         if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
                 && (!beyond || myVehicles[sublane] == 0)) {
             myVehicles[sublane] = veh;
@@ -211,13 +208,9 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, int sublane
         }
         return myFreeSublanes;
     }
-    // map center-line based coordinates into [0, myWidth] coordinates
-    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
-    const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
-    const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
-    const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
-    for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
-        sublane = (int)floor(posLat / MSGlobals::gLateralResolution);
+    int rightmost, leftmost;
+    getSubLanes(veh, rightmost, leftmost);
+    for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
         if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
                 && dist < myDistances[sublane]) {
             myVehicles[sublane] = veh;
