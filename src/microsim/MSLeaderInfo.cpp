@@ -33,6 +33,7 @@
 #include <math.h>
 #include <microsim/MSGlobals.h>
 #include <microsim/MSVehicle.h>
+#include <microsim/MSNet.h>
 #include "MSLeaderInfo.h"
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -88,15 +89,26 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
     const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
-        const int subLane = (int)floor(posLat / MSGlobals::gLateralResolution);
-        if ((egoRightMost < 0 || (egoRightMost <= subLane && subLane <= egoLeftMost))
-                && (!beyond || myVehicles[subLane] == 0)) {
-            myVehicles[subLane] = veh;
+        const int sublane = (int)floor(posLat / MSGlobals::gLateralResolution);
+        if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
+                && (!beyond || myVehicles[sublane] == 0)) {
+            myVehicles[sublane] = veh;
             myFreeSublanes--;
             myHasVehicles = true;
         }
     }
     return myFreeSublanes;
+}
+
+
+void 
+MSLeaderInfo::clear() {
+    myVehicles.assign(myVehicles.size(), (MSVehicle*)0);
+    myFreeSublanes = (int)myVehicles.size();
+    if (egoRightMost >= 0) {
+        myFreeSublanes -= egoRightMost;
+        myFreeSublanes -= (int)myVehicles.size() - 1 - egoLeftMost;
+    }
 }
 
 
@@ -171,12 +183,15 @@ MSLeaderDistanceInfo::~MSLeaderDistanceInfo() { }
 
 int 
 MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist) {
+    if (SIMTIME == 31 && gDebugFlag1 && veh != 0 && veh->getID() == "cars.8") {
+        std::cout << " BREAKPOINT\n";
+    }
     if (veh == 0) {
         return myFreeSublanes;
     }
-    dist += myRecordLeaders 
+    dist = myRecordLeaders 
         ? dist + veh->getBackPositionOnLane()
-        : dist + veh->getPositionOnLane() + veh->getVehicleType().getMinGap();
+        : dist - (veh->getPositionOnLane() + veh->getVehicleType().getMinGap());
     if (myVehicles.size() == 1) {
         // speedup for the simple case
         if (dist < myDistances[0]) {
@@ -193,16 +208,23 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist) {
     const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
-        const int subLane = (int)floor(posLat / MSGlobals::gLateralResolution);
-        if ((egoRightMost < 0 || (egoRightMost <= subLane && subLane <= egoLeftMost))
-                && dist < myDistances[0]) {
-            myVehicles[subLane] = veh;
-            myDistances[subLane] = dist;
+        const int sublane = (int)floor(posLat / MSGlobals::gLateralResolution);
+        if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
+                && dist < myDistances[sublane]) {
+            myVehicles[sublane] = veh;
+            myDistances[sublane] = dist;
             myFreeSublanes--;
             myHasVehicles = true;
         }
     }
     return myFreeSublanes;
+}
+
+
+void 
+MSLeaderDistanceInfo::clear() {
+    MSLeaderInfo::clear();
+    myDistances.assign(myVehicles.size(), std::numeric_limits<SUMOReal>::max());
 }
 
 

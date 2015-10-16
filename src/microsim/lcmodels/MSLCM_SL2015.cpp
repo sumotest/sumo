@@ -1384,7 +1384,10 @@ MSLCM_SL2015::updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& p
             // lane allowed, find potential leaders and compute safe speeds
             const MSLane::VehCont& vehicles = lane->getVehiclesSecure();
             for (int i = (int)vehicles.size() - 1; i > 0; --i) {
-                if (vehicles[i]->getPositionOnLane() > myVehicle.getPositionOnLane()) {
+                if (vehicles[i]->getPositionOnLane() > myVehicle.getPositionOnLane()
+                        // leader must not have changed yet
+                        // XXX should it appear on its new lane?
+                        && vehicles[i]->getLane() == lane) {
                     ahead.addLeader(vehicles[i], false);
                 }
             }

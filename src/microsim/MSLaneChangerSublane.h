@@ -58,6 +58,9 @@ protected:
     /** Find a new candidate and try to change it. */
     virtual bool change();
 
+    /** After the possible change, update the changer. */
+    virtual void updateChanger(bool vehHasChanged);
+
     /** @brief check whether sub-lane changing in the given direction is desirable
      * and possible
      * @param[in] laneOffset The direction in which changing should be checked
@@ -74,6 +77,8 @@ protected:
     ///  @brief change by the specified amount
     void startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist);
 
+    /// @brief get leaders for ego on the given lane
+    MSLeaderDistanceInfo getLeaders(const ChangerIt& target, const MSVehicle* ego) const; 
 
 private:
     /// Default constructor.

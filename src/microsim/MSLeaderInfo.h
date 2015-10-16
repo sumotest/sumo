@@ -69,6 +69,9 @@ public:
      */
     virtual int addLeader(const MSVehicle* veh, bool beyond);
 
+    /// @brief discard all information
+    virtual void clear();
+
     /* @brief adds this vehicle as a leader in the appropriate sublanes
      * @param[in] veh The vehicle to check
      * @param[out] rightmost The rightmost sublane occupied by veh 
@@ -135,6 +138,9 @@ public:
      * @return The number of free sublanes
      */
     int addLeader(const MSVehicle* veh, SUMOReal dist);
+
+    /// @brief discard all information
+    void clear();
 
     /// @brief return the vehicle and its distance for the given sublane
     CLeaderDist operator[](int sublane) const;

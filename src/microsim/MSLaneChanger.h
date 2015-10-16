@@ -72,7 +72,7 @@ public:
 
         ChangeElem(MSLane* _lane);
 
-        /// the vehicle following the current vehicle (@todo check: appeas to unused)
+        /// the vehicle following the current vehicle (@todo check: appears to unused)
         MSVehicle*                follow;
         /// the vehicle in front of the current vehicle
         MSVehicle*                lead;
@@ -146,7 +146,7 @@ protected:
     void registerUnchanged(MSVehicle* vehicle);
 
     /** After the possible change, update the changer. */
-    void updateChanger(bool vehHasChanged);
+    virtual void updateChanger(bool vehHasChanged);
 
     /** During lane-change a temporary vehicle container is filled within
         the lanes (bad pratice to modify foreign members, I know). Swap

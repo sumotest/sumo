@@ -844,6 +844,7 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
                 + victim->getID() + "', lane='" + getID() + "', gap=" + toString(gap)
                 + ", time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " stage=" + stage + ".");
         MSNet::getInstance()->getVehicleControl().registerCollision();
+        //return false; // no teleport after collision
         myBruttoVehicleLengthSum -= collider->getVehicleType().getLengthWithGap();
         myNettoVehicleLengthSum -= collider->getVehicleType().getLength();
         MSVehicleTransfer::getInstance()->add(timestep, collider);

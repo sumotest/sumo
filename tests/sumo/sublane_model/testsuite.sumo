@@ -1,2 +1,5 @@
 # vehicles overtaking a bicycle on a single-lane road
 overtaking_bicycle
+
+# vehicle behavior on a single edge with 2 lanes
+1edge_2lanes
