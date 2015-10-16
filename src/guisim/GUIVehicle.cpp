@@ -299,18 +299,23 @@ GUIVehicle::drawAction_drawVehicleBlinker(SUMOReal length) const {
 
 
 inline void
-GUIVehicle::drawAction_drawVehicleBrakeLight(SUMOReal length) const {
+GUIVehicle::drawAction_drawVehicleBrakeLight(SUMOReal length, bool onlyOne) const {
     if (!signalSet(MSVehicle::VEH_SIGNAL_BRAKELIGHT)) {
         return;
     }
     glColor3f(1.f, .2f, 0);
     glPushMatrix();
-    glTranslated(-getVehicleType().getWidth() * 0.5, length, -0.1);
-    GLHelper::drawFilledCircle(.5, 6);
-    glPopMatrix();
-    glPushMatrix();
-    glTranslated(getVehicleType().getWidth() * 0.5, length, -0.1);
-    GLHelper::drawFilledCircle(.5, 6);
+    if (onlyOne) {
+        glTranslated(0, length, -0.1);
+        GLHelper::drawFilledCircle(.5, 6);
+    } else {
+        glTranslated(-getVehicleType().getWidth() * 0.5, length, -0.1);
+        GLHelper::drawFilledCircle(.5, 6);
+        glPopMatrix();
+        glPushMatrix();
+        glTranslated(getVehicleType().getWidth() * 0.5, length, -0.1);
+        GLHelper::drawFilledCircle(.5, 6);
+    }
     glPopMatrix();
 }
 
