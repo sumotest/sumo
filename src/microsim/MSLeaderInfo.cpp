@@ -182,7 +182,7 @@ MSLeaderDistanceInfo::~MSLeaderDistanceInfo() { }
 
 
 int 
-MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist) {
+MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, int sublane) {
     if (SIMTIME == 31 && gDebugFlag1 && veh != 0 && veh->getID() == "cars.8") {
         std::cout << " BREAKPOINT\n";
     }
@@ -201,14 +201,23 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist) {
             myHasVehicles = true;
         }
         return myFreeSublanes;
-    } 
+    } else if (sublane >= 0) {
+        // sublane is already given
+        if (dist < myDistances[sublane]) {
+            myVehicles[sublane] = veh;
+            myDistances[sublane] = dist;
+            myFreeSublanes--;
+            myHasVehicles = true;
+        }
+        return myFreeSublanes;
+    }
     // map center-line based coordinates into [0, myWidth] coordinates
     const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
     const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
     const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
     for (SUMOReal posLat = rightVehSide; posLat < leftVehSide; posLat+= MSGlobals::gLateralResolution) {
-        const int sublane = (int)floor(posLat / MSGlobals::gLateralResolution);
+        sublane = (int)floor(posLat / MSGlobals::gLateralResolution);
         if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
                 && dist < myDistances[sublane]) {
             myVehicles[sublane] = veh;

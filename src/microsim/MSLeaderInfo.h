@@ -135,9 +135,10 @@ public:
      * @param[in] veh The vehicle to add
      * @param[in] seen The distance from the ego-front+minGap to the start of the lane of veh (myRecordLeaders=true) 
      *   or from the back of ego to start of the lane of veh (myRecordLeaders=false)
+     * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
      * @return The number of free sublanes
      */
-    int addLeader(const MSVehicle* veh, SUMOReal dist);
+    int addLeader(const MSVehicle* veh, SUMOReal dist, int sublane=-1);
 
     /// @brief discard all information
     void clear();
