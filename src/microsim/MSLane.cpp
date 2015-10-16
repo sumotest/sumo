@@ -770,7 +770,7 @@ MSLane::planMovements(SUMOTime t) {
             ahead.addLeader(*vehPart, false);
             ++vehPart;
         }
-        //std::cout << "   plan move for: " << (*veh)->getID() << "\n";
+        //std::cout << "   plan move for: " << (*veh)->getID() << " ahead=" << ahead.toString() << "\n";
         (*veh)->planMove(t, ahead, cumulatedVehLength);
         cumulatedVehLength += (*veh)->getVehicleType().getLengthWithGap();
         ahead.addLeader(*veh, false);
@@ -1822,6 +1822,24 @@ MSLane::loadState(std::vector<std::string>& vehIds, MSVehicleControl& vc) {
         incorporateVehicle(v, v->getPositionOnLane(), v->getSpeed(), v->getLateralPositionOnLane(), myVehicles.end(),
                            MSMoveReminder::NOTIFICATION_JUNCTION);
     }
+}
+
+
+MSLeaderDistanceInfo
+MSLane::getFollowersOnConsecutive(const MSVehicle* ego) const {
+    // get the follower vehicle on the lane to change to
+    if (gDebugFlag1) std::cout << SIMTIME << " getFollowers lane=" << getID() << " ego=" << ego->getID() << "\n";
+    MSLeaderDistanceInfo result(myWidth, ego, false);
+    const SUMOReal dist = -ego->getBackPositionOnLane();
+    /// XXX iterate in reverse and abort when there are no more freeSublanes
+    for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
+        const MSVehicle* veh = *last;
+        if (veh->getPositionOnLane() < ego->getPositionOnLane()) {
+            result.addLeader(veh, dist);
+        }
+    }
+    /// XXX traverse backwards if necessary
+    return result;
 }
 
 

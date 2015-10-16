@@ -955,7 +955,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "XXI_Aprile_1_452");
+    gDebugFlag1 = (getID() == "disabled");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -963,6 +963,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
             << " veh=" << getID()
             << " lane=" << myLane->getID() 
             << " pos=" << getPositionOnLane()
+            << " pos=" << getLateralPositionOnLane()
             << " speed=" << getSpeed()
             << "\n";
     }
@@ -1257,7 +1258,12 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
     int rightmost;
     int leftmost;
     ahead.getSubLanes(this, rightmost, leftmost);
-    //std::cout << SIMTIME << " veh=" << getID() << " rm=" << rightmost << " lm=" << leftmost << "\n";
+    if (gDebugFlag1) std::cout << SIMTIME 
+        << " adaptToLeaders veh=" << getID() 
+            << " rm=" << rightmost 
+            << " lm=" << leftmost 
+            << " ahead=" << ahead.toString()
+            << "\n";
     for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
         const MSVehicle* pred = ahead[sublane];
         if (pred != 0) {
@@ -1266,7 +1272,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
             const SUMOReal gap = (lane == myLane
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
                     : predBack + seen - lane->getLength() - getVehicleType().getMinGap());
-            //if (getID() == "always_right.10") std::cout << "     pred=" << pred->getID() << " predLane=" << pred->getLane()->getID() << " predPos=" << pred->getPositionOnLane() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << " lane=" << lane->getID() << " myLane=" << myLane->getID() << "\n";
+            if (gDebugFlag1) std::cout << "     pred=" << pred->getID() << " predLane=" << pred->getLane()->getID() << " predPos=" << pred->getPositionOnLane() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << " lane=" << lane->getID() << " myLane=" << myLane->getID() << "\n";
             adaptToLeader(std::make_pair(pred, gap), seen, lastLink, lane, v, vLinkPass);
         }
     }
@@ -1328,7 +1334,7 @@ MSVehicle::getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leader
 
 bool
 MSVehicle::executeMove() {
-    //gDebugFlag1 = (getID() == "XXI_Aprile_1_452");
+    gDebugFlag1 = (getID() == "disabled");
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == getID()) {
         int bla = 0;

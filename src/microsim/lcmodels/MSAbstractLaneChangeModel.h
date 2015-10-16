@@ -100,7 +100,11 @@ enum LaneChangeAction {
     LCA_BLOCKED_BY_FOLLOWER = LCA_BLOCKED_BY_LEFT_FOLLOWER | LCA_BLOCKED_BY_RIGHT_FOLLOWER,
     LCA_BLOCKED = LCA_BLOCKED_LEFT | LCA_BLOCKED_RIGHT | LCA_INSUFFICIENT_SPACE
 
-                  /// @}
+
+    // used by the sublane model
+    // LCA_BLOCKED_BY_CURRENT_LEADER = 1 << 28
+    // LCA_BLOCKED_BY_CURRENT_FOLLOWER = 1 << 29
+  /// @}
 
 };
 

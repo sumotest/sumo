@@ -80,6 +80,10 @@ protected:
     /// @brief get leaders for ego on the given lane
     MSLeaderDistanceInfo getLeaders(const ChangerIt& target, const MSVehicle* ego) const; 
 
+    static int checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset);
+
+    static int checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset);
+
 private:
     /// Default constructor.
     MSLaneChangerSublane();

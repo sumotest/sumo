@@ -212,6 +212,41 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
 }
 
 
+int 
+MSLaneChangerSublane::checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset) {
+    /// XXX check relative position of leader for laneOffset == 0
+    int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
+    for (int i = 0; i < leaders.numSublanes(); ++i) {
+        CLeaderDist lead = leaders[i];
+        if (lead.first != 0) {
+            if (lead.second < 0) {
+                return (blockedByLeader | LCA_OVERLAPPING);
+            } else if (lead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), lead.first->getSpeed(), lead.first->getCarFollowModel().getMaxDecel())) {
+                return blockedByLeader;
+            }
+        }
+    }
+    return 0;
+}
+
+
+int 
+MSLaneChangerSublane::checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset) {
+    /// XXX check relative position of follower for laneOffset == 0
+    int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
+    for (int i = 0; i < followers.numSublanes(); ++i) {
+        CLeaderDist follow = followers[i];
+        if (follow.first != 0) {
+            if (follow.second < 0) {
+                return (blockedByFollower | LCA_OVERLAPPING);
+            } else if (follow.second < follow.first->getCarFollowModel().getSecureGap(follow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
+                return blockedByFollower;
+            }
+        }
+    }
+    return 0;
+}
+
 
 int 
 MSLaneChangerSublane::checkChangeSublane(
@@ -224,43 +259,23 @@ MSLaneChangerSublane::checkChangeSublane(
     MSVehicle* vehicle = veh(myCandi);
     const MSLane& neighLane = *(target->lane);
     int blocked = 0;
-    int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
-    int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
 
-    //gDebugFlag1 = vehicle->getID() == "cars.7";
+    gDebugFlag1 = vehicle->getID() == "disabled";
 
     MSLeaderDistanceInfo neighLeaders = getLeaders(target, vehicle);
-    MSLeaderDistanceInfo neighFollowers(neighLane.getWidth(), vehicle);
+    MSLeaderDistanceInfo neighFollowers = target->lane->getFollowersOnConsecutive(vehicle);
     MSLeaderDistanceInfo neighBlockers(neighLane.getWidth(), vehicle);
     MSLeaderDistanceInfo leaders = getLeaders(myCandi, vehicle);
-    MSLeaderDistanceInfo followers(vehicle->getLane()->getWidth(), vehicle);
+    MSLeaderDistanceInfo followers = myCandi->lane->getFollowersOnConsecutive(vehicle);
     MSLeaderDistanceInfo blockers(vehicle->getLane()->getWidth(), vehicle);
  
-    // determine blocking state
-    for (int i = 0; i < leaders.numSublanes(); ++i) {
-        CLeaderDist lead = leaders[i];
-        if (lead.first != 0) {
-            if (lead.second < 0) {
-                blocked |= (blockedByLeader | LCA_OVERLAPPING);
-                break;
-            } else if (lead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), lead.first->getSpeed(), lead.first->getCarFollowModel().getMaxDecel())) {
-                blocked |= blockedByLeader;
-                break;
-            }
-        }
-    }
-    for (int i = 0; i < neighLeaders.numSublanes(); ++i) {
-        CLeaderDist lead = neighLeaders[i];
-        if (lead.first != 0) {
-            if (lead.second < 0) {
-                blocked |= (blockedByLeader | LCA_OVERLAPPING);
-                break;
-            } else if (lead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), lead.first->getSpeed(), lead.first->getCarFollowModel().getMaxDecel())) {
-                blocked |= blockedByLeader;
-                break;
-            }
-        }
-    }
+    // safe front gap
+    blocked |= checkBlockingLeaders(vehicle, leaders, laneOffset);
+    blocked |= checkBlockingLeaders(vehicle, neighLeaders, laneOffset);
+
+    // safe back gap
+    blocked |= checkBlockingFollowers(vehicle, followers, laneOffset);
+    blocked |= checkBlockingFollowers(vehicle, neighFollowers, laneOffset);
 
     if (gDebugFlag1) std::cout << SIMTIME 
         << " checkChangeSublane: veh=" << vehicle->getID() 
@@ -269,22 +284,6 @@ MSLaneChangerSublane::checkChangeSublane(
         << "\n  neighLeaders=" << neighLeaders.toString()
         << "\n";
 
-
-    // safe back gap
-    //if (neighFollow.first != 0) {
-    //    // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
-    //    if (neighFollow.second < neighFollow.first->getCarFollowModel().getSecureGap(neighFollow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
-    //        blocked |= blockedByFollower;
-    //    }
-    //}
-
-    // safe front gap
-    //if (neighLead.first != 0) {
-    //    // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
-    //    if (neighLead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())) {
-    //        blocked |= blockedByLeader;
-    //    }
-    //}
 
     int state = blocked | vehicle->getLaneChangeModel().wantsChangeSublane(
                     laneOffset, blocked,
