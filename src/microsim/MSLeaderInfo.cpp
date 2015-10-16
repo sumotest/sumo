@@ -206,7 +206,7 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist) {
 }
 
 
-const std::pair<const MSVehicle*, SUMOReal> 
+CLeaderDist
 MSLeaderDistanceInfo::operator[](int sublane) const {
     assert(sublane >= 0);
     assert(sublane < myVehicles.size());
@@ -220,7 +220,12 @@ MSLeaderDistanceInfo::toString() const {
     oss.setf(std::ios::fixed , std::ios::floatfield);
     oss << std::setprecision(2);
     for (int i = 0; i < (int)myVehicles.size(); ++i) {
-        oss << Named::getIDSecure(myVehicles[i]) << ":" << (myVehicles[i] == 0 ? "inf" : myDistances[i];
+        oss << Named::getIDSecure(myVehicles[i]) << ":";
+        if (myVehicles[i] == 0) {
+            oss << "inf";
+        } else {
+            oss << myDistances[i];
+        }
         if (i < (int)myVehicles.size() - 1) {
             oss << ", ";
         }

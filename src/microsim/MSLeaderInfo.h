@@ -45,6 +45,8 @@ class MSLane;
 // ===========================================================================
 // types definitions
 // ===========================================================================
+typedef std::pair<const MSVehicle*, SUMOReal> CLeaderDist;
+typedef std::pair<MSVehicle*, SUMOReal> LeaderDist;
 
 // ===========================================================================
 // class definitions
@@ -135,7 +137,7 @@ public:
     int addLeader(const MSVehicle* veh, SUMOReal dist);
 
     /// @brief return the vehicle and its distance for the given sublane
-    const std::pair<const MSVehicle*, SUMOReal> operator[](int sublane) const;
+    CLeaderDist operator[](int sublane) const;
 
     /// @brief print a debugging representation
     std::string toString() const;

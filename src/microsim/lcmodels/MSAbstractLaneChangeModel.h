@@ -226,16 +226,18 @@ public:
     };
 
     virtual int wantsChangeSublane(
-        int laneOffset,
-        MSAbstractLaneChangeModel::MSLCMessager& msgPass, int blocked,
-        const std::pair<MSVehicle*, SUMOReal>& leader,
-        const std::pair<MSVehicle*, SUMOReal>& neighLead,
-        const std::pair<MSVehicle*, SUMOReal>& neighFollow,
+        int laneOffset, int blocked,
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& neighLeaders,
+        const MSLeaderDistanceInfo& neighFollowers,
+        const MSLeaderDistanceInfo& neighBlockers,
         const MSLane& neighLane,
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
         MSVehicle** firstBlocked,
-        SUMOReal& latDist) {;
+        SUMOReal& latDist) {
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 

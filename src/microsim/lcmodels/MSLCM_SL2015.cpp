@@ -361,11 +361,17 @@ MSLCM_SL2015::inform(void* info, MSVehicle* sender) {
 }
 
 
+void 
+MSLCM_SL2015::msg(const CLeaderDist& cld, SUMOReal speed, int state) {
+    assert(cld.first != 0);
+    ((MSVehicle*)cld.first)->getLaneChangeModel().inform(new Info(speed, state), &myVehicle);
+}
+
+
 SUMOReal
-MSLCM_SL2015::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
-                           int blocked,
+MSLCM_SL2015::informLeader(int blocked,
                            int dir,
-                           const std::pair<MSVehicle*, SUMOReal>& neighLead,
+                           const CLeaderDist& neighLead,
                            SUMOReal remainingSeconds) {
     SUMOReal plannedSpeed = MIN2(myVehicle.getSpeed(),
                                  myVehicle.getCarFollowModel().stopSpeed(&myVehicle, myVehicle.getSpeed(), myLeftSpace - myLeadingBlockerLength));
@@ -381,7 +387,7 @@ MSLCM_SL2015::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 
     if ((blocked & LCA_BLOCKED_BY_LEADER) != 0) {
         assert(neighLead.first != 0);
-        MSVehicle* nv = neighLead.first;
+        const MSVehicle* nv = neighLead.first;
         if (gDebugFlag2) std::cout << " blocked by leader nv=" <<  nv->getID() << " nvSpeed=" << nv->getSpeed() << " needGap="
                                        << myVehicle.getCarFollowModel().getSecureGap(myVehicle.getSpeed(), nv->getSpeed(), nv->getCarFollowModel().getMaxDecel()) << "\n";
         // decide whether we want to overtake the leader or follow it
@@ -400,7 +406,7 @@ MSLCM_SL2015::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 // not enough time to overtake?
                 || dv * remainingSeconds < overtakeDist) {
             // cannot overtake
-            msgPass.informNeighLeader(new Info(-1, dir | LCA_AMBLOCKINGLEADER), &myVehicle);
+            msg(neighLead, -1, dir | LCA_AMBLOCKINGLEADER);
             // slow down smoothly to follow leader
             const SUMOReal targetSpeed = myCarFollowModel.followSpeed(
                                              &myVehicle, myVehicle.getSpeed(), neighLead.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
@@ -446,12 +452,12 @@ MSLCM_SL2015::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                           << "\n";
             }
             // overtaking, leader should not accelerate
-            msgPass.informNeighLeader(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGLEADER), &myVehicle);
+            msg(neighLead, nv->getSpeed(), dir | LCA_AMBLOCKINGLEADER);
             return -1;
         }
     } else if (neighLead.first != 0) { // (remainUnblocked)
         // we are not blocked now. make sure we stay far enough from the leader
-        MSVehicle* nv = neighLead.first;
+        const MSVehicle* nv = neighLead.first;
         const SUMOReal nextNVSpeed = nv->getSpeed() - HELP_OVERTAKE; // conservative
         const SUMOReal dv = SPEED2DIST(myVehicle.getSpeed() - nextNVSpeed);
         const SUMOReal targetSpeed = myCarFollowModel.followSpeed(
@@ -475,15 +481,14 @@ MSLCM_SL2015::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 
 
 void
-MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
-                             int blocked,
+MSLCM_SL2015::informFollower(int blocked,
                              int dir,
-                             const std::pair<MSVehicle*, SUMOReal>& neighFollow,
+                             const CLeaderDist& neighFollow,
                              SUMOReal remainingSeconds,
                              SUMOReal plannedSpeed) {
     if ((blocked & LCA_BLOCKED_BY_FOLLOWER) != 0) {
         assert(neighFollow.first != 0);
-        MSVehicle* nv = neighFollow.first;
+        const MSVehicle* nv = neighFollow.first;
         if (gDebugFlag2) std::cout << " blocked by follower nv=" <<  nv->getID() << " nvSpeed=" << nv->getSpeed() << " needGap="
                                        << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel()) << "\n";
 
@@ -495,7 +500,7 @@ MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     std::cout << " wants to cut in before  nv=" << nv->getID() << " without any help neededGap=" << neededGap << "\n";
                 }
                 // follower might even accelerate but not to much
-                msgPass.informNeighFollower(new Info(plannedSpeed - HELP_OVERTAKE, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+                msg(neighFollow, plannedSpeed - HELP_OVERTAKE, dir | LCA_AMBLOCKINGFOLLOWER);
                 return;
             }
         }
@@ -531,7 +536,7 @@ MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             // how hard does it actually need to be?
             const SUMOReal vsafe = MAX2(neighNewSpeed, nv->getCarFollowModel().followSpeed(
                                             nv, nv->getSpeed(), neighFollow.second, plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel()));
-            msgPass.informNeighFollower(new Info(vsafe, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            msg(neighFollow, vsafe, dir | LCA_AMBLOCKINGFOLLOWER);
             if (gDebugFlag2) {
                 std::cout << " wants to cut in before nv=" << nv->getID()
                           << " vsafe=" << vsafe
@@ -540,13 +545,13 @@ MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             }
         } else if (dv > 0 && dv * remainingSeconds > (secureGap - decelGap + POSITION_EPS)) {
             // decelerating once is sufficient to open up a large enough gap in time
-            msgPass.informNeighFollower(new Info(neighNewSpeed, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            msg(neighFollow, neighNewSpeed, dir | LCA_AMBLOCKINGFOLLOWER);
             if (gDebugFlag2) {
                 std::cout << " wants to cut in before nv=" << nv->getID() << " (eventually)\n";
             }
         } else if (dir == LCA_MRIGHT && !myAllowOvertakingRight && !nv->congested()) {
             const SUMOReal vhelp = MAX2(neighNewSpeed, HELP_OVERTAKE);
-            msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            msg(neighFollow, vhelp, dir | LCA_AMBLOCKINGFOLLOWER);
             if (gDebugFlag2) {
                 std::cout << " wants to cut in before nv=" << nv->getID() << " (nv cannot overtake right)\n";
             }
@@ -568,11 +573,11 @@ MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     if (gDebugFlag2) {
                         std::cout << " wants to cut in before right follower nv=" << nv->getID() << " (eventually)\n";
                     }
-                    msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+                    msg(neighFollow, vhelp, dir | LCA_AMBLOCKINGFOLLOWER);
                     return;
                 }
             }
-            msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            msg(neighFollow, vhelp, dir | LCA_AMBLOCKINGFOLLOWER);
             // this follower is supposed to overtake us. slow down smoothly to allow this
             const SUMOReal overtakeDist = (neighFollow.second // follower reaches ego back
                                            + myVehicle.getVehicleType().getLengthWithGap() // follower reaches ego front
@@ -598,16 +603,43 @@ MSLCM_SL2015::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         }
     } else if (neighFollow.first != 0) {
         // we are not blocked no, make sure it remains that way
-        MSVehicle* nv = neighFollow.first;
+        const MSVehicle* nv = neighFollow.first;
         const SUMOReal vsafe = nv->getCarFollowModel().followSpeed(
                                    nv, nv->getSpeed(), neighFollow.second, plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel());
-        msgPass.informNeighFollower(new Info(vsafe, dir), &myVehicle);
+        msg(neighFollow, vsafe, dir | LCA_AMBLOCKINGFOLLOWER);
         if (gDebugFlag2) {
             std::cout << " wants to cut in before non-blocking follower nv=" << nv->getID() << "\n";
         }
     }
 }
 
+SUMOReal 
+MSLCM_SL2015::informLeaders(int blocked, int dir,
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& neighLeaders,
+        SUMOReal remainingSeconds) {
+    // XXX
+    return myVehicle.getSpeed();
+}
+
+
+void 
+MSLCM_SL2015::informBlockers(int blocked, int dir,
+        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& neighBlockers,
+        SUMOReal remainingSeconds,
+        SUMOReal plannedSpeed) {
+}
+
+
+void 
+MSLCM_SL2015::informFollowers(int blocked, int dir,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& neighFollowers,
+        SUMOReal remainingSeconds,
+        SUMOReal plannedSpeed) {
+
+}
 
 void
 MSLCM_SL2015::prepareStep() {
@@ -906,13 +938,15 @@ MSLCM_SL2015::_wantsChangeSublane(
         ret = ret | lca | LCA_STRATEGIC | LCA_URGENT;
     } else {
         // VARIANT_20 (noOvertakeRight)
-        if (!myAllowOvertakingRight && left && !myVehicle.congested() && neighLead.first != 0) {
+        if (!myAllowOvertakingRight && left && !myVehicle.congested() && neighLeaders.hasVehicles()) {
             // check for slower leader on the left. we should not overtake but
             // rather move left ourselves (unless congested)
-            MSVehicle* nv = neighLead.first;
+            // XXX only adapt as much as possible to get a lateral gap
+            CLeaderDist cld = getSlowest(neighLeaders);
+            const MSVehicle* nv = cld.first;
             if (nv->getSpeed() < myVehicle.getSpeed()) {
                 const SUMOReal vSafe = myCarFollowModel.followSpeed(
-                                           &myVehicle, myVehicle.getSpeed(), neighLead.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
+                                           &myVehicle, myVehicle.getSpeed(), cld.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
                 myVSafes.push_back(vSafe);
                 if (vSafe < myVehicle.getSpeed()) {
                     mySpeedGainProbabilityRight += CHANGE_PROB_THRESHOLD_LEFT / 3;
@@ -949,7 +983,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             }
             ret = ret | LCA_STAY | LCA_STRATEGIC;
         } else if (bestLaneOffset == 0
-                   && (leader.first == 0 || !leader.first->isStopped())
+                   && !leaders.hasStoppedVehicle()
                    && neigh.bestContinuations.back()->getLinkCont().size() != 0
                    && roundaboutEdgesAhead == 0
                    && neighDist < TURN_LANE_DIST) {
@@ -992,18 +1026,21 @@ MSLCM_SL2015::_wantsChangeSublane(
 
         // letting vehicles merge in at the end of the lane in case of counter-lane change, step#1
         //   if there is a leader and he wants to change to the opposite direction
-        saveBlockerLength(neighLead.first, lcaCounter);
-        if (*firstBlocked != neighLead.first) {
+        const MSVehicle* neighLeadLongest = getLongest(neighLeaders).first;
+        saveBlockerLength(neighLeadLongest, lcaCounter);
+        if (*firstBlocked != neighLeadLongest) {
             saveBlockerLength(*firstBlocked, lcaCounter);
         }
 
         const SUMOReal remainingSeconds = ((ret & LCA_TRACI) == 0 ?
                                            MAX2((SUMOReal)STEPS2TIME(TS), myLeftSpace / MAX2(myLookAheadSpeed, NUMERICAL_EPS) / abs(bestLaneOffset) / URGENCY) :
                                            myVehicle.getInfluencer().changeRequestRemainingSeconds(currentTime));
-        const SUMOReal plannedSpeed = informLeader(msgPass, blocked, myLca, neighLead, remainingSeconds);
+        const SUMOReal plannedSpeed = informLeaders(blocked, myLca, leaders, neighLeaders, remainingSeconds);
+        // coordinate with direct obstructions
+        informBlockers(blocked, myLca, blockers, neighBlockers, remainingSeconds, plannedSpeed);
         if (plannedSpeed >= 0) {
             // maybe we need to deal with a blocking follower
-            informFollower(msgPass, blocked, myLca, neighFollow, remainingSeconds, plannedSpeed);
+            informFollowers(blocked, myLca, followers, neighFollowers, remainingSeconds, plannedSpeed);
         }
 
         if (gDebugFlag2) {
@@ -1153,10 +1190,11 @@ MSLCM_SL2015::_wantsChangeSublane(
             const SUMOReal acceptanceTime = KEEP_RIGHT_ACCEPTANCE * vMax * MAX2((SUMOReal)1, myVehicle.getSpeed()) / myVehicle.getLane()->getSpeedLimit();
             SUMOReal fullSpeedGap = MAX2((SUMOReal)0, neighDist - myVehicle.getCarFollowModel().brakeGap(vMax));
             SUMOReal fullSpeedDrivingSeconds = MIN2(acceptanceTime, fullSpeedGap / vMax);
+            CLeaderDist neighLead = getSlowest(neighLeaders);
             if (neighLead.first != 0 && neighLead.first->getSpeed() < vMax) {
                 fullSpeedGap = MAX2((SUMOReal)0, MIN2(fullSpeedGap,
-                                                      neighLead.second - myVehicle.getCarFollowModel().getSecureGap(
-                                                              vMax, neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())));
+                            neighLead.second - myVehicle.getCarFollowModel().getSecureGap(
+                                vMax, neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())));
                 fullSpeedDrivingSeconds = MIN2(fullSpeedDrivingSeconds, fullSpeedGap / (vMax - neighLead.first->getSpeed()));
             }
             const SUMOReal deltaProb = (CHANGE_PROB_THRESHOLD_RIGHT
@@ -1292,7 +1330,7 @@ MSLCM_SL2015::slowDownForBlocked(MSVehicle** blocked, int state) {
 
 
 void
-MSLCM_SL2015::saveBlockerLength(MSVehicle* blocker, int lcaCounter) {
+MSLCM_SL2015::saveBlockerLength(const MSVehicle* blocker, int lcaCounter) {
     if (gDebugFlag2) {
         std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                   << " veh=" << myVehicle.getID()
@@ -1325,7 +1363,7 @@ MSLCM_SL2015::saveBlockerLength(MSVehicle* blocker, int lcaCounter) {
                           << " potential=" << potential
                           << "\n";
             }
-            blocker->getLaneChangeModel().saveBlockerLength(myVehicle.getVehicleType().getLengthWithGap());
+            ((MSVehicle*)blocker)->getLaneChangeModel().saveBlockerLength(myVehicle.getVehicleType().getLengthWithGap());
         }
     }
 }
@@ -1379,5 +1417,38 @@ MSLCM_SL2015::updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& p
 }
 
 
-/****************************************************************************/
+CLeaderDist 
+MSLCM_SL2015::getLongest(const MSLeaderDistanceInfo& ldi) {
+    int iMax = 0;
+    SUMOReal maxLength = -1;
+    for (int i = 0; i < ldi.numSublanes(); ++i) {
+        if (ldi[i].first != 0) {
+            const SUMOReal length = ldi[i].first->getVehicleType().getLength();
+            if (length > maxLength) {
+                maxLength = length;
+                iMax = i;
+            }
+        }
+    }
+    return ldi[iMax];
+}
 
+
+CLeaderDist 
+MSLCM_SL2015::getSlowest(const MSLeaderDistanceInfo& ldi) {
+    int iMax = 0;
+    SUMOReal minSpeed = std::numeric_limits<SUMOReal>::max();
+    for (int i = 0; i < ldi.numSublanes(); ++i) {
+        if (ldi[i].first != 0) {
+            const SUMOReal speed = ldi[i].first->getSpeed();
+            if (speed < minSpeed) {
+                minSpeed = speed;
+                iMax = i;
+            }
+        }
+    }
+    return ldi[iMax];
+}
+
+
+/****************************************************************************/

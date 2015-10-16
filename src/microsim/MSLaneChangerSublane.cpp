@@ -169,14 +169,17 @@ MSLaneChangerSublane::checkChangeSublane(
         const std::vector<MSVehicle::LaneQ>& preb,
         SUMOReal& latDist) const {
 
-    MSLeaderDistanceInfo neighLeaders;
-    MSLeaderDistanceInfo neighFollowers;
-    MSLeaderDistanceInfo neighBlockers;
-    MSLeaderDistanceInfo leaders;
-    MSLeaderDistanceInfo followers;
-    MSLeaderDistanceInfo blockers;
-    MSVehicle* vehicle = veh(myCandi);
     ChangerIt target = myCandi + laneOffset;
+    MSVehicle* vehicle = veh(myCandi);
+    const MSLane& neighLane = *(target->lane);
+
+    MSLeaderDistanceInfo neighLeaders(neighLane.getWidth(), vehicle);
+    MSLeaderDistanceInfo neighFollowers(neighLane.getWidth(), vehicle);
+    MSLeaderDistanceInfo neighBlockers(neighLane.getWidth(), vehicle);
+    MSLeaderDistanceInfo leaders(vehicle->getLane()->getWidth(), vehicle);
+    MSLeaderDistanceInfo followers(vehicle->getLane()->getWidth(), vehicle);
+    MSLeaderDistanceInfo blockers(vehicle->getLane()->getWidth(), vehicle);
+
     int blocked = 0;
     int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
     int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
@@ -190,7 +193,7 @@ MSLaneChangerSublane::checkChangeSublane(
                     laneOffset, blocked,
                     leaders, followers, blockers,
                     neighLeaders, neighFollowers, neighBlockers,
-                    *(target->lane), preb, 
+                    neighLane, preb,
                     &(myCandi->lastBlocked), &(myCandi->firstBlocked), latDist);
 
     // XXX

@@ -121,19 +121,40 @@ protected:
         SUMOReal& latDist);
 
 
+    /* @brief decide whether we will overtake or follow blocking leaders
+     * and inform them accordingly (see informLeader)
+     * If we decide to follow, myVSafes will be extended
+     * returns the planned speed if following or -1 if overtaking */
+    SUMOReal informLeaders(int blocked, int dir,
+                          const MSLeaderDistanceInfo& leaders,
+                          const MSLeaderDistanceInfo& neighLeaders,
+                          SUMOReal remainingSeconds);
+
+    /// @brief decide how to deal with direct obstructions (could be leaders or followers)
+    void informBlockers(int blocked, int dir,
+                        const MSLeaderDistanceInfo& blockers,
+                        const MSLeaderDistanceInfo& neighBlockers,
+                        SUMOReal remainingSeconds,
+                        SUMOReal plannedSpeed);
+
+    /// @brief call informFollower for multiple followers
+    void informFollowers(int blocked, int dir,
+                        const MSLeaderDistanceInfo& followers,
+                        const MSLeaderDistanceInfo& neighFollowers,
+                        SUMOReal remainingSeconds,
+                        SUMOReal plannedSpeed);
+
     /* @brief decide whether we will overtake or follow a blocking leader
      * and inform it accordingly
      * If we decide to follow, myVSafes will be extended
      * returns the planned speed if following or -1 if overtaking */
-    SUMOReal informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
-                          int blocked, int dir,
-                          const std::pair<MSVehicle*, SUMOReal>& neighLead,
+    SUMOReal informLeader(int blocked, int dir,
+                          const CLeaderDist& neighLead,
                           SUMOReal remainingSeconds);
 
     /// @brief decide whether we will try cut in before the follower or allow to be overtaken
-    void informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
-                        int blocked, int dir,
-                        const std::pair<MSVehicle*, SUMOReal>& neighFollow,
+    void informFollower(int blocked, int dir,
+                        const CLeaderDist& neighFollow,
                         SUMOReal remainingSeconds,
                         SUMOReal plannedSpeed);
 
@@ -142,7 +163,7 @@ protected:
     int slowDownForBlocked(MSVehicle** blocked, int state);
 
     /// @brief save space for vehicles which need to counter-lane-change
-    void saveBlockerLength(MSVehicle* blocker, int lcaCounter);
+    void saveBlockerLength(const MSVehicle* blocker, int lcaCounter);
 
     /// @brief reserve space at the end of the lane to avoid dead locks
     inline void saveBlockerLength(SUMOReal length) {
@@ -175,9 +196,17 @@ protected:
     /// @brief XXX
     void updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& preb);
 
+    /// @brief send a speed recommendation to the given vehicle
+    void msg(const CLeaderDist& cld, SUMOReal speed, int state);
 
     /// @brief compute shift so that prevSublane + shift = newSublane
     int computeSublaneShift(const MSEdge* prevEdge, const MSEdge* curEdge);
+
+    /// @brief get the longest vehicle in the given info
+    static CLeaderDist getLongest(const MSLeaderDistanceInfo& ldi);
+
+    /// @brief get the slowest vehicle in the given info
+    static CLeaderDist getSlowest(const MSLeaderDistanceInfo& ldi);
 
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial
