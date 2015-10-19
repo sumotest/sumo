@@ -844,7 +844,7 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
                 + victim->getID() + "', lane='" + getID() + "', gap=" + toString(gap)
                 + ", time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " stage=" + stage + ".");
         MSNet::getInstance()->getVehicleControl().registerCollision();
-        //return false; // no teleport after collision
+        return false; // no teleport after collision
         myBruttoVehicleLengthSum -= collider->getVehicleType().getLengthWithGap();
         myNettoVehicleLengthSum -= collider->getVehicleType().getLength();
         MSVehicleTransfer::getInstance()->add(timestep, collider);
@@ -1843,7 +1843,7 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego) const {
     // get the follower vehicle on the lane to change to
     if (gDebugFlag1) std::cout << SIMTIME << " getFollowers lane=" << getID() << " ego=" << ego->getID() << "\n";
     MSLeaderDistanceInfo result(myWidth, ego, false);
-    const SUMOReal dist = -ego->getBackPositionOnLane();
+    const SUMOReal dist = ego->getBackPositionOnLane();
     /// XXX iterate in reverse and abort when there are no more freeSublanes
     for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
         const MSVehicle* veh = *last;

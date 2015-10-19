@@ -70,8 +70,6 @@ enum LaneChangeAction {
     /// @brief The action is urgent (to be defined by lc-model)
     LCA_URGENT = 1 << 8,
 
-    LCA_WANTS_LANECHANGE = LCA_LEFT | LCA_RIGHT,
-    LCA_WANTS_LANECHANGE_OR_STAY = LCA_WANTS_LANECHANGE | LCA_STAY,
     /// @}
 
     /// @name External state
@@ -94,6 +92,12 @@ enum LaneChangeAction {
     // change before the next turning movement
     LCA_INSUFFICIENT_SPACE =  1 << 14,
 
+    // used by the sublane model 
+    LCA_SUBLANE = 1 << 15,
+
+    LCA_WANTS_LANECHANGE = LCA_LEFT | LCA_RIGHT | LCA_SUBLANE,
+    LCA_WANTS_LANECHANGE_OR_STAY = LCA_WANTS_LANECHANGE | LCA_STAY,
+
     LCA_BLOCKED_LEFT = LCA_BLOCKED_BY_LEFT_LEADER | LCA_BLOCKED_BY_LEFT_FOLLOWER,
     LCA_BLOCKED_RIGHT = LCA_BLOCKED_BY_RIGHT_LEADER | LCA_BLOCKED_BY_RIGHT_FOLLOWER,
     LCA_BLOCKED_BY_LEADER = LCA_BLOCKED_BY_LEFT_LEADER | LCA_BLOCKED_BY_RIGHT_LEADER,
@@ -101,7 +105,6 @@ enum LaneChangeAction {
     LCA_BLOCKED = LCA_BLOCKED_LEFT | LCA_BLOCKED_RIGHT | LCA_INSUFFICIENT_SPACE
 
 
-    // used by the sublane model
     // LCA_BLOCKED_BY_CURRENT_LEADER = 1 << 28
     // LCA_BLOCKED_BY_CURRENT_FOLLOWER = 1 << 29
   /// @}
@@ -230,7 +233,7 @@ public:
     };
 
     virtual int wantsChangeSublane(
-        int laneOffset, int blocked,
+        int laneOffset,
         const MSLeaderDistanceInfo& leaders,
         const MSLeaderDistanceInfo& followers,
         const MSLeaderDistanceInfo& blockers,
@@ -241,7 +244,7 @@ public:
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
         MSVehicle** firstBlocked,
-        SUMOReal& latDist) {
+        SUMOReal& latDist, int& blocked) {
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 

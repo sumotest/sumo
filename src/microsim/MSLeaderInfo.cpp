@@ -180,9 +180,9 @@ MSLeaderDistanceInfo::~MSLeaderDistanceInfo() { }
 
 int 
 MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, int sublane) {
-    if (SIMTIME == 31 && gDebugFlag1 && veh != 0 && veh->getID() == "cars.8") {
-        std::cout << " BREAKPOINT\n";
-    }
+    //if (SIMTIME == 31 && gDebugFlag1 && veh != 0 && veh->getID() == "cars.8") {
+    //    std::cout << " BREAKPOINT\n";
+    //}
     if (veh == 0) {
         return myFreeSublanes;
     }

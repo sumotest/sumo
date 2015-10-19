@@ -579,6 +579,7 @@ StringBijection<LateralAlignment>::Entry SUMOXMLDefinitions::lateralAlignmentVal
     { "right",         LATALIGN_RIGHT },
     { "center",        LATALIGN_CENTER },
     { "arbitrary",     LATALIGN_ARBITRARY },
+    { "nice",          LATALIGN_NICE },
     { "left",          LATALIGN_LEFT }
 };
 

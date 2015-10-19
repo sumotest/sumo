@@ -750,6 +750,7 @@ enum LateralAlignment {
     LATALIGN_RIGHT,
     LATALIGN_CENTER,
     LATALIGN_ARBITRARY,
+    LATALIGN_NICE,
     LATALIGN_LEFT
 };
 

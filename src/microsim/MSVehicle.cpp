@@ -1648,8 +1648,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
                 return -leftLength;
             }
         }
-        assert(false);
-        return -NUMERICAL_EPS; // lane is fully occupied
+        throw ProcessError("Request backPos of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");
     }
 }
 

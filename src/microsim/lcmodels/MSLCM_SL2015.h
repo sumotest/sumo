@@ -68,19 +68,18 @@ public:
      * using the given laneOffset.
      * This method gets the information about the surrounding vehicles
      * and whether another lane may be more preferable */
-    int wantsChangeSublane(
-        int laneOffset, int blocked,
-        const MSLeaderDistanceInfo& leaders,
-        const MSLeaderDistanceInfo& followers,
-        const MSLeaderDistanceInfo& blockers,
-        const MSLeaderDistanceInfo& neighLeaders,
-        const MSLeaderDistanceInfo& neighFollowers,
-        const MSLeaderDistanceInfo& neighBlockers,
-        const MSLane& neighLane,
-        const std::vector<MSVehicle::LaneQ>& preb,
-        MSVehicle** lastBlocked,
-        MSVehicle** firstBlocked,
-        SUMOReal& latDist);
+    int wantsChangeSublane(int laneOffset,
+            const MSLeaderDistanceInfo& leaders,
+            const MSLeaderDistanceInfo& followers,
+            const MSLeaderDistanceInfo& blockers,
+            const MSLeaderDistanceInfo& neighLeaders,
+            const MSLeaderDistanceInfo& neighFollowers,
+            const MSLeaderDistanceInfo& neighBlockers,
+            const MSLane& neighLane,
+            const std::vector<MSVehicle::LaneQ>& preb,
+            MSVehicle** lastBlocked,
+            MSVehicle** firstBlocked,
+            SUMOReal& latDist, int& blocked);
 
     void* inform(void* info, MSVehicle* sender);
 
@@ -107,7 +106,7 @@ protected:
 
     /// @brief helper function for doing the actual work
     int _wantsChangeSublane(
-        int laneOffset, int blocked,
+        int laneOffset,
         const MSLeaderDistanceInfo& leaders,
         const MSLeaderDistanceInfo& followers,
         const MSLeaderDistanceInfo& blockers,
@@ -118,7 +117,7 @@ protected:
         const std::vector<MSVehicle::LaneQ>& preb,
         MSVehicle** lastBlocked,
         MSVehicle** firstBlocked,
-        SUMOReal& latDist);
+        SUMOReal& latDist, int& blocked);
 
 
     /* @brief decide whether we will overtake or follow blocking leaders
@@ -207,6 +206,19 @@ protected:
 
     /// @brief get the slowest vehicle in the given info
     static CLeaderDist getSlowest(const MSLeaderDistanceInfo& ldi);
+
+    /// @brief determine blocking state depending on latDist
+    int checkBlocking(SUMOReal latDist, int laneOffset,
+                const MSLeaderDistanceInfo& leaders,
+                const MSLeaderDistanceInfo& followers,
+                const MSLeaderDistanceInfo& blockers,
+                const MSLeaderDistanceInfo& neighLeaders,
+                const MSLeaderDistanceInfo& neighFollowers,
+                const MSLeaderDistanceInfo& neighBlockers) const; 
+
+    static int checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset, SUMOReal latDist); 
+    static int checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset, SUMOReal latDist); 
+    static bool overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal left2); 
 
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial
