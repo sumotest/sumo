@@ -1017,6 +1017,29 @@ private:
 
     };
 
+    /**
+     * @class vehicle_reverse_position_sorter
+     * @brief Sorts vehicles by their position (ascending)
+     */
+    class vehicle_natural_position_sorter {
+    public:
+        /// @brief Constructor
+        explicit vehicle_natural_position_sorter(const MSLane* lane) :
+            myLane(lane)
+        { }
+
+
+        /** @brief Comparing operator
+         * @param[in] v1 First vehicle to compare
+         * @param[in] v2 Second vehicle to compare
+         * @return Whether the first vehicle is further on the lane than the second
+         */
+        int operator()(MSVehicle* v1, MSVehicle* v2) const;
+
+        const MSLane* myLane;
+
+    };
+
     /** @class by_id_sorter
      * @brief Sorts edges by their angle relative to the given edge (straight comes first)
      *

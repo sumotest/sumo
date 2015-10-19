@@ -948,6 +948,9 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
             } // else look for a vehicle that isn't stopped?
         }
     }
+    if (MSGlobals::gLateralResolution > 0) {
+        lanesWithVehiclesToIntegrate.push_back(this);
+    }
     return myVehicles.size() == 0;
 }
 
@@ -1054,6 +1057,11 @@ MSLane::integrateNewVehicle(SUMOTime) {
         myEdge->markDelayed();
     }
     myVehBuffer.clear();
+    //std::cout << SIMTIME << " integrateNewVehicle lane=" << getID() << " myVehicles1=" << toString(myVehicles); 
+    if (MSGlobals::gLateralResolution > 0) {
+        sort(myVehicles.begin(), myVehicles.end(), vehicle_natural_position_sorter(this));
+    }
+    //std::cout << " myVehicles2=" << toString(myVehicles) << "\n"; 
     return wasInactive && myVehicles.size() != 0;
 }
 
@@ -1779,6 +1787,11 @@ MSLane::VehPosition::operator()(const MSVehicle* cmp, SUMOReal pos) const {
 int
 MSLane::vehicle_position_sorter::operator()(MSVehicle* v1, MSVehicle* v2) const {
     return v1->getBackPositionOnLane(myLane) > v2->getBackPositionOnLane(myLane);
+}
+
+int
+MSLane::vehicle_natural_position_sorter::operator()(MSVehicle* v1, MSVehicle* v2) const {
+    return v1->getBackPositionOnLane(myLane) < v2->getBackPositionOnLane(myLane);
 }
 
 MSLane::by_connections_to_sorter::by_connections_to_sorter(const MSEdge* const e) :

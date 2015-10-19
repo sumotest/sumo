@@ -796,7 +796,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     const int myLca = (right ? LCA_MRIGHT : LCA_MLEFT);
     const int lcaCounter = (right ? LCA_LEFT : LCA_RIGHT);
     const int myLcaCounter = (right ? LCA_MLEFT : LCA_MRIGHT);
-    const bool changeToBest = (right && bestLaneOffset < 0) || (left && bestLaneOffset > 0);
+    const bool changeToBest = (right && bestLaneOffset < 0) || (left && bestLaneOffset > 0) || (laneOffset == 0 && bestLaneOffset == 0);
     // keep information about being a leader/follower
     int ret = (myOwnState & 0xffff0000);
     int req = 0; // the request to change or stay
@@ -932,7 +932,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                   << "\n";
     }
 
-    if (changeToBest && bestLaneOffset == curr.bestLaneOffset
+    if (laneOffset != 0 && changeToBest && bestLaneOffset == curr.bestLaneOffset
             && currentDistDisallows(usableDist, bestLaneOffset, laDist)) {
         /// @brief we urgently need to change lanes to follow our route
         ret = ret | lca | LCA_STRATEGIC | LCA_URGENT;
@@ -1174,11 +1174,40 @@ MSLCM_SL2015::_wantsChangeSublane(
             }
         }
     }
-    //std::cout << SIMTIME 
-    //    << " veh=" << myVehicle.getID() 
-    //    << " defaultNextSpeed=" << defaultNextSpeed 
-    //    << " latDist=" << latDist 
-    //    << " maxGain=" << maxGain << "\n";
+    if (gDebugFlag2) std::cout << SIMTIME 
+        << " veh=" << myVehicle.getID() 
+        << " defaultNextSpeed=" << defaultNextSpeed 
+        << " latDist=" << latDist 
+        << " maxGain=" << maxGain << "\n";
+
+    // factor in preferred lateral alignment
+    if (latDist <= NUMERICAL_EPS) {
+        const SUMOReal halfLaneWidth = myVehicle.getLane()->getWidth() * 0.5;
+        const SUMOReal halfVehWidth = myVehicle.getVehicleType().getWidth() * 0.5;
+        switch (myVehicle.getVehicleType().getPreferredLateralAlignment()) {
+            case LATALIGN_RIGHT:
+                latDist = -halfLaneWidth + halfVehWidth - myVehicle.getLateralPositionOnLane();
+                break;
+            case LATALIGN_LEFT:
+                latDist = halfLaneWidth - halfVehWidth - myVehicle.getLateralPositionOnLane();
+                break;
+            case LATALIGN_CENTER: {
+                latDist = -myVehicle.getLateralPositionOnLane();
+                break;
+            }
+            case LATALIGN_ARBITRARY:
+                break;
+        }
+        if (latDist < 0) {
+            mySpeedGainProbabilityRight += CHANGE_PROB_THRESHOLD_RIGHT;
+        } else if (latDist > 0) {
+            mySpeedGainProbabilityLeft += CHANGE_PROB_THRESHOLD_LEFT;
+        }
+        if (gDebugFlag2) std::cout << SIMTIME 
+            << " adapting to preferred alignment= " << toString(myVehicle.getVehicleType().getPreferredLateralAlignment())
+                << " latDist=" << latDist 
+                << "\n";
+    }
 
     if (!left) {
         // ONLY FOR CHANGING TO THE RIGHT

@@ -444,6 +444,20 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
         vtype->loadingDuration = attrs.getSUMOTimeReporting(SUMO_ATTR_LOADING_DURATION, vtype->id.c_str(), ok);
         vtype->setParameter |= VTYPEPARS_LOADING_DURATION;
     }
+    if (attrs.hasAttribute(SUMO_ATTR_MAXSPEED_LAT)) {
+        vtype->maxSpeedLat = attrs.get<SUMOReal>(SUMO_ATTR_MAXSPEED_LAT, vtype->id.c_str(), ok);
+        vtype->setParameter |= VTYPEPARS_MAXSPEED_LAT_SET;
+    }
+    if (attrs.hasAttribute(SUMO_ATTR_LATALIGNMENT)) {
+        const std::string alignS = attrs.get<std::string>(SUMO_ATTR_LATALIGNMENT, vtype->id.c_str(), ok);
+        if (SUMOXMLDefinitions::LateralAlignments.hasString(alignS)) {
+            vtype->latAlignment = SUMOXMLDefinitions::LateralAlignments.get(alignS);
+            vtype->setParameter |= VTYPEPARS_LATALIGNMENT_SET;
+        } else {
+            WRITE_ERROR("Unknown lateral alignment '" + alignS + "' when parsing vtype '" + vtype->id + "'");
+            throw ProcessError();
+        }
+    }
     parseVTypeEmbedded(*vtype, vtype->cfModel, attrs, true);
     if (!ok) {
         delete vtype;

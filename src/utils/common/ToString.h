@@ -134,6 +134,11 @@ inline std::string toString<LaneChangeModel>(const LaneChangeModel& model, std::
     return SUMOXMLDefinitions::LaneChangeModels.getString(model);
 }
 
+template <>
+inline std::string toString<LateralAlignment>(const LateralAlignment& latA, std::streamsize accuracy) {
+    UNUSED_PARAMETER(accuracy);
+    return SUMOXMLDefinitions::LateralAlignments.getString(latA);
+}
 
 template <typename V>
 inline std::string toString(const std::vector<V*>& v, std::streamsize accuracy = OUTPUT_ACCURACY) {

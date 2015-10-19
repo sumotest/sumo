@@ -253,7 +253,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "route",          SUMO_ATTR_ROUTE },
     { "maxSpeed",       SUMO_ATTR_MAXSPEED },
     { "maxSpeedLat",    SUMO_ATTR_MAXSPEED_LAT },
-    { "latAlignment",   SUMO_ATTR_LATAlIGNMENT },
+    { "latAlignment",   SUMO_ATTR_LATALIGNMENT },
     { "accel",          SUMO_ATTR_ACCEL },
     { "decel",          SUMO_ATTR_DECEL },
     { "vClass",         SUMO_ATTR_VCLASS },
@@ -578,6 +578,7 @@ StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = 
 StringBijection<LateralAlignment>::Entry SUMOXMLDefinitions::lateralAlignmentValues[] = {
     { "right",         LATALIGN_RIGHT },
     { "center",        LATALIGN_CENTER },
+    { "arbitrary",     LATALIGN_ARBITRARY },
     { "left",          LATALIGN_LEFT }
 };
 

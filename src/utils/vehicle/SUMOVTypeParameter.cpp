@@ -56,6 +56,7 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
       vehicleClass(vclass), impatience(0.0), personCapacity(4), containerCapacity(0), boardingDuration(500),
       loadingDuration(90000), width(1.8), height(1.5), shape(SVS_UNKNOWN),
       cfModel(SUMO_TAG_CF_KRAUSS), lcModel(LCM_DEFAULT),
+      maxSpeedLat(1.0), latAlignment(LATALIGN_CENTER),
       setParameter(0), saved(false), onlyReferenced(false) {
     switch (vclass) {
         case SVC_PEDESTRIAN:
@@ -260,7 +261,12 @@ SUMOVTypeParameter::write(OutputDevice& dev) const {
     if (wasSet(VTYPEPARS_LOADING_DURATION)) {
         dev.writeAttr(SUMO_ATTR_LOADING_DURATION, loadingDuration);
     }
-
+    if (wasSet(VTYPEPARS_MAXSPEED_LAT_SET)) {
+        dev.writeAttr(SUMO_ATTR_MAXSPEED_LAT, maxSpeedLat);
+    }
+    if (wasSet(VTYPEPARS_LATALIGNMENT_SET)) {
+        dev.writeAttr(SUMO_ATTR_LATALIGNMENT, latAlignment);
+    }
     if (wasSet(VTYPEPARS_CAR_FOLLOW_MODEL) || cfParameter.size() != 0) {
         dev.openTag(cfModel);
         std::vector<SumoXMLAttr> attrs;

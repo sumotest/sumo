@@ -70,6 +70,8 @@ const int VTYPEPARS_BOARDING_DURATION = 2 << 17;
 const int VTYPEPARS_CONTAINER_CAPACITY = 2 << 18;
 const int VTYPEPARS_LOADING_DURATION = 2 << 19;
 const int VTYPEPARS_CAR_FOLLOW_MODEL = 2 << 20;
+const int VTYPEPARS_MAXSPEED_LAT_SET = 2 << 21;
+const int VTYPEPARS_LATALIGNMENT_SET = 2 << 22;
 
 
 // ===========================================================================
@@ -148,6 +150,10 @@ public:
     SUMOTime boardingDuration;
     /// @brief The time a container needs to get loaded on the vehicle
     SUMOTime loadingDuration;
+    /// @brief The vehicle type's maximum lateral speed [m/s]
+    SUMOReal maxSpeedLat;
+    /// @brief The vehicles desired lateral alignment
+    LateralAlignment latAlignment;
 
 
 
