@@ -192,8 +192,8 @@ protected:
     typedef std::pair<SUMOReal, int> Info;
 
 
-    /// @brief XXX
-    void updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& preb);
+    /// @brief update expected speeds for each sublane of the current edge
+    void updateExpectedSublaneSpeeds(const MSLeaderInfo& ahead, int sublaneOffset, int laneIndex); 
 
     /// @brief send a speed recommendation to the given vehicle
     void msg(const CLeaderDist& cld, SUMOReal speed, int state);

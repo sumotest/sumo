@@ -56,7 +56,6 @@ MSLaneChanger::ChangeElem::ChangeElem(MSLane* _lane) :
     follow(0),
     lead(0),
     lane(_lane),
-    veh(lane->myVehicles.rbegin()),
     hoppedVeh(0),
     lastBlocked(0),
     firstBlocked(0),
@@ -107,25 +106,13 @@ MSLaneChanger::initChanger() {
 
         //std::cout << SIMTIME << " initChanger lane=" << ce->lane->getID() << " vehicles=" << toString(ce->lane->myVehicles) << "\n";
 
-        MSLane::VehCont& vehicles = ce->lane->myVehicles;
-        if (vehicles.empty()) {
-            ce->veh  = vehicles.rend();
-            ce->follow = 0;
-            continue;
-        }
-        ce->veh  = vehicles.rbegin();
-        if (vehicles.size() == 1) {
-            ce->follow = 0;
-            continue;
-        }
-        ce->follow = *(vehicles.rbegin() + 1);
     }
 }
 
 
 void
 MSLaneChanger::updateChanger(bool vehHasChanged) {
-    assert(myCandi->veh != myCandi->lane->myVehicles.rend());
+    assert(veh(myCandi) != 0);
 
     // "Push" the vehicles to the back, i.e. follower becomes vehicle,
     // vehicle becomes leader, and leader becomes predecessor of vehicle,
@@ -134,20 +121,17 @@ MSLaneChanger::updateChanger(bool vehHasChanged) {
         //std::cout << SIMTIME << " updateChanger: lane=" << myCandi->lane->getID() << " has new lead=" << veh(myCandi)->getID() << "\n";
         myCandi->lead = veh(myCandi);
     }
-    myCandi->veh    = myCandi->veh + 1;
 
-    if (veh(myCandi) == 0) {
-        assert(myCandi->follow == 0);
-        // leader already 0.
-        return;
-    }
-    if (myCandi->veh + 1 == myCandi->lane->myVehicles.rend()) {
+    //std::cout << SIMTIME << " updateChanger lane=" << myCandi->lane->getID() << " vehicles=" << toString(myCandi->lane->myVehicles) << "\n";
+    MSLane::VehCont& vehicles = myCandi->lane->myVehicles;
+    vehicles.pop_back();
+    if (vehicles.size() <= 1) {
         myCandi->follow = 0;
     } else {
-        myCandi->follow = *(myCandi->veh + 1);
+        myCandi->follow = vehicles[(int)vehicles.size() - 2];
     }
-    return;
 }
+
 
 void
 MSLaneChanger::updateLanes(SUMOTime t) {
@@ -160,7 +144,7 @@ MSLaneChanger::updateLanes(SUMOTime t) {
     // Second: this swap would be faster if vehicle-containers would have
     // been pointers, but then I had to change too much of the MSLane code.
     for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
-
+        //std::cout << SIMTIME << " updateLanes lane=" << ce->lane->getID() << " myVehicles=" << toString(ce->lane->myVehicles) << " myTmpVehicles=" << toString(ce->lane->myTmpVehicles) << "\n";
         ce->lane->swapAfterLaneChange(t);
     }
 }

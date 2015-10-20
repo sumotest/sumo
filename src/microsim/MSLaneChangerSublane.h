@@ -70,7 +70,6 @@ protected:
      */
     int checkChangeSublane(
         int laneOffset,
-        const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb,
         SUMOReal& latDist) const;
 

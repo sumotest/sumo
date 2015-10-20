@@ -248,6 +248,12 @@ public:
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 
+    /// @brief update expected speeds for each sublane of the current edge
+    virtual void updateExpectedSublaneSpeeds(const MSLeaderInfo& /*ahead*/, int /*sublaneOffset*/, int /*laneIndex*/) {
+        throw ProcessError("Method not implemented by model " + toString(myModel));
+    }
+
+
     virtual void* inform(void* info, MSVehicle* sender) = 0;
 
     /** @brief Called to adapt the speed in order to allow a lane change.

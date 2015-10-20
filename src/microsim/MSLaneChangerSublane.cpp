@@ -92,14 +92,20 @@ MSLaneChangerSublane::change() {
         vehicle->adaptBestLanesOccupation(i, myChanger[i].dens);
     }
     const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
-    // XXX get leader(s)
-    std::pair<MSVehicle* const, SUMOReal> leader = getRealThisLeader(myCandi);
+
+    // update expected speeds
+    int sublaneIndex = 0;
+    for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
+        vehicle->getLaneChangeModel().updateExpectedSublaneSpeeds(ce->ahead, sublaneIndex, ce->lane->getIndex());
+        sublaneIndex += ce->ahead.numSublanes();
+    }
+
     // check whether the vehicle wants and is able to change to right lane
     int state1 = 0;
     SUMOReal latDist = 0;
     if (mayChange(-1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() - 0.5 * vehicle->getVehicleType().getWidth() > 0) {
-        state1 = checkChangeSublane(mayChange(-1) ? -1 : 0, leader, preb, latDist);
+        state1 = checkChangeSublane(mayChange(-1) ? -1 : 0, preb, latDist);
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state1 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed1) {
@@ -119,7 +125,7 @@ MSLaneChangerSublane::change() {
     int state2 = 0;
     if (mayChange(1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() + 0.5 * vehicle->getVehicleType().getWidth() < myCandi->lane->getWidth()) {
-        state2 = checkChangeSublane(mayChange(1) ? 1 : 0, leader, preb, latDist);
+        state2 = checkChangeSublane(mayChange(1) ? 1 : 0, preb, latDist);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed2) {
@@ -162,8 +168,6 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
         const int direction = vehicle->getLateralPositionOnLane() < 0 ? -1 : 1;
         ChangerIt to = from + direction;
         vehicle->myState.myPosLat -= direction * 0.5 * (from->lane->getWidth() + to->lane->getWidth());
-        assert(vehicle == from->lane->myVehicles.back());
-        from->lane->myVehicles.pop_back();
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += vehicle->getVehicleType().getLengthWithGap();
         vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
@@ -224,7 +228,6 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
 int 
 MSLaneChangerSublane::checkChangeSublane(
         int laneOffset,
-        const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb,
         SUMOReal& latDist) const {
 

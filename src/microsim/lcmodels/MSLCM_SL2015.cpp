@@ -142,6 +142,7 @@ MSLCM_SL2015::wantsChangeSublane(
                   << " veh=" << myVehicle.getID()
                   << " lane=" << myVehicle.getLane()->getID()
                   << " pos=" << myVehicle.getPositionOnLane()
+                  << " posLat=" << myVehicle.getLateralPositionOnLane()
                   << " speed=" << myVehicle.getSpeed()
                   << " considerChangeTo=" << changeType
                   << "\n";
@@ -804,9 +805,6 @@ MSLCM_SL2015::_wantsChangeSublane(
     int ret = (myOwnState & 0xffff0000);
     int req = 0; // the request to change or stay
 
-    /// XXX call this only once per simulation step
-    updateExpectedSublaneSpeeds(preb);
-
     // VARIANT_5 (disableAMBACKBLOCKER1)
     /*
     if (leader.first != 0
@@ -834,6 +832,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                   << " neighLeaders=" << neighLeaders.toString()
                   << " neighFollowers=" << neighFollowers.toString()
                   << " neighBlockers=" << neighBlockers.toString()
+                  << " changeToBest=" << changeToBest
                   << " expectedSpeeds=" << toString(myExpectedSublaneSpeeds)
                   << "\n";
     }
@@ -976,7 +975,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                 std::cout << " veh=" << myVehicle.getID() << " could not change back and forth in time (1) neighLeftPlace=" << neighLeftPlace << "\n";
             }
             ret = ret | LCA_STAY | LCA_STRATEGIC;
-        } else if (bestLaneOffset == 0 && (neighLeftPlace * 2. < laDist)) {
+        } else if (laneOffset != 0 && bestLaneOffset == 0 && (neighLeftPlace * 2. < laDist)) {
             // the current lane is the best and a lane-changing would cause a situation
             //  of which we assume we will not be able to return to the lane we have to be on.
             // this rule prevents the vehicle from leaving the current, best lane when it is
@@ -985,11 +984,13 @@ MSLCM_SL2015::_wantsChangeSublane(
                 std::cout << " veh=" << myVehicle.getID() << " could not change back and forth in time (2) neighLeftPlace=" << neighLeftPlace << "\n";
             }
             ret = ret | LCA_STAY | LCA_STRATEGIC;
-        } else if (bestLaneOffset == 0
-                   && !leaders.hasStoppedVehicle()
-                   && neigh.bestContinuations.back()->getLinkCont().size() != 0
-                   && roundaboutEdgesAhead == 0
-                   && neighDist < TURN_LANE_DIST) {
+        } else if (
+                laneOffset != 0
+                && bestLaneOffset == 0
+                && !leaders.hasStoppedVehicle()
+                && neigh.bestContinuations.back()->getLinkCont().size() != 0
+                && roundaboutEdgesAhead == 0
+                && neighDist < TURN_LANE_DIST) {
             // VARIANT_21 (stayOnBest)
             // we do not want to leave the best lane for a lane which leads elsewhere
             // unless our leader is stopped or we are approaching a roundabout
@@ -1226,7 +1227,12 @@ MSLCM_SL2015::_wantsChangeSublane(
     }
     latDist = MIN2(latDist, leftLimit);
     latDist = MAX2(latDist, rightLimit);
-    if (gDebugFlag2) std::cout << " latDistTrunc=" << latDist << "\n";
+    if (gDebugFlag2) std::cout 
+        << " laneOffset=" << laneOffset 
+        << " rightLimit=" << rightLimit 
+        << " leftLimit=" << leftLimit 
+        << " latDistTrunc=" << latDist 
+            << "\n";
 
 
     if (!left) {
@@ -1329,6 +1335,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     }
 
     // factor in preferred lateral alignment
+    // XXX ensure that we stay within leftLimit and rightLimit
     if (fabs(latDist) <= NUMERICAL_EPS) {
         const SUMOReal halfLaneWidth = myVehicle.getLane()->getWidth() * 0.5;
         const SUMOReal halfVehWidth = myVehicle.getVehicleType().getWidth() * 0.5;
@@ -1349,6 +1356,10 @@ MSLCM_SL2015::_wantsChangeSublane(
             case LATALIGN_ARBITRARY:
                 break;
         }
+        if (gDebugFlag2) std::cout << SIMTIME 
+                << " alignment=" << toString(myVehicle.getVehicleType().getPreferredLateralAlignment()) 
+                    << " latDist=" << latDist 
+                    << "\n";
         if ((latDist < 0 && mySpeedGainProbabilityRight < SPEED_LOSS_PROP_THRESHOLD)
                 || (latDist > 0 && mySpeedGainProbabilityLeft < SPEED_LOSS_PROP_THRESHOLD)) {
             // do not risk losing speed
@@ -1474,53 +1485,35 @@ MSLCM_SL2015::saveBlockerLength(const MSVehicle* blocker, int lcaCounter) {
 
 
 void
-MSLCM_SL2015::updateExpectedSublaneSpeeds(const std::vector<MSVehicle::LaneQ>& preb) {
-
-    // XXX obtain LeaderInfo for all lanes (of the current Edge) from MSLaneChanger (updated while handling each vehicle)
-    // XXX deal with leaders on subsequent lanes based on preb
+MSLCM_SL2015::updateExpectedSublaneSpeeds(const MSLeaderInfo& ahead, int sublaneOffset, int laneIndex) {
     const std::vector<MSLane*>& lanes = myVehicle.getLane()->getEdge().getLanes();
+    const std::vector<MSVehicle::LaneQ>& preb = myVehicle.getBestLanes();
+    const MSLane* lane = lanes[laneIndex];
+    const SUMOReal vMax = lane->getVehicleMaxSpeed(&myVehicle);
     assert(preb.size() == lanes.size());
-    int subLanesBefore = 0;
-    for (int iLane = 0; iLane < (int)lanes.size(); ++iLane) {
-        const MSLane* lane = lanes[iLane];
-        MSLeaderInfo ahead(lane->getWidth());
+
+    for (int sublane = 0; sublane < (int)ahead.numSublanes(); ++sublane) {
+        const int edgeSublane = sublane + sublaneOffset;
         if (lane->allowsVehicleClass(myVehicle.getVehicleType().getVehicleClass())) {
             // lane allowed, find potential leaders and compute safe speeds
-            const MSLane::VehCont& vehicles = lane->getVehiclesSecure();
-            for (int i = (int)vehicles.size() - 1; i > 0; --i) {
-                if (vehicles[i]->getPositionOnLane() > myVehicle.getPositionOnLane()
-                        // leader must not have changed yet
-                        // XXX should it appear on its new lane?
-                        && vehicles[i]->getLane() == lane) {
-                    ahead.addLeader(vehicles[i], false);
-                }
+            const MSVehicle* leader = ahead[sublane];
+            SUMOReal vSafe;
+            if (leader == 0) {
+                vSafe = MIN2(vMax, myCarFollowModel.followSpeed(&myVehicle, myVehicle.getSpeed(), preb[laneIndex].length, 0, 0));
+            } else {
+                const SUMOReal gap = leader->getBackPositionOnLane(lane) - myVehicle.getPositionOnLane() - myVehicle.getVehicleType().getMinGap();
+                vSafe = MIN2(vMax, myCarFollowModel.followSpeed(
+                            &myVehicle, myVehicle.getSpeed(), gap, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()));
             }
-            const SUMOReal vMax = lane->getVehicleMaxSpeed(&myVehicle);
-            for (int i = 0; i < ahead.numSublanes(); ++i) {
-                const int edgeSublane = i + subLanesBefore;
-                const MSVehicle* leader = ahead[i];
-                SUMOReal vSafe;
-                if (leader == 0) {
-                    vSafe = MIN2(vMax, myCarFollowModel.followSpeed(&myVehicle, myVehicle.getSpeed(), preb[iLane].length, 0, 0));
-                } else {
-                    const SUMOReal gap = leader->getBackPositionOnLane(lane) - myVehicle.getPositionOnLane() - myVehicle.getVehicleType().getMinGap();
-                    vSafe = MIN2(vMax, myCarFollowModel.followSpeed(
-                                &myVehicle, myVehicle.getSpeed(), gap, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()));
-                }
-                // XXX calibrate weightFactor?
-                const SUMOReal memoryFactor = 0.5;
-                myExpectedSublaneSpeeds[edgeSublane] = memoryFactor * myExpectedSublaneSpeeds[edgeSublane] + (1 - memoryFactor) * vSafe;
-            }
+            // XXX calibrate weightFactor?
+            const SUMOReal memoryFactor = 0.5;
+            myExpectedSublaneSpeeds[edgeSublane] = memoryFactor * myExpectedSublaneSpeeds[edgeSublane] + (1 - memoryFactor) * vSafe;
         } else {
             // lane forbidden
-            for (int i = 0; i < ahead.numSublanes(); ++i) {
-                const int edgeSublane = i + subLanesBefore;
-                myExpectedSublaneSpeeds[edgeSublane] = -1;
-            }
+            myExpectedSublaneSpeeds[edgeSublane] = -1;
         }
-        subLanesBefore += ahead.numSublanes();
-        lane->releaseVehicles();
     }
+    // XXX deal with leaders on subsequent lanes based on preb
 }
 
 

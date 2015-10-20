@@ -78,8 +78,6 @@ public:
         MSVehicle*                lead;
         /// the lane the vehicle is on
         MSLane*                   lane;
-        /// the regarded vehicle
-        MSLane::VehCont::reverse_iterator veh;
         /// last vehicle that changed into this lane
         MSVehicle*                hoppedVeh;
         /// the vehicle that really wants to change to this lane
@@ -128,14 +126,15 @@ protected:
         return false;
     }
 
-    /** Returns a pointer to the changer-element-iterator vehicle, or 0 if
-        there is none. */
+    /** Returns the furthes unhandled vehicle on this change-elements lane
+        or 0 if there is none. */
     MSVehicle* veh(ConstChangerIt ce) const {
         // If ce has a valid vehicle, return it. Otherwise return 0.
-        if (ce->veh != ce->lane->myVehicles.rend()) {
-            return *(ce->veh);
+        if (!ce->lane->myVehicles.empty()) {
+            return ce->lane->myVehicles.back();
+        } else {
+            return 0;
         }
-        return 0;
     }
 
 
