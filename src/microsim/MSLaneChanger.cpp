@@ -53,7 +53,6 @@
 // ChangeElem member method definitions
 // ===========================================================================
 MSLaneChanger::ChangeElem::ChangeElem(MSLane* _lane) :
-    follow(0),
     lead(0),
     lane(_lane),
     hoppedVeh(0),
@@ -125,11 +124,6 @@ MSLaneChanger::updateChanger(bool vehHasChanged) {
     //std::cout << SIMTIME << " updateChanger lane=" << myCandi->lane->getID() << " vehicles=" << toString(myCandi->lane->myVehicles) << "\n";
     MSLane::VehCont& vehicles = myCandi->lane->myVehicles;
     vehicles.pop_back();
-    if (vehicles.size() <= 1) {
-        myCandi->follow = 0;
-    } else {
-        myCandi->follow = vehicles[(int)vehicles.size() - 2];
-    }
 }
 
 

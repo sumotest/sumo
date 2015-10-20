@@ -72,8 +72,6 @@ public:
 
         ChangeElem(MSLane* _lane);
 
-        /// the vehicle following the current vehicle (@todo check: appears to unused)
-        MSVehicle*                follow;
         /// the vehicle in front of the current vehicle
         MSVehicle*                lead;
         /// the lane the vehicle is on
