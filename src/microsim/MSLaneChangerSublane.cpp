@@ -63,10 +63,10 @@ MSLaneChangerSublane::updateChanger(bool vehHasChanged) {
     if (!vehHasChanged) {
         myCandi->ahead.addLeader(myCandi->lead, false);
     }
-    std::cout << SIMTIME << " updateChanger: lane=" << myCandi->lane->getID() << " lead=" << Named::getIDSecure(myCandi->lead) << " ahead=" << myCandi->ahead.toString() << " vehHasChanged=" << vehHasChanged << "\n";
-    for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
-        std::cout << " lane=" << ce->lane->getID() << " vehicles=" << toString(ce->lane->myVehicles) << "\n";
-    }
+    //std::cout << SIMTIME << " updateChanger: lane=" << myCandi->lane->getID() << " lead=" << Named::getIDSecure(myCandi->lead) << " ahead=" << myCandi->ahead.toString() << " vehHasChanged=" << vehHasChanged << "\n";
+    //for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
+    //    std::cout << " lane=" << ce->lane->getID() << " vehicles=" << toString(ce->lane->myVehicles) << "\n";
+    //}
 }
 
 
@@ -183,7 +183,7 @@ MSLeaderDistanceInfo
 MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) const {
     // get the leading vehicle on the lane to change to
     if (gDebugFlag1) std::cout << SIMTIME << " getLeaders lane=" << target->lane->getID() << " ego=" << ego->getID() << "\n";
-    MSLeaderDistanceInfo result(target->lane->getWidth(), ego);
+    MSLeaderDistanceInfo result(target->lane->getWidth(), 0);
     for (int i = 0; i < target->ahead.numSublanes(); ++i) {
             if (gDebugFlag1 && target->ahead[i] != 0) std::cout << " dist=" << -ego->getPositionOnLane() << " lead=" << target->ahead[i]->getID() << " leadBack=" << target->ahead[i]->getBackPositionOnLane() << "\n";
         result.addLeader(target->ahead[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), i);
