@@ -88,7 +88,7 @@
 #define TURN_LANE_DIST (SUMOReal)200.0 // the distance at which a lane leading elsewhere is considered to be a turn-lane that must be avoided
 
 //#define DEBUG_COND (myVehicle.getID() == "moped.18" || myVehicle.getID() == "moped.16")
-#define DEBUG_COND (myVehicle.getID() == "disabled")
+#define DEBUG_COND (myVehicle.getID() == "cars.2")
 //#define DEBUG_COND (myVehicle.getID() == "pkw150478" || myVehicle.getID() == "pkw150494" || myVehicle.getID() == "pkw150289")
 //#define DEBUG_COND (myVehicle.getID() == "A" || myVehicle.getID() == "B") // fail change to left
 //#define DEBUG_COND (myVehicle.getID() == "disabled") // test stops_overtaking
@@ -1159,7 +1159,10 @@ MSLCM_SL2015::_wantsChangeSublane(
         ++i;
     }
     SUMOReal maxGain = -std::numeric_limits<SUMOReal>::max(); 
+    SUMOReal maxGainRight = -std::numeric_limits<SUMOReal>::max(); 
+    SUMOReal maxGainLeft = -std::numeric_limits<SUMOReal>::max(); 
     SUMOReal latDistNice = std::numeric_limits<SUMOReal>::max();
+    int sublaneCompact = 0;
 
     for (int i = 0; i < (int)sublaneSides.size(); ++i) {
         if (sublaneSides[i] + vehWidth < edge.getWidth()) {
@@ -1176,23 +1179,16 @@ MSLCM_SL2015::_wantsChangeSublane(
             const SUMOReal relativeGain = (vMin - defaultNextSpeed) / MAX2(vMin, RELGAIN_NORMALIZATION_MIN_SPEED);
             if (relativeGain > maxGain) {
                 maxGain = relativeGain;
+                sublaneCompact = i;
                 if (maxGain > 0) {
                     latDist = sublaneSides[i] - rightVehSide;
                 }
             }
             //std::cout << " sublaneSides[i]=" << sublaneSides[i] << " rightVehSide=" << rightVehSide << " relGain=" << relativeGain << "\n";
             if (sublaneSides[i] < rightVehSide) {
-                mySpeedGainProbabilityRight += relativeGain;
-                // decay
-                if (relativeGain < NUMERICAL_EPS) {
-                    mySpeedGainProbabilityRight *= 0.5;
-                }
+                maxGainRight = MAX2(maxGainRight, relativeGain);
             } else {
-                mySpeedGainProbabilityLeft += relativeGain;
-                // decay
-                if (relativeGain < NUMERICAL_EPS) {
-                    mySpeedGainProbabilityLeft *= 0.5;
-                }
+                maxGainLeft = MAX2(maxGainLeft, relativeGain);
             }
             const SUMOReal subAlignDist = sublaneSides[i] - rightVehSide;
             if (fabs(subAlignDist) < fabs(latDistNice)) {
@@ -1206,6 +1202,18 @@ MSLCM_SL2015::_wantsChangeSublane(
             }
         }
     }
+    // updated change probabilities
+    mySpeedGainProbabilityRight += maxGainRight;
+    mySpeedGainProbabilityLeft += maxGainLeft;
+    // decay
+    if (maxGainRight < NUMERICAL_EPS) {
+        mySpeedGainProbabilityRight *= 0.5;
+    }
+    if (maxGainLeft < NUMERICAL_EPS) {
+        mySpeedGainProbabilityLeft *= 0.5;
+    }
+
+
     if (gDebugFlag2) std::cout << SIMTIME 
         << " veh=" << myVehicle.getID() 
         << " defaultNextSpeed=" << defaultNextSpeed 
@@ -1335,7 +1343,6 @@ MSLCM_SL2015::_wantsChangeSublane(
     }
 
     // factor in preferred lateral alignment
-    // XXX ensure that we stay within leftLimit and rightLimit
     if (fabs(latDist) <= NUMERICAL_EPS) {
         const SUMOReal halfLaneWidth = myVehicle.getLane()->getWidth() * 0.5;
         const SUMOReal halfVehWidth = myVehicle.getVehicleType().getWidth() * 0.5;
@@ -1346,16 +1353,20 @@ MSLCM_SL2015::_wantsChangeSublane(
             case LATALIGN_LEFT:
                 latDist = halfLaneWidth - halfVehWidth - myVehicle.getLateralPositionOnLane();
                 break;
-            case LATALIGN_CENTER: {
+            case LATALIGN_CENTER: 
                 latDist = -myVehicle.getLateralPositionOnLane();
                 break;
-            }
             case LATALIGN_NICE:
                 latDist = latDistNice;
+                break;
+            case LATALIGN_COMPACT:
+                latDist = sublaneSides[sublaneCompact] - rightVehSide;
                 break;
             case LATALIGN_ARBITRARY:
                 break;
         }
+        latDist = MIN2(latDist, leftLimit);
+        latDist = MAX2(latDist, rightLimit);
         if (gDebugFlag2) std::cout << SIMTIME 
                 << " alignment=" << toString(myVehicle.getVehicleType().getPreferredLateralAlignment()) 
                     << " latDist=" << latDist 

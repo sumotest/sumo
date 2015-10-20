@@ -747,11 +747,12 @@ enum LaneChangeModel {
  * Information how vehicles align themselves within their lane by default
  */
 enum LateralAlignment {
-    LATALIGN_RIGHT,
-    LATALIGN_CENTER,
-    LATALIGN_ARBITRARY,
-    LATALIGN_NICE,
-    LATALIGN_LEFT
+    LATALIGN_RIGHT,      // drive on the right side
+    LATALIGN_CENTER,     // drive in the middle
+    LATALIGN_ARBITRARY,  // maintain the current alignment 
+    LATALIGN_NICE,       // align with the closest sublane border
+    LATALIGN_COMPACT,    // align with the rightmost sublane that allows keeping the current speed
+    LATALIGN_LEFT        // drive on the left side
 };
 
 /**
