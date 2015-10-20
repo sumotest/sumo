@@ -122,8 +122,17 @@ MSLeaderInfo::getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) c
     const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
     const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
-    rightmost = (int)floor(rightVehSide / MSGlobals::gLateralResolution);
+    rightmost = (int)floor((rightVehSide + NUMERICAL_EPS) / MSGlobals::gLateralResolution);
     leftmost = MIN2((int)myVehicles.size() - 1,(int)floor(leftVehSide / MSGlobals::gLateralResolution));
+    //if (veh->getID() == "car2") std::cout << SIMTIME << " veh=" << veh->getID()
+    //    << std::setprecision(10)
+    //    << " posLat=" << veh->getLateralPositionOnLane()
+    //    << " rightVehSide=" << rightVehSide
+    //    << " leftVehSide=" << leftVehSide
+    //    << " rightmost=" << rightmost
+    //    << " leftmost=" << leftmost
+    //    << std::setprecision(2)
+    //    << "\n";
 }
 
 

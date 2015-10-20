@@ -1848,7 +1848,7 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego) const {
     for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
         const MSVehicle* veh = *last;
         if (gDebugFlag1) std::cout << "  veh=" << veh->getID() << " lane=" << veh->getLane()->getID() << " pos=" << veh->getPositionOnLane() << "\n";
-        if (veh->getPositionOnLane() < ego->getPositionOnLane()) {
+        if (veh != ego && veh->getPositionOnLane() <= ego->getPositionOnLane()) {
             result.addLeader(veh, dist);
         }
     }
