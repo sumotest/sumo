@@ -1,8 +1,11 @@
 # vehicles overtaking a bicycle on a single-lane road
 overtaking_bicycle
 
-# vehicle behavior on a single edge with 2 lanes
+# vehicle behavior on a single edge with 2 lanes (default alignment)
 1edge_2lanes
 
 # narrow vehicle behavior on a single edge with 2 lanes
 1edge_2lanes_mopeds
+
+# vehicle behavior on a single edge with 2 lanes (compact alignment)
+1edge_2lanes_compact_cars

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Fri 16 Oct 2015 10:49:03 AM CEST by Netedit Version dev-SVN-r19067I
+<!-- generated on Tue 20 Oct 2015 02:06:26 PM CEST by Netedit Version dev-SVN-r19105I
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netedit.exeConfiguration.xsd">
 
     <input>
-        <sumo-net-file value="net.net.xml"/>
+        <sumo-net-file value="/scr1/sharps/tests/sumo/sublane_model/1edge_2lanes_mopeds/net.net.xml"/>
     </input>
 
     <output>
-        <output-file value="net.net.xml"/>
+        <output-file value="/scr1/sharps/tests/sumo/sublane_model/1edge_2lanes_mopeds/net.net.xml"/>
     </output>
 
     <processing>
@@ -38,6 +38,7 @@
     <tlLogic id="gneJ1" type="static" programID="0" offset="0">
         <phase duration="200" state="rr"/>
         <phase duration="200" state="GG"/>
+        <phase duration="3" state="yy"/>
     </tlLogic>
 
     <junction id="gneJ0" type="unregulated" x="0.00" y="0.00" incLanes="" intLanes="" shape="-0.00,-0.05 -0.00,-6.55"/>
