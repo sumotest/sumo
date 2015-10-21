@@ -170,6 +170,10 @@ MSXMLRawOut::writeVehicle(OutputDevice& of, const MSBaseVehicle& veh) {
         of.writeAttr(SUMO_ATTR_SPEED, veh.getSpeed());
         if (!MSGlobals::gUseMesoSim) {
             // microsim-specific stuff
+            if (MSGlobals::gLateralResolution > 0) {
+                const SUMOReal posLat = static_cast<const MSVehicle&>(veh).getLateralPositionOnLane();
+                of.writeAttr(SUMO_ATTR_POSITION_LAT, posLat);
+            }
             const unsigned int personNumber = static_cast<const MSVehicle&>(veh).getPersonNumber();
             if (personNumber > 0) {
                 of.writeAttr(SUMO_ATTR_PERSON_NUMBER, personNumber);
