@@ -102,6 +102,7 @@ MSLaneChanger::initChanger() {
         ce->firstBlocked = 0;
         ce->dens = 0;
         ce->ahead.clear();
+        ce->lane->getVehiclesSecure();
 
         //std::cout << SIMTIME << " initChanger lane=" << ce->lane->getID() << " vehicles=" << toString(ce->lane->myVehicles) << "\n";
 
@@ -140,6 +141,7 @@ MSLaneChanger::updateLanes(SUMOTime t) {
     for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
         //std::cout << SIMTIME << " updateLanes lane=" << ce->lane->getID() << " myVehicles=" << toString(ce->lane->myVehicles) << " myTmpVehicles=" << toString(ce->lane->myTmpVehicles) << "\n";
         ce->lane->swapAfterLaneChange(t);
+        ce->lane->releaseVehicles();
     }
 }
 
