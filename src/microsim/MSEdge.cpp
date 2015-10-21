@@ -514,8 +514,8 @@ MSEdge::changeLanes(SUMOTime t) {
         return;
     }
     if (myFunction == EDGEFUNCTION_INTERNAL) {
-        // XXX check this only once in initialize()
         // allow changing only if all links leading to this internal lane have priority
+        // Due to traffic-lights, this is a dynamic property
         for (std::vector<MSLane*>::const_iterator it = myLanes->begin(); it != myLanes->end(); ++it) {
             MSLane* pred = (*it)->getLogicalPredecessorLane();
             MSLink* link = MSLinkContHelper::getConnectingLink(*pred, **it);
