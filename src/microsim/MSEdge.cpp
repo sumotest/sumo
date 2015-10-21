@@ -129,6 +129,7 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     if (MSGlobals::gLateralResolution > 0) {
         SUMOReal widthBefore = 0;
         for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
+            (*i)->setRightSideOnEdge(widthBefore);
             MSLeaderInfo ahead((*i)->getWidth());
             for (int j = 0; j < ahead.numSublanes(); ++j) {
                 mySublaneSides.push_back(widthBefore + j * MSGlobals::gLateralResolution);
@@ -513,6 +514,7 @@ MSEdge::changeLanes(SUMOTime t) {
         return;
     }
     if (myFunction == EDGEFUNCTION_INTERNAL) {
+        // XXX check this only once in initialize()
         // allow changing only if all links leading to this internal lane have priority
         for (std::vector<MSLane*>::const_iterator it = myLanes->begin(); it != myLanes->end(); ++it) {
             MSLane* pred = (*it)->getLogicalPredecessorLane();
