@@ -1257,7 +1257,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
                          const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const {
     int rightmost;
     int leftmost;
-    ahead.getSubLanes(this, rightmost, leftmost);
+    ahead.getSubLanes(this, 0, rightmost, leftmost);
     if (gDebugFlag1) std::cout << SIMTIME 
         << " adaptToLeaders veh=" << getID() 
             << " rm=" << rightmost 

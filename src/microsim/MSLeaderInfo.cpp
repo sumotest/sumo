@@ -58,7 +58,7 @@ MSLeaderInfo::MSLeaderInfo(SUMOReal width, const MSVehicle* ego) :
     myHasVehicles(false)
 { 
     if (ego != 0) {
-        getSubLanes(ego, egoRightMost, egoLeftMost);
+        getSubLanes(ego, 0, egoRightMost, egoLeftMost);
         // filter out sublanes not of interest to ego
         myFreeSublanes -= egoRightMost;
         myFreeSublanes -= (int)myVehicles.size() - 1 - egoLeftMost;
@@ -70,7 +70,7 @@ MSLeaderInfo::~MSLeaderInfo() { }
 
 
 int 
-MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
+MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond, SUMOReal latOffset) {
     if (veh == 0) {
         return myFreeSublanes;
     }
@@ -85,7 +85,7 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond) {
     } 
     // map center-line based coordinates into [0, myWidth] coordinates
     int rightmost, leftmost;
-    getSubLanes(veh, rightmost, leftmost);
+    getSubLanes(veh, latOffset, rightmost, leftmost);
     for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
         if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
                 && (!beyond || myVehicles[sublane] == 0)) {
@@ -110,7 +110,7 @@ MSLeaderInfo::clear() {
 
 
 void 
-MSLeaderInfo::getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) const {
+MSLeaderInfo::getSubLanes(const MSVehicle* veh, SUMOReal latOffset, int& rightmost, int& leftmost) const {
     if (myVehicles.size() == 1) {
         // speedup for the simple case
         rightmost = 0;
@@ -118,7 +118,7 @@ MSLeaderInfo::getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) c
         return;
     }
     // map center-line based coordinates into [0, myWidth] coordinates
-    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth;
+    const SUMOReal vehCenter = veh->getLateralPositionOnLane() + 0.5 * myWidth + latOffset;
     const SUMOReal vehHalfWidth = 0.5 * veh->getVehicleType().getWidth();
     const SUMOReal rightVehSide = MAX2((SUMOReal)0,  vehCenter - vehHalfWidth);
     const SUMOReal leftVehSide = MIN2(myWidth, vehCenter + vehHalfWidth);
@@ -188,7 +188,7 @@ MSLeaderDistanceInfo::~MSLeaderDistanceInfo() { }
 
 
 int 
-MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, int sublane) {
+MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset, int sublane) {
     //if (SIMTIME == 31 && gDebugFlag1 && veh != 0 && veh->getID() == "cars.8") {
     //    std::cout << " BREAKPOINT\n";
     //}
@@ -218,7 +218,7 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, int sublane
         return myFreeSublanes;
     }
     int rightmost, leftmost;
-    getSubLanes(veh, rightmost, leftmost);
+    getSubLanes(veh, latOffset, rightmost, leftmost);
     for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
         if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
                 && dist < myDistances[sublane]) {

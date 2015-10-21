@@ -61,7 +61,13 @@ void
 MSLaneChangerSublane::updateChanger(bool vehHasChanged) {
     MSLaneChanger::updateChanger(vehHasChanged);
     if (!vehHasChanged) {
-        myCandi->ahead.addLeader(myCandi->lead, false);
+        MSVehicle* lead = myCandi->lead;
+        myCandi->ahead.addLeader(lead, false, 0);
+        MSLane* shadowLane = lead->getLaneChangeModel().getShadowLane();
+        if (shadowLane != 0) {
+            const SUMOReal latOffset = lead->getLane()->getRightSideOnEdge() - shadowLane->getRightSideOnEdge();
+            (myChanger.begin() + shadowLane->getIndex())->ahead.addLeader(lead, false, latOffset);
+        }
     }
     //std::cout << SIMTIME << " updateChanger: lane=" << myCandi->lane->getID() << " lead=" << Named::getIDSecure(myCandi->lead) << " ahead=" << myCandi->ahead.toString() << " vehHasChanged=" << vehHasChanged << "\n";
     //for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
@@ -163,23 +169,40 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
     //      - vehicle must be moved to the lane where it's midpoint is (either old or new)
     //      - shadow vehicle must be created/moved to the other lane if the vehicle intersects it
     // 3) updated dens of all lanes that hold the vehicle or its shadow
+    MSLane* shadowLane = 0;
+    const int direction = vehicle->getLateralPositionOnLane() < 0 ? -1 : 1;
+    ChangerIt to = from + direction;
     if (fabs(vehicle->getLateralPositionOnLane()) > 0.5 * vehicle->getLane()->getWidth()) {
         // vehicle moved to a new lane
-        const int direction = vehicle->getLateralPositionOnLane() < 0 ? -1 : 1;
-        ChangerIt to = from + direction;
         vehicle->myState.myPosLat -= direction * 0.5 * (from->lane->getWidth() + to->lane->getWidth());
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += vehicle->getVehicleType().getLengthWithGap();
         vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
-        to->ahead.addLeader(vehicle, false);
+        to->ahead.addLeader(vehicle, false, 0);
+        shadowLane = from->lane;
     } else {
         registerUnchanged(vehicle);
-        from->ahead.addLeader(vehicle, false);
+        from->ahead.addLeader(vehicle, false, 0);
+        shadowLane = to->lane;
     }
-    
-
-    // XXX updated vehicles lane and handle the shadow vehicle
-    // XXX updated dens for affected lanes
+    MSLane* oldShadowLane = vehicle->getLaneChangeModel().getShadowLane();
+    const SUMOReal overlap = (fabs(vehicle->getLateralPositionOnLane() + 0.5 * vehicle->getVehicleType().getWidth()) 
+            - 0.5 * vehicle->getLane()->getWidth());
+    if (overlap > 0) {
+        assert(to != from);
+        // sorted later in MSLane::integrateNewVehicle
+        if (shadowLane != oldShadowLane) {
+            shadowLane->setPartialOccupation(vehicle);
+            const SUMOReal latOffset = vehicle->getLane()->getRightSideOnEdge() - shadowLane->getRightSideOnEdge();
+            (myChanger.begin() + shadowLane->getIndex())->ahead.addLeader(vehicle, false, latOffset);
+        }
+    } else {
+        shadowLane = 0;
+    }
+    vehicle->getLaneChangeModel().setShadowLane(shadowLane);
+    if (oldShadowLane != 0 && oldShadowLane != shadowLane) {
+        oldShadowLane->resetPartialOccupation(vehicle);
+    }
 }
 
 
@@ -190,7 +213,7 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
     MSLeaderDistanceInfo result(target->lane->getWidth(), 0);
     for (int i = 0; i < target->ahead.numSublanes(); ++i) {
             if (gDebugFlag1 && target->ahead[i] != 0) std::cout << " dist=" << -ego->getPositionOnLane() << " lead=" << target->ahead[i]->getID() << " leadBack=" << target->ahead[i]->getBackPositionOnLane() << "\n";
-        result.addLeader(target->ahead[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), i);
+        result.addLeader(target->ahead[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), 0, i);
     }
 
     //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " neighLead=" << Named::getIDSecure(neighLead) << " (416)\n";

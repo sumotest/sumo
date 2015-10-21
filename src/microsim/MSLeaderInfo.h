@@ -65,9 +65,10 @@ public:
     /* @brief adds this vehicle as a leader in the appropriate sublanes
      * @param[in] veh The vehicle to add
      * @param[in] beyond Whether the vehicle is beyond the existing leaders (and thus may be shadowed by them)
+     * @param[in] latOffset The lateral offset that must be added to the position of veh
      * @return The number of free sublanes
      */
-    virtual int addLeader(const MSVehicle* veh, bool beyond);
+    virtual int addLeader(const MSVehicle* veh, bool beyond, SUMOReal latOffset=0);
 
     /// @brief discard all information
     virtual void clear();
@@ -77,7 +78,7 @@ public:
      * @param[out] rightmost The rightmost sublane occupied by veh 
      * @param[out] leftmost The rightmost sublane occupied by veh 
      */
-    void getSubLanes(const MSVehicle* veh, int& rightmost, int& leftmost) const;
+    void getSubLanes(const MSVehicle* veh, SUMOReal latOffset, int& rightmost, int& leftmost) const;
 
     /// @brief return the vehicle for the given sublane
     const MSVehicle* operator[](int sublane) const;
@@ -135,10 +136,11 @@ public:
      * @param[in] veh The vehicle to add
      * @param[in] seen The distance from the ego-front+minGap to the start of the lane of veh (myRecordLeaders=true) 
      *   or from the back of ego to start of the lane of veh (myRecordLeaders=false)
+     * @param[in] latOffset The lateral offset that must be added to the position of veh
      * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
      * @return The number of free sublanes
      */
-    int addLeader(const MSVehicle* veh, SUMOReal dist, int sublane=-1);
+    int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
 
     /// @brief discard all information
     void clear();

@@ -280,7 +280,7 @@ public:
         }
     }
 
-    /** @brief Returns the lane the vehicles shadow is on during continuouss lane change
+    /** @brief Returns the lane the vehicles shadow is on during continuous/sublane lane change
      * @return The vehicle's shadow lane
      */
     MSLane* getShadowLane() const {
@@ -289,6 +289,11 @@ public:
 
     /// @brief return the shadow lane for the given lane
     MSLane* getShadowLane(const MSLane* lane) const;
+
+    /// @brief set the shadow lane
+    void setShadowLane(MSLane* lane) {
+        myShadowLane = lane;
+    }
 
     const std::vector<MSLane*>& getShadowFurtherLanes() const {
         return myShadowFurtherLanes;
