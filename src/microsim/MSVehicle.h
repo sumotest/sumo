@@ -953,6 +953,11 @@ public:
     bool resumeFromStopping();
 
 
+    /// @brief update a vector of further lanes and return the new backPos
+    SUMOReal updateFurtherLanes(std::vector<MSLane*>& furtherLanes, 
+            const std::vector<MSLane*>& passedLanes); 
+
+
     /** @class Influencer
      * @brief Changes the wished vehicle speed / lanes
      *

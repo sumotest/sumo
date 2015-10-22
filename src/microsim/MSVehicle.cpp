@@ -410,6 +410,7 @@ MSVehicle::~MSVehicle() {
     for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
         (*i)->resetPartialOccupation(this);
     }
+    myLaneChangeModel->cleanupShadowLane();
     delete myLaneChangeModel; // still needed when calling resetPartialOccupation (getShadowLane)
     myFurtherLanes.clear();
     for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
@@ -1554,6 +1555,7 @@ MSVehicle::executeMove() {
                             WRITE_WARNING("Vehicle '" + getID() + "' could not finish continuous lane change (turn lane) time=" +
                                           time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
                             getLaneChangeModel().endLaneChangeManeuver();
+                            //getLaneChangeModel().cleanupShadowLane();
                         }
                     }
 #ifdef HAVE_INTERNAL_LANES
@@ -1572,11 +1574,6 @@ MSVehicle::executeMove() {
             }
         }
     }
-    // clear previously set information
-    for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
-        (*i)->resetPartialOccupation(this);
-    }
-    myFurtherLanes.clear();
 
     if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
         myWaitingTime = 0;
@@ -1593,35 +1590,53 @@ MSVehicle::executeMove() {
             myState.myPos = myLane->getLength();
             myState.mySpeed = 0;
         }
-        myState.myBackPos = myState.myPos - getVehicleType().getLength();
-        if (myState.myBackPos < 0 && passedLanes.size() > 0) {
-            SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
-            std::vector<MSLane*>::reverse_iterator i = passedLanes.rbegin() + 1;
-            while (leftLength > 0 && i != passedLanes.rend()) {
-                myFurtherLanes.push_back(*i);
-                // do not put this vehicle into the lane that is currently being
-                // processed. But it into the buffer instead where it will be
-                // integrated later
-                leftLength -= (*i)->setPartialOccupation(this);
-                ++i;
-            }
-            myState.myBackPos = -leftLength;
-        }
+        myState.myBackPos = updateFurtherLanes(myFurtherLanes, passedLanes);
         updateBestLanes();
         // bestLanes need to be updated before lane changing starts
         if (getLaneChangeModel().isChangingLanes()) {
             getLaneChangeModel().continueLaneChangeManeuver(moved);
+        } else if (moved && getLaneChangeModel().getShadowLane() != 0) {
+            getLaneChangeModel().updateShadowLane();
         }
         setBlinkerInformation(); // needs updated bestLanes
         // State needs to be reset for all vehicles before the next call to MSEdgeControl::changeLanes
         getLaneChangeModel().prepareStep();
     }
+    //if (getID() == "disabled") std::cout << SIMTIME << " executeMove finished veh=" << getID() << " lane=" << myLane->getID() << " myPos=" << getPositionOnLane() << " myPosLat=" << getLateralPositionOnLane() << "\n";
     return moved;
+}
+
+
+SUMOReal
+MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, 
+                const std::vector<MSLane*>& passedLanes) {
+
+    for (std::vector<MSLane*>::iterator i = furtherLanes.begin(); i != furtherLanes.end(); ++i) {
+        if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
+        (*i)->resetPartialOccupation(this);
+    }
+    furtherLanes.clear();
+    if (passedLanes.size() > 0) {
+        SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
+        std::vector<MSLane*>::const_reverse_iterator i = passedLanes.rbegin() + 1;
+        while (leftLength > 0 && i != passedLanes.rend()) {
+            furtherLanes.push_back(*i);
+            if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
+            leftLength -= (*i)->setPartialOccupation(this);
+            ++i;
+        }
+        return -leftLength;
+    } else {
+        return myState.myBackPos;
+    }
 }
 
 
 SUMOReal 
 MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
+    //if (getID() == "flow.4" && SIMTIME == 22 && lane->getID() == "beg_0") {
+    //    std::cout << SIMTIME << " getBackPositionOnLane veh=" << getID() << " lane=" << Named::getIDSecure(lane) << "\n";
+    //}
     if (lane == myLane 
             || lane == getLaneChangeModel().getShadowLane()) {
         return myState.myPos - getVehicleType().getLength();
@@ -1649,6 +1664,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
                 return -leftLength;
             }
         }
+        assert(false);
         throw ProcessError("Request backPos of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");
     }
 }
@@ -1958,8 +1974,10 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
             lane = lane->getLogicalPredecessorLane(myFurtherLanes[i]->getEdge());
         }
         if (lane != 0) {
+            if (getID() == "disabled") std::cout << SIMTIME << " enterLaneAtLaneChange \n";
             myFurtherLanes[i]->resetPartialOccupation(this);
             myFurtherLanes[i] = lane;
+            if (getID() == "disabled") std::cout << SIMTIME << " enterLaneAtLaneChange \n";
             leftLength -= (lane)->setPartialOccupation(this);
         } else {
             // keep the old values, but ensure there is no shadow
@@ -1997,6 +2015,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
         leftLength -= (clane)->setPartialOccupation(this);
     }
     myState.myBackPos = -leftLength;
+    getLaneChangeModel().updateShadowLane();
 }
 
 
@@ -2023,6 +2042,7 @@ MSVehicle::leaveLane(const MSMoveReminder::Notification reason) {
         // @note. In case of lane change, myFurtherLanes and partial occupation
         // are handled in enterLaneAtLaneChange()
         for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
+            if (getID() == "disabled") std::cout << SIMTIME << " leaveLane \n";
             (*i)->resetPartialOccupation(this);
         }
         myFurtherLanes.clear();

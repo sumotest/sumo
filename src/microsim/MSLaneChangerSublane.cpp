@@ -62,10 +62,12 @@ MSLaneChangerSublane::updateChanger(bool vehHasChanged) {
     MSLaneChanger::updateChanger(vehHasChanged);
     if (!vehHasChanged) {
         MSVehicle* lead = myCandi->lead;
+        //std::cout << SIMTIME << " updateChanger lane=" << myCandi->lane->getID() << " lead=" << Named::getIDSecure(lead) << "\n";
         myCandi->ahead.addLeader(lead, false, 0);
         MSLane* shadowLane = lead->getLaneChangeModel().getShadowLane();
         if (shadowLane != 0) {
             const SUMOReal latOffset = lead->getLane()->getRightSideOnEdge() - shadowLane->getRightSideOnEdge();
+            //std::cout << SIMTIME << " updateChanger shadowLane=" << shadowLane->getID() << " lead=" << Named::getIDSecure(lead) << "\n";
             (myChanger.begin() + shadowLane->getIndex())->ahead.addLeader(lead, false, latOffset);
         }
     }
@@ -169,7 +171,6 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
     //      - vehicle must be moved to the lane where it's midpoint is (either old or new)
     //      - shadow vehicle must be created/moved to the other lane if the vehicle intersects it
     // 3) updated dens of all lanes that hold the vehicle or its shadow
-    MSLane* shadowLane = 0;
     const int direction = vehicle->getLateralPositionOnLane() < 0 ? -1 : 1;
     ChangerIt to = from + direction;
     if (fabs(vehicle->getLateralPositionOnLane()) > 0.5 * vehicle->getLane()->getWidth()) {
@@ -179,30 +180,22 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
         to->dens += vehicle->getVehicleType().getLengthWithGap();
         vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
         to->ahead.addLeader(vehicle, false, 0);
-        shadowLane = from->lane;
     } else {
         registerUnchanged(vehicle);
         from->ahead.addLeader(vehicle, false, 0);
-        shadowLane = to->lane;
     }
+
     MSLane* oldShadowLane = vehicle->getLaneChangeModel().getShadowLane();
-    const SUMOReal overlap = (fabs(vehicle->getLateralPositionOnLane() + 0.5 * vehicle->getVehicleType().getWidth()) 
-            - 0.5 * vehicle->getLane()->getWidth());
-    if (overlap > 0) {
+    vehicle->getLaneChangeModel().updateShadowLane();
+    MSLane* shadowLane = vehicle->getLaneChangeModel().getShadowLane();
+    if (shadowLane != 0 && shadowLane != oldShadowLane) {
         assert(to != from);
-        // sorted later in MSLane::integrateNewVehicle
-        if (shadowLane != oldShadowLane) {
-            shadowLane->setPartialOccupation(vehicle);
-            const SUMOReal latOffset = vehicle->getLane()->getRightSideOnEdge() - shadowLane->getRightSideOnEdge();
-            (myChanger.begin() + shadowLane->getIndex())->ahead.addLeader(vehicle, false, latOffset);
-        }
-    } else {
-        shadowLane = 0;
+        const SUMOReal latOffset = vehicle->getLane()->getRightSideOnEdge() - shadowLane->getRightSideOnEdge();
+        (myChanger.begin() + shadowLane->getIndex())->ahead.addLeader(vehicle, false, latOffset);
     }
-    vehicle->getLaneChangeModel().setShadowLane(shadowLane);
-    if (oldShadowLane != 0 && oldShadowLane != shadowLane) {
-        oldShadowLane->resetPartialOccupation(vehicle);
-    }
+    if (vehicle->getID() == "disabled") std::cout << SIMTIME << " startChangeSublane shadowLane"
+        << " old=" << Named::getIDSecure(oldShadowLane) 
+            << " new=" << Named::getIDSecure(vehicle->getLaneChangeModel().getShadowLane()) << "\n";
 }
 
 

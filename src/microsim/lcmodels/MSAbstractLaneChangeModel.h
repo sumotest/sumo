@@ -348,9 +348,16 @@ public:
      */
     void continueLaneChangeManeuver(bool moved);
 
+    /* @brief update lane change shadow after the vehicle moved to a new lane */
+    void updateShadowLane();
+
     /* @brief finish the lane change maneuver
      */
     void endLaneChangeManeuver(const MSMoveReminder::Notification reason = MSMoveReminder::NOTIFICATION_LANE_CHANGE);
+
+    /* @brief clean up all references to the shadow vehicle
+     */
+    void cleanupShadowLane();
 
     /// @brief remove the shadow copy of a lane change maneuver
     void removeLaneChangeShadow(const MSMoveReminder::Notification reason, bool notify = true);

@@ -152,6 +152,7 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 
 SUMOReal
 MSLane::setPartialOccupation(MSVehicle* v) {
+    if (v->getID() == "cars.2") std::cout << SIMTIME << " setPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
     // XXX update occupancy here?
     myPartialVehicles.push_back(v);
     return myLength;
@@ -160,7 +161,7 @@ MSLane::setPartialOccupation(MSVehicle* v) {
 
 void
 MSLane::resetPartialOccupation(MSVehicle* v) {
-    //if (true || v->getID() == "always_right.9") std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+    if (v->getID() == "cars.2") std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
     for (VehCont::iterator i = myPartialVehicles.begin(); i != myPartialVehicles.end(); ++i) {
         if (v == *i) {
             myPartialVehicles.erase(i);
@@ -1251,7 +1252,7 @@ MSLane::setLength(SUMOReal val) {
 
 void
 MSLane::swapAfterLaneChange(SUMOTime) {
-    //if (getID() == "beg_1") std::cout << SIMTIME << " swapAfterLaneChange lane=" << getID() << " myVehicles=" << toString(myVehicles) << " myTmpVehicles=" << toString(myTmpVehicles) << "\n";
+    //if (getID() == "end_1") std::cout << SIMTIME << " swapAfterLaneChange lane=" << getID() << " myVehicles=" << toString(myVehicles) << " myTmpVehicles=" << toString(myTmpVehicles) << "\n";
     myVehicles = myTmpVehicles;
     myTmpVehicles.clear();
     if (myPartialVehicles.size() > 1) {

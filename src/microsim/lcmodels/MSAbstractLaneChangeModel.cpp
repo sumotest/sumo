@@ -176,8 +176,15 @@ MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* targe
 MSLane*
 MSAbstractLaneChangeModel::getShadowLane(const MSLane* lane) const {
     if (std::find(myNoPartiallyOccupatedByShadow.begin(), myNoPartiallyOccupatedByShadow.end(), lane) == myNoPartiallyOccupatedByShadow.end()) {
-        const int shadowDirection = myLaneChangeMidpointPassed ? -myLaneChangeDirection : myLaneChangeDirection;
-        return lane->getParallelLane(shadowDirection);
+        // initialize shadow lane
+        const SUMOReal overlap = (fabs(myVehicle.getLateralPositionOnLane() + 0.5 * myVehicle.getVehicleType().getWidth()) 
+                - 0.5 * myVehicle.getLane()->getWidth());
+        if (overlap > 0) {
+            const int shadowDirection = myVehicle.getLateralPositionOnLane() < 0 ? -1 : 1;
+            return lane->getParallelLane(shadowDirection);
+        } else {
+            return 0;
+        }
     } else {
         return 0;
     }
@@ -207,6 +214,7 @@ MSAbstractLaneChangeModel::continueLaneChangeManeuver(bool moved) {
         MSLane* tmp = myVehicle.getLane();
         // removing partial occupator shadows - will be rebuilt in enterLaneAtLaneChange
         for (std::vector<MSLane*>::const_iterator it = myPartiallyOccupatedByShadow.begin(); it != myPartiallyOccupatedByShadow.end(); ++it) {
+            if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " continueLaneChangeManeuver\n";
             (*it)->resetPartialOccupation(&myVehicle);
         }
         myPartiallyOccupatedByShadow.clear();
@@ -253,11 +261,29 @@ MSAbstractLaneChangeModel::endLaneChangeManeuver(const MSMoveReminder::Notificat
     myShadowLane = 0;
     // removing partial occupator shadows
     for (std::vector<MSLane*>::const_iterator it = myPartiallyOccupatedByShadow.begin(); it != myPartiallyOccupatedByShadow.end(); ++it) {
+        if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " endLaneChangeManeuver\n";
         (*it)->resetPartialOccupation(&myVehicle);
     }
     myPartiallyOccupatedByShadow.clear();
     myNoPartiallyOccupatedByShadow.clear();
 }
+
+
+void
+MSAbstractLaneChangeModel::cleanupShadowLane() {
+    if (myShadowLane != 0) {
+        if (myVehicle.getID() == "disabled") 
+            std::cout << SIMTIME << " cleanupShadowLane\n";
+        myShadowLane->resetPartialOccupation(&myVehicle);
+    }
+    for (std::vector<MSLane*>::const_iterator it = myShadowFurtherLanes.begin(); it != myShadowFurtherLanes.end(); ++it) {
+        if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " cleanupShadowLane2\n";
+        (*it)->resetPartialOccupation(&myVehicle);
+    }
+    myShadowFurtherLanes.clear();
+    myNoPartiallyOccupatedByShadow.clear();
+}
+
 
 bool
 MSAbstractLaneChangeModel::cancelRequest(int state) {
@@ -274,3 +300,33 @@ MSAbstractLaneChangeModel::initLastLaneChangeOffset(int dir) {
         myLastLaneChangeOffset = -1;
     }
 }
+
+void
+MSAbstractLaneChangeModel::updateShadowLane() {
+    if (myShadowLane != 0) {
+        if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " updateShadowLane\n";
+        myShadowLane->resetPartialOccupation(&myVehicle);
+    }
+    myShadowLane = getShadowLane(myVehicle.getLane());
+    std::vector<MSLane*> passed;
+    if (myShadowLane != 0) {
+        myShadowLane->setPartialOccupation(&myVehicle);
+        const std::vector<MSLane*>& further = myVehicle.getFurtherLanes();
+        for (std::vector<MSLane*>::const_reverse_iterator i = further.rbegin(); i != further.rend(); ++i) {
+            MSLane* shadowFurther = getShadowLane(*i);
+            if (shadowFurther != 0) {
+                passed.push_back(shadowFurther);
+            }
+        }
+        passed.push_back(myShadowLane);
+    }
+    if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " updateShadowLane veh=" << myVehicle.getID() 
+        << " newShadowLane=" << Named::getIDSecure(myShadowLane)
+        << "\n   before:" << " myShadowFurtherLanes=" << toString(myShadowFurtherLanes) << " passed=" << toString(passed)
+        << "\n";
+    myVehicle.updateFurtherLanes(myShadowFurtherLanes, passed);
+    if (myVehicle.getID() == "disabled") std::cout 
+        << "\n   after:" << " myShadowFurtherLanes=" << toString(myShadowFurtherLanes) << "\n";
+}
+
+
