@@ -329,6 +329,12 @@ public:
      */
     SUMOReal getRightSideOnEdge() const;
 
+    /** @brief Get the vehicle's lateral position on the edge:
+     * @return The lateral position of the vehicle (in m distance between center
+     * of vehicle and ride side of edge
+     */
+    SUMOReal getCenterOnEdge() const;
+
     /** @brief Returns the vehicle's current speed
      * @return The vehicle's speed
      */
@@ -479,7 +485,7 @@ public:
      * all cfmodels work (some of them require veh->getLane() to return a valid lane)
      * Once the vehicle is sucessfully inserted the lane is set again (see enterLaneAtInsertion)
      */
-    void setTentativeLaneAndPosition(MSLane* lane, const SUMOReal pos);
+    void setTentativeLaneAndPosition(MSLane* lane, SUMOReal pos, SUMOReal posLat=0);
 
     /** @brief Update when the vehicle enters a new lane in the laneChange step.
      *

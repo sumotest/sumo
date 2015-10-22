@@ -1240,7 +1240,8 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         v = MIN2(va, v);
         seenNonInternal += lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL ? 0 : lane->getLength();
         //gDebugFlag1 = getID() == "13";
-        ahead = lane->getLastVehicleInformation(this);
+        // do not restrict results to the current vehicle to allow caching for the current time step
+        ahead = lane->getLastVehicleInformation(0);
         //gDebugFlag1 = false;
         seen += lane->getLength();
         //if (getID() == "from3.5") std::cout << SIMTIME << " seen=" << seen << " includes lane=" << lane->getID() << " with length " << lane->getLength() << "\n";
@@ -2588,16 +2589,24 @@ MSVehicle::getLaneIndex() const {
 
 
 void
-MSVehicle::setTentativeLaneAndPosition(MSLane* lane, const SUMOReal pos) {
+MSVehicle::setTentativeLaneAndPosition(MSLane* lane, SUMOReal pos, SUMOReal posLat) {
     assert(lane != 0);
     myLane = lane;
     myState.myPos = pos;
+    myState.myPosLat = posLat;
+    myState.myBackPos = pos - getVehicleType().getLength();
 }
 
 
 SUMOReal 
 MSVehicle::getRightSideOnEdge() const {
     return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth() - 0.5 * getVehicleType().getWidth();
+}
+
+
+SUMOReal 
+MSVehicle::getCenterOnEdge() const {
+    return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth();
 }
 
 

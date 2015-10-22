@@ -308,9 +308,11 @@ public:
      * The information about the last vehicles in this lanes in all sublanes
      * occupied by ego are
      * returned. Partial occupators are included
+     * @param[in] ego The vehicle for which to restrict the returned leaderInfo
+     * @param[in] pos The minimum position from which to start search for leaders
      * @return Information about the last vehicles
      */
-    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego) const;
+    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos=0) const;
     /// @}
 
 
@@ -671,7 +673,7 @@ public:
         SUMOReal backOffset, SUMOReal leaderSpeed, SUMOReal leaderMaxDecel) const;
 
     /// @brief return the sublane followers with the largest missing rear gap among all predecessor lanes (within dist)
-    MSLeaderDistanceInfo getFollowersOnConsecutive(const MSVehicle* ego) const; 
+    MSLeaderDistanceInfo getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const; 
 
     /// @brief return by how much further the leader must be inserted to avoid rear end collisions
     SUMOReal getMissingRearGap(SUMOReal backOffset, SUMOReal leaderSpeed, SUMOReal leaderMaxDecel) const;
@@ -903,6 +905,10 @@ protected:
      * @return the depart speed
      */
     SUMOReal getDepartSpeed(const MSVehicle& veh, bool& patchSpeed);
+
+    /** @brief return the maximum safe speed for insertion behind leaders
+     * (a negative value indicates that safe insertion is impossible) */
+    SUMOReal safeInsertionSpeed(const MSVehicle* veh, const MSLeaderInfo& leaders, SUMOReal speed);
 
 protected:
     /// Unique numerical ID (set on reading by netload)

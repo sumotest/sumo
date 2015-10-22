@@ -262,10 +262,10 @@ MSLaneChangerSublane::checkChangeSublane(
     gDebugFlag1 = vehicle->getID() == "disabled";
 
     MSLeaderDistanceInfo neighLeaders = getLeaders(target, vehicle);
-    MSLeaderDistanceInfo neighFollowers = target->lane->getFollowersOnConsecutive(vehicle);
+    MSLeaderDistanceInfo neighFollowers = target->lane->getFollowersOnConsecutive(vehicle, true);
     MSLeaderDistanceInfo neighBlockers(neighLane.getWidth(), vehicle);
     MSLeaderDistanceInfo leaders = getLeaders(myCandi, vehicle);
-    MSLeaderDistanceInfo followers = myCandi->lane->getFollowersOnConsecutive(vehicle);
+    MSLeaderDistanceInfo followers = myCandi->lane->getFollowersOnConsecutive(vehicle, true);
     MSLeaderDistanceInfo blockers(vehicle->getLane()->getWidth(), vehicle);
  
     if (gDebugFlag1) std::cout << SIMTIME 
