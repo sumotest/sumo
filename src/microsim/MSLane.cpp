@@ -152,7 +152,7 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 
 SUMOReal
 MSLane::setPartialOccupation(MSVehicle* v) {
-    if (v->getID() == "cars.2") std::cout << SIMTIME << " setPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+    if (v->getID() == "disabled") std::cout << SIMTIME << " setPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
     // XXX update occupancy here?
     myPartialVehicles.push_back(v);
     return myLength;
@@ -161,7 +161,7 @@ MSLane::setPartialOccupation(MSVehicle* v) {
 
 void
 MSLane::resetPartialOccupation(MSVehicle* v) {
-    if (v->getID() == "cars.2") std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+    if (v->getID() == "disabled") std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
     for (VehCont::iterator i = myPartialVehicles.begin(); i != myPartialVehicles.end(); ++i) {
         if (v == *i) {
             myPartialVehicles.erase(i);
