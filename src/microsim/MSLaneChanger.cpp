@@ -202,10 +202,7 @@ MSLaneChanger::change() {
     }
 #endif
     if (vehicle->getLaneChangeModel().isChangingLanes()) {
-        // vehicles shadows and changing vehicles are not eligible
-        //if ((*myCandi).lane->getID() == "beg_1") std::cout << SIMTIME << " change on lane=" << (*myCandi).lane->getID() << " unchanged veh=" << vehicle->getID() << "\n";
-        registerUnchanged(vehicle);
-        return false;
+        return continueChange(vehicle, myCandi, vehicle->getLaneChangeModel().getLaneChangeDirection());
     }
 #ifndef NO_TRACI
     if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
@@ -321,8 +318,8 @@ MSLaneChanger::change() {
 void
 MSLaneChanger::registerUnchanged(MSVehicle* vehicle) {
     myCandi->lane->myTmpVehicles.insert(myCandi->lane->myTmpVehicles.begin(), veh(myCandi));
+    myCandi->dens += vehicle->getVehicleType().getLengthWithGap();
     vehicle->getLaneChangeModel().unchanged();
-    (myCandi)->dens += vehicle->getVehicleType().getLengthWithGap();
 }
 
 
@@ -333,13 +330,45 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
     // @todo delay entering the target lane until the vehicle intersects it
     //       physically (considering lane width and vehicle width)
     //if (to->lane->getID() == "beg_1") std::cout << SIMTIME << " startChange to lane=" << to->lane->getID() << " myTmpVehiclesBefore=" << toString(to->lane->myTmpVehicles) << "\n";
-    to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
     const bool continuous = vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
     if (continuous) {
+        continueChange(vehicle, myCandi, vehicle->getLaneChangeModel().getLaneChangeDirection());
+    } else {
+        to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
+        to->dens += to->hoppedVeh->getVehicleType().getLengthWithGap();
+    }
+}
+
+
+bool
+MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
+    const bool pastMidpoint = vehicle->getLaneChangeModel().updateCompletion();
+    vehicle->myState.myPosLat += vehicle->getLaneChangeModel().getLateralSpeed();
+    if (pastMidpoint) {
+        ChangerIt to = from + direction;
+        MSLane* source = myCandi->lane;
+        MSLane* target = to->lane;
+        vehicle->myState.myPosLat -= direction * 0.5 * (source->getWidth() + target->getWidth());
+        vehicle->leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
+        source->leftByLaneChange(vehicle);
+        vehicle->enterLaneAtLaneChange(target);
+        vehicle->getLaneChangeModel().changed(direction);
+
+        to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
+        to->dens += vehicle->getVehicleType().getLengthWithGap();
+    } else {
         from->lane->myTmpVehicles.insert(from->lane->myTmpVehicles.begin(), vehicle);
         from->dens += vehicle->getVehicleType().getLengthWithGap();
     }
-    to->dens += to->hoppedVeh->getVehicleType().getLengthWithGap();
+    //std::cout << SIMTIME << " continueChange veh=" << vehicle->getID() << " pastMidpoint=" << pastMidpoint << " posLat=" << vehicle->getLateralPositionOnLane() 
+    //    << " completion=" << vehicle->getLaneChangeModel().getLaneChangeCompletion()
+    //    << "\n";
+    if (!vehicle->getLaneChangeModel().isChangingLanes()) {
+        vehicle->myState.myPosLat = 0;
+        vehicle->getLaneChangeModel().endLaneChangeManeuver();
+    }
+    vehicle->getLaneChangeModel().updateShadowLane();
+    return pastMidpoint;
 }
 
 

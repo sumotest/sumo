@@ -85,10 +85,9 @@ MSAbstractLaneChangeModel::MSAbstractLaneChangeModel(MSVehicle& v, const LaneCha
     myOwnState(0),
     myLaneChangeCompletion(1.0),
     myLaneChangeDirection(0),
-    myLaneChangeMidpointPassed(false),
+    myLateralspeed(0),
     myAlreadyMoved(false),
     myShadowLane(0),
-    myHaveShadow(false),
     myCarFollowModel(v.getCarFollowModel()),
     myModel(model),
     myLastLaneChangeOffset(0) {
@@ -96,9 +95,6 @@ MSAbstractLaneChangeModel::MSAbstractLaneChangeModel(MSVehicle& v, const LaneCha
 
 
 MSAbstractLaneChangeModel::~MSAbstractLaneChangeModel() {
-    if (myShadowLane != 0 && myHaveShadow) {
-        myShadowLane->removeVehicle(&myVehicle, MSMoveReminder::NOTIFICATION_VAPORIZED, false);
-    }
 }
 
 
@@ -139,27 +135,9 @@ bool
 MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* target, int direction) {
     target->enteredByLaneChange(&myVehicle);
     if (MSGlobals::gLaneChangeDuration > DELTA_T) {
-        // initialize further lanes for shadow vehicle
-        // (must come before myLaneChangeCompletion is initialized)
-        myShadowFurtherLanes.clear();
-        const std::vector<MSLane*>& further = myVehicle.getFurtherLanes();
-        SUMOReal leftLength = myVehicle.getVehicleType().getLength() - myVehicle.getPositionOnLane();
-        MSLane* lane = target;
-        for (int i = 0; i < (int)further.size(); i++) {
-            lane = lane->getLogicalPredecessorLane(further[i]->getEdge());
-            if (lane != 0) {
-                leftLength -= lane->setPartialOccupation(&myVehicle);
-                setShadowPartialOccupator(lane);
-            } else {
-                break;
-            }
-        }
         myLaneChangeCompletion = 0;
-        myShadowLane = target;
-        myHaveShadow = true;
-        myLaneChangeMidpointPassed = false;
         myLaneChangeDirection = direction;
-        continueLaneChangeManeuver(false);
+        myLateralspeed = (target->getCenterOnEdge() - source->getCenterOnEdge()) * (SUMOReal)DELTA_T / (SUMOReal)MSGlobals::gLaneChangeDuration;
         myVehicle.switchOffSignal(MSVehicle::VEH_SIGNAL_BLINKER_RIGHT | MSVehicle::VEH_SIGNAL_BLINKER_LEFT);
         myVehicle.switchOnSignal(direction == 1 ? MSVehicle::VEH_SIGNAL_BLINKER_LEFT : MSVehicle::VEH_SIGNAL_BLINKER_RIGHT);
         return true;
@@ -173,13 +151,30 @@ MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* targe
 }
 
 
+bool
+MSAbstractLaneChangeModel::updateCompletion() {
+    const SUMOReal oldCompletion = myLaneChangeCompletion;
+    myLaneChangeCompletion += (SUMOReal)DELTA_T / (SUMOReal)MSGlobals::gLaneChangeDuration;
+    return myLaneChangeCompletion >= 0.5 && oldCompletion < 0.5; 
+}
+
+
+void
+MSAbstractLaneChangeModel::endLaneChangeManeuver(const MSMoveReminder::Notification reason) {
+    myLaneChangeCompletion = 1;
+    cleanupShadowLane();
+    myNoPartiallyOccupatedByShadow.clear();
+    myVehicle.switchOffSignal(MSVehicle::VEH_SIGNAL_BLINKER_RIGHT | MSVehicle::VEH_SIGNAL_BLINKER_LEFT);
+}
+
+
 MSLane*
 MSAbstractLaneChangeModel::getShadowLane(const MSLane* lane) const {
     if (std::find(myNoPartiallyOccupatedByShadow.begin(), myNoPartiallyOccupatedByShadow.end(), lane) == myNoPartiallyOccupatedByShadow.end()) {
         // initialize shadow lane
-        const SUMOReal overlap = (fabs(myVehicle.getLateralPositionOnLane() + 0.5 * myVehicle.getVehicleType().getWidth()) 
-                - 0.5 * myVehicle.getLane()->getWidth());
-        if (overlap > 0) {
+        const SUMOReal overlap = myVehicle.getLateralOverlap();
+        if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " veh=" << myVehicle.getID() << " posLat=" << myVehicle.getLateralPositionOnLane() << " overlap=" << overlap << "\n";
+        if (overlap > NUMERICAL_EPS) {
             const int shadowDirection = myVehicle.getLateralPositionOnLane() < 0 ? -1 : 1;
             return lane->getParallelLane(shadowDirection);
         } else {
@@ -188,84 +183,6 @@ MSAbstractLaneChangeModel::getShadowLane(const MSLane* lane) const {
     } else {
         return 0;
     }
-}
-
-
-void
-MSAbstractLaneChangeModel::continueLaneChangeManeuver(bool moved) {
-    if (moved && myHaveShadow) {
-        // move shadow to next lane
-        removeLaneChangeShadow(MSMoveReminder::NOTIFICATION_JUNCTION, false);
-        myShadowLane = getShadowLane(myVehicle.getLane());
-        if (myShadowLane == 0) {
-            // abort lane change
-            WRITE_WARNING("Vehicle '" + myVehicle.getID() + "' could not finish continuous lane change (lane disappeared) time=" +
-                          time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
-            endLaneChangeManeuver();
-            return;
-        }
-        myHaveShadow = true;
-    }
-    myLaneChangeCompletion += (SUMOReal)DELTA_T / (SUMOReal)MSGlobals::gLaneChangeDuration;
-    if (!myLaneChangeMidpointPassed && myLaneChangeCompletion >=
-            myVehicle.getLane()->getWidth() / (myVehicle.getLane()->getWidth() + myShadowLane->getWidth())) {
-        // maneuver midpoint reached, swap myLane and myShadowLane
-        myLaneChangeMidpointPassed = true;
-        MSLane* tmp = myVehicle.getLane();
-        // removing partial occupator shadows - will be rebuilt in enterLaneAtLaneChange
-        for (std::vector<MSLane*>::const_iterator it = myPartiallyOccupatedByShadow.begin(); it != myPartiallyOccupatedByShadow.end(); ++it) {
-            if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " continueLaneChangeManeuver\n";
-            (*it)->resetPartialOccupation(&myVehicle);
-        }
-        myPartiallyOccupatedByShadow.clear();
-        myVehicle.leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
-        myVehicle.enterLaneAtLaneChange(myShadowLane);
-        myShadowLane = tmp;
-        if (myVehicle.fixPosition()) {
-            WRITE_WARNING("Vehicle '" + myVehicle.getID() + "' set back by " + toString(myVehicle.getPositionOnLane() - myVehicle.getLane()->getLength()) +
-                          "m when changing lanes on lane '" + myVehicle.getLane()->getID() + "' time=" +
-                          time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
-        }
-        changed(myLaneChangeDirection);
-        myAlreadyMoved = true;
-    }
-    // remove shadow as soon as the vehicle leaves the original lane geometrically
-    if (myLaneChangeMidpointPassed && myHaveShadow) {
-        const SUMOReal sourceHalfWidth = myShadowLane->getWidth() / 2.0;
-        const SUMOReal targetHalfWidth = myVehicle.getLane()->getWidth() / 2.0;
-        if (myLaneChangeCompletion * (sourceHalfWidth + targetHalfWidth) - myVehicle.getVehicleType().getWidth() / 2.0 > sourceHalfWidth) {
-            removeLaneChangeShadow(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
-        }
-    }
-    // finish maneuver
-    if (!isChangingLanes()) {
-        assert(myLaneChangeMidpointPassed);
-        endLaneChangeManeuver();
-    }
-}
-
-
-void
-MSAbstractLaneChangeModel::removeLaneChangeShadow(const MSMoveReminder::Notification reason, bool notify) {
-    if (myShadowLane != 0 && myHaveShadow) {
-        myShadowLane->removeVehicle(&myVehicle, reason, notify);
-        myHaveShadow = false;
-        // maintain pointer to myShadowLane for interpolating position
-    }
-}
-
-void
-MSAbstractLaneChangeModel::endLaneChangeManeuver(const MSMoveReminder::Notification reason) {
-    removeLaneChangeShadow(reason);
-    myLaneChangeCompletion = 1;
-    myShadowLane = 0;
-    // removing partial occupator shadows
-    for (std::vector<MSLane*>::const_iterator it = myPartiallyOccupatedByShadow.begin(); it != myPartiallyOccupatedByShadow.end(); ++it) {
-        if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " endLaneChangeManeuver\n";
-        (*it)->resetPartialOccupation(&myVehicle);
-    }
-    myPartiallyOccupatedByShadow.clear();
-    myNoPartiallyOccupatedByShadow.clear();
 }
 
 
@@ -319,6 +236,12 @@ MSAbstractLaneChangeModel::updateShadowLane() {
             }
         }
         passed.push_back(myShadowLane);
+    } else {
+        if (isChangingLanes() && myVehicle.getLateralOverlap() > NUMERICAL_EPS) {
+            WRITE_WARNING("Vehicle '" + myVehicle.getID() + "' could not finish continuous lane change (lane disappeared) time=" +
+                    time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
+            endLaneChangeManeuver();
+        }
     }
     if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " updateShadowLane veh=" << myVehicle.getID() 
         << " newShadowLane=" << Named::getIDSecure(myShadowLane)

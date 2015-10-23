@@ -126,7 +126,7 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
         myWidth += (*i)->getWidth();
     }
-    if (MSGlobals::gLateralResolution > 0) {
+    if (MSGlobals::gLateralResolution > 0 || MSGlobals::gLaneChangeDuration > 0) {
         SUMOReal widthBefore = 0;
         for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
             (*i)->setRightSideOnEdge(widthBefore);

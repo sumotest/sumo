@@ -868,7 +868,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
     if (myVehicles.size() == 0) {
         return;
     }
-    if (MSGlobals::gLateralResolution <= 0) {
+    if (MSGlobals::gLateralResolution <= 0 && MSGlobals::gLaneChangeDuration <= 0) {
         // no sublanes
         VehCont::iterator lastVeh = myVehicles.end() - 1;
         for (VehCont::iterator veh = myVehicles.begin(); veh != lastVeh;) {
@@ -938,7 +938,7 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
         //    << " colliderPos=" << collider->getPositionOnLane(this)
         //    << "\n";
         SUMOReal latGap = 0;
-        if (MSGlobals::gLateralResolution > 0) {
+        if (MSGlobals::gLateralResolution > 0 || MSGlobals::gLaneChangeDuration > 0) {
             latGap = (fabs(victim->getCenterOnEdge() - collider->getCenterOnEdge()) 
                     - 0.5 * fabs(victim->getVehicleType().getWidth() + collider->getVehicleType().getWidth()));
             if (latGap + NUMERICAL_EPS > 0) {
@@ -1005,13 +1005,6 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
                 SUMOReal oldPos = veh->getPositionOnLane() - SPEED2DIST(veh->getSpeed());
                 veh->workOnMoveReminders(oldPos, veh->getPositionOnLane(), pspeed);
                 lanesWithVehiclesToIntegrate.push_back(target);
-                if (veh->getLaneChangeModel().hasShadowVehicle()) {
-                    MSLane* shadowLane = veh->getLaneChangeModel().getShadowLane();
-                    if (shadowLane != 0) {
-                        lanesWithVehiclesToIntegrate.push_back(shadowLane);
-                        shadowLane->myVehBuffer.push_back(veh);
-                    }
-                }
             }
         } else if (veh->isParking()) {
             // vehicle started to park
@@ -1319,6 +1312,8 @@ MSLane::swapAfterLaneChange(SUMOTime) {
     //if (getID() == "disabled_lane") std::cout << SIMTIME << " swapAfterLaneChange lane=" << getID() << " myVehicles=" << toString(myVehicles) << " myTmpVehicles=" << toString(myTmpVehicles) << "\n";
     myVehicles = myTmpVehicles;
     myTmpVehicles.clear();
+    // this needs to be done after finishing lane-changing for all lanes on the
+    // current edge (MSLaneChanger::updateLanes()) 
     if (myPartialVehicles.size() > 1) {
         sort(myPartialVehicles.begin(), myPartialVehicles.end(), vehicle_natural_position_sorter(this));
     }

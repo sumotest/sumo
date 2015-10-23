@@ -305,11 +305,6 @@ public:
 
 
     /// @brief return whether the vehicle passed the midpoint of a continuous lane change maneuver
-    inline bool isLaneChangeMidpointPassed() const {
-        return myLaneChangeMidpointPassed;
-    }
-
-    /// @brief return whether the vehicle passed the midpoint of a continuous lane change maneuver
     inline SUMOReal getLaneChangeCompletion() const {
         return myLaneChangeCompletion;
     }
@@ -319,14 +314,14 @@ public:
         return myLaneChangeCompletion < (1 - NUMERICAL_EPS);
     }
 
-    /// @brief return true if the vehicle currently has a shadow vehicle
-    inline bool hasShadowVehicle() const {
-        return myHaveShadow;
-    }
-
     /// @brief return the direction of the current lane change maneuver
     inline int getLaneChangeDirection() const {
         return myLaneChangeDirection;
+    }
+
+    /// @brief return the lateral speed of the current lane change maneuver
+    inline SUMOReal getLateralSpeed() const {
+        return myLateralspeed;
     }
 
     /// @brief reset the flag whether a vehicle already moved to false
@@ -343,10 +338,10 @@ public:
     bool startLaneChangeManeuver(MSLane* source, MSLane* target, int direction);
 
 
-    /* @brief continue the lane change maneuver
-     * @param[in] moved Whether the vehicle has moved to a new lane
+    /* @brief continue the lane change maneuver and return whether the midpoint
+     * was passed in this step
      */
-    void continueLaneChangeManeuver(bool moved);
+    bool updateCompletion();
 
     /* @brief update lane change shadow after the vehicle moved to a new lane */
     void updateShadowLane();
@@ -358,9 +353,6 @@ public:
     /* @brief clean up all references to the shadow vehicle
      */
     void cleanupShadowLane();
-
-    /// @brief remove the shadow copy of a lane change maneuver
-    void removeLaneChangeShadow(const MSMoveReminder::Notification reason, bool notify = true);
 
     /// @brief reserve space at the end of the lane to avoid dead locks
     virtual void saveBlockerLength(SUMOReal length) {
@@ -397,20 +389,18 @@ protected:
     /// @brief direction of the lane change maneuver -1 means right, 1 means left
     int myLaneChangeDirection;
 
-    /// @brief whether myLane has already been set to the target of the lane-change maneuver
-    bool myLaneChangeMidpointPassed;
+    /// @brief The lateral offset during a continuous LaneChangeManeuver
+    SUMOReal myLateralspeed;
 
     /// @brief whether the vehicle has already moved this step
     bool myAlreadyMoved;
 
-    /// @brief The lane the vehicle shadow is on during a continuous lane change
+    /// @brief A lane that is partially occupied by the front of the vehicle but that is not the primary lane
     MSLane* myShadowLane;
 
-    /// @brief analogue to MSVehicle::myFurtherLanes for the shadow vehicle
+    /* @brief Lanes that are parially (laterally) occupied by the back of the
+     * vehicle (analogue to MSVehicle::myFurtherLanes) */
     std::vector<MSLane*> myShadowFurtherLanes;
-
-    /// Wether a vehicle shadow exists
-    bool myHaveShadow;
 
     /// @brief The vehicle's car following model
     const MSCFModel& myCarFollowModel;

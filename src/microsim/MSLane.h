@@ -833,6 +833,10 @@ public:
         return myRightSideOnEdge;
     }
 
+    SUMOReal getCenterOnEdge() const {
+        return myRightSideOnEdge + 0.5 * myWidth;
+    }
+
     /// @name State saving/loading
     /// @{
 

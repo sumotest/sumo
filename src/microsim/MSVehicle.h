@@ -323,6 +323,9 @@ public:
         return myState.myPosLat;
     }
 
+    /// @brief return the amount by which the vehicle extends laterally outside it's primary lane
+    SUMOReal getLateralOverlap() const; 
+
     /** @brief Get the vehicle's lateral position on the edge:
      * @return The lateral position of the vehicle (in m distance between right
      * side of vehicle and ride side of edge
