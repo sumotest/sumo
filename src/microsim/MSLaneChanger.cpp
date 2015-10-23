@@ -296,38 +296,18 @@ MSLaneChanger::change() {
            ) {
 
             // check for position and speed
-            if (prohibitor->getVehicleType().getLengthWithGap() - vehicle->getVehicleType().getLengthWithGap() == 0) {
+            if (prohibitor->getVehicleType().getLengthWithGap() == vehicle->getVehicleType().getLengthWithGap()) {
                 // ok, may be swapped
                 // remove vehicle to swap with
                 MSLane::VehCont::iterator i = find(target->lane->myTmpVehicles.begin(), target->lane->myTmpVehicles.end(), prohibitor);
                 if (i != target->lane->myTmpVehicles.end()) {
                     assert(*i == prohibitor);
                     target->lane->myTmpVehicles.erase(i);
-                    // set this vehicle
-                    target->hoppedVeh = vehicle;
-                    target->lane->myTmpVehicles.insert(target->lane->myTmpVehicles.begin(), vehicle);
-                    myCandi->hoppedVeh = prohibitor;
-                    myCandi->lane->myTmpVehicles.insert(myCandi->lane->myTmpVehicles.begin(), prohibitor);
-
-                    // leave lane and detectors
-                    vehicle->leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
-                    prohibitor->leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
-                    // patch position and speed
-                    SUMOReal p1 = vehicle->getPositionOnLane();
-                    vehicle->myState.myPos = prohibitor->myState.myPos;
-                    prohibitor->myState.myPos = p1;
-                    // @todo what about myBackPos ?
-                    p1 = vehicle->getSpeed();
-                    vehicle->myState.mySpeed = prohibitor->myState.mySpeed;
-                    prohibitor->myState.mySpeed = p1;
-                    // enter lane and detectors
-                    vehicle->enterLaneAtLaneChange(target->lane);
-                    prohibitor->enterLaneAtLaneChange(myCandi->lane);
-                    // mark lane change
-                    vehicle->getLaneChangeModel().changed(direction);
-                    prohibitor->getLaneChangeModel().changed(-direction);
-                    (myCandi)->dens += prohibitor->getVehicleType().getLengthWithGap();
-                    (target)->dens += vehicle->getVehicleType().getLengthWithGap();
+                    startChange(vehicle, myCandi, direction);
+                    startChange(prohibitor, target, -direction);
+                    std::swap(vehicle->myState, prohibitor->myState);
+                    myCandi->lead = prohibitor;
+                    target->lead = vehicle;
                     return true;
                 }
             }
