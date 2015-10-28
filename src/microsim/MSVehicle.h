@@ -1389,6 +1389,10 @@ protected:
                        const SUMOReal seen, DriveProcessItem* const lastLink,
                        const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const;
 
+
+    // @brief return the lane on which the back of this vehicle resides
+    const MSLane* getBackLane() const;
+
 #ifdef HAVE_INTERNAL_LANES
     /// @brief ids of vehicles being followed across a link (for resolving priority)
     mutable std::map<const MSJunction*, std::set<std::string> > myLinkLeaders;

@@ -1588,10 +1588,11 @@ MSVehicle::executeMove() {
             myState.myPos = myLane->getLength();
             myState.mySpeed = 0;
         }
+        const MSLane* oldBackLane = getBackLane();
         myState.myBackPos = updateFurtherLanes(myFurtherLanes, passedLanes);
         updateBestLanes();
         // bestLanes need to be updated before lane changing starts
-        if (moved && getLaneChangeModel().getShadowLane() != 0) {
+        if (getLaneChangeModel().getShadowLane() != 0 && (moved || oldBackLane != getBackLane())) {
             getLaneChangeModel().updateShadowLane();
         }
         setBlinkerInformation(); // needs updated bestLanes
@@ -1603,10 +1604,21 @@ MSVehicle::executeMove() {
 }
 
 
+const MSLane* 
+MSVehicle::getBackLane() const {
+    if (myFurtherLanes.size() > 0) {
+        return myFurtherLanes.back();
+    } else {
+        return myLane;
+    }
+}
+
+
 SUMOReal
 MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, 
                 const std::vector<MSLane*>& passedLanes) {
 
+    if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes oldFurther=" << toString(myFurtherLanes) << " passed=" << toString(passedLanes) << "\n";
     for (std::vector<MSLane*>::iterator i = furtherLanes.begin(); i != furtherLanes.end(); ++i) {
         if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
         (*i)->resetPartialOccupation(this);
@@ -1621,6 +1633,7 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes,
             leftLength -= (*i)->setPartialOccupation(this);
             ++i;
         }
+        if (getID() == "disabled") std::cout << " newFurther=" << toString(myFurtherLanes) << " leftLength=" << leftLength << "\n";
         return -leftLength;
     } else {
         return myState.myBackPos;
@@ -1986,6 +1999,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
             }
         }
     }
+    if (getID() == "disabled") std::cout << SIMTIME << " enterLaneAtLaneChange new furtherLanes=" << toString(myFurtherLanes) << "\n";
 }
 
 
