@@ -801,7 +801,9 @@ MSLane::safeInsertionSpeed(const MSVehicle* veh, const MSLeaderInfo& leaders, SU
 const MSLeaderInfo& 
 MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
     if (myLeaderInfoTime < MSNet::getInstance()->getCurrentTimeStep() || ego != 0) {
-        myLeaderInfoTime = MSNet::getInstance()->getCurrentTimeStep();
+        if (ego == 0) {
+            myLeaderInfoTime = MSNet::getInstance()->getCurrentTimeStep();
+        }
         // recompute myLeaderInfo
         myLeaderInfo = MSLeaderInfo(myWidth, ego);
         AnyVehicleIterator last = anyVehiclesBegin();
@@ -811,7 +813,7 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
         //}
         const MSVehicle* veh = *last;
         while (freeSublanes > 0 && veh != 0) {
-            if (veh->getPositionOnLane(this) >= minPos) {
+            if (veh != ego && veh->getPositionOnLane(this) >= minPos) {
                 const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
                 freeSublanes = myLeaderInfo.addLeader(veh, true, latOffset);
             }
@@ -873,7 +875,8 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
         VehCont::iterator lastVeh = myVehicles.end() - 1;
         for (VehCont::iterator veh = myVehicles.begin(); veh != lastVeh;) {
             VehCont::iterator pred = veh + 1;
-            if (handleCollision(timestep, stage, *veh, *pred)) {
+            if (detectCollisionBetween(timestep, stage, *veh, *pred)) {
+                handleCollision(timestep, *veh);
                 veh = myVehicles.erase(veh); // remove current vehicle
                 lastVeh = myVehicles.end() - 1;
                 if (veh == myVehicles.end()) {
@@ -884,7 +887,8 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
             }
         }
         if (myPartialVehicles.size() > 0) {
-            if (handleCollision(timestep, stage, *lastVeh, myPartialVehicles.front())) {
+            if (detectCollisionBetween(timestep, stage, *lastVeh, myPartialVehicles.front())) {
+                handleCollision(timestep, *lastVeh);
                 myVehicles.erase(lastVeh); // remove current vehicle
             }
         }
@@ -894,34 +898,50 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
         // other on the same lane
         // instead, a moving-window approach is used where all vehicles that
         // overlap in the longitudinal direction receive pairwise checks
+        // XXX for efficiency, all lanes of an edge should be checked together
+        // (lanechanger-style)
 
         // XXX quick hack: check each in myVehicles against all others
-        VehCont toRemove;
+        std::set<MSVehicle*> toRemove;
         for (VehCont::iterator veh = myVehicles.begin(); veh != myVehicles.end(); ++veh) {
+            MSVehicle* follow = *veh;
             for (AnyVehicleIterator veh2 = anyVehiclesBegin(); veh2 != anyVehiclesEnd(); ++veh2) {
-                MSVehicle* lead = *veh;
-                MSVehicle* follow = (MSVehicle*)*veh2;
+                MSVehicle* lead = (MSVehicle*)*veh2;
                 if (lead == follow) {
                     continue;
                 }
                 if (lead->getPositionOnLane() < follow->getPositionOnLane(this)) {
-                    std::swap(lead, follow);
+                    continue;
                 }
-                if (handleCollision(timestep, stage, follow, lead)) {
-                    toRemove.push_back(*veh);
+                if (detectCollisionBetween(timestep, stage, follow, lead)) {
+                    toRemove.insert(follow);
                     break;
                 }
             }
+            if (follow->getLaneChangeModel().getShadowLane() != 0) {
+                // check whether follow collides on the shadow lane
+                const MSLane* shadowLane = follow->getLaneChangeModel().getShadowLane();
+                MSLeaderInfo ahead = shadowLane->getLastVehicleInformation(follow, follow->getPositionOnLane());
+                for (int i = 0; i < ahead.numSublanes(); ++i) {
+                    const MSVehicle* lead = ahead[i];
+                    if (lead != 0 && lead != follow && shadowLane->detectCollisionBetween(timestep, stage, follow, lead)) {
+                        toRemove.insert(follow);
+                        break;
+
+                    }
+                }
+            }
         }
-        for (VehCont::iterator veh = toRemove.begin(); veh != toRemove.end(); ++veh) {
+        for (std::set<MSVehicle*>::iterator veh = toRemove.begin(); veh != toRemove.end(); ++veh) {
             removeVehicle(*veh, MSMoveReminder::NOTIFICATION_TELEPORT, false);
+            handleCollision(timestep, *veh);
         }
     }
 }
 
 
 bool
-MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* collider, MSVehicle* victim) {
+MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim) const {
     if ((victim->hasInfluencer() && victim->getInfluencer().isVTDAffected(timestep)) ||
             (collider->hasInfluencer() && collider->getInfluencer().isVTDAffected(timestep))) {
         return false;
@@ -960,13 +980,17 @@ MSLane::handleCollision(SUMOTime timestep, const std::string& stage, MSVehicle* 
                 + ", time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) 
                 + " stage=" + stage + ".");
         MSNet::getInstance()->getVehicleControl().registerCollision();
-        //return false; // no teleport after collision
-        myBruttoVehicleLengthSum -= collider->getVehicleType().getLengthWithGap();
-        myNettoVehicleLengthSum -= collider->getVehicleType().getLength();
-        MSVehicleTransfer::getInstance()->add(timestep, collider);
         return true;
     }
     return false;
+}
+
+
+bool
+MSLane::handleCollision(SUMOTime timestep, MSVehicle* collider) {
+    myBruttoVehicleLengthSum -= collider->getVehicleType().getLengthWithGap();
+    myNettoVehicleLengthSum -= collider->getVehicleType().getLength();
+    MSVehicleTransfer::getInstance()->add(timestep, collider);
 }
 
 
@@ -1971,7 +1995,6 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
     /// XXX traverse backwards if necessary
     return result;
 }
-
 
 
 /****************************************************************************/

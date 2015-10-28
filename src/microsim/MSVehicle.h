@@ -1166,6 +1166,8 @@ public:
      * @return Reference to this vehicle's speed influencer
      */
     Influencer& getInfluencer();
+    
+    const Influencer& getInfluencer() const;
 
     bool hasInfluencer() const {
         return myInfluencer != 0;

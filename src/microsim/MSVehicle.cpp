@@ -952,7 +952,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "v0");
+    //gDebugFlag1 = (getID() == "cars.7");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1046,15 +1046,15 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // check leader on lane
         //  leader is given for the first edge only
         adaptToLeaders(ahead, seen, lastLink, lane, v, vLinkPass);
-        // XXX efficiently adapt to shadow leaders using neighAhead by iteration over the whole edge in parallel
-        //if (getLaneChangeModel().getShadowLane() != 0) {
-        //    // also slow down for leaders on the shadowLane relative to the current lane
-        //    const MSLane* shadowLane = getLaneChangeModel().getShadowLane(lane);
-        //    if (shadowLane != 0) {
-        //        std::pair<const MSVehicle*, SUMOReal> shadowLeaderInfo = shadowLane->getLeader(this, lane->getLength() - seen, false);
-        //        adaptToLeader(shadowLeaderInfo, seen, lastLink, shadowLane, v, vLinkPass);
-        //    }
-        //}
+        // XXX efficiently adapt to shadow leaders using neighAhead by iteration over the whole edge in parallel (lanechanger-style)
+        if (getLaneChangeModel().getShadowLane() != 0) {
+            // also slow down for leaders on the shadowLane relative to the current lane
+            const MSLane* shadowLane = getLaneChangeModel().getShadowLane(lane);
+            if (shadowLane != 0) {
+                adaptToLeaders(shadowLane->getLastVehicleInformation(this, lane->getLength() - seen),
+                        seen, lastLink, shadowLane, v, vLinkPass);
+            }
+        }
 
         // process stops
         if (!myStops.empty() && &myStops.begin()->lane->getEdge() == &lane->getEdge()) {
@@ -1256,9 +1256,11 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
                          const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const {
     int rightmost;
     int leftmost;
-    ahead.getSubLanes(this, 0, rightmost, leftmost);
+    const SUMOReal latOffset = getLane()->getRightSideOnEdge() - lane->getRightSideOnEdge();
+    ahead.getSubLanes(this, latOffset, rightmost, leftmost);
     if (gDebugFlag1) std::cout << SIMTIME 
         << " adaptToLeaders veh=" << getID() 
+            << " lane=" << lane->getID()
             << " rm=" << rightmost 
             << " lm=" << leftmost 
             << " ahead=" << ahead.toString()
@@ -1552,7 +1554,6 @@ MSVehicle::executeMove() {
                             WRITE_WARNING("Vehicle '" + getID() + "' could not finish continuous lane change (turn lane) time=" +
                                           time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
                             getLaneChangeModel().endLaneChangeManeuver();
-                            //getLaneChangeModel().cleanupShadowLane();
                         }
                     }
 #ifdef HAVE_INTERNAL_LANES
@@ -2765,6 +2766,12 @@ MSVehicle::getInfluencer() {
     if (myInfluencer == 0) {
         myInfluencer = new Influencer();
     }
+    return *myInfluencer;
+}
+
+
+const MSVehicle::Influencer&
+MSVehicle::getInfluencer() const {
     return *myInfluencer;
 }
 

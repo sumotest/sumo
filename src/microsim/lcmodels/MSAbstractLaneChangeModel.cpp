@@ -192,6 +192,7 @@ MSAbstractLaneChangeModel::cleanupShadowLane() {
         if (myVehicle.getID() == "disabled") 
             std::cout << SIMTIME << " cleanupShadowLane\n";
         myShadowLane->resetPartialOccupation(&myVehicle);
+        myShadowLane = 0;
     }
     for (std::vector<MSLane*>::const_iterator it = myShadowFurtherLanes.begin(); it != myShadowFurtherLanes.end(); ++it) {
         if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " cleanupShadowLane2\n";
