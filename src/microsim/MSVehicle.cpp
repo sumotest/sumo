@@ -2389,14 +2389,11 @@ MSVehicle::adaptBestLanesOccupation(int laneIndex, SUMOReal density) {
 }
 
 
-bool
+void
 MSVehicle::fixPosition() {
-    if (getPositionOnLane() > myLane->getLength()) {
-        myState.myPos = myLane->getLength();
-        myCachedPosition = Position::INVALID;
-        return true;
+    if (MSGlobals::gLaneChangeDuration > 0 && !getLaneChangeModel().isChangingLanes()) {
+        myState.myPosLat = 0;
     }
-    return false;
 }
 
 

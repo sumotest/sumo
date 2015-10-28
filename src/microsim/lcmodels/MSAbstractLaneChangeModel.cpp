@@ -165,6 +165,7 @@ MSAbstractLaneChangeModel::endLaneChangeManeuver(const MSMoveReminder::Notificat
     cleanupShadowLane();
     myNoPartiallyOccupatedByShadow.clear();
     myVehicle.switchOffSignal(MSVehicle::VEH_SIGNAL_BLINKER_RIGHT | MSVehicle::VEH_SIGNAL_BLINKER_LEFT);
+    myVehicle.fixPosition();
 }
 
 

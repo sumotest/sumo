@@ -577,7 +577,7 @@ public:
     /// @}
 
     /// @brief repair errors in vehicle position after changing between internal edges
-    bool fixPosition();
+    void fixPosition();
 
 
     /** @brief Replaces the current vehicle type by the one given
