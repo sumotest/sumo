@@ -334,7 +334,7 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
         continueChange(vehicle, myCandi, vehicle->getLaneChangeModel().getLaneChangeDirection());
     } else {
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
-        to->dens += to->hoppedVeh->getVehicleType().getLengthWithGap();
+        to->dens += vehicle->getVehicleType().getLengthWithGap();
         to->hoppedVeh = vehicle;
     }
 }
