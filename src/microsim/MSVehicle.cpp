@@ -2770,9 +2770,9 @@ MSVehicle::getInfluencer() {
 }
 
 
-const MSVehicle::Influencer&
+const MSVehicle::Influencer*
 MSVehicle::getInfluencer() const {
-    return *myInfluencer;
+    return myInfluencer;
 }
 
 

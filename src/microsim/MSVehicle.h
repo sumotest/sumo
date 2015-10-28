@@ -1167,7 +1167,7 @@ public:
      */
     Influencer& getInfluencer();
     
-    const Influencer& getInfluencer() const;
+    const Influencer* getInfluencer() const;
 
     bool hasInfluencer() const {
         return myInfluencer != 0;

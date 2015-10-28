@@ -942,8 +942,8 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
 
 bool
 MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim) const {
-    if ((victim->hasInfluencer() && victim->getInfluencer().isVTDAffected(timestep)) ||
-            (collider->hasInfluencer() && collider->getInfluencer().isVTDAffected(timestep))) {
+    if ((victim->hasInfluencer() && victim->getInfluencer()->isVTDAffected(timestep)) ||
+            (collider->hasInfluencer() && collider->getInfluencer()->isVTDAffected(timestep))) {
         return false;
     }
     const SUMOReal gap = victim->getBackPositionOnLane(this) - collider->getPositionOnLane() - collider->getVehicleType().getMinGap();
