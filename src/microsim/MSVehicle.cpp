@@ -1630,6 +1630,7 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes,
 
 SUMOReal 
 MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
+    //gDebugFlag1 = getID() == "Costa_12_18";
     //if (getID() == "flow.4" && SIMTIME == 22 && lane->getID() == "beg_0") {
     //    std::cout << SIMTIME << " getBackPositionOnLane veh=" << getID() << " lane=" << Named::getIDSecure(lane) << "\n";
     //}
@@ -1641,24 +1642,27 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
             ) {
         return myState.myBackPos;
     } else {
-        //std::cout << SIMTIME << " veh=" << getID() << " myFurtherLanes=" << toString(myFurtherLanes) << "\n";
+        //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myFurtherLanes=" << toString(myFurtherLanes) << "\n";
         SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
         std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();
         while (leftLength > 0 && i != myFurtherLanes.end()) {
             leftLength -= (*i)->getLength();
-            //std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
+            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (*i == lane) {
                 return -leftLength;
             }
             ++i;
         }
+        //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
         leftLength = getVehicleType().getLength() - myState.myPos;
         i = getLaneChangeModel().getShadowFurtherLanes().begin();
         while (leftLength > 0 && i != getLaneChangeModel().getShadowFurtherLanes().end()) {
             leftLength -= (*i)->getLength();
+            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (*i == lane) {
                 return -leftLength;
             }
+            ++i;
         }
         assert(false);
         throw ProcessError("Request backPos of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");

@@ -326,7 +326,6 @@ MSLaneChanger::registerUnchanged(MSVehicle* vehicle) {
 void
 MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
     ChangerIt to = from + direction;
-    to->hoppedVeh = vehicle;
     // @todo delay entering the target lane until the vehicle intersects it
     //       physically (considering lane width and vehicle width)
     //if (to->lane->getID() == "beg_1") std::cout << SIMTIME << " startChange to lane=" << to->lane->getID() << " myTmpVehiclesBefore=" << toString(to->lane->myTmpVehicles) << "\n";
@@ -336,6 +335,7 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
     } else {
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += to->hoppedVeh->getVehicleType().getLengthWithGap();
+        to->hoppedVeh = vehicle;
     }
 }
 
@@ -356,6 +356,7 @@ MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from, int direction
 
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += vehicle->getVehicleType().getLengthWithGap();
+        to->hoppedVeh = vehicle;
     } else {
         from->lane->myTmpVehicles.insert(from->lane->myTmpVehicles.begin(), vehicle);
         from->dens += vehicle->getVehicleType().getLengthWithGap();
