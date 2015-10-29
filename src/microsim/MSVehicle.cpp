@@ -952,7 +952,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    gDebugFlag1 = (getID() == "Costa_1_17");
+    //gDebugFlag1 = (getID() == "Costa_1_17");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
