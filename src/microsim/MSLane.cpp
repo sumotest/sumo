@@ -1485,7 +1485,7 @@ MSLane::getFollowerOnConsecutive(
                 // Therefore, technically v is not a follower but only an obstruction and
                 // the gap is not between the front of v and the back of ego
                 // but rather between the flank of v and the back of ego.
-                if (v->getLane() != next) {
+                if (!v->isFrontOnLane(next)) {
                     agap = (*i).length - next->getLength() + backOffset 
                         /// XXX dubious term. here for backwards compatibility
                         - v->getVehicleType().getMinGap();
