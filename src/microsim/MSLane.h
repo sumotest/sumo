@@ -901,7 +901,7 @@ protected:
     bool detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim) const;
 
     /// @brief handle collision caused by the given vehicle
-    bool handleCollision(SUMOTime timestep, MSVehicle* collider);
+    void handleCollision(SUMOTime timestep, MSVehicle* collider);
 
     /// @brief compute maximum braking distance on this lane
     SUMOReal getMaximumBrakeDist() const;

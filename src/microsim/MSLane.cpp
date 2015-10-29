@@ -1004,7 +1004,7 @@ MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, cons
 }
 
 
-bool
+void
 MSLane::handleCollision(SUMOTime timestep, MSVehicle* collider) {
     myBruttoVehicleLengthSum -= collider->getVehicleType().getLengthWithGap();
     myNettoVehicleLengthSum -= collider->getVehicleType().getLength();
