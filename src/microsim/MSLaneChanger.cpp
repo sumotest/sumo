@@ -476,9 +476,10 @@ MSLaneChanger::checkChange(
     int laneOffset,
     const std::pair<MSVehicle* const, SUMOReal>& leader,
     const std::vector<MSVehicle::LaneQ>& preb) const {
+    MSVehicle* vehicle = veh(myCandi);
+    //gDebugFlag1 = vehicle->getID() == "Costa_12_7";
     std::pair<MSVehicle* const, SUMOReal> neighLead = getRealLeader(myCandi + laneOffset);
     std::pair<MSVehicle* const, SUMOReal> neighFollow = getRealFollower(myCandi + laneOffset);
-    MSVehicle* vehicle = veh(myCandi);
     ChangerIt target = myCandi + laneOffset;
     int blocked = 0;
     int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
