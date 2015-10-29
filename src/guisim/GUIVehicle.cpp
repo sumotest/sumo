@@ -46,6 +46,7 @@
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/div/GLObjectValuePassConnector.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
+#include <microsim/MSGlobals.h>
 #include <microsim/MSVehicle.h>
 #include <microsim/MSLane.h>
 #include <microsim/logging/CastingFunctionBinding.h>
@@ -100,9 +101,13 @@ GUIParameterTableWindow*
 GUIVehicle::getParameterWindow(GUIMainWindow& app,
                                GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 42);
+        new GUIParameterTableWindow(app, *this, 43);
     // add items
     ret->mkItem("lane [id]", false, myLane->getID());
+    if (MSGlobals::gLaneChangeDuration > 0 || MSGlobals::gLateralResolution > 0) {
+        const MSLane* shadowLane = getLaneChangeModel().getShadowLane();
+        ret->mkItem("shadow lane [id]", false, shadowLane == 0 ? "" : shadowLane->getID());
+    }
     ret->mkItem("position [m]", true,
                 new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getPositionOnLane));
     ret->mkItem("lateral offset [m]", true,
