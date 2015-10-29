@@ -116,7 +116,7 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
         recalcCache();
         if (MSGlobals::gLateralResolution > 0) {
             myLaneChanger = new MSLaneChangerSublane(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
-        } else if (myLanes->size() > 1) {
+        } else if (myLanes->size() > 1 || MSGlobals::gLaneChangeDuration > 0) {
             myLaneChanger = new MSLaneChanger(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
         }
     }

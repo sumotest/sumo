@@ -204,6 +204,10 @@ MSLaneChanger::change() {
     if (vehicle->getLaneChangeModel().isChangingLanes()) {
         return continueChange(vehicle, myCandi, vehicle->getLaneChangeModel().getLaneChangeDirection());
     }
+    if (myChanger.size() == 1) {
+        registerUnchanged(vehicle);
+        return false;
+    }
 #ifndef NO_TRACI
     if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
         return false; // !!! temporary; just because it broke, here
