@@ -555,6 +555,10 @@ MSLaneChanger::checkChange(
             // get the next link used
             link = MSLane::succLinkSec(*vehicle, view, *nextLane, bestLaneConts);
         }
+        //if (vehicle->getID() == "XXI_Aprile_94_3") std::cout << SIMTIME << " checkChange seen=" << seen << " space2change=" << space2change << "\n";
+        if (nextLane->isLinkEnd(link) && seen < space2change) {
+            state |= LCA_INSUFFICIENT_SPACE;
+        }
 
         if ((state & LCA_BLOCKED) == 0) {
             // check for dangerous leaders in case the target lane changes laterally between

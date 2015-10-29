@@ -175,7 +175,9 @@ MSAbstractLaneChangeModel::getShadowLane(const MSLane* lane) const {
         // initialize shadow lane
         const SUMOReal overlap = myVehicle.getLateralOverlap();
         if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " veh=" << myVehicle.getID() << " posLat=" << myVehicle.getLateralPositionOnLane() << " overlap=" << overlap << "\n";
-        if (overlap > NUMERICAL_EPS) {
+        if (overlap > NUMERICAL_EPS || 
+                // "reserve" target lane even when there is no overlap yet
+                (isChangingLanes() && myLaneChangeCompletion < 0.5)) {
             const int shadowDirection = myVehicle.getLateralPositionOnLane() < 0 ? -1 : 1;
             return lane->getParallelLane(shadowDirection);
         } else {

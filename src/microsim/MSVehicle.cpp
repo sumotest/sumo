@@ -952,7 +952,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "cars.7");
+    gDebugFlag1 = (getID() == "Costa_1_17");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1119,8 +1119,8 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             if (    // slow down to finish lane change before a turn lane
                 ((*link)->getDirection() == LINKDIR_LEFT || (*link)->getDirection() == LINKDIR_RIGHT) ||
                 // slow down to finish lane change before the shadow lane ends
-                (getLaneChangeModel().getLaneChangeCompletion() > 0.5 &&
-                 (*link)->getViaLaneOrLane()->getParallelLane(-getLaneChangeModel().getLaneChangeDirection()) == 0)) {
+                (getLaneChangeModel().getShadowLane() != 0 &&
+                 (*link)->getViaLaneOrLane()->getParallelLane(getLaneChangeModel().getLaneChangeDirection()) == 0)) {
                 // XXX maybe this is too harsh. Vehicles could cut some corners here
                 const SUMOReal timeRemaining = STEPS2TIME((1 - getLaneChangeModel().getLaneChangeCompletion()) * MSGlobals::gLaneChangeDuration);
                 const SUMOReal va = MAX2((SUMOReal)0, (seen - POSITION_EPS) / timeRemaining);

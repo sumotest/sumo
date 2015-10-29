@@ -997,6 +997,8 @@ protected:
 
     /// @brief leaders on all sublanes as seen by approaching vehicles (cached)
     mutable MSLeaderInfo myLeaderInfo;
+    mutable MSLeaderInfo myLeaderInfoTmp;
+
     /// @brief time step for which myLeaderInfo was last updated
     mutable SUMOTime myLeaderInfoTime;
 
