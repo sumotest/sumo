@@ -691,16 +691,16 @@ NIImporter_SUMO::reconstructEdgeShape(const EdgeAttrs* edge, const Position& fro
         std::pair<SUMOReal, SUMOReal> offsets = NBEdge::laneOffset(from, me, offset);
         std::pair<SUMOReal, SUMOReal> offsets2 = NBEdge::laneOffset(me, to, offset);
 
-        Line l1(
-            Position(from.x() + offsets.first, from.y() + offsets.second),
-            Position(me.x() + offsets.first, me.y() + offsets.second));
-        l1.extrapolateBy(100);
-        Line l2(
-            Position(me.x() + offsets2.first, me.y() + offsets2.second),
-            Position(to.x() + offsets2.first, to.y() + offsets2.second));
-        l2.extrapolateBy(100);
+        PositionVector l1;
+        l1.push_back(Position(from.x() + offsets.first, from.y() + offsets.second));
+        l1.push_back(Position(me.x() + offsets.first, me.y() + offsets.second));
+        l1.extrapolate(100);
+        PositionVector l2;
+        l2.push_back(Position(me.x() + offsets2.first, me.y() + offsets2.second));
+        l2.push_back(Position(to.x() + offsets2.first, to.y() + offsets2.second));
+        l2.extrapolate(100);
         if (l1.intersects(l2)) {
-            result.push_back(l1.intersectsAt(l2));
+            result.push_back(l1.intersectionPosition2D(l2));
         } else {
             WRITE_WARNING("Could not reconstruct shape for edge '" + edge->id + "'.");
         }

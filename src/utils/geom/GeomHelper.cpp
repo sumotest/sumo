@@ -37,7 +37,6 @@
 #include <iostream>
 #include <utils/common/StdDefs.h>
 #include <utils/common/ToString.h>
-#include <utils/geom/Line.h>
 #include "Boundary.h"
 #include "GeomHelper.h"
 
@@ -149,51 +148,38 @@ GeomHelper::intersects(const Position& p11, const Position& p12,
 }
 
 
-bool
-GeomHelper::pointOnLine(const Position& p, const Position& from, const Position& to) {
-    if (p.x() >= MIN2(from.x(), to.x()) && p.x() <= MAX2(from.x(), to.x()) &&
-            p.y() >= MIN2(from.y(), to.y()) && p.y() <= MAX2(from.y(), to.y())) {
-        return true;
-    }
-    return false;
-}
-
-
 void
-GeomHelper::FindLineCircleIntersections(const Position& c, SUMOReal radius, const Position& p1, const Position& p2,
+GeomHelper::findLineCircleIntersections(const Position& c, SUMOReal radius, const Position& p1, const Position& p2,
                                         std::vector<SUMOReal>& into) {
-    SUMOReal dx = p2.x() - p1.x();
-    SUMOReal dy = p2.y() - p1.y();
+    const SUMOReal dx = p2.x() - p1.x();
+    const SUMOReal dy = p2.y() - p1.y();
 
-    SUMOReal A = dx * dx + dy * dy;
-    SUMOReal B = 2 * (dx * (p1.x() - c.x()) + dy * (p1.y() - c.y()));
-    SUMOReal C = (p1.x() - c.x()) * (p1.x() - c.x()) + (p1.y() - c.y()) * (p1.y() - c.y()) - radius * radius;
+    const SUMOReal A = dx * dx + dy * dy;
+    const SUMOReal B = 2 * (dx * (p1.x() - c.x()) + dy * (p1.y() - c.y()));
+    const SUMOReal C = (p1.x() - c.x()) * (p1.x() - c.x()) + (p1.y() - c.y()) * (p1.y() - c.y()) - radius * radius;
 
-    SUMOReal det = B * B - 4 * A * C;
+    const SUMOReal det = B * B - 4 * A * C;
     if ((A <= 0.0000001) || (det < 0)) {
         // No real solutions.
         return;
-    } else if (det == 0) {
+    }
+    if (det == 0) {
         // One solution.
-        SUMOReal t = -B / (2 * A);
-        Position intersection(p1.x() + t * dx, p1.y() + t * dy);
-        if (GeomHelper::pointOnLine(intersection, p1, p2)) {
+        const SUMOReal t = -B / (2 * A);
+        if (t >= 0. && t <= 1.) {
             into.push_back(t);
         }
-        return;
     } else {
         // Two solutions.
-        SUMOReal t = (float)((-B + sqrt(det)) / (2 * A));
+        const SUMOReal t = (SUMOReal)((-B + sqrt(det)) / (2 * A));
         Position intersection(p1.x() + t * dx, p1.y() + t * dy);
-        if (GeomHelper::pointOnLine(intersection, p1, p2)) {
+        if (t >= 0. && t <= 1.) {
             into.push_back(t);
         }
-        t = (float)((-B - sqrt(det)) / (2 * A));
-        intersection.set(p1.x() + t * dx, p1.y() + t * dy);
-        if (GeomHelper::pointOnLine(intersection, p1, p2)) {
-            into.push_back(t);
+        const SUMOReal t2 = (SUMOReal)((-B - sqrt(det)) / (2 * A));
+        if (t2 >= 0. && t2 <= 1.) {
+            into.push_back(t2);
         }
-        return;
     }
 }
 
@@ -214,46 +200,9 @@ GeomHelper::intersection_position2D(const Position& p11,
 }
 
 
-
-/*
-   Return the angle between two vectors on a plane
-   The angle is from vector 1 to vector 2, positive anticlockwise
-   The result is between -pi -> pi
-*/
 SUMOReal
-GeomHelper::Angle2D(SUMOReal x1, SUMOReal y1, SUMOReal x2, SUMOReal y2) {
-    SUMOReal dtheta = atan2(y2, x2) - atan2(y1, x1);
-    while (dtheta > (SUMOReal) M_PI) {
-        dtheta -= (SUMOReal)(2.0 * M_PI);
-    }
-    while (dtheta < (SUMOReal) - M_PI) {
-        dtheta += (SUMOReal)(2.0 * M_PI);
-    }
-    return dtheta;
-}
-
-
-Position
-GeomHelper::interpolate(const Position& p1,
-                        const Position& p2, SUMOReal length) {
-    const SUMOReal factor = length / p1.distanceTo(p2);
-    return p1 + (p2 - p1) * factor;
-}
-
-
-Position
-GeomHelper::extrapolate_first(const Position& p1,
-                              const Position& p2, SUMOReal length) {
-    const SUMOReal factor = length / p1.distanceTo(p2);
-    return p1 - (p2 - p1) * factor;
-}
-
-
-Position
-GeomHelper::extrapolate_second(const Position& p1,
-                               const Position& p2, SUMOReal length) {
-    const SUMOReal factor = length / p1.distanceTo(p2);
-    return p2 - (p1 - p2) * factor;
+GeomHelper::angle2D(const Position& p1, const Position& p2) {
+    return angleDiff(atan2(p1.y(), p1.x()), atan2(p2.y(), p2.x()));
 }
 
 
@@ -314,47 +263,30 @@ GeomHelper::closestDistancePointLine2D(const Position& point,
                                        const Position& lineEnd,
                                        Position& outIntersection) {
     const SUMOReal length = nearest_offset_on_line_to_point2D(lineStart, lineEnd, point, false);
-    outIntersection.set(Line(lineStart, lineEnd).getPositionAtDistance2D(length));
+    outIntersection.set(PositionVector::positionAtOffset2D(lineStart, lineEnd, length));
     return point.distanceTo2D(outIntersection);
 }
-
-
-
-Position
-GeomHelper::transfer_to_side(Position& p,
-                             const Position& lineBeg,
-                             const Position& lineEnd,
-                             SUMOReal amount) {
-    const SUMOReal dx = lineBeg.x() - lineEnd.x();
-    const SUMOReal dy = lineBeg.y() - lineEnd.y();
-    const SUMOReal length = sqrt(dx * dx + dy * dy);
-    if (length > 0) {
-        p.add(dy * amount / length, -dx * amount / length);
-    }
-    return p;
-}
-
 
 
 Position
 GeomHelper::crossPoint(const Boundary& b, const PositionVector& v) {
     if (v.intersects(Position(b.xmin(), b.ymin()), Position(b.xmin(), b.ymax()))) {
-        return v.intersectsAtPoint(
+        return v.intersectionPosition2D(
                    Position(b.xmin(), b.ymin()),
                    Position(b.xmin(), b.ymax()));
     }
     if (v.intersects(Position(b.xmax(), b.ymin()), Position(b.xmax(), b.ymax()))) {
-        return v.intersectsAtPoint(
+        return v.intersectionPosition2D(
                    Position(b.xmax(), b.ymin()),
                    Position(b.xmax(), b.ymax()));
     }
     if (v.intersects(Position(b.xmin(), b.ymin()), Position(b.xmax(), b.ymin()))) {
-        return v.intersectsAtPoint(
+        return v.intersectionPosition2D(
                    Position(b.xmin(), b.ymin()),
                    Position(b.xmax(), b.ymin()));
     }
     if (v.intersects(Position(b.xmin(), b.ymax()), Position(b.xmax(), b.ymax()))) {
-        return v.intersectsAtPoint(
+        return v.intersectionPosition2D(
                    Position(b.xmin(), b.ymax()),
                    Position(b.xmax(), b.ymax()));
     }
@@ -408,10 +340,42 @@ GeomHelper::getMinAngleDiff(SUMOReal angle1, SUMOReal angle2) {
 
 
 SUMOReal
-GeomHelper::getMaxAngleDiff(SUMOReal angle1, SUMOReal angle2) {
-    return MAX2(getCWAngleDiff(angle1, angle2), getCCWAngleDiff(angle1, angle2));
+GeomHelper::angleDiff(const SUMOReal angle1, const SUMOReal angle2) {
+    SUMOReal dtheta = angle2 - angle1;
+    while (dtheta > (SUMOReal) M_PI) {
+        dtheta -= (SUMOReal)(2.0 * M_PI);
+    }
+    while (dtheta < (SUMOReal) - M_PI) {
+        dtheta += (SUMOReal)(2.0 * M_PI);
+    }
+    return dtheta;
 }
 
+
+SUMOReal
+GeomHelper::naviDegree(const SUMOReal angle) {
+    SUMOReal degree = RAD2DEG(M_PI / 2. - angle);
+    while (degree >= 360.) {
+        degree -= 360.;
+    }
+    while (degree < 0.) {
+        degree += 360.;
+    }
+    return degree;
+}
+
+
+SUMOReal
+GeomHelper::legacyDegree(const SUMOReal angle) {
+    SUMOReal degree = -RAD2DEG(M_PI / 2. + angle);
+    while (degree >= 180.) {
+        degree -= 360.;
+    }
+    while (degree < -180.) {
+        degree += 360.;
+    }
+    return degree;
+}
 
 
 /****************************************************************************/

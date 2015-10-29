@@ -39,7 +39,6 @@
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class Line;
 class Boundary;
 
 
@@ -67,6 +66,20 @@ public:
      * @param[in] v The vector to copy
      */
     PositionVector(const std::vector<Position>& v);
+
+
+    /** @brief Constructor
+     * @param[in] beg The begin iterator for copy
+     * @param[in] end The end iterator to copy
+     */
+    PositionVector(const std::vector<Position>::const_iterator beg, const std::vector<Position>::const_iterator end);
+
+
+    /** @brief Constructor for lines
+     * @param[in] p1 the first position
+     * @param[in] p2 the second position
+     */
+    PositionVector(const Position& p1, const Position& p2);
 
 
     /// @brief Destructor
@@ -101,7 +114,7 @@ public:
     /// Puts the given position at the front of the list
     void push_front(const Position& p);
 
-    /// Removes and returns the position at the fron of the list
+    /// Removes and returns the position at the front of the list
     Position pop_front();
 
     void insertAt(int index, const Position& p);
@@ -111,7 +124,7 @@ public:
     void eraseAt(int i);
 
     /** @brief Returns the information whether the position vector describes a polygon lying around the given point
-        The optional offset is added to the polygon's bounderies */
+        The optional offset is added to the polygon's boundaries */
     bool around(const Position& p, SUMOReal offset = 0) const;
 
     /** @brief Returns the information whether the given polygon overlaps with this
@@ -125,11 +138,8 @@ public:
     bool intersects(const PositionVector& v1) const;
 
     /** Returns the position of the intersection */
-    Position intersectsAtPoint(const Position& p1,
+    Position intersectionPosition2D(const Position& p1,
                                const Position& p2) const; // !!!
-
-    /** Returns any intersection Points with the given line (ignoring z-coordinates) */
-    PositionVector intersectionPoints2D(const Line& line) const;
 
     /** @brief For all intersections between this vector and other,
      * return the 2D-length of the subvector from this vectors start to the intersection */
@@ -137,10 +147,10 @@ public:
 
     /** @brief For all intersections between this vector and line,
      * return the 2D-length of the subvector from this vectors start to the intersection */
-    std::vector<SUMOReal> intersectsAtLengths2D(const Line& line) const; // !!!
+    std::vector<SUMOReal> intersectsAtLengths2D(const Position& lp1, const Position& lp2) const; // !!!
 
     /** Returns the position of the intersection */
-    Position intersectsAtPoint(const PositionVector& v1) const; // !!!
+    Position intersectionPosition2D(const PositionVector& v1) const; // !!!
 
     /// @brief ensures that the last position equals the first
     void closePolygon();
@@ -164,11 +174,11 @@ public:
 
     /// Returns the position between the two given point at the specified position */
     static Position positionAtOffset(const Position& p1,
-                                     const Position& p2, SUMOReal pos, SUMOReal lateralOffset);
+                                     const Position& p2, SUMOReal pos, SUMOReal lateralOffset=0.);
 
     /// Returns the position between the two given point at the specified position */
     static Position positionAtOffset2D(const Position& p1,
-                                       const Position& p2, SUMOReal pos, SUMOReal lateralOffset);
+                                       const Position& p2, SUMOReal pos, SUMOReal lateralOffset=0.);
 
     /// Returns a boundary enclosing this list of lines
     Boundary getBoxBoundary() const;
@@ -213,11 +223,7 @@ public:
     /// @brief mirror coordinates along the x-axis
     void mirrorX();
 
-    void reshiftRotate(SUMOReal xoff, SUMOReal yoff, SUMOReal rot);
-
     PositionVector convexHull() const;
-
-    int appendWithCrossingPoint(const PositionVector& v);
 
     // @brief append the given vector to this one
     void append(const PositionVector& v, SUMOReal sameThreshold = 2.0);
@@ -232,17 +238,15 @@ public:
 
     void sortByIncreasingXY();
 
-    void extrapolate(SUMOReal val);
+    void extrapolate(const SUMOReal val, const bool onlyFirst=false);
+
+    void extrapolate2D(const SUMOReal val, const bool onlyFirst=false);
 
     PositionVector reverse() const;
 
     void move2side(SUMOReal amount);
 
-    Line lineAt(int pos) const;
-
-    Line getBegLine() const;
-
-    Line getEndLine() const;
+    SUMOReal angleAt2D(int pos) const;
 
 
     // @brief inserts p between the two closest positions and returns the insertion index
@@ -276,9 +280,7 @@ public:
     // !!!
     SUMOReal isLeft(const Position& P0, const Position& P1, const Position& P2) const;
 
-    void pruneFromBeginAt(const Position& p);
-    void pruneFromEndAt(const Position& p);
-
+    /// returns the angle in radians of the line connecting the first and the last position
     SUMOReal beginEndAngle() const;
 
     SUMOReal nearest_offset_to_point2D(const Position& p, bool perpendicular = true) const;

@@ -69,15 +69,6 @@ public:
                            const Position& p21, const Position& p22);
 
 
-    /** @brief Returns whether the given point lies on the given line
-     * @param[in] p The position
-     * @param[in] from The begin position of the line
-     * @param[in] to The end position of the line
-     * @return Whether the point lies on the line
-     */
-    static bool pointOnLine(const Position& p, const Position& from, const Position& to);
-
-
     /** @brief Returns the positions the given circle is crossed by the given line
      * @param[in] c The center position of the circle
      * @param[in] radius The radius of the circle
@@ -87,7 +78,7 @@ public:
      * @see http://blog.csharphelper.com/2010/03/28/determine-where-a-line-intersects-a-circle-in-c.aspx
      * @see http://gamedev.stackexchange.com/questions/18333/circle-line-collision-detection-problem (jazzdawg)
      */
-    static void FindLineCircleIntersections(const Position& c, SUMOReal radius, const Position& p1, const Position& p2,
+    static void findLineCircleIntersections(const Position& c, SUMOReal radius, const Position& p1, const Position& p2,
                                             std::vector<SUMOReal>& into);
 
 
@@ -99,16 +90,11 @@ public:
         const Position& p11, const Position& p12,
         const Position& p21, const Position& p22);
 
-    static SUMOReal Angle2D(SUMOReal x1, SUMOReal y1, SUMOReal x2, SUMOReal y2);
-
-    static Position interpolate(const Position& p1,
-                                const Position& p2, SUMOReal length);
-
-    static Position extrapolate_first(const Position& p1,
-                                      const Position& p2, SUMOReal length);
-
-    static Position extrapolate_second(const Position& p1,
-                                       const Position& p2, SUMOReal length);
+    /** @brief Returns the angle between two vectors on a plane
+       The angle is from vector 1 to vector 2, positive anticlockwise
+       The result is between -pi and pi
+    */
+    static SUMOReal angle2D(const Position& p1, const Position& p2);
 
     static SUMOReal nearest_offset_on_line_to_point2D(
         const Position& l1, const Position& l2,
@@ -125,11 +111,6 @@ public:
     static SUMOReal closestDistancePointLine2D(const Position& point,
             const Position& lineStart, const Position& lineEnd,
             Position& outIntersection);
-
-    static Position transfer_to_side(Position& p,
-                                     const Position& lineBeg, const Position& lineEnd,
-                                     SUMOReal amount);
-
 
     static Position crossPoint(const Boundary& b,
                                const PositionVector& v);
@@ -164,15 +145,34 @@ public:
     static SUMOReal getMinAngleDiff(SUMOReal angle1, SUMOReal angle2);
 
 
-    /** @brief Returns the maximum distance (clockwise/counter-clockwise) between both angles
+    /** @brief Returns the difference of the second angle to the first angle in radiants
+     * 
+     * The results are always between -pi and pi.
+     * Positive values denote that the second angle is counter clockwise closer, negative values mean
+     * it is clockwise closer.
      * @param[in] angle1 The first angle
      * @param[in] angle2 The second angle
-     * @return The maximum distance between both angles
+     * @return angle starting from first to second angle
      */
-    static SUMOReal getMaxAngleDiff(SUMOReal angle1, SUMOReal angle2);
+    static SUMOReal angleDiff(const SUMOReal angle1, const SUMOReal angle2);
 
 
-private:
+    /** Converts an angle from mathematical radians where 0 is to the right and positive angles
+     *  are counterclockwise to navigational degrees where 0 is up and positive means clockwise.
+     *  The result is always in the range [0, 360).
+     * @param[in] angle The angle in radians to convert
+     * @return the angle in degrees
+     */
+    static SUMOReal naviDegree(const SUMOReal angle);
+
+    /** Converts an angle from mathematical radians where 0 is to the right and positive angles
+     *  are counterclockwise to the legacy degrees used in sumo where 0 is down and positive means clockwise.
+     *  The result is always in the range [-180, 180).
+     * @param[in] angle The angle in radians to convert
+     * @return the angle in degrees
+     */
+    static SUMOReal legacyDegree(const SUMOReal angle);
+
     /** @brief return whether the line segments defined by Line (x1,y1),(x2,y2)
      * and Line (x3,y3),(x4,y4) intersect
      */

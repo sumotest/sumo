@@ -43,7 +43,6 @@
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/StringUtils.h>
 #include <utils/options/OptionsCont.h>
-#include <utils/geom/Line.h>
 #include <utils/geom/GeomHelper.h>
 #include <utils/geom/bezier.h>
 #include <utils/common/MsgHandler.h>
@@ -487,9 +486,12 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
     PositionVector init;
     unsigned int numInitialPoints = 0;
     bool noSpline = false;
-    Line begL = begShape.getEndLine();
-    Line endL = endShape.getBegLine();
-    if (beg.distanceTo(end) <= POSITION_EPS || begL.length() < POSITION_EPS || endL.length() < POSITION_EPS) {
+    PositionVector endBeg;
+    endBeg.push_back(end);
+    endBeg.push_back(endShape[1]);
+    endBeg.push_back(begShape[-2]);
+    endBeg.push_back(beg);
+    if (beg.distanceTo(end) < POSITION_EPS || beg.distanceTo(begShape[-2]) < POSITION_EPS || end.distanceTo(endShape[1]) < POSITION_EPS) {
         noSpline = true;
     } else {
         if (isTurnaround) {
@@ -499,37 +501,24 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
             //  - begin of outgoing lane
             numInitialPoints = 3;
             init.push_back(beg);
-            Line straightConn(begShape[-1], endShape[0]);
-            Position straightCenter = straightConn.getPositionAtDistance((SUMOReal) straightConn.length() / (SUMOReal) 2.);
-            Position center = straightCenter;//.add(straightCenter);
-            Line cross(straightConn);
-            cross.sub(cross.p1().x(), cross.p1().y());
-            cross.rotateAtP1(M_PI / 2);
-            center.sub(cross.p2());
+            Position center = PositionVector::positionAtOffset(beg, end, beg.distanceTo(end) / (SUMOReal) 2.);
+            center.sub(beg.y()-end.y(), end.x()-beg.x());
             init.push_back(center);
             init.push_back(end);
         } else {
-            const SUMOReal angle = fabs(begL.atan2Angle() - endL.atan2Angle());
-            if (angle < M_PI / 4. || angle > 7. / 4.*M_PI) {
+            const SUMOReal angle = fabs(GeomHelper::angleDiff(begShape.angleAt2D(-2), endShape.angleAt2D(0)));
+            if (angle < M_PI / 4.) {
                 // very low angle: almost straight
                 numInitialPoints = 4;
                 init.push_back(beg);
-                begL.extrapolateSecondBy(100);
-                endL.extrapolateFirstBy(100);
-                SUMOReal distance = beg.distanceTo(end);
-                if (distance > 10) {
-                    {
-                        SUMOReal off1 = begShape.getEndLine().length() + extrapolateBeg;
-                        off1 = MIN2(off1, (SUMOReal)(begShape.getEndLine().length() + distance / 2.));
-                        Position tmp = begL.getPositionAtDistance(off1);
-                        init.push_back(tmp);
-                    }
-                    {
-                        SUMOReal off1 = (SUMOReal) 100. - extrapolateEnd;
-                        off1 = MAX2(off1, (SUMOReal)(100. - distance / 2.));
-                        Position tmp = endL.getPositionAtDistance(off1);
-                        init.push_back(tmp);
-                    }
+                endBeg.extrapolate(100);
+                const SUMOReal halfDistance = beg.distanceTo(end) / 2.;
+                if (halfDistance > 5) {
+                    const SUMOReal endLength = begShape[-2].distanceTo(begShape[-1]);
+                    const SUMOReal off1 = endLength + MIN2(extrapolateBeg, halfDistance);
+                    init.push_back(PositionVector::positionAtOffset(endBeg[-2], endBeg[-1], off1));
+                    const SUMOReal off2 = 100. - MIN2(extrapolateEnd, halfDistance);
+                    init.push_back(PositionVector::positionAtOffset(endBeg[0], endBeg[1], off2));
                 } else {
                     noSpline = true;
                 }
@@ -542,12 +531,10 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
                 // attention: if there is no intersection, use a straight line
                 numInitialPoints = 3;
                 init.push_back(beg);
-                begL.extrapolateSecondBy(100);
-                endL.extrapolateFirstBy(100);
-                if (!begL.intersects(endL)) {
+                endBeg.extrapolate(100);
+                init.push_back(endBeg.getSubpartByIndex(0, 2).intersectionPosition2D(endBeg.getSubpartByIndex(2, 2)));
+                if (init[-1] == Position::INVALID) {
                     noSpline = true;
-                } else {
-                    init.push_back(begL.intersectsAt(endL));
                 }
                 init.push_back(end);
             }
