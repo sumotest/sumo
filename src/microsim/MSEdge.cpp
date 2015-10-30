@@ -183,31 +183,42 @@ MSEdge::closeBuilding() {
 void 
 MSEdge::buildLaneChanger() {
     if (!myLanes->empty()) {
+        const bool allowSwap = OptionsCont::getOptions().getBool("lanechange.allow-swap");
         if (MSGlobals::gLateralResolution > 0) {
-            myLaneChanger = new MSLaneChangerSublane(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
-        } else if (MSGlobals::gLaneChangeDuration > 0) {
-            myLaneChanger = new MSLaneChanger(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
-        } else if (myLanes->size() > 1) {
-            if (myFunction == EDGEFUNCTION_INTERNAL) {
-                // allow changing only if all links leading to this internal lane have priority
-                // or they are controlled by a traffic light
-                for (std::vector<MSLane*>::const_iterator it = myLanes->begin(); it != myLanes->end(); ++it) {
-                    MSLane* pred = (*it)->getLogicalPredecessorLane();
-                    MSLink* link = MSLinkContHelper::getConnectingLink(*pred, **it);
-                    assert(link != 0);
-                    LinkState state = link->getState();
-                    if (state == LINKSTATE_MINOR
-                            || state == LINKSTATE_EQUAL
-                            || state == LINKSTATE_STOP
-                            || state == LINKSTATE_ALLWAY_STOP
-                            || state == LINKSTATE_DEADEND) {
-                        return;
-                    }
-                }
-            } 
-            myLaneChanger = new MSLaneChanger(myLanes, OptionsCont::getOptions().getBool("lanechange.allow-swap"));
+            // may always initiate sublane-change
+            myLaneChanger = new MSLaneChangerSublane(myLanes, true, allowSwap);
+        } else {
+            const bool allowChanging = allowsLaneChanging();
+            if (MSGlobals::gLaneChangeDuration > 0) {
+                myLaneChanger = new MSLaneChanger(myLanes, allowChanging, allowSwap);
+            } else if (myLanes->size() > 1) {
+                myLaneChanger = new MSLaneChanger(myLanes, allowChanging, allowSwap); 
+            }
         }
     }
+}
+
+
+bool 
+MSEdge::allowsLaneChanging() {
+    if (myFunction == EDGEFUNCTION_INTERNAL) {
+        // allow changing only if all links leading to this internal lane have priority
+        // or they are controlled by a traffic light
+        for (std::vector<MSLane*>::const_iterator it = myLanes->begin(); it != myLanes->end(); ++it) {
+            MSLane* pred = (*it)->getLogicalPredecessorLane();
+            MSLink* link = MSLinkContHelper::getConnectingLink(*pred, **it);
+            assert(link != 0);
+            LinkState state = link->getState();
+            if (state == LINKSTATE_MINOR
+                    || state == LINKSTATE_EQUAL
+                    || state == LINKSTATE_STOP
+                    || state == LINKSTATE_ALLWAY_STOP
+                    || state == LINKSTATE_DEADEND) {
+                return false;
+            }
+        }
+    } 
+    return true;
 }
 
 

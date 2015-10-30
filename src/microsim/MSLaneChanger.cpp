@@ -64,7 +64,10 @@ MSLaneChanger::ChangeElem::ChangeElem(MSLane* _lane) :
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowSwap) : myAllowsSwap(allowSwap) {
+MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowChanging, bool allowSwap) : 
+    myAllowsSwap(allowSwap),
+    myAllowsChanging(allowChanging) 
+{
 
     // Fill the changer with the lane-data.
     myChanger.reserve(lanes->size());
@@ -214,7 +217,7 @@ MSLaneChanger::change() {
     if (vehicle->getLaneChangeModel().isChangingLanes()) {
         return continueChange(vehicle, myCandi);
     }
-    if (myChanger.size() == 1) {
+    if (myChanger.size() == 1 || !myAllowsChanging) {
         registerUnchanged(vehicle);
         return false;
     }

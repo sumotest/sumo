@@ -151,6 +151,11 @@ public:
     /// Has to be called after all sucessors and predecessors have been set (after closeBuilding())
     void buildLaneChanger();
 
+    /* @brief returns whether initizliaing a lane change is permitted on this edge
+     * @note Has to be called after all sucessors and predecessors have been set (after closeBuilding())
+     */
+    bool allowsLaneChanging();
+
     /// @name Access to the edge's lanes
     /// @{
 

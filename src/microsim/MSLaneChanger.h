@@ -55,7 +55,7 @@
 class MSLaneChanger {
 public:
     /// Constructor
-    MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowSwap);
+    MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowChanging, bool allowSwap);
 
     /// Destructor.
     ~MSLaneChanger();
@@ -187,6 +187,10 @@ protected:
 
     /// @brief Whether blocking vehicles may be swapped
     bool myAllowsSwap;
+
+    /* @brief Whether vehicles may start to change lanes on this edge
+     * (finishing a change in progress is always permitted) */
+    bool myAllowsChanging;
 
 private:
     /// Default constructor.

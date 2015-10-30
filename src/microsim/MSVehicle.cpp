@@ -1111,6 +1111,12 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
                 // XXX maybe this is too harsh. Vehicles could cut some corners here
                 const SUMOReal timeRemaining = STEPS2TIME(getLaneChangeModel().remainingTime());
                 const SUMOReal va = MAX2((SUMOReal)0, (seen - POSITION_EPS) / timeRemaining);
+                if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " slowing down to finish continuous change before"
+                    << " link=" << (*link)->getViaLaneOrLane()->getID()
+                    << " timeRemaining=" << timeRemaining
+                    << " v=" << v
+                    << " va=" << va
+                        << "\n";
                 v = MIN2(va, v);
             }
         }
