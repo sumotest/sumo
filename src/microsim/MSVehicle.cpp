@@ -412,11 +412,7 @@ MSVehicle::~MSVehicle() {
     myLaneChangeModel->cleanupShadowLane();
     delete myLaneChangeModel; // still needed when calling resetPartialOccupation (getShadowLane)
     myFurtherLanes.clear();
-    for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
-        if ((*i).myLink != 0) {
-            (*i).myLink->removeApproaching(this);
-        }
-    }
+    removeApproachingInformation(myLFLinkLanes);
     //
     if (myType->amVehicleSpecific()) {
         delete myType;
@@ -431,11 +427,7 @@ void
 MSVehicle::onRemovalFromNet(const MSMoveReminder::Notification reason) {
     MSVehicleTransfer::getInstance()->remove(this);
     workOnMoveReminders(myState.myPos - SPEED2DIST(myState.mySpeed), myState.myPos, myState.mySpeed);
-    for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
-        if ((*i).myLink != 0) {
-            (*i).myLink->removeApproaching(this);
-        }
-    }
+    removeApproachingInformation(myLFLinkLanes);
     leaveLane(reason);
 }
 
@@ -1000,11 +992,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     }
 #endif
     // remove information about approaching links, will be reset later in this step
-    for (DriveItemVector::iterator i = lfLinks.begin(); i != lfLinks.end(); ++i) {
-        if ((*i).myLink != 0) {
-            (*i).myLink->removeApproaching(this);
-        }
-    }
+    removeApproachingInformation(lfLinks);
     lfLinks.clear();
     //
     const MSCFModel& cfModel = getCarFollowModel();
@@ -2659,6 +2647,15 @@ MSVehicle::getLateralOverlap() const {
                 - 0.5 * myLane->getWidth());
 }
 
+
+void 
+MSVehicle::removeApproachingInformation(DriveItemVector& lfLinks) const {
+    for (DriveItemVector::iterator i = lfLinks.begin(); i != lfLinks.end(); ++i) {
+        if ((*i).myLink != 0) {
+            (*i).myLink->removeApproaching(this);
+        }
+    }
+}
 
 
 #ifndef NO_TRACI

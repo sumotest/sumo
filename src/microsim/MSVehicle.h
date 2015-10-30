@@ -1233,7 +1233,6 @@ protected:
      */
     const ConstMSEdgeVector getStopEdges() const;
 
-
     /// @brief The time the vehicle waits (is not faster than 0.1m/s) in seconds
     SUMOTime myWaitingTime;
 
@@ -1312,6 +1311,7 @@ protected:
             assert(vPass >= 0);
         };
 
+
         /// @brief constructor if the link shall not be passed
         DriveProcessItem(SUMOReal vWait, SUMOReal distance) :
             myLink(0), myVLinkPass(vWait), myVLinkWait(vWait), mySetRequest(false),
@@ -1335,13 +1335,16 @@ protected:
         }
     };
 
-    typedef std::vector< DriveProcessItem > DriveItemVector;
-
     /// Container for used Links/visited Lanes during lookForward.
+    typedef std::vector< DriveProcessItem > DriveItemVector;
     DriveItemVector myLFLinkLanes;
 
     void planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks) const;
     void checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& lfLinks) const;
+
+    /// @brief unregister approach from all upcoming links
+    void removeApproachingInformation(DriveItemVector& lfLinks) const;
+
 
     /// @brief estimate leaving speed when accelerating across a link
     inline SUMOReal estimateLeaveSpeed(const MSLink* const link, const SUMOReal vLinkPass) const {
