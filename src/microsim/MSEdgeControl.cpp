@@ -34,6 +34,7 @@
 #include "MSEdgeControl.h"
 #include "MSEdge.h"
 #include "MSLane.h"
+#include "MSVehicle.h"
 #include <iostream>
 #include <vector>
 
@@ -150,6 +151,10 @@ MSEdgeControl::changeLanes(SUMOTime t) {
                 const std::vector<MSLane*>& lanes = edge.getLanes();
                 for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
                     LaneUsage& lu = myLanes[(*i)->getNumericalID()];
+                    //if ((*i)->getID() == "disabled") {
+                    //    std::cout << SIMTIME << " vehicles=" << toString((*i)->getVehiclesSecure()) << "\n";
+                    //    (*i)->releaseVehicles();
+                    //}
                     if ((*i)->getVehicleNumber() > 0 && !lu.amActive) {
                         toAdd.push_back(*i);
                         lu.amActive = true;

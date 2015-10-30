@@ -114,7 +114,7 @@ MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
 }
 
 MSLCM_SL2015::~MSLCM_SL2015() {
-    changed(0);
+    changed();
 }
 
 
@@ -179,7 +179,7 @@ MSLCM_SL2015::wantsChangeSublane(
 
 SUMOReal
 MSLCM_SL2015::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
-    gDebugFlag1 = DEBUG_COND;
+    gDebugFlag2 = DEBUG_COND;
 
     const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
     if (gDebugFlag1) {
@@ -193,7 +193,7 @@ MSLCM_SL2015::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMORe
                   << patched
                   << "\n\n";
     }
-    gDebugFlag1 = false;
+    gDebugFlag2 = false;
     return newSpeed;
 }
 
@@ -338,7 +338,7 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     }
     if (myVehicle.getLane()->getEdge().getLanes().size() == 1) {
         // remove chaning information if on a road with a single lane
-        changed(0);
+        changed();
     }
     return wanted;
 }
@@ -731,7 +731,7 @@ MSLCM_SL2015::computeSublaneShift(const MSEdge* prevEdge, const MSEdge* curEdge)
 
 
 void
-MSLCM_SL2015::changed(int dir) {
+MSLCM_SL2015::changed() {
     myOwnState = 0;
     // XX do not reset values for unfinished maneuvers
     mySpeedGainProbabilityRight = 0;
@@ -747,7 +747,6 @@ MSLCM_SL2015::changed(int dir) {
     myLookAheadSpeed = LOOK_AHEAD_MIN_SPEED;
     myVSafes.clear();
     myDontBrake = false;
-    initLastLaneChangeOffset(dir);
 }
 
 

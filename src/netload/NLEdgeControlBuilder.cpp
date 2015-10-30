@@ -116,6 +116,9 @@ NLEdgeControlBuilder::build() {
         }
 #endif
     }
+    for (MSEdgeVector::iterator i1 = myEdges.begin(); i1 != myEdges.end(); i1++) {
+        (*i1)->buildLaneChanger();
+    }
     // mark internal edges belonging to a roundabout (after all edges are build)
     if (MSGlobals::gUsingInternalLanes) {
         for (MSEdgeVector::iterator i1 = myEdges.begin(); i1 != myEdges.end(); i1++) {

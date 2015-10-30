@@ -662,9 +662,7 @@ MSVehicle::getAngle() const {
                        atan2(p1.x() - p2.x(), p2.y() - p1.y()) * 180. / M_PI :
                        -myLane->getShape().rotationDegreeAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane())));
     if (getLaneChangeModel().isChangingLanes()) {
-        const SUMOReal completion = getLaneChangeModel().getLaneChangeCompletion();
-        const SUMOReal angleOffset = 60 / STEPS2TIME(MSGlobals::gLaneChangeDuration) * (completion > 0.5 ? 1 - completion : completion);
-        result += getLaneChangeModel().getLaneChangeDirection() * angleOffset;
+        result += getLaneChangeModel().getAngleOffset();
     }
     return result;
 }
@@ -951,7 +949,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "Costa_1_17");
+    gDebugFlag1 = (getID() == "disabled");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1119,9 +1117,9 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
                 ((*link)->getDirection() == LINKDIR_LEFT || (*link)->getDirection() == LINKDIR_RIGHT) ||
                 // slow down to finish lane change before the shadow lane ends
                 (getLaneChangeModel().getShadowLane() != 0 &&
-                 (*link)->getViaLaneOrLane()->getParallelLane(getLaneChangeModel().getLaneChangeDirection()) == 0)) {
+                 (*link)->getViaLaneOrLane()->getParallelLane(getLaneChangeModel().getShadowDirection()) == 0)) {
                 // XXX maybe this is too harsh. Vehicles could cut some corners here
-                const SUMOReal timeRemaining = STEPS2TIME((1 - getLaneChangeModel().getLaneChangeCompletion()) * MSGlobals::gLaneChangeDuration);
+                const SUMOReal timeRemaining = STEPS2TIME(getLaneChangeModel().remainingTime());
                 const SUMOReal va = MAX2((SUMOReal)0, (seen - POSITION_EPS) / timeRemaining);
                 v = MIN2(va, v);
             }
@@ -1646,7 +1644,7 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes,
 
 SUMOReal 
 MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
-    //gDebugFlag1 = getID() == "Costa_12_18";
+    //gDebugFlag1 = getID() == "disabled";
     //if (getID() == "flow.4" && SIMTIME == 22 && lane->getID() == "beg_0") {
     //    std::cout << SIMTIME << " getBackPositionOnLane veh=" << getID() << " lane=" << Named::getIDSecure(lane) << "\n";
     //}

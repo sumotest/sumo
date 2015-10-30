@@ -270,7 +270,11 @@ public:
     virtual SUMOReal patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max,
                                 const MSCFModel& cfModel) = 0;
 
-    virtual void changed(int dir) = 0;
+    /* @brief called once when the primary lane of the vehicle changes (updates
+     * the custom variables of each child implementation */
+    virtual void changed() = 0;
+
+
 
     void unchanged() {
         if (myLastLaneChangeOffset > 0) {
@@ -305,9 +309,12 @@ public:
 
 
     /// @brief return whether the vehicle passed the midpoint of a continuous lane change maneuver
-    inline SUMOReal getLaneChangeCompletion() const {
-        return myLaneChangeCompletion;
+    inline bool pastMidpoint() const {
+        return myLaneChangeCompletion >= 0.5;
     }
+
+    /// @brief return whether the vehicle passed the midpoint of a continuous lane change maneuver
+    SUMOTime remainingTime() const;
 
     /// @brief return true if the vehicle currently performs a lane change maneuver
     inline bool isChangingLanes() const {
@@ -318,6 +325,12 @@ public:
     inline int getLaneChangeDirection() const {
         return myLaneChangeDirection;
     }
+
+    /// @brief return the direction in which the current shadow lane lies
+    int getShadowDirection() const; 
+
+    /// @brief return the angle offset during a continuous change maneuver
+    SUMOReal getAngleOffset() const; 
 
     /// @brief return the lateral speed of the current lane change maneuver
     inline SUMOReal getLateralSpeed() const {
@@ -336,7 +349,6 @@ public:
 
     /// @brief start the lane change maneuver and return whether it continues
     bool startLaneChangeManeuver(MSLane* source, MSLane* target, int direction);
-
 
     /* @brief continue the lane change maneuver and return whether the midpoint
      * was passed in this step
@@ -366,6 +378,9 @@ public:
     void setNoShadowPartialOccupator(MSLane* lane) {
         myNoPartiallyOccupatedByShadow.push_back(lane);
     }
+
+    /// @brief called once when the vehicles primary lane changes
+    void primaryLaneChanged(MSLane* source, MSLane* target, int direction);
 
 protected:
     virtual bool congested(const MSVehicle* const neighLeader);

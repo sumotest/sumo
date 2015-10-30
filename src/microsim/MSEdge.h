@@ -148,6 +148,8 @@ public:
     /// @todo Has to be called after all edges were built and all connections were set...; Still, is not very nice
     void closeBuilding();
 
+    /// Has to be called after all sucessors and predecessors have been set (after closeBuilding())
+    void buildLaneChanger();
 
     /// @name Access to the edge's lanes
     /// @{

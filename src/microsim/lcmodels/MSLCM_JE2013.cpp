@@ -89,7 +89,7 @@
 #define TURN_LANE_DIST (SUMOReal)200.0 // the distance at which a lane leading elsewhere is considered to be a turn-lane that must be avoided
 
 //#define DEBUG_COND (myVehicle.getID() == "1501_27271428" || myVehicle.getID() == "1502_27270000")
-#define DEBUG_COND (myVehicle.getID() == "flow.21")
+#define DEBUG_COND (myVehicle.getID() == "disabled")
 //#define DEBUG_COND (myVehicle.getID() == "pkw150478" || myVehicle.getID() == "pkw150494" || myVehicle.getID() == "pkw150289")
 //#define DEBUG_COND (myVehicle.getID() == "A" || myVehicle.getID() == "B") // fail change to left
 //#define DEBUG_COND (myVehicle.getID() == "Costa_12_13") // test stops_overtaking
@@ -108,7 +108,7 @@ MSLCM_JE2013::MSLCM_JE2013(MSVehicle& v) :
 {}
 
 MSLCM_JE2013::~MSLCM_JE2013() {
-    changed(0);
+    changed();
 }
 
 
@@ -161,7 +161,7 @@ MSLCM_JE2013::wantsChange(
 
 SUMOReal
 MSLCM_JE2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
-    gDebugFlag1 = DEBUG_COND;
+    gDebugFlag2 = DEBUG_COND;
 
     const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
     if (gDebugFlag1) {
@@ -175,7 +175,7 @@ MSLCM_JE2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMORe
                   << patched
                   << "\n\n";
     }
-    gDebugFlag1 = false;
+    gDebugFlag2 = false;
     return newSpeed;
 }
 
@@ -321,7 +321,7 @@ MSLCM_JE2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     }
     if (myVehicle.getLane()->getEdge().getLanes().size() == 1) {
         // remove chaning information if on a road with a single lane
-        changed(0);
+        changed();
     }
     return wanted;
 }
@@ -620,7 +620,7 @@ MSLCM_JE2013::prepareStep() {
 
 
 void
-MSLCM_JE2013::changed(int dir) {
+MSLCM_JE2013::changed() {
     myOwnState = 0;
     mySpeedGainProbability = 0;
     myKeepRightProbability = 0;
@@ -633,7 +633,6 @@ MSLCM_JE2013::changed(int dir) {
     myLookAheadSpeed = LOOK_AHEAD_MIN_SPEED;
     myVSafes.clear();
     myDontBrake = false;
-    initLastLaneChangeOffset(dir);
 }
 
 

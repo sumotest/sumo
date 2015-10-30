@@ -133,7 +133,6 @@ MSAbstractLaneChangeModel::predInteraction(const std::pair<MSVehicle*, SUMOReal>
 
 bool
 MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* target, int direction) {
-    target->enteredByLaneChange(&myVehicle);
     if (MSGlobals::gLaneChangeDuration > DELTA_T) {
         myLaneChangeCompletion = 0;
         myLaneChangeDirection = direction;
@@ -142,20 +141,28 @@ MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* targe
         myVehicle.switchOnSignal(direction == 1 ? MSVehicle::VEH_SIGNAL_BLINKER_LEFT : MSVehicle::VEH_SIGNAL_BLINKER_RIGHT);
         return true;
     } else {
-        myVehicle.leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
-        source->leftByLaneChange(&myVehicle);
-        myVehicle.enterLaneAtLaneChange(target);
-        changed(direction);
+        primaryLaneChanged(source, target, direction);
         return false;
     }
 }
 
 
+void
+MSAbstractLaneChangeModel::primaryLaneChanged(MSLane* source, MSLane* target, int direction) {
+    initLastLaneChangeOffset(direction);
+    myVehicle.leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
+    source->leftByLaneChange(&myVehicle);
+    myVehicle.enterLaneAtLaneChange(target);
+    target->enteredByLaneChange(&myVehicle);
+    changed();
+}
+
+
 bool
 MSAbstractLaneChangeModel::updateCompletion() {
-    const SUMOReal oldCompletion = myLaneChangeCompletion;
+    const bool pastBefore = pastMidpoint();
     myLaneChangeCompletion += (SUMOReal)DELTA_T / (SUMOReal)MSGlobals::gLaneChangeDuration;
-    return myLaneChangeCompletion >= 0.5 && oldCompletion < 0.5; 
+    return !pastBefore && pastMidpoint();
 }
 
 
@@ -257,3 +264,26 @@ MSAbstractLaneChangeModel::updateShadowLane() {
 }
 
 
+int 
+MSAbstractLaneChangeModel::getShadowDirection() const {
+    if (myShadowLane == 0) {
+        return 0;
+    } else if (pastMidpoint()) {
+        return -myLaneChangeDirection;
+    } else {
+        return myLaneChangeDirection;
+    }
+}
+
+
+SUMOReal 
+MSAbstractLaneChangeModel::getAngleOffset() const {
+    const SUMOReal angleOffset = 60 / STEPS2TIME(MSGlobals::gLaneChangeDuration) * (pastMidpoint() ? 1 - myLaneChangeCompletion : myLaneChangeCompletion);
+    return myLaneChangeDirection * angleOffset;
+}
+
+
+SUMOTime 
+MSAbstractLaneChangeModel::remainingTime() const {
+    return (1 - myLaneChangeCompletion) * MSGlobals::gLaneChangeDuration;
+}

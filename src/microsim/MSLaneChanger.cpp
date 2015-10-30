@@ -74,7 +74,8 @@ MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowSwap) 
 }
 
 
-MSLaneChanger::~MSLaneChanger() {}
+MSLaneChanger::~MSLaneChanger() {
+}
 
 
 void
@@ -84,11 +85,19 @@ MSLaneChanger::laneChange(SUMOTime t) {
     // nedds an update to prevent multiple changes of one vehicle.
     // Finally, the change-result has to be given back to the lanes.
     initChanger();
-    while (vehInChanger()) {
-        bool haveChanged = change();
-        updateChanger(haveChanged);
+    try {
+        while (vehInChanger()) {
+            bool haveChanged = change();
+            updateChanger(haveChanged);
+        }
+        updateLanes(t);
+    } catch (const ProcessError& e) {
+        // clean up locks or the gui may hang
+        for (ChangerIt ce = myChanger.begin(); ce != myChanger.end(); ++ce) {
+            ce->lane->releaseVehicles();
+        }
+        throw;
     }
-    updateLanes(t);
 }
 
 
@@ -195,6 +204,7 @@ MSLaneChanger::change() {
     // priority.
     myCandi = findCandidate();
     MSVehicle* vehicle = veh(myCandi);
+    gDebugFlag1 = vehicle->getID() == "disabled";
     
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == vehicle->getID()) {
@@ -202,7 +212,7 @@ MSLaneChanger::change() {
     }
 #endif
     if (vehicle->getLaneChangeModel().isChangingLanes()) {
-        return continueChange(vehicle, myCandi, vehicle->getLaneChangeModel().getLaneChangeDirection());
+        return continueChange(vehicle, myCandi);
     }
     if (myChanger.size() == 1) {
         registerUnchanged(vehicle);
@@ -335,7 +345,7 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
     //if (to->lane->getID() == "beg_1") std::cout << SIMTIME << " startChange to lane=" << to->lane->getID() << " myTmpVehiclesBefore=" << toString(to->lane->myTmpVehicles) << "\n";
     const bool continuous = vehicle->getLaneChangeModel().startLaneChangeManeuver(from->lane, to->lane, direction);
     if (continuous) {
-        continueChange(vehicle, myCandi, vehicle->getLaneChangeModel().getLaneChangeDirection());
+        continueChange(vehicle, myCandi);
     } else {
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += vehicle->getVehicleType().getLengthWithGap();
@@ -345,34 +355,46 @@ MSLaneChanger::startChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
 
 
 bool
-MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from, int direction) {
-    const bool pastMidpoint = vehicle->getLaneChangeModel().updateCompletion();
-    vehicle->myState.myPosLat += vehicle->getLaneChangeModel().getLateralSpeed();
+MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from) {
+    MSAbstractLaneChangeModel& lcm = vehicle->getLaneChangeModel();
+    const int direction = lcm.getLaneChangeDirection();
+    const bool pastMidpoint = lcm.updateCompletion();
+    vehicle->myState.myPosLat += lcm.getLateralSpeed();
+    ChangerIt shadow;
     if (pastMidpoint) {
         ChangerIt to = from + direction;
         MSLane* source = myCandi->lane;
         MSLane* target = to->lane;
         vehicle->myState.myPosLat -= direction * 0.5 * (source->getWidth() + target->getWidth());
-        vehicle->leaveLane(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
-        source->leftByLaneChange(vehicle);
-        vehicle->enterLaneAtLaneChange(target);
-        vehicle->getLaneChangeModel().changed(direction);
-
+        lcm.primaryLaneChanged(source, target, direction);
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += vehicle->getVehicleType().getLengthWithGap();
         to->hoppedVeh = vehicle;
+        shadow = from;
     } else {
         from->lane->myTmpVehicles.insert(from->lane->myTmpVehicles.begin(), vehicle);
         from->dens += vehicle->getVehicleType().getLengthWithGap();
+        shadow = from + lcm.getShadowDirection();
     }
-    //std::cout << SIMTIME << " continueChange veh=" << vehicle->getID() << " pastMidpoint=" << pastMidpoint << " posLat=" << vehicle->getLateralPositionOnLane() 
-    //    << " completion=" << vehicle->getLaneChangeModel().getLaneChangeCompletion()
-    //    << "\n";
-    if (!vehicle->getLaneChangeModel().isChangingLanes()) {
+    if (!lcm.isChangingLanes()) {
         vehicle->myState.myPosLat = 0;
-        vehicle->getLaneChangeModel().endLaneChangeManeuver();
+        lcm.endLaneChangeManeuver();
     }
-    vehicle->getLaneChangeModel().updateShadowLane();
+    lcm.updateShadowLane();
+    if (lcm.getShadowLane() != 0) {
+        // set as hoppedVeh on the shadow lane so it is found as leader on both lanes
+        shadow->hoppedVeh = vehicle;
+    }
+    if (gDebugFlag1) std::cout << SIMTIME 
+        << " continueChange veh=" << vehicle->getID() 
+            << " from=" << Named::getIDSecure(from->lane)
+            << " dir=" << direction
+            << " pastMidpoint=" << pastMidpoint 
+            << " posLat=" << vehicle->getLateralPositionOnLane() 
+            //<< " completion=" << lcm.getLaneChangeCompletion()
+            << " shadowLane=" << Named::getIDSecure(lcm.getShadowLane())
+            << " shadowHopped=" << Named::getIDSecure(shadow->lane)
+            << "\n";
     return pastMidpoint;
 }
 
@@ -477,7 +499,7 @@ MSLaneChanger::checkChange(
     const std::pair<MSVehicle* const, SUMOReal>& leader,
     const std::vector<MSVehicle::LaneQ>& preb) const {
     MSVehicle* vehicle = veh(myCandi);
-    //gDebugFlag1 = vehicle->getID() == "Costa_12_7";
+    //gDebugFlag1 = vehicle->getID() == "disabled";
     std::pair<MSVehicle* const, SUMOReal> neighLead = getRealLeader(myCandi + laneOffset);
     std::pair<MSVehicle* const, SUMOReal> neighFollow = getRealFollower(myCandi + laneOffset);
     ChangerIt target = myCandi + laneOffset;
@@ -532,7 +554,9 @@ MSLaneChanger::checkChange(
         // before the next turning movement
         SUMOReal seen = myCandi->lane->getLength() - vehicle->getPositionOnLane();
         const SUMOReal decel = vehicle->getCarFollowModel().getMaxDecel() * STEPS2TIME(MSGlobals::gLaneChangeDuration);
-        const SUMOReal avgSpeed = 0.5 * (vehicle->getSpeed() + MAX2((SUMOReal)0, vehicle->getSpeed() - decel));
+        const SUMOReal avgSpeed = 0.5 * (
+                MAX2((SUMOReal)0, vehicle->getSpeed() - ACCEL2SPEED(vehicle->getCarFollowModel().getMaxDecel())) + 
+                MAX2((SUMOReal)0, vehicle->getSpeed() - decel));
         const SUMOReal space2change = avgSpeed * STEPS2TIME(MSGlobals::gLaneChangeDuration);
         // for finding turns it doesn't matter whether we look along the current lane or the target lane
         const std::vector<MSLane*>& bestLaneConts = vehicle->getBestLanesContinuation();
@@ -560,8 +584,8 @@ MSLaneChanger::checkChange(
             // get the next link used
             link = MSLane::succLinkSec(*vehicle, view, *nextLane, bestLaneConts);
         }
-        //if (vehicle->getID() == "XXI_Aprile_94_3") std::cout << SIMTIME << " checkChange seen=" << seen << " space2change=" << space2change << "\n";
         if (nextLane->isLinkEnd(link) && seen < space2change) {
+            if (gDebugFlag1) std::cout << SIMTIME << " checkChange insufficientSpace: seen=" << seen << " space2change=" << space2change << "\n";
             state |= LCA_INSUFFICIENT_SPACE;
         }
 
@@ -604,11 +628,20 @@ MSLaneChanger::checkChange(
     }
 #ifndef NO_TRACI
     // let TraCI influence the wish to change lanes and the security to take
-    //const int oldstate = state;
+    const int oldstate = state;
     state = vehicle->influenceChangeDecision(state);
-    //if (vehicle->getID() == "150_2_36000000") {
-    //    std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep()) << " veh=" << vehicle->getID() << " oldstate=" << oldstate << " newstate=" << state << "\n";
-    //}
+    if (gDebugFlag1)  std::cout << SIMTIME 
+        << " veh=" << vehicle->getID() << " oldstate=" << oldstate << " newstate=" << state << "\n  "
+            << ((state & LCA_URGENT) ? " (urgent)" : "")
+            << ((state & LCA_STRATEGIC) ? " (strat)" : "")
+            << ((state & LCA_COOPERATIVE) ? " (coop)" : "")
+            << ((state & LCA_SPEEDGAIN) ? " (speed)" : "")
+            << ((state & LCA_KEEPRIGHT) ? " (keepright)" : "")
+            << ((state & LCA_TRACI) ? " (traci)" : "")
+            << ((state & LCA_BLOCKED) ? " (blocked)" : "")
+            << ((state & LCA_OVERLAPPING) ? " (overlap)" : "")
+            << ((state & LCA_INSUFFICIENT_SPACE) ? " (insufficientSpace)" : "")
+            << "\n";
 #endif
     return state;
 }
