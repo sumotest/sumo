@@ -475,16 +475,13 @@ MSLaneChanger::getRealLeader(const ChangerIt& target) const {
 
 std::pair<MSVehicle* const, SUMOReal>
 MSLaneChanger::getRealFollower(const ChangerIt& target) const {
+    MSVehicle* candi = veh(myCandi);
+    const SUMOReal candiPos = candi->getPositionOnLane();
     MSVehicle* neighFollow = veh(target);
     // check whether the hopped vehicle became the follower
-    if (target->hoppedVeh != 0) {
-        SUMOReal hoppedPos = target->hoppedVeh->getPositionOnLane();
-        if (hoppedPos <= veh(myCandi)->getPositionOnLane() && (neighFollow == 0 || neighFollow->getPositionOnLane() < hoppedPos)) {
-            neighFollow = target->hoppedVeh;
-        }
-    }
+    neighFollow = getCloserFollower(candiPos, neighFollow, target->hoppedVeh);
+    neighFollow = getCloserFollower(candiPos, neighFollow, target->lane->getPartialBehind(candiPos));
     if (neighFollow == 0) {
-        MSVehicle* candi = veh(myCandi);
         return target->lane->getFollowerOnConsecutive(
                    candi->getPositionOnLane() - candi->getVehicleType().getLength(),
                    candi->getSpeed(), candi->getCarFollowModel().getMaxDecel());
@@ -495,6 +492,21 @@ MSLaneChanger::getRealFollower(const ChangerIt& target) const {
     }
 }
 
+
+MSVehicle* 
+MSLaneChanger::getCloserFollower(const SUMOReal maxPos, MSVehicle* follow1, MSVehicle* follow2) {
+    if (follow1 == 0 || follow1->getPositionOnLane() > maxPos) {
+        return follow2;
+    } else if (follow2 == 0 || follow2->getPositionOnLane() > maxPos) {
+        return follow1;
+    } else {
+        if (follow1->getPositionOnLane() > follow2->getPositionOnLane()) {
+            return follow1;
+        } else {
+            return follow2;
+        }
+    }
+}
 
 int
 MSLaneChanger::checkChange(

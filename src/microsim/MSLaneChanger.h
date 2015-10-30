@@ -176,6 +176,9 @@ protected:
     /// @brief whether changing to the lane in the given direction should be considered
     bool mayChange(int direction) const;
 
+    /// @brief return the closer follower of ego
+    static MSVehicle* getCloserFollower(const SUMOReal maxPos, MSVehicle* follow1, MSVehicle* follow2);
+
 protected:
     /// Container for ChangeElemements, one for every lane in the edge.
     Changer   myChanger;

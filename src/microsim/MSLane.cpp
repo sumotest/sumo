@@ -2006,5 +2006,17 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
 }
 
 
+MSVehicle* 
+MSLane::getPartialBehind(SUMOReal maxPos) const {
+    for (VehCont::const_reverse_iterator i = myPartialVehicles.rbegin(); i != myPartialVehicles.rend(); ++i) {
+        MSVehicle* veh = *i;
+        if (veh->isFrontOnLane(this)
+                && veh->getPositionOnLane() <= maxPos) {
+            return veh;
+        }
+    }
+    return 0;
+}
+
 /****************************************************************************/
 
