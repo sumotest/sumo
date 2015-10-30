@@ -735,9 +735,9 @@ public:
      */
     std::pair<MSVehicle* const, SUMOReal> getCriticalLeader(SUMOReal dist, SUMOReal seen, SUMOReal speed, const MSVehicle& veh) const;
 
-    /* @brief return the partial vehicle with the largest position lower than maxPos or 0
+    /* @brief return the partial vehicle closest behind ego or 0
      * if no such vehicle exists */
-    MSVehicle* getPartialBehind(SUMOReal maxPos) const;
+    MSVehicle* getPartialBehind(const MSVehicle* ego) const;
 
     /** @brief get the most likely precedecessor lane (sorted using by_connections_to_sorter).
      * The result is cached in myLogicalPredecessorLane

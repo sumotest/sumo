@@ -266,7 +266,8 @@ MSAbstractLaneChangeModel::updateShadowLane() {
 
 int 
 MSAbstractLaneChangeModel::getShadowDirection() const {
-    if (myShadowLane == 0) {
+    if (!isChangingLanes()) {
+        assert(false);
         return 0;
     } else if (pastMidpoint()) {
         return -myLaneChangeDirection;

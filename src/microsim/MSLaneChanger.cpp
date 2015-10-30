@@ -377,6 +377,7 @@ MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from) {
     } else {
         from->lane->myTmpVehicles.insert(from->lane->myTmpVehicles.begin(), vehicle);
         from->dens += vehicle->getVehicleType().getLengthWithGap();
+        from->hoppedVeh = vehicle;
         shadow = from + lcm.getShadowDirection();
     }
     if (!lcm.isChangingLanes()) {
@@ -442,7 +443,11 @@ std::pair<MSVehicle* const, SUMOReal>
 MSLaneChanger::getRealLeader(const ChangerIt& target) const {
     // get the leading vehicle on the lane to change to
     MSVehicle* neighLead = target->lead;
-    //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " neighLead=" << Named::getIDSecure(neighLead) << " (416)\n";
+    //if (veh(myCandi)->getID() == "disabled") std::cout << SIMTIME 
+    //    << " target=" << target->lane->getID()
+    //    << " neighLead=" << Named::getIDSecure(neighLead) 
+    //    << " hopped=" << Named::getIDSecure(target->hoppedVeh) 
+    //        << " (416)\n";
     // check whether the hopped vehicle became the leader
     if (target->hoppedVeh != 0) {
         SUMOReal hoppedPos = target->hoppedVeh->getPositionOnLane();
@@ -480,7 +485,7 @@ MSLaneChanger::getRealFollower(const ChangerIt& target) const {
     MSVehicle* neighFollow = veh(target);
     // check whether the hopped vehicle became the follower
     neighFollow = getCloserFollower(candiPos, neighFollow, target->hoppedVeh);
-    neighFollow = getCloserFollower(candiPos, neighFollow, target->lane->getPartialBehind(candiPos));
+    neighFollow = getCloserFollower(candiPos, neighFollow, target->lane->getPartialBehind(candi));
     if (neighFollow == 0) {
         return target->lane->getFollowerOnConsecutive(
                    candi->getPositionOnLane() - candi->getVehicleType().getLength(),

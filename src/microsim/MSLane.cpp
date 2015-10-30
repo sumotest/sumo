@@ -2007,14 +2007,17 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
 
 
 MSVehicle* 
-MSLane::getPartialBehind(SUMOReal maxPos) const {
+MSLane::getPartialBehind(const MSVehicle* ego) const {
     for (VehCont::const_reverse_iterator i = myPartialVehicles.rbegin(); i != myPartialVehicles.rend(); ++i) {
         MSVehicle* veh = *i;
         if (veh->isFrontOnLane(this)
-                && veh->getPositionOnLane() <= maxPos) {
+                && veh != ego
+                && veh->getPositionOnLane() <= ego->getPositionOnLane()) {
+            if (gDebugFlag1) std::cout << SIMTIME << " getPartialBehind lane=" << getID() << " ego=" << ego->getID() << " found=" << veh->getID() << "\n";
             return veh;
         }
     }
+    if (gDebugFlag1) std::cout << SIMTIME << " getPartialBehind lane=" << getID() << " ego=" << ego->getID() << " nothing found. partials=" << toString(myPartialVehicles) << "\n";
     return 0;
 }
 
