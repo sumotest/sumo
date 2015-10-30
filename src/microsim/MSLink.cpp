@@ -59,8 +59,9 @@ SUMOTime MSLink::myLookaheadTime = TIME2STEPS(1);
 // member method definitions
 // ===========================================================================
 #ifndef HAVE_INTERNAL_LANES
-MSLink::MSLink(MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
+MSLink::MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
     myLane(succLane),
+    myLaneBefore(predLane),
     myIndex(-1),
     myState(state),
     myLastStateChange(-1),
@@ -69,10 +70,13 @@ MSLink::MSLink(MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal le
     myHasFoes(false),
     myAmCont(false),
     myKeepClear(keepClear),
+    myParallelLeft(computeParallelLink(1)), 
+    myParallelRight(computeParallelLink(-1)),
     myJunction(0)
 #else
-MSLink::MSLink(MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
+MSLink::MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
     myLane(succLane),
+    myLaneBefore(predLane),
     myIndex(-1),
     myState(state),
     myLastStateChange(-1),
@@ -81,8 +85,10 @@ MSLink::MSLink(MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state
     myHasFoes(false),
     myAmCont(false),
     myKeepClear(keepClear),
-    myJunctionInlane(via),
+    myInternalLane(via),
     myInternalLaneBefore(0),
+    myParallelLeft(computeParallelLink(1)), 
+    myParallelRight(computeParallelLink(-1)),
     myJunction(0)
 #endif
 {}
@@ -318,39 +324,41 @@ MSLink::blockedAtTime(SUMOTime arrivalTime, SUMOTime leaveTime, SUMOReal arrival
                       bool sameTargetLane, SUMOReal impatience, SUMOReal decel, SUMOTime waitingTime,
                       std::vector<const SUMOVehicle*>* collectFoes) const {
     for (std::map<const SUMOVehicle*, ApproachingVehicleInformation>::const_iterator i = myApproachingVehicles.begin(); i != myApproachingVehicles.end(); ++i) {
-        if (!i->second.willPass) {
+        const SUMOVehicle* veh = i->first;
+        const ApproachingVehicleInformation& avi = i->second;
+        if (!avi.willPass) {
             continue;
         }
         if (myState == LINKSTATE_ALLWAY_STOP) {
             assert(waitingTime > 0);
-            if (waitingTime > i->second.waitingTime) {
+            if (waitingTime > avi.waitingTime) {
                 continue;
             }
-            if (waitingTime == i->second.waitingTime && arrivalTime < i->second.arrivalTime) {
+            if (waitingTime == avi.waitingTime && arrivalTime < avi.arrivalTime) {
                 continue;
             }
         }
-        const SUMOTime foeArrivalTime = (SUMOTime)((1.0 - impatience) * i->second.arrivalTime + impatience * i->second.arrivalTimeBraking);
-        if (i->second.leavingTime < arrivalTime) {
+        const SUMOTime foeArrivalTime = (SUMOTime)((1.0 - impatience) * avi.arrivalTime + impatience * avi.arrivalTimeBraking);
+        if (avi.leavingTime < arrivalTime) {
             // ego wants to be follower
-            if (sameTargetLane && (arrivalTime - i->second.leavingTime < myLookaheadTime
-                                   || unsafeMergeSpeeds(i->second.leaveSpeed, arrivalSpeed,
-                                           i->first->getVehicleType().getCarFollowModel().getMaxDecel(), decel))) {
+            if (sameTargetLane && (arrivalTime - avi.leavingTime < myLookaheadTime
+                                   || unsafeMergeSpeeds(avi.leaveSpeed, arrivalSpeed,
+                                           veh->getVehicleType().getCarFollowModel().getMaxDecel(), decel))) {
                 if (collectFoes == 0) {
                     return true;
                 } else {
-                    collectFoes->push_back(i->first);
+                    collectFoes->push_back(veh);
                 }
             }
         } else if (foeArrivalTime > leaveTime) {
             // ego wants to be leader.
             if (sameTargetLane && (foeArrivalTime - leaveTime < myLookaheadTime
-                                   || unsafeMergeSpeeds(leaveSpeed, i->second.arrivalSpeedBraking,
-                                           decel, i->first->getVehicleType().getCarFollowModel().getMaxDecel()))) {
+                                   || unsafeMergeSpeeds(leaveSpeed, avi.arrivalSpeedBraking,
+                                           decel, veh->getVehicleType().getCarFollowModel().getMaxDecel()))) {
                 if (collectFoes == 0) {
                     return true;
                 } else {
-                    collectFoes->push_back(i->first);
+                    collectFoes->push_back(veh);
                 }
             }
         } else {
@@ -358,7 +366,7 @@ MSLink::blockedAtTime(SUMOTime arrivalTime, SUMOTime leaveTime, SUMOReal arrival
             if (collectFoes == 0) {
                 return true;
             } else {
-                collectFoes->push_back(i->first);
+                collectFoes->push_back(veh);
             }
         }
     }
@@ -422,8 +430,8 @@ MSLane*
 MSLink::getApproachingLane() const {
     MSLane* approachedLane; //the lane approached by this link; this lane may be an internal lane
 #ifdef HAVE_INTERNAL_LANES
-    if (myJunctionInlane != 0) {    // if there is an internal lane
-        approachedLane = myJunctionInlane;  //consider the internal lane as the approached lane
+    if (myInternalLane != 0) {    // if there is an internal lane
+        approachedLane = myInternalLane;  //consider the internal lane as the approached lane
     } else {    //if ther is no internal lane
         approachedLane = myLane;
     }
@@ -449,10 +457,10 @@ MSLink::getApproachingLane() const {
 bool
 MSLink::lastWasContMajor() const {
 #ifdef HAVE_INTERNAL_LANES
-    if (myJunctionInlane == 0 || myAmCont) {
+    if (myInternalLane == 0 || myAmCont) {
         return false;
     } else {
-        MSLane* pred = myJunctionInlane->getLogicalPredecessorLane();
+        MSLane* pred = myInternalLane->getLogicalPredecessorLane();
         if (pred->getEdge().getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL) {
             return false;
         } else {
@@ -508,7 +516,7 @@ MSLink::writeApproaching(OutputDevice& od, const std::string fromLaneID) const {
 #ifdef HAVE_INTERNAL_LANES
 MSLane*
 MSLink::getViaLane() const {
-    return myJunctionInlane;
+    return myInternalLane;
 }
 
 
@@ -518,8 +526,8 @@ MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson
     //gDebugFlag1 = true;
     // this link needs to start at an internal lane (either an exit link or between two internal lanes)
     if (MSGlobals::gUsingInternalLanes && (
-                (myJunctionInlane == 0 && getLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL)
-                || (myJunctionInlane != 0 && myJunctionInlane->getLogicalPredecessorLane()->getEdge().isInternal()))) {
+                (myInternalLane == 0 && getLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL)
+                || (myInternalLane != 0 && myInternalLane->getLogicalPredecessorLane()->getEdge().isInternal()))) {
         if (gDebugFlag1) std::cout << SIMTIME << " getLeaderInfo link=" << getViaLaneOrLane()->getID() << "\n";
         // this is an exit link
         for (size_t i = 0; i < myFoeLanes.size(); ++i) {
@@ -589,13 +597,51 @@ MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson
 MSLane*
 MSLink::getViaLaneOrLane() const {
 #ifdef HAVE_INTERNAL_LANES
-    if (myJunctionInlane != 0) {
-        return myJunctionInlane;
+    if (myInternalLane != 0) {
+        return myInternalLane;
     }
 #endif
     return myLane;
 }
 
+
+const MSLane*
+MSLink::getLaneBefore() const {
+#ifdef HAVE_INTERNAL_LANES
+    // XXX this branch is superfluous
+    if (myInternalLaneBefore != 0) {
+        if (myLaneBefore != myInternalLaneBefore) {
+            throw ProcessError("lane before mismatch!");
+        }
+    }
+#endif
+    return myLaneBefore;
+}
+
+
+MSLink* 
+MSLink::getParallelLink(int direction) const {
+    if (direction == -1) {
+        return myParallelRight;
+    } else if (direction == 1) {
+        return myParallelLeft;
+    } else {
+        assert(false);
+        return 0;
+    }
+}
+
+
+MSLink* 
+MSLink::computeParallelLink(int direction) {
+    MSLane* before = getLaneBefore()->getParallelLane(direction);
+    MSLane* after = getViaLaneOrLane()->getParallelLane(direction);
+    if (before != 0 && after != 0) {
+        return MSLinkContHelper::getConnectingLink(*before, *after);
+    } else {
+        return 0;
+    }
+}
 
 /****************************************************************************/
 

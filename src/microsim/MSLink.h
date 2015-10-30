@@ -143,7 +143,7 @@ public:
      * @param[in] length The length of this link
      * @param[in] keepClear Whether the junction after this link must be kept clear
      */
-    MSLink(MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear);
+    MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear);
 #else
     /** @brief Constructor for simulation which uses internal lanes
      *
@@ -153,7 +153,7 @@ public:
      * @param[in] state The state of this link
      * @param[in] length The length of this link
      */
-    MSLink(MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear);
+    MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear);
 #endif
 
 
@@ -362,6 +362,9 @@ public:
     /// @brief return the via lane if it exists and the lane otherwise
     MSLane* getViaLaneOrLane() const;
 
+    /// @brief return the internalLaneBefore if it exists and the laneBefore otherwise
+    const MSLane* getLaneBefore() const;
+
 
     /// @brief return the expected time at which the given vehicle will clear the link
     SUMOTime getLeaveTime(const SUMOTime arrivalTime, const SUMOReal arrivalSpeed, const SUMOReal leaveSpeed, const SUMOReal vehicleLength) const;
@@ -374,6 +377,9 @@ public:
         return myJunction;
     }
 
+    /// @brief return the link that is parallel to this lane or 0
+    MSLink* getParallelLink(int direction) const;
+
 private:
     /// @brief return whether the given vehicles may NOT merge safely
     static inline bool unsafeMergeSpeeds(SUMOReal leaderSpeed, SUMOReal followerSpeed, SUMOReal leaderDecel, SUMOReal followerDecel) {
@@ -384,9 +390,14 @@ private:
     /// @brief returns whether the given lane may still be occupied by a vehicle currently on it
     static bool maybeOccupied(MSLane* lane);
 
+    MSLink* computeParallelLink(int direction);
+
 private:
-    /// @brief The lane (but the internal one) approached by this link
+    /// @brief The lane behind the junction approached by this link
     MSLane* myLane;
+
+    /// @brief The lane approaching this link
+    MSLane* myLaneBefore;
 
     std::map<const SUMOVehicle*, ApproachingVehicleInformation> myApproachingVehicles;
     std::set<MSLink*> myBlockedFoeLinks;
@@ -415,9 +426,10 @@ private:
 
 #ifdef HAVE_INTERNAL_LANES
     /// @brief The following junction-internal lane if used
-    MSLane* const myJunctionInlane;
+    MSLane* const myInternalLane;
 
     /// @brief The preceding junction-internal lane if used
+    // XXX obsolete as this is identical with myLaneBefore
     const MSLane* myInternalLaneBefore;
 
     /* @brief lengths after the crossing point with foeLane
@@ -435,6 +447,8 @@ private:
     std::vector<const MSLane*> myFoeLanes;
     static SUMOTime myLookaheadTime;
 
+    MSLink* myParallelRight;
+    MSLink* myParallelLeft;
 
 private:
     /// invalidated copy constructor

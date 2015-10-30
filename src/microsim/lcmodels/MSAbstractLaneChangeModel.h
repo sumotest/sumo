@@ -382,6 +382,10 @@ public:
     /// @brief called once when the vehicles primary lane changes
     void primaryLaneChanged(MSLane* source, MSLane* target, int direction);
 
+    /// @brief set approach information for the shadow vehicle
+    void setShadowApproachingInformation(MSLink* link) const; 
+    void removeShadowApproachingInformation() const; 
+
 protected:
     virtual bool congested(const MSVehicle* const neighLeader);
 
@@ -443,6 +447,8 @@ private:
      */
     SUMOTime myLastLaneChangeOffset;
 
+    /// @brief links which are approached by the shadow vehicle
+    mutable std::vector<MSLink*> myApproachedByShadow;
 
 
 private:

@@ -605,7 +605,7 @@ MSLaneChanger::checkChange(
                     state |= LCA_INSUFFICIENT_SPACE;
                     break;
                 } else {
-                    std::pair<MSVehicle* const, SUMOReal> neighLead2 = targetLane->getLeader(vehicle, -seen, true);
+                    std::pair<MSVehicle* const, SUMOReal> neighLead2 = targetLane->getLeader(vehicle, -seen, false);
                     if (neighLead2.first != 0 && neighLead2.first != neighLead.first
                             && (neighLead2.second < vehicle->getCarFollowModel().getSecureGap(
                                     vehicle->getSpeed(), neighLead2.first->getSpeed(), neighLead2.first->getCarFollowModel().getMaxDecel()))) {

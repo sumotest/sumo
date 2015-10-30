@@ -409,10 +409,12 @@ MSVehicle::~MSVehicle() {
     for (std::vector<MSLane*>::iterator i = myFurtherLanes.begin(); i != myFurtherLanes.end(); ++i) {
         (*i)->resetPartialOccupation(this);
     }
-    myLaneChangeModel->cleanupShadowLane();
-    delete myLaneChangeModel; // still needed when calling resetPartialOccupation (getShadowLane)
-    myFurtherLanes.clear();
     removeApproachingInformation(myLFLinkLanes);
+    myLaneChangeModel->cleanupShadowLane();
+    // still needed when calling resetPartialOccupation (getShadowLane) and when removing 
+    // approach information from parallel links
+    delete myLaneChangeModel; 
+    myFurtherLanes.clear();
     //
     if (myType->amVehicleSpecific()) {
         delete myType;
@@ -1890,6 +1892,19 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
                                         (*i).mySetRequest, (*i).myArrivalTimeBraking, (*i).myArrivalSpeedBraking, getWaitingTime());
         }
     }
+    if (getLaneChangeModel().getShadowLane() != 0) {
+        // register on all shadow links
+        for (DriveItemVector::iterator i = lfLinks.begin(); i != lfLinks.end(); ++i) {
+            if ((*i).myLink != 0) {
+                MSLink* parallelLink = (*i).myLink->getParallelLink(getLaneChangeModel().getShadowDirection());
+                if (parallelLink != 0) {
+                    parallelLink->setApproaching(this, (*i).myArrivalTime, (*i).myArrivalSpeed, (*i).getLeaveSpeed(),
+                            (*i).mySetRequest, (*i).myArrivalTimeBraking, (*i).myArrivalSpeedBraking, getWaitingTime());
+                    getLaneChangeModel().setShadowApproachingInformation(parallelLink);
+                }
+            }
+        }
+    }
 }
 
 
@@ -2655,6 +2670,8 @@ MSVehicle::removeApproachingInformation(DriveItemVector& lfLinks) const {
             (*i).myLink->removeApproaching(this);
         }
     }
+    // unregister on all shadow links
+    getLaneChangeModel().removeShadowApproachingInformation();
 }
 
 

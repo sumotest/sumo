@@ -287,3 +287,19 @@ SUMOTime
 MSAbstractLaneChangeModel::remainingTime() const {
     return (1 - myLaneChangeCompletion) * MSGlobals::gLaneChangeDuration;
 }
+
+
+void 
+MSAbstractLaneChangeModel::setShadowApproachingInformation(MSLink* link) const {
+    //std::cout << SIMTIME << " veh=" << myVehicle.getID() << " @=" << &myVehicle << " set shadow approaching=" << link->getViaLaneOrLane()->getID() << "\n";
+    myApproachedByShadow.push_back(link);
+}
+
+void 
+MSAbstractLaneChangeModel::removeShadowApproachingInformation() const {
+    for (std::vector<MSLink*>::iterator it = myApproachedByShadow.begin(); it != myApproachedByShadow.end(); ++it) {
+        //std::cout << SIMTIME << " veh=" << myVehicle.getID() << " @=" << &myVehicle << " remove shadow approaching=" << (*it)->getViaLaneOrLane()->getID() << "\n";
+        (*it)->removeApproaching(&myVehicle);
+    }
+    myApproachedByShadow.clear();
+}

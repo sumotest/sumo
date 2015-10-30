@@ -1533,18 +1533,10 @@ std::pair<MSVehicle* const, SUMOReal>
 MSLane::getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext) const {
     // get the leading vehicle for (shadow) veh
     // XXX this only works as long as all lanes of an edge have equal length
-    for (VehCont::const_iterator i = myVehicles.begin(); i != myVehicles.end(); ++i) {
-        if ((*i)->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
-            // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
-            MSVehicle* pred = (MSVehicle*)*i;
-            return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
-        }
-    }
-    /// XXX interleave!
-    for (VehCont::const_iterator i = myPartialVehicles.begin(); i != myPartialVehicles.end(); ++i) {
-        if ((*i)->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
-            // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
-            MSVehicle* pred = (MSVehicle*)*i;
+    for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
+        // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
+        MSVehicle* pred = (MSVehicle*)*last;
+        if (veh->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
             return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
         }
     }

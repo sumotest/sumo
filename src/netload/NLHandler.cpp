@@ -973,14 +973,14 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
             }
             length = via->getLength();
         }
-        link = new MSLink(toLane, via, dir, state, length, keepClear);
+        link = new MSLink(fromLane, toLane, via, dir, state, length, keepClear);
         if (via != 0) {
             via->addIncomingLane(fromLane, link);
         } else {
             toLane->addIncomingLane(fromLane, link);
         }
 #else
-        link = new MSLink(toLane, dir, state, length, keepClear);
+        link = new MSLink(fromLane, toLane, dir, state, length, keepClear);
         toLane->addIncomingLane(fromLane, link);
 #endif
         toLane->addApproachingLane(fromLane);
