@@ -106,7 +106,7 @@ MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
     myLeadingBlockerLength(0),
     myLeftSpace(0),
     myLookAheadSpeed(LOOK_AHEAD_MIN_SPEED),
-    myLastEdgeWidth(-1)
+    myLastEdge(0)
 {
     if (MSGlobals::gLateralResolution <= 0) {
         throw ProcessError("laneChangeModel 'MSLCM_SL2015' is only meant to be used when simulation with '--lateral-resoluion' > 0");
@@ -672,7 +672,8 @@ MSLCM_SL2015::prepareStep() {
     //std::cout << SIMTIME << " veh=" << myVehicle.getID() << " myExpectedSublaneSpeeds=" << toString(myExpectedSublaneSpeeds) << "\n";
     if (myExpectedSublaneSpeeds.size() != myVehicle.getLane()->getEdge().getSubLaneSides().size()) {
         // initialize
-        const std::vector<MSLane*>& lanes = myVehicle.getLane()->getEdge().getLanes();
+        const MSEdge* currEdge = &myVehicle.getLane()->getEdge();
+        const std::vector<MSLane*>& lanes = currEdge->getLanes();
         for (std::vector<MSLane*>::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
             const int subLanes = MAX2(1, int(ceil((*it_lane)->getWidth() / MSGlobals::gLateralResolution)));
             for (int i = 0; i < subLanes; ++i) {
@@ -681,10 +682,9 @@ MSLCM_SL2015::prepareStep() {
         }
         if (myExpectedSublaneSpeeds.size() > 0) {
             // copy old values
-            const MSEdge* prevEdge = myVehicle.succEdge(-1);
-            assert(prevEdge != 0);
-            if (prevEdge->getSubLaneSides().size() == myExpectedSublaneSpeeds.size()) {
-                int subLaneShift = computeSublaneShift(prevEdge, myVehicle.succEdge(0));
+            assert(myLastEdge != 0);
+            if (myLastEdge->getSubLaneSides().size() == myExpectedSublaneSpeeds.size()) {
+                int subLaneShift = computeSublaneShift(myLastEdge, currEdge);
                 for (int i = 0; i < myExpectedSublaneSpeeds.size(); ++i) {
                     int newI = i + subLaneShift;
                     if (newI > 0 && newI < newExpectedSpeeds.size()) {
@@ -694,6 +694,7 @@ MSLCM_SL2015::prepareStep() {
             }
         }
         myExpectedSublaneSpeeds = newExpectedSpeeds;
+        myLastEdge = currEdge;
     }
     assert(myExpectedSublaneSpeeds.size() == myVehicle.getLane()->getEdge().getSubLaneSides().size());
 }

@@ -244,7 +244,8 @@ protected:
     /// @brief expected travel speeds on all sublanes on the current edge(!)
     std::vector<SUMOReal> myExpectedSublaneSpeeds;
 
-    SUMOReal myLastEdgeWidth;
+    /// @brief expected travel speeds on all sublanes on the current edge(!)
+    const MSEdge* myLastEdge;
 
     /// @brief flag to prevent speed adaptation by slowing down
     bool myDontBrake;
