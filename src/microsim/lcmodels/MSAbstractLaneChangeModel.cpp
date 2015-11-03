@@ -266,15 +266,15 @@ MSAbstractLaneChangeModel::updateShadowLane() {
 
 int 
 MSAbstractLaneChangeModel::getShadowDirection() const {
-    assert(myShadowLane != 0);
     if (isChangingLanes()) {
         if (pastMidpoint()) {
             return -myLaneChangeDirection;
         } else {
             return myLaneChangeDirection;
         }
+    } else if (myShadowLane == 0) {
+        return 0;
     } else {
-        // sublane model
         assert(&myShadowLane->getEdge() == &myVehicle.getLane()->getEdge());
         return myShadowLane->getIndex() - myVehicle.getLane()->getIndex();
     }
