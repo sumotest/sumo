@@ -1183,7 +1183,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     const SUMOReal leftMax = MAX2(
             myVehicle.getLane()->getRightSideOnEdge() + myVehicle.getLane()->getWidth(),
             neighLane.getRightSideOnEdge() + neighLane.getWidth());
-    assert(leftMax < edge.getWidth());
+    assert(leftMax <= edge.getWidth());
 
     for (int i = iMin; i < (int)sublaneSides.size(); ++i) {
         if (sublaneSides[i] + vehWidth < leftMax) {
