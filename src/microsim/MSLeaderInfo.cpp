@@ -49,16 +49,17 @@
 // ===========================================================================
 // MSLeaderInfo member method definitions
 // ===========================================================================
-MSLeaderInfo::MSLeaderInfo(SUMOReal width, const MSVehicle* ego) : 
-    myWidth(width),
-    myVehicles(MAX2(1, int(ceil(width / MSGlobals::gLateralResolution))), (MSVehicle*)0),
+MSLeaderInfo::MSLeaderInfo(const MSLane* lane, const MSVehicle* ego) : 
+    myWidth(lane->getWidth()),
+    myVehicles(MAX2(1, int(ceil(myWidth / MSGlobals::gLateralResolution))), (MSVehicle*)0),
     myFreeSublanes((int)myVehicles.size()),
     egoRightMost(-1),
     egoLeftMost(-1),
     myHasVehicles(false)
 { 
     if (ego != 0) {
-        getSubLanes(ego, 0, egoRightMost, egoLeftMost);
+        const SUMOReal latOffset = ego->getLane()->getRightSideOnEdge() - lane->getRightSideOnEdge();
+        getSubLanes(ego, latOffset, egoRightMost, egoLeftMost);
         // filter out sublanes not of interest to ego
         myFreeSublanes -= egoRightMost;
         myFreeSublanes -= (int)myVehicles.size() - 1 - egoLeftMost;
@@ -177,8 +178,8 @@ MSLeaderInfo::hasStoppedVehicle() const {
 // ===========================================================================
 
 
-MSLeaderDistanceInfo::MSLeaderDistanceInfo(SUMOReal width, const MSVehicle* ego, bool recordLeaders) : 
-    MSLeaderInfo(width, ego),
+MSLeaderDistanceInfo::MSLeaderDistanceInfo(const MSLane* lane, const MSVehicle* ego, bool recordLeaders) : 
+    MSLeaderInfo(lane, ego),
     myRecordLeaders(recordLeaders),
     myDistances(myVehicles.size(), std::numeric_limits<SUMOReal>::max())
 { }
@@ -200,14 +201,9 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal la
         : dist - (veh->getPositionOnLane() + veh->getVehicleType().getMinGap());
     if (myVehicles.size() == 1) {
         // speedup for the simple case
-        if (dist < myDistances[0]) {
-            myVehicles[0] = veh;
-            myDistances[0] = dist;
-            myFreeSublanes = 0;
-            myHasVehicles = true;
-        }
-        return myFreeSublanes;
-    } else if (sublane >= 0) {
+        sublane = 0;
+    }
+    if (sublane >= 0) {
         // sublane is already given
         if (dist < myDistances[sublane]) {
             myVehicles[sublane] = veh;
@@ -266,5 +262,86 @@ MSLeaderDistanceInfo::toString() const {
     return oss.str();
 }
 
+
+// ===========================================================================
+// MSCriticalFollowerDistanceInfo member method definitions
+// ===========================================================================
+
+
+MSCriticalFollowerDistanceInfo::MSCriticalFollowerDistanceInfo(const MSLane* lane, const MSVehicle* ego) : 
+    MSLeaderDistanceInfo(lane, ego, false),
+    myMissingGaps(myVehicles.size(), -std::numeric_limits<SUMOReal>::max())
+{ }
+
+
+MSCriticalFollowerDistanceInfo::~MSCriticalFollowerDistanceInfo() { }
+
+
+int 
+MSCriticalFollowerDistanceInfo::addFollower(const MSVehicle* veh, const MSVehicle* ego, SUMOReal dist, SUMOReal latOffset, int sublane) {
+    //if (SIMTIME == 31 && gDebugFlag1 && veh != 0 && veh->getID() == "cars.8") {
+    //    std::cout << " BREAKPOINT\n";
+    //}
+    if (veh == 0) {
+        return myFreeSublanes;
+    }
+    const SUMOReal requiredGap = veh->getCarFollowModel().getSecureGap(veh->getSpeed(), ego->getSpeed(), ego->getCarFollowModel().getMaxDecel());
+    const SUMOReal missingGap = requiredGap - dist;
+    if (myVehicles.size() == 1) {
+        // speedup for the simple case
+        sublane = 0;
+    } 
+    if (sublane >= 0) {
+        // sublane is already given
+        if (missingGap > myMissingGaps[sublane]) {
+            myVehicles[sublane] = veh;
+            myDistances[sublane] = dist;
+            myMissingGaps[sublane] = missingGap;
+            myFreeSublanes--;
+            myHasVehicles = true;
+        }
+        return myFreeSublanes;
+    }
+    int rightmost, leftmost;
+    getSubLanes(veh, latOffset, rightmost, leftmost);
+    for (int sublane = rightmost; sublane <= leftmost; ++sublane) {
+        if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
+                && missingGap > myMissingGaps[sublane]) {
+            myVehicles[sublane] = veh;
+            myDistances[sublane] = dist;
+            myMissingGaps[sublane] = missingGap;
+            myFreeSublanes--;
+            myHasVehicles = true;
+        }
+    }
+    return myFreeSublanes;
+}
+
+
+void 
+MSCriticalFollowerDistanceInfo::clear() {
+    MSLeaderDistanceInfo::clear();
+    myMissingGaps.assign(myVehicles.size(), -std::numeric_limits<SUMOReal>::max());
+}
+
+
+std::string
+MSCriticalFollowerDistanceInfo::toString() const {
+    std::ostringstream oss;
+    oss.setf(std::ios::fixed , std::ios::floatfield);
+    oss << std::setprecision(2);
+    for (int i = 0; i < (int)myVehicles.size(); ++i) {
+        oss << Named::getIDSecure(myVehicles[i]) << ":";
+        if (myVehicles[i] == 0) {
+            oss << "inf:-inf";
+        } else {
+            oss << myDistances[i] << ":" << myMissingGaps[i];
+        }
+        if (i < (int)myVehicles.size() - 1) {
+            oss << ", ";
+        }
+    }
+    return oss.str();
+}
 /****************************************************************************/
 

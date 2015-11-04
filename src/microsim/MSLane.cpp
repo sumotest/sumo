@@ -116,11 +116,12 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myPermissions(permissions),
     myLogicalPredecessorLane(0),
     myBruttoVehicleLengthSum(0), myNettoVehicleLengthSum(0),
-    myLeaderInfo(width),
-    myLeaderInfoTmp(width),
+    myLeaderInfo(this),
+    myLeaderInfoTmp(this),
     myLeaderInfoTime(SUMOTime_MIN),
     myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength), // factor should not be 0
-    myRightSideOnEdge(0) // initialized in MSEdge::initialize
+    myRightSideOnEdge(0), // initialized in MSEdge::initialize
+    myRightmostSublane(0) // initialized in MSEdge::initialize
 {
     myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
 }
@@ -802,7 +803,7 @@ const MSLeaderInfo&
 MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
     if (myLeaderInfoTime < MSNet::getInstance()->getCurrentTimeStep() || ego != 0) {
         //gDebugFlag2 = (getID() == "53[1][0]_0");
-        myLeaderInfoTmp = MSLeaderInfo(myWidth, ego);
+        myLeaderInfoTmp = MSLeaderInfo(this, ego);
         AnyVehicleIterator last = anyVehiclesBegin();
         int freeSublanes = 1; // number of sublanes for which no leader was found
         //if (ego->getID() == "disabled" && SIMTIME == 58) {
@@ -846,7 +847,7 @@ MSLane::planMovements(SUMOTime t) {
     //gDebugFlag1 = (getID() == "53[1][0]");
     assert(myVehicles.size() != 0);
     SUMOReal cumulatedVehLength = 0.;
-    MSLeaderInfo ahead(myWidth);
+    MSLeaderInfo ahead(this);
     // iterate over myVehicles and myPartialVehicles merge-sort style 
     VehCont::reverse_iterator veh = myVehicles.rbegin();
     VehCont::reverse_iterator vehPart = myPartialVehicles.rbegin();
@@ -1990,7 +1991,7 @@ MSLeaderDistanceInfo
 MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const {
     // get the follower vehicle on the lane to change to
     if (gDebugFlag1) std::cout << SIMTIME << " getFollowers lane=" << getID() << " ego=" << ego->getID() << " pos=" << ego->getPositionOnLane() << "\n";
-    MSLeaderDistanceInfo result(myWidth, allSublanes ? 0 : ego, false);
+    MSCriticalFollowerDistanceInfo result(this, allSublanes ? 0 : ego);
     const SUMOReal dist = ego->getBackPositionOnLane();
     /// XXX iterate in reverse and abort when there are no more freeSublanes
     for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
@@ -2001,7 +2002,66 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
             result.addLeader(veh, dist, latOffset);
         }
     }
-    /// XXX traverse backwards if necessary
+    if (result.numFreeSublanes() > 0) {
+        const SUMOReal backOffset = ego->getBackPositionOnLane(ego->getLane());
+        // do a tree search among all follower lanes and check for the most
+        // important vehicle (the one requiring the largest reargap)
+        // to get a safe bound on the necessary search depth, we need to consider the maximum speed and minimum
+        // deceleration of potential follower vehicles
+        SUMOReal dist = getMaximumBrakeDist() - backOffset;
+
+        std::set<MSLane*> visited;
+        std::vector<MSLane::IncomingLaneInfo> newFound;
+        std::vector<MSLane::IncomingLaneInfo> toExamine = myIncomingLanes;
+        while (toExamine.size() != 0) {
+            for (std::vector<MSLane::IncomingLaneInfo>::iterator i = toExamine.begin(); i != toExamine.end(); ++i) {
+                MSLane* next = (*i).lane;
+                dist = MAX2(dist, next->getMaximumBrakeDist() - backOffset);
+                MSVehicle* v = next->getFirstAnyVehicle();
+                SUMOReal agap = 0;
+                if (v != 0) {
+                    // the front of v is already on divergent trajectory from the ego vehicle
+                    // for which this method is called (in the context of MSLaneChanger).
+                    // Therefore, technically v is not a follower but only an obstruction and
+                    // the gap is not between the front of v and the back of ego
+                    // but rather between the flank of v and the back of ego.
+                    if (!v->isFrontOnLane(next)) {
+                        agap = (*i).length - next->getLength() + backOffset 
+                            /// XXX dubious term. here for backwards compatibility
+                            - v->getVehicleType().getMinGap();
+                        if (agap > 0) {
+                            // Only if ego overlaps we treat v as if it were a real follower
+                            // Otherwise we ignore it and look for another follower
+                            v = next->getFirstFullVehicle();
+                            if (v != 0) {
+                                agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                            }
+                        }
+                    } else {
+                        agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                    }
+                }
+                result.addFollower(v, ego, agap);
+                if ((*i).length < dist) {
+                    const std::vector<MSLane::IncomingLaneInfo>& followers = next->getIncomingLanes();
+                    for (std::vector<MSLane::IncomingLaneInfo>::const_iterator j = followers.begin(); j != followers.end(); ++j) {
+                        if (visited.find((*j).lane) == visited.end()) {
+                            visited.insert((*j).lane);
+                            MSLane::IncomingLaneInfo ili;
+                            ili.lane = (*j).lane;
+                            ili.length = (*j).length + (*i).length;
+                            ili.viaLink = (*j).viaLink;
+                            newFound.push_back(ili);
+                        }
+                    }
+                }
+            }
+            toExamine.clear();
+            swap(newFound, toExamine);
+        }
+        //return result;
+
+    }
     return result;
 }
 

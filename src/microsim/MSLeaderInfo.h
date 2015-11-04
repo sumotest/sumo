@@ -57,7 +57,7 @@ typedef std::pair<MSVehicle*, SUMOReal> LeaderDist;
 class MSLeaderInfo {
 public:
     /// Constructor
-    MSLeaderInfo(SUMOReal width, const MSVehicle* ego=0);
+    MSLeaderInfo(const MSLane* lane, const MSVehicle* ego=0);
 
     /// Destructor
     virtual ~MSLeaderInfo();
@@ -127,14 +127,14 @@ protected:
 class MSLeaderDistanceInfo : public MSLeaderInfo {
 public:
     /// Constructor
-    MSLeaderDistanceInfo(SUMOReal width, const MSVehicle* ego, bool recordLeaders=true);
+    MSLeaderDistanceInfo(const MSLane* lane, const MSVehicle* ego, bool recordLeaders=true);
 
     /// Destructor
     virtual ~MSLeaderDistanceInfo();
 
     /* @brief adds this vehicle as a leader in the appropriate sublanes
      * @param[in] veh The vehicle to add
-     * @param[in] seen The distance from the ego-front+minGap to the start of the lane of veh (myRecordLeaders=true) 
+     * @param[in] dist The distance from the ego-front+minGap to the start of the lane of veh (myRecordLeaders=true) 
      *   or from the back of ego to start of the lane of veh (myRecordLeaders=false)
      * @param[in] latOffset The lateral offset that must be added to the position of veh
      * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
@@ -143,21 +143,56 @@ public:
     int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
 
     /// @brief discard all information
-    void clear();
+    virtual void clear();
 
     /// @brief return the vehicle and its distance for the given sublane
     CLeaderDist operator[](int sublane) const;
 
     /// @brief print a debugging representation
-    std::string toString() const;
+    virtual std::string toString() const;
 
-private:
+protected:
 
     /// @brief whether we are recording leaders of followers
     // @note: not const to simplify assignment
     bool myRecordLeaders;
 
     std::vector<SUMOReal> myDistances;
+
+};
+
+
+/* @brief saves follower vehicles and their distances as well as their required gap relative to an ego vehicle
+ * when adding new followers, the one with the largest required gap is recored
+ * (rather than the one with the smallest gap) */
+class MSCriticalFollowerDistanceInfo : public MSLeaderDistanceInfo {
+public:
+    /// Constructor
+    MSCriticalFollowerDistanceInfo(const MSLane* lane, const MSVehicle* ego);
+
+    /// Destructor
+    virtual ~MSCriticalFollowerDistanceInfo();
+
+    /* @brief adds this vehicle as a follower in the appropriate sublanes
+     * @param[in] veh The vehicle to add
+     * @param[in] ego The vehicle which is being followed
+     * @param[in] dist The distance from the back of ego to the follower
+     * @param[in] latOffset The lateral offset that must be added to the position of veh
+     * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
+     * @return The number of free sublanes
+     */
+    int addFollower(const MSVehicle* veh, const MSVehicle* ego, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
+
+    /// @brief discard all information
+    void clear();
+
+    /// @brief print a debugging representation
+    std::string toString() const;
+
+protected:
+
+    // @brief the differences between requriedGap and actual gap for each of the followers
+    std::vector<SUMOReal> myMissingGaps;
 
 };
 

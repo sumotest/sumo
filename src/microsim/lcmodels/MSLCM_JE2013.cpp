@@ -127,10 +127,11 @@ MSLCM_JE2013::wantsChange(
     gDebugFlag2 = DEBUG_COND;
 
     if (gDebugFlag2) {
-        std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+        std::cout << "\n" << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                   << " veh=" << myVehicle.getID()
                   << " lane=" << myVehicle.getLane()->getID()
                   << " pos=" << myVehicle.getPositionOnLane()
+                  << " posLat=" << myVehicle.getLateralPositionOnLane()
                   << " speed=" << myVehicle.getSpeed()
                   << " considerChangeTo=" << (laneOffset == -1  ? "right" : "left")
                   << "\n";

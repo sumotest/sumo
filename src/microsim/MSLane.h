@@ -828,12 +828,17 @@ public:
     SUMOReal getHarmonoise_NoiseEmissions() const;
     /// @}
 
-    void setRightSideOnEdge(SUMOReal value) {
+    void setRightSideOnEdge(SUMOReal value, int rightmostSublane) {
         myRightSideOnEdge = value;
+        myRightmostSublane = rightmostSublane;
     }
 
     SUMOReal getRightSideOnEdge() const {
         return myRightSideOnEdge;
+    }
+
+    SUMOReal getRightmostSublane() const {
+        return myRightmostSublane;
     }
 
     SUMOReal getCenterOnEdge() const {
@@ -1010,6 +1015,8 @@ protected:
 
     // @brief the combined width of all lanes with lower index on myEdge
     SUMOReal myRightSideOnEdge;
+    // @brief the index of the rightmost sublane of this lane on myEdge
+    int myRightmostSublane;
 
     /// definition of the static dictionary type
     typedef std::map< std::string, MSLane* > DictType;

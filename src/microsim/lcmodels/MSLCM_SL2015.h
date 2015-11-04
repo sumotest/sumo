@@ -208,7 +208,7 @@ protected:
     static CLeaderDist getSlowest(const MSLeaderDistanceInfo& ldi);
 
     /// @brief determine blocking state depending on latDist
-    int checkBlocking(SUMOReal latDist, int laneOffset,
+    int checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneOffset,
                 const MSLeaderDistanceInfo& leaders,
                 const MSLeaderDistanceInfo& followers,
                 const MSLeaderDistanceInfo& blockers,
@@ -216,8 +216,8 @@ protected:
                 const MSLeaderDistanceInfo& neighFollowers,
                 const MSLeaderDistanceInfo& neighBlockers) const; 
 
-    static int checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset, SUMOReal latDist); 
-    static int checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset, SUMOReal latDist); 
+    static int checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset, SUMOReal latDist, SUMOReal foeOffset); 
+    static int checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset, SUMOReal latDist, SUMOReal foeOffset); 
     static bool overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal left2); 
 
 protected:

@@ -2651,6 +2651,12 @@ MSVehicle::setTentativeLaneAndPosition(MSLane* lane, SUMOReal pos, SUMOReal posL
 
 
 SUMOReal 
+MSVehicle::getRightSideOnLane() const {
+    return myState.myPosLat + 0.5 * myLane->getWidth() - 0.5 * getVehicleType().getWidth();
+}
+
+
+SUMOReal 
 MSVehicle::getRightSideOnEdge() const {
     return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth() - 0.5 * getVehicleType().getWidth();
 }

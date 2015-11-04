@@ -58,7 +58,7 @@ MSLaneChanger::ChangeElem::ChangeElem(MSLane* _lane) :
     hoppedVeh(0),
     lastBlocked(0),
     firstBlocked(0),
-    ahead(lane->getWidth())
+    ahead(lane)
 { }
 
 // ===========================================================================
