@@ -332,17 +332,19 @@ public:
     /// @brief return the amount by which the vehicle extends laterally outside it's primary lane
     SUMOReal getLateralOverlap() const; 
 
-    /** @brief Get the vehicle's lateral position on the edge:
+    /** @brief Get the vehicle's lateral position on the edge of the given lane
+     * (or its current edge if lane == 0)
      * @return The lateral position of the vehicle (in m distance between right
      * side of vehicle and ride side of edge
      */
-    SUMOReal getRightSideOnEdge() const;
+    SUMOReal getRightSideOnEdge(const MSLane* lane=0) const;
 
-    /** @brief Get the vehicle's lateral position on the edge:
+    /** @brief Get the vehicle's lateral position on the edge of the given lane
+     * (or its current edge if lane == 0)
      * @return The lateral position of the vehicle (in m distance between center
      * of vehicle and ride side of edge
      */
-    SUMOReal getCenterOnEdge() const;
+    SUMOReal getCenterOnEdge(const MSLane* lane=0) const;
 
     /** @brief Returns the vehicle's current speed
      * @return The vehicle's speed

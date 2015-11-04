@@ -928,7 +928,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
                 if (lead == follow) {
                     continue;
                 }
-                if (lead->getPositionOnLane() < follow->getPositionOnLane(this)) {
+                if (lead->getPositionOnLane(this) < follow->getPositionOnLane()) {
                     continue;
                 }
                 if (detectCollisionBetween(timestep, stage, follow, lead)) {
@@ -960,6 +960,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
 
 bool
 MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim) const {
+    assert(collider->getLane() == this);
     if ((victim->hasInfluencer() && victim->getInfluencer()->isVTDAffected(timestep)) ||
             (collider->hasInfluencer() && collider->getInfluencer()->isVTDAffected(timestep))) {
         return false;
@@ -968,16 +969,18 @@ MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, cons
     if (gap < -NUMERICAL_EPS) {
         //std::cout << SIMTIME
         //    << " thisLane=" << getID()
-        //    << " victim=" << victim->getID()
-        //    << " victimLane=" << victim->getLane()->getID()
-        //    << " victimBackPos=" << victim->getBackPositionOnLane(this)
         //    << " collider=" << collider->getID()
+        //    << " victim=" << victim->getID()
         //    << " colliderLane=" << collider->getLane()->getID()
-        //    << " colliderPos=" << collider->getPositionOnLane(this)
+        //    << " victimLane=" << victim->getLane()->getID()
+        //    << " colliderPos=" << collider->getPositionOnLane()
+        //    << " victimBackPos=" << victim->getBackPositionOnLane(this)
+        //    << " colliderLat=" << collider->getCenterOnEdge()
+        //    << " victimLat=" << victim->getCenterOnEdge(this)
         //    << "\n";
         SUMOReal latGap = 0;
         if (MSGlobals::gLateralResolution > 0 || MSGlobals::gLaneChangeDuration > 0) {
-            latGap = (fabs(victim->getCenterOnEdge() - collider->getCenterOnEdge()) 
+            latGap = (fabs(victim->getCenterOnEdge(this) - collider->getCenterOnEdge()) 
                     - 0.5 * fabs(victim->getVehicleType().getWidth() + collider->getVehicleType().getWidth()));
             if (latGap + NUMERICAL_EPS > 0) {
                 return false;

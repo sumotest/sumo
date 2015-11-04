@@ -2657,14 +2657,42 @@ MSVehicle::getRightSideOnLane() const {
 
 
 SUMOReal 
-MSVehicle::getRightSideOnEdge() const {
-    return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth() - 0.5 * getVehicleType().getWidth();
+MSVehicle::getRightSideOnEdge(const MSLane* lane) const {
+    return getCenterOnEdge(lane) - 0.5 * getVehicleType().getWidth();
 }
 
 
 SUMOReal 
-MSVehicle::getCenterOnEdge() const {
-    return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth();
+MSVehicle::getCenterOnEdge(const MSLane* lane) const {
+    if (lane == 0 || &lane->getEdge() == &myLane->getEdge()) {
+        return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth();
+    } else {
+        SUMOReal result = lane->getRightSideOnEdge() + myState.myPosLat + 0.5 * lane->getWidth();
+        SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
+        std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();
+        while (leftLength > 0 && i != myFurtherLanes.end()) {
+            leftLength -= (*i)->getLength();
+            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
+            if (*i == lane) {
+                return result;
+            }
+            ++i;
+        }
+        //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
+        leftLength = getVehicleType().getLength() - myState.myPos;
+        i = getLaneChangeModel().getShadowFurtherLanes().begin();
+        while (leftLength > 0 && i != getLaneChangeModel().getShadowFurtherLanes().end()) {
+            leftLength -= (*i)->getLength();
+            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
+            if (*i == lane) {
+                assert(getLaneChangeModel().getShadowLane() != 0);
+                return result + (myLane->getCenterOnEdge() - getLaneChangeModel().getShadowLane()->getCenterOnEdge());
+            }
+            ++i;
+        }
+        assert(false);
+        throw ProcessError("Request lateral pos of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");
+    }
 }
 
 
