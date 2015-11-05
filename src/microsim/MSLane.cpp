@@ -1999,10 +1999,12 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
     /// XXX iterate in reverse and abort when there are no more freeSublanes
     for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
         const MSVehicle* veh = *last;
-        if (gDebugFlag1) std::cout << "  veh=" << veh->getID() << " lane=" << veh->getLane()->getID() << " pos=" << veh->getPositionOnLane() << "\n";
+        if (gDebugFlag1) std::cout << "  veh=" << veh->getID() << " lane=" << veh->getLane()->getID() << " pos=" << veh->getPositionOnLane(this) << "\n";
         if (veh != ego && veh->getPositionOnLane(this) <= ego->getPositionOnLane()) {
             const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
-            result.addLeader(veh, dist, latOffset);
+            const SUMOReal dist = ego->getBackPositionOnLane() - veh->getPositionOnLane(this) - veh->getVehicleType().getMinGap();
+            result.addFollower(veh, ego, dist, latOffset);
+            if (gDebugFlag1) std::cout << "  added veh=" << veh->getID() << " latOffset=" << latOffset << " result=" << result.toString() << "\n";
         }
     }
     if (result.numFreeSublanes() > 0) {

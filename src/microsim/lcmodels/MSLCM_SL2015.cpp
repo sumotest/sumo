@@ -172,7 +172,12 @@ MSLCM_SL2015::wantsChangeSublane(
                       << ((result & LCA_TRACI) ? " (traci)" : "")
                       << ((blocked & LCA_BLOCKED) ? " (blocked)" : "")
                       << ((blocked & LCA_OVERLAPPING) ? " (overlap)" : "")
-                      << "\n";
+                      << "\n\n";
+        } else {
+            std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+                      << " veh=" << myVehicle.getID()
+                      << " wantsNoChangeTo=" << changeType
+                      << "\n\n";
         }
     }
     gDebugFlag2 = false;
@@ -1666,12 +1671,16 @@ MSLCM_SL2015::checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDis
             const SUMOReal foeLeft = foeRight + MSGlobals::gLateralResolution;
             if (gDebugFlag2) 
                 std::cout << "  checkBlockingFollowers foe=" << follow.first->getID() 
+                    << " gap=" << follow.second
+                    << " secGap=" << follow.first->getCarFollowModel().getSecureGap(follow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())
                     << " foeRight=" << foeRight
                     << " foeLeft=" << foeLeft
                     << " rightNoOverlap=" << rightNoOverlap
                     << " leftNoOverlap=" << leftNoOverlap
                     << " rightVehSideDest=" << rightVehSideDest
                     << " leftVehSideDest=" << leftVehSideDest
+                    << " overlap=" << overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)
+                    << " overlapDest=" << overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft)
                     << "\n";
             if (overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)) {
                 if (follow.second < 0) {
