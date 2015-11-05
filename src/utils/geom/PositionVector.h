@@ -139,18 +139,19 @@ public:
 
     /** Returns the position of the intersection */
     Position intersectionPosition2D(const Position& p1,
-                               const Position& p2) const; // !!!
+                                    const Position& p2,
+                                    const SUMOReal withinDist=0.) const;
 
     /** @brief For all intersections between this vector and other,
      * return the 2D-length of the subvector from this vectors start to the intersection */
-    std::vector<SUMOReal> intersectsAtLengths2D(const PositionVector& other) const; // !!!
+    std::vector<SUMOReal> intersectsAtLengths2D(const PositionVector& other) const;
 
     /** @brief For all intersections between this vector and line,
      * return the 2D-length of the subvector from this vectors start to the intersection */
-    std::vector<SUMOReal> intersectsAtLengths2D(const Position& lp1, const Position& lp2) const; // !!!
+    std::vector<SUMOReal> intersectsAtLengths2D(const Position& lp1, const Position& lp2) const;
 
     /** Returns the position of the intersection */
-    Position intersectionPosition2D(const PositionVector& v1) const; // !!!
+    Position intersectionPosition2D(const PositionVector& v1) const;
 
     /// @brief ensures that the last position equals the first
     void closePolygon();
@@ -165,6 +166,9 @@ public:
 
     /// Returns the position at the given length
     Position positionAtOffset2D(SUMOReal pos, SUMOReal lateralOffset = 0) const;
+
+    /// Returns the rotation at the given length
+    SUMOReal rotationAtOffset(SUMOReal pos) const;
 
     /// Returns the rotation at the given length
     SUMOReal rotationDegreeAtOffset(SUMOReal pos) const;
@@ -244,6 +248,8 @@ public:
 
     PositionVector reverse() const;
 
+    static Position sideOffset(const Position& beg, const Position& end, const SUMOReal amount);
+
     void move2side(SUMOReal amount);
 
     SUMOReal angleAt2D(int pos) const;
@@ -320,10 +326,17 @@ public:
      */
     void removeDoublePoints(SUMOReal minDist = POSITION_EPS, bool assertLength = false);
 
-    void removeColinearPoints();
-
     /// @brief return whether two positions differ in z-coordinate
     bool hasElevation() const;
+
+private:
+    /** @brief return whether the line segments defined by Line p11,p12
+     * and Line p21,p22 intersect
+     */
+    static bool intersects(const Position& p11, const Position& p12,
+                           const Position& p21, const Position& p22,
+                           const SUMOReal withinDist=0.,
+                           SUMOReal* x=0, SUMOReal* y=0, SUMOReal* mu=0);
 
 };
 

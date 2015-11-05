@@ -112,7 +112,7 @@
         <vehicle id="v0" x="396.52" y="498.03" angle="90.60" type="DEFAULT_VEHTYPE" speed="13.89" pos="145.02" lane="1si_1" slope="0.00"/>
     </timestep>
     <timestep time="13.00">
-        <vehicle id="v0" x="403.47" y="498.19" angle="90.30" type="DEFAULT_VEHTYPE" speed="13.89" pos="151.97" lane="1si_1" slope="0.00"/>
+        <vehicle id="v0" x="403.47" y="498.19" angle="89.70" type="DEFAULT_VEHTYPE" speed="13.89" pos="151.97" lane="1si_1" slope="0.00"/>
     </timestep>
     <timestep time="13.50">
         <vehicle id="v0" x="410.41" y="498.35" angle="90.00" type="DEFAULT_VEHTYPE" speed="13.89" pos="158.91" lane="1si_1" slope="0.00"/>
