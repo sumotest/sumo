@@ -1394,6 +1394,7 @@ protected:
 
     /* @brief adapt safe velocity in accordance to multiple vehicles ahead:
      * @param[in] ahead The leader information according to the current lateral-resolution
+     * @param[in] latOffset the lateral offset for locating the ego vehicle on the given lane
      * @param[in] seen the distance to the end of the current lane
      * @param[in] lastLink the lastLink index
      * @param[in] lane The current Lane the vehicle is on
@@ -1401,6 +1402,7 @@ protected:
      * @param[in,out] the safe velocity for arriving at the next link
      */
     void adaptToLeaders(const MSLeaderInfo& ahead,
+                       SUMOReal latOffset,
                        const SUMOReal seen, DriveProcessItem* const lastLink,
                        const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const;
 

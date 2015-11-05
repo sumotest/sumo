@@ -942,7 +942,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    gDebugFlag1 = (getID() == "disabled");
+    //gDebugFlag1 = (getID() == "left0.5");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1031,13 +1031,15 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     while (true) {
         // check leader on lane
         //  leader is given for the first edge only
-        adaptToLeaders(ahead, seen, lastLink, lane, v, vLinkPass);
+        adaptToLeaders(ahead, 0, seen, lastLink, lane, v, vLinkPass);
         // XXX efficiently adapt to shadow leaders using neighAhead by iteration over the whole edge in parallel (lanechanger-style)
         if (getLaneChangeModel().getShadowLane() != 0) {
             // also slow down for leaders on the shadowLane relative to the current lane
             const MSLane* shadowLane = getLaneChangeModel().getShadowLane(lane);
             if (shadowLane != 0) {
+                const SUMOReal latOffset = getLane()->getRightSideOnEdge() - getLaneChangeModel().getShadowLane()->getRightSideOnEdge();
                 adaptToLeaders(shadowLane->getLastVehicleInformation(this, lane->getLength() - seen),
+                        latOffset,
                         seen, lastLink, shadowLane, v, vLinkPass);
             }
         }
@@ -1243,12 +1245,11 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
 
 
 void
-MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead,
+MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead, SUMOReal latOffset,
                          const SUMOReal seen, DriveProcessItem* const lastLink,
                          const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass) const {
     int rightmost;
     int leftmost;
-    const SUMOReal latOffset = getLane()->getRightSideOnEdge() - lane->getRightSideOnEdge();
     ahead.getSubLanes(this, latOffset, rightmost, leftmost);
     if (gDebugFlag1) std::cout << SIMTIME 
         << " adaptToLeaders veh=" << getID() 
