@@ -715,6 +715,9 @@ public:
     std::pair<MSVehicle* const, SUMOReal> getLeaderOnConsecutive(SUMOReal dist, SUMOReal seen,
             SUMOReal speed, const MSVehicle& veh, const std::vector<MSLane*>& bestLaneConts) const;
 
+    /// @brief Returns the immediate leaders and the distance to them (as getLeaderOnConsecutive but for the sublane case)
+    void getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, const MSVehicle* ego,
+                const std::vector<MSLane*>& bestLaneConts, MSLeaderDistanceInfo& result) const; 
 
     /** @brief Returns the most dangerous leader and the distance to him
      *

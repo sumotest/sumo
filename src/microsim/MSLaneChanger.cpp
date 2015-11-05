@@ -134,9 +134,9 @@ MSLaneChanger::updateChanger(bool vehHasChanged) {
         myCandi->lead = veh(myCandi);
     }
 
-    //std::cout << SIMTIME << " updateChanger lane=" << myCandi->lane->getID() << " vehicles=" << toString(myCandi->lane->myVehicles) << "\n";
     MSLane::VehCont& vehicles = myCandi->lane->myVehicles;
     vehicles.pop_back();
+    //std::cout << SIMTIME << " updateChanger lane=" << myCandi->lane->getID() << " vehicles=" << toString(myCandi->lane->myVehicles) << "\n";
 }
 
 
@@ -410,6 +410,7 @@ MSLaneChanger::getRealThisLeader(const ChangerIt& target) const {
     if (leader == 0) {
         MSLane* targetLane = target->lane;
         if (targetLane->myPartialVehicles.size() > 0) {
+            assert(targetLane->myPartialVehicles.size() == 1);
             MSVehicle* leader = targetLane->myPartialVehicles.front();
             return std::pair<MSVehicle*, SUMOReal>(leader, leader->getBackPositionOnLane(targetLane) - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap());
         }
@@ -459,6 +460,7 @@ MSLaneChanger::getRealLeader(const ChangerIt& target) const {
     if (neighLead == 0) {
         MSLane* targetLane = target->lane;
         if (targetLane->myPartialVehicles.size() > 0) {
+            assert(targetLane->myPartialVehicles.size() == 1);
             MSVehicle* leader = targetLane->myPartialVehicles.front();
             return std::pair<MSVehicle*, SUMOReal>(leader, leader->getBackPositionOnLane(targetLane) - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap());
         }

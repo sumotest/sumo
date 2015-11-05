@@ -127,7 +127,7 @@ MSLaneChangerSublane::change() {
             }
         }
     }
-
+    // latDist = 0; // XXX reset for the next query
 
     // check whether the vehicle wants and is able to change to left lane
     int state2 = 0;
@@ -201,6 +201,9 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
 
 MSLeaderDistanceInfo
 MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) const {
+    //if (ego->getID() == "C" && SIMTIME == 17) {
+    //    std::cout << "DEBUG\n";
+    //}
     // get the leading vehicle on the lane to change to
     if (gDebugFlag1) std::cout << SIMTIME << " getLeaders lane=" << target->lane->getID() << " ego=" << ego->getID() << "\n";
     MSLeaderDistanceInfo result(target->lane, 0);
@@ -209,34 +212,18 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
         result.addLeader(target->ahead[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), 0, i);
     }
 
-    //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " neighLead=" << Named::getIDSecure(neighLead) << " (416)\n";
-    // check whether the hopped vehicle became the leader
-    //if (target->hoppedVeh != 0) {
-    //    SUMOReal hoppedPos = target->hoppedVeh->getPositionOnLane();
-    //    if (hoppedPos > veh(myCandi)->getPositionOnLane() && (neighLead == 0 || neighLead->getPositionOnLane() > hoppedPos)) {
-    //        neighLead = target->hoppedVeh;
-    //        //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " neighLead=" << Named::getIDSecure(neighLead) << " (422)\n";
-    //    }
-    //}
-    //if (neighLead == 0) {
-    //    MSLane* targetLane = target->lane;
-    //    if (targetLane->myPartialVehicles.size() > 0) {
-    //        MSVehicle* leader = targetLane->myPartialVehicles.front();
-    //        return std::pair<MSVehicle*, SUMOReal>(leader, leader->getBackPositionOnLane(targetLane) - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap());
-    //    }
-    //    SUMOReal seen = myCandi->lane->getLength() - veh(myCandi)->getPositionOnLane();
-    //    SUMOReal speed = veh(myCandi)->getSpeed();
-    //    SUMOReal dist = veh(myCandi)->getCarFollowModel().brakeGap(speed) + veh(myCandi)->getVehicleType().getMinGap();
-    //    if (seen > dist) {
-    //        return std::pair<MSVehicle* const, SUMOReal>(static_cast<MSVehicle*>(0), -1);
-    //    }
-    //    const std::vector<MSLane*>& bestLaneConts = veh(myCandi)->getBestLanesContinuation(targetLane);
-    //    //if (veh(myCandi)->getID() == "flow.21") std::cout << SIMTIME << " calling getLeaderOnConsecutive (443)\n";
-    //    return target->lane->getLeaderOnConsecutive(dist, seen, speed, *veh(myCandi), bestLaneConts);
-    //} else {
-    //    MSVehicle* candi = veh(myCandi);
-    //    return std::pair<MSVehicle* const, SUMOReal>(neighLead, neighLead->getBackPositionOnLane(target->lane) - candi->getPositionOnLane() - candi->getVehicleType().getMinGap());
-    //}
+    if (result.numFreeSublanes() > 0) {
+        MSLane* targetLane = target->lane;
+
+        SUMOReal seen = ego->getLane()->getLength() - ego->getPositionOnLane();
+        SUMOReal speed = ego->getSpeed();
+        SUMOReal dist = ego->getCarFollowModel().brakeGap(speed) + ego->getVehicleType().getMinGap();
+        if (seen > dist) {
+            return result;
+        }
+        const std::vector<MSLane*>& bestLaneConts = veh(myCandi)->getBestLanesContinuation(targetLane);
+        target->lane->getLeadersOnConsecutive(dist, seen, speed, ego, bestLaneConts, result);
+    }
     return result;
 }
 

@@ -960,7 +960,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
 
 bool
 MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim) const {
-    assert(collider->getLane() == this);
+    assert(collider->isFrontOnLane(this));
     if ((victim->hasInfluencer() && victim->getInfluencer()->isVTDAffected(timestep)) ||
             (collider->hasInfluencer() && collider->getInfluencer()->isVTDAffected(timestep))) {
         return false;
@@ -2067,6 +2067,80 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
     }
     return result;
 }
+
+
+void
+MSLane::getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, const MSVehicle* ego,
+                               const std::vector<MSLane*>& bestLaneConts, MSLeaderDistanceInfo& result) const {
+    if (seen > dist) {
+        return;
+    }
+    // check partial vehicles (they might be on a different route and thus not
+    // found when iterating along bestLaneConts)
+    for (VehCont::const_iterator it = myPartialVehicles.begin(); it != myPartialVehicles.end(); ++it) {
+        MSVehicle* veh = *it;
+        if (!veh->isFrontOnLane(this)) {
+            result.addLeader(veh, seen);
+        } else {
+            break;
+        }
+    }
+    const MSLane* nextLane = this;
+    unsigned int view = 1;
+    SUMOTime arrivalTime = MSNet::getInstance()->getCurrentTimeStep() + TIME2STEPS(seen / MAX2(speed, NUMERICAL_EPS));
+    // loop over following lanes
+    while (seen < dist && result.numFreeSublanes() > 0) {
+        // get the next link used
+        MSLinkCont::const_iterator link = succLinkSec(*ego, view, *nextLane, bestLaneConts);
+        if (nextLane->isLinkEnd(link) || !(*link)->opened(arrivalTime, speed, speed, ego->getVehicleType().getLength(),
+                ego->getImpatience(), ego->getCarFollowModel().getMaxDecel(), 0) || (*link)->haveRed()) {
+            break;
+        }
+#ifdef HAVE_INTERNAL_LANES
+        // check for link leaders
+        const MSLink::LinkLeaders linkLeaders = (*link)->getLeaderInfo(seen, ego->getVehicleType().getMinGap());
+        if (linkLeaders.size() > 0) {
+            // add link leader to all sublanes and return
+            for (int i = 0; i < result.numSublanes(); ++i) {
+                MSVehicle* veh = linkLeaders[0].vehAndGap.first;
+                const SUMOReal gap = linkLeaders[0].vehAndGap.second;
+                const SUMOReal dist = gap - veh->getBackPositionOnLane(); // this value will be added back in addLeaders
+                result.addLeader(veh, dist, 0);
+            }
+            return; ;
+        }
+        bool nextInternal = (*link)->getViaLane() != 0;
+#endif
+        nextLane = (*link)->getViaLaneOrLane();
+        if (nextLane == 0) {
+            break;
+        }
+
+        MSLeaderInfo leaders = getLastVehicleInformation(ego);
+        // @todo check alignment issues if the lane width changes
+        const int iMax = MIN2(leaders.numSublanes(), result.numSublanes());
+        for (int i = 0; i < iMax; ++i) {
+            result.addLeader(leaders[i], seen - getLength(), 0, i);
+        }
+
+        if (nextLane->getVehicleMaxSpeed(ego) < speed) {
+            dist = ego->getCarFollowModel().brakeGap(nextLane->getVehicleMaxSpeed(ego));
+        }
+        seen += nextLane->getLength();
+        if (seen <= dist) {
+            // delaying the update of arrivalTime and making it conditional to avoid possible integer overflows
+            arrivalTime += TIME2STEPS(nextLane->getLength() / MAX2(speed, NUMERICAL_EPS));
+        }
+#ifdef HAVE_INTERNAL_LANES
+        if (!nextInternal) {
+            view++;
+        }
+#else
+        view++;
+#endif
+    } 
+}
+
 
 
 MSVehicle* 
