@@ -172,7 +172,7 @@ MSLCM_SL2015::wantsChangeSublane(
                       << ((result & LCA_TRACI) ? " (traci)" : "")
                       << ((blocked & LCA_BLOCKED) ? " (blocked)" : "")
                       << ((blocked & LCA_OVERLAPPING) ? " (overlap)" : "")
-                      << "\n\n\n";
+                      << "\n";
         }
     }
     gDebugFlag2 = false;
@@ -818,7 +818,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     int req = 0; // the request to change or stay
 
     const SUMOReal latLaneDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
-    /// XXX do not simlpy use latDist = latLaneDist for full-lane changes but rather take blocking and prefered alignment into account as well
+    /// XXX do not simlpy use latDist = latLaneDist for full-lane changes but rather take blocking and preferred alignment into account as well
 
     // VARIANT_5 (disableAMBACKBLOCKER1)
     /*
@@ -1164,29 +1164,40 @@ MSLCM_SL2015::_wantsChangeSublane(
     const SUMOReal leftVehSide = rightVehSide + vehWidth;
     // figure out next speed when staying where we are
     SUMOReal defaultNextSpeed = std::numeric_limits<SUMOReal>::max();
-    /// determine the rightmost sublane currently occupied
-    int rightmostOnEdge = 0;
-    while (rightmostOnEdge + 1 < (int)sublaneSides.size() && rightVehSide > sublaneSides[rightmostOnEdge + 1]) {
-        ++rightmostOnEdge;
+    /// determine the leftmost and rightmost sublanes currently occupied
+    int leftmostOnEdge = (int)sublaneSides.size() - 1;
+    while (leftmostOnEdge > 0 && sublaneSides[leftmostOnEdge] > leftVehSide) {
+        leftmostOnEdge--;
     }
-    int leftmostOnEdge = rightmostOnEdge;
-    while (leftmostOnEdge < (int)sublaneSides.size() && sublaneSides[leftmostOnEdge] < leftVehSide) {
-        defaultNextSpeed = MIN2(defaultNextSpeed, myExpectedSublaneSpeeds[leftmostOnEdge]);
-        if (gDebugFlag2) std::cout << "   adapted to current sublane=" << leftmostOnEdge << " defaultNextSpeed=" << defaultNextSpeed << "\n";
-        ++leftmostOnEdge;
+    int rightmostOnEdge = leftmostOnEdge;
+    while (rightmostOnEdge > 0 && sublaneSides[rightmostOnEdge] > rightVehSide + NUMERICAL_EPS) {
+        defaultNextSpeed = MIN2(defaultNextSpeed, myExpectedSublaneSpeeds[rightmostOnEdge]);
+        if (gDebugFlag2) std::cout << "   adapted to current sublane=" << rightmostOnEdge << " defaultNextSpeed=" << defaultNextSpeed << "\n";
+        if (gDebugFlag2) std::cout << "   sublaneSides[rightmostOnEdge]=" << sublaneSides[rightmostOnEdge] << " rightVehSide=" << rightVehSide << "\n";
+        rightmostOnEdge--;
     }
+    defaultNextSpeed = MIN2(defaultNextSpeed, myExpectedSublaneSpeeds[rightmostOnEdge]);
+    if (gDebugFlag2) std::cout << "   adapted to current sublane=" << rightmostOnEdge << " defaultNextSpeed=" << defaultNextSpeed << "\n";
+    if (gDebugFlag2) std::cout << "   sublaneSides[rightmostOnEdge]=" << sublaneSides[rightmostOnEdge] << " rightVehSide=" << rightVehSide << "\n";
     SUMOReal maxGain = -std::numeric_limits<SUMOReal>::max(); 
     SUMOReal maxGainRight = -std::numeric_limits<SUMOReal>::max(); 
     SUMOReal maxGainLeft = -std::numeric_limits<SUMOReal>::max(); 
     SUMOReal latDistNice = std::numeric_limits<SUMOReal>::max();
-    int sublaneCompact = MAX2(0, rightmostOnEdge - 1); // try to move right by default
 
     const int iMin = MIN2(myVehicle.getLane()->getRightmostSublane(), neighLane.getRightmostSublane());
     const SUMOReal leftMax = MAX2(
             myVehicle.getLane()->getRightSideOnEdge() + myVehicle.getLane()->getWidth(),
             neighLane.getRightSideOnEdge() + neighLane.getWidth());
     assert(leftMax <= edge.getWidth());
+    int sublaneCompact = MAX2(iMin, rightmostOnEdge - 1); // try to compactify to the right by default
 
+    if (gDebugFlag2) std::cout 
+        << "  checking sublanes rightmostOnEdge=" << rightmostOnEdge 
+            << " leftmostOnEdge=" << leftmostOnEdge 
+            << " iMin=" << iMin 
+            << " leftMax=" << leftMax 
+            << " sublaneCompact=" << sublaneCompact 
+            << "\n";
     for (int i = iMin; i < (int)sublaneSides.size(); ++i) {
         if (sublaneSides[i] + vehWidth < leftMax) {
             // i is the rightmost sublane and the left side of vehicles still fits on the edge,
@@ -1205,10 +1216,10 @@ MSLCM_SL2015::_wantsChangeSublane(
                 sublaneCompact = i;
                 if (maxGain > 0) {
                     latDist = sublaneSides[i] - rightVehSide;
-                    if (gDebugFlag2) std::cout << " i=" << i << " newLatDist=" << latDist << " relGain=" << relativeGain << "\n";
+                    if (gDebugFlag2) std::cout << "      i=" << i << " newLatDist=" << latDist << " relGain=" << relativeGain << "\n";
                 }
             }
-            if (gDebugFlag2) std::cout << " i=" << i << " rightmostOnEdge=" << rightmostOnEdge << " relGain=" << relativeGain << "\n";
+            if (gDebugFlag2) std::cout << "    i=" << i << " rightmostOnEdge=" << rightmostOnEdge << " relGain=" << relativeGain << " sublaneCompact=" << sublaneCompact << "\n";
             if (i < rightmostOnEdge) {
                 maxGainRight = MAX2(maxGainRight, relativeGain);
             } else if (i > rightmostOnEdge) {
@@ -1218,7 +1229,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             if (fabs(subAlignDist) < fabs(latDistNice)) {
                 latDistNice = subAlignDist;
                 if (gDebugFlag2) std::cout 
-                    << "   nicest sublane=" << i 
+                    << "    nicest sublane=" << i 
                         << " side=" << sublaneSides[i] 
                         << " rightSide=" << rightVehSide 
                         << " latDistNice=" << latDistNice
@@ -1249,29 +1260,9 @@ MSLCM_SL2015::_wantsChangeSublane(
         << " maxGainRight=" << maxGainRight
         << " maxGainLeft=" << maxGainLeft
         << " latDist=" << latDist
-        << " latDistNice=" << latDistNice;
-
-    // stay within the boundaries implied by the current laneOffset
-    // to be consistent with the current neigh-vehicles
-    const SUMOReal halfCurrentLaneWidth = 0.5 * myVehicle.getLane()->getWidth();
-    const SUMOReal halfVehWidth = 0.5 * myVehicle.getVehicleType().getWidth();
-    const SUMOReal latPos = myVehicle.getLateralPositionOnLane();
-    SUMOReal leftLimit = halfCurrentLaneWidth - halfVehWidth - latPos;
-    SUMOReal rightLimit = -halfCurrentLaneWidth + halfVehWidth - latPos;
-    if (laneOffset == -1) {
-        rightLimit -= neighLane.getWidth();
-    } else if (laneOffset == 1) {
-        leftLimit += neighLane.getWidth();
-    }
-    latDist = MIN2(latDist, leftLimit);
-    latDist = MAX2(latDist, rightLimit);
-    if (gDebugFlag2) std::cout 
-        << " laneOffset=" << laneOffset 
-        << " rightLimit=" << rightLimit 
-        << " leftLimit=" << leftLimit 
-        << " latDistTrunc=" << latDist 
-            << "\n";
-
+        << " latDistNice=" << latDistNice
+        << " sublaneCompact=" << sublaneCompact
+        << "\n";
 
     if (!left) {
         // ONLY FOR CHANGING TO THE RIGHT
@@ -1297,7 +1288,7 @@ MSLCM_SL2015::_wantsChangeSublane(
 
             if (gDebugFlag2) {
                 std::cout << STEPS2TIME(currentTime)
-                          << " veh=" << myVehicle.getID()
+                          << " considering keepRight:"
                           << " vMax=" << vMax
                           << " neighDist=" << neighDist
                           << " brakeGap=" << myVehicle.getCarFollowModel().brakeGap(myVehicle.getSpeed())
@@ -1308,6 +1299,8 @@ MSLCM_SL2015::_wantsChangeSublane(
                           << " fullSpeedGap=" << fullSpeedGap
                           << " fullSpeedDrivingSeconds=" << fullSpeedDrivingSeconds
                           << " dProb=" << deltaProb
+                          << " keepRight=" << myKeepRightProbability
+                          << " speedGainL=" << mySpeedGainProbabilityLeft
                           << "\n";
             }
             if (myKeepRightProbability > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)) {
@@ -1325,14 +1318,8 @@ MSLCM_SL2015::_wantsChangeSublane(
 
         if (gDebugFlag2) {
             std::cout << STEPS2TIME(currentTime)
-                      << " veh=" << myVehicle.getID()
-                      << " speed=" << myVehicle.getSpeed()
-                      << " defaultNextSpeed=" << defaultNextSpeed
-                      << " mySpeedGainProbabilityRight=" << mySpeedGainProbabilityRight
-                      << " myKeepRightProbability=" << myKeepRightProbability
-                      << " maxRelativeGain=" << maxGain
+                      << " speedGainR=" << mySpeedGainProbabilityRight
                       << " latDist=" << latDist
-                      << " blocked=" << blocked
                       << "\n";
         }
 
@@ -1351,13 +1338,8 @@ MSLCM_SL2015::_wantsChangeSublane(
 
         if (gDebugFlag2) {
             std::cout << STEPS2TIME(currentTime)
-                      << " veh=" << myVehicle.getID()
-                      << " speed=" << myVehicle.getSpeed()
-                      << " defaultNextSpeed=" << defaultNextSpeed
-                      << " mySpeedGainProbabilityLeft=" << mySpeedGainProbabilityLeft
-                      << " maxRelativeGain=" << maxGain
+                      << " speedGainL=" << mySpeedGainProbabilityLeft
                       << " latDist=" << latDist
-                      << " blocked=" << blocked
                       << "\n";
         }
 
@@ -1395,8 +1377,6 @@ MSLCM_SL2015::_wantsChangeSublane(
             case LATALIGN_ARBITRARY:
                 break;
         }
-        latDist = MIN2(latDist, leftLimit);
-        latDist = MAX2(latDist, rightLimit);
         if (gDebugFlag2) std::cout << SIMTIME 
                 << " alignment=" << toString(myVehicle.getVehicleType().getPreferredLateralAlignment()) 
                     << " latDist=" << latDist 
@@ -1650,10 +1630,12 @@ MSLCM_SL2015::checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDista
                     << "\n";
             if (overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)) {
                 if (lead.second < 0) {
+                    if (gDebugFlag2) std::cout << "    overlap\n";
                     return (blockedByLeader | LCA_OVERLAPPING);
                 } else if (
                         (overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft))
                         && lead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), lead.first->getSpeed(), lead.first->getCarFollowModel().getMaxDecel())) {
+                    if (gDebugFlag2) std::cout << "    blocked\n";
                     return blockedByLeader;
                 }
             }
@@ -1693,10 +1675,12 @@ MSLCM_SL2015::checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDis
                     << "\n";
             if (overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)) {
                 if (follow.second < 0) {
+                    if (gDebugFlag2) std::cout << "    overlap\n";
                     return (blockedByFollower | LCA_OVERLAPPING);
                 } else if (
                         (overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft))
                         && follow.second < follow.first->getCarFollowModel().getSecureGap(follow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
+                    if (gDebugFlag2) std::cout << "    blocked\n";
                     return blockedByFollower;
                 }
             }
@@ -1708,7 +1692,9 @@ MSLCM_SL2015::checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDis
 
 bool 
 MSLCM_SL2015::overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal left2) {
-    return (right <= right2 && right2 <= left) || (right <= left2 && left2 <= left);
+    assert(right <= left);
+    assert(right2 <= left2);
+    return left2 >= right + NUMERICAL_EPS && left >= right2 + NUMERICAL_EPS;
 }
 
 
