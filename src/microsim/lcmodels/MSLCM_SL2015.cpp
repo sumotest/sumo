@@ -86,6 +86,7 @@
 #define RELGAIN_NORMALIZATION_MIN_SPEED (SUMOReal)10.0
 
 #define TURN_LANE_DIST (SUMOReal)200.0 // the distance at which a lane leading elsewhere is considered to be a turn-lane that must be avoided
+#define GAIN_PERCEPTION_THRESHOLD (SUMOReal)0.05 // the minimum relative speed gain which affects the behavior
 
 //#define DEBUG_COND (myVehicle.getID() == "moped.18" || myVehicle.getID() == "moped.16")
 //#define DEBUG_COND (myVehicle.getID() == "B")
@@ -140,6 +141,7 @@ MSLCM_SL2015::wantsChangeSublane(
 
     if (gDebugFlag2) {
         std::cout << "\n" << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+                  //<< std::setprecision(10)
                   << " veh=" << myVehicle.getID()
                   << " lane=" << myVehicle.getLane()->getID()
                   << " pos=" << myVehicle.getPositionOnLane()
@@ -1177,7 +1179,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     SUMOReal maxGainRight = -std::numeric_limits<SUMOReal>::max(); 
     SUMOReal maxGainLeft = -std::numeric_limits<SUMOReal>::max(); 
     SUMOReal latDistNice = std::numeric_limits<SUMOReal>::max();
-    int sublaneCompact = 0;
+    int sublaneCompact = MAX2(0, rightmostOnEdge - 1); // try to move right by default
 
     const int iMin = MIN2(myVehicle.getLane()->getRightmostSublane(), neighLane.getRightmostSublane());
     const SUMOReal leftMax = MAX2(
@@ -1198,11 +1200,12 @@ MSLCM_SL2015::_wantsChangeSublane(
                 ++j;
             }
             const SUMOReal relativeGain = (vMin - defaultNextSpeed) / MAX2(vMin, RELGAIN_NORMALIZATION_MIN_SPEED);
-            if (relativeGain > maxGain) {
+            if (relativeGain > GAIN_PERCEPTION_THRESHOLD && relativeGain > maxGain) {
                 maxGain = relativeGain;
                 sublaneCompact = i;
                 if (maxGain > 0) {
                     latDist = sublaneSides[i] - rightVehSide;
+                    if (gDebugFlag2) std::cout << " i=" << i << " newLatDist=" << latDist << " relGain=" << relativeGain << "\n";
                 }
             }
             if (gDebugFlag2) std::cout << " i=" << i << " rightmostOnEdge=" << rightmostOnEdge << " relGain=" << relativeGain << "\n";

@@ -127,7 +127,7 @@ MSLaneChangerSublane::change() {
             }
         }
     }
-    // latDist = 0; // XXX reset for the next query
+    latDist = 0; // reset for the next query
 
     // check whether the vehicle wants and is able to change to left lane
     int state2 = 0;
