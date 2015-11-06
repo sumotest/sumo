@@ -800,11 +800,11 @@ MSLane::safeInsertionSpeed(const MSVehicle* veh, const MSLeaderInfo& leaders, SU
 
 // ------ Handling vehicles lapping into lanes ------
 const MSLeaderInfo& 
-MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
+MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos, bool allowCached) const {
     //if (/*getID() == "middle_0" && */ego != 0 && ego->getID() == "high.100" && SIMTIME == 122) {
     //    std::cout << "DEBUG getLastVehicleInformation lane=" << getID() << "\n";
     //}
-    if (myLeaderInfoTime < MSNet::getInstance()->getCurrentTimeStep() || ego != 0) {
+    if (myLeaderInfoTime < MSNet::getInstance()->getCurrentTimeStep() || ego != 0 || minPos > 0 || !allowCached) {
         //gDebugFlag2 = (getID() == "53[1][0]_0");
         myLeaderInfoTmp = MSLeaderInfo(this, ego);
         AnyVehicleIterator last = anyVehiclesBegin();
@@ -813,14 +813,17 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
         //    std::cout << "DEBUG\n";
         //}
         const MSVehicle* veh = *last;
+        //while (freeSublanes > 0 && veh != 0 && veh->getPositionOnLane(this) >= minPos) {
+        //    if (veh != ego) {
         while (freeSublanes > 0 && veh != 0) {
             if (veh != ego && veh->getPositionOnLane(this) >= minPos) {
                 const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
+                //const SUMOReal latOffset = veh->getLatOffset(this);
                 freeSublanes = myLeaderInfoTmp.addLeader(veh, true, latOffset);
             }
             veh = *(++last);
         }
-        if (ego == 0) {
+        if (ego == 0 && minPos == 0) {
             // update cached value
             myLeaderInfoTime = MSNet::getInstance()->getCurrentTimeStep();
             myLeaderInfo = myLeaderInfoTmp;
@@ -847,14 +850,16 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
 // ------  ------
 void
 MSLane::planMovements(SUMOTime t) {
-    //gDebugFlag1 = (getID() == "beg_1");
+    //gDebugFlag1 = (getID() == "85_1");
     assert(myVehicles.size() != 0);
     SUMOReal cumulatedVehLength = 0.;
     MSLeaderInfo ahead(this);
     // iterate over myVehicles and myPartialVehicles merge-sort style 
     VehCont::reverse_iterator veh = myVehicles.rbegin();
     VehCont::reverse_iterator vehPart = myPartialVehicles.rbegin();
-    if (gDebugFlag1) std::cout << SIMTIME 
+    if (gDebugFlag1) std::cout 
+        << "\n"
+        << SIMTIME 
         << " planMovements lane=" << getID() 
         << "\n"
         << "    vehicles=" << toString(myVehicles)
@@ -870,6 +875,7 @@ MSLane::planMovements(SUMOTime t) {
         }
         if (gDebugFlag1) std::cout << "   plan move for: " << (*veh)->getID() << " ahead=" << ahead.toString() << "\n";
         (*veh)->planMove(t, ahead, cumulatedVehLength);
+        //gDebugFlag1 = (getID() == "85_1");
         cumulatedVehLength += (*veh)->getVehicleType().getLengthWithGap();
         ahead.addLeader(*veh, false, 0);
     }

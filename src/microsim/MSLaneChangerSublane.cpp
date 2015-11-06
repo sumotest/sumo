@@ -205,11 +205,20 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
     //    std::cout << "DEBUG\n";
     //}
     // get the leading vehicle on the lane to change to
-    if (gDebugFlag1) std::cout << SIMTIME << " getLeaders lane=" << target->lane->getID() << " ego=" << ego->getID() << "\n";
+    if (gDebugFlag1) std::cout << SIMTIME << " getLeaders lane=" << target->lane->getID() << " ego=" << ego->getID() << " ahead=" << target->ahead.toString() << "\n";
     MSLeaderDistanceInfo result(target->lane, 0);
     for (int i = 0; i < target->ahead.numSublanes(); ++i) {
             if (gDebugFlag1 && target->ahead[i] != 0) std::cout << " dist=" << -ego->getPositionOnLane() << " lead=" << target->ahead[i]->getID() << " leadBack=" << target->ahead[i]->getBackPositionOnLane() << "\n";
         result.addLeader(target->ahead[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), 0, i);
+    }
+    // if there are vehicles on the target lane with the same position as ego,
+    // they may not have been added to 'ahead' yet
+    const MSLeaderInfo& aheadSamePos = target->lane->getLastVehicleInformation(0, ego->getPositionOnLane(), false);
+    for (int i = 0; i < aheadSamePos.numSublanes(); ++i) {
+        if (gDebugFlag1 && aheadSamePos[i] != 0) std::cout << " dist=" << -ego->getPositionOnLane() << " lead=" << aheadSamePos[i]->getID() << " leadBack=" << aheadSamePos[i]->getBackPositionOnLane() << "\n";
+        if (aheadSamePos[i] != ego) {
+            result.addLeader(aheadSamePos[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), 0, i);
+        }
     }
 
     if (result.numFreeSublanes() > 0) {

@@ -942,7 +942,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    gDebugFlag1 = (getID() == "disabled");
+    //gDebugFlag1 = (getID() == "disabled");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -2698,7 +2698,7 @@ SUMOReal
 MSVehicle::getLatOffset(const MSLane* lane) const {
     assert(lane != 0);
     if (&lane->getEdge() == &myLane->getEdge()) {
-        return lane->getRightSideOnEdge() - myLane->getRightSideOnEdge();
+        return myLane->getRightSideOnEdge() - lane->getRightSideOnEdge();
     } else {
         // if the vehicles rear is on lane, there is no offset
         std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();

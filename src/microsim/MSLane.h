@@ -309,10 +309,11 @@ public:
      * occupied by ego are
      * returned. Partial occupators are included
      * @param[in] ego The vehicle for which to restrict the returned leaderInfo
-     * @param[in] pos The minimum position from which to start search for leaders
+     * @param[in] minPos The minimum position from which to start search for leaders
+     * @param[in] allowCached Whether the cached value may be used
      * @return Information about the last vehicles
      */
-    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos=0) const;
+    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos=0, bool allowCached=true) const;
     /// @}
 
 
