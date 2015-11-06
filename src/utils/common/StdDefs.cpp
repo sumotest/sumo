@@ -98,6 +98,8 @@ const std::string getBuildName(const std::string& version) {
 
 bool gDebugFlag1 = false;
 bool gDebugFlag2 = false;
+bool gDebugFlag3 = false;
+bool gDebugFlag4 = false;
 std::string gDebugSelectedVehicle = "";
 
 /****************************************************************************/
