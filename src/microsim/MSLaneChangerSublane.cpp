@@ -113,7 +113,8 @@ MSLaneChangerSublane::change() {
     SUMOReal latDist = 0;
     if (mayChange(-1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() - 0.5 * vehicle->getVehicleType().getWidth() > 0) {
-        state1 = checkChangeSublane(mayChange(-1) ? -1 : 0, preb, latDist);
+        const int laneOffset = mayChange(-1) ? -1 : 0;
+        state1 = checkChangeSublane(laneOffset, preb, latDist);
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state1 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed1) {
@@ -121,9 +122,9 @@ MSLaneChangerSublane::change() {
             return true;
         }
         if ((state1 & LCA_WANTS_LANECHANGE) != 0 && (state1 & LCA_URGENT) != 0) {
-            (myCandi - 1)->lastBlocked = vehicle;
-            if ((myCandi - 1)->firstBlocked == 0) {
-                (myCandi - 1)->firstBlocked = vehicle;
+            (myCandi + laneOffset)->lastBlocked = vehicle;
+            if ((myCandi + laneOffset)->firstBlocked == 0) {
+                (myCandi + laneOffset)->firstBlocked = vehicle;
             }
         }
     }
@@ -133,7 +134,8 @@ MSLaneChangerSublane::change() {
     int state2 = 0;
     if (mayChange(1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() + 0.5 * vehicle->getVehicleType().getWidth() < myCandi->lane->getWidth()) {
-        state2 = checkChangeSublane(mayChange(1) ? 1 : 0, preb, latDist);
+        const int laneOffset = mayChange(1) ? 1 : 0;
+        state2 = checkChangeSublane(laneOffset, preb, latDist);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed2) {
@@ -141,9 +143,9 @@ MSLaneChangerSublane::change() {
             return true;
         }
         if ((state2 & LCA_WANTS_LANECHANGE) != 0 && (state2 & LCA_URGENT) != 0) {
-            (myCandi + 1)->lastBlocked = vehicle;
-            if ((myCandi + 1)->firstBlocked == 0) {
-                (myCandi + 1)->firstBlocked = vehicle;
+            (myCandi + laneOffset)->lastBlocked = vehicle;
+            if ((myCandi + laneOffset)->firstBlocked == 0) {
+                (myCandi + laneOffset)->firstBlocked = vehicle;
             }
         }
     }
