@@ -801,6 +801,9 @@ MSLane::safeInsertionSpeed(const MSVehicle* veh, const MSLeaderInfo& leaders, SU
 // ------ Handling vehicles lapping into lanes ------
 const MSLeaderInfo& 
 MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
+    //if (/*getID() == "middle_0" && */ego != 0 && ego->getID() == "high.100" && SIMTIME == 122) {
+    //    std::cout << "DEBUG getLastVehicleInformation lane=" << getID() << "\n";
+    //}
     if (myLeaderInfoTime < MSNet::getInstance()->getCurrentTimeStep() || ego != 0) {
         //gDebugFlag2 = (getID() == "53[1][0]_0");
         myLeaderInfoTmp = MSLeaderInfo(this, ego);
@@ -2118,7 +2121,7 @@ MSLane::getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, co
             break;
         }
 
-        MSLeaderInfo leaders = getLastVehicleInformation(ego);
+        MSLeaderInfo leaders = nextLane->getLastVehicleInformation(ego);
         // @todo check alignment issues if the lane width changes
         const int iMax = MIN2(leaders.numSublanes(), result.numSublanes());
         for (int i = 0; i < iMax; ++i) {
