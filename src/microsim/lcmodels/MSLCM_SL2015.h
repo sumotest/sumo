@@ -125,23 +125,14 @@ protected:
      * If we decide to follow, myVSafes will be extended
      * returns the planned speed if following or -1 if overtaking */
     SUMOReal informLeaders(int blocked, int dir,
-                          const MSLeaderDistanceInfo& leaders,
-                          const MSLeaderDistanceInfo& neighLeaders,
-                          SUMOReal remainingSeconds);
-
-    /// @brief decide how to deal with direct obstructions (could be leaders or followers)
-    void informBlockers(int blocked, int dir,
-                        const MSLeaderDistanceInfo& blockers,
-                        const MSLeaderDistanceInfo& neighBlockers,
-                        SUMOReal remainingSeconds,
-                        SUMOReal plannedSpeed);
+                           const std::vector<CLeaderDist>& blockers,
+                           SUMOReal remainingSeconds);
 
     /// @brief call informFollower for multiple followers
     void informFollowers(int blocked, int dir,
-                        const MSLeaderDistanceInfo& followers,
-                        const MSLeaderDistanceInfo& neighFollowers,
-                        SUMOReal remainingSeconds,
-                        SUMOReal plannedSpeed);
+                         const std::vector<CLeaderDist>& blockers,
+                         SUMOReal remainingSeconds,
+                         SUMOReal plannedSpeed);
 
     /* @brief decide whether we will overtake or follow a blocking leader
      * and inform it accordingly
@@ -214,11 +205,14 @@ protected:
                 const MSLeaderDistanceInfo& blockers,
                 const MSLeaderDistanceInfo& neighLeaders,
                 const MSLeaderDistanceInfo& neighFollowers,
-                const MSLeaderDistanceInfo& neighBlockers) const; 
+                const MSLeaderDistanceInfo& neighBlockers,
+                std::vector<CLeaderDist>* collectLeadBlockers = 0,
+                std::vector<CLeaderDist>* collectFollowBlockers = 0) const; 
 
     /// @brief check whether any of the vehicles overlaps with ego
     static int checkBlockingVehicles(const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
-            int laneOffset, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca); 
+            int laneOffset, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca,
+            std::vector<CLeaderDist>* collectBlockers = 0); 
 
     /// @brief return whether the given intervals overlap
     static bool overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal left2); 
