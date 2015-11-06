@@ -2714,7 +2714,6 @@ MSVehicle::getLatOffset(const MSLane* lane) const {
         while (i != getLaneChangeModel().getShadowFurtherLanes().end()) {
             //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (*i == lane) {
-                assert();
                 return getLatOffset(getLaneChangeModel().getShadowLane());
             }
             ++i;
