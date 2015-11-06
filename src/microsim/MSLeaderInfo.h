@@ -140,7 +140,11 @@ public:
      * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
      * @return The number of free sublanes
      */
-    int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
+    virtual int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
+
+    virtual int addLeader(const MSVehicle* veh, bool beyond, SUMOReal latOffset=0) {
+        throw ProcessError("Method not supported\n");
+    }
 
     /// @brief discard all information
     virtual void clear();
@@ -182,6 +186,14 @@ public:
      * @return The number of free sublanes
      */
     int addFollower(const MSVehicle* veh, const MSVehicle* ego, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
+
+    virtual int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1) {
+        throw ProcessError("Method not supported\n");
+    }
+
+    virtual int addLeader(const MSVehicle* veh, bool beyond, SUMOReal latOffset=0) {
+        throw ProcessError("Method not supported\n");
+    }
 
     /// @brief discard all information
     void clear();
