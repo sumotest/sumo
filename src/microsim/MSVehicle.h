@@ -346,6 +346,11 @@ public:
      */
     SUMOReal getCenterOnEdge(const MSLane* lane=0) const;
 
+    /** @brief Get the offset that that must be added to interpret
+     * myState.myPosLat for the given lane
+     */
+    SUMOReal getLatOffset(const MSLane* lane) const;
+
     /** @brief Returns the vehicle's current speed
      * @return The vehicle's speed
      */

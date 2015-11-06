@@ -844,7 +844,7 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos) const {
 // ------  ------
 void
 MSLane::planMovements(SUMOTime t) {
-    //gDebugFlag1 = (getID() == "53[1][0]");
+    //gDebugFlag1 = (getID() == "beg_1");
     assert(myVehicles.size() != 0);
     SUMOReal cumulatedVehLength = 0.;
     MSLeaderInfo ahead(this);
@@ -860,8 +860,8 @@ MSLane::planMovements(SUMOTime t) {
     for (; veh != myVehicles.rend(); ++veh) {
         while (vehPart != myPartialVehicles.rend()
                 && ((*vehPart)->getPositionOnLane(this) > (*veh)->getPositionOnLane())) {
-            const SUMOReal latOffset = (*vehPart)->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
-            //std::cout << "   partial ahead: " << (*vehPart)->getID() << " latOffset=" << latOffset << "\n";
+            const SUMOReal latOffset = (*vehPart)->getLatOffset(this);
+            if (gDebugFlag1) std::cout << "    partial ahead: " << (*vehPart)->getID() << " latOffset=" << latOffset << "\n";
             ahead.addLeader(*vehPart, false, latOffset);
             ++vehPart;
         }

@@ -942,11 +942,13 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "left0.5");
+    gDebugFlag1 = (getID() == "disabled");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
-        std::cout << STEPS2TIME(t)  
+        std::cout 
+            << "\n\n"
+            << STEPS2TIME(t)  
             << " veh=" << getID()
             << " lane=" << myLane->getID() 
             << " pos=" << getPositionOnLane()
@@ -2668,10 +2670,8 @@ MSVehicle::getCenterOnEdge(const MSLane* lane) const {
         return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth();
     } else {
         SUMOReal result = lane->getRightSideOnEdge() + myState.myPosLat + 0.5 * lane->getWidth();
-        SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
         std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();
-        while (leftLength > 0 && i != myFurtherLanes.end()) {
-            leftLength -= (*i)->getLength();
+        while (i != myFurtherLanes.end()) {
             //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (*i == lane) {
                 return result;
@@ -2679,10 +2679,8 @@ MSVehicle::getCenterOnEdge(const MSLane* lane) const {
             ++i;
         }
         //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
-        leftLength = getVehicleType().getLength() - myState.myPos;
         i = getLaneChangeModel().getShadowFurtherLanes().begin();
-        while (leftLength > 0 && i != getLaneChangeModel().getShadowFurtherLanes().end()) {
-            leftLength -= (*i)->getLength();
+        while (i != getLaneChangeModel().getShadowFurtherLanes().end()) {
             //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (*i == lane) {
                 assert(getLaneChangeModel().getShadowLane() != 0);
@@ -2692,6 +2690,37 @@ MSVehicle::getCenterOnEdge(const MSLane* lane) const {
         }
         assert(false);
         throw ProcessError("Request lateral pos of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");
+    }
+}
+
+
+SUMOReal 
+MSVehicle::getLatOffset(const MSLane* lane) const {
+    assert(lane != 0);
+    if (&lane->getEdge() == &myLane->getEdge()) {
+        return lane->getRightSideOnEdge() - myLane->getRightSideOnEdge();
+    } else {
+        // if the vehicles rear is on lane, there is no offset
+        std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();
+        while (i != myFurtherLanes.end()) {
+            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
+            if (*i == lane) {
+                return 0;
+            }
+            ++i;
+        }
+        //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
+        i = getLaneChangeModel().getShadowFurtherLanes().begin();
+        while (i != getLaneChangeModel().getShadowFurtherLanes().end()) {
+            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
+            if (*i == lane) {
+                assert();
+                return getLatOffset(getLaneChangeModel().getShadowLane());
+            }
+            ++i;
+        }
+        assert(false);
+        throw ProcessError("Request lateral offset of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");
     }
 }
 
