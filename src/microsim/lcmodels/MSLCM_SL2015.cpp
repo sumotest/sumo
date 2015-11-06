@@ -639,7 +639,9 @@ MSLCM_SL2015::informLeaders(int blocked, int dir,
         const MSLeaderDistanceInfo& leaders,
         const MSLeaderDistanceInfo& neighLeaders,
         SUMOReal remainingSeconds) {
-    // XXX
+
+
+
     return myVehicle.getSpeed();
 }
 
@@ -1594,85 +1596,51 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneO
 
     // XXX avoid checking the same leader multiple times
     // XXX ensure that only changes within the same lane are undertaken if laneOffset = 0
+
     int blocked = 0;
-    blocked |= checkBlockingLeaders(&myVehicle, leaders, laneOffset, latDist, myVehicle.getLane()->getRightSideOnEdge());
-    blocked |= checkBlockingFollowers(&myVehicle, followers, laneOffset, latDist, myVehicle.getLane()->getRightSideOnEdge());
+    blocked |= checkBlockingVehicles(&myVehicle, leaders, laneOffset, latDist, myVehicle.getLane()->getRightSideOnEdge(), true, LCA_BLOCKED_BY_LEADER);
+    blocked |= checkBlockingVehicles(&myVehicle, followers, laneOffset, latDist, myVehicle.getLane()->getRightSideOnEdge(), false, LCA_BLOCKED_BY_LEADER);
     if (laneOffset != 0) {
-        blocked |= checkBlockingLeaders(&myVehicle, neighLeaders, laneOffset, latDist, neighLane.getRightSideOnEdge());
-        blocked |= checkBlockingFollowers(&myVehicle, neighFollowers, laneOffset, latDist, neighLane.getRightSideOnEdge());
+        blocked |= checkBlockingVehicles(&myVehicle, neighLeaders, laneOffset, latDist, neighLane.getRightSideOnEdge(), true,
+                (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER));
+        blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, laneOffset, latDist, neighLane.getRightSideOnEdge(), false,
+                (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER));
     }
     return blocked;
 }
 
 
 int 
-MSLCM_SL2015::checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset, SUMOReal latDist, SUMOReal foeOffset) {
+MSLCM_SL2015::checkBlockingVehicles(
+        const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
+        int laneOffset, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca) {
     // determine borders where safety/no-overlap conditions must hold
-    const SUMOReal vehWidth = vehicle->getVehicleType().getWidth();
-    const SUMOReal rightVehSide = vehicle->getRightSideOnEdge();
+    const SUMOReal vehWidth = ego->getVehicleType().getWidth();
+    const SUMOReal rightVehSide = ego->getRightSideOnEdge();
     const SUMOReal leftVehSide = rightVehSide + vehWidth;
     const SUMOReal rightVehSideDest = rightVehSide + latDist;
     const SUMOReal leftVehSideDest = leftVehSide + latDist;
     const SUMOReal rightNoOverlap = MIN2(rightVehSideDest, rightVehSide);
     const SUMOReal leftNoOverlap = MAX2(leftVehSideDest, leftVehSide);
 
-    /// XXX check relative position of leader for laneOffset == 0
-    int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
-    for (int i = 0; i < leaders.numSublanes(); ++i) {
-        CLeaderDist lead = leaders[i];
-        if (lead.first != 0) {
+
+    for (int i = 0; i < vehicles.numSublanes(); ++i) {
+        CLeaderDist vehDist = vehicles[i];
+        if (vehDist.first != 0) {
             // only check the current stripe occuped by foe (transform into edge-coordinates)
             const SUMOReal foeRight = i * MSGlobals::gLateralResolution + foeOffset;
             const SUMOReal foeLeft = foeRight + MSGlobals::gLateralResolution;
-            if (gDebugFlag2) 
-                std::cout << "  checkBlockingLeaders foe=" << lead.first->getID() 
-                    << " foeRight=" << foeRight
-                    << " foeLeft=" << foeLeft
-                    << " rightNoOverlap=" << rightNoOverlap
-                    << " leftNoOverlap=" << leftNoOverlap
-                    << " rightVehSideDest=" << rightVehSideDest
-                    << " leftVehSideDest=" << leftVehSideDest
-                    << "\n";
-            if (overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)) {
-                if (lead.second < 0) {
-                    if (gDebugFlag2) std::cout << "    overlap\n";
-                    return (blockedByLeader | LCA_OVERLAPPING);
-                } else if (
-                        (overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft))
-                        && lead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), lead.first->getSpeed(), lead.first->getCarFollowModel().getMaxDecel())) {
-                    if (gDebugFlag2) std::cout << "    blocked\n";
-                    return blockedByLeader;
+            if (gDebugFlag2) {
+                const MSVehicle* leader = vehDist.first;
+                const MSVehicle* follower = ego;
+                if (!leaders) {
+                    std::swap(leader, follower);
                 }
-            }
-        }
-    }
-    return 0;
-}
-
-
-int 
-MSLCM_SL2015::checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset, SUMOReal latDist, SUMOReal foeOffset) {
-    // determine borders where safety/no-overlap conditions must hold
-    const SUMOReal vehWidth = vehicle->getVehicleType().getWidth();
-    const SUMOReal rightVehSide = vehicle->getRightSideOnEdge();
-    const SUMOReal leftVehSide = rightVehSide + vehWidth;
-    const SUMOReal rightVehSideDest = rightVehSide + latDist;
-    const SUMOReal leftVehSideDest = leftVehSide + latDist;
-    const SUMOReal rightNoOverlap = MIN2(rightVehSideDest, rightVehSide);
-    const SUMOReal leftNoOverlap = MAX2(leftVehSideDest, leftVehSide);
-
-    /// XXX check relative position of follower for laneOffset == 0
-    int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
-    for (int i = 0; i < followers.numSublanes(); ++i) {
-        CLeaderDist follow = followers[i];
-        if (follow.first != 0) {
-            // only check the current stripe occuped by foe (transform into edge-coordinates)
-            const SUMOReal foeRight = i * MSGlobals::gLateralResolution + foeOffset;
-            const SUMOReal foeLeft = foeRight + MSGlobals::gLateralResolution;
-            if (gDebugFlag2) 
-                std::cout << "  checkBlockingFollowers foe=" << follow.first->getID() 
-                    << " gap=" << follow.second
-                    << " secGap=" << follow.first->getCarFollowModel().getSecureGap(follow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())
+                std::cout << "  checkBlocking"
+                    << " leaders=" << leaders
+                    << " foe=" << vehDist.first->getID() 
+                    << " gap=" << vehDist.second
+                    << " secGap=" << follower->getCarFollowModel().getSecureGap(follower->getSpeed(), leader->getSpeed(), leader->getCarFollowModel().getMaxDecel())
                     << " foeRight=" << foeRight
                     << " foeLeft=" << foeLeft
                     << " rightNoOverlap=" << rightNoOverlap
@@ -1682,20 +1650,27 @@ MSLCM_SL2015::checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDis
                     << " overlap=" << overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)
                     << " overlapDest=" << overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft)
                     << "\n";
+            }
             if (overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)) {
-                if (follow.second < 0) {
+                if (vehDist.second < 0) {
                     if (gDebugFlag2) std::cout << "    overlap\n";
-                    return (blockedByFollower | LCA_OVERLAPPING);
-                } else if (
-                        (overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft))
-                        && follow.second < follow.first->getCarFollowModel().getSecureGap(follow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
-                    if (gDebugFlag2) std::cout << "    blocked\n";
-                    return blockedByFollower;
+                    return (lca | LCA_OVERLAPPING);
+                } else if (overlap(rightVehSideDest, leftVehSideDest, foeRight, foeLeft)) {
+                    const MSVehicle* leader = vehDist.first;
+                    const MSVehicle* follower = ego;
+                    if (!leaders) {
+                        std::swap(leader, follower);
+                    }
+                    if (vehDist.second < follower->getCarFollowModel().getSecureGap(follower->getSpeed(), leader->getSpeed(), leader->getCarFollowModel().getMaxDecel())) {
+                        if (gDebugFlag2) std::cout << "    blocked\n";
+                        return lca;
+                    }
                 }
             }
         }
     }
     return 0;
+
 }
 
 

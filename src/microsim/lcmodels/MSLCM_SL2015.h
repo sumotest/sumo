@@ -216,8 +216,11 @@ protected:
                 const MSLeaderDistanceInfo& neighFollowers,
                 const MSLeaderDistanceInfo& neighBlockers) const; 
 
-    static int checkBlockingLeaders(const MSVehicle* vehicle, const MSLeaderDistanceInfo& leaders, int laneOffset, SUMOReal latDist, SUMOReal foeOffset); 
-    static int checkBlockingFollowers(const MSVehicle* vehicle, const MSLeaderDistanceInfo& followers, int laneOffset, SUMOReal latDist, SUMOReal foeOffset); 
+    /// @brief check whether any of the vehicles overlaps with ego
+    static int checkBlockingVehicles(const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
+            int laneOffset, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca); 
+
+    /// @brief return whether the given intervals overlap
     static bool overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal left2); 
 
 protected:

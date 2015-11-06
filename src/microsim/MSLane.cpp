@@ -813,8 +813,6 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos, bool al
         //    std::cout << "DEBUG\n";
         //}
         const MSVehicle* veh = *last;
-        //while (freeSublanes > 0 && veh != 0 && veh->getPositionOnLane(this) >= minPos) {
-        //    if (veh != ego) {
         while (freeSublanes > 0 && veh != 0) {
             if (veh != ego && veh->getPositionOnLane(this) >= minPos) {
                 const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
