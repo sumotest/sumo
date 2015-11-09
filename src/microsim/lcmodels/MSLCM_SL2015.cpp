@@ -190,7 +190,7 @@ MSLCM_SL2015::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMORe
     gDebugFlag2 = DEBUG_COND;
 
     const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
-    if (gDebugFlag1) {
+    if (gDebugFlag2) {
         const std::string patched = (wanted != newSpeed ? " patched=" + toString(newSpeed) : "");
         std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                   << " veh=" << myVehicle.getID()
@@ -218,7 +218,7 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     //   if we want to change and have a blocking leader and there is enough room for him in front of us
     if (myLeadingBlockerLength != 0) {
         SUMOReal space = myLeftSpace - myLeadingBlockerLength - MAGIC_offset - myVehicle.getVehicleType().getMinGap();
-        if (gDebugFlag1) {
+        if (gDebugFlag2) {
             std::cout << time << " veh=" << myVehicle.getID() << " myLeadingBlockerLength=" << myLeadingBlockerLength << " space=" << space << "\n";
         }
         if (space > 0) { // XXX space > -MAGIC_offset
@@ -226,7 +226,7 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
             SUMOReal safe = cfModel.stopSpeed(&myVehicle, myVehicle.getSpeed(), space);
             // if we are approaching this place
             if (safe < wanted) {
-                if (gDebugFlag1) {
+                if (gDebugFlag2) {
                     std::cout << time << " veh=" << myVehicle.getID() << " slowing down for leading blocker, safe=" << safe << (safe + NUMERICAL_EPS < min ? " (not enough)" : "") << "\n";
                 }
                 return MAX2(min, safe);
@@ -241,16 +241,16 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         if (v >= min && v <= max) {
             nVSafe = MIN2(v, nVSafe);
             gotOne = true;
-            if (gDebugFlag1) {
+            if (gDebugFlag2) {
                 std::cout << time << " veh=" << myVehicle.getID() << " got nVSafe=" << nVSafe << "\n";
             }
         } else {
             if (v < min) {
-                if (gDebugFlag1) {
+                if (gDebugFlag2) {
                     std::cout << time << " veh=" << myVehicle.getID() << " ignoring low nVSafe=" << v << " min=" << min << "\n";
                 }
             } else {
-                if (gDebugFlag1) {
+                if (gDebugFlag2) {
                     std::cout << time << " veh=" << myVehicle.getID() << " ignoring high nVSafe=" << v << " max=" << max << "\n";
                 }
             }
@@ -258,7 +258,7 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     }
 
     if (gotOne && !myDontBrake) {
-        if (gDebugFlag1) {
+        if (gDebugFlag2) {
             std::cout << time << " veh=" << myVehicle.getID() << " got vSafe\n";
         }
         return nVSafe;
@@ -269,20 +269,20 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         if ((state & LCA_STRATEGIC) != 0) {
             // necessary decelerations are controlled via vSafe. If there are
             // none it means we should speed up
-            if (gDebugFlag1) {
+            if (gDebugFlag2) {
                 std::cout << time << " veh=" << myVehicle.getID() << " LCA_WANTS_LANECHANGE (strat, no vSafe)\n";
             }
             return (max + wanted) / (SUMOReal) 2.0;
         } else if ((state & LCA_COOPERATIVE) != 0) {
             // only minor adjustments in speed should be done
             if ((state & LCA_BLOCKED_BY_LEADER) != 0) {
-                if (gDebugFlag1) {
+                if (gDebugFlag2) {
                     std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_LEADER (coop)\n";
                 }
                 return (min + wanted) / (SUMOReal) 2.0;
             }
             if ((state & LCA_BLOCKED_BY_FOLLOWER) != 0) {
-                if (gDebugFlag1) {
+                if (gDebugFlag2) {
                     std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_FOLLOWER (coop)\n";
                 }
                 return (max + wanted) / (SUMOReal) 2.0;
@@ -290,7 +290,7 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
             //} else { // VARIANT_16
             //    // only accelerations should be performed
             //    if ((state & LCA_BLOCKED_BY_FOLLOWER) != 0) {
-            //        if (gDebugFlag1) std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_FOLLOWER\n";
+            //        if (gDebugFlag2) std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_FOLLOWER\n";
             //        return (max + wanted) / (SUMOReal) 2.0;
             //    }
         }
@@ -301,23 +301,23 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     //  (and does not have to change lanes)
     if ((state & LCA_AMBLOCKINGFOLLOWER) != 0) {
         if (fabs(max - myVehicle.getCarFollowModel().maxNextSpeed(myVehicle.getSpeed(), &myVehicle)) < 0.001 && min == 0) { // !!! was standing
-            if (gDebugFlag1) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBLOCKINGFOLLOWER (standing)\n";
+            if (gDebugFlag2) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBLOCKINGFOLLOWER (standing)\n";
             return 0;
         }
-        if (gDebugFlag1) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBLOCKINGFOLLOWER\n";
+        if (gDebugFlag2) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBLOCKINGFOLLOWER\n";
 
         //return min; // VARIANT_3 (brakeStrong)
         return (min + wanted) / (SUMOReal) 2.0;
     }
     if ((state & LCA_AMBACKBLOCKER) != 0) {
         if (max <= myVehicle.getCarFollowModel().maxNextSpeed(myVehicle.getSpeed(), &myVehicle) && min == 0) { // !!! was standing
-            if (gDebugFlag1) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBACKBLOCKER (standing)\n";
+            if (gDebugFlag2) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBACKBLOCKER (standing)\n";
             //return min; VARIANT_9 (backBlockVSafe)
             return nVSafe;
         }
     }
     if ((state & LCA_AMBACKBLOCKER_STANDING) != 0) {
-        if (gDebugFlag1) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBACKBLOCKER_STANDING\n";
+        if (gDebugFlag2) std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBACKBLOCKER_STANDING\n";
         //return min;
         return nVSafe;
     }
@@ -326,14 +326,14 @@ MSLCM_SL2015::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     // accelerate if being a blocking leader or blocking follower not able to brake
     //  (and does not have to change lanes)
     if ((state & LCA_AMBLOCKINGLEADER) != 0) {
-        if (gDebugFlag1) {
+        if (gDebugFlag2) {
             std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBLOCKINGLEADER\n";
         }
         return (max + wanted) / (SUMOReal) 2.0;
     }
 
     if ((state & LCA_AMBLOCKINGFOLLOWER_DONTBRAKE) != 0) {
-        if (gDebugFlag1) {
+        if (gDebugFlag2) {
             std::cout << time << " veh=" << myVehicle.getID() << " LCA_AMBLOCKINGFOLLOWER_DONTBRAKE\n";
         }
         /*
