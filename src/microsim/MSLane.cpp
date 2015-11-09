@@ -2198,14 +2198,17 @@ MSLane::getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, co
         // check for link leaders
         const MSLink::LinkLeaders linkLeaders = (*link)->getLeaderInfo(seen, ego->getVehicleType().getMinGap());
         if (linkLeaders.size() > 0) {
-            // add link leader to all sublanes and return
-            for (int i = 0; i < result.numSublanes(); ++i) {
-                MSVehicle* veh = linkLeaders[0].vehAndGap.first;
-                const SUMOReal gap = linkLeaders[0].vehAndGap.second;
-                const SUMOReal dist = gap - veh->getBackPositionOnLane(); // this value will be added back in addLeaders
-                result.addLeader(veh, dist, 0);
-            }
-            return; ;
+            const MSLink::LinkLeader ll = linkLeaders[0];
+            if (ll.vehAndGap.first != 0) {
+                // add link leader to all sublanes and return
+                for (int i = 0; i < result.numSublanes(); ++i) {
+                    MSVehicle* veh = ll.vehAndGap.first;
+                    const SUMOReal gap = ll.vehAndGap.second;
+                    const SUMOReal dist = gap - veh->getBackPositionOnLane(); // this value will be added back in addLeaders
+                    result.addLeader(veh, dist, 0);
+                }
+                return; ;
+            } // XXX else, deal with pedestrians
         }
         bool nextInternal = (*link)->getViaLane() != 0;
 #endif
