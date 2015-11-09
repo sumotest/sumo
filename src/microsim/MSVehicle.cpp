@@ -646,7 +646,7 @@ MSVehicle::getAngle() const {
         p2 = myLane->geometryPositionAtOffset(myState.myPos - myType->getLength(), posLat);
     } else {
         p2 = myFurtherLanes.size() > 0 && !getLaneChangeModel().isChangingLanes()
-             ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), myFurtherLanesPosLat.back())
+             ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), -myFurtherLanesPosLat.back())
              : myLane->geometryPositionAtOffset(0, posLat);
         if (getLaneChangeModel().isChangingLanes() && myFurtherLanes.size() > 0 && getLaneChangeModel().getShadowLane(myFurtherLanes.back()) == 0) {
             // special case where the target lane has no predecessor
