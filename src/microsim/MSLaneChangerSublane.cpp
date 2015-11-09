@@ -164,6 +164,7 @@ MSLaneChangerSublane::change() {
 
 void
 MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist) {
+    //gDebugFlag4 = vehicle->getID() == "Togliatti_80_26";
     // 1) update vehicles lateral position according to latDist and target lane
     vehicle->myState.myPosLat += latDist;
 
@@ -195,7 +196,7 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
         const SUMOReal latOffset = vehicle->getLane()->getRightSideOnEdge() - shadowLane->getRightSideOnEdge();
         (myChanger.begin() + shadowLane->getIndex())->ahead.addLeader(vehicle, false, latOffset);
     }
-    if (vehicle->getID() == "disabled") std::cout << SIMTIME << " startChangeSublane shadowLane"
+    if (gDebugFlag4) std::cout << SIMTIME << " startChangeSublane shadowLane"
         << " old=" << Named::getIDSecure(oldShadowLane) 
             << " new=" << Named::getIDSecure(vehicle->getLaneChangeModel().getShadowLane()) << "\n";
 }

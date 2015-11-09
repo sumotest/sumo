@@ -817,7 +817,20 @@ MSLCM_SL2015::_wantsChangeSublane(
     int ret = (myOwnState & 0xffff0000);
     int req = 0; // the request to change or stay
 
-    const SUMOReal latLaneDist = laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth());
+    // compute the distance when changing to the neighboring lane
+    // (ensure we do not lap into the line behind neighLane since there might be unseen blockers)
+    const SUMOReal halfCurrentLaneWidth = 0.5 * myVehicle.getLane()->getWidth(); 
+    const SUMOReal halfVehWidth = 0.5 * myVehicle.getVehicleType().getWidth(); 
+    const SUMOReal latPos = myVehicle.getLateralPositionOnLane(); 
+    SUMOReal leftLimit = halfCurrentLaneWidth - halfVehWidth - latPos; 
+    SUMOReal rightLimit = -halfCurrentLaneWidth + halfVehWidth - latPos; 
+    if (laneOffset == -1) { 
+        rightLimit -= neighLane.getWidth(); 
+    } else if (laneOffset == 1) { 
+        leftLimit += neighLane.getWidth(); 
+    } 
+    const SUMOReal latLaneDist = MAX2(rightLimit, MIN2(leftLimit, laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth())));
+
     /// XXX do not simlpy use latDist = latLaneDist for full-lane changes but rather take blocking and preferred alignment into account as well
 
     // VARIANT_5 (disableAMBACKBLOCKER1)
@@ -848,6 +861,9 @@ MSLCM_SL2015::_wantsChangeSublane(
                   << " neighFollowers=" << neighFollowers.toString()
                   << " neighBlockers=" << neighBlockers.toString()
                   << " changeToBest=" << changeToBest
+                  << " latLaneDist=" << latLaneDist
+                  << " leftLimit=" << leftLimit
+                  << " rightLimit=" << rightLimit
                   << " expectedSpeeds=" << toString(myExpectedSublaneSpeeds)
                   << "\n";
     }

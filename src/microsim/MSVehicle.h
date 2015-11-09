@@ -971,6 +971,7 @@ public:
 
     /// @brief update a vector of further lanes and return the new backPos
     SUMOReal updateFurtherLanes(std::vector<MSLane*>& furtherLanes, 
+            std::vector<SUMOReal>& furtherLanesPosLat, 
             const std::vector<MSLane*>& passedLanes); 
 
 
@@ -1278,6 +1279,7 @@ protected:
 
     /// @brief The information into which lanes the vehicle laps into
     std::vector<MSLane*> myFurtherLanes;
+    std::vector<SUMOReal> myFurtherLanesPosLat;
 
     /// @brief State of things of the vehicle that can be on or off
     int mySignals;

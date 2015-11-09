@@ -415,6 +415,7 @@ MSVehicle::~MSVehicle() {
     // approach information from parallel links
     delete myLaneChangeModel; 
     myFurtherLanes.clear();
+    myFurtherLanesPosLat.clear();
     //
     if (myType->amVehicleSpecific()) {
         delete myType;
@@ -644,8 +645,8 @@ MSVehicle::getAngle() const {
         // vehicle is fully on the new lane
         p2 = myLane->geometryPositionAtOffset(myState.myPos - myType->getLength(), posLat);
     } else {
-        p2 = myFurtherLanes.size() > 0
-             ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), posLat)
+        p2 = myFurtherLanes.size() > 0 && !getLaneChangeModel().isChangingLanes()
+             ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), myFurtherLanesPosLat.back())
              : myLane->geometryPositionAtOffset(0, posLat);
         if (getLaneChangeModel().isChangingLanes() && myFurtherLanes.size() > 0 && getLaneChangeModel().getShadowLane(myFurtherLanes.back()) == 0) {
             // special case where the target lane has no predecessor
@@ -1584,7 +1585,7 @@ MSVehicle::executeMove() {
             myState.mySpeed = 0;
         }
         const MSLane* oldBackLane = getBackLane();
-        myState.myBackPos = updateFurtherLanes(myFurtherLanes, passedLanes);
+        myState.myBackPos = updateFurtherLanes(myFurtherLanes, myFurtherLanesPosLat, passedLanes);
         updateBestLanes();
         // bestLanes need to be updated before lane changing starts
         if (getLaneChangeModel().getShadowLane() != 0 && (moved || oldBackLane != getBackLane())) {
@@ -1614,7 +1615,7 @@ MSVehicle::getBackLane() const {
 
 
 SUMOReal
-MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, 
+MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, std::vector<SUMOReal>& furtherLanesPosLat, 
                 const std::vector<MSLane*>& passedLanes) {
 
     if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes oldFurther=" << toString(myFurtherLanes) << " passed=" << toString(passedLanes) << "\n";
@@ -1623,11 +1624,13 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes,
         (*i)->resetPartialOccupation(this);
     }
     furtherLanes.clear();
+    furtherLanesPosLat.clear();
     if (passedLanes.size() > 0) {
         SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
         std::vector<MSLane*>::const_reverse_iterator i = passedLanes.rbegin() + 1;
         while (leftLength > 0 && i != passedLanes.rend()) {
             furtherLanes.push_back(*i);
+            furtherLanesPosLat.push_back(myState.myPosLat);
             if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
             leftLength -= (*i)->setPartialOccupation(this);
             ++i;
@@ -2002,6 +2005,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
             if (getID() == "disabled") std::cout << SIMTIME << " enterLaneAtLaneChange \n";
             myFurtherLanes[i]->resetPartialOccupation(this);
             myFurtherLanes[i] = lane;
+            myFurtherLanesPosLat[i] = myState.myPosLat;
             if (getID() == "disabled") std::cout << SIMTIME << " enterLaneAtLaneChange \n";
             leftLength -= (lane)->setPartialOccupation(this);
         } else {
@@ -2011,7 +2015,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
             }
         }
     }
-    if (getID() == "disabled") std::cout << SIMTIME << " enterLaneAtLaneChange new furtherLanes=" << toString(myFurtherLanes) << "\n";
+    if (gDebugFlag4) std::cout << SIMTIME << " enterLaneAtLaneChange new furtherLanes=" << toString(myFurtherLanes) << "\n";
 }
 
 
@@ -2038,6 +2042,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
             break;
         }
         myFurtherLanes.push_back(clane);
+        myFurtherLanesPosLat.push_back(myState.myPosLat);
         leftLength -= (clane)->setPartialOccupation(this);
     }
     myState.myBackPos = -leftLength;
@@ -2072,6 +2077,7 @@ MSVehicle::leaveLane(const MSMoveReminder::Notification reason) {
             (*i)->resetPartialOccupation(this);
         }
         myFurtherLanes.clear();
+        myFurtherLanesPosLat.clear();
     }
     if (reason >= MSMoveReminder::NOTIFICATION_TELEPORT) {
         myAmOnNet = false;
@@ -2669,24 +2675,22 @@ MSVehicle::getCenterOnEdge(const MSLane* lane) const {
     if (lane == 0 || &lane->getEdge() == &myLane->getEdge()) {
         return myLane->getRightSideOnEdge() + myState.myPosLat + 0.5 * myLane->getWidth();
     } else {
-        SUMOReal result = lane->getRightSideOnEdge() + myState.myPosLat + 0.5 * lane->getWidth();
-        std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();
-        while (i != myFurtherLanes.end()) {
+        assert(myFurtherLanes.size() == myFurtherLanesPosLat.size());
+        for (int i = 0; i < (int)myFurtherLanes.size(); ++i) {
             //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
-            if (*i == lane) {
-                return result;
+            if (myFurtherLanes[i] == lane) {
+                return lane->getRightSideOnEdge() + myFurtherLanesPosLat[i] + 0.5 * lane->getWidth();
             }
-            ++i;
         }
         //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
-        i = getLaneChangeModel().getShadowFurtherLanes().begin();
-        while (i != getLaneChangeModel().getShadowFurtherLanes().end()) {
+        const std::vector<MSLane*>& shadowFurther = getLaneChangeModel().getShadowFurtherLanes();
+        for (int i = 0; i < (int)shadowFurther.size(); ++i) {
             //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
-            if (*i == lane) {
+            if (shadowFurther[i] == lane) {
                 assert(getLaneChangeModel().getShadowLane() != 0);
-                return result + (myLane->getCenterOnEdge() - getLaneChangeModel().getShadowLane()->getCenterOnEdge());
+                return (lane->getRightSideOnEdge() + getLaneChangeModel().getShadowFurtherLanesPosLat()[i] + 0.5 * lane->getWidth()
+                        + (myLane->getCenterOnEdge() - getLaneChangeModel().getShadowLane()->getCenterOnEdge()));
             }
-            ++i;
         }
         assert(false);
         throw ProcessError("Request lateral pos of vehicle '" + getID() + "' for invalid lane '" + Named::getIDSecure(lane) + "'");

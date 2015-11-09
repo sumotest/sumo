@@ -235,7 +235,7 @@ MSAbstractLaneChangeModel::initLastLaneChangeOffset(int dir) {
 void
 MSAbstractLaneChangeModel::updateShadowLane() {
     if (myShadowLane != 0) {
-        if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " updateShadowLane\n";
+        if (gDebugFlag4) std::cout << SIMTIME << " updateShadowLane\n";
         myShadowLane->resetPartialOccupation(&myVehicle);
     }
     myShadowLane = getShadowLane(myVehicle.getLane());
@@ -257,12 +257,12 @@ MSAbstractLaneChangeModel::updateShadowLane() {
             endLaneChangeManeuver();
         }
     }
-    if (myVehicle.getID() == "disabled") std::cout << SIMTIME << " updateShadowLane veh=" << myVehicle.getID() 
+    if (gDebugFlag4) std::cout << SIMTIME << " updateShadowLane veh=" << myVehicle.getID() 
         << " newShadowLane=" << Named::getIDSecure(myShadowLane)
         << "\n   before:" << " myShadowFurtherLanes=" << toString(myShadowFurtherLanes) << " passed=" << toString(passed)
         << "\n";
-    myVehicle.updateFurtherLanes(myShadowFurtherLanes, passed);
-    if (myVehicle.getID() == "disabled") std::cout 
+    myVehicle.updateFurtherLanes(myShadowFurtherLanes, myShadowFurtherLanesPosLat, passed);
+    if (gDebugFlag4) std::cout 
         << "\n   after:" << " myShadowFurtherLanes=" << toString(myShadowFurtherLanes) << "\n";
 }
 

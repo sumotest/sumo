@@ -303,6 +303,10 @@ public:
         return myShadowFurtherLanes;
     }
 
+    const std::vector<SUMOReal>& getShadowFurtherLanesPosLat() const {
+        return myShadowFurtherLanesPosLat;
+    }
+
     inline SUMOTime getLastLaneChangeOffset() const {
         return myLastLaneChangeOffset;
     }
@@ -420,6 +424,7 @@ protected:
     /* @brief Lanes that are parially (laterally) occupied by the back of the
      * vehicle (analogue to MSVehicle::myFurtherLanes) */
     std::vector<MSLane*> myShadowFurtherLanes;
+    std::vector<SUMOReal> myShadowFurtherLanesPosLat;
 
     /// @brief The vehicle's car following model
     const MSCFModel& myCarFollowModel;
