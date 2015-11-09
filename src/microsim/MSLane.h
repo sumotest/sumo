@@ -85,6 +85,7 @@ public:
     friend class MSXMLRawOut;
 
     friend class MSQueueExport;
+    friend class AnyVehicleIterator;
 
     /// Container for vehicles.
     typedef std::vector<MSVehicle*> VehCont;
@@ -100,17 +101,18 @@ public:
     public:
         AnyVehicleIterator(
                 const MSLane* lane,
-                VehCont::const_iterator i1,
-                VehCont::const_iterator i2,
-                const VehCont::const_iterator i1End,
-                const VehCont::const_iterator i2End,
-                bool lastToFirst=true) :
+                int i1,
+                int i2,
+                const int i1End,
+                const int i2End,
+                bool downstream=true) :
             myLane(lane),
             myI1(i1),
             myI2(i2),
             myI1End(i1End),
             myI2End(i2End),
-            myLastToFirst(lastToFirst)
+            myDownstream(downstream),
+            myDirection(downstream ? 1 : -1)
         {}
 
         bool operator== (AnyVehicleIterator const& other) const {
@@ -124,32 +126,29 @@ public:
             return !(*this == other);
         }
 
-        const MSVehicle* operator*() { 
-            VehCont::const_iterator n = next();
-            if (n == myI1End) {
-                return 0;
-            } else {
-                return *n;
-            }
-        }
-
         const MSVehicle* operator->() { return **this; }
 
-        AnyVehicleIterator& operator++() {
-            ++next();
-            return *this;
-        }
+        const MSVehicle* operator*();
+
+        AnyVehicleIterator& operator++();
 
     private:
-        VehCont::const_iterator& next();
+        bool nextIsMyVehicles() const;
 
-    private:
+        /// @brief the lane that is being iterated
         const MSLane* myLane;
-        VehCont::const_iterator myI1;
-        VehCont::const_iterator myI2;
-        VehCont::const_iterator myI1End;
-        VehCont::const_iterator myI2End;
-        bool myLastToFirst;
+        /// @brief index for myVehicles
+        int myI1;
+        /// @brief index for myPartialVehicles
+        int myI2;
+        /// @brief end index for myVehicles
+        int myI1End;
+        /// @brief end index for myPartialVehicles
+        int myI2End;
+        /// @brief iteration direction
+        bool myDownstream;
+        /// @brief index delta
+        int myDirection;
 
     };            
 
@@ -349,16 +348,25 @@ public:
     }
 
 
-    /// @brief begin iterator for iterating over all vehicles touching this lane
+    /// @brief begin iterator for iterating over all vehicles touching this lane in downstream direction
     AnyVehicleIterator anyVehiclesBegin() const {
-        return AnyVehicleIterator(this, myVehicles.begin(), myPartialVehicles.begin(), myVehicles.end(), myPartialVehicles.end(), true);
+        return AnyVehicleIterator(this, 0, 0, myVehicles.size(), myPartialVehicles.size(), true);
     }
 
-    /// @brief end iterator for iterating over all vehicles touching this lane
+    /// @brief end iterator for iterating over all vehicles touching this lane in downstream direction
     AnyVehicleIterator anyVehiclesEnd() const {
-        return AnyVehicleIterator(this, myVehicles.end(), myPartialVehicles.end(), myVehicles.end(), myPartialVehicles.end(), true);
+        return AnyVehicleIterator(this, myVehicles.size(), myPartialVehicles.size(), myVehicles.size(), myPartialVehicles.size(), true);
     }
 
+    /// @brief begin iterator for iterating over all vehicles touching this lane in upstream direction
+    AnyVehicleIterator anyVehiclesUpstreamBegin() const {
+        return AnyVehicleIterator(this, myVehicles.size() - 1, myPartialVehicles.size() - 1, -1, -1, false);
+    }
+
+    /// @brief end iterator for iterating over all vehicles touching this lane in upstream direction
+    AnyVehicleIterator anyVehiclesUpstreamEnd() const {
+        return AnyVehicleIterator(this, -1, -1, -1, -1, false);
+    }
 
     /** @brief Allows to use the container for microsimulation again
      */

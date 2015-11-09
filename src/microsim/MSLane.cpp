@@ -83,25 +83,57 @@ MSLane::DictType MSLane::myDict;
 // ===========================================================================
 // internal class method definitions
 // ===========================================================================
-MSLane::VehCont::const_iterator& MSLane::AnyVehicleIterator::next() {
-    if (myI1 == myI1End) {
-        if (myI2 == myI2End) {
-            return myI1End;
+
+
+MSLane::AnyVehicleIterator&
+MSLane::AnyVehicleIterator::operator++() {
+    if (nextIsMyVehicles()) {
+        if (myI1 != myI1End) {
+            myI1 += myDirection;
+        }
+        // else: already at end
+    } else {
+        myI2 += myDirection;
+    }
+    return *this;
+}
+
+
+const MSVehicle*
+MSLane::AnyVehicleIterator::operator*() {
+    if (nextIsMyVehicles()) {
+        if (myI1 != myI1End) {
+            return myLane->myVehicles[myI1];
         } else {
-            return myI2;
+            return 0;
+        }
+    } else {
+        return myLane->myPartialVehicles[myI2];
+    }
+}
+
+
+bool 
+MSLane::AnyVehicleIterator::nextIsMyVehicles() const {
+    if (myI1 == myI1End) {
+        if (myI2 != myI2End) {
+            return false;
+        } else {
+            return true; // @note. must be caught
         }
     } else {
         if (myI2 == myI2End) {
-            return myI1;
+            return true;
         } else {
-            if ((*myI1)->getPositionOnLane(myLane) < (*myI2)->getPositionOnLane(myLane)) {
-                return myLastToFirst ? myI1 : myI2;
+            if ((myLane->myVehicles[myI1])->getPositionOnLane(myLane) < (myLane->myPartialVehicles[myI2])->getPositionOnLane(myLane)) {
+                return myDownstream;
             } else {
-                return myLastToFirst ? myI2 : myI1;
+                return !myDownstream;
             }
         }
     }
 }
+
 
 // ===========================================================================
 // member method definitions
@@ -2030,6 +2062,8 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
                 MSLane* next = (*i).lane;
                 dist = MAX2(dist, next->getMaximumBrakeDist() - backOffset);
                 MSVehicle* v = next->getFirstAnyVehicle();
+                //XXX assure that v != ego
+                //XXX integrate MSLeaderInfo behind = next->getFirstVehicleInformation (analogue to getLastVehicleInformation() but starting from the front)
                 SUMOReal agap = 0;
                 if (v != 0) {
                     // the front of v is already on divergent trajectory from the ego vehicle
@@ -2054,6 +2088,7 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
                     }
                 }
                 result.addFollower(v, ego, agap);
+                if (gDebugFlag1) std::cout << "  added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << "\n";
                 if ((*i).length < dist) {
                     const std::vector<MSLane::IncomingLaneInfo>& followers = next->getIncomingLanes();
                     for (std::vector<MSLane::IncomingLaneInfo>::const_iterator j = followers.begin(); j != followers.end(); ++j) {
