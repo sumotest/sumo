@@ -313,6 +313,10 @@ public:
      * @return Information about the last vehicles
      */
     const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos=0, bool allowCached=true) const;
+
+    /// @brief analogue to getLastVehicleInformation but in the upstream direction
+    const MSLeaderInfo& getFirstVehicleInformation(const MSVehicle* ego, bool onlyFrontOnLane, SUMOReal maxPos=std::numeric_limits<SUMOReal>::max(), bool allowCached=true) const;
+
     /// @}
 
 
@@ -1017,10 +1021,15 @@ protected:
 
     /// @brief leaders on all sublanes as seen by approaching vehicles (cached)
     mutable MSLeaderInfo myLeaderInfo;
+    /// @brief followers on all sublanes as seen by vehicles on consecutive lanes (cached)
+    mutable MSLeaderInfo myFollowerInfo;
+
     mutable MSLeaderInfo myLeaderInfoTmp;
 
     /// @brief time step for which myLeaderInfo was last updated
     mutable SUMOTime myLeaderInfoTime;
+    /// @brief time step for which myFollowerInfo was last updated
+    mutable SUMOTime myFollowerInfoTime;
 
     // precomputed myShape.length / myLength
     const SUMOReal myLengthGeometryFactor;

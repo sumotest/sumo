@@ -149,8 +149,10 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myLogicalPredecessorLane(0),
     myBruttoVehicleLengthSum(0), myNettoVehicleLengthSum(0),
     myLeaderInfo(this),
+    myFollowerInfo(this),
     myLeaderInfoTmp(this),
     myLeaderInfoTime(SUMOTime_MIN),
+    myFollowerInfoTime(SUMOTime_MIN),
     myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength), // factor should not be 0
     myRightSideOnEdge(0), // initialized in MSEdge::initialize
     myRightmostSublane(0) // initialized in MSEdge::initialize
@@ -874,6 +876,54 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos, bool al
         return myLeaderInfoTmp;
     }
     return myLeaderInfo;
+}
+
+
+const MSLeaderInfo& 
+MSLane::getFirstVehicleInformation(const MSVehicle* ego, bool onlyFrontOnLane, SUMOReal maxPos, bool allowCached) const {
+    //if (/*getID() == "middle_0" && */ego != 0 && ego->getID() == "high.100" && SIMTIME == 122) {
+    //    std::cout << "DEBUG getLastVehicleInformation lane=" << getID() << "\n";
+    //}
+    if (myFollowerInfoTime < MSNet::getInstance()->getCurrentTimeStep() || ego != 0 || maxPos < myLength || !allowCached || onlyFrontOnLane) {
+        // XXX separate cache for onlyFrontOnLane = true
+        //gDebugFlag2 = (getID() == "53[1][0]_0");
+        myLeaderInfoTmp = MSLeaderInfo(this, ego);
+        AnyVehicleIterator first = anyVehiclesUpstreamBegin();
+        int freeSublanes = 1; // number of sublanes for which no leader was found
+        //if (ego->getID() == "disabled" && SIMTIME == 58) {
+        //    std::cout << "DEBUG\n";
+        //}
+        const MSVehicle* veh = *first;
+        while (freeSublanes > 0 && veh != 0) {
+            if (veh != ego && veh->getPositionOnLane(this) <= maxPos
+                    || (!onlyFrontOnLane || veh->isFrontOnLane(this))) {
+                const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
+                //const SUMOReal latOffset = veh->getLatOffset(this);
+                freeSublanes = myLeaderInfoTmp.addLeader(veh, true, latOffset);
+            }
+            veh = *(++first);
+        }
+        if (ego == 0 && maxPos == std::numeric_limits<SUMOReal>::max()) {
+            // update cached value
+            myFollowerInfoTime = MSNet::getInstance()->getCurrentTimeStep();
+            myFollowerInfo = myLeaderInfoTmp;
+        }
+        //if (gDebugFlag2) std::cout << SIMTIME 
+        //    << " getLastVehicleInformation lane=" << getID() 
+        //        << " ego=" << Named::getIDSecure(ego)
+        //        << "\n"
+        //        << "    vehicles=" << toString(myVehicles)
+        //        << "    partials=" << toString(myPartialVehicles)
+        //        << "\n"
+        //        << "    result=" << myLeaderInfoTmp.toString()
+        //        << "    cached=" << myLeaderInfo.toString()
+        //        << "    myLeaderInfoTime=" << myLeaderInfoTime
+        //        << "\n";
+
+        //gDebugFlag2 = false;
+        return myLeaderInfoTmp;
+    }
+    return myFollowerInfo;
 }
 
 
@@ -2058,45 +2108,49 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
         std::vector<MSLane::IncomingLaneInfo> newFound;
         std::vector<MSLane::IncomingLaneInfo> toExamine = myIncomingLanes;
         while (toExamine.size() != 0) {
-            for (std::vector<MSLane::IncomingLaneInfo>::iterator i = toExamine.begin(); i != toExamine.end(); ++i) {
-                MSLane* next = (*i).lane;
+            for (std::vector<MSLane::IncomingLaneInfo>::iterator it = toExamine.begin(); it != toExamine.end(); ++it) {
+                MSLane* next = (*it).lane;
                 dist = MAX2(dist, next->getMaximumBrakeDist() - backOffset);
-                MSVehicle* v = next->getFirstAnyVehicle();
-                //XXX assure that v != ego
-                //XXX integrate MSLeaderInfo behind = next->getFirstVehicleInformation (analogue to getLastVehicleInformation() but starting from the front)
-                SUMOReal agap = 0;
-                if (v != 0) {
-                    // the front of v is already on divergent trajectory from the ego vehicle
-                    // for which this method is called (in the context of MSLaneChanger).
-                    // Therefore, technically v is not a follower but only an obstruction and
-                    // the gap is not between the front of v and the back of ego
-                    // but rather between the flank of v and the back of ego.
-                    if (!v->isFrontOnLane(next)) {
-                        agap = (*i).length - next->getLength() + backOffset 
-                            /// XXX dubious term. here for backwards compatibility
-                            - v->getVehicleType().getMinGap();
-                        if (agap > 0) {
-                            // Only if ego overlaps we treat v as if it were a real follower
-                            // Otherwise we ignore it and look for another follower
-                            v = next->getFirstFullVehicle();
-                            if (v != 0) {
-                                agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                MSLeaderInfo first = next->getFirstVehicleInformation(0, false);
+                MSLeaderInfo firstFront = next->getFirstVehicleInformation(0, true);
+                for (int i = 0; i < first.numSublanes(); ++i) {
+                    const MSVehicle* v = first[i];
+                    //XXX assure that v != ego
+                    //XXX integrate MSLeaderInfo behind = next->getFirstVehicleInformation (analogue to getLastVehicleInformation() but starting from the front)
+                    SUMOReal agap = 0;
+                    if (v != 0 && v != ego) {
+                        if (!v->isFrontOnLane(next)) {
+                            // the front of v is already on divergent trajectory from the ego vehicle
+                            // for which this method is called (in the context of MSLaneChanger).
+                            // Therefore, technically v is not a follower but only an obstruction and
+                            // the gap is not between the front of v and the back of ego
+                            // but rather between the flank of v and the back of ego.
+                            agap = (*it).length - next->getLength() + backOffset 
+                                /// XXX dubious term. here for backwards compatibility
+                                - v->getVehicleType().getMinGap();
+                            if (agap > 0) {
+                                // Only if ego overlaps we treat v as if it were a real follower
+                                // Otherwise we ignore it and look for another follower
+                                v = firstFront[i];
+                                if (v != 0 && v != ego) {
+                                    agap = (*it).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                                }
                             }
+                        } else {
+                            agap = (*it).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
                         }
-                    } else {
-                        agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
                     }
+                    if (gDebugFlag1) std::cout << "  added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << "\n";
+                    result.addFollower(v, ego, agap);
                 }
-                result.addFollower(v, ego, agap);
-                if (gDebugFlag1) std::cout << "  added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << "\n";
-                if ((*i).length < dist) {
+                if ((*it).length < dist) {
                     const std::vector<MSLane::IncomingLaneInfo>& followers = next->getIncomingLanes();
                     for (std::vector<MSLane::IncomingLaneInfo>::const_iterator j = followers.begin(); j != followers.end(); ++j) {
                         if (visited.find((*j).lane) == visited.end()) {
                             visited.insert((*j).lane);
                             MSLane::IncomingLaneInfo ili;
                             ili.lane = (*j).lane;
-                            ili.length = (*j).length + (*i).length;
+                            ili.length = (*j).length + (*it).length;
                             ili.viaLink = (*j).viaLink;
                             newFound.push_back(ili);
                         }
