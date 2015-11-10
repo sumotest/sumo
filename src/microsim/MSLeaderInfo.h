@@ -134,13 +134,13 @@ public:
 
     /* @brief adds this vehicle as a leader in the appropriate sublanes
      * @param[in] veh The vehicle to add
-     * @param[in] dist The distance from the ego-front+minGap to the start of the lane of veh (myRecordLeaders=true) 
-     *   or from the back of ego to start of the lane of veh (myRecordLeaders=false)
+     * @param[in] gap The gap between the egoFront+minGap to the back of veh (myRecordLeaders=true) 
+     *   or from the back of ego to the front+minGap of veh (myRecordLeaders=false)
      * @param[in] latOffset The lateral offset that must be added to the position of veh
      * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
      * @return The number of free sublanes
      */
-    virtual int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
+    virtual int addLeader(const MSVehicle* veh, SUMOReal gap, SUMOReal latOffset=0, int sublane=-1);
 
     virtual int addLeader(const MSVehicle* veh, bool beyond, SUMOReal latOffset=0) {
         throw ProcessError("Method not supported\n");
@@ -180,14 +180,14 @@ public:
     /* @brief adds this vehicle as a follower in the appropriate sublanes
      * @param[in] veh The vehicle to add
      * @param[in] ego The vehicle which is being followed
-     * @param[in] dist The distance from the back of ego to the follower
+     * @param[in] gap The distance from the back of ego to the follower
      * @param[in] latOffset The lateral offset that must be added to the position of veh
      * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
      * @return The number of free sublanes
      */
-    int addFollower(const MSVehicle* veh, const MSVehicle* ego, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1);
+    int addFollower(const MSVehicle* veh, const MSVehicle* ego, SUMOReal gap, SUMOReal latOffset=0, int sublane=-1);
 
-    virtual int addLeader(const MSVehicle* veh, SUMOReal dist, SUMOReal latOffset=0, int sublane=-1) {
+    virtual int addLeader(const MSVehicle* veh, SUMOReal gap, SUMOReal latOffset=0, int sublane=-1) {
         throw ProcessError("Method not supported\n");
     }
 

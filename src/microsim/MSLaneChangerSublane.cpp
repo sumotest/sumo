@@ -211,16 +211,23 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
     if (gDebugFlag1) std::cout << SIMTIME << " getLeaders lane=" << target->lane->getID() << " ego=" << ego->getID() << " ahead=" << target->ahead.toString() << "\n";
     MSLeaderDistanceInfo result(target->lane, 0);
     for (int i = 0; i < target->ahead.numSublanes(); ++i) {
-            if (gDebugFlag1 && target->ahead[i] != 0) std::cout << " dist=" << -ego->getPositionOnLane() << " lead=" << target->ahead[i]->getID() << " leadBack=" << target->ahead[i]->getBackPositionOnLane() << "\n";
-        result.addLeader(target->ahead[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), 0, i);
+        const MSVehicle* veh = target->ahead[i];
+        if (veh != 0) {
+            assert(veh != 0);
+            const SUMOReal gap = veh->getBackPositionOnLane() - ego->getPositionOnLane() - ego->getVehicleType().getMinGap();
+            if (gDebugFlag1) std::cout << " ahead lead=" << veh->getID() << " leadBack=" << veh->getBackPositionOnLane() << " gap=" << gap << "\n";
+            result.addLeader(veh, gap, 0, i);
+        }
     }
     // if there are vehicles on the target lane with the same position as ego,
     // they may not have been added to 'ahead' yet
     const MSLeaderInfo& aheadSamePos = target->lane->getLastVehicleInformation(0, ego->getPositionOnLane(), false);
     for (int i = 0; i < aheadSamePos.numSublanes(); ++i) {
-        if (gDebugFlag1 && aheadSamePos[i] != 0) std::cout << " dist=" << -ego->getPositionOnLane() << " lead=" << aheadSamePos[i]->getID() << " leadBack=" << aheadSamePos[i]->getBackPositionOnLane() << "\n";
-        if (aheadSamePos[i] != ego) {
-            result.addLeader(aheadSamePos[i], -(ego->getPositionOnLane() + ego->getVehicleType().getMinGap()), 0, i);
+        const MSVehicle* veh = aheadSamePos[i];
+        if (veh != 0 && veh != ego) {
+            const SUMOReal gap = veh->getBackPositionOnLane(target->lane) - ego->getPositionOnLane() - ego->getVehicleType().getMinGap();
+            if (gDebugFlag1) std::cout << " further lead=" << veh->getID() << " leadBack=" << veh->getBackPositionOnLane(target->lane) << " gap=" << gap << "\n";
+            result.addLeader(veh, gap, 0, i);
         }
     }
 

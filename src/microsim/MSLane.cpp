@@ -848,9 +848,10 @@ MSLane::getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos, bool al
         //}
         const MSVehicle* veh = *last;
         while (freeSublanes > 0 && veh != 0) {
+            if (gDebugFlag1) std::cout << "      getLastVehicleInformation lane=" << getID() << " minPos=" << minPos << " veh=" << veh->getID() << " pos=" << veh->getPositionOnLane(this)  << "\n";
             if (veh != ego && veh->getPositionOnLane(this) >= minPos) {
-                const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
-                //const SUMOReal latOffset = veh->getLatOffset(this);
+                //const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
+                const SUMOReal latOffset = veh->getLatOffset(this);
                 freeSublanes = myLeaderInfoTmp.addLeader(veh, true, latOffset);
             }
             veh = *(++last);
@@ -897,8 +898,8 @@ MSLane::getFirstVehicleInformation(const MSVehicle* ego, bool onlyFrontOnLane, S
         while (freeSublanes > 0 && veh != 0) {
             if (veh != ego && veh->getPositionOnLane(this) <= maxPos
                     || (!onlyFrontOnLane || veh->isFrontOnLane(this))) {
-                const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
-                //const SUMOReal latOffset = veh->getLatOffset(this);
+                //const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
+                const SUMOReal latOffset = veh->getLatOffset(this);
                 freeSublanes = myLeaderInfoTmp.addLeader(veh, true, latOffset);
             }
             veh = *(++first);
@@ -2090,7 +2091,8 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
         const MSVehicle* veh = *last;
         if (gDebugFlag1) std::cout << "  veh=" << veh->getID() << " lane=" << veh->getLane()->getID() << " pos=" << veh->getPositionOnLane(this) << "\n";
         if (veh != ego && veh->getPositionOnLane(this) <= ego->getPositionOnLane()) {
-            const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
+            //const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
+            const SUMOReal latOffset = veh->getLatOffset(this);
             const SUMOReal dist = ego->getBackPositionOnLane() - veh->getPositionOnLane(this) - veh->getVehicleType().getMinGap();
             result.addFollower(veh, ego, dist, latOffset);
             if (gDebugFlag1) std::cout << "  added veh=" << veh->getID() << " latOffset=" << latOffset << " result=" << result.toString() << "\n";
@@ -2203,9 +2205,7 @@ MSLane::getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, co
                 // add link leader to all sublanes and return
                 for (int i = 0; i < result.numSublanes(); ++i) {
                     MSVehicle* veh = ll.vehAndGap.first;
-                    const SUMOReal gap = ll.vehAndGap.second;
-                    const SUMOReal dist = gap - veh->getBackPositionOnLane(); // this value will be added back in addLeaders
-                    result.addLeader(veh, dist, 0);
+                    result.addLeader(veh, ll.vehAndGap.second, 0);
                 }
                 return; ;
             } // XXX else, deal with pedestrians
@@ -2217,11 +2217,15 @@ MSLane::getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, co
             break;
         }
 
-        MSLeaderInfo leaders = nextLane->getLastVehicleInformation(ego);
+        MSLeaderInfo leaders = nextLane->getLastVehicleInformation(0, 0, false);
+        if (gDebugFlag1) std::cout << SIMTIME << " getLeadersOnConsecutive lane=" << getID() << " nextLane=" << nextLane->getID() << " leaders=" << leaders.toString() << "\n";
         // @todo check alignment issues if the lane width changes
         const int iMax = MIN2(leaders.numSublanes(), result.numSublanes());
         for (int i = 0; i < iMax; ++i) {
-            result.addLeader(leaders[i], seen - getLength(), 0, i);
+            const MSVehicle* veh = leaders[i];
+            if (veh != 0) {
+                result.addLeader(veh, seen - getLength() + veh->getBackPositionOnLane(nextLane), 0, i);
+            }
         }
 
         if (nextLane->getVehicleMaxSpeed(ego) < speed) {
