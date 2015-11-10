@@ -142,6 +142,13 @@ public:
         return true;
     }
 
+    /** @brief Get the vehicle's lateral position on the lane
+     * @return The lateral position of the vehicle (in m relative to the
+     * centerline of the lane)
+     */
+    virtual SUMOReal getLateralPositionOnLane() const {
+        return 0;
+    }
 
     /** @brief Returns the starting point for reroutes (usually the current edge)
      *

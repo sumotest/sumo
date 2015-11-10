@@ -82,6 +82,12 @@ public:
      */
     virtual SUMOReal getBackPositionOnLane(const MSLane* lane) const = 0;
 
+    /** @brief Get the vehicle's lateral position on the lane
+     * @return The lateral position of the vehicle (in m relative to the
+     * centerline of the lane)
+     */
+    virtual SUMOReal getLateralPositionOnLane() const = 0;
+
     /** @brief Get the vehicle's angle
      * @return The angle of the vehicle (in degree)
      */

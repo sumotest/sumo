@@ -1391,7 +1391,7 @@ MSVehicle::executeMove() {
             const bool opened = yellow || influencerPrio ||
                                 link->opened((*i).myArrivalTime, (*i).myArrivalSpeed, (*i).getLeaveSpeed(),
                                              getVehicleType().getLength(), getImpatience(),
-                                             getCarFollowModel().getMaxDecel(), getWaitingTime());
+                                             getCarFollowModel().getMaxDecel(), getWaitingTime(), getLateralPositionOnLane());
             // vehicles should decelerate when approaching a minor link
             if (opened && !influencerPrio && !link->havePriority() && !link->lastWasContMajor() && !link->isCont()) {
                 if ((*i).myDistance > getCarFollowModel().getMaxDecel()) {
@@ -1844,7 +1844,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
 #endif
                                 item.myLink->opened(item.myArrivalTime, item.myArrivalSpeed,
                                                     item.getLeaveSpeed(), getVehicleType().getLength(),
-                                                    getImpatience(), getCarFollowModel().getMaxDecel(), getWaitingTime()));
+                                                    getImpatience(), getCarFollowModel().getMaxDecel(), getWaitingTime(), getLateralPositionOnLane()));
             bool allowsContinuation = item.myLink == 0 || item.myLink->isCont() || !lfLinks[i].hadVehicle || opened;
             if (!opened && item.myLink != 0) {
                 if (i > 1) {

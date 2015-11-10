@@ -201,6 +201,7 @@ public:
      */
     bool opened(SUMOTime arrivalTime, SUMOReal arrivalSpeed, SUMOReal leaveSpeed, SUMOReal vehicleLength,
                 SUMOReal impatience, SUMOReal decel, SUMOTime waitingTime,
+                SUMOReal posLat = 0,
                 std::vector<const SUMOVehicle*>* collectFoes = 0) const;
 
     /** @brief Returns the information whether this link is blocked
@@ -392,6 +393,9 @@ private:
 
     MSLink* computeParallelLink(int direction);
 
+    bool blockedByFoe(const SUMOVehicle* veh, const ApproachingVehicleInformation& avi, SUMOTime arrivalTime, SUMOTime leaveTime, SUMOReal arrivalSpeed, SUMOReal leaveSpeed,
+                       bool sameTargetLane, SUMOReal impatience, SUMOReal decel, SUMOTime waitingTime) const;
+
 private:
     /// @brief The lane behind the junction approached by this link
     MSLane* myLane;
@@ -446,6 +450,10 @@ private:
     std::vector<MSLink*> myFoeLinks;
     std::vector<const MSLane*> myFoeLanes;
     static SUMOTime myLookaheadTime;
+
+    /* @brief with the same origin lane and the same destination edge that may
+       be in conflict for sublane simulation */
+    std::vector<MSLink*> mySublaneFoeLinks; 
 
     MSLink* myParallelRight;
     MSLink* myParallelLeft;
