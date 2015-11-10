@@ -364,7 +364,7 @@ public:
 
     /// @brief begin iterator for iterating over all vehicles touching this lane in upstream direction
     AnyVehicleIterator anyVehiclesUpstreamBegin() const {
-        return AnyVehicleIterator(this, myVehicles.size() - 1, myPartialVehicles.size() - 1, -1, -1, false);
+        return AnyVehicleIterator(this, (int)myVehicles.size() - 1, (int)myPartialVehicles.size() - 1, -1, -1, false);
     }
 
     /// @brief end iterator for iterating over all vehicles touching this lane in upstream direction

@@ -943,7 +943,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "o3_car_14");
+    //gDebugFlag1 = (getID() == "Silvani_7_114");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -2713,9 +2713,9 @@ MSVehicle::getLatOffset(const MSLane* lane) const {
         return myLane->getRightSideOnEdge() - lane->getRightSideOnEdge();
     } else {
         for (int i = 0; i < (int)myFurtherLanes.size(); ++i) {
-            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (myFurtherLanes[i] == lane) {
-                return myState.myPosLat - myFurtherLanesPosLat[i];
+                if (gDebugFlag1) std::cout << "    getLatOffset veh=" << getID() << " lane=" << lane->getID() << " i=" << i << " posLat=" << myState.myPosLat << " furtherLat=" << myFurtherLanesPosLat[i] << "\n";
+                return myFurtherLanesPosLat[i] - myState.myPosLat;
             }
         }
         //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
