@@ -2136,14 +2136,16 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
                                 v = firstFront[i];
                                 if (v != 0 && v != ego) {
                                     agap = (*it).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                                } else {
+                                    v = 0;
                                 }
                             }
                         } else {
                             agap = (*it).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
                         }
+                        if (gDebugFlag1) std::cout << "  added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << "\n";
+                        result.addFollower(v, ego, agap);
                     }
-                    if (gDebugFlag1) std::cout << "  added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << "\n";
-                    result.addFollower(v, ego, agap);
                 }
                 if ((*it).length < dist) {
                     const std::vector<MSLane::IncomingLaneInfo>& followers = next->getIncomingLanes();
