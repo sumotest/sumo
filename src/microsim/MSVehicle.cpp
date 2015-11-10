@@ -1620,28 +1620,35 @@ SUMOReal
 MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, std::vector<SUMOReal>& furtherLanesPosLat, 
                 const std::vector<MSLane*>& passedLanes) {
 
+    // XXX only reset / set the values that were changed
     if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes oldFurther=" << toString(myFurtherLanes) << " passed=" << toString(passedLanes) << "\n";
     for (std::vector<MSLane*>::iterator i = furtherLanes.begin(); i != furtherLanes.end(); ++i) {
         if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
         (*i)->resetPartialOccupation(this);
     }
+    const MSLane* firstOldFurther = furtherLanes.size() > 0 ? furtherLanes.front() : 0;
+    // update furtherLanes
+    SUMOReal result = myState.myBackPos;
     furtherLanes.clear();
-    furtherLanesPosLat.clear();
     if (passedLanes.size() > 0) {
         SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
         std::vector<MSLane*>::const_reverse_iterator i = passedLanes.rbegin() + 1;
         while (leftLength > 0 && i != passedLanes.rend()) {
             furtherLanes.push_back(*i);
-            furtherLanesPosLat.push_back(myState.myPosLat);
+            if (*i != firstOldFurther) {
+                furtherLanesPosLat.insert(furtherLanesPosLat.begin(), myState.myPosLat);
+            }
             if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
             leftLength -= (*i)->setPartialOccupation(this);
             ++i;
         }
         if (getID() == "disabled") std::cout << " newFurther=" << toString(myFurtherLanes) << " leftLength=" << leftLength << "\n";
-        return -leftLength;
-    } else {
-        return myState.myBackPos;
+        result = -leftLength;
     }
+    assert(furtherLanesPosLat.size() >= furtherLanes.size());
+    furtherLanesPosLat.erase(furtherLanesPosLat.begin() + furtherLanes.size(), furtherLanesPosLat.end());
+    assert(furtherLanesPosLat.size() == furtherLanes.size());
+    return result;
 }
 
 
@@ -2679,7 +2686,6 @@ MSVehicle::getCenterOnEdge(const MSLane* lane) const {
     } else {
         assert(myFurtherLanes.size() == myFurtherLanesPosLat.size());
         for (int i = 0; i < (int)myFurtherLanes.size(); ++i) {
-            //if (gDebugFlag1) std::cout << " comparing i=" << (*i)->getID() << " lane=" << lane->getID() << "\n";
             if (myFurtherLanes[i] == lane) {
                 return lane->getRightSideOnEdge() + myFurtherLanesPosLat[i] + 0.5 * lane->getWidth();
             }
