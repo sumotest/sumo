@@ -12,3 +12,6 @@ overtaking_bicycle
 
 # A vehicle that does not fit into a single lane should drive safely
 extra_wide_vehicle
+
+# a lane has two follower lanes on the next edge and vehicle paths might cross
+lane_split_conflict
