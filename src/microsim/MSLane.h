@@ -312,10 +312,10 @@ public:
      * @param[in] allowCached Whether the cached value may be used
      * @return Information about the last vehicles
      */
-    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego, SUMOReal minPos=0, bool allowCached=true) const;
+    const MSLeaderInfo& getLastVehicleInformation(const MSVehicle* ego, SUMOReal latOffset, SUMOReal minPos=0, bool allowCached=true) const;
 
     /// @brief analogue to getLastVehicleInformation but in the upstream direction
-    const MSLeaderInfo& getFirstVehicleInformation(const MSVehicle* ego, bool onlyFrontOnLane, SUMOReal maxPos=std::numeric_limits<SUMOReal>::max(), bool allowCached=true) const;
+    const MSLeaderInfo& getFirstVehicleInformation(const MSVehicle* ego, SUMOReal latOffset, bool onlyFrontOnLane, SUMOReal maxPos=std::numeric_limits<SUMOReal>::max(), bool allowCached=true) const;
 
     /// @}
 

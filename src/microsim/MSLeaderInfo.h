@@ -57,7 +57,7 @@ typedef std::pair<MSVehicle*, SUMOReal> LeaderDist;
 class MSLeaderInfo {
 public:
     /// Constructor
-    MSLeaderInfo(const MSLane* lane, const MSVehicle* ego=0);
+    MSLeaderInfo(const MSLane* lane, const MSVehicle* ego=0, SUMOReal latOffset=0);
 
     /// Destructor
     virtual ~MSLeaderInfo();
@@ -127,15 +127,15 @@ protected:
 class MSLeaderDistanceInfo : public MSLeaderInfo {
 public:
     /// Constructor
-    MSLeaderDistanceInfo(const MSLane* lane, const MSVehicle* ego, bool recordLeaders=true);
+    MSLeaderDistanceInfo(const MSLane* lane, const MSVehicle* ego, SUMOReal latOffset);
 
     /// Destructor
     virtual ~MSLeaderDistanceInfo();
 
     /* @brief adds this vehicle as a leader in the appropriate sublanes
      * @param[in] veh The vehicle to add
-     * @param[in] gap The gap between the egoFront+minGap to the back of veh (myRecordLeaders=true) 
-     *   or from the back of ego to the front+minGap of veh (myRecordLeaders=false)
+     * @param[in] gap The gap between the egoFront+minGap to the back of veh 
+     *   or from the back of ego to the front+minGap of veh
      * @param[in] latOffset The lateral offset that must be added to the position of veh
      * @param[in] sublane The single sublane to which this leader shall be checked (-1 means: check for all)
      * @return The number of free sublanes
@@ -157,10 +157,6 @@ public:
 
 protected:
 
-    /// @brief whether we are recording leaders of followers
-    // @note: not const to simplify assignment
-    bool myRecordLeaders;
-
     std::vector<SUMOReal> myDistances;
 
 };
@@ -172,7 +168,7 @@ protected:
 class MSCriticalFollowerDistanceInfo : public MSLeaderDistanceInfo {
 public:
     /// Constructor
-    MSCriticalFollowerDistanceInfo(const MSLane* lane, const MSVehicle* ego);
+    MSCriticalFollowerDistanceInfo(const MSLane* lane, const MSVehicle* ego, SUMOReal latOffset);
 
     /// Destructor
     virtual ~MSCriticalFollowerDistanceInfo();

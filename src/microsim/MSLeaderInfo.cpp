@@ -50,7 +50,7 @@
 // ===========================================================================
 // MSLeaderInfo member method definitions
 // ===========================================================================
-MSLeaderInfo::MSLeaderInfo(const MSLane* lane, const MSVehicle* ego) : 
+MSLeaderInfo::MSLeaderInfo(const MSLane* lane, const MSVehicle* ego, SUMOReal latOffset) : 
     myWidth(lane->getWidth()),
     myVehicles(MAX2(1, int(ceil(myWidth / MSGlobals::gLateralResolution))), (MSVehicle*)0),
     myFreeSublanes((int)myVehicles.size()),
@@ -59,7 +59,6 @@ MSLeaderInfo::MSLeaderInfo(const MSLane* lane, const MSVehicle* ego) :
     myHasVehicles(false)
 { 
     if (ego != 0) {
-        const SUMOReal latOffset = ego->getLane()->getRightSideOnEdge() - lane->getRightSideOnEdge();
         getSubLanes(ego, latOffset, egoRightMost, egoLeftMost);
         // filter out sublanes not of interest to ego
         myFreeSublanes -= egoRightMost;
@@ -179,9 +178,8 @@ MSLeaderInfo::hasStoppedVehicle() const {
 // ===========================================================================
 
 
-MSLeaderDistanceInfo::MSLeaderDistanceInfo(const MSLane* lane, const MSVehicle* ego, bool recordLeaders) : 
-    MSLeaderInfo(lane, ego),
-    myRecordLeaders(recordLeaders),
+MSLeaderDistanceInfo::MSLeaderDistanceInfo(const MSLane* lane, const MSVehicle* ego, SUMOReal latOffset) : 
+    MSLeaderInfo(lane, ego, latOffset),
     myDistances(myVehicles.size(), std::numeric_limits<SUMOReal>::max())
 { }
 
@@ -266,8 +264,8 @@ MSLeaderDistanceInfo::toString() const {
 // ===========================================================================
 
 
-MSCriticalFollowerDistanceInfo::MSCriticalFollowerDistanceInfo(const MSLane* lane, const MSVehicle* ego) : 
-    MSLeaderDistanceInfo(lane, ego, false),
+MSCriticalFollowerDistanceInfo::MSCriticalFollowerDistanceInfo(const MSLane* lane, const MSVehicle* ego, SUMOReal latOffset) : 
+    MSLeaderDistanceInfo(lane, ego, latOffset),
     myMissingGaps(myVehicles.size(), -std::numeric_limits<SUMOReal>::max())
 { }
 

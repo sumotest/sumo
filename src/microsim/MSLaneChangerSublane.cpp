@@ -209,7 +209,7 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
     //}
     // get the leading vehicle on the lane to change to
     if (gDebugFlag1) std::cout << SIMTIME << " getLeaders lane=" << target->lane->getID() << " ego=" << ego->getID() << " ahead=" << target->ahead.toString() << "\n";
-    MSLeaderDistanceInfo result(target->lane, 0);
+    MSLeaderDistanceInfo result(target->lane, 0, 0);
     for (int i = 0; i < target->ahead.numSublanes(); ++i) {
         const MSVehicle* veh = target->ahead[i];
         if (veh != 0) {
@@ -221,7 +221,7 @@ MSLaneChangerSublane::getLeaders(const ChangerIt& target, const MSVehicle* ego) 
     }
     // if there are vehicles on the target lane with the same position as ego,
     // they may not have been added to 'ahead' yet
-    const MSLeaderInfo& aheadSamePos = target->lane->getLastVehicleInformation(0, ego->getPositionOnLane(), false);
+    const MSLeaderInfo& aheadSamePos = target->lane->getLastVehicleInformation(0, 0, ego->getPositionOnLane(), false);
     for (int i = 0; i < aheadSamePos.numSublanes(); ++i) {
         const MSVehicle* veh = aheadSamePos[i];
         if (veh != 0 && veh != ego) {
@@ -262,10 +262,10 @@ MSLaneChangerSublane::checkChangeSublane(
 
     MSLeaderDistanceInfo neighLeaders = getLeaders(target, vehicle);
     MSLeaderDistanceInfo neighFollowers = target->lane->getFollowersOnConsecutive(vehicle, true);
-    MSLeaderDistanceInfo neighBlockers(&neighLane, vehicle);
+    MSLeaderDistanceInfo neighBlockers(&neighLane, vehicle, vehicle->getLane()->getRightSideOnEdge() - neighLane.getRightSideOnEdge());
     MSLeaderDistanceInfo leaders = getLeaders(myCandi, vehicle);
     MSLeaderDistanceInfo followers = myCandi->lane->getFollowersOnConsecutive(vehicle, true);
-    MSLeaderDistanceInfo blockers(vehicle->getLane(), vehicle);
+    MSLeaderDistanceInfo blockers(vehicle->getLane(), vehicle, 0);
  
     if (gDebugFlag1) std::cout << SIMTIME 
         << " checkChangeSublane: veh=" << vehicle->getID() 

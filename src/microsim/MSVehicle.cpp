@@ -943,7 +943,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "Silvani_7_114");
+    //gDebugFlag1 = (getID() == "Silvani_1_618");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1042,7 +1042,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             const MSLane* shadowLane = getLaneChangeModel().getShadowLane(lane);
             if (shadowLane != 0) {
                 const SUMOReal latOffset = getLane()->getRightSideOnEdge() - getLaneChangeModel().getShadowLane()->getRightSideOnEdge();
-                adaptToLeaders(shadowLane->getLastVehicleInformation(this, lane->getLength() - seen),
+                adaptToLeaders(shadowLane->getLastVehicleInformation(this, latOffset, lane->getLength() - seen),
                         latOffset,
                         seen, lastLink, shadowLane, v, vLinkPass);
             }
@@ -1237,7 +1237,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         seenNonInternal += lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL ? 0 : lane->getLength();
         //gDebugFlag1 = getID() == "13";
         // do not restrict results to the current vehicle to allow caching for the current time step
-        ahead = lane->getLastVehicleInformation(0);
+        ahead = lane->getLastVehicleInformation(0, 0);
         //gDebugFlag1 = false;
         seen += lane->getLength();
         //if (getID() == "from3.5") std::cout << SIMTIME << " seen=" << seen << " includes lane=" << lane->getID() << " with length " << lane->getLength() << "\n";
