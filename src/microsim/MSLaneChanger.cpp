@@ -188,6 +188,9 @@ MSLaneChanger::findCandidate() {
 
 bool 
 MSLaneChanger::mayChange(int direction) const {
+    if (!myAllowsChanging) {
+        return false;
+    }
     if (direction == -1) {
         return (myCandi != myChanger.begin()    && (myCandi - 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass()));
     } else {

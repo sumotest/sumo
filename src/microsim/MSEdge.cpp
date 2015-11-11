@@ -184,11 +184,11 @@ void
 MSEdge::buildLaneChanger() {
     if (!myLanes->empty()) {
         const bool allowSwap = OptionsCont::getOptions().getBool("lanechange.allow-swap");
+        const bool allowChanging = allowsLaneChanging();
         if (MSGlobals::gLateralResolution > 0) {
             // may always initiate sublane-change
-            myLaneChanger = new MSLaneChangerSublane(myLanes, true, allowSwap);
+            myLaneChanger = new MSLaneChangerSublane(myLanes, allowChanging, allowSwap);
         } else {
-            const bool allowChanging = allowsLaneChanging();
             if (MSGlobals::gLaneChangeDuration > 0) {
                 myLaneChanger = new MSLaneChanger(myLanes, allowChanging, allowSwap);
             } else if (myLanes->size() > 1) {
