@@ -943,7 +943,7 @@ MSVehicle::getStopEdges() const {
 void
 MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal lengthsInFront) {
 
-    //gDebugFlag1 = (getID() == "Silvani_1_618");
+    //gDebugFlag1 = (getID() == "disabled");
     //gDebugFlag1 = true;
     //gDebugFlag1 = gDebugFlag1 || (getID() == "pkw35412");
     if (gDebugFlag1) {
@@ -1332,7 +1332,7 @@ MSVehicle::getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leader
 
 bool
 MSVehicle::executeMove() {
-    //gDebugFlag1 = (getID() == "o3_car_14");
+    //gDebugFlag1 = (getID() == "disabled");
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == getID()) {
         int bla = 0;
@@ -1425,6 +1425,7 @@ MSVehicle::executeMove() {
                 if (ls == LINKSTATE_EQUAL) {
                     link->removeApproaching(this);
                 }
+                if (gDebugFlag1) std::cout << SIMTIME << " braking for closed link=" << link->getViaLaneOrLane()->getID() << "\n";
                 break;
             }
         } else {
@@ -1621,7 +1622,11 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, std::vector<SU
                 const std::vector<MSLane*>& passedLanes) {
 
     // XXX only reset / set the values that were changed
-    if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes oldFurther=" << toString(myFurtherLanes) << " passed=" << toString(passedLanes) << "\n";
+    if (getID() == "disabled") std::cout << SIMTIME 
+        << " updateFurtherLanes oldFurther=" << toString(furtherLanes) 
+            << " oldFurtherPosLat=" << toString(furtherLanesPosLat) 
+            << " passed=" << toString(passedLanes) 
+            << "\n";
     for (std::vector<MSLane*>::iterator i = furtherLanes.begin(); i != furtherLanes.end(); ++i) {
         if (getID() == "disabled") std::cout << SIMTIME << " updateFurtherLanes \n";
         (*i)->resetPartialOccupation(this);
@@ -1642,12 +1647,16 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, std::vector<SU
             leftLength -= (*i)->setPartialOccupation(this);
             ++i;
         }
-        if (getID() == "disabled") std::cout << " newFurther=" << toString(myFurtherLanes) << " leftLength=" << leftLength << "\n";
         result = -leftLength;
     }
     assert(furtherLanesPosLat.size() >= furtherLanes.size());
     furtherLanesPosLat.erase(furtherLanesPosLat.begin() + furtherLanes.size(), furtherLanesPosLat.end());
     assert(furtherLanesPosLat.size() == furtherLanes.size());
+    if (getID() == "disabled") std::cout 
+        << " newFurther=" << toString(furtherLanes) 
+            << " newFurtherPosLat=" << toString(furtherLanesPosLat) 
+            << " newBackPos=" << result 
+            << "\n";
     return result;
 }
 

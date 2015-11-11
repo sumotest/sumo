@@ -243,10 +243,17 @@ MSAbstractLaneChangeModel::updateShadowLane() {
     if (myShadowLane != 0) {
         myShadowLane->setPartialOccupation(&myVehicle);
         const std::vector<MSLane*>& further = myVehicle.getFurtherLanes();
-        for (std::vector<MSLane*>::const_reverse_iterator i = further.rbegin(); i != further.rend(); ++i) {
-            MSLane* shadowFurther = getShadowLane(*i);
-            if (shadowFurther != 0) {
-                passed.push_back(shadowFurther);
+        const std::vector<SUMOReal>& furtherPosLat = myVehicle.getFurtherLanesPosLat();
+        assert(furter.size() == furtherPosLat.size());
+        for (int i = (int)further.size() - 1; i >= 0; --i) {
+            if (furtherPosLat[i] == myVehicle.getLateralPositionOnLane()) {
+                MSLane* shadowFurther = getShadowLane(further[i]);
+                if (shadowFurther != 0) {
+                    passed.push_back(shadowFurther);
+                }
+            } else {
+                // vehicle end is still on the original lane after lane changing
+                break;
             }
         }
         passed.push_back(myShadowLane);

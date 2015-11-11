@@ -345,6 +345,7 @@ MSLink::opened(SUMOTime arrivalTime, SUMOReal arrivalSpeed, SUMOReal leaveSpeed,
                                 impatience, decel, waitingTime)) {
                         //std::cout << SIMTIME << " blocked by " << foe->getID() << " arrival=" << arrivalTime << " foeArrival=" << i->second.arrivalTime << "\n";
                         if (collectFoes == 0) {
+                            //if (SIMTIME == 1181) std::cout << " link=" << getViaLaneOrLane()->getID() << " blocked by sublaneFoe=" << foe->getID() << " foeLink=" << foeLink->getViaLaneOrLane()->getID() << " posLat=" << posLat << "\n";
                             return false;
                         } else {
                             collectFoes->push_back(i->first);

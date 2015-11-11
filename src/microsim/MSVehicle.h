@@ -521,6 +521,10 @@ public:
         return myFurtherLanes;
     }
 
+    const std::vector<SUMOReal>& getFurtherLanesPosLat() const {
+        return myFurtherLanesPosLat;
+    }
+
     /// @name strategical/tactical lane choosing methods
     /// @{
 
