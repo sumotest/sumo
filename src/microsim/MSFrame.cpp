@@ -472,6 +472,9 @@ MSFrame::checkOptions() {
     if (string2time(oc.getString("lanechange.duration")) > 0 && oc.getFloat("lateral-resolution") > 0) {
         WRITE_ERROR("Only one of the options 'lanechange.duration' or 'lateral-resolution' may be given.");
     }
+    if (oc.getBool("duration-log.statistics") && oc.isDefault("verbose")) {
+        oc.set("verbose", "true");
+    }
     return ok;
 }
 

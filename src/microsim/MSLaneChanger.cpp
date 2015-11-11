@@ -234,7 +234,7 @@ MSLaneChanger::change() {
         vehicle->adaptBestLanesOccupation(i, myChanger[i].dens);
     }
     const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
-    std::pair<MSVehicle* const, SUMOReal> leader = getRealThisLeader(myCandi);
+    std::pair<MSVehicle* const, SUMOReal> leader = getRealLeader(myCandi);
     // check whether the vehicle wants and is able to change to right lane
     int state1 = 0;
     if (mayChange(-1)) {
@@ -403,43 +403,6 @@ MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from) {
             << " shadowHopped=" << Named::getIDSecure(shadow->lane)
             << "\n";
     return pastMidpoint;
-}
-
-
-std::pair<MSVehicle* const, SUMOReal>
-MSLaneChanger::getRealThisLeader(const ChangerIt& target) const {
-    // get the leading vehicle on the lane to change to
-    MSVehicle* leader = target->lead;
-    if (leader == 0) {
-        MSLane* targetLane = target->lane;
-        if (targetLane->myPartialVehicles.size() > 0) {
-            assert(targetLane->myPartialVehicles.size() == 1);
-            MSVehicle* leader = targetLane->myPartialVehicles.front();
-            return std::pair<MSVehicle*, SUMOReal>(leader, leader->getBackPositionOnLane(targetLane) - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap());
-        }
-        const std::vector<MSLane*>& bestLaneConts = veh(myCandi)->getBestLanesContinuation();
-        MSLinkCont::const_iterator link = MSLane::succLinkSec(*veh(myCandi), 1, *targetLane, bestLaneConts);
-        if (targetLane->isLinkEnd(link)) {
-            return std::pair<MSVehicle*, SUMOReal>(static_cast<MSVehicle*>(0), -1);
-        }
-        MSLane* nextLane = (*link)->getLane();
-        if (nextLane == 0) {
-            return std::pair<MSVehicle*, SUMOReal>(static_cast<MSVehicle*>(0), -1);
-        }
-        leader = nextLane->getLastFullVehicle();
-        if (leader == 0) {
-            return std::pair<MSVehicle*, SUMOReal>(static_cast<MSVehicle*>(0), -1);
-        }
-        SUMOReal gap =
-            leader->getPositionOnLane() - leader->getVehicleType().getLength()
-            +
-            (myCandi->lane->getLength() - veh(myCandi)->getPositionOnLane() - veh(myCandi)->getVehicleType().getMinGap()); // !!! recheck
-        return std::pair<MSVehicle* const, SUMOReal>(leader, MAX2((SUMOReal) 0, gap));
-    } else {
-        MSVehicle* candi = veh(myCandi);
-        SUMOReal gap = leader->getBackPositionOnLane(target->lane) - candi->getPositionOnLane() - candi->getVehicleType().getMinGap();
-        return std::pair<MSVehicle* const, SUMOReal>(leader, MAX2((SUMOReal) 0, gap));
-    }
 }
 
 
