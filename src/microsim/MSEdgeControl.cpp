@@ -32,6 +32,7 @@
 #endif
 
 #include "MSEdgeControl.h"
+#include "MSGlobals.h"
 #include "MSEdge.h"
 #include "MSLane.h"
 #include "MSVehicle.h"
@@ -133,6 +134,13 @@ MSEdgeControl::executeMovements(SUMOTime t) {
                 }
                 lu.amActive = true;
             }
+        }
+    }
+    if (MSGlobals::gLateralResolution > 0) {
+        // multiple vehicle shadows may have entered an inactive lane and would
+        // not be sorted otherwise
+        for (LaneUsageVector::iterator it = myLanes.begin(); it != myLanes.end(); ++it) {
+            (*it).lane->sortPartialVehicles();
         }
     }
 }

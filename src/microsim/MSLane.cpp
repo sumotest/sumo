@@ -95,9 +95,7 @@ MSLane::AnyVehicleIterator::operator++() {
     } else {
         myI2 += myDirection;
     }
-    //if (gDebugFlag1) {
-    //    std::cout << SIMTIME << "          AnyVehicleIterator lane=" << myLane->getID() << " myI1=" << myI1 << " myI2=" << myI2 << "\n";
-    //}
+    //if (gDebugFlag1) std::cout << SIMTIME << "          AnyVehicleIterator::operator++ lane=" << myLane->getID() << " myI1=" << myI1 << " myI2=" << myI2 << "\n";
     return *this;
 }
 
@@ -118,6 +116,10 @@ MSLane::AnyVehicleIterator::operator*() {
 
 bool 
 MSLane::AnyVehicleIterator::nextIsMyVehicles() const {
+    //if (gDebugFlag1) std::cout << SIMTIME << "          AnyVehicleIterator::nextIsMyVehicles lane=" << myLane->getID() 
+    //        << " myI1=" << myI1 
+    //        << " myI2=" << myI2 
+    //        << "\n";
     if (myI1 == myI1End) {
         if (myI2 != myI2End) {
             return false;
@@ -128,16 +130,12 @@ MSLane::AnyVehicleIterator::nextIsMyVehicles() const {
         if (myI2 == myI2End) {
             return true;
         } else {
-            //if (gDebugFlag1) {
-            //    std::cout << SIMTIME << "          AnyVehicleIterator lane=" << myLane->getID() 
-            //        << " myI1=" << myI1 
-            //        << " myI2=" << myI2 
+            //if (gDebugFlag1) std::cout << "              "
             //        << " veh1=" << myLane->myVehicles[myI1]->getID()
             //        << " veh2=" << myLane->myPartialVehicles[myI2]->getID()
             //        << " pos1=" << myLane->myVehicles[myI1]->getPositionOnLane(myLane) 
             //        << " pos2=" << myLane->myPartialVehicles[myI2]->getPositionOnLane(myLane)
             //        << "\n";
-            //}
             if (myLane->myVehicles[myI1]->getPositionOnLane(myLane) < myLane->myPartialVehicles[myI2]->getPositionOnLane(myLane)) {
                 return myDownstream;
             } else {
@@ -1324,13 +1322,18 @@ MSLane::integrateNewVehicle(SUMOTime) {
     if (MSGlobals::gLateralResolution > 0) {
         sort(myVehicles.begin(), myVehicles.end(), vehicle_natural_position_sorter(this));
     }
-    if (myPartialVehicles.size() > 1) {
-        sort(myPartialVehicles.begin(), myPartialVehicles.end(), vehicle_natural_position_sorter(this));
-    }
+    sortPartialVehicles();
     //std::cout << " myVehicles2=" << toString(myVehicles) << "\n"; 
     return wasInactive && myVehicles.size() != 0;
 }
 
+
+void 
+MSLane::sortPartialVehicles() {
+    if (myPartialVehicles.size() > 1) {
+        sort(myPartialVehicles.begin(), myPartialVehicles.end(), vehicle_natural_position_sorter(this));
+    }
+}
 
 bool
 MSLane::isLinkEnd(MSLinkCont::const_iterator& i) const {
@@ -1470,9 +1473,7 @@ MSLane::swapAfterLaneChange(SUMOTime) {
     myTmpVehicles.clear();
     // this needs to be done after finishing lane-changing for all lanes on the
     // current edge (MSLaneChanger::updateLanes()) 
-    if (myPartialVehicles.size() > 1) {
-        sort(myPartialVehicles.begin(), myPartialVehicles.end(), vehicle_natural_position_sorter(this));
-    }
+    sortPartialVehicles();
 }
 
 

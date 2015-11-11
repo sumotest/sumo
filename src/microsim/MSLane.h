@@ -340,6 +340,14 @@ public:
         return (int)myVehicles.size() + (int)myPartialVehicles.size();
     }
 
+    /** @brief Returns the number of vehicles partially on this lane (for which this lane
+     * is not responsible)
+     * @return The number of vehicles touching this lane but with their front on another lane
+     */
+    int getPartialVehicleNumber() const {
+        return (int)myPartialVehicles.size();
+    }
+
 
     /** @brief Returns the vehicles container; locks it for microsimulation
      *
@@ -860,6 +868,10 @@ public:
     SUMOReal getCenterOnEdge() const {
         return myRightSideOnEdge + 0.5 * myWidth;
     }
+
+    /// @brief sorts myPartialVehicles
+    void sortPartialVehicles();
+
 
     /// @name State saving/loading
     /// @{
