@@ -244,7 +244,7 @@ MSAbstractLaneChangeModel::updateShadowLane() {
         myShadowLane->setPartialOccupation(&myVehicle);
         const std::vector<MSLane*>& further = myVehicle.getFurtherLanes();
         const std::vector<SUMOReal>& furtherPosLat = myVehicle.getFurtherLanesPosLat();
-        assert(furter.size() == furtherPosLat.size());
+        assert(further.size() == furtherPosLat.size());
         for (int i = (int)further.size() - 1; i >= 0; --i) {
             if (furtherPosLat[i] == myVehicle.getLateralPositionOnLane()) {
                 MSLane* shadowFurther = getShadowLane(further[i]);
