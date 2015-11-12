@@ -1648,6 +1648,7 @@ MSLane::getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext) c
     for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
         // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
         MSVehicle* pred = (MSVehicle*)*last;
+        if (gDebugFlag1) std::cout << "   getLeader lane=" << getID() << " egoPos=" << vehPos << " pred=" << pred->getID() << " predPos=" << pred->getPositionOnLane() << "\n";
         if (pred->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
             return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
         }
@@ -2316,6 +2317,7 @@ MSLane::getFollower(SUMOReal egoPos) const {
     for (AnyVehicleIterator first = anyVehiclesUpstreamBegin(); first != anyVehiclesUpstreamEnd(); ++first) {
         // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
         MSVehicle* pred = (MSVehicle*)*first;
+        if (gDebugFlag1) std::cout << "   getFollower lane=" << getID() << " egoPos=" << egoPos << " pred=" << pred->getID() << " predPos=" << pred->getPositionOnLane() << "\n";
         if (pred->getPositionOnLane() < egoPos) {
             return std::pair<MSVehicle* const, SUMOReal>(pred, egoPos - pred->getPositionOnLane(this) - pred->getVehicleType().getMinGap());
         }
@@ -2329,11 +2331,10 @@ MSLane::getFollower(SUMOReal egoPos) const {
 
 std::pair<MSVehicle* const, SUMOReal> 
 MSLane::getOppositeLeader(const MSVehicle* ego) const {
-    const SUMOReal egoPos = getOppositePos(ego->getPositionOnLane());
     if (ego->getLaneChangeModel().isOpposite()) {
         return getLeader(ego, getOppositePos(ego->getPositionOnLane()), true);
     } else {
-        std::pair<MSVehicle* const, SUMOReal> result = getFollower(getOppositePos(ego->getBackPositionOnLane()));
+        std::pair<MSVehicle* const, SUMOReal> result = getFollower(getOppositePos(ego->getPositionOnLane()));
         result.second -= ego->getVehicleType().getMinGap();
         return result;
     }
@@ -2348,9 +2349,17 @@ MSLane::getOppositeFollower(const MSVehicle* ego) const {
     //    << " posOnOpposite=" << getOppositePos(ego->getBackPositionOnLane())
     //    << "\n";
     if (ego->getLaneChangeModel().isOpposite()) {
-        return getFollower(getOppositePos(ego->getPositionOnLane()));
+        std::pair<MSVehicle* const, SUMOReal> result = getFollower(getOppositePos(ego->getPositionOnLane()));
+        result.second -= ego->getVehicleType().getLength();
+        return result;
     } else {
-        return getLeader(ego, getOppositePos(ego->getBackPositionOnLane()), false);
+        std::pair<MSVehicle* const, SUMOReal> result = getLeader(ego, getOppositePos(ego->getPositionOnLane()), false);
+        if (result.second > 0) {
+            // follower can be safely ignored since it is going the other way
+            return std::make_pair(static_cast<MSVehicle*>(0), -1);
+        } else {
+            return result;
+        }
     }
 }
 

@@ -141,7 +141,7 @@ protected:
 
 
     /** try changing to the opposite direction edge. */
-    virtual bool changeOpposite();
+    virtual bool changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leader);
 
     /** Update changer for vehicles that did not change */
     void registerUnchanged(MSVehicle* vehicle);
@@ -190,6 +190,15 @@ protected:
 
     /// @brief return the closer follower of ego
     static MSVehicle* getCloserFollower(const SUMOReal maxPos, MSVehicle* follow1, MSVehicle* follow2);
+
+    /** @brief Compute the time and space required for overtaking the given leader
+     * @param[in] vehicle The vehicle that wants to overtake
+     * @param[in] leader The vehicle to be overtaken
+     * @param[in] gap The gap between vehicle and leader
+     * @param[out] timeToOvertake The time for overtaking
+     * @param[out] spaceToOvertake The space for overtaking
+     */
+    static void computeOvertakingTime(const MSVehicle* vehicle, const MSVehicle* leader, SUMOReal gap, SUMOReal& timeToOvertake, SUMOReal& spaceToOvertake);
 
 protected:
     /// Container for ChangeElemements, one for every lane in the edge.
