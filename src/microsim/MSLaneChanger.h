@@ -139,6 +139,10 @@ protected:
     /** Find a new candidate and try to change it. */
     virtual bool change();
 
+
+    /** try changing to the opposite direction edge. */
+    virtual bool changeOpposite();
+
     /** Update changer for vehicles that did not change */
     void registerUnchanged(MSVehicle* vehicle);
 
@@ -156,9 +160,19 @@ protected:
 
     /* @brief check whether lane changing in the given direction is desirable
      * and possible */
-    int checkChange(
+    int checkChangeWithinEdge(
         int laneOffset,
         const std::pair<MSVehicle* const, SUMOReal>& leader,
+        const std::vector<MSVehicle::LaneQ>& preb) const;
+    
+    /* @brief check whether lane changing in the given direction is desirable
+     * and possible */
+    int checkChange(
+        int laneOffset,
+        const MSLane* targetLane,
+        const std::pair<MSVehicle* const, SUMOReal>& leader,
+        const std::pair<MSVehicle* const, SUMOReal>& neighLead,
+        const std::pair<MSVehicle* const, SUMOReal>& neighFollow,
         const std::vector<MSVehicle::LaneQ>& preb) const;
 
     ///  @brief start the lane change maneuver (and finish it instantly if gLaneChangeDuration == 0)
@@ -166,8 +180,6 @@ protected:
 
     ///  @brief continue a lane change maneuver and return whether the midpoint was passed in this step (used if gLaneChangeDuration > 0)
     bool continueChange(MSVehicle* vehicle, ChangerIt& from);
-
-    std::pair<MSVehicle* const, SUMOReal> getRealThisLeader(const ChangerIt& target) const;
 
     std::pair<MSVehicle* const, SUMOReal> getRealFollower(const ChangerIt& target) const;
 

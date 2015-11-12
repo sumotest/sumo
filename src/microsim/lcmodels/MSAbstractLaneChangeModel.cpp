@@ -89,11 +89,12 @@ MSAbstractLaneChangeModel::MSAbstractLaneChangeModel(MSVehicle& v, const LaneCha
     myLaneChangeCompletion(1.0),
     myLaneChangeDirection(0),
     myLateralspeed(0),
-    myAlreadyMoved(false),
+    myAlreadyChanged(false),
     myShadowLane(0),
     myCarFollowModel(v.getCarFollowModel()),
     myModel(model),
-    myLastLaneChangeOffset(0) {
+    myLastLaneChangeOffset(0),
+    myAmOpposite(false) {
 }
 
 
@@ -136,6 +137,9 @@ MSAbstractLaneChangeModel::predInteraction(const std::pair<MSVehicle*, SUMOReal>
 
 bool
 MSAbstractLaneChangeModel::startLaneChangeManeuver(MSLane* source, MSLane* target, int direction) {
+    if (&source->getEdge() != &target->getEdge()) {
+        changedToOpposite();
+    }
     if (MSGlobals::gLaneChangeDuration > DELTA_T) {
         myLaneChangeCompletion = 0;
         myLaneChangeDirection = direction;
@@ -317,4 +321,11 @@ MSAbstractLaneChangeModel::removeShadowApproachingInformation() const {
         (*it)->removeApproaching(&myVehicle);
     }
     myApproachedByShadow.clear();
+}
+
+
+void 
+MSAbstractLaneChangeModel::changedToOpposite() {
+    myAmOpposite = !myAmOpposite;
+    myAlreadyChanged = true;
 }

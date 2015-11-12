@@ -658,6 +658,9 @@ MSVehicle::getAngle() const {
     if (getLaneChangeModel().isChangingLanes()) {
         result += DEG2RAD(getLaneChangeModel().getAngleOffset());
     }
+    if (getLaneChangeModel().isOpposite()) {
+        result += M_PI;
+    }
     return result;
 }
 
@@ -984,7 +987,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
                 << "\n";
         }
     }
-    getLaneChangeModel().resetMoved();
+    getLaneChangeModel().resetChanged();
     gDebugFlag1 = false;
 }
 
@@ -1492,7 +1495,11 @@ MSVehicle::executeMove() {
 
     // update position and speed
     myAcceleration = SPEED2ACCEL(vNext - myState.mySpeed);
-    myState.myPos += SPEED2DIST(vNext);
+    if (getLaneChangeModel().isOpposite()) {
+        myState.myPos -= SPEED2DIST(vNext);
+    } else {
+        myState.myPos += SPEED2DIST(vNext);
+    }
     myState.mySpeed = vNext;
     myCachedPosition = Position::INVALID;
     std::vector<MSLane*> passedLanes;
@@ -1587,7 +1594,12 @@ MSVehicle::executeMove() {
             myState.mySpeed = 0;
         }
         const MSLane* oldBackLane = getBackLane();
-        myState.myBackPos = updateFurtherLanes(myFurtherLanes, myFurtherLanesPosLat, passedLanes);
+        if (getLaneChangeModel().isOpposite()) {
+            myState.myBackPos = myState.myPos + getVehicleType().getLength();
+            // XXX what to do with further lanes?
+        } else {
+            myState.myBackPos = updateFurtherLanes(myFurtherLanes, myFurtherLanesPosLat, passedLanes);
+        }
         updateBestLanes();
         // bestLanes need to be updated before lane changing starts
         if (getLaneChangeModel().getShadowLane() != 0 && (moved || oldBackLane != getBackLane())) {
@@ -1633,7 +1645,7 @@ MSVehicle::updateFurtherLanes(std::vector<MSLane*>& furtherLanes, std::vector<SU
     }
     const MSLane* firstOldFurther = furtherLanes.size() > 0 ? furtherLanes.front() : 0;
     // update furtherLanes
-    SUMOReal result = myState.myBackPos;
+    SUMOReal result = myState.myPos - getVehicleType().getLength();
     furtherLanes.clear();
     if (passedLanes.size() > 0) {
         SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
@@ -1669,7 +1681,11 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
     //}
     if (lane == myLane 
             || lane == getLaneChangeModel().getShadowLane()) {
-        return myState.myPos - getVehicleType().getLength();
+        if (getLaneChangeModel().isOpposite()) {
+            return myState.myPos + getVehicleType().getLength();
+        } else {
+            return myState.myPos - getVehicleType().getLength();
+        }
     } else if ((myFurtherLanes.size() > 0 && lane == myFurtherLanes.back())
             || (getLaneChangeModel().getShadowFurtherLanes().size() > 0 && lane == getLaneChangeModel().getShadowFurtherLanes().back())
             ) {

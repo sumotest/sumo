@@ -93,7 +93,7 @@
 //#define DEBUG_COND (myVehicle.getID() == "pkw150478" || myVehicle.getID() == "pkw150494" || myVehicle.getID() == "pkw150289")
 //#define DEBUG_COND (myVehicle.getID() == "A" || myVehicle.getID() == "B") // fail change to left
 //#define DEBUG_COND (myVehicle.getID() == "Costa_12_13") // test stops_overtaking
-//#define DEBUG_COND false
+//#define DEBUG_COND true
 
 // ===========================================================================
 // member method definitions
@@ -662,16 +662,17 @@ MSLCM_JE2013::_wantsChange(
         // internal edges are not kept inside the bestLanes structure
         prebLane = prebLane->getLinkCont()[0]->getLane();
     }
+    const int prebOffset = (&neighLane.getEdge() == &myVehicle.getLane()->getEdge() ? laneOffset : 0);
     for (int p = 0; p < (int) preb.size(); ++p) {
         if (preb[p].lane == prebLane && p + laneOffset >= 0) {
-            assert(p + laneOffset < (int)preb.size());
+            assert(p + prebOffset < (int)preb.size());
             curr = preb[p];
-            neigh = preb[p + laneOffset];
+            neigh = preb[p + prebOffset];
             currentDist = curr.length;
             neighDist = neigh.length;
             bestLaneOffset = curr.bestLaneOffset;
             // VARIANT_13 (equalBest)
-            if (bestLaneOffset == 0 && preb[p + laneOffset].bestLaneOffset == 0) {
+            if (bestLaneOffset == 0 && preb[p + prebOffset].bestLaneOffset == 0) {
                 if (gDebugFlag2) {
                     std::cout << STEPS2TIME(currentTime)
                               << " veh=" << myVehicle.getID()
@@ -679,7 +680,7 @@ MSLCM_JE2013::_wantsChange(
                               << " bestLaneOffsetNew=" << laneOffset
                               << "\n";
                 }
-                bestLaneOffset = laneOffset;
+                bestLaneOffset = prebOffset;
             }
             best = preb[p + bestLaneOffset];
             currIdx = p;
@@ -688,6 +689,14 @@ MSLCM_JE2013::_wantsChange(
     }
     // direction specific constants
     const bool right = (laneOffset == -1);
+    if (isOpposite() && right) {
+        /// XXX left-hand networks
+        bestLaneOffset = -1;
+        curr.bestLaneOffset = -1;
+        currentDist = 0;
+        neigh = preb[preb.size() - 1];
+        neighDist = neigh.length;
+    }
     const int lca = (right ? LCA_RIGHT : LCA_LEFT);
     const int myLca = (right ? LCA_MRIGHT : LCA_MLEFT);
     const int lcaCounter = (right ? LCA_LEFT : LCA_RIGHT);

@@ -872,6 +872,17 @@ public:
     /// @brief sorts myPartialVehicles
     void sortPartialVehicles();
 
+    /// @brief return the opposite direction lane for lane changing or 0
+    MSLane* getOpposite() const;
+
+    /// @brief return the corresponding position on the opposite lane
+    SUMOReal getOppositePos(SUMOReal pos) const;
+
+    std::pair<MSVehicle* const, SUMOReal> getOppositeLeader(const MSVehicle* ego) const;
+
+    std::pair<MSVehicle* const, SUMOReal> getOppositeFollower(const MSVehicle* ego) const;
+
+    std::pair<MSVehicle* const, SUMOReal> getFollower(SUMOReal egoPos) const;
 
     /// @name State saving/loading
     /// @{

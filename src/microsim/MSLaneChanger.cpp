@@ -90,7 +90,7 @@ MSLaneChanger::laneChange(SUMOTime t) {
     initChanger();
     try {
         while (vehInChanger()) {
-            bool haveChanged = change();
+            const bool haveChanged = change();
             updateChanger(haveChanged);
         }
         updateLanes(t);
@@ -220,10 +220,18 @@ MSLaneChanger::change() {
     if (vehicle->getLaneChangeModel().isChangingLanes()) {
         return continueChange(vehicle, myCandi);
     }
-    if (myChanger.size() == 1 || !myAllowsChanging) {
+    if (!myAllowsChanging || vehicle->getLaneChangeModel().alreadyChanged()) {
         registerUnchanged(vehicle);
         return false;
     }
+    if (myChanger.size() == 1) {
+        if (changeOpposite()) {
+            return true;
+        }
+        registerUnchanged(vehicle);
+        return false;
+    }
+
 #ifndef NO_TRACI
     if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
         return false; // !!! temporary; just because it broke, here
@@ -238,7 +246,7 @@ MSLaneChanger::change() {
     // check whether the vehicle wants and is able to change to right lane
     int state1 = 0;
     if (mayChange(-1)) {
-        state1 = checkChange(-1, leader, preb);
+        state1 = checkChangeWithinEdge(-1, leader, preb);
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state1 & LCA_RIGHT) != 0 && changingAllowed1) {
@@ -258,7 +266,7 @@ MSLaneChanger::change() {
     // check whether the vehicle wants and is able to change to left lane
     int state2 = 0;
     if (mayChange(1)) {
-        state2 = checkChange(1, leader, preb);
+        state2 = checkChangeWithinEdge(1, leader, preb);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_LEFT) != 0 && changingAllowed2) {
@@ -330,8 +338,12 @@ MSLaneChanger::change() {
             }
         }
     }
-    registerUnchanged(vehicle);
-    return false;
+    if (!changeOpposite()) {
+        registerUnchanged(vehicle);
+        return false;
+    } else {
+        return true;
+    }
 }
 
 
@@ -482,15 +494,28 @@ MSLaneChanger::getCloserFollower(const SUMOReal maxPos, MSVehicle* follow1, MSVe
 }
 
 int
-MSLaneChanger::checkChange(
+MSLaneChanger::checkChangeWithinEdge(
     int laneOffset,
     const std::pair<MSVehicle* const, SUMOReal>& leader,
     const std::vector<MSVehicle::LaneQ>& preb) const {
-    MSVehicle* vehicle = veh(myCandi);
-    //gDebugFlag1 = vehicle->getID() == "disabled";
+
     std::pair<MSVehicle* const, SUMOReal> neighLead = getRealLeader(myCandi + laneOffset);
     std::pair<MSVehicle* const, SUMOReal> neighFollow = getRealFollower(myCandi + laneOffset);
     ChangerIt target = myCandi + laneOffset;
+    return checkChange(laneOffset, target->lane, leader, neighLead, neighFollow, preb);
+}
+
+int
+MSLaneChanger::checkChange(
+        int laneOffset,
+        const MSLane* targetLane,
+        const std::pair<MSVehicle* const, SUMOReal>& leader,
+        const std::pair<MSVehicle* const, SUMOReal>& neighLead,
+        const std::pair<MSVehicle* const, SUMOReal>& neighFollow,
+        const std::vector<MSVehicle::LaneQ>& preb) const {
+
+    MSVehicle* vehicle = veh(myCandi);
+    //gDebugFlag1 = vehicle->getID() == "disabled";
     int blocked = 0;
     int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
     int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
@@ -519,7 +544,7 @@ MSLaneChanger::checkChange(
 
     MSAbstractLaneChangeModel::MSLCMessager msg(leader.first, neighLead.first, neighFollow.first);
     int state = blocked | vehicle->getLaneChangeModel().wantsChange(
-                    laneOffset, msg, blocked, leader, neighLead, neighFollow, *(target->lane), preb, &(myCandi->lastBlocked), &(myCandi->firstBlocked));
+                    laneOffset, msg, blocked, leader, neighLead, neighFollow, *targetLane, preb, &(myCandi->lastBlocked), &(myCandi->firstBlocked));
 
     if (blocked == 0 && (state & LCA_WANTS_LANECHANGE) != 0 && neighLead.first != 0) {
         // do are more carefull (but expensive) check to ensure that a
@@ -527,7 +552,6 @@ MSLaneChanger::checkChange(
         const SUMOReal seen = myCandi->lane->getLength() - vehicle->getPositionOnLane();
         const SUMOReal speed = vehicle->getSpeed();
         const SUMOReal dist = vehicle->getCarFollowModel().brakeGap(speed) + vehicle->getVehicleType().getMinGap();
-        const MSLane* targetLane = (myCandi + laneOffset)->lane;
         if (seen < dist) {
             std::pair<MSVehicle* const, SUMOReal> neighLead2 = targetLane->getCriticalLeader(dist, seen, speed, *vehicle);
             if (neighLead2.first != 0 && neighLead2.first != neighLead.first
@@ -634,6 +658,48 @@ MSLaneChanger::checkChange(
     return state;
 }
 
+
+bool 
+MSLaneChanger::changeOpposite() {
+    myCandi = findCandidate();
+    if (!myCandi->lane->getEdge().canChangeToOpposite()) {
+        return false;
+    }
+    MSLane* opposite = myCandi->lane->getOpposite();
+    if (opposite == 0) {
+        return false;
+    }
+    MSVehicle* vehicle = veh(myCandi);
+    MSLane* source = vehicle->getLane();
+    //gDebugFlag1 = vehicle->getID() == "overtaking";
+
+
+    const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
+    std::pair<MSVehicle* const, SUMOReal> leader = getRealLeader(myCandi);
+    std::pair<MSVehicle* const, SUMOReal> neighLead = opposite->getOppositeLeader(vehicle);
+    std::pair<MSVehicle* const, SUMOReal> neighFollow = opposite->getOppositeFollower(vehicle);
+    // changing into the opposite direction is always to the left (XXX except for left-hand networkds)
+    int direction = vehicle->getLaneChangeModel().isOpposite() ? -1 : 1;
+    int state = checkChange(direction, opposite, leader, neighLead, neighFollow, preb);
+
+
+    bool changingAllowed = (state & LCA_BLOCKED) == 0;
+    // change if the vehicle wants to and is allowed to change
+    if ((state & LCA_WANTS_LANECHANGE) != 0 && changingAllowed) {
+        const bool continuous = vehicle->getLaneChangeModel().startLaneChangeManeuver(source, opposite, direction);
+        /// XXX use a dedicated transformation function
+        vehicle->myState.myPos = source->getOppositePos(vehicle->myState.myPos);
+        vehicle->myState.myBackPos = source->getOppositePos(vehicle->myState.myBackPos);
+        /// XXX compute a bette lateral position
+        opposite->forceVehicleInsertion(vehicle, vehicle->getPositionOnLane(), 0); 
+        //std::cout << SIMTIME << " changeOpposite veh=" << vehicle->getID() << " dir=" << direction << " opposite=" << Named::getIDSecure(opposite) << " state=" << state << "\n";
+        return true;
+    }
+    gDebugFlag1 = false;
+    //std::cout << SIMTIME << " notChangeOpposite veh=" << vehicle->getID() << " dir=" << direction << " opposite=" << Named::getIDSecure(opposite) << " state=" << state << "\n";
+    return false;
+
+}
 
 
 /****************************************************************************/

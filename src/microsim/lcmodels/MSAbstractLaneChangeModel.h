@@ -275,6 +275,8 @@ public:
     virtual void changed() = 0;
 
 
+    /// @brief called when a vehicle changes between lanes in opposite directions
+    void changedToOpposite();
 
     void unchanged() {
         if (myLastLaneChangeOffset > 0) {
@@ -342,13 +344,13 @@ public:
     }
 
     /// @brief reset the flag whether a vehicle already moved to false
-    inline bool alreadyMoved() const {
-        return myAlreadyMoved;
+    inline bool alreadyChanged() const {
+        return myAlreadyChanged;
     }
 
     /// @brief reset the flag whether a vehicle already moved to false
-    void resetMoved() {
-        myAlreadyMoved = false;
+    void resetChanged() {
+        myAlreadyChanged = false;
     }
 
     /// @brief start the lane change maneuver and return whether it continues
@@ -390,6 +392,10 @@ public:
     void setShadowApproachingInformation(MSLink* link) const; 
     void removeShadowApproachingInformation() const; 
 
+    bool isOpposite() const {
+        return myAmOpposite;
+    }
+
 protected:
     virtual bool congested(const MSVehicle* const neighLeader);
 
@@ -416,7 +422,7 @@ protected:
     SUMOReal myLateralspeed;
 
     /// @brief whether the vehicle has already moved this step
-    bool myAlreadyMoved;
+    bool myAlreadyChanged;
 
     /// @brief A lane that is partially occupied by the front of the vehicle but that is not the primary lane
     MSLane* myShadowLane;
@@ -454,6 +460,9 @@ private:
 
     /// @brief links which are approached by the shadow vehicle
     mutable std::vector<MSLink*> myApproachedByShadow;
+
+    /// @brief whether the vehicle is driving in the opposite direction
+    bool myAmOpposite;
 
 
 private:

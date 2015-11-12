@@ -191,7 +191,7 @@ MSEdge::buildLaneChanger() {
         } else {
             if (MSGlobals::gLaneChangeDuration > 0) {
                 myLaneChanger = new MSLaneChanger(myLanes, allowChanging, allowSwap);
-            } else if (myLanes->size() > 1) {
+            } else if (myLanes->size() > 1 || canChangeToOpposite()) {
                 myLaneChanger = new MSLaneChanger(myLanes, allowChanging, allowSwap); 
             }
         }
@@ -787,6 +787,15 @@ MSEdge::getSuccessors(SUMOVehicleClass vClass) const {
     return i->second;
 }
 
+
+bool 
+MSEdge::canChangeToOpposite() {
+    // XXX load data from network
+    return (
+            getID() == "VODUGES_beg" ||
+            getID() == "-VODUGES_beg"
+            );
+}
 
 /****************************************************************************/
 

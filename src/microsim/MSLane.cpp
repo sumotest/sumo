@@ -1126,10 +1126,6 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
     // iteratate over vehicles in reverse so that move reminders will be called in the correct order
     for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend();) {
         MSVehicle* veh = *i;
-        if (veh->getLaneChangeModel().alreadyMoved()) {
-            ++i;
-            continue;
-        }
         // length is needed later when the vehicle may not exist anymore
         const SUMOReal length = veh->getVehicleType().getLengthWithGap();
         const SUMOReal nettoLength = veh->getVehicleType().getLength();
@@ -1652,7 +1648,7 @@ MSLane::getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext) c
     for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
         // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
         MSVehicle* pred = (MSVehicle*)*last;
-        if (veh->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
+        if (pred->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
             return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
         }
     }
@@ -2287,6 +2283,75 @@ MSLane::getPartialBehind(const MSVehicle* ego) const {
     }
     if (gDebugFlag1) std::cout << SIMTIME << " getPartialBehind lane=" << getID() << " ego=" << ego->getID() << " nothing found. partials=" << toString(myPartialVehicles) << "\n";
     return 0;
+}
+
+
+MSLane* 
+MSLane::getOpposite() const {
+    // XXX load data from network
+    if (getID() == "VODUGES_beg_0") {
+        return dictionary("-VODUGES_beg_0");
+    } else if (getID() == "-VODUGES_beg_0") {
+        return dictionary("VODUGES_beg_0");
+    } else {
+        return 0;
+    }
+}
+
+
+SUMOReal 
+MSLane::getOppositePos(SUMOReal pos) const {
+    MSLane* opposite = getOpposite();
+    if (opposite == 0) {
+        assert(false);
+        throw ProcessError("Lane '" + getID() + "' cannot compute oppositePos as there is no opposite lane.");
+    }
+    // XXX transformations for curved geometries
+    return opposite->getLength() - pos;
+
+}
+
+std::pair<MSVehicle* const, SUMOReal> 
+MSLane::getFollower(SUMOReal egoPos) const {
+    for (AnyVehicleIterator first = anyVehiclesUpstreamBegin(); first != anyVehiclesUpstreamEnd(); ++first) {
+        // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
+        MSVehicle* pred = (MSVehicle*)*first;
+        if (pred->getPositionOnLane() < egoPos) {
+            return std::pair<MSVehicle* const, SUMOReal>(pred, egoPos - pred->getPositionOnLane(this) - pred->getVehicleType().getMinGap());
+        }
+    }
+    return std::make_pair(static_cast<MSVehicle*>(0), -1);
+    /// XXX
+    //return target->lane->getFollowerOnConsecutive(
+    //               candi->getPositionOnLane() - candi->getVehicleType().getLength(),
+    //               candi->getSpeed(), candi->getCarFollowModel().getMaxDecel());
+}
+
+std::pair<MSVehicle* const, SUMOReal> 
+MSLane::getOppositeLeader(const MSVehicle* ego) const {
+    const SUMOReal egoPos = getOppositePos(ego->getPositionOnLane());
+    if (ego->getLaneChangeModel().isOpposite()) {
+        return getLeader(ego, getOppositePos(ego->getPositionOnLane()), true);
+    } else {
+        std::pair<MSVehicle* const, SUMOReal> result = getFollower(getOppositePos(ego->getBackPositionOnLane()));
+        result.second -= ego->getVehicleType().getMinGap();
+        return result;
+    }
+}
+
+
+std::pair<MSVehicle* const, SUMOReal> 
+MSLane::getOppositeFollower(const MSVehicle* ego) const {
+    //std::cout << SIMTIME << " getOppositeFollower lane=" << getID() 
+    //    << " ego=" << ego->getID() 
+    //    << " backPos=" << ego->getBackPositionOnLane()
+    //    << " posOnOpposite=" << getOppositePos(ego->getBackPositionOnLane())
+    //    << "\n";
+    if (ego->getLaneChangeModel().isOpposite()) {
+        return getFollower(getOppositePos(ego->getPositionOnLane()));
+    } else {
+        return getLeader(ego, getOppositePos(ego->getBackPositionOnLane()), false);
+    }
 }
 
 /****************************************************************************/

@@ -610,6 +610,9 @@ public:
         return myLaneChanger != 0;
     }
 
+    /// @brief whether this edge allows changing to the opposite direction edge
+    bool canChangeToOpposite();
+
     /** @brief Inserts edge into the static dictionary
         Returns true if the key id isn't already in the dictionary. Otherwise
         returns false. */
@@ -706,6 +709,7 @@ protected:
 
     /// @brief lookup in map and return 0 if not found
     const std::vector<MSLane*>* getAllowedLanesWithDefault(const AllowedLanesCont& c, const MSEdge* dest) const;
+
 
 protected:
     /// @brief This edge's numerical id
