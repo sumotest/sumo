@@ -909,7 +909,7 @@ MSLane::getFirstVehicleInformation(const MSVehicle* ego, SUMOReal latOffset, boo
         while (freeSublanes > 0 && veh != 0) {
             if (gDebugFlag1) std::cout << "       veh=" << veh->getID() << " pos=" << veh->getPositionOnLane(this) << " maxPos=" << maxPos << "\n";
             if (veh != ego && veh->getPositionOnLane(this) <= maxPos
-                    || (!onlyFrontOnLane || veh->isFrontOnLane(this))) {
+                    && (!onlyFrontOnLane || veh->isFrontOnLane(this))) {
                 //const SUMOReal latOffset = veh->getLane()->getRightSideOnEdge() - getRightSideOnEdge();
                 const SUMOReal latOffset = veh->getLatOffset(this);
                 if (gDebugFlag1) std::cout << "          veh=" << veh->getID() << " latOffset=" << latOffset << "\n";
