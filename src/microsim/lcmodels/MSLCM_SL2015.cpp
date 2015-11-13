@@ -982,7 +982,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                                            &myVehicle, myVehicle.getSpeed(), cld.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
                 myVSafes.push_back(vSafe);
                 if (vSafe < myVehicle.getSpeed()) {
-                    mySpeedGainProbabilityRight += CHANGE_PROB_THRESHOLD_LEFT / 3;
+                    mySpeedGainProbabilityRight += TS * CHANGE_PROB_THRESHOLD_LEFT / 3;
                 }
                 if (gDebugFlag2) {
                     std::cout << STEPS2TIME(currentTime)
@@ -1257,17 +1257,17 @@ MSLCM_SL2015::_wantsChangeSublane(
     }
     // updated change probabilities
     if (maxGainRight != -std::numeric_limits<SUMOReal>::max()) {
-        mySpeedGainProbabilityRight += maxGainRight;
+        mySpeedGainProbabilityRight += TS * maxGainRight;
     }
     if (maxGainLeft != -std::numeric_limits<SUMOReal>::max()) {
-        mySpeedGainProbabilityLeft += maxGainLeft;
+        mySpeedGainProbabilityLeft += TS * maxGainLeft;
     }
     // decay
     if (maxGainRight < NUMERICAL_EPS) {
-        mySpeedGainProbabilityRight *= 0.5;
+        mySpeedGainProbabilityRight *= pow(0.5, TS);
     }
     if (maxGainLeft < NUMERICAL_EPS) {
-        mySpeedGainProbabilityLeft *= 0.5;
+        mySpeedGainProbabilityLeft *= pow(0.5, TS);
     }
 
 
@@ -1302,7 +1302,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             const SUMOReal deltaProb = (CHANGE_PROB_THRESHOLD_RIGHT
                                         * STEPS2TIME(DELTA_T)
                                         * (fullSpeedDrivingSeconds / acceptanceTime) / KEEP_RIGHT_TIME);
-            myKeepRightProbability += deltaProb;
+            myKeepRightProbability += TS * deltaProb;
 
             if (gDebugFlag2) {
                 std::cout << STEPS2TIME(currentTime)
