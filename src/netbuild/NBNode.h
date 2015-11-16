@@ -43,7 +43,6 @@
 #include <utils/geom/Bresenham.h>
 #include <utils/common/VectorHelper.h>
 #include <utils/geom/Position.h>
-#include <utils/geom/Line.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include "NBEdge.h"
@@ -185,9 +184,6 @@ public:
     static const int BACKWARD;
     /// @brief default width of pedetrian crossings
     static const SUMOReal DEFAULT_CROSSING_WIDTH;
-
-    /// @brief the default turning radius at intersections in m
-    static const SUMOReal DEFAULT_RADIUS;
 
     /// @brief unspecified lane width
     static const SUMOReal UNSPECIFIED_RADIUS;

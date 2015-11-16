@@ -43,7 +43,6 @@
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/StringUtils.h>
 #include <utils/options/OptionsCont.h>
-#include <utils/geom/Line.h>
 #include <utils/geom/GeomHelper.h>
 #include <utils/geom/bezier.h>
 #include <utils/common/MsgHandler.h>
@@ -91,7 +90,6 @@ const int NBNode::FORWARD(1);
 const int NBNode::BACKWARD(-1);
 const SUMOReal NBNode::DEFAULT_CROSSING_WIDTH(4);
 const SUMOReal NBNode::UNSPECIFIED_RADIUS = -1;
-const SUMOReal NBNode::DEFAULT_RADIUS = 1.5;
 
 // ===========================================================================
 // method definitions
@@ -239,7 +237,7 @@ NBNode::NBNode(const std::string& id, const Position& position,
     myDistrict(0),
     myHaveCustomPoly(false),
     myRequest(0),
-    myRadius(UNSPECIFIED_RADIUS),
+    myRadius(OptionsCont::getOptions().isDefault("default.junctions.radius") ? UNSPECIFIED_RADIUS : OptionsCont::getOptions().getFloat("default.junctions.radius")),
     myKeepClear(OptionsCont::getOptions().getBool("default.junctions.keep-clear")),
     myDiscardAllCrossings(false),
     myCrossingsLoadedFromSumoNet(0)
@@ -253,7 +251,7 @@ NBNode::NBNode(const std::string& id, const Position& position, NBDistrict* dist
     myDistrict(district),
     myHaveCustomPoly(false),
     myRequest(0),
-    myRadius(UNSPECIFIED_RADIUS),
+    myRadius(OptionsCont::getOptions().isDefault("default.junctions.radius") ? UNSPECIFIED_RADIUS : OptionsCont::getOptions().getFloat("default.junctions.radius")),
     myKeepClear(OptionsCont::getOptions().getBool("default.junctions.keep-clear")),
     myDiscardAllCrossings(false),
     myCrossingsLoadedFromSumoNet(0)
@@ -485,79 +483,68 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
     const Position end = endShape.front();
     PositionVector ret;
     PositionVector init;
-    unsigned int numInitialPoints = 0;
     bool noSpline = false;
-    PositionVector endBeg;
-    endBeg.push_back(end);
-    endBeg.push_back(endShape[1]);
-    endBeg.push_back(begShape[-2]);
-    endBeg.push_back(beg);
     if (beg.distanceTo(end) < POSITION_EPS || beg.distanceTo(begShape[-2]) < POSITION_EPS || end.distanceTo(endShape[1]) < POSITION_EPS) {
         noSpline = true;
     } else {
+        init.push_back(beg);
         if (isTurnaround) {
             // turnarounds:
             //  - end of incoming lane
             //  - position between incoming/outgoing end/begin shifted by the distance orthogonally
             //  - begin of outgoing lane
-            numInitialPoints = 3;
-            init.push_back(beg);
             Position center = PositionVector::positionAtOffset(beg, end, beg.distanceTo(end) / (SUMOReal) 2.);
             center.sub(beg.y()-end.y(), end.x()-beg.x());
             init.push_back(center);
-            init.push_back(end);
         } else {
             const SUMOReal angle = fabs(GeomHelper::angleDiff(begShape.angleAt2D(-2), endShape.angleAt2D(0)));
+            PositionVector endShapeBegLine(endShape[0], endShape[1]);
+            PositionVector begShapeEndLineRev(begShape[-1], begShape[-2]);
+            endShapeBegLine.extrapolate(100, true);
+            begShapeEndLineRev.extrapolate(100, true);
             if (angle < M_PI / 4.) {
                 // very low angle: almost straight
-                numInitialPoints = 4;
-                init.push_back(beg);
-                endBeg.extrapolate(100);
                 const SUMOReal halfDistance = beg.distanceTo(end) / 2.;
                 if (halfDistance > 5) {
                     const SUMOReal endLength = begShape[-2].distanceTo(begShape[-1]);
                     const SUMOReal off1 = endLength + MIN2(extrapolateBeg, halfDistance);
-                    init.push_back(PositionVector::positionAtOffset(endBeg[-2], endBeg[-1], off1));
+                    init.push_back(PositionVector::positionAtOffset(begShapeEndLineRev[1], begShapeEndLineRev[0], off1));
                     const SUMOReal off2 = 100. - MIN2(extrapolateEnd, halfDistance);
-                    init.push_back(PositionVector::positionAtOffset(endBeg[0], endBeg[1], off2));
+                    init.push_back(PositionVector::positionAtOffset(endShapeBegLine[0], endShapeBegLine[1], off2));
                 } else {
                     noSpline = true;
                 }
-                init.push_back(end);
             } else {
                 // turning
                 //  - end of incoming lane
                 //  - intersection of the extrapolated lanes
                 //  - begin of outgoing lane
                 // attention: if there is no intersection, use a straight line
-                numInitialPoints = 3;
-                init.push_back(beg);
-                endBeg.extrapolate(100);
-                init.push_back(GeomHelper::intersection_position2D(endBeg[0], endBeg[1], endBeg[2], endBeg[3]));
+                init.push_back(endShapeBegLine.intersectionPosition2D(begShapeEndLineRev));
                 if (init[-1] == Position::INVALID) {
                     noSpline = true;
                 }
-                init.push_back(end);
             }
         }
+        init.push_back(end);
     }
     //
     if (noSpline) {
-        ret.push_back(begShape.back());
-        ret.push_back(endShape.front());
+        ret.push_back(beg);
+        ret.push_back(end);
     } else {
-        SUMOReal* def = new SUMOReal[1 + numInitialPoints * 3];
-        for (int i = 0; i < (int) init.size(); ++i) {
+        SUMOReal* def = new SUMOReal[1 + (int)init.size() * 3];
+        for (int i = 0; i < (int)init.size(); ++i) {
             // starts at index 1
             def[i * 3 + 1] = init[i].x();
             def[i * 3 + 2] = 0;
             def[i * 3 + 3] = init[i].y();
         }
         SUMOReal* ret_buf = new SUMOReal[numPoints * 3 + 1];
-        bezier(numInitialPoints, def, numPoints, ret_buf);
+        bezier((int)init.size(), def, numPoints, ret_buf);
         delete[] def;
         Position prev;
-        for (int i = 0; i < (int) numPoints; i++) {
+        for (int i = 0; i < (int)numPoints; i++) {
             Position current(ret_buf[i * 3 + 1], ret_buf[i * 3 + 3], myPosition.z());
             if (prev != current && !ISNAN(current.x()) && !ISNAN(current.y())) {
                 ret.push_back(current);
@@ -846,7 +833,48 @@ NBNode::computeLanes2Lanes() {
             Bresenham::compute(&divider, numApproaching, divider.numAvailableLanes());
         }
         delete approaching;
+
+        // ensure that all modes have a connection if possible
+        for (EdgeVector::const_iterator i = myIncomingEdges.begin(); i != myIncomingEdges.end(); i++) {
+            NBEdge* incoming = *i;
+            if (incoming->getConnectionLanes(currentOutgoing).size() > 0) {
+                // no connections are needed for pedestrians during this step
+                // no satisfaction is possible if the outgoing edge disallows
+                SVCPermissions unsatisfied = incoming->getPermissions() & currentOutgoing->getPermissions() & ~SVC_PEDESTRIAN;
+                //std::cout << "initial unsatisfied modes from edge=" << incoming->getID() << " toEdge=" << currentOutgoing->getID() << " deadModes=" << getVehicleClassNames(unsatisfied) << "\n";
+                const std::vector<NBEdge::Connection>& elv = incoming->getConnections();
+                for (std::vector<NBEdge::Connection>::const_iterator k = elv.begin(); k != elv.end(); ++k) {
+                    const NBEdge::Connection& c = *k;
+                    if (c.toEdge == currentOutgoing) {
+                        const SVCPermissions satisfied = (incoming->getPermissions(c.fromLane) & c.toEdge->getPermissions(c.toLane));
+                        //std::cout << "  from=" << c.fromLane << " to=" << c.toEdge->getID() << "_" << c.toLane << " satisfied=" << getVehicleClassNames(satisfied) << "\n";
+                        unsatisfied &= ~satisfied;
+                    }
+                }
+                if (unsatisfied != 0) {
+                    //std::cout << " unsatisfied modes from edge=" << incoming->getID() << " toEdge=" << currentOutgoing->getID() << " deadModes=" << getVehicleClassNames(unsatisfied) << "\n";
+                    int fromLane = 0;
+                    while (unsatisfied != 0 && fromLane < incoming->getNumLanes()) {
+                        if ((incoming->getPermissions(fromLane) & unsatisfied) != 0) {
+                            for (int toLane = 0; toLane < currentOutgoing->getNumLanes(); ++toLane) {
+                                const SVCPermissions satisfied = incoming->getPermissions(fromLane) & currentOutgoing->getPermissions(toLane) & unsatisfied;
+                                if (satisfied != 0) {
+                                    incoming->setConnection((unsigned int)fromLane, currentOutgoing, toLane, NBEdge::L2L_COMPUTED);
+                                    //std::cout << "  new connection from=" << fromLane << " to=" << currentOutgoing->getID() << "_" << toLane << " satisfies=" << getVehicleClassNames(satisfied) << "\n";
+                                    unsatisfied &= ~satisfied;
+                                }
+                            }
+                        }
+                        fromLane++;
+                    }
+                    //if (unsatisfied != 0) {
+                    //    std::cout << "     still unsatisfied modes from edge=" << incoming->getID() << " toEdge=" << currentOutgoing->getID() << " deadModes=" << getVehicleClassNames(unsatisfied) << "\n";
+                    //}
+                }
+            }
+        }
     }
+
     // ... but we may have the case that there are no outgoing edges
     //  In this case, we have to mark the incoming edges as being in state
     //   LANE2LANE( not RECHECK) by hand
@@ -2198,13 +2226,13 @@ NBNode::buildWalkingAreas(int cornerDetail) {
                         << " endCrossingWidth=" << endCrossingWidth << " startCrossingWidth=" << startCrossingWidth
                         << "  begShape=" << begShape << " endShape=" << endShape << " smooth curve=" << curve << "\n";
             if (curve.size() > 2) {
-                curve.eraseAt(0);
-                curve.eraseAt(-1);
+                curve.erase(curve.begin());
+                curve.pop_back();
                 if (endCrossingWidth > 0) {
-                    wa.shape.eraseAt(-1);
+                    wa.shape.pop_back();
                 }
                 if (startCrossingWidth > 0) {
-                    wa.shape.eraseAt(0);
+                    wa.shape.erase(wa.shape.begin());
                 }
                 wa.shape.append(curve, 0);
             }
