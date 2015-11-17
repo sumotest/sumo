@@ -10,6 +10,9 @@ overtaking_bicycle
 # vehicle behavior on a single edge with 2 lanes (compact alignment)
 1edge_2lanes_compact_cars
 
+# vehicle behavior on a single edge with cars and mopeds
+1edge_2lanes_compact_mixed
+
 # A vehicle that does not fit into a single lane should drive safely
 extra_wide_vehicle
 
