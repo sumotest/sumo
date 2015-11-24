@@ -1421,11 +1421,6 @@ protected:
     // @brief return the lane on which the back of this vehicle resides
     const MSLane* getBackLane() const;
 
-#ifdef HAVE_INTERNAL_LANES
-    /// @brief ids of vehicles being followed across a link (for resolving priority)
-    mutable std::map<const MSJunction*, std::set<std::string> > myLinkLeaders;
-#endif
-
 private:
     /* @brief The vehicle's knowledge about edge efforts/travel times; @see MSEdgeWeightsStorage
      * @note member is initialized on first access */

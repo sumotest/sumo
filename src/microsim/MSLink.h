@@ -366,6 +366,8 @@ public:
     /// @brief return the internalLaneBefore if it exists and the laneBefore otherwise
     const MSLane* getLaneBefore() const;
 
+    /// @brief return myInternalLaneBefore (always 0 when compiled without internal lanes)
+    const MSLane* getInternalLaneBefore() const;
 
     /// @brief return the expected time at which the given vehicle will clear the link
     SUMOTime getLeaveTime(const SUMOTime arrivalTime, const SUMOReal arrivalSpeed, const SUMOReal leaveSpeed, const SUMOReal vehicleLength) const;
@@ -373,13 +375,14 @@ public:
     /// @brief write information about all approaching vehicles to the given output device
     void writeApproaching(OutputDevice& od, const std::string fromLaneID) const;
 
-    /// @brief return the junction to which this link belongs
-    const MSJunction* getJunction() const {
-        return myJunction;
-    }
+    /// @brief erase vehicle from myLinkLeaders of this links junction
+    void passedJunction(const MSVehicle* vehicle);
 
     /// @brief return the link that is parallel to this lane or 0
     MSLink* getParallelLink(int direction) const;
+
+    //// @brief @return whether the foe vehicle is a leader for ego
+    bool isLeader(const MSVehicle* ego, const MSVehicle* foe);
 
 private:
     /// @brief return whether the given vehicles may NOT merge safely
@@ -445,7 +448,7 @@ private:
 #endif
 
     /// @brief the junction to which this link belongs
-    const MSJunction* myJunction;
+    MSJunction* myJunction;
 
     std::vector<MSLink*> myFoeLinks;
     std::vector<const MSLane*> myFoeLanes;

@@ -69,6 +69,7 @@
 #include "MSContainer.h"
 #include "MSContainerControl.h"
 #include "MSLane.h"
+#include "MSJunction.h"
 #include "MSVehicle.h"
 #include "MSEdge.h"
 #include "MSVehicleType.h"
@@ -1033,6 +1034,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     SUMOReal vLinkPass = MIN2(estimateSpeedAfterDistance(seen, v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
     unsigned int view = 0;
     DriveProcessItem* lastLink = 0;
+    bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
     // iterator over subsequent lanes and fill lfLinks until stopping distance or stopped
     const MSLane* lane = myLane;
     while (true) {
@@ -1129,9 +1131,13 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             }
         }
 
-        // - even if red, if we cannot break we should issue a request
         // - always issue a request to leave the intersection we are currently on
-        bool setRequest = v > 0 || (myLane->getEdge().isInternal() && lastLink == 0);
+        const bool leavingCurrentIntersection = myLane->getEdge().isInternal() && lastLink == 0;
+        // - do not issue a request to enter an intersection after we already slowed down for an earlier one
+        const bool abortRequestAfterMinor = slowedDownForMinor && (*link)->getInternalLaneBefore() == 0;
+        // - even if red, if we cannot break we should issue a request
+        bool setRequest = (v > 0 && !abortRequestAfterMinor) || (leavingCurrentIntersection);
+
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
         const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed) - myState.mySpeed * cfModel.getHeadwayTime();
         if (yellowOrRed && seen >= brakeDist) {
@@ -1142,32 +1148,32 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         }
 
 #ifdef HAVE_INTERNAL_LANES
-        // we want to pass the link but need to check for foes on internal lanes
-        const MSLink::LinkLeaders linkLeaders = (*link)->getLeaderInfo(seen, getVehicleType().getMinGap());
-        for (MSLink::LinkLeaders::const_iterator it = linkLeaders.begin(); it != linkLeaders.end(); ++it) {
-            // the vehicle to enter the junction first has priority
-            const MSVehicle* leader = (*it).vehAndGap.first;
-            if (leader == 0) {
-                // leader is a pedestrian. Passing 'this' as a dummy.
-                //std::cout << SIMTIME << " veh=" << getID() << " is blocked on link to " << (*link)->getViaLaneOrLane()->getID() << " by pedestrian. dist=" << it->distToCrossing << "\n";
-                adaptToLeader(std::make_pair(this, -1), seen, lastLink, lane, v, vLinkPass, it->distToCrossing);
-            } else if (leader->myLinkLeaders[(*link)->getJunction()].count(getID()) == 0) {
-                // leader isn't already following us, now we follow it
-                myLinkLeaders[(*link)->getJunction()].insert(leader->getID());
-                adaptToLeader(it->vehAndGap, seen, lastLink, lane, v, vLinkPass, it->distToCrossing);
-                if (lastLink != 0) {
-                    // we are not yet on the junction with this linkLeader.
-                    // at least we can drive up to the previous link and stop there
-                    v = MAX2(v, lastLink->myVLinkWait);
-                }
-                // if blocked by a leader from the same lane we must yield our request
-                if (v < SUMO_const_haltingSpeed && leader->getLane()->getLogicalPredecessorLane() == myLane->getLogicalPredecessorLane()) {
-                    setRequest = false;
+        if (MSGlobals::gUsingInternalLanes) {
+            // we want to pass the link but need to check for foes on internal lanes
+            const MSLink::LinkLeaders linkLeaders = (*link)->getLeaderInfo(seen, getVehicleType().getMinGap());
+            for (MSLink::LinkLeaders::const_iterator it = linkLeaders.begin(); it != linkLeaders.end(); ++it) {
+                // the vehicle to enter the junction first has priority
+                const MSVehicle* leader = (*it).vehAndGap.first;
+                if (leader == 0) {
+                    // leader is a pedestrian. Passing 'this' as a dummy.
+                    //std::cout << SIMTIME << " veh=" << getID() << " is blocked on link to " << (*link)->getViaLaneOrLane()->getID() << " by pedestrian. dist=" << it->distToCrossing << "\n";
+                    adaptToLeader(std::make_pair(this, -1), seen, lastLink, lane, v, vLinkPass, it->distToCrossing);
+                } else if ((*link)->isLeader(this, leader)) {
+                    adaptToLeader(it->vehAndGap, seen, lastLink, lane, v, vLinkPass, it->distToCrossing);
+                    if (lastLink != 0) {
+                        // we are not yet on the junction with this linkLeader.
+                        // at least we can drive up to the previous link and stop there
+                        v = MAX2(v, lastLink->myVLinkWait);
+                    }
+                    // if blocked by a leader from the same lane we must yield our request
+                    if (v < SUMO_const_haltingSpeed && leader->getLane()->getLogicalPredecessorLane() == myLane->getLogicalPredecessorLane()) {
+                        setRequest = false;
+                    }
                 }
             }
+            // if this is the link between two internal lanes we may have to slow down for pedestrians
+            vLinkWait = MIN2(vLinkWait, v);
         }
-        // if this is the link between two internal lanes we may have to slow down for pedestrians
-        vLinkWait = MIN2(vLinkWait, v);
 #endif
 
         if (lastLink != 0) {
@@ -1180,6 +1186,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         if (!(*link)->havePriority() && stopDist > cfModel.getMaxDecel() && brakeDist < seen) {
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
             arrivalSpeed = cfModel.getMaxDecel() + cfModel.getMaxAccel();
+            slowedDownForMinor = true;
         }
         // @note intuitively it would make sense to compare arrivalSpeed with getSpeed() instead of v
         // however, due to the current position update rule (ticket #860) the vehicle moves with v in this step
@@ -1226,7 +1233,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         ++view;
 #endif
         // we need to look ahead far enough to see available space for checkRewindLinkLanes
-        if (!setRequest || ((v <= 0 || seen > dist) && hadNonInternal && seenNonInternal > vehicleLength * CRLL_LOOK_AHEAD)) {
+        if ((!setRequest || v <= 0 || seen > dist) && hadNonInternal && seenNonInternal > vehicleLength * CRLL_LOOK_AHEAD) {
             break;
         }
         // get the following lane
@@ -1550,6 +1557,14 @@ MSVehicle::executeMove() {
                     assert(myState.myPos > 0);
                     enterLaneAtMove(approachedLane);
                     myLane = approachedLane;
+#ifdef HAVE_INTERNAL_LANES
+                    if (MSGlobals::gUsingInternalLanes) {
+                        // erase leaders when past the junction
+                        if (link->getViaLane() == 0) {
+                            link->passedJunction(this);
+                        }
+                    }
+#endif
                     if (hasArrived()) {
                         break;
                     }
@@ -1561,12 +1576,6 @@ MSVehicle::executeMove() {
                             getLaneChangeModel().endLaneChangeManeuver();
                         }
                     }
-#ifdef HAVE_INTERNAL_LANES
-                    // erase leaders when past the junction
-                    if (link->getViaLane() == 0) {
-                        myLinkLeaders[link->getJunction()].clear();
-                    }
-#endif
                     moved = true;
                     if (approachedLane->getEdge().isVaporizing()) {
                         leaveLane(MSMoveReminder::NOTIFICATION_VAPORIZED);

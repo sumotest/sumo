@@ -37,6 +37,7 @@
 #include <utils/common/StringUtils.h>
 #include <utils/vehicle/SUMOVehicleParameter.h>
 #include <utils/emissions/PollutantsInterface.h>
+#include <utils/geom/GeomHelper.h>
 #include <utils/gui/globjects/GLIncludes.h>
 #include <utils/gui/windows/GUISUMOAbstractView.h>
 #include <utils/gui/windows/GUIAppEnum.h>
@@ -48,6 +49,7 @@
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <microsim/MSGlobals.h>
 #include <microsim/MSVehicle.h>
+#include <microsim/MSJunction.h>
 #include <microsim/MSLane.h>
 #include <microsim/logging/CastingFunctionBinding.h>
 #include <microsim/logging/FunctionBinding.h>
@@ -109,13 +111,13 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
         ret->mkItem("shadow lane [id]", false, shadowLane == 0 ? "" : shadowLane->getID());
     }
     ret->mkItem("position [m]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getPositionOnLane));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getPositionOnLane));
     ret->mkItem("lateral offset [m]", true,
                 new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getLateralPositionOnLane));
     ret->mkItem("speed [m/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getSpeed));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getSpeed));
     ret->mkItem("angle [degree]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getAngle));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getNaviDegree));
     if (getChosenSpeedFactor() != 1) {
         ret->mkItem("speed factor", false, getChosenSpeedFactor());
     }
@@ -128,6 +130,7 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("last lane change [s]", true,
                 new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getLastLaneChangeOffset));
     ret->mkItem("desired depart [s]", false, time2string(getParameter().depart));
+    ret->mkItem("depart delay [s]", false, time2string(getDepartDelay()));
     if (getParameter().repetitionNumber < INT_MAX) {
         ret->mkItem("remaining [#]", false, (unsigned int) getParameter().repetitionNumber - getParameter().repetitionsDone);
     }
@@ -140,19 +143,19 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("stop info", false, getStopInfo());
     ret->mkItem("line", false, myParameter->line);
     ret->mkItem("CO2 [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getCO2Emissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getCO2Emissions));
     ret->mkItem("CO [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getCOEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getCOEmissions));
     ret->mkItem("HC [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getHCEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getHCEmissions));
     ret->mkItem("NOx [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getNOxEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getNOxEmissions));
     ret->mkItem("PMx [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getPMxEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getPMxEmissions));
     ret->mkItem("fuel [ml/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getFuelConsumption));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getFuelConsumption));
     ret->mkItem("noise (Harmonoise) [dB]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getHarmonoise_NoiseEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getHarmonoise_NoiseEmissions));
     std::ostringstream str;
     for (std::vector<MSDevice*>::const_iterator i = myDevices.begin(); i != myDevices.end(); ++i) {
         if (i != myDevices.begin()) {
@@ -162,9 +165,9 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     }
     ret->mkItem("devices", false, str.str());
     ret->mkItem("persons", true,
-                new FunctionBinding<GUIVehicle, unsigned int>(this, &GUIVehicle::getPersonNumber));
+                new FunctionBinding<GUIVehicle, unsigned int>(this, &MSVehicle::getPersonNumber));
     ret->mkItem("containers", true,
-                new FunctionBinding<GUIVehicle, unsigned int>(this, &GUIVehicle::getContainerNumber));
+                new FunctionBinding<GUIVehicle, unsigned int>(this, &MSVehicle::getContainerNumber));
 
     ret->mkItem("parameters [key:val]", false, toString(getParameter().getMap()));
     ret->mkItem("", false, "");
@@ -374,6 +377,8 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
             return getAcceleration();
         case 23:
             return getTimeGap();
+        case 24:
+            return STEPS2TIME(getDepartDelay());
     }
     return 0;
 }
@@ -545,6 +550,12 @@ GUIVehicle::drawAction_drawRailCarriages(const GUIVisualizationSettings& s, SUMO
 }
 
 
+SUMOReal
+GUIVehicle::getNaviDegree() const {
+    return GeomHelper::naviDegree(getAngle());
+}
+
+
 int
 GUIVehicle::getNumPassengers() const {
     if (myPersonDevice != 0) {
@@ -621,8 +632,7 @@ GUIVehicle::selectBlockingFoes() const {
             // the vehicle to enter the junction first has priority
             const GUIVehicle* leader = dynamic_cast<const GUIVehicle*>(it->vehAndGap.first);
             if (leader != 0) {
-                if (leader->myLinkLeaders[dpi.myLink->getJunction()].count(getID()) == 0) {
-                    // leader isn't already following us, now we follow it
+                if (dpi.myLink->isLeader(this, leader)) {
                     gSelected.select(leader->getGlID());
                 }
             } else {
