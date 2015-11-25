@@ -118,6 +118,7 @@ public:
     long onCmdOpenNetwork(FXObject*, FXSelector, void*);
     long onCmdOpenForeign(FXObject*, FXSelector, void*);
     long onCmdOpenShapes(FXObject*, FXSelector, void*);
+	long onCmdOpenAdditionals(FXObject*, FXSelector, void*);	// PABLO #1916
     long onCmdReload(FXObject*, FXSelector, void*);
     long onCmdOpenRecent(FXObject*, FXSelector, void*);
     long onCmdClose(FXObject*, FXSelector, void*);

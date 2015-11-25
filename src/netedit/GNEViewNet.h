@@ -59,7 +59,11 @@ enum EditMode {
     /** mode for connecting lanes */
     GNE_MODE_CONNECT,
     /** mode for editing tls */
-    GNE_MODE_TLS
+    GNE_MODE_TLS,
+    /** Mode for editing Bus Stops */           // PABLO #1916
+    GNE_MODE_BUSSTOP,                           // PABLO #1916
+    /** Mode for editing charging Stations */   // PABLO #1916
+    GNE_MODE_CHARGINGSTATION                    // PABLO #1916
 };
 
 // ===========================================================================

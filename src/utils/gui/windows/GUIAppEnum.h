@@ -75,6 +75,8 @@ enum {
     MID_OPEN_NETWORK,
     /// Load additional file with poi and polygons
     MID_OPEN_SHAPES,
+	/// Load additional file with additional elements	// PABLO #1916
+    MID_OPEN_ADDITIONALS,								// PABLO #1916
     /// Reload the previously loaded simulation
     MID_RELOAD,
     /// Loads a file previously loaded
@@ -169,6 +171,10 @@ enum {
     MID_LOCATEPERSON,
     /// Locate TLS - button
     MID_LOCATETLS,
+    /// Locate BusStop - button         // PABLO #1916
+    MID_LOCATEBUSSTOP,                  // PABLO #1916
+    /// Locate ChargingStation - button // PABLO #1916
+    MID_LOCATECHARGINGSTATION,          // PABLO #1916
     /// Locate addtional structure - button
     MID_LOCATEADD,
     /// Locate poi - button
@@ -392,6 +398,11 @@ enum {
     MID_GNE_MODE_CONNECT,
     /** mode for editing tls */
     MID_GNE_MODE_TLS,
+    /** mode for editing bus Stops */           // PABLO #1916
+    MID_GNE_MODE_BUSSTOP,                       // PABLO #1916
+    /** mode for editing charging Stations */   // PABLO #1916
+    MID_GNE_MODE_CHARGINGSTATION,               // PABLO #1916
+
 
     /// selector match box messages
     MID_GNE_SELMB_TAG,

@@ -128,6 +128,7 @@ GNELoadThread::run() {
     }
     // this netbuilder instance becomes the responsibility of the GNENet
     NBNetBuilder* netBuilder = new NBNetBuilder();
+
     netBuilder->applyOptions(oc);
 
     if (myNewNet) {
@@ -137,8 +138,9 @@ GNELoadThread::run() {
         NILoader nl(*netBuilder);
         try {
             nl.load(oc);
+
             if (!myLoadNet) {
-                WRITE_MESSAGE("Performing initial computatation ...\n");
+                WRITE_MESSAGE("Performing initial computation ...\n");
                 // perform one-time processing (i.e. edge removal)
                 netBuilder->compute(oc);
                 // @todo remove one-time processing options!
@@ -154,6 +156,14 @@ GNELoadThread::run() {
             if (MsgHandler::getErrorInstance()->wasInformed()) {
                 throw ProcessError();
             } else {
+				/*****************************/	
+				std::cout << "Configuration" << std::endl;
+				std::cout << oc.getString("configuration-file") << std::endl;
+				std::cout << "-----------------"<< std::endl;
+
+				//NLHandler* handler;
+				/*****************************/
+
                 net = new GNENet(netBuilder);
             }
         } catch (ProcessError& e) {

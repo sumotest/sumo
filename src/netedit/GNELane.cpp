@@ -213,7 +213,6 @@ GNELane::drawLane2LaneConnections() const {
     glPopMatrix();
 }
 
-
 void
 GNELane::drawGL(const GUIVisualizationSettings& s) const {
     glPushMatrix();
@@ -279,7 +278,6 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (myParentEdge.getDest()->isLogicValid() && s.scale > 3) {
             drawArrows();
         }
-
     }
     glPopName();
 }

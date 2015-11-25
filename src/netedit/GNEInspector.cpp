@@ -183,7 +183,8 @@ GNEInspector::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
 GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList) :
     FXVerticalFrame(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0, 2, 0, 0, 0, 0, 0) {
     FXLabel* header;
-    if (ACs.size() > 0) {
+
+	if (ACs.size() > 0) {
         std::string headerString = toString(ACs[0]->getTag());
         if (ACs.size() > 1) {
             headerString = toString(ACs.size()) + " " + headerString + "s";

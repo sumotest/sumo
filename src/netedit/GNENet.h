@@ -66,6 +66,8 @@ class GNEEdge;
 class GNELane;
 class GNEJunction;
 class GNEUndoList;
+class GNEBusStop;
+class GNEChargingStation;
 
 // ===========================================================================
 // class definitions
@@ -403,6 +405,93 @@ public:
         return myShapeContainer;
     }
 
+
+	/** @brief Adds a bus stop
+     *
+     * If another bus stop with the same id exists, false is returned.
+     *  Otherwise, the bus stop is added to the internal bus stop
+     *  container "myBusStopDict".
+     *
+     * This control gets responsible for deletion of the added bus stop.
+     *
+     * @param[in] busStop The bus stop to add
+     * @return Whether the bus stop could be added
+     */
+    bool addBusStop(GNEBusStop* busStop);	// PABLO #1916
+
+
+    /** @brief Returns the named bus stop
+     * @param[in] id The id of the bus stop to return.
+     * @return The named bus stop, or 0 if no such stop exists
+     */
+    GNEBusStop* getBusStop(const std::string& id) const;
+
+    /** @brief Returns the bus stop close to the given position
+     * @param[in] lane the lane of the bus stop to return.
+     * @param[in] pos the position of the bus stop to return.
+     * @return The bus stop id on the location, or "" if no such stop exists
+     */
+    std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
+    /// @}
+
+
+    /// @name Insertion and retrieval of container stops
+    /// @{
+
+    /** @brief Adds a container stop
+     *
+     * If another container stop with the same id exists, false is returned.
+     *  Otherwise, the container stop is added to the internal container stop
+     *  container "myContainerStopDict".
+     *
+     * This control gets responsible for deletion of the added container stop.
+     *
+     * @param[in] containerStop The container stop to add
+     * @return Whether the container stop could be added
+     */
+    bool addContainerStop(GNEBusStop* containerStop);	// PABLO #1916
+
+    /** @brief Returns the named container stop
+     * @param[in] id The id of the container stop to return.
+     * @return The named container stop, or 0 if no such stop exists
+     */
+    GNEBusStop* getContainerStop(const std::string& id) const;
+
+    /** @brief Returns the container stop close to the given position
+     * @param[in] lane the lane of the container stop to return.
+     * @param[in] pos the position of the container stop to return.
+     * @return The container stop id on the location, or "" if no such stop exists
+     */
+    std::string getContainerStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
+    /// @}
+
+    /** @brief Adds a chargingg station
+     *
+     * If another charging station with the same id exists, false is returned.
+     *  Otherwise, the charging station is added to the internal bus stop
+     *  container "myChrgStnDict".
+     *
+     * This control gets responsible for deletion of the added charging station.
+     *
+     * @param[in] chrgStn The charging station add
+     * @return Whether the charging station could be added
+     */
+    bool addChrgStn(GNEChargingStation* chrgStn);	// PABLO #1916
+
+    /** @brief Returns the named charging station
+     * @param[in] id The id of the charging station to return.
+     * @return The named charging station, or 0 if no such stop exists
+     */
+    GNEChargingStation* getChrgStn(const std::string& id) const;	// PABLO #1916
+
+    /** @brief Returns the charging station close to the given position
+     * @param[in] lane the lane of the charging station to return.
+     * @param[in] pos the position of the bus stop to return.
+     * @return The charging station id on the location, or "" if no such stop exists
+     */
+    std::string getChrgStnID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
+    /// @}
+
 private:
     /// the rtree which contains all GUIGlObjects (so named for historical reasons)
     SUMORTree myGrid;
@@ -436,6 +525,15 @@ private:
 
     /// @brief whether the net needs recomputation
     bool myNeedRecompute;
+
+	/// @brief Dictionary of bus stops					// PABLO #1916
+    NamedObjectCont<GNEBusStop*> myBusStopDict;			// PABLO #1916
+
+    /// @brief Dictionary of container stops			// PABLO #1916
+    NamedObjectCont<GNEBusStop*> myContainerStopDict;	// PABLO #1916
+
+    /// @brief Dictionary of charging Stations			// PABLO #1916
+    NamedObjectCont<GNEChargingStation*> myChrgStnDict;	// PABLO #1916
 
 
 private:

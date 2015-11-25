@@ -708,6 +708,12 @@ GNEViewNet::setEditModeFromHotkey(FXushort selid) {
         case MID_GNE_MODE_TLS:
             setEditMode(GNE_MODE_TLS);
             break;
+                case MID_GNE_MODE_BUSSTOP:          // PABLO #1916
+            setEditMode(GNE_MODE_BUSSTOP);          // PABLO #1916
+            break;                                  // PABLO #1916
+                case MID_GNE_MODE_CHARGINGSTATION:  // PABLO #1916
+            setEditMode(GNE_MODE_TLS);              // PABLO #1916
+            break;                                  // PABLO #1916
         default:
             FXMessageBox::error(this, MBOX_OK, "invalid edit mode", "%s", "...");
             break;
@@ -1005,6 +1011,8 @@ GNEViewNet::buildEditModeControls() {
     myEditModeNames.insert("(s) Select", GNE_MODE_SELECT);
     myEditModeNames.insert("(c) Connect", GNE_MODE_CONNECT);
     myEditModeNames.insert("(t) Traffic Lights", GNE_MODE_TLS);
+    myEditModeNames.insert("(b) Bus Stops", GNE_MODE_BUSSTOP);                  // PABLO #1916
+    myEditModeNames.insert("(h) Charging Stations", GNE_MODE_CHARGINGSTATION);  // PABLO #1916
 
     // combo
     myEditModesCombo =

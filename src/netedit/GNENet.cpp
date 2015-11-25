@@ -68,6 +68,8 @@
 #include "GNEChange_Lane.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
+#include "GNEBusStop.h"			// PABLO #1916
+#include "GNEChargingStation.h"	// PABLO #1916
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -132,6 +134,8 @@ GNENet::GNENet(NBNetBuilder* netBuilder) :
     GUIEdge::fill(myEdgeWrapper);
     */
     //if (myGrid.count() == 0) // myGrid methods will return garbage
+
+	// Init AdditionalHandler
 
     if (myZBoundary.ymin() != Z_INITIALIZED) {
         myZBoundary.add(0, 0);
@@ -905,6 +909,80 @@ GNENet::finishMoveSelection(GNEUndoList* undoList) {
     }
     undoList->p_end();
 }
+
+
+// ------ Insertion and retrieval of bus stops ------
+bool														// PABLO #1916
+GNENet::addBusStop(GNEBusStop* busStop) {					// PABLO #1916
+    return myBusStopDict.add(busStop->getID(), busStop);	// PABLO #1916
+}															// PABLO #1916
+
+
+GNEBusStop*											// PABLO #1916
+GNENet::getBusStop(const std::string& id) const {	// PABLO #1916
+    return myBusStopDict.get(id);					// PABLO #1916
+}													// PABLO #1916
+
+
+std::string
+GNENet::getBusStopID(const GNELane* lane, const SUMOReal pos) const {										// PABLO #1916
+    const std::map<std::string, GNEBusStop*>& vals = myBusStopDict.getMyMap();								// PABLO #1916
+    for (std::map<std::string, GNEBusStop*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {	// PABLO #1916
+        GNEBusStop* stop = it->second;																		// PABLO #1916
+        if (&stop->getLane() == lane && fabs(stop->getEndLanePosition() - pos) < POSITION_EPS) {			// PABLO #1916
+            return stop->getID();																			// PABLO #1916
+        }																									// PABLO #1916
+    }																										// PABLO #1916
+    return "";																								// PABLO #1916
+}																											// PABLO #1916
+
+// ------ Insertion and retrieval of container stops ------
+bool
+GNENet::addContainerStop(GNEBusStop* containerStop) {						// PABLO #1916
+    return myContainerStopDict.add(containerStop->getID(), containerStop);	// PABLO #1916
+}																			// PABLO #1916
+
+GNEBusStop*																	// PABLO #1916
+GNENet::getContainerStop(const std::string& id) const {						// PABLO #1916
+    return myContainerStopDict.get(id);										// PABLO #1916
+}																			// PABLO #1916
+
+std::string																									// PABLO #1916
+GNENet::getContainerStopID(const GNELane* lane, const SUMOReal pos) const {									// PABLO #1916
+    const std::map<std::string, GNEBusStop*>& vals = myContainerStopDict.getMyMap();						// PABLO #1916
+    for (std::map<std::string, GNEBusStop*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {	// PABLO #1916
+        GNEBusStop* stop = it->second;																		// PABLO #1916
+        if (&stop->getLane() == lane && fabs(stop->getEndLanePosition() - pos) < POSITION_EPS) {			// PABLO #1916
+            return stop->getID();																			// PABLO #1916
+        }																									// PABLO #1916
+    }																										// PABLO #1916
+    return "";																								// PABLO #1916
+}																											// PABLO #1916
+
+// ------ Insertion and retrieval of charging Stations ------
+bool														// PABLO #1916
+GNENet::addChrgStn(GNEChargingStation* chrgStn) {			// PABLO #1916
+    return myChrgStnDict.add(chrgStn->getID(), chrgStn);	// PABLO #1916
+}															// PABLO #1916
+
+
+GNEChargingStation*									// PABLO #1916
+GNENet::getChrgStn(const std::string& id) const {	// PABLO #1916
+    return myChrgStnDict.get(id);					// PABLO #1916
+}													// PABLO #1916
+
+
+std::string																														// PABLO #1916
+GNENet::getChrgStnID(const GNELane* lane, const SUMOReal pos) const {															// PABLO #1916
+    const std::map<std::string, GNEChargingStation*>& vals = myChrgStnDict.getMyMap();											// PABLO #1916
+    for (std::map<std::string, GNEChargingStation*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {				// PABLO #1916
+        GNEChargingStation* chrgStn = it->second;																				// PABLO #1916
+        if (&chrgStn->getLane() == lane && chrgStn->getBeginLanePosition() <= pos && chrgStn->getEndLanePosition() >= pos) {	// PABLO #1916
+            return chrgStn->getID();																							// PABLO #1916
+        }																														// PABLO #1916
+    }																															// PABLO #1916
+    return "";																													// PABLO #1916
+}																																// PABLO #1916
 
 // ===========================================================================
 // private
