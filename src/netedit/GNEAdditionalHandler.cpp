@@ -50,4 +50,35 @@
 // ===========================================================================
 
 
+GNEAdditionalHandler::GNEAdditionalHandler(const std::string& file, GNENet *net) : SUMOSAXHandler(file), myNet(net)
+{
+
+}
+
+
+GNEAdditionalHandler::~GNEAdditionalHandler()
+{
+
+}
+
+
+void 
+GNEAdditionalHandler::myStartElement(int element,
+                        const SUMOSAXAttributes& attrs) {
+	try {
+		switch (element) {
+			case SUMO_TAG_BUS_STOP:
+				parseAndBuildBusStop(myNet, attrs);
+				break;
+			case SUMO_TAG_CHRG_STN:
+				parseAndBuildChrgStn(myNet, attrs);
+				break;
+			default:
+				break;
+		}
+	} catch (InvalidArgument& e) {
+		WRITE_ERROR(e.what());
+	}
+}
+
 /****************************************************************************/

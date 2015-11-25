@@ -156,14 +156,6 @@ GNELoadThread::run() {
             if (MsgHandler::getErrorInstance()->wasInformed()) {
                 throw ProcessError();
             } else {
-				/*****************************/	
-				std::cout << "Configuration" << std::endl;
-				std::cout << oc.getString("configuration-file") << std::endl;
-				std::cout << "-----------------"<< std::endl;
-
-				//NLHandler* handler;
-				/*****************************/
-
                 net = new GNENet(netBuilder);
             }
         } catch (ProcessError& e) {
