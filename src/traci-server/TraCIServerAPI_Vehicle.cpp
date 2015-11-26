@@ -1297,55 +1297,41 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             SUMOReal lanePosLat = 0;
             SUMOReal bestDistance = std::numeric_limits<SUMOReal>::max();
             int routeOffset = 0;
+            bool found;
+            SUMOReal maxRouteDistance = 100;
+            const bool keepRoute = v->getID() != "VTD_EGO"; // @todo #2033
             /* EGO vehicle is known to have a fixed route. @todo make this into a parameter of the TraCI call */
-            if (v->getID() != "VTD_EGO") {
+            if (keepRoute) {
                 // case a): vehicle is on its earlier route
                 //  we additionally assume it is moving forward (SUMO-limit);
                 //  note that the route ("edges") is not changed in this case
-                bool found = vtdMap_matchingRoutePosition(pos, origID, *v, bestDistance, &lane, lanePos, routeOffset, edges);
-                SUMOReal maxRouteDistance = 100;
-                // use the best we have
-                if (found && maxRouteDistance > bestDistance) {
-                    if (MSGlobals::gLateralResolution > 0) {
-                        const SUMOReal perpDist = lane->getShape().distance(pos, true);
-                        if (perpDist != GeomHelper::INVALID_OFFSET) {
-                            // XXX ensure it stays on the road?
-                            lanePosLat = perpDist;
-                            // figure out whether the offset is to the left or to the right
-                            PositionVector tmp = lane->getShape();
-                            tmp.move2side(-lanePosLat); // moved to left
-                            //std::cout << " lane=" << lane->getID() << " posLat=" << lanePosLat << " shape=" << lane->getShape() << " tmp=" << tmp << " tmpDist=" << tmp.distance(pos) << "\n";
-                            if (tmp.distance(pos) > perpDist) {
-                                lanePosLat = -perpDist;
-                            }
-                        }
-                    }
-                    server.setVTDControlled(v, lane, lanePos, lanePosLat, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
-                }
+                found = vtdMap_matchingRoutePosition(pos, origID, *v, bestDistance, &lane, lanePos, routeOffset, edges);
+                // @note silenty ignoring mapping failure
             } else {
-                // case b): vehicle does not follow a pre-fixed route (regard the limiting factor in maxRouteDistance)
-                bool found = vtdMap(pos, origID, angle, *v, server, bestDistance, &lane, lanePos, routeOffset, edges);
-                SUMOReal maxRouteDistance = 100;
-                // use the best we have
-                if (found && maxRouteDistance > bestDistance) {
-                    if (MSGlobals::gLateralResolution > 0) {
-                        const SUMOReal perpDist = lane->getShape().distance(pos, true);
-                        if (perpDist != GeomHelper::INVALID_OFFSET) {
-                            // XXX ensure it stays on the road?
-                            lanePosLat = perpDist;
-                            // figure out whether the offset is to the left or to the right
-                            PositionVector tmp = lane->getShape();
-                            tmp.move2side(-lanePosLat); // moved to left
-                            //std::cout << " lane=" << lane->getID() << " posLat=" << lanePosLat << " shape=" << lane->getShape() << " tmp=" << tmp << " tmpDist=" << tmp.distance(pos) << "\n";
-                            if (tmp.distance(pos) > perpDist) {
-                                lanePosLat = -perpDist;
-                            }
+                found = vtdMap(pos, origID, angle, *v, server, bestDistance, &lane, lanePos, routeOffset, edges);
+            }
+            if (found && maxRouteDistance > bestDistance) {
+                // optionally compute lateral offset
+                if (MSGlobals::gLateralResolution > 0) {
+                    const SUMOReal perpDist = lane->getShape().distance(pos, true);
+                    if (perpDist != GeomHelper::INVALID_OFFSET) {
+                        // XXX ensure it stays on the road?
+                        lanePosLat = perpDist;
+                        // figure out whether the offset is to the left or to the right
+                        PositionVector tmp = lane->getShape();
+                        tmp.move2side(-lanePosLat); // moved to left
+                        //std::cout << " lane=" << lane->getID() << " posLat=" << lanePosLat << " shape=" << lane->getShape() << " tmp=" << tmp << " tmpDist=" << tmp.distance(pos) << "\n";
+                        if (tmp.distance(pos) > perpDist) {
+                            lanePosLat = -perpDist;
                         }
                     }
-                    server.setVTDControlled(v, lane, lanePos, lanePosLat, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
-                } else {
-                    return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Could not map vehicle '" + id + "'.", outputStorage);
                 }
+                // use the best we have
+                server.setVTDControlled(v, lane, lanePos, lanePosLat, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
+            } else {
+                if (!keepRoute) {
+                    return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Could not map vehicle '" + id + "'.", outputStorage);
+                } // @note else, silently ignore failure to map
             }
         }
         break;
