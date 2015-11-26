@@ -9,3 +9,9 @@ offroute_edge
 
 # call moveToVTD and also set the speed
 set_speed
+
+# position with sublane precision
+sublane
+
+# position with sublane precision when vehicle jumps to an edge not on its route
+sublane_offroute
