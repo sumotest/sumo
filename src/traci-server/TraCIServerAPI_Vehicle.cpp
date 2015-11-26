@@ -42,6 +42,7 @@
 #include <microsim/MSLane.h>
 #include <microsim/MSEdge.h>
 #include <microsim/MSEdgeWeightsStorage.h>
+#include <microsim/MSGlobals.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/vehicle/DijkstraRouterTT.h>
@@ -1293,6 +1294,7 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             ConstMSEdgeVector edges;
             MSLane* lane = 0;
             SUMOReal lanePos;
+            SUMOReal lanePosLat = 0;
             SUMOReal bestDistance = std::numeric_limits<SUMOReal>::max();
             int routeOffset = 0;
             /* EGO vehicle is known to have a fixed route. @todo make this into a parameter of the TraCI call */
@@ -1304,7 +1306,21 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
                 SUMOReal maxRouteDistance = 100;
                 // use the best we have
                 if (found && maxRouteDistance > bestDistance) {
-                    server.setVTDControlled(v, lane, lanePos, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
+                    if (MSGlobals::gLateralResolution > 0) {
+                        const SUMOReal perpDist = lane->getShape().distance(pos, true);
+                        if (perpDist != GeomHelper::INVALID_OFFSET) {
+                            // XXX ensure it stays on the road?
+                            lanePosLat = perpDist;
+                            // figure out whether the offset is to the left or to the right
+                            PositionVector tmp = lane->getShape();
+                            tmp.move2side(-lanePosLat); // moved to left
+                            //std::cout << " lane=" << lane->getID() << " posLat=" << lanePosLat << " shape=" << lane->getShape() << " tmp=" << tmp << " tmpDist=" << tmp.distance(pos) << "\n";
+                            if (tmp.distance(pos) > perpDist) {
+                                lanePosLat = -perpDist;
+                            }
+                        }
+                    }
+                    server.setVTDControlled(v, lane, lanePos, lanePosLat, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
                 }
             } else {
                 // case b): vehicle does not follow a pre-fixed route (regard the limiting factor in maxRouteDistance)
@@ -1312,7 +1328,21 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
                 SUMOReal maxRouteDistance = 100;
                 // use the best we have
                 if (found && maxRouteDistance > bestDistance) {
-                    server.setVTDControlled(v, lane, lanePos, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
+                    if (MSGlobals::gLateralResolution > 0) {
+                        const SUMOReal perpDist = lane->getShape().distance(pos, true);
+                        if (perpDist != GeomHelper::INVALID_OFFSET) {
+                            // XXX ensure it stays on the road?
+                            lanePosLat = perpDist;
+                            // figure out whether the offset is to the left or to the right
+                            PositionVector tmp = lane->getShape();
+                            tmp.move2side(-lanePosLat); // moved to left
+                            //std::cout << " lane=" << lane->getID() << " posLat=" << lanePosLat << " shape=" << lane->getShape() << " tmp=" << tmp << " tmpDist=" << tmp.distance(pos) << "\n";
+                            if (tmp.distance(pos) > perpDist) {
+                                lanePosLat = -perpDist;
+                            }
+                        }
+                    }
+                    server.setVTDControlled(v, lane, lanePos, lanePosLat, routeOffset, edges, MSNet::getInstance()->getCurrentTimeStep());
                 } else {
                     return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Could not map vehicle '" + id + "'.", outputStorage);
                 }

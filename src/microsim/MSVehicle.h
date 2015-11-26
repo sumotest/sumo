@@ -1102,10 +1102,11 @@ public:
             return myOriginalSpeed;
         }
 
-        void setVTDControlled(bool c, MSLane* l, SUMOReal pos, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t) {
+        void setVTDControlled(bool c, MSLane* l, SUMOReal pos, SUMOReal posLat, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t) {
             myAmVTDControlled = c;
             myVTDLane = l;
             myVTDPos = pos;
+            myVTDPosLat = posLat;
             myVTDEdgeOffset = edgeOffset;
             myVTDRoute = route;
             myLastVTDAccess = t;
@@ -1163,6 +1164,7 @@ public:
         bool myAmVTDControlled;
         MSLane* myVTDLane;
         SUMOReal myVTDPos;
+        SUMOReal myVTDPosLat;
         int myVTDEdgeOffset;
         ConstMSEdgeVector myVTDRoute;
         SUMOTime myLastVTDAccess;
@@ -1177,6 +1179,8 @@ public:
         LaneChangeMode mySpeedGainLC;
         /// @brief changing to the rightmost lane
         LaneChangeMode myRightDriveLC;
+        /// @brief changing to the prefered lateral alignment
+        LaneChangeMode mySublaneLC;
         //@}
         ///* @brief flags for determining the priority of traci lane change requests
         TraciLaneChangePriority myTraciLaneChangePriority;

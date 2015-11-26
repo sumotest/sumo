@@ -158,6 +158,7 @@ MSVehicle::Influencer::Influencer() :
     myCooperativeLC(LC_NOCONFLICT),
     mySpeedGainLC(LC_NOCONFLICT),
     myRightDriveLC(LC_NOCONFLICT),
+    mySublaneLC(LC_NOCONFLICT),
     myTraciLaneChangePriority(LCP_URGENT)
 {}
 
@@ -243,6 +244,8 @@ MSVehicle::Influencer::influenceChangeDecision(const SUMOTime currentTime, const
             mode = mySpeedGainLC;
         } else if ((state & LCA_KEEPRIGHT) != 0) {
             mode = myRightDriveLC;
+        } else if ((state & LCA_SUBLANE) != 0) {
+            mode = mySublaneLC;
         } else if ((state & LCA_TRACI) != 0) {
             mode = LC_NEVER;
         } else {
@@ -338,6 +341,7 @@ MSVehicle::Influencer::setLaneChangeMode(int value) {
     mySpeedGainLC = (LaneChangeMode)((value & (16 + 32)) >> 4);
     myRightDriveLC = (LaneChangeMode)((value & (64 + 128)) >> 6);
     myTraciLaneChangePriority = (TraciLaneChangePriority)((value & (256 + 512)) >> 8);
+    mySublaneLC = (LaneChangeMode)((value & (1024 + 2048)) >> 10);
 }
 
 
@@ -352,7 +356,7 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     if (myVTDPos > myVTDLane->getLength()) {
         myVTDPos = myVTDLane->getLength();
     }
-    myVTDLane->forceVehicleInsertion(v, myVTDPos);
+    myVTDLane->forceVehicleInsertion(v, myVTDPos, myVTDPosLat);
     v->updateBestLanes();
     myAmVTDControlled = false;
 }
