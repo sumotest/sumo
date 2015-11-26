@@ -66,6 +66,7 @@
 const SUMOReal NBEdge::UNSPECIFIED_WIDTH = -1;
 const SUMOReal NBEdge::UNSPECIFIED_OFFSET = 0;
 const SUMOReal NBEdge::UNSPECIFIED_SPEED = -1;
+const SUMOReal NBEdge::UNSPECIFIED_CONTPOS = -1;
 
 const SUMOReal NBEdge::UNSPECIFIED_SIGNAL_OFFSET = -1;
 const SUMOReal NBEdge::UNSPECIFIED_LOADED_LENGTH = -1;
@@ -404,7 +405,7 @@ NBEdge::mirrorX() {
 // ----------- Edge geometry access and computation
 const PositionVector
 NBEdge::getInnerGeometry() const {
-    return myGeom.getSubpartByIndex(1, myGeom.size() - 2);
+    return myGeom.getSubpartByIndex(1, (int)myGeom.size() - 2);
 }
 
 
@@ -491,10 +492,15 @@ NBEdge::startShapeAt(const PositionVector& laneShape, const NBNode* startNode) c
         // shape intersects directly
         std::vector<SUMOReal> pbv = laneShape.intersectsAtLengths2D(nodeShape);
         assert(pbv.size() > 0);
-        SUMOReal pb = VectorHelper<SUMOReal>::maxValue(pbv);
-        assert(pb >= 0);
-        PositionVector ns = pb <= laneShape.length() ? laneShape.getSubpart2D(pb, laneShape.length()) : laneShape;
+        // ensure that the subpart has at least two points
+        SUMOReal pb = MIN2(laneShape.length2D() - POSITION_EPS - NUMERICAL_EPS, VectorHelper<SUMOReal>::maxValue(pbv));
+        if (pb < 0) {
+            return laneShape;
+        }
+        PositionVector ns = laneShape.getSubpart2D(pb, laneShape.length2D());
+        //PositionVector ns = pb < (laneShape.length() - POSITION_EPS) ? laneShape.getSubpart2D(pb, laneShape.length()) : laneShape;
         ns[0].set(ns[0].x(), ns[0].y(), startNode->getPosition().z());
+        assert(ns.size() >= 2);
         return ns;
     } else if (nodeShape.intersects(lb)) {
         // extension of first segment intersects
@@ -502,7 +508,7 @@ NBEdge::startShapeAt(const PositionVector& laneShape, const NBNode* startNode) c
         assert(pbv.size() > 0);
         SUMOReal pb = VectorHelper<SUMOReal>::maxValue(pbv);
         assert(pb >= 0);
-        PositionVector result = laneShape.getSubpartByIndex(1, laneShape.size() - 1);
+        PositionVector result = laneShape.getSubpartByIndex(1, (int)laneShape.size() - 1);
         Position np = PositionVector::positionAtOffset2D(lb[0], lb[1], pb);
         result.push_front_noDoublePos(Position(np.x(), np.y(), startNode->getPosition().z()));
         return result;
@@ -669,7 +675,8 @@ NBEdge::addLane2LaneConnection(unsigned int from, NBEdge* dest,
                                unsigned int toLane, Lane2LaneInfoType type,
                                bool mayUseSameDestination,
                                bool mayDefinitelyPass,
-                               bool keepClear) {
+                               bool keepClear,
+                               SUMOReal contPos) {
     if (myStep == INIT_REJECT_CONNECTIONS) {
         return true;
     }
@@ -682,7 +689,7 @@ NBEdge::addLane2LaneConnection(unsigned int from, NBEdge* dest,
     if (!addEdge2EdgeConnection(dest)) {
         return false;
     }
-    setConnection(from, dest, toLane, type, mayUseSameDestination, mayDefinitelyPass, keepClear);
+    setConnection(from, dest, toLane, type, mayUseSameDestination, mayDefinitelyPass, keepClear, contPos);
     return true;
 }
 
@@ -709,7 +716,8 @@ NBEdge::setConnection(unsigned int lane, NBEdge* destEdge,
                       unsigned int destLane, Lane2LaneInfoType type,
                       bool mayUseSameDestination,
                       bool mayDefinitelyPass,
-                      bool keepClear) {
+                      bool keepClear,
+                      SUMOReal contPos) {
     if (myStep == INIT_REJECT_CONNECTIONS) {
         return;
     }
@@ -748,6 +756,7 @@ NBEdge::setConnection(unsigned int lane, NBEdge* destEdge,
         myConnections.back().mayDefinitelyPass = true;
     }
     myConnections.back().keepClear = keepClear;
+    myConnections.back().contPos = contPos;
     if (type == L2L_USER) {
         myStep = LANES2LANES_USER;
     } else {
@@ -1056,6 +1065,7 @@ NBEdge::moveConnectionToRight(unsigned int lane) {
 
 void
 NBEdge::buildInnerEdges(const NBNode& n, unsigned int noInternalNoSplits, unsigned int& linkIndex, unsigned int& splitIndex) {
+    const int numPoints = OptionsCont::getOptions().getInt("junctions.internal-link-detail");
     std::string innerID = ":" + n.getID();
     NBEdge* toEdge = 0;
     unsigned int edgeIndex = linkIndex;
@@ -1073,7 +1083,7 @@ NBEdge::buildInnerEdges(const NBNode& n, unsigned int noInternalNoSplits, unsign
             toEdge = (*i).toEdge;
             internalLaneIndex = 0;
         }
-        PositionVector shape = n.computeInternalLaneShape(this, con);
+        PositionVector shape = n.computeInternalLaneShape(this, con, numPoints);
         std::vector<unsigned int> foeInternalLinks;
 
         LinkDirection dir = n.getDirection(this, con.toEdge);
@@ -1104,7 +1114,7 @@ NBEdge::buildInnerEdges(const NBNode& n, unsigned int noInternalNoSplits, unsign
                         // compute the crossing point
                         if (needsCont) {
                             crossingPositions.second.push_back(index);
-                            const PositionVector otherShape = n.computeInternalLaneShape(*i2, *k2);
+                            const PositionVector otherShape = n.computeInternalLaneShape(*i2, *k2, numPoints);
                             // vehicles are typically less wide than the lane
                             // they drive on but but bicycle lanes should be kept clear for their whole width
                             SUMOReal width2 = (*k2).toEdge->getLaneWidth((*k2).toLane);
@@ -1170,7 +1180,16 @@ NBEdge::buildInnerEdges(const NBNode& n, unsigned int noInternalNoSplits, unsign
             default:
                 break;
         }
-
+        if (con.contPos != UNSPECIFIED_CONTPOS) {
+            // apply custom internal junction position
+            if (con.contPos <= 0 || con.contPos >= shape.length()) {
+                // disable internal junction
+                crossingPositions.first = -1;
+            } else {
+                // set custom position
+                crossingPositions.first = con.contPos;
+            }
+        }
 
         // @todo compute the maximum speed allowed based on angular velocity
         //  see !!! for an explanation (with a_lat_mean ~0.3)

@@ -189,9 +189,6 @@ public:
     static const SUMOReal UNSPECIFIED_RADIUS;
 
 public:
-    /// @brief maximum number of connections allowed
-    static const int MAX_CONNECTIONS;
-
     /** @brief Constructor
      * @param[in] id The id of the node
      * @param[in] position The position of the node
@@ -545,7 +542,7 @@ public:
      * @param[in] numPoints The number of geometry points for the internal lane
      * @return The shape of the internal lane
      */
-    PositionVector computeInternalLaneShape(NBEdge* fromE, const NBEdge::Connection& con, int numPoints = 5) const;
+    PositionVector computeInternalLaneShape(NBEdge* fromE, const NBEdge::Connection& con, int numPoints) const;
 
 
     /** @brief Compute a smooth curve between the given geometries

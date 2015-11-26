@@ -185,6 +185,9 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("junctions.corner-detail", new Option_Integer(0));
     oc.addDescription("junctions.corner-detail", "Processing", "Generate INT intermediate points to smooth out intersection corners");
 
+    oc.doRegister("junctions.internal-link-detail", new Option_Integer(5));
+    oc.addDescription("junctions.internal-link-detail", "Processing", "Generate INT intermediate points to smooth out lanes within the intersection");
+
     oc.doRegister("check-lane-foes.roundabout", new Option_Bool(true));
     oc.addDescription("check-lane-foes.roundabout", "Processing",
                       "Allow driving onto a multi-lane road if there are foes on other lanes (at roundabouts)");
@@ -208,6 +211,10 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("sidewalks.guess.from-permissions", new Option_Bool(false));
     oc.addDescription("sidewalks.guess.from-permissions", "Processing",
                       "Add sidewalks for edges that allow pedestrians on any of their lanes regardless of speed");
+
+    oc.doRegister("sidewalks.guess.exclude", new Option_String());
+    oc.addDescription("sidewalks.guess.exclude", "Processing",
+                      "Do not guess sidewalks for the given list of edges");
 
     oc.doRegister("crossings.guess", new Option_Bool(false));
     oc.addDescription("crossings.guess", "Processing",
@@ -273,6 +280,9 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("tls.yellow.time", new Option_Integer());
     oc.addSynonyme("tls.yellow.time", "traffic-light-yellow", true);
     oc.addDescription("tls.yellow.time", "TLS Building", "Set INT as fixed time for yellow phase durations");
+
+    oc.doRegister("tls.left-green.time", new Option_Integer(6));
+    oc.addDescription("tls.left-green.time", "TLS Building", "Use INT as green phase duration for left turns (s)");
 
     // tls-shifts
     oc.doRegister("tls.half-offset", new Option_String());
@@ -410,6 +420,10 @@ NBFrame::checkOptions() {
     }
     if (!oc.isDefault("tls.green.time") && !oc.isDefault("tls.cycle.time")) {
         WRITE_ERROR("only one of the options 'tls.green.time' or 'tls.cycle.time' may be given");
+        ok = false;
+    }
+    if (oc.getInt("junctions.internal-link-detail") < 2) {
+        WRITE_ERROR("junctions.internal-link-detail must >= 2");
         ok = false;
     }
     return ok;

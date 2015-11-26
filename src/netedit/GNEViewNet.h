@@ -141,6 +141,12 @@ public:
     /// @brief makes selected edges straight
     long onCmdStraightenEdges(FXObject*, FXSelector, void*);
 
+    /// @brief simply shape of current polygon
+    long onCmdSimplifyShape(FXObject*, FXSelector, void*);
+
+    /// @brief delete the closes geometry point
+    long onCmdDeleteGeometry(FXObject*, FXSelector, void*);
+
     /// @brief duplicate selected lane
     long onCmdDuplicateLane(FXObject*, FXSelector, void*);
 
@@ -248,6 +254,10 @@ private:
 
     /// @brief the edge of which geometry is being moved
     GNEEdge* myEdgeToMove;
+
+    /// @brief the poly of which geometry is being moved
+    GNEPoly* myPolyToMove;
+
     /// @brief position from which to move edge geometry
     Position myMoveSrc;
 
@@ -336,6 +346,8 @@ private:
     /// @brief try to retrieve multiple edges at the given position
     std::set<GNEEdge*> getEdgesAtCursorPosition(Position& pos);
 
+    /// @brief remove the currently edited polygon
+    void removeCurrentPoly();
 
 };
 

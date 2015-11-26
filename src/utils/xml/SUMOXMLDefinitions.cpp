@@ -339,6 +339,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "foes",           SUMO_ATTR_FOES },
 
     { "cont",           SUMO_ATTR_CONT },
+    { "contPos",        SUMO_ATTR_CONTPOS },
     { "timeThreshold",  SUMO_ATTR_HALTING_TIME_THRESHOLD },
     { "speedThreshold", SUMO_ATTR_HALTING_SPEED_THRESHOLD },
     { "jamThreshold",   SUMO_ATTR_JAM_DIST_THRESHOLD },
@@ -421,6 +422,9 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "actType",        SUMO_ATTR_ACTTYPE },
     { "slope",          SUMO_ATTR_SLOPE },
     { "version",        SUMO_ATTR_VERSION },
+    { "junctionCornerDetail", SUMO_ATTR_CORNERDETAIL },
+    { "junctionLinkDetail", SUMO_ATTR_LINKDETAIL },
+    { "lefthand",        SUMO_ATTR_LEFTHAND },
 
     { "actorConfig",    SUMO_ATTR_ACTORCONFIG },
     { "vehicle",        SUMO_ATTR_VEHICLE },

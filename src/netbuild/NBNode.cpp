@@ -85,7 +85,6 @@
 // ===========================================================================
 // static members
 // ===========================================================================
-const int NBNode::MAX_CONNECTIONS(64);
 const int NBNode::FORWARD(1);
 const int NBNode::BACKWARD(-1);
 const SUMOReal NBNode::DEFAULT_CROSSING_WIDTH(4);
@@ -634,7 +633,7 @@ NBNode::needsCont(const NBEdge* fromE, const NBEdge* otherFromE,
     }
     if (c.tlID != "" && !bothLeft) {
         assert(myTrafficLights.size() > 0);
-        return (*myTrafficLights.begin())->needsCont(fromE, toE, otherFromE, otherToE);
+        return (c.contPos != NBEdge::UNSPECIFIED_CONTPOS) || (*myTrafficLights.begin())->needsCont(fromE, toE, otherFromE, otherToE);
     }
     if (fromE->getJunctionPriority(this) > 0 && otherFromE->getJunctionPriority(this) > 0) {
         return mustBrake(fromE, toE, c.fromLane, c.toLane, false);
@@ -670,7 +669,7 @@ NBNode::computeLogic(const NBEdgeCont& ec, OptionsCont& oc) {
         myRequest = new NBRequest(ec, this, myAllEdges, myIncomingEdges, myOutgoingEdges, myBlockedConnections);
         // check whether it is not too large
         unsigned int numConnections = numNormalConnections();
-        if (numConnections >= MAX_CONNECTIONS) {
+        if (numConnections >= SUMO_MAX_CONNECTIONS) {
             // yep -> make it untcontrolled, warn
             delete myRequest;
             myRequest = 0;
@@ -680,7 +679,7 @@ NBNode::computeLogic(const NBEdgeCont& ec, OptionsCont& oc) {
                 myType = NODETYPE_NOJUNCTION;
             }
             WRITE_WARNING("Junction '" + getID() + "' is too complicated (" + toString(numConnections)
-                          + " connections, max 64); will be set to " + toString(myType));
+                          + " connections, max " + toString(SUMO_MAX_CONNECTIONS) + "); will be set to " + toString(myType));
         } else if (numConnections == 0) {
             delete myRequest;
             myRequest = 0;
@@ -854,9 +853,9 @@ NBNode::computeLanes2Lanes() {
                 if (unsatisfied != 0) {
                     //std::cout << " unsatisfied modes from edge=" << incoming->getID() << " toEdge=" << currentOutgoing->getID() << " deadModes=" << getVehicleClassNames(unsatisfied) << "\n";
                     int fromLane = 0;
-                    while (unsatisfied != 0 && fromLane < incoming->getNumLanes()) {
+                    while (unsatisfied != 0 && fromLane < (int)incoming->getNumLanes()) {
                         if ((incoming->getPermissions(fromLane) & unsatisfied) != 0) {
-                            for (int toLane = 0; toLane < currentOutgoing->getNumLanes(); ++toLane) {
+                            for (int toLane = 0; toLane < (int)currentOutgoing->getNumLanes(); ++toLane) {
                                 const SVCPermissions satisfied = incoming->getPermissions(fromLane) & currentOutgoing->getPermissions(toLane) & unsatisfied;
                                 if (satisfied != 0) {
                                     incoming->setConnection((unsigned int)fromLane, currentOutgoing, toLane, NBEdge::L2L_COMPUTED);

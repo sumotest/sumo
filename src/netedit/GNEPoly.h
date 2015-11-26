@@ -106,20 +106,57 @@ public:
 public:
     /** @brief Constructor
      */
-    GNEPoly(const std::string& id, const std::string& type, const PositionVector& shape, bool fill,
+    GNEPoly(GNENet* net, GNEJunction* junction, const std::string& id, const std::string& type, const PositionVector& shape, bool fill,
            const RGBColor& color, SUMOReal layer,
            SUMOReal angle=0, const std::string& imgFile="");
 
     /// @brief Destructor
     virtual ~GNEPoly() ;
 
+    /// @name inherited from GUIGlObject
+    //@{
 
-    /** @brief reposition the node at pos and informs the edges
-     * @param[in] pos The new position
-     * @note: those operations are not added to the undoList. This is handled in
-     * registerMove to avoids merging lots of tiny movements
+    /** @brief Returns an own popup-menu
+     *
+     * @param[in] app The application needed to build the popup-menu
+     * @param[in] parent The parent window needed to build the popup-menu
+     * @return The built popup-menu
+     * @see GUIGlObject::getPopUpMenu
      */
-    //void move(Position pos);
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
+                                       GUISUMOAbstractView& parent) ;
+
+
+    /** @brief Draws the object
+     * @param[in] s The settings for the current view (may influence drawing)
+     * @see GUIGlObject::drawGL
+     */
+    void drawGL(const GUIVisualizationSettings& s) const ;
+    //@}
+
+
+    /// @brief draw the polygon and also little movement handles
+
+    /** @brief change the polygon geometry without registering undo/redo
+     * It is up to the Polygon to decide whether an new geometry node should be
+     * generated or an existing node should be moved
+     * @param[in] oldPos The origin of the mouse movement
+     * @param[in] newPos The destination of the mouse movenent
+     * @param[in] relative Whether newPos is absolute or relative
+     * @return newPos if something was moved, oldPos if nothing was moved
+     */
+    Position moveGeometry(const Position& oldPos, const Position& newPos, bool relative=false);
+
+    /// @brief replace the current shape with a rectangle
+    void simplifyShape();
+
+    /// @brief delete the geometry point closest to the given pos
+    void deleteGeometryNear(const Position& pos);
+
+    /// @brief retrieve the junction of which the shape is being edited
+    GNEJunction* getEditedJunction() const {
+        return myJunction;
+    }
 
 
     /// @brief registers completed movement with the undoList
@@ -145,6 +182,13 @@ public:
 
     /// @brief save POIs to file
     static void saveToFile(const std::string& file);
+
+protected:
+    /// @brief the net for querying updates
+    GNENet* myNet;
+
+    /// @brief junction of which the shape is being edited (optional)
+    GNEJunction* myJunction;
 
 private:
     /// @brief Invalidated copy constructor.
