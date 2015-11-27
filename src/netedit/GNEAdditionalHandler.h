@@ -264,6 +264,7 @@ public:
 		if (!ok) {
 			throw ProcessError();
 		}
+		/*
 		// get the lane
 		GNELane* lane = getLane(attrs, "busStop", id);
 		// get the positions
@@ -277,7 +278,9 @@ public:
 		std::vector<std::string> lines;
 		SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
 		// build the bus stop
+		
 		buildBusStop(net, id, lines, lane, frompos, topos);
+		*/
 	}
 
 
@@ -295,6 +298,7 @@ public:
 		if (!ok) {
 			throw ProcessError();
 		}
+		/*
 		// get the lane
 		GNELane* lane = getLane(attrs, "containerStop", id);
 		// get the positions
@@ -309,6 +313,7 @@ public:
 		SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
 		// build the container stop
 		buildContainerStop(net, id, lines, lane, frompos, topos);
+		*/
 	}
 
 
@@ -328,7 +333,7 @@ public:
 		if (!ok) {
 			throw ProcessError();
 		}
-
+		/*
 		// get the lane
 		GNELane* lane = getLane(attrs, "chargingStation", id);
 
@@ -352,6 +357,7 @@ public:
 
 		// build the Charging Station
 		buildChrgStn(net, id, lines, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, ChargeDelay);
+		*/
 	}
 
     /** @brief Parses his values and builds a mesoscopic or microscopic calibrator
