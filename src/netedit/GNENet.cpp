@@ -961,24 +961,24 @@ GNENet::getContainerStopID(const GNELane* lane, const SUMOReal pos) const {					
 
 // ------ Insertion and retrieval of charging Stations ------
 bool														// PABLO #1916
-GNENet::addChrgStn(GNEChargingStation* chrgStn) {			// PABLO #1916
-    return myChrgStnDict.add(chrgStn->getID(), chrgStn);	// PABLO #1916
+GNENet::addChargingStation(GNEChargingStation* chargingStation) {			// PABLO #1916
+    return myChargingStationDict.add(chargingStation->getID(), chargingStation);	// PABLO #1916
 }															// PABLO #1916
 
 
 GNEChargingStation*									// PABLO #1916
-GNENet::getChrgStn(const std::string& id) const {	// PABLO #1916
-    return myChrgStnDict.get(id);					// PABLO #1916
+GNENet::getChargingStation(const std::string& id) const {	// PABLO #1916
+    return myChargingStationDict.get(id);					// PABLO #1916
 }													// PABLO #1916
 
 
 std::string																														// PABLO #1916
-GNENet::getChrgStnID(const GNELane* lane, const SUMOReal pos) const {															// PABLO #1916
-    const std::map<std::string, GNEChargingStation*>& vals = myChrgStnDict.getMyMap();											// PABLO #1916
+GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {															// PABLO #1916
+    const std::map<std::string, GNEChargingStation*>& vals = myChargingStationDict.getMyMap();											// PABLO #1916
     for (std::map<std::string, GNEChargingStation*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {				// PABLO #1916
-        GNEChargingStation* chrgStn = it->second;																				// PABLO #1916
-        if (&chrgStn->getLane() == lane && chrgStn->getBeginLanePosition() <= pos && chrgStn->getEndLanePosition() >= pos) {	// PABLO #1916
-            return chrgStn->getID();																							// PABLO #1916
+        GNEChargingStation* chargingStation = it->second;																				// PABLO #1916
+        if (&chargingStation->getLane() == lane && chargingStation->getBeginLanePosition() <= pos && chargingStation->getEndLanePosition() >= pos) {	// PABLO #1916
+            return chargingStation->getID();																							// PABLO #1916
         }																														// PABLO #1916
     }																															// PABLO #1916
     return "";																													// PABLO #1916

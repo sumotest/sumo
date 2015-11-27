@@ -469,27 +469,27 @@ public:
      *
      * If another charging station with the same id exists, false is returned.
      *  Otherwise, the charging station is added to the internal bus stop
-     *  container "myChrgStnDict".
+     *  container "myChargingStationDict".
      *
      * This control gets responsible for deletion of the added charging station.
      *
-     * @param[in] chrgStn The charging station add
+     * @param[in] chargingStation The charging station add
      * @return Whether the charging station could be added
      */
-    bool addChrgStn(GNEChargingStation* chrgStn);	// PABLO #1916
+    bool addChargingStation(GNEChargingStation* chargingStation);	// PABLO #1916
 
     /** @brief Returns the named charging station
      * @param[in] id The id of the charging station to return.
      * @return The named charging station, or 0 if no such stop exists
      */
-    GNEChargingStation* getChrgStn(const std::string& id) const;	// PABLO #1916
+    GNEChargingStation* getChargingStation(const std::string& id) const;	// PABLO #1916
 
     /** @brief Returns the charging station close to the given position
      * @param[in] lane the lane of the charging station to return.
      * @param[in] pos the position of the bus stop to return.
      * @return The charging station id on the location, or "" if no such stop exists
      */
-    std::string getChrgStnID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
+    std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
     /// @}
 
 private:
@@ -533,7 +533,7 @@ private:
     NamedObjectCont<GNEBusStop*> myContainerStopDict;	// PABLO #1916
 
     /// @brief Dictionary of charging Stations			// PABLO #1916
-    NamedObjectCont<GNEChargingStation*> myChrgStnDict;	// PABLO #1916
+    NamedObjectCont<GNEChargingStation*> myChargingStationDict;	// PABLO #1916
 
 
 private:

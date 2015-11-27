@@ -55,7 +55,7 @@
 // ===========================================================================
 void
 MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
-    of.openTag("timestep").writeAttr("time", time2string(timestep));
+    of.openTag("timeStep").writeAttr("time", time2string(timestep));
     of.setPrecision(precision);
 
     MSVehicleControl& vc = MSNet::getInstance()->getVehicleControl();
@@ -86,32 +86,32 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 				of.writeAttr("id", veh->getID());
 
 				// Write consum
-				of.writeAttr("Consum", batteryToExport->getConsum());
+				of.writeAttr("energyConsumed", batteryToExport->getConsum());
 
 				// Write ActBatKap
-				of.writeAttr("ActBatKap", batteryToExport->getActBatKap());
+				of.writeAttr("actualBatteryCapacity", batteryToExport->getActBatKap());
 
 				// Write MaxBatKap
-				of.writeAttr("MaxBatKap", batteryToExport->getMaxBatKap());
+				of.writeAttr("maximumBatteryCapacity", batteryToExport->getMaxBatKap());
 
 				// Write Charging Station ID
-				of.writeAttr("ChrgStnId", batteryToExport->getChrgStnID());
+				of.writeAttr("chargingStationId", batteryToExport->getChargingStationID());
 
 				// Write Charge charged in the Battery
-				of.writeAttr("Charge", batteryToExport->getChrgEnergy());
+				of.writeAttr("energyCharged", batteryToExport->getChrgEnergy());
 
 				// Write ChargeInTransit
 				if (batteryToExport->isChargingInTransit()) {
-					of.writeAttr("ChargeInTransit", batteryToExport->getChrgEnergy());
+					of.writeAttr("energyChargedInTransit", batteryToExport->getChrgEnergy());
 				} else {
-					of.writeAttr("ChargeInTransit", 0.00);
+					of.writeAttr("energyChargedInTransit", 0.00);
 				}
 
 				// Write ChargingStopped
 				if (batteryToExport->isChargingStopped()) {
-					of.writeAttr("ChargeStopped", batteryToExport->getChrgEnergy());
+					of.writeAttr("energyChargeStopped", batteryToExport->getChrgEnergy());
 				} else {
-					of.writeAttr("ChargeStopped", 0.00);
+					of.writeAttr("energyChargeStopped", 0.00);
 				}
 
 				// Write Speed
@@ -121,10 +121,10 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 				of.writeAttr("acceleration", veh->getAcceleration());
 
 				// Write pos x
-				of.writeAttr("x", veh->getPosition().x());
+				of.writeAttr("posx", veh->getPosition().x());
 
 				// Write pos y
-				of.writeAttr("y", veh->getPosition().y());
+				of.writeAttr("posy", veh->getPosition().y());
 
 				// Write Lane ID
 				of.writeAttr("lane", veh->getLane()->getID());
@@ -135,20 +135,10 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 				// Write Time stopped (In all cases)
 				of.writeAttr("timeStopped", batteryToExport->getVehicleStopped());
 
-				/*0
-					1
-					2
-					3
-					4
-				vehiclestopped‹berein station
-
-					wielangevehiceladen
-					*/
 				// Close Row
 				of.closeTag();
 			}
         }
     }
     of.closeTag();
-
 }

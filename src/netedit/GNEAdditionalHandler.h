@@ -323,7 +323,7 @@ public:
      * @param[in] attrs SAXattributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
-    void parseAndBuildChrgStn(GNENet* net, const SUMOSAXAttributes& attrs)
+    void parseAndBuildChargingStation(GNENet* net, const SUMOSAXAttributes& attrs)
 	{
 		bool ok = true;
 
@@ -356,7 +356,7 @@ public:
 		SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
 
 		// build the Charging Station
-		buildChrgStn(net, id, lines, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, ChargeDelay);
+		buildChargingStation(net, id, lines, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, ChargeDelay);
 		*/
 	}
 
@@ -475,7 +475,7 @@ protected:
      * @param[in] topos End position of the charging Station on the lane
      * @exception InvalidArgument If the charging Station can not be added to the net (is duplicate)
      */
-    virtual void buildChrgStn(GNENet* net,
+    virtual void buildChargingStation(GNENet* net,
                               const std::string& id, const std::vector<std::string>& lines,
                               GNELane* lane, SUMOReal frompos, SUMOReal topos, SUMOReal chrgpower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal ChargeDelay)
 	{

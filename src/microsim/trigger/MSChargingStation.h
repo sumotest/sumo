@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    MSChrgStn_h.h
+/// @file    MSChargingStation_h.h
 /// @author  Daniel Krajzewicz
 /// @author  Tamas Kurzveil
 /// @author  Pablo Alvarez Lopez
 /// @date    20-12-13
-/// @version $Id$       //REVISION NEEDED
+/// @version $Id: MSChargingStation.h 18762 2015-09-01 16:27:09Z behrisch $
 ///
 // Chargin Station for Electric vehicles //REVISION NEEDED
 /****************************************************************************/
@@ -19,8 +19,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef MSChrgStn_h
-#define MSChrgStn_h
+#ifndef MSChargingStation_h
+#define MSChargingStation_h
 
 // ===========================================================================
 // included modules
@@ -39,38 +39,30 @@
 #include <microsim/MSStoppingPlace.h>
 
 
-#define DEFAULT_EFFICIENCY 0.95
-
-
-class OptionsCont;
-
 // ===========================================================================
 // class declarations
 // ===========================================================================
 class MSLane;
 class MSBusStop;
+class OptionsCont;
 
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
 /**
- * @class ChrgStn
+ * @class ChargingStation
  * @brief Definition of charging stations
  */
-class MSChrgStn : public MSStoppingPlace {
+class MSChargingStation : public MSStoppingPlace {
 public:
 
     // CONSTRUCTORES
 
-    MSChrgStn(const std::string& new_ChrgStnID, const std::vector<std::string>& new_lines, MSLane& new_Lane,
+    MSChargingStation(const std::string& new_ChargingStationID, const std::vector<std::string>& new_lines, MSLane& new_Lane,
               SUMOReal new_StartPos, SUMOReal new_EndPos, SUMOReal new_ChrgPower, SUMOReal new_Efficency, SUMOReal new_ChargeInTransit, SUMOReal new_ChargeDelay);
 
-    virtual ~MSChrgStn();
-
-
-    // GET FUNCTIONS
-
+    virtual ~MSChargingStation();
 
     /// @brief Get parameter 01, charging station's charging power
     SUMOReal getChrgPower() const;
@@ -83,9 +75,6 @@ public:
 
     /// @brief Get parameter 03, get Charge Delay
     SUMOReal getChargeDelay() const;
-
-
-    // SET FUNCTIONS
 
     /// @brief Set parameter 05, charging station's charging power
     inline void setChrgPower(SUMOReal new_ChrgPower);
@@ -123,8 +112,6 @@ private:
      * @return Variable var in String format
      */
     std::string SUMOReal_str(const SUMOReal& var);
-
-
 };
 
 #endif

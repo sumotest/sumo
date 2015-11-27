@@ -71,7 +71,7 @@ GNEAdditionalHandler::myStartElement(int element,
 				parseAndBuildBusStop(myNet, attrs);
 				break;
 			case SUMO_TAG_CHRG_STN:
-				parseAndBuildChrgStn(myNet, attrs);
+				parseAndBuildChargingStation(myNet, attrs);
 				break;
 			default:
 				break;

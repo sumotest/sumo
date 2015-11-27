@@ -34,7 +34,7 @@
 
 #include <microsim/devices/MSDevice.h>
 #include <microsim/MSVehicle.h>
-#include <microsim/trigger/MSChrgStn.h>
+#include <microsim/trigger/MSChargingStation.h>
 #include <utils/common/SUMOTime.h>
 #include <iostream>
 #include <sstream>
@@ -201,7 +201,7 @@ public:
     SUMOReal getConsum() const;
 
     /// @brief Get parameter 19, Charging Station I
-    const std::string& getChrgStnID() const;
+    const std::string& getChargingStationID() const;
 
     /// @brief Get parameter 20, charging energy
     SUMOReal getChrgEnergy() const;
@@ -351,7 +351,7 @@ private:
 
     /// @brief Parameter 19, Vehicle consum during a time step
     /// @condition by default is "".
-    std::string actChrgStn;
+    std::string actChargingStation;
 
     /// @brief Parameter 20, Energy charged in each timestep
     SUMOReal energyCharged;

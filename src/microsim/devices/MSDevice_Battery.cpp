@@ -165,12 +165,12 @@ bool MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOR
     }
 
     // Check if vehicle has under their position one charge Station
-    std::string ChargingStationID = MSNet::getInstance()->getChrgStnID(veh.getLane(), veh.getPositionOnLane());
+    std::string ChargingStationID = MSNet::getInstance()->getChargingStationID(veh.getLane(), veh.getPositionOnLane());
 
     // If vehicle is over a charging station
     if (ChargingStationID != "") {
         // Declare a pointer to the charging station
-        MSChrgStn* ChargingStationPointer = MSNet::getInstance()->getChrgStn(ChargingStationID);
+        MSChargingStation* ChargingStationPointer = MSNet::getInstance()->getChargingStation(ChargingStationID);
 
         // if the vehicle is almost stopped, or charge in transit is enabled, then charge vehicle
         if ((veh.getSpeed() < 0.2) || (ChargingStationPointer->getChargeInTransit() == 1)) {
@@ -189,8 +189,8 @@ bool MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOR
                 ItsChargingInTransit = true;
             }
 
-            // Set actChrgStn parameter
-            actChrgStn = ChargingStationID;
+            // Set actChargingStation parameter
+            actChargingStation = ChargingStationID;
 
             // Only update charging start time if vehicle allow charge in transit, or in other case
             // if the vehicle not allow charge in transit but it's stopped.
@@ -223,7 +223,7 @@ bool MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOR
         ItsChargingStopped = false;
 
         // Disable charging station
-        actChrgStn = "NULL";
+        actChargingStation = "NULL";
 
         // Set energy charged to 0
         energyCharged = 0.00;
@@ -288,7 +288,7 @@ MSDevice_Battery::MSDevice_Battery(SUMOVehicle& holder, const std::string& id, c
     vehicleStopped = 0;
 
     // Initially the Vehicle are not over a Charging Station
-    actChrgStn = "NULL";
+    actChargingStation = "NULL";
 
     if (ActBatKap > MaxBatKap) {
         WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has a actual battery capacity ("  + SUMOReal_str(ActBatKap) + ") greater than it's max battery capacity(" + SUMOReal_str(MaxBatKap) + ").");
@@ -553,8 +553,8 @@ SUMOReal MSDevice_Battery::getChargingStartTime() const {
     return ChargingStartTime;
 }
 
-const std::string& MSDevice_Battery::getChrgStnID() const {
-    return actChrgStn;
+const std::string& MSDevice_Battery::getChargingStationID() const {
+    return actChargingStation;
 }
 
 SUMOReal MSDevice_Battery::getChrgEnergy() const {
