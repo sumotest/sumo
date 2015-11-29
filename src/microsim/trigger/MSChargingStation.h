@@ -6,7 +6,7 @@
 /// @date    20-12-13
 /// @version $Id: MSChargingStation.h 18762 2015-09-01 16:27:09Z behrisch $
 ///
-// Chargin Station for Electric vehicles //REVISION NEEDED
+// Chargin Station for Electric vehicles
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors

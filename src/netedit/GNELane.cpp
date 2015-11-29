@@ -442,6 +442,10 @@ GNELane::setIndex(unsigned int index) {
     setMicrosimID(myParentEdge.getNBEdge()->getLaneID(index));
 }
 
+SUMOReal											// PABLO #1916
+GNELane::getLength() const {						// PABLO #1916
+    return myParentEdge.getNBEdge()->getLength();	// PABLO #1916
+}													// PABLO #1916
 
 std::string
 GNELane::getAttribute(SumoXMLAttr key) const {

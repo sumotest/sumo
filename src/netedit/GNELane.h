@@ -131,11 +131,18 @@ public:
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 
+	///@brief returns the index of the lane	// PABLO #1916
     unsigned int getIndex() const {
         return myIndex;
     }
 
+	/* @brief method for setting the index of the lane	// PABLO #1916
+     * @param[in] index The new index of lane			// PABLO #1916
+	 */													// PABLO #1916
     void setIndex(unsigned int index);
+
+    ///@brief returns the length of the lane	// PABLO #1916
+    SUMOReal getLength() const;					// PABLO #1916
 
     //@name inherited from GNEAttributeCarrier
     //@{
