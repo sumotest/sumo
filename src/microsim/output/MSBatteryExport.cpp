@@ -77,7 +77,7 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 
 			MSDevice_Battery* batteryToExport = dynamic_cast<MSDevice_Battery*>(veh->getDevice(typeid(MSDevice_Battery)));
 
-			if(batteryToExport->getMaxBatKap() > 0)
+			if(batteryToExport->getMaximumBatteryCapacity() > 0)
 			{
 				// Open Row
 				of.openTag("vehicle");
@@ -89,10 +89,10 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 				of.writeAttr("energyConsumed", batteryToExport->getConsum());
 
 				// Write ActBatKap
-				of.writeAttr("actualBatteryCapacity", batteryToExport->getActBatKap());
+				of.writeAttr("actualBatteryCapacity", batteryToExport->getActualBatteryCapacity());
 
 				// Write MaxBatKap
-				of.writeAttr("maximumBatteryCapacity", batteryToExport->getMaxBatKap());
+				of.writeAttr("maximumBatteryCapacity", batteryToExport->getMaximumBatteryCapacity());
 
 				// Write Charging Station ID
 				of.writeAttr("chargingStationId", batteryToExport->getChargingStationID());
@@ -109,9 +109,9 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 
 				// Write ChargingStopped
 				if (batteryToExport->isChargingStopped()) {
-					of.writeAttr("energyChargeStopped", batteryToExport->getChrgEnergy());
+					of.writeAttr("energyChargedStopped", batteryToExport->getChrgEnergy());
 				} else {
-					of.writeAttr("energyChargeStopped", 0.00);
+					of.writeAttr("energyChargedStopped", 0.00);
 				}
 
 				// Write Speed
