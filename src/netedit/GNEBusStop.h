@@ -70,7 +70,7 @@ public:
 
 	/**** DOCUMENTAR ***/
 
-	GNELane &getLane() const;
+	GNELane &getLane();
 
 	SUMOReal getBeginLanePosition() const;
 		
@@ -111,8 +111,8 @@ public:
      *
      * @return The GNElane parent
      */
-    GNELane& getParentLane() {
-        return myParentLane;
+    const GNELane& getParentLane() const {
+        return myLane;
     };
 
 
@@ -163,12 +163,17 @@ public:
     }
 
 private:
-    /// The lane that to which this busStop belongs
-    GNELane& myParentLane;
+	/// @brief The list of lines that are assigned to this stop
+    std::vector<std::string> myLines;
 
-	SUMOReal begin;
+    /// @brief The lane this bus stop is located at
+    GNELane& myLane;
 
-	SUMOReal end;
+    /// @brief The begin position this bus stop is located at
+    SUMOReal myBegPos;
+
+    /// @brief The end position this bus stop is located at
+    SUMOReal myEndPos;
 
     /// @name computed only once (for performance) in updateGeometry()
     //@{

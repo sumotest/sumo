@@ -173,10 +173,10 @@ NLTriggerBuilder::parseAndBuildChargingStation(MSNet& net, const SUMOSAXAttribut
     // get the positions
     SUMOReal frompos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
     SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLength());
-    SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHRGPOWER, id.c_str(), ok, 0);
+    SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGINGPOWER, id.c_str(), ok, 0);
     SUMOReal efficiency = attrs.getOpt<SUMOReal>(SUMO_ATTR_EFFICIENCY, id.c_str(), ok, 0);
-    SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHRGINTRANSIT, id.c_str(), ok, 0);
-    SUMOReal ChargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHRGDELAY, id.c_str(), ok, 0);
+    SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEINTRANSIT, id.c_str(), ok, 0);
+    SUMOReal ChargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
 
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
 

@@ -70,7 +70,7 @@ GNEAdditionalHandler::myStartElement(int element, const SUMOSAXAttributes& attrs
 			case SUMO_TAG_BUS_STOP:
 				parseAndBuildBusStop(myNet, attrs);
 				break;
-			case SUMO_TAG_CHRG_STN:
+			case SUMO_TAG_CHARGING_STATION:
 				parseAndBuildChargingStation(myNet, attrs);
 				break;
 			default:
@@ -283,10 +283,10 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
 	// get the positions
 	SUMOReal frompos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
 	SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLength());
-	SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHRGPOWER, id.c_str(), ok, 0);
+	SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGINGPOWER, id.c_str(), ok, 0);
 	SUMOReal efficiency = attrs.getOpt<SUMOReal>(SUMO_ATTR_EFFICIENCY, id.c_str(), ok, 0);
-	SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHRGINTRANSIT, id.c_str(), ok, 0);
-	SUMOReal ChargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHRGDELAY, id.c_str(), ok, 0);
+	SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEINTRANSIT, id.c_str(), ok, 0);
+	SUMOReal ChargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
 
 	const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
 
@@ -357,7 +357,7 @@ GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std
                                    GNELane* lane, SUMOReal frompos, SUMOReal topos)
 {
 
-    /** OJO! Cambiar esto por stoppingPlace **/
+    /** OJO! Cambiar esto por stoppingPlace *** */
     GNEBusStop* stop = new GNEBusStop(id, lines, *lane, frompos, topos);
     if (!net->addBusStop(stop)) {
         delete stop;
@@ -430,6 +430,7 @@ GNEAdditionalHandler::getLane(const SUMOSAXAttributes& attrs, const std::string&
 	std::string objectid = attrs.get<std::string>(SUMO_ATTR_LANE, tid.c_str(), ok);
 	std::vector<GNELane*> vectorOfLanes = myNet->retrieveLanes(); 
 	GNELane* lane = 0;
+
 	for(std::vector<GNELane*>::iterator i = vectorOfLanes.begin(); (i != vectorOfLanes.end()) && (lane == 0); i++) {
 		if((*i)->getID() == objectid) {
 			lane = (*i);

@@ -44,7 +44,7 @@
 
 
 GNEChargingStation::GNEChargingStation(GNELane& lane) :
-	GNEAttributeCarrier(SUMO_TAG_CHRG_STN),	
+	GNEAttributeCarrier(SUMO_TAG_CHARGING_STATION),	
 	myParentLane(lane){
 
 }

@@ -68,27 +68,32 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) :
-    GUIGlObject(GLO_TRIGGER, id),
+GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) : 
+	myLane(lane),
+	myLines(lines), 
+	myBegPos(frompos),
+	myEndPos(topos),
+	GUIGlObject(GLO_TRIGGER, id),
     GNEAttributeCarrier(SUMO_TAG_BUS_STOP),
-    myParentLane(lane),
     mySpecialColor(0) {
+
+		std::cout << "SE HA CREADO CON ID = " << getID() <<  std::endl;
     updateGeometry();
 }
 
 
 GNEBusStop::~GNEBusStop() {}
 
-GNELane &GNEBusStop::getLane() const {
-	return myParentLane;
+GNELane &GNEBusStop::getLane() {
+	return myLane;
 }
 
 SUMOReal GNEBusStop::getBeginLanePosition() const {
-	return begin;
+	return myBegPos;
 }
 		
 SUMOReal GNEBusStop::getEndLanePosition() const {
-	return end;
+	return myEndPos;
 }
 
 void
@@ -97,7 +102,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
     glPushMatrix();
     glPushName(getGlID());
     glTranslated(0, 0, getType());
-    const bool selectedEdge = gSelected.isSelected(myParentLane.getParentEdge().getType(), myParentLane.getParentEdge().getGlID());
+    const bool selectedEdge = gSelected.isSelected(myLane.getParentEdge().getType(), myLane.getParentEdge().getGlID());
     const bool selected = gSelected.isSelected(getType(), getGlID());
     if (mySpecialColor != 0) {
         GLHelper::setColor(*mySpecialColor);
@@ -127,7 +132,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
         
         // the actual lane
         // reduce lane width to make sure that a selected edge can still be seen
-		const SUMOReal halfWidth = selectionScale * (myParentLane.getParentEdge().getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
+		const SUMOReal halfWidth = selectionScale * (myLane.getParentEdge().getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
 		if (myShapeColors.size() > 0) {
             GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfWidth);
         } else {
@@ -140,7 +145,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         // draw ROWs only if target junction has a valid logic)
-        if (myParentLane.getParentEdge().getDest()->isLogicValid() && s.scale > 3) {
+        if (myLane.getParentEdge().getDest()->isLogicValid() && s.scale > 3) {
             drawArrows();
         }
     }
@@ -155,9 +160,9 @@ GNEBusStop::drawMarkings(const bool& selectedEdge, SUMOReal scale) const {
     glPushMatrix();
     glTranslated(0, 0, GLO_EDGE);
 
-    const SUMOReal halfWidth = myParentLane.getParentEdge().getNBEdge()->getLaneWidth(myIndex) * 0.5;
+    const SUMOReal halfWidth = myLane.getParentEdge().getNBEdge()->getLaneWidth(myIndex) * 0.5;
     // optionally draw inverse markings
-    if (myIndex > 0 && (myParentLane.getParentEdge().getNBEdge()->getPermissions(myIndex - 1) & myParentLane.getParentEdge().getNBEdge()->getPermissions(myIndex)) != 0) {
+    if (myIndex > 0 && (myLane.getParentEdge().getNBEdge()->getPermissions(myIndex - 1) & myLane.getParentEdge().getNBEdge()->getPermissions(myIndex)) != 0) {
         SUMOReal mw = (halfWidth + SUMO_const_laneOffset + .01) * scale;
         int e = (int) getShape().size() - 1;
         for (int i = 0; i < e; ++i) {
@@ -242,7 +247,7 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, myParentLane.getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("length [m]", false, myLane.getParentEdge().getNBEdge()->getLength());
     // close building
     ret->closeBuilding();
     return ret;
@@ -260,7 +265,7 @@ GNEBusStop::getCenteringBoundary() const {
 
 const PositionVector&
 GNEBusStop::getShape() const {
-    return myParentLane.getShape();
+    return myLane.getShape();
 }
 
 
@@ -278,7 +283,7 @@ GNEBusStop::getShapeLengths() const {
 
 Boundary
 GNEBusStop::getBoundary() const {
-    return myParentLane.getShape().getBoxBoundary();
+    return myLane.getShape().getBoxBoundary();
 }
 
 
@@ -286,7 +291,7 @@ void
 GNEBusStop::updateGeometry() {
     myShapeRotations.clear();
     myShapeLengths.clear();
-    //SUMOReal length = myParentLane.getParentEdge().getLength(); // @todo see ticket #448
+    //SUMOReal length = myLane.getParentEdge().getLength(); // @todo see ticket #448
     // may be different from length
     int segments = (int) getShape().size() - 1;
     if (segments >= 0) {
@@ -304,7 +309,7 @@ GNEBusStop::updateGeometry() {
 std::string
 GNEBusStop::getAttribute(SumoXMLAttr key) const {
 	/*
-    const NBEdge* edge = myParentLane.getParentEdge().getNBEdge();
+    const NBEdge* edge = myLane.getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
@@ -378,7 +383,7 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
 void
 GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
 	/*
-    NBEdge* edge = myParentLane.getParentEdge().getNBEdge();
+    NBEdge* edge = myLane.getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying lane attribute '" + toString(key) + "' not allowed");
@@ -443,7 +448,7 @@ GNEBusStop::setMultiColor(const GUIColorer& c) const {
 SUMOReal
 GNEBusStop::getColorValue(size_t activeScheme) const {
 	/*
-	const SVCPermissions myPermissions = myParentLane.getParentEdge().getNBEdge()->getPermissions(myIndex);
+	const SVCPermissions myPermissions = myLane.getParentEdge().getNBEdge()->getPermissions(myIndex);
     switch (activeScheme) {
         case 0:
 			switch (myPermissions) {
@@ -465,19 +470,19 @@ GNEBusStop::getColorValue(size_t activeScheme) const {
             }
         case 1:
             return gSelected.isSelected(getType(), getGlID()) ||
-                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&myParentLane.getParentEdge())->getGlID());
+                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&myLane.getParentEdge())->getGlID());
         case 2:
             return (SUMOReal)myPermissions;
         case 3:
-			return myParentLane.getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
+			return myLane.getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
         case 4:
-            return myParentLane.getParentEdge().getNBEdge()->getNumLanes();        
+            return myLane.getParentEdge().getNBEdge()->getNumLanes();        
         case 5: {
-            return myParentLane.getParentEdge().getNBEdge()->getLoadedLength() / myParentLane.getParentEdge().getNBEdge()->getLength();
+            return myLane.getParentEdge().getNBEdge()->getLoadedLength() / myLane.getParentEdge().getNBEdge()->getLength();
         }
 		// case 6: by angle (functional)
        case 7: {
-            return myParentLane.getParentEdge().getNBEdge()->getPriority();
+            return myLane.getParentEdge().getNBEdge()->getPriority();
         }
         case 8: {
             // color by z of first shape point
@@ -486,7 +491,7 @@ GNEBusStop::getColorValue(size_t activeScheme) const {
 		// case 9: by segment height
         case 10: {
             // color by incline
-            return (getShape()[-1].z() - getShape()[0].z()) /  myParentLane.getParentEdge().getNBEdge()->getLength();
+            return (getShape()[-1].z() - getShape()[0].z()) /  myLane.getParentEdge().getNBEdge()->getLength();
         }        
     }
 	*/
@@ -495,7 +500,7 @@ GNEBusStop::getColorValue(size_t activeScheme) const {
 
 const std::string& 
 GNEBusStop::getParentName() const {
-    return myParentLane.getMicrosimID();
+    return myLane.getMicrosimID();
 }
 
 /****************************************************************************/
