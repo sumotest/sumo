@@ -77,7 +77,7 @@ GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& li
     GNEAttributeCarrier(SUMO_TAG_BUS_STOP),
     mySpecialColor(0) {
 
-		std::cout << "SE HA CREADO CON ID = " << getID() <<  std::endl;
+		std::cout << "SE HA CREADO CON ID = " << getMicrosimID() <<  std::endl;
     updateGeometry();
 }
 
@@ -203,6 +203,7 @@ GNEBusStop::drawMarkings(const bool& selectedEdge, SUMOReal scale) const {
 GUIGLObjectPopupMenu*
 GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
+	/*
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
     new FXMenuCommand(ret, "Copy edge name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
@@ -236,6 +237,7 @@ GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 
     // let the GNEViewNet store the popup position
     (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
+	*/
     return ret;
 }
 
@@ -289,6 +291,7 @@ GNEBusStop::getBoundary() const {
 
 void
 GNEBusStop::updateGeometry() {
+	/*
     myShapeRotations.clear();
     myShapeLengths.clear();
     //SUMOReal length = myLane.getParentEdge().getLength(); // @todo see ticket #448
@@ -304,52 +307,44 @@ GNEBusStop::updateGeometry() {
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
     }
+	*/
 }
 
 std::string
 GNEBusStop::getAttribute(SumoXMLAttr key) const {
-	/*
-    const NBEdge* edge = myLane.getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
-        case SUMO_ATTR_SPEED:
-            return toString(edge->getLaneSpeed(myIndex));
-        case SUMO_ATTR_ALLOW:
-            // return all allowed classes (may differ from the written attributes)
-            return getVehicleClassNames(edge->getPermissions(myIndex));
-        case SUMO_ATTR_DISALLOW:
-            // return all disallowed classes (may differ from the written attributes)
-            return getVehicleClassNames(~(edge->getPermissions(myIndex)));
-        case SUMO_ATTR_WIDTH:
-            return toString(edge->getLaneStruct(myIndex).width);
-        case SUMO_ATTR_ENDOFFSET:
-            return toString(edge->getLaneStruct(myIndex).endOffset);
-        case SUMO_ATTR_INDEX:
-            return toString(myIndex);
+        case SUMO_ATTR_LANE:
+            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+        case SUMO_ATTR_STARTPOS:
+            return toString(myBegPos);
+        case SUMO_ATTR_ENDPOS:
+            return toString(myEndPos);
         default:
             throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
     }
-	*/
-
-	return "NULL";
 }
 
 
 void
 GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+	if (value == getAttribute(key)) {
+        return; //avoid needless changes, later logic relies on the fact that attributes have changed
+    }
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying lane attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_SPEED:
-        case SUMO_ATTR_ALLOW:
-        case SUMO_ATTR_DISALLOW:
-        case SUMO_ATTR_WIDTH:
-        case SUMO_ATTR_ENDOFFSET:
-        case SUMO_ATTR_INDEX:
-            // no special handling
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
+			/// Function has to be finished
+			
+			/*
+        case SUMO_ATTR_LANE:
+            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+        case SUMO_ATTR_STARTPOS:
+            return toString(myBegPos);
+        case SUMO_ATTR_ENDPOS:
+            return toString(myEndPos);
+			*/
         default:
             throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
     }
