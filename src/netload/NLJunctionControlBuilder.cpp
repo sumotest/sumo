@@ -123,10 +123,12 @@ NLJunctionControlBuilder::closeJunction() {
             junction = buildNoLogicJunction();
             break;
         case NODETYPE_TRAFFIC_LIGHT:
+        case NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED:
         case NODETYPE_RIGHT_BEFORE_LEFT:
         case NODETYPE_PRIORITY:
         case NODETYPE_PRIORITY_STOP:
         case NODETYPE_ALLWAY_STOP:
+        case NODETYPE_ZIPPER:
             junction = buildLogicJunction();
             break;
         case NODETYPE_INTERNAL:

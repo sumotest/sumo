@@ -132,6 +132,11 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
             widthBefore += (*i)->getWidth();
         }
     }
+#ifdef HAVE_INTERNAL
+    if (MSGlobals::gUseMesoSim) {
+        MSGlobals::gMesoNet->buildSegmentsFor(*this, OptionsCont::getOptions());
+    }
+#endif
 }
 
 

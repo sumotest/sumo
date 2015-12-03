@@ -58,7 +58,7 @@ class NLDetectorBuilder;
 class MSActuatedTrafficLightLogic : public MSSimpleTrafficLightLogic {
 public:
     /// @brief Definition of a map from lanes to induct loops lying on them
-    typedef std::map<MSLane*, MSInductLoop*> InductLoopMap;
+    typedef std::map<MSLane*, MSDetectorFileOutput*> InductLoopMap;
 
 public:
     /** @brief Constructor
@@ -132,6 +132,15 @@ protected:
 
     /// Whether the detectors shall be shown in the GUI
     bool myShowDetectors;
+
+    /// The output file for generated detectors
+    std::string myFile;
+
+    /// The frequency for aggregating detector output
+    SUMOTime myFreq;
+
+    /// Whether detector output separates by vType
+    bool mySplitByType;
 
 };
 
