@@ -46,6 +46,9 @@ GNEInspector.h GNEInspector.cpp \
 GNESelector.h GNESelector.cpp \
 GNEConnector.h GNEConnector.cpp \
 GNETLSEditor.h GNETLSEditor.cpp \
+GNEAdditionalHandler.h GNEAdditionalHandler.cpp \
+GNEChargingStation.h GNEChargingStation.cpp \
+GNEBusStop.h GNEBusStop.cpp \
 GNEReferenceCounter.h \
 GNEEvent_NetworkLoaded.h
 
