@@ -211,6 +211,10 @@ public:
         return myTLSEditor;
     }
 
+    bool changeAllPhases() const {
+        return myChangeAllPhases->getCheck();
+    }
+
 protected:
     int doPaintGL(int mode, const Boundary& bound);
 
@@ -232,6 +236,7 @@ private:
 
     FXMenuCheck* mySelectEdges;
     FXMenuCheck* myExtendToEdgeNodes;
+    FXMenuCheck* myChangeAllPhases;
 
     /// @name the state-variables of the create-edge state-machine
     // @{

@@ -243,6 +243,7 @@ GNETLSEditor::onCmdDefCreate(FXObject*, FXSelector, void*) {
     } else {
         myUndoList->add(new GNEChange_TLS(junction, 0, true, true), true);
     }
+    editJunction(junction);
     return 1;
 }
 
@@ -587,7 +588,14 @@ GNETLSEditor::getPhases() {
 void
 GNETLSEditor::handleChange(GNEInternalLane* lane) {
     myHaveModifications = true;
-    myEditedDef->getLogic()->setPhaseState(myPhaseTable->getCurrentRow(), lane->getTLIndex(), lane->getLinkState());
+    if (myUpdateTarget->changeAllPhases()) {
+        const std::vector<NBTrafficLightLogic::PhaseDefinition>& phases = getPhases();
+        for (unsigned int row = 0; row < phases.size(); row++) {
+            myEditedDef->getLogic()->setPhaseState(row, lane->getTLIndex(), lane->getLinkState());
+        }
+    } else {
+        myEditedDef->getLogic()->setPhaseState(myPhaseTable->getCurrentRow(), lane->getTLIndex(), lane->getLinkState());
+    }
     initPhaseTable(myPhaseTable->getCurrentRow());
     myPhaseTable->setFocus();
 }

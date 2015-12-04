@@ -263,10 +263,10 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "boardingDuration", SUMO_ATTR_BOARDING_DURATION },
     { "loadingDuration", SUMO_ATTR_LOADING_DURATION },
 
-    { "chrgpower",      SUMO_ATTR_CHARGINGPOWER },
-    { "efficiency",     SUMO_ATTR_EFFICIENCY },
+    { "power",           SUMO_ATTR_CHARGINGPOWER },
+    { "efficiency",      SUMO_ATTR_EFFICIENCY },
     { "chargeInTransit", SUMO_ATTR_CHARGEINTRANSIT },
-    { "chargeDelay",    SUMO_ATTR_CHARGEDELAY},
+    { "chargeDelay",     SUMO_ATTR_CHARGEDELAY},
 
     { "sigma",          SUMO_ATTR_SIGMA },
     { "tau",            SUMO_ATTR_TAU },

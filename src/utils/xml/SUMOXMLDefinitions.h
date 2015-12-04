@@ -329,10 +329,10 @@ enum SumoXMLAttr {
     SUMO_ATTR_BOARDING_DURATION,
     SUMO_ATTR_LOADING_DURATION,
     /* Charging Station */
-    SUMO_ATTR_CHARGINGPOWER,
-    SUMO_ATTR_EFFICIENCY,
-    SUMO_ATTR_CHARGEINTRANSIT,
-    SUMO_ATTR_CHARGEDELAY,
+    SUMO_ATTR_CHARGINGPOWER,    // charge in W of the Charging Stations
+    SUMO_ATTR_EFFICIENCY,       // Eficiency of the charge inCharging Stations
+    SUMO_ATTR_CHARGEINTRANSIT,  // Allow/disallow charge in transit in Charging Stations
+    SUMO_ATTR_CHARGEDELAY,      // Delay in the charge of charging stations
     /* Car following model attributes */
     SUMO_ATTR_SIGMA,    // used by: Krauss
     SUMO_ATTR_TAU,      // Krauss

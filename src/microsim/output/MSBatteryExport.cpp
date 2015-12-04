@@ -55,7 +55,7 @@
 // ===========================================================================
 void
 MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
-    of.openTag("timeStep").writeAttr("time", time2string(timestep));
+    of.openTag(SUMO_TAG_TIMESTEP).writeAttr(SUMO_ATTR_TIME, time2string(timestep));
     of.setPrecision(precision);
 
     MSVehicleControl& vc = MSNet::getInstance()->getVehicleControl();
@@ -121,10 +121,10 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
 				of.writeAttr("acceleration", veh->getAcceleration());
 
 				// Write pos x
-				of.writeAttr("posx", veh->getPosition().x());
+				of.writeAttr(SUMO_ATTR_X, veh->getPosition().x());
 
 				// Write pos y
-				of.writeAttr("posy", veh->getPosition().y());
+				of.writeAttr(SUMO_ATTR_Y, veh->getPosition().y());
 
 				// Write Lane ID
 				of.writeAttr("lane", veh->getLane()->getID());
