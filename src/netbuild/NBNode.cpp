@@ -74,8 +74,6 @@
 // create intermediate walking areas if either of the following thresholds is exceeded
 #define SPLIT_CROSSING_WIDTH_THRESHOLD 1.5 // meters
 #define SPLIT_CROSSING_ANGLE_THRESHOLD 5 // degrees
-// do not build uncontrolled crossings across edges with a speed above the threshold
-#define UNCONTROLLED_CROSSING_SPEED_THRESHOLD 13.89 // meters/second
 
 // minimum length for a weaving section at a combined on-off ramp 
 #define MIN_WEAVE_LENGTH 20.0
@@ -268,7 +266,7 @@ NBNode::reinit(const Position& position, SumoXMLNodeType type,
     myPosition = position;
     // patch type
     myType = type;
-    if (myType != NODETYPE_TRAFFIC_LIGHT && myType != NODETYPE_TRAFFIC_LIGHT_NOJUNCTION) {
+    if (!isTrafficLight(myType)) {
         removeTrafficLights();
     }
     if (updateEdgeGeometries) {
@@ -313,7 +311,8 @@ NBNode::mirrorX() {
 void
 NBNode::addTrafficLight(NBTrafficLightDefinition* tlDef) {
     myTrafficLights.insert(tlDef);
-    if (myType != NODETYPE_TRAFFIC_LIGHT_NOJUNCTION && myType != NODETYPE_RAIL_SIGNAL) {
+    // rail signals receive a temporary traffic light in order to set connection tl-linkIndex
+    if (!isTrafficLight(myType) && myType != NODETYPE_RAIL_SIGNAL) {
         myType = NODETYPE_TRAFFIC_LIGHT;
     }
 }
@@ -813,6 +812,28 @@ NBNode::computeLanes2Lanes() {
             }
             in->addLane2LaneConnections(inOffset, out1, out1Offset, out1->getNumLanes() - out1Offset, NBEdge::L2L_VALIDATED, true, true);
             in->addLane2LaneConnections(out1->getNumLanes() + inOffset - out1Offset, out2, out2Offset, out2->getNumLanes() - out2Offset, NBEdge::L2L_VALIDATED, false, true);
+            return;
+        }
+    }
+    // special case d):
+    //  one in, one out, the outgoing has one lane less and node has type 'zipper'
+    if (myIncomingEdges.size() == 1 && myOutgoingEdges.size() == 1 && myType == NODETYPE_ZIPPER) {
+        NBEdge* in = myIncomingEdges[0];
+        NBEdge* out = myOutgoingEdges[0];
+        // check if it's not the turnaround
+        if (in->getTurnDestination() == out) {
+            // will be added later or not...
+            return;
+        }
+        const int inOffset = MAX2(0, in->getFirstNonPedestrianLaneIndex(FORWARD, true));
+        const int outOffset = MAX2(0, out->getFirstNonPedestrianLaneIndex(FORWARD, true));
+        if (in->getStep() <= NBEdge::LANES2EDGES
+                && in->getNumLanes() - inOffset == out->getNumLanes() - outOffset + 1
+                && in != out
+                && in->isConnectedTo(out)) {
+            for (int i = inOffset; i < (int) in->getNumLanes(); ++i) {
+                in->setConnection(i, out, MIN2(outOffset + i, ((int)out->getNumLanes() - 1)), NBEdge::L2L_COMPUTED, true);
+            }
             return;
         }
     }
@@ -1481,6 +1502,9 @@ NBNode::getLinkState(const NBEdge* incoming, NBEdge* outgoing, int fromlane, int
     if (myType == NODETYPE_ALLWAY_STOP) {
         return LINKSTATE_ALLWAY_STOP; // all drive, first one to arrive may drive first
     }
+    if (myType == NODETYPE_ZIPPER && mustBrake(incoming, outgoing, fromlane, toLane, false)) {
+        return LINKSTATE_ZIPPER; 
+    }
     if ((!incoming->isInnerEdge() && mustBrake(incoming, outgoing, fromlane, toLane, true)) && !mayDefinitelyPass) {
         return myType == NODETYPE_PRIORITY_STOP ? LINKSTATE_STOP : LINKSTATE_MINOR; // minor road
     }
@@ -1759,7 +1783,7 @@ NBNode::checkCrossing(EdgeVector candidates) {
                 }
                 return 0;
             }
-            if (!isTLControlled() && edge->getSpeed() > UNCONTROLLED_CROSSING_SPEED_THRESHOLD) {
+            if (!isTLControlled() && edge->getSpeed() > OptionsCont::getOptions().getFloat("crossings.guess.speed-threshold")) {
                 if (gDebugFlag1) {
                     std::cout << "no crossing added (uncontrolled, edge with speed=" << edge->getSpeed() << ")\n";
                 }
@@ -2485,5 +2509,25 @@ NBNode::avoidOverlap() {
     // @todo: edges in the same direction with sharp angles starting/ending at the same position
 }
 
+
+bool 
+NBNode::isTrafficLight(SumoXMLNodeType type) {
+    return type == NODETYPE_TRAFFIC_LIGHT 
+        || type == NODETYPE_TRAFFIC_LIGHT_NOJUNCTION 
+        || type == NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED;
+}
+
+
+bool 
+NBNode::rightOnRedConflict(int index, int foeIndex) const {
+    if (myType == NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED) {
+        for (std::set<NBTrafficLightDefinition*>::const_iterator i = myTrafficLights.begin(); i != myTrafficLights.end(); ++i) {
+            if ((*i)->rightOnRedConflict(index, foeIndex)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 /****************************************************************************/
 

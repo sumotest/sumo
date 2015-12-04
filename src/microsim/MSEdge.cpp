@@ -118,6 +118,11 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     if (myFunction == EDGEFUNCTION_DISTRICT) {
         myCombinedPermissions = SVCAll;
     }
+#ifdef HAVE_INTERNAL
+    if (MSGlobals::gUseMesoSim && !lanes->empty()) {
+        MSGlobals::gMesoNet->buildSegmentsFor(*this, OptionsCont::getOptions());
+    }
+#endif
 }
 
 
@@ -506,6 +511,7 @@ MSEdge::changeLanes(SUMOTime t) {
                     || state == LINKSTATE_EQUAL
                     || state == LINKSTATE_STOP
                     || state == LINKSTATE_ALLWAY_STOP
+                    || state == LINKSTATE_ZIPPER
                     || state == LINKSTATE_DEADEND) {
                 return;
             }

@@ -477,8 +477,11 @@ NBRequest::writeLaneResponse(OutputDevice& od, NBEdge* from,
         assert((*j).toEdge != 0);
         od.openTag(SUMO_TAG_REQUEST);
         od.writeAttr(SUMO_ATTR_INDEX, pos++);
-        od.writeAttr(SUMO_ATTR_RESPONSE, getResponseString(from, (*j).toEdge, fromLane, (*j).toLane, (*j).mayDefinitelyPass, checkLaneFoes));
-        od.writeAttr(SUMO_ATTR_FOES, getFoesString(from, (*j).toEdge, fromLane, (*j).toLane, checkLaneFoes));
+        const std::string foes = getFoesString(from, (*j).toEdge, fromLane, (*j).toLane, checkLaneFoes);
+        const std::string response = (myJunction->getType() == NODETYPE_ZIPPER ? foes 
+                : getResponseString((*j).tlLinkNo, from, (*j).toEdge, fromLane, (*j).toLane, (*j).mayDefinitelyPass, checkLaneFoes));
+        od.writeAttr(SUMO_ATTR_RESPONSE, response);
+        od.writeAttr(SUMO_ATTR_FOES, foes);
         if (!OptionsCont::getOptions().getBool("no-internal-links")) {
             od.writeAttr(SUMO_ATTR_CONT, j->haveVia);
         }
@@ -525,7 +528,7 @@ NBRequest::writeCrossingResponse(OutputDevice& od, const NBNode::Crossing& cross
 
 
 std::string
-NBRequest::getResponseString(const NBEdge* const from, const NBEdge* const to,
+NBRequest::getResponseString(int tlIndex, const NBEdge* const from, const NBEdge* const to,
                              int fromLane, int toLane, bool mayDefinitelyPass, const bool checkLaneFoes) const {
     const bool lefthand = OptionsCont::getOptions().getBool("lefthand");
     int idx = 0;
@@ -560,7 +563,9 @@ NBRequest::getResponseString(const NBEdge* const from, const NBEdge* const to,
                     if ((myForbids[getIndex(*i, connected[k].toEdge)][idx] &&
                             (!checkLaneFoes || laneConflict(from, to, toLane, *i, connected[k].toEdge, connected[k].toLane)))
                             || NBNode::rightTurnConflict(from, to, fromLane, *i, connected[k].toEdge, connected[k].fromLane, lefthand)
-                            || mergeConflict(from, queryCon, *i, connected[k], false)) {
+                            || mergeConflict(from, queryCon, *i, connected[k], false)
+                            || myJunction->rightOnRedConflict(tlIndex, connected[k].tlLinkNo)
+                            ) {
                         result += '1';
                     } else {
                         result += '0';
@@ -730,7 +735,7 @@ NBRequest::mustBrake(const NBEdge* const from, const NBEdge* const to, int fromL
             const int size = (int) connected.size();
             for (int k = size; k-- > 0;) {
                 if ((*i) == from && fromLane != j
-                        && mergeConflict(from, queryCon, *i, connected[k], false)) {
+                        && mergeConflict(from, queryCon, *i, connected[k], myJunction->getType() == NODETYPE_ZIPPER)) {
                     return true;
                 }
             }

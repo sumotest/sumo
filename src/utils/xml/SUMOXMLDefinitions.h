@@ -604,11 +604,13 @@ enum SumoXMLNodeType {
     NODETYPE_UNKNOWN, // terminator
     NODETYPE_TRAFFIC_LIGHT,
     NODETYPE_TRAFFIC_LIGHT_NOJUNCTION, // junction controlled only by traffic light but without other prohibitions,
+    NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED,
     NODETYPE_RAIL_SIGNAL,
     NODETYPE_PRIORITY,
     NODETYPE_PRIORITY_STOP, // like priority but all minor links have stop signs
     NODETYPE_RIGHT_BEFORE_LEFT,
     NODETYPE_ALLWAY_STOP,
+    NODETYPE_ZIPPER,
     NODETYPE_DISTRICT,
     NODETYPE_NOJUNCTION,
     NODETYPE_INTERNAL,
@@ -686,6 +688,8 @@ enum LinkState {
     LINKSTATE_STOP = 's',
     /// @brief This is an uncontrolled, all-way stop link.
     LINKSTATE_ALLWAY_STOP = 'w',
+    /// @brief This is an uncontrolled, zipper-merge link
+    LINKSTATE_ZIPPER = 'Z',
     /// @brief This is a dead end link
     LINKSTATE_DEADEND = '-'
 };

@@ -424,7 +424,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "version",        SUMO_ATTR_VERSION },
     { "junctionCornerDetail", SUMO_ATTR_CORNERDETAIL },
     { "junctionLinkDetail", SUMO_ATTR_LINKDETAIL },
-    { "lefthand",        SUMO_ATTR_LEFTHAND },
+    { "lefthand",       SUMO_ATTR_LEFTHAND },
 
     { "actorConfig",    SUMO_ATTR_ACTORCONFIG },
     { "vehicle",        SUMO_ATTR_VEHICLE },
@@ -483,11 +483,13 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
 StringBijection<SumoXMLNodeType>::Entry SUMOXMLDefinitions::sumoNodeTypeValues[] = {
     {"traffic_light",       NODETYPE_TRAFFIC_LIGHT},
     {"traffic_light_unregulated", NODETYPE_TRAFFIC_LIGHT_NOJUNCTION},
+    {"traffic_light_right_on_red", NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED},
     {"rail_signal",         NODETYPE_RAIL_SIGNAL},
     {"priority",            NODETYPE_PRIORITY},
     {"priority_stop",       NODETYPE_PRIORITY_STOP},
     {"right_before_left",   NODETYPE_RIGHT_BEFORE_LEFT},
     {"allway_stop",         NODETYPE_ALLWAY_STOP},
+    {"zipper",              NODETYPE_ZIPPER},
     {"district",            NODETYPE_DISTRICT},
     {"unregulated",         NODETYPE_NOJUNCTION},
     {"internal",            NODETYPE_INTERNAL},
@@ -530,6 +532,7 @@ StringBijection<LinkState>::Entry SUMOXMLDefinitions::linkStateValues[] = {
     { "=", LINKSTATE_EQUAL },
     { "s", LINKSTATE_STOP },
     { "w", LINKSTATE_ALLWAY_STOP },
+    { "Z", LINKSTATE_ZIPPER },
     { "-", LINKSTATE_DEADEND }
 };
 

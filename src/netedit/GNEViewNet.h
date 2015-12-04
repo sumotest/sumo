@@ -207,6 +207,10 @@ public:
     /// @brief update control contents after undo/redo or recompute
     void updateControls();
 
+    GNETLSEditor* getTLSEditor() {
+        return myTLSEditor;
+    }
+
 protected:
     int doPaintGL(int mode, const Boundary& bound);
 
