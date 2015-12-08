@@ -137,6 +137,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(SUMO_ATTR_LANE);			// PABLO #1916
                 attrs.push_back(SUMO_ATTR_STARTPOS);		// PABLO #1916
                 attrs.push_back(SUMO_ATTR_ENDPOS);			// PABLO #1916
+				attrs.push_back(SUMO_ATTR_LINES);			// PABLO #1916
 				attrs.push_back(SUMO_ATTR_FRIENDLY_POS);	// PABLO #1916
 				break;										// PABLO #1916
 			case SUMO_TAG_CHARGING_STATION:					// PABLO #1916

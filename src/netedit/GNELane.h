@@ -45,6 +45,8 @@ class PositionVector;
 class GNETLSEditor;
 class GNEEdge;
 class GNENet;
+class GNEBusStop;			// PABLO #1916
+class GNEChargingStation;	// PABLO #1916
 
 // ===========================================================================
 // class definitions
@@ -168,6 +170,26 @@ public:
         mySpecialColor = color;
     }
 
+	/* @brief method for adding a pointero to busStop in this lane	// PABLO #1916
+     * @param[in] busStop The busStop to add						// PABLO #1916
+     */																// PABLO #1916
+	void addBusStop(GNEBusStop *busStop);							// PABLO #1916
+
+	/* @brief method for removing a pointero to busStop of this lane	// PABLO #1916
+     * @param[in] busStop The busStop to remove							// PABLO #1916
+     */																	// PABLO #1916
+	void removeBusStop(GNEBusStop *busStop);							// PABLO #1916
+
+	/* @brief method for adding a pointero to chargingStation in this lane	// PABLO #1916
+     * @param[in] chargingStation The chargingStation to add				// PABLO #1916
+     */																		// PABLO #1916
+	void addChargingStation(GNEChargingStation *chargingStation);			// PABLO #1916
+
+	/* @brief method for removing a pointero to chargingStation of this lane	// PABLO #1916
+     * @param[in] chargingStation The chargingStation to remove					// PABLO #1916
+     */																			// PABLO #1916
+	void removeChargingStation(GNEChargingStation *chargingStation);			// PABLO #1916
+
 protected:
     /// @brief FOX needs this
     GNELane();
@@ -190,6 +212,12 @@ private:
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;
+
+	/// @brief Vector with the busStops assigned to this lane	// PABLO #1916
+	std::vector<GNEBusStop*> myBusStops;						// PABLO #1916
+
+	/// @brief Vector with the chargingStations assigned to this lane	// PABLO #1916
+	std::vector<GNEChargingStation*> myChargingStations;				// PABLO #1916
 
 private:
     void setAttribute(SumoXMLAttr key, const std::string& value);

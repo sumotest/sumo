@@ -57,6 +57,8 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
+#include "GNEBusStop.h"			// PABLO #1916
+#include "GNEChargingStation.h"	// PABLO #1916
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -298,6 +300,15 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
             drawArrows();
         }
     }
+
+	// Draw busStops of this lane																		// PABLO #1916
+	for(std::vector<GNEBusStop*>::const_iterator i = myBusStops.begin(); i != myBusStops.end(); i++)	// PABLO #1916
+		(*i)->drawGL(s);																				// PABLO #1916
+
+	// Draw chargingStations of this lane																						// PABLO #1916
+	//for(std::vector<GNEChargingStation*>::const_iterator i = myChargingStations.begin(); i != myChargingStations.end(); i++)	// PABLO #1916
+	//	(*i)->drawGL(s);																										// PABLO #1916
+
     glPopName();
 }
 
@@ -545,6 +556,42 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
 
     }
+}
+
+void 
+GNELane::addBusStop(GNEBusStop *busStop) {
+	myBusStops.push_back(busStop);
+}
+
+void 
+GNELane::removeBusStop(GNEBusStop *busStop) {
+	std::vector<GNEBusStop*>::iterator i = myBusStops.begin();
+	while(i != myBusStops.end()) {
+		if((*i) == busStop) {
+			myBusStops.erase(i);
+			i = myBusStops.end();
+		}
+		else
+			i++;
+	}
+}
+
+void 
+GNELane::addChargingStation(GNEChargingStation *chargingStation) {
+	myChargingStations.push_back(chargingStation);
+}
+
+void 
+GNELane::removeChargingStation(GNEChargingStation *chargingStation) {
+	std::vector<GNEChargingStation*>::iterator i = myChargingStations.begin();
+	while(i != myChargingStations.end()) {
+		if((*i) == chargingStation) {
+			myChargingStations.erase(i);
+			i = myChargingStations.end();
+		}
+		else
+			i++;
+	}
 }
 
 // ===========================================================================

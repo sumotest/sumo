@@ -45,6 +45,7 @@
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/images/GUITexturesHelper.h>
+#include <utils/xml/SUMOSAXHandler.h>
 
 #include "GNEBusStop.h"
 #include "GNELane.h"
@@ -74,15 +75,15 @@ GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& li
 	myBegPos(frompos),
 	myEndPos(topos),
 	GUIGlObject(GLO_TRIGGER, id),
-    GNEAttributeCarrier(SUMO_TAG_BUS_STOP),
-    mySpecialColor(0) {
-
-		std::cout << "SE HA CREADO CON ID = " << getMicrosimID() <<  std::endl;
+    GNEAttributeCarrier(SUMO_TAG_BUS_STOP) {
+	myLane.addBusStop(this);
     updateGeometry();
 }
 
 
-GNEBusStop::~GNEBusStop() {}
+GNEBusStop::~GNEBusStop() {
+	myLane.removeBusStop(this);
+}
 
 GNELane &GNEBusStop::getLane() {
 	return myLane;
@@ -96,109 +97,58 @@ SUMOReal GNEBusStop::getEndLanePosition() const {
 	return myEndPos;
 }
 
+const std::vector<std::string> &GNEBusStop::getLines() const {
+	return myLines;
+}
+
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
-	/*
+	glPushName(getGlID());
     glPushMatrix();
-    glPushName(getGlID());
+    RGBColor green(76, 170, 50, 255);
+    RGBColor yellow(255, 235, 0, 255);
+    // draw the area
+    size_t i;
     glTranslated(0, 0, getType());
-    const bool selectedEdge = gSelected.isSelected(myLane.getParentEdge().getType(), myLane.getParentEdge().getGlID());
-    const bool selected = gSelected.isSelected(getType(), getGlID());
-    if (mySpecialColor != 0) {
-        GLHelper::setColor(*mySpecialColor);
-    } else if (selected) {
-        GLHelper::setColor(GNENet::selectedLaneColor);
-    } else if (selectedEdge) {
-        GLHelper::setColor(GNENet::selectionColor);
-    } else {
-		const GUIColorer& c = s.laneColorer;
-		if (!setFunctionalColor(c.getActive()) && !setMultiColor(c)) {
-			GLHelper::setColor(c.getScheme().getColor(getColorValue(c.getActive())));
-		}        
-    };
-
-    // draw lane
-    // check whether it is not too small
-    const SUMOReal selectionScale = selected || selectedEdge ? s.selectionScale : 1;
-    const SUMOReal exaggeration = selectionScale * s.laneWidthExaggeration; // * s.laneScaler.getScheme().getColor(getScaleValue(s.laneScaler.getActive()));
-    if (s.scale * exaggeration < 1.) {
-        if (myShapeColors.size() > 0) {
-            GLHelper::drawLine(getShape(), myShapeColors);
-        } else {
-            GLHelper::drawLine(getShape());
-        }
-        glPopMatrix();
-    } else {
-        
-        // the actual lane
-        // reduce lane width to make sure that a selected edge can still be seen
-		const SUMOReal halfWidth = selectionScale * (myLane.getParentEdge().getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
-		if (myShapeColors.size() > 0) {
-            GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfWidth);
-        } else {
-            GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfWidth);
-        }
-
-        glPopMatrix();
-        if (exaggeration == 1) {
-            drawMarkings(selectedEdge, exaggeration);
-        }
-
-        // draw ROWs only if target junction has a valid logic)
-        if (myLane.getParentEdge().getDest()->isLogicValid() && s.scale > 3) {
-            drawArrows();
-        }
-    }
-    glPopName();
-	*/
-}
-
-
-void
-GNEBusStop::drawMarkings(const bool& selectedEdge, SUMOReal scale) const {
-	/*
-    glPushMatrix();
-    glTranslated(0, 0, GLO_EDGE);
-
-    const SUMOReal halfWidth = myLane.getParentEdge().getNBEdge()->getLaneWidth(myIndex) * 0.5;
-    // optionally draw inverse markings
-    if (myIndex > 0 && (myLane.getParentEdge().getNBEdge()->getPermissions(myIndex - 1) & myLane.getParentEdge().getNBEdge()->getPermissions(myIndex)) != 0) {
-        SUMOReal mw = (halfWidth + SUMO_const_laneOffset + .01) * scale;
-        int e = (int) getShape().size() - 1;
-        for (int i = 0; i < e; ++i) {
+    GLHelper::setColor(green);
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+    // draw details unless zoomed out to far
+    if (s.scale * exaggeration >= 10) {
+        // draw the lines
+        //const SUMOReal rotSign = MSNet::getInstance()->lefthand() ? -1 : 1;
+		SUMOReal rotSign = 1;
+        for (i = 0; i != myLines.size(); ++i) {
             glPushMatrix();
-            glTranslated(getShape()[i].x(), getShape()[i].y(), 0.1);
-            glRotated(myShapeRotations[i], 0, 0, 1);
-            for (SUMOReal t = 0; t < myShapeLengths[i]; t += 6) {
-                const SUMOReal length = MIN2((SUMOReal)3, myShapeLengths[i] - t);
-                glBegin(GL_QUADS);
-                glVertex2d(-mw, -t);
-                glVertex2d(-mw, -t - length);
-                glVertex2d(halfWidth * 0.5 * scale, -t - length);
-                glVertex2d(halfWidth * 0.5 * scale, -t);
-                glEnd();
-            }
+            glTranslated(mySignPos.x(), mySignPos.y(), 0);
+            glRotated(180, 1, 0, 0);
+            glRotated(rotSign * mySignRot, 0, 0, 1);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            pfSetPosition(0, 0);
+            pfSetScale(1.f);
+            glTranslated(1.2, -(double)i, 0);
+            pfDrawString(myLines[i].c_str());
             glPopMatrix();
         }
+        // draw the sign
+        glTranslated(mySignPos.x(), mySignPos.y(), 0);
+        int noPoints = 9;
+        if (s.scale * exaggeration > 25) {
+            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
+        }
+        glScaled(exaggeration, exaggeration, 1);
+        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+        glTranslated(0, 0, .1);
+        GLHelper::setColor(yellow);
+        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
+        if (s.scale * exaggeration >= 4.5) {
+            GLHelper::drawText("H", Position(), .1, 1.6, green, mySignRot);
+        }
     }
-
-    // draw white boundings (and white markings) depending on selection
-    if (selectedEdge) {
-        glTranslated(0, 0, 0.2); // draw selection on top of regular markings
-        GLHelper::setColor(GNENet::selectionColor);
-    } else {
-        glColor3d(1, 1, 1);
-    }
-
-    GLHelper::drawBoxLines(
-        getShape(),
-        getShapeRotations(),
-        getShapeLengths(),
-        (halfWidth + SUMO_const_laneOffset) * scale);
     glPopMatrix();
-	*/
+    glPopName();
+    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }
-
 
 GUIGLObjectPopupMenu*
 GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
@@ -259,8 +209,8 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
 
 Boundary
 GNEBusStop::getCenteringBoundary() const {
-    Boundary b = getShape().getBoxBoundary();
-    b.grow(10);
+    Boundary b = myShape.getBoxBoundary();
+    b.grow(20);	// anterior: 10
     return b;
 }
 
@@ -291,23 +241,28 @@ GNEBusStop::getBoundary() const {
 
 void
 GNEBusStop::updateGeometry() {
-	/*
-    myShapeRotations.clear();
-    myShapeLengths.clear();
-    //SUMOReal length = myLane.getParentEdge().getLength(); // @todo see ticket #448
-    // may be different from length
-    int segments = (int) getShape().size() - 1;
-    if (segments >= 0) {
-        myShapeRotations.reserve(segments);
-        myShapeLengths.reserve(segments);
-        for (int i = 0; i < segments; ++i) {
-            const Position& f = getShape()[i];
-            const Position& s = getShape()[i + 1];
-            myShapeLengths.push_back(f.distanceTo2D(s));
-            myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
-        }
+    //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
+	SUMOReal offsetSign = 1;
+    myShape = myLane.getShape();
+    myShape.move2side(1.65 * offsetSign);
+    myShape = myShape.getSubpart(myBegPos, myEndPos);
+    myShapeRotations.reserve(myShape.size() - 1);
+    myShapeRotations.reserve(myShape.size() - 1);
+    int e = (int) myShape.size() - 1;
+    for (int i = 0; i < e; ++i) {
+        const Position& f = myShape[i];
+        const Position& s = myShape[i + 1];
+        myShapeLengths.push_back(f.distanceTo(s));
+        myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
     }
-	*/
+    PositionVector tmp = myShape;
+    tmp.move2side(1.5 * offsetSign);
+    mySignPos = tmp.getLineCenter();
+    mySignRot = 0;
+    if (tmp.length() != 0) {
+        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+        mySignRot -= 90;
+    }
 }
 
 std::string
@@ -321,8 +276,19 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
             return toString(myBegPos);
         case SUMO_ATTR_ENDPOS:
             return toString(myEndPos);
+		case SUMO_ATTR_LINES: {
+			// Convert myLines vector into String with the schema "line1 line2 ... lineN"
+			std::string myLinesStr;
+			for(std::vector<std::string>::const_iterator i = myLines.begin(); i != myLines.end(); i++) {
+				if((*i) != myLines.back())
+					myLinesStr += (myLinesStr + (*i) + " ");
+				else
+					myLinesStr += (myLinesStr + (*i));
+			}
+			return myLinesStr;
+		}
         default:
-            throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -334,8 +300,8 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying lane attribute '" + toString(key) + "' not allowed");
-			/// Function has to be finished
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+			/// CLASS GNEBUSSTOP_CHANGE has to be finished
 			
 			/*
         case SUMO_ATTR_LANE:
@@ -346,7 +312,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
             return toString(myEndPos);
 			*/
         default:
-            throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -356,18 +322,16 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
             return false;
-        case SUMO_ATTR_SPEED:
+        case SUMO_ATTR_LANE:
+            return canParse<std::string>(value);
+        case SUMO_ATTR_STARTPOS:
+			return canParse<SUMOReal>(value);
+        case SUMO_ATTR_ENDPOS:
             return canParse<SUMOReal>(value);
-        case SUMO_ATTR_ALLOW:
-        case SUMO_ATTR_DISALLOW:
-            return canParseVehicleClasses(value);
-        case SUMO_ATTR_WIDTH:
-            return isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH;
-        case SUMO_ATTR_ENDOFFSET:
-            return canParse<SUMOReal>(value);
+        case SUMO_ATTR_LINES:
+			return canParse<std::string>(value);
         default:
-            throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
-
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -377,30 +341,25 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
-	/*
     NBEdge* edge = myLane.getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying lane attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_SPEED:
-            edge->setSpeed(myIndex, parse<SUMOReal>(value));
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_LANE:
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
             break;
-        case SUMO_ATTR_ALLOW:
-            edge->setPermissions(parseVehicleClasses(value), myIndex);
+        case SUMO_ATTR_STARTPOS:
+            myBegPos = parse<SUMOReal>(value);
             break;
-        case SUMO_ATTR_DISALLOW:
-            edge->setPermissions(~parseVehicleClasses(value), myIndex); // negation yields allowed
+        case SUMO_ATTR_ENDPOS:
+            myEndPos = parse<SUMOReal>(value);
             break;
-        case SUMO_ATTR_WIDTH:
-            edge->setLaneWidth(myIndex, parse<SUMOReal>(value));
-            break;
-        case SUMO_ATTR_ENDOFFSET:
-            edge->setEndOffset(myIndex, parse<SUMOReal>(value));
+        case SUMO_ATTR_LINES:
+            SUMOSAXAttributes::parseStringVector(value, myLines);
             break;
         default:
-            throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
-	*/
 }
 
 

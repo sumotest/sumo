@@ -424,8 +424,6 @@ GNEAdditionalHandler::getFileName(const SUMOSAXAttributes& attrs, const std::str
 GNELane* 
 GNEAdditionalHandler::getLane(const SUMOSAXAttributes& attrs, const std::string& tt, const std::string& tid)
 {
-	/** Consultar estilos **/
-
 	bool ok = true;
 	std::string objectid = attrs.get<std::string>(SUMO_ATTR_LANE, tid.c_str(), ok);
 	std::vector<GNELane*> vectorOfLanes = myNet->retrieveLanes(); 

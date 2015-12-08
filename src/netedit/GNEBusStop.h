@@ -33,6 +33,7 @@
 #include <vector>
 #include <utils/gui/globjects/GUIGlObject.h>
 #include <utils/gui/settings/GUIPropertySchemeStorage.h>
+#include <utils/geom/PositionVector.h>
 #include "GNEAttributeCarrier.h"
 
 
@@ -75,6 +76,9 @@ public:
 	SUMOReal getBeginLanePosition() const;
 		
 	SUMOReal getEndLanePosition() const;
+
+	const std::vector<std::string> &getLines() const;
+
 
 	/**** *****/
 
@@ -158,10 +162,6 @@ public:
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
-    void setSpecialColor(const RGBColor* color) {
-        mySpecialColor = color;
-    }
-
 private:
 	/// @brief The list of lines that are assigned to this stop
     std::vector<std::string> myLines;
@@ -184,8 +184,14 @@ private:
     std::vector<SUMOReal> myShapeLengths;
     //@}
 
-    /// @brief optional special color
-    const RGBColor* mySpecialColor;
+    /// @brief The shape
+    PositionVector myShape;
+
+    /// @brief The position of the sign
+    Position mySignPos;
+
+    /// @brief The rotation of the sign
+    SUMOReal mySignRot;
 
 private:
     void setAttribute(SumoXMLAttr key, const std::string& value);
@@ -195,9 +201,6 @@ private:
 
     /// @brief Invalidated assignment operator.
     GNEBusStop& operator=(const GNEBusStop&);
-
-    //@brief draw lane markings
-    void drawMarkings(const bool& selectedEdge, SUMOReal scale) const;
 
     // drawing methods
     void drawLinkNo() const;

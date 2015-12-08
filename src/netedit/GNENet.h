@@ -406,18 +406,26 @@ public:
     }
 
 
-	/** @brief Adds a bus stop
+	/** @brief Adds a busStop
      *
      * If another bus stop with the same id exists, false is returned.
      *  Otherwise, the bus stop is added to the internal bus stop
-     *  container "myBusStopDict".
-     *
-     * This control gets responsible for deletion of the added bus stop.
+     *  container "GNEBusStops".
      *
      * @param[in] busStop The bus stop to add
-     * @return Whether the bus stop could be added
+     * @return true if busStop was added, false in other case
      */
     bool addBusStop(GNEBusStop* busStop);	// PABLO #1916
+
+
+	/** @brief Remove busStop
+     *
+     * Remove an existent bus stop of the Net
+     *
+     * @param[in] busStop The bus stop to remove
+     * @return true if busStop was removed, false in other case
+     */
+    bool removeBusStop(GNEBusStop* busStop);	// PABLO #1916
 
 
     /** @brief Returns the named bus stop
@@ -426,50 +434,20 @@ public:
      */
     GNEBusStop* getBusStop(const std::string& id) const;
 
+
     /** @brief Returns the bus stop close to the given position
      * @param[in] lane the lane of the bus stop to return.
      * @param[in] pos the position of the bus stop to return.
      * @return The bus stop id on the location, or "" if no such stop exists
      */
     std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
-    /// @}
 
 
-    /// @name Insertion and retrieval of container stops
-    /// @{
-
-    /** @brief Adds a container stop
-     *
-     * If another container stop with the same id exists, false is returned.
-     *  Otherwise, the container stop is added to the internal container stop
-     *  container "myContainerStopDict".
-     *
-     * This control gets responsible for deletion of the added container stop.
-     *
-     * @param[in] containerStop The container stop to add
-     * @return Whether the container stop could be added
-     */
-    bool addContainerStop(GNEBusStop* containerStop);	// PABLO #1916
-
-    /** @brief Returns the named container stop
-     * @param[in] id The id of the container stop to return.
-     * @return The named container stop, or 0 if no such stop exists
-     */
-    GNEBusStop* getContainerStop(const std::string& id) const;
-
-    /** @brief Returns the container stop close to the given position
-     * @param[in] lane the lane of the container stop to return.
-     * @param[in] pos the position of the container stop to return.
-     * @return The container stop id on the location, or "" if no such stop exists
-     */
-    std::string getContainerStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
-    /// @}
-
-    /** @brief Adds a chargingg station
+    /** @brief Adds a charging station
      *
      * If another charging station with the same id exists, false is returned.
      *  Otherwise, the charging station is added to the internal bus stop
-     *  container "myChargingStationDict".
+     *  container "GNEChargingStations".
      *
      * This control gets responsible for deletion of the added charging station.
      *
@@ -478,11 +456,22 @@ public:
      */
     bool addChargingStation(GNEChargingStation* chargingStation);	// PABLO #1916
 
+	/** @brief Remove chargingStation
+     *
+     * Remove an existent charging station of the Net
+     *
+     * @param[in] chargingStation The charging station to remove
+     * @return true if chargingStation was removed, false in other case
+     */
+    bool removeChargingStation(GNEChargingStation* chargingStation);	// PABLO #1916
+
+
     /** @brief Returns the named charging station
      * @param[in] id The id of the charging station to return.
      * @return The named charging station, or 0 if no such stop exists
      */
     GNEChargingStation* getChargingStation(const std::string& id) const;	// PABLO #1916
+
 
     /** @brief Returns the charging station close to the given position
      * @param[in] lane the lane of the charging station to return.
@@ -490,7 +479,7 @@ public:
      * @return The charging station id on the location, or "" if no such stop exists
      */
     std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
-    /// @}
+
 
 private:
     /// the rtree which contains all GUIGlObjects (so named for historical reasons)
@@ -507,9 +496,13 @@ private:
 
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
+    typedef std::map<std::string, GNEBusStop*> GNEBusStops;					// PABLO #1916
+    typedef std::map<std::string, GNEChargingStation*> GNEChargingStations;	// PABLO #1916
 
     GNEEdges myEdges;
     GNEJunctions myJunctions;
+	GNEBusStops myBusStops;
+	GNEChargingStations myChargingStations;
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{
@@ -525,16 +518,6 @@ private:
 
     /// @brief whether the net needs recomputation
     bool myNeedRecompute;
-
-	/// @brief Dictionary of bus stops					// PABLO #1916
-    NamedObjectCont<GNEBusStop*> myBusStopDict;			// PABLO #1916
-
-    /// @brief Dictionary of container stops			// PABLO #1916
-    NamedObjectCont<GNEBusStop*> myContainerStopDict;	// PABLO #1916
-
-    /// @brief Dictionary of charging Stations			// PABLO #1916
-    NamedObjectCont<GNEChargingStation*> myChargingStationDict;	// PABLO #1916
-
 
 private:
 
