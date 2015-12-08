@@ -67,6 +67,7 @@ NBLoadedSUMOTLDef::NBLoadedSUMOTLDef(NBTrafficLightDefinition* def, NBTrafficLig
     assert(def->getOffset() == logic->getOffset());
     assert(def->getType() == logic->getType());
     myControlledLinks = def->getControlledLinks();
+    myControlledNodes = def->getNodes();
 }
 
 
@@ -90,9 +91,8 @@ void
 NBLoadedSUMOTLDef::addConnection(NBEdge* from, NBEdge* to, int fromLane, int toLane, int linkIndex) {
     assert(myTLLogic->getNumLinks() > 0); // logic should be loaded by now
     if (linkIndex >= (int)myTLLogic->getNumLinks()) {
-        WRITE_ERROR("Invalid linkIndex " + toString(linkIndex) + " for traffic light '" + getID() +
-                    "' with " + toString(myTLLogic->getNumLinks()) + " links.");
-        return;
+        throw ProcessError("Invalid linkIndex " + toString(linkIndex) + " for traffic light '" + getID() +
+                           "' with " + toString(myTLLogic->getNumLinks()) + " links.");
     }
     NBConnection conn(from, fromLane, to, toLane, linkIndex);
     // avoid duplicates
@@ -126,7 +126,10 @@ NBLoadedSUMOTLDef::setTLControllingInformation() const {
     //  edges the links are starting at, respectively
     for (NBConnectionVector::const_iterator it = myControlledLinks.begin(); it != myControlledLinks.end(); it++) {
         const NBConnection& c = *it;
-        assert(c.getTLIndex() < (int)myTLLogic->getNumLinks());
+        if (c.getTLIndex() >= (int)myTLLogic->getNumLinks()) {
+            throw ProcessError("Invalid linkIndex " + toString(c.getTLIndex()) + " for traffic light '" + getID() +
+                               "' with " + toString(myTLLogic->getNumLinks()) + " links.");
+        }
         NBEdge* edge = c.getFrom();
         edge->setControllingTLInformation(c, getID());
     }
@@ -266,7 +269,7 @@ NBLoadedSUMOTLDef::collectEdges() {
                 } else {
                     myEdgesWithin.push_back(edge);
                     (*j)->setIsInnerEdge();
-                    j = myIncomingEdges.erase(j);
+                    ++j; //j = myIncomingEdges.erase(j);
                     continue;
                 }
             }
@@ -324,29 +327,49 @@ NBLoadedSUMOTLDef::patchIfCrossingsAdded() {
     }
     const int newCrossings = (int)crossings.size() - oldCrossings;
     if (newCrossings > 0) {
-        // collect edges
-        assert(size > 0);
-        EdgeVector fromEdges(size, 0);
-        EdgeVector toEdges(size, 0);
-        for (NBConnectionVector::const_iterator it = myControlledLinks.begin(); it != myControlledLinks.end(); it++) {
-            const NBConnection& c = *it;
-            if (c.getTLIndex() != NBConnection::InvalidTlIndex) {
-                assert(c.getTLIndex() < (int)size);
-                fromEdges[c.getTLIndex()] = c.getFrom();
-                toEdges[c.getTLIndex()] = c.getTo();
+        const std::vector<NBTrafficLightLogic::PhaseDefinition> phases = myTLLogic->getPhases();
+        if (phases.size() > 0) {
+            if (phases.front().state.size() == noLinksAll - newCrossings) {
+                // patch states for the newly added crossings
+
+                // collect edges
+                assert(size > 0);
+                EdgeVector fromEdges(size, 0);
+                EdgeVector toEdges(size, 0);
+                for (NBConnectionVector::const_iterator it = myControlledLinks.begin(); it != myControlledLinks.end(); it++) {
+                    const NBConnection& c = *it;
+                    if (c.getTLIndex() != NBConnection::InvalidTlIndex) {
+                        if (c.getTLIndex() >= (int)size) {
+                            throw ProcessError("Invalid linkIndex " + toString(c.getTLIndex()) + " for traffic light '" + getID() +
+                                               "' with " + toString(size) + " links.");
+                        }
+
+
+                        fromEdges[c.getTLIndex()] = c.getFrom();
+                        toEdges[c.getTLIndex()] = c.getTo();
+                    }
+                }
+                const std::string crossingDefaultState(newCrossings, 'r');
+
+                // rebuild the logic (see NBOwnTLDef.cpp::myCompute)
+                const std::vector<NBTrafficLightLogic::PhaseDefinition> phases = myTLLogic->getPhases();
+                NBTrafficLightLogic* newLogic = new NBTrafficLightLogic(getID(), getProgramID(), 0, myOffset, myType);
+                SUMOTime brakingTime = TIME2STEPS(3);
+                //std::cout << "patchIfCrossingsAdded for " << getID() << " numPhases=" << phases.size() << "\n";
+                for (std::vector<NBTrafficLightLogic::PhaseDefinition>::const_iterator it = phases.begin(); it != phases.end(); it++) {
+                    if ((*it).state.find_first_of("yY") != std::string::npos) {
+                        brakingTime = MAX2(brakingTime, it->duration);
+                    }
+                    NBOwnTLDef::addPedestrianPhases(newLogic, it->duration, it->state + crossingDefaultState, crossings, fromEdges, toEdges);
+                }
+                NBOwnTLDef::addPedestrianScramble(newLogic, noLinksAll, TIME2STEPS(10), brakingTime, crossings, fromEdges, toEdges);
+
+                delete myTLLogic;
+                myTLLogic = newLogic;
+            } else if (phases.front().state.size() != noLinksAll) {
+                WRITE_WARNING("Could not patch tlLogic " + getID() + "for new crossings");
             }
         }
-        const std::string crossingDefaultState(newCrossings, 'r');
-
-        // rebuild the logic (see NBOwnTLDef.cpp::myCompute)
-        const std::vector<NBTrafficLightLogic::PhaseDefinition> phases = myTLLogic->getPhases();
-        NBTrafficLightLogic* newLogic = new NBTrafficLightLogic(getID(), getProgramID(), 0, myOffset, myType);
-        //std::cout << "patchIfCrossingsAdded for " << getID() << " numPhases=" << phases.size() << "\n";
-        for (std::vector<NBTrafficLightLogic::PhaseDefinition>::const_iterator it = phases.begin(); it != phases.end(); it++) {
-            NBOwnTLDef::addPedestrianPhases(newLogic, it->duration, it->state + crossingDefaultState, crossings, fromEdges, toEdges);
-        }
-        delete myTLLogic;
-        myTLLogic = newLogic;
     }
 }
 

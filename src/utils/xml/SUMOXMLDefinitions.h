@@ -95,7 +95,7 @@ enum SumoXMLTag {
     /// @brief A container stop
     SUMO_TAG_CONTAINER_STOP,
     /// @brief A Charging Station
-    SUMO_TAG_CHRG_STN,
+    SUMO_TAG_CHARGING_STATION,	// PABLO #1916 (Renamed all references of SUMO_TAG_CHRG_STN)
     /** a vtypeprobe detector */
     SUMO_TAG_VTYPEPROBE,
     /** a routeprobe detector */
@@ -329,10 +329,10 @@ enum SumoXMLAttr {
     SUMO_ATTR_BOARDING_DURATION,
     SUMO_ATTR_LOADING_DURATION,
     /* Charging Station */
-    SUMO_ATTR_CHRGPOWER,    // charge in W of the Charging Stations
-    SUMO_ATTR_EFFICIENCY,    // Eficiency of the charge inCharging Stations
-    SUMO_ATTR_CHRGINTRANSIT,// Allow/disallow charge in transit in Charging Stations
-    SUMO_ATTR_CHRGDELAY,    // Delay in the charge of charging stations
+    SUMO_ATTR_CHARGINGPOWER,    // charge in W of the Charging Stations
+    SUMO_ATTR_EFFICIENCY,       // Eficiency of the charge inCharging Stations
+    SUMO_ATTR_CHARGEINTRANSIT,  // Allow/disallow charge in transit in Charging Stations
+    SUMO_ATTR_CHARGEDELAY,      // Delay in the charge of charging stations
     /* Car following model attributes */
     SUMO_ATTR_SIGMA,    // used by: Krauss
     SUMO_ATTR_TAU,      // Krauss
@@ -427,6 +427,7 @@ enum SumoXMLAttr {
     // Attributes for detectors
     /// Information whether the detector shall be continued on the folowing lanes
     SUMO_ATTR_CONT,
+    SUMO_ATTR_CONTPOS,
     SUMO_ATTR_HALTING_TIME_THRESHOLD,
     SUMO_ATTR_HALTING_SPEED_THRESHOLD,
     SUMO_ATTR_JAM_DIST_THRESHOLD,
@@ -509,6 +510,9 @@ enum SumoXMLAttr {
     SUMO_ATTR_ACTTYPE,
     SUMO_ATTR_SLOPE,
     SUMO_ATTR_VERSION,
+    SUMO_ATTR_CORNERDETAIL,
+    SUMO_ATTR_LINKDETAIL,
+    SUMO_ATTR_LEFTHAND,
     SUMO_ATTR_COMMAND,
 
     SUMO_ATTR_ACTORCONFIG,
@@ -602,11 +606,14 @@ enum SumoXMLNodeType {
     NODETYPE_UNKNOWN, // terminator
     NODETYPE_TRAFFIC_LIGHT,
     NODETYPE_TRAFFIC_LIGHT_NOJUNCTION, // junction controlled only by traffic light but without other prohibitions,
+    NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED,
     NODETYPE_RAIL_SIGNAL,
+    NODETYPE_RAIL_CROSSING,
     NODETYPE_PRIORITY,
     NODETYPE_PRIORITY_STOP, // like priority but all minor links have stop signs
     NODETYPE_RIGHT_BEFORE_LEFT,
     NODETYPE_ALLWAY_STOP,
+    NODETYPE_ZIPPER,
     NODETYPE_DISTRICT,
     NODETYPE_NOJUNCTION,
     NODETYPE_INTERNAL,
@@ -684,6 +691,8 @@ enum LinkState {
     LINKSTATE_STOP = 's',
     /// @brief This is an uncontrolled, all-way stop link.
     LINKSTATE_ALLWAY_STOP = 'w',
+    /// @brief This is an uncontrolled, zipper-merge link
+    LINKSTATE_ZIPPER = 'Z',
     /// @brief This is a dead end link
     LINKSTATE_DEADEND = '-'
 };

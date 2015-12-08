@@ -44,6 +44,7 @@
 #include <microsim/traffic_lights/MSTrafficLightLogic.h>
 #include <microsim/traffic_lights/MSSimpleTrafficLightLogic.h>
 #include <microsim/traffic_lights/MSRailSignal.h>
+#include <microsim/traffic_lights/MSRailCrossing.h>
 #include <microsim/MSEventControl.h>
 #include <microsim/traffic_lights/MSSOTLPolicyBasedTrafficLightLogic.h>
 #include <microsim/traffic_lights/MSSOTLPlatoonPolicy.h>
@@ -55,6 +56,7 @@
 #include <microsim/traffic_lights/MSSOTLWaveTrafficLightLogic.h>
 #include <microsim/MSEventControl.h>
 #include <microsim/MSGlobals.h>
+#include <microsim/MSNet.h>
 #include <microsim/traffic_lights/MSOffTrafficLightLogic.h>
 #include <microsim/traffic_lights/MSTLLogicControl.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
@@ -117,7 +119,7 @@ NLJunctionControlBuilder::openJunction(const std::string& id,
 
 
 void
-NLJunctionControlBuilder::closeJunction() {
+NLJunctionControlBuilder::closeJunction(const std::string& basePath) {
     if (myJunctions == 0) {
         throw ProcessError("Information about the number of nodes was missing.");
     }
@@ -131,10 +133,12 @@ NLJunctionControlBuilder::closeJunction() {
             junction = buildNoLogicJunction();
             break;
         case NODETYPE_TRAFFIC_LIGHT:
+        case NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED:
         case NODETYPE_RIGHT_BEFORE_LEFT:
         case NODETYPE_PRIORITY:
         case NODETYPE_PRIORITY_STOP:
         case NODETYPE_ALLWAY_STOP:
+        case NODETYPE_ZIPPER:
             junction = buildLogicJunction();
             break;
         case NODETYPE_INTERNAL:
@@ -145,11 +149,12 @@ NLJunctionControlBuilder::closeJunction() {
 #endif
             break;
         case NODETYPE_RAIL_SIGNAL:
+        case NODETYPE_RAIL_CROSSING:
             myOffset = 0;
             myActiveKey = myActiveID;
             myActiveProgram = "0";
             myLogicType = TLTYPE_RAIL;
-            closeTrafficLightLogic();
+            closeTrafficLightLogic(basePath);
             junction = buildLogicJunction();
             break;
         default:
@@ -220,7 +225,7 @@ NLJunctionControlBuilder::getTLLogic(const std::string& id) const {
 
 
 void
-NLJunctionControlBuilder::closeTrafficLightLogic() {
+NLJunctionControlBuilder::closeTrafficLightLogic(const std::string& basePath) {
     if (myActiveProgram == "off") {
         if (myAbsDuration > 0) {
             throw InvalidArgument("The off program for TLS '" + myActiveKey + "' has phases.");
@@ -233,10 +238,18 @@ NLJunctionControlBuilder::closeTrafficLightLogic() {
     }
     SUMOTime firstEventOffset = 0;
     unsigned int step = 0;
+    MSTrafficLightLogic* existing = 0;
     MSSimpleTrafficLightLogic::Phases::const_iterator i = myActivePhases.begin();
     if (myLogicType != TLTYPE_RAIL) {
         if (myAbsDuration == 0) {
-            throw InvalidArgument("TLS program '" + myActiveProgram + "' for TLS '" + myActiveKey + "' has a duration of 0.");
+            existing = getTLLogicControlToUse().get(myActiveKey, myActiveProgram);
+            if (existing == 0) {
+                throw InvalidArgument("TLS program '" + myActiveProgram + "' for TLS '" + myActiveKey + "' has a duration of 0.");
+            } else {
+                // only modify the offset of an existing logic
+                myAbsDuration = existing->getDefaultCycleTime();
+                i = existing->getPhases().begin();
+            }
         }
         // compute the initial step and first switch time of the tls-logic
         // a positive offset delays all phases by x (advance by absDuration - x) while a negative offset advances all phases by x seconds
@@ -253,6 +266,11 @@ NLJunctionControlBuilder::closeTrafficLightLogic() {
             ++i;
         }
         firstEventOffset = (*i)->duration - offset + myNet.getCurrentTimeStep();
+        if (existing != 0) {
+            existing->changeStepAndDuration(getTLLogicControlToUse(),
+                                            myNet.getCurrentTimeStep(), step, (*i)->duration - offset);
+            return;
+        }
     }
 
     if (myActiveProgram == "") {
@@ -289,7 +307,7 @@ NLJunctionControlBuilder::closeTrafficLightLogic() {
             tlLogic = new MSActuatedTrafficLightLogic(getTLLogicControlToUse(),
                     myActiveKey, myActiveProgram,
                     myActivePhases, step, (*i)->minDuration + myNet.getCurrentTimeStep(),
-                    myAdditionalParameter);
+                    myAdditionalParameter, basePath);
             break;
         case TLTYPE_STATIC:
             tlLogic =
@@ -299,9 +317,18 @@ NLJunctionControlBuilder::closeTrafficLightLogic() {
                                               myAdditionalParameter);
             break;
         case TLTYPE_RAIL:
-            tlLogic = new MSRailSignal(getTLLogicControlToUse(),
-                                       myActiveKey, myActiveProgram,
-                                       myAdditionalParameter);
+            if (myType == NODETYPE_RAIL_SIGNAL) {
+                tlLogic = new MSRailSignal(getTLLogicControlToUse(),
+                        myActiveKey, myActiveProgram,
+                        myAdditionalParameter);
+            } else if (myType == NODETYPE_RAIL_CROSSING) {
+                tlLogic = new MSRailCrossing(getTLLogicControlToUse(),
+                        myActiveKey, myActiveProgram,
+                        myAdditionalParameter);
+            } else {
+                throw ProcessError("Invalid node type '" + toString(myType) 
+                        + "' for traffic light type '" + toString(myLogicType) + "'");
+            }
             break;
     }
     myActivePhases.clear();
@@ -365,9 +392,9 @@ NLJunctionControlBuilder::addLogicItem(int request,
     assert(myActiveLogic.size() == (size_t) request);
     assert(myActiveFoes.size() == (size_t) request);
     // add the read response for the given request index
-    myActiveLogic.push_back(std::bitset<64>(response));
+    myActiveLogic.push_back(std::bitset<SUMO_MAX_CONNECTIONS>(response));
     // add the read junction-internal foes for the given request index
-    myActiveFoes.push_back(std::bitset<64>(foes));
+    myActiveFoes.push_back(std::bitset<SUMO_MAX_CONNECTIONS>(foes));
     // add whether the vehicle may drive a little bit further
     myActiveConts.set(request, cont);
     // increse number of set information

@@ -23,13 +23,9 @@ the Free Software Foundation; either version 3 of the License, or
 """
 import sys
 import os
-import itertools
-from collections import defaultdict
 from optparse import OptionParser
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from sumolib.output import parse
+
 from sumolib.net import readNet
-from sumolib.miscutils import Colorgen
 from sumolib import geomhelper
 
 
@@ -37,6 +33,10 @@ def parse_args():
     USAGE = "Usage: " + sys.argv[0] + " <netfile> [options]"
     optParser = OptionParser()
     optParser.add_option("-o", "--outfile", help="name of output file")
+    optParser.add_option(
+        "-r", "--radius", type=float, default=10., help="radius around the edge")
+    optParser.add_option("-t", "--travel-distance", action="store_true",
+                         default=False, help="use travel distance in the graph")
     options, args = optParser.parse_args()
     try:
         options.net, = args
@@ -46,41 +46,48 @@ def parse_args():
         options.outfile = options.net + ".taz.xml"
     return options
 
-DEBUGID = ["24214694", "-24214694"]
 
-
-def computeBidiTaz(net, radius=10):
-    taz = defaultdict(set)
+def computeBidiTaz(net, radius=10., useTravelDist=False):
     for edge in net.getEdges():
-        candidates = []
-        r = min(radius, geomhelper.polyLength(edge.getShape()) / 2)
-        if edge.getID() in DEBUGID:
-            print r, edge.getLength(), edge.getShape()
-        for x, y in edge.getShape():
-            nearby = set()
-            for edge2, dist in net.getNeighboringEdges(x, y, r):
-                nearby.add(edge2)
-            if edge.getID() in DEBUGID:
-                print "  ", [e.getID() for e in nearby]
-            candidates.append(nearby)
-        opposites = reduce(lambda a, b: a.intersection(b), candidates)
-        # XXX edges with the same endpoints should have roughly the same length
-        # to be considered as opposites
-        opposites.update(set(edge.getToNode().getOutgoing()).intersection(
-            set(edge.getFromNode().getIncoming())))
-        taz[edge.getID()] = opposites
-    return taz
+        if useTravelDist:
+            opposites = set()
+            queue = [(edge, -1.)]
+            while not len(queue) == 0:
+                edge2, dist = queue.pop()
+                if edge2 not in opposites and dist < radius:
+                    opposites.add(edge2)
+                    if dist == -1.:
+                        dist = 0.
+                    else:
+                        dist += edge2.getLength()
+                    toN = edge2.getToNode()
+                    fromN = edge2.getFromNode()
+                    for e in toN.getOutgoing() + toN.getIncoming() + fromN.getOutgoing() + fromN.getIncoming():
+                        queue.append((e, dist))
+        else:
+            candidates = []
+            r = min(radius, geomhelper.polyLength(edge.getShape()) / 2)
+            for x, y in edge.getShape():
+                nearby = set()
+                for edge2, dist in net.getNeighboringEdges(x, y, r):
+                    nearby.add(edge2)
+                candidates.append(nearby)
+            opposites = reduce(lambda a, b: a.intersection(b), candidates)
+            opposites.update(set(edge.getToNode().getOutgoing()).intersection(
+                set(edge.getFromNode().getIncoming())))
+        yield edge, opposites
 
 
-def main():
-    options = parse_args()
-    net = readNet(options.net)
-    with open(options.outfile, 'w') as outf:
+def main(netFile, outFile, radius, useTravelDist):
+    net = readNet(netFile, withConnections=False, withFoes=False)
+    with open(outFile, 'w') as outf:
         outf.write('<tazs>\n')
-        for tazID, edges in computeBidiTaz(net).items():
+        for taz, edges in computeBidiTaz(net, radius, useTravelDist):
             outf.write('    <taz id="%s" edges="%s"/>\n' % (
-                tazID, ' '.join(sorted([e.getID() for e in edges]))))
+                taz.getID(), ' '.join(sorted([e.getID() for e in edges]))))
         outf.write('</tazs>\n')
+    return net
 
 if __name__ == "__main__":
-    main()
+    options = parse_args()
+    main(options.net, options.outfile, options.radius, options.travel_distance)

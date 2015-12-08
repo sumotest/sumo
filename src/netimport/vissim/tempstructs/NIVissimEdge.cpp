@@ -506,7 +506,7 @@ NIVissimEdge::buildNBEdge(NBDistrictCont& dc, NBNodeCont& nc, NBEdgeCont& ec,
     NBEdge* buildEdge = new NBEdge(toString<int>(myID), fromNode, toNode, myType,
                                    avgSpeed / (SUMOReal) 3.6, myNoLanes, -1,
                                    NBEdge::UNSPECIFIED_WIDTH, NBEdge::UNSPECIFIED_OFFSET,
-                                   myGeom, myName, LANESPREAD_CENTER, true);
+                                   myGeom, myName, "", LANESPREAD_CENTER, true);
     for (i = 0; i < (int) myNoLanes; i++) {
         if ((int) myLaneSpeeds.size() <= i || myLaneSpeeds[i] == -1) {
             buildEdge->setSpeed(i, OptionsCont::getOptions().getFloat("vissim.default-speed") / (SUMOReal) 3.6);
@@ -903,12 +903,9 @@ NIVissimEdge::dict_checkEdges2Join() {
             }
             // only parallel edges which do end at the same node
             //  should be joined
-            // retrieve the "approximating" lines first
-            Line l1 = Line(g1.front(), g1.back());
-            Line l2 = Line(g2.front(), g2.back());
             // check for parallelity
             //  !!! the usage of an explicit value is not very fine
-            if (fabs(l1.atan2DegreeAngle() - l2.atan2DegreeAngle()) > 2.0) {
+            if (fabs(GeomHelper::angleDiff(g1.beginEndAngle(), g2.beginEndAngle())) > DEG2RAD(2.0)) {
                 // continue if the lines are not parallel
                 continue;
             }
@@ -916,7 +913,7 @@ NIVissimEdge::dict_checkEdges2Join() {
             // check whether the same node is approached
             //  (the distance between the ends should not be too large)
             //  !!! the usage of an explicit value is not very fine
-            if (l1.p2().distanceTo(l2.p2()) > 10) {
+            if (g1.back().distanceTo(g2.back()) > 10) {
                 // continue if the lines do not end at the same length
                 continue;
             }

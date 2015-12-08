@@ -40,10 +40,12 @@
 #include <utils/common/StringTokenizer.h>
 #include <utils/options/OptionsCont.h>
 #include "MSEdge.h"
+#include "MSInsertionControl.h"
 #include "MSJunction.h"
 #include "MSLane.h"
 #include "MSLaneChanger.h"
 #include "MSGlobals.h"
+#include "MSNet.h"
 #include "MSVehicle.h"
 #include "MSContainer.h"
 #include "MSEdgeWeightsStorage.h"
@@ -116,6 +118,11 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     if (myFunction == EDGEFUNCTION_DISTRICT) {
         myCombinedPermissions = SVCAll;
     }
+#ifdef HAVE_INTERNAL
+    if (MSGlobals::gUseMesoSim && !lanes->empty()) {
+        MSGlobals::gMesoNet->buildSegmentsFor(*this, OptionsCont::getOptions());
+    }
+#endif
 }
 
 
@@ -402,6 +409,21 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
                                "' is too high for the departure edge '" + getID() + "'.");
         }
     }
+    if (checkOnly && v.getEdge()->getPurpose() == MSEdge::EDGEFUNCTION_DISTRICT) {
+        return true;
+    }
+    if (!checkOnly) {
+        std::string msg;
+        if (!v.hasValidRoute(msg)) {
+            if (MSGlobals::gCheckRoutes) {
+                throw ProcessError("Vehicle '" + v.getID() + "' has no valid route. " + msg);
+            } else if (v.getEdge()->getPurpose() == MSEdge::EDGEFUNCTION_DISTRICT) {
+                WRITE_WARNING("Removing vehicle '" + pars.id + "' which has no valid route.");
+                MSNet::getInstance()->getInsertionControl().descheduleDeparture(&v);
+                return false;
+            }
+        }
+    }
 #ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         SUMOReal pos = 0.0;
@@ -450,9 +472,6 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
     UNUSED_PARAMETER(time);
 #endif
     if (checkOnly) {
-        if (v.getEdge()->getPurpose() == MSEdge::EDGEFUNCTION_DISTRICT) {
-            return true;
-        }
         switch (v.getParameter().departLaneProcedure) {
             case DEPART_LANE_GIVEN:
             case DEPART_LANE_DEFAULT:
@@ -482,11 +501,18 @@ MSEdge::changeLanes(SUMOTime t) {
     }
     if (myFunction == EDGEFUNCTION_INTERNAL) {
         // allow changing only if all links leading to this internal lane have priority
+        // or they are controlled by a traffic light
         for (std::vector<MSLane*>::const_iterator it = myLanes->begin(); it != myLanes->end(); ++it) {
             MSLane* pred = (*it)->getLogicalPredecessorLane();
             MSLink* link = MSLinkContHelper::getConnectingLink(*pred, **it);
             assert(link != 0);
-            if (!link->havePriority()) {
+            LinkState state = link->getState();
+            if (state == LINKSTATE_MINOR
+                    || state == LINKSTATE_EQUAL
+                    || state == LINKSTATE_STOP
+                    || state == LINKSTATE_ALLWAY_STOP
+                    || state == LINKSTATE_ZIPPER
+                    || state == LINKSTATE_DEADEND) {
                 return;
             }
         }
@@ -694,7 +720,7 @@ MSEdge::transportable_by_position_sorter::operator()(const MSTransportable* cons
 
 const MSEdgeVector&
 MSEdge::getSuccessors(SUMOVehicleClass vClass) const {
-    if (vClass == SVC_IGNORING || !MSNet::getInstance()->hasPermissions()) {
+    if (vClass == SVC_IGNORING || !MSNet::getInstance()->hasPermissions() || myFunction == EDGEFUNCTION_DISTRICT) {
         return mySuccessors;
     }
 #ifdef HAVE_FOX
@@ -702,30 +728,30 @@ MSEdge::getSuccessors(SUMOVehicleClass vClass) const {
         MSDevice_Routing::lock();
     }
 #endif
-    std::map<SUMOVehicleClass, MSEdgeVector>::const_iterator i = myClassesSuccessorMap.find(vClass);
-    if (i != myClassesSuccessorMap.end()) {
-        // can use cached value
-#ifdef HAVE_FOX
-        if (MSDevice_Routing::isParallel()) {
-            MSDevice_Routing::unlock();
-        }
-#endif
-        return i->second;
-    } else {
+    std::map<SUMOVehicleClass, MSEdgeVector>::iterator i = myClassesSuccessorMap.find(vClass);
+    if (i == myClassesSuccessorMap.end()) {
+        // instantiate vector
+        myClassesSuccessorMap[vClass];
+        i = myClassesSuccessorMap.find(vClass);
         // this vClass is requested for the first time. rebuild all successors
         for (MSEdgeVector::const_iterator it = mySuccessors.begin(); it != mySuccessors.end(); ++it) {
-            const std::vector<MSLane*>* allowed = allowedLanes(*it, vClass);
-            if (allowed != 0 && allowed->size() > 0) {
-                myClassesSuccessorMap[vClass].push_back(*it);
+            if ((*it)->getPurpose() == EDGEFUNCTION_DISTRICT) {
+                i->second.push_back(*it);
+            } else {
+                const std::vector<MSLane*>* allowed = allowedLanes(*it, vClass);
+                if (allowed != 0 && allowed->size() > 0) {
+                    i->second.push_back(*it);
+                }
             }
         }
-#ifdef HAVE_FOX
-        if (MSDevice_Routing::isParallel()) {
-            MSDevice_Routing::unlock();
-        }
-#endif
-        return myClassesSuccessorMap[vClass];
     }
+    // can use cached value
+#ifdef HAVE_FOX
+    if (MSDevice_Routing::isParallel()) {
+        MSDevice_Routing::unlock();
+    }
+#endif
+    return i->second;
 }
 
 

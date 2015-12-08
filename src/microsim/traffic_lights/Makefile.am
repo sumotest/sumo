@@ -7,6 +7,8 @@ MSOffTrafficLightLogic.cpp MSOffTrafficLightLogic.h \
 MSRailSignal.cpp MSRailSignal.h \
 MSPhaseDefinition.cpp MSPhaseDefinition.h \
 MSPhasedTrafficLightLogic.cpp MSPhasedTrafficLightLogic.h \
+MSPushButton.cpp MSPushButton.h \
+MSRailCrossing.cpp MSRailCrossing.h \
 MSSimpleTrafficLightLogic.cpp MSSimpleTrafficLightLogic.h \
 MSSOTLDefinitions.h \
 MSSOTLE2Sensors.cpp MSSOTLE2Sensors.h \
@@ -31,5 +33,4 @@ MSSOTLHiLevelTrafficLightLogic.cpp MSSOTLHiLevelTrafficLightLogic.h \
 MSSwarmTrafficLightLogic.cpp MSSwarmTrafficLightLogic.h \
 MSDeterministicHiLevelTrafficLightLogic.cpp MSDeterministicHiLevelTrafficLightLogic.h \
 MSTLLogicControl.cpp MSTLLogicControl.h \
-MSTrafficLightLogic.cpp MSTrafficLightLogic.h \
-MSPushButton.cpp MSPushButton.h
+MSTrafficLightLogic.cpp MSTrafficLightLogic.h

@@ -51,6 +51,13 @@
 // ===========================================================================
 MSDevice_Tripinfo::DeviceSet MSDevice_Tripinfo::myPendingOutput;
 
+SUMOReal MSDevice_Tripinfo::myVehicleCount(0);
+SUMOReal MSDevice_Tripinfo::myTotalRouteLength(0);
+SUMOTime MSDevice_Tripinfo::myTotalDuration(0);
+SUMOTime MSDevice_Tripinfo::myTotalWaitingTime(0);
+SUMOTime MSDevice_Tripinfo::myTotalTimeLoss(0);
+SUMOTime MSDevice_Tripinfo::myTotalDepartDelay(0);
+
 // ===========================================================================
 // method definitions
 // ===========================================================================
@@ -59,7 +66,7 @@ MSDevice_Tripinfo::DeviceSet MSDevice_Tripinfo::myPendingOutput;
 // ---------------------------------------------------------------------------
 void
 MSDevice_Tripinfo::buildVehicleDevices(SUMOVehicle& v, std::vector<MSDevice*>& into) {
-    if (OptionsCont::getOptions().isSet("tripinfo-output")) {
+    if (OptionsCont::getOptions().isSet("tripinfo-output") || OptionsCont::getOptions().getBool("duration-log.statistics")) {
         MSDevice_Tripinfo* device = new MSDevice_Tripinfo(v, "tripinfo_" + v.getID());
         into.push_back(device);
         myPendingOutput.insert(device);
@@ -144,10 +151,8 @@ MSDevice_Tripinfo::notifyLeave(SUMOVehicle& veh, SUMOReal /*lastPos*/,
     return true;
 }
 
-
 void
-MSDevice_Tripinfo::generateOutput() const {
-    myPendingOutput.erase(this);
+MSDevice_Tripinfo::computeLengthAndDuration(SUMOReal& routeLength, SUMOTime& duration) const {
     SUMOTime finalTime;
     SUMOReal finalPos;
     SUMOReal finalPosOnInternal = 0;
@@ -166,8 +171,23 @@ MSDevice_Tripinfo::generateOutput() const {
         finalPos = myArrivalPos;
     }
     const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
-    const SUMOReal routeLength = myHolder.getRoute().getDistanceBetween(myDepartPos, finalPos,
-                                 myHolder.getRoute().begin(), myHolder.getCurrentRouteEdge(), includeInternalLengths) + finalPosOnInternal;
+    routeLength = myHolder.getRoute().getDistanceBetween(myDepartPos, finalPos,
+                  myHolder.getRoute().begin(), myHolder.getCurrentRouteEdge(), includeInternalLengths) + finalPosOnInternal;
+
+    duration = finalTime - myHolder.getDeparture();
+}
+
+
+void
+MSDevice_Tripinfo::generateOutput() const {
+    updateStatistics();
+    if (!OptionsCont::getOptions().isSet("tripinfo-output")) {
+        return;
+    }
+    myPendingOutput.erase(this);
+    SUMOReal routeLength;
+    SUMOTime duration;
+    computeLengthAndDuration(routeLength, duration);
 
     // write
     OutputDevice& os = OutputDevice::getDeviceByOption("tripinfo-output");
@@ -176,12 +196,12 @@ MSDevice_Tripinfo::generateOutput() const {
     os.writeAttr("departLane", myDepartLane);
     os.writeAttr("departPos", myDepartPos);
     os.writeAttr("departSpeed", myDepartSpeed);
-    os.writeAttr("departDelay", time2string(myHolder.getDeparture() - myHolder.getParameter().depart));
+    os.writeAttr("departDelay", time2string(myHolder.getDepartDelay()));
     os.writeAttr("arrival", time2string(myArrivalTime));
     os.writeAttr("arrivalLane", myArrivalLane);
     os.writeAttr("arrivalPos", myArrivalPos);
     os.writeAttr("arrivalSpeed", myArrivalSpeed);
-    os.writeAttr("duration", time2string(finalTime - myHolder.getDeparture()));
+    os.writeAttr("duration", time2string(duration));
     os.writeAttr("routeLength", routeLength);
     os.writeAttr("waitSteps", myWaitingSteps);
     os.writeAttr("timeLoss", time2string(myTimeLoss));
@@ -207,6 +227,9 @@ MSDevice_Tripinfo::generateOutputForUnfinished() {
         const MSDevice_Tripinfo* d = *myPendingOutput.begin();
         if (d->myHolder.hasDeparted()) {
             d->generateOutput();
+            if (!OptionsCont::getOptions().isSet("tripinfo-output")) {
+                return;
+            }
             // @todo also generate emission output if holder has a device
             OutputDevice::getDeviceByOption("tripinfo-output").closeTag();
         } else {
@@ -215,6 +238,81 @@ MSDevice_Tripinfo::generateOutputForUnfinished() {
     }
 }
 
+
+void
+MSDevice_Tripinfo::updateStatistics() const {
+    SUMOReal routeLength;
+    SUMOTime duration;
+    computeLengthAndDuration(routeLength, duration);
+
+    myVehicleCount++;
+    myTotalRouteLength += routeLength;
+    myTotalDuration += duration;
+    myTotalWaitingTime += (SUMOTime)(myWaitingSteps * DELTA_T);
+    myTotalTimeLoss += myTimeLoss;
+    myTotalDepartDelay += myHolder.getDepartDelay();
+}
+
+
+std::string
+MSDevice_Tripinfo::printStatistics() {
+    std::ostringstream msg;
+    msg.setf(msg.fixed);
+    msg.precision(OUTPUT_ACCURACY);
+    msg << "Statistics (avg):\n"
+        << " RouteLength: " << getAvgRouteLength() << "\n"
+        << " Duration: " << getAvgDuration() << "\n"
+        << " WaitingTime: " << getAvgWaitingTime() << "\n"
+        << " TimeLoss: " << getAvgTimeLoss() << "\n"
+        << " DepartDelay: " << getAvgDepartDelay() << "\n";
+    return msg.str();
+}
+
+
+SUMOReal
+MSDevice_Tripinfo::getAvgRouteLength() {
+    if (myVehicleCount > 0) {
+        return myTotalRouteLength / myVehicleCount;
+    } else {
+        return 0;
+    }
+}
+
+SUMOReal
+MSDevice_Tripinfo::getAvgDuration() {
+    if (myVehicleCount > 0) {
+        return STEPS2TIME(myTotalDuration / myVehicleCount);
+    } else {
+        return 0;
+    }
+}
+
+SUMOReal
+MSDevice_Tripinfo::getAvgWaitingTime() {
+    if (myVehicleCount > 0) {
+        return STEPS2TIME(myTotalWaitingTime / myVehicleCount);
+    } else {
+        return 0;
+    }
+}
+
+SUMOReal
+MSDevice_Tripinfo::getAvgTimeLoss() {
+    if (myVehicleCount > 0) {
+        return STEPS2TIME(myTotalTimeLoss / myVehicleCount);
+    } else {
+        return 0;
+    }
+}
+
+SUMOReal
+MSDevice_Tripinfo::getAvgDepartDelay() {
+    if (myVehicleCount > 0) {
+        return STEPS2TIME(myTotalDepartDelay / myVehicleCount);
+    } else {
+        return 0;
+    }
+}
 
 
 /****************************************************************************/

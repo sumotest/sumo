@@ -226,7 +226,16 @@ public:
     }
 
     void updateColor(const GUIVisualizationSettings& s);
+
 #endif
+
+    /// @brief close this lane for traffic
+    void closeTraffic(bool rebuildAllowed = true);
+
+    bool isClosed() const {
+        return myAmClosed;
+    }
+
 protected:
     /// moves myTmpVehicles int myVehicles after a lane change procedure
     void swapAfterLaneChange(SUMOTime t);
@@ -248,9 +257,9 @@ protected:
 
 private:
     /// @brief helper methods
-    void drawLinkNo() const;
-    void drawTLSLinkNo(const GUINet& net) const;
-    void drawTextAtEnd(const std::string& text, const PositionVector& shape, SUMOReal x) const;
+    void drawLinkNo(const GUIVisualizationSettings& s) const;
+    void drawTLSLinkNo(const GUIVisualizationSettings& s, const GUINet& net) const;
+    void drawTextAtEnd(const std::string& text, const PositionVector& shape, SUMOReal x, const GUIVisualizationTextSettings& settings) const;
     void drawLinkRules(const GUIVisualizationSettings& s, const GUINet& net) const;
     void drawLinkRule(const GUIVisualizationSettings& s, const GUINet& net, MSLink* link, const PositionVector& shape, SUMOReal x1, SUMOReal x2) const;
     void drawArrows() const;
@@ -302,6 +311,9 @@ private:
     osg::Geometry* myGeom;
 #endif
 
+    /// @brief state for dynamic lane closings
+    bool myAmClosed;
+    SVCPermissions myOriginalPermissions;
 
 private:
     /// The mutex used to avoid concurrent updates of the vehicle buffer

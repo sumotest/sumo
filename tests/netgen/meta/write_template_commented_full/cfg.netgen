@@ -165,6 +165,12 @@
         <!-- Determines the maximal distance for joining traffic lights (defaults to 20) -->
         <tls.join-dist value="20" type="FLOAT"/>
 
+        <!-- Do not control edges that lie fully within a joined traffic light. This may cause collisions but allows old traffic light plans to be used -->
+        <tls.uncontrolled-within value="false" type="BOOL"/>
+
+        <!-- Use INT as cycle duration -->
+        <tls.cycle.time value="90" type="INT"/>
+
         <!-- Use INT as green phase duration -->
         <tls.green.time value="31" synonymes="traffic-light-green" type="INT"/>
 
@@ -176,6 +182,9 @@
 
         <!-- Set INT as fixed time for yellow phase durations -->
         <tls.yellow.time value="" synonymes="traffic-light-yellow" type="INT"/>
+
+        <!-- Use INT as green phase duration for left turns (s) -->
+        <tls.left-green.time value="6" type="INT"/>
 
         <!-- TLSs in STR will be shifted by half-phase -->
         <tls.half-offset value="" synonymes="tl-logics.half-offset" type="STR"/>
@@ -255,6 +264,9 @@
         <!-- Assumes left-hand traffic on the network -->
         <lefthand value="false" type="BOOL"/>
 
+        <!-- Merges edges whch connect the same nodes and are close to each other (recommended for VISSIM import) -->
+        <edges.join value="false" type="BOOL"/>
+
         <!-- Joins junctions that are close to each other (recommended for OSM import) -->
         <junctions.join value="false" type="BOOL"/>
 
@@ -263,6 +275,9 @@
 
         <!-- Generate INT intermediate points to smooth out intersection corners -->
         <junctions.corner-detail value="0" type="INT"/>
+
+        <!-- Generate INT intermediate points to smooth out lanes within the intersection -->
+        <junctions.internal-link-detail value="5" type="INT"/>
 
         <!-- Allow driving onto a multi-lane road if there are foes on other lanes (at roundabouts) -->
         <check-lane-foes.roundabout value="true" type="BOOL"/>
@@ -282,8 +297,14 @@
         <!-- Add sidewalks for edges that allow pedestrians on any of their lanes regardless of speed -->
         <sidewalks.guess.from-permissions value="false" type="BOOL"/>
 
+        <!-- Do not guess sidewalks for the given list of edges -->
+        <sidewalks.guess.exclude value="" type="STR"/>
+
         <!-- Guess pedestrian crossings based on the presence of sidewalks -->
         <crossings.guess value="false" type="BOOL"/>
+
+        <!-- At uncontrolled nodes, do not build crossings across edges with a speed above the threshold -->
+        <crossings.guess.speed-threshold value="13.89" type="FLOAT"/>
 
     </processing>
 
@@ -302,6 +323,9 @@
 
         <!-- Whether junctions should be kept clear by default -->
         <default.junctions.keep-clear value="true" type="BOOL"/>
+
+        <!-- The default turning radius of intersections -->
+        <default.junctions.radius value="1.5" type="FLOAT"/>
 
         <!-- [traffic_light|priority|right_before_left] Determines the type of the build junctions -->
         <default-junction-type value="" synonymes="j junctions" type="STR"/>

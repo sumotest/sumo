@@ -187,12 +187,7 @@ NBNodeCont::joinSimilarEdges(NBDistrictCont& dc, NBEdgeCont& ec, NBTrafficLightL
         std::map<NBNode*, EdgeVector> connectionCount;
         const EdgeVector& outgoing = (*i).second->getOutgoingEdges();
         for (EdgeVector::const_iterator j = outgoing.begin(); j != outgoing.end(); j++) {
-            NBEdge* e = (*j);
-            NBNode* connected = e->getToNode();
-            if (connectionCount.find(connected) == connectionCount.end()) {
-                connectionCount[connected] = EdgeVector();
-            }
-            connectionCount[connected].push_back(e);
+            connectionCount[(*j)->getToNode()].push_back(*j);
         }
         // check whether more than a single edge connect another node and join them
         std::map<NBNode*, EdgeVector>::iterator k;
@@ -329,7 +324,7 @@ NBNodeCont::removeUnwishedNodes(NBDistrictCont& dc, NBEdgeCont& ec,
     if (removeGeometryNodes) {
         const OptionsCont& oc = OptionsCont::getOptions();
         if (oc.isSet("geometry.remove.keep-edges.input-file")) {
-            NBHelpers::loadEdgesFromFile(oc.getString("geometry.remove.keep-edges.input-file"), edges2keep); 
+            NBHelpers::loadEdgesFromFile(oc.getString("geometry.remove.keep-edges.input-file"), edges2keep);
         }
         if (oc.isSet("geometry.remove.keep-edges.explicit")) {
             const std::vector<std::string> edges = oc.getStringVector("geometry.remove.keep-edges.explicit");
@@ -1119,6 +1114,7 @@ NBNodeCont::printBuiltNodesStatistics() const {
     int numPriorityJunctions = 0;
     int numRightBeforeLeftJunctions = 0;
     int numAllWayStopJunctions = 0;
+    int numZipperJunctions = 0;
     int numRailSignals = 0;
     for (NodeCont::const_iterator i = myNodes.begin(); i != myNodes.end(); i++) {
         switch ((*i).second->getType()) {
@@ -1132,6 +1128,8 @@ NBNodeCont::printBuiltNodesStatistics() const {
             case NODETYPE_PRIORITY:
             case NODETYPE_PRIORITY_STOP:
             case NODETYPE_TRAFFIC_LIGHT:
+            case NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED:
+            case NODETYPE_RAIL_CROSSING:
                 ++numPriorityJunctions;
                 break;
             case NODETYPE_RIGHT_BEFORE_LEFT:
@@ -1139,6 +1137,9 @@ NBNodeCont::printBuiltNodesStatistics() const {
                 break;
             case NODETYPE_ALLWAY_STOP:
                 ++numAllWayStopJunctions;
+                break;
+            case NODETYPE_ZIPPER:
+                ++numZipperJunctions;
                 break;
             case NODETYPE_DISTRICT:
                 ++numRightBeforeLeftJunctions;
@@ -1161,6 +1162,9 @@ NBNodeCont::printBuiltNodesStatistics() const {
     WRITE_MESSAGE("  Right-before-left junctions : " + toString(numRightBeforeLeftJunctions));
     if (numAllWayStopJunctions > 0) {
         WRITE_MESSAGE("  All-way stop junctions      : " + toString(numAllWayStopJunctions));
+    }
+    if (numZipperJunctions > 0) {
+        WRITE_MESSAGE("  Zipper-merge junctions      : " + toString(numZipperJunctions));
     }
     if (numRailSignals > 0) {
         WRITE_MESSAGE("  Rail signal junctions      : " + toString(numRailSignals));

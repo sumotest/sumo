@@ -428,7 +428,7 @@ GUIParameterTableWindow*
 GUINet::getParameterWindow(GUIMainWindow& app,
                            GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 22);
+        new GUIParameterTableWindow(app, *this, 28);
     // add items
     ret->mkItem("loaded vehicles [#]", true,
                 new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getLoadedVehicleNo));
@@ -446,11 +446,11 @@ GUINet::getParameterWindow(GUIMainWindow& app,
                 new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getTeleportCount));
     if (myPersonControl != 0) {
         ret->mkItem("loaded persons [#]", true,
-                new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getLoadedPersonNumber));
+                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getLoadedPersonNumber));
         ret->mkItem("running persons [#]", true,
-                new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getRunningPersonNumber));
+                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getRunningPersonNumber));
         ret->mkItem("jammed persons [#]", true,
-                new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getJammedPersonNumber));
+                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getJammedPersonNumber));
     }
     ret->mkItem("end time [s]", false, OptionsCont::getOptions().getString("end"));
     ret->mkItem("begin time [s]", false, OptionsCont::getOptions().getString("begin"));
@@ -472,11 +472,19 @@ GUINet::getParameterWindow(GUIMainWindow& app,
                 */
         ret->mkItem("ups [#]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getUPS));
         ret->mkItem("mean ups [#]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getMeanUPS));
+        if (OptionsCont::getOptions().getBool("duration-log.statistics")) {
+            ret->mkItem("avg. trip length [m]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getAvgRouteLength));
+            ret->mkItem("avg. trip duration [s]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getAvgDuration));
+            ret->mkItem("avg. trip waiting time [s]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getAvgWaitingTime));
+            ret->mkItem("avg. trip time loss [s]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getAvgTimeLoss));
+            ret->mkItem("avg. trip depart delay [s]", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getAvgDepartDelay));
+        }
     }
     ret->mkItem("nodes [#]", false, (int)myJunctions->size());
     ret->mkItem("edges [#]", false, (int)GUIEdge::getIDs(false).size());
     ret->mkItem("total edge length [km]", false, GUIEdge::getTotalLength(false, false) / 1000);
     ret->mkItem("total lane length [km]", false, GUIEdge::getTotalLength(false, true) / 1000);
+    ret->mkItem("network version ", false, toString(myVersion));
 
     // close building
     ret->closeBuilding();

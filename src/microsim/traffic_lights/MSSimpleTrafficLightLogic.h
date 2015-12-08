@@ -37,10 +37,13 @@
 #include <utility>
 #include <vector>
 #include <bitset>
-#include <microsim/MSEventControl.h>
-#include <microsim/MSNet.h>
 #include "MSTrafficLightLogic.h"
-#include "MSPhaseDefinition.h"
+
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class MSNet;
 
 
 // ===========================================================================
@@ -82,7 +85,7 @@ public:
      * @return The time of the next switch
      * @see MSTrafficLightLogic::trySwitch
      */
-    SUMOTime trySwitch();
+    virtual SUMOTime trySwitch();
     /// @}
 
 

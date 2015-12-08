@@ -129,6 +129,7 @@ public:
     long onUpdSaveNetwork(FXObject*, FXSelector, void*);
     long onCmdSaveAsNetwork(FXObject*, FXSelector, void*);
     long onUpdNeedsNetwork(FXObject*, FXSelector, void*);
+    long onUpdReload(FXObject*, FXSelector, void*);
     long onCmdSaveAsPlainXML(FXObject*, FXSelector, void*);
     long onCmdSaveJoined(FXObject*, FXSelector, void*);
     long onCmdSavePois(FXObject*, FXSelector, void*);
@@ -285,18 +286,18 @@ protected:
      * This subclasses ShapeHandler with netbuild specific function
      */
     class GNEShapeHandler : public ShapeHandler {
-        public:
-            GNEShapeHandler(const std::string& file, GNENet* net, ShapeContainer& sc) :
-                ShapeHandler(file, sc),
-                myNet(net) {}
+    public:
+        GNEShapeHandler(const std::string& file, GNENet* net, ShapeContainer& sc) :
+            ShapeHandler(file, sc),
+            myNet(net) {}
 
-            /// @brief Destructor
-            virtual ~GNEShapeHandler() {}
+        /// @brief Destructor
+        virtual ~GNEShapeHandler() {}
 
-            Position getLanePos(const std::string& poiID, const std::string& laneID, SUMOReal lanePos);
+        Position getLanePos(const std::string& poiID, const std::string& laneID, SUMOReal lanePos);
 
-        private:
-            GNENet* myNet;
+    private:
+        GNENet* myNet;
     };
 
 private:

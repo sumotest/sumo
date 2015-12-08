@@ -170,7 +170,7 @@ MSBaseVehicle::reroute(SUMOTime t, SUMOAbstractRouter<MSEdge, SUMOVehicle>& rout
 bool
 MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
     if (edges.empty()) {
-        WRITE_WARNING("No route for vehicle '" + getID() + "' found" + (onInit ? " (skipping vehicle)." : "."));
+        WRITE_WARNING("No route for vehicle '" + getID() + "' found.");
         return false;
     }
     // build a new id, first
@@ -274,7 +274,7 @@ MSBaseVehicle::hasValidRoute(std::string& msg) const {
     // check connectivity, first
     for (MSRouteIterator e = myCurrEdge; e != last; ++e) {
         if ((*e)->allowedLanes(**(e + 1), myType->getVehicleClass()) == 0) {
-            msg = "No connection between '" + (*e)->getID() + "' and '" + (*(e + 1))->getID() + "'.";
+            msg = "No connection between edge '" + (*e)->getID() + "' and edge '" + (*(e + 1))->getID() + "'.";
             return false;
         }
     }
@@ -368,7 +368,7 @@ MSBaseVehicle::calculateArrivalParams() {
         myArrivalLane = MIN2(myParameter->arrivalLane, (int)(lanes.size() - 1));
     }
     if (myParameter->arrivalSpeedProcedure == ARRIVAL_SPEED_GIVEN) {
-        for (std::vector<MSLane*>::const_iterator l = lanes.begin(); l !=lanes.end(); ++l) {
+        for (std::vector<MSLane*>::const_iterator l = lanes.begin(); l != lanes.end(); ++l) {
             if (myParameter->arrivalSpeed <= (*l)->getVehicleMaxSpeed(this)) {
                 return;
             }

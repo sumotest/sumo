@@ -70,6 +70,8 @@ env["SMTP_SERVER"] = "smtprelay.dlr.de"
 env["TEMP"] = env["TMP"] = r"D:\Delphi\texttesttmp"
 env["REMOTEDIR_BASE"] = 'O:/Daten/Sumo'
 compiler = r"D:\Programme\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe"
+if "VS100COMNTOOLS" in env:
+    compiler = os.path.join(env["VS100COMNTOOLS"], "..", "IDE", "devenv.exe")
 svnrev = ""
 
 maxTime = 0
@@ -135,7 +137,8 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     log = io.open(makeLog, 'a')
     if sumoAllZip:
         try:
-            binaryZip = sumoAllZip.replace("-all-", "-win32-" if platform == "Win32" else "-win64-")
+            binaryZip = sumoAllZip.replace(
+                "-all-", "-win32-" if platform == "Win32" else "-win64-")
             zipf = zipfile.ZipFile(binaryZip, 'w', zipfile.ZIP_DEFLATED)
             srcZip = zipfile.ZipFile(sumoAllZip)
             write = False
@@ -224,18 +227,13 @@ for platform, nightlyDir in [("Win32", r"O:\Daten\Sumo\Nightly"), ("x64", r"O:\D
     if options.sumoExe == "meso":
         runInternalTests.runInternal("", fullOpt, log, console=True)
     else:
-        subprocess.call(
-            [ttBin] + fullOpt, stdout=log, stderr=subprocess.STDOUT, shell=True)
-    subprocess.call([ttBin, "-a", "sumo.gui"] + fullOpt,
+        subprocess.call([ttBin] + fullOpt, env=os.environ,
+                        stdout=log, stderr=subprocess.STDOUT, shell=True)
+    subprocess.call([ttBin, "-a", "sumo.gui"] + fullOpt, env=os.environ,
                     stdout=log, stderr=subprocess.STDOUT, shell=True)
-    subprocess.call([ttBin, "-b", env["FILEPREFIX"], "-coll"],
+    subprocess.call([ttBin, "-b", env["FILEPREFIX"], "-coll"], env=os.environ,
                     stdout=log, stderr=subprocess.STDOUT, shell=True)
-    ago = datetime.datetime.now() - datetime.timedelta(50)
-    subprocess.call('%s -s "batch.ArchiveRepository session=%s before=%s"' % (
-        ttBin, env["FILEPREFIX"], ago.strftime("%d%b%Y")),
-        stdout=log, stderr=subprocess.STDOUT, shell=True)
     log.close()
     log = open(statusLog, 'w')
-    status.printStatus(
-        makeLog, makeAllLog, env["TEXTTEST_TMP"], env["SMTP_SERVER"], log)
+    status.printStatus(makeLog, makeAllLog, env["SMTP_SERVER"], log)
     log.close()

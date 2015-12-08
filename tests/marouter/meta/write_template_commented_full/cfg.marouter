@@ -45,17 +45,17 @@
         <!-- Name of the xml attribute which gives the edge weight -->
         <weight-attribute value="traveltime" synonymes="measure x" type="STR"/>
 
+        <!-- The travel time influence of prior intervals -->
+        <weight-adaption value="0" type="FLOAT"/>
+
     </input>
 
     <output>
         <!-- Prefix which is applied to all output files. The special string &apos;TIME&apos; is replaced by the current time. -->
         <output-prefix value="" type="STR"/>
 
-        <!-- Write route distributions to FILE -->
+        <!-- Write flow definitions with route distributions to FILE -->
         <output-file value="" synonymes="o output" type="FILE"/>
-
-        <!-- Writes flow definitions into FILE -->
-        <flow-output value="" type="FILE"/>
 
         <!-- Does not save vtype information -->
         <ignore-vehicle-type value="false" synonymes="no-vtype" type="BOOL"/>

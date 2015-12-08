@@ -148,8 +148,10 @@ public:
      * @param[in] relative Whether newPos is absolute or relative
      * @return newPos if something was moved, oldPos if nothing was moved
      */
-    Position moveGeometry(const Position& oldPos, const Position& newPos, bool relative=false);
+    Position moveGeometry(const Position& oldPos, const Position& newPos, bool relative = false);
 
+    //// @brief manipulate the given geometry and return whether it was changed
+    static bool changeGeometry(PositionVector& geom, const std::string& id, const Position& oldPos, const Position& newPos, bool relative = false, bool moveEndPoints = false);
 
     /** @brief change the edge geometry without registering undo/redo
      * @param[in] delta All inner points are moved by adding delta
@@ -227,10 +229,12 @@ public:
      * straight unless the user clicked near a geometry point */
     Position getSplitPos(const Position& clickPos);
 
+    /// @brief override to also set lane ids
+    void setMicrosimID(const std::string& newID);
 
-private:
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
+private:
 
     /// the underlying NBEdge
     NBEdge& myNBEdge;

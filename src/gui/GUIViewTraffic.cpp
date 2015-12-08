@@ -45,6 +45,7 @@
 #include <microsim/MSLane.h>
 #include <microsim/MSJunctionControl.h>
 #include <microsim/traffic_lights/MSTLLogicControl.h>
+#include <microsim/traffic_lights/MSSimpleTrafficLightLogic.h>
 #include <utils/common/RGBColor.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/shapes/Polygon.h>
@@ -68,6 +69,18 @@
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
+
+/* -------------------------------------------------------------------------
+ * GUIViewTraffic - FOX callback mapping
+ * ----------------------------------------------------------------------- */
+FXDEFMAP(GUIViewTraffic) GUIViewTrafficMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_CLOSE_LANE, GUIViewTraffic::onCmdCloseLane),
+    FXMAPFUNC(SEL_COMMAND, MID_CLOSE_EDGE, GUIViewTraffic::onCmdCloseEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_ADD_REROUTER, GUIViewTraffic::onCmdAddRerouter),
+};
+
+
+FXIMPLEMENT_ABSTRACT(GUIViewTraffic, GUISUMOAbstractView, GUIViewTrafficMap, ARRAYNUMBER(GUIViewTrafficMap))
 
 
 // ===========================================================================
@@ -111,17 +124,20 @@ GUIViewTraffic::buildViewToolBars(GUIGlChildWindow& v) {
                  GUIIconSubSys::getIcon(ICON_LOCATEEDGE), &v, MID_LOCATEEDGE,
                  ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
 
-    if (!MSGlobals::gUseMesoSim) { // there are no gui-vehicles in mesosim
-        // for vehicles
+    // for vehicles
+    new FXButton(v.getLocatorPopup(),
+                 "\tLocate Vehicle\tLocate a vehicle within the network.",
+                 GUIIconSubSys::getIcon(ICON_LOCATEVEHICLE), &v, MID_LOCATEVEHICLE,
+                 ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
+
+    // for persons
+    if (!MSGlobals::gUseMesoSim) { // there are no persons in mesosim (yet)
         new FXButton(v.getLocatorPopup(),
-                     "\tLocate Vehicle\tLocate a vehicle within the network.",
-                     GUIIconSubSys::getIcon(ICON_LOCATEVEHICLE), &v, MID_LOCATEVEHICLE,
+                     "\tLocate Vehicle\tLocate a person within the network.",
+                     GUIIconSubSys::getIcon(ICON_LOCATEPERSON), &v, MID_LOCATEPERSON,
                      ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
     }
-    new FXButton(v.getLocatorPopup(),
-                 "\tLocate Vehicle\tLocate a person within the network.",
-                 GUIIconSubSys::getIcon(ICON_LOCATEPERSON), &v, MID_LOCATEPERSON,
-                 ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
+
     // for tls
     new FXButton(v.getLocatorPopup(),
                  "\tLocate TLS\tLocate a tls within the network.",
@@ -282,5 +298,54 @@ GUIViewTraffic::getCurrentTimeStep() const {
     return MSNet::getInstance()->getCurrentTimeStep();
 }
 
+
+GUILane*
+GUIViewTraffic::getLaneUnderCursor() {
+    if (makeCurrent()) {
+        unsigned int id = getObjectUnderCursor();
+        if (id != 0) {
+            GUIGlObject* o = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
+            if (o != 0) {
+                return dynamic_cast<GUILane*>(o);
+            }
+        }
+        makeNonCurrent();
+    }
+    return 0;
+}
+
+long
+GUIViewTraffic::onCmdCloseLane(FXObject*, FXSelector, void*) {
+    GUILane* lane = getLaneUnderCursor();
+    if (lane != 0) {
+        lane->closeTraffic();
+        GUIGlObjectStorage::gIDStorage.unblockObject(lane->getGlID());
+        update();
+    }
+    return 1;
+}
+
+
+long
+GUIViewTraffic::onCmdCloseEdge(FXObject*, FXSelector, void*) {
+    GUILane* lane = getLaneUnderCursor();
+    if (lane != 0) {
+        dynamic_cast<GUIEdge*>(&lane->getEdge())->closeTraffic(lane);
+        GUIGlObjectStorage::gIDStorage.unblockObject(lane->getGlID());
+        update();
+    }
+    return 1;
+}
+
+long
+GUIViewTraffic::onCmdAddRerouter(FXObject*, FXSelector, void*) {
+    GUILane* lane = getLaneUnderCursor();
+    if (lane != 0) {
+        dynamic_cast<GUIEdge*>(&lane->getEdge())->addRerouter();
+        GUIGlObjectStorage::gIDStorage.unblockObject(lane->getGlID());
+        update();
+    }
+    return 1;
+}
 
 /****************************************************************************/

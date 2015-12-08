@@ -49,7 +49,7 @@
 #include <utils/geom/Boundary.h>
 #include <utils/geom/Position.h>
 #include <utils/common/SUMOTime.h>
-#include <microsim/trigger/MSChrgStn.h>
+#include <microsim/trigger/MSChargingStation.h>
 #include <microsim/MSStoppingPlace.h>
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/NamedObjectCont.h>
@@ -157,12 +157,16 @@ public:
      * @param[in] stateDumpTimes List of time steps at which state shall be written
      * @param[in] stateDumpFiles Filenames for states
      * @param[in] hasInternalLinks Whether the network actually contains internal links
+     * @param[in] lefthand Whether the network was built for left-hand traffic
+     * @param[in] version The network version
      * @todo Try to move all this to the constructor?
      */
     void closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
                        SUMORouteLoaderControl* routeLoaders, MSTLLogicControl* tlc,
                        std::vector<SUMOTime> stateDumpTimes, std::vector<std::string> stateDumpFiles,
-                       bool hasInternalLinks);
+                       bool hasInternalLinks,
+                       bool lefthand,
+                       SUMOReal version);
 
 
     /** @brief Returns whether the network has specific vehicle class permissions
@@ -491,27 +495,27 @@ public:
      *
      * If another charging station with the same id exists, false is returned.
      *  Otherwise, the charging station is added to the internal bus stop
-     *  container "myChrgStnDict".
+     *  container "myChargingStationDict".
      *
      * This control gets responsible for deletion of the added charging station.
      *
-     * @param[in] chrgStn The charging station add
+     * @param[in] chargingStation The charging station add
      * @return Whether the charging station could be added
      */
-    bool addChrgStn(MSChrgStn* chrgStn);
+    bool addChargingStation(MSChargingStation* chargingStation);
 
     /** @brief Returns the named charging station
      * @param[in] id The id of the charging station to return.
      * @return The named charging station, or 0 if no such stop exists
      */
-    MSChrgStn* getChrgStn(const std::string& id) const;
+    MSChargingStation* getChargingStation(const std::string& id) const;
 
     /** @brief Returns the charging station close to the given position
      * @param[in] lane the lane of the charging station to return.
      * @param[in] pos the position of the bus stop to return.
      * @return The charging station id on the location, or "" if no such stop exists
      */
-    std::string getChrgStnID(const MSLane* lane, const SUMOReal pos) const;
+    std::string getChargingStationID(const MSLane* lane, const SUMOReal pos) const;
     /// @}
 
 
@@ -630,6 +634,16 @@ public:
         return myHasElevation;
     }
 
+    /// @brief return whether the network was built for lefthand traffic
+    bool lefthand() const {
+        return myLefthand;
+    }
+
+    /// @brief return the network version
+    SUMOReal version() const {
+        return myVersion;
+    }
+
 protected:
     /// @brief check all lanes for elevation data
     bool checkElevation();
@@ -723,8 +737,11 @@ protected:
     /// @brief Whether the network contains elevation data
     bool myHasElevation;
 
-    /// @brief Storage for maximum vehicle number
-    int myTooManyVehicles;
+    /// @brief Whether the network was built for left-hand traffic
+    bool myLefthand;
+
+    /// @brief the network version
+    SUMOReal myVersion;
 
     /// @brief Dictionary of bus stops
     NamedObjectCont<MSStoppingPlace*> myBusStopDict;
@@ -733,7 +750,7 @@ protected:
     NamedObjectCont<MSStoppingPlace*> myContainerStopDict;
 
     /// @brief Dictionary of charging Stations
-    NamedObjectCont<MSChrgStn*> myChrgStnDict;
+    NamedObjectCont<MSChargingStation*> myChargingStationDict;
 
     /// @brief Container for vehicle state listener
     std::vector<VehicleStateListener*> myVehicleStateListeners;

@@ -79,14 +79,14 @@ public:
     class MSContainerStage_Driving : public MSTransportable::Stage {
     public:
         /// constructor
-        MSContainerStage_Driving(const MSEdge& destination, MSStoppingPlace* toCS,
-                                 const std::vector<std::string>& lines);
+        MSContainerStage_Driving(const MSEdge& destination, MSStoppingPlace* toStop,
+                                 const SUMOReal arrivalPos, const std::vector<std::string>& lines);
 
         /// destructor
         ~MSContainerStage_Driving();
 
         /// proceeds to the next step
-        virtual void proceed(MSNet* net, MSTransportable* container, SUMOTime now, MSEdge* previousEdge, const SUMOReal at);
+        virtual void proceed(MSNet* net, MSTransportable* container, SUMOTime now, Stage* previous);
 
         /// Returns the current edge
         const MSEdge* getEdge() const;
@@ -165,9 +165,6 @@ public:
         /// @brief The taken vehicle
         SUMOVehicle* myVehicle;
 
-        /// @brief The destination container stop
-        MSStoppingPlace* myDestinationContainerStop;
-
         /// @brief The container stop from which the container departs
         MSStoppingPlace* myDepartContainerStop;
 
@@ -235,7 +232,7 @@ public:
         MSStoppingPlace* getDepartContainerStop() const;
 
         /// proceeds to the next step
-        virtual void proceed(MSNet* net, MSTransportable* container, SUMOTime now, MSEdge* previousEdge, const SUMOReal at);
+        virtual void proceed(MSNet* net, MSTransportable* container, SUMOTime now, Stage* previous);
 
         /** @brief Called on writing tripinfo output
          *
@@ -276,8 +273,6 @@ public:
         /// @brief The type of activity
         std::string myActType;
 
-        SUMOReal myStartPos;
-
         /// @brief the container stop at which the container is waiting
         MSStoppingPlace* myCurrentContainerStop;
 
@@ -301,13 +296,13 @@ public:
 
     public:
         /// constructor
-        MSContainerStage_Tranship(const std::vector<const MSEdge*>& route, MSStoppingPlace* toCS, SUMOReal speed, SUMOReal departPos, SUMOReal arrivalPos);
+        MSContainerStage_Tranship(const std::vector<const MSEdge*>& route, MSStoppingPlace* toStop, SUMOReal speed, SUMOReal departPos, SUMOReal arrivalPos);
 
         /// destructor
         ~MSContainerStage_Tranship();
 
         /// proceeds to the next step
-        virtual void proceed(MSNet* net, MSTransportable* container, SUMOTime now, MSEdge* previousEdge, const SUMOReal at);
+        virtual void proceed(MSNet* net, MSTransportable* container, SUMOTime now, Stage* previous);
 
         /// Returns the current edge
         const MSEdge* getEdge() const;
@@ -399,12 +394,6 @@ public:
 
         /// @brief the depart position
         SUMOReal myDepartPos;
-
-        /// @brief the arrival position
-        SUMOReal myArrivalPos;
-
-        /// @brief the destination container stop
-        MSStoppingPlace* myDestinationContainerStop;
 
         /// @brief The container stop from which the container departs
         MSStoppingPlace* myDepartContainerStop;

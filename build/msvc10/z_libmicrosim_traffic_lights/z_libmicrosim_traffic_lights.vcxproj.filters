@@ -26,6 +26,9 @@
     <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSTrafficLightLogic.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSPushButton.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSRailSignal.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
@@ -101,7 +104,7 @@
     <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSTLLogicControl.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSPushButton.cpp">
+    <ClCompile Include="..\..\..\src\microsim\traffic_lights\MSRailCrossing.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -127,10 +130,13 @@
     <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSTrafficLightLogic.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSRailSignal.h">
+    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSPhasedTrafficLightLogic.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSPhasedTrafficLightLogic.h">
+    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSPushButton.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSRailSignal.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSSOTLDefinitions.h">
@@ -199,7 +205,7 @@
     <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSSOTLPolicy5DStimulus.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSPushButton.h">
+    <ClInclude Include="..\..\..\src\microsim\traffic_lights\MSRailCrossing.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>

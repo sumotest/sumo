@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Feb 24 15:45:12 2015 by SUMO netconvert Version dev-SVN-r17955I
+<!-- generated on Fri Nov 27 14:41:36 2015 by SUMO netconvert Version dev-SVN-r19444I
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
@@ -16,6 +16,8 @@
     <processing>
         <no-turnarounds value="true"/>
         <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+        <junctions.corner-detail value="0"/>
     </processing>
 
     <report>
@@ -25,7 +27,7 @@
 </configuration>
 -->
 
-<net version="0.13" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+<net version="0.25" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
     <location netOffset="500.00,500.00" convBoundary="0.00,0.00,1000.00,1000.00" origBoundary="-500.00,-500.00,500.00,500.00" projParameter="!"/>
 
@@ -153,19 +155,19 @@
         <request index="3" response="00111010000" foes="00111010000" cont="1"/>
         <request index="4" response="00111000000" foes="00111001000" cont="0"/>
         <request index="5" response="00111000111" foes="00111000111" cont="0"/>
-        <request index="6" response="00000000000" foes="10000111100" cont="0"/>
-        <request index="7" response="00000000000" foes="10000111100" cont="0"/>
-        <request index="8" response="00000000000" foes="10000111100" cont="0"/>
+        <request index="6" response="00000000000" foes="10110111100" cont="0"/>
+        <request index="7" response="00001000000" foes="10101111100" cont="0"/>
+        <request index="8" response="00011000000" foes="10011111100" cont="0"/>
         <request index="9" response="00000000010" foes="00000000010" cont="0"/>
         <request index="10" response="00111000110" foes="00111000110" cont="0"/>
     </junction>
-    <junction id="1" type="priority" x="0.00" y="500.00" incLanes="1o_0" intLanes=":1_0_0" shape="-0.00,499.95 -0.00,493.45 0.00,503.25 0.00,500.05">
+    <junction id="1" type="priority" x="0.00" y="500.00" incLanes="1o_0" intLanes=":1_0_0" shape="0.00,499.95 0.00,493.45 0.00,503.25 0.00,500.05">
         <request index="0" response="0" foes="0" cont="0"/>
     </junction>
     <junction id="2" type="priority" x="1000.00" y="500.00" incLanes="2o_0" intLanes=":2_0_0" shape="1000.00,500.05 1000.00,506.55 1000.00,496.75 1000.00,499.95">
         <request index="0" response="0" foes="0" cont="0"/>
     </junction>
-    <junction id="3" type="priority" x="500.00" y="0.00" incLanes="3o_0" intLanes=":3_0_0" shape="500.05,-0.00 506.55,-0.00 496.75,0.00 499.95,0.00">
+    <junction id="3" type="priority" x="500.00" y="0.00" incLanes="3o_0" intLanes=":3_0_0" shape="500.05,0.00 506.55,0.00 496.75,0.00 499.95,0.00">
         <request index="0" response="0" foes="0" cont="0"/>
     </junction>
     <junction id="4" type="priority" x="500.00" y="1000.00" incLanes="4o_0" intLanes=":4_0_0" shape="499.95,1000.00 493.45,1000.00 503.25,1000.00 500.05,1000.00">
@@ -212,8 +214,8 @@
     <connection from="3fi" to="3si" fromLane="1" toLane="2" via=":m3_0_2" dir="s" state="M"/>
     <connection from="3o" to="3fi" fromLane="0" toLane="1" via=":3_0_0" dir="t" state="M"/>
     <connection from="3si" to="4o" fromLane="0" toLane="0" via=":0_6_0" dir="s" state="M"/>
-    <connection from="3si" to="4o" fromLane="1" toLane="0" via=":0_6_1" dir="s" state="M"/>
-    <connection from="3si" to="4o" fromLane="2" toLane="0" via=":0_6_2" dir="s" state="M"/>
+    <connection from="3si" to="4o" fromLane="1" toLane="0" via=":0_6_1" dir="s" state="m"/>
+    <connection from="3si" to="4o" fromLane="2" toLane="0" via=":0_6_2" dir="s" state="m"/>
     <connection from="4fi" to="4si" fromLane="0" toLane="0" via=":m4_0_0" dir="s" state="M"/>
     <connection from="4fi" to="4si" fromLane="0" toLane="1" via=":m4_0_1" dir="s" state="M"/>
     <connection from="4fi" to="4si" fromLane="1" toLane="2" via=":m4_0_2" dir="s" state="M"/>

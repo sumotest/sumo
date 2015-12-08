@@ -307,15 +307,16 @@ private:
     std::vector<FXRealSpinDial*> myJunctionThresholds;
     std::vector<FXButton*> myJunctionButtons;
     FXCheckButton* myJunctionColorInterpolation;
-    FXCheckButton* myShowTLIndex, *myShowJunctionIndex;
 
     FXCheckButton* myShowLane2Lane;
     FXCheckButton* myDrawJunctionShape;
+    FXCheckButton* myDrawCrossingsAndWalkingAreas;
     FXCheckButton* myAntialiase;
     FXCheckButton* myDither;
     FXCheckButton* myShowSizeLegend;
 
     NamePanel* myEdgeNamePanel, *myInternalEdgeNamePanel, *myCwaEdgeNamePanel, *myStreetNamePanel,
+               *myJunctionIndexPanel, *myTLIndexPanel,
                *myJunctionNamePanel, *myInternalJunctionNamePanel,
                *myVehicleNamePanel, *myPersonNamePanel, *myContainerNamePanel,
                *myAddNamePanel, *myPOINamePanel, *myPolyNamePanel, *myPOITypePanel, *myPolyTypePanel;

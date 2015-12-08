@@ -262,8 +262,6 @@ GUIDialog_ViewSettings::GUIDialog_ViewSettings(GUISUMOAbstractView* parent,
         // edge name
         myEdgeNamePanel = new NamePanel(m22, this, "Show edge name", mySettings->edgeName);
         myStreetNamePanel = new NamePanel(m22, this, "Show street name", mySettings->streetName);
-        myInternalEdgeNamePanel = new NamePanel(m22, this, "Show internal edge name", mySettings->internalEdgeName);
-        myCwaEdgeNamePanel = new NamePanel(m22, this, "Show crossing and walkingarea name", mySettings->cwaEdgeName);
     }
     {
         // vehicles
@@ -450,19 +448,19 @@ GUIDialog_ViewSettings::GUIDialog_ViewSettings(GUISUMOAbstractView* parent,
         FXMatrix* m42 =
             new FXMatrix(frame4, 2, LAYOUT_FILL_X | LAYOUT_TOP | LAYOUT_LEFT | MATRIX_BY_COLUMNS,
                          0, 0, 0, 0, 10, 10, 10, 10, 5, 5);
-        myShowTLIndex = new FXCheckButton(m42, "Show link tls index", this, MID_SIMPLE_VIEW_COLORCHANGE);
-        myShowTLIndex->setCheck(mySettings->drawLinkTLIndex);
-        new FXLabel(m42, " ", 0, LAYOUT_CENTER_Y);
-        myShowJunctionIndex = new FXCheckButton(m42, "Show link junction index", this, MID_SIMPLE_VIEW_COLORCHANGE);
-        myShowJunctionIndex->setCheck(mySettings->drawLinkJunctionIndex);
-        new FXLabel(m42, " ", 0, LAYOUT_CENTER_Y);
+        myTLIndexPanel = new NamePanel(m42, this, "Show link tls index", mySettings->drawLinkTLIndex);
+        myJunctionIndexPanel = new NamePanel(m42, this, "Show link junction index", mySettings->drawLinkJunctionIndex);
         myShowLane2Lane = new FXCheckButton(m42, "Show lane to lane connections", this, MID_SIMPLE_VIEW_COLORCHANGE);
         myShowLane2Lane->setCheck(mySettings->showLane2Lane);
         new FXLabel(m42, " ", 0, LAYOUT_CENTER_Y);
         myJunctionNamePanel = new NamePanel(m42, this, "Show junction name", mySettings->junctionName);
         myInternalJunctionNamePanel = new NamePanel(m42, this, "Show internal junction name", mySettings->internalJunctionName);
+        myInternalEdgeNamePanel = new NamePanel(m42, this, "Show internal edge name", mySettings->internalEdgeName);
+        myCwaEdgeNamePanel = new NamePanel(m42, this, "Show crossing and walkingarea name", mySettings->cwaEdgeName);
         myDrawJunctionShape = new FXCheckButton(m42, "Draw junction shape", this, MID_SIMPLE_VIEW_COLORCHANGE);
         myDrawJunctionShape->setCheck(mySettings->drawJunctionShape);
+        myDrawCrossingsAndWalkingAreas = new FXCheckButton(m42, "Draw crossings/walkingareas", this, MID_SIMPLE_VIEW_COLORCHANGE);
+        myDrawCrossingsAndWalkingAreas->setCheck(mySettings->drawCrossingsAndWalkingareas);
     } {
         // detectors / triggers
         new FXTabItem(tabbook, "Detectors/Trigger", NULL, TAB_LEFT_NORMAL, 0, 0, 0, 0, 4, 8, 4, 4);
@@ -574,6 +572,8 @@ GUIDialog_ViewSettings::~GUIDialog_ViewSettings() {
     delete myInternalEdgeNamePanel;
     delete myCwaEdgeNamePanel;
     delete myStreetNamePanel;
+    delete myJunctionIndexPanel;
+    delete myTLIndexPanel;
     delete myJunctionNamePanel;
     delete myVehicleNamePanel;
     delete myAddNamePanel;
@@ -669,8 +669,8 @@ GUIDialog_ViewSettings::onCmdNameChange(FXObject*, FXSelector, void* data) {
     myContainerSizePanel->update(mySettings->containerSize);
 
     myJunctionColorMode->setCurrentItem((FXint) mySettings->junctionColorer.getActive());
-    myShowTLIndex->setCheck(mySettings->drawLinkTLIndex);
-    myShowJunctionIndex->setCheck(mySettings->drawLinkJunctionIndex);
+    myTLIndexPanel->update(mySettings->drawLinkTLIndex);
+    myJunctionIndexPanel->update(mySettings->drawLinkJunctionIndex);
     myJunctionNamePanel->update(mySettings->junctionName);
     myInternalJunctionNamePanel->update(mySettings->internalJunctionName);
 
@@ -687,6 +687,7 @@ GUIDialog_ViewSettings::onCmdNameChange(FXObject*, FXSelector, void* data) {
 
     myShowLane2Lane->setCheck(mySettings->showLane2Lane);
     myDrawJunctionShape->setCheck(mySettings->drawJunctionShape);
+    myDrawCrossingsAndWalkingAreas->setCheck(mySettings->drawCrossingsAndWalkingareas);
     myAntialiase->setCheck(mySettings->antialiase);
     myDither->setCheck(mySettings->dither);
     myShowSizeLegend->setCheck(mySettings->showSizeLegend);
@@ -864,8 +865,8 @@ GUIDialog_ViewSettings::onCmdColorChange(FXObject* sender, FXSelector, void* /*v
     tmpSettings.containerSize = myContainerSizePanel->getSettings();
 
     tmpSettings.junctionColorer.setActive(myJunctionColorMode->getCurrentItem());
-    tmpSettings.drawLinkTLIndex = (myShowTLIndex->getCheck() != FALSE);
-    tmpSettings.drawLinkJunctionIndex = (myShowJunctionIndex->getCheck() != FALSE);
+    tmpSettings.drawLinkTLIndex = myTLIndexPanel->getSettings();
+    tmpSettings.drawLinkJunctionIndex = myJunctionIndexPanel->getSettings();
     tmpSettings.junctionName = myJunctionNamePanel->getSettings();
     tmpSettings.internalJunctionName = myInternalJunctionNamePanel->getSettings();
 
@@ -882,6 +883,7 @@ GUIDialog_ViewSettings::onCmdColorChange(FXObject* sender, FXSelector, void* /*v
 
     tmpSettings.showLane2Lane = (myShowLane2Lane->getCheck() != FALSE);
     tmpSettings.drawJunctionShape = (myDrawJunctionShape->getCheck() != FALSE);
+    tmpSettings.drawCrossingsAndWalkingareas = (myDrawCrossingsAndWalkingAreas->getCheck() != FALSE);
     tmpSettings.antialiase = (myAntialiase->getCheck() != FALSE);
     tmpSettings.dither = (myDither->getCheck() != FALSE);
     tmpSettings.showSizeLegend = (myShowSizeLegend->getCheck() != FALSE);
@@ -1022,6 +1024,9 @@ GUIDialog_ViewSettings::loadSettings(const std::string& file) {
         rebuildList();
         myParent->update();
         myDecalsLock->unlock();
+    }
+    if (handler.getDelay() >= 0) {
+        myParent->setDelay(handler.getDelay());
     }
     Position lookFrom, lookAt;
     handler.setViewport(lookFrom, lookAt);

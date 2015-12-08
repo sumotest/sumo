@@ -81,6 +81,8 @@ FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_EDGE_ENDPOINT, GNEViewNet::onCmdSetEdgeEndpoint),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_RESET_EDGE_ENDPOINT, GNEViewNet::onCmdResetEdgeEndpoint),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_STRAIGHTEN, GNEViewNet::onCmdStraightenEdges),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SIMPLIFY_SHAPE, GNEViewNet::onCmdSimplifyShape),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_DELETE_GEOMETRY, GNEViewNet::onCmdDeleteGeometry),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_DUPLICATE_LANE, GNEViewNet::onCmdDuplicateLane),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_NODE_SHAPE, GNEViewNet::onCmdNodeShape),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_NODE_REPLACE, GNEViewNet::onCmdNodeReplace),
@@ -112,6 +114,7 @@ GNEViewNet::GNEViewNet(
     myCreateEdgeSource(0),
     myJunctionToMove(0),
     myEdgeToMove(0),
+    myPolyToMove(0),
     myMoveSelection(false),
     myAmInRectSelect(false),
     myToolbar(toolBar),
@@ -120,8 +123,7 @@ GNEViewNet::GNEViewNet(
     myUndoList(((GNEApplicationWindow*)myApp)->getUndoList()),
     myInspector(0),
     mySelector(0),
-    myCurrentPoly(0)
-{
+    myCurrentPoly(0) {
     // adding order is important
     myInspector = new GNEInspector(actualParent, myUndoList);
     myInspector->hide();
@@ -141,8 +143,8 @@ GNEViewNet::GNEViewNet(
 
     // init color schemes
     GUIColorer laneColorer;
-	GUIColorScheme scheme = GUIColorScheme("uniform", RGBColor::BLACK, "road", true);
-	scheme.addColor(RGBColor::GREY, 1, "sidewalk");
+    GUIColorScheme scheme = GUIColorScheme("uniform", RGBColor::BLACK, "road", true);
+    scheme.addColor(RGBColor::GREY, 1, "sidewalk");
     scheme.addColor(RGBColor(192, 66, 44), 2, "bike lane");
     scheme.addColor(RGBColor(200, 255, 200), 3, "green verge");
     scheme.addColor(RGBColor(150, 200, 200), 4, "waterway");
@@ -164,7 +166,7 @@ GNEViewNet::GNEViewNet(
     scheme.addColor(RGBColor(150, 200, 200), (SUMOReal)SVC_SHIP, "waterway");
     scheme.addColor(RGBColor::GREEN, (SUMOReal)SVCAll, "all");
     laneColorer.addScheme(scheme);
-   
+
     scheme = GUIColorScheme("by allowed speed (lanewise)", RGBColor::RED);
     scheme.addColor(RGBColor::YELLOW, (SUMOReal)(30 / 3.6));
     scheme.addColor(RGBColor::GREEN, (SUMOReal)(55 / 3.6));
@@ -176,7 +178,7 @@ GNEViewNet::GNEViewNet(
     scheme = GUIColorScheme("by lane number (streetwise)", RGBColor::RED);
     scheme.addColor(RGBColor::BLUE, (SUMOReal)5);
     laneColorer.addScheme(scheme);
- 
+
     scheme = GUIColorScheme("by given length/geometrical length", RGBColor::BLACK);
     scheme.addColor(RGBColor::RED, (SUMOReal)0.25);
     scheme.addColor(RGBColor::YELLOW, (SUMOReal)0.5);
@@ -222,10 +224,10 @@ GNEViewNet::GNEViewNet(
 
     myVisualizationSettings->laneColorer = laneColorer;
 
-	GUIColorer junctionColorer;
-    scheme = GUIColorScheme("uniform", RGBColor(102,0, 0), "", true); 
-	scheme.addColor(RGBColor(204,0, 0), 1, "shape not computed");
-	scheme.addColor(RGBColor(153,0, 0), 2, "geometry points");
+    GUIColorer junctionColorer;
+    scheme = GUIColorScheme("uniform", RGBColor(102, 0, 0), "", true);
+    scheme.addColor(RGBColor(204, 0, 0), 1, "shape not computed");
+    scheme.addColor(RGBColor(153, 0, 0), 2, "geometry points");
     junctionColorer.addScheme(scheme);
     scheme = GUIColorScheme("by selection", RGBColor(128, 128, 128, 255), "unselected", true);
     scheme.addColor(RGBColor(0, 80, 180, 255), 1, "selected");
@@ -240,6 +242,9 @@ GNEViewNet::GNEViewNet(
     scheme.addColor(RGBColor::MAGENTA, 7, "unregulated");
     scheme.addColor(RGBColor::BLACK, 8, "dead_end");
     scheme.addColor(RGBColor::ORANGE, 9, "rail_signal");
+    scheme.addColor(RGBColor(192, 128, 64), 10, "zipper");
+    scheme.addColor(RGBColor(192, 255, 192), 11, "traffic_light_right_on_red");
+    scheme.addColor(RGBColor(128, 0, 128), 11, "rail_crossing"); // dark purple
     junctionColorer.addScheme(scheme);
     myVisualizationSettings->junctionColorer = junctionColorer;
 }
@@ -380,6 +385,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
         GNELane* pointed_lane = 0;
         GNEEdge* pointed_edge = 0;
         GNEPOI* pointed_poi = 0;
+        GNEPoly* pointed_poly = 0;
         GNECrossing* pointed_crossing = 0;
         if (pointed) {
             switch (pointed->getType()) {
@@ -395,6 +401,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     break;
                 case GLO_POI:
                     pointed_poi = (GNEPOI*)pointed;
+                    break;
+                case GLO_POLYGON:
+                    pointed_poly = (GNEPoly*)pointed;
                     break;
                 case GLO_CROSSING:
                     pointed_crossing = (GNECrossing*)pointed;
@@ -424,11 +433,11 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                         if (myCreateEdgeSource != pointed_junction) {
                             // may fail to prevent double edges
                             GNEEdge* newEdge = myNet->createEdge(
-                                    myCreateEdgeSource, pointed_junction, myInspector->getEdgeTemplate(), myUndoList);
+                                                   myCreateEdgeSource, pointed_junction, myInspector->getEdgeTemplate(), myUndoList);
                             if (newEdge) {
                                 if (myAutoCreateOppositeEdge->getCheck()) {
                                     myNet->createEdge(
-                                            pointed_junction, myCreateEdgeSource, myInspector->getEdgeTemplate(), myUndoList);
+                                        pointed_junction, myCreateEdgeSource, myInspector->getEdgeTemplate(), myUndoList);
                                 }
                                 myCreateEdgeSource->unMarkAsCreateEdgeSource();
                                 if (myUndoList->hasCommandGroup()) {
@@ -456,7 +465,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 break;
 
             case GNE_MODE_MOVE:
-                if (pointed_junction) {
+                if (pointed_poly) {
+                    myMoveSrc = getPositionInformation();
+                    myPolyToMove = pointed_poly;
+                } else if (pointed_junction) {
                     if (gSelected.isSelected(GLO_JUNCTION, pointed_junction->getGlID())) {
                         myMoveSelection = true;
                         myMoveSrc = getPositionInformation();
@@ -543,7 +555,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     gSelected.toggleSelection(pointed->getGlID());
                 }
 
-                myAmInRectSelect = ((FXEvent*)data)->state & SHIFTMASK;
+                myAmInRectSelect = (((FXEvent*)data)->state & SHIFTMASK) != 0;
                 if (myAmInRectSelect) {
                     mySelCorner1 = getPositionInformation();
                     mySelCorner2 = getPositionInformation();
@@ -555,8 +567,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
 
             case GNE_MODE_CONNECT:
                 if (pointed_lane) {
-                    const bool mayPass = ((FXEvent*)data)->state & SHIFTMASK;
-                    myConnector->handleLaneClick(pointed_lane, mayPass);
+                    const bool mayPass = (((FXEvent*)data)->state & SHIFTMASK) != 0;
+                    const bool allowConflict = (((FXEvent*)data)->state & CONTROLMASK) != 0;
+                    myConnector->handleLaneClick(pointed_lane, mayPass, allowConflict, true);
                     update();
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -582,7 +595,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
 long
 GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
     GUISUMOAbstractView::onLeftBtnRelease(obj, sel, data);
-    if (myJunctionToMove) {
+    if (myPolyToMove) {
+        myPolyToMove = 0;
+    } else if (myJunctionToMove) {
         // position is already up to date but we must register with myUndoList
         if (!mergeJunctions(myJunctionToMove)) {
             myJunctionToMove->registerMove(myUndoList);
@@ -617,7 +632,9 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
 long
 GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {
     GUISUMOAbstractView::onMouseMove(obj, sel, data);
-    if (myJunctionToMove) {
+    if (myPolyToMove) {
+        myMoveSrc = myPolyToMove->moveGeometry(myMoveSrc, getPositionInformation());
+    } else if (myJunctionToMove) {
         myJunctionToMove->move(getPositionInformation());
     } else if (myEdgeToMove) {
         myMoveSrc = myEdgeToMove->moveGeometry(myMoveSrc, getPositionInformation());
@@ -648,6 +665,8 @@ GNEViewNet::abortOperation(bool clearSelection) {
         myConnector->onCmdCancel(0, 0, 0);
     } else if (myEditMode == GNE_MODE_TLS) {
         myTLSEditor->onCmdCancel(0, 0, 0);
+    } else if (myEditMode == GNE_MODE_MOVE) {
+        removeCurrentPoly();
     }
     myUndoList->p_abort();
 }
@@ -672,6 +691,12 @@ GNEViewNet::hotkeyEnter() {
         myConnector->onCmdOK(0, 0, 0);
     } else if (myEditMode == GNE_MODE_TLS) {
         myTLSEditor->onCmdOK(0, 0, 0);
+    } else if (myEditMode == GNE_MODE_MOVE && myCurrentPoly != 0) {
+        if (myCurrentPoly->getEditedJunction() != 0) {
+            myCurrentPoly->getEditedJunction()->setAttribute(SUMO_ATTR_SHAPE, toString(myCurrentPoly->getShape()), myUndoList);
+            removeCurrentPoly();
+            update();
+        }
     }
 }
 
@@ -893,6 +918,26 @@ GNEViewNet::onCmdStraightenEdges(FXObject*, FXSelector, void*) {
 
 
 long
+GNEViewNet::onCmdSimplifyShape(FXObject*, FXSelector, void*) {
+    if (myCurrentPoly != 0) {
+        myCurrentPoly->simplifyShape();
+        update();
+    }
+    return 1;
+}
+
+
+long
+GNEViewNet::onCmdDeleteGeometry(FXObject*, FXSelector, void*) {
+    if (myCurrentPoly != 0) {
+        myCurrentPoly->deleteGeometryNear(myPopupSpot);
+        update();
+    }
+    return 1;
+}
+
+
+long
 GNEViewNet::onCmdDuplicateLane(FXObject*, FXSelector, void*) {
     GNELane* lane = getLaneAtCurserPosition(myPopupSpot);
     if (lane != 0) {
@@ -917,23 +962,42 @@ long
 GNEViewNet::onCmdNodeShape(FXObject*, FXSelector, void*) {
     GNEJunction* junction = getJunctionAtCursorPosition(myPopupSpot);
     if (junction != 0) {
-        if (junction->getNBNode()->getShape().size() > 1) {
-            //std::cout << junction->getNBNode()->getShape() << "\n";
-            junction->getNBNode()->computeNodeShape(-1);
-            if (myCurrentPoly != 0) {
-                myNet->getVisualisationSpeedUp().removeAdditionalGLObject(myCurrentPoly);
-                delete myCurrentPoly;
-                myCurrentPoly = 0;
+        if (myCurrentPoly == 0) {
+            if (junction->getNBNode()->getShape().size() > 1) {
+                setEditModeFromHotkey(MID_GNE_MODE_MOVE);
+                //std::cout << junction->getNBNode()->getShape() << "\n";
+                junction->getNBNode()->computeNodeShape(-1);
+                if (myCurrentPoly != 0) {
+                    myNet->getVisualisationSpeedUp().removeAdditionalGLObject(myCurrentPoly);
+                    delete myCurrentPoly;
+                    myCurrentPoly = 0;
+                }
+                PositionVector shape = junction->getNBNode()->getShape();
+                shape.closePolygon();
+                myCurrentPoly = new GNEPoly(myNet, junction, "node_shape:" + junction->getMicrosimID(), "node shape",
+                                            shape, false, RGBColor::GREEN, GLO_POLYGON);
+                myCurrentPoly->setLineWidth(0.3);
+                myNet->getVisualisationSpeedUp().addAdditionalGLObject(myCurrentPoly);
+
+                update();
             }
-            PositionVector shape = junction->getNBNode()->getShape();
-            shape.closePolygon();
-            myCurrentPoly = new GNEPoly("node_shape:" + junction->getMicrosimID(), "node shape",
-                    shape, false, RGBColor::GREEN, GLO_POLYGON);
-            myNet->getVisualisationSpeedUp().addAdditionalGLObject(myCurrentPoly);
+        } else {
+            junction->setAttribute(SUMO_ATTR_SHAPE, toString(myCurrentPoly->getShape()), myUndoList);
+            removeCurrentPoly();
             update();
         }
     }
     return 1;
+}
+
+
+void
+GNEViewNet::removeCurrentPoly() {
+    if (myCurrentPoly != 0) {
+        myNet->getVisualisationSpeedUp().removeAdditionalGLObject(myCurrentPoly);
+        delete myCurrentPoly;
+        myCurrentPoly = 0;
+    }
 }
 
 
@@ -1027,6 +1091,9 @@ GNEViewNet::buildEditModeControls() {
     myWarnAboutMerge = new FXMenuCheck(myToolbar, "ask for merge\t\tAsk for confirmation before merging junctions.", this, 0);
     myWarnAboutMerge->setCheck();
     myVisualizeHeight = new FXMenuCheck(myToolbar, "show height\t\tVisualize height by color (green is low, red is high).", this, MID_GNE_VIS_HEIGHT);
+
+    myChangeAllPhases = new FXMenuCheck(myToolbar, "apply change to all phases\t\tToggle whether clicking should apply state changes to all phases of the current traffic light plan", this, 0);
+    myChangeAllPhases->setCheck(false);
 }
 
 
@@ -1041,6 +1108,7 @@ GNEViewNet::updateModeSpecificControls() {
     myAutoCreateOppositeEdge->hide();
     mySelectEdges->hide();
     myExtendToEdgeNodes->hide();
+    myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
     myVisualizeHeight->hide();
     int widthChange = 0;
@@ -1092,6 +1160,7 @@ GNEViewNet::updateModeSpecificControls() {
         case GNE_MODE_TLS:
             widthChange -= myTLSEditor->getWidth() + addChange;
             myTLSEditor->show();
+            myChangeAllPhases->show();
             break;
         default:
             break;
@@ -1182,7 +1251,7 @@ GNEViewNet::mergeJunctions(GNEJunction* moved) {
 }
 
 
-void 
+void
 GNEViewNet::updateControls() {
     switch (myEditMode) {
         case GNE_MODE_INSPECT:

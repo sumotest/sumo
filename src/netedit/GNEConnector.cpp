@@ -76,11 +76,11 @@ FXIMPLEMENT(GNEConnector, FXScrollWindow, GNEConnectorMap, ARRAYNUMBER(GNEConnec
 // static members
 // ===========================================================================
 const int GNEConnector::WIDTH = 140;
-const RGBColor GNEConnector::sourceColor(RGBColor::CYAN);
-const RGBColor GNEConnector::potentialTargetColor(RGBColor(0, 64, 0, 255));
-const RGBColor GNEConnector::targetColor(RGBColor::GREEN);
-const RGBColor GNEConnector::targetPassColor(RGBColor::MAGENTA);
-const RGBColor GNEConnector::conflictColor(RGBColor::YELLOW);
+RGBColor GNEConnector::sourceColor;
+RGBColor GNEConnector::potentialTargetColor;
+RGBColor GNEConnector::targetColor;
+RGBColor GNEConnector::targetPassColor;
+RGBColor GNEConnector::conflictColor;
 
 // ===========================================================================
 // method definitions
@@ -149,7 +149,15 @@ GNEConnector::GNEConnector(FXComposite* parent, GNEViewNet* updateTarget, GNEUnd
     new FXHorizontalSeparator(this, SEPARATOR_GROOVE | LAYOUT_FILL_X);
     // Selection Hint
     new FXLabel(myContentFrame, "Hold <SHIFT> while\nclicking to create\nunyielding conn's.\n", 0, JUSTIFY_LEFT);
+    new FXLabel(myContentFrame, "Hold <CTRL> while\nclicking to create\nconflicting conn's.\n", 0, JUSTIFY_LEFT);
     // Legend
+    // init colors here to avoid static order fiasco (https://isocpp.org/wiki/faq/ctors#static-init-order)
+    sourceColor = RGBColor::CYAN;
+    potentialTargetColor = RGBColor(0, 64, 0, 255);
+    targetColor = RGBColor::GREEN;
+    targetPassColor = RGBColor::MAGENTA;
+    conflictColor = RGBColor::YELLOW;
+
     new FXHorizontalSeparator(myContentFrame, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
     FXLabel* l;
     new FXLabel(myContentFrame, "Color Legend:", 0, JUSTIFY_LEFT);
@@ -172,7 +180,7 @@ GNEConnector::~GNEConnector() {
 
 
 void
-GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool toggle) {
+GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool allowConflict, bool toggle) {
     if (myCurrentLane == 0) {
         myCurrentLane = lane;
         myCurrentLane->setSpecialColor(&sourceColor);
@@ -180,7 +188,7 @@ GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool toggle
         buildIinternalLanes(lane->getParentEdge().getNBEdge()->getToNode());
         myNumChanges = 0;
         myUndoList->p_begin("modify connections");
-    } else if (myPotentialTargets.count(lane)) {
+    } else if (myPotentialTargets.count(lane) || allowConflict) {
         const unsigned int fromIndex = myCurrentLane->getIndex();
         GNEEdge& srcEdge = myCurrentLane->getParentEdge();
         GNEEdge& destEdge = lane->getParentEdge();
@@ -188,7 +196,10 @@ GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool toggle
         std::vector<NBEdge::Connection> connections = srcEdge.getNBEdge()->getConnectionsFromLane(fromIndex);
         bool changed = false;
         NBConnection deletedConnection = NBConnection::InvalidConnection;
-        const LaneStatus status = getLaneStatus(connections, lane);
+        LaneStatus status = getLaneStatus(connections, lane);
+        if (status == CONFLICTED && allowConflict) {
+            status = UNCONNECTED;
+        }
         switch (status) {
             case UNCONNECTED:
                 if (toggle) {
@@ -394,9 +405,9 @@ GNEConnector::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
 
 void
 GNEConnector::removeConnections(GNELane* lane) {
-    handleLaneClick(lane); // select as current lane
+    handleLaneClick(lane, false, false, true); // select as current lane
     for (std::set<GNELane*>::iterator it = myPotentialTargets.begin(); it != myPotentialTargets.end(); it++) {
-        handleLaneClick(*it, false, false);  // deselect
+        handleLaneClick(*it, false, false, false);  // deselect
     }
     onCmdOK(0, 0, 0); // save
 }
@@ -536,14 +547,14 @@ GNEConnector::buildIinternalLanes(NBNode* node) {
         const int NUM_POINTS = 5;
         SUMORTree& rtree = myUpdateTarget->getNet()->getVisualisationSpeedUp();
         std::string innerID = ":" + node->getID(); // see NWWriter_SUMO::writeInternalEdges
-        
+
         int index = 0;
         const EdgeVector& incoming = node->getIncomingEdges();
         for (EdgeVector::const_iterator it_edg = incoming.begin(); it_edg != incoming.end(); it_edg++) {
             const std::vector<NBEdge::Connection>& conns = (*it_edg)->getConnections();
             for (std::vector<NBEdge::Connection>::const_iterator it_con = conns.begin(); it_con != conns.end(); ++it_con) {
                 const PositionVector shape = node->computeInternalLaneShape(*it_edg, *it_con, NUM_POINTS);
-                LinkState state = node->getLinkState(*it_edg, it_con->toEdge, it_con->fromLane, it_con->mayDefinitelyPass, it_con->tlID);
+                LinkState state = node->getLinkState(*it_edg, it_con->toEdge, it_con->fromLane, it_con->toLane, it_con->mayDefinitelyPass, it_con->tlID);
                 GNEInternalLane* ilane = new GNEInternalLane(0, innerID + '_' + toString(index) , shape, -1, state);
                 rtree.addAdditionalGLObject(ilane);
                 myInternalLanes[index] = ilane;

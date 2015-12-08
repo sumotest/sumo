@@ -2,7 +2,7 @@ SUBDIRS = src unittest bin
 
 EXTRA_DIST = README ChangeLog AUTHORS COPYING INSTALL NEWS sumo.doxyconf
 
-doc: pydoc doxygen userdoc
+doc: pydoc doxygen userdoc javadoc
 
 pydoc:
 	rm -rf docs/pydoc
@@ -19,6 +19,14 @@ doxygen:
 
 userdoc:
 	tools/build/buildHTMLDocs.py -o docs/userdoc -i docs/wiki/index.html -r $(VERSION) && cp docs/wiki/*.png docs/wiki/*.css docs/userdoc
+
+javadoc:
+	rm -rf docs/javadoc
+	mkdir docs/javadoc
+	mvn --batch-mode -f tools/contributed/traci4j/pom.xml javadoc:javadoc
+	mv tools/contributed/traci4j/target/site/apidocs docs/javadoc/traci4j
+	ant -f tools/contributed/traas/build.xml javadoc
+	mv tools/contributed/traas/javadoc docs/javadoc/traas
 
 man:
 	rm -rf docs/man
@@ -60,7 +68,7 @@ dist-doc: doc
 	mv $(distdir)/tests/complex/tutorial $(distdir)/docs
 	rmdir $(distdir)/tests/complex
 	rmdir $(distdir)/tests
-	cp -r docs/pydoc docs/doxygen docs/userdoc $(distdir)/docs
+	cp -r docs/pydoc docs/doxygen docs/userdoc docs/javadoc $(distdir)/docs
 	tools/extractTest.py -i -f tests/examples.txt -o $(distdir)/docs
 	tar -czf $(PACKAGE)-doc-$(VERSION).tar.gz $(distdir)
 	rm -f $(PACKAGE)-doc-$(VERSION).zip
@@ -95,8 +103,8 @@ traas:
 	cp tools/contributed/traas/dist/TraaS.jar bin
 
 traci4j:
-	ant -f tools/contributed/traci4j/build.xml clean build deploy
-	cp tools/contributed/traci4j/*.jar bin
+	mvn --batch-mode -f tools/contributed/traci4j/pom.xml clean install || true
+	cp tools/contributed/traci4j/target/*.jar bin || true
 
 trafficmodeler:
 	cd tools/contributed/trafficmodeler && ./build.sh

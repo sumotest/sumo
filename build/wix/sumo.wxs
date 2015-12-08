@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
   <Product Name='SUMO' Id='A63B306E-2B15-11E1-88C8-028037EC0200' UpgradeCode='A764BC4F-2B15-11E1-9E7E-028037EC0200'
-    Language='1033' Codepage='1252' Version='0.24.0' Manufacturer='DLR'>
+    Language='1033' Codepage='1252' Version='0.25.0' Manufacturer='DLR'>
 
-    <Package Id='*' Description="SUMO 0.24.0 Installer"
+    <Package Id='*' Description="SUMO 0.25.0 Installer"
       Comments='Simulation of Urban Mobility' Manufacturer='[Manufacturer]'
       InstallerVersion='300' Compressed='yes' />
 
@@ -81,7 +81,13 @@
             </Directory>
 
             <Directory Id='DOCDIR' Name='doc' />
-            <Directory Id='TOOLDIR' Name='tools'/>
+            <Directory Id='TOOLDIR' Name='tools'>
+              <Component Id='OSMWebWizard' Guid='020B4F21-0E79-41C8-A745-28CA9B426126'>
+                <File Id='WebWizPy' Name='osmWebWizard.py' Source='O:\Daten\Sumo\Nightly\..\tools\osmWebWizard.py' KeyPath='yes'>
+                  <Shortcut Id="startWebWizPy" Directory="ProgramMenuDir" Name="OSM Web Wizard" Icon="sumogui.exe" IconIndex="0" Advertise="yes" />
+                </File>
+              </Component>
+            </Directory>
 			
   	        <Component Id='Path' Guid='17359CBF-8C61-4C3D-B5A7-4407AFF096AA'>
     		  <Condition>MODIFYENV</Condition>
@@ -113,6 +119,7 @@
         <ComponentRef Id='MainExecutables' />
         <ComponentRef Id='NetEditExecutable' />
         <ComponentRef Id='EnvironmentBatch' />
+        <ComponentRef Id='OSMWebWizard' />
         <ComponentRef Id='ProgramMenuDir' />
       </Feature>
 

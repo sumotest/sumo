@@ -79,6 +79,9 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("default.junctions.keep-clear", new Option_Bool(true));
     oc.addDescription("default.junctions.keep-clear", "Building Defaults", "Whether junctions should be kept clear by default");
 
+    oc.doRegister("default.junctions.radius", new Option_Float(1.5));
+    oc.addDescription("default.junctions.radius", "Building Defaults", "The default turning radius of intersections");
+
     // register the data processing options
     oc.doRegister("no-internal-links", new Option_Bool(false)); // !!! not described
     oc.addDescription("no-internal-links", "Processing", "Omits internal links");
@@ -111,8 +114,8 @@ NBFrame::fillOptions(bool forNetgen) {
         oc.addDescription("geometry.remove.keep-edges.explicit", "Processing", "Ensure that the given list of edges is not modified");
 
         oc.doRegister("geometry.remove.keep-edges.input-file", new Option_FileName());
-        oc.addDescription("geometry.remove.keep-edges.input-file", "Processing", 
-                "Ensure that the edges in FILE are not modified (Each id on a single line. Selection files from SUMO-GUI are also supported)");
+        oc.addDescription("geometry.remove.keep-edges.input-file", "Processing",
+                          "Ensure that the edges in FILE are not modified (Each id on a single line. Selection files from SUMO-GUI are also supported)");
 
         oc.doRegister("geometry.max-segment-length", new Option_Float(0));
         oc.addDescription("geometry.max-segment-length", "Processing", "splits geometry to restrict segment length");
@@ -156,6 +159,10 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("lefthand", new Option_Bool(false));
     oc.addDescription("lefthand", "Processing", "Assumes left-hand traffic on the network");
 
+    oc.doRegister("edges.join", new Option_Bool(false));
+    oc.addDescription("edges.join", "Processing",
+                      "Merges edges whch connect the same nodes and are close to each other (recommended for VISSIM import)");
+
     oc.doRegister("junctions.join", new Option_Bool(false));
     oc.addDescription("junctions.join", "Processing",
                       "Joins junctions that are close to each other (recommended for OSM import)");
@@ -177,6 +184,9 @@ NBFrame::fillOptions(bool forNetgen) {
 
     oc.doRegister("junctions.corner-detail", new Option_Integer(0));
     oc.addDescription("junctions.corner-detail", "Processing", "Generate INT intermediate points to smooth out intersection corners");
+
+    oc.doRegister("junctions.internal-link-detail", new Option_Integer(5));
+    oc.addDescription("junctions.internal-link-detail", "Processing", "Generate INT intermediate points to smooth out lanes within the intersection");
 
     oc.doRegister("check-lane-foes.roundabout", new Option_Bool(true));
     oc.addDescription("check-lane-foes.roundabout", "Processing",
@@ -202,9 +212,17 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addDescription("sidewalks.guess.from-permissions", "Processing",
                       "Add sidewalks for edges that allow pedestrians on any of their lanes regardless of speed");
 
+    oc.doRegister("sidewalks.guess.exclude", new Option_String());
+    oc.addDescription("sidewalks.guess.exclude", "Processing",
+                      "Do not guess sidewalks for the given list of edges");
+
     oc.doRegister("crossings.guess", new Option_Bool(false));
     oc.addDescription("crossings.guess", "Processing",
                       "Guess pedestrian crossings based on the presence of sidewalks");
+
+    oc.doRegister("crossings.guess.speed-threshold", new Option_Float(13.89));
+    oc.addDescription("crossings.guess.speed-threshold", "Processing",
+                      "At uncontrolled nodes, do not build crossings across edges with a speed above the threshold");
 
     // tls setting options
     // explicit tls
@@ -238,6 +256,10 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addDescription("tls.join-dist", "TLS Building",
                       "Determines the maximal distance for joining traffic lights (defaults to 20)");
 
+    oc.doRegister("tls.uncontrolled-within", new Option_Bool(false));
+    oc.addDescription("tls.uncontrolled-within", "TLS Building",
+                      "Do not control edges that lie fully within a joined traffic light. This may cause collisions but allows old traffic light plans to be used");
+
     if (!forNetgen) {
         oc.doRegister("tls.guess-signals", new Option_Bool(false));
         oc.addDescription("tls.guess-signals", "TLS Building", "Interprets tls nodes surrounding an intersection as signal positions for a larger TLS. This is typical pattern for OSM-derived networks");
@@ -248,6 +270,9 @@ NBFrame::fillOptions(bool forNetgen) {
 
 
     // computational
+    oc.doRegister("tls.cycle.time", new Option_Integer(90));
+    oc.addDescription("tls.cycle.time", "TLS Building", "Use INT as cycle duration");
+
     oc.doRegister("tls.green.time", new Option_Integer(31));
     oc.addSynonyme("tls.green.time", "traffic-light-green", true);
     oc.addDescription("tls.green.time", "TLS Building", "Use INT as green phase duration");
@@ -263,6 +288,9 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("tls.yellow.time", new Option_Integer());
     oc.addSynonyme("tls.yellow.time", "traffic-light-yellow", true);
     oc.addDescription("tls.yellow.time", "TLS Building", "Set INT as fixed time for yellow phase durations");
+
+    oc.doRegister("tls.left-green.time", new Option_Integer(6));
+    oc.addDescription("tls.left-green.time", "TLS Building", "Use INT as green phase duration for left turns (s)");
 
     // tls-shifts
     oc.doRegister("tls.half-offset", new Option_String());
@@ -396,6 +424,14 @@ NBFrame::checkOptions() {
     }
     if (oc.getBool("no-internal-links") && oc.getBool("crossings.guess")) {
         WRITE_ERROR("only one of the options 'no-internal-links' or 'crossings.guess' may be given");
+        ok = false;
+    }
+    if (!oc.isDefault("tls.green.time") && !oc.isDefault("tls.cycle.time")) {
+        WRITE_ERROR("only one of the options 'tls.green.time' or 'tls.cycle.time' may be given");
+        ok = false;
+    }
+    if (oc.getInt("junctions.internal-link-detail") < 2) {
+        WRITE_ERROR("junctions.internal-link-detail must >= 2");
         ok = false;
     }
     return ok;

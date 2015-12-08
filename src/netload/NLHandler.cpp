@@ -79,6 +79,8 @@ NLHandler::NLHandler(const std::string& file, MSNet& net,
     myHaveWarnedAboutDeprecatedLanes(false),
     myLastParameterised(0),
     myHaveSeenInternalEdge(false),
+    myLefthand(false),
+    myNetworkVersion(0),
     myNetIsLoaded(false)
 {}
 
@@ -91,6 +93,12 @@ NLHandler::myStartElement(int element,
                           const SUMOSAXAttributes& attrs) {
     try {
         switch (element) {
+            case SUMO_TAG_NET: {
+                bool ok;
+                myLefthand = attrs.getOpt<bool>(SUMO_ATTR_LEFTHAND, 0, ok, false);
+                myNetworkVersion = attrs.get<SUMOReal>(SUMO_ATTR_VERSION, 0, ok, false);
+                break;
+            }
             case SUMO_TAG_EDGE:
                 beginEdgeParsing(attrs);
                 break;
@@ -158,8 +166,8 @@ NLHandler::myStartElement(int element,
             case SUMO_TAG_CONTAINER_STOP:
                 myTriggerBuilder.parseAndBuildContainerStop(myNet, attrs);
                 break;
-            case SUMO_TAG_CHRG_STN:
-                myTriggerBuilder.parseAndBuildChrgStn(myNet, attrs);
+            case SUMO_TAG_CHARGING_STATION:
+                myTriggerBuilder.parseAndBuildChargingStation(myNet, attrs);
                 break;
             case SUMO_TAG_VTYPEPROBE:
                 addVTypeProbeDetector(attrs);
@@ -231,7 +239,7 @@ NLHandler::myEndElement(int element) {
             if (!myCurrentIsBroken) {
                 try {
                     myJunctionControlBuilder.closeJunctionLogic();
-                    myJunctionControlBuilder.closeJunction();
+                    myJunctionControlBuilder.closeJunction(getFileName());
                 } catch (InvalidArgument& e) {
                     WRITE_ERROR(e.what());
                 }
@@ -239,7 +247,7 @@ NLHandler::myEndElement(int element) {
             break;
         case SUMO_TAG_TLLOGIC:
             try {
-                myJunctionControlBuilder.closeTrafficLightLogic();
+                myJunctionControlBuilder.closeTrafficLightLogic(getFileName());
             } catch (InvalidArgument& e) {
                 WRITE_ERROR(e.what());
             }
@@ -633,20 +641,24 @@ NLHandler::initTrafficLightLogic(const SUMOSAXAttributes& attrs) {
     myAmInTLLogicMode = true;
     bool ok = true;
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
-    TrafficLightType type;
-    std::string typeS = attrs.get<std::string>(SUMO_ATTR_TYPE, 0, ok);
-    if (SUMOXMLDefinitions::TrafficLightTypes.hasString(typeS)) {
-        type = SUMOXMLDefinitions::TrafficLightTypes.get(typeS);
-    } else {
-        WRITE_ERROR("Traffic light '" + id + "' has unknown type '" + typeS + "'");
-        return;
+    std::string programID = attrs.getOpt<std::string>(SUMO_ATTR_PROGRAMID, id.c_str(), ok, "<unknown>");
+    TrafficLightType type = TLTYPE_STATIC;
+    std::string typeS;
+    if (myJunctionControlBuilder.getTLLogicControlToUse().get(id, programID) == 0) {
+        // SUMO_ATTR_TYPE is not needed when only modifying the offst of an
+        // existing program
+        typeS = attrs.get<std::string>(SUMO_ATTR_TYPE, 0, ok);
+        if (SUMOXMLDefinitions::TrafficLightTypes.hasString(typeS)) {
+            type = SUMOXMLDefinitions::TrafficLightTypes.get(typeS);
+        } else {
+            WRITE_ERROR("Traffic light '" + id + "' has unknown type '" + typeS + "'");
+        }
     }
     //
     SUMOTime offset = attrs.getOptSUMOTimeReporting(SUMO_ATTR_OFFSET, id.c_str(), ok, 0);
     if (!ok) {
         return;
     }
-    std::string programID = attrs.getOpt<std::string>(SUMO_ATTR_PROGRAMID, id.c_str(), ok, "<unknown>");
     myJunctionControlBuilder.initTrafficLightLogic(id, programID, type, offset);
 }
 
@@ -1027,7 +1039,8 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
             // make sure that the index is in range
             MSTrafficLightLogic* logic = myJunctionControlBuilder.getTLLogic(tlID).getActive();
             if ((tlLinkIdx < 0 || tlLinkIdx >= (int)logic->getCurrentPhaseDef().getState().size())
-                    && logic->getLogicType() != "railSignal") {
+                    && logic->getLogicType() != "railSignal"
+                    && logic->getLogicType() != "railCrossing") {
                 WRITE_ERROR("Invalid " + toString(SUMO_ATTR_TLLINKINDEX) + " '" + toString(tlLinkIdx) +
                             "' in connection controlled by '" + tlID + "'");
                 return;
@@ -1061,7 +1074,7 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
         link = new MSLink(toLane, dir, state, length, keepClear);
         toLane->addIncomingLane(fromLane, link);
 #endif
-        toLane->addApproachingLane(fromLane);
+        toLane->addApproachingLane(fromLane, myNetworkVersion < 0.25);
 
         // if a traffic light is responsible for it, inform the traffic light
         // check whether this link is controlled by a traffic light

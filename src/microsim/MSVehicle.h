@@ -59,7 +59,7 @@ class MSLaneChanger;
 class MSVehicleTransfer;
 class MSAbstractLaneChangeModel;
 class MSStoppingPlace;
-class MSChrgStn;
+class MSChargingStation;
 class MSPerson;
 class MSDevice;
 class MSEdgeWeightsStorage;
@@ -571,7 +571,7 @@ public:
         /// @brief (Optional) container stop if one is assigned to the stop
         MSStoppingPlace* containerstop;
         /// @brief (Optional) charging station if one is assigned to the stop
-        MSChrgStn* chrgStn;
+        MSChargingStation* chargingStation;
         /// @brief The stopping position start
         SUMOReal startPos;
         /// @brief The stopping position end
@@ -649,7 +649,7 @@ public:
      *          or a near infinite real value if the destination position is not contained
      *          within the vehicles route or the vehicle is not active
      */
-    SUMOReal getDistanceToPosition(SUMOReal destPos, const MSEdge* destEdge);
+    SUMOReal getDistanceToPosition(SUMOReal destPos, const MSEdge* destEdge) const;
 
 
     /** @brief Processes stops, returns the velocity needed to reach the stop
@@ -1037,6 +1037,12 @@ public:
 
         void postProcessVTD(MSVehicle* v);
 
+        /// @brief return the speed that is implicit in the new VTD position
+        SUMOReal implicitSpeedVTD(const MSVehicle* veh, SUMOReal oldSpeed);
+
+        /// @brief return the change in longitudinal position that is implicit in the new VTD position
+        SUMOReal implicitDeltaPosVTD(const MSVehicle* veh);
+
         inline bool isVTDControlled() const {
             return myAmVTDControlled;
         }
@@ -1157,6 +1163,10 @@ protected:
 
 
     void setBlinkerInformation();
+
+    /** @brief sets the blue flashing light for emergency vehicles
+     */
+    void setEmergencyBlueLight(SUMOTime currentTime);
 
     /// updates LaneQ::nextOccupation and myCurrentLaneInBestLanes
     void updateOccupancyAndCurrentBestLane(const MSLane* startLane);
@@ -1312,11 +1322,6 @@ protected:
                        const SUMOReal seen, DriveProcessItem* const lastLink,
                        const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass,
                        SUMOReal distToCrossing = -1) const;
-
-#ifdef HAVE_INTERNAL_LANES
-    /// @brief ids of vehicles being followed across a link (for resolving priority)
-    mutable std::map<const MSJunction*, std::set<std::string> > myLinkLeaders;
-#endif
 
 private:
     /* @brief The vehicle's knowledge about edge efforts/travel times; @see MSEdgeWeightsStorage

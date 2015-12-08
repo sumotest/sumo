@@ -191,6 +191,8 @@ private:
         bool mayDefinitelyPass;
         /// @brief Whether the junction must be kept clear coming from this connection
         bool keepClear;
+        /// @brief custom position for internal junction on this connection
+        SUMOReal contPos;
     };
 
 
@@ -314,6 +316,15 @@ private:
 
     /// @brief whether the loaded network contains internal lanes
     bool myHaveSeenInternalEdge;
+
+    /// @brief whether the loaded network was built for lefthand traffic
+    bool myAmLefthand;
+
+    /// @brief the level of corner detail in the loaded network
+    int myCornerDetail;
+
+    /// @brief the level of geometry detail for internal lanes in the loaded network
+    int myLinkDetail;
 
     /// @brief loaded roundabout edges
     std::vector<std::vector<std::string> > myRoundabouts;

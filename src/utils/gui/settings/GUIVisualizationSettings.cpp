@@ -69,10 +69,14 @@ GUIVisualizationSettings::GUIVisualizationSettings()
       containerQuality(0),
       containerSize(1),
       containerName(false, 50, RGBColor(0, 153, 204, 255)),
-      drawLinkTLIndex(false), drawLinkJunctionIndex(false),
+      drawLinkTLIndex(false, 50, RGBColor(128, 128, 255, 255)),
+      drawLinkJunctionIndex(false, 50, RGBColor(128, 128, 255, 255)),
       junctionName(false, 50, RGBColor(0, 255, 128, 255)),
       internalJunctionName(false, 50, RGBColor(0, 204, 128, 255)),
-      showLane2Lane(false), drawJunctionShape(true), addMode(0),
+      showLane2Lane(false),
+      drawJunctionShape(true),
+      drawCrossingsAndWalkingareas(true),
+      addMode(0),
       addSize(1),
       addName(false, 50, RGBColor(255, 0, 128, 255)),
       poiSize(0), poiName(false, 50, RGBColor(255, 0, 128, 255)),
@@ -90,6 +94,7 @@ GUIVisualizationSettings::GUIVisualizationSettings()
     scheme.addColor(RGBColor(0, 0, 0, 0), 3, "green verge");
     scheme.addColor(RGBColor(150, 200, 200), 4, "waterway");
     scheme.addColor(RGBColor(92, 92, 92), 5, "no passenger"); // paths, service roads etc
+    scheme.addColor(RGBColor::RED, 6, "closed"); // road closing
     laneColorer.addScheme(scheme);
     scheme = GUIColorScheme("by selection (lane-/streetwise)", RGBColor(128, 128, 128, 255), "unselected", true);
     scheme.addColor(RGBColor(0, 80, 180, 255), 1, "selected");
@@ -248,8 +253,8 @@ GUIVisualizationSettings::GUIVisualizationSettings()
     scheme = GUIColorScheme("by time since lane change", RGBColor(179, 179, 179, 255), "0");
     scheme.addColor(RGBColor(189, 189, 179, 255), -180);
     scheme.addColor(RGBColor(255, 255, 0, 255), -20);
-    scheme.addColor(RGBColor(255,   0, 0, 255), -1);
-    scheme.addColor(RGBColor(0,   0, 255, 255),  1);
+    scheme.addColor(RGBColor(255,   0, 0, 255), -0.001);
+    scheme.addColor(RGBColor(0,   0, 255, 255),  0.001);
     scheme.addColor(RGBColor(0, 255, 255, 255),  20);
     scheme.addColor(RGBColor(179, 189, 189, 255),  180);
     scheme.setAllowsNegativeValues(true);
@@ -309,6 +314,12 @@ GUIVisualizationSettings::GUIVisualizationSettings()
     scheme.addColor(RGBColor(0, 255, 255, 255), 1);
     scheme.addColor(RGBColor(0,   0, 255, 255), 2);
     scheme.setAllowsNegativeValues(true);
+    vehicleColorer.addScheme(scheme);
+    scheme = GUIColorScheme("by depart delay", RGBColor::BLUE);
+    scheme.addColor(RGBColor::CYAN, (SUMOReal)30);
+    scheme.addColor(RGBColor::GREEN, (SUMOReal)100);
+    scheme.addColor(RGBColor::YELLOW, (SUMOReal)200);
+    scheme.addColor(RGBColor::RED, (SUMOReal)300);
     vehicleColorer.addScheme(scheme);
     vehicleColorer.addScheme(GUIColorScheme("random", RGBColor::YELLOW, "", true));
 
@@ -382,6 +393,9 @@ GUIVisualizationSettings::GUIVisualizationSettings()
     scheme.addColor(RGBColor::MAGENTA, 7, "unregulated");
     scheme.addColor(RGBColor::BLACK, 8, "dead_end");
     scheme.addColor(RGBColor::ORANGE, 9, "rail_signal");
+    scheme.addColor(RGBColor(192, 128, 64), 10, "zipper"); // light brown
+    scheme.addColor(RGBColor(192, 255, 192), 11, "traffic_light_right_on_red"); // light green
+    scheme.addColor(RGBColor(128, 0, 128), 11, "rail_crossing"); // dark purple
     junctionColorer.addScheme(scheme);
 
 
@@ -484,14 +498,23 @@ GUIVisualizationSettings::GUIVisualizationSettings()
     scheme.addColor(RGBColor::RED, (SUMOReal)0.95);
     edgeColorer.addScheme(scheme);
     scheme = GUIColorScheme("by current speed (streetwise)", RGBColor::RED);
-    scheme.addColor(RGBColor::BLUE, (SUMOReal)(150.0 / 3.6));
+    scheme.addColor(RGBColor::YELLOW, (SUMOReal)(30 / 3.6));
+    scheme.addColor(RGBColor::GREEN, (SUMOReal)(55 / 3.6));
+    scheme.addColor(RGBColor::CYAN, (SUMOReal)(80 / 3.6));
+    scheme.addColor(RGBColor::BLUE, (SUMOReal)(120 / 3.6));
+    scheme.addColor(RGBColor::MAGENTA, (SUMOReal)(150 / 3.6));
     edgeColorer.addScheme(scheme);
     scheme = GUIColorScheme("by current flow (streetwise)", RGBColor::BLUE);
     scheme.addColor(RGBColor::RED, (SUMOReal)5000);
     edgeColorer.addScheme(scheme);
     scheme = GUIColorScheme("by relative speed (streetwise)", RGBColor::RED);
-    scheme.addColor(RGBColor::BLUE, (SUMOReal)1);
+    scheme.addColor(RGBColor::YELLOW, (SUMOReal)(0.25));
+    scheme.addColor(RGBColor::GREEN, (SUMOReal)(0.5));
+    scheme.addColor(RGBColor::CYAN, (SUMOReal)(0.75));
+    scheme.addColor(RGBColor::BLUE, (SUMOReal)(1));
+    scheme.addColor(RGBColor::MAGENTA, (SUMOReal)(1.25));
     edgeColorer.addScheme(scheme);
+
 
     /// add edge scaling schemes
     {
@@ -639,8 +662,12 @@ GUIVisualizationSettings::save(OutputDevice& dev) const {
     // junctions
     dev.openTag(SUMO_TAG_VIEWSETTINGS_JUNCTIONS);
     dev.writeAttr("junctionMode", junctionColorer.getActive());
-    dev.writeAttr("drawLinkTLIndex", drawLinkTLIndex);
-    dev.writeAttr("drawLinkJunctionIndex", drawLinkJunctionIndex);
+    dev.lf();
+    dev << "                  ";
+    drawLinkTLIndex.print(dev, "drawLinkTLIndex");
+    dev.lf();
+    dev << "                  ";
+    drawLinkTLIndex.print(dev, "drawLinkJunctionIndex");
     dev.lf();
     dev << "                  ";
     junctionName.print(dev, "junctionName");
@@ -651,6 +678,7 @@ GUIVisualizationSettings::save(OutputDevice& dev) const {
     dev << "                  ";
     dev.writeAttr("showLane2Lane", showLane2Lane);
     dev.writeAttr("drawShape", drawJunctionShape);
+    dev.writeAttr("drawCrossingsAndWalkingareas", drawCrossingsAndWalkingareas);
     junctionColorer.save(dev);
     dev.closeTag();
     // additionals
@@ -811,6 +839,10 @@ GUIVisualizationSettings::operator==(const GUIVisualizationSettings& v2) {
     }
 
     if (drawJunctionShape != v2.drawJunctionShape) {
+        return false;
+    }
+
+    if (drawCrossingsAndWalkingareas != v2.drawCrossingsAndWalkingareas) {
         return false;
     }
 

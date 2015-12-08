@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu Sep 10 13:12:36 2015 by SUMO netconvert Version dev-SVN-r18820I
+<!-- generated on Fri Nov 27 14:41:42 2015 by SUMO netconvert Version dev-SVN-r19444I
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
@@ -26,7 +26,7 @@
 </configuration>
 -->
 
-<net version="0.13" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+<net version="0.25" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
     <location netOffset="100.00,100.00" convBoundary="0.00,0.00,200.00,100.00" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
 
@@ -94,13 +94,13 @@
     </edge>
 
     <tlLogic id="C" type="static" programID="0" offset="0">
-        <phase duration="26" state="GggGrGr"/>
+        <phase duration="61" state="GggGrGr"/>
         <phase duration="5" state="GggGrrr"/>
         <phase duration="4" state="ygyyrrr"/>
         <phase duration="6" state="rGrrrrr"/>
         <phase duration="4" state="ryrrrrr"/>
-        <phase duration="6" state="rrrrGrG"/>
-        <phase duration="3" state="rrrrrrr"/>
+        <phase duration="5" state="rrrrGGG"/>
+        <phase duration="5" state="rrrrrrr"/>
     </tlLogic>
 
     <junction id="C" type="traffic_light" x="100.00" y="100.00" incLanes="EC_0 EC_1 WC_0 WC_1 :C_w1_0 :C_w2_0 :C_w0_0" intLanes=":C_0_0 :C_4_0 :C_5_0 :C_3_0 :C_c0_0 :C_c1_0 :C_c2_0" shape="101.50,105.35 101.50,94.65 99.95,93.15 96.75,93.15 95.25,94.65 95.25,105.35">
@@ -114,7 +114,7 @@
     </junction>
     <junction id="E" type="dead_end" x="200.00" y="100.00" incLanes="CE_0 CE_1" intLanes="" shape="200.00,100.05 200.00,105.35 200.00,94.65 200.00,99.95"/>
     <junction id="S" type="unregulated" x="100.00" y="0.00" incLanes="CS_0" intLanes="" shape="96.75,0.00 99.95,0.00"/>
-    <junction id="W" type="dead_end" x="0.00" y="100.00" incLanes="CW_0 CW_1" intLanes="" shape="-0.00,99.95 -0.00,94.65 0.00,105.35 0.00,100.05"/>
+    <junction id="W" type="dead_end" x="0.00" y="100.00" incLanes="CW_0 CW_1" intLanes="" shape="0.00,99.95 0.00,94.65 0.00,105.35 0.00,100.05"/>
 
     <junction id=":C_4_0" type="internal" x="99.40" y="99.95" incLanes=":C_1_0 WC_1" intLanes=":C_2_0 :C_3_0 :C_c0_0 :C_c1_0"/>
     <junction id=":C_5_0" type="internal" x="97.48" y="97.15" incLanes=":C_2_0" intLanes=":C_1_0 :C_c1_0 :C_c2_0"/>

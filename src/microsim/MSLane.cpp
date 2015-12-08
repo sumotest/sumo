@@ -67,7 +67,6 @@
 #include <utils/common/ToString.h>
 #include <utils/options/OptionsCont.h>
 #include <utils/emissions/HelpersHarmonoise.h>
-#include <utils/geom/Line.h>
 #include <utils/geom/GeomHelper.h>
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -93,8 +92,7 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myPermissions(permissions),
     myLogicalPredecessorLane(0),
     myBruttoVehicleLengthSum(0), myNettoVehicleLengthSum(0), myInlappingVehicleEnd(10000), myInlappingVehicle(0),
-    myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength) // factor should not be 0
-{
+    myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength) { // factor should not be 0
     myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
 }
 
@@ -460,11 +458,6 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
         WRITE_WARNING("Invalid departPos " + toString(pos) + " given for vehicle '" +
                       aVehicle->getID() + "'. Inserting at lane end instead.");
         pos = myLength;
-    }
-    std::string msg;
-    if (!MSGlobals::gCheckRoutes && aVehicle->getParameter().wasSet(VEHPARS_FORCE_REROUTE) && !aVehicle->hasValidRoute(msg)) {
-        MSNet::getInstance()->getInsertionControl().descheduleDeparture(aVehicle);
-        return false;
     }
     aVehicle->setTentativeLaneAndPosition(this, pos);
     aVehicle->updateBestLanes(false, this);
@@ -1123,11 +1116,11 @@ MSLane::addIncomingLane(MSLane* lane, MSLink* viaLink) {
 
 
 void
-MSLane::addApproachingLane(MSLane* lane) {
+MSLane::addApproachingLane(MSLane* lane, bool warnMultiCon) {
     MSEdge* approachingEdge = &lane->getEdge();
     if (myApproachingLanes.find(approachingEdge) == myApproachingLanes.end()) {
         myApproachingLanes[approachingEdge] = std::vector<MSLane*>();
-    } else if (approachingEdge->getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL) {
+    } else if (approachingEdge->getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL && warnMultiCon) {
         // whenever a normal edge connects twice, there is a corresponding
         // internal edge wich connects twice, one warning is sufficient
         WRITE_WARNING("Lane '" + getID() + "' is approached multiple times from edge '" + approachingEdge->getID() + "'. This may cause collisions.");
@@ -1677,7 +1670,7 @@ MSLane::vehicle_position_sorter::operator()(MSVehicle* v1, MSVehicle* v2) const 
 
 MSLane::by_connections_to_sorter::by_connections_to_sorter(const MSEdge* const e) :
     myEdge(e),
-    myLaneDir(e->getLanes()[0]->getShape().getBegLine().atan2PositiveAngle())
+    myLaneDir(e->getLanes()[0]->getShape().angleAt2D(0))
 { }
 
 
@@ -1687,11 +1680,11 @@ MSLane::by_connections_to_sorter::operator()(const MSEdge* const e1, const MSEdg
     const std::vector<MSLane*>* ae2 = e2->allowedLanes(*myEdge);
     SUMOReal s1 = 0;
     if (ae1 != 0 && ae1->size() != 0) {
-        s1 = (SUMOReal) ae1->size() + GeomHelper::getMinAngleDiff((*ae1)[0]->getShape().getBegLine().atan2PositiveAngle(), myLaneDir) / M_PI / 2.;
+        s1 = (SUMOReal) ae1->size() + fabs(GeomHelper::angleDiff((*ae1)[0]->getShape().angleAt2D(0), myLaneDir)) / M_PI / 2.;
     }
     SUMOReal s2 = 0;
     if (ae2 != 0 && ae2->size() != 0) {
-        s2 = (SUMOReal) ae2->size() + GeomHelper::getMinAngleDiff((*ae2)[0]->getShape().getBegLine().atan2PositiveAngle(), myLaneDir) / M_PI / 2.;
+        s2 = (SUMOReal) ae2->size() + fabs(GeomHelper::angleDiff((*ae2)[0]->getShape().angleAt2D(0), myLaneDir)) / M_PI / 2.;
     }
     return s1 < s2;
 }

@@ -34,9 +34,10 @@
 #ifndef NO_TRACI
 
 #include "TraCIConstants.h"
-#include <microsim/traffic_lights/MSTLLogicControl.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSEdge.h>
+#include <microsim/traffic_lights/MSTLLogicControl.h>
+#include <microsim/traffic_lights/MSSimpleTrafficLightLogic.h>
 #include "TraCIServerAPI_TLS.h"
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -314,7 +315,8 @@ TraCIServerAPI_TLS::processSet(TraCIServer& server, tcpip::Storage& inputStorage
                 return server.writeErrorStatusCmd(CMD_SET_TL_VARIABLE, "The phase index must be given as an integer.", outputStorage);
             }
             if (index < 0 || vars.getActive()->getPhaseNumber() <= (unsigned int)index) {
-                return server.writeErrorStatusCmd(CMD_SET_TL_VARIABLE, "The phase index is not in the allowed range.", outputStorage);
+                return server.writeErrorStatusCmd(CMD_SET_TL_VARIABLE, "The phase index " + toString(index) + " is not in the allowed range [0,"
+                                                  + toString((int)vars.getActive()->getPhaseNumber() - 1) + "].", outputStorage);
             }
             const SUMOTime duration = vars.getActive()->getPhase(index).duration;
             vars.getActive()->changeStepAndDuration(tlsControl, cTime, index, duration);

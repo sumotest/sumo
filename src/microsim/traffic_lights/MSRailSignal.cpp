@@ -93,7 +93,7 @@ MSRailSignal::init(NLDetectorBuilder&) {
                 if (precedentLane == 0) { //if there is no preceeding lane
                     noRailSignal = false;
                 } else {
-                    const MSJunction* junction = MSLinkContHelper::getConnectingLink(*precedentLane, *currentLane)->getJunction();  //the junction between precentLane and currentLane
+                    const MSJunction* junction = precedentLane->getEdge().getToJunction();
                     if ((junction != 0) && (junction->getType() == NODETYPE_RAIL_SIGNAL)) { //if this junction exists and if it has a rail signal
                         noRailSignal = false;
                     } else {
@@ -129,7 +129,7 @@ MSRailSignal::init(NLDetectorBuilder&) {
                             noRailSignal = false;
                         } else {
                             if (outGoingLanes.size() > 1) {
-                                WRITE_WARNING("Rail lane " + currentLane->getID() + " has more than one outgoing lane but does not have a rail signal at its end");
+                                WRITE_WARNING("Rail lane '" + currentLane->getID() + "' has more than one outgoing lane but does not have a rail signal at its end");
                             }
                             const MSLane* nextLane = outGoingLanes.front();
                             succeedingBlock.push_back(nextLane);

@@ -98,14 +98,20 @@ void
 initNet(RONet& net, ROLoader& loader, OptionsCont& oc) {
     // load the net
     ROMAEdgeBuilder builder;
-    ROEdge::setGlobalOptions(oc.getBool("weights.expand"), oc.getBool("weights.expand"), oc.getBool("weights.interpolate"), false);
+    ROEdge::setGlobalOptions(oc.getBool("weights.interpolate"), false);
     loader.loadNet(net, builder);
+    // initialize the travel times
+    /* const SUMOTime begin = string2time(oc.getString("begin"));
+    const SUMOTime end = string2time(oc.getString("end"));
+    for (std::map<std::string, ROEdge*>::const_iterator i = net.getEdgeMap().begin(); i != net.getEdgeMap().end(); ++i) {
+        (*i).second->addTravelTime(STEPS2TIME(begin), STEPS2TIME(end), (*i).second->getLength() / (*i).second->getSpeed());
+    }*/
     // load the weights when wished/available
     if (oc.isSet("weight-files")) {
-        loader.loadWeights(net, "weight-files", oc.getString("weight-attribute"), false);
+        loader.loadWeights(net, "weight-files", oc.getString("weight-attribute"), false, oc.getBool("weights.expand"));
     }
     if (oc.isSet("lane-weight-files")) {
-        loader.loadWeights(net, "lane-weight-files", oc.getString("weight-attribute"), true);
+        loader.loadWeights(net, "lane-weight-files", oc.getString("weight-attribute"), true, oc.getBool("weights.expand"));
     }
 }
 
@@ -149,8 +155,13 @@ writeInterval(OutputDevice& dev, const SUMOTime begin, const SUMOTime end, const
         ROMAEdge* edge = static_cast<ROMAEdge*>(i->second);
         if (edge->getFunc() == ROEdge::ET_NORMAL) {
             dev.openTag(SUMO_TAG_EDGE).writeAttr(SUMO_ATTR_ID, edge->getID());
-            dev.writeAttr("traveltime", edge->getTravelTime(veh, STEPS2TIME(begin)));
-            dev.writeAttr("entered", edge->getFlow(STEPS2TIME(begin))).closeTag();
+            const SUMOReal traveltime = edge->getTravelTime(veh, STEPS2TIME(begin));
+            const SUMOReal flow = edge->getFlow(STEPS2TIME(begin));
+            dev.writeAttr("traveltime", traveltime);
+            dev.writeAttr("speed", edge->getLength() / traveltime);
+            dev.writeAttr("entered", flow);
+            dev.writeAttr("flowCapacityRatio", 100. * flow / ROMAAssignments::getCapacity(edge));
+            dev.closeTag();
         }
     }
     dev.closeTag();
@@ -265,15 +276,15 @@ computeRoutes(RONet& net, OptionsCont& oc, ODMatrix& matrix) {
         }
     }
     // prepare the output
-    net.openOutput(oc.isSet("output-file") ? oc.getString("output-file") : "",
-                   oc.isSet("flow-output") ? oc.getString("flow-output") : "", "");
+    net.openOutput(oc.isSet("output-file") ? oc.getString("output-file") : "", "", "");
     // process route definitions
     try {
         if (oc.isSet("timeline")) {
             matrix.applyCurve(matrix.parseTimeLine(oc.getStringVector("timeline"), oc.getBool("timeline.day-in-hours")));
         }
+        matrix.sortByBeginTime();
         ROVehicle defaultVehicle(SUMOVehicleParameter(), 0, net.getVehicleTypeSecure(DEFAULT_VTYPE_ID), &net);
-        ROMAAssignments a(begin, end, oc.getBool("additive-traffic"), net, matrix, *router);
+        ROMAAssignments a(begin, end, oc.getBool("additive-traffic"), oc.getFloat("weight-adaption"), net, matrix, *router);
         a.resetFlows();
         const std::string assignMethod = oc.getString("assignment-method");
         if (assignMethod == "incremental") {
@@ -285,19 +296,6 @@ computeRoutes(RONet& net, OptionsCont& oc, ODMatrix& matrix) {
         // update path costs and output
         bool haveOutput = false;
         OutputDevice* dev = net.getRouteOutput();
-        if (dev != 0) {
-            for (std::vector<ODCell*>::const_iterator i = matrix.getCells().begin(); i != matrix.getCells().end(); ++i) {
-                const ODCell* const c = *i;
-                dev->openTag(SUMO_TAG_ROUTE_DISTRIBUTION).writeAttr(SUMO_ATTR_ID, c->origin + "_" + c->destination + "_" + time2string(c->begin) + "_" + time2string(c->end));
-                for (std::vector<RORoute*>::const_iterator j = c->pathsVector.begin(); j != c->pathsVector.end(); ++j) {
-                    (*j)->setCosts(router->recomputeCosts((*j)->getEdgeVector(), &defaultVehicle, begin));
-                    (*j)->writeXMLDefinition(*dev, 0, true, false);
-                }
-                dev->closeTag();
-            }
-            haveOutput = true;
-        }
-        dev = net.getRouteOutput(true);
         if (dev != 0) {
             int num = 0;
             for (std::vector<ODCell*>::const_iterator i = matrix.getCells().begin(); i != matrix.getCells().end(); ++i) {

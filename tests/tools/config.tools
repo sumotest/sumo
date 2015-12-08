@@ -72,6 +72,7 @@ nodes:nodes.nod.xml
 edges:edges.xml
 nodes:nodes.xml
 net:net.net.xml
+connections:connections.xml
 fixed:routes.rou.xml.fixed
 activityfile:activityfile.tcl
 mobilityfile:mobilityfile.tcl

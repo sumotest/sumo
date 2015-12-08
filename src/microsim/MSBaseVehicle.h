@@ -51,6 +51,9 @@
  */
 class MSBaseVehicle : public SUMOVehicle {
 public:
+
+    friend class GUIBaseVehicle;
+
     /** @brief Constructor
      * @param[in] pars The vehicle description
      * @param[in] route The vehicle's route
@@ -199,6 +202,13 @@ public:
     inline SUMOTime getDeparture() const {
         return myDeparture;
     }
+
+    /** @brief Returns the depart delay */
+    SUMOTime getDepartDelay() const {
+        return getDeparture() - getParameter().depart;
+    }
+
+
 
     /** @brief Returns this vehicle's desired arrivalPos for its current route
      * (may change on reroute)

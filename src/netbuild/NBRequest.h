@@ -105,7 +105,7 @@ public:
      * @param[in] includePedCrossings Whether braking due to a pedestrian crossing counts
      * @return Whether the described connection must brake (has higher priorised foes)
      */
-    bool mustBrake(const NBEdge* const from, const NBEdge* const to, int fromLane, bool includePedCrossings) const;
+    bool mustBrake(const NBEdge* const from, const NBEdge* const to, int fromLane, int toLane, bool includePedCrossings) const;
 
     /** @brief Returns the information whether the described flow must brake for the given crossing
      * @param[in] node The parent node of this request
@@ -149,6 +149,10 @@ public:
     /// reports warnings if any occured
     static void reportWarnings();
 
+    /// @brief whether multple connections from the same edge target the same lane
+    static bool mergeConflict(const NBEdge* from, const NBEdge::Connection& con,
+                              const NBEdge* prohibitorFrom,  const NBEdge::Connection& prohibitorCon, bool foes);
+
 
 private:
     /** sets the information that the edge from1->to1 blocks the edge
@@ -174,15 +178,16 @@ private:
      * In the case "mayDefinitelyPass" is true, the link will not be disturbed by
      *  any other (special case for on-ramps).
      *
-     * @param[in] od The stream to write the information to
+     * @param[in] tlIndex The tl index of the connection for which the responses shall be written
      * @param[in] from The link's starting edge
      * @param[in] to The link's destination edge
      * @param[in] fromLane The link's starting lane
      * @param[in] toLane The link's destination lane
      * @param[in] mayDefinitelyPass Whether this link is definitely not disturbed
+     * @return the response string
      * @exception IOError not yet implemented
      */
-    std::string getResponseString(const NBEdge* const from, const NBEdge* const to,
+    std::string getResponseString(int tlIndex, const NBEdge* const from, const NBEdge* const to,
                                   int fromLane, int toLane, bool mayDefinitelyPass, const bool checkLaneFoes) const;
 
 

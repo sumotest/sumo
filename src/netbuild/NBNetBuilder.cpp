@@ -89,7 +89,8 @@ NBNetBuilder::compute(OptionsCont& oc,
     GeoConvHelper& geoConvHelper = GeoConvHelper::getProcessing();
 
 
-    if (oc.getBool("lefthand")) {
+    const bool lefthand = oc.getBool("lefthand");
+    if (lefthand) {
         mirrorX();
     };
 
@@ -178,9 +179,9 @@ NBNetBuilder::compute(OptionsCont& oc,
     geoConvHelper.setConvBoundary(boundary);
 
     if (!oc.getBool("offset.disable-normalization") && oc.isDefault("offset.x") && oc.isDefault("offset.y")) {
-        moveToOrigin(geoConvHelper);
+        moveToOrigin(geoConvHelper, lefthand);
     }
-    geoConvHelper.computeFinal(); // information needed for location element fixed at this point
+    geoConvHelper.computeFinal(lefthand); // information needed for location element fixed at this point
 
     if (oc.exists("geometry.min-dist") && oc.isSet("geometry.min-dist")) {
         PROGRESS_BEGIN_MESSAGE("Reducing geometries");
@@ -189,7 +190,7 @@ NBNetBuilder::compute(OptionsCont& oc,
     }
     // @note: removing geometry can create similar edges so joinSimilarEdges  must come afterwards
     // @note: likewise splitting can destroy similarities so joinSimilarEdges must come before
-    if (removeElements) {
+    if (removeElements && oc.getBool("edges.join")) {
         PROGRESS_BEGIN_MESSAGE("Joining similar edges");
         myJoinedEdges.init(myEdgeCont);
         myNodeCont.joinSimilarEdges(myDistrictCont, myEdgeCont, myTLLCont);
@@ -228,7 +229,7 @@ NBNetBuilder::compute(OptionsCont& oc,
     //
     if (oc.exists("geometry.max-angle")) {
         myEdgeCont.checkGeometries(
-            oc.getFloat("geometry.max-angle"),
+            DEG2RAD(oc.getFloat("geometry.max-angle")),
             oc.getFloat("geometry.min-radius"),
             oc.getBool("geometry.min-radius.fix"));
     }
@@ -308,7 +309,10 @@ NBNetBuilder::compute(OptionsCont& oc,
     //
     if (oc.getBool("roundabouts.guess")) {
         PROGRESS_BEGIN_MESSAGE("Guessing and setting roundabouts");
-        myEdgeCont.guessRoundabouts();
+        const int numGuessed = myEdgeCont.guessRoundabouts();
+        if (numGuessed > 0) {
+            WRITE_MESSAGE(" Guessed " + toString(numGuessed) + " roundabout(s).");
+        }
         PROGRESS_DONE_MESSAGE();
     }
     myEdgeCont.markRoundabouts();
@@ -334,7 +338,7 @@ NBNetBuilder::compute(OptionsCont& oc,
     myEdgeCont.recheckLanes();
     PROGRESS_DONE_MESSAGE();
 
-    if (haveCrossings) {
+    if (haveCrossings && !oc.getBool("no-internal-links")) {
         for (std::map<std::string, NBNode*>::const_iterator i = myNodeCont.begin(); i != myNodeCont.end(); ++i) {
             i->second->buildCrossingsAndWalkingAreas();
         }
@@ -401,7 +405,7 @@ NBNetBuilder::compute(OptionsCont& oc,
         }
         PROGRESS_DONE_MESSAGE();
     }
-    if (oc.getBool("lefthand")) {
+    if (lefthand) {
         mirrorX();
     };
 
@@ -424,11 +428,11 @@ NBNetBuilder::compute(OptionsCont& oc,
 
 
 void
-NBNetBuilder::moveToOrigin(GeoConvHelper& geoConvHelper) {
+NBNetBuilder::moveToOrigin(GeoConvHelper& geoConvHelper, bool lefthand) {
     PROGRESS_BEGIN_MESSAGE("Moving network to origin");
     Boundary boundary = geoConvHelper.getConvBoundary();
     const SUMOReal x = -boundary.xmin();
-    const SUMOReal y = -boundary.ymin();
+    const SUMOReal y = -(lefthand ? boundary.ymax() : boundary.ymin());
     //if (lefthand) {
     //    y = boundary.ymax();
     //}
@@ -500,7 +504,7 @@ NBNetBuilder::transformCoordinates(PositionVector& from, bool includeInBoundary,
             while (length > maxLength) {
                 length -= maxLength;
                 steps++;
-                from.insertAt(i + inserted + 1, start + (step * steps));
+                from.insert(from.begin() + i + inserted + 1, start + (step * steps));
                 inserted++;
             }
         }

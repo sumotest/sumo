@@ -245,8 +245,7 @@ MSFrame::fillOptions() {
     oc.addDescription("ignore-route-errors", "Processing", "Do not check whether routes are connected");
 
     oc.doRegister("max-num-vehicles", new Option_Integer(-1));
-    oc.addSynonyme("max-num-vehicles", "too-many-vehicles", true);
-    oc.addDescription("max-num-vehicles", "Processing", "Quit simulation if this number of vehicles is exceeded");
+    oc.addDescription("max-num-vehicles", "Processing", "Delay vehicle insertion to stay within the given maximum number");
 
     oc.doRegister("scale", new Option_Float());
     oc.addDescription("scale", "Processing", "Scale demand by the given factor (by discarding or duplicating vehicles)");
@@ -307,8 +306,12 @@ MSFrame::fillOptions() {
     MSDevice::insertOptions(oc);
 
     // register report options
-    oc.doRegister("no-duration-log", new Option_Bool(false));
-    oc.addDescription("no-duration-log", "Report", "Disable performance reports for individual simulation steps");
+    oc.doRegister("duration-log.disable", new Option_Bool(false));
+    oc.addSynonyme("duration-log.disable", "no-duration-log", false);
+    oc.addDescription("duration-log.disable", "Report", "Disable performance reports for individual simulation steps");
+
+    oc.doRegister("duration-log.statistics", new Option_Bool(false));
+    oc.addDescription("duration-log.statistics", "Report", "Enable statistics on vehicle trips");
 
     oc.doRegister("no-step-log", new Option_Bool(false));
     oc.addDescription("no-step-log", "Report", "Disable console output of current simulation step");
@@ -463,6 +466,9 @@ MSFrame::checkOptions() {
 #endif
     if (oc.getBool("sloppy-insert")) {
         WRITE_WARNING("The option 'sloppy-insert' is deprecated, because it is now activated by default, see the new option 'eager-insert'.");
+    }
+    if (oc.getBool("duration-log.statistics") && oc.isDefault("verbose")) {
+        oc.set("verbose", "true");
     }
     return ok;
 }

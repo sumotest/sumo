@@ -477,8 +477,11 @@ NBRequest::writeLaneResponse(OutputDevice& od, NBEdge* from,
         assert((*j).toEdge != 0);
         od.openTag(SUMO_TAG_REQUEST);
         od.writeAttr(SUMO_ATTR_INDEX, pos++);
-        od.writeAttr(SUMO_ATTR_RESPONSE, getResponseString(from, (*j).toEdge, fromLane, (*j).toLane, (*j).mayDefinitelyPass, checkLaneFoes));
-        od.writeAttr(SUMO_ATTR_FOES, getFoesString(from, (*j).toEdge, fromLane, (*j).toLane, checkLaneFoes));
+        const std::string foes = getFoesString(from, (*j).toEdge, fromLane, (*j).toLane, checkLaneFoes);
+        const std::string response = (myJunction->getType() == NODETYPE_ZIPPER ? foes
+                                      : getResponseString((*j).tlLinkNo, from, (*j).toEdge, fromLane, (*j).toLane, (*j).mayDefinitelyPass, checkLaneFoes));
+        od.writeAttr(SUMO_ATTR_RESPONSE, response);
+        od.writeAttr(SUMO_ATTR_FOES, foes);
         if (!OptionsCont::getOptions().getBool("no-internal-links")) {
             od.writeAttr(SUMO_ATTR_CONT, j->haveVia);
         }
@@ -525,7 +528,7 @@ NBRequest::writeCrossingResponse(OutputDevice& od, const NBNode::Crossing& cross
 
 
 std::string
-NBRequest::getResponseString(const NBEdge* const from, const NBEdge* const to,
+NBRequest::getResponseString(int tlIndex, const NBEdge* const from, const NBEdge* const to,
                              int fromLane, int toLane, bool mayDefinitelyPass, const bool checkLaneFoes) const {
     const bool lefthand = OptionsCont::getOptions().getBool("lefthand");
     int idx = 0;
@@ -537,6 +540,7 @@ NBRequest::getResponseString(const NBEdge* const from, const NBEdge* const to,
     for (std::vector<NBNode::Crossing>::const_reverse_iterator i = myCrossings.rbegin(); i != myCrossings.rend(); i++) {
         result += mustBrakeForCrossing(myJunction, from, to, *i) ? '1' : '0';
     }
+    NBEdge::Connection queryCon = from->getConnection(fromLane, to, toLane);
     // normal connections
     for (EdgeVector::const_reverse_iterator i = myIncoming.rbegin(); i != myIncoming.rend(); i++) {
         //const std::vector<NBEdge::Connection> &allConnections = (*i)->getConnections();
@@ -558,7 +562,10 @@ NBRequest::getResponseString(const NBEdge* const from, const NBEdge* const to,
                     // check whether the connection is prohibited by another one
                     if ((myForbids[getIndex(*i, connected[k].toEdge)][idx] &&
                             (!checkLaneFoes || laneConflict(from, to, toLane, *i, connected[k].toEdge, connected[k].toLane)))
-                            || NBNode::rightTurnConflict(from, to, fromLane, *i, connected[k].toEdge, connected[k].fromLane, lefthand)) {
+                            || NBNode::rightTurnConflict(from, to, fromLane, *i, connected[k].toEdge, connected[k].fromLane, lefthand)
+                            || mergeConflict(from, queryCon, *i, connected[k], false)
+                            || myJunction->rightOnRedConflict(tlIndex, connected[k].tlLinkNo)
+                       ) {
                         result += '1';
                     } else {
                         result += '0';
@@ -589,6 +596,7 @@ NBRequest::getFoesString(NBEdge* from, NBEdge* to, int fromLane, int toLane, con
         }
         result += foes ? '1' : '0';
     }
+    NBEdge::Connection queryCon = from->getConnection(fromLane, to, toLane);
     // normal connections
     for (EdgeVector::const_reverse_iterator i = myIncoming.rbegin();
             i != myIncoming.rend(); i++) {
@@ -599,7 +607,8 @@ NBRequest::getFoesString(NBEdge* from, NBEdge* to, int fromLane, int toLane, con
             for (int k = size; k-- > 0;) {
                 if ((foes(from, to, (*i), connected[k].toEdge) &&
                         (!checkLaneFoes || laneConflict(from, to, toLane, *i, connected[k].toEdge, connected[k].toLane)))
-                        || NBNode::rightTurnConflict(from, to, fromLane, *i, connected[k].toEdge, connected[k].fromLane)) {
+                        || NBNode::rightTurnConflict(from, to, fromLane, *i, connected[k].toEdge, connected[k].fromLane)
+                        || mergeConflict(from, queryCon, *i, connected[k], true)) {
                     result += '1';
                 } else {
                     result += '0';
@@ -608,6 +617,19 @@ NBRequest::getFoesString(NBEdge* from, NBEdge* to, int fromLane, int toLane, con
         }
     }
     return result;
+}
+
+
+bool
+NBRequest::mergeConflict(const NBEdge* from, const NBEdge::Connection& con,
+                         const NBEdge* prohibitorFrom,  const NBEdge::Connection& prohibitorCon, bool foes) {
+    return (from == prohibitorFrom
+            && con.toEdge == prohibitorCon.toEdge
+            && con.toLane == prohibitorCon.toLane
+            && con.fromLane != prohibitorCon.fromLane
+            && (foes ||
+                ((con.fromLane > prohibitorCon.fromLane && !con.mayDefinitelyPass)
+                 || prohibitorCon.mayDefinitelyPass)));
 }
 
 
@@ -665,7 +687,7 @@ operator<<(std::ostream& os, const NBRequest& r) {
 
 
 bool
-NBRequest::mustBrake(const NBEdge* const from, const NBEdge* const to, int fromLane, bool includePedCrossings) const {
+NBRequest::mustBrake(const NBEdge* const from, const NBEdge* const to, int fromLane, int toLane, bool includePedCrossings) const {
     // vehicles which do not have a following lane must always decelerate to the end
     if (to == 0) {
         return true;
@@ -704,6 +726,22 @@ NBRequest::mustBrake(const NBEdge* const from, const NBEdge* const to, int fromL
             }
         }
     }
+    // maybe we need to brake due to a merge conflict
+    NBEdge::Connection queryCon = from->getConnection(fromLane, to, toLane);
+    for (EdgeVector::const_reverse_iterator i = myIncoming.rbegin(); i != myIncoming.rend(); i++) {
+        unsigned int noLanes = (*i)->getNumLanes();
+        for (int j = noLanes; j-- > 0;) {
+            std::vector<NBEdge::Connection> connected = (*i)->getConnectionsFromLane(j);
+            const int size = (int) connected.size();
+            for (int k = size; k-- > 0;) {
+                if ((*i) == from && fromLane != j
+                        && mergeConflict(from, queryCon, *i, connected[k], myJunction->getType() == NODETYPE_ZIPPER)) {
+                    return true;
+                }
+            }
+        }
+    }
+
     return false;
 }
 

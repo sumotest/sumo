@@ -101,7 +101,7 @@ GNEJunction::~GNEJunction() {
 }
 
 
-void 
+void
 GNEJunction::rebuildCrossings(bool deleteOnly) {
     for (std::vector<GNECrossing*>::const_iterator it = myCrossings.begin(); it != myCrossings.end(); it++) {
         (*it)->decRef();
@@ -137,7 +137,7 @@ GNEJunction::getPopUpMenu(GUIMainWindow& app,
     FXMenuCommand* mcReplace = new FXMenuCommand(ret, "Replace by geometry node", 0, &parent, MID_GNE_NODE_REPLACE);
     const int editMode = parent.getVisualisationSettings()->editMode;
     const bool wrongMode = (editMode == GNE_MODE_CONNECT || editMode == GNE_MODE_TLS || editMode == GNE_MODE_CREATE_EDGE);
-    if (wrongMode) { 
+    if (wrongMode) {
         mcCustomShape->handle(&parent, FXSEL(SEL_COMMAND, FXWindow::ID_DISABLE), 0);
     }
     // checkIsRemovable requiers turnarounds to be computed. This is ugly
@@ -182,7 +182,7 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
 
         if (drawShape) {
             glPushMatrix();
-			setColor(s, false);                        
+            setColor(s, false);
             glTranslated(0, 0, getType());
             PositionVector shape = myNBNode.getShape();
             shape.closePolygon();
@@ -193,12 +193,12 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
                 GLHelper::drawFilledPoly(shape, true);
             } else {
                 GLHelper::drawFilledPolyTesselated(shape, true);
-            }   
+            }
             glPopMatrix();
         }
         if (drawBubble) {
             glPushMatrix();
-            setColor(s, true);           
+            setColor(s, true);
             Position pos = myNBNode.getPosition();
             glTranslated(pos.x(), pos.y(), getType() - 0.05);
             GLHelper::drawFilledCircle(myMaxSize * selectionScale, 32);
@@ -342,7 +342,7 @@ GNEJunction::removeFromCrossings(GNEEdge* edge, GNEUndoList* undoList) {
     // @todo implement GNEChange_Crossing
     UNUSED_PARAMETER(undoList);
     // make a copy because the original will be modified
-    const std::vector<NBNode::Crossing> crossings = myNBNode.getCrossings();  
+    const std::vector<NBNode::Crossing> crossings = myNBNode.getCrossings();
     for (std::vector<NBNode::Crossing>::const_iterator it = crossings.begin(); it != crossings.end(); it++) {
         EdgeSet edgeSet((*it).edges.begin(), (*it).edges.end());
         if (edgeSet.count(edge->getNBEdge()) == 1) {
@@ -371,6 +371,8 @@ GNEJunction::getAttribute(SumoXMLAttr key) const {
             return toString(myNBNode.getShape());
         case SUMO_ATTR_RADIUS:
             return toString(myNBNode.getRadius());
+        case SUMO_ATTR_KEEP_CLEAR:
+            return myNBNode.getKeepClear() ? "true" : "false";
         default:
             throw InvalidArgument("junction attribute '" + toString(key) + "' not allowed");
     }
@@ -388,12 +390,12 @@ GNEJunction::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
         case GNE_ATTR_MODIFICATION_STATUS:
         case SUMO_ATTR_SHAPE:
         case SUMO_ATTR_RADIUS:
+        case SUMO_ATTR_KEEP_CLEAR:
             undoList->add(new GNEChange_Attribute(this, key, value), true);
             break;
         case SUMO_ATTR_TYPE: {
             undoList->p_begin("change junction type");
-            if (SUMOXMLDefinitions::NodeTypes.get(value) == NODETYPE_TRAFFIC_LIGHT ||
-                    SUMOXMLDefinitions::NodeTypes.get(value) == NODETYPE_TRAFFIC_LIGHT_NOJUNCTION) {
+            if (NBNode::isTrafficLight(SUMOXMLDefinitions::NodeTypes.get(value))) {
                 if (!getNBNode()->isTLControlled()) {
                     // create new traffic light
                     undoList->add(new GNEChange_TLS(this, 0, true), true);
@@ -437,8 +439,11 @@ GNEJunction::isValid(SumoXMLAttr key, const std::string& value) {
             return ok;
             break;
         }
-        case SUMO_ATTR_RADIUS: 
+        case SUMO_ATTR_RADIUS:
             return canParse<SUMOReal>(value);
+            break;
+        case SUMO_ATTR_KEEP_CLEAR:
+            return value == "true" || value == "false";
             break;
         default:
             throw InvalidArgument("junction attribute '" + toString(key) + "' not allowed");
@@ -473,8 +478,11 @@ GNEJunction::setAttribute(SumoXMLAttr key, const std::string& value) {
             myNBNode.setCustomShape(shape);
             break;
         }
-        case SUMO_ATTR_RADIUS: 
+        case SUMO_ATTR_RADIUS:
             myNBNode.setRadius(parse<SUMOReal>(value));
+            break;
+        case SUMO_ATTR_KEEP_CLEAR:
+            myNBNode.setKeepClear(value == "true");
             break;
         default:
             throw InvalidArgument("junction attribute '" + toString(key) + "' not allowed");
@@ -496,7 +504,7 @@ GNEJunction::setPosition(Position pos) {
 
 SUMOReal
 GNEJunction::getColorValue(const GUIVisualizationSettings& s, bool bubble) const {
-	switch (s.junctionColorer.getActive()) {
+    switch (s.junctionColorer.getActive()) {
         case 0:
             if (bubble) {
                 return 1;
@@ -532,6 +540,12 @@ GNEJunction::getColorValue(const GUIVisualizationSettings& s, bool bubble) const
                     return 8;
                 case NODETYPE_RAIL_SIGNAL:
                     return 9;
+                case NODETYPE_ZIPPER:
+                    return 10;
+                case NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED:
+                    return 11;
+                case NODETYPE_RAIL_CROSSING:
+                    return 12;
             }
         default:
             assert(false);
@@ -542,7 +556,7 @@ GNEJunction::getColorValue(const GUIVisualizationSettings& s, bool bubble) const
 
 void
 GNEJunction::setColor(const GUIVisualizationSettings& s, bool bubble) const {
-	GLHelper::setColor(s.junctionColorer.getScheme().getColor(getColorValue(s, bubble)));
+    GLHelper::setColor(s.junctionColorer.getScheme().getColor(getColorValue(s, bubble)));
     // override with special colors
     if (gSelected.isSelected(getType(), getGlID())) {
         GLHelper::setColor(GNENet::selectionColor);
@@ -567,7 +581,7 @@ GNEJunction::removeTrafficLight(NBTrafficLightDefinition* tlDef) {
     myNBNode.removeTrafficLight(tlDef);
 }
 
-void 
+void
 GNEJunction::updateCrossingAttributes(NBNode::Crossing crossing) {
     EdgeSet edgeSet(crossing.edges.begin(), crossing.edges.end());
     for (std::vector<NBNode::Crossing>::iterator it = myNBNode.myCrossings.begin(); it != myNBNode.myCrossings.end(); ++it) {
