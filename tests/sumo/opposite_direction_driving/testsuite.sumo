@@ -1,2 +1,11 @@
+# a stopped vehicle is overtaken
+overtaking_noconflict
+
 # a stopped vehicle is overtake as soon as there is a safe gap in the oncoming traffic
 overtaking_stopped
+
+# a stopped vehicle is overtaken but currently collides with its back on the opposite lane
+overtaking_stopped_collision
+
+# a slow vehicle is overtake as soon as there is a safe gap in the oncoming traffic
+overtaking_slow
