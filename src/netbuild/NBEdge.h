@@ -120,9 +120,10 @@ public:
      * @brief An (internal) definition of a single lane of an edge
      */
     struct Lane {
-        Lane(NBEdge* e) :
+        Lane(NBEdge* e, const std::string& _origID) :
             speed(e->getSpeed()), permissions(SVCAll), preferred(0),
-            endOffset(e->getEndOffset()), width(e->getLaneWidth()) {}
+            endOffset(e->getEndOffset()), width(e->getLaneWidth()),
+            origID(_origID) {}
         /// @brief The lane's shape
         PositionVector shape;
         /// @brief The speed allowed on this lane
@@ -166,7 +167,7 @@ public:
         /// @brief The id of the traffic light that controls this connection
         std::string tlID;
         /// @brief The index of this connection within the controlling traffic light
-        unsigned int tlLinkNo;
+        int tlLinkNo;
         /// @brief Information about being definitely free to drive (on-ramps)
         bool mayDefinitelyPass;
         /// @brief whether the junction must be kept clear when using this connection
@@ -254,6 +255,7 @@ public:
      * @param[in] offset Additional offset to the destination node
      * @param[in] geom The edge's geomatry
      * @param[in] streetName The street name (need not be unique)
+     * @param[in] origID The original ID in the source network (need not be unique)
      * @param[in] spread How the lateral offset of the lanes shall be computed
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
      * @see init
@@ -265,6 +267,7 @@ public:
            SUMOReal width, SUMOReal offset,
            PositionVector geom,
            const std::string& streetName = "",
+           const std::string& origID = "",
            LaneSpreadFunction spread = LANESPREAD_RIGHT,
            bool tryIgnoreNodePositions = false);
 
@@ -1018,9 +1021,9 @@ public:
 
     void decLaneNo(unsigned int by);
 
-    void deleteLane(unsigned int index, bool recompute=true);
+    void deleteLane(unsigned int index, bool recompute = true);
 
-    void addLane(unsigned int index, bool recompute=true);
+    void addLane(unsigned int index, bool recompute = true);
 
     void markAsInLane2LaneState();
 
@@ -1195,8 +1198,9 @@ private:
      *
      * @param[in] noLanes The number of lanes this edge has
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
+     * @param[in] origID The original ID this edge had
      */
-    void init(unsigned int noLanes, bool tryIgnoreNodePositions);
+    void init(unsigned int noLanes, bool tryIgnoreNodePositions, const std::string& origID);
 
 
     /** divides the lanes on the outgoing edges */

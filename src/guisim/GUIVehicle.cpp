@@ -193,7 +193,7 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
 }
 
 
-void 
+void
 GUIVehicle::drawAction_drawPersonsAndContainers(const GUIVisualizationSettings& s) const {
     if (myPersonDevice != 0) {
         const std::vector<MSTransportable*>& ps = myPersonDevice->getPersons();
@@ -218,7 +218,7 @@ GUIVehicle::drawAction_drawPersonsAndContainers(const GUIVisualizationSettings& 
 }
 
 
-void 
+void
 GUIVehicle::drawAction_drawLinkItems(const GUIVisualizationSettings& s) const {
     for (DriveItemVector::const_iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         if ((*i).myLink == 0) {
@@ -234,7 +234,7 @@ GUIVehicle::drawAction_drawLinkItems(const GUIVisualizationSettings& s) const {
                 glColor3d(.8, 0, 0);
             }
             const SUMOTime leaveTime = (*i).myLink->getLeaveTime(
-                    (*i).myArrivalTime, (*i).myArrivalSpeed, (*i).getLeaveSpeed(), getVehicleType().getLengthWithGap());
+                                           (*i).myArrivalTime, (*i).myArrivalSpeed, (*i).getLeaveSpeed(), getVehicleType().getLengthWithGap());
             drawLinkItem(p, (*i).myArrivalTime, leaveTime, s.vehicleName.size / s.scale);
             // the time slot that ego vehicle uses when checking opened may
             // differ from the one it requests in setApproaching
@@ -329,7 +329,7 @@ GUIVehicle::drawAction_drawVehicleBrakeLight(SUMOReal length, bool onlyOne) cons
 
 inline void
 GUIVehicle::drawAction_drawVehicleBlueLight() const {
-    if (signalSet(MSVehicle::VEH_SIGNAL_EMERGENCY_BLUE)){
+    if (signalSet(MSVehicle::VEH_SIGNAL_EMERGENCY_BLUE)) {
         glPushMatrix();
         glTranslated(0, 2.5, .5);
         glColor3f(0, 0, 1);

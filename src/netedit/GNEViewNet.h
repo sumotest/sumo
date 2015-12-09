@@ -152,9 +152,6 @@ public:
     /// @brief replace node by geometry
     long onCmdNodeReplace(FXObject*, FXSelector, void*);
 
-    /// @brief switch color scheme
-    long onCmdVisualizeHeight(FXObject*, FXSelector, void*);
-
     /** @brief sets edit mode (from hotkey)
      * @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
      */
@@ -203,6 +200,14 @@ public:
     /// @brief update control contents after undo/redo or recompute
     void updateControls();
 
+    GNETLSEditor* getTLSEditor() {
+        return myTLSEditor;
+    }
+
+    bool changeAllPhases() const {
+        return myChangeAllPhases->getCheck() != FALSE;
+    }
+
 protected:
     int doPaintGL(int mode, const Boundary& bound);
 
@@ -224,6 +229,7 @@ private:
 
     FXMenuCheck* mySelectEdges;
     FXMenuCheck* myExtendToEdgeNodes;
+    FXMenuCheck* myChangeAllPhases;
 
     /// @name the state-variables of the create-edge state-machine
     // @{
@@ -265,9 +271,6 @@ private:
     // @}
 
     /// @name state-variables of inspect-mode
-    // @{
-    FXMenuCheck* myVisualizeHeight;
-    // @}
     //
     /// @name state-variables of select-mode
     // @{

@@ -75,8 +75,7 @@ GUILane::GUILane(const std::string& id, SUMOReal maxSpeed, SUMOReal length,
                  SVCPermissions permissions, unsigned int index) :
     MSLane(id, maxSpeed, length, edge, numericalID, shape, width, permissions, index),
     GUIGlObject(GLO_LANE, id),
-    myAmClosed(false)
-{
+    myAmClosed(false) {
     myShapeRotations.reserve(myShape.size() - 1);
     myShapeLengths.reserve(myShape.size() - 1);
     myShapeColors.reserve(myShape.size() - 1);
@@ -1017,7 +1016,7 @@ GUILane::updateColor(const GUIVisualizationSettings& s) {
 #endif
 
 
-void 
+void
 GUILane::closeTraffic(bool rebuildAllowed) {
     MSGlobals::gCheckRoutes = false;
     if (myAmClosed) {

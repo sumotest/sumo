@@ -32,6 +32,7 @@
 #include <iostream>
 #include <utility>
 #include <foreign/polyfonts/polyfonts.h>
+#include <utils/foxtools/MFXUtils.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/common/RandHelper.h>
 #include <utils/common/SUMOVehicleClass.h>
@@ -50,6 +51,8 @@
 #include "GNELane.h"
 #include "GNEEdge.h"
 #include "GNEJunction.h"
+#include "GNETLSEditor.h"
+#include "GNEInternalLane.h"
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
@@ -59,24 +62,34 @@
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
-
 // ===========================================================================
-// static member definitions
+// FOX callback mapping
 // ===========================================================================
+// Object implementation
+FXIMPLEMENT(GNELane, FXDelegator, 0, 0)
 
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNELane::GNELane(GNEEdge& edge, const unsigned int index) :
+GNELane::GNELane(GNEEdge& edge, const int index) :
     GUIGlObject(GLO_LANE, edge.getNBEdge()->getLaneID(index)),
     GNEAttributeCarrier(SUMO_TAG_LANE),
     myParentEdge(edge),
     myIndex(index),
-    mySpecialColor(0) {
+    mySpecialColor(0),
+    myTLSEditor(0) {
     updateGeometry();
 }
 
+GNELane::GNELane() :
+    GUIGlObject(GLO_LANE, "dummyConstructorGNELane"),
+    GNEAttributeCarrier(SUMO_TAG_LANE),
+    myParentEdge(*static_cast<GNEEdge*>(0)),
+    myIndex(-1),
+    mySpecialColor(0),
+    myTLSEditor(0)
+{ }
 
 GNELane::~GNELane() {}
 
@@ -112,7 +125,7 @@ GNELane::drawArrows() const {
     const std::vector<NBEdge::Connection>& edgeCons = myParentEdge.getNBEdge()->myConnections;
     NBNode* dest = myParentEdge.getNBEdge()->myTo;
     for (std::vector<NBEdge::Connection>::const_iterator i = edgeCons.begin(); i != edgeCons.end(); ++i) {
-        if ((*i).fromLane == (int)myIndex) {
+        if ((*i).fromLane == myIndex) {
             LinkDirection dir = dest->getDirection(myParentEdge.getNBEdge(), i->toEdge, OptionsCont::getOptions().getBool("lefthand"));
             switch (dir) {
                 case LINKDIR_STRAIGHT:
@@ -230,10 +243,10 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
     } else if (selectedEdge) {
         GLHelper::setColor(GNENet::selectionColor);
     } else {
-		const GUIColorer& c = s.laneColorer;
-		if (!setFunctionalColor(c.getActive()) && !setMultiColor(c)) {
-			GLHelper::setColor(c.getScheme().getColor(getColorValue(c.getActive())));
-		}        
+        const GUIColorer& c = s.laneColorer;
+        if (!setFunctionalColor(c.getActive()) && !setMultiColor(c)) {
+            GLHelper::setColor(c.getScheme().getColor(getColorValue(c.getActive())));
+        }
     };
 
     // draw lane
@@ -251,22 +264,22 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (drawAsRailway(s)) {
             // draw as railway
             const SUMOReal halfRailWidth = 0.725 * exaggeration;
-			if (myShapeColors.size() > 0) {
-				GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfRailWidth);
-			} else {
-				GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfRailWidth);
-			}            
+            if (myShapeColors.size() > 0) {
+                GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfRailWidth);
+            } else {
+                GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfRailWidth);
+            }
             RGBColor current = GLHelper::getColor();
             glColor3d(1, 1, 1);
             glTranslated(0, 0, .1);
-			GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfRailWidth - 0.2);
+            GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfRailWidth - 0.2);
             GLHelper::setColor(current);
             drawCrossties(0.3 * exaggeration, 1 * exaggeration, 1 * exaggeration);
         } else {
             // the actual lane
             // reduce lane width to make sure that a selected edge can still be seen
-			const SUMOReal halfWidth = selectionScale * (myParentEdge.getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
-			if (myShapeColors.size() > 0) {
+            const SUMOReal halfWidth = selectionScale * (myParentEdge.getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
+            if (myShapeColors.size() > 0) {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfWidth);
             } else {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfWidth);
@@ -342,6 +355,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     buildSelectionPopupEntry(ret);
     buildPositionCopyEntry(ret, false);
     const int editMode = parent.getVisualisationSettings()->editMode;
+    myTLSEditor = 0;
     if (editMode != GNE_MODE_CONNECT && editMode != GNE_MODE_TLS && editMode != GNE_MODE_CREATE_EDGE) {
         new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
         new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
@@ -358,6 +372,18 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
         } else {
             new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
+        }
+    } else if (editMode == GNE_MODE_TLS) {
+        myTLSEditor = static_cast<GNEViewNet&>(parent).getTLSEditor();
+        if (myTLSEditor->controlsEdge(myParentEdge)) {
+            new FXMenuCommand(ret, "Select state for all links from this edge:", 0, 0, 0);
+            const std::vector<std::string> names = GNEInternalLane::LinkStateNames.getStrings();
+            for (std::vector<std::string>::const_iterator it = names.begin(); it != names.end(); it++) {
+                FXuint state = GNEInternalLane::LinkStateNames.get(*it);
+                FXMenuRadio* mc = new FXMenuRadio(ret, (*it).c_str(), this, FXDataTarget::ID_OPTION + state);
+                mc->setSelBackColor(MFXUtils::getFXColor(GNEInternalLane::colorForLinksState(state)));
+                mc->setBackColor(MFXUtils::getFXColor(GNEInternalLane::colorForLinksState(state)));
+            }
         }
     } else {
         FXMenuCommand* mc = new FXMenuCommand(ret, "Additional options available in 'Inspect Mode'", 0, 0, 0);
@@ -440,7 +466,7 @@ GNELane::updateGeometry() {
     }
 }
 
-void 
+void
 GNELane::setIndex(unsigned int index) {
     myIndex = index;
     setMicrosimID(myParentEdge.getNBEdge()->getLaneID(index));
@@ -584,10 +610,10 @@ GNELane::setMultiColor(const GUIColorer& c) const {
 
 SUMOReal
 GNELane::getColorValue(size_t activeScheme) const {
-	const SVCPermissions myPermissions = myParentEdge.getNBEdge()->getPermissions(myIndex);
+    const SVCPermissions myPermissions = myParentEdge.getNBEdge()->getPermissions(myIndex);
     switch (activeScheme) {
         case 0:
-			switch (myPermissions) {
+            switch (myPermissions) {
                 case SVC_PEDESTRIAN:
                     return 1;
                 case SVC_BICYCLE:
@@ -610,25 +636,25 @@ GNELane::getColorValue(size_t activeScheme) const {
         case 2:
             return (SUMOReal)myPermissions;
         case 3:
-			return myParentEdge.getNBEdge()->getLaneSpeed(myIndex);
+            return myParentEdge.getNBEdge()->getLaneSpeed(myIndex);
         case 4:
-            return myParentEdge.getNBEdge()->getNumLanes();        
+            return myParentEdge.getNBEdge()->getNumLanes();
         case 5: {
             return myParentEdge.getNBEdge()->getLoadedLength() / myParentEdge.getNBEdge()->getLength();
         }
-		// case 6: by angle (functional)
-       case 7: {
+        // case 6: by angle (functional)
+        case 7: {
             return myParentEdge.getNBEdge()->getPriority();
         }
         case 8: {
             // color by z of first shape point
             return getShape()[0].z();
         }
-		// case 9: by segment height
+        // case 9: by segment height
         case 10: {
             // color by incline
             return (getShape()[-1].z() - getShape()[0].z()) /  myParentEdge.getNBEdge()->getLength();
-        }        
+        }
     }
     return 0;
 }
@@ -670,9 +696,20 @@ GNELane::drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) co
 }
 
 
-const std::string& 
+const std::string&
 GNELane::getParentName() const {
     return myParentEdge.getMicrosimID();
 }
+
+
+long
+GNELane::onDefault(FXObject* obj, FXSelector sel, void* data) {
+    if (myTLSEditor != 0) {
+        myTLSEditor->handleMultiChange(this, obj, sel, data);
+    }
+    return 1;
+}
+
+
 
 /****************************************************************************/
