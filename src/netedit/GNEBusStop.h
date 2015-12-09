@@ -65,12 +65,14 @@ public:
      */
     GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos);
 
-
     /// @brief Destructor
-    virtual ~GNEBusStop() ;
+    ~GNEBusStop();
 
-	/**** DOCUMENTAR ***/
 
+	/** @brief Returns parent lane
+     *
+     * @return The GNElane parent
+     */
 	GNELane &getLane();
 
 	SUMOReal getBeginLanePosition() const;
@@ -80,14 +82,13 @@ public:
 	const std::vector<std::string> &getLines() const;
 
 
-	/**** *****/
-
     /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns the name of the parent object (if any)
      * @return This object's parent id
      */
     const std::string& getParentName() const; 
+
 
     /** @brief Returns an own popup-menu
      *
@@ -111,15 +112,6 @@ public:
             GUISUMOAbstractView& parent) ;
 
 
-    /** @brief Returns parent lane
-     *
-     * @return The GNElane parent
-     */
-    const GNELane& getParentLane() const {
-        return myLane;
-    };
-
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
@@ -136,7 +128,9 @@ public:
     //@}
 
     const PositionVector& getShape() const;
+
     const std::vector<SUMOReal>& getShapeRotations() const;
+
     const std::vector<SUMOReal>& getShapeLengths() const;
 
     ///@brief returns the boundry (including lanes)
@@ -145,8 +139,6 @@ public:
     ///@brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
-    void setIndex(unsigned int index);
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -201,13 +193,6 @@ private:
 
     /// @brief Invalidated assignment operator.
     GNEBusStop& operator=(const GNEBusStop&);
-
-    // drawing methods
-    void drawLinkNo() const;
-    void drawTLSLinkNo() const;
-    void drawLinkRules() const;
-    void drawArrows() const;
-    void drawLane2LaneConnections() const;
 
     // @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;

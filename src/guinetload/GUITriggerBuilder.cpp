@@ -104,18 +104,16 @@ GUITriggerBuilder::buildContainerStop(MSNet& net, const std::string& id,
 
 
 void
-GUITriggerBuilder::buildChargingStation(MSNet& net, const std::string& id,
-                                const std::vector<std::string>& lines,
-                                MSLane* lane,
-                                SUMOReal frompos, SUMOReal topos, SUMOReal chrgpower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay) {
-    GUIChargingStation* chrg = new GUIChargingStation(id, lines, *lane, frompos, topos, chrgpower, efficiency, chargeInTransit, chargeDelay);
+GUITriggerBuilder::buildChargingStation(MSNet& net, const std::string& id, MSLane* lane, SUMOReal frompos, SUMOReal topos,
+                   SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay) {
+    GUIChargingStation* chrgStn = new GUIChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
 
-    if (!net.addChargingStation(chrg)) {
-        delete chrg;
+    if (!net.addChargingStation(chrgStn)) {
+        delete chrgStn;
         throw InvalidArgument("Could not build charging station '" + id + "'; probably declared twice.");
     }
 
-    static_cast<GUINet&>(net).getVisualisationSpeedUp().addAdditionalGLObject(chrg);
+    static_cast<GUINet&>(net).getVisualisationSpeedUp().addAdditionalGLObject(chrgStn);
 }
 
 MSCalibrator*

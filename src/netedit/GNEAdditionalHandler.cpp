@@ -286,7 +286,7 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
 	SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGINGPOWER, id.c_str(), ok, 0);
 	SUMOReal efficiency = attrs.getOpt<SUMOReal>(SUMO_ATTR_EFFICIENCY, id.c_str(), ok, 0);
 	SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEINTRANSIT, id.c_str(), ok, 0);
-	SUMOReal ChargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
+	SUMOReal chargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
 
 	const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
 
@@ -299,7 +299,7 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
 	SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
 
 	// build the Charging Station
-	buildChargingStation(net, id, lines, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, ChargeDelay);
+	buildChargingStation(net, id, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, chargeDelay);
 }
 
 
@@ -356,8 +356,6 @@ void
 GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines, 
                                    GNELane* lane, SUMOReal frompos, SUMOReal topos)
 {
-
-    /** OJO! Cambiar esto por stoppingPlace *** */
     GNEBusStop* stop = new GNEBusStop(id, lines, *lane, frompos, topos);
     if (!net->addBusStop(stop)) {
         delete stop;
@@ -366,11 +364,14 @@ GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std
 }
 
 void 
-GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, const std::vector<std::string>& lines, 
-                                           GNELane* lane, SUMOReal frompos, SUMOReal topos, SUMOReal chrgpower, 
-										   SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal ChargeDelay)
+GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
+                                           SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay)
 {
-
+    GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
+    if (!net->addChargingStation(chargingStation)) {
+        delete chargingStation;
+    throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
+	}
 }
 
 void 

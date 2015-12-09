@@ -202,7 +202,7 @@ bool MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOR
             // time it takes the vehicle at the station < charging station time delay?
             if (getChargingStartTime() > ChargingStationPointer->getChargeDelay()) {
                 // Calulate energy charged (Fix);
-                energyCharged = ChargingStationPointer->getChrgPower() * ChargingStationPointer->getEfficency();
+                energyCharged = ChargingStationPointer->getChargingPower() * ChargingStationPointer->getEfficency();
 
                 // Convert from [kWs] to [kWh] (3600s / 1h):
                 energyCharged /= 3600;

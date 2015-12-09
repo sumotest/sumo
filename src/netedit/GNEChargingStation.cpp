@@ -27,7 +27,34 @@
 #include <config.h>
 #endif
 
+#include <string>
+#include <iostream>
+#include <utility>
+#include <foreign/polyfonts/polyfonts.h>
+#include <utils/geom/PositionVector.h>
+#include <utils/common/RandHelper.h>
+#include <utils/common/SUMOVehicleClass.h>
+#include <utils/common/ToString.h>
+#include <utils/geom/GeomHelper.h>
+#include <utils/gui/windows/GUISUMOAbstractView.h>
+#include <utils/gui/windows/GUIAppEnum.h>
+#include <utils/gui/images/GUIIconSubSys.h>
+#include <utils/gui/div/GUIParameterTableWindow.h>
+#include <utils/gui/globjects/GUIGLObjectPopupMenu.h>
+#include <utils/gui/div/GUIGlobalSelection.h>
+#include <utils/gui/div/GLHelper.h>
+#include <utils/gui/windows/GUIAppEnum.h>
+#include <utils/gui/images/GUITexturesHelper.h>
+#include <utils/xml/SUMOSAXHandler.h>
+
 #include "GNEChargingStation.h"
+#include "GNELane.h"
+#include "GNEEdge.h"
+#include "GNEJunction.h"
+#include "GNEUndoList.h"
+#include "GNENet.h"
+#include "GNEChange_Attribute.h"
+#include "GNEViewNet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -43,25 +70,367 @@
 // ===========================================================================
 
 
-GNEChargingStation::GNEChargingStation(GNELane& lane) :
-	GNEAttributeCarrier(SUMO_TAG_CHARGING_STATION),	
-	myParentLane(lane){
-
+GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
+		                               SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay) :
+	myLane(lane),
+	myBegPos(frompos),
+	myEndPos(topos),
+	GUIGlObject(GLO_TRIGGER, id),
+    GNEAttributeCarrier(SUMO_TAG_BUS_STOP) {
+	myLane.addChargingStation(this);
+    updateGeometry();
 }
 
 GNEChargingStation::~GNEChargingStation() {
+	myLane.removeChargingStation(this);
 }
 
-GNELane &GNEChargingStation::getLane() const {
-	return myParentLane;
+GNELane&
+GNEChargingStation::getLane() const {
+	return myLane;
 }
 
-SUMOReal GNEChargingStation::getBeginLanePosition() const {
-	return begin;
+SUMOReal 
+GNEChargingStation::getBeginLanePosition() const {
+	return myBegPos;
 }
 		
-SUMOReal GNEChargingStation::getEndLanePosition() const {
-	return end;
+SUMOReal 
+GNEChargingStation::getEndLanePosition() const {
+	return myEndPos;
+}
+
+void
+GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
+	// Draw Charging Station
+    glPushName(getGlID());
+    glPushMatrix();
+    RGBColor blue(114, 210, 252, 255);
+    RGBColor green(76, 170, 50, 255);
+    RGBColor yellow(255, 235, 0, 255);
+    // draw the area
+    glTranslated(0, 0, getType());
+    GLHelper::setColor(blue);
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+
+    // draw details unless zoomed out to far
+    if (s.scale * exaggeration >= 10) {
+        // draw the sign
+        glTranslated(mySignPos.x(), mySignPos.y(), 0);
+        int noPoints = 9;
+        if (s.scale * exaggeration > 25) {
+            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
+        }
+
+        glScaled(exaggeration, exaggeration, 1);
+        GLHelper::setColor(blue);
+        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+        glTranslated(0, 0, .1);
+
+        GLHelper::setColor(yellow);
+        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
+
+        if (s.scale * exaggeration >= 4.5) {
+            GLHelper::drawText("C", Position(), .1, 1.6, green, mySignRot);
+        }
+
+        glTranslated(5, 0, 0);
+
+    }
+    glPopMatrix();
+    glPopName();
+    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+}
+
+GUIGLObjectPopupMenu*
+GNEChargingStation::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
+	/*
+    buildPopupHeader(ret, app);
+    buildCenterPopupEntry(ret);
+    new FXMenuCommand(ret, "Copy edge name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
+    buildNameCopyPopupEntry(ret);
+    buildSelectionPopupEntry(ret);
+    buildPositionCopyEntry(ret, false);
+    if (parent.getVisualisationSettings()->editMode != GNE_MODE_CONNECT) {
+        new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
+        new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
+        new FXMenuCommand(ret, "Reverse edge", 0, &parent, MID_GNE_REVERSE_EDGE);
+        new FXMenuCommand(ret, "Add reverse direction", 0, &parent, MID_GNE_ADD_REVERSE_EDGE);
+        new FXMenuCommand(ret, "Set geometry endpoint here", 0, &parent, MID_GNE_SET_EDGE_ENDPOINT);
+        new FXMenuCommand(ret, "Restore geometry endpoint", 0, &parent, MID_GNE_RESET_EDGE_ENDPOINT);
+        if (gSelected.isSelected(GLO_LANE, getGlID())) {
+            new FXMenuCommand(ret, "Straighten selected Edges", 0, &parent, MID_GNE_STRAIGHTEN);
+        } else {
+            new FXMenuCommand(ret, "Straighten edge", 0, &parent, MID_GNE_STRAIGHTEN);
+        }
+        if (gSelected.isSelected(GLO_LANE, getGlID())) {
+            new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
+        } else {
+            new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
+        }
+    }
+    // buildShowParamsPopupEntry(ret, false);
+    const SUMOReal pos = getShape().nearest_offset_to_point2D(parent.getPositionInformation());
+    const SUMOReal height = getShape().positionAtOffset2D(getShape().nearest_offset_to_point2D(parent.getPositionInformation())).z();
+    new FXMenuCommand(ret, ("pos: " + toString(pos) + " height: " + toString(height)).c_str(), 0, 0, 0);
+    // new FXMenuSeparator(ret);
+    // buildPositionCopyEntry(ret, false);
+
+    // let the GNEViewNet store the popup position
+    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
+	*/
+    return ret;
+}
+
+
+GUIParameterTableWindow*
+GNEChargingStation::getParameterWindow(GUIMainWindow& app,
+                            GUISUMOAbstractView&) {
+
+    GUIParameterTableWindow* ret =
+        new GUIParameterTableWindow(app, *this, 2);
+    // add items
+    ret->mkItem("length [m]", false, myLane.getParentEdge().getNBEdge()->getLength());
+    // close building
+    ret->closeBuilding();
+    return ret;
+
+}
+
+
+Boundary
+GNEChargingStation::getCenteringBoundary() const {
+    Boundary b = myShape.getBoxBoundary();
+    b.grow(20);	// anterior: 10
+    return b;
+}
+
+
+const PositionVector&
+GNEChargingStation::getShape() const {
+    return myLane.getShape();
+}
+
+
+const std::vector<SUMOReal>&
+GNEChargingStation::getShapeRotations() const {
+    return myShapeRotations;
+}
+
+
+const std::vector<SUMOReal>&
+GNEChargingStation::getShapeLengths() const {
+    return myShapeLengths;
+}
+
+
+Boundary
+GNEChargingStation::getBoundary() const {
+    return myLane.getShape().getBoxBoundary();
+}
+
+
+void
+GNEChargingStation::updateGeometry() {
+    //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
+	SUMOReal offsetSign = 1;
+    myShape = myLane.getShape();
+    myShape = myShape.getSubpart(myBegPos, myEndPos);
+    myShapeRotations.reserve(myShape.size() - 1);
+    myShapeLengths.reserve(myShape.size() - 1);
+    int e = (int) myShape.size() - 1;
+    for (int i = 0; i < e; ++i) {
+        const Position& f = myShape[i];
+        const Position& s = myShape[i + 1];
+        myShapeLengths.push_back(f.distanceTo(s));
+        myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+    }
+    PositionVector tmp = myShape;
+    tmp.move2side(1.5);
+    mySignPos = tmp.getLineCenter();
+    mySignRot = 0;
+    if (tmp.length() != 0) {
+        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+        mySignRot -= 90;
+    }
+}
+
+std::string
+GNEChargingStation::getAttribute(SumoXMLAttr key) const {
+    switch (key) {
+        case SUMO_ATTR_ID:
+            return getMicrosimID();
+        case SUMO_ATTR_LANE:
+            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+        case SUMO_ATTR_STARTPOS:
+            return toString(myBegPos);
+        case SUMO_ATTR_ENDPOS:
+            return toString(myEndPos);
+        default:
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+    }
+}
+
+
+void
+GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+	if (value == getAttribute(key)) {
+        return; //avoid needless changes, later logic relies on the fact that attributes have changed
+    }
+    switch (key) {
+        case SUMO_ATTR_ID:
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+			/// CLASS GNEChargingStation_CHANGE has to be finished
+			
+			/*
+        case SUMO_ATTR_LANE:
+            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+        case SUMO_ATTR_STARTPOS:
+            return toString(myBegPos);
+        case SUMO_ATTR_ENDPOS:
+            return toString(myEndPos);
+			*/
+        default:
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+    }
+}
+
+
+bool
+GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
+    switch (key) {
+        case SUMO_ATTR_ID:
+            return false;
+        case SUMO_ATTR_LANE:
+            return canParse<std::string>(value);
+        case SUMO_ATTR_STARTPOS:
+			return canParse<SUMOReal>(value);
+        case SUMO_ATTR_ENDPOS:
+            return canParse<SUMOReal>(value);
+        default:
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+    }
+}
+
+// ===========================================================================
+// private
+// ===========================================================================
+
+void
+GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
+    NBEdge* edge = myLane.getParentEdge().getNBEdge();
+    switch (key) {
+        case SUMO_ATTR_ID:
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_LANE:
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+            break;
+        case SUMO_ATTR_STARTPOS:
+            myBegPos = parse<SUMOReal>(value);
+            break;
+        case SUMO_ATTR_ENDPOS:
+            myEndPos = parse<SUMOReal>(value);
+            break;
+        default:
+            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+    }
+}
+
+
+bool
+GNEChargingStation::setFunctionalColor(size_t activeScheme) const {
+    switch (activeScheme) {
+        case 6: {
+            SUMOReal hue = GeomHelper::naviDegree(getShape().beginEndAngle()); // [0-360]
+            GLHelper::setColor(RGBColor::fromHSV(hue, 1., 1.));
+            return true;
+        }
+        default:
+            return false;
+    }
+}
+
+
+bool
+GNEChargingStation::setMultiColor(const GUIColorer& c) const {
+    const size_t activeScheme = c.getActive();
+    myShapeColors.clear();
+    switch (activeScheme) {
+        case 9: // color by height at segment start
+            for (PositionVector::const_iterator ii = getShape().begin(); ii != getShape().end() - 1; ++ii) {
+                myShapeColors.push_back(c.getScheme().getColor(ii->z()));
+            }
+            return true;
+        case 11: // color by inclination  at segment start
+            for (int ii = 1; ii < (int)getShape().size(); ++ii) {
+                const SUMOReal inc = (getShape()[ii].z() - getShape()[ii - 1].z()) / MAX2(POSITION_EPS, getShape()[ii].distanceTo2D(getShape()[ii - 1]));
+                myShapeColors.push_back(c.getScheme().getColor(inc));
+            }
+            return true;
+        default:
+            return false;
+    }
+}
+
+
+SUMOReal
+GNEChargingStation::getColorValue(size_t activeScheme) const {
+	/*
+	const SVCPermissions myPermissions = myLane.getParentEdge().getNBEdge()->getPermissions(myIndex);
+    switch (activeScheme) {
+        case 0:
+			switch (myPermissions) {
+                case SVC_PEDESTRIAN:
+                    return 1;
+                case SVC_BICYCLE:
+                    return 2;
+                case 0:
+                    return 3;
+                case SVC_SHIP:
+                    return 4;
+                default:
+                    break;
+            }
+            if ((myPermissions & SVC_PASSENGER) != 0 || isRailway(myPermissions)) {
+                return 0;
+            } else {
+                return 5;
+            }
+        case 1:
+            return gSelected.isSelected(getType(), getGlID()) ||
+                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&myLane.getParentEdge())->getGlID());
+        case 2:
+            return (SUMOReal)myPermissions;
+        case 3:
+			return myLane.getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
+        case 4:
+            return myLane.getParentEdge().getNBEdge()->getNumLanes();        
+        case 5: {
+            return myLane.getParentEdge().getNBEdge()->getLoadedLength() / myLane.getParentEdge().getNBEdge()->getLength();
+        }
+		// case 6: by angle (functional)
+       case 7: {
+            return myLane.getParentEdge().getNBEdge()->getPriority();
+        }
+        case 8: {
+            // color by z of first shape point
+            return getShape()[0].z();
+        }
+		// case 9: by segment height
+        case 10: {
+            // color by incline
+            return (getShape()[-1].z() - getShape()[0].z()) /  myLane.getParentEdge().getNBEdge()->getLength();
+        }        
+    }
+	*/
+    return 0;
+}
+
+const std::string& 
+GNEChargingStation::getParentName() const {
+    return myLane.getMicrosimID();
 }
 
 /****************************************************************************/

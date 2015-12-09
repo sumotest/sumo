@@ -306,8 +306,8 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
 		(*i)->drawGL(s);																				// PABLO #1916
 
 	// Draw chargingStations of this lane																						// PABLO #1916
-	//for(std::vector<GNEChargingStation*>::const_iterator i = myChargingStations.begin(); i != myChargingStations.end(); i++)	// PABLO #1916
-	//	(*i)->drawGL(s);																										// PABLO #1916
+	for(std::vector<GNEChargingStation*>::const_iterator i = myChargingStations.begin(); i != myChargingStations.end(); i++)	// PABLO #1916
+		(*i)->drawGL(s);																										// PABLO #1916
 
     glPopName();
 }

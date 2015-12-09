@@ -85,19 +85,23 @@ GNEBusStop::~GNEBusStop() {
 	myLane.removeBusStop(this);
 }
 
-GNELane &GNEBusStop::getLane() {
+GNELane&
+GNEBusStop::getLane() {
 	return myLane;
 }
 
-SUMOReal GNEBusStop::getBeginLanePosition() const {
+SUMOReal 
+GNEBusStop::getBeginLanePosition() const {
 	return myBegPos;
 }
 		
-SUMOReal GNEBusStop::getEndLanePosition() const {
+SUMOReal 
+GNEBusStop::getEndLanePosition() const {
 	return myEndPos;
 }
 
-const std::vector<std::string> &GNEBusStop::getLines() const {
+const 
+std::vector<std::string> &GNEBusStop::getLines() const {
 	return myLines;
 }
 

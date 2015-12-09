@@ -59,13 +59,13 @@ public:
 
     // CONSTRUCTORES
 
-    MSChargingStation(const std::string& new_ChargingStationID, const std::vector<std::string>& new_lines, MSLane& new_Lane,
-              SUMOReal new_StartPos, SUMOReal new_EndPos, SUMOReal new_ChrgPower, SUMOReal new_Efficency, SUMOReal new_ChargeInTransit, SUMOReal new_ChargeDelay);
+    MSChargingStation(const std::string& chargingStationID, MSLane& lane, SUMOReal startPos, SUMOReal endPos, 
+		              SUMOReal chargingPower, SUMOReal efficency, SUMOReal chargeInTransit, SUMOReal chargeDelay);
 
-    virtual ~MSChargingStation();
+    ~MSChargingStation();
 
     /// @brief Get parameter 01, charging station's charging power
-    SUMOReal getChrgPower() const;
+    SUMOReal getChargingPower() const;
 
     /// @brief Get parameter 02, efficiency of the charging station
     SUMOReal getEfficency() const;
@@ -95,17 +95,16 @@ public:
 private:
 
     /// @brief Parameter 01, charging station's charging power
-    SUMOReal ChrgPower;
+    SUMOReal myChargingPower;
 
     /// @brief Parameter 02, efficiency of the charging station
-    SUMOReal Efficency;
+    SUMOReal myEfficiency;
 
     /// @brief Parameter 03, Allow charge in transit
-    SUMOReal ChargeInTransit;
+    SUMOReal myChargeInTransit;
 
     /// @brief Parameter 03, Charge Delay
-    SUMOReal ChargeDelay;
-
+    SUMOReal myChargeDelay;
 
     /** @brief convert from SUMOReal to String
      * @param[in] var Variable in SUMOReal format

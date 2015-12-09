@@ -78,13 +78,15 @@ public:
      * @param[in] id The id of the Charging Station
      * @param[in] lines Names of the bus lines that halt on this bus stop
      * @param[in] lane The lane the charging station is placed on
-     * @param[in] begPos Begin position of the charging station on the lane
-     * @param[in] endPos End position of the charging station on the lane
+     * @param[in] frompos Begin position of the charging station on the lane
+     * @param[in] topos End position of the charging station on the lane
+	 * @param[in] chargingPower
+	 * @param[in] efficiency
+	 * @param[in] chargeInTransit
+	 * @param[in] chargeDelay
      */
-    GUIChargingStation(const std::string& id,
-               const std::vector<std::string>& lines, MSLane& lane,
-               SUMOReal frompos, SUMOReal topos,
-               SUMOReal new_chrgpower, SUMOReal new_efficiency, SUMOReal new_ChargeInTransit, SUMOReal new_ChargeDelay);
+    GUIChargingStation(const std::string& id, MSLane& lane, SUMOReal frompos, SUMOReal topos,
+               SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay);
 
 
     /// @brief Destructor
@@ -134,17 +136,17 @@ public:
     //@}
 
 private:
-    /// @brief chrgpower of the Charging Station
-    SUMOReal chrgpower;
+    /// @brief chargingPower of the Charging Station
+    SUMOReal myChargingPower;
 
     /// @brief efficiency of the Charging Station
-    SUMOReal efficiency;
+    SUMOReal myEfficiency;
 
     /// @brief allow charge in transit
-    SUMOReal chargeInTransit;
+    SUMOReal myChargeInTransit;
 
     /// @brief charge delay
-    SUMOReal chargeDelay;
+    SUMOReal myChargeDelay;
 
 private:
     /// @brief The rotations of the shape parts

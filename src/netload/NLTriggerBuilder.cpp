@@ -173,10 +173,10 @@ NLTriggerBuilder::parseAndBuildChargingStation(MSNet& net, const SUMOSAXAttribut
     // get the positions
     SUMOReal frompos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
     SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLength());
-    SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGINGPOWER, id.c_str(), ok, 0);
+    SUMOReal chargingPower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGINGPOWER, id.c_str(), ok, 0);
     SUMOReal efficiency = attrs.getOpt<SUMOReal>(SUMO_ATTR_EFFICIENCY, id.c_str(), ok, 0);
     SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEINTRANSIT, id.c_str(), ok, 0);
-    SUMOReal ChargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
+    SUMOReal chargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
 
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
 
@@ -184,12 +184,8 @@ NLTriggerBuilder::parseAndBuildChargingStation(MSNet& net, const SUMOSAXAttribut
         throw InvalidArgument("Invalid position for Charging Station '" + id + "'.");
     }
 
-    // get the lines
-    std::vector<std::string> lines;
-    SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
-
     // build the Charging Station
-    buildChargingStation(net, id, lines, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, ChargeDelay);
+    buildChargingStation(net, id, lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
 }
 
 void
@@ -384,11 +380,10 @@ NLTriggerBuilder::buildContainerStop(MSNet& net, const std::string& id,
 }
 
 void
-NLTriggerBuilder::buildChargingStation(MSNet& net, const std::string& id,
-                               const std::vector<std::string>& lines,
-                               MSLane* lane, SUMOReal frompos, SUMOReal topos, SUMOReal chrgpower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal ChargeDelay) {
+NLTriggerBuilder::buildChargingStation(MSNet& net, const std::string& id, MSLane* lane, SUMOReal frompos, SUMOReal topos, 
+                  SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal ChargeDelay) {
 
-    MSChargingStation* chargingStation = new MSChargingStation(id, lines, *lane, frompos, topos, chrgpower, efficiency, chargeInTransit, ChargeDelay);
+    MSChargingStation* chargingStation = new MSChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, ChargeDelay);
 
     if (!net.addChargingStation(chargingStation)) {
         delete chargingStation;
