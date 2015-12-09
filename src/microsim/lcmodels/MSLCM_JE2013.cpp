@@ -128,7 +128,7 @@ MSLCM_JE2013::wantsChange(
 
     if (gDebugFlag2) {
         std::cout << "\n" << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
-                  //<< std::setprecision(20)
+                  //<< std::setprecision(10)
                   << " veh=" << myVehicle.getID()
                   << " lane=" << myVehicle.getLane()->getID()
                   << " pos=" << myVehicle.getPositionOnLane()
@@ -321,7 +321,7 @@ MSLCM_JE2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         return (min + wanted) / (SUMOReal) 2.0;
         */
     }
-    if (myVehicle.getLane()->getEdge().getLanes().size() == 1) {
+    if (!myVehicle.getLane()->getEdge().hasLaneChanger()) {
         // remove chaning information if on a road with a single lane
         changed();
     }
@@ -691,12 +691,12 @@ MSLCM_JE2013::_wantsChange(
     // direction specific constants
     const bool right = (laneOffset == -1);
     if (isOpposite() && right) {
-        /// XXX left-hand networks
+        neigh = preb[preb.size() - 1];
+        curr = neigh;
         bestLaneOffset = -1;
         curr.bestLaneOffset = -1;
-        currentDist = 0;
-        neigh = preb[preb.size() - 1];
         neighDist = neigh.length;
+        currentDist = curr.length;
     }
     const int lca = (right ? LCA_RIGHT : LCA_LEFT);
     const int myLca = (right ? LCA_MRIGHT : LCA_MLEFT);
@@ -834,7 +834,7 @@ MSLCM_JE2013::_wantsChange(
     }
 
     if (changeToBest && bestLaneOffset == curr.bestLaneOffset
-            && currentDistDisallows(usableDist, bestLaneOffset, laDist)) {
+            && (currentDistDisallows(usableDist, bestLaneOffset, laDist) || isOpposite())) {
         /// @brief we urgently need to change lanes to follow our route
         ret = ret | lca | LCA_STRATEGIC | LCA_URGENT;
     } else {

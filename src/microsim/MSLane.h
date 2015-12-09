@@ -882,7 +882,7 @@ public:
 
     std::pair<MSVehicle* const, SUMOReal> getOppositeFollower(const MSVehicle* ego) const;
 
-    std::pair<MSVehicle* const, SUMOReal> getFollower(SUMOReal egoPos) const;
+    std::pair<MSVehicle* const, SUMOReal> getFollower(SUMOReal egoPos, SUMOReal egoLength) const;
 
     /// @name State saving/loading
     /// @{
