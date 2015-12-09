@@ -2189,6 +2189,9 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         startLane = myLane;
     }
     assert(startLane != 0);
+    if (getLaneChangeModel().isOpposite()) {
+        return;
+    }
     if (myBestLanes.size() > 0 && !forceRebuild && myLastBestLanesEdge == &startLane->getEdge()) {
         updateOccupancyAndCurrentBestLane(startLane);
         return;
