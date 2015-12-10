@@ -362,12 +362,12 @@ public:
 
     /// @brief begin iterator for iterating over all vehicles touching this lane in downstream direction
     AnyVehicleIterator anyVehiclesBegin() const {
-        return AnyVehicleIterator(this, 0, 0, myVehicles.size(), myPartialVehicles.size(), true);
+        return AnyVehicleIterator(this, 0, 0, (int)myVehicles.size(), (int)myPartialVehicles.size(), true);
     }
 
     /// @brief end iterator for iterating over all vehicles touching this lane in downstream direction
     AnyVehicleIterator anyVehiclesEnd() const {
-        return AnyVehicleIterator(this, myVehicles.size(), myPartialVehicles.size(), myVehicles.size(), myPartialVehicles.size(), true);
+        return AnyVehicleIterator(this, (int)myVehicles.size(), (int)myPartialVehicles.size(), (int)myVehicles.size(), (int)myPartialVehicles.size(), true);
     }
 
     /// @brief begin iterator for iterating over all vehicles touching this lane in upstream direction
@@ -861,7 +861,7 @@ public:
         return myRightSideOnEdge;
     }
 
-    SUMOReal getRightmostSublane() const {
+    int getRightmostSublane() const {
         return myRightmostSublane;
     }
 

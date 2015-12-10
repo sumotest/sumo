@@ -304,7 +304,7 @@ MSAbstractLaneChangeModel::getAngleOffset() const {
 
 SUMOTime 
 MSAbstractLaneChangeModel::remainingTime() const {
-    return (1 - myLaneChangeCompletion) * MSGlobals::gLaneChangeDuration;
+    return (SUMOTime)((1. - myLaneChangeCompletion) * MSGlobals::gLaneChangeDuration);
 }
 
 
