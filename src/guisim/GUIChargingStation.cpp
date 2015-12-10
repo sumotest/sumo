@@ -100,7 +100,7 @@ GUIChargingStation::~GUIChargingStation()
 
 GUIParameterTableWindow*
 GUIChargingStation::getParameterWindow(GUIMainWindow& app,
-                               GUISUMOAbstractView&) {
+                                       GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 6);
 
     // add items
