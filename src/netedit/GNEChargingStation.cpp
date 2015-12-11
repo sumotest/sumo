@@ -61,11 +61,6 @@
 #endif
 
 // ===========================================================================
-// static member definitions
-// ===========================================================================
-
-
-// ===========================================================================
 // member method definitions
 // ===========================================================================
 
@@ -224,13 +219,6 @@ const std::vector<SUMOReal>&
 GNEChargingStation::getShapeLengths() const {
     return myShapeLengths;
 }
-
-
-Boundary
-GNEChargingStation::getBoundary() const {
-    return myLane.getShape().getBoxBoundary();
-}
-
 
 void
 GNEChargingStation::updateGeometry() {

@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: $
 ///
-/// A class for visualizing busStop geometry (adapted from GUILaneWrapper)
+/// A lane area vehicles can halt at (GNE version)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors

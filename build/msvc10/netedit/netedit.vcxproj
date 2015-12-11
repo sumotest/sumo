@@ -224,6 +224,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNESelector.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNETLSEditor.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEUndoList.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEViewNet.cpp" />
@@ -265,10 +266,12 @@
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEReferenceCounter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEUndoList.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEViewNet.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEViewParent.h" />
+    <ClInclude Include="GNEStoppingPlace.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\y_libnetbuild\y_libnetbuild.vcxproj">

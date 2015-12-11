@@ -117,6 +117,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalHandler.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -226,10 +229,13 @@
     <ClInclude Include="..\..\..\src\netedit\GNEChargingStation.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="GNEAdditionalHandler.cpp">
-      <Filter>Quellcodedateien</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEAdditionalHandler.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GNEStoppingPlace.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>

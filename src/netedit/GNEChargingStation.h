@@ -75,6 +75,13 @@ public:
 		
 	SUMOReal getEndLanePosition() const;
 
+    
+    const PositionVector& getShape() const;
+    const std::vector<SUMOReal>& getShapeRotations() const;
+    const std::vector<SUMOReal>& getShapeLengths() const;
+
+
+
 
     /// @name inherited from GUIGlObject
     //@{
@@ -120,18 +127,12 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
-    const PositionVector& getShape() const;
-    const std::vector<SUMOReal>& getShapeRotations() const;
-    const std::vector<SUMOReal>& getShapeLengths() const;
-
     ///@brief returns the boundry (including lanes)
     Boundary getBoundary() const;
 
     ///@brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
-    void setIndex(unsigned int index);
 
     //@name inherited from GNEAttributeCarrier
     //@{

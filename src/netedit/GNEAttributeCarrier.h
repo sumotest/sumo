@@ -67,7 +67,13 @@ public:
     /// @brief Destructor
     virtual ~GNEAttributeCarrier() {};
 
+
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     virtual std::string getAttribute(SumoXMLAttr key) const = 0;
+
 
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
@@ -77,7 +83,14 @@ public:
      */
     virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
 
+
+    /* @brief method for checking if the key and their conrrespond attribute are valids
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
     virtual bool isValid(SumoXMLAttr key, const std::string& value);
+
 
     /// @brief how should this attribute carrier be called
     virtual std::string getDescription() {
