@@ -948,7 +948,7 @@ std::string
 GNENet::getBusStopID(const GNELane* lane, const SUMOReal pos) const {													// PABLO #1916
     for (std::map<std::string, GNEBusStop*>::const_iterator it = myBusStops.begin(); it != myBusStops.end(); ++it) {	// PABLO #1916
         GNEBusStop* stop = it->second;																					// PABLO #1916
-        if (&stop->getLane() == lane && fabs(stop->getEndLanePosition() - pos) < POSITION_EPS) {						// PABLO #1916
+        if (&stop->getLane() == lane && fabs(stop->getToPosition() - pos) < POSITION_EPS) {						// PABLO #1916
             return stop->getID();																						// PABLO #1916
         }																												// PABLO #1916
     }																													// PABLO #1916
@@ -992,7 +992,7 @@ std::string																																				// PABLO #1916
 GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {																			// PABLO #1916
 	for (std::map<std::string, GNEChargingStation*>::const_iterator it = myChargingStations.begin(); it != myChargingStations.end(); ++it) {			// PABLO #1916
         GNEChargingStation* chargingStation = it->second;																								// PABLO #1916
-        if (&chargingStation->getLane() == lane && chargingStation->getBeginLanePosition() <= pos && chargingStation->getEndLanePosition() >= pos) {	// PABLO #1916
+        if (&chargingStation->getLane() == lane && chargingStation->getFromPosition() <= pos && chargingStation->getToPosition() >= pos) {	// PABLO #1916
             return chargingStation->getID();																											// PABLO #1916
         }																																				// PABLO #1916
     }																																					// PABLO #1916

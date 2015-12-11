@@ -4,7 +4,7 @@
 /// @date    Dec 2015
 /// @version $Id: $
 ///
-/// A lane area vehicles can halt at (GNE version)
+/// A abstract class to define common parameters of lane area in which vehicles can halt (GNE version)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -65,6 +65,67 @@
 // member method definitions
 // ===========================================================================
 
+GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag) :
+	myLane(lane),
+	myFromPos(fromPos),
+	myToPos(toPos),
+	GUIGlObject(GLO_TRIGGER, id),
+    GNEAttributeCarrier(tag) {
+}
+
+
+GNEStoppingPlace::~GNEStoppingPlace() {
+}
+
+
+GNELane&
+GNEStoppingPlace::getLane() const {
+	return myLane;
+}
+
+
+SUMOReal 
+GNEStoppingPlace::getFromPosition() const {
+	return myFromPos;
+}
+
+		
+SUMOReal 
+GNEStoppingPlace::getToPosition() const {
+	return myToPos;
+}
+
+
+void 
+GNEStoppingPlace::setFromPosition(SUMOReal fromPos) {
+    if(fromPos < 0)
+        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be greather than 0");
+    else if(fromPos >= myToPos)
+        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be smaller than than ToPos '" + toString(myToPos) + "'");
+    else if ( (myToPos - fromPos) < 1)
+        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
+    else
+        myFromPos = fromPos;
+}
+
+
+void 
+GNEStoppingPlace::setToPosition(SUMOReal toPos) {
+    if(toPos > myLane.getLength())
+        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than lane length");
+    else if(myFromPos >= toPos)
+        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than than ToPos '" + toString(myToPos) + "'");
+    else if ( (myFromPos - toPos) < 1)
+        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
+    else
+        myToPos = toPos;
+}
+
+
+const std::string& 
+GNEStoppingPlace::getParentName() const {
+    return myLane.getMicrosimID();
+}
 
 
 /****************************************************************************/

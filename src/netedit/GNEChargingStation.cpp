@@ -64,36 +64,87 @@
 // member method definitions
 // ===========================================================================
 
-
-GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
-		                               SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay) :
-	myLane(lane),
-	myBegPos(frompos),
-	myEndPos(topos),
-	GUIGlObject(GLO_TRIGGER, id),
-    GNEAttributeCarrier(SUMO_TAG_BUS_STOP) {
-	myLane.addChargingStation(this);
+GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
+	GNEStoppingPlace(id, lane, fromPos, toPos, SUMO_TAG_CHARGING_STATION),
+	myChargingPower(chargingPower), 
+    myEfficiency(efficiency), 
+    myChargeInTransit(chargeInTransit), 
+    myChargeDelay(chargeDelay) {
+	getLane().addChargingStation(this);
     updateGeometry();
 }
 
+
 GNEChargingStation::~GNEChargingStation() {
-	myLane.removeChargingStation(this);
+	getLane().removeChargingStation(this);
 }
 
-GNELane&
-GNEChargingStation::getLane() const {
-	return myLane;
-}
 
 SUMOReal 
-GNEChargingStation::getBeginLanePosition() const {
-	return myBegPos;
+GNEChargingStation::getChargingPower() {
+    return myChargingPower;
 }
-		
+
+
 SUMOReal 
-GNEChargingStation::getEndLanePosition() const {
-	return myEndPos;
+GNEChargingStation::getEfficiency() {
+    return myEfficiency;
 }
+
+
+bool 
+GNEChargingStation::getChargeInTransit() {
+    return myChargeInTransit;
+}
+
+
+SUMOReal 
+GNEChargingStation::getChargeDelay() {
+    return myChargeDelay;
+}
+
+
+PositionVector
+GNEChargingStation::getShape() const {
+    return myShape;
+}
+
+
+std::vector<SUMOReal>
+GNEChargingStation::getShapeRotations() const {
+    return myShapeRotations;
+}
+
+
+std::vector<SUMOReal>
+GNEChargingStation::getShapeLengths() const {
+    return myShapeLengths;
+}
+
+
+void 
+GNEChargingStation::setChargingPower(SUMOReal chargingPower){
+    /** Falta poner condiciones **/
+}
+
+
+void 
+GNEChargingStation::setEfficiency(SUMOReal efficiency) {
+    /** Falta poner condiciones **/
+}
+
+
+void 
+GNEChargingStation::setChargeInTransit(bool chargeinTransit) {
+    /** Falta poner condiciones **/
+}
+
+
+void 
+GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
+    /** Falta poner condiciones **/
+}
+
 
 void
 GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
@@ -137,6 +188,7 @@ GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
     glPopName();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }
+
 
 GUIGLObjectPopupMenu*
 GNEChargingStation::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
@@ -187,7 +239,7 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app,
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, myLane.getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
     // close building
     ret->closeBuilding();
     return ret;
@@ -202,30 +254,12 @@ GNEChargingStation::getCenteringBoundary() const {
     return b;
 }
 
-
-const PositionVector&
-GNEChargingStation::getShape() const {
-    return myLane.getShape();
-}
-
-
-const std::vector<SUMOReal>&
-GNEChargingStation::getShapeRotations() const {
-    return myShapeRotations;
-}
-
-
-const std::vector<SUMOReal>&
-GNEChargingStation::getShapeLengths() const {
-    return myShapeLengths;
-}
-
 void
 GNEChargingStation::updateGeometry() {
     //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
 	SUMOReal offsetSign = 1;
-    myShape = myLane.getShape();
-    myShape = myShape.getSubpart(myBegPos, myEndPos);
+    myShape = getLane().getShape();
+    myShape = myShape.getSubpart(getFromPosition(), getToPosition());
     myShapeRotations.reserve(myShape.size() - 1);
     myShapeLengths.reserve(myShape.size() - 1);
     int e = (int) myShape.size() - 1;
@@ -251,13 +285,24 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+            return toString(getLane().getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(myBegPos);
+            return toString(getFromPosition());
         case SUMO_ATTR_ENDPOS:
-            return toString(myEndPos);
+            return toString(getToPosition());
+        case SUMO_ATTR_CHARGINGPOWER:
+            return toString(myChargingPower);
+        case SUMO_ATTR_EFFICIENCY:
+            return toString(myEfficiency);
+        case SUMO_ATTR_CHARGEINTRANSIT:
+            if(myChargeInTransit == true)
+                return "true";
+            else
+                return false;
+        case SUMO_ATTR_CHARGEDELAY:
+            return toString(myChargeDelay);
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -269,19 +314,33 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEU
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
 			/// CLASS GNEChargingStation_CHANGE has to be finished
-			
-			/*
         case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            return toString(myBegPos);
+            //return toString(getFromPosition());
+            break;
         case SUMO_ATTR_ENDPOS:
-            return toString(myEndPos);
-			*/
+            //return toString(getToPosition());
+            break;
+        case SUMO_ATTR_CHARGINGPOWER:
+            //return toString(myChargingPower);
+            break;
+        case SUMO_ATTR_EFFICIENCY:
+            //return toString(myEfficiency);
+            break;
+        case SUMO_ATTR_CHARGEINTRANSIT:
+            //if(myChargeInTransit == true)
+             //   return "true";
+            //else
+             //   return false;
+            //break;
+        case SUMO_ATTR_CHARGEDELAY:
+            //return toString(myChargeDelay);
+            break;
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -297,6 +356,7 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
 			return canParse<SUMOReal>(value);
         case SUMO_ATTR_ENDPOS:
             return canParse<SUMOReal>(value);
+            /*****/
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
@@ -308,7 +368,7 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
-    NBEdge* edge = myLane.getParentEdge().getNBEdge();
+    NBEdge* edge = getLane().getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
@@ -316,11 +376,13 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
             break;
         case SUMO_ATTR_STARTPOS:
-            myBegPos = parse<SUMOReal>(value);
+            setFromPosition(parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_ENDPOS:
-            myEndPos = parse<SUMOReal>(value);
+            setToPosition(parse<SUMOReal>(value));
             break;
+
+            /*****/
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
@@ -366,7 +428,7 @@ GNEChargingStation::setMultiColor(const GUIColorer& c) const {
 SUMOReal
 GNEChargingStation::getColorValue(size_t activeScheme) const {
 	/*
-	const SVCPermissions myPermissions = myLane.getParentEdge().getNBEdge()->getPermissions(myIndex);
+	const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
     switch (activeScheme) {
         case 0:
 			switch (myPermissions) {
@@ -388,19 +450,19 @@ GNEChargingStation::getColorValue(size_t activeScheme) const {
             }
         case 1:
             return gSelected.isSelected(getType(), getGlID()) ||
-                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&myLane.getParentEdge())->getGlID());
+                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&getLane().getParentEdge())->getGlID());
         case 2:
             return (SUMOReal)myPermissions;
         case 3:
-			return myLane.getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
+			return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
         case 4:
-            return myLane.getParentEdge().getNBEdge()->getNumLanes();        
+            return getLane().getParentEdge().getNBEdge()->getNumLanes();        
         case 5: {
-            return myLane.getParentEdge().getNBEdge()->getLoadedLength() / myLane.getParentEdge().getNBEdge()->getLength();
+            return getLane().getParentEdge().getNBEdge()->getLoadedLength() / getLane().getParentEdge().getNBEdge()->getLength();
         }
 		// case 6: by angle (functional)
        case 7: {
-            return myLane.getParentEdge().getNBEdge()->getPriority();
+            return getLane().getParentEdge().getNBEdge()->getPriority();
         }
         case 8: {
             // color by z of first shape point
@@ -409,16 +471,12 @@ GNEChargingStation::getColorValue(size_t activeScheme) const {
 		// case 9: by segment height
         case 10: {
             // color by incline
-            return (getShape()[-1].z() - getShape()[0].z()) /  myLane.getParentEdge().getNBEdge()->getLength();
+            return (getShape()[-1].z() - getShape()[0].z()) /  getLane().getParentEdge().getNBEdge()->getLength();
         }        
     }
 	*/
     return 0;
 }
 
-const std::string& 
-GNEChargingStation::getParentName() const {
-    return myLane.getMicrosimID();
-}
 
 /****************************************************************************/

@@ -228,7 +228,7 @@ protected:
      * @exception InvalidArgument If the charging Station can not be added to the net (is duplicate)
      */
     void buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
-		                      SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay);
+		                      SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
 
 
     /** @brief Builds a container stop

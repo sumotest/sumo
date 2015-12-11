@@ -232,9 +232,6 @@
     <ClInclude Include="..\..\..\src\netedit\GNEAdditionalHandler.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="GNEStoppingPlace.h">
-      <Filter>Header-Dateien</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>

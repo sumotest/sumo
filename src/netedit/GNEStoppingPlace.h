@@ -4,7 +4,7 @@
 /// @date    Dec 2015
 /// @version $Id: $
 ///
-/// A lane area vehicles can halt at (GNE version)
+/// A abstract class to define common parameters of lane area in which vehicles can halt (GNE version)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -55,12 +55,13 @@ class GNEStoppingPlace : public GUIGlObject, public GNEAttributeCarrier
 public:
 
 	/** @brief Constructor.
-     * @param[in] id Id of the stopping place (Must be unique)
+     * @param[in] id Gl-id of the stopping place (Must be unique)
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] frompos From position of the StoppingPlace
      * @param[in] topos To position of the StoppingPlace
+     * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
      */
-    GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos);
+    GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag);
 
 
     /** @brief Destructor.
@@ -68,15 +69,15 @@ public:
 	~GNEStoppingPlace();
 
 
-	/** @brief Returns parent lane
-     * @return The GNElane parent
-     */
-	GNELane &getLane() const;
-
-
     ///@brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
+
+
+	/** @brief Returns parent lane
+     * @return The GNElane parent lane
+     */
+	GNELane &getLane() const;
 
 
     /** @brief Returns the from position of the stoppingPlace
@@ -91,22 +92,36 @@ public:
 	SUMOReal getToPosition() const;
 
 
-    /** @brief Returns the Shape of the stoppingPlace
+    /** @brief Set a new from Position in StoppingPlace
+     * @param[in] fromPos new From Position of StoppingPlace
+     * @throws InvalidArgument if value of fromPos isn't valid
+     */
+    void setFromPosition(SUMOReal fromPos);
+
+
+    /** @brief Set a new to Position in StoppingPlace
+     * @param[in] toPos new to Position of StoppingPlace
+     * @throws InvalidArgument if value of toPos isn't valid
+     */
+    void setToPosition(SUMOReal toPos);
+
+
+    /** @brief Returns a copy of the Shape of the stoppingPlace
      * @return The Shape of the stoppingPlace
      */
-    const PositionVector& getShape() const;
+    PositionVector getShape() const;
 
 
-    /** @brief Returns the ShapeRotations of the stoppingPlace
+    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
      * @return The ShapeRotations of the stoppingPlace
      */
-    const std::vector<SUMOReal>& getShapeRotations() const;
+    std::vector<SUMOReal> getShapeRotations() const;
 
 
-    /** @brief Returns the ShapeLengths of the stoppingPlace
+    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
      * @return The ShapeLengths of the stoppingPlace
      */
-    const std::vector<SUMOReal>& getShapeLengths() const;
+    std::vector<SUMOReal> getShapeLengths() const;
 
 
     /// @name inherited from GUIGlObject
@@ -114,7 +129,8 @@ public:
     /** @brief Returns the name of the parent object (if any)
      * @return This object's parent id
      */
-    virtual const std::string& getParentName() const = 0; 
+    const std::string& getParentName() const; 
+
 
     /** @brief Returns an own popup-menu
      *
@@ -158,7 +174,8 @@ public:
      * @param[in] key The attribute key
      * @return string with the value associated to key
      */
-    std::string getAttribute(SumoXMLAttr key) const;
+    virtual std::string getAttribute(SumoXMLAttr key) const = 0;
+
 
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
@@ -185,28 +202,11 @@ private:
     SUMOReal myFromPos;
 
     /// @brief The end position this stopping place is located at
-    SUMOReal myEndPos;
-
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
-
-    /// @brief The shape
-    PositionVector myShape;
-
-    /// @brief The position of the sign
-    Position mySignPos;
-
-    /// @brief The rotation of the sign
-    SUMOReal mySignRot;
+    SUMOReal myToPos;
 
 private:
-    void setAttribute(SumoXMLAttr key, const std::string& value);
+    /// @brief set attribute after validation
+    virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
     /// @brief Invalidated copy constructor.
     GNEStoppingPlace(const GNEStoppingPlace&);

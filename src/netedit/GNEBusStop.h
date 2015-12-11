@@ -35,6 +35,7 @@
 #include <utils/gui/settings/GUIPropertySchemeStorage.h>
 #include <utils/geom/PositionVector.h>
 #include "GNEAttributeCarrier.h"
+#include "GNEStoppingPlace.h"
 
 
 // ===========================================================================
@@ -56,40 +57,51 @@ class GNENet;
  * @see MSStoppingPlace
  */
 
-class GNEBusStop : public GUIGlObject, public GNEAttributeCarrier {
+class GNEBusStop : public GNEStoppingPlace {
 public:
     /** @brief Constructor
-     * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
-     * @param[in] the edge this lane belongs to
-     * @param[in] the index of this lane
+     * @param[in] id The storage of gl-ids to get the one for this lane representation from
+     * @param[in] 
+     * @param[in] 
      */
     GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos);
+
 
     /// @brief Destructor
     ~GNEBusStop();
 
+    
+    ///@brief update pre-computed geometry information
+    //  @note: must be called when geometry changes (i.e. junction moved)
+    void updateGeometry();
 
-	/** @brief Returns parent lane
-     *
-     * @return The GNElane parent
+
+    /** @brief get lines of busStop
+     * @return vector of strings with the lines of the busStop 
      */
-	GNELane &getLane();
-
-	SUMOReal getBeginLanePosition() const;
-		
-	SUMOReal getEndLanePosition() const;
-
 	const std::vector<std::string> &getLines() const;
+
+
+    /** @brief Returns a copy of the Shape of the stoppingPlace
+     * @return The Shape of the stoppingPlace
+     */
+    PositionVector getShape() const;
+
+
+    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
+     * @return The ShapeRotations of the stoppingPlace
+     */
+    std::vector<SUMOReal> getShapeRotations() const;
+
+
+    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
+     * @return The ShapeLengths of the stoppingPlace
+     */
+    std::vector<SUMOReal> getShapeLengths() const;
 
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns the name of the parent object (if any)
-     * @return This object's parent id
-     */
-    const std::string& getParentName() const; 
-
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -97,8 +109,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent) ;
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
 
     /** @brief Returns an own parameter window
@@ -108,8 +119,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
-            GUISUMOAbstractView& parent) ;
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
@@ -117,7 +127,7 @@ public:
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
-    Boundary getCenteringBoundary() const ;
+    Boundary getCenteringBoundary() const;
 
 
     /** @brief Draws the object
@@ -127,22 +137,15 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
-    const PositionVector& getShape() const;
-
-    const std::vector<SUMOReal>& getShapeRotations() const;
-
-    const std::vector<SUMOReal>& getShapeLengths() const;
-
-    ///@brief returns the boundry (including lanes)
-    Boundary getBoundary() const;
-
-    ///@brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. junction moved)
-    void updateGeometry();
 
     //@name inherited from GNEAttributeCarrier
     //@{
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     std::string getAttribute(SumoXMLAttr key) const;
+
 
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
@@ -151,30 +154,17 @@ public:
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
+    /* @brief method for checking if the key and their conrrespond attribute are valids
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
 private:
 	/// @brief The list of lines that are assigned to this stop
     std::vector<std::string> myLines;
-
-    /// @brief The lane this bus stop is located at
-    GNELane& myLane;
-
-    /// @brief The begin position this bus stop is located at
-    SUMOReal myBegPos;
-
-    /// @brief The end position this bus stop is located at
-    SUMOReal myEndPos;
-
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
 
     /// @brief The shape
     PositionVector myShape;
@@ -185,7 +175,17 @@ private:
     /// @brief The rotation of the sign
     SUMOReal mySignRot;
 
+    /// @name Variables to improve performance in function updateGeometry()
+    //@{
+    /// The rotations of the shape parts
+    std::vector<SUMOReal> myShapeRotations;
+
+    /// The lengths of the shape parts
+    std::vector<SUMOReal> myShapeLengths;
+    //@}
+
 private:
+    /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief Invalidated copy constructor.

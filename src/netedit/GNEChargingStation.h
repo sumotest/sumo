@@ -36,7 +36,7 @@
 #include <utils/geom/Boundary.h>
 #include <utils/gui/globjects/GUIGlObject.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
-#include "GNEAttributeCarrier.h"
+#include "GNEStoppingPlace.h"
 
 
 // ===========================================================================
@@ -52,44 +52,61 @@ class GNENet;
 // class definitions
 // ===========================================================================
 
-class GNEChargingStation : public GUIGlObject, public GNEAttributeCarrier
+class GNEChargingStation : public GNEStoppingPlace
 {
 public:
 
 	/** @brief Constructor.
-     * @param[in] nbe The represented edge
-     * @param[in] net The net to inform about gui updates
+     * @param[in] 
+     * @param[in] 
      */
-    GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
-		               SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay);
+    GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPpos, SUMOReal toPos, 
+		               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
 
 	~GNEChargingStation();
 
-	/** @brief Returns parent lane
-     *
-     * @return The GNElane parent
+    ///@brief update pre-computed geometry information
+    //  @note: must be called when geometry changes (i.e. junction moved)
+    void updateGeometry();
+
+
+    SUMOReal getChargingPower();
+
+    SUMOReal getEfficiency(); 
+
+    bool getChargeInTransit(); 
+
+    SUMOReal getChargeDelay();
+
+    /** @brief Returns a copy of the Shape of the stoppingPlace
+     * @return The Shape of the stoppingPlace
      */
-	GNELane &getLane() const;
+    PositionVector getShape() const;
 
-	SUMOReal getBeginLanePosition() const;
-		
-	SUMOReal getEndLanePosition() const;
 
-    
-    const PositionVector& getShape() const;
-    const std::vector<SUMOReal>& getShapeRotations() const;
-    const std::vector<SUMOReal>& getShapeLengths() const;
+    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
+     * @return The ShapeRotations of the stoppingPlace
+     */
+    std::vector<SUMOReal> getShapeRotations() const;
 
+
+    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
+     * @return The ShapeLengths of the stoppingPlace
+     */
+    std::vector<SUMOReal> getShapeLengths() const;
+
+    void setChargingPower(SUMOReal chargingPower);
+
+    void setEfficiency(SUMOReal efficiency); 
+
+    void setChargeInTransit(bool chargeinTransit); 
+
+    void setChargeDelay(SUMOReal chargeDelay);
 
 
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns the name of the parent object (if any)
-     * @return This object's parent id
-     */
-    const std::string& getParentName() const; 
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -97,8 +114,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent) ;
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
 
     /** @brief Returns an own parameter window
@@ -108,8 +124,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
-            GUISUMOAbstractView& parent) ;
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
@@ -127,12 +142,6 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
-    ///@brief returns the boundry (including lanes)
-    Boundary getBoundary() const;
-
-    ///@brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. junction moved)
-    void updateGeometry();
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -149,26 +158,17 @@ public:
     //@}
 
 private:
+    /// @brief Charging power pro timestep
+    SUMOReal myChargingPower;
 
-    /// @brief The lane this charging station is located at
-    GNELane& myLane;
+    /// @brief efficiency of the charge
+    SUMOReal myEfficiency; 
 
-    /// @brief The begin position this charging station is located at
-    SUMOReal myBegPos;
+    /// @brief enable or disable charge in transit
+    bool myChargeInTransit; 
 
-    /// @brief The end position this charging station is located at
-    SUMOReal myEndPos;
-
-	/** FALTAN **/
-
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
+    /// @brief delay in the starting of charge
+    SUMOReal myChargeDelay;
 
     /// @brief The shape
     PositionVector myShape;
@@ -179,7 +179,17 @@ private:
     /// @brief The rotation of the sign
     SUMOReal mySignRot;
 
+    /// @name computed only once (for performance) in updateGeometry()
+    //@{
+    /// The rotations of the shape parts
+    std::vector<SUMOReal> myShapeRotations;
+
+    /// The lengths of the shape parts
+    std::vector<SUMOReal> myShapeLengths;
+    //@}
+
 private:
+    /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief Invalidated copy constructor.
@@ -199,7 +209,6 @@ private:
 	
     /// The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
-
 };
 
 

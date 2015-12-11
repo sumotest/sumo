@@ -70,40 +70,67 @@
 // method definitions
 // ===========================================================================
 GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) : 
-	myLane(lane),
-	myLines(lines), 
-	myBegPos(frompos),
-	myEndPos(topos),
-	GUIGlObject(GLO_TRIGGER, id),
-    GNEAttributeCarrier(SUMO_TAG_BUS_STOP) {
-	myLane.addBusStop(this);
+	GNEStoppingPlace(id, lane, frompos, topos, SUMO_TAG_BUS_STOP),
+	myLines(lines) {
+	getLane().addBusStop(this);
     updateGeometry();
 }
 
 
 GNEBusStop::~GNEBusStop() {
-	myLane.removeBusStop(this);
+	getLane().removeBusStop(this);
 }
 
-GNELane&
-GNEBusStop::getLane() {
-	return myLane;
+
+void
+GNEBusStop::updateGeometry() {
+    //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
+	SUMOReal offsetSign = 1;
+    myShape = getLane().getShape();
+    myShape.move2side(1.65 * offsetSign);
+    myShape = myShape.getSubpart(getFromPosition(), getToPosition());
+    myShapeRotations.reserve(myShape.size() - 1);
+    myShapeRotations.reserve(myShape.size() - 1);
+    int e = (int) myShape.size() - 1;
+    for (int i = 0; i < e; ++i) {
+        const Position& f = myShape[i];
+        const Position& s = myShape[i + 1];
+        myShapeLengths.push_back(f.distanceTo(s));
+        myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+    }
+    PositionVector tmp = myShape;
+    tmp.move2side(1.5 * offsetSign);
+    mySignPos = tmp.getLineCenter();
+    mySignRot = 0;
+    if (tmp.length() != 0) {
+        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+        mySignRot -= 90;
+    }
 }
 
-SUMOReal 
-GNEBusStop::getBeginLanePosition() const {
-	return myBegPos;
-}
-		
-SUMOReal 
-GNEBusStop::getEndLanePosition() const {
-	return myEndPos;
-}
 
 const 
 std::vector<std::string> &GNEBusStop::getLines() const {
 	return myLines;
 }
+
+PositionVector
+GNEBusStop::getShape() const {
+    return myShape;
+}
+
+
+std::vector<SUMOReal>
+GNEBusStop::getShapeRotations() const {
+    return myShapeRotations;
+}
+
+
+std::vector<SUMOReal>
+GNEBusStop::getShapeLengths() const {
+    return myShapeLengths;
+}
+
 
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
@@ -154,6 +181,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }
 
+
 GUIGLObjectPopupMenu*
 GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
@@ -183,8 +211,8 @@ GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
         }
     }
     // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = getShape().nearest_offset_to_point2D(parent.getPositionInformation());
-    const SUMOReal height = getShape().positionAtOffset2D(getShape().nearest_offset_to_point2D(parent.getPositionInformation())).z();
+    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
+    const SUMOReal height = myShape.positionAtOffset2D(myShape.nearest_offset_to_point2D(parent.getPositionInformation())).z();
     new FXMenuCommand(ret, ("pos: " + toString(pos) + " height: " + toString(height)).c_str(), 0, 0, 0);
     // new FXMenuSeparator(ret);
     // buildPositionCopyEntry(ret, false);
@@ -203,7 +231,7 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, myLane.getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
     // close building
     ret->closeBuilding();
     return ret;
@@ -216,58 +244,12 @@ GNEBusStop::getCenteringBoundary() const {
     Boundary b = myShape.getBoxBoundary();
     b.grow(20);	// anterior: 10
     return b;
+
+    //Boundary
+    //GNEBusStop::getBoundary() const {
+    //return myLane.myShape.getBoxBoundary();
 }
 
-
-const PositionVector&
-GNEBusStop::getShape() const {
-    return myLane.getShape();
-}
-
-
-const std::vector<SUMOReal>&
-GNEBusStop::getShapeRotations() const {
-    return myShapeRotations;
-}
-
-
-const std::vector<SUMOReal>&
-GNEBusStop::getShapeLengths() const {
-    return myShapeLengths;
-}
-
-
-Boundary
-GNEBusStop::getBoundary() const {
-    return myLane.getShape().getBoxBoundary();
-}
-
-
-void
-GNEBusStop::updateGeometry() {
-    //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-	SUMOReal offsetSign = 1;
-    myShape = myLane.getShape();
-    myShape.move2side(1.65 * offsetSign);
-    myShape = myShape.getSubpart(myBegPos, myEndPos);
-    myShapeRotations.reserve(myShape.size() - 1);
-    myShapeRotations.reserve(myShape.size() - 1);
-    int e = (int) myShape.size() - 1;
-    for (int i = 0; i < e; ++i) {
-        const Position& f = myShape[i];
-        const Position& s = myShape[i + 1];
-        myShapeLengths.push_back(f.distanceTo(s));
-        myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
-    }
-    PositionVector tmp = myShape;
-    tmp.move2side(1.5 * offsetSign);
-    mySignPos = tmp.getLineCenter();
-    mySignRot = 0;
-    if (tmp.length() != 0) {
-        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
-        mySignRot -= 90;
-    }
-}
 
 std::string
 GNEBusStop::getAttribute(SumoXMLAttr key) const {
@@ -275,11 +257,11 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+            return toString(getLane().getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(myBegPos);
+            return toString(getFromPosition());
         case SUMO_ATTR_ENDPOS:
-            return toString(myEndPos);
+            return toString(getToPosition());
 		case SUMO_ATTR_LINES: {
 			// Convert myLines vector into String with the schema "line1 line2 ... lineN"
 			std::string myLinesStr;
@@ -309,11 +291,11 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
 			
 			/*
         case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+            return toString(getLane().getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(myBegPos);
+            return toString(getFromPosition());
         case SUMO_ATTR_ENDPOS:
-            return toString(myEndPos);
+            return toString(getToPosition());
 			*/
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
@@ -345,7 +327,7 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
-    NBEdge* edge = myLane.getParentEdge().getNBEdge();
+    NBEdge* edge = getLane().getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
@@ -353,10 +335,10 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
             break;
         case SUMO_ATTR_STARTPOS:
-            myBegPos = parse<SUMOReal>(value);
+            setFromPosition(parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_ENDPOS:
-            myEndPos = parse<SUMOReal>(value);
+            setToPosition(parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_LINES:
             SUMOSAXAttributes::parseStringVector(value, myLines);
@@ -371,7 +353,7 @@ bool
 GNEBusStop::setFunctionalColor(size_t activeScheme) const {
     switch (activeScheme) {
         case 6: {
-            SUMOReal hue = GeomHelper::naviDegree(getShape().beginEndAngle()); // [0-360]
+            SUMOReal hue = GeomHelper::naviDegree(myShape.beginEndAngle()); // [0-360]
             GLHelper::setColor(RGBColor::fromHSV(hue, 1., 1.));
             return true;
         }
@@ -387,13 +369,13 @@ GNEBusStop::setMultiColor(const GUIColorer& c) const {
     myShapeColors.clear();
     switch (activeScheme) {
         case 9: // color by height at segment start
-            for (PositionVector::const_iterator ii = getShape().begin(); ii != getShape().end() - 1; ++ii) {
+            for (PositionVector::const_iterator ii = myShape.begin(); ii != myShape.end() - 1; ++ii) {
                 myShapeColors.push_back(c.getScheme().getColor(ii->z()));
             }
             return true;
         case 11: // color by inclination  at segment start
-            for (int ii = 1; ii < (int)getShape().size(); ++ii) {
-                const SUMOReal inc = (getShape()[ii].z() - getShape()[ii - 1].z()) / MAX2(POSITION_EPS, getShape()[ii].distanceTo2D(getShape()[ii - 1]));
+            for (int ii = 1; ii < (int)myShape.size(); ++ii) {
+                const SUMOReal inc = (myShape[ii].z() - myShape[ii - 1].z()) / MAX2(POSITION_EPS, myShape[ii].distanceTo2D(myShape[ii - 1]));
                 myShapeColors.push_back(c.getScheme().getColor(inc));
             }
             return true;
@@ -406,7 +388,7 @@ GNEBusStop::setMultiColor(const GUIColorer& c) const {
 SUMOReal
 GNEBusStop::getColorValue(size_t activeScheme) const {
 	/*
-	const SVCPermissions myPermissions = myLane.getParentEdge().getNBEdge()->getPermissions(myIndex);
+	const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
     switch (activeScheme) {
         case 0:
 			switch (myPermissions) {
@@ -428,37 +410,33 @@ GNEBusStop::getColorValue(size_t activeScheme) const {
             }
         case 1:
             return gSelected.isSelected(getType(), getGlID()) ||
-                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&myLane.getParentEdge())->getGlID());
+                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&getLane().getParentEdge())->getGlID());
         case 2:
             return (SUMOReal)myPermissions;
         case 3:
-			return myLane.getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
+			return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
         case 4:
-            return myLane.getParentEdge().getNBEdge()->getNumLanes();        
+            return getLane().getParentEdge().getNBEdge()->getNumLanes();        
         case 5: {
-            return myLane.getParentEdge().getNBEdge()->getLoadedLength() / myLane.getParentEdge().getNBEdge()->getLength();
+            return getLane().getParentEdge().getNBEdge()->getLoadedLength() / getLane().getParentEdge().getNBEdge()->getLength();
         }
 		// case 6: by angle (functional)
        case 7: {
-            return myLane.getParentEdge().getNBEdge()->getPriority();
+            return getLane().getParentEdge().getNBEdge()->getPriority();
         }
         case 8: {
             // color by z of first shape point
-            return getShape()[0].z();
+            return myShape[0].z();
         }
 		// case 9: by segment height
         case 10: {
             // color by incline
-            return (getShape()[-1].z() - getShape()[0].z()) /  myLane.getParentEdge().getNBEdge()->getLength();
+            return (myShape[-1].z() - myShape[0].z()) /  getLane().getParentEdge().getNBEdge()->getLength();
         }        
     }
 	*/
     return 0;
 }
 
-const std::string& 
-GNEBusStop::getParentName() const {
-    return myLane.getMicrosimID();
-}
 
 /****************************************************************************/

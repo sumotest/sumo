@@ -365,7 +365,7 @@ GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std
 
 void 
 GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
-                                           SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay)
+                                           SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
 {
     GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
     if (!net->addChargingStation(chargingStation)) {
