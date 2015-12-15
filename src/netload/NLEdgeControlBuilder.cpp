@@ -138,8 +138,7 @@ NLEdgeControlBuilder::buildEdge(const std::string& id, const MSEdge::EdgeBasicFu
     return new MSEdge(id, myCurrentNumericalEdgeID++, function, streetName, edgeType, priority);
 }
 
-void NLEdgeControlBuilder::addCrossingEdges(const std::vector<std::string>& crossingEdges)
-{
+void NLEdgeControlBuilder::addCrossingEdges(const std::vector<std::string>& crossingEdges) {
     myActiveEdge->setCrossingEdges(crossingEdges);
 }
 

@@ -89,7 +89,6 @@ GUILane::GUILane(const std::string& id, SUMOReal maxSpeed, SUMOReal length,
     //
     myHalfLaneWidth = (SUMOReal)(myWidth / 2.);
     myQuarterLaneWidth = (SUMOReal)(myWidth / 4.);
-    myIndex = index;
 }
 
 

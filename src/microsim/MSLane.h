@@ -968,11 +968,11 @@ protected:
     /// Unique numerical ID (set on reading by netload)
     size_t myNumericalID;
 
-    /// The lane index
-    int myIndex;
-
     /// The shape of the lane
     PositionVector myShape;
+
+    /// The lane index
+    int myIndex;
 
     /** @brief The lane's vehicles.
         This container holds all vehicles that have their front (longitudinally) 
