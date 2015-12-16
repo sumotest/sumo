@@ -73,8 +73,8 @@ protected:
         const std::vector<MSVehicle::LaneQ>& preb,
         SUMOReal& latDist) const;
 
-    ///  @brief change by the specified amount
-    void startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist);
+    ///  @brief change by the specified amount and return whether a new lane was entered
+    bool startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist);
 
     /// @brief get leaders for ego on the given lane
     MSLeaderDistanceInfo getLeaders(const ChangerIt& target, const MSVehicle* ego) const; 

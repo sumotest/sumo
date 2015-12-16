@@ -118,8 +118,7 @@ MSLaneChangerSublane::change() {
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state1 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed1) {
-            startChangeSublane(vehicle, myCandi, latDist);
-            return true;
+            return startChangeSublane(vehicle, myCandi, latDist);
         }
         if ((state1 & LCA_WANTS_LANECHANGE) != 0 && (state1 & LCA_URGENT) != 0) {
             (myCandi + laneOffset)->lastBlocked = vehicle;
@@ -139,8 +138,7 @@ MSLaneChangerSublane::change() {
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed2) {
-            startChangeSublane(vehicle, myCandi, latDist);
-            return true;
+            return startChangeSublane(vehicle, myCandi, latDist);
         }
         if ((state2 & LCA_WANTS_LANECHANGE) != 0 && (state2 & LCA_URGENT) != 0) {
             (myCandi + laneOffset)->lastBlocked = vehicle;
@@ -162,7 +160,7 @@ MSLaneChangerSublane::change() {
 }
 
 
-void
+bool
 MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SUMOReal latDist) {
     //gDebugFlag4 = vehicle->getID() == "Togliatti_80_26";
     // 1) update vehicles lateral position according to latDist and target lane
@@ -176,8 +174,8 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
     // 3) updated dens of all lanes that hold the vehicle or its shadow
     const int direction = vehicle->getLateralPositionOnLane() < 0 ? -1 : 1;
     ChangerIt to = from + direction;
-    if (fabs(vehicle->getLateralPositionOnLane()) > 0.5 * vehicle->getLane()->getWidth()) {
-        // vehicle moved to a new lane
+    const bool changedToNewLane = fabs(vehicle->getLateralPositionOnLane()) > 0.5 * vehicle->getLane()->getWidth();
+    if (changedToNewLane) {
         vehicle->myState.myPosLat -= direction * 0.5 * (from->lane->getWidth() + to->lane->getWidth());
         to->lane->myTmpVehicles.insert(to->lane->myTmpVehicles.begin(), vehicle);
         to->dens += vehicle->getVehicleType().getLengthWithGap();
@@ -199,6 +197,7 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
     if (gDebugFlag4) std::cout << SIMTIME << " startChangeSublane shadowLane"
         << " old=" << Named::getIDSecure(oldShadowLane) 
             << " new=" << Named::getIDSecure(vehicle->getLaneChangeModel().getShadowLane()) << "\n";
+    return changedToNewLane;
 }
 
 
