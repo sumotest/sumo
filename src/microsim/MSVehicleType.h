@@ -135,6 +135,13 @@ public:
         return myParameter.minGap;
     }
 
+    /** @brief Get the minimum lateral gap that vehicles of this type maintain
+     * @return The place before the vehicle
+     */
+    SUMOReal getMinGapLat() const {
+        return myParameter.minGap;
+    }
+
 
     /** @brief Returns the vehicle type's car following model definition (const version)
      * @return The vehicle type's car following model definition
