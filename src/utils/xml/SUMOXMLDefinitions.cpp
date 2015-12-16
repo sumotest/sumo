@@ -254,6 +254,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "maxSpeed",       SUMO_ATTR_MAXSPEED },
     { "maxSpeedLat",    SUMO_ATTR_MAXSPEED_LAT },
     { "latAlignment",   SUMO_ATTR_LATALIGNMENT },
+    { "minGapLat",      SUMO_ATTR_MINGAP_LAT },
     { "accel",          SUMO_ATTR_ACCEL },
     { "decel",          SUMO_ATTR_DECEL },
     { "vClass",         SUMO_ATTR_VCLASS },

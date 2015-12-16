@@ -444,6 +444,10 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
         vtype->maxSpeedLat = attrs.get<SUMOReal>(SUMO_ATTR_MAXSPEED_LAT, vtype->id.c_str(), ok);
         vtype->setParameter |= VTYPEPARS_MAXSPEED_LAT_SET;
     }
+    if (attrs.hasAttribute(SUMO_ATTR_MINGAP_LAT)) {
+        vtype->minGapLat = attrs.get<SUMOReal>(SUMO_ATTR_MINGAP_LAT, vtype->id.c_str(), ok);
+        vtype->setParameter |= VTYPEPARS_MINGAP_LAT_SET;
+    }
     if (attrs.hasAttribute(SUMO_ATTR_LATALIGNMENT)) {
         const std::string alignS = attrs.get<std::string>(SUMO_ATTR_LATALIGNMENT, vtype->id.c_str(), ok);
         if (SUMOXMLDefinitions::LateralAlignments.hasString(alignS)) {

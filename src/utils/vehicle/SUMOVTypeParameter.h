@@ -72,6 +72,7 @@ const int VTYPEPARS_LOADING_DURATION = 2 << 19;
 const int VTYPEPARS_CAR_FOLLOW_MODEL = 2 << 20;
 const int VTYPEPARS_MAXSPEED_LAT_SET = 2 << 21;
 const int VTYPEPARS_LATALIGNMENT_SET = 2 << 22;
+const int VTYPEPARS_MINGAP_LAT_SET = 2 << 23;
 
 
 // ===========================================================================
@@ -154,6 +155,8 @@ public:
     SUMOReal maxSpeedLat;
     /// @brief The vehicles desired lateral alignment
     LateralAlignment latAlignment;
+    /// @brief The vehicle type's minimum lateral gap [m]
+    SUMOReal minGapLat;
 
 
 

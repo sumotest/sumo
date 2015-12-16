@@ -633,10 +633,10 @@
 #define VAR_LATALIGNMENT 0xb9
 
 // get/set maximum lateral speed (vehicle, vtypes)
-#define VAR_MAXSPEEDLAT 0xba
+#define VAR_MAXSPEED_LAT 0xba
 
 // get/set minimum lateral gap (vehicle, vtypes)
-#define VAR_MINGAPLAT 0xbb
+#define VAR_MINGAP_LAT 0xbb
 
 // current CO2 emission of a node (get: vehicle, lane, edge)
 #define VAR_CO2EMISSION 0x60
