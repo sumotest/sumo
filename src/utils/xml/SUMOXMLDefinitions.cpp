@@ -604,6 +604,20 @@ StringBijection<LateralAlignment>::Entry SUMOXMLDefinitions::lateralAlignmentVal
     { "left",          LATALIGN_LEFT }
 };
 
+StringBijection<LaneChangeAction>::Entry SUMOXMLDefinitions::laneChangeActionValues[] = {
+    { "stay",        LCA_STAY },
+    { "left",        LCA_LEFT },
+    { "right",       LCA_RIGHT },
+    { "strategic",   LCA_STRATEGIC },
+    { "cooperative", LCA_COOPERATIVE },
+    { "speedGain",   LCA_SPEEDGAIN },
+    { "keepRaight",  LCA_KEEPRIGHT },
+    { "sublane",     LCA_SUBLANE },
+    { "traci",       LCA_TRACI },
+    { "urgent",      LCA_URGENT },
+    { "blocked",     LCA_BLOCKED }
+};
+
 StringBijection<int> SUMOXMLDefinitions::Tags(
     SUMOXMLDefinitions::tags, SUMO_TAG_NOTHING);
 
@@ -636,6 +650,9 @@ StringBijection<SumoXMLTag> SUMOXMLDefinitions::CarFollowModels(
 
 StringBijection<LateralAlignment> SUMOXMLDefinitions::LateralAlignments(
     SUMOXMLDefinitions::lateralAlignmentValues, LATALIGN_LEFT);
+
+StringBijection<LaneChangeAction> SUMOXMLDefinitions::LaneChangeActions(
+    SUMOXMLDefinitions::laneChangeActionValues, LCA_BLOCKED);
 
 std::string
 SUMOXMLDefinitions::getJunctionIDFromInternalEdge(const std::string internalEdge) {

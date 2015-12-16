@@ -747,6 +747,80 @@ enum TrafficLightType {
     TLTYPE_INVALID //< must be the last one
 };
 
+/** @enum LaneChangeAction
+ * @brief The state of a vehicle's lane-change behavior
+ */
+enum LaneChangeAction {
+    /// @name currently wanted lane-change action
+    /// @{
+
+    /// @brief No action desired
+    LCA_NONE = 0,
+    /// @brief Needs to stay on the current lane
+    LCA_STAY = 1 << 0,
+    /// @brief Wants go to the left
+    LCA_LEFT = 1 << 1,
+    /// @brief Wants go to the right
+    LCA_RIGHT = 1 << 2,
+
+    /// @brief The action is needed to follow the route (navigational lc)
+    LCA_STRATEGIC = 1 << 3,
+    /// @brief The action is done to help someone else
+    LCA_COOPERATIVE = 1 << 4,
+    /// @brief The action is due to the wish to be faster (tactical lc)
+    LCA_SPEEDGAIN = 1 << 5,
+    /// @brief The action is due to the default of keeping right "Rechtsfahrgebot"
+    LCA_KEEPRIGHT = 1 << 6,
+    /// @brief The action is due to a TraCI request
+    LCA_TRACI = 1 << 7,
+
+    /// @brief The action is urgent (to be defined by lc-model)
+    LCA_URGENT = 1 << 8,
+
+    /// @}
+
+    /// @name External state
+    /// @{
+
+    /// @brief The vehicle is blocked by left leader
+    LCA_BLOCKED_BY_LEFT_LEADER = 1 << 9,
+    /// @brief The vehicle is blocked by left follower
+    LCA_BLOCKED_BY_LEFT_FOLLOWER = 1 << 10,
+
+    /// @brief The vehicle is blocked by right leader
+    LCA_BLOCKED_BY_RIGHT_LEADER = 1 << 11,
+    /// @brief The vehicle is blocked by right follower
+    LCA_BLOCKED_BY_RIGHT_FOLLOWER = 1 << 12,
+
+    // The vehicle is blocked being overlapping
+    LCA_OVERLAPPING =  1 << 13,
+
+    // The vehicle does not have enough space to complete a continuous lane
+    // change before the next turning movement
+    LCA_INSUFFICIENT_SPACE =  1 << 14,
+
+    // used by the sublane model 
+    LCA_SUBLANE = 1 << 15,
+
+    LCA_WANTS_LANECHANGE = LCA_LEFT | LCA_RIGHT | LCA_SUBLANE,
+    LCA_WANTS_LANECHANGE_OR_STAY = LCA_WANTS_LANECHANGE | LCA_STAY,
+
+    LCA_BLOCKED_LEFT = LCA_BLOCKED_BY_LEFT_LEADER | LCA_BLOCKED_BY_LEFT_FOLLOWER,
+    LCA_BLOCKED_RIGHT = LCA_BLOCKED_BY_RIGHT_LEADER | LCA_BLOCKED_BY_RIGHT_FOLLOWER,
+    LCA_BLOCKED_BY_LEADER = LCA_BLOCKED_BY_LEFT_LEADER | LCA_BLOCKED_BY_RIGHT_LEADER,
+    LCA_BLOCKED_BY_FOLLOWER = LCA_BLOCKED_BY_LEFT_FOLLOWER | LCA_BLOCKED_BY_RIGHT_FOLLOWER,
+    LCA_BLOCKED = LCA_BLOCKED_LEFT | LCA_BLOCKED_RIGHT | LCA_INSUFFICIENT_SPACE
+
+
+    // LCA_BLOCKED_BY_CURRENT_LEADER = 1 << 28
+    // LCA_BLOCKED_BY_CURRENT_FOLLOWER = 1 << 29
+  /// @}
+
+};
+
+
+
+
 
 /**
  * @enum LaneChangeModel
@@ -815,6 +889,8 @@ public:
     static StringBijection<SumoXMLTag> CarFollowModels;
 
     static StringBijection<LateralAlignment> LateralAlignments;
+
+    static StringBijection<LaneChangeAction> LaneChangeActions;
     //@}
 
     /// @name Helper functions for ID-string manipulations
@@ -847,6 +923,8 @@ private:
     static StringBijection<SumoXMLTag>::Entry carFollowModelValues[];
 
     static StringBijection<LateralAlignment>::Entry lateralAlignmentValues[];
+
+    static StringBijection<LaneChangeAction>::Entry laneChangeActionValues[];
 
 };
 
