@@ -179,6 +179,10 @@ public:
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 
+    /// @brief decide in which direction to move in case both directions are desirable
+    virtual SUMOReal decideDirection(int /*stateRight*/, SUMOReal /*latDistRight*/, int /*stateLeft*/, SUMOReal /*latDistLeft*/) const {
+        throw ProcessError("Method not implemented by model " + toString(myModel));
+    }
 
     virtual void* inform(void* info, MSVehicle* sender) = 0;
 

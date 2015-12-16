@@ -1706,4 +1706,36 @@ MSLCM_SL2015::overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal l
 }
 
 
+SUMOReal 
+MSLCM_SL2015::decideDirection(int stateRight, SUMOReal latDistRight, int stateLeft, SUMOReal latDistLeft) const {
+    const bool mayChangeRight = ((stateRight & LCA_WANTS_LANECHANGE_OR_STAY) != 0 && (stateRight & LCA_BLOCKED) == 0);
+    const bool mayChangeLeft = ((stateLeft & LCA_WANTS_LANECHANGE_OR_STAY) != 0 && (stateLeft & LCA_BLOCKED) == 0);
+    if (DEBUG_COND) std::cout << SIMTIME << " " << myVehicle.getID() << " mayChangeRight=" << mayChangeRight << " mayChangeLeft=" << mayChangeLeft << "\n";
+    if (mayChangeRight) {
+        if (mayChangeLeft) {
+            // decide whether right or left has higher priority
+            if (((stateRight & LCA_CHANGE_REASONS) > (stateLeft & LCA_CHANGE_REASONS))
+                    // in case of similar priority change wins over stay
+                    || ((stateRight & LCA_CHANGE_REASONS) == (stateLeft & LCA_CHANGE_REASONS) &&
+                        (stateRight & LCA_STAY) == 0)) {
+                if (DEBUG_COND) std::cout << SIMTIME << " " << myVehicle.getID() << " deciding for right change " << latDistRight << " " << toString((LaneChangeAction)(stateRight & LCA_CHANGE_REASONS))
+                        << " against " << latDistLeft << " " << toString((LaneChangeAction)(stateLeft & LCA_CHANGE_REASONS)) << "\n";
+                return latDistRight;
+            } else {
+                if (DEBUG_COND) std::cout << SIMTIME << " " << myVehicle.getID() << " deciding for left change " << latDistLeft << " " << toString((LaneChangeAction)(stateLeft & LCA_CHANGE_REASONS)) 
+                        << " against " << latDistRight << " " << toString((LaneChangeAction)(stateRight & LCA_CHANGE_REASONS)) << "\n";
+                return latDistLeft;
+            }
+        } else {
+            return latDistRight;
+        }
+    } else {
+        if (mayChangeLeft) {
+            return latDistLeft;
+        } else {
+            return 0;
+        }
+    }
+}
+
 /****************************************************************************/

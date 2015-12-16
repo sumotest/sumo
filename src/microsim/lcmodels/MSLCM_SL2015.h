@@ -186,6 +186,9 @@ protected:
     /// @brief update expected speeds for each sublane of the current edge
     void updateExpectedSublaneSpeeds(const MSLeaderInfo& ahead, int sublaneOffset, int laneIndex); 
 
+    /// @brief decide in which direction to move in case both directions are desirable
+    SUMOReal decideDirection(int stateRight, SUMOReal latDistRight, int stateLeft, SUMOReal latDistLeft) const;
+
     /// @brief send a speed recommendation to the given vehicle
     void msg(const CLeaderDist& cld, SUMOReal speed, int state);
 

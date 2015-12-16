@@ -110,42 +110,37 @@ MSLaneChangerSublane::change() {
 
     // check whether the vehicle wants and is able to change to right lane
     int state1 = 0;
-    SUMOReal latDist = 0;
+    SUMOReal latDist1 = 0;
     if (mayChange(-1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() - 0.5 * vehicle->getVehicleType().getWidth() > 0) {
         const int laneOffset = mayChange(-1) ? -1 : 0;
-        state1 = checkChangeSublane(laneOffset, preb, latDist);
-        bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
-        // change if the vehicle wants to and is allowed to change
-        if ((state1 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed1) {
-            return startChangeSublane(vehicle, myCandi, latDist);
-        }
-        if ((state1 & LCA_WANTS_LANECHANGE) != 0 && (state1 & LCA_URGENT) != 0) {
+        state1 = checkChangeSublane(laneOffset, preb, latDist1);
+        if ((state1 & LCA_WANTS_LANECHANGE) != 0 && (state1 & LCA_URGENT) != 0 && (state1 & LCA_BLOCKED) != 0) {
             (myCandi + laneOffset)->lastBlocked = vehicle;
             if ((myCandi + laneOffset)->firstBlocked == 0) {
                 (myCandi + laneOffset)->firstBlocked = vehicle;
             }
         }
     }
-    latDist = 0; // reset for the next query
+    SUMOReal latDist2 = 0; 
 
     // check whether the vehicle wants and is able to change to left lane
     int state2 = 0;
     if (mayChange(1) ||
             vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() + 0.5 * vehicle->getVehicleType().getWidth() < myCandi->lane->getWidth()) {
         const int laneOffset = mayChange(1) ? 1 : 0;
-        state2 = checkChangeSublane(laneOffset, preb, latDist);
-        bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
-        // change if the vehicle wants to and is allowed to change
-        if ((state2 & LCA_WANTS_LANECHANGE) != 0 && changingAllowed2) {
-            return startChangeSublane(vehicle, myCandi, latDist);
-        }
-        if ((state2 & LCA_WANTS_LANECHANGE) != 0 && (state2 & LCA_URGENT) != 0) {
+        state2 = checkChangeSublane(laneOffset, preb, latDist2);
+        if ((state2 & LCA_WANTS_LANECHANGE) != 0 && (state2 & LCA_URGENT) != 0 && (state2 & LCA_BLOCKED) != 0) {
             (myCandi + laneOffset)->lastBlocked = vehicle;
             if ((myCandi + laneOffset)->firstBlocked == 0) {
                 (myCandi + laneOffset)->firstBlocked = vehicle;
             }
         }
+    }
+    const SUMOReal latDist = vehicle->getLaneChangeModel().decideDirection(state1, latDist1, state2, latDist2);
+    if (latDist != 0) {
+        // change if the vehicle wants to and is allowed to change
+        return startChangeSublane(vehicle, myCandi, latDist);
     }
 
     if ((state1 & (LCA_URGENT)) != 0 && (state2 & (LCA_URGENT)) != 0) {
