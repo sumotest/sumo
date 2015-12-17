@@ -105,6 +105,9 @@ NLHandler::myStartElement(int element,
             case SUMO_TAG_LANE:
                 addLane(attrs);
                 break;
+            case SUMO_TAG_NEIGH:
+                myEdgeControlBuilder.addNeigh(attrs.getString(SUMO_ATTR_LANE));
+                break;
             case SUMO_TAG_JUNCTION:
                 openJunction(attrs);
                 initJunctionLogic(attrs);

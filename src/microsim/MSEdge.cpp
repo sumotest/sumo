@@ -813,11 +813,7 @@ MSEdge::getSuccessors(SUMOVehicleClass vClass) const {
 
 bool 
 MSEdge::canChangeToOpposite() {
-    // XXX load data from network
-    return (
-            getID() == "VODUGES_beg" ||
-            getID() == "-VODUGES_beg"
-            );
+    return !myLanes->empty() && myLanes->back()->getOpposite() != 0;
 }
 
 /****************************************************************************/

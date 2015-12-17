@@ -55,6 +55,8 @@ enum SumoXMLTag {
     SUMO_TAG_EDGE,
     /** begin/end of the description of a single lane */
     SUMO_TAG_LANE,
+    /** begin/end of the description of a neighboring lane */
+    SUMO_TAG_NEIGH,
     /** begin/end of the description of a polygon */
     SUMO_TAG_POI,
     /** begin/end of the description of a polygon */

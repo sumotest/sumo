@@ -1434,9 +1434,9 @@ NBEdge::hasLaneSpecificPermissions() const {
 
 
 bool
-NBEdge::hasLaneSpecificWidth() const {
+NBEdge::hasLaneSpecificSpeed() const {
     for (std::vector<Lane>::const_iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
-        if (i->width != myLanes.begin()->width) {
+        if (i->speed != getSpeed()) {
             return true;
         }
     }
@@ -1445,9 +1445,9 @@ NBEdge::hasLaneSpecificWidth() const {
 
 
 bool
-NBEdge::hasLaneSpecificSpeed() const {
+NBEdge::hasLaneSpecificWidth() const {
     for (std::vector<Lane>::const_iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
-        if (i->speed != getSpeed()) {
+        if (i->width != myLanes.begin()->width) {
             return true;
         }
     }
@@ -1468,7 +1468,7 @@ NBEdge::hasLaneSpecificEndOffset() const {
 
 bool
 NBEdge::needsLaneSpecificOutput() const {
-    return hasLaneSpecificPermissions() || hasLaneSpecificSpeed() || hasLaneSpecificWidth() || hasLaneSpecificEndOffset();
+    return hasLaneSpecificPermissions() || hasLaneSpecificSpeed() || hasLaneSpecificWidth() || hasLaneSpecificEndOffset() || (!myLanes.empty() && myLanes.back().oppositeID != "");
 }
 
 

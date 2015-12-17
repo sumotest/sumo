@@ -91,6 +91,12 @@ NLEdgeControlBuilder::addLane(const std::string& id,
 }
 
 
+void
+NLEdgeControlBuilder::addNeigh(const std::string id) {
+    myLaneStorage->back()->addNeigh(id);
+}
+
+
 MSEdge*
 NLEdgeControlBuilder::closeEdge() {
     std::vector<MSLane*>* lanes = new std::vector<MSLane*>();

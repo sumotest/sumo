@@ -185,6 +185,12 @@ MSLane::addLink(MSLink* link) {
 }
 
 
+void
+MSLane::addNeigh(const std::string& id) {
+    myNeighs.push_back(id);
+}
+
+
 // ------ interaction with MSMoveReminder ------
 void
 MSLane::addMoveReminder(MSMoveReminder* rem) {
@@ -2295,14 +2301,10 @@ MSLane::getPartialBehind(const MSVehicle* ego) const {
 
 MSLane* 
 MSLane::getOpposite() const {
-    // XXX load data from network
-    if (getID() == "VODUGES_beg_0") {
-        return dictionary("-VODUGES_beg_0");
-    } else if (getID() == "-VODUGES_beg_0") {
-        return dictionary("VODUGES_beg_0");
-    } else {
-        return 0;
+    if (myNeighs.size() == 1) {
+        return dictionary(myNeighs[0]);
     }
+    return 0;
 }
 
 

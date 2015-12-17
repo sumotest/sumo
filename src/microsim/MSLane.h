@@ -188,6 +188,12 @@ public:
      * @param[in] link An outgoing link
      */
     void addLink(MSLink* link);
+
+    /** @brief Adds a neighbor to this lane
+     *
+     * @param[in] id The lane's id
+     */
+    void addNeigh(const std::string& id);
     ///@}
 
 
@@ -1054,13 +1060,16 @@ protected:
     /// @brief time step for which myFollowerInfo was last updated
     mutable SUMOTime myFollowerInfoTime;
 
-    // precomputed myShape.length / myLength
+    /// @brief precomputed myShape.length / myLength
     const SUMOReal myLengthGeometryFactor;
 
-    // @brief the combined width of all lanes with lower index on myEdge
+    /// @brief the combined width of all lanes with lower index on myEdge
     SUMOReal myRightSideOnEdge;
-    // @brief the index of the rightmost sublane of this lane on myEdge
+    /// @brief the index of the rightmost sublane of this lane on myEdge
     int myRightmostSublane;
+
+    // @brief the ids of neighboring lanes
+    std::vector<std::string> myNeighs;
 
     /// definition of the static dictionary type
     typedef std::map< std::string, MSLane* > DictType;
