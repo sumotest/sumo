@@ -688,9 +688,9 @@ MSLCM_SL2015::prepareStep() {
             assert(myLastEdge != 0);
             if (myLastEdge->getSubLaneSides().size() == myExpectedSublaneSpeeds.size()) {
                 int subLaneShift = computeSublaneShift(myLastEdge, currEdge);
-                for (int i = 0; i < myExpectedSublaneSpeeds.size(); ++i) {
+                for (int i = 0; i < (int)myExpectedSublaneSpeeds.size(); ++i) {
                     int newI = i + subLaneShift;
-                    if (newI > 0 && newI < newExpectedSpeeds.size()) {
+                    if (newI > 0 && newI < (int)newExpectedSpeeds.size()) {
                         newExpectedSpeeds[newI] = myExpectedSublaneSpeeds[i];
                     }
                 }
