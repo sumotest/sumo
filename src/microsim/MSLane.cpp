@@ -2247,7 +2247,13 @@ MSLane::getLeadersOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, co
         for (int i = 0; i < iMax; ++i) {
             const MSVehicle* veh = leaders[i];
             if (veh != 0) {
-                result.addLeader(veh, seen - getLength() + veh->getBackPositionOnLane(nextLane), 0, i);
+                if (gDebugFlag1) std::cout << "   lead=" << veh->getID()  
+                    << " seen=" << seen
+                        << " minGap=" << ego->getVehicleType().getMinGap()
+                        << " backPos=" << veh->getBackPositionOnLane(nextLane)
+                        << " gap=" << seen - ego->getVehicleType().getMinGap() + veh->getBackPositionOnLane(nextLane)
+                        << "\n";
+                result.addLeader(veh, seen - ego->getVehicleType().getMinGap() + veh->getBackPositionOnLane(nextLane), 0, i);
             }
         }
 
