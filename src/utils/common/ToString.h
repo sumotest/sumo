@@ -148,12 +148,12 @@ inline std::string toString<LaneChangeAction>(const LaneChangeAction& action, st
     std::ostringstream oss;
     for (std::vector<std::string>::const_iterator it = strings.begin(); it != strings.end(); ++it) {
         if ((action & SUMOXMLDefinitions::LaneChangeActions.get(*it)) != 0) {
-            oss << (*it);
             if (hadOne) {
                 oss << "|";
             } else {
                 hadOne = true;
             }
+            oss << (*it);
         }
     }
     return oss.str();
