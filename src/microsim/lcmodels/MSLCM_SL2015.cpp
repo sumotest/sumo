@@ -1424,6 +1424,7 @@ MSLCM_SL2015::_wantsChangeSublane(
 
 
     // --------
+    /*
     if (changeToBest && bestLaneOffset == curr.bestLaneOffset && laneOffset != 0
             && (right 
                 ? mySpeedGainProbabilityRight > MAX2((SUMOReal)0, mySpeedGainProbabilityLeft) 
@@ -1438,6 +1439,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             return ret | req;
         }
     }
+    */
     if (gDebugFlag2) {
         std::cout << STEPS2TIME(currentTime)
                   << " veh=" << myVehicle.getID()
@@ -1708,33 +1710,50 @@ MSLCM_SL2015::overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal l
 
 SUMOReal 
 MSLCM_SL2015::decideDirection(int stateRight, SUMOReal latDistRight, int stateLeft, SUMOReal latDistLeft) const {
-    const bool mayChangeRight = ((stateRight & LCA_WANTS_LANECHANGE_OR_STAY) != 0 && (stateRight & LCA_BLOCKED) == 0);
-    const bool mayChangeLeft = ((stateLeft & LCA_WANTS_LANECHANGE_OR_STAY) != 0 && (stateLeft & LCA_BLOCKED) == 0);
-    if (DEBUG_COND) std::cout << SIMTIME << " " << myVehicle.getID() << " mayChangeRight=" << mayChangeRight << " mayChangeLeft=" << mayChangeLeft << "\n";
-    if (mayChangeRight) {
-        if (mayChangeLeft) {
+    const bool wantChangeRight = ((stateRight & LCA_WANTS_LANECHANGE_OR_STAY) != 0);
+    const bool canChangeRight = ((stateRight & LCA_BLOCKED) == 0);
+    const bool wantChangeLeft = ((stateLeft & LCA_WANTS_LANECHANGE_OR_STAY) != 0);
+    const bool canChangeLeft = ((stateLeft & LCA_BLOCKED) == 0);
+    if (DEBUG_COND) std::cout << SIMTIME 
+        << " veh=" << myVehicle.getID() 
+            << " stateRight=" << toString((LaneChangeAction)stateRight) 
+            << " distRight=" << latDistRight 
+            << " stateLeft=" << toString((LaneChangeAction)stateLeft) 
+            << " distLeft=" << latDistLeft 
+            << "\n";
+    if (wantChangeRight) {
+        if (wantChangeLeft) {
             // decide whether right or left has higher priority
-            if (((stateRight & LCA_CHANGE_REASONS) > (stateLeft & LCA_CHANGE_REASONS))
-                    // in case of similar priority change wins over stay
-                    || ((stateRight & LCA_CHANGE_REASONS) == (stateLeft & LCA_CHANGE_REASONS) &&
-                        (stateRight & LCA_STAY) == 0)) {
-                if (DEBUG_COND) std::cout << SIMTIME << " " << myVehicle.getID() << " deciding for right change " << latDistRight << " " << toString((LaneChangeAction)(stateRight & LCA_CHANGE_REASONS))
-                        << " against " << latDistLeft << " " << toString((LaneChangeAction)(stateLeft & LCA_CHANGE_REASONS)) << "\n";
-                return latDistRight;
+            if ((stateRight & LCA_CHANGE_REASONS) > (stateLeft & LCA_CHANGE_REASONS)) {
+                return canChangeRight ? latDistRight : 0;
+            } else if ((stateRight & LCA_CHANGE_REASONS) < (stateLeft & LCA_CHANGE_REASONS)) {
+                return canChangeLeft ? latDistLeft : 0;
             } else {
-                if (DEBUG_COND) std::cout << SIMTIME << " " << myVehicle.getID() << " deciding for left change " << latDistLeft << " " << toString((LaneChangeAction)(stateLeft & LCA_CHANGE_REASONS)) 
-                        << " against " << latDistRight << " " << toString((LaneChangeAction)(stateRight & LCA_CHANGE_REASONS)) << "\n";
-                return latDistLeft;
+                // same priority. see which one is allowed
+                if (canChangeRight) {
+                    if (canChangeLeft) {
+                        // if both are allowed change wins over stay
+                        if ((stateRight & LCA_STAY) == 0) {
+                            return latDistRight;
+                        } else {
+                            return latDistLeft;
+                        }
+                    } else {
+                        return latDistRight;
+                    }
+                } else if (canChangeLeft) {
+                    return latDistLeft;
+                } else {
+                    return 0;
+                }
             }
         } else {
-            return latDistRight;
+            return canChangeRight ? latDistRight : 0;
         }
+    } else if (wantChangeLeft) {
+        return canChangeLeft ? latDistLeft : 0;
     } else {
-        if (mayChangeLeft) {
-            return latDistLeft;
-        } else {
-            return 0;
-        }
+        return 0;
     }
 }
 
