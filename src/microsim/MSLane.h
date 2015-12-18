@@ -659,7 +659,6 @@ public:
     void leftByLaneChange(MSVehicle* v);
     void enteredByLaneChange(MSVehicle* v);
 
-
     /** @brief Returns the lane with the given offset parallel to this one or 0 if it does not exist
      * @param[in] offset The offset of the result lane
      */

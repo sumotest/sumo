@@ -36,16 +36,16 @@ MSSwarmTrafficLightLogic::MSSwarmTrafficLightLogic(MSTLLogicControl& tlcontrol, 
     std::transform(pols.begin(), pols.end(), pols.begin(), ::tolower);
     DBG(std::ostringstream str; str << "policies: " << pols; WRITE_MESSAGE(str.str());)
 
-    if (pols.find("platoon") != -1) {
+    if (pols.find("platoon") != std::string::npos) {
         addPolicy(new MSSOTLPlatoonPolicy(new MSSOTLPolicy5DFamilyStimulus("PLATOON", parameters), parameters));
     }
-    if (pols.find("phase") != -1) {
+    if (pols.find("phase") != std::string::npos) {
         addPolicy(new MSSOTLPhasePolicy(new MSSOTLPolicy5DFamilyStimulus("PHASE", parameters), parameters));
     }
-    if (pols.find("marching") != -1) {
+    if (pols.find("marching") != std::string::npos) {
         addPolicy(new MSSOTLMarchingPolicy(new MSSOTLPolicy5DFamilyStimulus("MARCHING", parameters), parameters));
     }
-    if (pols.find("congestion") != -1) {
+    if (pols.find("congestion") != std::string::npos) {
         addPolicy(new MSSOTLCongestionPolicy(new MSSOTLPolicy5DFamilyStimulus("CONGESTION", parameters), parameters));
     }
 
@@ -69,7 +69,7 @@ MSSwarmTrafficLightLogic::MSSwarmTrafficLightLogic(MSTLLogicControl& tlcontrol, 
     })
     congestion_steps = 0;
     m_useVehicleTypesWeights = getParameter("USE_VEHICLE_TYPES_WEIGHTS", "0") == "1";
-    if (m_useVehicleTypesWeights && pols.find("phase") == -1) {
+    if (m_useVehicleTypesWeights && pols.find("phase") == std::string::npos) {
         WRITE_ERROR("VEHICLE TYPES WEIGHT only works with phase policy, which is missing");
     }
 }
@@ -174,8 +174,8 @@ void MSSwarmTrafficLightLogic::init(NLDetectorBuilder& nb) throw(ProcessError) {
         }
     }
 
-    initScaleFactorDispersionIn(pheromoneInputLanes.size());
-    initScaleFactorDispersionOut(pheromoneOutputLanes.size());
+    initScaleFactorDispersionIn((int)pheromoneInputLanes.size());
+    initScaleFactorDispersionOut((int)pheromoneOutputLanes.size());
     //Initializing thresholds for theta evaluations
     lastThetaSensitivityUpdate = MSNet::getInstance()->getCurrentTimeStep();
 
@@ -215,7 +215,7 @@ void MSSwarmTrafficLightLogic::resetPheromone() {
     }
 }
 
-size_t MSSwarmTrafficLightLogic::decideNextPhase() {
+int MSSwarmTrafficLightLogic::decideNextPhase() {
 
     DBG(
         MsgHandler::getMessageInstance()->inform("\n" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " MSSwarmTrafficLightLogic decideNextPhase()"); std::ostringstream dnp; dnp << (MSNet::getInstance()->getCurrentTimeStep()) << " MSSwarmTrafficLightLogic::decideNextPhase:: " << "tlsid=" << getID() << " getCurrentPhaseDef().getState()=" << getCurrentPhaseDef().getState() << " is commit?" << getCurrentPhaseDef().isCommit(); MsgHandler::getMessageInstance()->inform(dnp.str());)
@@ -277,7 +277,7 @@ size_t MSSwarmTrafficLightLogic::decideNextPhase() {
     //Execute current policy. congestion "policy" must maintain the commit phase, and that must be an all-red one
     return getCurrentPolicy()->decideNextPhase(getCurrentPhaseElapsed(), &getCurrentPhaseDef(), getCurrentPhaseIndex(),
             getPhaseIndexWithMaxCTS(), isThresholdPassed(), isPushButtonPressed(), countVehicles(getCurrentPhaseDef()));
-//	size_t newStep =getCurrentPolicy()->decideNextPhase(getCurrentPhaseElapsed(), &getCurrentPhaseDef(), getCurrentPhaseIndex(),
+//	int newStep =getCurrentPolicy()->decideNextPhase(getCurrentPhaseElapsed(), &getCurrentPhaseDef(), getCurrentPhaseIndex(),
 //	          getPhaseIndexWithMaxCTS(), isThresholdPassed(), isPushButtonPressed(), countVehicles(getCurrentPhaseDef()));
 //	if(newStep != myStep)
 //	  pheroBegin = phero;
@@ -399,7 +399,7 @@ void MSSwarmTrafficLightLogic::updatePheromoneLevels(MSLaneId_PheromoneMap& pher
         DBG(
             std::ostringstream str; str << time2string(MSNet::getInstance()->getCurrentTimeStep()) << " MSSwarmTrafficLightLogic::countSensors:: lane " << laneId << " passedVeh " << getCountSensors()->getPassedVeh(laneId, false); WRITE_MESSAGE(str.str());)
 
-//		unsigned int vehicles = getSensors()->countVehicles(laneId);
+//		int vehicles = getSensors()->countVehicles(laneId);
 //		SUMOReal pheroIn = getBetaNo() * oldPheroIn + // Evaporation
 //		getGammaNo() * vehicles;
 //		DBG(
@@ -846,7 +846,7 @@ SUMOReal MSSwarmTrafficLightLogic::calculateEtaDiff() {
     }
 
     // IN < OUT
-    else if (inTarget < carsOut) {
+    else {
         // Can't say nothing
         if (inTarget == 0) {
             eta = 0;

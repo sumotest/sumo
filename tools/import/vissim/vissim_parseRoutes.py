@@ -25,6 +25,8 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 
 import sys
 import optparse
@@ -137,7 +139,7 @@ if options.edgemap:
     for entry in options.edgemap.split(","):
         orig, renamed = entry.split(":")
         edgemap[orig] = renamed
-print "Parsing Vissim input..."
+print("Parsing Vissim input...")
 fd = open(sys.argv[1])
 routeDecisions = []
 haveRouteDecision = False
@@ -172,7 +174,7 @@ for line in fd:
         currentInFlow = currentInFlow + line
 
 # process inflows
-print "Writing flows..."
+print("Writing flows...")
 fdo = open(options.output + ".flows.xml", "w")
 fdo.write("<flowdefs>\n")
 flow_sn = 0
@@ -186,7 +188,7 @@ fdo.close()
 
 # process combinations
 #  parse route decision
-print "Building routes..."
+print("Building routes...")
 edges2check = {}
 edgesSumFlows = {}
 for rd in routeDecisions:
@@ -223,11 +225,11 @@ for inflow in inflows:
                     edges.insert(0, strecke)
             emissions.append((int(t), id, edges))
 # sort emissions
-print "Sorting routes..."
+print("Sorting routes...")
 emissions.sort(sorter(0))
 
 # save emissions
-print "Writing routes..."
+print("Writing routes...")
 fdo = open(options.output + ".rou.xml", "w")
 fdo.write("<routes>\n")
 for emission in emissions:
