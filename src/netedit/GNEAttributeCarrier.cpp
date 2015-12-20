@@ -138,7 +138,6 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(SUMO_ATTR_STARTPOS);		// PABLO #1916
                 attrs.push_back(SUMO_ATTR_ENDPOS);			// PABLO #1916
 				attrs.push_back(SUMO_ATTR_LINES);			// PABLO #1916
-				attrs.push_back(SUMO_ATTR_FRIENDLY_POS);	// PABLO #1916
 				break;										// PABLO #1916
 			case SUMO_TAG_CHARGING_STATION:					// PABLO #1916
 				attrs.push_back(SUMO_ATTR_ID);				// PABLO #1916
@@ -239,9 +238,6 @@ GNEAttributeCarrier::discreteChoices(SumoXMLTag tag, SumoXMLAttr attr) {
 
         _discreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("true");
         _discreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("false");
-
-		_discreteChoices[SUMO_TAG_BUS_STOP][SUMO_ATTR_FRIENDLY_POS].push_back("true");	// PABLO #1916
-		_discreteChoices[SUMO_TAG_BUS_STOP][SUMO_ATTR_FRIENDLY_POS].push_back("false");	// PABLO #1916
 
 		_discreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("true");	// PABLO #1916
 		_discreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("false");	// PABLO #1916

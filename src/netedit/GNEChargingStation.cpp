@@ -298,7 +298,7 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
             if(myChargeInTransit == true)
                 return "true";
             else
-                return false;
+                return "false";
         case SUMO_ATTR_CHARGEDELAY:
             return toString(myChargeDelay);
         default:
@@ -319,25 +319,25 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEU
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            //return toString(getFromPosition());
+            setFromPosition(parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_ENDPOS:
-            //return toString(getToPosition());
+            setToPosition(parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_CHARGINGPOWER:
-            //return toString(myChargingPower);
+            myChargingPower = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_EFFICIENCY:
-            //return toString(myEfficiency);
+            myEfficiency = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_CHARGEINTRANSIT:
-            //if(myChargeInTransit == true)
-             //   return "true";
-            //else
-             //   return false;
-            //break;
+            if(value == "true")
+                myChargeInTransit = true;
+            else
+                myChargeInTransit = false;
+            break;
         case SUMO_ATTR_CHARGEDELAY:
-            //return toString(myChargeDelay);
+            myChargeDelay = parse<SUMOReal>(value);
             break;
         default:
             throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
@@ -356,9 +356,16 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
 			return canParse<SUMOReal>(value);
         case SUMO_ATTR_ENDPOS:
             return canParse<SUMOReal>(value);
-            /*****/
+        case SUMO_ATTR_CHARGINGPOWER:
+            return canParse<SUMOReal>(value);
+        case SUMO_ATTR_EFFICIENCY:
+            return canParse<SUMOReal>(value);
+        case SUMO_ATTR_CHARGEINTRANSIT:
+            return value == "true" || value == "false";
+        case SUMO_ATTR_CHARGEDELAY:
+            return canParse<SUMOReal>(value);
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -381,8 +388,21 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_ENDPOS:
             setToPosition(parse<SUMOReal>(value));
             break;
-
-            /*****/
+        case SUMO_ATTR_CHARGINGPOWER:
+            myChargingPower = parse<SUMOReal>(value);
+            break;
+        case SUMO_ATTR_EFFICIENCY:
+            myEfficiency = parse<SUMOReal>(value);
+            break;
+        case SUMO_ATTR_CHARGEINTRANSIT:
+            if(value == "true")
+                myChargeInTransit = true;
+            else
+                myChargeInTransit = false;
+            break;
+        case SUMO_ATTR_CHARGEDELAY:
+            myChargeDelay = parse<SUMOReal>(value);
+            break;
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
