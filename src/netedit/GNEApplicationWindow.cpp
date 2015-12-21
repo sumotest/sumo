@@ -661,7 +661,7 @@ GNEApplicationWindow::onCmdOpenAdditionals(FXObject*, FXSelector, void*) {	// PA
     if (opendialog.execute()) {												// PABLO #1916
         gCurrentFolder = opendialog.getDirectory();							// PABLO #1916
         std::string file = opendialog.getFilename().text();					// PABLO #1916
-        GNEAdditionalHandler additionalHandler(file, myNet);				// PABLO #1916
+        GNEAdditionalHandler additionalHandler(file, getView(), myNet);		// PABLO #1916
         if (!XMLSubSys::runParser(additionalHandler, file, false)) {		// PABLO #1916
             WRITE_MESSAGE("Loading of " + file + " failed.");				// PABLO #1916
         }																	// PABLO #1916

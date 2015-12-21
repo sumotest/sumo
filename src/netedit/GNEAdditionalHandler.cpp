@@ -34,6 +34,7 @@
 #include "GNELane.h"
 #include "GNEJunction.h"
 #include "GNENet.h"
+#include "GNEViewNet.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -51,16 +52,14 @@
 // ===========================================================================
 
 
-GNEAdditionalHandler::GNEAdditionalHandler(const std::string& file, GNENet *net) : SUMOSAXHandler(file), myNet(net)
-{
-
+GNEAdditionalHandler::GNEAdditionalHandler(const std::string& file, GNEViewNet* viewNet, GNENet *net) : 
+    SUMOSAXHandler(file), 
+    myNet(net), 
+    myViewNet(viewNet){
 }
 
 
-GNEAdditionalHandler::~GNEAdditionalHandler()
-{
-
-}
+GNEAdditionalHandler::~GNEAdditionalHandler() {}
 
 
 void 
@@ -238,33 +237,6 @@ GNEAdditionalHandler::parseAndBuildBusStop(GNENet* net, const SUMOSAXAttributes&
 	buildBusStop(net, id, lines, lane, frompos, topos);
 }
 
-
-void 
-GNEAdditionalHandler::parseAndBuildContainerStop(GNENet* net, const SUMOSAXAttributes& attrs)
-{
-	bool ok = true;
-	// get the id, throw if not given or empty...
-	std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
-	if (!ok) {
-		throw ProcessError();
-	}
-	// get the lane
-	GNELane* lane = getLane(attrs, "containerStop", id);
-	// get the positions
-	SUMOReal frompos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
-	SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLength());
-	const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
-	if (!ok || !checkStopPos(frompos, topos, lane->getLength(), POSITION_EPS, friendlyPos)) {
-		throw InvalidArgument("Invalid position for container stop '" + id + "'.");
-	}
-	// get the lines
-	std::vector<std::string> lines;
-	SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
-	// build the container stop
-	buildContainerStop(net, id, lines, lane, frompos, topos);
-}
-
-
 void 
 GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAttributes& attrs)
 {
@@ -356,10 +328,12 @@ void
 GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines, 
                                    GNELane* lane, SUMOReal frompos, SUMOReal topos)
 {
-    GNEBusStop* stop = new GNEBusStop(id, lines, *lane, frompos, topos);
-    if (!net->addBusStop(stop)) {
-        delete stop;
-    throw InvalidArgument("Could not build bus stop in netEdit '" + id + "'; probably declared twice.");
+    GNEBusStop* busStop = new GNEBusStop(id, lines, *lane, frompos, topos);
+    if (net->addBusStop(busStop)) {
+        myViewNet->addAdditionalGLVisualisation(busStop);
+    } else {
+        delete busStop;
+        throw InvalidArgument("Could not build bus stop in netEdit '" + id + "'; probably declared twice.");
 	}
 }
 
@@ -368,17 +342,12 @@ GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, G
                                            SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
 {
     GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
-    if (!net->addChargingStation(chargingStation)) {
+    if (net->addChargingStation(chargingStation)) {
+        myViewNet->addAdditionalGLVisualisation(chargingStation);
+    } else {
         delete chargingStation;
-    throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
 	}
-}
-
-void 
-GNEAdditionalHandler::buildContainerStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines, 
-                                         GNELane* lane, SUMOReal frompos, SUMOReal topos)
-{
-
 }
 
 

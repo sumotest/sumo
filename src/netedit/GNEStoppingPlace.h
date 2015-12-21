@@ -64,8 +64,7 @@ public:
     GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag);
 
 
-    /** @brief Destructor.
-     */
+    /// @brief Destructor
 	~GNEStoppingPlace();
 
 

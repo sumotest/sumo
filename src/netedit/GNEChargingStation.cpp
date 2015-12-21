@@ -70,14 +70,11 @@ GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUM
     myEfficiency(efficiency), 
     myChargeInTransit(chargeInTransit), 
     myChargeDelay(chargeDelay) {
-	getLane().addChargingStation(this);
     updateGeometry();
 }
 
 
-GNEChargingStation::~GNEChargingStation() {
-	getLane().removeChargingStation(this);
-}
+GNEChargingStation::~GNEChargingStation() {}
 
 
 SUMOReal 
@@ -123,32 +120,90 @@ GNEChargingStation::getShapeLengths() const {
 
 
 void 
-GNEChargingStation::setChargingPower(SUMOReal chargingPower){
-    /** Falta poner condiciones **/
+GNEChargingStation::setChargingPower(SUMOReal chargingPower) {
+    if(chargingPower > 0) {
+        myChargingPower = chargingPower;
+    } else {
+        throw InvalidArgument("Value of charging Power must be greather than 0");
+    }
 }
 
 
 void 
 GNEChargingStation::setEfficiency(SUMOReal efficiency) {
-    /** Falta poner condiciones **/
+    if(efficiency >= 0 && efficiency <= 1) {
+        myEfficiency = efficiency;
+    } else {
+        throw InvalidArgument("Value of efficiency must be between 0 and 1");
+    }
 }
 
 
 void 
-GNEChargingStation::setChargeInTransit(bool chargeinTransit) {
-    /** Falta poner condiciones **/
+GNEChargingStation::setChargeInTransit(bool chargeInTransit) {
+    myChargeInTransit = chargeInTransit;
 }
 
 
 void 
 GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
-    /** Falta poner condiciones **/
+    if(chargeDelay < 0) {
+        myChargeDelay = chargeDelay;
+    } else {
+        throw InvalidArgument("Value of chargeDelay cannot be negative");
+    }
 }
 
 
 void
 GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
 	// Draw Charging Station
+    glPushName(getGlID());
+    glPushMatrix();
+    RGBColor blue(114, 210, 252, 255);
+    RGBColor green(76, 170, 50, 255);
+    RGBColor yellow(255, 235, 0, 255);
+    // draw the area
+    glTranslated(0, 0, getType());
+    GLHelper::setColor(blue);
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+
+    // draw details unless zoomed out to far
+    if (s.scale * exaggeration >= 10) {
+        // draw the sign
+        glTranslated(mySignPos.x(), mySignPos.y(), 0);
+        int noPoints = 9;
+        if (s.scale * exaggeration > 25) {
+            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
+        }
+
+        glScaled(exaggeration, exaggeration, 1);
+        GLHelper::setColor(blue);
+        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+        glTranslated(0, 0, .1);
+
+        GLHelper::setColor(yellow);
+        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
+
+        if (s.scale * exaggeration >= 4.5) {
+            GLHelper::drawText("C", Position(), .1, 1.6, green, mySignRot);
+        }
+
+        glTranslated(5, 0, 0);
+
+    }
+    glPopMatrix();
+    glPopName();
+    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+}
+
+
+void 
+GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    // Draw Charging Station
     glPushName(getGlID());
     glPushMatrix();
     RGBColor blue(114, 210, 252, 255);
@@ -243,7 +298,6 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app,
     // close building
     ret->closeBuilding();
     return ret;
-
 }
 
 

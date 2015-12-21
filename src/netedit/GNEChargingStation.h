@@ -62,21 +62,39 @@ public:
      */
     GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPpos, SUMOReal toPos, 
 		               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
-
+    
+    /// @brief Destructor
 	~GNEChargingStation();
+
 
     ///@brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 
 
+    /** @brief Returns the charging power of the chargingStation
+     * @return The charging power of the chargingStation
+     */
     SUMOReal getChargingPower();
 
+
+    /** @brief Returns the charging efficiency of the chargingStation
+     * @return The charging efficiency of the chargingStation
+     */
     SUMOReal getEfficiency(); 
 
+
+    /** @brief Returns the value of charge in transit of the chargingStation
+     * @return True if charge in transit is enabled, false in other case
+     */
     bool getChargeInTransit(); 
 
+
+    /** @brief Returns the charge delay of the chargingStation
+     * @return The charge delay of the chargingStation
+     */
     SUMOReal getChargeDelay();
+
 
     /** @brief Returns a copy of the Shape of the stoppingPlace
      * @return The Shape of the stoppingPlace
@@ -95,14 +113,32 @@ public:
      */
     std::vector<SUMOReal> getShapeLengths() const;
 
+
+    /** @brief Set a new charging power in the charging station
+     * @param[in] chargingPower new charging power 
+     * @throws InvalidArgument if value of chargingPower isn't valid
+     */
     void setChargingPower(SUMOReal chargingPower);
 
+
+    /** @brief Set a new efficiency in the charging station
+     * @param[in] efficiency new efficiency
+     * @throws InvalidArgument if value of efficiency isn't valid
+     */
     void setEfficiency(SUMOReal efficiency); 
 
-    void setChargeInTransit(bool chargeinTransit); 
 
+    /** @brief Enable or disable charge in transit in the charging station
+     * @param[in] chargeInTransit new charge in Transit value (0 or 1)
+     */
+    void setChargeInTransit(bool chargeInTransit); 
+
+
+    /** @brief Set a new charge delay in the charging station
+     * @param[in] chargeDelay new charge delay value (true or false)
+     * @throws InvalidArgument if value of chargeDelay isn't valid
+     */
     void setChargeDelay(SUMOReal chargeDelay);
-
 
 
     /// @name inherited from GUIGlObject
@@ -114,7 +150,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
 
     /** @brief Returns an own parameter window
@@ -124,7 +160,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
@@ -132,19 +168,28 @@ public:
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
-    Boundary getCenteringBoundary() const ;
+    Boundary getCenteringBoundary() const;
 
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
-    void drawGL(const GUIVisualizationSettings& s) const ;
+    void drawGL(const GUIVisualizationSettings& s) const;
+
+
+    /** @brief Draws additionally triggered visualisations
+     * @param[in] parent The view
+     * @param[in] s The settings for the current view (may influence drawing)
+     */
+    void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const;
     //@}
 
 
     //@name inherited from GNEAttributeCarrier
     //@{
+
+    /** DOCUMENTAR **/
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
@@ -153,6 +198,8 @@ public:
      * @param[in] undoList The undoList on which to register changes
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
+
+    /** DOCUMENTAR **/
 
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}

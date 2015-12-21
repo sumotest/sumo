@@ -619,7 +619,7 @@ GNENet::retrieveAttributeCarriers(const std::set<GUIGlID>& ids, GUIGlObjectType 
                 case GLO_LANE:
                     ac = dynamic_cast<GNELane*>(object);
                     break;
-                case GLO_TRIGGER:                                           // PABLO #1916 ERDMANN
+                case GLO_TRIGGER:                                           // PABLO #1916
                     if(dynamic_cast<GNEBusStop*>(object)) {                 // PABLO #1916
                         ac = dynamic_cast<GNEBusStop*>(object);             // PABLO #1916
                     } else if(dynamic_cast<GNEChargingStation*>(object)) {  // PABLO #1916

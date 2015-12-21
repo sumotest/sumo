@@ -72,14 +72,11 @@
 GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) : 
 	GNEStoppingPlace(id, lane, frompos, topos, SUMO_TAG_BUS_STOP),
 	myLines(lines) {
-	getLane().addBusStop(this);
     updateGeometry();
 }
 
 
-GNEBusStop::~GNEBusStop() {
-	getLane().removeBusStop(this);
-}
+GNEBusStop::~GNEBusStop() {}
 
 
 void
@@ -134,6 +131,7 @@ GNEBusStop::getShapeLengths() const {
 
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
+    // Draw busStop
 	glPushName(getGlID());
     glPushMatrix();
     RGBColor green(76, 170, 50, 255);
@@ -180,6 +178,59 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
     glPopName();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }
+
+
+void 
+GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    // Draw busStop
+    glPushName(getGlID());
+    glPushMatrix();
+    RGBColor green(76, 170, 50, 255);
+    RGBColor yellow(255, 235, 0, 255);
+    // draw the area
+    size_t i;
+    glTranslated(0, 0, getType());
+    GLHelper::setColor(green);
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+    // draw details unless zoomed out to far
+    if (s.scale * exaggeration >= 10) {
+        // draw the lines
+        //const SUMOReal rotSign = MSNet::getInstance()->lefthand() ? -1 : 1;
+		SUMOReal rotSign = 1;
+        for (i = 0; i != myLines.size(); ++i) {
+            glPushMatrix();
+            glTranslated(mySignPos.x(), mySignPos.y(), 0);
+            glRotated(180, 1, 0, 0);
+            glRotated(rotSign * mySignRot, 0, 0, 1);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            pfSetPosition(0, 0);
+            pfSetScale(1.f);
+            glTranslated(1.2, -(double)i, 0);
+            pfDrawString(myLines[i].c_str());
+            glPopMatrix();
+        }
+        // draw the sign
+        glTranslated(mySignPos.x(), mySignPos.y(), 0);
+        int noPoints = 9;
+        if (s.scale * exaggeration > 25) {
+            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
+        }
+        glScaled(exaggeration, exaggeration, 1);
+        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+        glTranslated(0, 0, .1);
+        GLHelper::setColor(yellow);
+        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
+        if (s.scale * exaggeration >= 4.5) {
+            GLHelper::drawText("H", Position(), .1, 1.6, green, mySignRot);
+        }
+    }
+    glPopMatrix();
+    glPopName();
+    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+};
 
 
 GUIGLObjectPopupMenu*
