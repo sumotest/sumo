@@ -242,7 +242,7 @@ GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     buildNameCopyPopupEntry(ret);
     buildSelectionPopupEntry(ret);
     buildPositionCopyEntry(ret, false);
-    if (parent.getVisualisationSettings()->editMode == GNE_MODE_BUSSTOP) {
+    if (parent.getVisualisationSettings()->editMode == GNE_MODE_ADDITIONAL) {
         /*
         new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
         new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);

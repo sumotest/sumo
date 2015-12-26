@@ -171,10 +171,10 @@ enum {
     MID_LOCATEPERSON,
     /// Locate TLS - button
     MID_LOCATETLS,
-    /// Locate BusStop - button         // PABLO #1916
-    MID_LOCATEBUSSTOP,                  // PABLO #1916
-    /// Locate ChargingStation - button // PABLO #1916
-    MID_LOCATECHARGINGSTATION,          // PABLO #1916
+    /// Locate BusStop - button             // PABLO #1916
+    MID_LOCATEADDITIONAL_BUSSTOP,           // PABLO #1916
+    /// Locate ChargingStation - button     // PABLO #1916
+    MID_LOCATEADDITIONAL_CHARGINGSTATION,   // PABLO #1916
     /// Locate addtional structure - button
     MID_LOCATEADD,
     /// Locate poi - button
@@ -384,6 +384,9 @@ enum {
     /** mode has changed */
     MID_GNE_MODE_CHANGE,
 
+    /** mode has changed */         // PABLO #1916
+    MID_GNE_MODEADDITIONAL_CHANGE,  // PABLO #1916
+
     /** mode for adding edges */
     MID_GNE_MODE_CREATE_EDGE,
     /** mode for moving things */
@@ -398,10 +401,13 @@ enum {
     MID_GNE_MODE_CONNECT,
     /** mode for editing tls */
     MID_GNE_MODE_TLS,
-    /** mode for editing bus Stops */           // PABLO #1916
-    MID_GNE_MODE_BUSSTOP,                       // PABLO #1916
+    /** mode for editing additional */          // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL,                    // PABLO #1916
+
+    /** mode for editing bus stops */           // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_BUSSTOP,            // PABLO #1916
     /** mode for editing charging Stations */   // PABLO #1916
-    MID_GNE_MODE_CHARGINGSTATION,               // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_CHARGINGSTATION,    // PABLO #1916
 
 
     /// selector match box messages
