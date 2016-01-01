@@ -195,6 +195,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\netedit\GNEAdditional.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalHandler.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEApplicationWindow.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEAttributeCarrier.cpp" />
@@ -235,6 +236,7 @@
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\netedit\GNEAdditional.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEAdditionalHandler.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEApplicationWindow.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEAttributeCarrier.h" />

@@ -606,14 +606,17 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 break;
 
             case GNE_MODE_ADDITIONAL:                   // PABLO #1916
-                    // decide what to do based on the additional mode
-                    //switch (myEditMode) {
-                    //}
 
-                    if (dynamic_cast<GNELane*>(pointed)) {                  // PABLO #1916
-                        std::cout << "Lane selected" << std::endl;
-                    }
-            break;                                                      // PABLO #1916
+                // decide what to do based on the additional mode
+                //switch (myEditMode) {
+                //}
+
+                if (dynamic_cast<GNELane*>(pointed)) {                  
+                    std::cout << "Lane selected" << std::endl;
+                } 
+
+                GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
+                break;
 
             default:
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -1118,7 +1121,7 @@ GNEViewNet::buildEditModeControls() {
     myEditModeNames.insert("(s) Select", GNE_MODE_SELECT);
     myEditModeNames.insert("(c) Connect", GNE_MODE_CONNECT);
     myEditModeNames.insert("(t) Traffic Lights", GNE_MODE_TLS);
-    myEditModeNames.insert("(a) Additional", GNE_MODE_ADDITIONAL);  // PABLO #1916
+    myEditModeNames.insert("(a) Additionals", GNE_MODE_ADDITIONAL);  // PABLO #1916
 
     // initialize additional mapping                                                            // PABLO #1916
     myEditAdditionalModeNames.insert("Bus stop", GNE_MODE_ADDITIONAL_BUSSTOP);                  // PABLO #1916
