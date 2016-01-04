@@ -31,14 +31,23 @@
 #include <version.h>
 #endif
 
-#include <cmath>
-#include <cassert>
 #include <iostream>
+#include <utils/foxtools/fxexdefs.h>
 #include <utils/foxtools/MFXUtils.h>
+#include <utils/common/MsgHandler.h>
 #include <utils/gui/windows/GUIAppEnum.h>
+#include <utils/gui/div/GUIIOGlobals.h>
+#include <utils/gui/div/GUIGlobalSelection.h>
+#include <utils/gui/globjects/GUIGlObjectStorage.h>
+#include <utils/gui/images/GUIIconSubSys.h>
 #include "GNEAdditional.h"
-#include "GNEUndoList.h"
+#include "GNEViewNet.h"
+#include "GNENet.h"
+#include "GNEJunction.h"
 #include "GNEEdge.h"
+#include "GNELane.h"
+#include "GNEUndoList.h"
+#include "GNEChange_Selection.h"
 #include "GNEAttributeCarrier.h"
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -50,304 +59,170 @@
 // FOX callback mapping
 // ===========================================================================
 FXDEFMAP(GNEAdditional) GNEAdditionalMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE, GNEAdditional::onCmdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,  GNEAdditional::onCmdSetTemplate),
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE, GNEAdditional::onUpdCopyTemplate)
-};
-
-/*
-FXDEFMAP(GNEAdditional::AttrPanel) AttrPanelMap[]= {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE, GNEAdditional::AttrPanelMap::onCmdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,  GNEAdditional::AttrPanelMap::onCmdSetTemplate)
-};
-*/
-
-FXDEFMAP(GNEAdditional::AttrInput) AttrInputMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_ATTRIBUTE,         GNEAdditional::AttrInput::onCmdSetAttribute),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEAdditional::AttrInput::onCmdOpenAttributeEditor)
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL_ITEM,           GNEAdditional::onCmdSelectAdditional),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEAdditional::onCmdSelectReferencePoint),
 };
 
 // Object implementation
 FXIMPLEMENT(GNEAdditional, FXScrollWindow, GNEAdditionalMap, ARRAYNUMBER(GNEAdditionalMap))
-// FXIMPLEMENT(GNEAdditional::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))
-FXIMPLEMENT(GNEAdditional::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 
 // ===========================================================================
 // static members
 // ===========================================================================
-const int GNEAdditional::WIDTH = 140;
+const int GNEAdditional::WIDTH = 150;
+const int GNEAdditional::maximumNumberOfAdditionalParameterTextField = 10;
+const int GNEAdditional::maximumNumberOfAdditionalParameterCheckButton = 10;
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEAdditional::GNEAdditional(FXComposite* parent, GNEUndoList* undoList):
+GNEAdditional::GNEAdditional(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
-    myUndoList(undoList),
-    myHeaderFont(new FXFont(getApp(), "Arial", 18, FXFont::Bold)),
-    myPanel(0),
-    myEdgeTemplate(0) {
-    myPanel = new AttrPanel(this, myACs, undoList);
-}
+    myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
+    myUpdateTarget(updateTarget),
+    myActualAdditionalType(GNE_ADDITIONAL_BUSSTOP),
+    myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT),
+    myUndoList(undoList) {
+    // Create frame
+    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0);
+    
+    // Create titel frame
+    myFrameLabel = new FXLabel(myContentFrame, "Additionals", 0, JUSTIFY_LEFT);
+    myFrameLabel->setFont(myHeaderFont);
+    
+    // Create groupBox for myAdditionalMatchBox 
+    FXGroupBox* groupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element",
+                                                      GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+    
+    // Create FXListBox in groupBoxForMyAdditionalMatchBox
+    myAdditionalMatchBox = new FXComboBox(groupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM, 
+                                          FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
 
+    // Create groupBox for parameters 
+    FXGroupBox* groupBoxForParameters = new FXGroupBox(myContentFrame, "Default parameters",
+                                            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+    // Create groupBox for reference point
+    FXGroupBox* myReferencePointBox = new FXGroupBox(myContentFrame, "Reference point",
+                                            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+    
+    // Create FXListBox for the reference points
+    myReferencePointMatchBox = new FXComboBox(myReferencePointBox, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
+                                              FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
 
-void
-GNEAdditional::create() {
-    FXScrollWindow::create();
-    myHeaderFont->create();
-    myPanel->create();
+    // Create additionalParameterTextField
+    for(int i = 0; i < maximumNumberOfAdditionalParameterTextField; i++) {
+        additionalParameterTextField additionalParameter;
+        // Create elements
+        additionalParameter.horizontalFrame = new FXHorizontalFrame(groupBoxForParameters, LAYOUT_SIDE_TOP | LAYOUT_FIX_WIDTH | PACK_UNIFORM_WIDTH, 0, 0, WIDTH - 20/**revisar**/, 0);
+        //additionalParameter.horizontalFrame->setPackingHints(PACK_UNIFORM_WIDTH);
+        
+        additionalParameter.label = new FXLabel(additionalParameter.horizontalFrame, "param", 0, JUSTIFY_RIGHT);
+        additionalParameter.textField = new FXTextField(additionalParameter.horizontalFrame, 10, this, MID_GNE_SELMB_STRING, TEXTFIELD_NORMAL, 0, 0, 0, 0, 4, 2, 0, 2);
+        // Add to myVectorOfParametersTextFields
+        myVectorOfParametersTextFields.push_back(additionalParameter);
+    }
+
+    // Create additionalParameterCheckButton/
+    for(int i = 0; i < maximumNumberOfAdditionalParameterCheckButton; i++) {
+        additionalParameterCheckButton additionalParameter;
+        additionalParameter.horizontalFrame = new FXHorizontalFrame(groupBoxForParameters, LAYOUT_SIDE_TOP | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0);
+        additionalParameter.label = new FXLabel(additionalParameter.horizontalFrame, "param", 0, JUSTIFY_RIGHT);
+        additionalParameter.menuCheck = new FXMenuCheck(additionalParameter.horizontalFrame, "", this, 0);
+        // Add to myVectorOfParameterCheckButton
+        myVectorOfParameterCheckButton.push_back(additionalParameter);
+    }
+
+    // Add options to myAdditionalMatchBox
+    myAdditionalMatchBox->appendItem("Bus stop");
+    myAdditionalMatchBox->appendItem("Charging station");
+    myAdditionalMatchBox->appendItem("Detector E1");
+    myAdditionalMatchBox->appendItem("Detector E2");
+    myAdditionalMatchBox->appendItem("Detector E3");
+    myAdditionalMatchBox->appendItem("Rerouters");
+    myAdditionalMatchBox->appendItem("Calibrators");
+    myAdditionalMatchBox->appendItem("VSpeed signals");
+
+    myAdditionalMatchBox->setNumVisible((int)myAdditionalMatchBox->getNumItems()); 
+
+    // By default, myActualAdditionalType is busStop
+    myActualAdditionalType = GNE_ADDITIONAL_BUSSTOP;
+
+    // Add options to myReferencePointMatchBox
+    myReferencePointMatchBox->appendItem("left");
+    myReferencePointMatchBox->appendItem("right");
+    myReferencePointMatchBox->appendItem("center");
+
+    myReferencePointMatchBox->setNumVisible((int)myReferencePointMatchBox->getNumItems());
+
+    // By default, reference point is left
+    myActualAdditionalReferencePoint = GNE_ADDITIONALREFERENCEPOINT_LEFT;
 }
 
 
 GNEAdditional::~GNEAdditional() {
-    delete myPanel;
     delete myHeaderFont;
-    if (myEdgeTemplate) {
-        myEdgeTemplate->decRef("GNEAdditional::~GNEAdditional");
-        if (myEdgeTemplate->unreferenced()) {
-            delete myEdgeTemplate;
-        }
-    }
+    gSelected.remove2Update();
+}
+
+long
+GNEAdditional::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
+    // cast actual additional type
+    myActualAdditionalType = static_cast<additionalType>(myAdditionalMatchBox->getCurrentItem());
+    // Set parameters
+    setParameters();
+
+    return 1;
+}
+
+long 
+GNEAdditional::onCmdSelectReferencePoint(FXObject*, FXSelector, void*) {
+    return 1;
+}
+
+void
+GNEAdditional::show() {
+    // Set parameters
+    setParameters();
+    // Show 
+    FXScrollWindow::show();
 }
 
 
 void
-GNEAdditional::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
-    delete myPanel;
-    myACs = ACs;
-    myPanel = new AttrPanel(this, myACs, myUndoList);
-    myPanel->create();
-    recalc();
+GNEAdditional::hide() {
+    FXScrollWindow::hide();
 }
 
-
-void
-GNEAdditional::update() {
-    inspect(myACs);
-}
-
-void
-GNEAdditional::setEdgeTemplate(GNEEdge* tpl) {
-    if (myEdgeTemplate) {
-        myEdgeTemplate->decRef("GNEAdditional::setEdgeTemplate");
-        if (myEdgeTemplate->unreferenced()) {
-            delete myEdgeTemplate;
-        }
+void 
+GNEAdditional::setParameters() {
+    // Hide all additionalParameterTextField
+    for(std::vector<additionalParameterTextField>::iterator i = myVectorOfParametersTextFields.begin(); i != myVectorOfParametersTextFields.end(); i++) {
+        (*i).horizontalFrame->hide();
     }
-    myEdgeTemplate = tpl;
-    myEdgeTemplate->incRef("GNEAdditional::setEdgeTemplate");
-}
-
-
-long
-GNEAdditional::onCmdCopyTemplate(FXObject*, FXSelector, void*) {
-    for (std::vector<GNEAttributeCarrier*>::iterator it = myACs.begin(); it != myACs.end(); it++) {
-        GNEEdge* edge = dynamic_cast<GNEEdge*>(*it);
-        assert(edge);
-        edge->copyTemplate(myEdgeTemplate, myUndoList);
+    // Hide all additionalParameterCheckButton
+    for(std::vector<additionalParameterCheckButton>::iterator i = myVectorOfParameterCheckButton.begin(); i != myVectorOfParameterCheckButton.end(); i++) {
+        (*i).horizontalFrame->hide();
     }
-    return 1;
-}
+    // Set parameters depending of myActualAdditionalType
+    switch(myActualAdditionalType) {
+        case GNE_ADDITIONAL_BUSSTOP :
+            myVectorOfParametersTextFields.at(0).label->setText("size");
+            myVectorOfParametersTextFields.at(0).horizontalFrame->show();
+            myVectorOfParametersTextFields.at(1).label->setText("lines");
+            myVectorOfParametersTextFields.at(1).horizontalFrame->show();
+            break;
 
+        case GNE_ADDITIONAL_CHARGINGSTATION :
+            myVectorOfParametersTextFields.at(0).label->setText("size");
+            myVectorOfParametersTextFields.at(0).horizontalFrame->show();
+            myVectorOfParametersTextFields.at(1).label->setText("crg. Power");
+            myVectorOfParametersTextFields.at(1).horizontalFrame->show();
+            myVectorOfParametersTextFields.at(2).label->setText("efficiency");
+            myVectorOfParametersTextFields.at(2).horizontalFrame->show();
+            break;
 
-long
-GNEAdditional::onCmdSetTemplate(FXObject*, FXSelector, void*) {
-    assert(myACs.size() == 1);
-    GNEEdge* edge = dynamic_cast<GNEEdge*>(myACs[0]);
-    assert(edge);
-    setEdgeTemplate(edge);
-    myPanel->update();
-    return 1;
-}
-
-
-long
-GNEAdditional::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
-    FXString caption;
-    if (myEdgeTemplate) {
-        caption = ("Copy '" + myEdgeTemplate->getMicrosimID() + "'").c_str();
-        sender->handle(this, FXSEL(SEL_COMMAND, ID_ENABLE), NULL);
-    } else {
-        caption = "No Template Set";
-        sender->handle(this, FXSEL(SEL_COMMAND, ID_DISABLE), NULL);
-    }
-    sender->handle(this, FXSEL(SEL_COMMAND, FXLabel::ID_SETSTRINGVALUE), (void*)&caption);
-    return 1;
-}
-
-
-// ===========================================================================
-// AttrPanel method definitions
-// ===========================================================================
-
-GNEAdditional::AttrPanel::AttrPanel(GNEAdditional* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList) :
-    FXVerticalFrame(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0, 2, 0, 0, 0, 0, 0) {
-    FXLabel* header;
-
-	if (ACs.size() > 0) {
-        std::string headerString = toString(ACs[0]->getTag());
-        if (ACs.size() > 1) {
-            headerString = toString(ACs.size()) + " " + headerString + "s";
-        }
-        header = new FXLabel(this, headerString.c_str());
-        new FXHorizontalSeparator(this, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
-
-        const std::vector<SumoXMLAttr>& attrs = ACs[0]->getAttrs();
-        for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
-            if (ACs.size() > 1 && GNEAttributeCarrier::isUnique(*it)) {
-                // disable editing for some attributes in case of multi-selection
-                // even displaying is problematic because of string rendering restrictions
-                continue;
-            }
-            std::set<std::string> occuringValues;
-            for (std::vector<GNEAttributeCarrier*>::const_iterator it_ac = ACs.begin(); it_ac != ACs.end(); it_ac++) {
-                occuringValues.insert((*it_ac)->getAttribute(*it));
-            }
-            std::ostringstream oss;
-            for (std::set<std::string>::iterator it_val = occuringValues.begin(); it_val != occuringValues.end(); it_val++) {
-                if (it_val != occuringValues.begin()) {
-                    oss << " ";
-                }
-                oss << *it_val;
-            }
-            new AttrInput(this, ACs, *it, oss.str(), undoList);
-        }
-
-        if (dynamic_cast<GNEEdge*>(ACs[0])) {
-            new FXHorizontalSeparator(this, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
-            // "Copy Template" (caption supplied via onUpdate)
-            new FXButton(this, "", 0, parent, MID_GNE_COPY_TEMPLATE,
-                         ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                         0, 0, 0, 0, 4, 4, 3, 3);
-
-            if (ACs.size() == 1) {
-                // "Set As Template"
-                new FXButton(this, "Set as Template\t\t", 0, parent, MID_GNE_SET_TEMPLATE,
-                             ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                             0, 0, 0, 0, 4, 4, 3, 3);
-            }
-        };
-    } else {
-        header = new FXLabel(this, "No Object\nselected", 0, JUSTIFY_LEFT);
-    }
-    header->setFont(parent->getHeaderFont());
-
-}
-
-
-// ===========================================================================
-// AttrInput method definitions
-//
-// ===========================================================================
-GNEAdditional::AttrInput::AttrInput(
-    FXComposite* parent,
-    const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue,
-    GNEUndoList* undoList) :
-    FXHorizontalFrame(parent, LAYOUT_FILL_X, 0, 0, WIDTH, 0, 0, 0, 0, 2),
-    myTag(ACs[0]->getTag()),
-    myAttr(attr),
-    myACs(&ACs),
-    myUndoList(undoList),
-    myTextField(0),
-    myChoicesCombo(0) {
-    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
-    const bool combinableChoices = choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr);
-    FXuint opts;
-    std::string label;
-    if (combinableChoices) {
-        opts = BUTTON_NORMAL;
-        label = toString(attr) + "\t\tOpen edit dialog for attribute '" + toString(attr) + "'";
-    } else {
-        opts = 0;
-        label = toString(attr);
-    }
-    FXButton* but = new FXButton(this, label.c_str(), 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR,
-                                 opts, 0, 0, 0, 0, DEFAULT_PAD, DEFAULT_PAD, 1, 1);
-    int cols = (WIDTH - but->getDefaultWidth() - 6) / 9;
-    if (choices.size() == 0 || combinableChoices) {
-        // rudimentary input restriction
-        unsigned int numerical = GNEAttributeCarrier::isNumerical(attr) ? TEXTFIELD_REAL : 0;
-        myTextField = new FXTextField(this, cols,
-                                      this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_RIGHT | numerical, 0, 0, 0, 0, 4, 2, 0, 2);
-        myTextField->setText(initialValue.c_str());
-    } else {
-        myChoicesCombo = new FXComboBox(this, 12, this, MID_GNE_SET_ATTRIBUTE,
-                                        FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
-        for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
-            myChoicesCombo->appendItem(it->c_str());
-        }
-        myChoicesCombo->setNumVisible((int)choices.size());
-        myChoicesCombo->setCurrentItem(myChoicesCombo->findItem(initialValue.c_str()));
+        default:
+            break;
     }
 }
-
-
-long
-GNEAdditional::AttrInput::onCmdOpenAttributeEditor(FXObject*, FXSelector, void*) {
-    FXDialogBox* editor = new FXDialogBox(getApp(),
-                                          ("Select " + toString(myAttr) + "ed").c_str(),
-                                          DECOR_CLOSE | DECOR_TITLE);
-    FXMatrix* m1 = new FXMatrix(editor, 2, MATRIX_BY_COLUMNS);
-    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
-    std::vector<FXCheckButton*> vClassButtons;
-    const std::string oldValue(myTextField->getText().text());
-    for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
-        vClassButtons.push_back(new FXCheckButton(m1, (*it).c_str()));
-        if (oldValue.find(*it) != std::string::npos) {
-            vClassButtons.back()->setCheck(true);
-        }
-    }
-    // buttons
-    new FXHorizontalSeparator(m1, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
-    new FXHorizontalSeparator(m1, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
-    // "Cancel"
-    new FXButton(m1, "Cancel\t\tDiscard modifications", 0, editor, FXDialogBox::ID_CANCEL,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
-    // "OK"
-    new FXButton(m1, "OK\t\tSave modifications", 0, editor, FXDialogBox::ID_ACCEPT,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
-    editor->create();
-    if (editor->execute()) {
-        std::vector<std::string> vClasses;
-        for (std::vector<FXCheckButton*>::const_iterator it = vClassButtons.begin(); it != vClassButtons.end(); ++it) {
-            if ((*it)->getCheck()) {
-                vClasses.push_back(std::string((*it)->getText().text()));
-            }
-        }
-        myTextField->setText(joinToString(vClasses, " ").c_str());
-        onCmdSetAttribute(0, 0, 0);
-    }
-    return 1;
-}
-
-
-long
-GNEAdditional::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* data) {
-    std::string newVal(myTextField != 0 ? myTextField->getText().text() : (char*) data);
-    const std::vector<GNEAttributeCarrier*>& ACs = *myACs;
-    if (ACs[0]->isValid(myAttr, newVal)) {
-        // if its valid for the first AC than its valid for all (of the same type)
-        if (ACs.size() > 1) {
-            myUndoList->p_begin("Change multiple attributes");
-        }
-        for (std::vector<GNEAttributeCarrier*>::const_iterator it_ac = ACs.begin(); it_ac != ACs.end(); it_ac++) {
-            (*it_ac)->setAttribute(myAttr, newVal, myUndoList);
-        }
-        if (ACs.size() > 1) {
-            myUndoList->p_end();
-        }
-        if (myTextField != 0) {
-            myTextField->setTextColor(FXRGB(0, 0, 0));
-            myTextField->killFocus();
-        }
-    } else {
-        if (myTextField != 0) {
-            myTextField->setTextColor(FXRGB(255, 0, 0));
-        }
-    }
-    return 1;
-}
-
-
 /****************************************************************************/

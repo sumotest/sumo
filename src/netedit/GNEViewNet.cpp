@@ -62,10 +62,12 @@
 #include "GNESelector.h"
 #include "GNEConnector.h"
 #include "GNETLSEditor.h"
+#include "GNEAdditional.h"      // PABLO #1916
 #include "GNEPoly.h"
 #include "GNECrossing.h"
 #include "GNEBusStop.h"         // PABLO #1916
 #include "GNEChargingStation.h" // PABLO #1916
+
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -76,7 +78,6 @@
 // ===========================================================================
 FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_CHANGE, GNEViewNet::onCmdChangeMode),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODEADDITIONAL_CHANGE, GNEViewNet::onCmdChangeAdditionalMode),    // PABLO #1916
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SPLIT_EDGE, GNEViewNet::onCmdSplitEdge),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SPLIT_EDGE_BIDI, GNEViewNet::onCmdSplitEdgeBidi),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_REVERSE_EDGE, GNEViewNet::onCmdReverseEdge),
@@ -112,7 +113,6 @@ GNEViewNet::GNEViewNet(
     GUISUMOAbstractView(tmpParent, app, viewParent, net->getVisualisationSpeedUp(), glVis, share),
     myNet(net),
     myEditMode(GNE_MODE_MOVE),
-    myEditAdditionalMode(GNE_MODE_ADDITIONAL_BUSSTOP),   // PABLO #1916
     myPreviousEditMode(GNE_MODE_MOVE),
     myCreateEdgeSource(0),
     myJunctionToMove(0),
@@ -122,7 +122,6 @@ GNEViewNet::GNEViewNet(
     myAmInRectSelect(false),
     myToolbar(toolBar),
     myEditModesCombo(0),
-    myEditAdditionalsCombo(0),  // PABLO #1916
     myEditModeNames(),
     myUndoList(((GNEApplicationWindow*)myApp)->getUndoList()),
     myInspector(0),
@@ -137,6 +136,8 @@ GNEViewNet::GNEViewNet(
     myConnector->hide();
     myTLSEditor = new GNETLSEditor(actualParent, this, myUndoList);
     myTLSEditor->hide();
+    myAdditional = new GNEAdditional(actualParent,this, myUndoList);    // PABLO #1916
+    myAdditional->hide();                                               // PABLO #1916
     // view must be the final member of actualParent
     reparent(actualParent);
 
@@ -365,7 +366,6 @@ GNEViewNet::doPaintGL(int mode, const Boundary& bound) {
     glEnable(GL_POLYGON_OFFSET_FILL);
     glEnable(GL_POLYGON_OFFSET_LINE);
     myVisualizationSettings->editMode = myEditMode;
-    myVisualizationSettings->editAdditionalMode = myEditAdditionalMode; // PABLO #1916
     int hits2 = myGrid->Search(minB, maxB, *myVisualizationSettings);
 
     glTranslated(0, 0, GLO_ADDITIONAL);
@@ -607,6 +607,8 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
 
             case GNE_MODE_ADDITIONAL:                   // PABLO #1916
 
+
+
                 // decide what to do based on the additional mode
                 //switch (myEditMode) {
                 //}
@@ -741,12 +743,6 @@ GNEViewNet::onCmdChangeMode(FXObject*, FXSelector, void* data) {
     setEditMode(myEditModeNames.get((char*) data));
     return 1;
 }
-
-long                                                                        // PABLO #1916
-GNEViewNet::onCmdChangeAdditionalMode(FXObject*, FXSelector, void* data) {  // PABLO #1916
-    setEditAdditionalMode(myEditAdditionalModeNames.get((char*) data));     // PABLO #1916
-    return 1;                                                               // PABLO #1916
-}                                                                           // PABLO #1916
 
 
 void
@@ -1087,31 +1083,6 @@ GNEViewNet::setEditMode(EditMode mode) {
 
 
 void
-GNEViewNet::setEditAdditionalMode(EditMode additionalMode) {
-    setStatusBarText("");
-    abortOperation(false);
-    if (additionalMode == myEditAdditionalMode) {
-        // when trying to switch to the existing mode, toggle with previous instead
-        // not quite sure whether this is useful
-        //myEditMode = myPreviousEditMode;
-        //myPreviousEditMode = mode;
-        setStatusBarText("Additional mode already selected");
-    } else {
-        myPreviousEditAdditionalMode = myEditAdditionalMode;
-        myEditAdditionalMode = additionalMode;
-        myVisualizationSettings->laneColorer.setActive(0); //default
-        switch (additionalMode) {
-            case GNE_MODE_ADDITIONAL_BUSSTOP:
-            case GNE_MODE_ADDITIONAL_CHARGINGSTATION:
-            default:
-                break;
-        }
-    }
-    updateModeSpecificControls();
-}
-
-
-void
 GNEViewNet::buildEditModeControls() {
     // initialize mappings
     myEditModeNames.insert("(e) Create Edge", GNE_MODE_CREATE_EDGE);
@@ -1123,32 +1094,16 @@ GNEViewNet::buildEditModeControls() {
     myEditModeNames.insert("(t) Traffic Lights", GNE_MODE_TLS);
     myEditModeNames.insert("(a) Additionals", GNE_MODE_ADDITIONAL);  // PABLO #1916
 
-    // initialize additional mapping                                                            // PABLO #1916
-    myEditAdditionalModeNames.insert("Bus stop", GNE_MODE_ADDITIONAL_BUSSTOP);                  // PABLO #1916
-    myEditAdditionalModeNames.insert("Charging station", GNE_MODE_ADDITIONAL_CHARGINGSTATION);  // PABLO #1916
-    /** Rest of Additional elements **/
-
     // initialize combo for modes
     myEditModesCombo =
         new FXComboBox(myToolbar, 12, this, MID_GNE_MODE_CHANGE,
                        FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
-
-    // initialize combo for additional elements                                                         // PABLO #1916         
-    myEditAdditionalsCombo =                                                                            // PABLO #1916
-        new FXComboBox(myToolbar, 12, this, MID_GNE_MODEADDITIONAL_CHANGE,                              // PABLO #1916
-                       FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);    // PABLO #1916
 
     std::vector<std::string> names = myEditModeNames.getStrings();
     for (std::vector<std::string>::const_iterator it = names.begin(); it != names.end(); it++) {
         myEditModesCombo->appendItem(it->c_str());
     }
     myEditModesCombo->setNumVisible((int)myEditModeNames.size());
-
-    std::vector<std::string> namesAdditional = myEditAdditionalModeNames.getStrings();                                  // PABLO #1916
-    for (std::vector<std::string>::const_iterator it = namesAdditional.begin(); it != namesAdditional.end(); it++) {    // PABLO #1916
-        myEditAdditionalsCombo->appendItem(it->c_str());                                                                // PABLO #1916
-    }                                                                                                                   // PABLO #1916
-    myEditAdditionalsCombo->setNumVisible((int)myEditModeNames.size());                                                 // PABLO #1916
 
     // initialize mode specific controls
     myChainCreateEdge = new FXMenuCheck(myToolbar, "chain\t\tCreate consecutive edges with a single click (hit ESC to cancel chain).", this, 0);
@@ -1179,7 +1134,6 @@ GNEViewNet::updateModeSpecificControls() {
     myExtendToEdgeNodes->hide();
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
-    myEditAdditionalsCombo->hide();  // PABLO #1916
     int widthChange = 0;
     if (myInspector->shown()) {
         widthChange += myInspector->getWidth() + addChange;
@@ -1198,7 +1152,10 @@ GNEViewNet::updateModeSpecificControls() {
         widthChange += myTLSEditor->getWidth() + addChange;
         myTLSEditor->hide();
     }
-
+    if (myAdditional->shown()) {                                // PABLO #1916
+        widthChange += myAdditional->getWidth() + addChange;    // PABLO #1916
+        myAdditional->hide();                                   // PABLO #1916
+    }                                                           // PABLO #1916
     // enable selected controls
     switch (myEditMode) {
         case GNE_MODE_CREATE_EDGE:
@@ -1229,9 +1186,11 @@ GNEViewNet::updateModeSpecificControls() {
             widthChange -= myTLSEditor->getWidth() + addChange;
             myTLSEditor->show();
             myChangeAllPhases->show();
-        case GNE_MODE_ADDITIONAL:           // PABLO #1916
-            myEditAdditionalsCombo->show(); // PABLO #1916
-            break;                          // PABLO #1916
+            break;
+        case GNE_MODE_ADDITIONAL:                                   // PABLO #1916
+            widthChange -= myAdditional->getWidth() + addChange;    // PABLO #1916
+            myAdditional->show();                                   // PABLO #1916
+            break;                                                  // PABLO #1916
         default:
             break;
     }

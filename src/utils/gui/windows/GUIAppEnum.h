@@ -404,15 +404,13 @@ enum {
     /** mode for editing additional */          // PABLO #1916
     MID_GNE_MODE_ADDITIONAL,                    // PABLO #1916
 
-    /** mode for editing bus stops */           // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_BUSSTOP,            // PABLO #1916
-    /** mode for editing charging Stations */   // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_CHARGINGSTATION,    // PABLO #1916
-
-
     /// selector match box messages
     MID_GNE_SELMB_TAG,
     MID_GNE_SELMB_STRING,
+    
+    /// additional match box messages           // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_ITEM,               // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,     // PABLO #1916
 
     /// processing menu messages
     MID_GNE_COMPUTE_JUNCTIONS,

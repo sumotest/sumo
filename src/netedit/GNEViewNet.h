@@ -61,11 +61,7 @@ enum EditMode {
     /** mode for editing tls */
     GNE_MODE_TLS,
     /** Mode for editing additionals */                 // PABLO #1916
-    GNE_MODE_ADDITIONAL,                                // PABLO #1916
-    /** Mode for editing Trigger bus stops */           // PABLO #1916
-    GNE_MODE_ADDITIONAL_BUSSTOP,                        // PABLO #1916
-    /** Mode for editing trigger charging Stations */   // PABLO #1916
-    GNE_MODE_ADDITIONAL_CHARGINGSTATION                 // PABLO #1916
+    GNE_MODE_ADDITIONAL                                // PABLO #1916
 };
 
 // ===========================================================================
@@ -81,6 +77,7 @@ class GNEInspector;
 class GNESelector;
 class GNEConnector;
 class GNETLSEditor;
+class GNEAdditional;    // PABLO #1916
 class GNEPoly;
 
 // ===========================================================================
@@ -121,9 +118,6 @@ public:
 
     /// @brief sets edit mode via combo box
     long onCmdChangeMode(FXObject*, FXSelector, void*);
-
-    /// @brief sets edit mode via combo box                         // PABLO #1916
-    long onCmdChangeAdditionalMode(FXObject*, FXSelector, void*);   // PABLO #1916
 
     /// @brief split edge at cursor position
     long onCmdSplitEdge(FXObject*, FXSelector, void*);
@@ -213,6 +207,10 @@ public:
         return myTLSEditor;
     }
 
+    GNEAdditional* getAdditional() {    // PABLO #1916
+        return myAdditional;            // PABLO #1916
+    }                                   // PABLO #1916
+
     bool changeAllPhases() const {
         return myChangeAllPhases->getCheck() != FALSE;
     }
@@ -233,14 +231,8 @@ private:
     // the current edit mode
     EditMode myEditMode;
 
-    // the current edit additional mode // PABLO #1916
-    EditMode myEditAdditionalMode;      // PABLO #1916
-
     // the previous edit mode used for toggling
     EditMode myPreviousEditMode;
-
-    // the previous edit additional mode used for toggling  // PABLO #1916
-    EditMode myPreviousEditAdditionalMode;                  // PABLO #1916
 
     FXMenuCheck* mySelectEdges;
     FXMenuCheck* myExtendToEdgeNodes;
@@ -302,8 +294,6 @@ private:
     FXToolBar* myToolbar;
     /// @brief combo box for selecting the  edit mode
     FXComboBox* myEditModesCombo;
-    /// @brief combo box for selecting the additionalElement    // PABLO #1916
-    FXComboBox* myEditAdditionalsCombo;                         // PABLO #1916
 
     /** @brief since we cannot switch on strings we map the mode names to an enum
      */
@@ -327,6 +317,9 @@ private:
     // @brief the panel for GNE_MODE_TLS
     GNETLSEditor* myTLSEditor;
 
+    // @brief the panel for GNE_MODE_ADDITIONAL // PABLO #1916
+    GNEAdditional* myAdditional;                // PABLO #1916
+
     Position myPopupSpot;
 
     GNEPoly* myCurrentPoly;
@@ -335,8 +328,6 @@ private:
     // set edit mode
     void setEditMode(EditMode mode);
 
-    // set edit additional mode                             // PABLO #1916
-    void setEditAdditionalMode(EditMode additionalMode);    // PABLO #1916
 
     /// @brief adds controls for setting the edit mode
     void buildEditModeControls();
