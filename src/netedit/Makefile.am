@@ -47,6 +47,7 @@ GNESelector.h GNESelector.cpp \
 GNEConnector.h GNEConnector.cpp \
 GNETLSEditor.h GNETLSEditor.cpp \
 GNEAdditionalHandler.h GNEAdditionalHandler.cpp \
+GNEAdditional.h GNEAdditional.cpp \
 GNEChargingStation.h GNEChargingStation.cpp \
 GNEStoppingPlace.h GNEStoppingPlace.cpp \
 GNEBusStop.h GNEBusStop.cpp \
