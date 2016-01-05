@@ -115,14 +115,14 @@ private:
     /// @brief set parameters depending of the additionalType selected
     void setParameters();
 
-    /// @brief struct for text field parameters             // QUESTION ERDMANN 01
+    /// @brief struct for text field parameters
     struct additionalParameterTextField {
         FXHorizontalFrame *horizontalFrame;
         FXLabel *label;
         FXTextField *textField;
     };
 
-    /// @brief struct for boolean (menuCheck) parameters    // QUESTION ERDMANN 02
+    /// @brief struct for boolean (menuCheck) parameters 
     struct additionalParameterCheckButton {
         FXHorizontalFrame *horizontalFrame;
         FXLabel *label;
@@ -144,10 +144,10 @@ private:
     /// @brief the window to inform 
     GNEViewNet* myUpdateTarget;
 
-    /// @brief vector of Labels for the name of default parameters                  // QUESTION ERDMANN 03
+    /// @brief vector of Labels for the name of default parameters
     std::vector<additionalParameterTextField> myVectorOfParametersTextFields;
 
-    /// @brief vector of Text fiels with the default text parameters                // QUESTION ERDMANN 04
+    /// @brief vector of Text fiels with the default text parameters
     std::vector<additionalParameterCheckButton> myVectorOfParameterCheckButton;
 
     /// @brief the box for the reference point match Box

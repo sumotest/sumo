@@ -71,10 +71,12 @@ GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, SUMORea
 	myToPos(toPos),
 	GUIGlObject(GLO_TRIGGER, id),
     GNEAttributeCarrier(tag) {
+    myLane.addStoppingPlace(this);
 }
 
 
 GNEStoppingPlace::~GNEStoppingPlace() {
+    myLane.removeStoppingPlace(this);
 }
 
 

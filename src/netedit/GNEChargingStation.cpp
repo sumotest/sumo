@@ -310,6 +310,7 @@ GNEChargingStation::getCenteringBoundary() const {
 
 void
 GNEChargingStation::updateGeometry() {
+    myShapeRotations.clear();
     //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
 	SUMOReal offsetSign = 1;
     myShape = getLane().getShape();
