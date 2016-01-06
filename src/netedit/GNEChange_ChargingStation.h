@@ -29,23 +29,49 @@
 #include <config.h>
 #endif
 
+#include <fx.h>
+#include <utils/foxtools/fxexdefs.h>
+#include <netbuild/NBEdge.h>
+#include "GNEChange.h"
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class GNEChargingStation;
+
+// ===========================================================================
+// class definitions
+// ===========================================================================
+/**
+ * @class GNEChange_ChargingStation
+ * A network change in which a single ChargingStation is created or deleted
+ */
+class GNEChange_ChargingStation : public GNEChange {
+    FXDECLARE_ABSTRACT(GNEChange_ChargingStation)
+
+public:
+    /** @brief Constructor for creating/deleting an edge
+     * @param[in] net The net on which to apply changes
+     * @param[in] chargingStation The chargingStation to be created/deleted
+     * @param[in] forward Whether to create/delete (true/false)
+     */
+    GNEChange_ChargingStation(GNENet* net, GNEChargingStation* chargingStation, bool forward);
+
+    /// @brief Destructor
+    ~GNEChange_ChargingStation();
+
+    FXString undoName() const;
+    FXString redoName() const;
+    void undo();
+    void redo();
 
 
-#ifdef CHECK_MEMORY_LEAKS
-#include <foreign/nvwa/debug_new.h>
+private:
+    /** @brief full information regarding the chargingStation that is to be created/deleted
+     * we assume shared responsibility for the pointer (via reference counting)
+     */
+    GNEChargingStation* myChargingStation;
+};
+
 #endif
-
-// ===========================================================================
-// static member definitions
-// ===========================================================================
-
-
-// ===========================================================================
-// member method definitions
-// ===========================================================================
-// ---------------------------------------------------------------------------
-// Class::Subclass - methods <LEAVE OUT IF METHODS ARE OF ONE CLASS ONLY>
-// ---------------------------------------------------------------------------
-
 /****************************************************************************/
-#endif

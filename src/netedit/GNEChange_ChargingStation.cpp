@@ -28,22 +28,73 @@
 #endif
 
 #include "GNEChange_ChargingStation.h"
+#include "GNENet.h"
+#include "GNEChargingStation.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif
 
-// ===========================================================================
-// static member definitions
-// ===========================================================================
 
+// ===========================================================================
+// FOX-declarations
+// ===========================================================================
+FXIMPLEMENT_ABSTRACT(GNEChange_ChargingStation, GNEChange, NULL, 0)
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-// ---------------------------------------------------------------------------
-// Class::Subclass - methods <LEAVE OUT IF METHODS ARE OF ONE CLASS ONLY>
-// ---------------------------------------------------------------------------
 
 
-/****************************************************************************/
+// Constructor for creating an ChargingStation
+GNEChange_ChargingStation::GNEChange_ChargingStation(GNENet* net, GNEChargingStation* chargingStation, bool forward):
+    GNEChange(net, forward),
+    myChargingStation(chargingStation) {
+    assert(myNet);
+    chargingStation->incRef("GNEChange_ChargingStation");
+}
+
+
+GNEChange_ChargingStation::~GNEChange_ChargingStation() {
+    assert(myChargingStation);
+    myChargingStation->decRef("GNEChange_ChargingStation");
+    if (myChargingStation->unreferenced()) {
+        delete myChargingStation;
+    }
+}
+
+
+void GNEChange_ChargingStation::undo() {
+    if (myForward) {
+        myNet->removeChargingStation(myChargingStation);
+    } else {
+        myNet->addChargingStation(myChargingStation);
+    }
+}
+
+
+void GNEChange_ChargingStation::redo() {
+    if (myForward) {
+        myNet->addChargingStation(myChargingStation);
+    } else {
+        myNet->removeChargingStation(myChargingStation);
+    }
+}
+
+
+FXString GNEChange_ChargingStation::undoName() const {
+    if (myForward) {
+        return ("Undo create ChargingStation");
+    } else {
+        return ("Undo delete ChargingStation");
+    }
+}
+
+
+FXString GNEChange_ChargingStation::redoName() const {
+    if (myForward) {
+        return ("Redo create ChargingStation");
+    } else {
+        return ("Redo delete ChargingStation");
+    }
+}

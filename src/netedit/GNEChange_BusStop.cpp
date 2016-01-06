@@ -28,22 +28,73 @@
 #endif
 
 #include "GNEChange_BusStop.h"
+#include "GNENet.h"
+#include "GNEBusStop.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif
 
-// ===========================================================================
-// static member definitions
-// ===========================================================================
 
+// ===========================================================================
+// FOX-declarations
+// ===========================================================================
+FXIMPLEMENT_ABSTRACT(GNEChange_BusStop, GNEChange, NULL, 0)
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-// ---------------------------------------------------------------------------
-// Class::Subclass - methods <LEAVE OUT IF METHODS ARE OF ONE CLASS ONLY>
-// ---------------------------------------------------------------------------
 
 
-/****************************************************************************/
+// Constructor for creating an BusStop
+GNEChange_BusStop::GNEChange_BusStop(GNENet* net, GNEBusStop* busStop, bool forward):
+    GNEChange(net, forward),
+    myBusStop(busStop) {
+    assert(myNet);
+    busStop->incRef("GNEChange_BusStop");
+}
+
+
+GNEChange_BusStop::~GNEChange_BusStop() {
+    assert(myBusStop);
+    myBusStop->decRef("GNEChange_BusStop");
+    if (myBusStop->unreferenced()) {
+        delete myBusStop;
+    }
+}
+
+
+void GNEChange_BusStop::undo() {
+    if (myForward) {
+        myNet->removeBusStop(myBusStop);
+    } else {
+        myNet->addBusStop(myBusStop);
+    }
+}
+
+
+void GNEChange_BusStop::redo() {
+    if (myForward) {
+        myNet->addBusStop(myBusStop);
+    } else {
+        myNet->removeBusStop(myBusStop);
+    }
+}
+
+
+FXString GNEChange_BusStop::undoName() const {
+    if (myForward) {
+        return ("Undo create BusStop");
+    } else {
+        return ("Undo delete BusStop");
+    }
+}
+
+
+FXString GNEChange_BusStop::redoName() const {
+    if (myForward) {
+        return ("Redo create BusStop");
+    } else {
+        return ("Redo delete BusStop");
+    }
+}

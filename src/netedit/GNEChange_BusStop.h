@@ -29,23 +29,49 @@
 #include <config.h>
 #endif
 
+#include <fx.h>
+#include <utils/foxtools/fxexdefs.h>
+#include <netbuild/NBEdge.h>
+#include "GNEChange.h"
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class GNEBusStop;
+
+// ===========================================================================
+// class definitions
+// ===========================================================================
+/**
+ * @class GNEChange_BusStop
+ * A network change in which a single BusStop is created or deleted
+ */
+class GNEChange_BusStop : public GNEChange {
+    FXDECLARE_ABSTRACT(GNEChange_BusStop)
+
+public:
+    /** @brief Constructor for creating/deleting an edge
+     * @param[in] net The net on which to apply changes
+     * @param[in] busStop The busStop to be created/deleted
+     * @param[in] forward Whether to create/delete (true/false)
+     */
+    GNEChange_BusStop(GNENet* net, GNEBusStop* busStop, bool forward);
+
+    /// @brief Destructor
+    ~GNEChange_BusStop();
+
+    FXString undoName() const;
+    FXString redoName() const;
+    void undo();
+    void redo();
 
 
-#ifdef CHECK_MEMORY_LEAKS
-#include <foreign/nvwa/debug_new.h>
+private:
+    /** @brief full information regarding the busStop that is to be created/deleted
+     * we assume shared responsibility for the pointer (via reference counting)
+     */
+    GNEBusStop* myBusStop;
+};
+
 #endif
-
-// ===========================================================================
-// static member definitions
-// ===========================================================================
-
-
-// ===========================================================================
-// member method definitions
-// ===========================================================================
-// ---------------------------------------------------------------------------
-// Class::Subclass - methods <LEAVE OUT IF METHODS ARE OF ONE CLASS ONLY>
-// ---------------------------------------------------------------------------
-
 /****************************************************************************/
-#endif

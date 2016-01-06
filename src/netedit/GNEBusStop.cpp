@@ -339,16 +339,23 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
-			/// CLASS GNEBUSSTOP_CHANGE has to be finished
-			
-			/*
-        case SUMO_ATTR_LANE:
-            return toString(getLane().getAttribute(SUMO_ATTR_ID));
-        case SUMO_ATTR_STARTPOS:
-            return toString(getFromPosition());
-        case SUMO_ATTR_ENDPOS:
-            return toString(getToPosition());
-			*/
+		case SUMO_ATTR_LANE:
+            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_STARTPOS: {
+            setFromPosition(parse<SUMOReal>(value));
+            updateGeometry();
+            break;
+            }
+        case SUMO_ATTR_ENDPOS: {
+            setToPosition(parse<SUMOReal>(value));
+            updateGeometry();
+            break;
+            }
+        case SUMO_ATTR_LINES: {
+            SUMOSAXAttributes::parseStringVector(value, myLines);
+            updateGeometry();
+            break;
+            }
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
@@ -362,10 +369,26 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
             return false;
         case SUMO_ATTR_LANE:
             return canParse<std::string>(value);
-        case SUMO_ATTR_STARTPOS:
-			return canParse<SUMOReal>(value);
-        case SUMO_ATTR_ENDPOS:
-            return canParse<SUMOReal>(value);
+        case SUMO_ATTR_STARTPOS: {
+            if(canParse<SUMOReal>(value)) {
+                SUMOReal startPos = parse<SUMOReal>(value);
+                if (startPos >= 0 && startPos < (getToPosition()-1))
+                    return true;
+                else
+                    return false;
+            } else
+                return false;
+            }
+        case SUMO_ATTR_ENDPOS: {
+            if(canParse<SUMOReal>(value)) {
+                SUMOReal endPos = parse<SUMOReal>(value);
+                if (endPos >= 1 && endPos > (getFromPosition()))
+                    return true;
+                else
+                    return false;
+            } else
+                return false;
+            }
         case SUMO_ATTR_LINES:
 			return canParse<std::string>(value);
         default:
@@ -383,18 +406,23 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_LANE:
+		case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
-            break;
-        case SUMO_ATTR_STARTPOS:
+        case SUMO_ATTR_STARTPOS: {
             setFromPosition(parse<SUMOReal>(value));
+            updateGeometry();
             break;
-        case SUMO_ATTR_ENDPOS:
+            }
+        case SUMO_ATTR_ENDPOS: {
             setToPosition(parse<SUMOReal>(value));
+            updateGeometry();
             break;
-        case SUMO_ATTR_LINES:
+            }
+        case SUMO_ATTR_LINES: {
             SUMOSAXAttributes::parseStringVector(value, myLines);
+            updateGeometry();
             break;
+            }
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
