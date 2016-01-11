@@ -49,6 +49,8 @@
 #include "GNEUndoList.h"
 #include "GNEChange_Selection.h"
 #include "GNEAttributeCarrier.h"
+#include "GNEBusStop.h"
+#include "GNEChargingStation.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -163,6 +165,64 @@ GNEAdditional::~GNEAdditional() {
     delete myHeaderFont;
     gSelected.remove2Update();
 }
+
+
+void
+GNEAdditional::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
+    // Position of the mouse in the lane
+    SUMOReal position = lane.getShape().nearest_offset_to_point2D(parent->getPositionInformation());
+    switch(myActualAdditionalType) {
+        case GNE_ADDITIONAL_BUSSTOP: {
+            int numberOfBusStops = myUpdateTarget->getNet()->getNumberOfBusStops();
+            // Check that the ID of the new busStop is unique
+            while(myUpdateTarget->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
+                numberOfBusStops++;
+            // Create an add new busStop
+            /** TERMINAR **/
+            GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), std::vector<std::string>(), lane, position, position + 10);
+            myUpdateTarget->getNet()->addBusStop(busStop);
+            parent->addAdditionalGLVisualisation(busStop);
+            break;
+        }
+        case GNE_ADDITIONAL_CHARGINGSTATION: {
+            int numberOfBusStops = myUpdateTarget->getNet()->getNumberOfChargingStations();
+            // Check that the ID of the new chargingStation is unique
+            while(myUpdateTarget->getNet()->getBusStop("chargingStation" + toString(numberOfBusStops)) != NULL)
+                numberOfBusStops++;
+            // Create an add new chargingStation
+            /** TERMINAR **/
+            GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, position, position + 10, 32000, 0.95, true, 5);
+            myUpdateTarget->getNet()->addChargingStation(chargingStation);
+            parent->addAdditionalGLVisualisation(chargingStation);
+            break;
+        }
+        case GNE_ADDITIONAL_E1:{
+            /** Finish **/
+            break;
+        }
+        case GNE_ADDITIONAL_E2:{
+            /** Finish **/
+            break;
+        }
+        case GNE_ADDITIONAL_E3:{
+            /** Finish **/
+            break;
+        }
+        case GNE_ADDITIONAL_REROUTERS:{
+            /** Finish **/
+            break;
+        }
+        case GNE_ADDITIONAL_CALIBRATORS:{
+            /** Finish **/
+            break;
+        }
+        case GNE_ADDITIONAL_VARIABLESPEEDSIGNS:{
+            /** Finish **/
+            break;
+        }
+    }
+}
+
 
 long
 GNEAdditional::onCmdSelectAdditional(FXObject*, FXSelector, void*) {

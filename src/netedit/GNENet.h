@@ -406,79 +406,92 @@ public:
     }
 
 
-	/** @brief Adds a busStop
-     *
-     * If another bus stop with the same id exists, false is returned.
-     *  Otherwise, the bus stop is added to the internal bus stop
-     *  container "GNEBusStops".
-     *
-     * @param[in] busStop The bus stop to add
-     * @return true if busStop was added, false in other case
-     */
-    bool addBusStop(GNEBusStop* busStop);	// PABLO #1916
+	/** @brief Adds a busStop                                           // PABLO #1916
+     *                                                                  // PABLO #1916
+     * If another bus stop with the same id exists, false is returned.  // PABLO #1916
+     *  Otherwise, the bus stop is added to the internal bus stop       // PABLO #1916
+     *  container "GNEBusStops".                                        // PABLO #1916
+     *                                                                  // PABLO #1916
+     * @param[in] busStop The bus stop to add                           // PABLO #1916
+     * @return true if busStop was added, false in other case           // PABLO #1916
+     */                                                                 // PABLO #1916
+    bool addBusStop(GNEBusStop* busStop);	                            // PABLO #1916
 
 
-	/** @brief Remove busStop
-     *
-     * Remove an existent bus stop of the Net
-     *
-     * @param[in] busStop The bus stop to remove
-     * @return true if busStop was removed, false in other case
-     */
-    bool removeBusStop(GNEBusStop* busStop);	// PABLO #1916
+	/** @brief Remove busStop                                   // PABLO #1916
+     *                                                          // PABLO #1916
+     * Remove an existent bus stop of the Net                   // PABLO #1916
+     *                                                          // PABLO #1916
+     * @param[in] busStop The bus stop to remove                // PABLO #1916
+     * @return true if busStop was removed, false in other case // PABLO #1916
+     */                                                         // PABLO #1916
+    bool removeBusStop(GNEBusStop* busStop);	                // PABLO #1916
 
 
-    /** @brief Returns the named bus stop
-     * @param[in] id The id of the bus stop to return.
-     * @return The named bus stop, or 0 if no such stop exists
-     */
-    GNEBusStop* getBusStop(const std::string& id) const;
+    /** @brief Returns the named bus stop                       // PABLO #1916
+     * @param[in] id The id of the bus stop to return.          // PABLO #1916
+     * @return The named bus stop, or 0 if no such stop exists  // PABLO #1916
+     */                                                         // PABLO #1916
+    GNEBusStop* getBusStop(const std::string& id) const;        // PABLO #1916
 
 
-    /** @brief Returns the bus stop close to the given position
-     * @param[in] lane the lane of the bus stop to return.
-     * @param[in] pos the position of the bus stop to return.
-     * @return The bus stop id on the location, or "" if no such stop exists
-     */
+    /** @brief Returns the bus stop close to the given position                 // PABLO #1916
+     * @param[in] lane the lane of the bus stop to return.                      // PABLO #1916
+     * @param[in] pos the position of the bus stop to return.                   // PABLO #1916
+     * @return The bus stop id on the location, or "" if no such stop exists    // PABLO #1916
+     */                                                                         // PABLO #1916
     std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
 
 
-    /** @brief Adds a charging station
-     *
-     * If another charging station with the same id exists, false is returned.
-     *  Otherwise, the charging station is added to the internal bus stop
-     *  container "GNEChargingStations".
-     *
-     * This control gets responsible for deletion of the added charging station.
-     *
-     * @param[in] chargingStation The charging station add
-     * @return Whether the charging station could be added
-     */
-    bool addChargingStation(GNEChargingStation* chargingStation);	// PABLO #1916
+    /** @brief Adds a charging station                                              // PABLO #1916
+     *                                                                              // PABLO #1916
+     * If another charging station with the same id exists, false is returned.      // PABLO #1916
+     *  Otherwise, the charging station is added to the internal bus stop           // PABLO #1916
+     *  container "GNEChargingStations".                                            // PABLO #1916
+     *                                                                              // PABLO #1916
+     * This control gets responsible for deletion of the added charging station.    // PABLO #1916
+     *                                                                              // PABLO #1916
+     * @param[in] chargingStation The charging station add                          // PABLO #1916
+     * @return Whether the charging station could be added                          // PABLO #1916
+     */                                                                             // PABLO #1916
+    bool addChargingStation(GNEChargingStation* chargingStation);	                // PABLO #1916
 
-	/** @brief Remove chargingStation
-     *
-     * Remove an existent charging station of the Net
-     *
-     * @param[in] chargingStation The charging station to remove
-     * @return true if chargingStation was removed, false in other case
-     */
+	/** @brief Remove chargingStation                                   // PABLO #1916
+     *                                                                  // PABLO #1916
+     * Remove an existent charging station of the Net                   // PABLO #1916
+     *                                                                  // PABLO #1916
+     * @param[in] chargingStation The charging station to remove        // PABLO #1916
+     * @return true if chargingStation was removed, false in other case // PABLO #1916
+     */                                                                 // PABLO #1916
     bool removeChargingStation(GNEChargingStation* chargingStation);	// PABLO #1916
 
 
-    /** @brief Returns the named charging station
-     * @param[in] id The id of the charging station to return.
-     * @return The named charging station, or 0 if no such stop exists
-     */
+    /** @brief Returns the named charging station                           // PABLO #1916
+     * @param[in] id The id of the charging station to return.              // PABLO #1916
+     * @return The named charging station, or 0 if no such stop exists      // PABLO #1916
+     */                                                                     // PABLO #1916
     GNEChargingStation* getChargingStation(const std::string& id) const;	// PABLO #1916
 
 
-    /** @brief Returns the charging station close to the given position
-     * @param[in] lane the lane of the charging station to return.
-     * @param[in] pos the position of the bus stop to return.
-     * @return The charging station id on the location, or "" if no such stop exists
-     */
+    /** @brief Returns the charging station close to the given position                 // PABLO #1916
+     * @param[in] lane the lane of the charging station to return.                      // PABLO #1916
+     * @param[in] pos the position of the bus stop to return.                           // PABLO #1916
+     * @return The charging station id on the location, or "" if no such stop exists    // PABLO #1916
+     */                                                                                 // PABLO #1916
     std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
+
+
+    /** @brief Returns the number of busStops of the net    // PABLO #1916
+     * @return Number of busStops of the net                // PABLO #1916
+     */                                                     // PABLO #1916
+    int getNumberOfBusStops();                              // PABLO #1916
+
+
+    /** @brief Returns the Number of chargingStations of the net    // PABLO #1916
+     * @return Number of charging Stations of the net               // PABLO #1916
+     */                                                             // PABLO #1916
+    int getNumberOfChargingStations();                              // PABLO #1916
+
 
 
 private:
@@ -501,8 +514,8 @@ private:
 
     GNEEdges myEdges;
     GNEJunctions myJunctions;
-	GNEBusStops myBusStops;
-	GNEChargingStations myChargingStations;
+	GNEBusStops myBusStops;                 // PABLO #1916
+	GNEChargingStations myChargingStations; // PABLO #1916
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{

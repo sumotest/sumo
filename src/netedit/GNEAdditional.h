@@ -42,6 +42,7 @@
 class GNEViewNet;
 class GNEAttributeCarrier;
 class GNEUndoList;
+class GNELane;
 
 // ===========================================================================
 // class definitions
@@ -83,6 +84,8 @@ public:
 
     /// @brief Destructor
     ~GNEAdditional();
+
+    void addAdditional(GNELane &lane, GUISUMOAbstractView* parent);
 
 
     FXFont* getHeaderFont() {

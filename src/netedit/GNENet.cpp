@@ -1006,6 +1006,19 @@ GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {			
     return "";																																			// PABLO #1916
 }																																						// PABLO #1916
 
+
+int                             // PABLO #1916
+GNENet::getNumberOfBusStops() { // PABLO #1916
+    return myBusStops.size();   // PABLO #1916
+}                               // PABLO #1916
+
+
+int                                     // PABLO #1916
+GNENet::getNumberOfChargingStations() { // PABLO #1916
+    return myChargingStations.size();   // PABLO #1916
+}                                       // PABLO #1916
+
+
 // ===========================================================================
 // private
 // ===========================================================================

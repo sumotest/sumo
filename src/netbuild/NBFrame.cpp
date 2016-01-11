@@ -371,6 +371,15 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addDescription("keep-nodes-unregulated.district-nodes", "Unregulated Nodes", "Do not regulate district nodes");
 
 
+    oc.doRegister("busStop default length", new Option_String("10"));                                   // PABLO #1916
+    oc.addDescription("busStop default length", "Default values", "Default lenght of the busStops");    // PABLO #1916
+
+    oc.doRegister("busStop default lines", new Option_String());                                    // PABLO #1916
+    oc.addDescription("busStop default lines", "Default values", "Default lines of the busStops");  // PABLO #1916
+
+    oc.doRegister("chargingStation default length", new Option_String("10"));                                       // PABLO #1916
+    oc.addDescription("chargingStation default length", "Default values", "Default length of the chargingStation"); // PABLO #1916
+
     // ramp guessing options
     if (!forNetgen) {
         oc.doRegister("ramps.guess", new Option_Bool(false));

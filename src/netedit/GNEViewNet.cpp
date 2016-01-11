@@ -605,20 +605,13 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
 
-            case GNE_MODE_ADDITIONAL:                   // PABLO #1916
-
-
-
-                // decide what to do based on the additional mode
-                //switch (myEditMode) {
-                //}
-
-                if (dynamic_cast<GNELane*>(pointed)) {                  
-                    std::cout << "Lane selected" << std::endl;
-                } 
-
-                GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
-                break;
+            case GNE_MODE_ADDITIONAL:                                   // PABLO #1916
+                if(pointed_lane) {                                      // PABLO #1916
+                    myAdditional->addAdditional(*pointed_lane, this);   // PABLO #1916
+                    update();                                           // PABLO #1916
+                }                                                       // PABLO #1916
+                GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);    // PABLO #1916
+                break;                                                  // PABLO #1916
 
             default:
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
