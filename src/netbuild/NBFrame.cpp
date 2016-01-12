@@ -380,6 +380,18 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("chargingStation default length", new Option_String("10"));                                       // PABLO #1916
     oc.addDescription("chargingStation default length", "Default values", "Default length of the chargingStation"); // PABLO #1916
 
+    oc.doRegister("chargingStation default charging power", new Option_String("22000"));                                            // PABLO #1916
+    oc.addDescription("chargingStation default charging power", "Default values", "Default charging power of the chargingStation"); // PABLO #1916
+
+    oc.doRegister("chargingStation default efficiency", new Option_String("0.95"));                                                     // PABLO #1916
+    oc.addDescription("chargingStation default efficiency", "Default values", "Default charging efficiency of the chargingStation");    // PABLO #1916
+
+    oc.doRegister("chargingStation default charge in transit", new Option_Bool(false));                                                     // PABLO #1916
+    oc.addDescription("chargingStation default charge in transit", "Default values", "Default charge in transit of the chargingStation");   // PABLO #1916
+
+    oc.doRegister("chargingStation default charge delay", new Option_String("0"));                                              // PABLO #1916
+    oc.addDescription("chargingStation default charge delay", "Default values", "Default charge delay of the chargingStation"); // PABLO #1916
+
     // ramp guessing options
     if (!forNetgen) {
         oc.doRegister("ramps.guess", new Option_Bool(false));

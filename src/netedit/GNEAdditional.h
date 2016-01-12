@@ -94,13 +94,13 @@ public:
 
     /// @name FOX-callbacks
     /// @{
-    /** @brief Called when the user enters a new selection expression
-     * validates expression and modifies current selection
+    /** @brief Called when the user select another additional Type
+     * set te currently additional type
      */
     long onCmdSelectAdditional(FXObject*, FXSelector, void*);
 
-    /** @brief 
-     * 
+    /** @brief Called when the user enters another reference point
+     * set the currently reference point
      */
     long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
     /// @}
@@ -118,14 +118,17 @@ private:
     /// @brief set parameters depending of the additionalType selected
     void setParameters();
 
-    /// @brief struct for text field parameters
+    /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
+    bool setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
+
+    /// @brief struct for text field parameters // QUESTION ERDMANN 01
     struct additionalParameterTextField {
         FXHorizontalFrame *horizontalFrame;
         FXLabel *label;
         FXTextField *textField;
     };
 
-    /// @brief struct for boolean (menuCheck) parameters 
+    /// @brief struct for boolean (menuCheck) parameters    // QUESTION ERDMANN 02
     struct additionalParameterCheckButton {
         FXHorizontalFrame *horizontalFrame;
         FXLabel *label;
@@ -158,6 +161,9 @@ private:
 
     /// @brief match box with the list of reference points
     FXComboBox* myReferencePointMatchBox;
+
+    /// @brief checkBox for the option "force position"
+    FXMenuCheck* myCheckForcePosition;
 
     /// @brief actual additional type selected in the match Box
     additionalType myActualAdditionalType;

@@ -408,9 +408,12 @@ enum {
     MID_GNE_SELMB_TAG,
     MID_GNE_SELMB_STRING,
     
-    /// additional match box messages           // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_ITEM,               // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,     // PABLO #1916
+    /// additional match box messages               // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_ITEM,                   // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,         // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,          // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT,   // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,  // PABLO #1916
 
     /// processing menu messages
     MID_GNE_COMPUTE_JUNCTIONS,
