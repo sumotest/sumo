@@ -70,14 +70,11 @@ public:
      */
     GNEJunction(NBNode& nbn, GNENet* net, bool loaded = false) ;
 
-
     /// @brief Destructor
     virtual ~GNEJunction() ;
 
-
     /// @name inherited from GUIGlObject
     //@{
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -87,7 +84,6 @@ public:
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
                                        GUISUMOAbstractView& parent) ;
-
 
     /** @brief Returns an own parameter window
      *
@@ -99,15 +95,13 @@ public:
     GUIParameterTableWindow* getParameterWindow(
         GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const ;
-
-
+        
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
@@ -115,41 +109,22 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
+    /// @brief Returns the boundary of the junction
+    Boundary getBoundary() const;
+
+    /// @brief marks as first junction in createEdge-mode
+    void markAsCreateEdgeSource();
+
+    /// @brief removes mark as first junction in createEdge-mode
+    void unMarkAsCreateEdgeSource();
 
 
-    /** @brief Returns the boundary of the junction
-     * @return This junction's boundary
-     */
-    Boundary getBoundary() const {
-        return myBoundary;
-    }
+    /// @brief notify the junction of being selected in tls-mode. (used to control drawing)
+    void selectTLS(bool selected);
 
 
-    /** @brief marks as first junction in createEdge-mode
-     */
-    void markAsCreateEdgeSource() {
-        myAmCreateEdgeSource = true;
-    }
-
-    /** @brief removes mark as first junction in createEdge-mode
-     */
-    void unMarkAsCreateEdgeSource() {
-        myAmCreateEdgeSource = false;
-    }
-
-
-    /** @brief notify the junction of being selected in tls-mode. (used to control drawing) */
-    void selectTLS(bool selected) {
-        myAmTLSSelected = selected;
-    }
-
-
-    /** @brief returns the internal NBNode
-     */
-    NBNode* getNBNode() {
-        return &myNBNode;
-    }
-
+    /// @brief returns the internal NBNode
+    NBNode* getNBNode();
 
     /** @brief reposition the node at pos and informs the edges
      * @param[in] pos The new position
@@ -158,13 +133,16 @@ public:
      */
     void move(Position pos);
 
-
     /// @brief registers completed movement with the undoList
     void registerMove(GNEUndoList* undoList);
 
 
     //@name inherited from GNEAttributeCarrier
     //@{
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
@@ -174,14 +152,16 @@ public:
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
+    /* @brief method for checking if the key and their correspond attribute are valids
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
     /// @brief set responsibility for deleting internal strctures
-    void setResponsible(bool newVal) {
-        myAmResponsible = newVal;
-    }
-
+    void setResponsible(bool newVal);
 
     /* @brief notify junction that one of its edges has changed its shape, and
      * therefore the junction shape is no longer valid */
@@ -195,7 +175,6 @@ public:
      * @note: this should always be called with an active command group */
     void setLogicValid(bool valid, GNEUndoList* undoList = 0, const std::string& status = GUESSED);
 
-
     /* @brief invalidates loaded or edited TLS
      * @param[in] deletedConnection If a valid connection is given a replacement def with this connection removed
      *   but all other information intact will be computed instead of guessing a new tlDef
@@ -206,14 +185,11 @@ public:
     /// @brief removes the given edge from all pedestrian crossings
     void removeFromCrossings(GNEEdge* edge, GNEUndoList* undoList);
 
-    /* @brief whether this junction has a valid logic */
-    bool isLogicValid() {
-        return myHasValidLogic;
-    }
+    /// @brief whether this junction has a valid logic
+    bool isLogicValid();
 
-    static void resetDecal() {
-        TLSDecalInitialized = false;
-    }
+    /// @brief reset decals
+    static void resetDecal();
 
     /// @brief modify the specified crossing (using friend privileges)
     void updateCrossingAttributes(NBNode::Crossing crossing);
@@ -222,7 +198,7 @@ private:
     /// @brief A reference to the represented junction
     NBNode& myNBNode;
 
-    ///@brief restore point for undo
+    /// @brief restore point for undo
     Position myOrigPos;
 
     /// @brief The maximum size (in either x-, or y-dimension) for determining whether to draw or not
@@ -231,8 +207,8 @@ private:
     /// @brief The represented junction's boundary
     Boundary myBoundary;
 
-    /* @brief whether this junction is the first junction for a newly created
-     *  edge. (see GNEApplicationWindow::createEdgeSource)
+    /* @brief whether this junction is the first junction for a newly creatededge
+     * @see GNEApplicationWindow::createEdgeSource)
      */
     bool myAmCreateEdgeSource;
 
@@ -267,9 +243,7 @@ private:
     /// @brief Invalidated assignment operator.
     GNEJunction& operator=(const GNEJunction&);
 
-    /* @brief method for setting the attribute and nothing else
-     * (used in GNEChange_Attribute)
-     * */
+    /// @brief method for setting the attribute and nothing else (used in GNEChange_Attribute)
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief reposition the NBNnode and nothing else
@@ -295,4 +269,3 @@ private:
 #endif
 
 /****************************************************************************/
-

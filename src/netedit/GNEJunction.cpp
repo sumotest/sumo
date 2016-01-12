@@ -234,6 +234,35 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
     glPopName();
 }
 
+Boundary 
+GNEJunction::getBoundary() const {
+    return myBoundary;
+}
+
+
+void 
+GNEJunction::markAsCreateEdgeSource() {
+    myAmCreateEdgeSource = true;
+}
+
+
+void 
+GNEJunction::unMarkAsCreateEdgeSource() {
+    myAmCreateEdgeSource = false;
+}
+
+
+void 
+GNEJunction::selectTLS(bool selected) {
+    myAmTLSSelected = selected;
+}
+
+
+NBNode* 
+GNEJunction::getNBNode() {
+    return &myNBNode;
+}
+
 
 void
 GNEJunction::move(Position pos) {
@@ -352,6 +381,18 @@ GNEJunction::removeFromCrossings(GNEEdge* edge, GNEUndoList* undoList) {
 }
 
 
+bool 
+GNEJunction::isLogicValid() {
+    return myHasValidLogic;
+}
+
+
+void 
+GNEJunction::resetDecal() {
+    TLSDecalInitialized = false;
+}
+
+
 std::string
 GNEJunction::getAttribute(SumoXMLAttr key) const {
     switch (key) {
@@ -448,6 +489,12 @@ GNEJunction::isValid(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("junction attribute '" + toString(key) + "' not allowed");
     }
+}
+
+
+void 
+GNEJunction::setResponsible(bool newVal) {
+    myAmResponsible = newVal;
 }
 
 // ===========================================================================

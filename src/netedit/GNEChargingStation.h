@@ -67,7 +67,7 @@ public:
 	~GNEChargingStation();
 
 
-    ///@brief update pre-computed geometry information
+    /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 

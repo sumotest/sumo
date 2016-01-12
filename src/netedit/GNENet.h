@@ -82,7 +82,10 @@ class GNENet : public GUIGlObject {
     friend class GNEChange_Edge;
 
 public:
+    ///@brief color of selection
     static const RGBColor selectionColor;
+
+    ///@brief color of selected lane
     static const RGBColor selectedLaneColor;
 
     /** @brief Constructor
@@ -91,15 +94,11 @@ public:
      **/
     GNENet(NBNetBuilder* netBuilder);
 
-
     /// @brief Destructor
     ~GNENet() ;
 
-
-
     /// @name inherited from GUIGlObject
     //@{
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -108,8 +107,7 @@ public:
      * @see GUIGlObject::getPopUpMenu
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent) ;
-
+                                       GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -119,8 +117,7 @@ public:
      * @see GUIGlObject::getParameterWindow
      */
     GUIParameterTableWindow* getParameterWindow(
-        GUIMainWindow& app, GUISUMOAbstractView& parent) ;
-
+        GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -129,14 +126,10 @@ public:
      */
     Boundary getCenteringBoundary() const ;
 
-
     /** @brief Returns the Z boundary (stored in the x() coordinate)
      * values of 0 do not affect the boundary
      */
-    const Boundary& getZBoundary() const {
-        return myZBoundary;
-    }
-
+    const Boundary& getZBoundary() const;
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
@@ -145,26 +138,18 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
-
     /// returns the bounder of the network
     const Boundary& getBoundary() const;
 
+    /** @brief Returns the RTree used for visualisation speed-up
+     * @return The visualisation speed-up
+     */
+    SUMORTree& getVisualisationSpeedUp();
 
     /** @brief Returns the RTree used for visualisation speed-up
      * @return The visualisation speed-up
      */
-    SUMORTree& getVisualisationSpeedUp() {
-        return myGrid;
-    }
-
-
-    /** @brief Returns the RTree used for visualisation speed-up
-     * @return The visualisation speed-up
-     */
-    const SUMORTree& getVisualisationSpeedUp() const {
-        return myGrid;
-    }
-
+    const SUMORTree& getVisualisationSpeedUp() const;
 
     /** @brief creates a new junction
      * @param[in] position The position of the new junction
@@ -184,22 +169,14 @@ public:
      * @param[in] allowDuplicateGeom Whether to create the edge even though another edge with the same geometry exists
      * @return The newly created edge or 0 if no edge was created
      */
-    GNEEdge* createEdge(
-        GNEJunction* src,
-        GNEJunction* dest,
-        GNEEdge* tpl,
-        GNEUndoList* undoList,
-        const std::string& suggestedName = "",
-        bool wasSplit = false,
-        bool allowDuplicateGeom = false);
-
+    GNEEdge* createEdge(GNEJunction* src, GNEJunction* dest, GNEEdge* tpl, GNEUndoList* undoList,
+                        const std::string& suggestedName = "", bool wasSplit = false, bool allowDuplicateGeom = false);
 
     /** @brief removes junction and all incident edges
      * @param[in] junction The junction to be removed
      * @param[in] undoList The undolist in which to mark changes
      */
     void deleteJunction(GNEJunction* junction, GNEUndoList* undoList);
-
 
     /** @brief removes edge
      * @param[in] edge The edge to be removed
@@ -227,14 +204,12 @@ public:
      */
     void deleteGeometryOrEdge(GNEEdge* edge, const Position& pos, GNEUndoList* undoList);
 
-
     /** @brief split edge at position by inserting a new junction
      * @param[in] edge The edge to be split
      * @param[in] pos The position on which to insert the new junction
      * @return The new junction
      */
     GNEJunction* splitEdge(GNEEdge* edge, const Position& pos, GNEUndoList* undoList, GNEJunction* newJunction = 0);
-
 
     /** @brief split all edges at position by inserting one new junction
      * @param[in] edges The edges to be split
@@ -261,7 +236,6 @@ public:
      */
     void mergeJunctions(GNEJunction* moved, GNEJunction* target, GNEUndoList* undoList);
 
-
     /** @brief get junction by id
      * @param[in] id The id of the desired junction
      * @param[in] failHard Whether attempts to retrieve a nonexisting junction
@@ -269,7 +243,6 @@ public:
      * @throws UnknownElement
      */
     GNEJunction* retrieveJunction(const std::string& id, bool failHard = true);
-
 
     /** @brief get edge by id
      * @param[in] id The id of the desired edge
@@ -279,14 +252,13 @@ public:
      */
     GNEEdge* retrieveEdge(const std::string& id, bool failHard = true);
 
-
     /** @brief get the attribute carriers based on GlIDs
      * @param[in] ids The set of ids for which to retrive the ACs
      * @param[in] type The GUI-type of the objects with the given ids
      * @throws InvalidArgument if any given id does not match the declared type
      */
     std::vector<GNEAttributeCarrier*> retrieveAttributeCarriers(
-        const std::set<GUIGlID>& ids, GUIGlObjectType type);
+                                      const std::set<GUIGlID>& ids, GUIGlObjectType type);
 
     /** @brief return all edges
      * @param[in] onlySelected Whether to return only selected edges
@@ -319,9 +291,7 @@ public:
     void saveJoined(OptionsCont& oc);
 
     /// @brief Set the target to be notified of network changes
-    void setUpdateTarget(FXWindow* updateTarget) {
-        myUpdateTarget = updateTarget;
-    }
+    void setUpdateTarget(FXWindow* updateTarget);
 
     /// @brief refreshes boundary information for o and update
     void refreshElement(GUIGlObject* o);
@@ -336,9 +306,7 @@ public:
     void changeEdgeEndpoints(GNEEdge* edge, const std::string& newSourceID, const std::string& newDestID);
 
     /// @brief returns the tllcont of the underlying netbuilder
-    NBTrafficLightLogicCont& getTLLogicCont() {
-        return myNetBuilder->getTLLogicCont();
-    };
+    NBTrafficLightLogicCont& getTLLogicCont();
 
     /* @brief get ids of currently active objects
      * param[in] type If type != GLO_MAX, get active ids of that type, otherwise get all active ids
@@ -376,16 +344,11 @@ public:
      */
     void computeJunction(GNEJunction* junction);
 
-
     /// @brief inform the net about the need for recomputation
-    inline void requireRecompute() {
-        myNeedRecompute = true;
-    }
+    void requireRecompute();
 
-
-    FXApp* getApp() {
-        return myUpdateTarget->getApp();
-    }
+    /// @brief get pointer to the main App
+    FXApp* getApp();
 
     /// @brief add edge id to the list of explicit turnarounds
     void addExplicitTurnaround(std::string id);
@@ -401,10 +364,8 @@ public:
     /// @brief register changes to junction and edge positions with the undoList
     void finishMoveSelection(GNEUndoList* undoList);
 
-    ShapeContainer& getShapeContainer() {
-        return myShapeContainer;
-    }
-
+    /// @brief get shape container
+    ShapeContainer& getShapeContainer();
 
 	/** @brief Adds a busStop                                           // PABLO #1916
      *                                                                  // PABLO #1916
@@ -417,7 +378,6 @@ public:
      */                                                                 // PABLO #1916
     bool addBusStop(GNEBusStop* busStop);	                            // PABLO #1916
 
-
 	/** @brief Remove busStop                                   // PABLO #1916
      *                                                          // PABLO #1916
      * Remove an existent bus stop of the Net                   // PABLO #1916
@@ -427,13 +387,11 @@ public:
      */                                                         // PABLO #1916
     bool removeBusStop(GNEBusStop* busStop);	                // PABLO #1916
 
-
     /** @brief Returns the named bus stop                       // PABLO #1916
      * @param[in] id The id of the bus stop to return.          // PABLO #1916
      * @return The named bus stop, or 0 if no such stop exists  // PABLO #1916
      */                                                         // PABLO #1916
     GNEBusStop* getBusStop(const std::string& id) const;        // PABLO #1916
-
 
     /** @brief Returns the bus stop close to the given position                 // PABLO #1916
      * @param[in] lane the lane of the bus stop to return.                      // PABLO #1916
@@ -441,7 +399,6 @@ public:
      * @return The bus stop id on the location, or "" if no such stop exists    // PABLO #1916
      */                                                                         // PABLO #1916
     std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
-
 
     /** @brief Adds a charging station                                              // PABLO #1916
      *                                                                              // PABLO #1916
@@ -492,8 +449,6 @@ public:
      */                                                             // PABLO #1916
     int getNumberOfChargingStations();                              // PABLO #1916
 
-
-
 private:
     /// the rtree which contains all GUIGlObjects (so named for historical reasons)
     SUMORTree myGrid;
@@ -506,16 +461,23 @@ private:
 
     /// @name internal GNE components
     //@{
-
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
     typedef std::map<std::string, GNEBusStop*> GNEBusStops;					// PABLO #1916
     typedef std::map<std::string, GNEChargingStation*> GNEChargingStations;	// PABLO #1916
+    // @}
 
+    /// @brief map with the name and pointer to edges of net
     GNEEdges myEdges;
+
+    /// @brief map with the name and pointer to junctions of net
     GNEJunctions myJunctions;
-	GNEBusStops myBusStops;                 // PABLO #1916
-	GNEChargingStations myChargingStations; // PABLO #1916
+
+    /// @brief map with the name and pointer to busStops of net // PABLO #1916
+	GNEBusStops myBusStops;                                     // PABLO #1916
+
+    /// @brief map with the name and pointer to chargingStations of net // PABLO #1916
+	GNEChargingStations myChargingStations;                             // PABLO #1916
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{
@@ -540,12 +502,10 @@ private:
     /// @brief Initialises the tl-logic map and wrappers
     void initTLMap();
 
-    /// @brief inserts a single junction into the net and into the underlying
-    //netbuild-container
+    /// @brief inserts a single junction into the net and into the underlying netbuild-container
     void insertJunction(GNEJunction* junction);
 
-    /// @brief inserts a single edge into the net and into the underlying
-    //netbuild-container
+    /// @brief inserts a single edge into the net and into the underlying netbuild-container
     void insertEdge(GNEEdge* edge);
 
     /// @brief registers a junction with GNENet containers
@@ -563,8 +523,10 @@ private:
     /// @brief notify myUpdateTarget
     void update();
 
+    /// @brief reserve edge ID (To avoid duplicates)
     void reserveEdgeID(const std::string& id);
 
+    /// @brief reserve junction ID (To avoid duplicates)
     void reserveJunctionID(const std::string& id);
 
     /* @brief helper function for changing the endpoints of a junction
@@ -583,4 +545,3 @@ private:
 #endif
 
 /****************************************************************************/
-

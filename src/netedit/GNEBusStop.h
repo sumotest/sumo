@@ -66,39 +66,32 @@ public:
      */
     GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos);
 
-
     /// @brief Destructor
     ~GNEBusStop();
 
-    
-    ///@brief update pre-computed geometry information
+    /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
 
     /** @brief get lines of busStop
      * @return vector of strings with the lines of the busStop 
      */
 	const std::vector<std::string> &getLines() const;
 
-
     /** @brief Returns a copy of the Shape of the stoppingPlace
      * @return The Shape of the stoppingPlace
      */
     PositionVector getShape() const;
-
 
     /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
      * @return The ShapeRotations of the stoppingPlace
      */
     std::vector<SUMOReal> getShapeRotations() const;
 
-
     /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
      * @return The ShapeLengths of the stoppingPlace
      */
     std::vector<SUMOReal> getShapeLengths() const;
-
 
     /// @name inherited from GUIGlObject
     //@{
@@ -111,7 +104,6 @@ public:
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -121,7 +113,6 @@ public:
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
@@ -129,13 +120,11 @@ public:
      */
     Boundary getCenteringBoundary() const;
 
-
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const ;
-    
 
     /** @brief Draws additionally triggered visualisations
      * @param[in] parent The view
@@ -143,7 +132,6 @@ public:
      */
     void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const;
     //@}
-
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -153,7 +141,6 @@ public:
      */
     std::string getAttribute(SumoXMLAttr key) const;
 
-
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
      * @param[in] value The new value
@@ -161,7 +148,7 @@ public:
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
-    /* @brief method for checking if the key and their conrrespond attribute are valids
+    /* @brief method for checking if the key and their correspond attribute are valids
      * @param[in] key The attribute key
      * @param[in] value The value asociated to key key
      * @return true if the value is valid, false in other case

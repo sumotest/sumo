@@ -244,6 +244,12 @@ GNEAdditional::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
 }
 
 
+FXFont* 
+GNEAdditional::getHeaderFont() {
+    return myHeaderFont;
+}
+
+
 long
 GNEAdditional::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
     // Cast actual additional type
@@ -305,16 +311,16 @@ GNEAdditional::setParameters() {
                 myVectorOfParametersTextFields.at(0).label->setText("size");
                 myVectorOfParametersTextFields.at(0).textField->setText(oc.getString("chargingStation default length").c_str());
                 myVectorOfParametersTextFields.at(0).horizontalFrame->show();
-                myVectorOfParametersTextFields.at(1).label->setText("crg. Power");
+                myVectorOfParametersTextFields.at(1).label->setText("chrg. Power");
                 myVectorOfParametersTextFields.at(1).textField->setText(oc.getString("chargingStation default charging power").c_str());
                 myVectorOfParametersTextFields.at(1).horizontalFrame->show();
                 myVectorOfParametersTextFields.at(2).label->setText("efficiency");
                 myVectorOfParametersTextFields.at(2).textField->setText(oc.getString("chargingStation default efficiency").c_str());
                 myVectorOfParametersTextFields.at(2).horizontalFrame->show();
-                myVectorOfParametersTextFields.at(3).label->setText("crg. delay");
+                myVectorOfParametersTextFields.at(3).label->setText("chrg. delay");
                 myVectorOfParametersTextFields.at(3).textField->setText(oc.getString("chargingStation default charge delay").c_str());
                 myVectorOfParametersTextFields.at(3).horizontalFrame->show();
-                myVectorOfParameterCheckButton.at(0).label->setText("crg. in transit");
+                myVectorOfParameterCheckButton.at(0).label->setText("chrg. in transit");
                 myVectorOfParameterCheckButton.at(0).menuCheck->setCheck(oc.getBool("chargingStation default charge in transit"));
                 myVectorOfParameterCheckButton.at(0).horizontalFrame->show();
             }

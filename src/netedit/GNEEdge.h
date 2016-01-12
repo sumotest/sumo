@@ -64,7 +64,7 @@ class GNEEdge : public GUIGlObject, public GNEAttributeCarrier {
     friend class GNEChange_Connection;
 
 public:
-    /// Definition of the lane's positions vector
+    /// @brief Definition of the lane's positions vector
     typedef std::vector<GNELane*> LaneVector;
 
     /** @brief Constructor.
@@ -74,17 +74,14 @@ public:
      */
     GNEEdge(NBEdge& nbe, GNENet* net, bool wasSplit = false, bool loaded = false) ;
 
-
     /// @brief Destructor.
     ~GNEEdge() ;
 
     /// Returns the street's geometry
     Boundary getBoundary() const;
 
-
     /// @name inherited from GUIGlObject
     //@{
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -94,7 +91,6 @@ public:
      */
     virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
             GUISUMOAbstractView& parent) ;
-
 
     /** @brief Returns an own parameter window
      *
@@ -106,14 +102,12 @@ public:
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
             GUISUMOAbstractView& parent) ;
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const ;
-
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
@@ -122,22 +116,16 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
-
     /** @brief update edge geometry after junction move */
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
 
+    /// @brief returns the internal NBEdge
+    NBEdge* getNBEdge();
 
-    /** @brief returns the internal NBEdge
-     */
-    NBEdge* getNBEdge() {
-        return &myNBEdge;
-    }
-
-
-    /** @brief returns the source-junction */
+    /// @brief returns the source-junction
     GNEJunction* getSource() const;
 
-    /** @brief returns the destination-junction */
+    /// @brief returns the destination-junction
     GNEJunction* getDest() const;
 
     /** @brief change the edge geometry without registering undo/redo
@@ -158,25 +146,25 @@ public:
      */
     void moveGeometry(const Position& delta);
 
-
     /** @brief deletes the closest geometry node within SNAP_RADIUS.
      * @return true if a node was deleted
      */
     bool deleteGeometry(const Position& pos, GNEUndoList* undoList);
 
-
     /** @brief makes pos the new geometry endpoint at the appropriate end
      */
     void setEndpoint(Position pos, GNEUndoList* undoList);
-
 
     /** @brief restores the endpoint to the junction position at the appropriate end
      */
     void resetEndpoint(const Position& pos, GNEUndoList* undoList);
 
-
     //@name inherited from GNEAttributeCarrier
     //@{
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
@@ -186,13 +174,16 @@ public:
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
+    /* @brief method for setting the attribute and letting the object perform additional changes
+     * @param[in] key The attribute key
+     * @param[in] value The new value
+     * @param[in] undoList The undoList on which to register changes
+     */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
     /// @brief set responsibility for deleting internal strctures
-    void setResponsible(bool newVal) {
-        myAmResponsible = newVal;
-    }
+    void setResponsible(bool newVal);
 
     /** @brief update edge geometry and inform the lanes
      * @param[in] geom The new geometry
@@ -200,30 +191,23 @@ public:
      */
     void setGeometry(PositionVector geom, bool inner);
 
-
     /** @brief update edge geometry and inform the lanes
      * let the lanes recompute their precomputed geometry information
      * (needed after computing junction shapes)
      */
     void updateLaneGeometries();
 
-
-    /** @brief copy edge attributes from tpl */
+    /// @brief copy edge attributes from tpl
     void copyTemplate(GNEEdge* tpl, GNEUndoList* undolist);
 
-
-    /** returns GLIDs of all lanes */
+    /// @brief returns GLIDs of all lanes
     std::set<GUIGlID> getLaneGlIDs();
 
-    /** returns a reference to the lane vector */
-    const LaneVector& getLanes() {
-        return myLanes;
-    }
+    /// @brief returns a reference to the lane vector
+    const LaneVector& getLanes();
 
     /// @brief whether this edge was created from a split
-    bool wasSplit() {
-        return myWasSplit;
-    }
+    bool wasSplit();
 
     /* @brief compute a splitting position which keeps the resulting edges
      * straight unless the user clicked near a geometry point */
@@ -234,18 +218,18 @@ public:
 
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
-private:
 
-    /// the underlying NBEdge
+private:
+    /// @brief the underlying NBEdge
     NBEdge& myNBEdge;
 
-    ///@brief restore point for undo
+    /// @brief restore point for undo
     PositionVector myOrigShape;
 
-    /// List of this edges lanes
+    /// @brief List of this edges lanes
     LaneVector myLanes;
 
-    // the net to inform about updates
+    // @brief the net to inform about updates
     GNENet* myNet;
 
     /// @brief whether we are responsible for deleting myNBNode
@@ -258,6 +242,7 @@ private:
     std::string myConnectionStatus;
 
 private:
+    /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief invalidated copy constructor

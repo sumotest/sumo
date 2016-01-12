@@ -208,6 +208,24 @@ GNENet::getCenteringBoundary() const {
 }
 
 
+const Boundary& 
+GNENet::getZBoundary() const {
+    return myZBoundary;
+}
+
+
+SUMORTree& 
+GNENet::getVisualisationSpeedUp() {
+    return myGrid;
+}
+
+
+const SUMORTree& 
+GNENet::getVisualisationSpeedUp() const {
+    return myGrid;
+}
+
+
 GNEJunction*
 GNENet::createJunction(const Position& pos, GNEUndoList* undoList) {
     std::string id = myJunctionIDSupplier.getNext();
@@ -529,6 +547,12 @@ GNENet::saveJoined(OptionsCont& oc) {
 }
 
 
+void 
+GNENet::setUpdateTarget(FXWindow* updateTarget) {
+    myUpdateTarget = updateTarget;
+}
+
+
 GNEJunction*
 GNENet::retrieveJunction(const std::string& id, bool failHard) {
     if (myJunctions.count(id)) {
@@ -736,6 +760,18 @@ GNENet::computeJunction(GNEJunction* junction) {
 }
 
 
+void 
+GNENet::requireRecompute() {
+    myNeedRecompute = true;
+}
+
+
+FXApp* 
+GNENet::getApp() {
+    return myUpdateTarget->getApp();
+}
+
+
 void
 GNENet::joinSelectedJunctions(GNEUndoList* undoList) {
     std::vector<GNEJunction*> selected = retrieveJunctions(true);
@@ -843,6 +879,12 @@ GNENet::changeEdgeEndpoints(GNEEdge* edge, const std::string& newSource, const s
 }
 
 
+NBTrafficLightLogicCont& 
+GNENet::getTLLogicCont() {
+    return myNetBuilder->getTLLogicCont();
+};
+
+
 void
 GNENet::renameJunction(GNEJunction* junction, const std::string& newID) {
     myJunctions.erase(junction->getNBNode()->getID());
@@ -915,6 +957,12 @@ GNENet::finishMoveSelection(GNEUndoList* undoList) {
         }
     }
     undoList->p_end();
+}
+
+
+ShapeContainer& 
+GNENet::getShapeContainer() {
+    return myShapeContainer;
 }
 
 

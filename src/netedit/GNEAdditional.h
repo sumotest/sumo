@@ -81,16 +81,19 @@ public:
      */
     GNEAdditional(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
 
-
     /// @brief Destructor
     ~GNEAdditional();
 
+    /** @brief add additional element
+     * @param[in] lane lane in which the new element will be inserted
+     * @param[in] parent AbstractView to obtain the position of the mouse over the lane
+     */
     void addAdditional(GNELane &lane, GUISUMOAbstractView* parent);
 
-
-    FXFont* getHeaderFont() {
-        return myHeaderFont;
-    }
+    /** @brief get header font
+     * @return font of the header
+     */
+    FXFont* getHeaderFont();
 
     /// @name FOX-callbacks
     /// @{
@@ -105,8 +108,10 @@ public:
     long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
     /// @}
 
+    /// @brief show additional frame
     void show();
 
+    /// @brief hidde additional frame
     void hide();
 
 protected:
@@ -123,15 +128,21 @@ private:
 
     /// @brief struct for text field parameters // QUESTION ERDMANN 01
     struct additionalParameterTextField {
+        /// @brief horizontal frame for label and textField
         FXHorizontalFrame *horizontalFrame;
+        /// @brief lael with the name of the parameter
         FXLabel *label;
+        /// @brief textField to modify the value of parameter
         FXTextField *textField;
     };
 
     /// @brief struct for boolean (menuCheck) parameters    // QUESTION ERDMANN 02
     struct additionalParameterCheckButton {
+        /// @brief horizontal frame for label and menuCheck
         FXHorizontalFrame *horizontalFrame;
+        /// @brief label with the name of the parameter
         FXLabel *label;
+        /// @brief menuCheck to enable/disable the value of parameter
         FXMenuCheck *menuCheck;
     };
 

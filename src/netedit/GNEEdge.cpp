@@ -212,7 +212,10 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
     setGeometry(geom, false);
 }
 
-
+NBEdge* 
+GNEEdge::getNBEdge() {
+    return &myNBEdge;
+}
 Position
 GNEEdge::getSplitPos(const Position& clickPos) {
     const PositionVector& geom = myNBEdge.getGeometry();
@@ -394,6 +397,18 @@ GNEEdge::getLaneGlIDs() {
         result.insert(myLanes[i]->getGlID());
     }
     return result;
+}
+
+
+const GNEEdge::LaneVector& 
+GNEEdge::getLanes() {
+    return myLanes;
+}
+
+
+bool 
+GNEEdge::wasSplit() {
+    return myWasSplit;
 }
 
 
@@ -592,6 +607,11 @@ GNEEdge::isValid(SumoXMLAttr key, const std::string& value) {
     }
 }
 
+
+void 
+GNEEdge::setResponsible(bool newVal) {
+    myAmResponsible = newVal;
+}
 
 // ===========================================================================
 // private

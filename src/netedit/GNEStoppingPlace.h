@@ -68,7 +68,7 @@ public:
 	~GNEStoppingPlace();
 
 
-    ///@brief update pre-computed geometry information
+    /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 

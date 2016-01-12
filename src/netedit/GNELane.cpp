@@ -469,6 +469,11 @@ GNELane::updateGeometry() {
         (*i)->updateGeometry();                                                                     // PABLO #1916
 }
 
+unsigned int 
+GNELane::getIndex() const {
+    return myIndex;
+}
+
 void
 GNELane::setIndex(unsigned int index) {
     myIndex = index;
@@ -532,12 +537,21 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* un
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying lane attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_SPEED:
+            undoList->p_add(new GNEChange_Attribute(this, key, value));
+            break;
         case SUMO_ATTR_ALLOW:
+            undoList->p_add(new GNEChange_Attribute(this, key, value));
+            break;
         case SUMO_ATTR_DISALLOW:
+            undoList->p_add(new GNEChange_Attribute(this, key, value));
+            break;
         case SUMO_ATTR_WIDTH:
+            undoList->p_add(new GNEChange_Attribute(this, key, value));
+            break;
         case SUMO_ATTR_ENDOFFSET:
+            undoList->p_add(new GNEChange_Attribute(this, key, value));
+            break;
         case SUMO_ATTR_INDEX:
-            // no special handling
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             break;
         default:
@@ -568,6 +582,11 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
     }
 }
 
+
+void 
+GNELane::setSpecialColor(const RGBColor* color) {
+    mySpecialColor = color;
+}
 
 // ===========================================================================
 // private
@@ -738,6 +757,9 @@ GNELane::onDefault(FXObject* obj, FXSelector sel, void* data) {
     return 1;
 }
 
-
+GNEEdge& 
+GNELane::getParentEdge() {
+    return myParentEdge;
+};
 
 /****************************************************************************/

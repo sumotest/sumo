@@ -70,10 +70,8 @@ public:
      */
     GNELane(GNEEdge& edge, const int index);
 
-
     /// @brief Destructor
     virtual ~GNELane() ;
-
 
     /// @name inherited from GUIGlObject
     //@{
@@ -92,7 +90,6 @@ public:
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
                                        GUISUMOAbstractView& parent) ;
 
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -107,13 +104,9 @@ public:
     long onDefault(FXObject*, FXSelector, void*);
 
     /** @brief Returns underlying parent edge
-     *
      * @return The underlying GNEEdge
      */
-    GNEEdge& getParentEdge() {
-        return myParentEdge;
-    };
-
+    GNEEdge& getParentEdge();
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -122,7 +115,6 @@ public:
      */
     Boundary getCenteringBoundary() const ;
 
-
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
@@ -130,28 +122,31 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const ;
     //@}
 
+    /// @brief returns the shape of the lane
     const PositionVector& getShape() const;
+
+    /// @brief returns the vector with the shape rotations
     const std::vector<SUMOReal>& getShapeRotations() const;
+
+    /// @brief returns the vector with the shape lengths
     const std::vector<SUMOReal>& getShapeLengths() const;
 
-    ///@brief returns the boundry (including lanes)
+    /// @brief returns the boundry (including lanes)
     Boundary getBoundary() const;
 
-    ///@brief update pre-computed geometry information
+    /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 
-	///@brief returns the index of the lane	// PABLO #1916
-    unsigned int getIndex() const {
-        return myIndex;
-    }
+	/// @brief returns the index of the lane	// PABLO #1916
+    unsigned int getIndex() const;
 
 	/* @brief method for setting the index of the lane	// PABLO #1916
      * @param[in] index The new index of lane			// PABLO #1916
 	 */													// PABLO #1916
     void setIndex(unsigned int index);                  // PABLO #1916
 
-    ///@brief returns the length of the lane	// PABLO #1916
+    /// @brief returns the length of the lane	// PABLO #1916
     SUMOReal getLength() const;					// PABLO #1916
 
     /* @brief method for adding a reference of a stoppingPlace placed in this lane  // PABLO #1916
@@ -167,6 +162,10 @@ public:
 
     //@name inherited from GNEAttributeCarrier
     //@{
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
@@ -175,31 +174,37 @@ public:
      * @param[in] undoList The undoList on which to register changes
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
-
+    
+    /* @brief method for checking if the key and their correspond attribute are valids
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
-    void setSpecialColor(const RGBColor* color) {
-        mySpecialColor = color;
-    }
+    /* @brief method for setting the special color of the lane
+     * @param[in] color Pointer to new special color
+     */
+    void setSpecialColor(const RGBColor* color);
 
 protected:
     /// @brief FOX needs this
     GNELane();
 
 private:
-    /// The Edge that to which this lane belongs
+    /// @brief The Edge that to which this lane belongs
     GNEEdge& myParentEdge;
 
-    /// The index of this lane
+    /// @brief The index of this lane
     int myIndex;
 
     /// @name computed only once (for performance) in updateGeometry()
     //@{
-    /// The rotations of the shape parts
+    /// @brief The rotations of the shape parts
     std::vector<SUMOReal> myShapeRotations;
 
-    /// The lengths of the shape parts
+    /// @brief The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
     //@}
 
@@ -207,6 +212,7 @@ private:
     const RGBColor* mySpecialColor;
 
 private:
+    /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief Invalidated copy constructor.
@@ -215,17 +221,25 @@ private:
     /// @brief Invalidated assignment operator.
     GNELane& operator=(const GNELane&);
 
-    //@brief draw lane markings
+    /// @brief draw lane markings
     void drawMarkings(const bool& selectedEdge, SUMOReal scale) const;
 
-    // drawing methods
+    /// @brief draw link Number
     void drawLinkNo() const;
+
+    /// @brief draw TLS Link Number
     void drawTLSLinkNo() const;
+
+    /// @brief draw link rules
     void drawLinkRules() const;
+
+    /// @brief draw arrows
     void drawArrows() const;
+
+    /// @brief draw lane to lane connections
     void drawLane2LaneConnections() const;
 
-    // @brief return value for lane coloring according to the given scheme
+    /// @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
 
     /// @brief sets the color according to the current scheme index and some lane function
@@ -244,8 +258,7 @@ private:
      * @todo: XXX This duplicates the code of GUILane::drawCrossties and needs to be */
     void drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) const;
 
-
-    /// The color of the shape parts (cached)
+    /// @brief The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
 
     /// @brief the tls-editor for setting multiple links in TLS-mode
