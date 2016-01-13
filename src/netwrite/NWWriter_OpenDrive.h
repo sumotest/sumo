@@ -31,12 +31,14 @@
 #endif
 
 #include <utils/common/StringBijection.h>
+#include <utils/common/SUMOVehicleClass.h>
 
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
 class NBNetBuilder;
+class NBEdge;
 class OptionsCont;
 class PositionVector;
 class OutputDevice;
@@ -64,6 +66,10 @@ protected:
     static void writeEmptyCenterLane(OutputDevice& device, const std::string& mark, SUMOReal markWidth);
     static int getID(const std::string& origID, StringBijection<int>& map, int& lastID);
 
+    static std::string getLaneType(SVCPermissions permissions);
+
+    /// @brief get the left border of the given lane (the leftmost one by default)
+    static PositionVector getLeftLaneBorder(const NBEdge* edge, int laneIndex=-1);
 };
 
 

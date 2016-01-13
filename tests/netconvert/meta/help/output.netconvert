@@ -1,4 +1,4 @@
-SUMO netconvert Version dev-SVN-r18972
+SUMO netconvert Version dev-SVN-r19481
  Copyright (C) 2001-2015 DLR and contributors; http://sumo.dlr.de
 Road network importer / builder for the road traffic simulation SUMO.
 
@@ -92,6 +92,10 @@ TLS Building Options:
   --tls.join                           Tries to cluster tls-controlled nodes
   --tls.join-dist FLOAT                Determines the maximal distance for
                                          joining traffic lights (defaults to 20)
+  --tls.uncontrolled-within            Do not control edges that lie fully
+                                         within a joined traffic light. This may
+                                         cause collisions but allows old traffic
+                                         light plans to be used
   --tls.guess-signals                  Interprets tls nodes surrounding an
                                          intersection as signal positions for a
                                          larger TLS. This is typical pattern for
@@ -105,6 +109,8 @@ TLS Building Options:
                                          being too short
   --tls.yellow.time INT                Set INT as fixed time for yellow phase
                                          durations
+  --tls.left-green.time INT            Use INT as green phase duration for left
+                                         turns (s)
   --tls.half-offset STR                TLSs in STR will be shifted by
                                          half-phase
   --tls.quarter-offset STR             TLSs in STR will be shifted by
@@ -250,6 +256,9 @@ Processing Options:
                                          by FLOAT
   --junctions.corner-detail INT        Generate INT intermediate points to
                                          smooth out intersection corners
+  --junctions.internal-link-detail INT  Generate INT intermediate points to
+                                         smooth out lanes within the
+                                         intersection
   --check-lane-foes.roundabout         Allow driving onto a multi-lane road if
                                          there are foes on other lanes (at
                                          roundabouts)
@@ -265,8 +274,13 @@ Processing Options:
   --sidewalks.guess.from-permissions   Add sidewalks for edges that allow
                                          pedestrians on any of their lanes
                                          regardless of speed
+  --sidewalks.guess.exclude STR        Do not guess sidewalks for the given
+                                         list of edges
   --crossings.guess                    Guess pedestrian crossings based on the
                                          presence of sidewalks
+  --crossings.guess.speed-threshold FLOAT  At uncontrolled nodes, do not build
+                                         crossings across edges with a speed
+                                         above the threshold
 
 Building Defaults Options:
   -L, --default.lanenumber INT         The default number of lanes in an edge
@@ -275,6 +289,8 @@ Building Defaults Options:
   --default.sidewalk-width FLOAT       The default width of added sidewalks
   --default.junctions.keep-clear       Whether junctions should be kept clear
                                          by default
+  --default.junctions.radius FLOAT     The default turning radius of
+                                         intersections
 
 Report Options:
   -v, --verbose                        Switches to verbose output

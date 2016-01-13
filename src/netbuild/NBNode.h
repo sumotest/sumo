@@ -43,7 +43,6 @@
 #include <utils/geom/Bresenham.h>
 #include <utils/common/VectorHelper.h>
 #include <utils/geom/Position.h>
-#include <utils/geom/Line.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include "NBEdge.h"
@@ -186,16 +185,10 @@ public:
     /// @brief default width of pedetrian crossings
     static const SUMOReal DEFAULT_CROSSING_WIDTH;
 
-    /// @brief the default turning radius at intersections in m
-    static const SUMOReal DEFAULT_RADIUS;
-
     /// @brief unspecified lane width
     static const SUMOReal UNSPECIFIED_RADIUS;
 
 public:
-    /// @brief maximum number of connections allowed
-    static const int MAX_CONNECTIONS;
-
     /** @brief Constructor
      * @param[in] id The id of the node
      * @param[in] position The position of the node
@@ -549,7 +542,7 @@ public:
      * @param[in] numPoints The number of geometry points for the internal lane
      * @return The shape of the internal lane
      */
-    PositionVector computeInternalLaneShape(NBEdge* fromE, const NBEdge::Connection& con, int numPoints = 5) const;
+    PositionVector computeInternalLaneShape(NBEdge* fromE, const NBEdge::Connection& con, int numPoints) const;
 
 
     /** @brief Compute a smooth curve between the given geometries
@@ -666,6 +659,8 @@ public:
      */
     void avoidOverlap();
 
+    /// @brief whether the given index must yield to the foeIndex while turing right on a red light
+    bool rightOnRedConflict(int index, int foeIndex) const;
 
     /**
      * @class nodes_by_id_sorter
@@ -704,6 +699,10 @@ public:
 
     /// @brief returns the node id for internal lanes, crossings and walkingareas
     static std::string getNodeIDFromInternalLane(const std::string id);
+
+
+    /// @brief return whether the given type is a traffic light
+    static bool isTrafficLight(SumoXMLNodeType type);
 
 private:
     bool isSimpleContinuation() const;

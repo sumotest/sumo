@@ -220,7 +220,9 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
                      MSTLLogicControl* tlc,
                      std::vector<SUMOTime> stateDumpTimes,
                      std::vector<std::string> stateDumpFiles,
-                     bool hasInternalLinks) {
+                     bool hasInternalLinks,
+                     bool lefthand,
+                     SUMOReal version) {
     myEdges = edges;
     myJunctions = junctions;
     myRouteLoaders = routeLoaders;
@@ -238,6 +240,8 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
     }
     myHasInternalLinks = hasInternalLinks;
     myHasElevation = checkElevation();
+    myLefthand = lefthand;
+    myVersion = version;
 }
 
 
@@ -821,24 +825,24 @@ MSNet::getContainerStopID(const MSLane* lane, const SUMOReal pos) const {
 
 
 bool
-MSNet::addChrgStn(MSChrgStn* chrgStn) {
-    return myChrgStnDict.add(chrgStn->getID(), chrgStn);
+MSNet::addChargingStation(MSChargingStation* chargingStation) {
+    return myChargingStationDict.add(chargingStation->getID(), chargingStation);
 }
 
 
-MSChrgStn*
-MSNet::getChrgStn(const std::string& id) const {
-    return myChrgStnDict.get(id);
+MSChargingStation*
+MSNet::getChargingStation(const std::string& id) const {
+    return myChargingStationDict.get(id);
 }
 
 
 std::string
-MSNet::getChrgStnID(const MSLane* lane, const SUMOReal pos) const {
-    const std::map<std::string, MSChrgStn*>& vals = myChrgStnDict.getMyMap();
-    for (std::map<std::string, MSChrgStn*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
-        MSChrgStn* chrgStn = it->second;
-        if (&chrgStn->getLane() == lane && chrgStn->getBeginLanePosition() <= pos && chrgStn->getEndLanePosition() >= pos) {
-            return chrgStn->getID();
+MSNet::getChargingStationID(const MSLane* lane, const SUMOReal pos) const {
+    const std::map<std::string, MSChargingStation*>& vals = myChargingStationDict.getMyMap();
+    for (std::map<std::string, MSChargingStation*>::const_iterator it = vals.begin(); it != vals.end(); ++it) {
+        MSChargingStation* chargingStation = it->second;
+        if (&chargingStation->getLane() == lane && chargingStation->getBeginLanePosition() <= pos && chargingStation->getEndLanePosition() >= pos) {
+            return chargingStation->getID();
         }
     }
     return "";

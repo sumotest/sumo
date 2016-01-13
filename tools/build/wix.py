@@ -17,6 +17,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
 import optparse
 import subprocess
 import zipfile
@@ -26,8 +27,8 @@ import tempfile
 import glob
 import shutil
 
-INPUT_DEFAULT = r"O:\Daten\Sumo\Nightly\sumo-msvc10Win32-svn.zip"
-OUTPUT_DEFAULT = r"O:\Daten\Sumo\Nightly\sumo-msvc10Win32-svn.msi"
+INPUT_DEFAULT = r"O:\Daten\Sumo\Nightly\sumo-win32-svn.zip"
+OUTPUT_DEFAULT = "sumo.msi"
 WIX_DEFAULT = "%sbin" % os.environ.get(
     "WIX", r"D:\Programme\Windows Installer XML v3.5\\")
 WXS_DEFAULT = os.path.join(
@@ -35,17 +36,26 @@ WXS_DEFAULT = os.path.join(
 LICENSE = os.path.join(
     os.path.dirname(__file__), "..", "..", "build", "wix", "License.rtf")
 
+SKIP_FILES = [r"osmWebWizard.py"]
+
 
 def buildFragment(wixBin, sourceDir, targetLabel, tmpDir, log=None):
     base = os.path.basename(sourceDir)
     subprocess.call([os.path.join(wixBin, "heat.exe"), "dir", sourceDir,
                      "-cg", base, "-gg", "-dr", targetLabel,
-                     "-out", os.path.join(tmpDir, "Fragment.wxs")],
+                     "-out", os.path.join(tmpDir, base + "RawFragment.wxs")],
                     stdout=log, stderr=log)
-    fragIn = open(os.path.join(tmpDir, "Fragment.wxs"))
+    fragIn = open(os.path.join(tmpDir, base + "RawFragment.wxs"))
     fragOut = open(os.path.join(tmpDir, base + "Fragment.wxs"), "w")
+    skip = 0
     for l in fragIn:
-        fragOut.write(l.replace("SourceDir", sourceDir))
+        for s in SKIP_FILES:
+            if s in l:
+                skip = 3
+        if skip == 0:
+            fragOut.write(l.replace("SourceDir", sourceDir))
+        else:
+            skip -= 1
     fragOut.close()
     fragIn.close()
     return fragOut.name
@@ -57,12 +67,13 @@ def buildMSI(sourceZip=INPUT_DEFAULT, outFile=OUTPUT_DEFAULT,
     tmpDir = tempfile.mkdtemp()
     zipfile.ZipFile(sourceZip).extractall(tmpDir)
     sumoRoot = glob.glob(os.path.join(tmpDir, "sumo-*"))[0]
-    fragments = [buildFragment(wixBin, os.path.join(sumoRoot, d), "INSTALLDIR", tmpDir, log) for d in ["data", "tools"]]
+    fragments = [buildFragment(wixBin, os.path.join(
+        sumoRoot, d), "INSTALLDIR", tmpDir, log) for d in ["data", "tools"]]
     for d in ["userdoc", "pydoc", "javadoc", "tutorial", "examples"]:
         fragments.append(
             buildFragment(wixBin, os.path.join(sumoRoot, "docs", d), "DOCDIR", tmpDir, log))
     for wxs in glob.glob(wxsPattern):
-        with open(wxs) as wxsIn: 
+        with open(wxs) as wxsIn:
             with open(os.path.join(tmpDir, os.path.basename(wxs)), "w") as wxsOut:
                 for l in wxsIn:
                     l = l.replace("License.rtf", license)

@@ -32,6 +32,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_FFMPEG
+#include <utils/gui/div/GUIVideoEncoder.h>
+#endif
+
 #include <iostream>
 #include <utility>
 #include <cmath>
@@ -45,6 +49,7 @@
 #include <microsim/MSLane.h>
 #include <microsim/MSJunctionControl.h>
 #include <microsim/traffic_lights/MSTLLogicControl.h>
+#include <microsim/traffic_lights/MSSimpleTrafficLightLogic.h>
 #include <utils/common/RGBColor.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/shapes/Polygon.h>
@@ -92,7 +97,11 @@ GUIViewTraffic::GUIViewTraffic(
     GUINet& net, FXGLVisual* glVis,
     FXGLCanvas* share) :
     GUISUMOAbstractView(p, app, parent, net.getVisualisationSpeedUp(), glVis, share),
-    myTrackedID(-1) {}
+    myTrackedID(-1)
+#ifdef HAVE_FFMPEG
+    , myCurrentVideo(0)
+#endif
+    {}
 
 
 GUIViewTraffic::~GUIViewTraffic() {
@@ -125,16 +134,16 @@ GUIViewTraffic::buildViewToolBars(GUIGlChildWindow& v) {
 
     // for vehicles
     new FXButton(v.getLocatorPopup(),
-            "\tLocate Vehicle\tLocate a vehicle within the network.",
-            GUIIconSubSys::getIcon(ICON_LOCATEVEHICLE), &v, MID_LOCATEVEHICLE,
-            ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
+                 "\tLocate Vehicle\tLocate a vehicle within the network.",
+                 GUIIconSubSys::getIcon(ICON_LOCATEVEHICLE), &v, MID_LOCATEVEHICLE,
+                 ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
 
     // for persons
     if (!MSGlobals::gUseMesoSim) { // there are no persons in mesosim (yet)
         new FXButton(v.getLocatorPopup(),
-                "\tLocate Vehicle\tLocate a person within the network.",
-                GUIIconSubSys::getIcon(ICON_LOCATEPERSON), &v, MID_LOCATEPERSON,
-                ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
+                     "\tLocate Vehicle\tLocate a person within the network.",
+                     GUIIconSubSys::getIcon(ICON_LOCATEPERSON), &v, MID_LOCATEPERSON,
+                     ICON_ABOVE_TEXT | FRAME_THICK | FRAME_RAISED);
     }
 
     // for tls
@@ -298,7 +307,7 @@ GUIViewTraffic::getCurrentTimeStep() const {
 }
 
 
-GUILane* 
+GUILane*
 GUIViewTraffic::getLaneUnderCursor() {
     if (makeCurrent()) {
         unsigned int id = getObjectUnderCursor();
@@ -319,7 +328,7 @@ GUIViewTraffic::onCmdCloseLane(FXObject*, FXSelector, void*) {
     if (lane != 0) {
         lane->closeTraffic();
         GUIGlObjectStorage::gIDStorage.unblockObject(lane->getGlID());
-		update();
+        update();
     }
     return 1;
 }
@@ -331,10 +340,11 @@ GUIViewTraffic::onCmdCloseEdge(FXObject*, FXSelector, void*) {
     if (lane != 0) {
         dynamic_cast<GUIEdge*>(&lane->getEdge())->closeTraffic(lane);
         GUIGlObjectStorage::gIDStorage.unblockObject(lane->getGlID());
-		update();
+        update();
     }
     return 1;
 }
+
 
 long
 GUIViewTraffic::onCmdAddRerouter(FXObject*, FXSelector, void*) {
@@ -342,9 +352,49 @@ GUIViewTraffic::onCmdAddRerouter(FXObject*, FXSelector, void*) {
     if (lane != 0) {
         dynamic_cast<GUIEdge*>(&lane->getEdge())->addRerouter();
         GUIGlObjectStorage::gIDStorage.unblockObject(lane->getGlID());
-		update();
+        update();
     }
     return 1;
 }
+
+
+void
+GUIViewTraffic::saveFrame(const std::string& destFile, FXColor* buf) {
+#ifdef HAVE_FFMPEG
+    if (myCurrentVideo == 0) {
+        myCurrentVideo = new GUIVideoEncoder(destFile.c_str(), getWidth(), getHeight(), myApp->getDelay());
+    }
+    myCurrentVideo->writeFrame((uint8_t*)buf);
+#else
+    UNUSED_PARAMETER(destFile);
+    UNUSED_PARAMETER(buf);
+#endif
+}
+
+
+void
+GUIViewTraffic::endSnapshot() {
+#ifdef HAVE_FFMPEG
+    if (myCurrentVideo != 0) {
+        delete myCurrentVideo;
+        myCurrentVideo = 0;
+    }
+#endif
+}
+
+
+void
+GUIViewTraffic::checkSnapshots() {
+    GUISUMOAbstractView::checkSnapshots();
+#ifdef HAVE_FFMPEG
+    if (myCurrentVideo != 0) {
+        std::string error = makeSnapshot("");
+        if (error != "") {
+            WRITE_WARNING(error);
+        }
+    }
+#endif
+}
+
 
 /****************************************************************************/

@@ -55,7 +55,7 @@ GUIPolygon::GUIPolygon(const std::string& id, const std::string& type,
     Polygon(id, type, color, shape, fill, layer, angle, imgFile),
     GUIGlObject_AbstractAdd("poly", GLO_POLYGON, id),
     myDisplayList(0),
-    myLineWidth(-1)
+    myLineWidth(1) // m
 
 {}
 
@@ -161,15 +161,14 @@ GUIPolygon::drawGL(const GUIVisualizationSettings& s) const {
     glPushName(getGlID());
     glPushMatrix();
     glTranslated(0, 0, getLayer());
-    // XXX shape should be rotated around its center when initializing the polygon. do we even need this?
-    //glRotated(getAngle(), 0, 0, 1);
+    glRotated(-getNaviDegree(), 0, 0, 1);
     GLHelper::setColor(getColor());
 
     int textureID = -1;
     if (getFill()) {
         const std::string& file = getImgFile();
         if (file != "") {
-            textureID = GUITexturesHelper::getTextureID(file);
+            textureID = GUITexturesHelper::getTextureID(file, true);
         }
     }
     // init generation of texture coordinates
@@ -197,7 +196,7 @@ GUIPolygon::drawGL(const GUIVisualizationSettings& s) const {
     }
     // recall tesselation
     //glCallList(myDisplayList);
-    performTesselation(s.polySize.getExaggeration(s));
+    performTesselation(myLineWidth * s.polySize.getExaggeration(s));
     // de-init generation of texture coordinates
     if (textureID >= 0) {
         glEnable(GL_DEPTH_TEST);
@@ -255,9 +254,8 @@ GUIPolygon::performTesselation(SUMOReal lineWidth) const {
         delete[] points;
 
     } else {
-        myLineWidth = lineWidth;
         GLHelper::drawLine(myShape);
-        GLHelper::drawBoxLines(myShape, myLineWidth);
+        GLHelper::drawBoxLines(myShape, lineWidth);
     }
     //std::cout << "OpenGL says: '" << gluErrorString(glGetError()) << "'\n";
 }

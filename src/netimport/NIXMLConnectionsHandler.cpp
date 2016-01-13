@@ -216,6 +216,7 @@ NIXMLConnectionsHandler::parseLaneBound(const SUMOSAXAttributes& attrs, NBEdge* 
     bool ok = true;
     const bool mayDefinitelyPass = attrs.getOpt<bool>(SUMO_ATTR_PASS, 0, ok, false);
     const bool keepClear = attrs.getOpt<bool>(SUMO_ATTR_KEEP_CLEAR, 0, ok, true);
+    const SUMOReal contPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_CONTPOS, 0, ok, NBEdge::UNSPECIFIED_CONTPOS);
     if (!ok) {
         return;
     }
@@ -238,27 +239,15 @@ NIXMLConnectionsHandler::parseLaneBound(const SUMOSAXAttributes& attrs, NBEdge* 
                                       from->getID() + "' to '" + to->getID() + "'.");
             return;
         }
-        if (from->hasConnectionTo(to, toLane)) {
+        if (from->hasConnectionTo(to, toLane) && from->getToNode()->getType() != NODETYPE_ZIPPER) {
             WRITE_WARNING("Target lane '" + to->getLaneID(toLane) + "' is already connected from '" + from->getID() + "'.");
         }
-        if (!from->addLane2LaneConnection(fromLane, to, toLane, NBEdge::L2L_USER, true, mayDefinitelyPass, keepClear)) {
-            NBEdge* nFrom = from;
-            while (nFrom->getToNode()->getOutgoingEdges().size() == 1) {
-                NBEdge* t = nFrom->getToNode()->getOutgoingEdges()[0];
-                if (t->getID().substr(0, t->getID().find('/')) != nFrom->getID().substr(0, nFrom->getID().find('/'))) {
-                    break;
-                }
-                nFrom = t;
+        if (!from->addLane2LaneConnection(fromLane, to, toLane, NBEdge::L2L_USER, true, mayDefinitelyPass, keepClear, contPos)) {
+            if (OptionsCont::getOptions().getBool("show-errors.connections-first-try")) {
+                WRITE_WARNING("Could not set loaded connection from '" + from->getLaneID(fromLane) + "' to '" + to->getLaneID(toLane) + "'.");
             }
-            if (nFrom == 0 || !nFrom->addLane2LaneConnection(fromLane, to, toLane, NBEdge::L2L_USER, false, mayDefinitelyPass, keepClear)) {
-                if (OptionsCont::getOptions().getBool("show-errors.connections-first-try")) {
-                    WRITE_WARNING("Could not set loaded connection from '" + from->getLaneID(fromLane) + "' to '" + to->getLaneID(toLane) + "'.");
-                }
-                // set as to be re-applied after network processing
-                myEdgeCont.addPostProcessConnection(nFrom->getID(), fromLane, to->getID(), toLane, mayDefinitelyPass, keepClear);
-            } else {
-                from = nFrom;
-            }
+            // set as to be re-applied after network processing
+            myEdgeCont.addPostProcessConnection(from->getID(), fromLane, to->getID(), toLane, mayDefinitelyPass, keepClear, contPos);
         }
     } catch (NumberFormatException&) {
         myErrorMsgHandler->inform("At least one of the defined lanes was not numeric");

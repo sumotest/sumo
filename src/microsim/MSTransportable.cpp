@@ -45,8 +45,8 @@
 /* -------------------------------------------------------------------------
  * MSTransportable::Stage - methods
  * ----------------------------------------------------------------------- */
-MSTransportable::Stage::Stage(const MSEdge& destination, StageType type)
-    : myDestination(destination), myDeparted(-1), myArrived(-1), myType(type) {}
+MSTransportable::Stage::Stage(const MSEdge& destination, MSStoppingPlace* toStop, const SUMOReal arrivalPos, StageType type)
+    : myDestination(destination), myDestinationStop(toStop), myArrivalPos(arrivalPos), myDeparted(-1), myArrived(-1), myType(type) {}
 
 MSTransportable::Stage::~Stage() {}
 
@@ -54,6 +54,7 @@ const MSEdge&
 MSTransportable::Stage::getDestination() const {
     return myDestination;
 }
+
 
 void
 MSTransportable::Stage::setDeparted(SUMOTime now) {
@@ -84,8 +85,7 @@ MSTransportable::Stage::getLanePosition(const MSLane* lane, SUMOReal at, SUMORea
 
 SUMOReal
 MSTransportable::Stage::getEdgeAngle(const MSEdge* e, SUMOReal at) const {
-    PositionVector shp = e->getLanes()[0]->getShape();
-    return -shp.rotationDegreeAtOffset(at);
+    return e->getLanes()[0]->getShape().rotationAtOffset(at);
 }
 
 

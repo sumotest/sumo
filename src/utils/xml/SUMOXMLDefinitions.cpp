@@ -72,7 +72,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "rerouter",         SUMO_TAG_REROUTER },
     { "busStop",          SUMO_TAG_BUS_STOP },
     { "containerStop",    SUMO_TAG_CONTAINER_STOP },
-    { "chargingStation",  SUMO_TAG_CHRG_STN },
+    { "chargingStation",  SUMO_TAG_CHARGING_STATION },
     { "vTypeProbe",       SUMO_TAG_VTYPEPROBE },
     { "routeProbe",       SUMO_TAG_ROUTEPROBE },
     { "routes",           SUMO_TAG_ROUTES },
@@ -263,10 +263,10 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "boardingDuration", SUMO_ATTR_BOARDING_DURATION },
     { "loadingDuration", SUMO_ATTR_LOADING_DURATION },
 
-    { "chrgpower",      SUMO_ATTR_CHRGPOWER },
-    { "efficiency",     SUMO_ATTR_EFFICIENCY },
-    { "chargeInTransit", SUMO_ATTR_CHRGINTRANSIT },
-    { "chargeDelay",    SUMO_ATTR_CHRGDELAY},
+    { "power",           SUMO_ATTR_CHARGINGPOWER },
+    { "efficiency",      SUMO_ATTR_EFFICIENCY },
+    { "chargeInTransit", SUMO_ATTR_CHARGEINTRANSIT },
+    { "chargeDelay",     SUMO_ATTR_CHARGEDELAY},
 
     { "sigma",          SUMO_ATTR_SIGMA },
     { "tau",            SUMO_ATTR_TAU },
@@ -339,6 +339,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "foes",           SUMO_ATTR_FOES },
 
     { "cont",           SUMO_ATTR_CONT },
+    { "contPos",        SUMO_ATTR_CONTPOS },
     { "timeThreshold",  SUMO_ATTR_HALTING_TIME_THRESHOLD },
     { "speedThreshold", SUMO_ATTR_HALTING_SPEED_THRESHOLD },
     { "jamThreshold",   SUMO_ATTR_JAM_DIST_THRESHOLD },
@@ -421,6 +422,9 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "actType",        SUMO_ATTR_ACTTYPE },
     { "slope",          SUMO_ATTR_SLOPE },
     { "version",        SUMO_ATTR_VERSION },
+    { "junctionCornerDetail", SUMO_ATTR_CORNERDETAIL },
+    { "junctionLinkDetail", SUMO_ATTR_LINKDETAIL },
+    { "lefthand",       SUMO_ATTR_LEFTHAND },
 
     { "actorConfig",    SUMO_ATTR_ACTORCONFIG },
     { "vehicle",        SUMO_ATTR_VEHICLE },
@@ -472,6 +476,8 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "shapeStartNotForPrinting", GNE_ATTR_SHAPE_START},
     { "shapeEndNotForPrinting", GNE_ATTR_SHAPE_END},
 
+    { "targetLanes",   SUMO_ATTR_TARGETLANE },
+
     { "",               SUMO_ATTR_NOTHING }
 };
 
@@ -479,11 +485,14 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
 StringBijection<SumoXMLNodeType>::Entry SUMOXMLDefinitions::sumoNodeTypeValues[] = {
     {"traffic_light",       NODETYPE_TRAFFIC_LIGHT},
     {"traffic_light_unregulated", NODETYPE_TRAFFIC_LIGHT_NOJUNCTION},
+    {"traffic_light_right_on_red", NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED},
     {"rail_signal",         NODETYPE_RAIL_SIGNAL},
+    {"rail_crossing",       NODETYPE_RAIL_CROSSING},
     {"priority",            NODETYPE_PRIORITY},
     {"priority_stop",       NODETYPE_PRIORITY_STOP},
     {"right_before_left",   NODETYPE_RIGHT_BEFORE_LEFT},
     {"allway_stop",         NODETYPE_ALLWAY_STOP},
+    {"zipper",              NODETYPE_ZIPPER},
     {"district",            NODETYPE_DISTRICT},
     {"unregulated",         NODETYPE_NOJUNCTION},
     {"internal",            NODETYPE_INTERNAL},
@@ -526,6 +535,7 @@ StringBijection<LinkState>::Entry SUMOXMLDefinitions::linkStateValues[] = {
     { "=", LINKSTATE_EQUAL },
     { "s", LINKSTATE_STOP },
     { "w", LINKSTATE_ALLWAY_STOP },
+    { "Z", LINKSTATE_ZIPPER },
     { "-", LINKSTATE_DEADEND }
 };
 
@@ -546,6 +556,15 @@ StringBijection<TrafficLightType>::Entry SUMOXMLDefinitions::trafficLightTypesVa
     { "static", TLTYPE_STATIC },
     { "rail", TLTYPE_RAIL },
     { "actuated", TLTYPE_ACTUATED },
+    { "agentbased", TLTYPE_AGENT },
+    { "sotl_phase", TLTYPE_SOTL_PHASE },
+    { "sotl_platoon", TLTYPE_SOTL_PLATOON },
+    { "sotl_request", TLTYPE_SOTL_REQUEST },
+    { "sotl_wave", TLTYPE_SOTL_WAVE },
+    { "sotl_marching", TLTYPE_SOTL_MARCHING },
+    { "swarm", TLTYPE_SWARM_BASED },
+    { "deterministic", TLTYPE_HILVL_DETERMINISTIC },
+    { "<invalid>", TLTYPE_INVALID } //< must be the last one
 };
 
 
@@ -591,7 +610,7 @@ StringBijection<LinkDirection> SUMOXMLDefinitions::LinkDirections(
     SUMOXMLDefinitions::linkDirectionValues, LINKDIR_NODIR);
 
 StringBijection<TrafficLightType> SUMOXMLDefinitions::TrafficLightTypes(
-    SUMOXMLDefinitions::trafficLightTypesVales, TLTYPE_ACTUATED);
+    SUMOXMLDefinitions::trafficLightTypesVales, TLTYPE_INVALID);
 
 StringBijection<LaneChangeModel> SUMOXMLDefinitions::LaneChangeModels(
     SUMOXMLDefinitions::laneChangeModelValues, LCM_JE2013);

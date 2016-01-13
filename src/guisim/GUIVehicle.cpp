@@ -37,6 +37,7 @@
 #include <utils/common/StringUtils.h>
 #include <utils/vehicle/SUMOVehicleParameter.h>
 #include <utils/emissions/PollutantsInterface.h>
+#include <utils/geom/GeomHelper.h>
 #include <utils/gui/globjects/GLIncludes.h>
 #include <utils/gui/windows/GUISUMOAbstractView.h>
 #include <utils/gui/windows/GUIAppEnum.h>
@@ -47,6 +48,7 @@
 #include <utils/gui/div/GLObjectValuePassConnector.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <microsim/MSVehicle.h>
+#include <microsim/MSJunction.h>
 #include <microsim/MSLane.h>
 #include <microsim/logging/CastingFunctionBinding.h>
 #include <microsim/logging/FunctionBinding.h>
@@ -104,11 +106,11 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     // add items
     ret->mkItem("lane [id]", false, myLane->getID());
     ret->mkItem("position [m]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getPositionOnLane));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getPositionOnLane));
     ret->mkItem("speed [m/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getSpeed));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getSpeed));
     ret->mkItem("angle [degree]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getAngle));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getNaviDegree));
     if (getChosenSpeedFactor() != 1) {
         ret->mkItem("speed factor", false, getChosenSpeedFactor());
     }
@@ -121,6 +123,7 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("last lane change [s]", true,
                 new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getLastLaneChangeOffset));
     ret->mkItem("desired depart [s]", false, time2string(getParameter().depart));
+    ret->mkItem("depart delay [s]", false, time2string(getDepartDelay()));
     if (getParameter().repetitionNumber < INT_MAX) {
         ret->mkItem("remaining [#]", false, (unsigned int) getParameter().repetitionNumber - getParameter().repetitionsDone);
     }
@@ -133,19 +136,19 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("stop info", false, getStopInfo());
     ret->mkItem("line", false, myParameter->line);
     ret->mkItem("CO2 [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getCO2Emissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getCO2Emissions));
     ret->mkItem("CO [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getCOEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getCOEmissions));
     ret->mkItem("HC [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getHCEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getHCEmissions));
     ret->mkItem("NOx [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getNOxEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getNOxEmissions));
     ret->mkItem("PMx [mg/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getPMxEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getPMxEmissions));
     ret->mkItem("fuel [ml/s]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getFuelConsumption));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getFuelConsumption));
     ret->mkItem("noise (Harmonoise) [dB]", true,
-                new FunctionBinding<GUIVehicle, SUMOReal>(this, &GUIVehicle::getHarmonoise_NoiseEmissions));
+                new FunctionBinding<GUIVehicle, SUMOReal>(this, &MSVehicle::getHarmonoise_NoiseEmissions));
     std::ostringstream str;
     for (std::vector<MSDevice*>::const_iterator i = myDevices.begin(); i != myDevices.end(); ++i) {
         if (i != myDevices.begin()) {
@@ -155,9 +158,9 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     }
     ret->mkItem("devices", false, str.str());
     ret->mkItem("persons", true,
-                new FunctionBinding<GUIVehicle, unsigned int>(this, &GUIVehicle::getPersonNumber));
+                new FunctionBinding<GUIVehicle, unsigned int>(this, &MSVehicle::getPersonNumber));
     ret->mkItem("containers", true,
-                new FunctionBinding<GUIVehicle, unsigned int>(this, &GUIVehicle::getContainerNumber));
+                new FunctionBinding<GUIVehicle, unsigned int>(this, &MSVehicle::getContainerNumber));
 
     ret->mkItem("parameters [key:val]", false, toString(getParameter().getMap()));
     ret->mkItem("", false, "");
@@ -182,7 +185,7 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
 }
 
 
-void 
+void
 GUIVehicle::drawAction_drawPersonsAndContainers(const GUIVisualizationSettings& s) const {
     if (myPersonDevice != 0) {
         const std::vector<MSTransportable*>& ps = myPersonDevice->getPersons();
@@ -207,7 +210,7 @@ GUIVehicle::drawAction_drawPersonsAndContainers(const GUIVisualizationSettings& 
 }
 
 
-void 
+void
 GUIVehicle::drawAction_drawLinkItems(const GUIVisualizationSettings& s) const {
     for (DriveItemVector::const_iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         if ((*i).myLink == 0) {
@@ -223,8 +226,8 @@ GUIVehicle::drawAction_drawLinkItems(const GUIVisualizationSettings& s) const {
                 glColor3d(.8, 0, 0);
             }
             const SUMOTime leaveTime = (*i).myLink->getLeaveTime(
-                    (*i).myArrivalTime, (*i).myArrivalSpeed, (*i).getLeaveSpeed(), getVehicleType().getLengthWithGap());
-            drawLinkItem(p, (*i).myArrivalTime, leaveTime, s.vehicleSize.getExaggeration(s));
+                                           (*i).myArrivalTime, (*i).myArrivalSpeed, (*i).getLeaveSpeed(), getVehicleType().getLengthWithGap());
+            drawLinkItem(p, (*i).myArrivalTime, leaveTime, s.vehicleName.size / s.scale);
             // the time slot that ego vehicle uses when checking opened may
             // differ from the one it requests in setApproaching
             MSLink::ApproachingVehicleInformation avi = (*i).myLink->getApproaching(this);
@@ -313,7 +316,7 @@ GUIVehicle::drawAction_drawVehicleBrakeLight(SUMOReal length) const {
 
 inline void
 GUIVehicle::drawAction_drawVehicleBlueLight() const {
-    if (signalSet(MSVehicle::VEH_SIGNAL_EMERGENCY_BLUE)){
+    if (signalSet(MSVehicle::VEH_SIGNAL_EMERGENCY_BLUE)) {
         glPushMatrix();
         glTranslated(0, 2.5, .5);
         glColor3f(0, 0, 1);
@@ -361,6 +364,8 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
             return getAcceleration();
         case 23:
             return getTimeGap();
+        case 24:
+            return STEPS2TIME(getDepartDelay());
     }
     return 0;
 }
@@ -532,6 +537,12 @@ GUIVehicle::drawAction_drawRailCarriages(const GUIVisualizationSettings& s, SUMO
 }
 
 
+SUMOReal
+GUIVehicle::getNaviDegree() const {
+    return GeomHelper::naviDegree(getAngle());
+}
+
+
 int
 GUIVehicle::getNumPassengers() const {
     if (myPersonDevice != 0) {
@@ -546,15 +557,14 @@ GUIVehicle::computeSeats(const Position& front, const Position& back, int& requi
     if (requiredSeats <= 0) {
         return; // save some work
     }
-    const Line l(front, back);
-    const SUMOReal length = l.length2D();
+    const SUMOReal length = front.distanceTo2D(back);
     if (length < 4) {
         // small vehicle, sit at the center
-        mySeatPositions.push_back(l.getPositionAtDistance2D(length / 2));
+        mySeatPositions.push_back(PositionVector::positionAtOffset2D(front, back, length / 2));
         requiredSeats--;
     } else {
         for (SUMOReal p = 2; p <= length - 1; p += 1) {
-            mySeatPositions.push_back(l.getPositionAtDistance2D(p));
+            mySeatPositions.push_back(PositionVector::positionAtOffset2D(front, back, p));
             requiredSeats--;
         }
     }
@@ -609,8 +619,7 @@ GUIVehicle::selectBlockingFoes() const {
             // the vehicle to enter the junction first has priority
             const GUIVehicle* leader = dynamic_cast<const GUIVehicle*>(it->vehAndGap.first);
             if (leader != 0) {
-                if (leader->myLinkLeaders[dpi.myLink->getJunction()].count(getID()) == 0) {
-                    // leader isn't already following us, now we follow it
+                if (dpi.myLink->isLeader(this, leader)) {
                     gSelected.select(leader->getGlID());
                 }
             } else {

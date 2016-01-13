@@ -273,6 +273,9 @@ TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expecte
         throw tcpip::SocketException("#Error: received response with command id: " + toString(cmdId) + "but expected: " + toString(command + 0x10));
     }
     if (expectedType >= 0) {
+        // not called from the TraCITestClient but from within the TraCIAPI
+        inMsg.readUnsignedByte(); // variableID
+        inMsg.readString(); // objectID
         int valueDataType = inMsg.readUnsignedByte();
         if (valueDataType != expectedType) {
             throw tcpip::SocketException("Expected " + toString(expectedType) + " but got " + toString(valueDataType));
@@ -427,6 +430,13 @@ TraCIAPI::getColor(int cmd, int var, const std::string& id, tcpip::Storage* add)
     return c;
 }
 
+
+void
+TraCIAPI::simulationStep(SUMOTime time) {
+    send_commandSimulationStep(time);
+    tcpip::Storage inMsg;
+    check_resultState(inMsg, CMD_SIMSTEP2);
+}
 
 
 // ---------------------------------------------------------------------------
@@ -600,8 +610,11 @@ TraCIAPI::GUIScope::setOffset(const std::string& viewID, SUMOReal x, SUMOReal y)
 void
 TraCIAPI::GUIScope::setSchema(const std::string& viewID, const std::string& schemeName) const {
     tcpip::Storage content;
+    content.writeUnsignedByte(TYPE_STRING);
     content.writeString(schemeName);
     myParent.send_commandSetValue(CMD_SET_GUI_VARIABLE, VAR_VIEW_SCHEMA, viewID, content);
+    tcpip::Storage inMsg;
+    myParent.check_resultState(inMsg, CMD_SET_GUI_VARIABLE);
 }
 
 void

@@ -43,6 +43,7 @@
 #include <utils/common/StringUtils.h>
 #include <utils/vehicle/SUMOVehicleParameter.h>
 #include <utils/common/AbstractMutex.h>
+#include <utils/geom/GeomHelper.h>
 #include <utils/gui/images/GUITexturesHelper.h>
 #include <utils/gui/windows/GUISUMOAbstractView.h>
 #include <utils/gui/windows/GUIAppEnum.h>
@@ -89,8 +90,8 @@ FXIMPLEMENT(GUIPerson::GUIPersonPopupMenu, GUIGLObjectPopupMenu, GUIPersonPopupM
  * ----------------------------------------------------------------------- */
 GUIPerson::GUIPersonPopupMenu::GUIPersonPopupMenu(
     GUIMainWindow& app, GUISUMOAbstractView& parent,
-    GUIGlObject& o, std::map<GUISUMOAbstractView*, int>& additionalVisualizations) : 
-    GUIGLObjectPopupMenu(app, parent, o), 
+    GUIGlObject& o, std::map<GUISUMOAbstractView*, int>& additionalVisualizations) :
+    GUIGLObjectPopupMenu(app, parent, o),
     myVehiclesAdditionalVisualizations(additionalVisualizations)
 {}
 
@@ -204,7 +205,7 @@ GUIParameterTableWindow*
 GUIPerson::getParameterWindow(GUIMainWindow& app,
                               GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 8);
+        new GUIParameterTableWindow(app, *this, 16);
     // add items
     //ret->mkItem("type [NAME]", false, myType->getID());
     ret->mkItem("stage", false, getCurrentStageDescription());
@@ -213,8 +214,18 @@ GUIPerson::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("edge [id]", false, getEdge()->getID());
     ret->mkItem("position [m]", true, new FunctionBinding<GUIPerson, SUMOReal>(this, &GUIPerson::getEdgePos));
     ret->mkItem("speed [m/s]", true, new FunctionBinding<GUIPerson, SUMOReal>(this, &GUIPerson::getSpeed));
-    ret->mkItem("angle [degree]", true, new FunctionBinding<GUIPerson, SUMOReal>(this, &GUIPerson::getAngle));
+    ret->mkItem("angle [degree]", true, new FunctionBinding<GUIPerson, SUMOReal>(this, &GUIPerson::getNaviDegree));
     ret->mkItem("waiting time [s]", true, new FunctionBinding<GUIPerson, SUMOReal>(this, &GUIPerson::getWaitingSeconds));
+
+    ret->mkItem("parameters [key:val]", false, toString(getParameter().getMap()));
+    ret->mkItem("", false, "");
+    ret->mkItem("Type Information:", false, "");
+    ret->mkItem("type [id]", false, myVType->getID());
+    ret->mkItem("length", false, myVType->getLength());
+    ret->mkItem("minGap", false, myVType->getMinGap());
+    ret->mkItem("maximum speed [m/s]", false, myVType->getMaxSpeed());
+
+    ret->mkItem("type parameters [key:val]", false, toString(myVType->getParameter().getMap()));
     // close building
     ret->closeBuilding();
     return ret;
@@ -356,7 +367,7 @@ GUIPerson::setFunctionalColor(size_t activeScheme) const {
             return false;
         }
         case 8: { // color by angle
-            SUMOReal hue = getAngle() + 180; // [0-360]
+            SUMOReal hue = GeomHelper::naviDegree(getAngle());
             GLHelper::setColor(RGBColor::fromHSV(hue, 1., 1.));
             return true;
         }
@@ -410,9 +421,9 @@ GUIPerson::getPosition() const {
 
 
 SUMOReal
-GUIPerson::getAngle() const {
+GUIPerson::getNaviDegree() const {
     AbstractMutex::ScopedLocker locker(myLock);
-    return MSPerson::getAngle();
+    return GeomHelper::naviDegree(MSPerson::getAngle());
 }
 
 
@@ -433,7 +444,7 @@ GUIPerson::getSpeed() const {
 void
 GUIPerson::drawAction_drawAsTriangle(const GUIVisualizationSettings& /* s */) const {
     // draw triangle pointing forward
-    glRotated(getAngle(), 0, 0, 1);
+    glRotated(RAD2DEG(getAngle() + PI / 2.), 0, 0, 1);
     glScaled(getVehicleType().getLength(), getVehicleType().getWidth(), 1);
     glBegin(GL_TRIANGLES);
     glVertex2d(0., 0.);
@@ -455,7 +466,7 @@ GUIPerson::drawAction_drawAsTriangle(const GUIVisualizationSettings& /* s */) co
 void
 GUIPerson::drawAction_drawAsPoly(const GUIVisualizationSettings& /* s */) const {
     // draw pedestrian shape
-    glRotated(getAngle(), 0, 0, 1);
+    glRotated(GeomHelper::naviDegree(getAngle()) - 180, 0, 0, -1);
     glScaled(getVehicleType().getLength(), getVehicleType().getWidth(), 1);
     RGBColor lighter = GLHelper::getColor().changedBrightness(51);
     glTranslated(0, 0, .045);
@@ -483,7 +494,7 @@ GUIPerson::drawAction_drawAsImage(const GUIVisualizationSettings& s) const {
     const std::string& file = getVehicleType().getImgFile();
     if (file != "") {
         if (getVehicleType().getGuiShape() == SVS_PEDESTRIAN) {
-            glRotated(getAngle(), 0, 0, 1);
+            glRotated(RAD2DEG(getAngle() + PI / 2.), 0, 0, 1);
         }
         int textureID = GUITexturesHelper::getTextureID(file);
         if (textureID > 0) {

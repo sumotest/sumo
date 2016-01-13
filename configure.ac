@@ -85,14 +85,6 @@ else
     ac_disabled="$ac_disabled DoublePrecision"
 fi
 
-AC_ARG_ENABLE([subsecond], [AS_HELP_STRING([--disable-subsecond],[Disable subsecond timesteps.])])
-if test x$enable_subsecond != xno; then
-    AC_DEFINE(HAVE_SUBSECOND_TIMESTEPS, 1, [Undefine for disabling subsecond timesteps.])
-    ac_enabled="$ac_enabled Subsecond"
-else
-    ac_disabled="$ac_disabled Subsecond"
-fi
-
 AC_DEFINE([POSITION_EPS], [(SUMOReal)0.1], [defines the epsilon to use on position comparison])
 AC_DEFINE([NUMERICAL_EPS], [(SUMOReal)0.001], [defines the epsilon to use on general floating point comparison])
 AC_DEFINE([OUTPUT_ACCURACY], [2], [defines the number of digits after the comma in output])
@@ -405,6 +397,16 @@ if test -d src/osgview; then
                      ac_enabled="$ac_enabled OSG"],
                     [ac_disabled="$ac_disabled OSG"])
 fi
+
+save_cppflags=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS -I/usr/include/ffmpeg -I/usr/local/include"
+export CPPFLAGS
+AC_CHECK_HEADER([libavformat/version.h], 
+                [AM_CPPFLAGS="$CPPFLAGS $AM_CPPFLAGS"
+                 AC_DEFINE([HAVE_FFMPEG], [1], [defined if ffmpeg is available])
+                 FFMPEG_LIBS="-lavformat -lavcodec -lavutil -lswscale" AC_SUBST(FFMPEG_LIBS)
+                 ac_enabled="$ac_enabled ffmpeg"],
+                [ac_disabled="$ac_disabled ffmpeg"])
 
 AM_CPPFLAGS="-I$PWD/$srcdir/src $AM_CPPFLAGS"
 AC_SUBST(AM_CPPFLAGS)

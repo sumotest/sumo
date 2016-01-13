@@ -133,3 +133,12 @@ class Lane:
 
     def addOutgoing(self, conn):
         self._outgoing.append(conn)
+
+    def getOutgoing(self):
+        return self._outgoing
+
+    def setParam(self, key, value):
+        self._params[key] = value
+
+    def getParam(self, key, default=None):
+        return self._params.get(key, default)

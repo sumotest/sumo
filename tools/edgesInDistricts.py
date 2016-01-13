@@ -21,11 +21,13 @@ the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
 from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import collections
 from optparse import OptionParser
 from xml.sax import parse
 import sumolib
+import random
 
 
 # written into the net. All members are "private".
@@ -43,7 +45,7 @@ class DistrictEdgeComputer:
             districtBoxes[district.id] = district.getBoundingBox()
         for idx, edge in enumerate(self._net.getEdges()):
             shape = edge.getShape()
-            if edge.getSpeed() < options.maxspeed and (options.internal or edge.getFunction() != "internal"):
+            if edge.getSpeed() < options.maxspeed and edge.getSpeed() > options.minspeed and (options.internal or edge.getFunction() != "internal"):
                 if options.vclass is None or edge.allows(options.vclass):
                     if options.assign_from:
                         xmin, ymin = shape[0]
@@ -80,17 +82,21 @@ class DistrictEdgeComputer:
                 result[edge] = districts[0]
         return result
 
-    def writeResults(self, output, weighted):
-        fd = open(output, "w")
+    def writeResults(self, options):
+        fd = open(options.output, "w")
         fd.write("<tazs>\n")
         for district, edges in sorted(self._districtEdges.iteritems()):
             filtered = [
                 edge for edge in edges if edge not in self._invalidatedEdges]
             if len(filtered) == 0:
-                print("District '" + district + "' has no edges!")
+                print("District '" + district.id + "' has no edges!")
             else:
-                if weighted:
-                    fd.write('    <taz id="%s" shape="%s">\n' % (district.id, district.getShapeString()))
+                if options.weighted:
+                    if options.shapeinfo:
+                        fd.write('    <taz id="%s" shape="%s">\n' %
+                                 (district.id, district.getShapeString()))
+                    else:
+                        fd.write('    <taz id="%s">\n' % district.id)
                     for edge in filtered:
                         weight = edge.getSpeed() * edge.getLength()
                         fd.write(
@@ -99,8 +105,12 @@ class DistrictEdgeComputer:
                             '        <tazSink id="%s" weight="%.2f"/>\n' % (edge.getID(), weight))
                     fd.write("    </taz>\n")
                 else:
-                    fd.write('    <taz id="%s" shape="%s" edges="%s"/>\n' %
-                             (district.id, district.getShapeString(), " ".join([e.getID() for e in filtered])))
+                    if options.shapeinfo:
+                        fd.write('    <taz id="%s" shape="%s" edges="%s"/>\n' %
+                                 (district.id, district.getShapeString(), " ".join([e.getID() for e in filtered])))
+                    else:
+                        fd.write('    <taz id="%s" edges="%s"/>\n' %
+                                 (district.id, " ".join([e.getID() for e in filtered])))
         fd.write("</tazs>\n")
         fd.close()
 
@@ -120,8 +130,10 @@ def fillOptions(optParser):
                          help="read districts from FILEs", metavar="FILE")
     optParser.add_option("-o", "--output", default="districts.taz.xml",
                          help="write results to FILE (default: %default)", metavar="FILE")
-    optParser.add_option("-m", "--max-speed", type="float", dest="maxspeed",
+    optParser.add_option("-x", "--max-speed", type="float", dest="maxspeed",
                          default=1000.0, help="use lanes where speed is not greater than this (m/s) (default: %default)")
+    optParser.add_option("-m", "--min-speed", type="float", dest="minspeed",
+                         default=0., help="use lanes where speed is greater than this (m/s) (default: %default)")
     optParser.add_option("-w", "--weighted", action="store_true",
                          default=False, help="Weights sources/sinks by lane number and length")
     optParser.add_option("-f", "--assign-from", action="store_true",
@@ -130,6 +142,8 @@ def fillOptions(optParser):
                          default=False, help="Include internal edges in output")
     optParser.add_option(
         "-l", "--vclass", help="Include only edges allowing VCLASS")
+    optParser.add_option("-s", "--shapeinfo", action="store_true",
+                         default=False, help="write also the shape info in the file")
 
 
 if __name__ == "__main__":
@@ -141,7 +155,7 @@ if __name__ == "__main__":
         optParser.exit("Error! Providing a network is mandatory")
 
     if options.verbose:
-        print("Reading net '" + net_file + "'")
+        print("Reading net '" + options.net_file + "'")
     nets = options.net_file.split(",")
     if len(nets) > 1:
         print(
@@ -156,4 +170,4 @@ if __name__ == "__main__":
     reader.computeWithin(polyReader.getPolygons(), options)
     if options.verbose:
         print("Writing results")
-    reader.writeResults(options.output, options.weighted)
+    reader.writeResults(options)

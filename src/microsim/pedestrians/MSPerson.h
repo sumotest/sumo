@@ -80,13 +80,13 @@ public:
 
     public:
         /// constructor
-        MSPersonStage_Walking(const ConstMSEdgeVector& route, MSStoppingPlace* toBS, SUMOTime walkingTime, SUMOReal speed, SUMOReal departPos, SUMOReal arrivalPos);
+        MSPersonStage_Walking(const ConstMSEdgeVector& route, MSStoppingPlace* toStop, SUMOTime walkingTime, SUMOReal speed, SUMOReal departPos, SUMOReal arrivalPos);
 
         /// destructor
         ~MSPersonStage_Walking();
 
         /// proceeds to the next step
-        virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, MSEdge* previousEdge, const SUMOReal at);
+        virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous);
 
         /// Returns the current edge
         const MSEdge* getEdge() const;
@@ -182,12 +182,7 @@ public:
         /// @brief The current internal edge this person is on or 0
         MSEdge* myCurrentInternalEdge;
 
-        /// @brief A vector of computed times an edge is reached
-        //std::vector<SUMOTime> myArrivalTimes;
-
         SUMOReal myDepartPos;
-        SUMOReal myArrivalPos;
-        MSStoppingPlace* myDestinationBusStop;
         SUMOReal mySpeed;
 
         /// @brief state that is to be manipulated by MSPModel
@@ -224,14 +219,14 @@ public:
     class MSPersonStage_Driving : public MSTransportable::Stage {
     public:
         /// constructor
-        MSPersonStage_Driving(const MSEdge& destination, MSStoppingPlace* toBS,
-                              const std::vector<std::string>& lines);
+        MSPersonStage_Driving(const MSEdge& destination, MSStoppingPlace* toStop,
+                              const SUMOReal arrivalPos, const std::vector<std::string>& lines);
 
         /// destructor
         ~MSPersonStage_Driving();
 
         /// proceeds to the next step
-        virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, MSEdge* previousEdge, const SUMOReal at);
+        virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous);
 
         /// Returns the current edge
         const MSEdge* getEdge() const;
@@ -298,11 +293,11 @@ public:
         /// @brief The taken vehicle
         SUMOVehicle* myVehicle;
 
-        MSStoppingPlace* myDestinationBusStop;
         SUMOReal myWaitingPos;
         /// @brief The time since which this person is waiting for a ride
         SUMOTime myWaitingSince;
         const MSEdge* myWaitingEdge;
+        Position myStopWaitPos;
 
     private:
         /// @brief Invalidated copy constructor.
@@ -345,7 +340,7 @@ public:
         }
 
         /// proceeds to the next step
-        virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, MSEdge* previousEdge, const SUMOReal at);
+        virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous);
 
         /** @brief Called on writing tripinfo output
          *
@@ -386,9 +381,6 @@ public:
         /// @brief The type of activity
         std::string myActType;
 
-        SUMOReal myStartPos;
-
-
     private:
         /// @brief Invalidated copy constructor.
         MSPersonStage_Waiting(const MSPersonStage_Waiting&);
@@ -418,6 +410,9 @@ public:
 
     /// @brief return the list of internal edges if this person is walking and the pedestrian model allows it
     const std::string& getNextEdge() const;
+
+    /// @brief returns the next edge ptr if this person is walking and the pedestrian model allows it
+    const MSEdge* getNextEdgePtr() const;
 
 private:
     /// @brief Invalidated copy constructor.

@@ -22,6 +22,7 @@ the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
 from __future__ import print_function
+from __future__ import absolute_import
 import os
 import sys
 import subprocess
@@ -182,10 +183,12 @@ def call(command, log):
         sys.exit(retCode)
 
 
-def writeRouteConf(step, options, file, output, routesInfo, initial_type):
+def writeRouteConf(duarouterBinary, step, options, dua_args, file,
+                   output, routesInfo, initial_type):
     filename = os.path.basename(file)
     filename = filename.split('.')[0]
     cfgname = "iteration_%03i_%s.duarcfg" % (step, filename)
+
     withExitTimes = False
     if routesInfo == "detailed":
         withExitTimes = True
@@ -194,7 +197,8 @@ def writeRouteConf(step, options, file, output, routesInfo, initial_type):
     <input>
         <net-file value="%s"/>""" % options.net, file=fd)
     if options.districts:
-        print('        <taz-files value="%s"/>' % options.districts, file=fd)
+        print('        <additional-files value="%s"/>' %
+              options.districts, file=fd)
     if step == 0:
         print('        <%s-files value="%s"/>' % (initial_type, file), file=fd)
     else:
@@ -251,6 +255,8 @@ def writeRouteConf(step, options, file, output, routesInfo, initial_type):
     </report>
 </configuration>""" % (options.router_verbose, options.noWarnings), file=fd)
     fd.close()
+    subprocess.call(
+        [duarouterBinary, "-c", cfgname, "--save-configuration", cfgname] + dua_args)
     return cfgname
 
 
@@ -470,6 +476,7 @@ def main(args=None):
             "Error: Could not locate sumo (%s).\nMake sure its on the search path or set environment variable SUMO_BINARY\n" % sumoBinary)
 
     sumo_args = assign_remaining_args(sumoBinary, 'sumo', remaining_args)
+    dua_args = assign_remaining_args(sumoBinary, 'duarouter', remaining_args)
 
     sys.stdout = sumolib.TeeFile(sys.stdout, open("stdout.log", "w+"))
     log = open("dua.log", "w+")
@@ -541,8 +548,8 @@ def main(args=None):
                 print(">> Running router on %s" % router_input)
                 btime = datetime.now()
                 print(">>> Begin time: %s" % btime)
-                cfgname = writeRouteConf(
-                    step, options, router_input, output, options.routefile, initial_type)
+                cfgname = writeRouteConf(duaBinary, step, options, dua_args, router_input,
+                                         output, options.routefile, initial_type)
                 log.flush()
                 sys.stdout.flush()
                 call([duaBinary, "-c", cfgname], log)

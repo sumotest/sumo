@@ -292,8 +292,6 @@ GUIEdge::drawGL(const GUIVisualizationSettings& s) const {
 #ifdef HAVE_INTERNAL
 void
 GUIEdge::drawMesoVehicles(const GUIVisualizationSettings& s) const {
-    const GUIVisualizationTextSettings& nameSettings = s.vehicleName;
-    const SUMOReal exaggeration = s.vehicleSize.getExaggeration(s);
     GUIMEVehicleControl* vehicleControl = GUINet::getGUIInstance()->getGUIMEVehicleControl();
     if (vehicleControl != 0) {
         // draw the meso vehicles
@@ -310,7 +308,6 @@ GUIEdge::drawMesoVehicles(const GUIVisualizationSettings& s) const {
                 if (laneIndex < segment->numQueues()) {
                     // make a copy so we don't have to worry about synchronization
                     queue = segment->getQueue(laneIndex);
-                    const SUMOReal avgCarSize = segment->getBruttoOccupancy() / segment->getCarNumber();
                     const size_t queueSize = queue.size();
                     SUMOReal vehiclePosition = segmentOffset + length;
                     // draw vehicles beginning with the leader at the end of the segment
@@ -326,7 +323,7 @@ GUIEdge::drawMesoVehicles(const GUIVisualizationSettings& s) const {
                             xOff += 2;
                         }
                         const Position p = l->geometryPositionAtOffset(vehiclePosition);
-                        const SUMOReal angle = -l->getShape().rotationDegreeAtOffset(l->interpolateLanePosToGeometryPos(vehiclePosition));
+                        const SUMOReal angle = l->getShape().rotationAtOffset(l->interpolateLanePosToGeometryPos(vehiclePosition));
                         veh->setPositionAndAngle(p, angle);
                         veh->drawGL(s);
                         vehiclePosition -= vehLength;
@@ -474,7 +471,7 @@ GUIEdge::getSegmentAtPosition(const Position& pos) {
 #endif
 
 
-void 
+void
 GUIEdge::closeTraffic(const GUILane* lane) {
     const std::vector<MSLane*>& lanes = getLanes();
     const bool isClosed = lane->isClosed();
@@ -488,7 +485,7 @@ GUIEdge::closeTraffic(const GUILane* lane) {
 }
 
 
-void 
+void
 GUIEdge::addRerouter() {
     MSEdgeVector edges;
     edges.push_back(this);

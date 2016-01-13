@@ -36,19 +36,22 @@
 #include <map>
 #include <microsim/MSLink.h>
 #include <microsim/MSLane.h>
-#include "MSTrafficLightLogic.h"
 #include <microsim/MSEventControl.h>
-#include "MSTLLogicControl.h"
 #include <microsim/MSJunctionLogic.h>
+#include <microsim/MSNet.h>
+#include "MSTLLogicControl.h"
+#include "MSTrafficLightLogic.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
+
 // ===========================================================================
 // static value definitions
 // ===========================================================================
 const MSTrafficLightLogic::LaneVector MSTrafficLightLogic::myEmptyLaneVector;
+
 
 // ===========================================================================
 // member method definitions
@@ -74,9 +77,9 @@ MSTrafficLightLogic::SwitchCommand::execute(SUMOTime t) {
     }
     //
     const bool isActive = myTLControl.isActive(myTLLogic);
-    size_t step1 = myTLLogic->getCurrentPhaseIndex();
+    int step1 = myTLLogic->getCurrentPhaseIndex();
     SUMOTime next = myTLLogic->trySwitch();
-    size_t step2 = myTLLogic->getCurrentPhaseIndex();
+    int step2 = myTLLogic->getCurrentPhaseIndex();
     if (step1 != step2) {
         if (isActive) {
             // execute any action connected to this tls
@@ -160,7 +163,7 @@ MSTrafficLightLogic::init(NLDetectorBuilder&) {
         for (int j = 0; j < (int)foundGreen.size(); ++j) {
             if (!foundGreen[j]) {
                 WRITE_WARNING("Missing green phase in tlLogic '" + getID()
-                        + "', program '" + getProgramID() + "' for tl-index " + toString(j));
+                              + "', program '" + getProgramID() + "' for tl-index " + toString(j));
                 break;
             }
         }
@@ -177,16 +180,16 @@ MSTrafficLightLogic::~MSTrafficLightLogic() {
 
 // ----------- Handling of controlled links
 void
-MSTrafficLightLogic::addLink(MSLink* link, MSLane* lane, unsigned int pos) {
+MSTrafficLightLogic::addLink(MSLink* link, MSLane* lane, int pos) {
     // !!! should be done within the loader (checking necessary)
     myLinks.reserve(pos + 1);
-    while (myLinks.size() <= pos) {
+    while ((int)myLinks.size() <= pos) {
         myLinks.push_back(LinkVector());
     }
     myLinks[pos].push_back(link);
     //
     myLanes.reserve(pos + 1);
-    while (myLanes.size() <= pos) {
+    while ((int)myLanes.size() <= pos) {
         myLanes.push_back(LaneVector());
     }
     myLanes[pos].push_back(lane);

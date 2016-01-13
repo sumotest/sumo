@@ -20,6 +20,7 @@ the Free Software Foundation; either version 3 of the License, or
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
 import os
 import sys
 import random
@@ -95,7 +96,8 @@ def makeEntries(movables, chosen, options):
                 edge = v.edge
                 if v.lane:
                     edge = sumolib._laneID2edgeID(v.lane)
-                result.append(FCDVehicleEntry(v.id, x, y, z, v.speed, v.type, edge, v.slope))
+                result.append(
+                    FCDVehicleEntry(v.id, x, y, z, v.speed, v.type, edge, v.slope))
     return result
 
 

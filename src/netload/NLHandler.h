@@ -33,21 +33,10 @@
 #include <config.h>
 #endif
 
-#include <xercesc/sax/HandlerBase.hpp>
-#include <xercesc/sax/SAXException.hpp>
-#include <xercesc/sax/AttributeList.hpp>
-#include <utils/common/SUMOTime.h>
-#include <utils/common/Parameterised.h>
-#include <utils/xml/SUMOXMLDefinitions.h>
+#include <utils/geom/Boundary.h>
 #include <utils/shapes/ShapeHandler.h>
-#include <microsim/MSLink.h>
 #include <microsim/MSRouteHandler.h>
-#include <microsim/traffic_lights/MSSimpleTrafficLightLogic.h>
-#include <microsim/traffic_lights/MSActuatedTrafficLightLogic.h>
-#include <microsim/MSBitSetLogic.h>
-#include "NLBuilder.h"
 #include "NLDiscreteEventBuilder.h"
-
 
 
 // ===========================================================================
@@ -55,6 +44,8 @@
 // ===========================================================================
 class NLContainer;
 class NLDetectorBuilder;
+class NLEdgeControlBuilder;
+class NLJunctionControlBuilder;
 class NLTriggerBuilder;
 class MSTrafficLightLogic;
 
@@ -116,6 +107,14 @@ public:
 
     bool haveSeenInternalEdge() const {
         return myHaveSeenInternalEdge;
+    }
+
+    bool lefthand() const {
+        return myLefthand;
+    }
+
+    SUMOReal networkVersion() const {
+        return myNetworkVersion;
     }
 
 protected:
@@ -332,6 +331,12 @@ protected:
 
     /// @brief whether the loaded network contains internal lanes
     bool myHaveSeenInternalEdge;
+
+    /// @brief whether the loaded network was built for left hand traffic
+    bool myLefthand;
+
+    /// @brief the loaded network version
+    SUMOReal myNetworkVersion;
 
     /// @brief whether the location element was already loadee
     bool myNetIsLoaded;

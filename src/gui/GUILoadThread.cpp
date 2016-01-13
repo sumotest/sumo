@@ -126,6 +126,7 @@ GUILoadThread::run() {
                 myFile = oc.getString("configuration-file");
             } else if (oc.isSet("net-file")) {
                 myFile = oc.getString("net-file");
+                myLoadNet = true;
             }
         }
         myTitle = myFile;
@@ -134,6 +135,11 @@ GUILoadThread::run() {
         MsgHandler::getWarningInstance()->removeRetriever(&OutputDevice::getDevice("stderr"));
         MsgHandler::getErrorInstance()->removeRetriever(&OutputDevice::getDevice("stderr"));
         // do this once again to get parsed options
+        if (oc.getBool("duration-log.statistics") && oc.isDefault("verbose")) {
+            // must be done before calling initOutputOptions (which checks option "verbose")
+            // but initOutputOptions must come before checkOptions (so that warnings are printed)
+            oc.set("verbose", "true");
+        }
         MsgHandler::initOutputOptions();
         XMLSubSys::setValidation(oc.getString("xml-validation"), oc.getString("xml-validation.net"));
         GUIGlobals::gRunAfterLoad = oc.getBool("start");

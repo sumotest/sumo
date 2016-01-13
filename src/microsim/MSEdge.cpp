@@ -118,6 +118,11 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     if (myFunction == EDGEFUNCTION_DISTRICT) {
         myCombinedPermissions = SVCAll;
     }
+#ifdef HAVE_INTERNAL
+    if (MSGlobals::gUseMesoSim && !lanes->empty()) {
+        MSGlobals::gMesoNet->buildSegmentsFor(*this, OptionsCont::getOptions());
+    }
+#endif
 }
 
 
@@ -496,11 +501,18 @@ MSEdge::changeLanes(SUMOTime t) {
     }
     if (myFunction == EDGEFUNCTION_INTERNAL) {
         // allow changing only if all links leading to this internal lane have priority
+        // or they are controlled by a traffic light
         for (std::vector<MSLane*>::const_iterator it = myLanes->begin(); it != myLanes->end(); ++it) {
             MSLane* pred = (*it)->getLogicalPredecessorLane();
             MSLink* link = MSLinkContHelper::getConnectingLink(*pred, **it);
             assert(link != 0);
-            if (!link->havePriority()) {
+            LinkState state = link->getState();
+            if (state == LINKSTATE_MINOR
+                    || state == LINKSTATE_EQUAL
+                    || state == LINKSTATE_STOP
+                    || state == LINKSTATE_ALLWAY_STOP
+                    || state == LINKSTATE_ZIPPER
+                    || state == LINKSTATE_DEADEND) {
                 return;
             }
         }

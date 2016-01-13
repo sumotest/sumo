@@ -391,13 +391,13 @@ GNENet::splitEdge(GNEEdge* edge, const Position& pos, GNEUndoList* undoList, GNE
     firstPart->setAttribute(GNE_ATTR_SHAPE_START, toString(newGeoms.first[0]), undoList);
     firstPart->setAttribute(GNE_ATTR_SHAPE_END, toString(newGeoms.first[-1]), undoList);
     newGeoms.first.pop_back();
-    newGeoms.first.pop_front();
+    newGeoms.first.erase(newGeoms.first.begin());
     firstPart->setAttribute(SUMO_ATTR_SHAPE, toString(newGeoms.first), undoList);
 
     secondPart->setAttribute(GNE_ATTR_SHAPE_START, toString(newGeoms.second[0]), undoList);
     secondPart->setAttribute(GNE_ATTR_SHAPE_END, toString(newGeoms.second[-1]), undoList);
     newGeoms.second.pop_back();
-    newGeoms.second.pop_front();
+    newGeoms.second.erase(newGeoms.second.begin());
     secondPart->setAttribute(SUMO_ATTR_SHAPE, toString(newGeoms.second), undoList);
     // fix connections
     std::vector<NBEdge::Connection>& connections = edge->getNBEdge()->getConnections();
@@ -414,7 +414,7 @@ void
 GNENet::splitEdgesBidi(const std::set<GNEEdge*>& edges, const Position& pos, GNEUndoList* undoList) {
     GNEJunction* newJunction = 0;
     undoList->p_begin("split edges");
-    for(std::set<GNEEdge*>::const_iterator it = edges.begin(); it != edges.end(); ++it) {
+    for (std::set<GNEEdge*>::const_iterator it = edges.begin(); it != edges.end(); ++it) {
         newJunction = splitEdge(*it, pos, undoList, newJunction);
     }
     undoList->p_end();
@@ -565,7 +565,7 @@ std::vector<GNELane*>
 GNENet::retrieveLanes(bool onlySelected) {
     std::vector<GNELane*> result;
     for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); ++it) {
-        const GNEEdge::LaneVector& lanes = it->second->getLanes(); 
+        const GNEEdge::LaneVector& lanes = it->second->getLanes();
         for (GNEEdge::LaneVector::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
             if (!onlySelected || gSelected.isSelected(GLO_LANE, (*it_lane)->getGlID())) {
                 result.push_back(*it_lane);
@@ -717,8 +717,8 @@ GNENet::computeJunction(GNEJunction* junction) {
     for (std::set<NBTrafficLightDefinition*>::iterator it = tldefs.begin(); it != tldefs.end(); it++) {
         NBTrafficLightDefinition* def = *it;
         def->setParticipantsInformation();
-        def->setTLControllingInformation(ec);
-        tllCont.computeSingleLogic(ec, oc, def);
+        def->setTLControllingInformation();
+        tllCont.computeSingleLogic(oc, def);
     }
 
     // @todo compute connections etc...
@@ -792,7 +792,7 @@ GNENet::removeSolitaryJunctions(GNEUndoList* undoList) {
 }
 
 
-void 
+void
 GNENet::replaceJunctionByGeometry(GNEJunction* junction, GNEUndoList* undoList) {
     undoList->p_begin("Replace junction by geometry");
     assert(junction->getNBNode()->checkIsRemovable());
@@ -826,7 +826,7 @@ void
 GNENet::changeEdgeEndpoints(GNEEdge* edge, const std::string& newSource, const std::string& newDest) {
     NBNode* from = retrieveJunction(newSource)->getNBNode();
     NBNode* to = retrieveJunction(newDest)->getNBNode();
-    edge->getNBEdge()->reinitNodes(from, to); 
+    edge->getNBEdge()->reinitNodes(from, to);
     requireRecompute();
     update();
 }
@@ -871,7 +871,7 @@ GNENet::moveSelection(const Position& moveSrc, const Position& moveDest) {
         GNEEdge* edge = *it;
         if (edge) {
             if (junctionSet.count(edge->getSource()) > 0 &&
-                junctionSet.count(edge->getDest()) > 0) {
+                    junctionSet.count(edge->getDest()) > 0) {
                 // edge and its endpoints are selected, move all the inner points as well
                 edge->moveGeometry(delta);
             } else {

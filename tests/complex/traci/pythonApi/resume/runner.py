@@ -18,9 +18,11 @@ the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
 
-import subprocess
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 import sys
+import subprocess
 
 
 if 'SUMO_HOME' in os.environ:

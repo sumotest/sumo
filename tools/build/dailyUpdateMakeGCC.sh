@@ -40,7 +40,6 @@ if make >> $MAKELOG 2>&1; then
         for f in $PREFIX/sumo/sumo-*.tar.* $PREFIX/sumo/sumo-*.zip; do
           if test $f -nt $PREFIX/sumo/configure; then
             cp $f $NIGHTDIR
-            scp -q $f $REMOTEDIR
           fi
         done
         rsync -rcz $PREFIX/sumo/docs/pydoc $PREFIX/sumo/docs/doxygen $PREFIX/sumo/docs/userdoc $PREFIX/sumo/docs/javadoc $REMOTEDIR
@@ -73,7 +72,7 @@ if test -e $SUMO_BINDIR/sumo -a $SUMO_BINDIR/sumo -nt $PREFIX/sumo/configure; th
     tests/runTests.sh -a sumo.gui -b $FILEPREFIX -name `date +%d%b%y`r$SVNREV >> $TESTLOG 2>&1
   fi
   tests/runTests.sh -b $FILEPREFIX -name `date +%d%b%y`r$SVNREV -coll >> $TESTLOG 2>&1
-  find $TEXTTEST_TMP -name batchreport."*" -exec echo -n '{} ' \; -exec head -1 '{}' \; | sort >> $STATUSLOG
+  echo "batchreport" >> $STATUSLOG
   rsync -rL $SUMO_REPORT $REMOTEDIR
 fi
 
@@ -81,7 +80,7 @@ echo "--" >> $STATUSLOG
 basename $MAKEALLLOG >> $STATUSLOG
 export CXXFLAGS="$CXXFLAGS -Wall -W -pedantic -Wno-long-long -Wformat -Wformat-security"
 ./configure --prefix=$PREFIX/sumo --program-suffix=A --with-python \
-  --disable-double-precision --disable-subsecond --disable-internal-lanes \
+  --disable-double-precision --disable-internal-lanes \
   --enable-memcheck $CONFIGURE_OPT &> $MAKEALLLOG || (echo "configure with all options failed" | tee -a $STATUSLOG; tail -10 $MAKEALLLOG)
 if make >> $MAKEALLLOG 2>&1; then
   make install >> $MAKEALLLOG 2>&1 || (echo "make install with all options failed" | tee -a $STATUSLOG; tail -10 $MAKEALLLOG)

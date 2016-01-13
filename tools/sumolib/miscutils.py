@@ -16,6 +16,8 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
 import time
 import os
@@ -24,6 +26,7 @@ import colorsys
 import socket
 import random
 from collections import defaultdict
+from functools import total_ordering
 
 # append import path stanca:
 #THIS_DIR == os.path.basename(__file__)
@@ -31,25 +34,29 @@ from collections import defaultdict
 
 # http://www.python.org/dev/peps/pep-0326/
 
-
+@total_ordering
 class _ExtremeType(object):
 
-    def __init__(self, cmpr, rep):
+    def __init__(self, isMax, rep):
         object.__init__(self)
-        self._cmpr = cmpr
+        self._isMax = isMax
         self._rep = rep
 
-    def __cmp__(self, other):
-        if isinstance(other, self.__class__) and\
-           other._cmpr == self._cmpr:
-            return 0
-        return self._cmpr
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and\
+           other._isMax == self._isMax
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __gt__(self, other):
+        return self._isMax and not self == other
 
     def __repr__(self):
         return self._rep
 
-uMax = _ExtremeType(1, "uMax")
-uMin = _ExtremeType(-1, "uMin")
+uMax = _ExtremeType(True, "uMax")
+uMin = _ExtremeType(False, "uMin")
 
 # decorator for timing a function
 

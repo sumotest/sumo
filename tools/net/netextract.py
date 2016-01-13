@@ -25,6 +25,8 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 
 
 import os
@@ -67,12 +69,31 @@ def writeEdges(net):
     fd.write("</edges>\n")
 
 
+def writeConnections(net):
+    with open("connections.xml", "w") as fd:
+        fd.write("<connections>\n")
+
+        # take care to write output in stable order
+        for edge in sorted(net._edges, key=lambda e: e.getID()):
+            for toEdge in sorted(edge.getOutgoing().keys(), key=lambda e: e.getID()):
+                for conn in edge.getOutgoing()[toEdge]:
+                    fd.write('<connection from="%s" to="%s" fromLane="%s" toLane="%s"/>\n' %
+                             (edge.getID(),
+                              toEdge.getID(),
+                              conn.getFromLane().getIndex(),
+                              conn.getToLane().getIndex()))
+
+        fd.write("</connections>\n")
+
+
 if len(sys.argv) < 2:
-    print "Usage: " + sys.argv[0] + " <net>"
+    print("Usage: " + sys.argv[0] + " <net>")
     sys.exit()
-print "Reading net..."
+print("Reading net...")
 net = sumolib.net.readNet(sys.argv[1])
-print "Writing nodes..."
+print("Writing nodes...")
 writeNodes(net)
-print "Writing edges..."
+print("Writing edges...")
 writeEdges(net)
+print("Writing connections...")
+writeConnections(net)

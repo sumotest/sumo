@@ -17,6 +17,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
 import traci
 import struct
 import traci.constants as tc
@@ -89,11 +90,13 @@ def getContextSubscriptionResults(routeID=None):
 
 
 def add(routeID, edges):
+    """add(string, list(string)) -> None
+
+    Adds a new route with the given id consisting of the given list of edge IDs.
+    """
     traci._beginMessage(tc.CMD_SET_ROUTE_VARIABLE, tc.ADD, routeID,
                         1 + 4 + sum(map(len, edges)) + 4 * len(edges))
-    traci._message.string += struct.pack("!Bi", tc.TYPE_STRINGLIST, len(edges))
-    for e in edges:
-        traci._message.string += struct.pack("!i", len(e)) + str(e)
+    traci._message.packStringList(edges)
     traci._sendExact()
 
 

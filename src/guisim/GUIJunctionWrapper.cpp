@@ -137,15 +137,21 @@ GUIJunctionWrapper::drawGL(const GUIVisualizationSettings& s) const {
         glPushName(getGlID());
         const SUMOReal colorValue = getColorValue(s);
         GLHelper::setColor(s.junctionColorer.getScheme().getColor(colorValue));
-        glTranslated(0, 0, getType());
-        if (s.scale * myMaxSize < 40.) {
-            GLHelper::drawFilledPoly(myJunction.getShape(), true);
-        } else {
-            GLHelper::drawFilledPolyTesselated(myJunction.getShape(), true);
-        }
+
+        // recognize full transparency and simply don't draw
+        GLfloat color[4];
+        glGetFloatv(GL_CURRENT_COLOR, color);
+        if (color[3] != 0) {
+            glTranslated(0, 0, getType());
+            if (s.scale * myMaxSize < 40.) {
+                GLHelper::drawFilledPoly(myJunction.getShape(), true);
+            } else {
+                GLHelper::drawFilledPolyTesselated(myJunction.getShape(), true);
+            }
 #ifdef GUIJunctionWrapper_DEBUG_DRAW_NODE_SHAPE_VERTICES
-        GLHelper::debugVertices(myJunction.getShape(), 80 / s.scale);
+            GLHelper::debugVertices(myJunction.getShape(), 80 / s.scale);
 #endif
+        }
         glPopName();
         glPopMatrix();
     }
@@ -195,6 +201,12 @@ GUIJunctionWrapper::getColorValue(const GUIVisualizationSettings& s) const {
                     return 8;
                 case NODETYPE_RAIL_SIGNAL:
                     return 9;
+                case NODETYPE_ZIPPER:
+                    return 10;
+                case NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED:
+                    return 11;
+                case NODETYPE_RAIL_CROSSING:
+                    return 12;
             }
         default:
             assert(false);

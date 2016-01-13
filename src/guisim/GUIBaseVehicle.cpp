@@ -35,6 +35,7 @@
 #include <string>
 #include <foreign/polyfonts/polyfonts.h>
 #include <utils/common/StringUtils.h>
+#include <utils/geom/GeomHelper.h>
 #include <utils/vehicle/SUMOVehicleParameter.h>
 #include <utils/emissions/PollutantsInterface.h>
 #include <utils/gui/globjects/GLIncludes.h>
@@ -246,6 +247,7 @@ long
 GUIBaseVehicle::GUIBaseVehiclePopupMenu::onCmdShowFoes(FXObject*, FXSelector, void*) {
     assert(myObject->getType() == GLO_VEHICLE);
     static_cast<GUIBaseVehicle*>(myObject)->selectBlockingFoes();
+    myParent->update();
     return 1;
 }
 
@@ -254,11 +256,10 @@ GUIBaseVehicle::GUIBaseVehiclePopupMenu::onCmdShowFoes(FXObject*, FXSelector, vo
  * GUIBaseVehicle - methods
  * ----------------------------------------------------------------------- */
 
-GUIBaseVehicle::GUIBaseVehicle(MSBaseVehicle& vehicle) : 
+GUIBaseVehicle::GUIBaseVehicle(MSBaseVehicle& vehicle) :
     GUIGlObject(GLO_VEHICLE, vehicle.getID()),
     myVehicle(vehicle),
-    myVType(vehicle.getVehicleType())
-{
+    myVType(vehicle.getVehicleType()) {
     // as it is possible to show all vehicle routes, we have to store them... (bug [ 2519761 ])
     myRoutes = MSDevice_Vehroutes::buildVehicleDevices(myVehicle, myVehicle.myDevices, 5);
     myVehicle.myMoveReminders.push_back(std::make_pair(myRoutes, 0.));
@@ -279,7 +280,7 @@ GUIBaseVehicle::~GUIBaseVehicle() {
 
 GUIGLObjectPopupMenu*
 GUIBaseVehicle::getPopUpMenu(GUIMainWindow& app,
-                         GUISUMOAbstractView& parent) {
+                             GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIBaseVehiclePopupMenu(app, parent, *this, myAdditionalVisualizations);
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
@@ -826,6 +827,7 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
     glPushName(getGlID());
     glPushMatrix();
     Position p1 = getPosition();
+    const SUMOReal angle = RAD2DEG(getAngle() + PI / 2.);
     // one seat in the center of the vehicle by default
     if (myVehicle.getLane() != 0) {
         mySeatPositions[0] = myVehicle.getLane()->geometryPositionAtOffset(myVehicle.getPositionOnLane() - myVType.getLength() / 2);
@@ -833,7 +835,7 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
         mySeatPositions[0] = p1;
     }
     glTranslated(p1.x(), p1.y(), getType());
-    glRotated(getAngle(), 0, 0, 1);
+    glRotated(angle, 0, 0, 1);
     // set lane color
     setColor(s);
     // scale
@@ -861,7 +863,7 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
         case 2:
             drawAction_drawVehicleAsPoly(s);
             // draw flashing blue light for emergency vehicles
-            if (myVType.getGuiShape()== SVS_EMERGENCY) {
+            if (myVType.getGuiShape() == SVS_EMERGENCY) {
                 glTranslated(0, 0, .1);
                 drawAction_drawVehicleBlueLight();
             }
@@ -957,14 +959,17 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
         glEnd();
     }
     */
-    glPopMatrix();
-    const Position namePos = getPosition(-MIN2(myVType.getLength() / 2, SUMOReal(5)));
-    drawName(namePos, s.scale,
+    glTranslated(0, MIN2(myVType.getLength() / 2, SUMOReal(5)), -getType()); // drawing name at GLO_MAX fails unless translating z
+    glRotated(-angle, 0, 0, 1);
+    glScaled(1 / upscale, 1 / upscale, 1);
+    drawName(Position(0, 0), s.scale,
              myVType.getGuiShape() == SVS_PEDESTRIAN ? s.personName : s.vehicleName);
     if (s.vehicleName.show && myVehicle.getParameter().line != "") {
-        GLHelper::drawText("line:" + myVehicle.getParameter().line, namePos + Position(0, -0.6 * s.vehicleName.size / s.scale),
+        glTranslated(0, 0.6 * s.vehicleName.size / s.scale, 0);
+        GLHelper::drawText("line:" + myVehicle.getParameter().line, Position(0, 0),
                            GLO_MAX, s.vehicleName.size / s.scale, s.vehicleName.color);
     }
+    glPopMatrix();
     glPopName();
     drawAction_drawPersonsAndContainers(s);
 }
@@ -1087,7 +1092,7 @@ GUIBaseVehicle::setFunctionalColor(size_t activeScheme, const MSBaseVehicle* veh
             GLHelper::setColor(RGBColor::fromHSV(hue, sat, 1.));
             return true;
         }
-        case 24: { // color randomly (by pointer)
+        case 25: { // color randomly (by pointer)
             const SUMOReal hue = (long)veh % 360; // [0-360]
             const SUMOReal sat = (((long)veh / 360) % 67) / 100.0 + 0.33; // [0.33-1]
             GLHelper::setColor(RGBColor::fromHSV(hue, sat, 1.));

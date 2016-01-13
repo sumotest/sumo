@@ -23,8 +23,8 @@ userdoc:
 javadoc:
 	rm -rf docs/javadoc
 	mkdir docs/javadoc
-	ant -f tools/contributed/traci4j/build.xml javadoc
-	mv tools/contributed/traci4j/doc docs/javadoc/traci4j
+	mvn --batch-mode -f tools/contributed/traci4j/pom.xml javadoc:javadoc
+	mv tools/contributed/traci4j/target/site/apidocs docs/javadoc/traci4j
 	ant -f tools/contributed/traas/build.xml javadoc
 	mv tools/contributed/traas/javadoc docs/javadoc/traas
 
@@ -70,6 +70,7 @@ dist-doc: doc
 	mv $(distdir)/tests/complex/tutorial $(distdir)/docs
 	rmdir $(distdir)/tests/complex
 	rmdir $(distdir)/tests
+	find docs/doxygen -name "*.png" | xargs rm
 	cp -r docs/pydoc docs/doxygen docs/userdoc docs/javadoc $(distdir)/docs
 	tools/extractTest.py -i -f tests/examples.txt -o $(distdir)/docs
 	tar -czf $(PACKAGE)-doc-$(VERSION).tar.gz $(distdir)
@@ -105,8 +106,8 @@ traas:
 	cp tools/contributed/traas/dist/TraaS.jar bin
 
 traci4j:
-	ant -f tools/contributed/traci4j/build.xml clean build deploy
-	cp tools/contributed/traci4j/*.jar bin
+	mvn --batch-mode -f tools/contributed/traci4j/pom.xml clean install || true
+	cp tools/contributed/traci4j/target/*.jar bin || true
 
 trafficmodeler:
 	cd tools/contributed/trafficmodeler && ./build.sh

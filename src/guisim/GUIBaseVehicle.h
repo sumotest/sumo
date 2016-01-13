@@ -68,7 +68,7 @@ class MSDevice_Vehroutes;
 class GUIBaseVehicle : public GUIGlObject {
 public:
 
-    GUIBaseVehicle(MSBaseVehicle& vehicle); 
+    GUIBaseVehicle(MSBaseVehicle& vehicle);
 
     /// @brief destructor
     ~GUIBaseVehicle();
@@ -83,7 +83,7 @@ public:
      */
     virtual Position getPosition(const SUMOReal offset = 0) const = 0;
 
-    /** @brief Returns the vehicle's direction in degrees
+    /** @brief Returns the vehicle's direction in radians
      * @return The vehicle's current angle
      */
     virtual SUMOReal getAngle() const = 0;
@@ -119,7 +119,7 @@ public:
      * @see GUIGlObject::getParameterWindow
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
-    
+
     virtual void drawAction_drawVehicleBlinker(SUMOReal /*length*/) const {}
     virtual void drawAction_drawVehicleBrakeLight(SUMOReal /*length*/) const {}
     virtual void drawAction_drawLinkItems(const GUIVisualizationSettings& /*s*/) const {}
@@ -215,7 +215,7 @@ public:
          * @param[in, out] additionalVisualizations Information which additional visualisations are enabled (per view)
          */
         GUIBaseVehiclePopupMenu(GUIMainWindow& app,
-                            GUISUMOAbstractView& parent, GUIGlObject& o, std::map<GUISUMOAbstractView*, int>& additionalVisualizations);
+                                GUISUMOAbstractView& parent, GUIGlObject& o, std::map<GUISUMOAbstractView*, int>& additionalVisualizations);
 
         /// @brief Destructor
         ~GUIBaseVehiclePopupMenu();

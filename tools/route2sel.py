@@ -17,6 +17,7 @@ the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
 from __future__ import print_function
+from __future__ import absolute_import
 import sys
 from optparse import OptionParser
 from sumolib.output import parse_fast
@@ -44,7 +45,7 @@ def main():
         edges.update(route.edges.split())
     for walk in parse_fast(options.routefile, 'walk', ['edges']):
         edges.update(walk.edges.split())
-  
+
     # warn about potentially missing edges
     for trip in parse_fast(options.routefile, 'trip', ['id', 'from', 'to']):
         edges.update([trip.attr_from, trip.to])

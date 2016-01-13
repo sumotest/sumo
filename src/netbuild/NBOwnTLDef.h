@@ -107,10 +107,9 @@ public:
 
 
     /** @brief Informs edges about being controlled by a tls
-     * @param[in] ec The container of edges
      * @see NBTrafficLightDefinition::setTLControllingInformation
      */
-    void setTLControllingInformation(const NBEdgeCont& ec) const;
+    void setTLControllingInformation() const;
     /// @}
 
 
@@ -119,6 +118,11 @@ public:
     void setSinglePhase() {
         myHaveSinglePhase = true;
     }
+
+    /// @brief add an additional pedestrian phase if there are crossings that did not get green yet
+    static void addPedestrianScramble(NBTrafficLightLogic* logic, unsigned int noLinksAll,
+                                      SUMOTime greenTime, SUMOTime yellowTime,
+                                      const std::vector<NBNode::Crossing>& crossings, const EdgeVector& fromEdges, const EdgeVector& toEdges);
 
     /// @brief add 1 or 2 phases depending on the presence of pedestrian crossings
     static std::string addPedestrianPhases(NBTrafficLightLogic* logic, SUMOTime greenTime,
@@ -143,13 +147,11 @@ protected:
     /// @{
 
     /** @brief Computes the traffic light logic finally in dependence to the type
-     * @param[in] ec The edge container
      * @param[in] brakingTime Duration a vehicle needs for braking in front of the tls
      * @return The computed logic
      * @see NBTrafficLightDefinition::myCompute
      */
-    NBTrafficLightLogic* myCompute(const NBEdgeCont& ec,
-                                   unsigned int brakingTimeSeconds);
+    NBTrafficLightLogic* myCompute(unsigned int brakingTimeSeconds);
 
 
     /** @brief Collects the nodes participating in this traffic light
@@ -221,6 +223,29 @@ protected:
     /// @brief compute whether the given connection is crossed by pedestrians
     static bool hasCrossing(const NBEdge* from, const NBEdge* to, const std::vector<NBNode::Crossing>& crossings);
 
+    /// @brief get edges that have connections
+    static EdgeVector getConnectedOuterEdges(const EdgeVector& incoming);
+
+
+    /// @brief allow connections that follow on of the chosen edges
+    std::string allowFollowersOfChosen(std::string state, const EdgeVector& fromEdges, const EdgeVector& toEdges);
+
+    /** @brief change 'G' to 'g' for conflicting connections
+     * @param[in] state
+     * @param[in] fromEdges
+     * @param[in] toEdges
+     * @param[in] isTurnaround
+     * @param[in] fromLanes
+     * @param[in] hadGreenMajor
+     * @param[out] haveForbiddenLeftMover
+     * @param[out] rightTurnConflicts
+     * @return The corrected state
+     */
+    std::string correctConflicting(std::string state, const EdgeVector& fromEdges, const EdgeVector& toEdges,
+                                   const std::vector<bool>& isTurnaround,
+                                   const std::vector<int>& fromLanes,
+                                   const std::vector<bool>& hadGreenMajor,
+                                   bool& haveForbiddenLeftMover, std::vector<bool>& rightTurnConflicts);
 
     /** @class edge_by_incoming_priority_sorter
      * @brief Sorts edges by their priority within the node they end at

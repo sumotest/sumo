@@ -19,6 +19,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
 import struct
 import traci
 import traci.constants as tc
@@ -342,10 +343,7 @@ def setAllowed(laneID, allowedClasses):
         allowedClasses = [allowedClasses]
     traci._beginMessage(tc.CMD_SET_LANE_VARIABLE, tc.LANE_ALLOWED, laneID,
                         1 + 4 + sum(map(len, allowedClasses)) + 4 * len(allowedClasses))
-    traci._message.string += struct.pack("!Bi",
-                                         tc.TYPE_STRINGLIST, len(allowedClasses))
-    for c in allowedClasses:
-        traci._message.string += struct.pack("!i", len(c)) + str(c)
+    traci._message.packStringList(allowedClasses)
     traci._sendExact()
 
 
@@ -358,10 +356,7 @@ def setDisallowed(laneID, disallowedClasses):
         disallowedClasses = [disallowedClasses]
     traci._beginMessage(tc.CMD_SET_LANE_VARIABLE, tc.LANE_DISALLOWED, laneID,
                         1 + 4 + sum(map(len, disallowedClasses)) + 4 * len(disallowedClasses))
-    traci._message.string += struct.pack("!Bi",
-                                         tc.TYPE_STRINGLIST, len(disallowedClasses))
-    for c in disallowedClasses:
-        traci._message.string += struct.pack("!i", len(c)) + str(c)
+    traci._message.packStringList(disallowedClasses)
     traci._sendExact()
 
 

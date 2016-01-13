@@ -22,12 +22,14 @@ the Free Software Foundation; either version 3 of the License, or
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
 import os
 import sys
 import math
 from xml.sax import saxutils, parse, handler
 from copy import copy
 from itertools import *
+from collections import defaultdict
 
 import sumolib
 from . import lane, edge, node, connection, roundabout
@@ -127,6 +129,7 @@ class Net:
         self._roundabouts = []
         self._rtree = None
         self._allLanes = []
+        self._origIdx = None
 
     def setLocation(self, netOffset, convBoundary, origBoundary, projParameter):
         self._location["netOffset"] = netOffset
@@ -173,9 +176,9 @@ class Net:
         self._roundabouts.append(r)
         return r
 
-    def addConnection(self, fromEdge, toEdge, fromlane, tolane, direction, tls, tllink):
+    def addConnection(self, fromEdge, toEdge, fromlane, tolane, direction, tls, tllink, state):
         conn = connection.Connection(
-            fromEdge, toEdge, fromlane, tolane, direction, tls, tllink)
+            fromEdge, toEdge, fromlane, tolane, direction, tls, tllink, state)
         fromEdge.addOutgoing(conn)
         fromlane.addOutgoing(conn)
         toEdge._addIncoming(conn)
@@ -274,7 +277,7 @@ class Net:
         self._id2node[junctionID].setFoes(index, foes, prohibits)
 
     def forbids(self, possProhibitor, possProhibited):
-        return possProhibitor[0].getEdge()._to.forbids(possProhibitor, possProhibited)
+        return possProhibitor.getFrom().getToNode().forbids(possProhibitor, possProhibited)
 
     def getDownstreamEdges(self, edge, distance, stopOnTLS):
         ret = []
@@ -307,6 +310,15 @@ class Net:
             if not hadTLS:
                 toProc.extend(mn)
         return ret
+
+    def getEdgesByOrigID(self, origID):
+        if self._origIdx is None:
+            self._origIdx = defaultdict(set)
+            for edge in self._edges:
+                for lane in edge.getLanes():
+                    for oID in lane.getParam("origId", "").split():
+                        self._origIdx[oID].add(edge)
+        return self._origIdx[origID]
 
     # the diagonal of the bounding box of all nodes
     def getBBoxDiameter(self):
@@ -377,14 +389,14 @@ class NetReader(handler.ContentHandler):
             function = attrs.get('function', '')
             if function == '' or self._withInternal:
                 prio = -1
-                if attrs.has_key('priority'):
+                if 'priority' in attrs:
                     prio = int(attrs['priority'])
                 name = ""
-                if attrs.has_key('name'):
+                if 'name' in attrs:
                     name = attrs['name']
                 self._currentEdge = self._net.addEdge(attrs['id'],
                                                       attrs.get('from', None), attrs.get('to', None), prio, function, name)
-                if attrs.has_key('shape'):
+                if 'shape' in attrs:
                     self.processShape(self._currentEdge, attrs['shape'])
             else:
                 if function in ['crossing', 'walkingarea']:
@@ -397,7 +409,7 @@ class NetReader(handler.ContentHandler):
                 float(attrs['length']),
                 attrs.get('allow'),
                 attrs.get('disallow'))
-            if attrs.has_key('shape'):
+            if 'shape' in attrs:
                 # deprecated: at some time, this is mandatory
                 self._currentShape = attrs['shape']
             else:
@@ -419,7 +431,7 @@ class NetReader(handler.ContentHandler):
             if lid[0] != ':' and lid != "SUMO_NO_DESTINATION" and self._currentEdge:
                 connected = self._net.getEdge(lid[:lid.rfind('_')])
                 tolane = int(lid[lid.rfind('_') + 1:])
-                if attrs.has_key('tl') and attrs['tl'] != "":
+                if 'tl' in attrs and attrs['tl'] != "":
                     tl = attrs['tl']
                     tllink = int(attrs['linkIdx'])
                     tlid = attrs['tl']
@@ -434,7 +446,8 @@ class NetReader(handler.ContentHandler):
                 toEdge = self._net.getEdge(lid[:lid.rfind('_')])
                 tolane = toEdge._lanes[tolane]
                 self._net.addConnection(self._currentEdge, connected, self._currentEdge._lanes[
-                                        self._currentLane], tolane, attrs['dir'], tl, tllink)
+                                        self._currentLane], tolane,
+                                        attrs['dir'], tl, tllink, attrs['state'])
         if name == 'connection' and self._withConnections and attrs['from'][0] != ":":
             fromEdgeID = attrs['from']
             toEdgeID = attrs['to']
@@ -444,7 +457,7 @@ class NetReader(handler.ContentHandler):
                 toEdge = self._net.getEdge(toEdgeID)
                 fromLane = fromEdge.getLane(int(attrs['fromLane']))
                 toLane = toEdge.getLane(int(attrs['toLane']))
-                if attrs.has_key('tl') and attrs['tl'] != "":
+                if 'tl' in attrs and attrs['tl'] != "":
                     tl = attrs['tl']
                     tllink = int(attrs['linkIndex'])
                     tls = self._net.addTLS(tl, fromLane, toLane, tllink)
@@ -453,7 +466,8 @@ class NetReader(handler.ContentHandler):
                     tl = ""
                     tllink = -1
                 self._net.addConnection(
-                    fromEdge, toEdge, fromLane, toLane, attrs['dir'], tl, tllink)
+                    fromEdge, toEdge, fromLane, toLane, attrs['dir'], tl,
+                    tllink, attrs['state'])
         # 'row-logic' is deprecated!!!
         if self._withFoes and name == 'ROWLogic':
             self._currentNode = attrs['id']
@@ -473,7 +487,7 @@ class NetReader(handler.ContentHandler):
             self._net.addRoundabout(attrs['nodes'].split())
         if name == 'param':
             if self._currentLane != None:
-                self._currentLane._params[attrs['key']] = attrs['value']
+                self._currentLane.setParam(attrs['key'], attrs['value'])
 
     def characters(self, content):
         if self._currentLane != None:

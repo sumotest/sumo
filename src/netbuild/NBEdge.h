@@ -42,7 +42,6 @@
 #include <utils/common/VectorHelper.h>
 #include <utils/geom/Bresenham.h>
 #include <utils/geom/PositionVector.h>
-#include <utils/geom/Line.h>
 #include <utils/common/SUMOVehicleClass.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include "NBCont.h"
@@ -121,9 +120,10 @@ public:
      * @brief An (internal) definition of a single lane of an edge
      */
     struct Lane {
-        Lane(NBEdge* e) :
+        Lane(NBEdge* e, const std::string& _origID) :
             speed(e->getSpeed()), permissions(SVCAll), preferred(0),
-            endOffset(e->getEndOffset()), width(e->getLaneWidth()) {}
+            endOffset(e->getEndOffset()), width(e->getLaneWidth()),
+            origID(_origID) {}
         /// @brief The lane's shape
         PositionVector shape;
         /// @brief The speed allowed on this lane
@@ -167,11 +167,13 @@ public:
         /// @brief The id of the traffic light that controls this connection
         std::string tlID;
         /// @brief The index of this connection within the controlling traffic light
-        unsigned int tlLinkNo;
+        int tlLinkNo;
         /// @brief Information about being definitely free to drive (on-ramps)
         bool mayDefinitelyPass;
         /// @brief whether the junction must be kept clear when using this connection
         bool keepClear;
+        /// @brief custom position for internal junction on this connection
+        SUMOReal contPos;
 
 
         std::string origID;
@@ -195,16 +197,14 @@ public:
 
     };
 
-    /// Computes the offset from the edge shape on the current segment
-    static std::pair<SUMOReal, SUMOReal> laneOffset(const Position& from,
-            const Position& to, SUMOReal laneCenterOffset);
-
     /// @brief unspecified lane width
     static const SUMOReal UNSPECIFIED_WIDTH;
     /// @brief unspecified lane offset
     static const SUMOReal UNSPECIFIED_OFFSET;
     /// @brief unspecified lane speed
     static const SUMOReal UNSPECIFIED_SPEED;
+    /// @brief unspecified internal junction position
+    static const SUMOReal UNSPECIFIED_CONTPOS;
 
     /// @brief no length override given
     static const SUMOReal UNSPECIFIED_LOADED_LENGTH;
@@ -255,6 +255,7 @@ public:
      * @param[in] offset Additional offset to the destination node
      * @param[in] geom The edge's geomatry
      * @param[in] streetName The street name (need not be unique)
+     * @param[in] origID The original ID in the source network (need not be unique)
      * @param[in] spread How the lateral offset of the lanes shall be computed
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
      * @see init
@@ -266,6 +267,7 @@ public:
            SUMOReal width, SUMOReal offset,
            PositionVector geom,
            const std::string& streetName = "",
+           const std::string& origID = "",
            LaneSpreadFunction spread = LANESPREAD_RIGHT,
            bool tryIgnoreNodePositions = false);
 
@@ -669,7 +671,8 @@ public:
                                 unsigned int toLane, Lane2LaneInfoType type,
                                 bool mayUseSameDestination = false,
                                 bool mayDefinitelyPass = false,
-                                bool keepClear = true);
+                                bool keepClear = true,
+                                SUMOReal contPos = UNSPECIFIED_CONTPOS);
 
 
     /** @brief Builds no connections starting at the given lanes
@@ -710,7 +713,8 @@ public:
                        Lane2LaneInfoType type,
                        bool mayUseSameDestination = false,
                        bool mayDefinitelyPass = false,
-                       bool keepClear = true);
+                       bool keepClear = true,
+                       SUMOReal contPos = UNSPECIFIED_CONTPOS);
 
 
 
@@ -1017,9 +1021,9 @@ public:
 
     void decLaneNo(unsigned int by);
 
-    void deleteLane(unsigned int index, bool recompute=true);
+    void deleteLane(unsigned int index, bool recompute = true);
 
-    void addLane(unsigned int index, bool recompute=true);
+    void addLane(unsigned int index, bool recompute = true);
 
     void markAsInLane2LaneState();
 
@@ -1175,9 +1179,6 @@ private:
     /// Computes the shape for the given lane
     PositionVector computeLaneShape(unsigned int lane, SUMOReal offset) const;
 
-    /// Computes the offset from the edge shape on the current segment
-    //std::pair<SUMOReal, SUMOReal> laneOffset(const Position& from, const Position& to, SUMOReal laneCenterOffset);
-
     void computeLaneShapes();
 
 
@@ -1197,8 +1198,9 @@ private:
      *
      * @param[in] noLanes The number of lanes this edge has
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
+     * @param[in] origID The original ID this edge had
      */
-    void init(unsigned int noLanes, bool tryIgnoreNodePositions);
+    void init(unsigned int noLanes, bool tryIgnoreNodePositions, const std::string& origID);
 
 
     /** divides the lanes on the outgoing edges */

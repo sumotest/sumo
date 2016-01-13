@@ -21,19 +21,22 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
 import sys
 import os
 from optparse import OptionParser
 
 from sumolib.net import readNet
 from sumolib import geomhelper
+from functools import reduce
 
 
 def parse_args():
     USAGE = "Usage: " + sys.argv[0] + " <netfile> [options]"
     optParser = OptionParser()
     optParser.add_option("-o", "--outfile", help="name of output file")
-    optParser.add_option("-r", "--radius", type=float, default=10., help="radius around the edge")
+    optParser.add_option(
+        "-r", "--radius", type=float, default=10., help="radius around the edge")
     optParser.add_option("-t", "--travel-distance", action="store_true",
                          default=False, help="use travel distance in the graph")
     options, args = optParser.parse_args()

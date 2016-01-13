@@ -91,6 +91,7 @@ NWWriter_Amitran::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
         switch (i->second->getType()) {
             case NODETYPE_TRAFFIC_LIGHT:
             case NODETYPE_TRAFFIC_LIGHT_NOJUNCTION:
+            case NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED:
                 device << "\" type=\"trafficLight";
                 break;
             case NODETYPE_PRIORITY:
@@ -105,8 +106,14 @@ NWWriter_Amitran::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
             case NODETYPE_ALLWAY_STOP:
                 device << "\" type=\"allwayStop";
                 break;
+            case NODETYPE_ZIPPER:
+                device << "\" type=\"zipper";
+                break;
             case NODETYPE_RAIL_SIGNAL:
                 device << "\" type=\"railSignal";
+                break;
+            case NODETYPE_RAIL_CROSSING:
+                device << "\" type=\"railCrossing";
                 break;
             case NODETYPE_DEAD_END:
             case NODETYPE_DEAD_END_DEPRECATED:

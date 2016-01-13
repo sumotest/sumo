@@ -230,7 +230,7 @@ public:
 #endif
 
     /// @brief close this lane for traffic
-    void closeTraffic(bool rebuildAllowed=true);
+    void closeTraffic(bool rebuildAllowed = true);
 
     bool isClosed() const {
         return myAmClosed;
@@ -303,9 +303,6 @@ private:
 
     /// @brief Quarter of lane width, for speed-up
     SUMOReal myQuarterLaneWidth;
-
-    /// The lane index
-    unsigned int myIndex;
 
 #ifdef HAVE_OSG
     osg::Geometry* myGeom;

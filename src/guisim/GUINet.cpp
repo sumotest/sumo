@@ -428,7 +428,7 @@ GUIParameterTableWindow*
 GUINet::getParameterWindow(GUIMainWindow& app,
                            GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 27);
+        new GUIParameterTableWindow(app, *this, 28);
     // add items
     ret->mkItem("loaded vehicles [#]", true,
                 new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getLoadedVehicleNo));
@@ -446,11 +446,11 @@ GUINet::getParameterWindow(GUIMainWindow& app,
                 new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getTeleportCount));
     if (myPersonControl != 0) {
         ret->mkItem("loaded persons [#]", true,
-                new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getLoadedPersonNumber));
+                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getLoadedPersonNumber));
         ret->mkItem("running persons [#]", true,
-                new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getRunningPersonNumber));
+                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getRunningPersonNumber));
         ret->mkItem("jammed persons [#]", true,
-                new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getJammedPersonNumber));
+                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getJammedPersonNumber));
     }
     ret->mkItem("end time [s]", false, OptionsCont::getOptions().getString("end"));
     ret->mkItem("begin time [s]", false, OptionsCont::getOptions().getString("begin"));
@@ -484,6 +484,7 @@ GUINet::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("edges [#]", false, (int)GUIEdge::getIDs(false).size());
     ret->mkItem("total edge length [km]", false, GUIEdge::getTotalLength(false, false) / 1000);
     ret->mkItem("total lane length [km]", false, GUIEdge::getTotalLength(false, true) / 1000);
+    ret->mkItem("network version ", false, toString(myVersion));
 
     // close building
     ret->closeBuilding();

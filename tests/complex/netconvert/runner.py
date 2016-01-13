@@ -19,6 +19,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
+from __future__ import absolute_import
 
 
 import sys
@@ -35,5 +36,7 @@ args1 = [netconvert,
          '--sumo-net-file', 'input_net.net.xml',
          '--%s-output' % format, format]
 
+args2 = [netconvert, '--%s' % format, format] + sys.argv[2:]
+
 subprocess.call(args1)
-subprocess.call([netconvert, '--%s' % format, format])
+subprocess.call(args2)
