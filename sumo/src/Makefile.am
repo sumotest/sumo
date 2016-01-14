@@ -63,8 +63,8 @@ $(MESO_LIBS) \
 $(TRACI_LIBS) \
 $(COMMON_LIBS) \
 $(PYTHON_LIBS) \
+$(GRPC_LIBS) \
 $(FOX_LDFLAGS) $(XERCES_LDFLAGS) $(PROJ_LDFLAGS)
-
 
 netconvert_SOURCES = netconvert_main.cpp
 

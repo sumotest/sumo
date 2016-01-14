@@ -16,7 +16,7 @@ dnl because it modifies CXXFLAGS
 if test x$CXX = xclang++; then
     CXXFLAGS="-msse2 $CXXFLAGS"
 else
-    CXXFLAGS="-msse2 -mfpmath=sse $CXXFLAGS"
+    CXXFLAGS="-msse2 -mfpmath=sse $CXXFLAGS -std=c++11"
 fi
 AC_ARG_ENABLE([debug], [AS_HELP_STRING([--enable-debug],[enable sumo debugging code [default=no].])])
 if test x$enable_debug = xyes; then
@@ -407,6 +407,13 @@ AC_CHECK_HEADER([libavformat/version.h],
                  FFMPEG_LIBS="-lavformat -lavcodec -lavutil -lswscale" AC_SUBST(FFMPEG_LIBS)
                  ac_enabled="$ac_enabled ffmpeg"],
                 [ac_disabled="$ac_disabled ffmpeg"])
+
+AC_CHECK_HEADER([grpc++/grpc++.h], 
+                [AM_CPPFLAGS="$CPPFLAGS $AM_CPPFLAGS"
+                 AC_DEFINE([HAVE_GRPC], [1], [defined if grpc is available])
+                 GRPC_LIBS="-lgrpc++" AC_SUBST(GRPC_LIBS)
+                 ac_enabled="$ac_enabled grpc"],
+                [ac_disabled="$ac_disabled grpc"])
 
 AM_CPPFLAGS="-I$PWD/$srcdir/src $AM_CPPFLAGS"
 AC_SUBST(AM_CPPFLAGS)
