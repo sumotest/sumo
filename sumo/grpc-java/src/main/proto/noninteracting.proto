@@ -15,10 +15,62 @@ syntax = "proto3";
 
 package noninteracting;
 
-option java_multiple_files = true;
+option java_multiple_files = false;
 option java_package = "de.dlr.sumo.noninteracting";
 option java_outer_classname = "NonInteractingProto";
 
-service NonInteracting {
+service PState {
+    rpc computeWalkingTime(CMPWlkgTm) returns (SUMOTime) {}
+    rpc getPosition(GetPos) returns (Position) {}
+    rpc getAngle(GetAngle) returns (SUMOReal) {}
+    rpc getWaitingTime(SUMOTime) returns (SUMOTime) {}
+    rpc getSpeed(MSPersonStage_Walking) returns (SUMOReal) {}
+    rpc getNextEdge(MSPersonStage_Walking) returns (Edge) {}
 
+}
+
+
+
+message Position {
+    double x = 1;
+    double y = 2;
+    double z = 3;
+}
+
+message Edge {
+    string fromJunctionId = 1;
+    string toJunctionId = 2;
+    double length = 3;
+}
+
+message SUMOTime {
+    double sumoTime = 1;
+}
+
+message SUMOReal {
+    double sumoReal = 1;
+}
+
+message MSPersonStage_Walking {
+    Edge edge = 1;
+    Edge nextRouteEdge = 2;
+    double departPos = 3;
+    double arrivalPos = 4;
+    double maxSpeed = 5;
+}
+
+message CMPWlkgTm {
+    Edge edge = 1;
+    MSPersonStage_Walking stage = 2;
+    SUMOTime sumoTime = 3;
+}
+
+message GetPos {
+    MSPersonStage_Walking stage = 1;
+    SUMOTime sumoTime = 2;
+}
+
+message GetAngle {
+    MSPersonStage_Walking stage = 1;
+    SUMOTime sumoTime = 2;
 }
