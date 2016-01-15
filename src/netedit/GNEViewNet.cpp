@@ -62,11 +62,13 @@
 #include "GNESelector.h"
 #include "GNEConnector.h"
 #include "GNETLSEditor.h"
-#include "GNEAdditional.h"      // PABLO #1916
+#include "GNEAdditionalFrame.h"          // PABLO #1916
+#include "GNEAdditionalHandler.h"   // PABLO #1916
 #include "GNEPoly.h"
 #include "GNECrossing.h"
 #include "GNEBusStop.h"         // PABLO #1916
 #include "GNEChargingStation.h" // PABLO #1916
+
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -136,7 +138,7 @@ GNEViewNet::GNEViewNet(
     myConnector->hide();
     myTLSEditor = new GNETLSEditor(actualParent, this, myUndoList);
     myTLSEditor->hide();
-    myAdditional = new GNEAdditional(actualParent,this, myUndoList);    // PABLO #1916
+    myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);    // PABLO #1916
     myAdditional->hide();                                               // PABLO #1916
     // view must be the final member of actualParent
     reparent(actualParent);
@@ -524,6 +526,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     // XXX this is a dirty dirty hack! implemente GNEChange_POI
                     myNet->getShapeContainer().removePOI(pointed_poi->getMicrosimID());
                     update();
+                } else if (pointed_busStop) {                                                   // PABLO #1916
+
+                    /** COMPLETAR **/
+                    update();                                                                   // PABLO #1916                                                   
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }

@@ -39,6 +39,7 @@
 // ===========================================================================
 class GNENet;
 class GNEViewNet;
+class GNEUndoList;
 class GNEJunction;
 class GNEEdge;
 class GNELane;
@@ -63,7 +64,7 @@ class MSEdgeVector;	// Equivalence in GNE?
 class GNEAdditionalHandler : public SUMOSAXHandler {
 public:
     /// @brief Constructor
-    GNEAdditionalHandler(const std::string& file, GNEViewNet* viewNet, GNENet *net);
+    GNEAdditionalHandler(const std::string& file, GNEViewNet* viewNet, GNENet *net, GNEUndoList* undoList);
 
 
     /// @brief Destructor
@@ -159,8 +160,6 @@ public:
                                  const std::string& base);
     //@}
 
-
-protected:
     /// @name building methods
     ///
     /// Called with parsed values, these methods build the trigger.
@@ -170,7 +169,6 @@ protected:
     ///
     /// In most cases, these methods only call the constructor.
     //@{
-
     /** @brief Builds a lane speed trigger
      *
      * Simply calls the GNELaneSpeedTrigger constructor.
@@ -185,7 +183,6 @@ protected:
     GNELaneSpeedTrigger* buildLaneSpeedTrigger(GNENet* net, const std::string& id, 
 		                                       const std::vector<GNELane*>& destLanes,
                                                const std::string& file);
-
 
     /** @brief Builds a bus stop
      *
@@ -238,7 +235,6 @@ protected:
                                    const std::string& file, const std::string& outfile,
                                    const SUMOTime freq, const MSRouteProbe* probe);
 
-
     /** @brief builds an rerouter
      *
      * Simply calls the MSTriggeredRerouter constructor.
@@ -253,10 +249,14 @@ protected:
                                         SUMOReal prob, const std::string& file, bool off);
     //@}
 
+    /// @name removing methods
+    ///
+    /// These methods remove the trigger.
+    //@{
 
-protected:
-    /// @name helper method for obtaining and checking values
-    /// @{
+    void removeBusStop(GNENet* net, GNEBusStop *busStop);
+
+    //@}
 
     /** @brief Helper method to obtain the filename
      *
@@ -272,7 +272,6 @@ protected:
     std::string getFileName(const SUMOSAXAttributes& attrs, const std::string& base,
                             const bool allowEmpty = false);
 
-
     /** @brief Returns the lane defined by attribute "lane"
      *
      * Retrieves the lane id from the given attrs. Tries to retrieve the lane,
@@ -285,7 +284,6 @@ protected:
      * @exception InvalidArgument If the named lane does not exist or a lane is not named
      */
     GNELane* getLane(const SUMOSAXAttributes& attrs,  const std::string& tt, const std::string& tid);
-
 
     /** @brief returns the position on the lane checking it
      *
@@ -317,9 +315,6 @@ protected:
 	bool checkStopPos(SUMOReal& startPos, SUMOReal& endPos, const SUMOReal laneLength,
                       const SUMOReal minLength, const bool friendlyPos);
 
-    /// @}
-
-
 protected:
     /// @brief Net in which add the additional elements
     GNENet* myNet;
@@ -327,6 +322,8 @@ protected:
     /// @brief View of the Net
     GNEViewNet* myViewNet;
 
+    /// @brief Undo/redo list
+    GNEUndoList* myUndoList;
 };
 
 

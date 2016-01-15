@@ -569,7 +569,6 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
             return value == toString(myIndex);
         default:
             throw InvalidArgument("lane attribute '" + toString(key) + "' not allowed");
-
     }
 }
 

@@ -77,7 +77,7 @@ class GNEInspector;
 class GNESelector;
 class GNEConnector;
 class GNETLSEditor;
-class GNEAdditional;    // PABLO #1916
+class GNEAdditionalFrame;    // PABLO #1916
 class GNEPoly;
 
 // ===========================================================================
@@ -207,7 +207,7 @@ public:
         return myTLSEditor;
     }
 
-    GNEAdditional* getAdditional() {    // PABLO #1916
+    GNEAdditionalFrame* getAdditional() {    // PABLO #1916
         return myAdditional;            // PABLO #1916
     }                                   // PABLO #1916
 
@@ -318,7 +318,7 @@ private:
     GNETLSEditor* myTLSEditor;
 
     // @brief the panel for GNE_MODE_ADDITIONAL // PABLO #1916
-    GNEAdditional* myAdditional;                // PABLO #1916
+    GNEAdditionalFrame* myAdditional;                // PABLO #1916
 
     Position myPopupSpot;
 

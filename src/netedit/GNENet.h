@@ -367,25 +367,21 @@ public:
     /// @brief get shape container
     ShapeContainer& getShapeContainer();
 
-	/** @brief Adds a busStop                                           // PABLO #1916
+	/** @brief Insert a busStop into the net                            // PABLO #1916
      *                                                                  // PABLO #1916
-     * If another bus stop with the same id exists, false is returned.  // PABLO #1916
-     *  Otherwise, the bus stop is added to the internal bus stop       // PABLO #1916
-     *  container "GNEBusStops".                                        // PABLO #1916
+     * insert a busStop previously created in GNEAdditionalHandler      // PABLO #1916
      *                                                                  // PABLO #1916
-     * @param[in] busStop The bus stop to add                           // PABLO #1916
-     * @return true if busStop was added, false in other case           // PABLO #1916
+     * @param[in] busStop The busStop to add                            // PABLO #1916
      */                                                                 // PABLO #1916
-    bool addBusStop(GNEBusStop* busStop);	                            // PABLO #1916
+    void insertBusStop(GNEBusStop* busStop);	                        // PABLO #1916
 
-	/** @brief Remove busStop                                   // PABLO #1916
+	/** @brief delete busStop                                   // PABLO #1916
      *                                                          // PABLO #1916
-     * Remove an existent bus stop of the Net                   // PABLO #1916
+     * delete an existent bus stop of the Net                   // PABLO #1916
      *                                                          // PABLO #1916
-     * @param[in] busStop The bus stop to remove                // PABLO #1916
-     * @return true if busStop was removed, false in other case // PABLO #1916
+     * @param[in] busStop The busStop to remove                 // PABLO #1916
      */                                                         // PABLO #1916
-    bool removeBusStop(GNEBusStop* busStop);	                // PABLO #1916
+    void deleteBusStop(GNEBusStop* busStop);	                // PABLO #1916
 
     /** @brief Returns the named bus stop                       // PABLO #1916
      * @param[in] id The id of the bus stop to return.          // PABLO #1916
@@ -400,18 +396,13 @@ public:
      */                                                                         // PABLO #1916
     std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
 
-    /** @brief Adds a charging station                                              // PABLO #1916
-     *                                                                              // PABLO #1916
-     * If another charging station with the same id exists, false is returned.      // PABLO #1916
-     *  Otherwise, the charging station is added to the internal bus stop           // PABLO #1916
-     *  container "GNEChargingStations".                                            // PABLO #1916
-     *                                                                              // PABLO #1916
-     * This control gets responsible for deletion of the added charging station.    // PABLO #1916
-     *                                                                              // PABLO #1916
-     * @param[in] chargingStation The charging station add                          // PABLO #1916
-     * @return Whether the charging station could be added                          // PABLO #1916
-     */                                                                             // PABLO #1916
-    bool addChargingStation(GNEChargingStation* chargingStation);	                // PABLO #1916
+	/** @brief Insert a charging Station into the net                       // PABLO #1916
+     *                                                                      // PABLO #1916
+     * insert a chargingStation previously created in GNEAdditionalHandler  // PABLO #1916
+     *                                                                      // PABLO #1916
+     * @param[in] chargingStation The chargingStation to add                // PABLO #1916
+     */                                                                     // PABLO #1916
+    void insertChargingStation(GNEChargingStation* chargingStation);	    // PABLO #1916
 
 	/** @brief Remove chargingStation                                   // PABLO #1916
      *                                                                  // PABLO #1916

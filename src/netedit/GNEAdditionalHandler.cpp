@@ -28,6 +28,7 @@
 #endif
 
 #include "GNEAdditionalHandler.h"
+#include "GNEUndoList.h"
 #include "GNEBusStop.h"
 #include "GNEChargingStation.h"
 #include "GNEEdge.h"
@@ -35,6 +36,7 @@
 #include "GNEJunction.h"
 #include "GNENet.h"
 #include "GNEViewNet.h"
+#include "GNEChange_Additional.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -52,10 +54,11 @@
 // ===========================================================================
 
 
-GNEAdditionalHandler::GNEAdditionalHandler(const std::string& file, GNEViewNet* viewNet, GNENet *net) : 
+GNEAdditionalHandler::GNEAdditionalHandler(const std::string& file, GNEViewNet* viewNet, GNENet *net, GNEUndoList* undoList) : 
     SUMOSAXHandler(file), 
     myNet(net), 
-    myViewNet(viewNet){
+    myViewNet(viewNet),
+    myUndoList(undoList){
 }
 
 
@@ -328,21 +331,25 @@ void
 GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines, 
                                    GNELane* lane, SUMOReal frompos, SUMOReal topos)
 {
-    GNEBusStop* busStop = new GNEBusStop(id, lines, *lane, frompos, topos);
-    if (net->addBusStop(busStop)) {
-        myViewNet->addAdditionalGLVisualisation(busStop);
+    if (net->getBusStop(id) == NULL) {
+        GNEBusStop* busStop = new GNEBusStop(id, lines, *lane, frompos, topos);
+        myUndoList->p_begin("add busStop");
+        myUndoList->add(new GNEChange_Additional(net, busStop, true, myViewNet), true);
+        myUndoList->p_end();
     } else {
-        delete busStop;
         throw InvalidArgument("Could not build bus stop in netEdit '" + id + "'; probably declared twice.");
 	}
 }
+
 
 void 
 GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
                                            SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
 {
     GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
-    if (net->addChargingStation(chargingStation)) {
+    if (1) {
+
+        net->insertChargingStation(chargingStation);
         myViewNet->addAdditionalGLVisualisation(chargingStation);
     } else {
         delete chargingStation;
@@ -368,6 +375,14 @@ GNEAdditionalHandler::buildRerouter(GNENet* net, const std::string& id, MSEdgeVe
 	std::cout << "Function buildRerouter of class GNEAdditionalHandler not implemented yet";
 
 	return NULL;
+}
+
+
+void 
+GNEAdditionalHandler::removeBusStop(GNENet* net, GNEBusStop *busStop) {
+    myUndoList->p_begin("delete busStop");
+    myUndoList->add(new GNEChange_Additional(net, busStop, false, myViewNet), true);
+    myUndoList->p_end();
 }
 
 

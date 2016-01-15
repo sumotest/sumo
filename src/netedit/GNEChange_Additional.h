@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    GNEChange_ChargingStation.h
+/// @file    GNEChange_Additional.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
 /// @version $Id: $
 ///
-/// A network change in which a chargingStation is created or deleted
+/// A network change in which a additional element is created or deleted
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEChange_ChargingStation_h
-#define GNEChange_ChargingStation_h
+#ifndef GNEChange_Additional_h
+#define GNEChange_Additional_h
 
 // ===========================================================================
 // included modules
@@ -37,28 +37,30 @@
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNEChargingStation;
+class GNEAdditional;
+class GNEViewNet;
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
 /**
- * @class GNEChange_ChargingStation
- * A network change in which a single ChargingStation is created or deleted
+ * @class GNEChange_Additional
+ * A network change in which a single BusStop is created or deleted
  */
-class GNEChange_ChargingStation : public GNEChange {
-    FXDECLARE_ABSTRACT(GNEChange_ChargingStation)
+class GNEChange_Additional : public GNEChange {
+    FXDECLARE_ABSTRACT(GNEChange_Additional)
 
 public:
     /** @brief Constructor for creating/deleting an edge
      * @param[in] net The net on which to apply changes
-     * @param[in] chargingStation The chargingStation to be created/deleted
+     * @param[in] busStop The busStop to be created/deleted
      * @param[in] forward Whether to create/delete (true/false)
+COMPLETAR
      */
-    GNEChange_ChargingStation(GNENet* net, GNEChargingStation* chargingStation, bool forward);
+    GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward, GNEViewNet* viewNet);
 
     /// @brief Destructor
-    ~GNEChange_ChargingStation();
+    ~GNEChange_Additional();
 
     FXString undoName() const;
     FXString redoName() const;
@@ -67,10 +69,10 @@ public:
 
 
 private:
-    /** @brief full information regarding the chargingStation that is to be created/deleted
-     * we assume shared responsibility for the pointer (via reference counting)
-     */
-    GNEChargingStation* myChargingStation;
+    /// @brief full information regarding the additional element that is to be created/deleted
+    GNEAdditional* myAdditional;
+
+    GNEViewNet* myViewNet;
 };
 
 #endif

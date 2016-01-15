@@ -1,10 +1,10 @@
 /****************************************************************************/
 /// @file    GNEAdditional.h
 /// @author  Pablo Alvarez Lopez
-/// @date    Dec 2015
+/// @date    Jan 2016
 /// @version $Id: $
 ///
-/// The Widget for setting default parameters of additional elements
+/// A abstract class for representation of additional elements
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -17,9 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEADDITIONAL_H
-#define GNEADDITIONAL_H
-
+#ifndef GNEAdditional_h
+#define GNEAdditional_h
 
 // ===========================================================================
 // included modules
@@ -30,172 +29,211 @@
 #include <config.h>
 #endif
 
-#include <fx.h>
-#include <GL/gl.h>
-#include <utils/foxtools/FXRealSpinDial.h>
-#include <utils/xml/SUMOXMLDefinitions.h>
-#include <utils/gui/div/GUISelectedStorage.h>
+#include <string>
+#include <vector>
+#include <utils/gui/globjects/GUIGlObject.h>
+#include <utils/gui/settings/GUIPropertySchemeStorage.h>
+#include <utils/geom/PositionVector.h>
+#include "GNEAttributeCarrier.h"
+
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNEViewNet;
-class GNEAttributeCarrier;
-class GNEUndoList;
+class GUIGLObjectPopupMenu;
+class PositionVector;
 class GNELane;
+class GNENet;
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
+
 /**
  * @class GNEAdditional
- * The Widget for setting default parameters of additional elements
+ * @brief A lane area vehicles can halt at (netedit-version)
+ *
+ * @see MSStoppingPlace
  */
-class GNEAdditional : public FXScrollWindow {
-    // FOX-declarations
-    FXDECLARE(GNEAdditional)
 
+class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier
+{
 public:
 
-    /// @brief list of additional types
-    enum additionalType {
-        GNE_ADDITIONAL_BUSSTOP,
-        GNE_ADDITIONAL_CHARGINGSTATION,
-        GNE_ADDITIONAL_E1,                  // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_E2,                  // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_E3,                  // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_REROUTERS,           // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_CALIBRATORS,         // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_VARIABLESPEEDSIGNS   // NOT YET IMPLEMENTED
-    };
-
-    /// @brief list of the reference points
-    enum additionalReferencePoint {
-        GNE_ADDITIONALREFERENCEPOINT_LEFT,
-        GNE_ADDITIONALREFERENCEPOINT_RIGHT,
-        GNE_ADDITIONALREFERENCEPOINT_CENTER
-    };
-
-    /** @brief Constructor
-     * @param[in] parent The parent window
+	/** @brief Constructor.
+     * @param[in] id Gl-id of the stopping place (Must be unique)
+     * @param[in] lane Lane of this StoppingPlace belongs
+     * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
      */
-    GNEAdditional(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
+    GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag tag);
+
 
     /// @brief Destructor
-    ~GNEAdditional();
+	~GNEAdditional();
 
-    /** @brief add additional element
-     * @param[in] lane lane in which the new element will be inserted
-     * @param[in] parent AbstractView to obtain the position of the mouse over the lane
+
+    /// @brief update pre-computed geometry information
+    //  @note: must be called when geometry changes (i.e. lane moved)
+    virtual void updateGeometry() = 0;
+
+
+	/** @brief Returns parent lane
+     * @return The GNElane parent lane
      */
-    void addAdditional(GNELane &lane, GUISUMOAbstractView* parent);
+	GNELane &getLane() const;
 
-    /** @brief get header font
-     * @return font of the header
+
+    /** @brief Returns the from position of the stoppingPlace
+     * @return The from position of the stopping place
      */
-    FXFont* getHeaderFont();
+	SUMOReal getFromPosition() const;
+		
 
-    /// @name FOX-callbacks
-    /// @{
-    /** @brief Called when the user select another additional Type
-     * set te currently additional type
+    /** @brief Returns the to position of the stoppingPlace
+     * @return The to position of the stopping place
      */
-    long onCmdSelectAdditional(FXObject*, FXSelector, void*);
+	SUMOReal getToPosition() const;
 
-    /** @brief Called when the user enters another reference point
-     * set the currently reference point
+
+    /** @brief Set a new from Position in StoppingPlace
+     * @param[in] fromPos new From Position of StoppingPlace
+     * @throws InvalidArgument if value of fromPos isn't valid
      */
-    long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
-    /// @}
+    void setFromPosition(SUMOReal fromPos);
 
-    /// @brief show additional frame
-    void show();
 
-    /// @brief hidde additional frame
-    void hide();
+    /** @brief Set a new to Position in StoppingPlace
+     * @param[in] toPos new to Position of StoppingPlace
+     * @throws InvalidArgument if value of toPos isn't valid
+     */
+    void setToPosition(SUMOReal toPos);
 
-protected:
-    /// @brief FOX needs this
-    GNEAdditional() {}
+
+    /** @brief Returns a copy of the Shape of the stoppingPlace
+     * @return The Shape of the stoppingPlace
+     */
+    PositionVector getShape() const;
+
+
+    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
+     * @return The ShapeRotations of the stoppingPlace
+     */
+    std::vector<SUMOReal> getShapeRotations() const;
+
+
+    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
+     * @return The ShapeLengths of the stoppingPlace
+     */
+    std::vector<SUMOReal> getShapeLengths() const;
+
+
+    /// @name inherited from GUIGlObject
+    //@{
+    /** @brief Returns the name of the parent object (if any)
+     * @return This object's parent id
+     */
+    const std::string& getParentName() const; 
+
+
+    /** @brief Returns an own popup-menu
+     *
+     * @param[in] app The application needed to build the popup-menu
+     * @param[in] parent The parent window needed to build the popup-menu
+     * @return The built popup-menu
+     * @see GUIGlObject::getPopUpMenu
+     */
+    virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
+
+
+    /** @brief Returns an own parameter window
+     *
+     * @param[in] app The application needed to build the parameter window
+     * @param[in] parent The parent window needed to build the parameter window
+     * @return The built parameter window
+     * @see GUIGlObject::getParameterWindow
+     */
+    virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
+
+
+    /** @brief Returns the boundary to which the view shall be centered in order to show the object
+     *
+     * @return The boundary the object is within
+     * @see GUIGlObject::getCenteringBoundary
+     */
+    virtual Boundary getCenteringBoundary() const = 0;
+
+
+    /** @brief Draws the object
+     * @param[in] s The settings for the current view (may influence drawing)
+     * @see GUIGlObject::drawGL
+     */
+    virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
+    //@}
+
+
+    //@name inherited from GNEAttributeCarrier
+    //@{
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
+    virtual std::string getAttribute(SumoXMLAttr key) const = 0;
+
+
+    /* @brief method for setting the attribute and letting the object perform additional changes
+     * @param[in] key The attribute key
+     * @param[in] value The new value
+     * @param[in] undoList The undoList on which to register changes
+     */
+    virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
+
+
+    /* @brief method for checking if the key and their conrrespond attribute are valids
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
+    virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
+    //@}
 
 private:
 
-    /// @brief set parameters depending of the additionalType selected
-    void setParameters();
+    /// @brief The lane this stopping place is located at
+    GNELane& myLane;
 
-    /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
-    bool setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
+    /// @brief The begin position this stopping place is located at
+    SUMOReal myFromPos;
 
-    /// @brief struct for text field parameters // QUESTION ERDMANN 01
-    struct additionalParameterTextField {
-        /// @brief horizontal frame for label and textField
-        FXHorizontalFrame *horizontalFrame;
-        /// @brief lael with the name of the parameter
-        FXLabel *label;
-        /// @brief textField to modify the value of parameter
-        FXTextField *textField;
-    };
+    /// @brief The end position this stopping place is located at
+    SUMOReal myToPos;
 
-    /// @brief struct for boolean (menuCheck) parameters    // QUESTION ERDMANN 02
-    struct additionalParameterCheckButton {
-        /// @brief horizontal frame for label and menuCheck
-        FXHorizontalFrame *horizontalFrame;
-        /// @brief label with the name of the parameter
-        FXLabel *label;
-        /// @brief menuCheck to enable/disable the value of parameter
-        FXMenuCheck *menuCheck;
-    };
+private:
+    /// @brief set attribute after validation
+    virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
-    /// @brief the panel to hold all member widgets
-    FXVerticalFrame* myContentFrame;
+    /// @brief Invalidated copy constructor.
+    GNEAdditional(const GNEAdditional&);
 
-    /// @brief Font for the widget
-    FXFont* myHeaderFont;
+    /// @brief Invalidated assignment operator.
+    GNEAdditional& operator=(const GNEAdditional&);
 
-    /// @brief the label for the frame
-    FXLabel* myFrameLabel;
+/**
+    ALL OF THIS FUNCTIONS SHOULD BE ERASED?
 
-    /// @brief combo box with the list of additional elements
-    FXComboBox* myAdditionalMatchBox;
+    // @brief return value for lane coloring according to the given scheme
+    SUMOReal getColorValue(size_t activeScheme) const;
+		
+    /// @brief sets the color according to the current scheme index and some lane function
+    bool setFunctionalColor(size_t activeScheme) const;
 
-    /// @brief the window to inform 
-    GNEViewNet* myUpdateTarget;
+    /// @brief sets multiple colors according to the current scheme index and some lane function
+    bool setMultiColor(const GUIColorer& c) const;
+	
+    /// The color of the shape parts (cached)
+    mutable std::vector<RGBColor> myShapeColors;
+**/
 
-    /// @brief vector of Labels for the name of default parameters
-    std::vector<additionalParameterTextField> myVectorOfParametersTextFields;
-
-    /// @brief vector of Text fiels with the default text parameters
-    std::vector<additionalParameterCheckButton> myVectorOfParameterCheckButton;
-
-    /// @brief the box for the reference point match Box
-    FXGroupBox* myReferencePointBox;
-
-    /// @brief match box with the list of reference points
-    FXComboBox* myReferencePointMatchBox;
-
-    /// @brief checkBox for the option "force position"
-    FXMenuCheck* myCheckForcePosition;
-
-    /// @brief actual additional type selected in the match Box
-    additionalType myActualAdditionalType;
-
-    /// @brief actual additional reference point selected in the match Box
-    additionalReferencePoint myActualAdditionalReferencePoint;
-
-    /// @brief Width of frame
-    static const int WIDTH;
-
-    /// @brief Maximun number (Size of vector) of additionalParameterTextField
-    static const int maximumNumberOfAdditionalParameterTextField;
-
-    /// @brief Maximun number (Size of vector) of additionalParameterCheckButton
-    static const int maximumNumberOfAdditionalParameterCheckButton;
-
-    // @brief undo 
-    GNEUndoList* myUndoList;
 };
 
 
 #endif
-
-/****************************************************************************/

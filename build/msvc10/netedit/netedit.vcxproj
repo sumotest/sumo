@@ -190,14 +190,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditional.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEAdditionalFrame.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalHandler.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEApplicationWindow.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEAttributeCarrier.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEBusStop.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Attribute.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNEChange_BusStop.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNEChange_ChargingStation.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEChange_Additional.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Connection.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Edge.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Junction.cpp" />
@@ -231,14 +231,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\netedit\GNEAdditional.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEAdditionalFrame.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEAdditionalHandler.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEApplicationWindow.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEAttributeCarrier.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEBusStop.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Attribute.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNEChange_BusStop.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNEChange_ChargingStation.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEChange_Additional.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Connection.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Edge.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Junction.h" />

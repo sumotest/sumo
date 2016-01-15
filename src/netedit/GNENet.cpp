@@ -966,37 +966,35 @@ GNENet::getShapeContainer() {
 }
 
 
-// ------ Insertion and retrieval of bus stops ------
-bool															// PABLO #1916
-GNENet::addBusStop(GNEBusStop* busStop) {						// PABLO #1916
-	// Check if busStop exists before insertion					// PABLO #1916
-	if(myBusStops.find(busStop->getID()) != myBusStops.end())	// PABLO #1916
-		return false;											// PABLO #1916
-	else {														// PABLO #1916
-		myBusStops[busStop->getID()] = busStop;					// PABLO #1916
-		return true;											// PABLO #1916
-	}															// PABLO #1916
-}																// PABLO #1916
+void															                        // PABLO #1916
+GNENet::insertBusStop(GNEBusStop* busStop) {						                    // PABLO #1916
+	// Check if busStop exists before insertion					                        // PABLO #1916
+	if(myBusStops.find(busStop->getID()) != myBusStops.end())	                        // PABLO #1916
+		throw ProcessError("busStop with ID='" + busStop->getID() + "' already exist"); // PABLO #1916
+	else {														                        // PABLO #1916
+		myBusStops[busStop->getID()] = busStop;					                        // PABLO #1916
+	}															                        // PABLO #1916
+}																                        // PABLO #1916
 
-bool																			// PABLO #1916
-GNENet::removeBusStop(GNEBusStop* busStop) {									// PABLO #1916
-	GNEBusStops::iterator positionToRemove = myBusStops.find(busStop->getID());	// PABLO #1916
-	// Check if busStop exists before deletion									// PABLO #1916
-	if(positionToRemove != myBusStops.end()){									// PABLO #1916
-		myBusStops.erase(positionToRemove);										// PABLO #1916
-		return true;															// PABLO #1916
-	}																			// PABLO #1916
-	else																		// PABLO #1916
-		return false;															// PABLO #1916
-}																				// PABLO #1916
 
-GNEBusStop*											// PABLO #1916
-GNENet::getBusStop(const std::string& id) const {	// PABLO #1916
-	if(myBusStops.find(id) != myBusStops.end())		// PABLO #1916
-		return myBusStops.at(id);					// PABLO #1916
-	else											// PABLO #1916
-		return NULL;								// PABLO #1916
-}													// PABLO #1916
+void																			        // PABLO #1916
+GNENet::deleteBusStop(GNEBusStop* busStop) {									        // PABLO #1916
+	GNEBusStops::iterator positionToRemove = myBusStops.find(busStop->getID());	        // PABLO #1916
+	// Check if busStop exists before deletion									        // PABLO #1916
+	if(positionToRemove == myBusStops.end()){									        // PABLO #1916
+		throw ProcessError("busStop with ID='" + busStop->getID() + "' don't exist");   // PABLO #1916
+	}																			        // PABLO #1916
+	else																		        // PABLO #1916
+		myBusStops.erase(positionToRemove);										        // PABLO #1916
+}																				        // PABLO #1916
+
+GNEBusStop*											                    // PABLO #1916
+GNENet::getBusStop(const std::string& id) const {	                    // PABLO #1916
+	if(!myBusStops.empty() && myBusStops.find(id) != myBusStops.end())	// PABLO #1916
+		return myBusStops.at(id);					                    // PABLO #1916
+	else											                    // PABLO #1916
+		return NULL;								                    // PABLO #1916
+}													                    // PABLO #1916
 
 
 std::string
@@ -1010,17 +1008,16 @@ GNENet::getBusStopID(const GNELane* lane, const SUMOReal pos) const {											
     return "";																											// PABLO #1916
 }																														// PABLO #1916																									// PABLO #1916
 
-// ------ Insertion and retrieval of charging Stations ------
-bool																					// PABLO #1916
-GNENet::addChargingStation(GNEChargingStation* chargingStation) {						// PABLO #1916
-	// Check if chargingStation exists before insertion									// PABLO #1916
-	if(myChargingStations.find(chargingStation->getID()) != myChargingStations.end())	// PABLO #1916
-		return false;																	// PABLO #1916
-	else {																				// PABLO #1916
-		myChargingStations[chargingStation->getID()] = chargingStation;					// PABLO #1916
-		return true;																	// PABLO #1916
-	}																					// PABLO #1916
-}																						// PABLO #1916
+
+void																					                // PABLO #1916
+GNENet::insertChargingStation(GNEChargingStation* chargingStation) {						            // PABLO #1916
+	// Check if busStop exists before insertion					                                        // PABLO #1916
+	if(myChargingStations.find(chargingStation->getID()) != myChargingStations.end())	                // PABLO #1916
+		throw ProcessError("chargingStation with ID='" + chargingStation->getID() + "' already exist"); // PABLO #1916
+	else {														                                        // PABLO #1916
+		myChargingStations[chargingStation->getID()] = chargingStation;					                // PABLO #1916
+	}																				                    // PABLO #1916
+}																						                // PABLO #1916
 
 bool																									// PABLO #1916
 GNENet::removeChargingStation(GNEChargingStation* chargingStation) {									// PABLO #1916
@@ -1034,25 +1031,25 @@ GNENet::removeChargingStation(GNEChargingStation* chargingStation) {									// 
 		return false;																					// PABLO #1916
 }
 
-GNEChargingStation*												// PABLO #1916
-GNENet::getChargingStation(const std::string& id) const {		// PABLO #1916
-	if(myChargingStations.find(id) != myChargingStations.end())	// PABLO #1916
-		return myChargingStations.at(id);						// PABLO #1916
-	else														// PABLO #1916
-		return NULL;											// PABLO #1916
-}																// PABLO #1916
+GNEChargingStation*												                                // PABLO #1916
+GNENet::getChargingStation(const std::string& id) const {		                                // PABLO #1916
+	if(!myChargingStations.empty() && myChargingStations.find(id) != myChargingStations.end())	// PABLO #1916
+		return myChargingStations.at(id);						                                // PABLO #1916
+	else														                                // PABLO #1916
+		return NULL;											                                // PABLO #1916
+}																                                // PABLO #1916
 
 
-std::string																																				// PABLO #1916
-GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {																			// PABLO #1916
-	for (std::map<std::string, GNEChargingStation*>::const_iterator it = myChargingStations.begin(); it != myChargingStations.end(); ++it) {			// PABLO #1916
-        GNEChargingStation* chargingStation = it->second;																								// PABLO #1916
-        if (&chargingStation->getLane() == lane && chargingStation->getFromPosition() <= pos && chargingStation->getToPosition() >= pos) {	// PABLO #1916
-            return chargingStation->getID();																											// PABLO #1916
-        }																																				// PABLO #1916
-    }																																					// PABLO #1916
-    return "";																																			// PABLO #1916
-}																																						// PABLO #1916
+std::string																																		// PABLO #1916
+GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {																	// PABLO #1916
+	for (std::map<std::string, GNEChargingStation*>::const_iterator it = myChargingStations.begin(); it != myChargingStations.end(); ++it) {	// PABLO #1916
+        GNEChargingStation* chargingStation = it->second;																						// PABLO #1916
+        if (&chargingStation->getLane() == lane && chargingStation->getFromPosition() <= pos && chargingStation->getToPosition() >= pos) {	    // PABLO #1916
+            return chargingStation->getID();																									// PABLO #1916
+        }																																		// PABLO #1916
+    }																																			// PABLO #1916
+    return "";																																	// PABLO #1916
+}																																				// PABLO #1916
 
 
 int                             // PABLO #1916

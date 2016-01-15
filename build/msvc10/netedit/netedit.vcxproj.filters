@@ -105,12 +105,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNEBusStop.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEChange_BusStop.cpp">
-      <Filter>Quellcodedateien</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEChange_ChargingStation.cpp">
-      <Filter>Quellcodedateien</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEChargingStation.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
@@ -118,6 +112,12 @@
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEAdditionalFrame.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEChange_Additional.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditional.cpp">
@@ -223,12 +223,6 @@
     <ClInclude Include="..\..\..\src\netedit\GNEBusStop.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEChange_BusStop.h">
-      <Filter>Header-Dateien</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEChange_ChargingStation.h">
-      <Filter>Header-Dateien</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEChargingStation.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
@@ -236,6 +230,12 @@
       <Filter>Header-Dateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEAdditionalFrame.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEChange_Additional.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEAdditional.h">
