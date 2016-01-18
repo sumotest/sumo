@@ -66,6 +66,7 @@ class GNEEdge;
 class GNELane;
 class GNEJunction;
 class GNEUndoList;
+class GNEAdditional;
 class GNEBusStop;
 class GNEChargingStation;
 
@@ -95,7 +96,7 @@ public:
     GNENet(NBNetBuilder* netBuilder);
 
     /// @brief Destructor
-    ~GNENet() ;
+    ~GNENet();
 
     /// @name inherited from GUIGlObject
     //@{
@@ -124,7 +125,7 @@ public:
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
-    Boundary getCenteringBoundary() const ;
+    Boundary getCenteringBoundary() const;
 
     /** @brief Returns the Z boundary (stored in the x() coordinate)
      * values of 0 do not affect the boundary
@@ -135,7 +136,7 @@ public:
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
-    void drawGL(const GUIVisualizationSettings& s) const ;
+    void drawGL(const GUIVisualizationSettings& s) const;
     //@}
 
     /// returns the bounder of the network
@@ -356,9 +357,8 @@ public:
     /// @brief remove edge id from the list of explicit turnarounds
     void removeExplicitTurnaround(std::string id);
 
-    /* @brief move all selected junctions and edges
-     * @note: inner points of an edge will only be modified if the edge and its endpoints are selected
-     */
+    /// @brief move all selected junctions and edges
+    /// @note: inner points of an edge will only be modified if the edge and its endpoints are selected
     void moveSelection(const Position& moveSrc, const Position& moveDest);
 
     /// @brief register changes to junction and edge positions with the undoList
@@ -367,21 +367,21 @@ public:
     /// @brief get shape container
     ShapeContainer& getShapeContainer();
 
-	/** @brief Insert a busStop into the net                            // PABLO #1916
-     *                                                                  // PABLO #1916
-     * insert a busStop previously created in GNEAdditionalHandler      // PABLO #1916
-     *                                                                  // PABLO #1916
-     * @param[in] busStop The busStop to add                            // PABLO #1916
-     */                                                                 // PABLO #1916
-    void insertBusStop(GNEBusStop* busStop);	                        // PABLO #1916
+    /** @brief Insert a additional element into the net                         // PABLO #1916
+     *                                                                          // PABLO #1916
+     * insert an additional element previously created in GNEAdditionalHandler  // PABLO #1916
+     *                                                                          // PABLO #1916
+     * @param[in] additional The additional element to add                      // PABLO #1916
+     */                                                                         // PABLO #1916
+    void insertAdditional(GNEAdditional* additional);                            // PABLO #1916
 
-	/** @brief delete busStop                                   // PABLO #1916
-     *                                                          // PABLO #1916
-     * delete an existent bus stop of the Net                   // PABLO #1916
-     *                                                          // PABLO #1916
-     * @param[in] busStop The busStop to remove                 // PABLO #1916
-     */                                                         // PABLO #1916
-    void deleteBusStop(GNEBusStop* busStop);	                // PABLO #1916
+    /** @brief delete additional element                            // PABLO #1916
+     *                                                              // PABLO #1916
+     * delete an additional element of the Net previously inserted  // PABLO #1916
+     *                                                              // PABLO #1916
+     * @param[in] additional The additional element to remove       // PABLO #1916
+     */                                                             // PABLO #1916
+    void deleteAdditional(GNEAdditional* additional);                // PABLO #1916
 
     /** @brief Returns the named bus stop                       // PABLO #1916
      * @param[in] id The id of the bus stop to return.          // PABLO #1916
@@ -394,46 +394,25 @@ public:
      * @param[in] pos the position of the bus stop to return.                   // PABLO #1916
      * @return The bus stop id on the location, or "" if no such stop exists    // PABLO #1916
      */                                                                         // PABLO #1916
-    std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
-
-	/** @brief Insert a charging Station into the net                       // PABLO #1916
-     *                                                                      // PABLO #1916
-     * insert a chargingStation previously created in GNEAdditionalHandler  // PABLO #1916
-     *                                                                      // PABLO #1916
-     * @param[in] chargingStation The chargingStation to add                // PABLO #1916
-     */                                                                     // PABLO #1916
-    void insertChargingStation(GNEChargingStation* chargingStation);	    // PABLO #1916
-
-	/** @brief Remove chargingStation                                   // PABLO #1916
-     *                                                                  // PABLO #1916
-     * Remove an existent charging station of the Net                   // PABLO #1916
-     *                                                                  // PABLO #1916
-     * @param[in] chargingStation The charging station to remove        // PABLO #1916
-     * @return true if chargingStation was removed, false in other case // PABLO #1916
-     */                                                                 // PABLO #1916
-    bool removeChargingStation(GNEChargingStation* chargingStation);	// PABLO #1916
-
+    std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
 
     /** @brief Returns the named charging station                           // PABLO #1916
      * @param[in] id The id of the charging station to return.              // PABLO #1916
      * @return The named charging station, or 0 if no such stop exists      // PABLO #1916
      */                                                                     // PABLO #1916
-    GNEChargingStation* getChargingStation(const std::string& id) const;	// PABLO #1916
-
+    GNEChargingStation* getChargingStation(const std::string& id) const;    // PABLO #1916
 
     /** @brief Returns the charging station close to the given position                 // PABLO #1916
      * @param[in] lane the lane of the charging station to return.                      // PABLO #1916
      * @param[in] pos the position of the bus stop to return.                           // PABLO #1916
      * @return The charging station id on the location, or "" if no such stop exists    // PABLO #1916
      */                                                                                 // PABLO #1916
-    std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;	// PABLO #1916
-
+    std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
 
     /** @brief Returns the number of busStops of the net    // PABLO #1916
      * @return Number of busStops of the net                // PABLO #1916
      */                                                     // PABLO #1916
     int getNumberOfBusStops();                              // PABLO #1916
-
 
     /** @brief Returns the Number of chargingStations of the net    // PABLO #1916
      * @return Number of charging Stations of the net               // PABLO #1916
@@ -454,8 +433,7 @@ private:
     //@{
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
-    typedef std::map<std::string, GNEBusStop*> GNEBusStops;					// PABLO #1916
-    typedef std::map<std::string, GNEChargingStation*> GNEChargingStations;	// PABLO #1916
+    typedef std::map<std::string, GNEAdditional*> GNEAdditionals;   // PABLO #1916
     // @}
 
     /// @brief map with the name and pointer to edges of net
@@ -464,11 +442,8 @@ private:
     /// @brief map with the name and pointer to junctions of net
     GNEJunctions myJunctions;
 
-    /// @brief map with the name and pointer to busStops of net // PABLO #1916
-	GNEBusStops myBusStops;                                     // PABLO #1916
-
-    /// @brief map with the name and pointer to chargingStations of net // PABLO #1916
-	GNEChargingStations myChargingStations;                             // PABLO #1916
+    /// @brief map with the name and pointer to additional elements of net  // PABLO #1916
+    GNEAdditionals myAdditionals;                                           // PABLO #1916
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{

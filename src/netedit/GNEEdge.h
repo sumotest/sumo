@@ -72,10 +72,10 @@ public:
      * @param[in] net The net to inform about gui updates
      * @param[in] loaded Whether the edge was loaded from a file
      */
-    GNEEdge(NBEdge& nbe, GNENet* net, bool wasSplit = false, bool loaded = false) ;
+    GNEEdge(NBEdge& nbe, GNENet* net, bool wasSplit = false, bool loaded = false);
 
     /// @brief Destructor.
-    ~GNEEdge() ;
+    ~GNEEdge();
 
     /// Returns the street's geometry
     Boundary getBoundary() const;
@@ -90,7 +90,7 @@ public:
      * @see GUIGlObject::getPopUpMenu
      */
     virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-            GUISUMOAbstractView& parent) ;
+            GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -100,20 +100,20 @@ public:
      * @see GUIGlObject::getParameterWindow
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
-            GUISUMOAbstractView& parent) ;
+            GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
-    Boundary getCenteringBoundary() const ;
+    Boundary getCenteringBoundary() const;
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
-    void drawGL(const GUIVisualizationSettings& s) const ;
+    void drawGL(const GUIVisualizationSettings& s) const;
     //@}
 
     /** @brief update edge geometry after junction move */

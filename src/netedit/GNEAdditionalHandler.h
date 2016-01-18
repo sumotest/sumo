@@ -48,8 +48,8 @@ class GNEChargingStation;
 class GNELaneSpeedTrigger;
 class GNETriggeredRerouter;
 class GNECalibrator;
-class MSRouteProbe;	// Equivalence in GNE?
-class MSEdgeVector;	// Equivalence in GNE?
+class MSRouteProbe;    // Equivalence in GNE?
+class MSEdgeVector;    // Equivalence in GNE?
 
 // ===========================================================================
 // class definitions
@@ -71,7 +71,7 @@ public:
     ~GNEAdditionalHandler();
 
 
-	/// @name inherited from GenericSAXHandler
+    /// @name inherited from GenericSAXHandler
     //@{
 
     /** @brief Called on the opening of a tag;
@@ -82,7 +82,7 @@ public:
      * @see GenericSAXHandler::myStartElement
      * @todo Refactor/describe
      */
-	void myStartElement(int element, const SUMOSAXAttributes& attrs);
+    void myStartElement(int element, const SUMOSAXAttributes& attrs);
 
 
     /** @brief Builds a vaporization
@@ -181,7 +181,7 @@ public:
      * @exception ProcessError If the XML definition file is errornous
      */
     GNELaneSpeedTrigger* buildLaneSpeedTrigger(GNENet* net, const std::string& id, 
-		                                       const std::vector<GNELane*>& destLanes,
+                                               const std::vector<GNELane*>& destLanes,
                                                const std::string& file);
 
     /** @brief Builds a bus stop
@@ -210,14 +210,14 @@ public:
      * @param[in] lane The lane the charging Station is placed on
      * @param[in] frompos Begin position of the charging Station on the lane
      * @param[in] topos End position of the charging Station on the lane
-	 * @param[in] chargingPower
-	 * @param[in] efficiency
-	 * @param[in] chargeInTransit
-	 * @param[in] chargeDelay
+     * @param[in] chargingPower
+     * @param[in] efficiency
+     * @param[in] chargeInTransit
+     * @param[in] chargeDelay
      * @exception InvalidArgument If the charging Station can not be added to the net (is duplicate)
      */
     void buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
-		                      SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
+                              SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
 
 
     /** @brief builds a microscopic calibrator
@@ -299,20 +299,20 @@ public:
      * @exception InvalidArgument If the position is beyond the lane
      */
     SUMOReal getPosition(const SUMOSAXAttributes& attrs, GNELane* lane, const std::string& tt, 
-		                 const std::string& tid);
+                         const std::string& tid);
 
-	/** @brief check start and end position of a stop
-	*
-	* This method check if the position of an Stop over a lane is valid
-	*
-	* @param[in] startPos Start position of Stop
-	* @param[in] endPos End position of Stop
-	* @param[in] laneLength Lenght of the lane
-	* @param[in] minLength Min length of the Stop
-	* @param[in] friendlyPos Attribute of Stop
-	* @return true if the Stop position is valid, false in otherweise
-	*/
-	bool checkStopPos(SUMOReal& startPos, SUMOReal& endPos, const SUMOReal laneLength,
+    /** @brief check start and end position of a stop
+    *
+    * This method check if the position of an Stop over a lane is valid
+    *
+    * @param[in] startPos Start position of Stop
+    * @param[in] endPos End position of Stop
+    * @param[in] laneLength Lenght of the lane
+    * @param[in] minLength Min length of the Stop
+    * @param[in] friendlyPos Attribute of Stop
+    * @return true if the Stop position is valid, false in otherweise
+    */
+    bool checkStopPos(SUMOReal& startPos, SUMOReal& endPos, const SUMOReal laneLength,
                       const SUMOReal minLength, const bool friendlyPos);
 
 protected:

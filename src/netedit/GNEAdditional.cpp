@@ -66,8 +66,8 @@
 // ===========================================================================
 
 GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag tag) :
-	myLane(lane),
-	GUIGlObject(GLO_TRIGGER, id),
+    myLane(lane),
+    GUIGlObject(GLO_TRIGGER, id),
     GNEAttributeCarrier(tag) {
     myLane.addAdditional(this);
 }
@@ -80,7 +80,7 @@ GNEAdditional::~GNEAdditional() {
 
 GNELane&
 GNEAdditional::getLane() const {
-	return myLane;
+    return myLane;
 }
 
 

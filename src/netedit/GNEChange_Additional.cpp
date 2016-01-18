@@ -68,9 +68,11 @@ GNEChange_Additional::~GNEChange_Additional() {
 
 void GNEChange_Additional::undo() {
     if (myForward) {
+        myNet->deleteAdditional(myAdditional);
         myViewNet->removeAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     } else {
+        myNet->insertAdditional(myAdditional);
         myViewNet->addAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     }
@@ -79,10 +81,11 @@ void GNEChange_Additional::undo() {
 
 void GNEChange_Additional::redo() {
     if (myForward) {
+        myNet->insertAdditional(myAdditional);
         myViewNet->addAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     } else {
-
+        myNet->deleteAdditional(myAdditional);
         myViewNet->removeAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     }

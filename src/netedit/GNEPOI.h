@@ -67,7 +67,7 @@ public:
 
 
     /// @brief Destructor
-    virtual ~GNEPOI() ;
+    virtual ~GNEPOI();
 
 
     /** @brief reposition the node at pos and informs the edges

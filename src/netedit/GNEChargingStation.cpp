@@ -65,8 +65,8 @@
 // ===========================================================================
 
 GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
-	GNEStoppingPlace(id, lane, fromPos, toPos, SUMO_TAG_CHARGING_STATION),
-	myChargingPower(chargingPower), 
+    GNEStoppingPlace(id, lane, fromPos, toPos, SUMO_TAG_CHARGING_STATION),
+    myChargingPower(chargingPower), 
     myEfficiency(efficiency), 
     myChargeInTransit(chargeInTransit), 
     myChargeDelay(chargeDelay) {
@@ -157,7 +157,7 @@ GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
 
 void
 GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
-	// Draw Charging Station
+    // Draw Charging Station
     glPushName(getGlID());
     glPushMatrix();
     RGBColor blue(114, 210, 252, 255);
@@ -248,7 +248,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
 GUIGLObjectPopupMenu*
 GNEChargingStation::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-	/*
+    /*
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
     new FXMenuCommand(ret, "Copy edge name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
@@ -282,7 +282,7 @@ GNEChargingStation::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent
 
     // let the GNEViewNet store the popup position
     (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-	*/
+    */
     return ret;
 }
 
@@ -304,7 +304,7 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app,
 Boundary
 GNEChargingStation::getCenteringBoundary() const {
     Boundary b = myShape.getBoxBoundary();
-    b.grow(20);	// anterior: 10
+    b.grow(20);    // anterior: 10
     return b;
 }
 
@@ -312,7 +312,7 @@ void
 GNEChargingStation::updateGeometry() {
     myShapeRotations.clear();
     //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-	SUMOReal offsetSign = 1;
+    SUMOReal offsetSign = 1;
     myShape = getLane().getShape();
     myShape = myShape.getSubpart(getFromPosition(), getToPosition());
     myShapeRotations.reserve(myShape.size() - 1);
@@ -364,7 +364,7 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
 
 void
 GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-	if (value == getAttribute(key)) {
+    if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
     switch (key) {
@@ -485,11 +485,11 @@ GNEChargingStation::setMultiColor(const GUIColorer& c) const {
 
 SUMOReal
 GNEChargingStation::getColorValue(size_t activeScheme) const {
-	/*
-	const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
+    /*
+    const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
     switch (activeScheme) {
         case 0:
-			switch (myPermissions) {
+            switch (myPermissions) {
                 case SVC_PEDESTRIAN:
                     return 1;
                 case SVC_BICYCLE:
@@ -512,13 +512,13 @@ GNEChargingStation::getColorValue(size_t activeScheme) const {
         case 2:
             return (SUMOReal)myPermissions;
         case 3:
-			return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
+            return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
         case 4:
             return getLane().getParentEdge().getNBEdge()->getNumLanes();        
         case 5: {
             return getLane().getParentEdge().getNBEdge()->getLoadedLength() / getLane().getParentEdge().getNBEdge()->getLength();
         }
-		// case 6: by angle (functional)
+        // case 6: by angle (functional)
        case 7: {
             return getLane().getParentEdge().getNBEdge()->getPriority();
         }
@@ -526,13 +526,13 @@ GNEChargingStation::getColorValue(size_t activeScheme) const {
             // color by z of first shape point
             return getShape()[0].z();
         }
-		// case 9: by segment height
+        // case 9: by segment height
         case 10: {
             // color by incline
             return (getShape()[-1].z() - getShape()[0].z()) /  getLane().getParentEdge().getNBEdge()->getLength();
         }        
     }
-	*/
+    */
     return 0;
 }
 

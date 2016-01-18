@@ -190,7 +190,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
             if(setPositions(lane, position, startPosition, endPosition)) {
                 // Create an add new busStop
                 GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), std::vector<std::string>(), lane, startPosition, endPosition);
-                myUndoList->p_begin("add busStop");
+                myUndoList->p_begin("add " + busStop->getDescription());
                 myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), busStop, true, myUpdateTarget), true);
                 myUndoList->p_end();
             } 
@@ -212,7 +212,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                     int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfParametersTextFields.at(3).textField->getText().text());
                     // Create an add new chargingStation
                     GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
-                    myUndoList->p_begin("add chargingStation");
+                    myUndoList->p_begin("add " + chargingStation->getDescription());
                     myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true, myUpdateTarget), true);
                     myUndoList->p_end();
                 }
@@ -243,9 +243,19 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 /** Finish **/
             }
             break;
+        default:
+            throw ProcessError("Tag of additional object not supported");
+            break;
     }
 }
 
+void 
+GNEAdditionalFrame::removeAdditional(GNEAdditional *additional) {
+
+    myUndoList->p_begin("delete " + additional->getDescription());
+    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), additional, false, myUpdateTarget), true);
+    myUndoList->p_end();
+}
 
 FXFont* 
 GNEAdditionalFrame::getHeaderFont() {

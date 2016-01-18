@@ -49,7 +49,7 @@ public:
 
 
     /// @brief Destructor
-    ~GNEDialog_About() ;
+    ~GNEDialog_About();
 
 
     /** @brief Creates the widget (and the icons)

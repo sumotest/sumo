@@ -68,8 +68,8 @@
 #include "GNEChange_Lane.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
-#include "GNEBusStop.h"			// PABLO #1916
-#include "GNEChargingStation.h"	// PABLO #1916
+#include "GNEBusStop.h"            // PABLO #1916
+#include "GNEChargingStation.h"    // PABLO #1916
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -135,7 +135,7 @@ GNENet::GNENet(NBNetBuilder* netBuilder) :
     */
     //if (myGrid.count() == 0) // myGrid methods will return garbage
 
-	// Init AdditionalHandler
+    // Init AdditionalHandler
 
     if (myZBoundary.ymin() != Z_INITIALIZED) {
         myZBoundary.add(0, 0);
@@ -966,102 +966,87 @@ GNENet::getShapeContainer() {
 }
 
 
-void															                        // PABLO #1916
-GNENet::insertBusStop(GNEBusStop* busStop) {						                    // PABLO #1916
-	// Check if busStop exists before insertion					                        // PABLO #1916
-	if(myBusStops.find(busStop->getID()) != myBusStops.end())	                        // PABLO #1916
-		throw ProcessError("busStop with ID='" + busStop->getID() + "' already exist"); // PABLO #1916
-	else {														                        // PABLO #1916
-		myBusStops[busStop->getID()] = busStop;					                        // PABLO #1916
-	}															                        // PABLO #1916
-}																                        // PABLO #1916
+void                                                                                                    // PABLO #1916
+GNENet::insertAdditional(GNEAdditional* additional) {                                                    // PABLO #1916
+    // Check if additional element exists before insertion                                                // PABLO #1916
+    if(myAdditionals.find(additional->getID()) != myAdditionals.end())                                    // PABLO #1916
+        throw ProcessError("additional element with ID='" + additional->getID() + "' already exist");   // PABLO #1916
+    else {                                                                                                // PABLO #1916
+        myAdditionals[additional->getID()] = additional;                                                // PABLO #1916
+    }                                                                                                    // PABLO #1916
+}                                                                                                        // PABLO #1916
 
 
-void																			        // PABLO #1916
-GNENet::deleteBusStop(GNEBusStop* busStop) {									        // PABLO #1916
-	GNEBusStops::iterator positionToRemove = myBusStops.find(busStop->getID());	        // PABLO #1916
-	// Check if busStop exists before deletion									        // PABLO #1916
-	if(positionToRemove == myBusStops.end()){									        // PABLO #1916
-		throw ProcessError("busStop with ID='" + busStop->getID() + "' don't exist");   // PABLO #1916
-	}																			        // PABLO #1916
-	else																		        // PABLO #1916
-		myBusStops.erase(positionToRemove);										        // PABLO #1916
-}																				        // PABLO #1916
+void                                                                                                // PABLO #1916
+GNENet::deleteAdditional(GNEAdditional* additional) {                                                // PABLO #1916
+    GNEAdditionals::iterator positionToRemove = myAdditionals.find(additional->getID());            // PABLO #1916
+    // Check if additional element exists before deletion                                            // PABLO #1916
+    if(positionToRemove == myAdditionals.end())                                                     // PABLO #1916
+        throw ProcessError("additional element with ID='" + additional->getID() + "' don't exist"); // PABLO #1916
+    else                                                                                            // PABLO #1916
+        myAdditionals.erase(positionToRemove);                                                        // PABLO #1916
+}                                                                                                    // PABLO #1916
 
-GNEBusStop*											                    // PABLO #1916
-GNENet::getBusStop(const std::string& id) const {	                    // PABLO #1916
-	if(!myBusStops.empty() && myBusStops.find(id) != myBusStops.end())	// PABLO #1916
-		return myBusStops.at(id);					                    // PABLO #1916
-	else											                    // PABLO #1916
-		return NULL;								                    // PABLO #1916
-}													                    // PABLO #1916
+GNEBusStop*                                                                        // PABLO #1916
+GNENet::getBusStop(const std::string& id) const {                                // PABLO #1916
+    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end())    // PABLO #1916
+        return dynamic_cast<GNEBusStop*>(myAdditionals.at(id));                    // PABLO #1916
+    else                                                                        // PABLO #1916
+        return NULL;                                                            // PABLO #1916
+}                                                                                // PABLO #1916
 
 
 std::string
-GNENet::getBusStopID(const GNELane* lane, const SUMOReal pos) const {													// PABLO #1916
-    for (std::map<std::string, GNEBusStop*>::const_iterator it = myBusStops.begin(); it != myBusStops.end(); ++it) {	// PABLO #1916
-        GNEBusStop* stop = it->second;																					// PABLO #1916
-        if (&stop->getLane() == lane && fabs(stop->getToPosition() - pos) < POSITION_EPS) {						// PABLO #1916
-            return stop->getID();																						// PABLO #1916
-        }																												// PABLO #1916
-    }																													// PABLO #1916
-    return "";																											// PABLO #1916
-}																														// PABLO #1916																									// PABLO #1916
+GNENet::getBusStopID(const GNELane* lane, const SUMOReal pos) const {                                                    // PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                    // PABLO #1916
+        GNEBusStop* busStop = dynamic_cast<GNEBusStop*>(it->second);                                                    // PABLO #1916
+        if (busStop != NULL && &busStop->getLane() == lane && fabs(busStop->getToPosition() - pos) < POSITION_EPS) {    // PABLO #1916
+            return busStop->getID();                                                                                    // PABLO #1916
+        }                                                                                                                // PABLO #1916
+    }                                                                                                                    // PABLO #1916
+    return "";                                                                                                            // PABLO #1916
+}                                                                                                                        // PABLO #1916                                                                                                    // PABLO #1916
 
 
-void																					                // PABLO #1916
-GNENet::insertChargingStation(GNEChargingStation* chargingStation) {						            // PABLO #1916
-	// Check if busStop exists before insertion					                                        // PABLO #1916
-	if(myChargingStations.find(chargingStation->getID()) != myChargingStations.end())	                // PABLO #1916
-		throw ProcessError("chargingStation with ID='" + chargingStation->getID() + "' already exist"); // PABLO #1916
-	else {														                                        // PABLO #1916
-		myChargingStations[chargingStation->getID()] = chargingStation;					                // PABLO #1916
-	}																				                    // PABLO #1916
-}																						                // PABLO #1916
-
-bool																									// PABLO #1916
-GNENet::removeChargingStation(GNEChargingStation* chargingStation) {									// PABLO #1916
-	GNEChargingStations::iterator positionToRemove = myChargingStations.find(chargingStation->getID());	// PABLO #1916
-	// Check if busStop exists before deletion															// PABLO #1916
-	if(positionToRemove != myChargingStations.end()){													// PABLO #1916
-		myChargingStations.erase(positionToRemove);														// PABLO #1916
-		return true;																					// PABLO #1916
-	}																									// PABLO #1916
-	else																								// PABLO #1916
-		return false;																					// PABLO #1916
-}
-
-GNEChargingStation*												                                // PABLO #1916
-GNENet::getChargingStation(const std::string& id) const {		                                // PABLO #1916
-	if(!myChargingStations.empty() && myChargingStations.find(id) != myChargingStations.end())	// PABLO #1916
-		return myChargingStations.at(id);						                                // PABLO #1916
-	else														                                // PABLO #1916
-		return NULL;											                                // PABLO #1916
-}																                                // PABLO #1916
+GNEChargingStation*                                                                // PABLO #1916
+GNENet::getChargingStation(const std::string& id) const {                        // PABLO #1916
+    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end())    // PABLO #1916
+        return dynamic_cast<GNEChargingStation*>(myAdditionals.at(id));            // PABLO #1916
+    else                                                                        // PABLO #1916
+        return NULL;                                                            // PABLO #1916
+}                                                                                // PABLO #1916
 
 
-std::string																																		// PABLO #1916
-GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {																	// PABLO #1916
-	for (std::map<std::string, GNEChargingStation*>::const_iterator it = myChargingStations.begin(); it != myChargingStations.end(); ++it) {	// PABLO #1916
-        GNEChargingStation* chargingStation = it->second;																						// PABLO #1916
-        if (&chargingStation->getLane() == lane && chargingStation->getFromPosition() <= pos && chargingStation->getToPosition() >= pos) {	    // PABLO #1916
-            return chargingStation->getID();																									// PABLO #1916
-        }																																		// PABLO #1916
-    }																																			// PABLO #1916
-    return "";																																	// PABLO #1916
-}																																				// PABLO #1916
+std::string                                                                                                                                        // PABLO #1916
+GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {                                                                    // PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                                            // PABLO #1916
+        GNEChargingStation* chargingStation = dynamic_cast<GNEChargingStation*>(it->second);                                                    // PABLO #1916
+        if (chargingStation != NULL && &chargingStation->getLane() == lane && fabs(chargingStation->getToPosition() - pos) < POSITION_EPS) {    // PABLO #1916
+            return chargingStation->getID();                                                                                                    // PABLO #1916
+        }                                                                                                                                        // PABLO #1916
+    }                                                                                                                                            // PABLO #1916
+    return "";                                                                                                                                    // PABLO #1916
+}                                                                                                                                                // PABLO #1916
 
 
-int                             // PABLO #1916
-GNENet::getNumberOfBusStops() { // PABLO #1916
-    return myBusStops.size();   // PABLO #1916
-}                               // PABLO #1916
+int                                                                                                     // PABLO #1916
+GNENet::getNumberOfBusStops() {                                                                         // PABLO #1916
+    int counter = 0;                                                                                    // PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
+        if(dynamic_cast<GNEBusStop*>(it->second))                                                        // PABLO #1916
+            counter++;                                                                                  // PABLO #1916
+    return counter;                                                                                     // PABLO #1916
+}                                                                                                       // PABLO #1916
 
 
-int                                     // PABLO #1916
-GNENet::getNumberOfChargingStations() { // PABLO #1916
-    return myChargingStations.size();   // PABLO #1916
-}                                       // PABLO #1916
+int                                                                                                     // PABLO #1916
+GNENet::getNumberOfChargingStations() {                                                                 // PABLO #1916
+    int counter = 0;                                                                                    // PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
+        if(dynamic_cast<GNEChargingStation*>(it->second))                                                // PABLO #1916
+            counter++;                                                                                  // PABLO #1916
+    return counter;                                                                                     // PABLO #1916
+}                                                                                                       // PABLO #1916
 
 
 // ===========================================================================

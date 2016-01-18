@@ -66,9 +66,9 @@
 // ===========================================================================
 
 GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag) :
-	GNEAdditional(id, lane, tag),
+    GNEAdditional(id, lane, tag),
     myFromPos(fromPos),
-	myToPos(toPos){
+    myToPos(toPos){
 }
 
 
@@ -78,13 +78,13 @@ GNEStoppingPlace::~GNEStoppingPlace() {
 
 SUMOReal 
 GNEStoppingPlace::getFromPosition() const {
-	return myFromPos;
+    return myFromPos;
 }
 
-		
+        
 SUMOReal 
 GNEStoppingPlace::getToPosition() const {
-	return myToPos;
+    return myToPos;
 }
 
 

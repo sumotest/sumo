@@ -132,22 +132,22 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(SUMO_ATTR_WIDTH);
                 attrs.push_back(SUMO_ATTR_EDGES);
                 break;
-			case SUMO_TAG_BUS_STOP:							// PABLO #1916
-                attrs.push_back(SUMO_ATTR_ID);				// PABLO #1916
-                attrs.push_back(SUMO_ATTR_LANE);			// PABLO #1916
-                attrs.push_back(SUMO_ATTR_STARTPOS);		// PABLO #1916
-                attrs.push_back(SUMO_ATTR_ENDPOS);			// PABLO #1916
-				attrs.push_back(SUMO_ATTR_LINES);			// PABLO #1916
-				break;										// PABLO #1916
-			case SUMO_TAG_CHARGING_STATION:					// PABLO #1916
-				attrs.push_back(SUMO_ATTR_ID);				// PABLO #1916
-				attrs.push_back(SUMO_ATTR_LANE);			// PABLO #1916
-                attrs.push_back(SUMO_ATTR_STARTPOS);		// PABLO #1916
-                attrs.push_back(SUMO_ATTR_ENDPOS);			// PABLO #1916
-                attrs.push_back(SUMO_ATTR_CHARGINGPOWER);	// PABLO #1916
-                attrs.push_back(SUMO_ATTR_EFFICIENCY);		// PABLO #1916
-                attrs.push_back(SUMO_ATTR_CHARGEINTRANSIT);	// PABLO #1916
-                attrs.push_back(SUMO_ATTR_CHARGEDELAY);		// PABLO #1916
+            case SUMO_TAG_BUS_STOP:                            // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ID);                // PABLO #1916
+                attrs.push_back(SUMO_ATTR_LANE);            // PABLO #1916
+                attrs.push_back(SUMO_ATTR_STARTPOS);        // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ENDPOS);            // PABLO #1916
+                attrs.push_back(SUMO_ATTR_LINES);            // PABLO #1916
+                break;                                        // PABLO #1916
+            case SUMO_TAG_CHARGING_STATION:                    // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ID);                // PABLO #1916
+                attrs.push_back(SUMO_ATTR_LANE);            // PABLO #1916
+                attrs.push_back(SUMO_ATTR_STARTPOS);        // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ENDPOS);            // PABLO #1916
+                attrs.push_back(SUMO_ATTR_CHARGINGPOWER);    // PABLO #1916
+                attrs.push_back(SUMO_ATTR_EFFICIENCY);        // PABLO #1916
+                attrs.push_back(SUMO_ATTR_CHARGEINTRANSIT);    // PABLO #1916
+                attrs.push_back(SUMO_ATTR_CHARGEDELAY);        // PABLO #1916
             default:
                 WRITE_WARNING("allowed attributes for tag '" +
                               toString(tag) + "' not defined");
@@ -164,8 +164,8 @@ GNEAttributeCarrier::allowedTags() {
         _allowedTags.push_back(SUMO_TAG_JUNCTION);
         _allowedTags.push_back(SUMO_TAG_EDGE);
         _allowedTags.push_back(SUMO_TAG_LANE);
-		_allowedTags.push_back(SUMO_TAG_BUS_STOP);			// PABLO #1916
-		_allowedTags.push_back(SUMO_TAG_CHARGING_STATION);	// PABLO #1916
+        _allowedTags.push_back(SUMO_TAG_BUS_STOP);            // PABLO #1916
+        _allowedTags.push_back(SUMO_TAG_CHARGING_STATION);    // PABLO #1916
     }
     return _allowedTags;
 }
@@ -183,11 +183,11 @@ GNEAttributeCarrier::isNumerical(SumoXMLAttr attr) {
         _numericalAttrs.insert(SUMO_ATTR_ENDOFFSET);
         _numericalAttrs.insert(SUMO_ATTR_INDEX);
         _numericalAttrs.insert(SUMO_ATTR_RADIUS);
-		_numericalAttrs.insert(SUMO_ATTR_STARTPOS);			// PABLO #1916
-		_numericalAttrs.insert(SUMO_ATTR_ENDPOS);			// PABLO #1916
-		_numericalAttrs.insert(SUMO_ATTR_CHARGINGPOWER);	// PABLO #1916
-		_numericalAttrs.insert(SUMO_ATTR_EFFICIENCY);		// PABLO #1916
-		_numericalAttrs.insert(SUMO_ATTR_CHARGEDELAY);		// PABLO #1916
+        _numericalAttrs.insert(SUMO_ATTR_STARTPOS);            // PABLO #1916
+        _numericalAttrs.insert(SUMO_ATTR_ENDPOS);            // PABLO #1916
+        _numericalAttrs.insert(SUMO_ATTR_CHARGINGPOWER);    // PABLO #1916
+        _numericalAttrs.insert(SUMO_ATTR_EFFICIENCY);        // PABLO #1916
+        _numericalAttrs.insert(SUMO_ATTR_CHARGEDELAY);        // PABLO #1916
     }
     return _numericalAttrs.count(attr) == 1;
 }
@@ -239,8 +239,8 @@ GNEAttributeCarrier::discreteChoices(SumoXMLTag tag, SumoXMLAttr attr) {
         _discreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("true");
         _discreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("false");
 
-		_discreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("true");	// PABLO #1916
-		_discreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("false");	// PABLO #1916
+        _discreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("true");    // PABLO #1916
+        _discreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("false");    // PABLO #1916
     }
     return _discreteChoices[tag][attr];
 }

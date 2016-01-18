@@ -43,6 +43,7 @@ class GNEViewNet;
 class GNEAttributeCarrier;
 class GNEUndoList;
 class GNELane;
+class GNEAdditional;
 
 // ===========================================================================
 // class definitions
@@ -89,6 +90,11 @@ public:
      * @param[in] parent AbstractView to obtain the position of the mouse over the lane
      */
     void addAdditional(GNELane &lane, GUISUMOAbstractView* parent);
+
+    /** @brief remove an additional element previously added
+     * @param[in] additional element to erase
+     */
+    void removeAdditional(GNEAdditional *additional);
 
     /** @brief get header font
      * @return font of the header

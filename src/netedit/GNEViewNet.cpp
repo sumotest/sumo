@@ -394,8 +394,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
         GNEPOI* pointed_poi = 0;
         GNEPoly* pointed_poly = 0;
         GNECrossing* pointed_crossing = 0;
-        GNEBusStop* pointed_busStop = 0;                    // PABLO #1916
-        GNEChargingStation* pointed_chargingStation = 0;    // PABLO #1916
+        GNEAdditional* pointed_additional = 0;  // PABLO #1916
         if (pointed) {
             switch (pointed->getType()) {
                 case GLO_JUNCTION:
@@ -417,14 +416,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 case GLO_CROSSING:
                     pointed_crossing = (GNECrossing*)pointed;
                     break;
-                case GLO_TRIGGER:                                                               // PABLO #1916 ERDMANN
-                    if (dynamic_cast<GNEBusStop*>(pointed)) {                                   // PABLO #1916
-                        pointed_busStop = dynamic_cast<GNEBusStop*>(pointed);                   // PABLO #1916
-                    } else if (dynamic_cast<GNEChargingStation*>(pointed)) {                    // PABLO #1916
-                        pointed_chargingStation = dynamic_cast<GNEChargingStation*>(pointed);   // PABLO #1916
-                    }
-                    // Same methode for the rest of addionals items
-                    break;
+                case GLO_TRIGGER:                                   // PABLO #1916
+                    pointed_additional = (GNEAdditional*)pointed;   // PABLO #1916
+                    break;                                          // PABLO #1916
                 default:
                     pointed = 0;
                     break;
@@ -526,10 +520,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     // XXX this is a dirty dirty hack! implemente GNEChange_POI
                     myNet->getShapeContainer().removePOI(pointed_poi->getMicrosimID());
                     update();
-                } else if (pointed_busStop) {                                                   // PABLO #1916
-
-                    /** COMPLETAR **/
-                    update();                                                                   // PABLO #1916                                                   
+                } else if (pointed_additional) {                        // PABLO #1916
+                    myAdditional->removeAdditional(pointed_additional); // PABLO #1916
+                    update();                                           // PABLO #1916                                                                                                                   
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
@@ -555,13 +548,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_crossing) {
                     pointedAC = pointed_crossing;
                     pointedO = pointed_crossing;
-                } else if (pointed_busStop) {               // PABLO #1916
-                    pointedAC = pointed_busStop;            // PABLO #1916
-                    pointedO = pointed_busStop;             // PABLO #1916
-                } else if (pointed_chargingStation) {       // PABLO #1916
-                    pointedAC = pointed_chargingStation;    // PABLO #1916
-                    pointedO = pointed_chargingStation;     // PABLO #1916
-                }                                           // PABLO #1916
+                } else if (pointed_additional) {        // PABLO #1916
+                    pointedAC = pointed_additional;     // PABLO #1916
+                    pointedO = pointed_additional;      // PABLO #1916
+                }                                       // PABLO #1916
 
                 std::vector<GNEAttributeCarrier*> selected;
                 if (pointedO && gSelected.isSelected(pointedO->getType(), pointedO->getGlID())) {

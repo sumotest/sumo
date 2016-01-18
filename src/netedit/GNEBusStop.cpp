@@ -70,8 +70,8 @@
 // method definitions
 // ===========================================================================
 GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) : 
-	GNEStoppingPlace(id, lane, frompos, topos, SUMO_TAG_BUS_STOP),
-	myLines(lines) {
+    GNEStoppingPlace(id, lane, frompos, topos, SUMO_TAG_BUS_STOP),
+    myLines(lines) {
     updateGeometry();
 }
 
@@ -83,7 +83,7 @@ void
 GNEBusStop::updateGeometry() {
     myShapeRotations.clear();
     //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-	SUMOReal offsetSign = 1;
+    SUMOReal offsetSign = 1;
     myShape = getLane().getShape();
     myShape.move2side(1.65 * offsetSign);
     myShape = myShape.getSubpart(getFromPosition(), getToPosition());
@@ -109,7 +109,7 @@ GNEBusStop::updateGeometry() {
 
 const 
 std::vector<std::string> &GNEBusStop::getLines() const {
-	return myLines;
+    return myLines;
 }
 
 PositionVector
@@ -133,7 +133,7 @@ GNEBusStop::getShapeLengths() const {
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
     // Draw busStop
-	glPushName(getGlID());
+    glPushName(getGlID());
     glPushMatrix();
     RGBColor green(76, 170, 50, 255);
     RGBColor yellow(255, 235, 0, 255);
@@ -147,7 +147,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
     if (s.scale * exaggeration >= 10) {
         // draw the lines
         //const SUMOReal rotSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-		SUMOReal rotSign = 1;
+        SUMOReal rotSign = 1;
         for (i = 0; i != myLines.size(); ++i) {
             glPushMatrix();
             glTranslated(mySignPos.x(), mySignPos.y(), 0);
@@ -200,7 +200,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
     if (s.scale * exaggeration >= 10) {
         // draw the lines
         //const SUMOReal rotSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-		SUMOReal rotSign = 1;
+        SUMOReal rotSign = 1;
         for (i = 0; i != myLines.size(); ++i) {
             glPushMatrix();
             glTranslated(mySignPos.x(), mySignPos.y(), 0);
@@ -294,7 +294,7 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
 Boundary
 GNEBusStop::getCenteringBoundary() const {
     Boundary b = myShape.getBoxBoundary();
-    b.grow(20);	// anterior: 10
+    b.grow(20);    // anterior: 10
     return b;
 
     //Boundary
@@ -314,17 +314,17 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
             return toString(getFromPosition());
         case SUMO_ATTR_ENDPOS:
             return toString(getToPosition());
-		case SUMO_ATTR_LINES: {
-			// Convert myLines vector into String with the schema "line1 line2 ... lineN"
-			std::string myLinesStr;
-			for(std::vector<std::string>::const_iterator i = myLines.begin(); i != myLines.end(); i++) {
-				if((*i) != myLines.back())
-					myLinesStr += (myLinesStr + (*i) + " ");
-				else
-					myLinesStr += (myLinesStr + (*i));
-			}
-			return myLinesStr;
-		}
+        case SUMO_ATTR_LINES: {
+            // Convert myLines vector into String with the schema "line1 line2 ... lineN"
+            std::string myLinesStr;
+            for(std::vector<std::string>::const_iterator i = myLines.begin(); i != myLines.end(); i++) {
+                if((*i) != myLines.back())
+                    myLinesStr += (myLinesStr + (*i) + " ");
+                else
+                    myLinesStr += (myLinesStr + (*i));
+            }
+            return myLinesStr;
+        }
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
@@ -333,13 +333,13 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
 
 void
 GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-	if (value == getAttribute(key)) {
+    if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
-		case SUMO_ATTR_LANE:
+        case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
@@ -368,7 +368,7 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_ENDPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > getFromPosition());
         case SUMO_ATTR_LINES:
-			return canParse<std::string>(value);
+            return canParse<std::string>(value);
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
@@ -384,7 +384,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
-		case SUMO_ATTR_LANE:
+        case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS: {
             setFromPosition(parse<SUMOReal>(value));
@@ -445,11 +445,11 @@ GNEBusStop::setMultiColor(const GUIColorer& c) const {
 
 SUMOReal
 GNEBusStop::getColorValue(size_t activeScheme) const {
-	/*
-	const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
+    /*
+    const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
     switch (activeScheme) {
         case 0:
-			switch (myPermissions) {
+            switch (myPermissions) {
                 case SVC_PEDESTRIAN:
                     return 1;
                 case SVC_BICYCLE:
@@ -472,13 +472,13 @@ GNEBusStop::getColorValue(size_t activeScheme) const {
         case 2:
             return (SUMOReal)myPermissions;
         case 3:
-			return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
+            return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
         case 4:
             return getLane().getParentEdge().getNBEdge()->getNumLanes();        
         case 5: {
             return getLane().getParentEdge().getNBEdge()->getLoadedLength() / getLane().getParentEdge().getNBEdge()->getLength();
         }
-		// case 6: by angle (functional)
+        // case 6: by angle (functional)
        case 7: {
             return getLane().getParentEdge().getNBEdge()->getPriority();
         }
@@ -486,13 +486,13 @@ GNEBusStop::getColorValue(size_t activeScheme) const {
             // color by z of first shape point
             return myShape[0].z();
         }
-		// case 9: by segment height
+        // case 9: by segment height
         case 10: {
             // color by incline
             return (myShape[-1].z() - myShape[0].z()) /  getLane().getParentEdge().getNBEdge()->getLength();
         }        
     }
-	*/
+    */
     return 0;
 }
 

@@ -60,28 +60,24 @@ class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier
 {
 public:
 
-	/** @brief Constructor.
+    /** @brief Constructor.
      * @param[in] id Gl-id of the stopping place (Must be unique)
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
      */
     GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag tag);
 
-
     /// @brief Destructor
-	~GNEAdditional();
-
+    ~GNEAdditional();
 
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
-
-	/** @brief Returns parent lane
+    /** @brief Returns parent lane
      * @return The GNElane parent lane
      */
-	GNELane &getLane() const;
-
+    GNELane &getLane() const;
 
     /// @name inherited from GUIGlObject
     //@{
@@ -89,7 +85,6 @@ public:
      * @return This object's parent id
      */
     const std::string& getParentName() const; 
-
 
     /** @brief Returns an own popup-menu
      *
@@ -100,7 +95,6 @@ public:
      */
     virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -110,7 +104,6 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
@@ -118,14 +111,12 @@ public:
      */
     virtual Boundary getCenteringBoundary() const = 0;
 
-
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
     //@}
-
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -135,14 +126,12 @@ public:
      */
     virtual std::string getAttribute(SumoXMLAttr key) const = 0;
 
-
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
      * @param[in] value The new value
      * @param[in] undoList The undoList on which to register changes
      */
     virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
-
 
     /* @brief method for checking if the key and their conrrespond attribute are valids
      * @param[in] key The attribute key
@@ -172,13 +161,13 @@ private:
 
     // @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
-		
+        
     /// @brief sets the color according to the current scheme index and some lane function
     bool setFunctionalColor(size_t activeScheme) const;
 
     /// @brief sets multiple colors according to the current scheme index and some lane function
     bool setMultiColor(const GUIColorer& c) const;
-	
+    
     /// The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
 **/

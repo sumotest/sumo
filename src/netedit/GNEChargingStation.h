@@ -56,15 +56,15 @@ class GNEChargingStation : public GNEStoppingPlace
 {
 public:
 
-	/** @brief Constructor.
+    /** @brief Constructor.
      * @param[in] 
      * @param[in] 
      */
     GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPpos, SUMOReal toPos, 
-		               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
+                       SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
     
     /// @brief Destructor
-	~GNEChargingStation();
+    ~GNEChargingStation();
 
 
     /// @brief update pre-computed geometry information
@@ -247,13 +247,13 @@ private:
 
     // @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
-		
+        
     /// @brief sets the color according to the current scheme index and some lane function
     bool setFunctionalColor(size_t activeScheme) const;
 
     /// @brief sets multiple colors according to the current scheme index and some lane function
     bool setMultiColor(const GUIColorer& c) const;
-	
+    
     /// The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
 };

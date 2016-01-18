@@ -57,7 +57,7 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
-#include "GNEStoppingPlace.h"			// PABLO #1916
+#include "GNEStoppingPlace.h"            // PABLO #1916
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -480,10 +480,10 @@ GNELane::setIndex(unsigned int index) {
     setMicrosimID(myParentEdge.getNBEdge()->getLaneID(index));
 }
 
-SUMOReal											// PABLO #1916
-GNELane::getLength() const {						// PABLO #1916
-    return myParentEdge.getNBEdge()->getLength();	// PABLO #1916
-}													// PABLO #1916
+SUMOReal                                            // PABLO #1916
+GNELane::getLength() const {                        // PABLO #1916
+    return myParentEdge.getNBEdge()->getLength();    // PABLO #1916
+}                                                    // PABLO #1916
 
 
 void 

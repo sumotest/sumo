@@ -53,7 +53,7 @@ class GNEStoppingPlace : public GNEAdditional
 {
 public:
 
-	/** @brief Constructor.
+    /** @brief Constructor.
      * @param[in] id Gl-id of the stopping place (Must be unique)
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] frompos From position of the StoppingPlace
@@ -63,7 +63,7 @@ public:
     GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag);
 
     /// @brief Destructor
-	~GNEStoppingPlace();
+    ~GNEStoppingPlace();
 
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
@@ -72,12 +72,12 @@ public:
     /** @brief Returns the from position of the stoppingPlace
      * @return The from position of the stopping place
      */
-	SUMOReal getFromPosition() const;
-		
+    SUMOReal getFromPosition() const;
+        
     /** @brief Returns the to position of the stoppingPlace
      * @return The to position of the stopping place
      */
-	SUMOReal getToPosition() const;
+    SUMOReal getToPosition() const;
 
     /** @brief Set a new from Position in StoppingPlace
      * @param[in] fromPos new From Position of StoppingPlace
@@ -176,13 +176,13 @@ private:
 
     // @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
-		
+        
     /// @brief sets the color according to the current scheme index and some lane function
     bool setFunctionalColor(size_t activeScheme) const;
 
     /// @brief sets multiple colors according to the current scheme index and some lane function
     bool setMultiColor(const GUIColorer& c) const;
-	
+    
     /// The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
 **/

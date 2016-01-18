@@ -76,7 +76,7 @@ public:
     /** @brief get lines of busStop
      * @return vector of strings with the lines of the busStop 
      */
-	const std::vector<std::string> &getLines() const;
+    const std::vector<std::string> &getLines() const;
 
     /** @brief Returns a copy of the Shape of the stoppingPlace
      * @return The Shape of the stoppingPlace
@@ -102,7 +102,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -111,7 +111,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) ;
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -124,7 +124,7 @@ public:
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
-    void drawGL(const GUIVisualizationSettings& s) const ;
+    void drawGL(const GUIVisualizationSettings& s) const;
 
     /** @brief Draws additionally triggered visualisations
      * @param[in] parent The view
@@ -157,7 +157,7 @@ public:
     //@}
 
 private:
-	/// @brief The list of lines that are assigned to this stop
+    /// @brief The list of lines that are assigned to this stop
     std::vector<std::string> myLines;
 
     /// @brief The shape
@@ -190,13 +190,13 @@ private:
 
     // @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
-		
+        
     /// @brief sets the color according to the current scheme index and some lane function
     bool setFunctionalColor(size_t activeScheme) const;
 
     /// @brief sets multiple colors according to the current scheme index and some lane function
     bool setMultiColor(const GUIColorer& c) const;
-	
+    
     /// The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
 };

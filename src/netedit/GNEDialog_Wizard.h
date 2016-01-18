@@ -49,11 +49,11 @@ public:
      * @param[in] width The initial width of the dialog
      * @param[in] height The initial height of the dialog
      */
-    GNEDialog_Wizard(FXWindow* parent,  const char* name, int width, int height) ;
+    GNEDialog_Wizard(FXWindow* parent,  const char* name, int width, int height);
 
 
     /// @brief Destructor
-    ~GNEDialog_Wizard() ;
+    ~GNEDialog_Wizard();
 
 
     // ===========================================================================
