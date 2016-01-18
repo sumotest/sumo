@@ -61,8 +61,10 @@ class GNEBusStop : public GNEStoppingPlace {
 public:
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
-     * @param[in] 
-     * @param[in] 
+     * @param[in] lines lines of the busStop
+     * @param[in] lane Lane of this StoppingPlace belongs
+     * @param[in] frompos From position of the StoppingPlace
+     * @param[in] topos To position of the StoppingPlace
      */
     GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos);
 

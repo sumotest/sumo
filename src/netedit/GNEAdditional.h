@@ -61,9 +61,9 @@ class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier
 public:
 
     /** @brief Constructor.
-     * @param[in] id Gl-id of the stopping place (Must be unique)
-     * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
+     * @param[in] id Gl-id of the additional element (Must be unique)
+     * @param[in] lane Lane of this additional element belongs
+     * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      */
     GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag tag);
 

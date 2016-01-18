@@ -69,11 +69,13 @@ GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag ta
     myLane(lane),
     GUIGlObject(GLO_TRIGGER, id),
     GNEAttributeCarrier(tag) {
+    // Add a reference to this new additional to laneParent
     myLane.addAdditional(this);
 }
 
 
 GNEAdditional::~GNEAdditional() {
+    // Remove reference to this new additional to laneParent
     myLane.removeAdditional(this);
 }
 

@@ -70,6 +70,7 @@ GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUM
     myEfficiency(efficiency), 
     myChargeInTransit(chargeInTransit), 
     myChargeDelay(chargeDelay) {
+    // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
 }
 
@@ -310,28 +311,65 @@ GNEChargingStation::getCenteringBoundary() const {
 
 void
 GNEChargingStation::updateGeometry() {
+
+    // Clear all containers
     myShapeRotations.clear();
-    //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-    SUMOReal offsetSign = 1;
+    myShapeLengths.clear();
+    
+    // Clear shape
+    myShape.clear();
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand");
+
+    // Get shape of lane parent
     myShape = getLane().getShape();
+    
+    // Move shape to side
+    myShape.move2side(1.65 * offsetSign);
+
+    // Cut shape using as delimitators from position and end position
     myShape = myShape.getSubpart(getFromPosition(), getToPosition());
-    myShapeRotations.reserve(myShape.size() - 1);
-    myShapeLengths.reserve(myShape.size() - 1);
+
+    // Get number of parts of the shape
     int e = (int) myShape.size() - 1;
+
+    // For every part of the shape
     for (int i = 0; i < e; ++i) {
+
+        // Obtain first position
         const Position& f = myShape[i];
+
+        // Obtain next position
         const Position& s = myShape[i + 1];
+
+        // Save distance between position into myShapeLengths
         myShapeLengths.push_back(f.distanceTo(s));
+
+        // Save rotation (angle) of the vector constructed by points f and s
         myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
     }
-    PositionVector tmp = myShape;
-    tmp.move2side(1.5);
-    mySignPos = tmp.getLineCenter();
-    mySignRot = 0;
-    if (tmp.length() != 0) {
+
+    // Obtain a copy of the shape
+    PositionVector tmpShape = myShape;
+
+    // Move shape to side 
+    tmpShape.move2side(1.5 * offsetSign);
+
+    // Get position of the sing
+    mySignPos = tmpShape.getLineCenter();
+
+    // If lenght of the shape is distint to 0
+    if (tmpShape.length() != 0) {
+        // Obtain rotation of signal rot
         mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+
+        // correct orientation
         mySignRot -= 90;
     }
+    else
+        // Value of signal rotation is 0
+        mySignRot = 0;
 }
 
 std::string

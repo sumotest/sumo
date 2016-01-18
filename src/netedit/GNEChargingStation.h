@@ -56,9 +56,15 @@ class GNEChargingStation : public GNEStoppingPlace
 {
 public:
 
-    /** @brief Constructor.
-     * @param[in] 
-     * @param[in] 
+    /** @brief Constructor of charging station
+     * @param[in] id The storage of gl-ids to get the one for this lane representation from
+     * @param[in] lane Lane of this StoppingPlace belongs
+     * @param[in] frompos From position of the StoppingPlace
+     * @param[in] topos To position of the StoppingPlace
+     * @param[in] chargingPower charging power of the charging station
+     * @param[in] efficiency efficiency of the charge [0,1]
+     * @param[in] chargeInTransit enable or disable charge in transit
+     * @param[in] chargeDelay delay in timeSteps in the charge
      */
     GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPpos, SUMOReal toPos, 
                        SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
@@ -66,53 +72,44 @@ public:
     /// @brief Destructor
     ~GNEChargingStation();
 
-
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
 
     /** @brief Returns the charging power of the chargingStation
      * @return The charging power of the chargingStation
      */
     SUMOReal getChargingPower();
 
-
     /** @brief Returns the charging efficiency of the chargingStation
      * @return The charging efficiency of the chargingStation
      */
     SUMOReal getEfficiency(); 
-
 
     /** @brief Returns the value of charge in transit of the chargingStation
      * @return True if charge in transit is enabled, false in other case
      */
     bool getChargeInTransit(); 
 
-
     /** @brief Returns the charge delay of the chargingStation
      * @return The charge delay of the chargingStation
      */
     SUMOReal getChargeDelay();
-
 
     /** @brief Returns a copy of the Shape of the stoppingPlace
      * @return The Shape of the stoppingPlace
      */
     PositionVector getShape() const;
 
-
     /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
      * @return The ShapeRotations of the stoppingPlace
      */
     std::vector<SUMOReal> getShapeRotations() const;
 
-
     /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
      * @return The ShapeLengths of the stoppingPlace
      */
     std::vector<SUMOReal> getShapeLengths() const;
-
 
     /** @brief Set a new charging power in the charging station
      * @param[in] chargingPower new charging power 
@@ -120,26 +117,22 @@ public:
      */
     void setChargingPower(SUMOReal chargingPower);
 
-
     /** @brief Set a new efficiency in the charging station
      * @param[in] efficiency new efficiency
      * @throws InvalidArgument if value of efficiency isn't valid
      */
     void setEfficiency(SUMOReal efficiency); 
 
-
     /** @brief Enable or disable charge in transit in the charging station
      * @param[in] chargeInTransit new charge in Transit value (0 or 1)
      */
     void setChargeInTransit(bool chargeInTransit); 
-
 
     /** @brief Set a new charge delay in the charging station
      * @param[in] chargeDelay new charge delay value (true or false)
      * @throws InvalidArgument if value of chargeDelay isn't valid
      */
     void setChargeDelay(SUMOReal chargeDelay);
-
 
     /// @name inherited from GUIGlObject
     //@{
@@ -152,7 +145,6 @@ public:
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -162,7 +154,6 @@ public:
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
@@ -170,13 +161,11 @@ public:
      */
     Boundary getCenteringBoundary() const;
 
-
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const;
-
 
     /** @brief Draws additionally triggered visualisations
      * @param[in] parent The view
@@ -185,11 +174,12 @@ public:
     void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const;
     //@}
 
-
     //@name inherited from GNEAttributeCarrier
     //@{
-
-    /** DOCUMENTAR **/
+    /* @brief method for getting the Attribute of an XML key
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
@@ -199,8 +189,11 @@ public:
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
-    /** DOCUMENTAR **/
-
+    /* @brief method for checking if the key and their correspond attribute are valids
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 

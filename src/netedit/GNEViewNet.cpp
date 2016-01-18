@@ -661,10 +661,8 @@ GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {
     if (myPolyToMove) {
         myMoveSrc = myPolyToMove->moveGeometry(myMoveSrc, getPositionInformation());
     } else if (myJunctionToMove) {
-        std::cout << "PASA POR JUNCTION" << std::endl;
         myJunctionToMove->move(getPositionInformation());
     } else if (myEdgeToMove) {
-        std::cout << "PASA POR EDGE" << std::endl;
         myMoveSrc = myEdgeToMove->moveGeometry(myMoveSrc, getPositionInformation());
     } else if (myMoveSelection) {
         Position moveTarget = getPositionInformation();

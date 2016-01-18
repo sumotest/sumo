@@ -72,6 +72,7 @@
 GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) : 
     GNEStoppingPlace(id, lane, frompos, topos, SUMO_TAG_BUS_STOP),
     myLines(lines) {
+    // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
 }
 
@@ -81,29 +82,65 @@ GNEBusStop::~GNEBusStop() {}
 
 void
 GNEBusStop::updateGeometry() {
+
+    // Clear all containers
     myShapeRotations.clear();
-    //const SUMOReal offsetSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-    SUMOReal offsetSign = 1;
+    myShapeLengths.clear();
+    
+    // Clear shape
+    myShape.clear();
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand");
+
+    // Get shape of lane parent
     myShape = getLane().getShape();
+    
+    // Move shape to side
     myShape.move2side(1.65 * offsetSign);
+
+    // Cut shape using as delimitators from position and end position
     myShape = myShape.getSubpart(getFromPosition(), getToPosition());
-    myShapeRotations.reserve(myShape.size() - 1);
-    myShapeRotations.reserve(myShape.size() - 1);
+
+    // Get number of parts of the shape
     int e = (int) myShape.size() - 1;
+
+    // For every part of the shape
     for (int i = 0; i < e; ++i) {
+
+        // Obtain first position
         const Position& f = myShape[i];
+
+        // Obtain next position
         const Position& s = myShape[i + 1];
+
+        // Save distance between position into myShapeLengths
         myShapeLengths.push_back(f.distanceTo(s));
+
+        // Save rotation (angle) of the vector constructed by points f and s
         myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
     }
-    PositionVector tmp = myShape;
-    tmp.move2side(1.5 * offsetSign);
-    mySignPos = tmp.getLineCenter();
-    mySignRot = 0;
-    if (tmp.length() != 0) {
+
+    // Obtain a copy of the shape
+    PositionVector tmpShape = myShape;
+
+    // Move shape to side 
+    tmpShape.move2side(1.5 * offsetSign);
+
+    // Get position of the sing
+    mySignPos = tmpShape.getLineCenter();
+
+    // If lenght of the shape is distint to 0
+    if (tmpShape.length() != 0) {
+        // Obtain rotation of signal rot
         mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+
+        // correct orientation
         mySignRot -= 90;
     }
+    else
+        // Value of signal rotation is 0
+        mySignRot = 0;
 }
 
 
@@ -132,51 +169,107 @@ GNEBusStop::getShapeLengths() const {
 
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
-    // Draw busStop
+
+    // Start drawing adding an gl identificator
     glPushName(getGlID());
+    
+    // Add a draw matrix
     glPushMatrix();
+    
+    // Define colors of the busStop
     RGBColor green(76, 170, 50, 255);
     RGBColor yellow(255, 235, 0, 255);
-    // draw the area
-    size_t i;
+
+    // Start with the drawing of the area traslating matrix to origing 
     glTranslated(0, 0, getType());
+
+    // Set draw color to green
     GLHelper::setColor(green);
+    
+    // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    
+    // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
-    // draw details unless zoomed out to far
+
+    // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
-        // draw the lines
-        //const SUMOReal rotSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-        SUMOReal rotSign = 1;
-        for (i = 0; i != myLines.size(); ++i) {
+        
+        // Obtain rotation of the sing depeding of the option "lefthand"
+        SUMOReal rotSign = OptionsCont::getOptions().getBool("lefthand");
+
+        // Iterate over every line
+        for (size_t i = 0; i != myLines.size(); ++i) {
+
+            // Add a new push matrix
             glPushMatrix();
+
+            // Traslate to positionof signal
             glTranslated(mySignPos.x(), mySignPos.y(), 0);
+            
+            // Rotate 180%
             glRotated(180, 1, 0, 0);
+
+            // Rotate again depending of the option rotSign
             glRotated(rotSign * mySignRot, 0, 0, 1);
+            
+            // Set poligon mode
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+            // set polyfront position ot 0 
             pfSetPosition(0, 0);
+
+            // Set polyfront scale to 1
             pfSetScale(1.f);
+            
+            // traslate matrix for every line
             glTranslated(1.2, -(double)i, 0);
+
+            // draw line
             pfDrawString(myLines[i].c_str());
+
+            // pop matrix
             glPopMatrix();
         }
-        // draw the sign
+
+        // Start drawing sisgn traslating matrix to signal position
         glTranslated(mySignPos.x(), mySignPos.y(), 0);
+
+        // Define nº points (for efficiency)
         int noPoints = 9;
-        if (s.scale * exaggeration > 25) {
+
+        // If the scale * exaggeration is more than 25, recalculate nº points
+        if (s.scale * exaggeration > 25) 
+            
             noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
-        }
+        
+        // scale matrix depending of the exaggeration
         glScaled(exaggeration, exaggeration, 1);
+
+        // Draw green circle
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+
+        // Traslate to front
         glTranslated(0, 0, .1);
+
+        // change color to yellow
         GLHelper::setColor(yellow);
+
+        // draw circle again, but a little bit more small
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
-        if (s.scale * exaggeration >= 4.5) {
+
+        // If the scale * exageration is equal or more than 4.5, draw H
+        if (s.scale * exaggeration >= 4.5)
             GLHelper::drawText("H", Position(), .1, 1.6, green, mySignRot);
-        }
     }
+
+    // Pop matrix
     glPopMatrix();
+
+    // Pop name
     glPopName();
+
+    // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }
 
@@ -196,6 +289,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
     GLHelper::setColor(green);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
         // draw the lines
@@ -228,6 +322,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
             GLHelper::drawText("H", Position(), .1, 1.6, green, mySignRot);
         }
     }
+
     glPopMatrix();
     glPopName();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
