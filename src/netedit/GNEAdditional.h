@@ -83,50 +83,6 @@ public:
 	GNELane &getLane() const;
 
 
-    /** @brief Returns the from position of the stoppingPlace
-     * @return The from position of the stopping place
-     */
-	SUMOReal getFromPosition() const;
-		
-
-    /** @brief Returns the to position of the stoppingPlace
-     * @return The to position of the stopping place
-     */
-	SUMOReal getToPosition() const;
-
-
-    /** @brief Set a new from Position in StoppingPlace
-     * @param[in] fromPos new From Position of StoppingPlace
-     * @throws InvalidArgument if value of fromPos isn't valid
-     */
-    void setFromPosition(SUMOReal fromPos);
-
-
-    /** @brief Set a new to Position in StoppingPlace
-     * @param[in] toPos new to Position of StoppingPlace
-     * @throws InvalidArgument if value of toPos isn't valid
-     */
-    void setToPosition(SUMOReal toPos);
-
-
-    /** @brief Returns a copy of the Shape of the stoppingPlace
-     * @return The Shape of the stoppingPlace
-     */
-    PositionVector getShape() const;
-
-
-    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
-     * @return The ShapeRotations of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeRotations() const;
-
-
-    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
-     * @return The ShapeLengths of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeLengths() const;
-
-
     /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns the name of the parent object (if any)
@@ -200,12 +156,6 @@ private:
 
     /// @brief The lane this stopping place is located at
     GNELane& myLane;
-
-    /// @brief The begin position this stopping place is located at
-    SUMOReal myFromPos;
-
-    /// @brief The end position this stopping place is located at
-    SUMOReal myToPos;
 
 private:
     /// @brief set attribute after validation

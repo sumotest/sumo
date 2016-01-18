@@ -35,7 +35,7 @@
 #include <utils/geom/Boundary.h>
 #include <utils/gui/globjects/GUIGlObject.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
-#include "GNEAttributeCarrier.h"
+#include "GNEAdditional.h"
 
 // ===========================================================================
 // class declarations
@@ -43,14 +43,13 @@
 
 class GUIGLObjectPopupMenu;
 class PositionVector;
-class GNELane;
 class GNENet;
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
 
-class GNEStoppingPlace : public GUIGlObject, public GNEAttributeCarrier
+class GNEStoppingPlace : public GNEAdditional
 {
 public:
 
@@ -63,33 +62,22 @@ public:
      */
     GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag);
 
-
     /// @brief Destructor
 	~GNEStoppingPlace();
-
 
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
-
-
-	/** @brief Returns parent lane
-     * @return The GNElane parent lane
-     */
-	GNELane &getLane() const;
-
 
     /** @brief Returns the from position of the stoppingPlace
      * @return The from position of the stopping place
      */
 	SUMOReal getFromPosition() const;
 		
-
     /** @brief Returns the to position of the stoppingPlace
      * @return The to position of the stopping place
      */
 	SUMOReal getToPosition() const;
-
 
     /** @brief Set a new from Position in StoppingPlace
      * @param[in] fromPos new From Position of StoppingPlace
@@ -97,40 +85,29 @@ public:
      */
     void setFromPosition(SUMOReal fromPos);
 
-
     /** @brief Set a new to Position in StoppingPlace
      * @param[in] toPos new to Position of StoppingPlace
      * @throws InvalidArgument if value of toPos isn't valid
      */
     void setToPosition(SUMOReal toPos);
 
-
     /** @brief Returns a copy of the Shape of the stoppingPlace
      * @return The Shape of the stoppingPlace
      */
     PositionVector getShape() const;
-
 
     /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
      * @return The ShapeRotations of the stoppingPlace
      */
     std::vector<SUMOReal> getShapeRotations() const;
 
-
     /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
      * @return The ShapeLengths of the stoppingPlace
      */
     std::vector<SUMOReal> getShapeLengths() const;
 
-
-    /// @name inherited from GUIGlObject
+    /// @name inherited from GNEAdditional
     //@{
-    /** @brief Returns the name of the parent object (if any)
-     * @return This object's parent id
-     */
-    const std::string& getParentName() const; 
-
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -139,7 +116,6 @@ public:
      * @see GUIGlObject::getPopUpMenu
      */
     virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
-
 
     /** @brief Returns an own parameter window
      *
@@ -150,7 +126,6 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
@@ -158,14 +133,12 @@ public:
      */
     virtual Boundary getCenteringBoundary() const = 0;
 
-
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
     //@}
-
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -175,14 +148,12 @@ public:
      */
     virtual std::string getAttribute(SumoXMLAttr key) const = 0;
 
-
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
      * @param[in] value The new value
      * @param[in] undoList The undoList on which to register changes
      */
     virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
-
 
     /* @brief method for checking if the key and their conrrespond attribute are valids
      * @param[in] key The attribute key
@@ -194,24 +165,11 @@ public:
 
 private:
 
-    /// @brief The lane this stopping place is located at
-    GNELane& myLane;
-
     /// @brief The begin position this stopping place is located at
     SUMOReal myFromPos;
 
     /// @brief The end position this stopping place is located at
     SUMOReal myToPos;
-
-private:
-    /// @brief set attribute after validation
-    virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
-
-    /// @brief Invalidated copy constructor.
-    GNEStoppingPlace(const GNEStoppingPlace&);
-
-    /// @brief Invalidated assignment operator.
-    GNEStoppingPlace& operator=(const GNEStoppingPlace&);
 
 /**
     ALL OF THIS FUNCTIONS SHOULD BE ERASED?

@@ -369,24 +369,13 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEU
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_ENDPOS:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_CHARGINGPOWER:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_EFFICIENCY:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_CHARGEINTRANSIT:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_CHARGEDELAY:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             break;
@@ -400,7 +389,6 @@ bool
 GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:

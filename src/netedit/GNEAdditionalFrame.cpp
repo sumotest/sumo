@@ -212,8 +212,9 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                     int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfParametersTextFields.at(3).textField->getText().text());
                     // Create an add new chargingStation
                     GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
-                    myUpdateTarget->getNet()->insertChargingStation(chargingStation);
-                    parent->addAdditionalGLVisualisation(chargingStation);
+                    myUndoList->p_begin("add chargingStation");
+                    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true, myUpdateTarget), true);
+                    myUndoList->p_end();
                 }
             }
             break;

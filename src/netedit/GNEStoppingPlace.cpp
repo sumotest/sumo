@@ -66,23 +66,13 @@
 // ===========================================================================
 
 GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag) :
-	myLane(lane),
-	myFromPos(fromPos),
-	myToPos(toPos),
-	GUIGlObject(GLO_TRIGGER, id),
-    GNEAttributeCarrier(tag) {
-    myLane.addStoppingPlace(this);
+	GNEAdditional(id, lane, tag),
+    myFromPos(fromPos),
+	myToPos(toPos){
 }
 
 
 GNEStoppingPlace::~GNEStoppingPlace() {
-    myLane.removeStoppingPlace(this);
-}
-
-
-GNELane&
-GNEStoppingPlace::getLane() const {
-	return myLane;
 }
 
 
@@ -113,7 +103,7 @@ GNEStoppingPlace::setFromPosition(SUMOReal fromPos) {
 
 void 
 GNEStoppingPlace::setToPosition(SUMOReal toPos) {
-    if(toPos > myLane.getLength())
+    if(toPos > getLane().getLength())
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than lane length");
     else if(myFromPos >= toPos)
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than than ToPos '" + toString(myToPos) + "'");
@@ -121,12 +111,6 @@ GNEStoppingPlace::setToPosition(SUMOReal toPos) {
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
         myToPos = toPos;
-}
-
-
-const std::string& 
-GNEStoppingPlace::getParentName() const {
-    return myLane.getMicrosimID();
 }
 
 

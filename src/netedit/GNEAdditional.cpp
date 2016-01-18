@@ -69,12 +69,12 @@ GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag ta
 	myLane(lane),
 	GUIGlObject(GLO_TRIGGER, id),
     GNEAttributeCarrier(tag) {
-    //myLane.addStoppingPlace(this);
+    myLane.addAdditional(this);
 }
 
 
 GNEAdditional::~GNEAdditional() {
-    //myLane.removeStoppingPlace(this);
+    myLane.removeAdditional(this);
 }
 
 

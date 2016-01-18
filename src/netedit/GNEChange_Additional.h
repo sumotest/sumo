@@ -45,17 +45,17 @@ class GNEViewNet;
 // ===========================================================================
 /**
  * @class GNEChange_Additional
- * A network change in which a single BusStop is created or deleted
+ * A network change in which a additional element is created or deleted
  */
 class GNEChange_Additional : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Additional)
 
 public:
-    /** @brief Constructor for creating/deleting an edge
+    /** @brief Constructor for creating/deleting an additional element
      * @param[in] net The net on which to apply changes
-     * @param[in] busStop The busStop to be created/deleted
+     * @param[in] additional The additional element to be created/deleted
      * @param[in] forward Whether to create/delete (true/false)
-COMPLETAR
+     * @param[in] GNEViewNet viewNet to add additional elements
      */
     GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward, GNEViewNet* viewNet);
 
@@ -72,6 +72,7 @@ private:
     /// @brief full information regarding the additional element that is to be created/deleted
     GNEAdditional* myAdditional;
 
+    /// @brief pointer to viewNet
     GNEViewNet* myViewNet;
 };
 

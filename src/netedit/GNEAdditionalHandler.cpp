@@ -346,13 +346,12 @@ void
 GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
                                            SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
 {
-    GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
-    if (1) {
-
-        net->insertChargingStation(chargingStation);
-        myViewNet->addAdditionalGLVisualisation(chargingStation);
+    if (net->getChargingStation(id) == NULL) {
+        GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
+        myUndoList->p_begin("add chargingStation");
+        myUndoList->add(new GNEChange_Additional(net, chargingStation, true, myViewNet), true);
+        myUndoList->p_end();
     } else {
-        delete chargingStation;
         throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
 	}
 }

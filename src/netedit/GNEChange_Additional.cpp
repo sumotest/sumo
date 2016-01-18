@@ -68,11 +68,9 @@ GNEChange_Additional::~GNEChange_Additional() {
 
 void GNEChange_Additional::undo() {
     if (myForward) {
-        //myNet->deleteBusStop(myAdditional);
         myViewNet->removeAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     } else {
-        //myNet->insertBusStop(myAdditional);
         myViewNet->addAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     }
@@ -81,11 +79,10 @@ void GNEChange_Additional::undo() {
 
 void GNEChange_Additional::redo() {
     if (myForward) {
-        //myNet->insertBusStop(myAdditional);
         myViewNet->addAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     } else {
-        //myNet->deleteBusStop(myAdditional);
+
         myViewNet->removeAdditionalGLVisualisation(myAdditional);
         myViewNet->update();
     }
@@ -93,7 +90,6 @@ void GNEChange_Additional::redo() {
 
 
 FXString GNEChange_Additional::undoName() const {
-    /** update this **/
     if (myForward) {
         return ("Undo create additional");
     } else {
@@ -103,7 +99,6 @@ FXString GNEChange_Additional::undoName() const {
 
 
 FXString GNEChange_Additional::redoName() const {
-    /** update this **/
     if (myForward) {
         return ("Redo create additional");
     } else {

@@ -464,9 +464,9 @@ GNELane::updateGeometry() {
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
     }
-    // Update geometry of stoppingPlaces                                                            // PABLO #1916
-    for(stoppingPlaceVector::iterator i = stoppingPlaces.begin(); i != stoppingPlaces.end(); i++)   // PABLO #1916
-        (*i)->updateGeometry();                                                                     // PABLO #1916
+    // Update geometry of additionalElements                                                            // PABLO #1916
+    for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++)  // PABLO #1916
+        (*i)->updateGeometry();                                                                         // PABLO #1916
 }
 
 unsigned int 
@@ -487,22 +487,22 @@ GNELane::getLength() const {						// PABLO #1916
 
 
 void 
-GNELane::addStoppingPlace(GNEStoppingPlace *stoppingPlace) {                        // PABLO #1916
-    stoppingPlaces.push_back(stoppingPlace);                                        // PABLO #1916
-}                                                                                   // PABLO #1916
+GNELane::addAdditional(GNEAdditional *additional) { // PABLO #1916
+    additionalElements.push_back(additional);       // PABLO #1916
+}                                                   // PABLO #1916
 
 
 bool 
-GNELane::removeStoppingPlace(GNEStoppingPlace *stoppingPlace) {                                     // PABLO #1916
-    // Find and remove stoppingPlace                                                                // PABLO #1916
-    for(stoppingPlaceVector::iterator i = stoppingPlaces.begin(); i != stoppingPlaces.end(); i++) { // PABLO #1916
-        if(*i == stoppingPlace) {                                                                   // PABLO #1916
-            stoppingPlaces.erase(i);                                                                // PABLO #1916
-            return true;                                                                            // PABLO #1916
-        }                                                                                           // PABLO #1916
-    }                                                                                               // PABLO #1916
-    return false;                                                                                   // PABLO #1916
-}                                                                                                   // PABLO #1916
+GNELane::removeAdditional(GNEAdditional *additional) {                                                      // PABLO #1916
+    // Find and remove stoppingPlace                                                                        // PABLO #1916
+    for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++) {    // PABLO #1916
+        if(*i == additional) {                                                                              // PABLO #1916
+            additionalElements.erase(i);                                                                    // PABLO #1916
+            return true;                                                                                    // PABLO #1916
+        }                                                                                                   // PABLO #1916
+    }                                                                                                       // PABLO #1916
+    return false;                                                                                           // PABLO #1916
+}                                                                                                           // PABLO #1916
 
 
 std::string

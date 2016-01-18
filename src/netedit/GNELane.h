@@ -45,7 +45,7 @@ class PositionVector;
 class GNETLSEditor;
 class GNEEdge;
 class GNENet;
-class GNEStoppingPlace;			// PABLO #1916
+class GNEAdditional;			// PABLO #1916
 
 // ===========================================================================
 // class definitions
@@ -61,7 +61,7 @@ class GNELane : public GUIGlObject, public GNEAttributeCarrier, public FXDelegat
 
 public:
     /// Definition of the lane's stoppingPlaces vector
-    typedef std::vector<GNEStoppingPlace*> stoppingPlaceVector;
+    typedef std::vector<GNEAdditional*> additionalVector;
 
     /** @brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
@@ -149,16 +149,16 @@ public:
     /// @brief returns the length of the lane	// PABLO #1916
     SUMOReal getLength() const;					// PABLO #1916
 
-    /* @brief method for adding a reference of a stoppingPlace placed in this lane  // PABLO #1916
-     * @param[in] stoppingPlace Pointer to stoppingPlace 		                    // PABLO #1916
-	 */													                            // PABLO #1916
-    void addStoppingPlace(GNEStoppingPlace *stoppingPlace);                         // PABLO #1916
+    /* @brief method for adding a reference of a additional element placed in this lane // PABLO #1916
+     * @param[in] additional Pointer to additional element 		                        // PABLO #1916
+	 */													                                // PABLO #1916
+    void addAdditional(GNEAdditional *additional);                                      // PABLO #1916
 
-    /* @brief method for remove a reference of a stoppingPlace placed in this lane  // PABLO #1916
-     * @param[in] stoppingPlace Pointer to stoppingPlace previously added 			// PABLO #1916
-	   @return true if stoppingPlace was sucesfully removed, flase in other case    // PABLO #1916
-     */													                            // PABLO #1916
-    bool removeStoppingPlace(GNEStoppingPlace *stoppingPlace);                      // PABLO #1916
+    /* @brief method for remove a reference of a additional element placed in this lane // PABLO #1916
+     * @param[in] additional Pointer to additional element previously added 			// PABLO #1916
+	   @return true if additional element was sucesfully removed, flase in other case   // PABLO #1916
+     */													                                // PABLO #1916
+    bool removeAdditional(GNEAdditional *additional);                                   // PABLO #1916
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -264,8 +264,8 @@ private:
     /// @brief the tls-editor for setting multiple links in TLS-mode
     GNETLSEditor* myTLSEditor;
 
-    /// @brief vector with pointers to stoppingPlaces placed in this lane   // PABLO #1916
-    stoppingPlaceVector stoppingPlaces;                                     // PABLO #1916
+    /// @brief vector with pointers to additional elements placed in this lane  // PABLO #1916
+    additionalVector additionalElements;                                        // PABLO #1916
 };
 
 
