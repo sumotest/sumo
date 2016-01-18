@@ -61,12 +61,21 @@ public:
 
     /// @brief Destructor
     ~GNEChange_Additional();
-
+    
+    //@name inherited from GNEChange
+    //@{
+    /// @brief get undo Name
     FXString undoName() const;
-    FXString redoName() const;
-    void undo();
-    void redo();
 
+    /// @brief get Redo name
+    FXString redoName() const;
+
+    /// @brief undo action
+    void undo();
+
+    /// @brief redo action
+    void redo();
+    //@}
 
 private:
     /// @brief full information regarding the additional element that is to be created/deleted

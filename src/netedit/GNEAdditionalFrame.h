@@ -197,7 +197,7 @@ private:
     /// @brief Maximun number (Size of vector) of additionalParameterCheckButton
     static const int maximumNumberOfAdditionalParameterCheckButton;
 
-    // @brief undo 
+    /// @brief undo 
     GNEUndoList* myUndoList;
 };
 

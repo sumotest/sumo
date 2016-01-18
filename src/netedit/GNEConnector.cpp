@@ -178,6 +178,10 @@ GNEConnector::~GNEConnector() {
     delete myHeaderFont;
 }
 
+FXFont* 
+GNEConnector::getHeaderFont() {
+    return myHeaderFont;
+}
 
 void
 GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool allowConflict, bool toggle) {

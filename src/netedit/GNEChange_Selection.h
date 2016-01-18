@@ -59,15 +59,26 @@ public:
     /// @brief Destructor
     ~GNEChange_Selection();
 
+    //@name inherited from GNEChange
+    //@{
+    /// @brief get undo Name
     FXString undoName() const;
+
+    /// @brief get Redo name
     FXString redoName() const;
+
+    /// @brief undo action
     void undo();
+
+    /// @brief redo action
     void redo();
+    //@}
 
 
 private:
     /// @brief all ids that were selected in this change
     std::set<GUIGlID> mySelectedIDs;
+
     /// @brief all ids that were deselected in this change
     std::set<GUIGlID> myDeselectedIDs;
 };

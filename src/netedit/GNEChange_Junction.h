@@ -60,10 +60,20 @@ public:
     /// @brief Destructor
     ~GNEChange_Junction();
 
+    //@name inherited from GNEChange
+    //@{
+    /// @brief get undo Name
     FXString undoName() const;
+
+    /// @brief get Redo name
     FXString redoName() const;
+
+    /// @brief undo action
     void undo();
+
+    /// @brief redo action
     void redo();
+    //@}
 
 
 private:

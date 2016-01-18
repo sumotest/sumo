@@ -66,16 +66,23 @@ public:
     /// @brief Destructor
     ~GNEChange_Attribute();
 
+    //@name inherited from GNEChange
+    //@{
+    /// @brief get undo Name
     FXString undoName() const;
+
+    /// @brief get Redo name
     FXString redoName() const;
+
+    /// @brief undo action
     void undo();
+
+    /// @brief redo action
     void redo();
+    //@}
 
     /// @brief wether original and new value differ
-    bool trueChange() {
-        return myOrigValue != myNewValue;
-    }
-
+    bool trueChange();
 
 private:
     /** @brief the net to which all operations shall be applied

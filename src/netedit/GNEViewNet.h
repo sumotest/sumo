@@ -172,7 +172,7 @@ public:
     // store the position where a popup-menu was requested
     void markPopupPosition();
 
-    // @brief get the net object
+    /// @brief get the net object
     GNENet* getNet() {
         return myNet;
     };
@@ -281,9 +281,9 @@ private:
     //
     /// @name state-variables of select-mode
     // @{
-    // @brief whether we have started rectangle-selection
+    /// @brief whether we have started rectangle-selection
     bool myAmInRectSelect;
-    // @brief corner of the rectangle-selection
+    /// @brief corner of the rectangle-selection
     Position mySelCorner1;
     Position mySelCorner2;
     // @}
@@ -305,19 +305,19 @@ private:
     /// @brief a reference to the undolist maintained in the application
     GNEUndoList* myUndoList;
 
-    // @brief the panel for GNE_MODE_INSPECT
+    /// @brief the panel for GNE_MODE_INSPECT
     GNEInspector* myInspector;
 
-    // @brief the panel for GNE_MODE_SELECT
+    /// @brief the panel for GNE_MODE_SELECT
     GNESelector* mySelector;
 
-    // @brief the panel for GNE_MODE_CONNECT
+    /// @brief the panel for GNE_MODE_CONNECT
     GNEConnector* myConnector;
 
-    // @brief the panel for GNE_MODE_TLS
+    /// @brief the panel for GNE_MODE_TLS
     GNETLSEditor* myTLSEditor;
 
-    // @brief the panel for GNE_MODE_ADDITIONAL // PABLO #1916
+    /// @brief the panel for GNE_MODE_ADDITIONAL // PABLO #1916
     GNEAdditionalFrame* myAdditional;                // PABLO #1916
 
     Position myPopupSpot;

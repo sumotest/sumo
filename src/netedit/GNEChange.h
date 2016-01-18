@@ -55,23 +55,23 @@ public:
      */
     GNEChange(GNENet* net, bool forward);
 
-
     /// @brief Destructor
-    ~GNEChange() {};
+    ~GNEChange();
 
-    virtual FXuint size() const {
-        return 1;
-    }
+    /// @brief return actual size
+    virtual FXuint size() const;
 
-    virtual FXString undoName() const {
-        return "Undo";
-    }
-    virtual FXString redoName() const {
-        return "Redo";
-    }
-    virtual void undo() {};
-    virtual void redo() {};
+    /// @brief return undoName
+    virtual FXString undoName() const;
 
+    /// @brief return rendoName
+    virtual FXString redoName() const;
+
+    /// @brief undo action/operation
+    virtual void undo();
+
+    /// @brief redo action/operation
+    virtual void redo();
 
 protected:
     /** @brief the net to which operations shall be applied or which shall be

@@ -868,6 +868,18 @@ GNEApplicationWindow::getBuildGLCanvas() const {
 }
 
 
+SUMOTime 
+GNEApplicationWindow::getCurrentSimTime() const {
+    return 0;
+}
+
+
+GNEUndoList* 
+GNEApplicationWindow::getUndoList() {
+    return myUndoList;
+}
+
+
 void
 GNEApplicationWindow::closeAllWindows() {
     myTrackerLock.lock();
@@ -1223,6 +1235,14 @@ GNEApplicationWindow::continueWithUnsavedChanges() {
         return true;
     }
 }
+
+
+GNEApplicationWindow::GNEShapeHandler::GNEShapeHandler(const std::string& file, GNENet* net, ShapeContainer& sc) :
+            ShapeHandler(file, sc),
+            myNet(net) {}
+
+
+GNEApplicationWindow::GNEShapeHandler::~GNEShapeHandler() {}
 
 
 Position

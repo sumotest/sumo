@@ -62,10 +62,20 @@ public:
     /// @brief Destructor
     ~GNEChange_Lane();
 
+    //@name inherited from GNEChange
+    //@{
+    /// @brief get undo Name
     FXString undoName() const;
+
+    /// @brief get Redo name
     FXString redoName() const;
+
+    /// @brief undo action
     void undo();
+
+    /// @brief redo action
     void redo();
+    //@}
 
 
 private:
@@ -73,15 +83,13 @@ private:
      * we assume shared responsibility for the pointers (via reference counting)
      */
 
-    // we need the edge because it is the target of our change commands
+    /// @brief we need the edge because it is the target of our change commands
     GNEEdge* myEdge;
 
-    // we need to preserve the lane because it maybe the target of
-    // GNEChange_Attribute commands
+    /// @brief we need to preserve the lane because it maybe the target of GNEChange_Attribute commands
     GNELane* myLane;
 
-    // we need to preserve the attributes explicitly because they are not
-    // contained withing GNELane itself
+    /// @brief we need to preserve the attributes explicitly because they are not contained withing GNELane itself
     const NBEdge::Lane myLaneAttrs;
 };
 

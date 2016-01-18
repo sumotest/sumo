@@ -127,7 +127,7 @@ public:
     /// @brief long names for link states
     static const StringBijection<FXuint> LinkStateNames;
 
-    // @brief return the color for each linkstate
+    /// @brief return the color for each linkstate
     static RGBColor colorForLinksState(FXuint state);
 
 protected:
@@ -171,7 +171,7 @@ private:
 
 private:
 
-    // @brief return the color for each linkstate
+    /// @brief return the color for each linkstate
     static const std::string& longNameForLinkState(FXuint state);
 
     /// @brief Invalidated copy constructor.

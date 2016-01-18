@@ -61,10 +61,20 @@ public:
     /// @brief Destructor
     ~GNEChange_TLS();
 
+    //@name inherited from GNEChange
+    //@{
+    /// @brief get undo Name
     FXString undoName() const;
+
+    /// @brief get Redo name
     FXString redoName() const;
+
+    /// @brief undo action
     void undo();
+
+    /// @brief redo action
     void redo();
+    //@}
 
 
 private:
@@ -76,6 +86,7 @@ private:
      * since it is hard to track by which NBnodes a tlDef is used (may be more than one). */
     NBTrafficLightDefinition* myTlDef;
 
+    /// @brief check if forceInsert is enabled
     bool myForceInsert;
 };
 

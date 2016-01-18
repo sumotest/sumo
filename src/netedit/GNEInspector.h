@@ -124,12 +124,12 @@ public:
         return myHeaderFont;
     }
 
-    // @brief the template edge (to copy attributes from)
+    /// @brief the template edge (to copy attributes from)
     GNEEdge* getEdgeTemplate() {
         return myEdgeTemplate;
     }
 
-    // @brief seh the template edge (we assume shared responsibility via reference counting)
+    /// @brief seh the template edge (we assume shared responsibility via reference counting)
     void setEdgeTemplate(GNEEdge* tpl);
 
     /// @brief copy edge attributes from edge template

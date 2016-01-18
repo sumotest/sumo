@@ -57,17 +57,16 @@ class GNEConnector : public FXScrollWindow {
 public:
     /** @brief Constructor
      * @param[in] parent The parent window
+     * @param[in] updateTarget view to update
+     * @param[in] undoList pointer to undoList modul
      */
     GNEConnector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
-
 
     /// @brief Destructor
     ~GNEConnector();
 
-
-    FXFont* getHeaderFont() {
-        return myHeaderFont;
-    }
+    /// @brief get Header front
+    FXFont* getHeaderFont();
 
     /** @brief either sets the current lane or toggles the connection of the
      * current lane to this lane (if they share a junction)
@@ -79,17 +78,13 @@ public:
 
     /// @name FOX-callbacks
     /// @{
-    /** @brief Called when the user presses the OK-Button
-     * saves any connection modifications
-     */
+    /// @brief Called when the user presses the OK-Button saves any connection modifications
     long onCmdOK(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Cancel-button
-     * discards any connection modifications
-     */
+    /// @brief Called when the user presses the Cancel-button discards any connection modifications
     long onCmdCancel(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Corresponding-button */
+    /// @brief Called when the user presses the Corresponding-button
     long onCmdSelectDeadEnds(FXObject*, FXSelector, void*);
     long onCmdSelectDeadStarts(FXObject*, FXSelector, void*);
     long onCmdSelectConflicts(FXObject*, FXSelector, void*);
@@ -155,13 +150,13 @@ private:
 
     void initTargets();
 
-    // @brief clean up when deselecting current lane
+    /// @brief clean up when deselecting current lane
     void cleanup();
 
-    // @brief remove connections
+    /// @brief remove connections
     void removeConnections(GNELane* lane);
 
-    // @brief return the status of toLane
+    /// @brief return the status of toLane
     LaneStatus getLaneStatus(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane);
 
     /* @brief return the link number (tlLinkNo) of an existing connection

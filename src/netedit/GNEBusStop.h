@@ -56,7 +56,6 @@ class GNENet;
  *
  * @see MSStoppingPlace
  */
-
 class GNEBusStop : public GNEStoppingPlace {
 public:
     /** @brief Constructor
@@ -72,7 +71,7 @@ public:
     ~GNEBusStop();
 
     /// @brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. junction moved)
+    ///  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 
     /** @brief get lines of busStop
@@ -190,7 +189,7 @@ private:
     /// @brief Invalidated assignment operator.
     GNEBusStop& operator=(const GNEBusStop&);
 
-    // @brief return value for lane coloring according to the given scheme
+    /// @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
         
     /// @brief sets the color according to the current scheme index and some lane function

@@ -229,7 +229,7 @@ private:
     /// @brief List of this edges lanes
     LaneVector myLanes;
 
-    // @brief the net to inform about updates
+    /// @brief the net to inform about updates
     GNENet* myNet;
 
     /// @brief whether we are responsible for deleting myNBNode

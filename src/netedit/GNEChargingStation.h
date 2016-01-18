@@ -238,7 +238,7 @@ private:
     /// @brief Invalidated assignment operator.
     GNEChargingStation& operator=(const GNEChargingStation&);
 
-    // @brief return value for lane coloring according to the given scheme
+    /// @brief return value for lane coloring according to the given scheme
     SUMOReal getColorValue(size_t activeScheme) const;
         
     /// @brief sets the color according to the current scheme index and some lane function

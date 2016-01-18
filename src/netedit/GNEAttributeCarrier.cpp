@@ -66,6 +66,30 @@ GNEAttributeCarrier::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
+std::string 
+GNEAttributeCarrier::getDescription() {
+    return toString(myTag);
+}
+
+
+SumoXMLTag 
+GNEAttributeCarrier::getTag() const {
+    return myTag;
+}
+
+
+const std::vector<SumoXMLAttr>& 
+GNEAttributeCarrier::getAttrs() const {
+    return GNEAttributeCarrier::allowedAttributes(myTag);
+}
+
+
+const std::string 
+GNEAttributeCarrier::getID() const {
+    return getAttribute(SUMO_ATTR_ID);
+}
+
+
 bool
 GNEAttributeCarrier::isValidID(const std::string& value) {
     return value.find_first_of(" \t\n\r@$%^&/|\\{}*'\";:<>") == std::string::npos;

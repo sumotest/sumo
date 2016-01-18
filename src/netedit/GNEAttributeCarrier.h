@@ -54,26 +54,24 @@ class GNEUndoList;
  * inherits from GNEReferenceCounter for convenience
  */
 class GNEAttributeCarrier : public GNEReferenceCounter {
-
+    /// @brief declare friend class
     friend class GNEChange_Attribute;
 
 public:
 
     /** @brief Constructor
+     * @param[in] tag SUMO Tag assigned to this type of object
      */
     GNEAttributeCarrier(SumoXMLTag tag);
 
-
     /// @brief Destructor
     virtual ~GNEAttributeCarrier() {};
-
 
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
      */
     virtual std::string getAttribute(SumoXMLAttr key) const = 0;
-
 
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
@@ -83,7 +81,6 @@ public:
      */
     virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
 
-
     /* @brief method for checking if the key and their conrrespond attribute are valids
      * @param[in] key The attribute key
      * @param[in] value The value asociated to key key
@@ -91,24 +88,17 @@ public:
      */
     virtual bool isValid(SumoXMLAttr key, const std::string& value);
 
-
     /// @brief how should this attribute carrier be called
-    virtual std::string getDescription() {
-        return toString(myTag);
-    }
+    virtual std::string getDescription();
 
-    SumoXMLTag getTag() const {
-        return myTag;
-    }
+    /// @brief get Tag assigned to this object
+    SumoXMLTag getTag() const;
 
-    const std::vector<SumoXMLAttr>& getAttrs() const {
-        return GNEAttributeCarrier::allowedAttributes(myTag);
-    }
+    /// @brief get vector of attributes
+    const std::vector<SumoXMLAttr>& getAttrs() const;
 
     /// @brief function to support debugging
-    const std::string getID() const {
-        return getAttribute(SUMO_ATTR_ID);
-    }
+    const std::string getID() const;
 
     /// @brief get all editable attributes for tag.
     static const std::vector<SumoXMLAttr>& allowedAttributes(SumoXMLTag tag);
@@ -161,33 +151,42 @@ public:
 
     /// @brief feature is still unchanged after being loaded (implies approval)
     static const std::string LOADED;
+
     /// @brief feature has been reguessed (may still be unchanged be we can't tell (yet)
     static const std::string GUESSED;
+
     /// @brief feature has been manually modified (implies approval)
     static const std::string MODIFIED;
+
     /// @brief feature has been approved but not changed (i.e. after being reguessed)
     static const std::string APPROVED;
 
 
 private:
-    /* @brief method for setting the attribute and nothing else
-     * (used in GNEChange_Attribute)
-     * */
+    /// @brief method for setting the attribute and nothing else (used in GNEChange_Attribute)
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
     /// @brief the xml tag to which this carrier corresponds
     const SumoXMLTag myTag;
 
+    /// @brief map with the allowed attributes
     static std::map<SumoXMLTag, std::vector<SumoXMLAttr> > _allowedAttributes;
+
+    /// @brief map with the allowed tags
     static std::vector<SumoXMLTag> _allowedTags;
+
+    /// @brief map with the numerical attributes
     static std::set<SumoXMLAttr> _numericalAttrs;
+
+    /// @brief map with the unique attributes
     static std::set<SumoXMLAttr> _uniqueAttrs;
+
+    /// @brief map with the values of discrete choices
     static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > _discreteChoices;
 
 private:
     /// @brief Invalidated assignment operator
     GNEAttributeCarrier& operator=(const GNEAttributeCarrier& src);
-
 };
 
 #endif
