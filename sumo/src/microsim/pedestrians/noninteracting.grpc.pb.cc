@@ -14,184 +14,184 @@
 #include <grpc++/support/sync_stream.h>
 namespace noninteracting {
 
-static const char* PState_method_names[] = {
-  "/noninteracting.PState/computeWalkingTime",
-  "/noninteracting.PState/getPosition",
-  "/noninteracting.PState/getAngle",
-  "/noninteracting.PState/getWaitingTime",
-  "/noninteracting.PState/getSpeed",
-  "/noninteracting.PState/getNextEdge",
+static const char* PBPState_method_names[] = {
+  "/noninteracting.PBPState/computeWalkingTime",
+  "/noninteracting.PBPState/getPosition",
+  "/noninteracting.PBPState/getAngle",
+  "/noninteracting.PBPState/getWaitingTime",
+  "/noninteracting.PBPState/getSpeed",
+  "/noninteracting.PBPState/getNextEdge",
 };
 
-std::unique_ptr< PState::Stub> PState::NewStub(const std::shared_ptr< ::grpc::Channel>& channel, const ::grpc::StubOptions& options) {
-  std::unique_ptr< PState::Stub> stub(new PState::Stub(channel));
+std::unique_ptr< PBPState::Stub> PBPState::NewStub(const std::shared_ptr< ::grpc::Channel>& channel, const ::grpc::StubOptions& options) {
+  std::unique_ptr< PBPState::Stub> stub(new PBPState::Stub(channel));
   return stub;
 }
 
-PState::Stub::Stub(const std::shared_ptr< ::grpc::Channel>& channel)
-  : channel_(channel), rpcmethod_computeWalkingTime_(PState_method_names[0], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getPosition_(PState_method_names[1], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getAngle_(PState_method_names[2], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getWaitingTime_(PState_method_names[3], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getSpeed_(PState_method_names[4], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getNextEdge_(PState_method_names[5], ::grpc::RpcMethod::NORMAL_RPC, channel)
+PBPState::Stub::Stub(const std::shared_ptr< ::grpc::Channel>& channel)
+  : channel_(channel), rpcmethod_computeWalkingTime_(PBPState_method_names[0], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getPosition_(PBPState_method_names[1], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getAngle_(PBPState_method_names[2], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getWaitingTime_(PBPState_method_names[3], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getSpeed_(PBPState_method_names[4], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getNextEdge_(PBPState_method_names[5], ::grpc::RpcMethod::NORMAL_RPC, channel)
   {}
 
-::grpc::Status PState::Stub::computeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::noninteracting::SUMOTime* response) {
+::grpc::Status PBPState::Stub::computeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::noninteracting::PBSUMOTime* response) {
   return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_computeWalkingTime_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>* PState::Stub::AsynccomputeWalkingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) {
-  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>(channel_.get(), cq, rpcmethod_computeWalkingTime_, context, request);
+::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>* PBPState::Stub::AsynccomputeWalkingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>(channel_.get(), cq, rpcmethod_computeWalkingTime_, context, request);
 }
 
-::grpc::Status PState::Stub::getPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::noninteracting::Position* response) {
+::grpc::Status PBPState::Stub::getPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::noninteracting::PBPosition* response) {
   return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_getPosition_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::noninteracting::Position>* PState::Stub::AsyncgetPositionRaw(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) {
-  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::Position>(channel_.get(), cq, rpcmethod_getPosition_, context, request);
+::grpc::ClientAsyncResponseReader< ::noninteracting::PBPosition>* PBPState::Stub::AsyncgetPositionRaw(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::PBPosition>(channel_.get(), cq, rpcmethod_getPosition_, context, request);
 }
 
-::grpc::Status PState::Stub::getAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::noninteracting::SUMOReal* response) {
+::grpc::Status PBPState::Stub::getAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::noninteracting::PBSUMOReal* response) {
   return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_getAngle_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>* PState::Stub::AsyncgetAngleRaw(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) {
-  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>(channel_.get(), cq, rpcmethod_getAngle_, context, request);
+::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>* PBPState::Stub::AsyncgetAngleRaw(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>(channel_.get(), cq, rpcmethod_getAngle_, context, request);
 }
 
-::grpc::Status PState::Stub::getWaitingTime(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::noninteracting::SUMOTime* response) {
+::grpc::Status PBPState::Stub::getWaitingTime(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::noninteracting::PBSUMOTime* response) {
   return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_getWaitingTime_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>* PState::Stub::AsyncgetWaitingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::grpc::CompletionQueue* cq) {
-  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>(channel_.get(), cq, rpcmethod_getWaitingTime_, context, request);
+::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>* PBPState::Stub::AsyncgetWaitingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>(channel_.get(), cq, rpcmethod_getWaitingTime_, context, request);
 }
 
-::grpc::Status PState::Stub::getSpeed(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::noninteracting::SUMOReal* response) {
+::grpc::Status PBPState::Stub::getSpeed(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::noninteracting::PBSUMOReal* response) {
   return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_getSpeed_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>* PState::Stub::AsyncgetSpeedRaw(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
-  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>(channel_.get(), cq, rpcmethod_getSpeed_, context, request);
+::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>* PBPState::Stub::AsyncgetSpeedRaw(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>(channel_.get(), cq, rpcmethod_getSpeed_, context, request);
 }
 
-::grpc::Status PState::Stub::getNextEdge(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::noninteracting::Edge* response) {
+::grpc::Status PBPState::Stub::getNextEdge(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::noninteracting::PBEdge* response) {
   return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_getNextEdge_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::noninteracting::Edge>* PState::Stub::AsyncgetNextEdgeRaw(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
-  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::Edge>(channel_.get(), cq, rpcmethod_getNextEdge_, context, request);
+::grpc::ClientAsyncResponseReader< ::noninteracting::PBEdge>* PBPState::Stub::AsyncgetNextEdgeRaw(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::noninteracting::PBEdge>(channel_.get(), cq, rpcmethod_getNextEdge_, context, request);
 }
 
-PState::AsyncService::AsyncService() : ::grpc::AsynchronousService(PState_method_names, 6) {}
+PBPState::AsyncService::AsyncService() : ::grpc::AsynchronousService(PBPState_method_names, 6) {}
 
-PState::Service::~Service() {
+PBPState::Service::~Service() {
   delete service_;
 }
 
-::grpc::Status PState::Service::computeWalkingTime(::grpc::ServerContext* context, const ::noninteracting::CMPWlkgTm* request, ::noninteracting::SUMOTime* response) {
+::grpc::Status PBPState::Service::computeWalkingTime(::grpc::ServerContext* context, const ::noninteracting::CMPWlkgTm* request, ::noninteracting::PBSUMOTime* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-void PState::AsyncService::RequestcomputeWalkingTime(::grpc::ServerContext* context, ::noninteracting::CMPWlkgTm* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+void PBPState::AsyncService::RequestcomputeWalkingTime(::grpc::ServerContext* context, ::noninteracting::CMPWlkgTm* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
   AsynchronousService::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
 }
 
-::grpc::Status PState::Service::getPosition(::grpc::ServerContext* context, const ::noninteracting::GetPos* request, ::noninteracting::Position* response) {
+::grpc::Status PBPState::Service::getPosition(::grpc::ServerContext* context, const ::noninteracting::GetPos* request, ::noninteracting::PBPosition* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-void PState::AsyncService::RequestgetPosition(::grpc::ServerContext* context, ::noninteracting::GetPos* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::Position>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+void PBPState::AsyncService::RequestgetPosition(::grpc::ServerContext* context, ::noninteracting::GetPos* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBPosition>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
   AsynchronousService::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
 }
 
-::grpc::Status PState::Service::getAngle(::grpc::ServerContext* context, const ::noninteracting::GetAngle* request, ::noninteracting::SUMOReal* response) {
+::grpc::Status PBPState::Service::getAngle(::grpc::ServerContext* context, const ::noninteracting::GetAngle* request, ::noninteracting::PBSUMOReal* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-void PState::AsyncService::RequestgetAngle(::grpc::ServerContext* context, ::noninteracting::GetAngle* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+void PBPState::AsyncService::RequestgetAngle(::grpc::ServerContext* context, ::noninteracting::GetAngle* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
   AsynchronousService::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
 }
 
-::grpc::Status PState::Service::getWaitingTime(::grpc::ServerContext* context, const ::noninteracting::SUMOTime* request, ::noninteracting::SUMOTime* response) {
+::grpc::Status PBPState::Service::getWaitingTime(::grpc::ServerContext* context, const ::noninteracting::PBSUMOTime* request, ::noninteracting::PBSUMOTime* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-void PState::AsyncService::RequestgetWaitingTime(::grpc::ServerContext* context, ::noninteracting::SUMOTime* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+void PBPState::AsyncService::RequestgetWaitingTime(::grpc::ServerContext* context, ::noninteracting::PBSUMOTime* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
   AsynchronousService::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
 }
 
-::grpc::Status PState::Service::getSpeed(::grpc::ServerContext* context, const ::noninteracting::MSPersonStage_Walking* request, ::noninteracting::SUMOReal* response) {
+::grpc::Status PBPState::Service::getSpeed(::grpc::ServerContext* context, const ::noninteracting::PBMSPersonStage_Walking* request, ::noninteracting::PBSUMOReal* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-void PState::AsyncService::RequestgetSpeed(::grpc::ServerContext* context, ::noninteracting::MSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+void PBPState::AsyncService::RequestgetSpeed(::grpc::ServerContext* context, ::noninteracting::PBMSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
   AsynchronousService::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
 }
 
-::grpc::Status PState::Service::getNextEdge(::grpc::ServerContext* context, const ::noninteracting::MSPersonStage_Walking* request, ::noninteracting::Edge* response) {
+::grpc::Status PBPState::Service::getNextEdge(::grpc::ServerContext* context, const ::noninteracting::PBMSPersonStage_Walking* request, ::noninteracting::PBEdge* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-void PState::AsyncService::RequestgetNextEdge(::grpc::ServerContext* context, ::noninteracting::MSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::Edge>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+void PBPState::AsyncService::RequestgetNextEdge(::grpc::ServerContext* context, ::noninteracting::PBMSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBEdge>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
   AsynchronousService::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
 }
 
-::grpc::RpcService* PState::Service::service() {
+::grpc::RpcService* PBPState::Service::service() {
   if (service_ != nullptr) {
     return service_;
   }
   service_ = new ::grpc::RpcService();
   service_->AddMethod(new ::grpc::RpcServiceMethod(
-      PState_method_names[0],
+      PBPState_method_names[0],
       ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< PState::Service, ::noninteracting::CMPWlkgTm, ::noninteracting::SUMOTime>(
-          std::mem_fn(&PState::Service::computeWalkingTime), this)));
+      new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::CMPWlkgTm, ::noninteracting::PBSUMOTime>(
+          std::mem_fn(&PBPState::Service::computeWalkingTime), this)));
   service_->AddMethod(new ::grpc::RpcServiceMethod(
-      PState_method_names[1],
+      PBPState_method_names[1],
       ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< PState::Service, ::noninteracting::GetPos, ::noninteracting::Position>(
-          std::mem_fn(&PState::Service::getPosition), this)));
+      new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::GetPos, ::noninteracting::PBPosition>(
+          std::mem_fn(&PBPState::Service::getPosition), this)));
   service_->AddMethod(new ::grpc::RpcServiceMethod(
-      PState_method_names[2],
+      PBPState_method_names[2],
       ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< PState::Service, ::noninteracting::GetAngle, ::noninteracting::SUMOReal>(
-          std::mem_fn(&PState::Service::getAngle), this)));
+      new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::GetAngle, ::noninteracting::PBSUMOReal>(
+          std::mem_fn(&PBPState::Service::getAngle), this)));
   service_->AddMethod(new ::grpc::RpcServiceMethod(
-      PState_method_names[3],
+      PBPState_method_names[3],
       ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< PState::Service, ::noninteracting::SUMOTime, ::noninteracting::SUMOTime>(
-          std::mem_fn(&PState::Service::getWaitingTime), this)));
+      new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::PBSUMOTime, ::noninteracting::PBSUMOTime>(
+          std::mem_fn(&PBPState::Service::getWaitingTime), this)));
   service_->AddMethod(new ::grpc::RpcServiceMethod(
-      PState_method_names[4],
+      PBPState_method_names[4],
       ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< PState::Service, ::noninteracting::MSPersonStage_Walking, ::noninteracting::SUMOReal>(
-          std::mem_fn(&PState::Service::getSpeed), this)));
+      new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::PBMSPersonStage_Walking, ::noninteracting::PBSUMOReal>(
+          std::mem_fn(&PBPState::Service::getSpeed), this)));
   service_->AddMethod(new ::grpc::RpcServiceMethod(
-      PState_method_names[5],
+      PBPState_method_names[5],
       ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< PState::Service, ::noninteracting::MSPersonStage_Walking, ::noninteracting::Edge>(
-          std::mem_fn(&PState::Service::getNextEdge), this)));
+      new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::PBMSPersonStage_Walking, ::noninteracting::PBEdge>(
+          std::mem_fn(&PBPState::Service::getNextEdge), this)));
   return service_;
 }
 

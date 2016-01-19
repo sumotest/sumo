@@ -29,12 +29,14 @@
 #include <config.h>
 #endif
 
+
 #include <string>
 #include <limits>
 #include <utils/common/SUMOTime.h>
 #include <utils/common/Command.h>
 #include "MSPerson.h"
 #include "MSPModel.h"
+#include "MSGRPCClient.h"
 
 // ===========================================================================
 // class declarations
@@ -59,7 +61,7 @@ public:
     /// @brief Constructor (it should not be necessary to construct more than one instance)
     MSPModel_NonInteracting_GRPC(const OptionsCont& oc, MSNet* net);
 
-    ~MSPModel_NonInteracting_GPRC();
+    ~MSPModel_NonInteracting_GRPC();
 
     /// @brief register the given person as a pedestrian
     PedestrianState* add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now);
@@ -85,7 +87,9 @@ private:
     /// @brief abstract base class for managing callbacks to retrieve various state information from the model
     class PState : public PedestrianState {
     public:
-        PState() {};
+        PState(MSGRPCClient * client):
+        	grpcClient(client)
+        {};
 
         /// @brief abstract methods inherited from PedestrianState
         /// @{
@@ -106,6 +110,7 @@ private:
         SUMOTime myCurrentDuration;
         SUMOReal myCurrentBeginPos;
         SUMOReal myCurrentEndPos;
+        MSGRPCClient * grpcClient;
 
     };
 

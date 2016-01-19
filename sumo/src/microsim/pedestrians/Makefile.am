@@ -6,4 +6,5 @@ MSPModel_Striping.cpp MSPModel_Striping.h \
 MSPModel_NonInteracting.cpp MSPModel_NonInteracting.h \
 MSPModel_NonInteracting_GRPC.cpp MSPModel_NonInteracting_GRPC.h \
 noninteracting.grpc.pb.cc noninteracting.grpc.pb.h \
-noninteracting.pb.cc nointeracting.pb.h
+noninteracting.pb.cc nointeracting.pb.h \
+MSGRPCClient.cpp MSGRPCClient.h

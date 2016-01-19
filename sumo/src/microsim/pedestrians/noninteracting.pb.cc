@@ -21,21 +21,21 @@ namespace noninteracting {
 
 namespace {
 
-const ::google::protobuf::Descriptor* Position_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* PBPosition_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Position_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Edge_descriptor_ = NULL;
+  PBPosition_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PBEdge_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Edge_reflection_ = NULL;
-const ::google::protobuf::Descriptor* SUMOTime_descriptor_ = NULL;
+  PBEdge_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PBSUMOTime_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  SUMOTime_reflection_ = NULL;
-const ::google::protobuf::Descriptor* SUMOReal_descriptor_ = NULL;
+  PBSUMOTime_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PBSUMOReal_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  SUMOReal_reflection_ = NULL;
-const ::google::protobuf::Descriptor* MSPersonStage_Walking_descriptor_ = NULL;
+  PBSUMOReal_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PBMSPersonStage_Walking_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  MSPersonStage_Walking_reflection_ = NULL;
+  PBMSPersonStage_Walking_reflection_ = NULL;
 const ::google::protobuf::Descriptor* CMPWlkgTm_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CMPWlkgTm_reflection_ = NULL;
@@ -55,92 +55,92 @@ void protobuf_AssignDesc_noninteracting_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "noninteracting.proto");
   GOOGLE_CHECK(file != NULL);
-  Position_descriptor_ = file->message_type(0);
-  static const int Position_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Position, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Position, y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Position, z_),
+  PBPosition_descriptor_ = file->message_type(0);
+  static const int PBPosition_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, y_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, z_),
   };
-  Position_reflection_ =
+  PBPosition_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      Position_descriptor_,
-      Position::default_instance_,
-      Position_offsets_,
+      PBPosition_descriptor_,
+      PBPosition::default_instance_,
+      PBPosition_offsets_,
       -1,
       -1,
       -1,
-      sizeof(Position),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Position, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Position, _is_default_instance_));
-  Edge_descriptor_ = file->message_type(1);
-  static const int Edge_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, fromjunctionid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, tojunctionid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, length_),
+      sizeof(PBPosition),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, _is_default_instance_));
+  PBEdge_descriptor_ = file->message_type(1);
+  static const int PBEdge_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBEdge, fromjunctionid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBEdge, tojunctionid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBEdge, length_),
   };
-  Edge_reflection_ =
+  PBEdge_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      Edge_descriptor_,
-      Edge::default_instance_,
-      Edge_offsets_,
+      PBEdge_descriptor_,
+      PBEdge::default_instance_,
+      PBEdge_offsets_,
       -1,
       -1,
       -1,
-      sizeof(Edge),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, _is_default_instance_));
-  SUMOTime_descriptor_ = file->message_type(2);
-  static const int SUMOTime_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SUMOTime, sumotime_),
+      sizeof(PBEdge),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBEdge, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBEdge, _is_default_instance_));
+  PBSUMOTime_descriptor_ = file->message_type(2);
+  static const int PBSUMOTime_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBSUMOTime, sumotime_),
   };
-  SUMOTime_reflection_ =
+  PBSUMOTime_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      SUMOTime_descriptor_,
-      SUMOTime::default_instance_,
-      SUMOTime_offsets_,
+      PBSUMOTime_descriptor_,
+      PBSUMOTime::default_instance_,
+      PBSUMOTime_offsets_,
       -1,
       -1,
       -1,
-      sizeof(SUMOTime),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SUMOTime, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SUMOTime, _is_default_instance_));
-  SUMOReal_descriptor_ = file->message_type(3);
-  static const int SUMOReal_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SUMOReal, sumoreal_),
+      sizeof(PBSUMOTime),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBSUMOTime, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBSUMOTime, _is_default_instance_));
+  PBSUMOReal_descriptor_ = file->message_type(3);
+  static const int PBSUMOReal_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBSUMOReal, sumoreal_),
   };
-  SUMOReal_reflection_ =
+  PBSUMOReal_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      SUMOReal_descriptor_,
-      SUMOReal::default_instance_,
-      SUMOReal_offsets_,
+      PBSUMOReal_descriptor_,
+      PBSUMOReal::default_instance_,
+      PBSUMOReal_offsets_,
       -1,
       -1,
       -1,
-      sizeof(SUMOReal),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SUMOReal, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SUMOReal, _is_default_instance_));
-  MSPersonStage_Walking_descriptor_ = file->message_type(4);
-  static const int MSPersonStage_Walking_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, edge_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, nextrouteedge_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, departpos_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, arrivalpos_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, maxspeed_),
+      sizeof(PBSUMOReal),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBSUMOReal, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBSUMOReal, _is_default_instance_));
+  PBMSPersonStage_Walking_descriptor_ = file->message_type(4);
+  static const int PBMSPersonStage_Walking_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, edge_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, nextrouteedge_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, departpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, arrivalpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, maxspeed_),
   };
-  MSPersonStage_Walking_reflection_ =
+  PBMSPersonStage_Walking_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      MSPersonStage_Walking_descriptor_,
-      MSPersonStage_Walking::default_instance_,
-      MSPersonStage_Walking_offsets_,
+      PBMSPersonStage_Walking_descriptor_,
+      PBMSPersonStage_Walking::default_instance_,
+      PBMSPersonStage_Walking_offsets_,
       -1,
       -1,
       -1,
-      sizeof(MSPersonStage_Walking),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MSPersonStage_Walking, _is_default_instance_));
+      sizeof(PBMSPersonStage_Walking),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBMSPersonStage_Walking, _is_default_instance_));
   CMPWlkgTm_descriptor_ = file->message_type(5);
   static const int CMPWlkgTm_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, edge_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, prev_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, stage_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, sumotime_),
   };
@@ -200,15 +200,15 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      Position_descriptor_, &Position::default_instance());
+      PBPosition_descriptor_, &PBPosition::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      Edge_descriptor_, &Edge::default_instance());
+      PBEdge_descriptor_, &PBEdge::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      SUMOTime_descriptor_, &SUMOTime::default_instance());
+      PBSUMOTime_descriptor_, &PBSUMOTime::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      SUMOReal_descriptor_, &SUMOReal::default_instance());
+      PBSUMOReal_descriptor_, &PBSUMOReal::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      MSPersonStage_Walking_descriptor_, &MSPersonStage_Walking::default_instance());
+      PBMSPersonStage_Walking_descriptor_, &PBMSPersonStage_Walking::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       CMPWlkgTm_descriptor_, &CMPWlkgTm::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -220,16 +220,16 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_noninteracting_2eproto() {
-  delete Position::default_instance_;
-  delete Position_reflection_;
-  delete Edge::default_instance_;
-  delete Edge_reflection_;
-  delete SUMOTime::default_instance_;
-  delete SUMOTime_reflection_;
-  delete SUMOReal::default_instance_;
-  delete SUMOReal_reflection_;
-  delete MSPersonStage_Walking::default_instance_;
-  delete MSPersonStage_Walking_reflection_;
+  delete PBPosition::default_instance_;
+  delete PBPosition_reflection_;
+  delete PBEdge::default_instance_;
+  delete PBEdge_reflection_;
+  delete PBSUMOTime::default_instance_;
+  delete PBSUMOTime_reflection_;
+  delete PBSUMOReal::default_instance_;
+  delete PBSUMOReal_reflection_;
+  delete PBMSPersonStage_Walking::default_instance_;
+  delete PBMSPersonStage_Walking_reflection_;
   delete CMPWlkgTm::default_instance_;
   delete CMPWlkgTm_reflection_;
   delete GetPos::default_instance_;
@@ -245,53 +245,54 @@ void protobuf_AddDesc_noninteracting_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024noninteracting.proto\022\016noninteracting\"+"
-    "\n\010Position\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 "
-    "\001(\001\"D\n\004Edge\022\026\n\016fromJunctionId\030\001 \001(\t\022\024\n\014t"
-    "oJunctionId\030\002 \001(\t\022\016\n\006length\030\003 \001(\001\"\034\n\010SUM"
-    "OTime\022\020\n\010sumoTime\030\001 \001(\001\"\034\n\010SUMOReal\022\020\n\010s"
-    "umoReal\030\001 \001(\001\"\241\001\n\025MSPersonStage_Walking\022"
-    "\"\n\004edge\030\001 \001(\0132\024.noninteracting.Edge\022+\n\rn"
-    "extRouteEdge\030\002 \001(\0132\024.noninteracting.Edge"
-    "\022\021\n\tdepartPos\030\003 \001(\001\022\022\n\narrivalPos\030\004 \001(\001\022"
-    "\020\n\010maxSpeed\030\005 \001(\001\"\221\001\n\tCMPWlkgTm\022\"\n\004edge\030"
-    "\001 \001(\0132\024.noninteracting.Edge\0224\n\005stage\030\002 \001"
-    "(\0132%.noninteracting.MSPersonStage_Walkin"
-    "g\022*\n\010sumoTime\030\003 \001(\0132\030.noninteracting.SUM"
-    "OTime\"j\n\006GetPos\0224\n\005stage\030\001 \001(\0132%.noninte"
-    "racting.MSPersonStage_Walking\022*\n\010sumoTim"
-    "e\030\002 \001(\0132\030.noninteracting.SUMOTime\"l\n\010Get"
-    "Angle\0224\n\005stage\030\001 \001(\0132%.noninteracting.MS"
-    "PersonStage_Walking\022*\n\010sumoTime\030\002 \001(\0132\030."
-    "noninteracting.SUMOTime2\277\003\n\006PState\022K\n\022co"
-    "mputeWalkingTime\022\031.noninteracting.CMPWlk"
-    "gTm\032\030.noninteracting.SUMOTime\"\000\022A\n\013getPo"
-    "sition\022\026.noninteracting.GetPos\032\030.noninte"
-    "racting.Position\"\000\022@\n\010getAngle\022\030.noninte"
-    "racting.GetAngle\032\030.noninteracting.SUMORe"
-    "al\"\000\022F\n\016getWaitingTime\022\030.noninteracting."
-    "SUMOTime\032\030.noninteracting.SUMOTime\"\000\022M\n\010"
-    "getSpeed\022%.noninteracting.MSPersonStage_"
-    "Walking\032\030.noninteracting.SUMOReal\"\000\022L\n\013g"
-    "etNextEdge\022%.noninteracting.MSPersonStag"
-    "e_Walking\032\024.noninteracting.Edge\"\000B3\n\032de."
-    "dlr.sumo.noninteractingB\023NonInteractingP"
-    "rotoP\000b\006proto3", 1254);
+    "\n\024noninteracting.proto\022\016noninteracting\"-"
+    "\n\nPBPosition\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030"
+    "\003 \001(\001\"F\n\006PBEdge\022\026\n\016fromJunctionId\030\001 \001(\t\022"
+    "\024\n\014toJunctionId\030\002 \001(\t\022\016\n\006length\030\003 \001(\001\"\036\n"
+    "\nPBSUMOTime\022\020\n\010sumoTime\030\001 \001(\001\"\036\n\nPBSUMOR"
+    "eal\022\020\n\010sumoReal\030\001 \001(\001\"\247\001\n\027PBMSPersonStag"
+    "e_Walking\022$\n\004edge\030\001 \001(\0132\026.noninteracting"
+    ".PBEdge\022-\n\rnextRouteEdge\030\002 \001(\0132\026.noninte"
+    "racting.PBEdge\022\021\n\tdepartPos\030\003 \001(\001\022\022\n\narr"
+    "ivalPos\030\004 \001(\001\022\020\n\010maxSpeed\030\005 \001(\001\"\227\001\n\tCMPW"
+    "lkgTm\022$\n\004prev\030\001 \001(\0132\026.noninteracting.PBE"
+    "dge\0226\n\005stage\030\002 \001(\0132\'.noninteracting.PBMS"
+    "PersonStage_Walking\022,\n\010sumoTime\030\003 \001(\0132\032."
+    "noninteracting.PBSUMOTime\"n\n\006GetPos\0226\n\005s"
+    "tage\030\001 \001(\0132\'.noninteracting.PBMSPersonSt"
+    "age_Walking\022,\n\010sumoTime\030\002 \001(\0132\032.noninter"
+    "acting.PBSUMOTime\"p\n\010GetAngle\0226\n\005stage\030\001"
+    " \001(\0132\'.noninteracting.PBMSPersonStage_Wa"
+    "lking\022,\n\010sumoTime\030\002 \001(\0132\032.noninteracting"
+    ".PBSUMOTime2\323\003\n\010PBPState\022M\n\022computeWalki"
+    "ngTime\022\031.noninteracting.CMPWlkgTm\032\032.noni"
+    "nteracting.PBSUMOTime\"\000\022C\n\013getPosition\022\026"
+    ".noninteracting.GetPos\032\032.noninteracting."
+    "PBPosition\"\000\022B\n\010getAngle\022\030.noninteractin"
+    "g.GetAngle\032\032.noninteracting.PBSUMOReal\"\000"
+    "\022J\n\016getWaitingTime\022\032.noninteracting.PBSU"
+    "MOTime\032\032.noninteracting.PBSUMOTime\"\000\022Q\n\010"
+    "getSpeed\022\'.noninteracting.PBMSPersonStag"
+    "e_Walking\032\032.noninteracting.PBSUMOReal\"\000\022"
+    "P\n\013getNextEdge\022\'.noninteracting.PBMSPers"
+    "onStage_Walking\032\026.noninteracting.PBEdge\""
+    "\000B3\n\032de.dlr.sumo.noninteractingB\023NonInte"
+    "ractingProtoP\000b\006proto3", 1302);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "noninteracting.proto", &protobuf_RegisterTypes);
-  Position::default_instance_ = new Position();
-  Edge::default_instance_ = new Edge();
-  SUMOTime::default_instance_ = new SUMOTime();
-  SUMOReal::default_instance_ = new SUMOReal();
-  MSPersonStage_Walking::default_instance_ = new MSPersonStage_Walking();
+  PBPosition::default_instance_ = new PBPosition();
+  PBEdge::default_instance_ = new PBEdge();
+  PBSUMOTime::default_instance_ = new PBSUMOTime();
+  PBSUMOReal::default_instance_ = new PBSUMOReal();
+  PBMSPersonStage_Walking::default_instance_ = new PBMSPersonStage_Walking();
   CMPWlkgTm::default_instance_ = new CMPWlkgTm();
   GetPos::default_instance_ = new GetPos();
   GetAngle::default_instance_ = new GetAngle();
-  Position::default_instance_->InitAsDefaultInstance();
-  Edge::default_instance_->InitAsDefaultInstance();
-  SUMOTime::default_instance_->InitAsDefaultInstance();
-  SUMOReal::default_instance_->InitAsDefaultInstance();
-  MSPersonStage_Walking::default_instance_->InitAsDefaultInstance();
+  PBPosition::default_instance_->InitAsDefaultInstance();
+  PBEdge::default_instance_->InitAsDefaultInstance();
+  PBSUMOTime::default_instance_->InitAsDefaultInstance();
+  PBSUMOReal::default_instance_->InitAsDefaultInstance();
+  PBMSPersonStage_Walking::default_instance_->InitAsDefaultInstance();
   CMPWlkgTm::default_instance_->InitAsDefaultInstance();
   GetPos::default_instance_->InitAsDefaultInstance();
   GetAngle::default_instance_->InitAsDefaultInstance();
@@ -318,30 +319,30 @@ static void MergeFromFail(int line) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int Position::kXFieldNumber;
-const int Position::kYFieldNumber;
-const int Position::kZFieldNumber;
+const int PBPosition::kXFieldNumber;
+const int PBPosition::kYFieldNumber;
+const int PBPosition::kZFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-Position::Position()
+PBPosition::PBPosition()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.Position)
+  // @@protoc_insertion_point(constructor:noninteracting.PBPosition)
 }
 
-void Position::InitAsDefaultInstance() {
+void PBPosition::InitAsDefaultInstance() {
   _is_default_instance_ = true;
 }
 
-Position::Position(const Position& from)
+PBPosition::PBPosition(const PBPosition& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.Position)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.PBPosition)
 }
 
-void Position::SharedCtor() {
+void PBPosition::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
   x_ = 0;
@@ -349,44 +350,44 @@ void Position::SharedCtor() {
   z_ = 0;
 }
 
-Position::~Position() {
-  // @@protoc_insertion_point(destructor:noninteracting.Position)
+PBPosition::~PBPosition() {
+  // @@protoc_insertion_point(destructor:noninteracting.PBPosition)
   SharedDtor();
 }
 
-void Position::SharedDtor() {
+void PBPosition::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void Position::SetCachedSize(int size) const {
+void PBPosition::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Position::descriptor() {
+const ::google::protobuf::Descriptor* PBPosition::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Position_descriptor_;
+  return PBPosition_descriptor_;
 }
 
-const Position& Position::default_instance() {
+const PBPosition& PBPosition::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-Position* Position::default_instance_ = NULL;
+PBPosition* PBPosition::default_instance_ = NULL;
 
-Position* Position::New(::google::protobuf::Arena* arena) const {
-  Position* n = new Position;
+PBPosition* PBPosition::New(::google::protobuf::Arena* arena) const {
+  PBPosition* n = new PBPosition;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void Position::Clear() {
+void PBPosition::Clear() {
 #define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<Position*>(16)->f)
+  &reinterpret_cast<PBPosition*>(16)->f)
 
 #define ZR_(first, last) do {\
   ::memset(&first, 0,\
@@ -400,11 +401,11 @@ void Position::Clear() {
 
 }
 
-bool Position::MergePartialFromCodedStream(
+bool PBPosition::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.Position)
+  // @@protoc_insertion_point(parse_start:noninteracting.PBPosition)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -467,17 +468,17 @@ bool Position::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.Position)
+  // @@protoc_insertion_point(parse_success:noninteracting.PBPosition)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.Position)
+  // @@protoc_insertion_point(parse_failure:noninteracting.PBPosition)
   return false;
 #undef DO_
 }
 
-void Position::SerializeWithCachedSizes(
+void PBPosition::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.Position)
+  // @@protoc_insertion_point(serialize_start:noninteracting.PBPosition)
   // optional double x = 1;
   if (this->x() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->x(), output);
@@ -493,12 +494,12 @@ void Position::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->z(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:noninteracting.Position)
+  // @@protoc_insertion_point(serialize_end:noninteracting.PBPosition)
 }
 
-::google::protobuf::uint8* Position::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* PBPosition::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.Position)
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.PBPosition)
   // optional double x = 1;
   if (this->x() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->x(), target);
@@ -514,11 +515,11 @@ void Position::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->z(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.Position)
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.PBPosition)
   return target;
 }
 
-int Position::ByteSize() const {
+int PBPosition::ByteSize() const {
   int total_size = 0;
 
   // optional double x = 1;
@@ -542,10 +543,10 @@ int Position::ByteSize() const {
   return total_size;
 }
 
-void Position::MergeFrom(const ::google::protobuf::Message& from) {
+void PBPosition::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const Position* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const Position>(
+  const PBPosition* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBPosition>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -554,7 +555,7 @@ void Position::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Position::MergeFrom(const Position& from) {
+void PBPosition::MergeFrom(const PBPosition& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.x() != 0) {
     set_x(from.x());
@@ -567,28 +568,28 @@ void Position::MergeFrom(const Position& from) {
   }
 }
 
-void Position::CopyFrom(const ::google::protobuf::Message& from) {
+void PBPosition::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Position::CopyFrom(const Position& from) {
+void PBPosition::CopyFrom(const PBPosition& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Position::IsInitialized() const {
+bool PBPosition::IsInitialized() const {
 
   return true;
 }
 
-void Position::Swap(Position* other) {
+void PBPosition::Swap(PBPosition* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void Position::InternalSwap(Position* other) {
+void PBPosition::InternalSwap(PBPosition* other) {
   std::swap(x_, other->x_);
   std::swap(y_, other->y_);
   std::swap(z_, other->z_);
@@ -596,57 +597,57 @@ void Position::InternalSwap(Position* other) {
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata Position::GetMetadata() const {
+::google::protobuf::Metadata PBPosition::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Position_descriptor_;
-  metadata.reflection = Position_reflection_;
+  metadata.descriptor = PBPosition_descriptor_;
+  metadata.reflection = PBPosition_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// Position
+// PBPosition
 
 // optional double x = 1;
-void Position::clear_x() {
+void PBPosition::clear_x() {
   x_ = 0;
 }
- double Position::x() const {
-  // @@protoc_insertion_point(field_get:noninteracting.Position.x)
+ double PBPosition::x() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.x)
   return x_;
 }
- void Position::set_x(double value) {
+ void PBPosition::set_x(double value) {
   
   x_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.Position.x)
+  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.x)
 }
 
 // optional double y = 2;
-void Position::clear_y() {
+void PBPosition::clear_y() {
   y_ = 0;
 }
- double Position::y() const {
-  // @@protoc_insertion_point(field_get:noninteracting.Position.y)
+ double PBPosition::y() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.y)
   return y_;
 }
- void Position::set_y(double value) {
+ void PBPosition::set_y(double value) {
   
   y_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.Position.y)
+  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.y)
 }
 
 // optional double z = 3;
-void Position::clear_z() {
+void PBPosition::clear_z() {
   z_ = 0;
 }
- double Position::z() const {
-  // @@protoc_insertion_point(field_get:noninteracting.Position.z)
+ double PBPosition::z() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.z)
   return z_;
 }
- void Position::set_z(double value) {
+ void PBPosition::set_z(double value) {
   
   z_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.Position.z)
+  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.z)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -654,30 +655,30 @@ void Position::clear_z() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int Edge::kFromJunctionIdFieldNumber;
-const int Edge::kToJunctionIdFieldNumber;
-const int Edge::kLengthFieldNumber;
+const int PBEdge::kFromJunctionIdFieldNumber;
+const int PBEdge::kToJunctionIdFieldNumber;
+const int PBEdge::kLengthFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-Edge::Edge()
+PBEdge::PBEdge()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.Edge)
+  // @@protoc_insertion_point(constructor:noninteracting.PBEdge)
 }
 
-void Edge::InitAsDefaultInstance() {
+void PBEdge::InitAsDefaultInstance() {
   _is_default_instance_ = true;
 }
 
-Edge::Edge(const Edge& from)
+PBEdge::PBEdge(const PBEdge& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.Edge)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.PBEdge)
 }
 
-void Edge::SharedCtor() {
+void PBEdge::SharedCtor() {
     _is_default_instance_ = false;
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
@@ -686,54 +687,54 @@ void Edge::SharedCtor() {
   length_ = 0;
 }
 
-Edge::~Edge() {
-  // @@protoc_insertion_point(destructor:noninteracting.Edge)
+PBEdge::~PBEdge() {
+  // @@protoc_insertion_point(destructor:noninteracting.PBEdge)
   SharedDtor();
 }
 
-void Edge::SharedDtor() {
+void PBEdge::SharedDtor() {
   fromjunctionid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   tojunctionid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
 
-void Edge::SetCachedSize(int size) const {
+void PBEdge::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Edge::descriptor() {
+const ::google::protobuf::Descriptor* PBEdge::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Edge_descriptor_;
+  return PBEdge_descriptor_;
 }
 
-const Edge& Edge::default_instance() {
+const PBEdge& PBEdge::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-Edge* Edge::default_instance_ = NULL;
+PBEdge* PBEdge::default_instance_ = NULL;
 
-Edge* Edge::New(::google::protobuf::Arena* arena) const {
-  Edge* n = new Edge;
+PBEdge* PBEdge::New(::google::protobuf::Arena* arena) const {
+  PBEdge* n = new PBEdge;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void Edge::Clear() {
+void PBEdge::Clear() {
   fromjunctionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   tojunctionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   length_ = 0;
 }
 
-bool Edge::MergePartialFromCodedStream(
+bool PBEdge::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.Edge)
+  // @@protoc_insertion_point(parse_start:noninteracting.PBEdge)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -747,7 +748,7 @@ bool Edge::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->fromjunctionid().data(), this->fromjunctionid().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.Edge.fromJunctionId"));
+            "noninteracting.PBEdge.fromJunctionId"));
         } else {
           goto handle_unusual;
         }
@@ -764,7 +765,7 @@ bool Edge::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->tojunctionid().data(), this->tojunctionid().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.Edge.toJunctionId"));
+            "noninteracting.PBEdge.toJunctionId"));
         } else {
           goto handle_unusual;
         }
@@ -800,23 +801,23 @@ bool Edge::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.Edge)
+  // @@protoc_insertion_point(parse_success:noninteracting.PBEdge)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.Edge)
+  // @@protoc_insertion_point(parse_failure:noninteracting.PBEdge)
   return false;
 #undef DO_
 }
 
-void Edge::SerializeWithCachedSizes(
+void PBEdge::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.Edge)
+  // @@protoc_insertion_point(serialize_start:noninteracting.PBEdge)
   // optional string fromJunctionId = 1;
   if (this->fromjunctionid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->fromjunctionid().data(), this->fromjunctionid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.Edge.fromJunctionId");
+      "noninteracting.PBEdge.fromJunctionId");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->fromjunctionid(), output);
   }
@@ -826,7 +827,7 @@ void Edge::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->tojunctionid().data(), this->tojunctionid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.Edge.toJunctionId");
+      "noninteracting.PBEdge.toJunctionId");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->tojunctionid(), output);
   }
@@ -836,18 +837,18 @@ void Edge::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->length(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:noninteracting.Edge)
+  // @@protoc_insertion_point(serialize_end:noninteracting.PBEdge)
 }
 
-::google::protobuf::uint8* Edge::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* PBEdge::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.Edge)
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.PBEdge)
   // optional string fromJunctionId = 1;
   if (this->fromjunctionid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->fromjunctionid().data(), this->fromjunctionid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.Edge.fromJunctionId");
+      "noninteracting.PBEdge.fromJunctionId");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->fromjunctionid(), target);
@@ -858,7 +859,7 @@ void Edge::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->tojunctionid().data(), this->tojunctionid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.Edge.toJunctionId");
+      "noninteracting.PBEdge.toJunctionId");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->tojunctionid(), target);
@@ -869,11 +870,11 @@ void Edge::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->length(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.Edge)
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.PBEdge)
   return target;
 }
 
-int Edge::ByteSize() const {
+int PBEdge::ByteSize() const {
   int total_size = 0;
 
   // optional string fromJunctionId = 1;
@@ -901,10 +902,10 @@ int Edge::ByteSize() const {
   return total_size;
 }
 
-void Edge::MergeFrom(const ::google::protobuf::Message& from) {
+void PBEdge::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const Edge* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const Edge>(
+  const PBEdge* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBEdge>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -913,7 +914,7 @@ void Edge::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Edge::MergeFrom(const Edge& from) {
+void PBEdge::MergeFrom(const PBEdge& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.fromjunctionid().size() > 0) {
 
@@ -928,28 +929,28 @@ void Edge::MergeFrom(const Edge& from) {
   }
 }
 
-void Edge::CopyFrom(const ::google::protobuf::Message& from) {
+void PBEdge::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Edge::CopyFrom(const Edge& from) {
+void PBEdge::CopyFrom(const PBEdge& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Edge::IsInitialized() const {
+bool PBEdge::IsInitialized() const {
 
   return true;
 }
 
-void Edge::Swap(Edge* other) {
+void PBEdge::Swap(PBEdge* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void Edge::InternalSwap(Edge* other) {
+void PBEdge::InternalSwap(PBEdge* other) {
   fromjunctionid_.Swap(&other->fromjunctionid_);
   tojunctionid_.Swap(&other->tojunctionid_);
   std::swap(length_, other->length_);
@@ -957,115 +958,115 @@ void Edge::InternalSwap(Edge* other) {
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata Edge::GetMetadata() const {
+::google::protobuf::Metadata PBEdge::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Edge_descriptor_;
-  metadata.reflection = Edge_reflection_;
+  metadata.descriptor = PBEdge_descriptor_;
+  metadata.reflection = PBEdge_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// Edge
+// PBEdge
 
 // optional string fromJunctionId = 1;
-void Edge::clear_fromjunctionid() {
+void PBEdge::clear_fromjunctionid() {
   fromjunctionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& Edge::fromjunctionid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.Edge.fromJunctionId)
+ const ::std::string& PBEdge::fromjunctionid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBEdge.fromJunctionId)
   return fromjunctionid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Edge::set_fromjunctionid(const ::std::string& value) {
+ void PBEdge::set_fromjunctionid(const ::std::string& value) {
   
   fromjunctionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.Edge.fromJunctionId)
+  // @@protoc_insertion_point(field_set:noninteracting.PBEdge.fromJunctionId)
 }
- void Edge::set_fromjunctionid(const char* value) {
+ void PBEdge::set_fromjunctionid(const char* value) {
   
   fromjunctionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.Edge.fromJunctionId)
+  // @@protoc_insertion_point(field_set_char:noninteracting.PBEdge.fromJunctionId)
 }
- void Edge::set_fromjunctionid(const char* value, size_t size) {
+ void PBEdge::set_fromjunctionid(const char* value, size_t size) {
   
   fromjunctionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.Edge.fromJunctionId)
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.PBEdge.fromJunctionId)
 }
- ::std::string* Edge::mutable_fromjunctionid() {
+ ::std::string* PBEdge::mutable_fromjunctionid() {
   
-  // @@protoc_insertion_point(field_mutable:noninteracting.Edge.fromJunctionId)
+  // @@protoc_insertion_point(field_mutable:noninteracting.PBEdge.fromJunctionId)
   return fromjunctionid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* Edge::release_fromjunctionid() {
+ ::std::string* PBEdge::release_fromjunctionid() {
   
   return fromjunctionid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Edge::set_allocated_fromjunctionid(::std::string* fromjunctionid) {
+ void PBEdge::set_allocated_fromjunctionid(::std::string* fromjunctionid) {
   if (fromjunctionid != NULL) {
     
   } else {
     
   }
   fromjunctionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), fromjunctionid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.Edge.fromJunctionId)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.PBEdge.fromJunctionId)
 }
 
 // optional string toJunctionId = 2;
-void Edge::clear_tojunctionid() {
+void PBEdge::clear_tojunctionid() {
   tojunctionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& Edge::tojunctionid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.Edge.toJunctionId)
+ const ::std::string& PBEdge::tojunctionid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBEdge.toJunctionId)
   return tojunctionid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Edge::set_tojunctionid(const ::std::string& value) {
+ void PBEdge::set_tojunctionid(const ::std::string& value) {
   
   tojunctionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.Edge.toJunctionId)
+  // @@protoc_insertion_point(field_set:noninteracting.PBEdge.toJunctionId)
 }
- void Edge::set_tojunctionid(const char* value) {
+ void PBEdge::set_tojunctionid(const char* value) {
   
   tojunctionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.Edge.toJunctionId)
+  // @@protoc_insertion_point(field_set_char:noninteracting.PBEdge.toJunctionId)
 }
- void Edge::set_tojunctionid(const char* value, size_t size) {
+ void PBEdge::set_tojunctionid(const char* value, size_t size) {
   
   tojunctionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.Edge.toJunctionId)
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.PBEdge.toJunctionId)
 }
- ::std::string* Edge::mutable_tojunctionid() {
+ ::std::string* PBEdge::mutable_tojunctionid() {
   
-  // @@protoc_insertion_point(field_mutable:noninteracting.Edge.toJunctionId)
+  // @@protoc_insertion_point(field_mutable:noninteracting.PBEdge.toJunctionId)
   return tojunctionid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* Edge::release_tojunctionid() {
+ ::std::string* PBEdge::release_tojunctionid() {
   
   return tojunctionid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Edge::set_allocated_tojunctionid(::std::string* tojunctionid) {
+ void PBEdge::set_allocated_tojunctionid(::std::string* tojunctionid) {
   if (tojunctionid != NULL) {
     
   } else {
     
   }
   tojunctionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tojunctionid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.Edge.toJunctionId)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.PBEdge.toJunctionId)
 }
 
 // optional double length = 3;
-void Edge::clear_length() {
+void PBEdge::clear_length() {
   length_ = 0;
 }
- double Edge::length() const {
-  // @@protoc_insertion_point(field_get:noninteracting.Edge.length)
+ double PBEdge::length() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBEdge.length)
   return length_;
 }
- void Edge::set_length(double value) {
+ void PBEdge::set_length(double value) {
   
   length_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.Edge.length)
+  // @@protoc_insertion_point(field_set:noninteracting.PBEdge.length)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1073,77 +1074,77 @@ void Edge::clear_length() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int SUMOTime::kSumoTimeFieldNumber;
+const int PBSUMOTime::kSumoTimeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-SUMOTime::SUMOTime()
+PBSUMOTime::PBSUMOTime()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(constructor:noninteracting.PBSUMOTime)
 }
 
-void SUMOTime::InitAsDefaultInstance() {
+void PBSUMOTime::InitAsDefaultInstance() {
   _is_default_instance_ = true;
 }
 
-SUMOTime::SUMOTime(const SUMOTime& from)
+PBSUMOTime::PBSUMOTime(const PBSUMOTime& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.PBSUMOTime)
 }
 
-void SUMOTime::SharedCtor() {
+void PBSUMOTime::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
   sumotime_ = 0;
 }
 
-SUMOTime::~SUMOTime() {
-  // @@protoc_insertion_point(destructor:noninteracting.SUMOTime)
+PBSUMOTime::~PBSUMOTime() {
+  // @@protoc_insertion_point(destructor:noninteracting.PBSUMOTime)
   SharedDtor();
 }
 
-void SUMOTime::SharedDtor() {
+void PBSUMOTime::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void SUMOTime::SetCachedSize(int size) const {
+void PBSUMOTime::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* SUMOTime::descriptor() {
+const ::google::protobuf::Descriptor* PBSUMOTime::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return SUMOTime_descriptor_;
+  return PBSUMOTime_descriptor_;
 }
 
-const SUMOTime& SUMOTime::default_instance() {
+const PBSUMOTime& PBSUMOTime::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-SUMOTime* SUMOTime::default_instance_ = NULL;
+PBSUMOTime* PBSUMOTime::default_instance_ = NULL;
 
-SUMOTime* SUMOTime::New(::google::protobuf::Arena* arena) const {
-  SUMOTime* n = new SUMOTime;
+PBSUMOTime* PBSUMOTime::New(::google::protobuf::Arena* arena) const {
+  PBSUMOTime* n = new PBSUMOTime;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void SUMOTime::Clear() {
+void PBSUMOTime::Clear() {
   sumotime_ = 0;
 }
 
-bool SUMOTime::MergePartialFromCodedStream(
+bool PBSUMOTime::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(parse_start:noninteracting.PBSUMOTime)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -1176,38 +1177,38 @@ bool SUMOTime::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(parse_success:noninteracting.PBSUMOTime)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(parse_failure:noninteracting.PBSUMOTime)
   return false;
 #undef DO_
 }
 
-void SUMOTime::SerializeWithCachedSizes(
+void PBSUMOTime::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(serialize_start:noninteracting.PBSUMOTime)
   // optional double sumoTime = 1;
   if (this->sumotime() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->sumotime(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(serialize_end:noninteracting.PBSUMOTime)
 }
 
-::google::protobuf::uint8* SUMOTime::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* PBSUMOTime::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.PBSUMOTime)
   // optional double sumoTime = 1;
   if (this->sumotime() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->sumotime(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.SUMOTime)
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.PBSUMOTime)
   return target;
 }
 
-int SUMOTime::ByteSize() const {
+int PBSUMOTime::ByteSize() const {
   int total_size = 0;
 
   // optional double sumoTime = 1;
@@ -1221,10 +1222,10 @@ int SUMOTime::ByteSize() const {
   return total_size;
 }
 
-void SUMOTime::MergeFrom(const ::google::protobuf::Message& from) {
+void PBSUMOTime::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const SUMOTime* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const SUMOTime>(
+  const PBSUMOTime* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBSUMOTime>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1233,63 +1234,63 @@ void SUMOTime::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void SUMOTime::MergeFrom(const SUMOTime& from) {
+void PBSUMOTime::MergeFrom(const PBSUMOTime& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.sumotime() != 0) {
     set_sumotime(from.sumotime());
   }
 }
 
-void SUMOTime::CopyFrom(const ::google::protobuf::Message& from) {
+void PBSUMOTime::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void SUMOTime::CopyFrom(const SUMOTime& from) {
+void PBSUMOTime::CopyFrom(const PBSUMOTime& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool SUMOTime::IsInitialized() const {
+bool PBSUMOTime::IsInitialized() const {
 
   return true;
 }
 
-void SUMOTime::Swap(SUMOTime* other) {
+void PBSUMOTime::Swap(PBSUMOTime* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void SUMOTime::InternalSwap(SUMOTime* other) {
+void PBSUMOTime::InternalSwap(PBSUMOTime* other) {
   std::swap(sumotime_, other->sumotime_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata SUMOTime::GetMetadata() const {
+::google::protobuf::Metadata PBSUMOTime::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = SUMOTime_descriptor_;
-  metadata.reflection = SUMOTime_reflection_;
+  metadata.descriptor = PBSUMOTime_descriptor_;
+  metadata.reflection = PBSUMOTime_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// SUMOTime
+// PBSUMOTime
 
 // optional double sumoTime = 1;
-void SUMOTime::clear_sumotime() {
+void PBSUMOTime::clear_sumotime() {
   sumotime_ = 0;
 }
- double SUMOTime::sumotime() const {
-  // @@protoc_insertion_point(field_get:noninteracting.SUMOTime.sumoTime)
+ double PBSUMOTime::sumotime() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBSUMOTime.sumoTime)
   return sumotime_;
 }
- void SUMOTime::set_sumotime(double value) {
+ void PBSUMOTime::set_sumotime(double value) {
   
   sumotime_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.SUMOTime.sumoTime)
+  // @@protoc_insertion_point(field_set:noninteracting.PBSUMOTime.sumoTime)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1297,77 +1298,77 @@ void SUMOTime::clear_sumotime() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int SUMOReal::kSumoRealFieldNumber;
+const int PBSUMOReal::kSumoRealFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-SUMOReal::SUMOReal()
+PBSUMOReal::PBSUMOReal()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(constructor:noninteracting.PBSUMOReal)
 }
 
-void SUMOReal::InitAsDefaultInstance() {
+void PBSUMOReal::InitAsDefaultInstance() {
   _is_default_instance_ = true;
 }
 
-SUMOReal::SUMOReal(const SUMOReal& from)
+PBSUMOReal::PBSUMOReal(const PBSUMOReal& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.PBSUMOReal)
 }
 
-void SUMOReal::SharedCtor() {
+void PBSUMOReal::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
   sumoreal_ = 0;
 }
 
-SUMOReal::~SUMOReal() {
-  // @@protoc_insertion_point(destructor:noninteracting.SUMOReal)
+PBSUMOReal::~PBSUMOReal() {
+  // @@protoc_insertion_point(destructor:noninteracting.PBSUMOReal)
   SharedDtor();
 }
 
-void SUMOReal::SharedDtor() {
+void PBSUMOReal::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void SUMOReal::SetCachedSize(int size) const {
+void PBSUMOReal::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* SUMOReal::descriptor() {
+const ::google::protobuf::Descriptor* PBSUMOReal::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return SUMOReal_descriptor_;
+  return PBSUMOReal_descriptor_;
 }
 
-const SUMOReal& SUMOReal::default_instance() {
+const PBSUMOReal& PBSUMOReal::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-SUMOReal* SUMOReal::default_instance_ = NULL;
+PBSUMOReal* PBSUMOReal::default_instance_ = NULL;
 
-SUMOReal* SUMOReal::New(::google::protobuf::Arena* arena) const {
-  SUMOReal* n = new SUMOReal;
+PBSUMOReal* PBSUMOReal::New(::google::protobuf::Arena* arena) const {
+  PBSUMOReal* n = new PBSUMOReal;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void SUMOReal::Clear() {
+void PBSUMOReal::Clear() {
   sumoreal_ = 0;
 }
 
-bool SUMOReal::MergePartialFromCodedStream(
+bool PBSUMOReal::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(parse_start:noninteracting.PBSUMOReal)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -1400,38 +1401,38 @@ bool SUMOReal::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(parse_success:noninteracting.PBSUMOReal)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(parse_failure:noninteracting.PBSUMOReal)
   return false;
 #undef DO_
 }
 
-void SUMOReal::SerializeWithCachedSizes(
+void PBSUMOReal::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(serialize_start:noninteracting.PBSUMOReal)
   // optional double sumoReal = 1;
   if (this->sumoreal() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->sumoreal(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(serialize_end:noninteracting.PBSUMOReal)
 }
 
-::google::protobuf::uint8* SUMOReal::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* PBSUMOReal::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.PBSUMOReal)
   // optional double sumoReal = 1;
   if (this->sumoreal() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->sumoreal(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.SUMOReal)
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.PBSUMOReal)
   return target;
 }
 
-int SUMOReal::ByteSize() const {
+int PBSUMOReal::ByteSize() const {
   int total_size = 0;
 
   // optional double sumoReal = 1;
@@ -1445,10 +1446,10 @@ int SUMOReal::ByteSize() const {
   return total_size;
 }
 
-void SUMOReal::MergeFrom(const ::google::protobuf::Message& from) {
+void PBSUMOReal::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const SUMOReal* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const SUMOReal>(
+  const PBSUMOReal* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBSUMOReal>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1457,63 +1458,63 @@ void SUMOReal::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void SUMOReal::MergeFrom(const SUMOReal& from) {
+void PBSUMOReal::MergeFrom(const PBSUMOReal& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.sumoreal() != 0) {
     set_sumoreal(from.sumoreal());
   }
 }
 
-void SUMOReal::CopyFrom(const ::google::protobuf::Message& from) {
+void PBSUMOReal::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void SUMOReal::CopyFrom(const SUMOReal& from) {
+void PBSUMOReal::CopyFrom(const PBSUMOReal& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool SUMOReal::IsInitialized() const {
+bool PBSUMOReal::IsInitialized() const {
 
   return true;
 }
 
-void SUMOReal::Swap(SUMOReal* other) {
+void PBSUMOReal::Swap(PBSUMOReal* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void SUMOReal::InternalSwap(SUMOReal* other) {
+void PBSUMOReal::InternalSwap(PBSUMOReal* other) {
   std::swap(sumoreal_, other->sumoreal_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata SUMOReal::GetMetadata() const {
+::google::protobuf::Metadata PBSUMOReal::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = SUMOReal_descriptor_;
-  metadata.reflection = SUMOReal_reflection_;
+  metadata.descriptor = PBSUMOReal_descriptor_;
+  metadata.reflection = PBSUMOReal_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// SUMOReal
+// PBSUMOReal
 
 // optional double sumoReal = 1;
-void SUMOReal::clear_sumoreal() {
+void PBSUMOReal::clear_sumoreal() {
   sumoreal_ = 0;
 }
- double SUMOReal::sumoreal() const {
-  // @@protoc_insertion_point(field_get:noninteracting.SUMOReal.sumoReal)
+ double PBSUMOReal::sumoreal() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBSUMOReal.sumoReal)
   return sumoreal_;
 }
- void SUMOReal::set_sumoreal(double value) {
+ void PBSUMOReal::set_sumoreal(double value) {
   
   sumoreal_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.SUMOReal.sumoReal)
+  // @@protoc_insertion_point(field_set:noninteracting.PBSUMOReal.sumoReal)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1521,34 +1522,34 @@ void SUMOReal::clear_sumoreal() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int MSPersonStage_Walking::kEdgeFieldNumber;
-const int MSPersonStage_Walking::kNextRouteEdgeFieldNumber;
-const int MSPersonStage_Walking::kDepartPosFieldNumber;
-const int MSPersonStage_Walking::kArrivalPosFieldNumber;
-const int MSPersonStage_Walking::kMaxSpeedFieldNumber;
+const int PBMSPersonStage_Walking::kEdgeFieldNumber;
+const int PBMSPersonStage_Walking::kNextRouteEdgeFieldNumber;
+const int PBMSPersonStage_Walking::kDepartPosFieldNumber;
+const int PBMSPersonStage_Walking::kArrivalPosFieldNumber;
+const int PBMSPersonStage_Walking::kMaxSpeedFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-MSPersonStage_Walking::MSPersonStage_Walking()
+PBMSPersonStage_Walking::PBMSPersonStage_Walking()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(constructor:noninteracting.PBMSPersonStage_Walking)
 }
 
-void MSPersonStage_Walking::InitAsDefaultInstance() {
+void PBMSPersonStage_Walking::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  edge_ = const_cast< ::noninteracting::Edge*>(&::noninteracting::Edge::default_instance());
-  nextrouteedge_ = const_cast< ::noninteracting::Edge*>(&::noninteracting::Edge::default_instance());
+  edge_ = const_cast< ::noninteracting::PBEdge*>(&::noninteracting::PBEdge::default_instance());
+  nextrouteedge_ = const_cast< ::noninteracting::PBEdge*>(&::noninteracting::PBEdge::default_instance());
 }
 
-MSPersonStage_Walking::MSPersonStage_Walking(const MSPersonStage_Walking& from)
+PBMSPersonStage_Walking::PBMSPersonStage_Walking(const PBMSPersonStage_Walking& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.PBMSPersonStage_Walking)
 }
 
-void MSPersonStage_Walking::SharedCtor() {
+void PBMSPersonStage_Walking::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
   edge_ = NULL;
@@ -1558,46 +1559,46 @@ void MSPersonStage_Walking::SharedCtor() {
   maxspeed_ = 0;
 }
 
-MSPersonStage_Walking::~MSPersonStage_Walking() {
-  // @@protoc_insertion_point(destructor:noninteracting.MSPersonStage_Walking)
+PBMSPersonStage_Walking::~PBMSPersonStage_Walking() {
+  // @@protoc_insertion_point(destructor:noninteracting.PBMSPersonStage_Walking)
   SharedDtor();
 }
 
-void MSPersonStage_Walking::SharedDtor() {
+void PBMSPersonStage_Walking::SharedDtor() {
   if (this != default_instance_) {
     delete edge_;
     delete nextrouteedge_;
   }
 }
 
-void MSPersonStage_Walking::SetCachedSize(int size) const {
+void PBMSPersonStage_Walking::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* MSPersonStage_Walking::descriptor() {
+const ::google::protobuf::Descriptor* PBMSPersonStage_Walking::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return MSPersonStage_Walking_descriptor_;
+  return PBMSPersonStage_Walking_descriptor_;
 }
 
-const MSPersonStage_Walking& MSPersonStage_Walking::default_instance() {
+const PBMSPersonStage_Walking& PBMSPersonStage_Walking::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-MSPersonStage_Walking* MSPersonStage_Walking::default_instance_ = NULL;
+PBMSPersonStage_Walking* PBMSPersonStage_Walking::default_instance_ = NULL;
 
-MSPersonStage_Walking* MSPersonStage_Walking::New(::google::protobuf::Arena* arena) const {
-  MSPersonStage_Walking* n = new MSPersonStage_Walking;
+PBMSPersonStage_Walking* PBMSPersonStage_Walking::New(::google::protobuf::Arena* arena) const {
+  PBMSPersonStage_Walking* n = new PBMSPersonStage_Walking;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void MSPersonStage_Walking::Clear() {
+void PBMSPersonStage_Walking::Clear() {
 #define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<MSPersonStage_Walking*>(16)->f)
+  &reinterpret_cast<PBMSPersonStage_Walking*>(16)->f)
 
 #define ZR_(first, last) do {\
   ::memset(&first, 0,\
@@ -1615,17 +1616,17 @@ void MSPersonStage_Walking::Clear() {
 
 }
 
-bool MSPersonStage_Walking::MergePartialFromCodedStream(
+bool PBMSPersonStage_Walking::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(parse_start:noninteracting.PBMSPersonStage_Walking)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .noninteracting.Edge edge = 1;
+      // optional .noninteracting.PBEdge edge = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -1637,7 +1638,7 @@ bool MSPersonStage_Walking::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .noninteracting.Edge nextRouteEdge = 2;
+      // optional .noninteracting.PBEdge nextRouteEdge = 2;
       case 2: {
         if (tag == 18) {
          parse_nextRouteEdge:
@@ -1708,24 +1709,24 @@ bool MSPersonStage_Walking::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(parse_success:noninteracting.PBMSPersonStage_Walking)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(parse_failure:noninteracting.PBMSPersonStage_Walking)
   return false;
 #undef DO_
 }
 
-void MSPersonStage_Walking::SerializeWithCachedSizes(
+void PBMSPersonStage_Walking::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.MSPersonStage_Walking)
-  // optional .noninteracting.Edge edge = 1;
+  // @@protoc_insertion_point(serialize_start:noninteracting.PBMSPersonStage_Walking)
+  // optional .noninteracting.PBEdge edge = 1;
   if (this->has_edge()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->edge_, output);
   }
 
-  // optional .noninteracting.Edge nextRouteEdge = 2;
+  // optional .noninteracting.PBEdge nextRouteEdge = 2;
   if (this->has_nextrouteedge()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->nextrouteedge_, output);
@@ -1746,20 +1747,20 @@ void MSPersonStage_Walking::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->maxspeed(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(serialize_end:noninteracting.PBMSPersonStage_Walking)
 }
 
-::google::protobuf::uint8* MSPersonStage_Walking::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* PBMSPersonStage_Walking::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.MSPersonStage_Walking)
-  // optional .noninteracting.Edge edge = 1;
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.PBMSPersonStage_Walking)
+  // optional .noninteracting.PBEdge edge = 1;
   if (this->has_edge()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, *this->edge_, target);
   }
 
-  // optional .noninteracting.Edge nextRouteEdge = 2;
+  // optional .noninteracting.PBEdge nextRouteEdge = 2;
   if (this->has_nextrouteedge()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1781,21 +1782,21 @@ void MSPersonStage_Walking::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->maxspeed(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.MSPersonStage_Walking)
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.PBMSPersonStage_Walking)
   return target;
 }
 
-int MSPersonStage_Walking::ByteSize() const {
+int PBMSPersonStage_Walking::ByteSize() const {
   int total_size = 0;
 
-  // optional .noninteracting.Edge edge = 1;
+  // optional .noninteracting.PBEdge edge = 1;
   if (this->has_edge()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->edge_);
   }
 
-  // optional .noninteracting.Edge nextRouteEdge = 2;
+  // optional .noninteracting.PBEdge nextRouteEdge = 2;
   if (this->has_nextrouteedge()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1823,10 +1824,10 @@ int MSPersonStage_Walking::ByteSize() const {
   return total_size;
 }
 
-void MSPersonStage_Walking::MergeFrom(const ::google::protobuf::Message& from) {
+void PBMSPersonStage_Walking::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const MSPersonStage_Walking* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const MSPersonStage_Walking>(
+  const PBMSPersonStage_Walking* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBMSPersonStage_Walking>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1835,13 +1836,13 @@ void MSPersonStage_Walking::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void MSPersonStage_Walking::MergeFrom(const MSPersonStage_Walking& from) {
+void PBMSPersonStage_Walking::MergeFrom(const PBMSPersonStage_Walking& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.has_edge()) {
-    mutable_edge()->::noninteracting::Edge::MergeFrom(from.edge());
+    mutable_edge()->::noninteracting::PBEdge::MergeFrom(from.edge());
   }
   if (from.has_nextrouteedge()) {
-    mutable_nextrouteedge()->::noninteracting::Edge::MergeFrom(from.nextrouteedge());
+    mutable_nextrouteedge()->::noninteracting::PBEdge::MergeFrom(from.nextrouteedge());
   }
   if (from.departpos() != 0) {
     set_departpos(from.departpos());
@@ -1854,28 +1855,28 @@ void MSPersonStage_Walking::MergeFrom(const MSPersonStage_Walking& from) {
   }
 }
 
-void MSPersonStage_Walking::CopyFrom(const ::google::protobuf::Message& from) {
+void PBMSPersonStage_Walking::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void MSPersonStage_Walking::CopyFrom(const MSPersonStage_Walking& from) {
+void PBMSPersonStage_Walking::CopyFrom(const PBMSPersonStage_Walking& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool MSPersonStage_Walking::IsInitialized() const {
+bool PBMSPersonStage_Walking::IsInitialized() const {
 
   return true;
 }
 
-void MSPersonStage_Walking::Swap(MSPersonStage_Walking* other) {
+void PBMSPersonStage_Walking::Swap(PBMSPersonStage_Walking* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void MSPersonStage_Walking::InternalSwap(MSPersonStage_Walking* other) {
+void PBMSPersonStage_Walking::InternalSwap(PBMSPersonStage_Walking* other) {
   std::swap(edge_, other->edge_);
   std::swap(nextrouteedge_, other->nextrouteedge_);
   std::swap(departpos_, other->departpos_);
@@ -1885,44 +1886,44 @@ void MSPersonStage_Walking::InternalSwap(MSPersonStage_Walking* other) {
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata MSPersonStage_Walking::GetMetadata() const {
+::google::protobuf::Metadata PBMSPersonStage_Walking::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = MSPersonStage_Walking_descriptor_;
-  metadata.reflection = MSPersonStage_Walking_reflection_;
+  metadata.descriptor = PBMSPersonStage_Walking_descriptor_;
+  metadata.reflection = PBMSPersonStage_Walking_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// MSPersonStage_Walking
+// PBMSPersonStage_Walking
 
-// optional .noninteracting.Edge edge = 1;
-bool MSPersonStage_Walking::has_edge() const {
+// optional .noninteracting.PBEdge edge = 1;
+bool PBMSPersonStage_Walking::has_edge() const {
   return !_is_default_instance_ && edge_ != NULL;
 }
-void MSPersonStage_Walking::clear_edge() {
+void PBMSPersonStage_Walking::clear_edge() {
   if (GetArenaNoVirtual() == NULL && edge_ != NULL) delete edge_;
   edge_ = NULL;
 }
-const ::noninteracting::Edge& MSPersonStage_Walking::edge() const {
-  // @@protoc_insertion_point(field_get:noninteracting.MSPersonStage_Walking.edge)
+const ::noninteracting::PBEdge& PBMSPersonStage_Walking::edge() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBMSPersonStage_Walking.edge)
   return edge_ != NULL ? *edge_ : *default_instance_->edge_;
 }
-::noninteracting::Edge* MSPersonStage_Walking::mutable_edge() {
+::noninteracting::PBEdge* PBMSPersonStage_Walking::mutable_edge() {
   
   if (edge_ == NULL) {
-    edge_ = new ::noninteracting::Edge;
+    edge_ = new ::noninteracting::PBEdge;
   }
-  // @@protoc_insertion_point(field_mutable:noninteracting.MSPersonStage_Walking.edge)
+  // @@protoc_insertion_point(field_mutable:noninteracting.PBMSPersonStage_Walking.edge)
   return edge_;
 }
-::noninteracting::Edge* MSPersonStage_Walking::release_edge() {
+::noninteracting::PBEdge* PBMSPersonStage_Walking::release_edge() {
   
-  ::noninteracting::Edge* temp = edge_;
+  ::noninteracting::PBEdge* temp = edge_;
   edge_ = NULL;
   return temp;
 }
-void MSPersonStage_Walking::set_allocated_edge(::noninteracting::Edge* edge) {
+void PBMSPersonStage_Walking::set_allocated_edge(::noninteracting::PBEdge* edge) {
   delete edge_;
   edge_ = edge;
   if (edge) {
@@ -1930,36 +1931,36 @@ void MSPersonStage_Walking::set_allocated_edge(::noninteracting::Edge* edge) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.MSPersonStage_Walking.edge)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.PBMSPersonStage_Walking.edge)
 }
 
-// optional .noninteracting.Edge nextRouteEdge = 2;
-bool MSPersonStage_Walking::has_nextrouteedge() const {
+// optional .noninteracting.PBEdge nextRouteEdge = 2;
+bool PBMSPersonStage_Walking::has_nextrouteedge() const {
   return !_is_default_instance_ && nextrouteedge_ != NULL;
 }
-void MSPersonStage_Walking::clear_nextrouteedge() {
+void PBMSPersonStage_Walking::clear_nextrouteedge() {
   if (GetArenaNoVirtual() == NULL && nextrouteedge_ != NULL) delete nextrouteedge_;
   nextrouteedge_ = NULL;
 }
-const ::noninteracting::Edge& MSPersonStage_Walking::nextrouteedge() const {
-  // @@protoc_insertion_point(field_get:noninteracting.MSPersonStage_Walking.nextRouteEdge)
+const ::noninteracting::PBEdge& PBMSPersonStage_Walking::nextrouteedge() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBMSPersonStage_Walking.nextRouteEdge)
   return nextrouteedge_ != NULL ? *nextrouteedge_ : *default_instance_->nextrouteedge_;
 }
-::noninteracting::Edge* MSPersonStage_Walking::mutable_nextrouteedge() {
+::noninteracting::PBEdge* PBMSPersonStage_Walking::mutable_nextrouteedge() {
   
   if (nextrouteedge_ == NULL) {
-    nextrouteedge_ = new ::noninteracting::Edge;
+    nextrouteedge_ = new ::noninteracting::PBEdge;
   }
-  // @@protoc_insertion_point(field_mutable:noninteracting.MSPersonStage_Walking.nextRouteEdge)
+  // @@protoc_insertion_point(field_mutable:noninteracting.PBMSPersonStage_Walking.nextRouteEdge)
   return nextrouteedge_;
 }
-::noninteracting::Edge* MSPersonStage_Walking::release_nextrouteedge() {
+::noninteracting::PBEdge* PBMSPersonStage_Walking::release_nextrouteedge() {
   
-  ::noninteracting::Edge* temp = nextrouteedge_;
+  ::noninteracting::PBEdge* temp = nextrouteedge_;
   nextrouteedge_ = NULL;
   return temp;
 }
-void MSPersonStage_Walking::set_allocated_nextrouteedge(::noninteracting::Edge* nextrouteedge) {
+void PBMSPersonStage_Walking::set_allocated_nextrouteedge(::noninteracting::PBEdge* nextrouteedge) {
   delete nextrouteedge_;
   nextrouteedge_ = nextrouteedge;
   if (nextrouteedge) {
@@ -1967,49 +1968,49 @@ void MSPersonStage_Walking::set_allocated_nextrouteedge(::noninteracting::Edge* 
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.MSPersonStage_Walking.nextRouteEdge)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.PBMSPersonStage_Walking.nextRouteEdge)
 }
 
 // optional double departPos = 3;
-void MSPersonStage_Walking::clear_departpos() {
+void PBMSPersonStage_Walking::clear_departpos() {
   departpos_ = 0;
 }
- double MSPersonStage_Walking::departpos() const {
-  // @@protoc_insertion_point(field_get:noninteracting.MSPersonStage_Walking.departPos)
+ double PBMSPersonStage_Walking::departpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBMSPersonStage_Walking.departPos)
   return departpos_;
 }
- void MSPersonStage_Walking::set_departpos(double value) {
+ void PBMSPersonStage_Walking::set_departpos(double value) {
   
   departpos_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.MSPersonStage_Walking.departPos)
+  // @@protoc_insertion_point(field_set:noninteracting.PBMSPersonStage_Walking.departPos)
 }
 
 // optional double arrivalPos = 4;
-void MSPersonStage_Walking::clear_arrivalpos() {
+void PBMSPersonStage_Walking::clear_arrivalpos() {
   arrivalpos_ = 0;
 }
- double MSPersonStage_Walking::arrivalpos() const {
-  // @@protoc_insertion_point(field_get:noninteracting.MSPersonStage_Walking.arrivalPos)
+ double PBMSPersonStage_Walking::arrivalpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBMSPersonStage_Walking.arrivalPos)
   return arrivalpos_;
 }
- void MSPersonStage_Walking::set_arrivalpos(double value) {
+ void PBMSPersonStage_Walking::set_arrivalpos(double value) {
   
   arrivalpos_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.MSPersonStage_Walking.arrivalPos)
+  // @@protoc_insertion_point(field_set:noninteracting.PBMSPersonStage_Walking.arrivalPos)
 }
 
 // optional double maxSpeed = 5;
-void MSPersonStage_Walking::clear_maxspeed() {
+void PBMSPersonStage_Walking::clear_maxspeed() {
   maxspeed_ = 0;
 }
- double MSPersonStage_Walking::maxspeed() const {
-  // @@protoc_insertion_point(field_get:noninteracting.MSPersonStage_Walking.maxSpeed)
+ double PBMSPersonStage_Walking::maxspeed() const {
+  // @@protoc_insertion_point(field_get:noninteracting.PBMSPersonStage_Walking.maxSpeed)
   return maxspeed_;
 }
- void MSPersonStage_Walking::set_maxspeed(double value) {
+ void PBMSPersonStage_Walking::set_maxspeed(double value) {
   
   maxspeed_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.MSPersonStage_Walking.maxSpeed)
+  // @@protoc_insertion_point(field_set:noninteracting.PBMSPersonStage_Walking.maxSpeed)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2017,7 +2018,7 @@ void MSPersonStage_Walking::clear_maxspeed() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int CMPWlkgTm::kEdgeFieldNumber;
+const int CMPWlkgTm::kPrevFieldNumber;
 const int CMPWlkgTm::kStageFieldNumber;
 const int CMPWlkgTm::kSumoTimeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -2030,9 +2031,9 @@ CMPWlkgTm::CMPWlkgTm()
 
 void CMPWlkgTm::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  edge_ = const_cast< ::noninteracting::Edge*>(&::noninteracting::Edge::default_instance());
-  stage_ = const_cast< ::noninteracting::MSPersonStage_Walking*>(&::noninteracting::MSPersonStage_Walking::default_instance());
-  sumotime_ = const_cast< ::noninteracting::SUMOTime*>(&::noninteracting::SUMOTime::default_instance());
+  prev_ = const_cast< ::noninteracting::PBEdge*>(&::noninteracting::PBEdge::default_instance());
+  stage_ = const_cast< ::noninteracting::PBMSPersonStage_Walking*>(&::noninteracting::PBMSPersonStage_Walking::default_instance());
+  sumotime_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
 }
 
 CMPWlkgTm::CMPWlkgTm(const CMPWlkgTm& from)
@@ -2046,7 +2047,7 @@ CMPWlkgTm::CMPWlkgTm(const CMPWlkgTm& from)
 void CMPWlkgTm::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
-  edge_ = NULL;
+  prev_ = NULL;
   stage_ = NULL;
   sumotime_ = NULL;
 }
@@ -2058,7 +2059,7 @@ CMPWlkgTm::~CMPWlkgTm() {
 
 void CMPWlkgTm::SharedDtor() {
   if (this != default_instance_) {
-    delete edge_;
+    delete prev_;
     delete stage_;
     delete sumotime_;
   }
@@ -2090,8 +2091,8 @@ CMPWlkgTm* CMPWlkgTm::New(::google::protobuf::Arena* arena) const {
 }
 
 void CMPWlkgTm::Clear() {
-  if (GetArenaNoVirtual() == NULL && edge_ != NULL) delete edge_;
-  edge_ = NULL;
+  if (GetArenaNoVirtual() == NULL && prev_ != NULL) delete prev_;
+  prev_ = NULL;
   if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
   stage_ = NULL;
   if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
@@ -2108,11 +2109,11 @@ bool CMPWlkgTm::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .noninteracting.Edge edge = 1;
+      // optional .noninteracting.PBEdge prev = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_edge()));
+               input, mutable_prev()));
         } else {
           goto handle_unusual;
         }
@@ -2120,7 +2121,7 @@ bool CMPWlkgTm::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .noninteracting.MSPersonStage_Walking stage = 2;
+      // optional .noninteracting.PBMSPersonStage_Walking stage = 2;
       case 2: {
         if (tag == 18) {
          parse_stage:
@@ -2133,7 +2134,7 @@ bool CMPWlkgTm::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .noninteracting.SUMOTime sumoTime = 3;
+      // optional .noninteracting.PBSUMOTime sumoTime = 3;
       case 3: {
         if (tag == 26) {
          parse_sumoTime:
@@ -2170,19 +2171,19 @@ failure:
 void CMPWlkgTm::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:noninteracting.CMPWlkgTm)
-  // optional .noninteracting.Edge edge = 1;
-  if (this->has_edge()) {
+  // optional .noninteracting.PBEdge prev = 1;
+  if (this->has_prev()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->edge_, output);
+      1, *this->prev_, output);
   }
 
-  // optional .noninteracting.MSPersonStage_Walking stage = 2;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 2;
   if (this->has_stage()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->stage_, output);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 3;
+  // optional .noninteracting.PBSUMOTime sumoTime = 3;
   if (this->has_sumotime()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       3, *this->sumotime_, output);
@@ -2194,21 +2195,21 @@ void CMPWlkgTm::SerializeWithCachedSizes(
 ::google::protobuf::uint8* CMPWlkgTm::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:noninteracting.CMPWlkgTm)
-  // optional .noninteracting.Edge edge = 1;
-  if (this->has_edge()) {
+  // optional .noninteracting.PBEdge prev = 1;
+  if (this->has_prev()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        1, *this->edge_, target);
+        1, *this->prev_, target);
   }
 
-  // optional .noninteracting.MSPersonStage_Walking stage = 2;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 2;
   if (this->has_stage()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, *this->stage_, target);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 3;
+  // optional .noninteracting.PBSUMOTime sumoTime = 3;
   if (this->has_sumotime()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -2222,21 +2223,21 @@ void CMPWlkgTm::SerializeWithCachedSizes(
 int CMPWlkgTm::ByteSize() const {
   int total_size = 0;
 
-  // optional .noninteracting.Edge edge = 1;
-  if (this->has_edge()) {
+  // optional .noninteracting.PBEdge prev = 1;
+  if (this->has_prev()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->edge_);
+        *this->prev_);
   }
 
-  // optional .noninteracting.MSPersonStage_Walking stage = 2;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 2;
   if (this->has_stage()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->stage_);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 3;
+  // optional .noninteracting.PBSUMOTime sumoTime = 3;
   if (this->has_sumotime()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -2263,14 +2264,14 @@ void CMPWlkgTm::MergeFrom(const ::google::protobuf::Message& from) {
 
 void CMPWlkgTm::MergeFrom(const CMPWlkgTm& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.has_edge()) {
-    mutable_edge()->::noninteracting::Edge::MergeFrom(from.edge());
+  if (from.has_prev()) {
+    mutable_prev()->::noninteracting::PBEdge::MergeFrom(from.prev());
   }
   if (from.has_stage()) {
-    mutable_stage()->::noninteracting::MSPersonStage_Walking::MergeFrom(from.stage());
+    mutable_stage()->::noninteracting::PBMSPersonStage_Walking::MergeFrom(from.stage());
   }
   if (from.has_sumotime()) {
-    mutable_sumotime()->::noninteracting::SUMOTime::MergeFrom(from.sumotime());
+    mutable_sumotime()->::noninteracting::PBSUMOTime::MergeFrom(from.sumotime());
   }
 }
 
@@ -2296,7 +2297,7 @@ void CMPWlkgTm::Swap(CMPWlkgTm* other) {
   InternalSwap(other);
 }
 void CMPWlkgTm::InternalSwap(CMPWlkgTm* other) {
-  std::swap(edge_, other->edge_);
+  std::swap(prev_, other->prev_);
   std::swap(stage_, other->stage_);
   std::swap(sumotime_, other->sumotime_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -2314,44 +2315,44 @@ void CMPWlkgTm::InternalSwap(CMPWlkgTm* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // CMPWlkgTm
 
-// optional .noninteracting.Edge edge = 1;
-bool CMPWlkgTm::has_edge() const {
-  return !_is_default_instance_ && edge_ != NULL;
+// optional .noninteracting.PBEdge prev = 1;
+bool CMPWlkgTm::has_prev() const {
+  return !_is_default_instance_ && prev_ != NULL;
 }
-void CMPWlkgTm::clear_edge() {
-  if (GetArenaNoVirtual() == NULL && edge_ != NULL) delete edge_;
-  edge_ = NULL;
+void CMPWlkgTm::clear_prev() {
+  if (GetArenaNoVirtual() == NULL && prev_ != NULL) delete prev_;
+  prev_ = NULL;
 }
-const ::noninteracting::Edge& CMPWlkgTm::edge() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm.edge)
-  return edge_ != NULL ? *edge_ : *default_instance_->edge_;
+const ::noninteracting::PBEdge& CMPWlkgTm::prev() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm.prev)
+  return prev_ != NULL ? *prev_ : *default_instance_->prev_;
 }
-::noninteracting::Edge* CMPWlkgTm::mutable_edge() {
+::noninteracting::PBEdge* CMPWlkgTm::mutable_prev() {
   
-  if (edge_ == NULL) {
-    edge_ = new ::noninteracting::Edge;
+  if (prev_ == NULL) {
+    prev_ = new ::noninteracting::PBEdge;
   }
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm.edge)
-  return edge_;
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm.prev)
+  return prev_;
 }
-::noninteracting::Edge* CMPWlkgTm::release_edge() {
+::noninteracting::PBEdge* CMPWlkgTm::release_prev() {
   
-  ::noninteracting::Edge* temp = edge_;
-  edge_ = NULL;
+  ::noninteracting::PBEdge* temp = prev_;
+  prev_ = NULL;
   return temp;
 }
-void CMPWlkgTm::set_allocated_edge(::noninteracting::Edge* edge) {
-  delete edge_;
-  edge_ = edge;
-  if (edge) {
+void CMPWlkgTm::set_allocated_prev(::noninteracting::PBEdge* prev) {
+  delete prev_;
+  prev_ = prev;
+  if (prev) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm.edge)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm.prev)
 }
 
-// optional .noninteracting.MSPersonStage_Walking stage = 2;
+// optional .noninteracting.PBMSPersonStage_Walking stage = 2;
 bool CMPWlkgTm::has_stage() const {
   return !_is_default_instance_ && stage_ != NULL;
 }
@@ -2359,25 +2360,25 @@ void CMPWlkgTm::clear_stage() {
   if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
   stage_ = NULL;
 }
-const ::noninteracting::MSPersonStage_Walking& CMPWlkgTm::stage() const {
+const ::noninteracting::PBMSPersonStage_Walking& CMPWlkgTm::stage() const {
   // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm.stage)
   return stage_ != NULL ? *stage_ : *default_instance_->stage_;
 }
-::noninteracting::MSPersonStage_Walking* CMPWlkgTm::mutable_stage() {
+::noninteracting::PBMSPersonStage_Walking* CMPWlkgTm::mutable_stage() {
   
   if (stage_ == NULL) {
-    stage_ = new ::noninteracting::MSPersonStage_Walking;
+    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
   }
   // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm.stage)
   return stage_;
 }
-::noninteracting::MSPersonStage_Walking* CMPWlkgTm::release_stage() {
+::noninteracting::PBMSPersonStage_Walking* CMPWlkgTm::release_stage() {
   
-  ::noninteracting::MSPersonStage_Walking* temp = stage_;
+  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
   stage_ = NULL;
   return temp;
 }
-void CMPWlkgTm::set_allocated_stage(::noninteracting::MSPersonStage_Walking* stage) {
+void CMPWlkgTm::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
   delete stage_;
   stage_ = stage;
   if (stage) {
@@ -2388,7 +2389,7 @@ void CMPWlkgTm::set_allocated_stage(::noninteracting::MSPersonStage_Walking* sta
   // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm.stage)
 }
 
-// optional .noninteracting.SUMOTime sumoTime = 3;
+// optional .noninteracting.PBSUMOTime sumoTime = 3;
 bool CMPWlkgTm::has_sumotime() const {
   return !_is_default_instance_ && sumotime_ != NULL;
 }
@@ -2396,25 +2397,25 @@ void CMPWlkgTm::clear_sumotime() {
   if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
   sumotime_ = NULL;
 }
-const ::noninteracting::SUMOTime& CMPWlkgTm::sumotime() const {
+const ::noninteracting::PBSUMOTime& CMPWlkgTm::sumotime() const {
   // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm.sumoTime)
   return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
 }
-::noninteracting::SUMOTime* CMPWlkgTm::mutable_sumotime() {
+::noninteracting::PBSUMOTime* CMPWlkgTm::mutable_sumotime() {
   
   if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::SUMOTime;
+    sumotime_ = new ::noninteracting::PBSUMOTime;
   }
   // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm.sumoTime)
   return sumotime_;
 }
-::noninteracting::SUMOTime* CMPWlkgTm::release_sumotime() {
+::noninteracting::PBSUMOTime* CMPWlkgTm::release_sumotime() {
   
-  ::noninteracting::SUMOTime* temp = sumotime_;
+  ::noninteracting::PBSUMOTime* temp = sumotime_;
   sumotime_ = NULL;
   return temp;
 }
-void CMPWlkgTm::set_allocated_sumotime(::noninteracting::SUMOTime* sumotime) {
+void CMPWlkgTm::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
   delete sumotime_;
   sumotime_ = sumotime;
   if (sumotime) {
@@ -2442,8 +2443,8 @@ GetPos::GetPos()
 
 void GetPos::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  stage_ = const_cast< ::noninteracting::MSPersonStage_Walking*>(&::noninteracting::MSPersonStage_Walking::default_instance());
-  sumotime_ = const_cast< ::noninteracting::SUMOTime*>(&::noninteracting::SUMOTime::default_instance());
+  stage_ = const_cast< ::noninteracting::PBMSPersonStage_Walking*>(&::noninteracting::PBMSPersonStage_Walking::default_instance());
+  sumotime_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
 }
 
 GetPos::GetPos(const GetPos& from)
@@ -2515,7 +2516,7 @@ bool GetPos::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .noninteracting.MSPersonStage_Walking stage = 1;
+      // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -2527,7 +2528,7 @@ bool GetPos::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .noninteracting.SUMOTime sumoTime = 2;
+      // optional .noninteracting.PBSUMOTime sumoTime = 2;
       case 2: {
         if (tag == 18) {
          parse_sumoTime:
@@ -2564,13 +2565,13 @@ failure:
 void GetPos::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:noninteracting.GetPos)
-  // optional .noninteracting.MSPersonStage_Walking stage = 1;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
   if (this->has_stage()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->stage_, output);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 2;
+  // optional .noninteracting.PBSUMOTime sumoTime = 2;
   if (this->has_sumotime()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->sumotime_, output);
@@ -2582,14 +2583,14 @@ void GetPos::SerializeWithCachedSizes(
 ::google::protobuf::uint8* GetPos::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:noninteracting.GetPos)
-  // optional .noninteracting.MSPersonStage_Walking stage = 1;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
   if (this->has_stage()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, *this->stage_, target);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 2;
+  // optional .noninteracting.PBSUMOTime sumoTime = 2;
   if (this->has_sumotime()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -2603,14 +2604,14 @@ void GetPos::SerializeWithCachedSizes(
 int GetPos::ByteSize() const {
   int total_size = 0;
 
-  // optional .noninteracting.MSPersonStage_Walking stage = 1;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
   if (this->has_stage()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->stage_);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 2;
+  // optional .noninteracting.PBSUMOTime sumoTime = 2;
   if (this->has_sumotime()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -2638,10 +2639,10 @@ void GetPos::MergeFrom(const ::google::protobuf::Message& from) {
 void GetPos::MergeFrom(const GetPos& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.has_stage()) {
-    mutable_stage()->::noninteracting::MSPersonStage_Walking::MergeFrom(from.stage());
+    mutable_stage()->::noninteracting::PBMSPersonStage_Walking::MergeFrom(from.stage());
   }
   if (from.has_sumotime()) {
-    mutable_sumotime()->::noninteracting::SUMOTime::MergeFrom(from.sumotime());
+    mutable_sumotime()->::noninteracting::PBSUMOTime::MergeFrom(from.sumotime());
   }
 }
 
@@ -2684,7 +2685,7 @@ void GetPos::InternalSwap(GetPos* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // GetPos
 
-// optional .noninteracting.MSPersonStage_Walking stage = 1;
+// optional .noninteracting.PBMSPersonStage_Walking stage = 1;
 bool GetPos::has_stage() const {
   return !_is_default_instance_ && stage_ != NULL;
 }
@@ -2692,25 +2693,25 @@ void GetPos::clear_stage() {
   if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
   stage_ = NULL;
 }
-const ::noninteracting::MSPersonStage_Walking& GetPos::stage() const {
+const ::noninteracting::PBMSPersonStage_Walking& GetPos::stage() const {
   // @@protoc_insertion_point(field_get:noninteracting.GetPos.stage)
   return stage_ != NULL ? *stage_ : *default_instance_->stage_;
 }
-::noninteracting::MSPersonStage_Walking* GetPos::mutable_stage() {
+::noninteracting::PBMSPersonStage_Walking* GetPos::mutable_stage() {
   
   if (stage_ == NULL) {
-    stage_ = new ::noninteracting::MSPersonStage_Walking;
+    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
   }
   // @@protoc_insertion_point(field_mutable:noninteracting.GetPos.stage)
   return stage_;
 }
-::noninteracting::MSPersonStage_Walking* GetPos::release_stage() {
+::noninteracting::PBMSPersonStage_Walking* GetPos::release_stage() {
   
-  ::noninteracting::MSPersonStage_Walking* temp = stage_;
+  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
   stage_ = NULL;
   return temp;
 }
-void GetPos::set_allocated_stage(::noninteracting::MSPersonStage_Walking* stage) {
+void GetPos::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
   delete stage_;
   stage_ = stage;
   if (stage) {
@@ -2721,7 +2722,7 @@ void GetPos::set_allocated_stage(::noninteracting::MSPersonStage_Walking* stage)
   // @@protoc_insertion_point(field_set_allocated:noninteracting.GetPos.stage)
 }
 
-// optional .noninteracting.SUMOTime sumoTime = 2;
+// optional .noninteracting.PBSUMOTime sumoTime = 2;
 bool GetPos::has_sumotime() const {
   return !_is_default_instance_ && sumotime_ != NULL;
 }
@@ -2729,25 +2730,25 @@ void GetPos::clear_sumotime() {
   if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
   sumotime_ = NULL;
 }
-const ::noninteracting::SUMOTime& GetPos::sumotime() const {
+const ::noninteracting::PBSUMOTime& GetPos::sumotime() const {
   // @@protoc_insertion_point(field_get:noninteracting.GetPos.sumoTime)
   return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
 }
-::noninteracting::SUMOTime* GetPos::mutable_sumotime() {
+::noninteracting::PBSUMOTime* GetPos::mutable_sumotime() {
   
   if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::SUMOTime;
+    sumotime_ = new ::noninteracting::PBSUMOTime;
   }
   // @@protoc_insertion_point(field_mutable:noninteracting.GetPos.sumoTime)
   return sumotime_;
 }
-::noninteracting::SUMOTime* GetPos::release_sumotime() {
+::noninteracting::PBSUMOTime* GetPos::release_sumotime() {
   
-  ::noninteracting::SUMOTime* temp = sumotime_;
+  ::noninteracting::PBSUMOTime* temp = sumotime_;
   sumotime_ = NULL;
   return temp;
 }
-void GetPos::set_allocated_sumotime(::noninteracting::SUMOTime* sumotime) {
+void GetPos::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
   delete sumotime_;
   sumotime_ = sumotime;
   if (sumotime) {
@@ -2775,8 +2776,8 @@ GetAngle::GetAngle()
 
 void GetAngle::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  stage_ = const_cast< ::noninteracting::MSPersonStage_Walking*>(&::noninteracting::MSPersonStage_Walking::default_instance());
-  sumotime_ = const_cast< ::noninteracting::SUMOTime*>(&::noninteracting::SUMOTime::default_instance());
+  stage_ = const_cast< ::noninteracting::PBMSPersonStage_Walking*>(&::noninteracting::PBMSPersonStage_Walking::default_instance());
+  sumotime_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
 }
 
 GetAngle::GetAngle(const GetAngle& from)
@@ -2848,7 +2849,7 @@ bool GetAngle::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .noninteracting.MSPersonStage_Walking stage = 1;
+      // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -2860,7 +2861,7 @@ bool GetAngle::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .noninteracting.SUMOTime sumoTime = 2;
+      // optional .noninteracting.PBSUMOTime sumoTime = 2;
       case 2: {
         if (tag == 18) {
          parse_sumoTime:
@@ -2897,13 +2898,13 @@ failure:
 void GetAngle::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:noninteracting.GetAngle)
-  // optional .noninteracting.MSPersonStage_Walking stage = 1;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
   if (this->has_stage()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->stage_, output);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 2;
+  // optional .noninteracting.PBSUMOTime sumoTime = 2;
   if (this->has_sumotime()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->sumotime_, output);
@@ -2915,14 +2916,14 @@ void GetAngle::SerializeWithCachedSizes(
 ::google::protobuf::uint8* GetAngle::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:noninteracting.GetAngle)
-  // optional .noninteracting.MSPersonStage_Walking stage = 1;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
   if (this->has_stage()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, *this->stage_, target);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 2;
+  // optional .noninteracting.PBSUMOTime sumoTime = 2;
   if (this->has_sumotime()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -2936,14 +2937,14 @@ void GetAngle::SerializeWithCachedSizes(
 int GetAngle::ByteSize() const {
   int total_size = 0;
 
-  // optional .noninteracting.MSPersonStage_Walking stage = 1;
+  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
   if (this->has_stage()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->stage_);
   }
 
-  // optional .noninteracting.SUMOTime sumoTime = 2;
+  // optional .noninteracting.PBSUMOTime sumoTime = 2;
   if (this->has_sumotime()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -2971,10 +2972,10 @@ void GetAngle::MergeFrom(const ::google::protobuf::Message& from) {
 void GetAngle::MergeFrom(const GetAngle& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.has_stage()) {
-    mutable_stage()->::noninteracting::MSPersonStage_Walking::MergeFrom(from.stage());
+    mutable_stage()->::noninteracting::PBMSPersonStage_Walking::MergeFrom(from.stage());
   }
   if (from.has_sumotime()) {
-    mutable_sumotime()->::noninteracting::SUMOTime::MergeFrom(from.sumotime());
+    mutable_sumotime()->::noninteracting::PBSUMOTime::MergeFrom(from.sumotime());
   }
 }
 
@@ -3017,7 +3018,7 @@ void GetAngle::InternalSwap(GetAngle* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // GetAngle
 
-// optional .noninteracting.MSPersonStage_Walking stage = 1;
+// optional .noninteracting.PBMSPersonStage_Walking stage = 1;
 bool GetAngle::has_stage() const {
   return !_is_default_instance_ && stage_ != NULL;
 }
@@ -3025,25 +3026,25 @@ void GetAngle::clear_stage() {
   if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
   stage_ = NULL;
 }
-const ::noninteracting::MSPersonStage_Walking& GetAngle::stage() const {
+const ::noninteracting::PBMSPersonStage_Walking& GetAngle::stage() const {
   // @@protoc_insertion_point(field_get:noninteracting.GetAngle.stage)
   return stage_ != NULL ? *stage_ : *default_instance_->stage_;
 }
-::noninteracting::MSPersonStage_Walking* GetAngle::mutable_stage() {
+::noninteracting::PBMSPersonStage_Walking* GetAngle::mutable_stage() {
   
   if (stage_ == NULL) {
-    stage_ = new ::noninteracting::MSPersonStage_Walking;
+    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
   }
   // @@protoc_insertion_point(field_mutable:noninteracting.GetAngle.stage)
   return stage_;
 }
-::noninteracting::MSPersonStage_Walking* GetAngle::release_stage() {
+::noninteracting::PBMSPersonStage_Walking* GetAngle::release_stage() {
   
-  ::noninteracting::MSPersonStage_Walking* temp = stage_;
+  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
   stage_ = NULL;
   return temp;
 }
-void GetAngle::set_allocated_stage(::noninteracting::MSPersonStage_Walking* stage) {
+void GetAngle::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
   delete stage_;
   stage_ = stage;
   if (stage) {
@@ -3054,7 +3055,7 @@ void GetAngle::set_allocated_stage(::noninteracting::MSPersonStage_Walking* stag
   // @@protoc_insertion_point(field_set_allocated:noninteracting.GetAngle.stage)
 }
 
-// optional .noninteracting.SUMOTime sumoTime = 2;
+// optional .noninteracting.PBSUMOTime sumoTime = 2;
 bool GetAngle::has_sumotime() const {
   return !_is_default_instance_ && sumotime_ != NULL;
 }
@@ -3062,25 +3063,25 @@ void GetAngle::clear_sumotime() {
   if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
   sumotime_ = NULL;
 }
-const ::noninteracting::SUMOTime& GetAngle::sumotime() const {
+const ::noninteracting::PBSUMOTime& GetAngle::sumotime() const {
   // @@protoc_insertion_point(field_get:noninteracting.GetAngle.sumoTime)
   return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
 }
-::noninteracting::SUMOTime* GetAngle::mutable_sumotime() {
+::noninteracting::PBSUMOTime* GetAngle::mutable_sumotime() {
   
   if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::SUMOTime;
+    sumotime_ = new ::noninteracting::PBSUMOTime;
   }
   // @@protoc_insertion_point(field_mutable:noninteracting.GetAngle.sumoTime)
   return sumotime_;
 }
-::noninteracting::SUMOTime* GetAngle::release_sumotime() {
+::noninteracting::PBSUMOTime* GetAngle::release_sumotime() {
   
-  ::noninteracting::SUMOTime* temp = sumotime_;
+  ::noninteracting::PBSUMOTime* temp = sumotime_;
   sumotime_ = NULL;
   return temp;
 }
-void GetAngle::set_allocated_sumotime(::noninteracting::SUMOTime* sumotime) {
+void GetAngle::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
   delete sumotime_;
   sumotime_ = sumotime;
   if (sumotime) {

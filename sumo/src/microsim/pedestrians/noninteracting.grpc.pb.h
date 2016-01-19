@@ -25,79 +25,79 @@ class ServerContext;
 
 namespace noninteracting {
 
-class PState GRPC_FINAL {
+class PBPState GRPC_FINAL {
  public:
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status computeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::noninteracting::SUMOTime* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOTime>> AsynccomputeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOTime>>(AsynccomputeWalkingTimeRaw(context, request, cq));
+    virtual ::grpc::Status computeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::noninteracting::PBSUMOTime* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOTime>> AsynccomputeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOTime>>(AsynccomputeWalkingTimeRaw(context, request, cq));
     }
-    virtual ::grpc::Status getPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::noninteracting::Position* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::Position>> AsyncgetPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::Position>>(AsyncgetPositionRaw(context, request, cq));
+    virtual ::grpc::Status getPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::noninteracting::PBPosition* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBPosition>> AsyncgetPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBPosition>>(AsyncgetPositionRaw(context, request, cq));
     }
-    virtual ::grpc::Status getAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::noninteracting::SUMOReal* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOReal>> AsyncgetAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOReal>>(AsyncgetAngleRaw(context, request, cq));
+    virtual ::grpc::Status getAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::noninteracting::PBSUMOReal* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOReal>> AsyncgetAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOReal>>(AsyncgetAngleRaw(context, request, cq));
     }
-    virtual ::grpc::Status getWaitingTime(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::noninteracting::SUMOTime* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOTime>> AsyncgetWaitingTime(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOTime>>(AsyncgetWaitingTimeRaw(context, request, cq));
+    virtual ::grpc::Status getWaitingTime(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::noninteracting::PBSUMOTime* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOTime>> AsyncgetWaitingTime(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOTime>>(AsyncgetWaitingTimeRaw(context, request, cq));
     }
-    virtual ::grpc::Status getSpeed(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::noninteracting::SUMOReal* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOReal>> AsyncgetSpeed(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOReal>>(AsyncgetSpeedRaw(context, request, cq));
+    virtual ::grpc::Status getSpeed(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::noninteracting::PBSUMOReal* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOReal>> AsyncgetSpeed(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOReal>>(AsyncgetSpeedRaw(context, request, cq));
     }
-    virtual ::grpc::Status getNextEdge(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::noninteracting::Edge* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::Edge>> AsyncgetNextEdge(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::Edge>>(AsyncgetNextEdgeRaw(context, request, cq));
+    virtual ::grpc::Status getNextEdge(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::noninteracting::PBEdge* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBEdge>> AsyncgetNextEdge(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBEdge>>(AsyncgetNextEdgeRaw(context, request, cq));
     }
   private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOTime>* AsynccomputeWalkingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::Position>* AsyncgetPositionRaw(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOReal>* AsyncgetAngleRaw(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOTime>* AsyncgetWaitingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::SUMOReal>* AsyncgetSpeedRaw(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::Edge>* AsyncgetNextEdgeRaw(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOTime>* AsynccomputeWalkingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBPosition>* AsyncgetPositionRaw(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOReal>* AsyncgetAngleRaw(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOTime>* AsyncgetWaitingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBSUMOReal>* AsyncgetSpeedRaw(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::noninteracting::PBEdge>* AsyncgetNextEdgeRaw(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub GRPC_FINAL : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::Channel>& channel);
-    ::grpc::Status computeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::noninteracting::SUMOTime* response) GRPC_OVERRIDE;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>> AsynccomputeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>>(AsynccomputeWalkingTimeRaw(context, request, cq));
+    ::grpc::Status computeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::noninteracting::PBSUMOTime* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>> AsynccomputeWalkingTime(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>>(AsynccomputeWalkingTimeRaw(context, request, cq));
     }
-    ::grpc::Status getPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::noninteracting::Position* response) GRPC_OVERRIDE;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::Position>> AsyncgetPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::Position>>(AsyncgetPositionRaw(context, request, cq));
+    ::grpc::Status getPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::noninteracting::PBPosition* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBPosition>> AsyncgetPosition(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBPosition>>(AsyncgetPositionRaw(context, request, cq));
     }
-    ::grpc::Status getAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::noninteracting::SUMOReal* response) GRPC_OVERRIDE;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>> AsyncgetAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>>(AsyncgetAngleRaw(context, request, cq));
+    ::grpc::Status getAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::noninteracting::PBSUMOReal* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>> AsyncgetAngle(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>>(AsyncgetAngleRaw(context, request, cq));
     }
-    ::grpc::Status getWaitingTime(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::noninteracting::SUMOTime* response) GRPC_OVERRIDE;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>> AsyncgetWaitingTime(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>>(AsyncgetWaitingTimeRaw(context, request, cq));
+    ::grpc::Status getWaitingTime(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::noninteracting::PBSUMOTime* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>> AsyncgetWaitingTime(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>>(AsyncgetWaitingTimeRaw(context, request, cq));
     }
-    ::grpc::Status getSpeed(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::noninteracting::SUMOReal* response) GRPC_OVERRIDE;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>> AsyncgetSpeed(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>>(AsyncgetSpeedRaw(context, request, cq));
+    ::grpc::Status getSpeed(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::noninteracting::PBSUMOReal* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>> AsyncgetSpeed(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>>(AsyncgetSpeedRaw(context, request, cq));
     }
-    ::grpc::Status getNextEdge(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::noninteracting::Edge* response) GRPC_OVERRIDE;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::Edge>> AsyncgetNextEdge(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::Edge>>(AsyncgetNextEdgeRaw(context, request, cq));
+    ::grpc::Status getNextEdge(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::noninteracting::PBEdge* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBEdge>> AsyncgetNextEdge(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::noninteracting::PBEdge>>(AsyncgetNextEdgeRaw(context, request, cq));
     }
 
    private:
     std::shared_ptr< ::grpc::Channel> channel_;
-    ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>* AsynccomputeWalkingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
-    ::grpc::ClientAsyncResponseReader< ::noninteracting::Position>* AsyncgetPositionRaw(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
-    ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>* AsyncgetAngleRaw(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
-    ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOTime>* AsyncgetWaitingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::SUMOTime& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
-    ::grpc::ClientAsyncResponseReader< ::noninteracting::SUMOReal>* AsyncgetSpeedRaw(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
-    ::grpc::ClientAsyncResponseReader< ::noninteracting::Edge>* AsyncgetNextEdgeRaw(::grpc::ClientContext* context, const ::noninteracting::MSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>* AsynccomputeWalkingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::CMPWlkgTm& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::noninteracting::PBPosition>* AsyncgetPositionRaw(::grpc::ClientContext* context, const ::noninteracting::GetPos& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>* AsyncgetAngleRaw(::grpc::ClientContext* context, const ::noninteracting::GetAngle& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOTime>* AsyncgetWaitingTimeRaw(::grpc::ClientContext* context, const ::noninteracting::PBSUMOTime& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::noninteracting::PBSUMOReal>* AsyncgetSpeedRaw(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::noninteracting::PBEdge>* AsyncgetNextEdgeRaw(::grpc::ClientContext* context, const ::noninteracting::PBMSPersonStage_Walking& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
     const ::grpc::RpcMethod rpcmethod_computeWalkingTime_;
     const ::grpc::RpcMethod rpcmethod_getPosition_;
     const ::grpc::RpcMethod rpcmethod_getAngle_;
@@ -111,12 +111,12 @@ class PState GRPC_FINAL {
    public:
     Service() : service_(nullptr) {}
     virtual ~Service();
-    virtual ::grpc::Status computeWalkingTime(::grpc::ServerContext* context, const ::noninteracting::CMPWlkgTm* request, ::noninteracting::SUMOTime* response);
-    virtual ::grpc::Status getPosition(::grpc::ServerContext* context, const ::noninteracting::GetPos* request, ::noninteracting::Position* response);
-    virtual ::grpc::Status getAngle(::grpc::ServerContext* context, const ::noninteracting::GetAngle* request, ::noninteracting::SUMOReal* response);
-    virtual ::grpc::Status getWaitingTime(::grpc::ServerContext* context, const ::noninteracting::SUMOTime* request, ::noninteracting::SUMOTime* response);
-    virtual ::grpc::Status getSpeed(::grpc::ServerContext* context, const ::noninteracting::MSPersonStage_Walking* request, ::noninteracting::SUMOReal* response);
-    virtual ::grpc::Status getNextEdge(::grpc::ServerContext* context, const ::noninteracting::MSPersonStage_Walking* request, ::noninteracting::Edge* response);
+    virtual ::grpc::Status computeWalkingTime(::grpc::ServerContext* context, const ::noninteracting::CMPWlkgTm* request, ::noninteracting::PBSUMOTime* response);
+    virtual ::grpc::Status getPosition(::grpc::ServerContext* context, const ::noninteracting::GetPos* request, ::noninteracting::PBPosition* response);
+    virtual ::grpc::Status getAngle(::grpc::ServerContext* context, const ::noninteracting::GetAngle* request, ::noninteracting::PBSUMOReal* response);
+    virtual ::grpc::Status getWaitingTime(::grpc::ServerContext* context, const ::noninteracting::PBSUMOTime* request, ::noninteracting::PBSUMOTime* response);
+    virtual ::grpc::Status getSpeed(::grpc::ServerContext* context, const ::noninteracting::PBMSPersonStage_Walking* request, ::noninteracting::PBSUMOReal* response);
+    virtual ::grpc::Status getNextEdge(::grpc::ServerContext* context, const ::noninteracting::PBMSPersonStage_Walking* request, ::noninteracting::PBEdge* response);
     ::grpc::RpcService* service() GRPC_OVERRIDE GRPC_FINAL;
    private:
     ::grpc::RpcService* service_;
@@ -125,12 +125,12 @@ class PState GRPC_FINAL {
    public:
     explicit AsyncService();
     ~AsyncService() {};
-    void RequestcomputeWalkingTime(::grpc::ServerContext* context, ::noninteracting::CMPWlkgTm* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestgetPosition(::grpc::ServerContext* context, ::noninteracting::GetPos* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::Position>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestgetAngle(::grpc::ServerContext* context, ::noninteracting::GetAngle* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestgetWaitingTime(::grpc::ServerContext* context, ::noninteracting::SUMOTime* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestgetSpeed(::grpc::ServerContext* context, ::noninteracting::MSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::SUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestgetNextEdge(::grpc::ServerContext* context, ::noninteracting::MSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::Edge>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestcomputeWalkingTime(::grpc::ServerContext* context, ::noninteracting::CMPWlkgTm* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestgetPosition(::grpc::ServerContext* context, ::noninteracting::GetPos* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBPosition>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestgetAngle(::grpc::ServerContext* context, ::noninteracting::GetAngle* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestgetWaitingTime(::grpc::ServerContext* context, ::noninteracting::PBSUMOTime* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOTime>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestgetSpeed(::grpc::ServerContext* context, ::noninteracting::PBMSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBSUMOReal>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestgetNextEdge(::grpc::ServerContext* context, ::noninteracting::PBMSPersonStage_Walking* request, ::grpc::ServerAsyncResponseWriter< ::noninteracting::PBEdge>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
   };
 };
 

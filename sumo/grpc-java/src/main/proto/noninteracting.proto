@@ -19,58 +19,58 @@ option java_multiple_files = false;
 option java_package = "de.dlr.sumo.noninteracting";
 option java_outer_classname = "NonInteractingProto";
 
-service PState {
-    rpc computeWalkingTime(CMPWlkgTm) returns (SUMOTime) {}
-    rpc getPosition(GetPos) returns (Position) {}
-    rpc getAngle(GetAngle) returns (SUMOReal) {}
-    rpc getWaitingTime(SUMOTime) returns (SUMOTime) {}
-    rpc getSpeed(MSPersonStage_Walking) returns (SUMOReal) {}
-    rpc getNextEdge(MSPersonStage_Walking) returns (Edge) {}
+service PBPState {
+    rpc computeWalkingTime(CMPWlkgTm) returns (PBSUMOTime) {}
+    rpc getPosition(GetPos) returns (PBPosition) {}
+    rpc getAngle(GetAngle) returns (PBSUMOReal) {}
+    rpc getWaitingTime(PBSUMOTime) returns (PBSUMOTime) {}
+    rpc getSpeed(PBMSPersonStage_Walking) returns (PBSUMOReal) {}
+    rpc getNextEdge(PBMSPersonStage_Walking) returns (PBEdge) {}
 
 }
 
 
 
-message Position {
+message PBPosition {
     double x = 1;
     double y = 2;
     double z = 3;
 }
 
-message Edge {
+message PBEdge {
     string fromJunctionId = 1;
     string toJunctionId = 2;
     double length = 3;
 }
 
-message SUMOTime {
+message PBSUMOTime {
     double sumoTime = 1;
 }
 
-message SUMOReal {
+message PBSUMOReal {
     double sumoReal = 1;
 }
 
-message MSPersonStage_Walking {
-    Edge edge = 1;
-    Edge nextRouteEdge = 2;
+message PBMSPersonStage_Walking {
+    PBEdge edge = 1;
+    PBEdge nextRouteEdge = 2;
     double departPos = 3;
     double arrivalPos = 4;
     double maxSpeed = 5;
 }
 
 message CMPWlkgTm {
-    Edge edge = 1;
-    MSPersonStage_Walking stage = 2;
-    SUMOTime sumoTime = 3;
+    PBEdge prev = 1;
+    PBMSPersonStage_Walking stage = 2;
+    PBSUMOTime sumoTime = 3;
 }
 
 message GetPos {
-    MSPersonStage_Walking stage = 1;
-    SUMOTime sumoTime = 2;
+    PBMSPersonStage_Walking stage = 1;
+    PBSUMOTime sumoTime = 2;
 }
 
 message GetAngle {
-    MSPersonStage_Walking stage = 1;
-    SUMOTime sumoTime = 2;
+    PBMSPersonStage_Walking stage = 1;
+    PBSUMOTime sumoTime = 2;
 }

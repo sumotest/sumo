@@ -29,9 +29,13 @@ public class NonInteractingPedestrian {
     private int port = 8081;
     private Server server;
 
+    private static int FWD = 1;
+    private static int BCKWD = -1;
+    private static int UNDF = 0;
+
     private void start() throws Exception {
         server = ServerBuilder.forPort(port)
-                .addService(PStateGrpc.bindService(new PStateImpl()))
+                .addService(PBPStateGrpc.bindService(new PStateImpl()))
                 .build()
                 .start();
         logger.info("Server started, listening on " + port);
@@ -71,39 +75,71 @@ public class NonInteractingPedestrian {
 
     }
 
-    private class PStateImpl implements PStateGrpc.PState {
+    private class PStateImpl implements PBPStateGrpc.PBPState {
 
         @Override
-        public void computeWalkingTime(NonInteractingProto.CMPWlkgTm request, StreamObserver<NonInteractingProto.SUMOTime> responseObserver) {
+        public void computeWalkingTime(NonInteractingProto.CMPWlkgTm request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
+            double currentTime = request.getSumoTime().getSumoTime();
+            NonInteractingProto.PBEdge prev = request.getPrev();
+            NonInteractingProto.PBEdge edge = request.getStage().getEdge();
+            NonInteractingProto.PBEdge nxt = request.getStage().getNextRouteEdge();
+            int dir = UNDF;
+            double beginPos;
+            double endPos;
+
+            if (prev != null) {
+                beginPos = request.getStage().getDepartPos();
+            } else {
+                dir = (edge.getToJunctionId() == prev.getToJunctionId() || edge.getToJunctionId() == prev.getFromJunctionId()) ? BCKWD : FWD;
+                beginPos = dir == FWD ? 0 : edge.getLength();
+            }
+            if (nxt == null) {
+                endPos = request.getStage().getArrivalPos();
+            } else {
+                if (dir == UNDF) {
+                    dir = (edge.getToJunctionId() == prev.getToJunctionId() || edge.getToJunctionId() == prev.getFromJunctionId()) ? BCKWD : FWD;
+                }
+                endPos = dir == FWD ? edge.getLength() : 0;
+            }
+
+            double duration = MAX2(1, Math.abs(endPos-beginPos)/request.getStage().getMaxSpeed());
+
+            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(duration).build();
+            responseObserver.onNext(t);
+            responseObserver.onCompleted();
 
         }
 
         @Override
-        public void getPosition(NonInteractingProto.GetPos request, StreamObserver<NonInteractingProto.Position> responseObserver) {
+        public void getPosition(NonInteractingProto.GetPos request, StreamObserver<NonInteractingProto.PBPosition> responseObserver) {
 
         }
 
         @Override
-        public void getAngle(NonInteractingProto.GetAngle request, StreamObserver<NonInteractingProto.SUMOReal> responseObserver) {
+        public void getAngle(NonInteractingProto.GetAngle request, StreamObserver<NonInteractingProto.PBSUMOReal> responseObserver) {
 
         }
 
         @Override
-        public void getWaitingTime(NonInteractingProto.SUMOTime request, StreamObserver<NonInteractingProto.SUMOTime> responseObserver) {
-            NonInteractingProto.SUMOTime replay = NonInteractingProto.SUMOTime.newBuilder().setSumoTime(0).build();
+        public void getWaitingTime(NonInteractingProto.PBSUMOTime request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
+            NonInteractingProto.PBSUMOTime replay = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(0).build();
             responseObserver.onNext(replay);
             responseObserver.onCompleted();
 
         }
 
         @Override
-        public void getSpeed(NonInteractingProto.MSPersonStage_Walking request, StreamObserver<NonInteractingProto.SUMOReal> responseObserver) {
+        public void getSpeed(NonInteractingProto.PBMSPersonStage_Walking request, StreamObserver<NonInteractingProto.PBSUMOReal> responseObserver) {
 
         }
 
         @Override
-        public void getNextEdge(NonInteractingProto.MSPersonStage_Walking request, StreamObserver<NonInteractingProto.Edge> responseObserver) {
+        public void getNextEdge(NonInteractingProto.PBMSPersonStage_Walking request, StreamObserver<NonInteractingProto.PBEdge> responseObserver) {
 
         }
+    }
+
+    private static double MAX2(double a, double b) {
+        return a > b ? a : b;
     }
 }
