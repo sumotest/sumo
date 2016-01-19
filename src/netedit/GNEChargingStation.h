@@ -210,45 +210,26 @@ private:
     /// @brief delay in the starting of charge
     SUMOReal myChargeDelay;
 
-    /// @brief The shape
-    PositionVector myShape;
-
-    /// @brief The position of the sign
-    Position mySignPos;
-
-    /// @brief The rotation of the sign
-    SUMOReal mySignRot;
-
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
-
 private:
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
+
+    /// @brief set colors of scheme
+    void setColors();
+
+    /// @brief list of colors
+    enum colorTypes {
+        CHARGINGSTATION_BASE = 0,
+        CHARGINGSTATION_BASE_SELECTED = 1,
+        CHARGINGSTATION_SIGN = 2,
+        CHARGINGSTATION_SIGN_SELECTED = 3,
+    };
 
     /// @brief Invalidated copy constructor.
     GNEChargingStation(const GNEChargingStation&);
 
     /// @brief Invalidated assignment operator.
     GNEChargingStation& operator=(const GNEChargingStation&);
-
-    /// @brief return value for lane coloring according to the given scheme
-    SUMOReal getColorValue(size_t activeScheme) const;
-        
-    /// @brief sets the color according to the current scheme index and some lane function
-    bool setFunctionalColor(size_t activeScheme) const;
-
-    /// @brief sets multiple colors according to the current scheme index and some lane function
-    bool setMultiColor(const GUIColorer& c) const;
-    
-    /// The color of the shape parts (cached)
-    mutable std::vector<RGBColor> myShapeColors;
 };
 
 

@@ -214,6 +214,27 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.addOptionSubTopic("Building Defaults");
     oc.addOptionSubTopic("Visualisation");
 
+    oc.doRegister("busStop default length", new Option_String("10"));                                   // PABLO #1916
+    oc.addDescription("busStop default length", "Default values", "Default lenght of the busStops");    // PABLO #1916
+
+    oc.doRegister("busStop default lines", new Option_String());                                    // PABLO #1916
+    oc.addDescription("busStop default lines", "Default values", "Default lines of the busStops");  // PABLO #1916
+
+    oc.doRegister("chargingStation default length", new Option_String("10"));                                       // PABLO #1916
+    oc.addDescription("chargingStation default length", "Default values", "Default length of the chargingStation"); // PABLO #1916
+
+    oc.doRegister("chargingStation default charging power", new Option_String("22000"));                                            // PABLO #1916
+    oc.addDescription("chargingStation default charging power", "Default values", "Default charging power of the chargingStation"); // PABLO #1916
+
+    oc.doRegister("chargingStation default efficiency", new Option_String("0.95"));                                                     // PABLO #1916
+    oc.addDescription("chargingStation default efficiency", "Default values", "Default charging efficiency of the chargingStation");    // PABLO #1916
+
+    oc.doRegister("chargingStation default charge in transit", new Option_Bool(false));                                                     // PABLO #1916
+    oc.addDescription("chargingStation default charge in transit", "Default values", "Default charge in transit of the chargingStation");   // PABLO #1916
+
+    oc.doRegister("chargingStation default charge delay", new Option_String("0"));                                              // PABLO #1916
+    oc.addDescription("chargingStation default charge delay", "Default values", "Default charge delay of the chargingStation"); // PABLO #1916
+
     oc.doRegister("disable-textures", 'T', new Option_Bool(false)); // !!!
     oc.addDescription("disable-textures", "Visualisation", "");
     oc.doRegister("gui-settings-file", new Option_FileName());

@@ -141,24 +141,24 @@ public:
     /// @brief returns the index of the lane    // PABLO #1916
     unsigned int getIndex() const;
 
-    /* @brief method for setting the index of the lane    // PABLO #1916
-     * @param[in] index The new index of lane            // PABLO #1916
-     */                                                    // PABLO #1916
-    void setIndex(unsigned int index);                  // PABLO #1916
+    /* @brief method for setting the index of the lane      // PABLO #1916
+     * @param[in] index The new index of lane               // PABLO #1916
+     */                                                     // PABLO #1916
+    void setIndex(unsigned int index);                      // PABLO #1916
 
-    /// @brief returns the length of the lane    // PABLO #1916
-    SUMOReal getLength() const;                    // PABLO #1916
+    /// @brief returns the length of the lane       // PABLO #1916
+    SUMOReal getLength() const;                     // PABLO #1916
 
-    /* @brief method for adding a reference of a additional element placed in this lane // PABLO #1916
-     * @param[in] additional Pointer to additional element                                 // PABLO #1916
-     */                                                                                    // PABLO #1916
-    void addAdditional(GNEAdditional *additional);                                      // PABLO #1916
+    /* @brief method for adding a reference of a additional element placed in this lane     // PABLO #1916
+     * @param[in] additional Pointer to additional element                                  // PABLO #1916
+     */                                                                                     // PABLO #1916
+    void addAdditional(GNEAdditional *additional);                                          // PABLO #1916
 
-    /* @brief method for remove a reference of a additional element placed in this lane // PABLO #1916
-     * @param[in] additional Pointer to additional element previously added             // PABLO #1916
-       @return true if additional element was sucesfully removed, flase in other case   // PABLO #1916
-     */                                                                                    // PABLO #1916
-    bool removeAdditional(GNEAdditional *additional);                                   // PABLO #1916
+    /* @brief method for remove a reference of a additional element placed in this lane     // PABLO #1916
+     * @param[in] additional Pointer to additional element previously added                 // PABLO #1916
+       @return true if additional element was sucesfully removed, flase in other case       // PABLO #1916
+     */                                                                                     // PABLO #1916
+    bool removeAdditional(GNEAdditional *additional);                                       // PABLO #1916
 
     //@name inherited from GNEAttributeCarrier
     //@{

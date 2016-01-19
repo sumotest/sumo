@@ -62,7 +62,7 @@ public:
      */
     GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag);
 
-    /// @brief Destructor
+    /// @brief Destructorc
     ~GNEStoppingPlace();
 
     /// @brief update pre-computed geometry information
@@ -163,30 +163,42 @@ public:
     virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
     //@}
 
+protected:
+
+    /// @brief The shape of the stoppingPlace
+    PositionVector myShape;
+
+    /// @name computed only once (for performance) in updateGeometry()
+    //@{
+    /// The rotations of the shape parts
+    std::vector<SUMOReal> myShapeRotations;
+
+    /// The lengths of the shape parts
+    std::vector<SUMOReal> myShapeLengths;
+    //@}
+
+    /// @brief The position of the sign
+    Position mySignPos;
+
+    /// @brief The rotation of the sign
+    SUMOReal mySignRot;
+
+    /// @brief vector with the different colors
+    std::vector<RGBColor> myRGBColors;
+
 private:
+
+    /// @brief set attribute after validation
+    virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
+
+    /// @brief set colors of scheme
+    virtual void setColors() = 0;
 
     /// @brief The begin position this stopping place is located at
     SUMOReal myFromPos;
 
     /// @brief The end position this stopping place is located at
     SUMOReal myToPos;
-
-/**
-    ALL OF THIS FUNCTIONS SHOULD BE ERASED?
-
-    /// @brief return value for lane coloring according to the given scheme
-    SUMOReal getColorValue(size_t activeScheme) const;
-        
-    /// @brief sets the color according to the current scheme index and some lane function
-    bool setFunctionalColor(size_t activeScheme) const;
-
-    /// @brief sets multiple colors according to the current scheme index and some lane function
-    bool setMultiColor(const GUIColorer& c) const;
-    
-    /// The color of the shape parts (cached)
-    mutable std::vector<RGBColor> myShapeColors;
-**/
-
 };
 
 

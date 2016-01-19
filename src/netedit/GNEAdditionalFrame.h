@@ -132,7 +132,7 @@ private:
     /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
     bool setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
 
-    /// @brief struct for text field parameters // QUESTION ERDMANN 01
+    /// @brief struct for text field parameters
     struct additionalParameterTextField {
         /// @brief horizontal frame for label and textField
         FXHorizontalFrame *horizontalFrame;
@@ -142,7 +142,7 @@ private:
         FXTextField *textField;
     };
 
-    /// @brief struct for boolean (menuCheck) parameters    // QUESTION ERDMANN 02
+    /// @brief struct for boolean (menuCheck) parameters
     struct additionalParameterCheckButton {
         /// @brief horizontal frame for label and menuCheck
         FXHorizontalFrame *horizontalFrame;

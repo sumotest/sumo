@@ -72,6 +72,8 @@ GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUM
     myChargeDelay(chargeDelay) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
+    // And color must be configured
+    setColors();
 }
 
 
@@ -158,15 +160,25 @@ GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
 
 void
 GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
+    // Declare variables to get colors depending if the chargingStation is selected
+    RGBColor base, sign;
+
+    // Set colors
+    if(gSelected.isSelected(getType(), getGlID())) {
+        base = myRGBColors[CHARGINGSTATION_BASE_SELECTED];
+        sign = myRGBColors[CHARGINGSTATION_SIGN_SELECTED];
+    } else {
+        base = myRGBColors[CHARGINGSTATION_BASE];
+        sign = myRGBColors[CHARGINGSTATION_SIGN];
+    }
+
     // Draw Charging Station
     glPushName(getGlID());
     glPushMatrix();
-    RGBColor blue(114, 210, 252, 255);
-    RGBColor green(76, 170, 50, 255);
-    RGBColor yellow(255, 235, 0, 255);
+
     // draw the area
     glTranslated(0, 0, getType());
-    GLHelper::setColor(blue);
+    GLHelper::setColor(base);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
@@ -180,19 +192,16 @@ GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         glScaled(exaggeration, exaggeration, 1);
-        GLHelper::setColor(blue);
+        GLHelper::setColor(base);
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
         glTranslated(0, 0, .1);
 
-        GLHelper::setColor(yellow);
+        GLHelper::setColor(sign);
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
         if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("C", Position(), .1, 1.6, green, mySignRot);
+            GLHelper::drawText("C", Position(), .1, 1.6, base, mySignRot);
         }
-
-        glTranslated(5, 0, 0);
-
     }
     glPopMatrix();
     glPopName();
@@ -204,15 +213,26 @@ void
 GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
+
+    // Declare variables to get colors depending if the chargingStation is selected
+    RGBColor base, sign;
+
+    // Set colors
+    if(gSelected.isSelected(getType(), getGlID())) {
+        base = myRGBColors[CHARGINGSTATION_BASE_SELECTED];
+        sign = myRGBColors[CHARGINGSTATION_SIGN_SELECTED];
+    } else {
+        base = myRGBColors[CHARGINGSTATION_BASE];
+        sign = myRGBColors[CHARGINGSTATION_SIGN];
+    }
+
     // Draw Charging Station
     glPushName(getGlID());
     glPushMatrix();
-    RGBColor blue(114, 210, 252, 255);
-    RGBColor green(76, 170, 50, 255);
-    RGBColor yellow(255, 235, 0, 255);
+
     // draw the area
     glTranslated(0, 0, getType());
-    GLHelper::setColor(blue);
+    GLHelper::setColor(base);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
@@ -226,19 +246,16 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         }
 
         glScaled(exaggeration, exaggeration, 1);
-        GLHelper::setColor(blue);
+        GLHelper::setColor(base);
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
         glTranslated(0, 0, .1);
 
-        GLHelper::setColor(yellow);
+        GLHelper::setColor(sign);
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
         if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("C", Position(), .1, 1.6, green, mySignRot);
+            GLHelper::drawText("C", Position(), .1, 1.6, base, mySignRot);
         }
-
-        glTranslated(5, 0, 0);
-
     }
     glPopMatrix();
     glPopName();
@@ -311,7 +328,6 @@ GNEChargingStation::getCenteringBoundary() const {
 
 void
 GNEChargingStation::updateGeometry() {
-
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
@@ -485,94 +501,16 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
 }
 
 
-bool
-GNEChargingStation::setFunctionalColor(size_t activeScheme) const {
-    switch (activeScheme) {
-        case 6: {
-            SUMOReal hue = GeomHelper::naviDegree(getShape().beginEndAngle()); // [0-360]
-            GLHelper::setColor(RGBColor::fromHSV(hue, 1., 1.));
-            return true;
-        }
-        default:
-            return false;
-    }
+void
+GNEChargingStation::setColors() {
+    // Color CHARGINGSTATION_BASE
+    myRGBColors.push_back(RGBColor(114, 210, 252, 255));
+    // Color CHARGINGSTATION_BASE_SELECTED
+    myRGBColors.push_back(RGBColor(125, 255, 255, 255));
+    // Color CHARGINGSTATION_SIGN
+    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
+    // Color CHARGINGSTATION_SIGN_SELECTED
+    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
 }
-
-
-bool
-GNEChargingStation::setMultiColor(const GUIColorer& c) const {
-    const size_t activeScheme = c.getActive();
-    myShapeColors.clear();
-    switch (activeScheme) {
-        case 9: // color by height at segment start
-            for (PositionVector::const_iterator ii = getShape().begin(); ii != getShape().end() - 1; ++ii) {
-                myShapeColors.push_back(c.getScheme().getColor(ii->z()));
-            }
-            return true;
-        case 11: // color by inclination  at segment start
-            for (int ii = 1; ii < (int)getShape().size(); ++ii) {
-                const SUMOReal inc = (getShape()[ii].z() - getShape()[ii - 1].z()) / MAX2(POSITION_EPS, getShape()[ii].distanceTo2D(getShape()[ii - 1]));
-                myShapeColors.push_back(c.getScheme().getColor(inc));
-            }
-            return true;
-        default:
-            return false;
-    }
-}
-
-
-SUMOReal
-GNEChargingStation::getColorValue(size_t activeScheme) const {
-    /*
-    const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
-    switch (activeScheme) {
-        case 0:
-            switch (myPermissions) {
-                case SVC_PEDESTRIAN:
-                    return 1;
-                case SVC_BICYCLE:
-                    return 2;
-                case 0:
-                    return 3;
-                case SVC_SHIP:
-                    return 4;
-                default:
-                    break;
-            }
-            if ((myPermissions & SVC_PASSENGER) != 0 || isRailway(myPermissions)) {
-                return 0;
-            } else {
-                return 5;
-            }
-        case 1:
-            return gSelected.isSelected(getType(), getGlID()) ||
-                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&getLane().getParentEdge())->getGlID());
-        case 2:
-            return (SUMOReal)myPermissions;
-        case 3:
-            return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
-        case 4:
-            return getLane().getParentEdge().getNBEdge()->getNumLanes();        
-        case 5: {
-            return getLane().getParentEdge().getNBEdge()->getLoadedLength() / getLane().getParentEdge().getNBEdge()->getLength();
-        }
-        // case 6: by angle (functional)
-       case 7: {
-            return getLane().getParentEdge().getNBEdge()->getPriority();
-        }
-        case 8: {
-            // color by z of first shape point
-            return getShape()[0].z();
-        }
-        // case 9: by segment height
-        case 10: {
-            // color by incline
-            return (getShape()[-1].z() - getShape()[0].z()) /  getLane().getParentEdge().getNBEdge()->getLength();
-        }        
-    }
-    */
-    return 0;
-}
-
 
 /****************************************************************************/

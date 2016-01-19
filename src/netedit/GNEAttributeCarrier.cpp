@@ -156,25 +156,24 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(SUMO_ATTR_WIDTH);
                 attrs.push_back(SUMO_ATTR_EDGES);
                 break;
-            case SUMO_TAG_BUS_STOP:                            // PABLO #1916
-                attrs.push_back(SUMO_ATTR_ID);                // PABLO #1916
+            case SUMO_TAG_BUS_STOP:                         // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ID);              // PABLO #1916
                 attrs.push_back(SUMO_ATTR_LANE);            // PABLO #1916
                 attrs.push_back(SUMO_ATTR_STARTPOS);        // PABLO #1916
-                attrs.push_back(SUMO_ATTR_ENDPOS);            // PABLO #1916
-                attrs.push_back(SUMO_ATTR_LINES);            // PABLO #1916
-                break;                                        // PABLO #1916
-            case SUMO_TAG_CHARGING_STATION:                    // PABLO #1916
-                attrs.push_back(SUMO_ATTR_ID);                // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ENDPOS);          // PABLO #1916
+                attrs.push_back(SUMO_ATTR_LINES);           // PABLO #1916
+                break;                                      // PABLO #1916
+            case SUMO_TAG_CHARGING_STATION:                 // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ID);              // PABLO #1916
                 attrs.push_back(SUMO_ATTR_LANE);            // PABLO #1916
                 attrs.push_back(SUMO_ATTR_STARTPOS);        // PABLO #1916
-                attrs.push_back(SUMO_ATTR_ENDPOS);            // PABLO #1916
-                attrs.push_back(SUMO_ATTR_CHARGINGPOWER);    // PABLO #1916
-                attrs.push_back(SUMO_ATTR_EFFICIENCY);        // PABLO #1916
-                attrs.push_back(SUMO_ATTR_CHARGEINTRANSIT);    // PABLO #1916
-                attrs.push_back(SUMO_ATTR_CHARGEDELAY);        // PABLO #1916
+                attrs.push_back(SUMO_ATTR_ENDPOS);          // PABLO #1916
+                attrs.push_back(SUMO_ATTR_CHARGINGPOWER);   // PABLO #1916
+                attrs.push_back(SUMO_ATTR_EFFICIENCY);      // PABLO #1916
+                attrs.push_back(SUMO_ATTR_CHARGEINTRANSIT); // PABLO #1916
+                attrs.push_back(SUMO_ATTR_CHARGEDELAY);     // PABLO #1916
             default:
-                WRITE_WARNING("allowed attributes for tag '" +
-                              toString(tag) + "' not defined");
+                WRITE_WARNING("allowed attributes for tag '" + toString(tag) + "' not defined");
         }
     }
     return _allowedAttributes[tag];

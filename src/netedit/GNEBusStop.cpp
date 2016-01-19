@@ -74,6 +74,8 @@ GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& li
     myLines(lines) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
+    // And colors must be configured
+    setColors();
 }
 
 
@@ -169,23 +171,32 @@ GNEBusStop::getShapeLengths() const {
 
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
+    // Declare variables to get colors depending if the busStop is selected
+    RGBColor base, sign, letter;
+
+    // Set colors
+    if(gSelected.isSelected(getType(), getGlID())) {
+        base = myRGBColors[BUSSTOP_BASE_SELECTED];
+        sign = myRGBColors[BUSSTOP_SIGN_SELECTED];
+        letter = myRGBColors[BUSSTOP_LETTER_SELECTED];
+    } else {
+        base = myRGBColors[BUSSTOP_BASE];
+        sign = myRGBColors[BUSSTOP_SIGN];
+        letter = myRGBColors[BUSSTOP_LETTER];
+    }
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
     
     // Add a draw matrix
     glPushMatrix();
-    
-    // Define colors of the busStop
-    RGBColor green(76, 170, 50, 255);
-    RGBColor yellow(255, 235, 0, 255);
 
     // Start with the drawing of the area traslating matrix to origing 
     glTranslated(0, 0, getType());
 
-    // Set draw color to green
-    GLHelper::setColor(green);
-    
+    // Set color of the base
+    GLHelper::setColor(base);
+
     // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     
@@ -197,6 +208,9 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
         
         // Obtain rotation of the sing depeding of the option "lefthand"
         SUMOReal rotSign = OptionsCont::getOptions().getBool("lefthand");
+
+        // Set color of the lines
+        GLHelper::setColor(letter);
 
         // Iterate over every line
         for (size_t i = 0; i != myLines.size(); ++i) {
@@ -232,7 +246,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
             glPopMatrix();
         }
 
-        // Start drawing sisgn traslating matrix to signal position
+        // Start drawing sign traslating matrix to signal position
         glTranslated(mySignPos.x(), mySignPos.y(), 0);
 
         // Define nº points (for efficiency)
@@ -240,7 +254,6 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
 
         // If the scale * exaggeration is more than 25, recalculate nº points
         if (s.scale * exaggeration > 25) 
-            
             noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
         
         // scale matrix depending of the exaggeration
@@ -252,15 +265,15 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
         // Traslate to front
         glTranslated(0, 0, .1);
 
-        // change color to yellow
-        GLHelper::setColor(yellow);
+        // Set color of the lines
+        GLHelper::setColor(sign);
 
-        // draw circle again, but a little bit more small
+        // draw another circle in the same position, but a little bit more small
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
         // If the scale * exageration is equal or more than 4.5, draw H
         if (s.scale * exaggeration >= 4.5)
-            GLHelper::drawText("H", Position(), .1, 1.6, green, mySignRot);
+            GLHelper::drawText("H", Position(), .1, 1.6, letter, mySignRot);
     }
 
     // Pop matrix
@@ -278,53 +291,119 @@ void
 GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-    // Draw busStop
-    glPushName(getGlID());
-    glPushMatrix();
-    RGBColor green(76, 170, 50, 255);
-    RGBColor yellow(255, 235, 0, 255);
-    // draw the area
-    size_t i;
-    glTranslated(0, 0, getType());
-    GLHelper::setColor(green);
-    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+    
+    // Declare variables to get colors depending if the busStop is selected
+    RGBColor base, sign, letter;
 
-    // draw details unless zoomed out to far
-    if (s.scale * exaggeration >= 10) {
-        // draw the lines
-        //const SUMOReal rotSign = MSNet::getInstance()->lefthand() ? -1 : 1;
-        SUMOReal rotSign = 1;
-        for (i = 0; i != myLines.size(); ++i) {
-            glPushMatrix();
-            glTranslated(mySignPos.x(), mySignPos.y(), 0);
-            glRotated(180, 1, 0, 0);
-            glRotated(rotSign * mySignRot, 0, 0, 1);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            pfSetPosition(0, 0);
-            pfSetScale(1.f);
-            glTranslated(1.2, -(double)i, 0);
-            pfDrawString(myLines[i].c_str());
-            glPopMatrix();
-        }
-        // draw the sign
-        glTranslated(mySignPos.x(), mySignPos.y(), 0);
-        int noPoints = 9;
-        if (s.scale * exaggeration > 25) {
-            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
-        }
-        glScaled(exaggeration, exaggeration, 1);
-        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
-        glTranslated(0, 0, .1);
-        GLHelper::setColor(yellow);
-        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
-        if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("H", Position(), .1, 1.6, green, mySignRot);
-        }
+    // Set colors
+    if(gSelected.isSelected(getType(), getGlID())) {
+        base = myRGBColors[BUSSTOP_BASE_SELECTED];
+        sign = myRGBColors[BUSSTOP_SIGN_SELECTED];
+        letter = myRGBColors[BUSSTOP_LETTER_SELECTED];
+    } else {
+        base = myRGBColors[BUSSTOP_BASE];
+        sign = myRGBColors[BUSSTOP_SIGN];
+        letter = myRGBColors[BUSSTOP_LETTER];
     }
 
+    // Start drawing adding an gl identificator
+    glPushName(getGlID());
+    
+    // Add a draw matrix
+    glPushMatrix();
+
+    // Start with the drawing of the area traslating matrix to origing 
+    glTranslated(0, 0, getType());
+
+    // Set color of the base
+    GLHelper::setColor(base);
+
+    // Obtain exaggeration of the draw
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    
+    // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
+
+    // Check if the distance is enought to draw details
+    if (s.scale * exaggeration >= 10) {
+        
+        // Obtain rotation of the sing depeding of the option "lefthand"
+        SUMOReal rotSign = OptionsCont::getOptions().getBool("lefthand");
+
+        // Set color of the lines
+        GLHelper::setColor(letter);
+
+        // Iterate over every line
+        for (size_t i = 0; i != myLines.size(); ++i) {
+
+            // Add a new push matrix
+            glPushMatrix();
+
+            // Traslate to positionof signal
+            glTranslated(mySignPos.x(), mySignPos.y(), 0);
+            
+            // Rotate 180%
+            glRotated(180, 1, 0, 0);
+
+            // Rotate again depending of the option rotSign
+            glRotated(rotSign * mySignRot, 0, 0, 1);
+            
+            // Set poligon mode
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+            // set polyfront position ot 0 
+            pfSetPosition(0, 0);
+
+            // Set polyfront scale to 1
+            pfSetScale(1.f);
+            
+            // traslate matrix for every line
+            glTranslated(1.2, -(double)i, 0);
+
+            // draw line
+            pfDrawString(myLines[i].c_str());
+
+            // pop matrix
+            glPopMatrix();
+        }
+
+        // Start drawing sign traslating matrix to signal position
+        glTranslated(mySignPos.x(), mySignPos.y(), 0);
+
+        // Define nº points (for efficiency)
+        int noPoints = 9;
+
+        // If the scale * exaggeration is more than 25, recalculate nº points
+        if (s.scale * exaggeration > 25) 
+            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
+        
+        // scale matrix depending of the exaggeration
+        glScaled(exaggeration, exaggeration, 1);
+
+        // Draw green circle
+        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+
+        // Traslate to front
+        glTranslated(0, 0, .1);
+
+        // Set color of the lines
+        GLHelper::setColor(sign);
+
+        // draw another circle in the same position, but a little bit more small
+        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
+
+        // If the scale * exageration is equal or more than 4.5, draw H
+        if (s.scale * exaggeration >= 4.5)
+            GLHelper::drawText("H", Position(), .1, 1.6, letter, mySignRot);
+    }
+
+    // Pop matrix
     glPopMatrix();
+
+    // Pop name
     glPopName();
+
+    // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 };
 
@@ -382,19 +461,14 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
     // close building
     ret->closeBuilding();
     return ret;
-
 }
 
 
 Boundary
 GNEBusStop::getCenteringBoundary() const {
     Boundary b = myShape.getBoxBoundary();
-    b.grow(20);    // anterior: 10
+    b.grow(20);    // before: 10
     return b;
-
-    //Boundary
-    //GNEBusStop::getBoundary() const {
-    //return myLane.myShape.getBoxBoundary();
 }
 
 
@@ -433,15 +507,10 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_ENDPOS:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            break;
         case SUMO_ATTR_LINES:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             break;
@@ -455,7 +524,6 @@ bool
 GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
@@ -475,10 +543,8 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
-    NBEdge* edge = getLane().getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS: {
@@ -502,94 +568,20 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
 }
 
 
-bool
-GNEBusStop::setFunctionalColor(size_t activeScheme) const {
-    switch (activeScheme) {
-        case 6: {
-            SUMOReal hue = GeomHelper::naviDegree(myShape.beginEndAngle()); // [0-360]
-            GLHelper::setColor(RGBColor::fromHSV(hue, 1., 1.));
-            return true;
-        }
-        default:
-            return false;
-    }
+void
+GNEBusStop::setColors() {
+    // Color BUSSTOP_BASE
+    myRGBColors.push_back(RGBColor(76, 170, 50, 255));
+    // Color BUSSTOP_BASE_SELECTED
+    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
+    // Color BUSSTOP_SIGN
+    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
+    // Color BUSSTOP_SIGN_SELECTED
+    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
+    // Color BUSSTOP_LINES
+    myRGBColors.push_back(RGBColor(76, 170, 50, 255));
+    // Color BUSSTOP_LINES_SELECTED
+    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
 }
-
-
-bool
-GNEBusStop::setMultiColor(const GUIColorer& c) const {
-    const size_t activeScheme = c.getActive();
-    myShapeColors.clear();
-    switch (activeScheme) {
-        case 9: // color by height at segment start
-            for (PositionVector::const_iterator ii = myShape.begin(); ii != myShape.end() - 1; ++ii) {
-                myShapeColors.push_back(c.getScheme().getColor(ii->z()));
-            }
-            return true;
-        case 11: // color by inclination  at segment start
-            for (int ii = 1; ii < (int)myShape.size(); ++ii) {
-                const SUMOReal inc = (myShape[ii].z() - myShape[ii - 1].z()) / MAX2(POSITION_EPS, myShape[ii].distanceTo2D(myShape[ii - 1]));
-                myShapeColors.push_back(c.getScheme().getColor(inc));
-            }
-            return true;
-        default:
-            return false;
-    }
-}
-
-
-SUMOReal
-GNEBusStop::getColorValue(size_t activeScheme) const {
-    /*
-    const SVCPermissions myPermissions = getLane().getParentEdge().getNBEdge()->getPermissions(myIndex);
-    switch (activeScheme) {
-        case 0:
-            switch (myPermissions) {
-                case SVC_PEDESTRIAN:
-                    return 1;
-                case SVC_BICYCLE:
-                    return 2;
-                case 0:
-                    return 3;
-                case SVC_SHIP:
-                    return 4;
-                default:
-                    break;
-            }
-            if ((myPermissions & SVC_PASSENGER) != 0 || isRailway(myPermissions)) {
-                return 0;
-            } else {
-                return 5;
-            }
-        case 1:
-            return gSelected.isSelected(getType(), getGlID()) ||
-                   gSelected.isSelected(GLO_EDGE, dynamic_cast<GNEEdge*>(&getLane().getParentEdge())->getGlID());
-        case 2:
-            return (SUMOReal)myPermissions;
-        case 3:
-            return getLane().getParentEdge().getNBEdge()->getLaneSpeed(myIndex);
-        case 4:
-            return getLane().getParentEdge().getNBEdge()->getNumLanes();        
-        case 5: {
-            return getLane().getParentEdge().getNBEdge()->getLoadedLength() / getLane().getParentEdge().getNBEdge()->getLength();
-        }
-        // case 6: by angle (functional)
-       case 7: {
-            return getLane().getParentEdge().getNBEdge()->getPriority();
-        }
-        case 8: {
-            // color by z of first shape point
-            return myShape[0].z();
-        }
-        // case 9: by segment height
-        case 10: {
-            // color by incline
-            return (myShape[-1].z() - myShape[0].z()) /  getLane().getParentEdge().getNBEdge()->getLength();
-        }        
-    }
-    */
-    return 0;
-}
-
 
 /****************************************************************************/

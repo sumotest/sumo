@@ -161,45 +161,28 @@ private:
     /// @brief The list of lines that are assigned to this stop
     std::vector<std::string> myLines;
 
-    /// @brief The shape
-    PositionVector myShape;
-
-    /// @brief The position of the sign
-    Position mySignPos;
-
-    /// @brief The rotation of the sign
-    SUMOReal mySignRot;
-
-    /// @name Variables to improve performance in function updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
-
 private:
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
+
+    /// @brief set colors of scheme
+    void setColors();
+
+    /// @brief list of colors QUESTION ERDMANN 01
+    enum colorTypes {
+        BUSSTOP_BASE = 0,
+        BUSSTOP_BASE_SELECTED = 1,
+        BUSSTOP_SIGN = 2,
+        BUSSTOP_SIGN_SELECTED = 3,
+        BUSSTOP_LETTER = 4,             // Currently the same as BUSSTOP_BASE
+        BUSSTOP_LETTER_SELECTED = 5,    // Currently the same as BUSSTOP_BASE_SELECTED
+    };
 
     /// @brief Invalidated copy constructor.
     GNEBusStop(const GNEBusStop&);
 
     /// @brief Invalidated assignment operator.
     GNEBusStop& operator=(const GNEBusStop&);
-
-    /// @brief return value for lane coloring according to the given scheme
-    SUMOReal getColorValue(size_t activeScheme) const;
-        
-    /// @brief sets the color according to the current scheme index and some lane function
-    bool setFunctionalColor(size_t activeScheme) const;
-
-    /// @brief sets multiple colors according to the current scheme index and some lane function
-    bool setMultiColor(const GUIColorer& c) const;
-    
-    /// The color of the shape parts (cached)
-    mutable std::vector<RGBColor> myShapeColors;
 };
 
 
