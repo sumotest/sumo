@@ -75,6 +75,7 @@ GNEAdditionalHandler::myStartElement(int element, const SUMOSAXAttributes& attrs
             case SUMO_TAG_CHARGING_STATION:
                 parseAndBuildChargingStation(myNet, attrs);
                 break;
+            // Rest of additional elements
             default:
                 break;
         }

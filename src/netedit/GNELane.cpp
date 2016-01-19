@@ -505,6 +505,16 @@ GNELane::removeAdditional(GNEAdditional *additional) {                          
 }                                                                                                           // PABLO #1916
 
 
+std::set<GUIGlID>                                                                                           // PABLO #1916
+GNELane::getAdditionals() {                                                                                 // PABLO #1916
+    std::set<GUIGlID> result;                                                                               // PABLO #1916
+    for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++) {    // PABLO #1916
+        result.insert((*i)->getGlID());                                                                     // PABLO #1916
+    }                                                                                                       // PABLO #1916
+    return result;                                                                                          // PABLO #1916
+}                                                                                                           // PABLO #1916
+
+
 std::string
 GNELane::getAttribute(SumoXMLAttr key) const {
     const NBEdge* edge = myParentEdge.getNBEdge();

@@ -172,6 +172,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(SUMO_ATTR_EFFICIENCY);      // PABLO #1916
                 attrs.push_back(SUMO_ATTR_CHARGEINTRANSIT); // PABLO #1916
                 attrs.push_back(SUMO_ATTR_CHARGEDELAY);     // PABLO #1916
+                break;                                      // PABLO #1916
             default:
                 WRITE_WARNING("allowed attributes for tag '" + toString(tag) + "' not defined");
         }

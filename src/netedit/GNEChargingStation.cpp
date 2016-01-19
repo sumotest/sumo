@@ -266,41 +266,19 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
 GUIGLObjectPopupMenu*
 GNEChargingStation::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    /*
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy edge name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
+    new FXMenuCommand(ret, "Copy chargingStation name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
     buildNameCopyPopupEntry(ret);
     buildSelectionPopupEntry(ret);
     buildPositionCopyEntry(ret, false);
-    if (parent.getVisualisationSettings()->editMode != GNE_MODE_CONNECT) {
-        new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
-        new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
-        new FXMenuCommand(ret, "Reverse edge", 0, &parent, MID_GNE_REVERSE_EDGE);
-        new FXMenuCommand(ret, "Add reverse direction", 0, &parent, MID_GNE_ADD_REVERSE_EDGE);
-        new FXMenuCommand(ret, "Set geometry endpoint here", 0, &parent, MID_GNE_SET_EDGE_ENDPOINT);
-        new FXMenuCommand(ret, "Restore geometry endpoint", 0, &parent, MID_GNE_RESET_EDGE_ENDPOINT);
-        if (gSelected.isSelected(GLO_LANE, getGlID())) {
-            new FXMenuCommand(ret, "Straighten selected Edges", 0, &parent, MID_GNE_STRAIGHTEN);
-        } else {
-            new FXMenuCommand(ret, "Straighten edge", 0, &parent, MID_GNE_STRAIGHTEN);
-        }
-        if (gSelected.isSelected(GLO_LANE, getGlID())) {
-            new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
-        } else {
-            new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
-        }
-    }
     // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = getShape().nearest_offset_to_point2D(parent.getPositionInformation());
-    const SUMOReal height = getShape().positionAtOffset2D(getShape().nearest_offset_to_point2D(parent.getPositionInformation())).z();
-    new FXMenuCommand(ret, ("pos: " + toString(pos) + " height: " + toString(height)).c_str(), 0, 0, 0);
+    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
+    new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
     // new FXMenuSeparator(ret);
     // buildPositionCopyEntry(ret, false);
-
     // let the GNEViewNet store the popup position
     (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    */
     return ret;
 }
 
@@ -311,10 +289,12 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app,
 
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
+    /* not supported yet
     // add items
     ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
     // close building
     ret->closeBuilding();
+    */
     return ret;
 }
 
@@ -471,9 +451,8 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
     NBEdge* edge = getLane().getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             setFromPosition(parse<SUMOReal>(value));
             break;
@@ -496,7 +475,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
             myChargeDelay = parse<int>(value);
             break;
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
     }
 }
 

@@ -227,6 +227,10 @@ GNESelector::onCmdInvert(FXObject*, FXSelector, void*) {
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
+    ids = myUpdateTarget->getNet()->getGlIDs(GLO_TRIGGER);                              // PABLO #1916
+    for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {   // PABLO #1916
+        gSelected.toggleSelection(*it);                                                 // PABLO #1916
+    }
     myUpdateTarget->update();
     return 1;
 }
@@ -369,7 +373,8 @@ GNESelector::getStats() const {
     return "Selection:\n" +
            toString(gSelected.getSelected(GLO_JUNCTION).size()) + " Junctions\n" +
            toString(gSelected.getSelected(GLO_EDGE).size()) + " Edges\n" +
-           toString(gSelected.getSelected(GLO_LANE).size()) + " Lanes\n";
+           toString(gSelected.getSelected(GLO_LANE).size()) + " Lanes\n" +
+           toString(gSelected.getSelected(GLO_TRIGGER).size()) + " Additionals\n";  // PABLO #1916
 }
 
 
@@ -462,6 +467,7 @@ GNESelector::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal 
     const std::set<GUIGlID> allIDs = myUpdateTarget->getNet()->getGlIDs();
     const bool numerical = GNEAttributeCarrier::isNumerical(attr);
     for (std::set<GUIGlID>::const_iterator it = allIDs.begin(); it != allIDs.end(); it++) {
+        std::cout << expr << " glid:" << (*it) << " num:" << numerical << " val:" << val << std::endl;
         GUIGlID id = *it;
         object = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
         if (!object) {

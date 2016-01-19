@@ -160,6 +160,12 @@ public:
      */                                                                                     // PABLO #1916
     bool removeAdditional(GNEAdditional *additional);                                       // PABLO #1916
 
+    /* @brief method to obtain a set of additional elements associated to this lane     // PABLO #1916
+       @return set with all additional elements                                         // PABLO #1916
+       @todo modify to get only a specific type of additional element                   // PABLO #1916
+     */                                                                                 // PABLO #1916
+    std::set<GUIGlID> getAdditionals();                                                 // PABLO #1916
+
     //@name inherited from GNEAttributeCarrier
     //@{
     /* @brief method for getting the Attribute of an XML key

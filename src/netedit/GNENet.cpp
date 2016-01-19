@@ -711,6 +711,21 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             }
             break;
         }
+        case GLO_TRIGGER: {                                                                                                                                 // PABLO #1916
+            // Iterate over every                                                                                                                           // PABLO #1916
+            for (GNEEdges::const_iterator itEdges = myEdges.begin(); itEdges != myEdges.end(); itEdges++) {                                                 // PABLO #1916
+                GNEEdge::LaneVector lanesOfEdge = itEdges->second->getLanes();                                                                              // PABLO #1916
+                // Iterate over every lane of edge                                                                                                          // PABLO #1916
+                for (GNEEdge::LaneVector::const_iterator itLanes = lanesOfEdge.begin(); itLanes != lanesOfEdge.end(); itLanes++) {                          // PABLO #1916
+                    std::set<GUIGlID> additionalOfLane = (*itLanes)->getAdditionals();                                                                      // PABLO #1916
+                    // Iterate over every additional of lane                                                                                                // PABLO #1916
+                    for (std::set<GUIGlID>::iterator itAdditionals = additionalOfLane.begin(); itAdditionals != additionalOfLane.end(); itAdditionals++) {  // PABLO #1916
+                        result.insert(*itAdditionals);                                                                                                      // PABLO #1916
+                    }                                                                                                                                       // PABLO #1916
+                }                                                                                                                                           // PABLO #1916
+            }                                                                                                                                               // PABLO #1916
+            break;                                                                                                                                          // PABLO #1916
+        }                                                                                                                                                   // PABLO #1916
         default: // add other types once we know them
             break;
     }

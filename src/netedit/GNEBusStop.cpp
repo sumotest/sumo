@@ -417,30 +417,8 @@ GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     buildNameCopyPopupEntry(ret);
     buildSelectionPopupEntry(ret);
     buildPositionCopyEntry(ret, false);
-    if (parent.getVisualisationSettings()->editMode == GNE_MODE_ADDITIONAL) {
-        /*
-        new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
-        new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
-        new FXMenuCommand(ret, "Reverse edge", 0, &parent, MID_GNE_REVERSE_EDGE);
-        new FXMenuCommand(ret, "Add reverse direction", 0, &parent, MID_GNE_ADD_REVERSE_EDGE);
-        new FXMenuCommand(ret, "Set geometry endpoint here", 0, &parent, MID_GNE_SET_EDGE_ENDPOINT);
-        new FXMenuCommand(ret, "Restore geometry endpoint", 0, &parent, MID_GNE_RESET_EDGE_ENDPOINT);
-        
-        if (gSelected.isSelected(GLO_LANE, getGlID())) {
-            new FXMenuCommand(ret, "Straighten selected Edges", 0, &parent, MID_GNE_STRAIGHTEN);
-        } else {
-            new FXMenuCommand(ret, "Straighten edge", 0, &parent, MID_GNE_STRAIGHTEN);
-        }
-        if (gSelected.isSelected(GLO_LANE, getGlID())) {
-            new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
-        } else {
-            new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
-        }
-        */
-    }
     // buildShowParamsPopupEntry(ret, false);
     const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
-    const SUMOReal height = myShape.positionAtOffset2D(myShape.nearest_offset_to_point2D(parent.getPositionInformation())).z();
     new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
     // new FXMenuSeparator(ret);
     // buildPositionCopyEntry(ret, false);
@@ -456,10 +434,12 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
 
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
+    /* not supported yet
     // add items
     ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
     // close building
     ret->closeBuilding();
+    */
     return ret;
 }
 
