@@ -1,13 +1,12 @@
 /****************************************************************************/
-/// @file    MSPModel_NonInteracting.h
+/// @file    MSPModel_NonInteracting_GRPC.h
 /// @author  Jakob Erdmann
-/// @date    Mon, 13 Jan 2014
-/// @version $Id: MSPModel_NonInteracting.cpp 19230 2015-10-30 21:59:38Z behrisch $
+/// @author  Gregor Laemmel
 ///
 // The pedestrian following model (prototype)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.

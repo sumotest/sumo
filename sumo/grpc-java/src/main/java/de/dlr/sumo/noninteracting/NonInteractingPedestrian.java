@@ -26,7 +26,7 @@ public class NonInteractingPedestrian {
 
     private static final Logger logger = Logger.getLogger(NonInteractingPedestrian.class.getName());
 
-    private int port = 8081;
+    private int port = 50051;
     private Server server;
 
     private static int FWD = 1;
@@ -104,7 +104,9 @@ public class NonInteractingPedestrian {
 
             double duration = MAX2(1, Math.abs(endPos-beginPos)/request.getStage().getMaxSpeed());
 
-            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(duration).build();
+            System.out.println("duration:" + duration);
+
+            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(10.).build();
             responseObserver.onNext(t);
             responseObserver.onCompleted();
 
@@ -122,6 +124,7 @@ public class NonInteractingPedestrian {
 
         @Override
         public void getWaitingTime(NonInteractingProto.PBSUMOTime request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
+
             NonInteractingProto.PBSUMOTime replay = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(0).build();
             responseObserver.onNext(replay);
             responseObserver.onCompleted();

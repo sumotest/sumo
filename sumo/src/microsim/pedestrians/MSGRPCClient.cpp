@@ -50,12 +50,15 @@ SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::M
 	nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
 	nxtStEdge.set_fromjunctionid(stage.getNextRouteEdge()->getFromJunction()->getID());
 	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
-	st.set_allocated_edge(&nxtStEdge);
+	st.set_allocated_nextrouteedge(&nxtStEdge);
 
 	noninteracting::PBEdge edge;
-	edge.set_length(prev->getLength());
-	edge.set_fromjunctionid(prev->getFromJunction()->getID());
-	edge.set_tojunctionid(prev->getToJunction()->getID());
+	//edge.set_length((double)prev->getLength());
+	edge.set_length(1.0);
+//	edge.set_fromjunctionid(prev->getFromJunction()->getID());
+	edge.set_fromjunctionid("from");
+//	edge.set_tojunctionid(prev->getToJunction()->getID());
+	edge.set_tojunctionid("to");
 	request.set_allocated_prev(&edge);
 
 	noninteracting::PBSUMOTime replay;

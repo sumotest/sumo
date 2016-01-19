@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef MSPModel_NonInteracting_h
-#define MSPModel_NonInteracting_h
+#ifndef MSPModel_NonInteracting_GPRC_h
+#define MSPModel_NonInteracting_GRPC_h
 
 // ===========================================================================
 // included modules
@@ -121,5 +121,5 @@ private:
 };
 
 
-#endif /* MSPModel_NonInteracting_h */
+#endif /* MSPModel_NonInteracting_GPRC_h */
 
