@@ -36,20 +36,29 @@ SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::M
 
 	noninteracting::PBMSPersonStage_Walking st;
 	st.set_maxspeed(stage.getMaxSpeed());
+	std::cout << "setting speed to " << stage.getMaxSpeed() << std::endl;
 	st.set_departpos(stage.getDepartPos());
+	std::cout << "setting dpartpos to " << stage.getDepartPos() << std::endl;
 	st.set_arrivalpos(stage.getArrivalPos());
+	std::cout << "setting arrival pos to " << stage.getArrivalPos() << std::endl;
 
 	noninteracting::PBEdge stEdge;
 
-	stEdge.set_length(stage.getEdge()->getLength());
+	stEdge.set_length((double)stage.getEdge()->getLength());
+	std::cout << "setting length to " << stage.getEdge()->getLength() << std::endl;
 	stEdge.set_fromjunctionid(stage.getEdge()->getFromJunction()->getID());
+	std::cout << "setting fromjunctionid to " << stage.getEdge()->getFromJunction()->getID() << std::endl;
 	stEdge.set_tojunctionid(stage.getEdge()->getToJunction()->getID());
+	std::cout << "setting tojunctionid to " << stage.getEdge()->getToJunction()->getID() << std::endl;
 	st.set_allocated_edge(&stEdge);
 
 	noninteracting::PBEdge nxtStEdge;
-	nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
+	nxtStEdge.set_length((double)stage.getNextRouteEdge()->getLength());
+	std::cout << "setting length to " << stage.getNextRouteEdge()->getLength() << std::endl;
 	nxtStEdge.set_fromjunctionid(stage.getNextRouteEdge()->getFromJunction()->getID());
+	std::cout << "setting fromjunctionid to " << stage.getNextRouteEdge()->getFromJunction()->getID() << std::endl;
 	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
+	std::cout << "setting tojunctionid to " << stage.getNextRouteEdge()->getToJunction()->getID() << std::endl;
 	st.set_allocated_nextrouteedge(&nxtStEdge);
 
 	noninteracting::PBEdge edge;

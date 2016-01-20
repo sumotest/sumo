@@ -80,9 +80,16 @@ public class NonInteractingPedestrian {
         @Override
         public void computeWalkingTime(NonInteractingProto.CMPWlkgTm request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
             double currentTime = request.getSumoTime().getSumoTime();
+            double time = request.getSumoTime().getSumoTime();
+            System.out.println(time);
+
             NonInteractingProto.PBEdge prev = request.getPrev();
+            printEdge(prev);
+
             NonInteractingProto.PBEdge edge = request.getStage().getEdge();
+            printEdge(edge);
             NonInteractingProto.PBEdge nxt = request.getStage().getNextRouteEdge();
+            printEdge(nxt);
             int dir = UNDF;
             double beginPos;
             double endPos;
@@ -110,6 +117,18 @@ public class NonInteractingPedestrian {
             responseObserver.onNext(t);
             responseObserver.onCompleted();
 
+        }
+
+        private void printEdge(NonInteractingProto.PBEdge prev) {
+            StringBuffer buf = new StringBuffer();
+            buf.append("Edge length: ");
+            buf.append(prev.getLength());
+            buf.append(" from: ");
+            buf.append(prev.getFromJunctionId());
+            buf.append(" to: ");
+            buf.append(prev.getToJunctionId());
+            buf.append("\n");
+            System.out.println(buf.toString());
         }
 
         @Override
