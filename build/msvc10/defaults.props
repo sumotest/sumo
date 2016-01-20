@@ -3,6 +3,9 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="Exists('$(VS120COMNTOOLS)')">
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -29,5 +32,10 @@
     <ClCompile>
       <PreprocessorDefinitions>HAVE_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="Exists('$(FFMPEG)')">
+    <Link>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
   </ItemDefinitionGroup>
 </Project>
