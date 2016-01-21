@@ -46,10 +46,10 @@
     <lane>
         <vehicles value="v0"/>
     </lane>
-    <lane>
+    <lane id="end_0">
         <vehicles value=""/>
     </lane>
-    <lane>
+    <lane id="middle_0">
         <vehicles value=""/>
     </lane>
 </snapshot>
