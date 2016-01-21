@@ -87,20 +87,21 @@ public class NonInteractingPedestrian {
             printEdge(prev);
 
             NonInteractingProto.PBEdge edge = request.getStage().getEdge();
-            printEdge(edge);
+//            printEdge(edge);
             NonInteractingProto.PBEdge nxt = request.getStage().getNextRouteEdge();
-            printEdge(nxt);
+//            printEdge(nxt);
+            printStage(request.getStage());
             int dir = UNDF;
             double beginPos;
             double endPos;
 
-            if (prev != null) {
+            if (!prev.getFromJunctionId().isEmpty()) {
                 beginPos = request.getStage().getDepartPos();
             } else {
                 dir = (edge.getToJunctionId() == prev.getToJunctionId() || edge.getToJunctionId() == prev.getFromJunctionId()) ? BCKWD : FWD;
                 beginPos = dir == FWD ? 0 : edge.getLength();
             }
-            if (nxt == null) {
+            if (!nxt.getFromJunctionId().isEmpty()) {
                 endPos = request.getStage().getArrivalPos();
             } else {
                 if (dir == UNDF) {
@@ -113,10 +114,17 @@ public class NonInteractingPedestrian {
 
             System.out.println("duration:" + duration);
 
-            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(10.).build();
+            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(duration).build();
             responseObserver.onNext(t);
             responseObserver.onCompleted();
 
+        }
+
+        private void printStage(NonInteractingProto.PBMSPersonStage_Walking stage) {
+            double spd = stage.getMaxSpeed();
+            System.out.println("max spd: " + spd);
+            printEdge(stage.getEdge());
+            printEdge(stage.getNextRouteEdge());
         }
 
         private void printEdge(NonInteractingProto.PBEdge prev) {
@@ -124,9 +132,9 @@ public class NonInteractingPedestrian {
             buf.append("Edge length: ");
             buf.append(prev.getLength());
             buf.append(" from: ");
-            buf.append(prev.getFromJunctionId());
+            buf.append(prev.getFromJunctionId().toString());
             buf.append(" to: ");
-            buf.append(prev.getToJunctionId());
+            buf.append(prev.getToJunctionId().toString());
             buf.append("\n");
             System.out.println(buf.toString());
         }

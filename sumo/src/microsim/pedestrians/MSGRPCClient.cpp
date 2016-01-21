@@ -31,44 +31,52 @@ MSGRPCClient::~MSGRPCClient() {
 	// TODO Auto-generated destructor stub
 }
 
-SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage, SUMOTime currentTime){
+SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime){
 	noninteracting::CMPWlkgTm request;
+	if (prev != 0){
+		noninteracting::PBEdge edge;
+		edge.set_length(prev->getLength());
+		edge.set_fromjunctionid(prev->getFromJunction()->getID());
+		edge.set_tojunctionid(prev->getToJunction()->getID());
+		request.set_allocated_prev(&edge);
+	} else {
+		noninteracting::PBEdge edge;
+		edge.set_length(1.);
+		edge.set_fromjunctionid("a");
+		edge.set_tojunctionid("b");
+		request.set_allocated_prev(&edge);
+	}
+
 
 	noninteracting::PBMSPersonStage_Walking st;
-	st.set_maxspeed(stage.getMaxSpeed());
-	std::cout << "setting speed to " << stage.getMaxSpeed() << std::endl;
-	st.set_departpos(stage.getDepartPos());
-	std::cout << "setting dpartpos to " << stage.getDepartPos() << std::endl;
-	st.set_arrivalpos(stage.getArrivalPos());
-	std::cout << "setting arrival pos to " << stage.getArrivalPos() << std::endl;
 
 	noninteracting::PBEdge stEdge;
-
-	stEdge.set_length((double)stage.getEdge()->getLength());
-	std::cout << "setting length to " << stage.getEdge()->getLength() << std::endl;
+	stEdge.set_length(stage.getEdge()->getLength());
 	stEdge.set_fromjunctionid(stage.getEdge()->getFromJunction()->getID());
-	std::cout << "setting fromjunctionid to " << stage.getEdge()->getFromJunction()->getID() << std::endl;
 	stEdge.set_tojunctionid(stage.getEdge()->getToJunction()->getID());
-	std::cout << "setting tojunctionid to " << stage.getEdge()->getToJunction()->getID() << std::endl;
 	st.set_allocated_edge(&stEdge);
 
-	noninteracting::PBEdge nxtStEdge;
-	nxtStEdge.set_length((double)stage.getNextRouteEdge()->getLength());
-	std::cout << "setting length to " << stage.getNextRouteEdge()->getLength() << std::endl;
-	nxtStEdge.set_fromjunctionid(stage.getNextRouteEdge()->getFromJunction()->getID());
-	std::cout << "setting fromjunctionid to " << stage.getNextRouteEdge()->getFromJunction()->getID() << std::endl;
-	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
-	std::cout << "setting tojunctionid to " << stage.getNextRouteEdge()->getToJunction()->getID() << std::endl;
-	st.set_allocated_nextrouteedge(&nxtStEdge);
 
-	noninteracting::PBEdge edge;
-	//edge.set_length((double)prev->getLength());
-	edge.set_length(1.0);
-//	edge.set_fromjunctionid(prev->getFromJunction()->getID());
-	edge.set_fromjunctionid("from");
-//	edge.set_tojunctionid(prev->getToJunction()->getID());
-	edge.set_tojunctionid("to");
-	request.set_allocated_prev(&edge);
+	//	if (stage.getNextRouteEdge() != 0) {
+	noninteracting::PBEdge nxtStEdge;
+	nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
+	nxtStEdge.set_fromjunctionid((stage.getNextRouteEdge()->getFromJunction()->getID()));
+	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
+	st.set_allocated_nextrouteedge(&nxtStEdge);
+	//	} else {
+	//		noninteracting::PBEdge df = noninteracting::PBEdge::default_instance();
+	//		st.set_allocated_nextrouteedge(&df);
+	//	}
+
+	st.set_departpos(stage.getDepartPos());
+	st.set_arrivalpos(stage.getArrivalPos());
+	st.set_maxspeed(stage.getMaxSpeed());
+
+	request.set_allocated_stage(&st);
+
+	noninteracting::PBSUMOTime time;
+	time.set_sumotime(currentTime);
+	request.set_allocated_sumotime(&time);
 
 	noninteracting::PBSUMOTime replay;
 
@@ -78,6 +86,7 @@ SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::M
 	Status status = stub_->computeWalkingTime(&context,request, &replay);
 
 	if (status.ok()){
+		std::cout << MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime())) << std::endl;
 		return  MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
 	} else {
 		std::cerr << "something went wrong!" << std::endl;
