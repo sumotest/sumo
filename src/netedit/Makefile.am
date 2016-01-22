@@ -40,6 +40,7 @@ GNEChange_Connection.h GNEChange_Connection.cpp \
 GNEChange_Attribute.h GNEChange_Attribute.cpp \
 GNEChange_TLS.h GNEChange_TLS.cpp \
 GNEChange_Selection.h GNEChange_Selection.cpp \
+GNEChange_Additional.h GNEChange_Additional.cpp \
 GNEUndoList.h GNEUndoList.cpp \
 GNEAttributeCarrier.h GNEAttributeCarrier.cpp \
 GNEInspector.h GNEInspector.cpp \
@@ -48,6 +49,7 @@ GNEConnector.h GNEConnector.cpp \
 GNETLSEditor.h GNETLSEditor.cpp \
 GNEAdditionalHandler.h GNEAdditionalHandler.cpp \
 GNEAdditional.h GNEAdditional.cpp \
+GNEAdditionalFrame.h GNEAdditionalFrame.cpp \
 GNEChargingStation.h GNEChargingStation.cpp \
 GNEStoppingPlace.h GNEStoppingPlace.cpp \
 GNEBusStop.h GNEBusStop.cpp \
