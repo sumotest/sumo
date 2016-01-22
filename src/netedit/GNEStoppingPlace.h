@@ -2,7 +2,7 @@
 /// @file    GNEStoppingPlace.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Dec 2015
-/// @version $Id: $
+/// @version $Id$
 ///
 /// A abstract class to define common parameters of lane area in which vehicles can halt (GNE version)
 /****************************************************************************/

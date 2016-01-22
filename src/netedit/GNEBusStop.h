@@ -2,7 +2,7 @@
 /// @file    GNEBusStop.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
-/// @version $Id: $
+/// @version $Id$
 ///
 /// A class for visualizing busStop geometry (adapted from GUILaneWrapper)
 /****************************************************************************/

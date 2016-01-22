@@ -2,7 +2,7 @@
 /// @file    GNEAdditional.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Jan 2016
-/// @version $Id: $
+/// @version $Id$
 ///
 /// A abstract class for representation of additional elements
 /****************************************************************************/

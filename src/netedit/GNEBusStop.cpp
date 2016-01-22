@@ -2,7 +2,7 @@
 /// @file    GNEBusStop.cpp
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
-/// @version $Id: $
+/// @version $Id$
 ///
 /// A lane area vehicles can halt at (GNE version)
 /****************************************************************************/

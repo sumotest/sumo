@@ -2,7 +2,7 @@
 /// @file    GNEChargingStation.cpp
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
-/// @version $Id: $
+/// @version $Id$
 ///
 /// A class for visualizing chargingStation geometry (adapted from GUILaneWrapper)
 /****************************************************************************/

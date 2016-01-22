@@ -2,7 +2,7 @@
 /// @file    GNEAdditionalFrame.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Dec 2015
-/// @version $Id: $
+/// @version $Id$
 ///
 /// The Widget for setting default parameters of additional elements
 /****************************************************************************/

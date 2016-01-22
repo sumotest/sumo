@@ -2,7 +2,7 @@
 /// @file    GNEAdditionalHandler
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
-/// @version $Id: $
+/// @version $Id$
 ///
 /// Builds trigger objects for netEdit
 /****************************************************************************/
