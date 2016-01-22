@@ -467,7 +467,6 @@ GNESelector::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal 
     const std::set<GUIGlID> allIDs = myUpdateTarget->getNet()->getGlIDs();
     const bool numerical = GNEAttributeCarrier::isNumerical(attr);
     for (std::set<GUIGlID>::const_iterator it = allIDs.begin(); it != allIDs.end(); it++) {
-        std::cout << expr << " glid:" << (*it) << " num:" << numerical << " val:" << val << std::endl;
         GUIGlID id = *it;
         object = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
         if (!object) {
@@ -475,6 +474,7 @@ GNESelector::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal 
         }
         ac = dynamic_cast<GNEAttributeCarrier*>(object);
         if (ac && ac->getTag() == tag) { // not all objects need to be attribute carriers
+            std::cout << "ENTRA" << std::endl;
             if (expr == "") {
                 result.push_back(id);
             } else if (numerical) {

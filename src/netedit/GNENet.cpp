@@ -676,6 +676,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             knownTypes.insert(GLO_EDGE);
             knownTypes.insert(GLO_LANE);
             // knownTypes.insert(GLO_TLLOGIC); makes no sense to include them
+            knownTypes.insert(GLO_TRIGGER); // PABLO #1916
             for (std::set<GUIGlObjectType>::const_iterator it = knownTypes.begin(); it != knownTypes.end(); it++) {
                 const std::set<GUIGlID> tmp = getGlIDs(*it);
                 result.insert(tmp.begin(), tmp.end());
@@ -712,7 +713,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             break;
         }
         case GLO_TRIGGER: {                                                                                                                                 // PABLO #1916
-            // Iterate over every                                                                                                                           // PABLO #1916
+            // Iterate over every edge                                                                                                                      // PABLO #1916
             for (GNEEdges::const_iterator itEdges = myEdges.begin(); itEdges != myEdges.end(); itEdges++) {                                                 // PABLO #1916
                 GNEEdge::LaneVector lanesOfEdge = itEdges->second->getLanes();                                                                              // PABLO #1916
                 // Iterate over every lane of edge                                                                                                          // PABLO #1916
