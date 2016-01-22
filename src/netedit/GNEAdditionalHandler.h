@@ -66,10 +66,8 @@ public:
     /// @brief Constructor
     GNEAdditionalHandler(const std::string& file, GNEViewNet* viewNet, GNENet *net, GNEUndoList* undoList);
 
-
     /// @brief Destructor
     ~GNEAdditionalHandler();
-
 
     /// @name inherited from GenericSAXHandler
     //@{
@@ -84,7 +82,6 @@ public:
      */
     void myStartElement(int element, const SUMOSAXAttributes& attrs);
 
-
     /** @brief Builds a vaporization
      *
      * Parses the attributes, reporting errors if the time values are false
@@ -95,7 +92,6 @@ public:
      * @note recheck throwing the exception
      */
     void buildVaporizer(const SUMOSAXAttributes& attrs);
-
 
     /// @name parsing methods
     ///
@@ -120,7 +116,6 @@ public:
     void parseAndBuildLaneSpeedTrigger(GNENet* net, const SUMOSAXAttributes& attrs,
                                        const std::string& base);
 
-
     /** @brief Parses his values and builds a rerouter
      *
      * @param[in] net The network the rerouter belongs to
@@ -131,7 +126,6 @@ public:
     void parseAndBuildRerouter(GNENet* net, const SUMOSAXAttributes& attrs,
                                const std::string& base);
 
-
     /** @brief Parses his values and builds a bus stop
      *
      * @param[in] net The network the bus stop belongs to
@@ -139,7 +133,6 @@ public:
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildBusStop(GNENet* net, const SUMOSAXAttributes& attrs);
-
 
     /** @brief Parses his values and builds a charging station
      *
@@ -199,7 +192,6 @@ public:
     void buildBusStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines,
                       GNELane* lane, SUMOReal frompos, SUMOReal topos);
 
-
     /** @brief Builds a charging Station
      *
      * Simply calls the MSBusStop constructor.
@@ -218,7 +210,6 @@ public:
      */
     void buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
                               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
-
 
     /** @brief builds a microscopic calibrator
      *
@@ -247,16 +238,6 @@ public:
      */
     GNETriggeredRerouter* buildRerouter(GNENet* net, const std::string& id, MSEdgeVector& edges,
                                         SUMOReal prob, const std::string& file, bool off);
-    //@}
-
-    /// @name removing methods
-    ///
-    /// These methods remove the trigger.
-    //@{
-
-    void removeBusStop(GNENet* net, GNEBusStop *busStop);
-
-    //@}
 
     /** @brief Helper method to obtain the filename
      *

@@ -378,14 +378,6 @@ GNEAdditionalHandler::buildRerouter(GNENet* net, const std::string& id, MSEdgeVe
 }
 
 
-void 
-GNEAdditionalHandler::removeBusStop(GNENet* net, GNEBusStop *busStop) {
-    myUndoList->p_begin("delete busStop");
-    myUndoList->add(new GNEChange_Additional(net, busStop, false, myViewNet), true);
-    myUndoList->p_end();
-}
-
-
 std::string 
 GNEAdditionalHandler::getFileName(const SUMOSAXAttributes& attrs, const std::string& base, const bool allowEmpty)
 {

@@ -62,7 +62,7 @@
 #include "GNESelector.h"
 #include "GNEConnector.h"
 #include "GNETLSEditor.h"
-#include "GNEAdditionalFrame.h"          // PABLO #1916
+#include "GNEAdditionalFrame.h"     // PABLO #1916
 #include "GNEAdditionalHandler.h"   // PABLO #1916
 #include "GNEPoly.h"
 #include "GNECrossing.h"
@@ -120,6 +120,7 @@ GNEViewNet::GNEViewNet(
     myJunctionToMove(0),
     myEdgeToMove(0),
     myPolyToMove(0),
+    myAdditionalToMove(0),  // PABLO #1916 
     myMoveSelection(false),
     myAmInRectSelect(false),
     myToolbar(toolBar),
@@ -138,8 +139,8 @@ GNEViewNet::GNEViewNet(
     myConnector->hide();
     myTLSEditor = new GNETLSEditor(actualParent, this, myUndoList);
     myTLSEditor->hide();
-    myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);    // PABLO #1916
-    myAdditional->hide();                                               // PABLO #1916
+    myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);   // PABLO #1916
+    myAdditional->hide();                                                   // PABLO #1916
     // view must be the final member of actualParent
     reparent(actualParent);
 
@@ -416,7 +417,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 case GLO_CROSSING:
                     pointed_crossing = (GNECrossing*)pointed;
                     break;
-                case GLO_TRIGGER:                                   // PABLO #1916
+                case GLO_ADDITIONAL:                                // PABLO #1916
                     pointed_additional = (GNEAdditional*)pointed;   // PABLO #1916
                     break;                                          // PABLO #1916
                 default:
@@ -477,15 +478,15 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
 
             case GNE_MODE_MOVE:
                 if (pointed_poly) {
-                    myMoveSrc = getPositionInformation();
                     myPolyToMove = pointed_poly;
+                    myMoveSrc = getPositionInformation();
                 } else if (pointed_junction) {
                     if (gSelected.isSelected(GLO_JUNCTION, pointed_junction->getGlID())) {
                         myMoveSelection = true;
-                        myMoveSrc = getPositionInformation();
                     } else {
                         myJunctionToMove = pointed_junction;
                     }
+                    myMoveSrc = getPositionInformation();
                 } else if (pointed_edge) {
                     if (gSelected.isSelected(GLO_EDGE, pointed_edge->getGlID())) {
                         myMoveSelection = true;
@@ -493,6 +494,15 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                         myEdgeToMove = pointed_edge;
                     }
                     myMoveSrc = getPositionInformation();
+                } else if (pointed_additional) {                                                // PABLO #1916
+                    if (gSelected.isSelected(GLO_ADDITIONAL, pointed_additional->getGlID())) {  // PABLO #1916
+                        myMoveSelection = true;                                                 // PABLO #1916
+                    } else {                                                                    // PABLO #1916
+                        myAdditionalToMove = pointed_additional;                                // PABLO #1916
+                        myAdditionalToMoveFirstPosition = myAdditionalToMove->getLane().getShape().nearest_offset_to_point2D(getPositionInformation(), false);
+
+                    }                                                                           // PABLO #1916
+                    myMoveSrc = getPositionInformation();                                       // PABLO #1916
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
@@ -634,6 +644,14 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
         const std::string& newShape = myEdgeToMove->getAttribute(SUMO_ATTR_SHAPE);
         myEdgeToMove->setAttribute(SUMO_ATTR_SHAPE, newShape, myUndoList);
         myEdgeToMove = 0;
+    } else if (myAdditionalToMove) {                                                                                    // PABLO #1916
+        if(dynamic_cast<GNEStoppingPlace*>(myAdditionalToMove)) {                                                       // PABLO #1916
+            GNEStoppingPlace *stoppingPlace = dynamic_cast<GNEStoppingPlace*>(myAdditionalToMove);                      // PABLO #1916
+            stoppingPlace->setAttribute(SUMO_ATTR_STARTPOS, toString(stoppingPlace->getFromPosition()), myUndoList);    // PABLO #1916
+            stoppingPlace->setAttribute(SUMO_ATTR_ENDPOS, toString(stoppingPlace->getToPosition()), myUndoList);        // PABLO #1916
+        }                                                                                                               // PABLO #1916
+        // Rest of elements                                                                                             // PABLO #1916
+        myAdditionalToMove = 0;                                                                                         // PABLO #1916
     } else if (myMoveSelection) {
         // positions and shapes are already up to date but we must register with myUndoList
         myNet->finishMoveSelection(myUndoList);
@@ -664,6 +682,11 @@ GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {
         myJunctionToMove->move(getPositionInformation());
     } else if (myEdgeToMove) {
         myMoveSrc = myEdgeToMove->moveGeometry(myMoveSrc, getPositionInformation());
+    } else if (myAdditionalToMove) {                                                                                                        // PABLO #1916
+        SUMOReal posOfMouseOverLane = myAdditionalToMove->getLane().getShape().nearest_offset_to_point2D(getPositionInformation(), false);  // PABLO #1916
+        myAdditionalToMove->moveAdditional(posOfMouseOverLane - myAdditionalToMoveFirstPosition);                                           // PABLO #1916
+        myAdditionalToMoveFirstPosition = posOfMouseOverLane;                                                                               // PABLO #1916
+        update();                                                                                                                           // PABLO #1916
     } else if (myMoveSelection) {
         Position moveTarget = getPositionInformation();
         myNet->moveSelection(myMoveSrc, moveTarget);

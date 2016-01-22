@@ -96,7 +96,7 @@ GNEBusStop::updateGeometry() {
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand");
 
     // Get shape of lane parent
-    myShape = getLane().getShape();
+    myShape = myLane.getShape();
     
     // Move shape to side
     myShape.move2side(1.65 * offsetSign);
@@ -145,6 +145,20 @@ GNEBusStop::updateGeometry() {
         mySignRot = 0;
 }
 
+
+void 
+GNEBusStop::moveAdditional(SUMOReal distance) {
+    // Move to Right if distance is positive
+    if(distance > 0 && getToPosition() + distance < myLane.getLength()) {
+        setFromPosition(getFromPosition() + distance);
+        setToPosition(getToPosition() + distance);
+    } else if(distance < 0 && getFromPosition() + distance > 0) { 
+        setFromPosition(getFromPosition() + distance);
+        setToPosition(getToPosition() + distance);
+    }
+    // Update geometry with the new shape of busStop
+    updateGeometry();
+}
 
 const 
 std::vector<std::string> &GNEBusStop::getLines() const {
@@ -458,7 +472,7 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(getLane().getAttribute(SUMO_ATTR_ID));
+            return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
             return toString(getFromPosition());
         case SUMO_ATTR_ENDPOS:

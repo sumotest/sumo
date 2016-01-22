@@ -190,7 +190,6 @@ private:
 
     // the string that should be matched against if attr 'allowed' or 'disalloed' are set to "all"
     const std::string ALL_VCLASS_NAMES_MATCH_STRING;
-
 };
 
 

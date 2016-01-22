@@ -319,7 +319,7 @@ GNEChargingStation::updateGeometry() {
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand");
 
     // Get shape of lane parent
-    myShape = getLane().getShape();
+    myShape = myLane.getShape();
     
     // Move shape to side
     myShape.move2side(1.65 * offsetSign);
@@ -368,13 +368,19 @@ GNEChargingStation::updateGeometry() {
         mySignRot = 0;
 }
 
+
+void 
+GNEChargingStation::moveAdditional(SUMOReal distance) {
+}
+
+
 std::string
 GNEChargingStation::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(getLane().getAttribute(SUMO_ATTR_ID));
+            return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
             return toString(getFromPosition());
         case SUMO_ATTR_ENDPOS:
@@ -398,9 +404,6 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
 
 void
 GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-    if (value == getAttribute(key)) {
-        return; //avoid needless changes, later logic relies on the fact that attributes have changed
-    }
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
@@ -448,7 +451,7 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
-    NBEdge* edge = getLane().getParentEdge().getNBEdge();
+    NBEdge* edge = myLane.getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:

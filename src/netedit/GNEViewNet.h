@@ -77,7 +77,8 @@ class GNEInspector;
 class GNESelector;
 class GNEConnector;
 class GNETLSEditor;
-class GNEAdditionalFrame;    // PABLO #1916
+class GNEAdditionalFrame;   // PABLO #1916
+class GNEAdditional;        // PABLO #1916
 class GNEPoly;
 
 // ===========================================================================
@@ -267,6 +268,12 @@ private:
     /// @brief the poly of which geometry is being moved
     GNEPoly* myPolyToMove;
 
+    /// @brief the additional element of which shape is being moved     // PABLO #1916
+    GNEAdditional* myAdditionalToMove;                                  // PABLO #1916
+
+    /// @brief variable to save the position of the click over the lane // PABLO #1916
+    SUMOReal myAdditionalToMoveFirstPosition;                           // PABLO #1916
+
     /// @brief position from which to move edge geometry
     Position myMoveSrc;
 
@@ -295,11 +302,9 @@ private:
     /// @brief combo box for selecting the  edit mode
     FXComboBox* myEditModesCombo;
 
-    /** @brief since we cannot switch on strings we map the mode names to an enum
-     */
+    /// @brief since we cannot switch on strings we map the mode names to an enum
     StringBijection<EditMode> myEditModeNames;
     StringBijection<EditMode> myEditAdditionalModeNames;    // PABLO #1916
-
     //@}
 
     /// @brief a reference to the undolist maintained in the application
@@ -317,8 +322,8 @@ private:
     /// @brief the panel for GNE_MODE_TLS
     GNETLSEditor* myTLSEditor;
 
-    /// @brief the panel for GNE_MODE_ADDITIONAL // PABLO #1916
-    GNEAdditionalFrame* myAdditional;                // PABLO #1916
+    /// @brief the panel for GNE_MODE_ADDITIONAL    // PABLO #1916
+    GNEAdditionalFrame* myAdditional;               // PABLO #1916
 
     Position myPopupSpot;
 
@@ -327,7 +332,6 @@ private:
 private:
     // set edit mode
     void setEditMode(EditMode mode);
-
 
     /// @brief adds controls for setting the edit mode
     void buildEditModeControls();

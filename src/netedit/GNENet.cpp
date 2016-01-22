@@ -643,7 +643,7 @@ GNENet::retrieveAttributeCarriers(const std::set<GUIGlID>& ids, GUIGlObjectType 
                 case GLO_LANE:
                     ac = dynamic_cast<GNELane*>(object);
                     break;
-                case GLO_TRIGGER:                                           // PABLO #1916
+                case GLO_ADDITIONAL:                                           // PABLO #1916
                     if(dynamic_cast<GNEBusStop*>(object)) {                 // PABLO #1916
                         ac = dynamic_cast<GNEBusStop*>(object);             // PABLO #1916
                     } else if(dynamic_cast<GNEChargingStation*>(object)) {  // PABLO #1916
@@ -676,7 +676,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             knownTypes.insert(GLO_EDGE);
             knownTypes.insert(GLO_LANE);
             // knownTypes.insert(GLO_TLLOGIC); makes no sense to include them
-            knownTypes.insert(GLO_TRIGGER); // PABLO #1916
+            knownTypes.insert(GLO_ADDITIONAL); // PABLO #1916
             for (std::set<GUIGlObjectType>::const_iterator it = knownTypes.begin(); it != knownTypes.end(); it++) {
                 const std::set<GUIGlID> tmp = getGlIDs(*it);
                 result.insert(tmp.begin(), tmp.end());
@@ -712,7 +712,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             }
             break;
         }
-        case GLO_TRIGGER: {                                                                                                                                 // PABLO #1916
+        case GLO_ADDITIONAL: {                                                                                                                                 // PABLO #1916
             // Iterate over every edge                                                                                                                      // PABLO #1916
             for (GNEEdges::const_iterator itEdges = myEdges.begin(); itEdges != myEdges.end(); itEdges++) {                                                 // PABLO #1916
                 GNEEdge::LaneVector lanesOfEdge = itEdges->second->getLanes();                                                                              // PABLO #1916

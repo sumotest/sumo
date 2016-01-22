@@ -76,6 +76,13 @@ public:
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 
+    /** @brief change the position of the additonal geometry without registering undo/redo
+     * @param[in] oldPos The origin of the mouse movement
+     * @param[in] newPos The destination of the mouse movenent
+     * @return newPos if something was moved, oldPos if nothing was moved
+     */
+    void moveAdditional(SUMOReal distance);
+
     /** @brief Returns the charging power of the chargingStation
      * @return The charging power of the chargingStation
      */

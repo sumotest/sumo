@@ -103,7 +103,7 @@ GNEStoppingPlace::setFromPosition(SUMOReal fromPos) {
 
 void 
 GNEStoppingPlace::setToPosition(SUMOReal toPos) {
-    if(toPos > getLane().getLength())
+    if(toPos > myLane.getLength())
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than lane length");
     else if(myFromPos >= toPos)
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than than ToPos '" + toString(myToPos) + "'");

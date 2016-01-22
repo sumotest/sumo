@@ -79,6 +79,18 @@ public:
      */
     GNELane &getLane() const;
 
+    /** @brief Returns string with the information of the shape
+     * @return The string with the shape of the additional element
+     */
+    std::string getShape() const;
+
+    /** @brief change the position of the additonal geometry without registering undo/redo
+     * @param[in] oldPos The origin of the mouse movement
+     * @param[in] newPos The destination of the mouse movenent
+     * @return newPos if something was moved, oldPos if nothing was moved
+     */
+    virtual void moveAdditional(SUMOReal distance) = 0;
+
     /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns the name of the parent object (if any)
@@ -141,10 +153,12 @@ public:
     virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
     //@}
 
-private:
-
-    /// @brief The lane this stopping place is located at
+protected:
+    /// @brief The lane this additional element is located at
     GNELane& myLane;
+
+    /// @brief The shape of the additional element
+    PositionVector myShape;
 
 private:
     /// @brief set attribute after validation
@@ -155,22 +169,6 @@ private:
 
     /// @brief Invalidated assignment operator.
     GNEAdditional& operator=(const GNEAdditional&);
-
-/**
-    ALL OF THIS FUNCTIONS SHOULD BE ERASED?
-
-    /// @brief return value for lane coloring according to the given scheme
-    SUMOReal getColorValue(size_t activeScheme) const;
-        
-    /// @brief sets the color according to the current scheme index and some lane function
-    bool setFunctionalColor(size_t activeScheme) const;
-
-    /// @brief sets multiple colors according to the current scheme index and some lane function
-    bool setMultiColor(const GUIColorer& c) const;
-    
-    /// The color of the shape parts (cached)
-    mutable std::vector<RGBColor> myShapeColors;
-**/
 
 };
 

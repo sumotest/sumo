@@ -69,6 +69,13 @@ public:
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
+    /** @brief change the position of the additonal geometry without registering undo/redo
+     * @param[in] oldPos The origin of the mouse movement
+     * @param[in] newPos The destination of the mouse movenent
+     * @return newPos if something was moved, oldPos if nothing was moved
+     */
+    virtual void moveAdditional(SUMOReal distance) = 0;
+
     /** @brief Returns the from position of the stoppingPlace
      * @return The from position of the stopping place
      */
@@ -164,9 +171,6 @@ public:
     //@}
 
 protected:
-
-    /// @brief The shape of the stoppingPlace
-    PositionVector myShape;
 
     /// @name computed only once (for performance) in updateGeometry()
     //@{
