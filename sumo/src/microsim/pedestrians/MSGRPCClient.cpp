@@ -33,18 +33,23 @@ MSGRPCClient::~MSGRPCClient() {
 
 SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime){
 	noninteracting::CMPWlkgTm request;
+
+
+
 	if (prev != 0){
 		noninteracting::PBEdge edge;
 		edge.set_length(prev->getLength());
-		edge.set_fromjunctionid(prev->getFromJunction()->getID());
-		edge.set_tojunctionid(prev->getToJunction()->getID());
+		std::string from =prev->getFromJunction()->getID();
+		edge.set_allocated_fromjunctionid(&from);
+		std::string to = prev->getToJunction()->getID();
+		edge.set_allocated_tojunctionid(&to);
 		request.set_allocated_prev(&edge);
 	} else {
-		noninteracting::PBEdge edge;
-		edge.set_length(1.);
-		edge.set_fromjunctionid("a");
-		edge.set_tojunctionid("b");
-		request.set_allocated_prev(&edge);
+		//		noninteracting::PBEdge edge;
+		//		edge.set_length(1.);
+		//		edge.set_fromjunctionid("a");
+		//		edge.set_tojunctionid("b");
+		//		request.set_allocated_prev(&edge);
 	}
 
 
@@ -52,18 +57,25 @@ SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::M
 
 	noninteracting::PBEdge stEdge;
 	stEdge.set_length(stage.getEdge()->getLength());
-	stEdge.set_fromjunctionid(stage.getEdge()->getFromJunction()->getID());
-	stEdge.set_tojunctionid(stage.getEdge()->getToJunction()->getID());
+	std::string from = new std::string(prev->getFromJunction()->getID());
+	stEdge.set_fromjunctionid(from);
+	std::string to = new std::string(stage.getEdge()->getToJunction()->getID());
+	stEdge.set_tojunctionid(to);
 	st.set_allocated_edge(&stEdge);
 
 
-	//	if (stage.getNextRouteEdge() != 0) {
-	noninteracting::PBEdge nxtStEdge;
-	nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
-	nxtStEdge.set_fromjunctionid((stage.getNextRouteEdge()->getFromJunction()->getID()));
-	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
-	st.set_allocated_nextrouteedge(&nxtStEdge);
-	//	} else {
+	if (stage.getNextRouteEdge() != 0) {
+		noninteracting::PBEdge nxtStEdge;
+		nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
+//		std::string from2 = stage.getNextRouteEdge()->getFromJunction()->getID();
+		std::string from2 = "aaaa";
+		nxtStEdge.set_fromjunctionid(from2);
+//		std::string to2 =stage.getNextRouteEdge()->getToJunction()->getID();
+		std::string to2 ="bbbb";
+		nxtStEdge.set_tojunctionid(to2);
+		st.set_allocated_nextrouteedge(&nxtStEdge);
+	}
+	//else {
 	//		noninteracting::PBEdge df = noninteracting::PBEdge::default_instance();
 	//		st.set_allocated_nextrouteedge(&df);
 	//	}
