@@ -73,7 +73,7 @@ MSPModel_NonInteracting_GRPC::~MSPModel_NonInteracting_GRPC() {
 
 PedestrianState*
 MSPModel_NonInteracting_GRPC::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
-	MSGRPCClient client(grpc::CreateChannel("localhost:50051", grpc::InsecureCredentials()));
+	MSGRPCClient client(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
     PState* state = new PState(&client);
     const SUMOTime firstEdgeDuration = state->computeWalkingTime(0, *stage, now);
     myNet->getBeginOfTimestepEvents()->addEvent(new MoveToNextEdge(person, *stage),

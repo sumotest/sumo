@@ -87,8 +87,10 @@ PBPState::Stub::Stub(const std::shared_ptr< ::grpc::Channel>& channel)
 
 PBPState::AsyncService::AsyncService() : ::grpc::AsynchronousService(PBPState_method_names, 6) {}
 
+PBPState::Service::Service() {
+}
+
 PBPState::Service::~Service() {
-  delete service_;
 }
 
 ::grpc::Status PBPState::Service::computeWalkingTime(::grpc::ServerContext* context, const ::noninteracting::CMPWlkgTm* request, ::noninteracting::PBSUMOTime* response) {
@@ -158,10 +160,10 @@ void PBPState::AsyncService::RequestgetNextEdge(::grpc::ServerContext* context, 
 }
 
 ::grpc::RpcService* PBPState::Service::service() {
-  if (service_ != nullptr) {
-    return service_;
+  if (service_) {
+    return service_.get();
   }
-  service_ = new ::grpc::RpcService();
+  service_ = std::unique_ptr< ::grpc::RpcService>(new ::grpc::RpcService());
   service_->AddMethod(new ::grpc::RpcServiceMethod(
       PBPState_method_names[0],
       ::grpc::RpcMethod::NORMAL_RPC,
@@ -192,7 +194,7 @@ void PBPState::AsyncService::RequestgetNextEdge(::grpc::ServerContext* context, 
       ::grpc::RpcMethod::NORMAL_RPC,
       new ::grpc::RpcMethodHandler< PBPState::Service, ::noninteracting::PBMSPersonStage_Walking, ::noninteracting::PBEdge>(
           std::mem_fn(&PBPState::Service::getNextEdge), this)));
-  return service_;
+  return service_.get();
 }
 
 

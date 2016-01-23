@@ -109,7 +109,7 @@ class PBPState GRPC_FINAL {
 
   class Service : public ::grpc::SynchronousService {
    public:
-    Service() : service_(nullptr) {}
+    Service();
     virtual ~Service();
     virtual ::grpc::Status computeWalkingTime(::grpc::ServerContext* context, const ::noninteracting::CMPWlkgTm* request, ::noninteracting::PBSUMOTime* response);
     virtual ::grpc::Status getPosition(::grpc::ServerContext* context, const ::noninteracting::GetPos* request, ::noninteracting::PBPosition* response);
@@ -119,7 +119,7 @@ class PBPState GRPC_FINAL {
     virtual ::grpc::Status getNextEdge(::grpc::ServerContext* context, const ::noninteracting::PBMSPersonStage_Walking* request, ::noninteracting::PBEdge* response);
     ::grpc::RpcService* service() GRPC_OVERRIDE GRPC_FINAL;
    private:
-    ::grpc::RpcService* service_;
+    std::unique_ptr< ::grpc::RpcService> service_;
   };
   class AsyncService GRPC_FINAL : public ::grpc::AsynchronousService {
    public:

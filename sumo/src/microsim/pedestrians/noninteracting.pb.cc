@@ -5,7 +5,6 @@
 #include "noninteracting.pb.h"
 
 #include <algorithm>
-#include <stdio.h>
 
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/port.h>
@@ -878,7 +877,6 @@ void PBEdge::SerializeWithCachedSizes(
 int PBEdge::ByteSize() const {
   int total_size = 0;
 
-  auto x =  this->fromjunctionid();
   // optional string fromJunctionId = 1;
   if (this->fromjunctionid().size() > 0) {
     total_size += 1 +
