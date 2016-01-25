@@ -188,10 +188,14 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
             SUMOReal endPosition;
             // If positions are valid
             if(setPositions(lane, position, startPosition, endPosition)) {
+                // Extract bus lines
+                std::string linesWithoutParse = myVectorOfParametersTextFields.at(1).textField->getText().text();
+                std::vector<std::string> lines;
+                SUMOSAXAttributes::parseStringVector(linesWithoutParse, lines);
                 // Create an add new busStop
-                GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), std::vector<std::string>(), lane, startPosition, endPosition);
+                GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, lines);
                 myUndoList->p_begin("add " + busStop->getDescription());
-                myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), busStop, true, myUpdateTarget), true);
+                myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), busStop, true), true);
                 myUndoList->p_end();
             } 
         }
@@ -206,14 +210,15 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 SUMOReal endPosition;
                 // If positions are valid
                 if(setPositions(lane, position, startPosition, endPosition)) {
+                    // Get values of text fields
                     SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfParametersTextFields.at(1).textField->getText().text());
                     SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfParametersTextFields.at(2).textField->getText().text());
                     bool chargeInTransit = myVectorOfParameterCheckButton.at(0).menuCheck->getCheck();
                     int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfParametersTextFields.at(3).textField->getText().text());
                     // Create an add new chargingStation
-                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
+                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
                     myUndoList->p_begin("add " + chargingStation->getDescription());
-                    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true, myUpdateTarget), true);
+                    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true), true);
                     myUndoList->p_end();
                 }
             }
@@ -253,7 +258,7 @@ void
 GNEAdditionalFrame::removeAdditional(GNEAdditional *additional) {
 
     myUndoList->p_begin("delete " + additional->getDescription());
-    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), additional, false, myUpdateTarget), true);
+    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), additional, false), true);
     myUndoList->p_end();
 }
 

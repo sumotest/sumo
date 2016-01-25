@@ -451,6 +451,7 @@ void
 GNELane::updateGeometry() {
     myShapeRotations.clear();
     myShapeLengths.clear();
+    myLength = 0;  // PABLO #1916 (QUESTION ERDMANN 01)
     //SUMOReal length = myParentEdge.getLength(); // @todo see ticket #448
     // may be different from length
     int segments = (int) getShape().size() - 1;
@@ -461,8 +462,13 @@ GNELane::updateGeometry() {
             const Position& f = getShape()[i];
             const Position& s = getShape()[i + 1];
             myShapeLengths.push_back(f.distanceTo2D(s));
+            myLength += myShapeLengths.back();   // PABLO #1916 (QUESTION ERDMANN 01)
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
+    }
+    else {                                                                              // PABLO #1916 (QUESTION ERDMANN 01)
+        // There are only a segment, then lenght of lane is calculated using edge shape // PABLO #1916 (QUESTION ERDMANN 01)
+        myLength = getShape()[0].distanceTo2D(getShape()[1]);                           // PABLO #1916 (QUESTION ERDMANN 01)
     }
     // Update geometry of additionalElements                                                            // PABLO #1916
     for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++)  // PABLO #1916
@@ -480,10 +486,10 @@ GNELane::setIndex(unsigned int index) {
     setMicrosimID(myParentEdge.getNBEdge()->getLaneID(index));
 }
 
-SUMOReal                                            // PABLO #1916
-GNELane::getLength() const {                        // PABLO #1916
-    return myParentEdge.getNBEdge()->getLength();   // PABLO #1916
-}                                                   // PABLO #1916
+SUMOReal                        // PABLO #1916
+GNELane::getLength() const {    // PABLO #1916  
+    return myLength;            // PABLO #1916
+}                               // PABLO #1916
 
 
 void 

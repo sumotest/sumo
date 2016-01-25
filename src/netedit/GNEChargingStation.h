@@ -59,14 +59,15 @@ public:
     /** @brief Constructor of charging station
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] frompos From position of the StoppingPlace
-     * @param[in] topos To position of the StoppingPlace
+     * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
+     * @param[in] fromPos From position of the StoppingPlace
+     * @param[in] toPos To position of the StoppingPlace
      * @param[in] chargingPower charging power of the charging station
      * @param[in] efficiency efficiency of the charge [0,1]
      * @param[in] chargeInTransit enable or disable charge in transit
      * @param[in] chargeDelay delay in timeSteps in the charge
      */
-    GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPpos, SUMOReal toPos, 
+    GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, 
                        SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
     
     /// @brief Destructor
@@ -75,13 +76,6 @@ public:
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
-    /** @brief change the position of the additonal geometry without registering undo/redo
-     * @param[in] oldPos The origin of the mouse movement
-     * @param[in] newPos The destination of the mouse movenent
-     * @return newPos if something was moved, oldPos if nothing was moved
-     */
-    void moveAdditional(SUMOReal distance);
 
     /** @brief Returns the charging power of the chargingStation
      * @return The charging power of the chargingStation

@@ -65,9 +65,11 @@
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag tag) :
-    myLane(lane),
+GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
     GUIGlObject(GLO_ADDITIONAL, id),
+    myLane(lane),
+    myViewNet(viewNet),
+    myBlocked(blocked),
     GNEAttributeCarrier(tag) {
     // Add a reference to this new additional to laneParent
     myLane.addAdditional(this);
@@ -86,9 +88,27 @@ GNEAdditional::getLane() const {
 }
 
 
+GNEViewNet* 
+GNEAdditional::getViewNet() const {
+    return myViewNet;
+}
+
+
 std::string
 GNEAdditional::getShape() const {
     return toString(myShape);
+}
+
+
+bool 
+GNEAdditional::isBlocked() const {
+    return myBlocked;
+}
+
+
+void 
+GNEAdditional::setBlocked(bool value) {
+    myBlocked = value;
 }
 
 

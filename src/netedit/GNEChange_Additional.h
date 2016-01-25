@@ -55,9 +55,8 @@ public:
      * @param[in] net The net on which to apply changes
      * @param[in] additional The additional element to be created/deleted
      * @param[in] forward Whether to create/delete (true/false)
-     * @param[in] GNEViewNet viewNet to add additional elements
      */
-    GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward, GNEViewNet* viewNet);
+    GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward);
 
     /// @brief Destructor
     ~GNEChange_Additional();
@@ -80,9 +79,6 @@ public:
 private:
     /// @brief full information regarding the additional element that is to be created/deleted
     GNEAdditional* myAdditional;
-
-    /// @brief pointer to viewNet
-    GNEViewNet* myViewNet;
 };
 
 #endif

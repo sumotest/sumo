@@ -60,12 +60,13 @@ class GNEBusStop : public GNEStoppingPlace {
 public:
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
-     * @param[in] lines lines of the busStop
      * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] frompos From position of the StoppingPlace
-     * @param[in] topos To position of the StoppingPlace
+     * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
+     * @param[in] fromPos From position of the StoppingPlace
+     * @param[in] toPos To position of the StoppingPlace
+     * @param[in] lines lines of the busStop
      */
-    GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos);
+    GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines);
 
     /// @brief Destructor
     ~GNEBusStop();
@@ -73,13 +74,6 @@ public:
     /// @brief update pre-computed geometry information
     ///  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
-    /** @brief change the position of the additonal geometry without registering undo/redo
-     * @param[in] oldPos The origin of the mouse movement
-     * @param[in] newPos The destination of the mouse movenent
-     * @return newPos if something was moved, oldPos if nothing was moved
-     */
-    void moveAdditional(SUMOReal distance);
 
     /** @brief get lines of busStop
      * @return vector of strings with the lines of the busStop 

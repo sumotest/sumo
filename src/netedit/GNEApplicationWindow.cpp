@@ -647,26 +647,35 @@ GNEApplicationWindow::onCmdOpenShapes(FXObject*, FXSelector, void*) {
 
 
 long                                                                                    // PABLO #1916
-GNEApplicationWindow::onCmdOpenAdditionals(FXObject*, FXSelector, void*) {                // PABLO #1916
-    // get the shape file name                                                            // PABLO #1916
-    FXFileDialog opendialog(this, "Open Additional");                                    // PABLO #1916
-    opendialog.setIcon(GUIIconSubSys::getIcon(ICON_EMPTY));                                // PABLO #1916
-    opendialog.setSelectMode(SELECTFILE_EXISTING);                                        // PABLO #1916
-    opendialog.setPatternList("Additional files (*.xml)\nAll files (*)");                // PABLO #1916
-    if (gCurrentFolder.length() != 0) {                                                    // PABLO #1916
+GNEApplicationWindow::onCmdOpenAdditionals(FXObject*, FXSelector, void*) {              // PABLO #1916
+    // get the shape file name                                                          // PABLO #1916
+    FXFileDialog opendialog(this, "Open Additional");                                   // PABLO #1916
+    opendialog.setIcon(GUIIconSubSys::getIcon(ICON_EMPTY));                             // PABLO #1916
+    opendialog.setSelectMode(SELECTFILE_EXISTING);                                      // PABLO #1916
+    opendialog.setPatternList("Additional files (*.xml)\nAll files (*)");               // PABLO #1916
+    if (gCurrentFolder.length() != 0) {                                                 // PABLO #1916
         opendialog.setDirectory(gCurrentFolder);                                        // PABLO #1916
-    }                                                                                    // PABLO #1916
-    if (opendialog.execute()) {                                                            // PABLO #1916
-        gCurrentFolder = opendialog.getDirectory();                                        // PABLO #1916
-        std::string file = opendialog.getFilename().text();                                // PABLO #1916
-        GNEAdditionalHandler additionalHandler(file, getView(), myNet, myUndoList);        // PABLO #1916
+    }                                                                                   // PABLO #1916
+    if (opendialog.execute()) {                                                         // PABLO #1916
+        gCurrentFolder = opendialog.getDirectory();                                     // PABLO #1916
+        std::string file = opendialog.getFilename().text();                             // PABLO #1916
+        // Start operation for undo/redo                                                // PABLO #1916
+        myUndoList->p_begin("load additionals");                                        // PABLO #1916
+        // Create additional handler                                                    // PABLO #1916
+        GNEAdditionalHandler additionalHandler(file, getView(), myNet, myUndoList);     // PABLO #1916
+        // Run parser                                                                   // PABLO #1916
         if (!XMLSubSys::runParser(additionalHandler, file, false)) {                    // PABLO #1916
-            WRITE_MESSAGE("Loading of " + file + " failed.");                            // PABLO #1916
-        }                                                                                // PABLO #1916
-        update();                                                                        // PABLO #1916
-    }                                                                                    // PABLO #1916
-    return 1;                                                                            // PABLO #1916
-}                                                                                        // PABLO #1916
+            WRITE_MESSAGE("Loading of " + file + " failed.");                           // PABLO #1916
+            // Abort undo/redo                                                          // PABLO #1916
+            myUndoList->abort();                                                        // PABLO #1916
+        } else {                                                                        // PABLO #1916
+            // commit undo/redo operation                                               // PABLO #1916
+            myUndoList->p_end();                                                        // PABLO #1916
+            update();                                                                   // PABLO #1916
+        }                                                                               // PABLO #1916
+    }                                                                                   // PABLO #1916
+    return 1;                                                                           // PABLO #1916
+}                                                                                       // PABLO #1916
 
 
 long

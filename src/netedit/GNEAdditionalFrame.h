@@ -35,6 +35,7 @@
 #include <utils/foxtools/FXRealSpinDial.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/gui/div/GUISelectedStorage.h>
+#include <utils/xml/SUMOSAXHandler.h>
 
 // ===========================================================================
 // class declarations

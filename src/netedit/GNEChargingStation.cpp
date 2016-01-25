@@ -64,8 +64,8 @@
 // member method definitions
 // ===========================================================================
 
-GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
-    GNEStoppingPlace(id, lane, fromPos, toPos, SUMO_TAG_CHARGING_STATION),
+GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
+    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_CHARGING_STATION, fromPos, toPos),
     myChargingPower(chargingPower), 
     myEfficiency(efficiency), 
     myChargeInTransit(chargeInTransit), 
@@ -325,7 +325,7 @@ GNEChargingStation::updateGeometry() {
     myShape.move2side(1.65 * offsetSign);
 
     // Cut shape using as delimitators from position and end position
-    myShape = myShape.getSubpart(getFromPosition(), getToPosition());
+    myShape = myShape.getSubpart(myFromPos, myToPos);
 
     // Get number of parts of the shape
     int e = (int) myShape.size() - 1;
@@ -369,11 +369,6 @@ GNEChargingStation::updateGeometry() {
 }
 
 
-void 
-GNEChargingStation::moveAdditional(SUMOReal distance) {
-}
-
-
 std::string
 GNEChargingStation::getAttribute(SumoXMLAttr key) const {
     switch (key) {
@@ -382,9 +377,9 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(getFromPosition());
+            return toString(myFromPos);
         case SUMO_ATTR_ENDPOS:
-            return toString(getToPosition());
+            return toString(myToPos);
         case SUMO_ATTR_CHARGINGPOWER:
             return toString(myChargingPower);
         case SUMO_ATTR_EFFICIENCY:
@@ -429,9 +424,9 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (getToPosition()-1));
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myToPos-1));
         case SUMO_ATTR_ENDPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > getFromPosition());
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myFromPos);
         case SUMO_ATTR_CHARGINGPOWER:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_EFFICIENCY:
@@ -457,10 +452,10 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            setFromPosition(parse<SUMOReal>(value));
+            myFromPos = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_ENDPOS:
-            setToPosition(parse<SUMOReal>(value));
+            myToPos = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_CHARGINGPOWER:
             myChargingPower = parse<SUMOReal>(value);

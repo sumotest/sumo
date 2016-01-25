@@ -48,10 +48,9 @@ FXIMPLEMENT_ABSTRACT(GNEChange_Additional, GNEChange, NULL, 0)
 
 
 // Constructor for creating an BusStop
-GNEChange_Additional::GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward, GNEViewNet* viewNet):
+GNEChange_Additional::GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward) :
     GNEChange(net, forward),
-    myAdditional(additional),
-    myViewNet(viewNet) {
+    myAdditional(additional) {
     assert(myNet);
     myAdditional->incRef("GNEChange_Additional");
 }
@@ -69,12 +68,12 @@ GNEChange_Additional::~GNEChange_Additional() {
 void GNEChange_Additional::undo() {
     if (myForward) {
         myNet->deleteAdditional(myAdditional);
-        myViewNet->removeAdditionalGLVisualisation(myAdditional);
-        myViewNet->update();
+        myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
+        myAdditional->getViewNet()->update();
     } else {
         myNet->insertAdditional(myAdditional);
-        myViewNet->addAdditionalGLVisualisation(myAdditional);
-        myViewNet->update();
+        myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
+        myAdditional->getViewNet()->update();
     }
 }
 
@@ -82,12 +81,12 @@ void GNEChange_Additional::undo() {
 void GNEChange_Additional::redo() {
     if (myForward) {
         myNet->insertAdditional(myAdditional);
-        myViewNet->addAdditionalGLVisualisation(myAdditional);
-        myViewNet->update();
+        myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
+        myAdditional->getViewNet()->update();
     } else {
         myNet->deleteAdditional(myAdditional);
-        myViewNet->removeAdditionalGLVisualisation(myAdditional);
-        myViewNet->update();
+        myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
+        myAdditional->getViewNet()->update();
     }
 }
 

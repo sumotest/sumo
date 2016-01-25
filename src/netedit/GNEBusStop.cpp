@@ -69,8 +69,8 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEBusStop::GNEBusStop(const std::string& id, const std::vector<std::string>& lines, GNELane& lane, SUMOReal frompos, SUMOReal topos) : 
-    GNEStoppingPlace(id, lane, frompos, topos, SUMO_TAG_BUS_STOP),
+GNEBusStop::GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines) : 
+    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_BUS_STOP, fromPos, toPos),
     myLines(lines) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
@@ -101,26 +101,34 @@ GNEBusStop::updateGeometry() {
     // Move shape to side
     myShape.move2side(1.65 * offsetSign);
 
-    // Cut shape using as delimitators from position and end position
-    myShape = myShape.getSubpart(getFromPosition(), getToPosition());
+    // Cut shape using as delimitators from start position and end position
+    myShape = myShape.getSubpart(myFromPos, myToPos);
 
     // Get number of parts of the shape
-    int e = (int) myShape.size() - 1;
+    int numberOfSegments = (int) myShape.size() - 1;
 
-    // For every part of the shape
-    for (int i = 0; i < e; ++i) {
+    // If number of segments is more than 0
+    if(numberOfSegments >= 0) {
 
-        // Obtain first position
-        const Position& f = myShape[i];
+        // Reserve memory (To improve efficiency)
+        myShapeRotations.reserve(numberOfSegments);
+        myShapeLengths.reserve(numberOfSegments);
 
-        // Obtain next position
-        const Position& s = myShape[i + 1];
+        // For every part of the shape
+        for (int i = 0; i < numberOfSegments; ++i) {
 
-        // Save distance between position into myShapeLengths
-        myShapeLengths.push_back(f.distanceTo(s));
+            // Obtain first position
+            const Position& f = myShape[i];
 
-        // Save rotation (angle) of the vector constructed by points f and s
-        myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+            // Obtain next position
+            const Position& s = myShape[i + 1];
+
+            // Save distance between position into myShapeLengths
+            myShapeLengths.push_back(f.distanceTo(s));
+
+            // Save rotation (angle) of the vector constructed by points f and s
+            myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+        }
     }
 
     // Obtain a copy of the shape
@@ -134,6 +142,7 @@ GNEBusStop::updateGeometry() {
 
     // If lenght of the shape is distint to 0
     if (tmpShape.length() != 0) {
+
         // Obtain rotation of signal rot
         mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
 
@@ -145,25 +154,11 @@ GNEBusStop::updateGeometry() {
         mySignRot = 0;
 }
 
-
-void 
-GNEBusStop::moveAdditional(SUMOReal distance) {
-    // Move to Right if distance is positive
-    if(distance > 0 && getToPosition() + distance < myLane.getLength()) {
-        setFromPosition(getFromPosition() + distance);
-        setToPosition(getToPosition() + distance);
-    } else if(distance < 0 && getFromPosition() + distance > 0) { 
-        setFromPosition(getFromPosition() + distance);
-        setToPosition(getToPosition() + distance);
-    }
-    // Update geometry with the new shape of busStop
-    updateGeometry();
-}
-
 const 
 std::vector<std::string> &GNEBusStop::getLines() const {
     return myLines;
 }
+
 
 PositionVector
 GNEBusStop::getShape() const {
@@ -474,9 +469,9 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(getFromPosition());
+            return toString(myFromPos);
         case SUMO_ATTR_ENDPOS:
-            return toString(getToPosition());
+            return toString(myToPos);
         case SUMO_ATTR_LINES: {
             // Convert myLines vector into String with the schema "line1 line2 ... lineN"
             std::string myLinesStr;
@@ -507,6 +502,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
         case SUMO_ATTR_ENDPOS:
         case SUMO_ATTR_LINES:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
+            updateGeometry();
             break;
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
@@ -521,9 +517,9 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (getToPosition()-1));
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myToPos-1));
         case SUMO_ATTR_ENDPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > getFromPosition());
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myFromPos);
         case SUMO_ATTR_LINES:
             return canParse<std::string>(value);
         default:
@@ -542,16 +538,17 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS: {
-            setFromPosition(parse<SUMOReal>(value));
+            myFromPos = parse<SUMOReal>(value);
             updateGeometry();
             break;
             }
         case SUMO_ATTR_ENDPOS: {
-            setToPosition(parse<SUMOReal>(value));
+            myToPos = parse<SUMOReal>(value);
             updateGeometry();
             break;
             }
         case SUMO_ATTR_LINES: {
+            myLines.clear();
             SUMOSAXAttributes::parseStringVector(value, myLines);
             updateGeometry();
             break;

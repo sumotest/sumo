@@ -238,7 +238,7 @@ GNEAdditionalHandler::parseAndBuildBusStop(GNENet* net, const SUMOSAXAttributes&
     std::vector<std::string> lines;
     SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
     // build the bus stop
-    buildBusStop(net, id, lines, lane, frompos, topos);
+    buildBusStop(net, id, *lane, frompos, topos, lines);
 }
 
 void 
@@ -275,7 +275,7 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
     SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
 
     // build the Charging Station
-    buildChargingStation(net, id, lane, frompos, topos, chrgpower, efficiency, chargeInTransit, chargeDelay);
+    buildChargingStation(net, id, *lane, frompos, topos, chrgpower, efficiency, chargeInTransit, chargeDelay);
 }
 
 
@@ -329,13 +329,13 @@ GNEAdditionalHandler::buildLaneSpeedTrigger(GNENet* net, const std::string& id, 
 
 
 void 
-GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines, 
-                                   GNELane* lane, SUMOReal frompos, SUMOReal topos)
+GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, GNELane& lane, 
+                                   SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines)
 {
     if (net->getBusStop(id) == NULL) {
-        GNEBusStop* busStop = new GNEBusStop(id, lines, *lane, frompos, topos);
+        GNEBusStop* busStop = new GNEBusStop(id, lane, myViewNet, frompos, topos, lines);
         myUndoList->p_begin("add busStop");
-        myUndoList->add(new GNEChange_Additional(net, busStop, true, myViewNet), true);
+        myUndoList->add(new GNEChange_Additional(net, busStop, true), true);
         myUndoList->p_end();
     } else {
         throw InvalidArgument("Could not build bus stop in netEdit '" + id + "'; probably declared twice.");
@@ -344,13 +344,13 @@ GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, const std
 
 
 void 
-GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
+GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
                                            SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
 {
     if (net->getChargingStation(id) == NULL) {
-        GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
+        GNEChargingStation* chargingStation = new GNEChargingStation(id, lane, myViewNet, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
         myUndoList->p_begin("add chargingStation");
-        myUndoList->add(new GNEChange_Additional(net, chargingStation, true, myViewNet), true);
+        myUndoList->add(new GNEChange_Additional(net, chargingStation, true), true);
         myUndoList->p_end();
     } else {
         throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
@@ -420,7 +420,7 @@ GNEAdditionalHandler::getLane(const SUMOSAXAttributes& attrs, const std::string&
 
 
 SUMOReal 
-GNEAdditionalHandler::getPosition(const SUMOSAXAttributes& attrs, GNELane* lane, const std::string& tt, const std::string& tid)
+GNEAdditionalHandler::getPosition(const SUMOSAXAttributes& attrs, GNELane& lane, const std::string& tt, const std::string& tid)
 {
     bool ok = true;
     SUMOReal pos = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, 0, ok);
@@ -429,13 +429,13 @@ GNEAdditionalHandler::getPosition(const SUMOSAXAttributes& attrs, GNELane* lane,
         throw InvalidArgument("Error on parsing a position information.");
     }
     if (pos < 0) {
-        pos = lane->getLength() + pos;
+        pos = lane.getLength() + pos;
     }
-    if (pos > lane->getLength()) {
+    if (pos > lane.getLength()) {
         if (friendlyPos) {
-            pos = lane->getLength() - (SUMOReal) 0.1;
+            pos = lane.getLength() - (SUMOReal) 0.1;
         } else {
-            throw InvalidArgument("The position of " + tt + " '" + tid + "' lies beyond the lane's '" + lane->getID() + "' length.");
+            throw InvalidArgument("The position of " + tt + " '" + tid + "' lies beyond the lane's '" + lane.getID() + "' length.");
         }
     }
     return pos;

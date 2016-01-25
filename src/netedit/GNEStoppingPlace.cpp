@@ -65,14 +65,37 @@
 // member method definitions
 // ===========================================================================
 
-GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag) :
-    GNEAdditional(id, lane, tag),
+GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos) :
+    GNEAdditional(id, lane, viewNet, tag),
     myFromPos(fromPos),
     myToPos(toPos){
 }
 
 
 GNEStoppingPlace::~GNEStoppingPlace() {
+}
+
+
+void 
+GNEStoppingPlace::updateGeometry() {
+}
+
+
+void 
+GNEStoppingPlace::moveAdditional(SUMOReal distance) {
+    // if item isn't blocked
+    if(myBlocked == false) {
+        // Move to Right if distance is positive, to left if distance is negative
+        if((distance > 0) && ((myToPos + distance) < myLane.getLength())) {
+            myFromPos += distance;
+            myToPos += distance;
+        } else if((distance < 0) && ((myFromPos + distance) > 0)) { 
+            myFromPos += distance;
+            myToPos += distance;
+        }
+        // Update geometry with the new shape of busStop
+        updateGeometry(); 
+    }
 }
 
 

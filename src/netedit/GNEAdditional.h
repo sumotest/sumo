@@ -44,6 +44,7 @@ class GUIGLObjectPopupMenu;
 class PositionVector;
 class GNELane;
 class GNENet;
+class GNEViewNet;
 
 // ===========================================================================
 // class definitions
@@ -62,10 +63,12 @@ public:
 
     /** @brief Constructor.
      * @param[in] id Gl-id of the additional element (Must be unique)
-     * @param[in] lane Lane of this additional element belongs
+     * @param[in] lane GNELane of this additional element belongs
+     * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
+     * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      */
-    GNEAdditional(const std::string& id, GNELane& lane, SumoXMLTag tag);
+    GNEAdditional(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
 
     /// @brief Destructor
     ~GNEAdditional();
@@ -79,10 +82,25 @@ public:
      */
     GNELane &getLane() const;
 
+    /** @brief Returns View Net
+     * @return The GNEViewNet in which additional element is located
+     */
+    GNEViewNet* getViewNet() const;
+
     /** @brief Returns string with the information of the shape
      * @return The string with the shape of the additional element
      */
     std::string getShape() const;
+
+    /** @brief Check if item is blocked (i.e. cannot be moved with mouse)
+     * @return true if element is blocked, false in other case
+     */
+    bool isBlocked() const;
+
+    /** @brief Block or unblock additional element(i.e. cannot be moved with mouse)
+     * @param[in] value true or false
+     */
+    void setBlocked(bool value);
 
     /** @brief change the position of the additonal geometry without registering undo/redo
      * @param[in] oldPos The origin of the mouse movement
@@ -157,8 +175,14 @@ protected:
     /// @brief The lane this additional element is located at
     GNELane& myLane;
 
+    /// @brief The GNEViewNet this additional element belongs
+    GNEViewNet* myViewNet;
+
     /// @brief The shape of the additional element
     PositionVector myShape;
+
+    /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
+    bool myBlocked;
 
 private:
     /// @brief set attribute after validation

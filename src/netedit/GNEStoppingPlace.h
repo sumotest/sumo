@@ -56,25 +56,26 @@ public:
     /** @brief Constructor.
      * @param[in] id Gl-id of the stopping place (Must be unique)
      * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] frompos From position of the StoppingPlace
-     * @param[in] topos To position of the StoppingPlace
+     * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
+     * @param[in] fromPos From position of the StoppingPlace
+     * @param[in] toPos To position of the StoppingPlace
      */
-    GNEStoppingPlace(const std::string& id, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, SumoXMLTag tag);
+    GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos);
 
     /// @brief Destructorc
     ~GNEStoppingPlace();
 
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
-    virtual void updateGeometry() = 0;
+    virtual void updateGeometry();
 
     /** @brief change the position of the additonal geometry without registering undo/redo
      * @param[in] oldPos The origin of the mouse movement
      * @param[in] newPos The destination of the mouse movenent
      * @return newPos if something was moved, oldPos if nothing was moved
      */
-    virtual void moveAdditional(SUMOReal distance) = 0;
+    void moveAdditional(SUMOReal distance);
 
     /** @brief Returns the from position of the stoppingPlace
      * @return The from position of the stopping place
@@ -181,6 +182,12 @@ protected:
     std::vector<SUMOReal> myShapeLengths;
     //@}
 
+    /// @brief The begin position this stopping place is located at
+    SUMOReal myFromPos;
+
+    /// @brief The end position this stopping place is located at
+    SUMOReal myToPos;
+
     /// @brief The position of the sign
     Position mySignPos;
 
@@ -197,12 +204,6 @@ private:
 
     /// @brief set colors of scheme
     virtual void setColors() = 0;
-
-    /// @brief The begin position this stopping place is located at
-    SUMOReal myFromPos;
-
-    /// @brief The end position this stopping place is located at
-    SUMOReal myToPos;
 };
 
 

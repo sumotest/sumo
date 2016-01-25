@@ -146,8 +146,9 @@ public:
      */                                                     // PABLO #1916
     void setIndex(unsigned int index);                      // PABLO #1916
 
-    /// @brief returns the length of the lane       // PABLO #1916
-    SUMOReal getLength() const;                     // PABLO #1916
+    /// @brief returns the length of the lane                           // PABLO #1916
+    /// @note length is calculated as the sumatorial of myShapeLengths  // PABLO #1916
+    SUMOReal getLength() const;                                         // PABLO #1916
 
     /* @brief method for adding a reference of a additional element placed in this lane     // PABLO #1916
      * @param[in] additional Pointer to additional element                                  // PABLO #1916
@@ -214,8 +215,20 @@ private:
     std::vector<SUMOReal> myShapeLengths;
     //@}
 
+    /// @brief The lengths of the lane (Calculated from myShapeLengths) // PABLO #1916 (QUESTION ERDMANN 01)
+    SUMOReal myLength;                                                  // PABLO #1916 (QUESTION ERDMANN 01)
+
+    /// @brief vector with pointers to additional elements placed in this lane  // PABLO #1916
+    additionalVector additionalElements;                                        // PABLO #1916
+
     /// @brief optional special color
     const RGBColor* mySpecialColor;
+
+        /// @brief The color of the shape parts (cached)
+    mutable std::vector<RGBColor> myShapeColors;
+
+    /// @brief the tls-editor for setting multiple links in TLS-mode
+    GNETLSEditor* myTLSEditor;
 
 private:
     /// @brief set attribute after validation
@@ -263,15 +276,6 @@ private:
     /* @brief draw crossties for railroads
      * @todo: XXX This duplicates the code of GUILane::drawCrossties and needs to be */
     void drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) const;
-
-    /// @brief The color of the shape parts (cached)
-    mutable std::vector<RGBColor> myShapeColors;
-
-    /// @brief the tls-editor for setting multiple links in TLS-mode
-    GNETLSEditor* myTLSEditor;
-
-    /// @brief vector with pointers to additional elements placed in this lane  // PABLO #1916
-    additionalVector additionalElements;                                        // PABLO #1916
 };
 
 

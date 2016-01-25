@@ -183,14 +183,14 @@ public:
      *
      * @param[in] net The net the bus stop belongs to
      * @param[in] id The id of the bus stop
-     * @param[in] lines Names of the bus lines that halt on this bus stop
      * @param[in] lane The lane the bus stop is placed on
      * @param[in] frompos Begin position of the bus stop on the lane
      * @param[in] topos End position of the bus stop on the lane
+     * @param[in] lines Names of the bus lines that halt on this bus stop
      * @exception InvalidArgument If the bus stop can not be added to the net (is duplicate)
      */
-    void buildBusStop(GNENet* net, const std::string& id, const std::vector<std::string>& lines,
-                      GNELane* lane, SUMOReal frompos, SUMOReal topos);
+    void buildBusStop(GNENet* net, const std::string& id, GNELane& lane, 
+                      SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines);
 
     /** @brief Builds a charging Station
      *
@@ -208,7 +208,7 @@ public:
      * @param[in] chargeDelay
      * @exception InvalidArgument If the charging Station can not be added to the net (is duplicate)
      */
-    void buildChargingStation(GNENet* net, const std::string& id, GNELane* lane, SUMOReal frompos, SUMOReal topos, 
+    void buildChargingStation(GNENet* net, const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
                               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
 
     /** @brief builds a microscopic calibrator
@@ -279,7 +279,7 @@ public:
      * @return The position on the lane
      * @exception InvalidArgument If the position is beyond the lane
      */
-    SUMOReal getPosition(const SUMOSAXAttributes& attrs, GNELane* lane, const std::string& tt, 
+    SUMOReal getPosition(const SUMOSAXAttributes& attrs, GNELane& lane, const std::string& tt, 
                          const std::string& tid);
 
     /** @brief check start and end position of a stop
