@@ -120,6 +120,55 @@ public class NonInteractingPedestrian {
 
         }
 
+        @Override
+        public void computeWalkingTimeFlat(NonInteractingProto.CMPWlkgTm_flat request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
+            String prevFromId = request.getPrevFromId();
+            String prevToId = request.getPrevToId();
+            double prevLen = request.getPrevLen();
+            String currentFromId = request.getCurrentFromId();
+            String currentToId = request.getCurrentToId();
+            double currentLen = request.getCurrentLen();
+            String nextFromId = request.getNextFromId();
+            String nextToId = request.getNextToId();
+            double nextLen = request.getNextLen();
+            double depPos = request.getDepPos();
+            double arrPos = request.getArrivalPos();
+            double mxSpd = request.getMaxSpeed();
+            double time = request.getTime();
+
+            int dir = UNDF;
+            double beginPos;
+            double endPos;
+            System.out.println(time + " prevFrom: " + prevFromId + " prevTo: " + prevToId + " prevLen: " + prevLen + " currentFrom:" + currentFromId + " currentTo:" +
+            currentToId + " currentLen:" + currentLen + " nextFrom:" + nextFromId + " nextTo:" + nextToId + " depPos:" + depPos + " arrPos:" + arrPos + " mxSpd:" +
+            mxSpd + " time:" + time);
+
+            if (!prevFromId.isEmpty()) {
+                beginPos = depPos;
+            } else {
+                dir = currentToId.equals(prevToId) || currentToId.equals(prevFromId) ? BCKWD : FWD;
+                beginPos = dir == FWD ? 0 : currentLen;
+            }
+            if (!nextFromId.isEmpty()) {
+                endPos = arrPos;
+            } else {
+                if (dir == UNDF) {
+                    dir = currentToId.equals(prevToId) || currentToId.equals(prevFromId) ? BCKWD : FWD;
+                }
+                endPos = dir == FWD ? currentLen : 0;
+            }
+
+            double duration = MAX2(1, Math.abs(endPos-beginPos)/mxSpd);
+
+            System.out.println("duration:" + duration);
+
+
+            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(duration).build();
+            responseObserver.onNext(t);
+            responseObserver.onCompleted();
+
+        }
+
         private void printStage(NonInteractingProto.PBMSPersonStage_Walking stage) {
             double spd = stage.getMaxSpeed();
             System.out.println("max spd: " + spd);

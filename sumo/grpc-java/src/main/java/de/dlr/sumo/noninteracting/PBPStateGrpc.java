@@ -31,6 +31,15 @@ public class PBPStateGrpc {
           io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm.getDefaultInstance()),
           io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance()));
   @io.grpc.ExperimentalApi
+  public static final io.grpc.MethodDescriptor<de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat,
+      de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> METHOD_COMPUTE_WALKING_TIME_FLAT =
+      io.grpc.MethodDescriptor.create(
+          io.grpc.MethodDescriptor.MethodType.UNARY,
+          generateFullMethodName(
+              "noninteracting.PBPState", "computeWalkingTime_flat"),
+          io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.getDefaultInstance()),
+          io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance()));
+  @io.grpc.ExperimentalApi
   public static final io.grpc.MethodDescriptor<de.dlr.sumo.noninteracting.NonInteractingProto.GetPos,
       de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition> METHOD_GET_POSITION =
       io.grpc.MethodDescriptor.create(
@@ -95,6 +104,9 @@ public class PBPStateGrpc {
     public void computeWalkingTime(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm request,
         io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> responseObserver);
 
+    public void computeWalkingTimeFlat(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request,
+        io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> responseObserver);
+
     public void getPosition(de.dlr.sumo.noninteracting.NonInteractingProto.GetPos request,
         io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition> responseObserver);
 
@@ -115,6 +127,8 @@ public class PBPStateGrpc {
 
     public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime computeWalkingTime(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm request);
 
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime computeWalkingTimeFlat(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request);
+
     public de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition getPosition(de.dlr.sumo.noninteracting.NonInteractingProto.GetPos request);
 
     public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOReal getAngle(de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle request);
@@ -130,6 +144,9 @@ public class PBPStateGrpc {
 
     public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> computeWalkingTime(
         de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm request);
+
+    public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> computeWalkingTimeFlat(
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request);
 
     public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition> getPosition(
         de.dlr.sumo.noninteracting.NonInteractingProto.GetPos request);
@@ -169,6 +186,13 @@ public class PBPStateGrpc {
         io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(METHOD_COMPUTE_WALKING_TIME, getCallOptions()), request, responseObserver);
+    }
+
+    @java.lang.Override
+    public void computeWalkingTimeFlat(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request,
+        io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(METHOD_COMPUTE_WALKING_TIME_FLAT, getCallOptions()), request, responseObserver);
     }
 
     @java.lang.Override
@@ -231,6 +255,12 @@ public class PBPStateGrpc {
     }
 
     @java.lang.Override
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime computeWalkingTimeFlat(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request) {
+      return blockingUnaryCall(
+          getChannel().newCall(METHOD_COMPUTE_WALKING_TIME_FLAT, getCallOptions()), request);
+    }
+
+    @java.lang.Override
     public de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition getPosition(de.dlr.sumo.noninteracting.NonInteractingProto.GetPos request) {
       return blockingUnaryCall(
           getChannel().newCall(METHOD_GET_POSITION, getCallOptions()), request);
@@ -286,6 +316,13 @@ public class PBPStateGrpc {
     }
 
     @java.lang.Override
+    public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> computeWalkingTimeFlat(
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request) {
+      return futureUnaryCall(
+          getChannel().newCall(METHOD_COMPUTE_WALKING_TIME_FLAT, getCallOptions()), request);
+    }
+
+    @java.lang.Override
     public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition> getPosition(
         de.dlr.sumo.noninteracting.NonInteractingProto.GetPos request) {
       return futureUnaryCall(
@@ -335,6 +372,19 @@ public class PBPStateGrpc {
                 de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm request,
                 io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> responseObserver) {
               serviceImpl.computeWalkingTime(request, responseObserver);
+            }
+          }))
+      .addMethod(
+        METHOD_COMPUTE_WALKING_TIME_FLAT,
+        asyncUnaryCall(
+          new io.grpc.stub.ServerCalls.UnaryMethod<
+              de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat,
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime>() {
+            @java.lang.Override
+            public void invoke(
+                de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat request,
+                io.grpc.stub.StreamObserver<de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime> responseObserver) {
+              serviceImpl.computeWalkingTimeFlat(request, responseObserver);
             }
           }))
       .addMethod(

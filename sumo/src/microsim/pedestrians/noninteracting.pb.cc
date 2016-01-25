@@ -39,6 +39,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CMPWlkgTm_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CMPWlkgTm_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CMPWlkgTm_flat_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CMPWlkgTm_flat_reflection_ = NULL;
 const ::google::protobuf::Descriptor* GetPos_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   GetPos_reflection_ = NULL;
@@ -155,7 +158,34 @@ void protobuf_AssignDesc_noninteracting_2eproto() {
       sizeof(CMPWlkgTm),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, _is_default_instance_));
-  GetPos_descriptor_ = file->message_type(6);
+  CMPWlkgTm_flat_descriptor_ = file->message_type(6);
+  static const int CMPWlkgTm_flat_offsets_[13] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, prevfromid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, prevtoid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, prevlen_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, currentfromid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, currenttoid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, currentlen_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, nextfromid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, nexttoid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, nextlen_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, deppos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, arrivalpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, maxspeed_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, time_),
+  };
+  CMPWlkgTm_flat_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      CMPWlkgTm_flat_descriptor_,
+      CMPWlkgTm_flat::default_instance_,
+      CMPWlkgTm_flat_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(CMPWlkgTm_flat),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, _is_default_instance_));
+  GetPos_descriptor_ = file->message_type(7);
   static const int GetPos_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, stage_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, sumotime_),
@@ -171,7 +201,7 @@ void protobuf_AssignDesc_noninteracting_2eproto() {
       sizeof(GetPos),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, _is_default_instance_));
-  GetAngle_descriptor_ = file->message_type(7);
+  GetAngle_descriptor_ = file->message_type(8);
   static const int GetAngle_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetAngle, stage_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetAngle, sumotime_),
@@ -212,6 +242,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       CMPWlkgTm_descriptor_, &CMPWlkgTm::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      CMPWlkgTm_flat_descriptor_, &CMPWlkgTm_flat::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       GetPos_descriptor_, &GetPos::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       GetAngle_descriptor_, &GetAngle::default_instance());
@@ -232,6 +264,8 @@ void protobuf_ShutdownFile_noninteracting_2eproto() {
   delete PBMSPersonStage_Walking_reflection_;
   delete CMPWlkgTm::default_instance_;
   delete CMPWlkgTm_reflection_;
+  delete CMPWlkgTm_flat::default_instance_;
+  delete CMPWlkgTm_flat_reflection_;
   delete GetPos::default_instance_;
   delete GetPos_reflection_;
   delete GetAngle::default_instance_;
@@ -258,26 +292,35 @@ void protobuf_AddDesc_noninteracting_2eproto() {
     "lkgTm\022$\n\004prev\030\001 \001(\0132\026.noninteracting.PBE"
     "dge\0226\n\005stage\030\002 \001(\0132\'.noninteracting.PBMS"
     "PersonStage_Walking\022,\n\010sumoTime\030\003 \001(\0132\032."
-    "noninteracting.PBSUMOTime\"n\n\006GetPos\0226\n\005s"
-    "tage\030\001 \001(\0132\'.noninteracting.PBMSPersonSt"
-    "age_Walking\022,\n\010sumoTime\030\002 \001(\0132\032.noninter"
-    "acting.PBSUMOTime\"p\n\010GetAngle\0226\n\005stage\030\001"
-    " \001(\0132\'.noninteracting.PBMSPersonStage_Wa"
-    "lking\022,\n\010sumoTime\030\002 \001(\0132\032.noninteracting"
-    ".PBSUMOTime2\323\003\n\010PBPState\022M\n\022computeWalki"
-    "ngTime\022\031.noninteracting.CMPWlkgTm\032\032.noni"
-    "nteracting.PBSUMOTime\"\000\022C\n\013getPosition\022\026"
-    ".noninteracting.GetPos\032\032.noninteracting."
-    "PBPosition\"\000\022B\n\010getAngle\022\030.noninteractin"
-    "g.GetAngle\032\032.noninteracting.PBSUMOReal\"\000"
-    "\022J\n\016getWaitingTime\022\032.noninteracting.PBSU"
-    "MOTime\032\032.noninteracting.PBSUMOTime\"\000\022Q\n\010"
-    "getSpeed\022\'.noninteracting.PBMSPersonStag"
-    "e_Walking\032\032.noninteracting.PBSUMOReal\"\000\022"
-    "P\n\013getNextEdge\022\'.noninteracting.PBMSPers"
-    "onStage_Walking\032\026.noninteracting.PBEdge\""
-    "\000B3\n\032de.dlr.sumo.noninteractingB\023NonInte"
-    "ractingProtoP\000b\006proto3", 1302);
+    "noninteracting.PBSUMOTime\"\202\002\n\016CMPWlkgTm_"
+    "flat\022\022\n\nprevFromId\030\001 \001(\t\022\020\n\010prevToId\030\002 \001"
+    "(\t\022\017\n\007prevLen\030\003 \001(\001\022\025\n\rcurrentFromId\030\004 \001"
+    "(\t\022\023\n\013currentToId\030\005 \001(\t\022\022\n\ncurrentLen\030\006 "
+    "\001(\001\022\022\n\nnextFromId\030\007 \001(\t\022\020\n\010nextToId\030\010 \001("
+    "\t\022\017\n\007nextLen\030\t \001(\001\022\016\n\006depPos\030\n \001(\001\022\022\n\nar"
+    "rivalPos\030\013 \001(\001\022\020\n\010maxSpeed\030\014 \001(\001\022\014\n\004time"
+    "\030\r \001(\001\"n\n\006GetPos\0226\n\005stage\030\001 \001(\0132\'.nonint"
+    "eracting.PBMSPersonStage_Walking\022,\n\010sumo"
+    "Time\030\002 \001(\0132\032.noninteracting.PBSUMOTime\"p"
+    "\n\010GetAngle\0226\n\005stage\030\001 \001(\0132\'.noninteracti"
+    "ng.PBMSPersonStage_Walking\022,\n\010sumoTime\030\002"
+    " \001(\0132\032.noninteracting.PBSUMOTime2\254\004\n\010PBP"
+    "State\022M\n\022computeWalkingTime\022\031.noninterac"
+    "ting.CMPWlkgTm\032\032.noninteracting.PBSUMOTi"
+    "me\"\000\022W\n\027computeWalkingTime_flat\022\036.nonint"
+    "eracting.CMPWlkgTm_flat\032\032.noninteracting"
+    ".PBSUMOTime\"\000\022C\n\013getPosition\022\026.nonintera"
+    "cting.GetPos\032\032.noninteracting.PBPosition"
+    "\"\000\022B\n\010getAngle\022\030.noninteracting.GetAngle"
+    "\032\032.noninteracting.PBSUMOReal\"\000\022J\n\016getWai"
+    "tingTime\022\032.noninteracting.PBSUMOTime\032\032.n"
+    "oninteracting.PBSUMOTime\"\000\022Q\n\010getSpeed\022\'"
+    ".noninteracting.PBMSPersonStage_Walking\032"
+    "\032.noninteracting.PBSUMOReal\"\000\022P\n\013getNext"
+    "Edge\022\'.noninteracting.PBMSPersonStage_Wa"
+    "lking\032\026.noninteracting.PBEdge\"\000B3\n\032de.dl"
+    "r.sumo.noninteractingB\023NonInteractingPro"
+    "toP\000b\006proto3", 1652);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "noninteracting.proto", &protobuf_RegisterTypes);
   PBPosition::default_instance_ = new PBPosition();
@@ -286,6 +329,7 @@ void protobuf_AddDesc_noninteracting_2eproto() {
   PBSUMOReal::default_instance_ = new PBSUMOReal();
   PBMSPersonStage_Walking::default_instance_ = new PBMSPersonStage_Walking();
   CMPWlkgTm::default_instance_ = new CMPWlkgTm();
+  CMPWlkgTm_flat::default_instance_ = new CMPWlkgTm_flat();
   GetPos::default_instance_ = new GetPos();
   GetAngle::default_instance_ = new GetAngle();
   PBPosition::default_instance_->InitAsDefaultInstance();
@@ -294,6 +338,7 @@ void protobuf_AddDesc_noninteracting_2eproto() {
   PBSUMOReal::default_instance_->InitAsDefaultInstance();
   PBMSPersonStage_Walking::default_instance_->InitAsDefaultInstance();
   CMPWlkgTm::default_instance_->InitAsDefaultInstance();
+  CMPWlkgTm_flat::default_instance_->InitAsDefaultInstance();
   GetPos::default_instance_->InitAsDefaultInstance();
   GetAngle::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_noninteracting_2eproto);
@@ -2424,6 +2469,1127 @@ void CMPWlkgTm::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm.sumoTime)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CMPWlkgTm_flat::kPrevFromIdFieldNumber;
+const int CMPWlkgTm_flat::kPrevToIdFieldNumber;
+const int CMPWlkgTm_flat::kPrevLenFieldNumber;
+const int CMPWlkgTm_flat::kCurrentFromIdFieldNumber;
+const int CMPWlkgTm_flat::kCurrentToIdFieldNumber;
+const int CMPWlkgTm_flat::kCurrentLenFieldNumber;
+const int CMPWlkgTm_flat::kNextFromIdFieldNumber;
+const int CMPWlkgTm_flat::kNextToIdFieldNumber;
+const int CMPWlkgTm_flat::kNextLenFieldNumber;
+const int CMPWlkgTm_flat::kDepPosFieldNumber;
+const int CMPWlkgTm_flat::kArrivalPosFieldNumber;
+const int CMPWlkgTm_flat::kMaxSpeedFieldNumber;
+const int CMPWlkgTm_flat::kTimeFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CMPWlkgTm_flat::CMPWlkgTm_flat()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:noninteracting.CMPWlkgTm_flat)
+}
+
+void CMPWlkgTm_flat::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+CMPWlkgTm_flat::CMPWlkgTm_flat(const CMPWlkgTm_flat& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:noninteracting.CMPWlkgTm_flat)
+}
+
+void CMPWlkgTm_flat::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  prevfromid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  prevtoid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  prevlen_ = 0;
+  currentfromid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  currenttoid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  currentlen_ = 0;
+  nextfromid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nexttoid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nextlen_ = 0;
+  deppos_ = 0;
+  arrivalpos_ = 0;
+  maxspeed_ = 0;
+  time_ = 0;
+}
+
+CMPWlkgTm_flat::~CMPWlkgTm_flat() {
+  // @@protoc_insertion_point(destructor:noninteracting.CMPWlkgTm_flat)
+  SharedDtor();
+}
+
+void CMPWlkgTm_flat::SharedDtor() {
+  prevfromid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  prevtoid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  currentfromid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  currenttoid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nextfromid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nexttoid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void CMPWlkgTm_flat::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CMPWlkgTm_flat::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CMPWlkgTm_flat_descriptor_;
+}
+
+const CMPWlkgTm_flat& CMPWlkgTm_flat::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
+  return *default_instance_;
+}
+
+CMPWlkgTm_flat* CMPWlkgTm_flat::default_instance_ = NULL;
+
+CMPWlkgTm_flat* CMPWlkgTm_flat::New(::google::protobuf::Arena* arena) const {
+  CMPWlkgTm_flat* n = new CMPWlkgTm_flat;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void CMPWlkgTm_flat::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<CMPWlkgTm_flat*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  prevfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  prevtoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  prevlen_ = 0;
+  currentfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  currenttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  currentlen_ = 0;
+  nextfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nexttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ZR_(nextlen_, time_);
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool CMPWlkgTm_flat::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:noninteracting.CMPWlkgTm_flat)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string prevFromId = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_prevfromid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->prevfromid().data(), this->prevfromid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "noninteracting.CMPWlkgTm_flat.prevFromId"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_prevToId;
+        break;
+      }
+
+      // optional string prevToId = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_prevToId:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_prevtoid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->prevtoid().data(), this->prevtoid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "noninteracting.CMPWlkgTm_flat.prevToId"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(25)) goto parse_prevLen;
+        break;
+      }
+
+      // optional double prevLen = 3;
+      case 3: {
+        if (tag == 25) {
+         parse_prevLen:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &prevlen_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_currentFromId;
+        break;
+      }
+
+      // optional string currentFromId = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_currentFromId:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_currentfromid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->currentfromid().data(), this->currentfromid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "noninteracting.CMPWlkgTm_flat.currentFromId"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_currentToId;
+        break;
+      }
+
+      // optional string currentToId = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_currentToId:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_currenttoid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->currenttoid().data(), this->currenttoid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "noninteracting.CMPWlkgTm_flat.currentToId"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(49)) goto parse_currentLen;
+        break;
+      }
+
+      // optional double currentLen = 6;
+      case 6: {
+        if (tag == 49) {
+         parse_currentLen:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &currentlen_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_nextFromId;
+        break;
+      }
+
+      // optional string nextFromId = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_nextFromId:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_nextfromid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->nextfromid().data(), this->nextfromid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "noninteracting.CMPWlkgTm_flat.nextFromId"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_nextToId;
+        break;
+      }
+
+      // optional string nextToId = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_nextToId:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_nexttoid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->nexttoid().data(), this->nexttoid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "noninteracting.CMPWlkgTm_flat.nextToId"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(73)) goto parse_nextLen;
+        break;
+      }
+
+      // optional double nextLen = 9;
+      case 9: {
+        if (tag == 73) {
+         parse_nextLen:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &nextlen_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(81)) goto parse_depPos;
+        break;
+      }
+
+      // optional double depPos = 10;
+      case 10: {
+        if (tag == 81) {
+         parse_depPos:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &deppos_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(89)) goto parse_arrivalPos;
+        break;
+      }
+
+      // optional double arrivalPos = 11;
+      case 11: {
+        if (tag == 89) {
+         parse_arrivalPos:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &arrivalpos_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(97)) goto parse_maxSpeed;
+        break;
+      }
+
+      // optional double maxSpeed = 12;
+      case 12: {
+        if (tag == 97) {
+         parse_maxSpeed:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &maxspeed_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(105)) goto parse_time;
+        break;
+      }
+
+      // optional double time = 13;
+      case 13: {
+        if (tag == 105) {
+         parse_time:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &time_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:noninteracting.CMPWlkgTm_flat)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:noninteracting.CMPWlkgTm_flat)
+  return false;
+#undef DO_
+}
+
+void CMPWlkgTm_flat::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:noninteracting.CMPWlkgTm_flat)
+  // optional string prevFromId = 1;
+  if (this->prevfromid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->prevfromid().data(), this->prevfromid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.prevFromId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->prevfromid(), output);
+  }
+
+  // optional string prevToId = 2;
+  if (this->prevtoid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->prevtoid().data(), this->prevtoid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.prevToId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->prevtoid(), output);
+  }
+
+  // optional double prevLen = 3;
+  if (this->prevlen() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->prevlen(), output);
+  }
+
+  // optional string currentFromId = 4;
+  if (this->currentfromid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->currentfromid().data(), this->currentfromid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.currentFromId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->currentfromid(), output);
+  }
+
+  // optional string currentToId = 5;
+  if (this->currenttoid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->currenttoid().data(), this->currenttoid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.currentToId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->currenttoid(), output);
+  }
+
+  // optional double currentLen = 6;
+  if (this->currentlen() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->currentlen(), output);
+  }
+
+  // optional string nextFromId = 7;
+  if (this->nextfromid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->nextfromid().data(), this->nextfromid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.nextFromId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      7, this->nextfromid(), output);
+  }
+
+  // optional string nextToId = 8;
+  if (this->nexttoid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->nexttoid().data(), this->nexttoid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.nextToId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->nexttoid(), output);
+  }
+
+  // optional double nextLen = 9;
+  if (this->nextlen() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->nextlen(), output);
+  }
+
+  // optional double depPos = 10;
+  if (this->deppos() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(10, this->deppos(), output);
+  }
+
+  // optional double arrivalPos = 11;
+  if (this->arrivalpos() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->arrivalpos(), output);
+  }
+
+  // optional double maxSpeed = 12;
+  if (this->maxspeed() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->maxspeed(), output);
+  }
+
+  // optional double time = 13;
+  if (this->time() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(13, this->time(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:noninteracting.CMPWlkgTm_flat)
+}
+
+::google::protobuf::uint8* CMPWlkgTm_flat::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.CMPWlkgTm_flat)
+  // optional string prevFromId = 1;
+  if (this->prevfromid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->prevfromid().data(), this->prevfromid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.prevFromId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->prevfromid(), target);
+  }
+
+  // optional string prevToId = 2;
+  if (this->prevtoid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->prevtoid().data(), this->prevtoid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.prevToId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->prevtoid(), target);
+  }
+
+  // optional double prevLen = 3;
+  if (this->prevlen() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->prevlen(), target);
+  }
+
+  // optional string currentFromId = 4;
+  if (this->currentfromid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->currentfromid().data(), this->currentfromid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.currentFromId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->currentfromid(), target);
+  }
+
+  // optional string currentToId = 5;
+  if (this->currenttoid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->currenttoid().data(), this->currenttoid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.currentToId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->currenttoid(), target);
+  }
+
+  // optional double currentLen = 6;
+  if (this->currentlen() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->currentlen(), target);
+  }
+
+  // optional string nextFromId = 7;
+  if (this->nextfromid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->nextfromid().data(), this->nextfromid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.nextFromId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        7, this->nextfromid(), target);
+  }
+
+  // optional string nextToId = 8;
+  if (this->nexttoid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->nexttoid().data(), this->nexttoid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "noninteracting.CMPWlkgTm_flat.nextToId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->nexttoid(), target);
+  }
+
+  // optional double nextLen = 9;
+  if (this->nextlen() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->nextlen(), target);
+  }
+
+  // optional double depPos = 10;
+  if (this->deppos() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(10, this->deppos(), target);
+  }
+
+  // optional double arrivalPos = 11;
+  if (this->arrivalpos() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->arrivalpos(), target);
+  }
+
+  // optional double maxSpeed = 12;
+  if (this->maxspeed() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->maxspeed(), target);
+  }
+
+  // optional double time = 13;
+  if (this->time() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(13, this->time(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.CMPWlkgTm_flat)
+  return target;
+}
+
+int CMPWlkgTm_flat::ByteSize() const {
+  int total_size = 0;
+
+  // optional string prevFromId = 1;
+  if (this->prevfromid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->prevfromid());
+  }
+
+  // optional string prevToId = 2;
+  if (this->prevtoid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->prevtoid());
+  }
+
+  // optional double prevLen = 3;
+  if (this->prevlen() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional string currentFromId = 4;
+  if (this->currentfromid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->currentfromid());
+  }
+
+  // optional string currentToId = 5;
+  if (this->currenttoid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->currenttoid());
+  }
+
+  // optional double currentLen = 6;
+  if (this->currentlen() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional string nextFromId = 7;
+  if (this->nextfromid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->nextfromid());
+  }
+
+  // optional string nextToId = 8;
+  if (this->nexttoid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->nexttoid());
+  }
+
+  // optional double nextLen = 9;
+  if (this->nextlen() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double depPos = 10;
+  if (this->deppos() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double arrivalPos = 11;
+  if (this->arrivalpos() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double maxSpeed = 12;
+  if (this->maxspeed() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double time = 13;
+  if (this->time() != 0) {
+    total_size += 1 + 8;
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CMPWlkgTm_flat::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const CMPWlkgTm_flat* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const CMPWlkgTm_flat>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CMPWlkgTm_flat::MergeFrom(const CMPWlkgTm_flat& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.prevfromid().size() > 0) {
+
+    prevfromid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.prevfromid_);
+  }
+  if (from.prevtoid().size() > 0) {
+
+    prevtoid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.prevtoid_);
+  }
+  if (from.prevlen() != 0) {
+    set_prevlen(from.prevlen());
+  }
+  if (from.currentfromid().size() > 0) {
+
+    currentfromid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.currentfromid_);
+  }
+  if (from.currenttoid().size() > 0) {
+
+    currenttoid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.currenttoid_);
+  }
+  if (from.currentlen() != 0) {
+    set_currentlen(from.currentlen());
+  }
+  if (from.nextfromid().size() > 0) {
+
+    nextfromid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.nextfromid_);
+  }
+  if (from.nexttoid().size() > 0) {
+
+    nexttoid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.nexttoid_);
+  }
+  if (from.nextlen() != 0) {
+    set_nextlen(from.nextlen());
+  }
+  if (from.deppos() != 0) {
+    set_deppos(from.deppos());
+  }
+  if (from.arrivalpos() != 0) {
+    set_arrivalpos(from.arrivalpos());
+  }
+  if (from.maxspeed() != 0) {
+    set_maxspeed(from.maxspeed());
+  }
+  if (from.time() != 0) {
+    set_time(from.time());
+  }
+}
+
+void CMPWlkgTm_flat::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CMPWlkgTm_flat::CopyFrom(const CMPWlkgTm_flat& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CMPWlkgTm_flat::IsInitialized() const {
+
+  return true;
+}
+
+void CMPWlkgTm_flat::Swap(CMPWlkgTm_flat* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CMPWlkgTm_flat::InternalSwap(CMPWlkgTm_flat* other) {
+  prevfromid_.Swap(&other->prevfromid_);
+  prevtoid_.Swap(&other->prevtoid_);
+  std::swap(prevlen_, other->prevlen_);
+  currentfromid_.Swap(&other->currentfromid_);
+  currenttoid_.Swap(&other->currenttoid_);
+  std::swap(currentlen_, other->currentlen_);
+  nextfromid_.Swap(&other->nextfromid_);
+  nexttoid_.Swap(&other->nexttoid_);
+  std::swap(nextlen_, other->nextlen_);
+  std::swap(deppos_, other->deppos_);
+  std::swap(arrivalpos_, other->arrivalpos_);
+  std::swap(maxspeed_, other->maxspeed_);
+  std::swap(time_, other->time_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata CMPWlkgTm_flat::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CMPWlkgTm_flat_descriptor_;
+  metadata.reflection = CMPWlkgTm_flat_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// CMPWlkgTm_flat
+
+// optional string prevFromId = 1;
+void CMPWlkgTm_flat::clear_prevfromid() {
+  prevfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& CMPWlkgTm_flat::prevfromid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevFromId)
+  return prevfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_prevfromid(const ::std::string& value) {
+  
+  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevFromId)
+}
+ void CMPWlkgTm_flat::set_prevfromid(const char* value) {
+  
+  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.prevFromId)
+}
+ void CMPWlkgTm_flat::set_prevfromid(const char* value, size_t size) {
+  
+  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.prevFromId)
+}
+ ::std::string* CMPWlkgTm_flat::mutable_prevfromid() {
+  
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.prevFromId)
+  return prevfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* CMPWlkgTm_flat::release_prevfromid() {
+  
+  return prevfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_allocated_prevfromid(::std::string* prevfromid) {
+  if (prevfromid != NULL) {
+    
+  } else {
+    
+  }
+  prevfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prevfromid);
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.prevFromId)
+}
+
+// optional string prevToId = 2;
+void CMPWlkgTm_flat::clear_prevtoid() {
+  prevtoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& CMPWlkgTm_flat::prevtoid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevToId)
+  return prevtoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_prevtoid(const ::std::string& value) {
+  
+  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevToId)
+}
+ void CMPWlkgTm_flat::set_prevtoid(const char* value) {
+  
+  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.prevToId)
+}
+ void CMPWlkgTm_flat::set_prevtoid(const char* value, size_t size) {
+  
+  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.prevToId)
+}
+ ::std::string* CMPWlkgTm_flat::mutable_prevtoid() {
+  
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.prevToId)
+  return prevtoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* CMPWlkgTm_flat::release_prevtoid() {
+  
+  return prevtoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_allocated_prevtoid(::std::string* prevtoid) {
+  if (prevtoid != NULL) {
+    
+  } else {
+    
+  }
+  prevtoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prevtoid);
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.prevToId)
+}
+
+// optional double prevLen = 3;
+void CMPWlkgTm_flat::clear_prevlen() {
+  prevlen_ = 0;
+}
+ double CMPWlkgTm_flat::prevlen() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevLen)
+  return prevlen_;
+}
+ void CMPWlkgTm_flat::set_prevlen(double value) {
+  
+  prevlen_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevLen)
+}
+
+// optional string currentFromId = 4;
+void CMPWlkgTm_flat::clear_currentfromid() {
+  currentfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& CMPWlkgTm_flat::currentfromid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentFromId)
+  return currentfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_currentfromid(const ::std::string& value) {
+  
+  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentFromId)
+}
+ void CMPWlkgTm_flat::set_currentfromid(const char* value) {
+  
+  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.currentFromId)
+}
+ void CMPWlkgTm_flat::set_currentfromid(const char* value, size_t size) {
+  
+  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.currentFromId)
+}
+ ::std::string* CMPWlkgTm_flat::mutable_currentfromid() {
+  
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.currentFromId)
+  return currentfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* CMPWlkgTm_flat::release_currentfromid() {
+  
+  return currentfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_allocated_currentfromid(::std::string* currentfromid) {
+  if (currentfromid != NULL) {
+    
+  } else {
+    
+  }
+  currentfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), currentfromid);
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.currentFromId)
+}
+
+// optional string currentToId = 5;
+void CMPWlkgTm_flat::clear_currenttoid() {
+  currenttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& CMPWlkgTm_flat::currenttoid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentToId)
+  return currenttoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_currenttoid(const ::std::string& value) {
+  
+  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentToId)
+}
+ void CMPWlkgTm_flat::set_currenttoid(const char* value) {
+  
+  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.currentToId)
+}
+ void CMPWlkgTm_flat::set_currenttoid(const char* value, size_t size) {
+  
+  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.currentToId)
+}
+ ::std::string* CMPWlkgTm_flat::mutable_currenttoid() {
+  
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.currentToId)
+  return currenttoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* CMPWlkgTm_flat::release_currenttoid() {
+  
+  return currenttoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_allocated_currenttoid(::std::string* currenttoid) {
+  if (currenttoid != NULL) {
+    
+  } else {
+    
+  }
+  currenttoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), currenttoid);
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.currentToId)
+}
+
+// optional double currentLen = 6;
+void CMPWlkgTm_flat::clear_currentlen() {
+  currentlen_ = 0;
+}
+ double CMPWlkgTm_flat::currentlen() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentLen)
+  return currentlen_;
+}
+ void CMPWlkgTm_flat::set_currentlen(double value) {
+  
+  currentlen_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentLen)
+}
+
+// optional string nextFromId = 7;
+void CMPWlkgTm_flat::clear_nextfromid() {
+  nextfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& CMPWlkgTm_flat::nextfromid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextFromId)
+  return nextfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_nextfromid(const ::std::string& value) {
+  
+  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextFromId)
+}
+ void CMPWlkgTm_flat::set_nextfromid(const char* value) {
+  
+  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.nextFromId)
+}
+ void CMPWlkgTm_flat::set_nextfromid(const char* value, size_t size) {
+  
+  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.nextFromId)
+}
+ ::std::string* CMPWlkgTm_flat::mutable_nextfromid() {
+  
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.nextFromId)
+  return nextfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* CMPWlkgTm_flat::release_nextfromid() {
+  
+  return nextfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_allocated_nextfromid(::std::string* nextfromid) {
+  if (nextfromid != NULL) {
+    
+  } else {
+    
+  }
+  nextfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), nextfromid);
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.nextFromId)
+}
+
+// optional string nextToId = 8;
+void CMPWlkgTm_flat::clear_nexttoid() {
+  nexttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& CMPWlkgTm_flat::nexttoid() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextToId)
+  return nexttoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_nexttoid(const ::std::string& value) {
+  
+  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextToId)
+}
+ void CMPWlkgTm_flat::set_nexttoid(const char* value) {
+  
+  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.nextToId)
+}
+ void CMPWlkgTm_flat::set_nexttoid(const char* value, size_t size) {
+  
+  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.nextToId)
+}
+ ::std::string* CMPWlkgTm_flat::mutable_nexttoid() {
+  
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.nextToId)
+  return nexttoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* CMPWlkgTm_flat::release_nexttoid() {
+  
+  return nexttoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void CMPWlkgTm_flat::set_allocated_nexttoid(::std::string* nexttoid) {
+  if (nexttoid != NULL) {
+    
+  } else {
+    
+  }
+  nexttoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), nexttoid);
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.nextToId)
+}
+
+// optional double nextLen = 9;
+void CMPWlkgTm_flat::clear_nextlen() {
+  nextlen_ = 0;
+}
+ double CMPWlkgTm_flat::nextlen() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextLen)
+  return nextlen_;
+}
+ void CMPWlkgTm_flat::set_nextlen(double value) {
+  
+  nextlen_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextLen)
+}
+
+// optional double depPos = 10;
+void CMPWlkgTm_flat::clear_deppos() {
+  deppos_ = 0;
+}
+ double CMPWlkgTm_flat::deppos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.depPos)
+  return deppos_;
+}
+ void CMPWlkgTm_flat::set_deppos(double value) {
+  
+  deppos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.depPos)
+}
+
+// optional double arrivalPos = 11;
+void CMPWlkgTm_flat::clear_arrivalpos() {
+  arrivalpos_ = 0;
+}
+ double CMPWlkgTm_flat::arrivalpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.arrivalPos)
+  return arrivalpos_;
+}
+ void CMPWlkgTm_flat::set_arrivalpos(double value) {
+  
+  arrivalpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.arrivalPos)
+}
+
+// optional double maxSpeed = 12;
+void CMPWlkgTm_flat::clear_maxspeed() {
+  maxspeed_ = 0;
+}
+ double CMPWlkgTm_flat::maxspeed() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.maxSpeed)
+  return maxspeed_;
+}
+ void CMPWlkgTm_flat::set_maxspeed(double value) {
+  
+  maxspeed_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.maxSpeed)
+}
+
+// optional double time = 13;
+void CMPWlkgTm_flat::clear_time() {
+  time_ = 0;
+}
+ double CMPWlkgTm_flat::time() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.time)
+  return time_;
+}
+ void CMPWlkgTm_flat::set_time(double value) {
+  
+  time_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.time)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

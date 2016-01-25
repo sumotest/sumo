@@ -21,6 +21,7 @@ option java_outer_classname = "NonInteractingProto";
 
 service PBPState {
     rpc computeWalkingTime(CMPWlkgTm) returns (PBSUMOTime) {}
+    rpc computeWalkingTime_flat(CMPWlkgTm_flat) returns (PBSUMOTime) {}
     rpc getPosition(GetPos) returns (PBPosition) {}
     rpc getAngle(GetAngle) returns (PBSUMOReal) {}
     rpc getWaitingTime(PBSUMOTime) returns (PBSUMOTime) {}
@@ -64,6 +65,21 @@ message CMPWlkgTm {
     PBMSPersonStage_Walking stage = 2;
     PBSUMOTime sumoTime = 3;
 }
+message CMPWlkgTm_flat {
+    string prevFromId = 1;
+    string prevToId = 2;
+    double prevLen = 3;
+    string currentFromId = 4;
+    string currentToId = 5;
+    double currentLen = 6;
+    string nextFromId = 7;
+    string nextToId = 8;
+    double nextLen = 9;
+    double depPos = 10;
+    double arrivalPos = 11;
+    double maxSpeed = 12;
+    double time = 13;
+}
 
 message GetPos {
     PBMSPersonStage_Walking stage = 1;
@@ -74,3 +90,4 @@ message GetAngle {
     PBMSPersonStage_Walking stage = 1;
     PBSUMOTime sumoTime = 2;
 }
+

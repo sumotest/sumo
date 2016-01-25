@@ -28,67 +28,85 @@ MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) : stub_(noninteract
 }
 
 MSGRPCClient::~MSGRPCClient() {
-	// TODO Auto-generated destructor stub
+
 }
 
 SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime){
-	noninteracting::CMPWlkgTm request;
-	if (prev != 0){
-		noninteracting::PBEdge edge;
-		edge.set_length(prev->getLength());
-		edge.set_fromjunctionid(prev->getFromJunction()->getID());
-		edge.set_tojunctionid(prev->getToJunction()->getID());
-		request.set_allocated_prev(&edge);
-	} else {
-//		noninteracting::PBEdge edge;
-//		edge.set_length(1.);
-//		edge.set_fromjunctionid("a");
-//		edge.set_tojunctionid("b");
-//		request.set_allocated_prev(&edge);
+
+	noninteracting::CMPWlkgTm_flat r;
+	if (prev != 0) {
+		r.set_prevfromid(prev->getFromJunction()->getID());
+		r.set_prevtoid(prev->getToJunction()->getID());
+		r.set_prevlen(prev->getLength());
 	}
-
-
-
-	noninteracting::PBEdge stEdge;
-	stEdge.set_length(stage.getEdge()->getLength());
-	stEdge.set_fromjunctionid(stage.getEdge()->getFromJunction()->getID());
-	stEdge.set_tojunctionid(stage.getEdge()->getToJunction()->getID());
-
-
-	//	if (stage.getNextRouteEdge() != 0) {
-	noninteracting::PBEdge nxtStEdge;
-	nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
-	nxtStEdge.set_fromjunctionid((stage.getNextRouteEdge()->getFromJunction()->getID()));
-	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
-	noninteracting::PBMSPersonStage_Walking st;
-	st.set_allocated_edge(&stEdge);
-	st.set_allocated_nextrouteedge(&nxtStEdge);
-	//	} else {
-	//		noninteracting::PBEdge df = noninteracting::PBEdge::default_instance();
-	//		st.set_allocated_nextrouteedge(&df);
-	//	}
-
-	st.set_departpos(stage.getDepartPos());
-	st.set_arrivalpos(stage.getArrivalPos());
-	st.set_maxspeed(stage.getMaxSpeed());
-
-	request.set_allocated_stage(&st);
-
-	noninteracting::PBSUMOTime time;
-	time.set_sumotime(currentTime);
-	request.set_allocated_sumotime(&time);
+	r.set_currentfromid(stage.getEdge()->getFromJunction()->getID());
+	r.set_currenttoid(stage.getEdge()->getToJunction()->getID());
+	r.set_currentlen(stage.getEdge()->getLength());
+	if (stage.getNextRouteEdge() != 0) {
+		r.set_nextfromid(stage.getNextRouteEdge()->getFromJunction()->getID());
+		r.set_nexttoid(stage.getNextRouteEdge()->getToJunction()->getID());
+		r.set_nextlen(stage.getNextRouteEdge()->getLength());
+	}
+	r.set_deppos(stage.getDepartPos());
+	r.set_arrivalpos(stage.getArrivalPos());
+	r.set_time(currentTime);
+	r.set_maxspeed(stage.getMaxSpeed());
+//	noninteracting::CMPWlkgTm request;
+//	if (prev != 0){
+//		noninteracting::PBEdge edge;
+//		edge.set_length(prev->getLength());
+//		edge.set_fromjunctionid(prev->getFromJunction()->getID());
+//		edge.set_tojunctionid(prev->getToJunction()->getID());
+//		request.set_allocated_prev(&edge);
+//	} else {
+////		noninteracting::PBEdge edge;
+////		edge.set_length(1.);
+////		edge.set_fromjunctionid("a");
+////		edge.set_tojunctionid("b");
+////		request.set_allocated_prev(&edge);
+//	}
+//
+//
+//
+//	noninteracting::PBEdge stEdge;
+//	stEdge.set_length(stage.getEdge()->getLength());
+//	stEdge.set_fromjunctionid(stage.getEdge()->getFromJunction()->getID());
+//	stEdge.set_tojunctionid(stage.getEdge()->getToJunction()->getID());
+//
+//
+//	//	if (stage.getNextRouteEdge() != 0) {
+//	noninteracting::PBEdge nxtStEdge;
+//	nxtStEdge.set_length(stage.getNextRouteEdge()->getLength());
+//	nxtStEdge.set_fromjunctionid((stage.getNextRouteEdge()->getFromJunction()->getID()));
+//	nxtStEdge.set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
+//	noninteracting::PBMSPersonStage_Walking st;
+//	st.set_allocated_edge(&stEdge);
+//	st.set_allocated_nextrouteedge(&nxtStEdge);
+//	//	} else {
+//	//		noninteracting::PBEdge df = noninteracting::PBEdge::default_instance();
+//	//		st.set_allocated_nextrouteedge(&df);
+//	//	}
+//
+//	st.set_departpos(stage.getDepartPos());
+//	st.set_arrivalpos(stage.getArrivalPos());
+//	st.set_maxspeed(stage.getMaxSpeed());
+//
+//	request.set_allocated_stage(&st);
+//
+//	noninteracting::PBSUMOTime time;
+//	time.set_sumotime(currentTime);
+//	request.set_allocated_sumotime(&time);
 
 	noninteracting::PBSUMOTime replay;
 
 
 	ClientContext context;
 
-	Status status = stub_->computeWalkingTime(&context,request, &replay);
+	Status status = stub_->computeWalkingTime_flat(&context,r, &replay);
+
 
 	if (status.ok()){
 		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
-		std::cout << ret << std::endl;
-
 		return  ret;
 	} else {
 		std::cerr << "something went wrong!" << std::endl;

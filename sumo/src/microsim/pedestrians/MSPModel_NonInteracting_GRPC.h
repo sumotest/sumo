@@ -118,6 +118,8 @@ private:
     /// @brief the net to which to issue moveToNextEdge commands
     MSNet* myNet;
 
+    MSGRPCClient* client;
+
 };
 
 

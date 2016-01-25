@@ -3626,6 +3626,1533 @@ public final class NonInteractingProto {
 
   }
 
+  public interface CMPWlkgTm_flatOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:noninteracting.CMPWlkgTm_flat)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>optional string prevFromId = 1;</code>
+     */
+    java.lang.String getPrevFromId();
+    /**
+     * <code>optional string prevFromId = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getPrevFromIdBytes();
+
+    /**
+     * <code>optional string prevToId = 2;</code>
+     */
+    java.lang.String getPrevToId();
+    /**
+     * <code>optional string prevToId = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getPrevToIdBytes();
+
+    /**
+     * <code>optional double prevLen = 3;</code>
+     */
+    double getPrevLen();
+
+    /**
+     * <code>optional string currentFromId = 4;</code>
+     */
+    java.lang.String getCurrentFromId();
+    /**
+     * <code>optional string currentFromId = 4;</code>
+     */
+    com.google.protobuf.ByteString
+        getCurrentFromIdBytes();
+
+    /**
+     * <code>optional string currentToId = 5;</code>
+     */
+    java.lang.String getCurrentToId();
+    /**
+     * <code>optional string currentToId = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getCurrentToIdBytes();
+
+    /**
+     * <code>optional double currentLen = 6;</code>
+     */
+    double getCurrentLen();
+
+    /**
+     * <code>optional string nextFromId = 7;</code>
+     */
+    java.lang.String getNextFromId();
+    /**
+     * <code>optional string nextFromId = 7;</code>
+     */
+    com.google.protobuf.ByteString
+        getNextFromIdBytes();
+
+    /**
+     * <code>optional string nextToId = 8;</code>
+     */
+    java.lang.String getNextToId();
+    /**
+     * <code>optional string nextToId = 8;</code>
+     */
+    com.google.protobuf.ByteString
+        getNextToIdBytes();
+
+    /**
+     * <code>optional double nextLen = 9;</code>
+     */
+    double getNextLen();
+
+    /**
+     * <code>optional double depPos = 10;</code>
+     */
+    double getDepPos();
+
+    /**
+     * <code>optional double arrivalPos = 11;</code>
+     */
+    double getArrivalPos();
+
+    /**
+     * <code>optional double maxSpeed = 12;</code>
+     */
+    double getMaxSpeed();
+
+    /**
+     * <code>optional double time = 13;</code>
+     */
+    double getTime();
+  }
+  /**
+   * Protobuf type {@code noninteracting.CMPWlkgTm_flat}
+   */
+  public  static final class CMPWlkgTm_flat extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:noninteracting.CMPWlkgTm_flat)
+      CMPWlkgTm_flatOrBuilder {
+    // Use CMPWlkgTm_flat.newBuilder() to construct.
+    private CMPWlkgTm_flat(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private CMPWlkgTm_flat() {
+      prevFromId_ = "";
+      prevToId_ = "";
+      prevLen_ = 0D;
+      currentFromId_ = "";
+      currentToId_ = "";
+      currentLen_ = 0D;
+      nextFromId_ = "";
+      nextToId_ = "";
+      nextLen_ = 0D;
+      depPos_ = 0D;
+      arrivalPos_ = 0D;
+      maxSpeed_ = 0D;
+      time_ = 0D;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    }
+    private CMPWlkgTm_flat(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
+      this();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!input.skipField(tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              prevFromId_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              prevToId_ = s;
+              break;
+            }
+            case 25: {
+
+              prevLen_ = input.readDouble();
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              currentFromId_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              currentToId_ = s;
+              break;
+            }
+            case 49: {
+
+              currentLen_ = input.readDouble();
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              nextFromId_ = s;
+              break;
+            }
+            case 66: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              nextToId_ = s;
+              break;
+            }
+            case 73: {
+
+              nextLen_ = input.readDouble();
+              break;
+            }
+            case 81: {
+
+              depPos_ = input.readDouble();
+              break;
+            }
+            case 89: {
+
+              arrivalPos_ = input.readDouble();
+              break;
+            }
+            case 97: {
+
+              maxSpeed_ = input.readDouble();
+              break;
+            }
+            case 105: {
+
+              time_ = input.readDouble();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw new RuntimeException(e.setUnfinishedMessage(this));
+      } catch (java.io.IOException e) {
+        throw new RuntimeException(
+            new com.google.protobuf.InvalidProtocolBufferException(
+                e.getMessage()).setUnfinishedMessage(this));
+      } finally {
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.class, de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.Builder.class);
+    }
+
+    public static final int PREVFROMID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object prevFromId_;
+    /**
+     * <code>optional string prevFromId = 1;</code>
+     */
+    public java.lang.String getPrevFromId() {
+      java.lang.Object ref = prevFromId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        prevFromId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string prevFromId = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPrevFromIdBytes() {
+      java.lang.Object ref = prevFromId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        prevFromId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PREVTOID_FIELD_NUMBER = 2;
+    private volatile java.lang.Object prevToId_;
+    /**
+     * <code>optional string prevToId = 2;</code>
+     */
+    public java.lang.String getPrevToId() {
+      java.lang.Object ref = prevToId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        prevToId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string prevToId = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPrevToIdBytes() {
+      java.lang.Object ref = prevToId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        prevToId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PREVLEN_FIELD_NUMBER = 3;
+    private double prevLen_;
+    /**
+     * <code>optional double prevLen = 3;</code>
+     */
+    public double getPrevLen() {
+      return prevLen_;
+    }
+
+    public static final int CURRENTFROMID_FIELD_NUMBER = 4;
+    private volatile java.lang.Object currentFromId_;
+    /**
+     * <code>optional string currentFromId = 4;</code>
+     */
+    public java.lang.String getCurrentFromId() {
+      java.lang.Object ref = currentFromId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        currentFromId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string currentFromId = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getCurrentFromIdBytes() {
+      java.lang.Object ref = currentFromId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        currentFromId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CURRENTTOID_FIELD_NUMBER = 5;
+    private volatile java.lang.Object currentToId_;
+    /**
+     * <code>optional string currentToId = 5;</code>
+     */
+    public java.lang.String getCurrentToId() {
+      java.lang.Object ref = currentToId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        currentToId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string currentToId = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getCurrentToIdBytes() {
+      java.lang.Object ref = currentToId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        currentToId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CURRENTLEN_FIELD_NUMBER = 6;
+    private double currentLen_;
+    /**
+     * <code>optional double currentLen = 6;</code>
+     */
+    public double getCurrentLen() {
+      return currentLen_;
+    }
+
+    public static final int NEXTFROMID_FIELD_NUMBER = 7;
+    private volatile java.lang.Object nextFromId_;
+    /**
+     * <code>optional string nextFromId = 7;</code>
+     */
+    public java.lang.String getNextFromId() {
+      java.lang.Object ref = nextFromId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nextFromId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string nextFromId = 7;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNextFromIdBytes() {
+      java.lang.Object ref = nextFromId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nextFromId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NEXTTOID_FIELD_NUMBER = 8;
+    private volatile java.lang.Object nextToId_;
+    /**
+     * <code>optional string nextToId = 8;</code>
+     */
+    public java.lang.String getNextToId() {
+      java.lang.Object ref = nextToId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nextToId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string nextToId = 8;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNextToIdBytes() {
+      java.lang.Object ref = nextToId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nextToId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NEXTLEN_FIELD_NUMBER = 9;
+    private double nextLen_;
+    /**
+     * <code>optional double nextLen = 9;</code>
+     */
+    public double getNextLen() {
+      return nextLen_;
+    }
+
+    public static final int DEPPOS_FIELD_NUMBER = 10;
+    private double depPos_;
+    /**
+     * <code>optional double depPos = 10;</code>
+     */
+    public double getDepPos() {
+      return depPos_;
+    }
+
+    public static final int ARRIVALPOS_FIELD_NUMBER = 11;
+    private double arrivalPos_;
+    /**
+     * <code>optional double arrivalPos = 11;</code>
+     */
+    public double getArrivalPos() {
+      return arrivalPos_;
+    }
+
+    public static final int MAXSPEED_FIELD_NUMBER = 12;
+    private double maxSpeed_;
+    /**
+     * <code>optional double maxSpeed = 12;</code>
+     */
+    public double getMaxSpeed() {
+      return maxSpeed_;
+    }
+
+    public static final int TIME_FIELD_NUMBER = 13;
+    private double time_;
+    /**
+     * <code>optional double time = 13;</code>
+     */
+    public double getTime() {
+      return time_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getPrevFromIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, prevFromId_);
+      }
+      if (!getPrevToIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, prevToId_);
+      }
+      if (prevLen_ != 0D) {
+        output.writeDouble(3, prevLen_);
+      }
+      if (!getCurrentFromIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 4, currentFromId_);
+      }
+      if (!getCurrentToIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 5, currentToId_);
+      }
+      if (currentLen_ != 0D) {
+        output.writeDouble(6, currentLen_);
+      }
+      if (!getNextFromIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 7, nextFromId_);
+      }
+      if (!getNextToIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 8, nextToId_);
+      }
+      if (nextLen_ != 0D) {
+        output.writeDouble(9, nextLen_);
+      }
+      if (depPos_ != 0D) {
+        output.writeDouble(10, depPos_);
+      }
+      if (arrivalPos_ != 0D) {
+        output.writeDouble(11, arrivalPos_);
+      }
+      if (maxSpeed_ != 0D) {
+        output.writeDouble(12, maxSpeed_);
+      }
+      if (time_ != 0D) {
+        output.writeDouble(13, time_);
+      }
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getPrevFromIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, prevFromId_);
+      }
+      if (!getPrevToIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, prevToId_);
+      }
+      if (prevLen_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(3, prevLen_);
+      }
+      if (!getCurrentFromIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, currentFromId_);
+      }
+      if (!getCurrentToIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, currentToId_);
+      }
+      if (currentLen_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(6, currentLen_);
+      }
+      if (!getNextFromIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(7, nextFromId_);
+      }
+      if (!getNextToIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(8, nextToId_);
+      }
+      if (nextLen_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(9, nextLen_);
+      }
+      if (depPos_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(10, depPos_);
+      }
+      if (arrivalPos_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(11, arrivalPos_);
+      }
+      if (maxSpeed_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(12, maxSpeed_);
+      }
+      if (time_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(13, time_);
+      }
+      memoizedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code noninteracting.CMPWlkgTm_flat}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:noninteracting.CMPWlkgTm_flat)
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flatOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.class, de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.Builder.class);
+      }
+
+      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        prevFromId_ = "";
+
+        prevToId_ = "";
+
+        prevLen_ = 0D;
+
+        currentFromId_ = "";
+
+        currentToId_ = "";
+
+        currentLen_ = 0D;
+
+        nextFromId_ = "";
+
+        nextToId_ = "";
+
+        nextLen_ = 0D;
+
+        depPos_ = 0D;
+
+        arrivalPos_ = 0D;
+
+        maxSpeed_ = 0D;
+
+        time_ = 0D;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+      }
+
+      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat getDefaultInstanceForType() {
+        return de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.getDefaultInstance();
+      }
+
+      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat build() {
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat buildPartial() {
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat result = new de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat(this);
+        result.prevFromId_ = prevFromId_;
+        result.prevToId_ = prevToId_;
+        result.prevLen_ = prevLen_;
+        result.currentFromId_ = currentFromId_;
+        result.currentToId_ = currentToId_;
+        result.currentLen_ = currentLen_;
+        result.nextFromId_ = nextFromId_;
+        result.nextToId_ = nextToId_;
+        result.nextLen_ = nextLen_;
+        result.depPos_ = depPos_;
+        result.arrivalPos_ = arrivalPos_;
+        result.maxSpeed_ = maxSpeed_;
+        result.time_ = time_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat) {
+          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat other) {
+        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.getDefaultInstance()) return this;
+        if (!other.getPrevFromId().isEmpty()) {
+          prevFromId_ = other.prevFromId_;
+          onChanged();
+        }
+        if (!other.getPrevToId().isEmpty()) {
+          prevToId_ = other.prevToId_;
+          onChanged();
+        }
+        if (other.getPrevLen() != 0D) {
+          setPrevLen(other.getPrevLen());
+        }
+        if (!other.getCurrentFromId().isEmpty()) {
+          currentFromId_ = other.currentFromId_;
+          onChanged();
+        }
+        if (!other.getCurrentToId().isEmpty()) {
+          currentToId_ = other.currentToId_;
+          onChanged();
+        }
+        if (other.getCurrentLen() != 0D) {
+          setCurrentLen(other.getCurrentLen());
+        }
+        if (!other.getNextFromId().isEmpty()) {
+          nextFromId_ = other.nextFromId_;
+          onChanged();
+        }
+        if (!other.getNextToId().isEmpty()) {
+          nextToId_ = other.nextToId_;
+          onChanged();
+        }
+        if (other.getNextLen() != 0D) {
+          setNextLen(other.getNextLen());
+        }
+        if (other.getDepPos() != 0D) {
+          setDepPos(other.getDepPos());
+        }
+        if (other.getArrivalPos() != 0D) {
+          setArrivalPos(other.getArrivalPos());
+        }
+        if (other.getMaxSpeed() != 0D) {
+          setMaxSpeed(other.getMaxSpeed());
+        }
+        if (other.getTime() != 0D) {
+          setTime(other.getTime());
+        }
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object prevFromId_ = "";
+      /**
+       * <code>optional string prevFromId = 1;</code>
+       */
+      public java.lang.String getPrevFromId() {
+        java.lang.Object ref = prevFromId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          prevFromId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string prevFromId = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getPrevFromIdBytes() {
+        java.lang.Object ref = prevFromId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          prevFromId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string prevFromId = 1;</code>
+       */
+      public Builder setPrevFromId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        prevFromId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string prevFromId = 1;</code>
+       */
+      public Builder clearPrevFromId() {
+        
+        prevFromId_ = getDefaultInstance().getPrevFromId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string prevFromId = 1;</code>
+       */
+      public Builder setPrevFromIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        prevFromId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object prevToId_ = "";
+      /**
+       * <code>optional string prevToId = 2;</code>
+       */
+      public java.lang.String getPrevToId() {
+        java.lang.Object ref = prevToId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          prevToId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string prevToId = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getPrevToIdBytes() {
+        java.lang.Object ref = prevToId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          prevToId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string prevToId = 2;</code>
+       */
+      public Builder setPrevToId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        prevToId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string prevToId = 2;</code>
+       */
+      public Builder clearPrevToId() {
+        
+        prevToId_ = getDefaultInstance().getPrevToId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string prevToId = 2;</code>
+       */
+      public Builder setPrevToIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        prevToId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private double prevLen_ ;
+      /**
+       * <code>optional double prevLen = 3;</code>
+       */
+      public double getPrevLen() {
+        return prevLen_;
+      }
+      /**
+       * <code>optional double prevLen = 3;</code>
+       */
+      public Builder setPrevLen(double value) {
+        
+        prevLen_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double prevLen = 3;</code>
+       */
+      public Builder clearPrevLen() {
+        
+        prevLen_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object currentFromId_ = "";
+      /**
+       * <code>optional string currentFromId = 4;</code>
+       */
+      public java.lang.String getCurrentFromId() {
+        java.lang.Object ref = currentFromId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          currentFromId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string currentFromId = 4;</code>
+       */
+      public com.google.protobuf.ByteString
+          getCurrentFromIdBytes() {
+        java.lang.Object ref = currentFromId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          currentFromId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string currentFromId = 4;</code>
+       */
+      public Builder setCurrentFromId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        currentFromId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string currentFromId = 4;</code>
+       */
+      public Builder clearCurrentFromId() {
+        
+        currentFromId_ = getDefaultInstance().getCurrentFromId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string currentFromId = 4;</code>
+       */
+      public Builder setCurrentFromIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        currentFromId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object currentToId_ = "";
+      /**
+       * <code>optional string currentToId = 5;</code>
+       */
+      public java.lang.String getCurrentToId() {
+        java.lang.Object ref = currentToId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          currentToId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string currentToId = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getCurrentToIdBytes() {
+        java.lang.Object ref = currentToId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          currentToId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string currentToId = 5;</code>
+       */
+      public Builder setCurrentToId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        currentToId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string currentToId = 5;</code>
+       */
+      public Builder clearCurrentToId() {
+        
+        currentToId_ = getDefaultInstance().getCurrentToId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string currentToId = 5;</code>
+       */
+      public Builder setCurrentToIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        currentToId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private double currentLen_ ;
+      /**
+       * <code>optional double currentLen = 6;</code>
+       */
+      public double getCurrentLen() {
+        return currentLen_;
+      }
+      /**
+       * <code>optional double currentLen = 6;</code>
+       */
+      public Builder setCurrentLen(double value) {
+        
+        currentLen_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double currentLen = 6;</code>
+       */
+      public Builder clearCurrentLen() {
+        
+        currentLen_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object nextFromId_ = "";
+      /**
+       * <code>optional string nextFromId = 7;</code>
+       */
+      public java.lang.String getNextFromId() {
+        java.lang.Object ref = nextFromId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          nextFromId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string nextFromId = 7;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNextFromIdBytes() {
+        java.lang.Object ref = nextFromId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          nextFromId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string nextFromId = 7;</code>
+       */
+      public Builder setNextFromId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        nextFromId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string nextFromId = 7;</code>
+       */
+      public Builder clearNextFromId() {
+        
+        nextFromId_ = getDefaultInstance().getNextFromId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string nextFromId = 7;</code>
+       */
+      public Builder setNextFromIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        nextFromId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object nextToId_ = "";
+      /**
+       * <code>optional string nextToId = 8;</code>
+       */
+      public java.lang.String getNextToId() {
+        java.lang.Object ref = nextToId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          nextToId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string nextToId = 8;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNextToIdBytes() {
+        java.lang.Object ref = nextToId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          nextToId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string nextToId = 8;</code>
+       */
+      public Builder setNextToId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        nextToId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string nextToId = 8;</code>
+       */
+      public Builder clearNextToId() {
+        
+        nextToId_ = getDefaultInstance().getNextToId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string nextToId = 8;</code>
+       */
+      public Builder setNextToIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        nextToId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private double nextLen_ ;
+      /**
+       * <code>optional double nextLen = 9;</code>
+       */
+      public double getNextLen() {
+        return nextLen_;
+      }
+      /**
+       * <code>optional double nextLen = 9;</code>
+       */
+      public Builder setNextLen(double value) {
+        
+        nextLen_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double nextLen = 9;</code>
+       */
+      public Builder clearNextLen() {
+        
+        nextLen_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double depPos_ ;
+      /**
+       * <code>optional double depPos = 10;</code>
+       */
+      public double getDepPos() {
+        return depPos_;
+      }
+      /**
+       * <code>optional double depPos = 10;</code>
+       */
+      public Builder setDepPos(double value) {
+        
+        depPos_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double depPos = 10;</code>
+       */
+      public Builder clearDepPos() {
+        
+        depPos_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double arrivalPos_ ;
+      /**
+       * <code>optional double arrivalPos = 11;</code>
+       */
+      public double getArrivalPos() {
+        return arrivalPos_;
+      }
+      /**
+       * <code>optional double arrivalPos = 11;</code>
+       */
+      public Builder setArrivalPos(double value) {
+        
+        arrivalPos_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double arrivalPos = 11;</code>
+       */
+      public Builder clearArrivalPos() {
+        
+        arrivalPos_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double maxSpeed_ ;
+      /**
+       * <code>optional double maxSpeed = 12;</code>
+       */
+      public double getMaxSpeed() {
+        return maxSpeed_;
+      }
+      /**
+       * <code>optional double maxSpeed = 12;</code>
+       */
+      public Builder setMaxSpeed(double value) {
+        
+        maxSpeed_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double maxSpeed = 12;</code>
+       */
+      public Builder clearMaxSpeed() {
+        
+        maxSpeed_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double time_ ;
+      /**
+       * <code>optional double time = 13;</code>
+       */
+      public double getTime() {
+        return time_;
+      }
+      /**
+       * <code>optional double time = 13;</code>
+       */
+      public Builder setTime(double value) {
+        
+        time_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double time = 13;</code>
+       */
+      public Builder clearTime() {
+        
+        time_ = 0D;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:noninteracting.CMPWlkgTm_flat)
+    }
+
+    // @@protoc_insertion_point(class_scope:noninteracting.CMPWlkgTm_flat)
+    private static final de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat();
+    }
+
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CMPWlkgTm_flat>
+        PARSER = new com.google.protobuf.AbstractParser<CMPWlkgTm_flat>() {
+      public CMPWlkgTm_flat parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        try {
+          return new CMPWlkgTm_flat(input, extensionRegistry);
+        } catch (RuntimeException e) {
+          if (e.getCause() instanceof
+              com.google.protobuf.InvalidProtocolBufferException) {
+            throw (com.google.protobuf.InvalidProtocolBufferException)
+                e.getCause();
+          }
+          throw e;
+        }
+      }
+    };
+
+    public static com.google.protobuf.Parser<CMPWlkgTm_flat> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CMPWlkgTm_flat> getParserForType() {
+      return PARSER;
+    }
+
+    public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface GetPosOrBuilder extends
       // @@protoc_insertion_point(interface_extends:noninteracting.GetPos)
       com.google.protobuf.MessageOrBuilder {
@@ -5029,6 +6556,11 @@ public final class NonInteractingProto {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_noninteracting_CMPWlkgTm_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_noninteracting_GetPos_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -5060,26 +6592,35 @@ public final class NonInteractingProto {
       "lkgTm\022$\n\004prev\030\001 \001(\0132\026.noninteracting.PBE" +
       "dge\0226\n\005stage\030\002 \001(\0132\'.noninteracting.PBMS" +
       "PersonStage_Walking\022,\n\010sumoTime\030\003 \001(\0132\032." +
-      "noninteracting.PBSUMOTime\"n\n\006GetPos\0226\n\005s" +
-      "tage\030\001 \001(\0132\'.noninteracting.PBMSPersonSt" +
-      "age_Walking\022,\n\010sumoTime\030\002 \001(\0132\032.noninter" +
-      "acting.PBSUMOTime\"p\n\010GetAngle\0226\n\005stage\030\001" +
-      " \001(\0132\'.noninteracting.PBMSPersonStage_Wa" +
-      "lking\022,\n\010sumoTime\030\002 \001(\0132\032.noninteracting" +
-      ".PBSUMOTime2\323\003\n\010PBPState\022M\n\022computeWalki",
-      "ngTime\022\031.noninteracting.CMPWlkgTm\032\032.noni" +
-      "nteracting.PBSUMOTime\"\000\022C\n\013getPosition\022\026" +
-      ".noninteracting.GetPos\032\032.noninteracting." +
-      "PBPosition\"\000\022B\n\010getAngle\022\030.noninteractin" +
-      "g.GetAngle\032\032.noninteracting.PBSUMOReal\"\000" +
-      "\022J\n\016getWaitingTime\022\032.noninteracting.PBSU" +
-      "MOTime\032\032.noninteracting.PBSUMOTime\"\000\022Q\n\010" +
-      "getSpeed\022\'.noninteracting.PBMSPersonStag" +
-      "e_Walking\032\032.noninteracting.PBSUMOReal\"\000\022" +
-      "P\n\013getNextEdge\022\'.noninteracting.PBMSPers",
-      "onStage_Walking\032\026.noninteracting.PBEdge\"" +
-      "\000B3\n\032de.dlr.sumo.noninteractingB\023NonInte" +
-      "ractingProtoP\000b\006proto3"
+      "noninteracting.PBSUMOTime\"\202\002\n\016CMPWlkgTm_" +
+      "flat\022\022\n\nprevFromId\030\001 \001(\t\022\020\n\010prevToId\030\002 \001" +
+      "(\t\022\017\n\007prevLen\030\003 \001(\001\022\025\n\rcurrentFromId\030\004 \001" +
+      "(\t\022\023\n\013currentToId\030\005 \001(\t\022\022\n\ncurrentLen\030\006 " +
+      "\001(\001\022\022\n\nnextFromId\030\007 \001(\t\022\020\n\010nextToId\030\010 \001(" +
+      "\t\022\017\n\007nextLen\030\t \001(\001\022\016\n\006depPos\030\n \001(\001\022\022\n\nar" +
+      "rivalPos\030\013 \001(\001\022\020\n\010maxSpeed\030\014 \001(\001\022\014\n\004time",
+      "\030\r \001(\001\"n\n\006GetPos\0226\n\005stage\030\001 \001(\0132\'.nonint" +
+      "eracting.PBMSPersonStage_Walking\022,\n\010sumo" +
+      "Time\030\002 \001(\0132\032.noninteracting.PBSUMOTime\"p" +
+      "\n\010GetAngle\0226\n\005stage\030\001 \001(\0132\'.noninteracti" +
+      "ng.PBMSPersonStage_Walking\022,\n\010sumoTime\030\002" +
+      " \001(\0132\032.noninteracting.PBSUMOTime2\254\004\n\010PBP" +
+      "State\022M\n\022computeWalkingTime\022\031.noninterac" +
+      "ting.CMPWlkgTm\032\032.noninteracting.PBSUMOTi" +
+      "me\"\000\022W\n\027computeWalkingTime_flat\022\036.nonint" +
+      "eracting.CMPWlkgTm_flat\032\032.noninteracting",
+      ".PBSUMOTime\"\000\022C\n\013getPosition\022\026.nonintera" +
+      "cting.GetPos\032\032.noninteracting.PBPosition" +
+      "\"\000\022B\n\010getAngle\022\030.noninteracting.GetAngle" +
+      "\032\032.noninteracting.PBSUMOReal\"\000\022J\n\016getWai" +
+      "tingTime\022\032.noninteracting.PBSUMOTime\032\032.n" +
+      "oninteracting.PBSUMOTime\"\000\022Q\n\010getSpeed\022\'" +
+      ".noninteracting.PBMSPersonStage_Walking\032" +
+      "\032.noninteracting.PBSUMOReal\"\000\022P\n\013getNext" +
+      "Edge\022\'.noninteracting.PBMSPersonStage_Wa" +
+      "lking\032\026.noninteracting.PBEdge\"\000B3\n\032de.dl",
+      "r.sumo.noninteractingB\023NonInteractingPro" +
+      "toP\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -5129,14 +6670,20 @@ public final class NonInteractingProto {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_noninteracting_CMPWlkgTm_descriptor,
         new java.lang.String[] { "Prev", "Stage", "SumoTime", });
-    internal_static_noninteracting_GetPos_descriptor =
+    internal_static_noninteracting_CMPWlkgTm_flat_descriptor =
       getDescriptor().getMessageTypes().get(6);
+    internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_noninteracting_CMPWlkgTm_flat_descriptor,
+        new java.lang.String[] { "PrevFromId", "PrevToId", "PrevLen", "CurrentFromId", "CurrentToId", "CurrentLen", "NextFromId", "NextToId", "NextLen", "DepPos", "ArrivalPos", "MaxSpeed", "Time", });
+    internal_static_noninteracting_GetPos_descriptor =
+      getDescriptor().getMessageTypes().get(7);
     internal_static_noninteracting_GetPos_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_noninteracting_GetPos_descriptor,
         new java.lang.String[] { "Stage", "SumoTime", });
     internal_static_noninteracting_GetAngle_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_noninteracting_GetAngle_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_noninteracting_GetAngle_descriptor,
