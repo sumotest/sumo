@@ -404,6 +404,8 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         // If the scale * exageration is equal or more than 4.5, draw H
         if (s.scale * exaggeration >= 4.5)
             GLHelper::drawText("H", Position(), .1, 1.6, letter, mySignRot);
+
+        GNEAdditional::drawLockIcon(12);
     }
 
     // Pop matrix

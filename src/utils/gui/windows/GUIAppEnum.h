@@ -453,6 +453,8 @@ enum {
     MID_GNE_INSERT_NETWORK,
     /** attribute edited */
     MID_GNE_SET_ATTRIBUTE,
+    /** netEdit attribute blocking */   // PABLO #1916
+    MID_GNE_SET_BLOCKING,               // PABLO #1916
     /** open edit dialog */
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
     /** split an edge */

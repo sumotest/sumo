@@ -183,8 +183,19 @@ protected:
 
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked;
+    
+    /// @brief variable to keep GLId of the additional lock image
+    static int additionalLockGlID;
 
-private:
+    /// @brief boolean to check if additional lock image was inicializated
+    static bool additionalLockInitialized;    
+
+    /* @brief draw lock icon
+     * @param[in] altitude altitude (Z) in which the lock icon will be draw
+     */
+    void drawLockIcon(SUMOReal altitude) const;
+
+private:    
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
@@ -193,7 +204,6 @@ private:
 
     /// @brief Invalidated assignment operator.
     GNEAdditional& operator=(const GNEAdditional&);
-
 };
 
 

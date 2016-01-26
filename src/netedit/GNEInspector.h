@@ -87,7 +87,10 @@ public:
 
         /// @brief open model dialog for more comfortable attribute editing
         long onCmdOpenAttributeEditor(FXObject*, FXSelector, void*);
-
+        
+        /// @brief try to set new attribute value               // PABLO #1916
+        long onCmdSetBlocking(FXObject*, FXSelector, void*);    // PABLO #1916
+    
     protected:
         /// @brief FOX needs this
         AttrInput() {}
@@ -110,6 +113,9 @@ public:
 
         /// @brief pointer to combo box choices
         FXComboBox* myChoicesCombo;
+
+        /// @brief pointer to check button blockec
+        FXCheckButton *checkBlocked;
     };
 
 public:
