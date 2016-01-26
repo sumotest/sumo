@@ -115,6 +115,7 @@ MSPModel_NonInteracting_GRPC::PState::computeWalkingTime(const MSEdge* prev, con
 	myCurrentBeginPos = rpl.currentBeginPos;
 	myCurrentEndPos = rpl.currentEndPos;
 	myLastEntryTime = rpl.lastEntrTm;
+	myCurrentDuration = rpl.currentDuration;
     return rpl.wlkTm;
 }
 

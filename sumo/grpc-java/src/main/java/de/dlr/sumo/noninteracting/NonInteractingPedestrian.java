@@ -112,7 +112,7 @@ public class NonInteractingPedestrian {
                 endPos = dir == FWD ? edge.getLength() : 0;
             }
 
-            double duration = MAX2(1, Math.abs(endPos - beginPos) / request.getStage().getMaxSpeed());
+            double duration = Math.abs(endPos - beginPos) / request.getStage().getMaxSpeed();
 
 //            System.out.println("duration:" + duration);
 

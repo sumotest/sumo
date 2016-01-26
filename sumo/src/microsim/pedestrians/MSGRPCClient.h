@@ -35,6 +35,7 @@ class MSGRPCClient {
 public :
 	struct CmpWlkTmStruct {
 		SUMOTime wlkTm;
+		SUMOTime currentDuration;
 		SUMOReal currentBeginPos;
 		SUMOReal currentEndPos;
 		SUMOReal lastEntrTm;
