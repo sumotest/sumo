@@ -58,8 +58,8 @@ public:
     // class AttrPanel
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
-        // FOX-declarations
-        FXDECLARE(GNEInspector::AttrPanel)
+        // FOX-declarations isn't needed here because this class don't have callbacks (long onCmd....)
+        // FXDECLARE(GNEInspector::AttrPanel)
 
     public:
         /// @brief constructor
@@ -78,8 +78,7 @@ public:
         FXDECLARE(GNEInspector::AttrInput)
 
     public:
-
-        /// @brief
+        /// @brief constructor
         AttrInput(FXComposite* parent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, 
                   std::string initialValue, GNEUndoList* undoList);
 
@@ -94,7 +93,6 @@ public:
         AttrInput() {}
 
     private:
-
         /// @brief actual tag
         SumoXMLTag myTag;
 
@@ -145,6 +143,7 @@ public:
 
     /// @brief copy edge attributes from edge template
     long onCmdCopyTemplate(FXObject*, FXSelector, void*);
+    
     /// @brief set current edge as new template
     long onCmdSetTemplate(FXObject*, FXSelector, void*);
 
@@ -156,6 +155,7 @@ protected:
     GNEInspector() {}
 
 private:
+    /// @brief pointer to undo list
     GNEUndoList* myUndoList;
 
     /// @brief Font for the widget

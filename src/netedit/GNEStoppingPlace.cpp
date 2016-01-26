@@ -77,24 +77,17 @@ GNEStoppingPlace::~GNEStoppingPlace() {
 
 
 void 
-GNEStoppingPlace::updateGeometry() {
-}
-
-
-void 
-GNEStoppingPlace::moveAdditional(SUMOReal distance) {
+GNEStoppingPlace::moveAdditional(SUMOReal distance, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if distance is positive, to left if distance is negative
-        if((distance > 0) && ((myToPos + distance) < myLane.getLength())) {
-            myFromPos += distance;
-            myToPos += distance;
-        } else if((distance < 0) && ((myFromPos + distance) > 0)) { 
-            myFromPos += distance;
-            myToPos += distance;
+        if( ((distance > 0) && ((myToPos + distance) < myLane.getLength())) || ((distance < 0) && ((myFromPos + distance) > 0)) ) {
+            // Save attribute
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(myFromPos + distance)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(myToPos + distance)));
+            // Update geometry with the new shape of stopping place
+            //updateGeometry(); 
         }
-        // Update geometry with the new shape of busStop
-        updateGeometry(); 
     }
 }
 

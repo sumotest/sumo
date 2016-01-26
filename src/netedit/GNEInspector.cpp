@@ -251,7 +251,7 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
             // Create groupBox for templates                                                // PABLO #1916
             FXGroupBox* groupBoxForEditor = new FXGroupBox(this, "editor",                  // PABLO #1916
             GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
-        }
+        }                                                                                   // PABLO #1916
 
 
     } else {

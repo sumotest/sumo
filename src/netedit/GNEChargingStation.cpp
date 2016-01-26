@@ -399,6 +399,9 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
 
 void
 GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+    if (value == getAttribute(key)) {
+        return; //avoid needless changes, later logic relies on the fact that attributes have changed
+    }
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
@@ -453,9 +456,13 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             myFromPos = parse<SUMOReal>(value);
+            updateGeometry();
+            getViewNet()->update();
             break;
         case SUMO_ATTR_ENDPOS:
             myToPos = parse<SUMOReal>(value);
+            updateGeometry();
+            getViewNet()->update();
             break;
         case SUMO_ATTR_CHARGINGPOWER:
             myChargingPower = parse<SUMOReal>(value);

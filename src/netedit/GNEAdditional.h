@@ -103,11 +103,11 @@ public:
     void setBlocked(bool value);
 
     /** @brief change the position of the additonal geometry without registering undo/redo
-     * @param[in] oldPos The origin of the mouse movement
-     * @param[in] newPos The destination of the mouse movenent
+     * @param[in] distance value for the movement. Positive for right, negative for left
+     * @param[in] undoList pointer to the undo list
      * @return newPos if something was moved, oldPos if nothing was moved
      */
-    virtual void moveAdditional(SUMOReal distance) = 0;
+    virtual void moveAdditional(SUMOReal distance, GNEUndoList *undoList) = 0;
 
     /// @name inherited from GUIGlObject
     //@{

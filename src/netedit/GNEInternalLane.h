@@ -69,7 +69,6 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -106,13 +105,13 @@ public:
     void setLinkState(LinkState state);
 
     /// @brief whether link state has been modfied
-    inline LinkState getLinkState() const;
+    LinkState getLinkState() const;
 
     /// @brief multiplexes message to two targets
     long onDefault(FXObject*, FXSelector, void*);
 
     /// @brief get Traffic Light index
-    inline int getTLIndex() const;
+    int getTLIndex() const;
 
     /// @brief long names for link states
     static const StringBijection<FXuint> LinkStateNames;

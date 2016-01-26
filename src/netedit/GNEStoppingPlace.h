@@ -67,15 +67,15 @@ public:
     ~GNEStoppingPlace();
 
     /// @brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. lane moved)
-    virtual void updateGeometry();
+    //  @note: must be called when geometry changes (i.e. lane moved, start or end position changed, etc..)
+    virtual void updateGeometry() = 0;
 
     /** @brief change the position of the additonal geometry without registering undo/redo
-     * @param[in] oldPos The origin of the mouse movement
-     * @param[in] newPos The destination of the mouse movenent
+     * @param[in] distance value for the movement. Positive for right, negative for left
+     * @param[in] undoList pointer to the undo list
      * @return newPos if something was moved, oldPos if nothing was moved
      */
-    void moveAdditional(SUMOReal distance);
+    void moveAdditional(SUMOReal distance, GNEUndoList *undoList);
 
     /** @brief Returns the from position of the stoppingPlace
      * @return The from position of the stopping place
