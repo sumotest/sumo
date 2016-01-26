@@ -53,11 +53,9 @@
 #include "MSEdgeWeightsStorage.h"
 #include <microsim/devices/MSDevice_Routing.h>
 
-#ifdef HAVE_INTERNAL
 #include <mesosim/MELoop.h>
 #include <mesosim/MESegment.h>
 #include <mesosim/MEVehicle.h>
-#endif
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -132,11 +130,9 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
             widthBefore += (*i)->getWidth();
         }
     }
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim && !lanes->empty()) {
         MSGlobals::gMesoNet->buildSegmentsFor(*this, OptionsCont::getOptions());
     }
-#endif
 }
 
 
@@ -480,7 +476,6 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
             }
         }
     }
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         SUMOReal pos = 0.0;
         switch (pars.departPosProcedure) {
@@ -524,9 +519,6 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
         }
         return result;
     }
-#else
-    UNUSED_PARAMETER(time);
-#endif
     if (checkOnly) {
         switch (v.getParameter().departLaneProcedure) {
             case DEPART_LANE_GIVEN:
@@ -608,7 +600,6 @@ MSEdge::getCurrentTravelTime(SUMOReal minSpeed) const {
         return myEmptyTraveltime;
     }
     SUMOReal v = 0;
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         MESegment* first = MSGlobals::gMesoNet->getSegmentForEdge(*this);
         unsigned segments = 0;
@@ -619,14 +610,11 @@ MSEdge::getCurrentTravelTime(SUMOReal minSpeed) const {
         } while (first != 0);
         v /= (SUMOReal) segments;
     } else {
-#endif
         for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
             v += (*i)->getMeanSpeed();
         }
         v /= (SUMOReal) myLanes->size();
-#ifdef HAVE_INTERNAL
     }
-#endif
     return getLength() / MAX2(minSpeed, v);
 }
 

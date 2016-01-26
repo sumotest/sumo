@@ -57,14 +57,10 @@ SUMOTime MSGlobals::gLaneChangeDuration;
 SUMOReal MSGlobals::gLateralResolution;
 
 bool MSGlobals::gStateLoaded;
-#ifdef HAVE_INTERNAL
 bool MSGlobals::gUseMesoSim;
 bool MSGlobals::gMesoLimitedJunctionControl;
 bool MSGlobals::gMesoOvertaking;
 MELoop* MSGlobals::gMesoNet;
-#else
-const bool MSGlobals::gUseMesoSim = false;
-#endif
 
 /****************************************************************************/
 
