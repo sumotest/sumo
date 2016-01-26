@@ -20,6 +20,7 @@
 #include <iostream>
 #include <grpc++/grpc++.h>
 #include <utils/common/SUMOTime.h>
+#include <utils/geom/Position.h>
 #include <microsim/MSEdge.h>
 #include "MSPerson.h"
 #include "noninteracting.grpc.pb.h"
@@ -28,15 +29,29 @@ using grpc::ClientContext;
 using grpc::Status;
 
 
+
+
 class MSGRPCClient {
+public :
+	struct CmpWlkTmStruct {
+		SUMOTime wlkTm;
+		SUMOReal currentBeginPos;
+		SUMOReal currentEndPos;
+		SUMOReal lastEntrTm;
+	};
 public:
 	MSGRPCClient(std::shared_ptr<Channel> channel);
 	virtual ~MSGRPCClient();
-	SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime);
+	MSGRPCClient::CmpWlkTmStruct computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime);
+	SUMOReal getEdgePos(SUMOReal myCurrentBeginPos, SUMOReal myCurrentEndPos, SUMOReal myCurrentDuration, SUMOTime myLastEntryTime, SUMOTime now);
+	SUMOTime getWaitingTime();
+	SUMOReal getMaxSpeed(const MSPerson::MSPersonStage_Walking& stage);
+
 
 
 private:
 	std::unique_ptr<noninteracting::PBPState::Stub> stub_;
+
 
 
 };

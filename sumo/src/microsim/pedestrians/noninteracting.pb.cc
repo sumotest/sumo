@@ -21,9 +21,9 @@ namespace noninteracting {
 
 namespace {
 
-const ::google::protobuf::Descriptor* PBPosition_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* GetEdgePos_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  PBPosition_reflection_ = NULL;
+  GetEdgePos_reflection_ = NULL;
 const ::google::protobuf::Descriptor* PBEdge_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PBEdge_reflection_ = NULL;
@@ -39,15 +39,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CMPWlkgTm_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CMPWlkgTm_reflection_ = NULL;
-const ::google::protobuf::Descriptor* CMPWlkgTm_flat_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* CMPWlkgTmRpl_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  CMPWlkgTm_flat_reflection_ = NULL;
-const ::google::protobuf::Descriptor* GetPos_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  GetPos_reflection_ = NULL;
-const ::google::protobuf::Descriptor* GetAngle_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  GetAngle_reflection_ = NULL;
+  CMPWlkgTmRpl_reflection_ = NULL;
 
 }  // namespace
 
@@ -58,23 +52,25 @@ void protobuf_AssignDesc_noninteracting_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "noninteracting.proto");
   GOOGLE_CHECK(file != NULL);
-  PBPosition_descriptor_ = file->message_type(0);
-  static const int PBPosition_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, z_),
+  GetEdgePos_descriptor_ = file->message_type(0);
+  static const int GetEdgePos_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, mycurrentbeginpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, mycurrentendpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, mycurrentduration_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, time_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, mylastentrytime_),
   };
-  PBPosition_reflection_ =
+  GetEdgePos_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      PBPosition_descriptor_,
-      PBPosition::default_instance_,
-      PBPosition_offsets_,
+      GetEdgePos_descriptor_,
+      GetEdgePos::default_instance_,
+      GetEdgePos_offsets_,
       -1,
       -1,
       -1,
-      sizeof(PBPosition),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBPosition, _is_default_instance_));
+      sizeof(GetEdgePos),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetEdgePos, _is_default_instance_));
   PBEdge_descriptor_ = file->message_type(1);
   static const int PBEdge_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBEdge, fromjunctionid_),
@@ -158,65 +154,24 @@ void protobuf_AssignDesc_noninteracting_2eproto() {
       sizeof(CMPWlkgTm),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm, _is_default_instance_));
-  CMPWlkgTm_flat_descriptor_ = file->message_type(6);
-  static const int CMPWlkgTm_flat_offsets_[13] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, prevfromid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, prevtoid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, prevlen_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, currentfromid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, currenttoid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, currentlen_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, nextfromid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, nexttoid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, nextlen_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, deppos_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, arrivalpos_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, maxspeed_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, time_),
+  CMPWlkgTmRpl_descriptor_ = file->message_type(6);
+  static const int CMPWlkgTmRpl_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTmRpl, duration_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTmRpl, mylastentrytime_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTmRpl, mycurrentbeginpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTmRpl, mycurrentendpos_),
   };
-  CMPWlkgTm_flat_reflection_ =
+  CMPWlkgTmRpl_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      CMPWlkgTm_flat_descriptor_,
-      CMPWlkgTm_flat::default_instance_,
-      CMPWlkgTm_flat_offsets_,
+      CMPWlkgTmRpl_descriptor_,
+      CMPWlkgTmRpl::default_instance_,
+      CMPWlkgTmRpl_offsets_,
       -1,
       -1,
       -1,
-      sizeof(CMPWlkgTm_flat),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTm_flat, _is_default_instance_));
-  GetPos_descriptor_ = file->message_type(7);
-  static const int GetPos_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, stage_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, sumotime_),
-  };
-  GetPos_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      GetPos_descriptor_,
-      GetPos::default_instance_,
-      GetPos_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(GetPos),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetPos, _is_default_instance_));
-  GetAngle_descriptor_ = file->message_type(8);
-  static const int GetAngle_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetAngle, stage_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetAngle, sumotime_),
-  };
-  GetAngle_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      GetAngle_descriptor_,
-      GetAngle::default_instance_,
-      GetAngle_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(GetAngle),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetAngle, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetAngle, _is_default_instance_));
+      sizeof(CMPWlkgTmRpl),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTmRpl, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CMPWlkgTmRpl, _is_default_instance_));
 }
 
 namespace {
@@ -230,7 +185,7 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      PBPosition_descriptor_, &PBPosition::default_instance());
+      GetEdgePos_descriptor_, &GetEdgePos::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PBEdge_descriptor_, &PBEdge::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -242,18 +197,14 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       CMPWlkgTm_descriptor_, &CMPWlkgTm::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      CMPWlkgTm_flat_descriptor_, &CMPWlkgTm_flat::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      GetPos_descriptor_, &GetPos::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      GetAngle_descriptor_, &GetAngle::default_instance());
+      CMPWlkgTmRpl_descriptor_, &CMPWlkgTmRpl::default_instance());
 }
 
 }  // namespace
 
 void protobuf_ShutdownFile_noninteracting_2eproto() {
-  delete PBPosition::default_instance_;
-  delete PBPosition_reflection_;
+  delete GetEdgePos::default_instance_;
+  delete GetEdgePos_reflection_;
   delete PBEdge::default_instance_;
   delete PBEdge_reflection_;
   delete PBSUMOTime::default_instance_;
@@ -264,12 +215,8 @@ void protobuf_ShutdownFile_noninteracting_2eproto() {
   delete PBMSPersonStage_Walking_reflection_;
   delete CMPWlkgTm::default_instance_;
   delete CMPWlkgTm_reflection_;
-  delete CMPWlkgTm_flat::default_instance_;
-  delete CMPWlkgTm_flat_reflection_;
-  delete GetPos::default_instance_;
-  delete GetPos_reflection_;
-  delete GetAngle::default_instance_;
-  delete GetAngle_reflection_;
+  delete CMPWlkgTmRpl::default_instance_;
+  delete CMPWlkgTmRpl_reflection_;
 }
 
 void protobuf_AddDesc_noninteracting_2eproto() {
@@ -279,68 +226,53 @@ void protobuf_AddDesc_noninteracting_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024noninteracting.proto\022\016noninteracting\"-"
-    "\n\nPBPosition\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030"
-    "\003 \001(\001\"F\n\006PBEdge\022\026\n\016fromJunctionId\030\001 \001(\t\022"
-    "\024\n\014toJunctionId\030\002 \001(\t\022\016\n\006length\030\003 \001(\001\"\036\n"
-    "\nPBSUMOTime\022\020\n\010sumoTime\030\001 \001(\001\"\036\n\nPBSUMOR"
-    "eal\022\020\n\010sumoReal\030\001 \001(\001\"\247\001\n\027PBMSPersonStag"
-    "e_Walking\022$\n\004edge\030\001 \001(\0132\026.noninteracting"
-    ".PBEdge\022-\n\rnextRouteEdge\030\002 \001(\0132\026.noninte"
-    "racting.PBEdge\022\021\n\tdepartPos\030\003 \001(\001\022\022\n\narr"
-    "ivalPos\030\004 \001(\001\022\020\n\010maxSpeed\030\005 \001(\001\"\227\001\n\tCMPW"
-    "lkgTm\022$\n\004prev\030\001 \001(\0132\026.noninteracting.PBE"
-    "dge\0226\n\005stage\030\002 \001(\0132\'.noninteracting.PBMS"
-    "PersonStage_Walking\022,\n\010sumoTime\030\003 \001(\0132\032."
-    "noninteracting.PBSUMOTime\"\202\002\n\016CMPWlkgTm_"
-    "flat\022\022\n\nprevFromId\030\001 \001(\t\022\020\n\010prevToId\030\002 \001"
-    "(\t\022\017\n\007prevLen\030\003 \001(\001\022\025\n\rcurrentFromId\030\004 \001"
-    "(\t\022\023\n\013currentToId\030\005 \001(\t\022\022\n\ncurrentLen\030\006 "
-    "\001(\001\022\022\n\nnextFromId\030\007 \001(\t\022\020\n\010nextToId\030\010 \001("
-    "\t\022\017\n\007nextLen\030\t \001(\001\022\016\n\006depPos\030\n \001(\001\022\022\n\nar"
-    "rivalPos\030\013 \001(\001\022\020\n\010maxSpeed\030\014 \001(\001\022\014\n\004time"
-    "\030\r \001(\001\"n\n\006GetPos\0226\n\005stage\030\001 \001(\0132\'.nonint"
-    "eracting.PBMSPersonStage_Walking\022,\n\010sumo"
-    "Time\030\002 \001(\0132\032.noninteracting.PBSUMOTime\"p"
-    "\n\010GetAngle\0226\n\005stage\030\001 \001(\0132\'.noninteracti"
-    "ng.PBMSPersonStage_Walking\022,\n\010sumoTime\030\002"
-    " \001(\0132\032.noninteracting.PBSUMOTime2\254\004\n\010PBP"
-    "State\022M\n\022computeWalkingTime\022\031.noninterac"
-    "ting.CMPWlkgTm\032\032.noninteracting.PBSUMOTi"
-    "me\"\000\022W\n\027computeWalkingTime_flat\022\036.nonint"
-    "eracting.CMPWlkgTm_flat\032\032.noninteracting"
-    ".PBSUMOTime\"\000\022C\n\013getPosition\022\026.nonintera"
-    "cting.GetPos\032\032.noninteracting.PBPosition"
-    "\"\000\022B\n\010getAngle\022\030.noninteracting.GetAngle"
-    "\032\032.noninteracting.PBSUMOReal\"\000\022J\n\016getWai"
-    "tingTime\022\032.noninteracting.PBSUMOTime\032\032.n"
-    "oninteracting.PBSUMOTime\"\000\022Q\n\010getSpeed\022\'"
-    ".noninteracting.PBMSPersonStage_Walking\032"
-    "\032.noninteracting.PBSUMOReal\"\000\022P\n\013getNext"
-    "Edge\022\'.noninteracting.PBMSPersonStage_Wa"
-    "lking\032\026.noninteracting.PBEdge\"\000B3\n\032de.dl"
-    "r.sumo.noninteractingB\023NonInteractingPro"
-    "toP\000b\006proto3", 1652);
+    "\n\024noninteracting.proto\022\016noninteracting\"\272"
+    "\001\n\nGetEdgePos\022\031\n\021myCurrentBeginPos\030\001 \001(\001"
+    "\022\027\n\017myCurrentEndPos\030\002 \001(\001\022\031\n\021myCurrentDu"
+    "ration\030\003 \001(\001\022(\n\004time\030\004 \001(\0132\032.noninteract"
+    "ing.PBSUMOTime\0223\n\017myLastEntryTime\030\005 \001(\0132"
+    "\032.noninteracting.PBSUMOTime\"F\n\006PBEdge\022\026\n"
+    "\016fromJunctionId\030\001 \001(\t\022\024\n\014toJunctionId\030\002 "
+    "\001(\t\022\016\n\006length\030\003 \001(\001\"\036\n\nPBSUMOTime\022\020\n\010sum"
+    "oTime\030\001 \001(\001\"\036\n\nPBSUMOReal\022\020\n\010sumoReal\030\001 "
+    "\001(\001\"\247\001\n\027PBMSPersonStage_Walking\022$\n\004edge\030"
+    "\001 \001(\0132\026.noninteracting.PBEdge\022-\n\rnextRou"
+    "teEdge\030\002 \001(\0132\026.noninteracting.PBEdge\022\021\n\t"
+    "departPos\030\003 \001(\001\022\022\n\narrivalPos\030\004 \001(\001\022\020\n\010m"
+    "axSpeed\030\005 \001(\001\"\227\001\n\tCMPWlkgTm\022$\n\004prev\030\001 \001("
+    "\0132\026.noninteracting.PBEdge\0226\n\005stage\030\002 \001(\013"
+    "2\'.noninteracting.PBMSPersonStage_Walkin"
+    "g\022,\n\010sumoTime\030\003 \001(\0132\032.noninteracting.PBS"
+    "UMOTime\"\211\001\n\014CMPWlkgTmRpl\022,\n\010duration\030\001 \001"
+    "(\0132\032.noninteracting.PBSUMOTime\022\027\n\017myLast"
+    "EntryTime\030\002 \001(\001\022\031\n\021myCurrentBeginPos\030\003 \001"
+    "(\001\022\027\n\017myCurrentEndPos\030\004 \001(\0012\303\002\n\010PBPState"
+    "\022O\n\022computeWalkingTime\022\031.noninteracting."
+    "CMPWlkgTm\032\034.noninteracting.CMPWlkgTmRpl\""
+    "\000\022J\n\016getWaitingTime\022\032.noninteracting.PBS"
+    "UMOTime\032\032.noninteracting.PBSUMOTime\"\000\022Q\n"
+    "\010getSpeed\022\'.noninteracting.PBMSPersonSta"
+    "ge_Walking\032\032.noninteracting.PBSUMOReal\"\000"
+    "\022G\n\013getEdgePost\022\032.noninteracting.GetEdge"
+    "Pos\032\032.noninteracting.PBSUMOReal\"\000B3\n\032de."
+    "dlr.sumo.noninteractingB\023NonInteractingP"
+    "rotoP\000b\006proto3", 1214);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "noninteracting.proto", &protobuf_RegisterTypes);
-  PBPosition::default_instance_ = new PBPosition();
+  GetEdgePos::default_instance_ = new GetEdgePos();
   PBEdge::default_instance_ = new PBEdge();
   PBSUMOTime::default_instance_ = new PBSUMOTime();
   PBSUMOReal::default_instance_ = new PBSUMOReal();
   PBMSPersonStage_Walking::default_instance_ = new PBMSPersonStage_Walking();
   CMPWlkgTm::default_instance_ = new CMPWlkgTm();
-  CMPWlkgTm_flat::default_instance_ = new CMPWlkgTm_flat();
-  GetPos::default_instance_ = new GetPos();
-  GetAngle::default_instance_ = new GetAngle();
-  PBPosition::default_instance_->InitAsDefaultInstance();
+  CMPWlkgTmRpl::default_instance_ = new CMPWlkgTmRpl();
+  GetEdgePos::default_instance_->InitAsDefaultInstance();
   PBEdge::default_instance_->InitAsDefaultInstance();
   PBSUMOTime::default_instance_->InitAsDefaultInstance();
   PBSUMOReal::default_instance_->InitAsDefaultInstance();
   PBMSPersonStage_Walking::default_instance_->InitAsDefaultInstance();
   CMPWlkgTm::default_instance_->InitAsDefaultInstance();
-  CMPWlkgTm_flat::default_instance_->InitAsDefaultInstance();
-  GetPos::default_instance_->InitAsDefaultInstance();
-  GetAngle::default_instance_->InitAsDefaultInstance();
+  CMPWlkgTmRpl::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_noninteracting_2eproto);
 }
 
@@ -364,135 +296,173 @@ static void MergeFromFail(int line) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int PBPosition::kXFieldNumber;
-const int PBPosition::kYFieldNumber;
-const int PBPosition::kZFieldNumber;
+const int GetEdgePos::kMyCurrentBeginPosFieldNumber;
+const int GetEdgePos::kMyCurrentEndPosFieldNumber;
+const int GetEdgePos::kMyCurrentDurationFieldNumber;
+const int GetEdgePos::kTimeFieldNumber;
+const int GetEdgePos::kMyLastEntryTimeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-PBPosition::PBPosition()
+GetEdgePos::GetEdgePos()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.PBPosition)
+  // @@protoc_insertion_point(constructor:noninteracting.GetEdgePos)
 }
 
-void PBPosition::InitAsDefaultInstance() {
+void GetEdgePos::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  time_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
+  mylastentrytime_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
 }
 
-PBPosition::PBPosition(const PBPosition& from)
+GetEdgePos::GetEdgePos(const GetEdgePos& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.PBPosition)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.GetEdgePos)
 }
 
-void PBPosition::SharedCtor() {
+void GetEdgePos::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
-  x_ = 0;
-  y_ = 0;
-  z_ = 0;
+  mycurrentbeginpos_ = 0;
+  mycurrentendpos_ = 0;
+  mycurrentduration_ = 0;
+  time_ = NULL;
+  mylastentrytime_ = NULL;
 }
 
-PBPosition::~PBPosition() {
-  // @@protoc_insertion_point(destructor:noninteracting.PBPosition)
+GetEdgePos::~GetEdgePos() {
+  // @@protoc_insertion_point(destructor:noninteracting.GetEdgePos)
   SharedDtor();
 }
 
-void PBPosition::SharedDtor() {
+void GetEdgePos::SharedDtor() {
   if (this != default_instance_) {
+    delete time_;
+    delete mylastentrytime_;
   }
 }
 
-void PBPosition::SetCachedSize(int size) const {
+void GetEdgePos::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* PBPosition::descriptor() {
+const ::google::protobuf::Descriptor* GetEdgePos::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return PBPosition_descriptor_;
+  return GetEdgePos_descriptor_;
 }
 
-const PBPosition& PBPosition::default_instance() {
+const GetEdgePos& GetEdgePos::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-PBPosition* PBPosition::default_instance_ = NULL;
+GetEdgePos* GetEdgePos::default_instance_ = NULL;
 
-PBPosition* PBPosition::New(::google::protobuf::Arena* arena) const {
-  PBPosition* n = new PBPosition;
+GetEdgePos* GetEdgePos::New(::google::protobuf::Arena* arena) const {
+  GetEdgePos* n = new GetEdgePos;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void PBPosition::Clear() {
+void GetEdgePos::Clear() {
 #define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<PBPosition*>(16)->f)
+  &reinterpret_cast<GetEdgePos*>(16)->f)
 
 #define ZR_(first, last) do {\
   ::memset(&first, 0,\
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  ZR_(x_, z_);
+  ZR_(mycurrentbeginpos_, mycurrentduration_);
+  if (GetArenaNoVirtual() == NULL && time_ != NULL) delete time_;
+  time_ = NULL;
+  if (GetArenaNoVirtual() == NULL && mylastentrytime_ != NULL) delete mylastentrytime_;
+  mylastentrytime_ = NULL;
 
 #undef ZR_HELPER_
 #undef ZR_
 
 }
 
-bool PBPosition::MergePartialFromCodedStream(
+bool GetEdgePos::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.PBPosition)
+  // @@protoc_insertion_point(parse_start:noninteracting.GetEdgePos)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional double x = 1;
+      // optional double myCurrentBeginPos = 1;
       case 1: {
         if (tag == 9) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &x_)));
+                 input, &mycurrentbeginpos_)));
 
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(17)) goto parse_y;
+        if (input->ExpectTag(17)) goto parse_myCurrentEndPos;
         break;
       }
 
-      // optional double y = 2;
+      // optional double myCurrentEndPos = 2;
       case 2: {
         if (tag == 17) {
-         parse_y:
+         parse_myCurrentEndPos:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &y_)));
+                 input, &mycurrentendpos_)));
 
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(25)) goto parse_z;
+        if (input->ExpectTag(25)) goto parse_myCurrentDuration;
         break;
       }
 
-      // optional double z = 3;
+      // optional double myCurrentDuration = 3;
       case 3: {
         if (tag == 25) {
-         parse_z:
+         parse_myCurrentDuration:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &z_)));
+                 input, &mycurrentduration_)));
 
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_time;
+        break;
+      }
+
+      // optional .noninteracting.PBSUMOTime time = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_time:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_time()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_myLastEntryTime;
+        break;
+      }
+
+      // optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_myLastEntryTime:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_mylastentrytime()));
         } else {
           goto handle_unusual;
         }
@@ -513,73 +483,113 @@ bool PBPosition::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.PBPosition)
+  // @@protoc_insertion_point(parse_success:noninteracting.GetEdgePos)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.PBPosition)
+  // @@protoc_insertion_point(parse_failure:noninteracting.GetEdgePos)
   return false;
 #undef DO_
 }
 
-void PBPosition::SerializeWithCachedSizes(
+void GetEdgePos::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.PBPosition)
-  // optional double x = 1;
-  if (this->x() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->x(), output);
+  // @@protoc_insertion_point(serialize_start:noninteracting.GetEdgePos)
+  // optional double myCurrentBeginPos = 1;
+  if (this->mycurrentbeginpos() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->mycurrentbeginpos(), output);
   }
 
-  // optional double y = 2;
-  if (this->y() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->y(), output);
+  // optional double myCurrentEndPos = 2;
+  if (this->mycurrentendpos() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->mycurrentendpos(), output);
   }
 
-  // optional double z = 3;
-  if (this->z() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->z(), output);
+  // optional double myCurrentDuration = 3;
+  if (this->mycurrentduration() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->mycurrentduration(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:noninteracting.PBPosition)
+  // optional .noninteracting.PBSUMOTime time = 4;
+  if (this->has_time()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, *this->time_, output);
+  }
+
+  // optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+  if (this->has_mylastentrytime()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, *this->mylastentrytime_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:noninteracting.GetEdgePos)
 }
 
-::google::protobuf::uint8* PBPosition::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* GetEdgePos::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.PBPosition)
-  // optional double x = 1;
-  if (this->x() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->x(), target);
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.GetEdgePos)
+  // optional double myCurrentBeginPos = 1;
+  if (this->mycurrentbeginpos() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->mycurrentbeginpos(), target);
   }
 
-  // optional double y = 2;
-  if (this->y() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->y(), target);
+  // optional double myCurrentEndPos = 2;
+  if (this->mycurrentendpos() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->mycurrentendpos(), target);
   }
 
-  // optional double z = 3;
-  if (this->z() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->z(), target);
+  // optional double myCurrentDuration = 3;
+  if (this->mycurrentduration() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->mycurrentduration(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.PBPosition)
+  // optional .noninteracting.PBSUMOTime time = 4;
+  if (this->has_time()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, *this->time_, target);
+  }
+
+  // optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+  if (this->has_mylastentrytime()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, *this->mylastentrytime_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.GetEdgePos)
   return target;
 }
 
-int PBPosition::ByteSize() const {
+int GetEdgePos::ByteSize() const {
   int total_size = 0;
 
-  // optional double x = 1;
-  if (this->x() != 0) {
+  // optional double myCurrentBeginPos = 1;
+  if (this->mycurrentbeginpos() != 0) {
     total_size += 1 + 8;
   }
 
-  // optional double y = 2;
-  if (this->y() != 0) {
+  // optional double myCurrentEndPos = 2;
+  if (this->mycurrentendpos() != 0) {
     total_size += 1 + 8;
   }
 
-  // optional double z = 3;
-  if (this->z() != 0) {
+  // optional double myCurrentDuration = 3;
+  if (this->mycurrentduration() != 0) {
     total_size += 1 + 8;
+  }
+
+  // optional .noninteracting.PBSUMOTime time = 4;
+  if (this->has_time()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->time_);
+  }
+
+  // optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+  if (this->has_mylastentrytime()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->mylastentrytime_);
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -588,10 +598,10 @@ int PBPosition::ByteSize() const {
   return total_size;
 }
 
-void PBPosition::MergeFrom(const ::google::protobuf::Message& from) {
+void GetEdgePos::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const PBPosition* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const PBPosition>(
+  const GetEdgePos* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const GetEdgePos>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -600,99 +610,181 @@ void PBPosition::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void PBPosition::MergeFrom(const PBPosition& from) {
+void GetEdgePos::MergeFrom(const GetEdgePos& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.x() != 0) {
-    set_x(from.x());
+  if (from.mycurrentbeginpos() != 0) {
+    set_mycurrentbeginpos(from.mycurrentbeginpos());
   }
-  if (from.y() != 0) {
-    set_y(from.y());
+  if (from.mycurrentendpos() != 0) {
+    set_mycurrentendpos(from.mycurrentendpos());
   }
-  if (from.z() != 0) {
-    set_z(from.z());
+  if (from.mycurrentduration() != 0) {
+    set_mycurrentduration(from.mycurrentduration());
+  }
+  if (from.has_time()) {
+    mutable_time()->::noninteracting::PBSUMOTime::MergeFrom(from.time());
+  }
+  if (from.has_mylastentrytime()) {
+    mutable_mylastentrytime()->::noninteracting::PBSUMOTime::MergeFrom(from.mylastentrytime());
   }
 }
 
-void PBPosition::CopyFrom(const ::google::protobuf::Message& from) {
+void GetEdgePos::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void PBPosition::CopyFrom(const PBPosition& from) {
+void GetEdgePos::CopyFrom(const GetEdgePos& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool PBPosition::IsInitialized() const {
+bool GetEdgePos::IsInitialized() const {
 
   return true;
 }
 
-void PBPosition::Swap(PBPosition* other) {
+void GetEdgePos::Swap(GetEdgePos* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void PBPosition::InternalSwap(PBPosition* other) {
-  std::swap(x_, other->x_);
-  std::swap(y_, other->y_);
-  std::swap(z_, other->z_);
+void GetEdgePos::InternalSwap(GetEdgePos* other) {
+  std::swap(mycurrentbeginpos_, other->mycurrentbeginpos_);
+  std::swap(mycurrentendpos_, other->mycurrentendpos_);
+  std::swap(mycurrentduration_, other->mycurrentduration_);
+  std::swap(time_, other->time_);
+  std::swap(mylastentrytime_, other->mylastentrytime_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata PBPosition::GetMetadata() const {
+::google::protobuf::Metadata GetEdgePos::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = PBPosition_descriptor_;
-  metadata.reflection = PBPosition_reflection_;
+  metadata.descriptor = GetEdgePos_descriptor_;
+  metadata.reflection = GetEdgePos_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// PBPosition
+// GetEdgePos
 
-// optional double x = 1;
-void PBPosition::clear_x() {
-  x_ = 0;
+// optional double myCurrentBeginPos = 1;
+void GetEdgePos::clear_mycurrentbeginpos() {
+  mycurrentbeginpos_ = 0;
 }
- double PBPosition::x() const {
-  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.x)
-  return x_;
+ double GetEdgePos::mycurrentbeginpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myCurrentBeginPos)
+  return mycurrentbeginpos_;
 }
- void PBPosition::set_x(double value) {
+ void GetEdgePos::set_mycurrentbeginpos(double value) {
   
-  x_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.x)
-}
-
-// optional double y = 2;
-void PBPosition::clear_y() {
-  y_ = 0;
-}
- double PBPosition::y() const {
-  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.y)
-  return y_;
-}
- void PBPosition::set_y(double value) {
-  
-  y_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.y)
+  mycurrentbeginpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.GetEdgePos.myCurrentBeginPos)
 }
 
-// optional double z = 3;
-void PBPosition::clear_z() {
-  z_ = 0;
+// optional double myCurrentEndPos = 2;
+void GetEdgePos::clear_mycurrentendpos() {
+  mycurrentendpos_ = 0;
 }
- double PBPosition::z() const {
-  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.z)
-  return z_;
+ double GetEdgePos::mycurrentendpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myCurrentEndPos)
+  return mycurrentendpos_;
 }
- void PBPosition::set_z(double value) {
+ void GetEdgePos::set_mycurrentendpos(double value) {
   
-  z_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.z)
+  mycurrentendpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.GetEdgePos.myCurrentEndPos)
+}
+
+// optional double myCurrentDuration = 3;
+void GetEdgePos::clear_mycurrentduration() {
+  mycurrentduration_ = 0;
+}
+ double GetEdgePos::mycurrentduration() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myCurrentDuration)
+  return mycurrentduration_;
+}
+ void GetEdgePos::set_mycurrentduration(double value) {
+  
+  mycurrentduration_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.GetEdgePos.myCurrentDuration)
+}
+
+// optional .noninteracting.PBSUMOTime time = 4;
+bool GetEdgePos::has_time() const {
+  return !_is_default_instance_ && time_ != NULL;
+}
+void GetEdgePos::clear_time() {
+  if (GetArenaNoVirtual() == NULL && time_ != NULL) delete time_;
+  time_ = NULL;
+}
+const ::noninteracting::PBSUMOTime& GetEdgePos::time() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.time)
+  return time_ != NULL ? *time_ : *default_instance_->time_;
+}
+::noninteracting::PBSUMOTime* GetEdgePos::mutable_time() {
+  
+  if (time_ == NULL) {
+    time_ = new ::noninteracting::PBSUMOTime;
+  }
+  // @@protoc_insertion_point(field_mutable:noninteracting.GetEdgePos.time)
+  return time_;
+}
+::noninteracting::PBSUMOTime* GetEdgePos::release_time() {
+  
+  ::noninteracting::PBSUMOTime* temp = time_;
+  time_ = NULL;
+  return temp;
+}
+void GetEdgePos::set_allocated_time(::noninteracting::PBSUMOTime* time) {
+  delete time_;
+  time_ = time;
+  if (time) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetEdgePos.time)
+}
+
+// optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+bool GetEdgePos::has_mylastentrytime() const {
+  return !_is_default_instance_ && mylastentrytime_ != NULL;
+}
+void GetEdgePos::clear_mylastentrytime() {
+  if (GetArenaNoVirtual() == NULL && mylastentrytime_ != NULL) delete mylastentrytime_;
+  mylastentrytime_ = NULL;
+}
+const ::noninteracting::PBSUMOTime& GetEdgePos::mylastentrytime() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myLastEntryTime)
+  return mylastentrytime_ != NULL ? *mylastentrytime_ : *default_instance_->mylastentrytime_;
+}
+::noninteracting::PBSUMOTime* GetEdgePos::mutable_mylastentrytime() {
+  
+  if (mylastentrytime_ == NULL) {
+    mylastentrytime_ = new ::noninteracting::PBSUMOTime;
+  }
+  // @@protoc_insertion_point(field_mutable:noninteracting.GetEdgePos.myLastEntryTime)
+  return mylastentrytime_;
+}
+::noninteracting::PBSUMOTime* GetEdgePos::release_mylastentrytime() {
+  
+  ::noninteracting::PBSUMOTime* temp = mylastentrytime_;
+  mylastentrytime_ = NULL;
+  return temp;
+}
+void GetEdgePos::set_allocated_mylastentrytime(::noninteracting::PBSUMOTime* mylastentrytime) {
+  delete mylastentrytime_;
+  mylastentrytime_ = mylastentrytime;
+  if (mylastentrytime) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetEdgePos.myLastEntryTime)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2476,331 +2568,153 @@ void CMPWlkgTm::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int CMPWlkgTm_flat::kPrevFromIdFieldNumber;
-const int CMPWlkgTm_flat::kPrevToIdFieldNumber;
-const int CMPWlkgTm_flat::kPrevLenFieldNumber;
-const int CMPWlkgTm_flat::kCurrentFromIdFieldNumber;
-const int CMPWlkgTm_flat::kCurrentToIdFieldNumber;
-const int CMPWlkgTm_flat::kCurrentLenFieldNumber;
-const int CMPWlkgTm_flat::kNextFromIdFieldNumber;
-const int CMPWlkgTm_flat::kNextToIdFieldNumber;
-const int CMPWlkgTm_flat::kNextLenFieldNumber;
-const int CMPWlkgTm_flat::kDepPosFieldNumber;
-const int CMPWlkgTm_flat::kArrivalPosFieldNumber;
-const int CMPWlkgTm_flat::kMaxSpeedFieldNumber;
-const int CMPWlkgTm_flat::kTimeFieldNumber;
+const int CMPWlkgTmRpl::kDurationFieldNumber;
+const int CMPWlkgTmRpl::kMyLastEntryTimeFieldNumber;
+const int CMPWlkgTmRpl::kMyCurrentBeginPosFieldNumber;
+const int CMPWlkgTmRpl::kMyCurrentEndPosFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-CMPWlkgTm_flat::CMPWlkgTm_flat()
+CMPWlkgTmRpl::CMPWlkgTmRpl()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(constructor:noninteracting.CMPWlkgTmRpl)
 }
 
-void CMPWlkgTm_flat::InitAsDefaultInstance() {
+void CMPWlkgTmRpl::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  duration_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
 }
 
-CMPWlkgTm_flat::CMPWlkgTm_flat(const CMPWlkgTm_flat& from)
+CMPWlkgTmRpl::CMPWlkgTmRpl(const CMPWlkgTmRpl& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(copy_constructor:noninteracting.CMPWlkgTmRpl)
 }
 
-void CMPWlkgTm_flat::SharedCtor() {
+void CMPWlkgTmRpl::SharedCtor() {
     _is_default_instance_ = false;
-  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  prevfromid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  prevtoid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  prevlen_ = 0;
-  currentfromid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  currenttoid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  currentlen_ = 0;
-  nextfromid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  nexttoid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  nextlen_ = 0;
-  deppos_ = 0;
-  arrivalpos_ = 0;
-  maxspeed_ = 0;
-  time_ = 0;
+  duration_ = NULL;
+  mylastentrytime_ = 0;
+  mycurrentbeginpos_ = 0;
+  mycurrentendpos_ = 0;
 }
 
-CMPWlkgTm_flat::~CMPWlkgTm_flat() {
-  // @@protoc_insertion_point(destructor:noninteracting.CMPWlkgTm_flat)
+CMPWlkgTmRpl::~CMPWlkgTmRpl() {
+  // @@protoc_insertion_point(destructor:noninteracting.CMPWlkgTmRpl)
   SharedDtor();
 }
 
-void CMPWlkgTm_flat::SharedDtor() {
-  prevfromid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  prevtoid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  currentfromid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  currenttoid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  nextfromid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  nexttoid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+void CMPWlkgTmRpl::SharedDtor() {
   if (this != default_instance_) {
+    delete duration_;
   }
 }
 
-void CMPWlkgTm_flat::SetCachedSize(int size) const {
+void CMPWlkgTmRpl::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* CMPWlkgTm_flat::descriptor() {
+const ::google::protobuf::Descriptor* CMPWlkgTmRpl::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return CMPWlkgTm_flat_descriptor_;
+  return CMPWlkgTmRpl_descriptor_;
 }
 
-const CMPWlkgTm_flat& CMPWlkgTm_flat::default_instance() {
+const CMPWlkgTmRpl& CMPWlkgTmRpl::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
   return *default_instance_;
 }
 
-CMPWlkgTm_flat* CMPWlkgTm_flat::default_instance_ = NULL;
+CMPWlkgTmRpl* CMPWlkgTmRpl::default_instance_ = NULL;
 
-CMPWlkgTm_flat* CMPWlkgTm_flat::New(::google::protobuf::Arena* arena) const {
-  CMPWlkgTm_flat* n = new CMPWlkgTm_flat;
+CMPWlkgTmRpl* CMPWlkgTmRpl::New(::google::protobuf::Arena* arena) const {
+  CMPWlkgTmRpl* n = new CMPWlkgTmRpl;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void CMPWlkgTm_flat::Clear() {
+void CMPWlkgTmRpl::Clear() {
 #define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<CMPWlkgTm_flat*>(16)->f)
+  &reinterpret_cast<CMPWlkgTmRpl*>(16)->f)
 
 #define ZR_(first, last) do {\
   ::memset(&first, 0,\
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  prevfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  prevtoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  prevlen_ = 0;
-  currentfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  currenttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  currentlen_ = 0;
-  nextfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  nexttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ZR_(nextlen_, time_);
+  ZR_(mylastentrytime_, mycurrentendpos_);
+  if (GetArenaNoVirtual() == NULL && duration_ != NULL) delete duration_;
+  duration_ = NULL;
 
 #undef ZR_HELPER_
 #undef ZR_
 
 }
 
-bool CMPWlkgTm_flat::MergePartialFromCodedStream(
+bool CMPWlkgTmRpl::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(parse_start:noninteracting.CMPWlkgTmRpl)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional string prevFromId = 1;
+      // optional .noninteracting.PBSUMOTime duration = 1;
       case 1: {
         if (tag == 10) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_prevfromid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->prevfromid().data(), this->prevfromid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.CMPWlkgTm_flat.prevFromId"));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_duration()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_prevToId;
+        if (input->ExpectTag(17)) goto parse_myLastEntryTime;
         break;
       }
 
-      // optional string prevToId = 2;
+      // optional double myLastEntryTime = 2;
       case 2: {
-        if (tag == 18) {
-         parse_prevToId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_prevtoid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->prevtoid().data(), this->prevtoid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.CMPWlkgTm_flat.prevToId"));
+        if (tag == 17) {
+         parse_myLastEntryTime:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &mylastentrytime_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(25)) goto parse_prevLen;
+        if (input->ExpectTag(25)) goto parse_myCurrentBeginPos;
         break;
       }
 
-      // optional double prevLen = 3;
+      // optional double myCurrentBeginPos = 3;
       case 3: {
         if (tag == 25) {
-         parse_prevLen:
+         parse_myCurrentBeginPos:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &prevlen_)));
+                 input, &mycurrentbeginpos_)));
 
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_currentFromId;
+        if (input->ExpectTag(33)) goto parse_myCurrentEndPos;
         break;
       }
 
-      // optional string currentFromId = 4;
+      // optional double myCurrentEndPos = 4;
       case 4: {
-        if (tag == 34) {
-         parse_currentFromId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_currentfromid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->currentfromid().data(), this->currentfromid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.CMPWlkgTm_flat.currentFromId"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_currentToId;
-        break;
-      }
-
-      // optional string currentToId = 5;
-      case 5: {
-        if (tag == 42) {
-         parse_currentToId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_currenttoid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->currenttoid().data(), this->currenttoid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.CMPWlkgTm_flat.currentToId"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(49)) goto parse_currentLen;
-        break;
-      }
-
-      // optional double currentLen = 6;
-      case 6: {
-        if (tag == 49) {
-         parse_currentLen:
+        if (tag == 33) {
+         parse_myCurrentEndPos:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &currentlen_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(58)) goto parse_nextFromId;
-        break;
-      }
-
-      // optional string nextFromId = 7;
-      case 7: {
-        if (tag == 58) {
-         parse_nextFromId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_nextfromid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->nextfromid().data(), this->nextfromid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.CMPWlkgTm_flat.nextFromId"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(66)) goto parse_nextToId;
-        break;
-      }
-
-      // optional string nextToId = 8;
-      case 8: {
-        if (tag == 66) {
-         parse_nextToId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_nexttoid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->nexttoid().data(), this->nexttoid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "noninteracting.CMPWlkgTm_flat.nextToId"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(73)) goto parse_nextLen;
-        break;
-      }
-
-      // optional double nextLen = 9;
-      case 9: {
-        if (tag == 73) {
-         parse_nextLen:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &nextlen_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(81)) goto parse_depPos;
-        break;
-      }
-
-      // optional double depPos = 10;
-      case 10: {
-        if (tag == 81) {
-         parse_depPos:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &deppos_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(89)) goto parse_arrivalPos;
-        break;
-      }
-
-      // optional double arrivalPos = 11;
-      case 11: {
-        if (tag == 89) {
-         parse_arrivalPos:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &arrivalpos_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(97)) goto parse_maxSpeed;
-        break;
-      }
-
-      // optional double maxSpeed = 12;
-      case 12: {
-        if (tag == 97) {
-         parse_maxSpeed:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &maxspeed_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(105)) goto parse_time;
-        break;
-      }
-
-      // optional double time = 13;
-      case 13: {
-        if (tag == 105) {
-         parse_time:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &time_)));
+                 input, &mycurrentendpos_)));
 
         } else {
           goto handle_unusual;
@@ -2822,300 +2736,92 @@ bool CMPWlkgTm_flat::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(parse_success:noninteracting.CMPWlkgTmRpl)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(parse_failure:noninteracting.CMPWlkgTmRpl)
   return false;
 #undef DO_
 }
 
-void CMPWlkgTm_flat::SerializeWithCachedSizes(
+void CMPWlkgTmRpl::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.CMPWlkgTm_flat)
-  // optional string prevFromId = 1;
-  if (this->prevfromid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->prevfromid().data(), this->prevfromid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.prevFromId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->prevfromid(), output);
+  // @@protoc_insertion_point(serialize_start:noninteracting.CMPWlkgTmRpl)
+  // optional .noninteracting.PBSUMOTime duration = 1;
+  if (this->has_duration()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->duration_, output);
   }
 
-  // optional string prevToId = 2;
-  if (this->prevtoid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->prevtoid().data(), this->prevtoid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.prevToId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->prevtoid(), output);
+  // optional double myLastEntryTime = 2;
+  if (this->mylastentrytime() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->mylastentrytime(), output);
   }
 
-  // optional double prevLen = 3;
-  if (this->prevlen() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->prevlen(), output);
+  // optional double myCurrentBeginPos = 3;
+  if (this->mycurrentbeginpos() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->mycurrentbeginpos(), output);
   }
 
-  // optional string currentFromId = 4;
-  if (this->currentfromid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->currentfromid().data(), this->currentfromid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.currentFromId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->currentfromid(), output);
+  // optional double myCurrentEndPos = 4;
+  if (this->mycurrentendpos() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->mycurrentendpos(), output);
   }
 
-  // optional string currentToId = 5;
-  if (this->currenttoid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->currenttoid().data(), this->currenttoid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.currentToId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->currenttoid(), output);
-  }
-
-  // optional double currentLen = 6;
-  if (this->currentlen() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->currentlen(), output);
-  }
-
-  // optional string nextFromId = 7;
-  if (this->nextfromid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->nextfromid().data(), this->nextfromid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.nextFromId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      7, this->nextfromid(), output);
-  }
-
-  // optional string nextToId = 8;
-  if (this->nexttoid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->nexttoid().data(), this->nexttoid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.nextToId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      8, this->nexttoid(), output);
-  }
-
-  // optional double nextLen = 9;
-  if (this->nextlen() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->nextlen(), output);
-  }
-
-  // optional double depPos = 10;
-  if (this->deppos() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(10, this->deppos(), output);
-  }
-
-  // optional double arrivalPos = 11;
-  if (this->arrivalpos() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->arrivalpos(), output);
-  }
-
-  // optional double maxSpeed = 12;
-  if (this->maxspeed() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->maxspeed(), output);
-  }
-
-  // optional double time = 13;
-  if (this->time() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(13, this->time(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(serialize_end:noninteracting.CMPWlkgTmRpl)
 }
 
-::google::protobuf::uint8* CMPWlkgTm_flat::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* CMPWlkgTmRpl::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.CMPWlkgTm_flat)
-  // optional string prevFromId = 1;
-  if (this->prevfromid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->prevfromid().data(), this->prevfromid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.prevFromId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->prevfromid(), target);
+  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.CMPWlkgTmRpl)
+  // optional .noninteracting.PBSUMOTime duration = 1;
+  if (this->has_duration()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->duration_, target);
   }
 
-  // optional string prevToId = 2;
-  if (this->prevtoid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->prevtoid().data(), this->prevtoid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.prevToId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->prevtoid(), target);
+  // optional double myLastEntryTime = 2;
+  if (this->mylastentrytime() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->mylastentrytime(), target);
   }
 
-  // optional double prevLen = 3;
-  if (this->prevlen() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->prevlen(), target);
+  // optional double myCurrentBeginPos = 3;
+  if (this->mycurrentbeginpos() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->mycurrentbeginpos(), target);
   }
 
-  // optional string currentFromId = 4;
-  if (this->currentfromid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->currentfromid().data(), this->currentfromid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.currentFromId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->currentfromid(), target);
+  // optional double myCurrentEndPos = 4;
+  if (this->mycurrentendpos() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->mycurrentendpos(), target);
   }
 
-  // optional string currentToId = 5;
-  if (this->currenttoid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->currenttoid().data(), this->currenttoid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.currentToId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->currenttoid(), target);
-  }
-
-  // optional double currentLen = 6;
-  if (this->currentlen() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->currentlen(), target);
-  }
-
-  // optional string nextFromId = 7;
-  if (this->nextfromid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->nextfromid().data(), this->nextfromid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.nextFromId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        7, this->nextfromid(), target);
-  }
-
-  // optional string nextToId = 8;
-  if (this->nexttoid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->nexttoid().data(), this->nexttoid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "noninteracting.CMPWlkgTm_flat.nextToId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        8, this->nexttoid(), target);
-  }
-
-  // optional double nextLen = 9;
-  if (this->nextlen() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->nextlen(), target);
-  }
-
-  // optional double depPos = 10;
-  if (this->deppos() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(10, this->deppos(), target);
-  }
-
-  // optional double arrivalPos = 11;
-  if (this->arrivalpos() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->arrivalpos(), target);
-  }
-
-  // optional double maxSpeed = 12;
-  if (this->maxspeed() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->maxspeed(), target);
-  }
-
-  // optional double time = 13;
-  if (this->time() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(13, this->time(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.CMPWlkgTmRpl)
   return target;
 }
 
-int CMPWlkgTm_flat::ByteSize() const {
+int CMPWlkgTmRpl::ByteSize() const {
   int total_size = 0;
 
-  // optional string prevFromId = 1;
-  if (this->prevfromid().size() > 0) {
+  // optional .noninteracting.PBSUMOTime duration = 1;
+  if (this->has_duration()) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->prevfromid());
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->duration_);
   }
 
-  // optional string prevToId = 2;
-  if (this->prevtoid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->prevtoid());
-  }
-
-  // optional double prevLen = 3;
-  if (this->prevlen() != 0) {
+  // optional double myLastEntryTime = 2;
+  if (this->mylastentrytime() != 0) {
     total_size += 1 + 8;
   }
 
-  // optional string currentFromId = 4;
-  if (this->currentfromid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->currentfromid());
-  }
-
-  // optional string currentToId = 5;
-  if (this->currenttoid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->currenttoid());
-  }
-
-  // optional double currentLen = 6;
-  if (this->currentlen() != 0) {
+  // optional double myCurrentBeginPos = 3;
+  if (this->mycurrentbeginpos() != 0) {
     total_size += 1 + 8;
   }
 
-  // optional string nextFromId = 7;
-  if (this->nextfromid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->nextfromid());
-  }
-
-  // optional string nextToId = 8;
-  if (this->nexttoid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->nexttoid());
-  }
-
-  // optional double nextLen = 9;
-  if (this->nextlen() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional double depPos = 10;
-  if (this->deppos() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional double arrivalPos = 11;
-  if (this->arrivalpos() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional double maxSpeed = 12;
-  if (this->maxspeed() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional double time = 13;
-  if (this->time() != 0) {
+  // optional double myCurrentEndPos = 4;
+  if (this->mycurrentendpos() != 0) {
     total_size += 1 + 8;
   }
 
@@ -3125,10 +2831,10 @@ int CMPWlkgTm_flat::ByteSize() const {
   return total_size;
 }
 
-void CMPWlkgTm_flat::MergeFrom(const ::google::protobuf::Message& from) {
+void CMPWlkgTmRpl::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const CMPWlkgTm_flat* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const CMPWlkgTm_flat>(
+  const CMPWlkgTmRpl* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const CMPWlkgTmRpl>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -3137,1125 +2843,140 @@ void CMPWlkgTm_flat::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void CMPWlkgTm_flat::MergeFrom(const CMPWlkgTm_flat& from) {
+void CMPWlkgTmRpl::MergeFrom(const CMPWlkgTmRpl& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.prevfromid().size() > 0) {
-
-    prevfromid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.prevfromid_);
+  if (from.has_duration()) {
+    mutable_duration()->::noninteracting::PBSUMOTime::MergeFrom(from.duration());
   }
-  if (from.prevtoid().size() > 0) {
-
-    prevtoid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.prevtoid_);
+  if (from.mylastentrytime() != 0) {
+    set_mylastentrytime(from.mylastentrytime());
   }
-  if (from.prevlen() != 0) {
-    set_prevlen(from.prevlen());
+  if (from.mycurrentbeginpos() != 0) {
+    set_mycurrentbeginpos(from.mycurrentbeginpos());
   }
-  if (from.currentfromid().size() > 0) {
-
-    currentfromid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.currentfromid_);
-  }
-  if (from.currenttoid().size() > 0) {
-
-    currenttoid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.currenttoid_);
-  }
-  if (from.currentlen() != 0) {
-    set_currentlen(from.currentlen());
-  }
-  if (from.nextfromid().size() > 0) {
-
-    nextfromid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.nextfromid_);
-  }
-  if (from.nexttoid().size() > 0) {
-
-    nexttoid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.nexttoid_);
-  }
-  if (from.nextlen() != 0) {
-    set_nextlen(from.nextlen());
-  }
-  if (from.deppos() != 0) {
-    set_deppos(from.deppos());
-  }
-  if (from.arrivalpos() != 0) {
-    set_arrivalpos(from.arrivalpos());
-  }
-  if (from.maxspeed() != 0) {
-    set_maxspeed(from.maxspeed());
-  }
-  if (from.time() != 0) {
-    set_time(from.time());
+  if (from.mycurrentendpos() != 0) {
+    set_mycurrentendpos(from.mycurrentendpos());
   }
 }
 
-void CMPWlkgTm_flat::CopyFrom(const ::google::protobuf::Message& from) {
+void CMPWlkgTmRpl::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void CMPWlkgTm_flat::CopyFrom(const CMPWlkgTm_flat& from) {
+void CMPWlkgTmRpl::CopyFrom(const CMPWlkgTmRpl& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool CMPWlkgTm_flat::IsInitialized() const {
+bool CMPWlkgTmRpl::IsInitialized() const {
 
   return true;
 }
 
-void CMPWlkgTm_flat::Swap(CMPWlkgTm_flat* other) {
+void CMPWlkgTmRpl::Swap(CMPWlkgTmRpl* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void CMPWlkgTm_flat::InternalSwap(CMPWlkgTm_flat* other) {
-  prevfromid_.Swap(&other->prevfromid_);
-  prevtoid_.Swap(&other->prevtoid_);
-  std::swap(prevlen_, other->prevlen_);
-  currentfromid_.Swap(&other->currentfromid_);
-  currenttoid_.Swap(&other->currenttoid_);
-  std::swap(currentlen_, other->currentlen_);
-  nextfromid_.Swap(&other->nextfromid_);
-  nexttoid_.Swap(&other->nexttoid_);
-  std::swap(nextlen_, other->nextlen_);
-  std::swap(deppos_, other->deppos_);
-  std::swap(arrivalpos_, other->arrivalpos_);
-  std::swap(maxspeed_, other->maxspeed_);
-  std::swap(time_, other->time_);
+void CMPWlkgTmRpl::InternalSwap(CMPWlkgTmRpl* other) {
+  std::swap(duration_, other->duration_);
+  std::swap(mylastentrytime_, other->mylastentrytime_);
+  std::swap(mycurrentbeginpos_, other->mycurrentbeginpos_);
+  std::swap(mycurrentendpos_, other->mycurrentendpos_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata CMPWlkgTm_flat::GetMetadata() const {
+::google::protobuf::Metadata CMPWlkgTmRpl::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = CMPWlkgTm_flat_descriptor_;
-  metadata.reflection = CMPWlkgTm_flat_reflection_;
+  metadata.descriptor = CMPWlkgTmRpl_descriptor_;
+  metadata.reflection = CMPWlkgTmRpl_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// CMPWlkgTm_flat
+// CMPWlkgTmRpl
 
-// optional string prevFromId = 1;
-void CMPWlkgTm_flat::clear_prevfromid() {
-  prevfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional .noninteracting.PBSUMOTime duration = 1;
+bool CMPWlkgTmRpl::has_duration() const {
+  return !_is_default_instance_ && duration_ != NULL;
 }
- const ::std::string& CMPWlkgTm_flat::prevfromid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevFromId)
-  return prevfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+void CMPWlkgTmRpl::clear_duration() {
+  if (GetArenaNoVirtual() == NULL && duration_ != NULL) delete duration_;
+  duration_ = NULL;
 }
- void CMPWlkgTm_flat::set_prevfromid(const ::std::string& value) {
+const ::noninteracting::PBSUMOTime& CMPWlkgTmRpl::duration() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.duration)
+  return duration_ != NULL ? *duration_ : *default_instance_->duration_;
+}
+::noninteracting::PBSUMOTime* CMPWlkgTmRpl::mutable_duration() {
   
-  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevFromId)
-}
- void CMPWlkgTm_flat::set_prevfromid(const char* value) {
-  
-  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.prevFromId)
-}
- void CMPWlkgTm_flat::set_prevfromid(const char* value, size_t size) {
-  
-  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.prevFromId)
-}
- ::std::string* CMPWlkgTm_flat::mutable_prevfromid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.prevFromId)
-  return prevfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* CMPWlkgTm_flat::release_prevfromid() {
-  
-  return prevfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_allocated_prevfromid(::std::string* prevfromid) {
-  if (prevfromid != NULL) {
-    
-  } else {
-    
+  if (duration_ == NULL) {
+    duration_ = new ::noninteracting::PBSUMOTime;
   }
-  prevfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prevfromid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.prevFromId)
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTmRpl.duration)
+  return duration_;
 }
-
-// optional string prevToId = 2;
-void CMPWlkgTm_flat::clear_prevtoid() {
-  prevtoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& CMPWlkgTm_flat::prevtoid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevToId)
-  return prevtoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_prevtoid(const ::std::string& value) {
+::noninteracting::PBSUMOTime* CMPWlkgTmRpl::release_duration() {
   
-  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevToId)
-}
- void CMPWlkgTm_flat::set_prevtoid(const char* value) {
-  
-  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.prevToId)
-}
- void CMPWlkgTm_flat::set_prevtoid(const char* value, size_t size) {
-  
-  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.prevToId)
-}
- ::std::string* CMPWlkgTm_flat::mutable_prevtoid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.prevToId)
-  return prevtoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* CMPWlkgTm_flat::release_prevtoid() {
-  
-  return prevtoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_allocated_prevtoid(::std::string* prevtoid) {
-  if (prevtoid != NULL) {
-    
-  } else {
-    
-  }
-  prevtoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prevtoid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.prevToId)
-}
-
-// optional double prevLen = 3;
-void CMPWlkgTm_flat::clear_prevlen() {
-  prevlen_ = 0;
-}
- double CMPWlkgTm_flat::prevlen() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevLen)
-  return prevlen_;
-}
- void CMPWlkgTm_flat::set_prevlen(double value) {
-  
-  prevlen_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevLen)
-}
-
-// optional string currentFromId = 4;
-void CMPWlkgTm_flat::clear_currentfromid() {
-  currentfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& CMPWlkgTm_flat::currentfromid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentFromId)
-  return currentfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_currentfromid(const ::std::string& value) {
-  
-  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
- void CMPWlkgTm_flat::set_currentfromid(const char* value) {
-  
-  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
- void CMPWlkgTm_flat::set_currentfromid(const char* value, size_t size) {
-  
-  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
- ::std::string* CMPWlkgTm_flat::mutable_currentfromid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.currentFromId)
-  return currentfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* CMPWlkgTm_flat::release_currentfromid() {
-  
-  return currentfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_allocated_currentfromid(::std::string* currentfromid) {
-  if (currentfromid != NULL) {
-    
-  } else {
-    
-  }
-  currentfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), currentfromid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
-
-// optional string currentToId = 5;
-void CMPWlkgTm_flat::clear_currenttoid() {
-  currenttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& CMPWlkgTm_flat::currenttoid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentToId)
-  return currenttoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_currenttoid(const ::std::string& value) {
-  
-  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentToId)
-}
- void CMPWlkgTm_flat::set_currenttoid(const char* value) {
-  
-  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.currentToId)
-}
- void CMPWlkgTm_flat::set_currenttoid(const char* value, size_t size) {
-  
-  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.currentToId)
-}
- ::std::string* CMPWlkgTm_flat::mutable_currenttoid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.currentToId)
-  return currenttoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* CMPWlkgTm_flat::release_currenttoid() {
-  
-  return currenttoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_allocated_currenttoid(::std::string* currenttoid) {
-  if (currenttoid != NULL) {
-    
-  } else {
-    
-  }
-  currenttoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), currenttoid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.currentToId)
-}
-
-// optional double currentLen = 6;
-void CMPWlkgTm_flat::clear_currentlen() {
-  currentlen_ = 0;
-}
- double CMPWlkgTm_flat::currentlen() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentLen)
-  return currentlen_;
-}
- void CMPWlkgTm_flat::set_currentlen(double value) {
-  
-  currentlen_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentLen)
-}
-
-// optional string nextFromId = 7;
-void CMPWlkgTm_flat::clear_nextfromid() {
-  nextfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& CMPWlkgTm_flat::nextfromid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextFromId)
-  return nextfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_nextfromid(const ::std::string& value) {
-  
-  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
- void CMPWlkgTm_flat::set_nextfromid(const char* value) {
-  
-  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
- void CMPWlkgTm_flat::set_nextfromid(const char* value, size_t size) {
-  
-  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
- ::std::string* CMPWlkgTm_flat::mutable_nextfromid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.nextFromId)
-  return nextfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* CMPWlkgTm_flat::release_nextfromid() {
-  
-  return nextfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_allocated_nextfromid(::std::string* nextfromid) {
-  if (nextfromid != NULL) {
-    
-  } else {
-    
-  }
-  nextfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), nextfromid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
-
-// optional string nextToId = 8;
-void CMPWlkgTm_flat::clear_nexttoid() {
-  nexttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& CMPWlkgTm_flat::nexttoid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextToId)
-  return nexttoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_nexttoid(const ::std::string& value) {
-  
-  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextToId)
-}
- void CMPWlkgTm_flat::set_nexttoid(const char* value) {
-  
-  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.nextToId)
-}
- void CMPWlkgTm_flat::set_nexttoid(const char* value, size_t size) {
-  
-  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.nextToId)
-}
- ::std::string* CMPWlkgTm_flat::mutable_nexttoid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.nextToId)
-  return nexttoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* CMPWlkgTm_flat::release_nexttoid() {
-  
-  return nexttoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void CMPWlkgTm_flat::set_allocated_nexttoid(::std::string* nexttoid) {
-  if (nexttoid != NULL) {
-    
-  } else {
-    
-  }
-  nexttoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), nexttoid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.nextToId)
-}
-
-// optional double nextLen = 9;
-void CMPWlkgTm_flat::clear_nextlen() {
-  nextlen_ = 0;
-}
- double CMPWlkgTm_flat::nextlen() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextLen)
-  return nextlen_;
-}
- void CMPWlkgTm_flat::set_nextlen(double value) {
-  
-  nextlen_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextLen)
-}
-
-// optional double depPos = 10;
-void CMPWlkgTm_flat::clear_deppos() {
-  deppos_ = 0;
-}
- double CMPWlkgTm_flat::deppos() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.depPos)
-  return deppos_;
-}
- void CMPWlkgTm_flat::set_deppos(double value) {
-  
-  deppos_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.depPos)
-}
-
-// optional double arrivalPos = 11;
-void CMPWlkgTm_flat::clear_arrivalpos() {
-  arrivalpos_ = 0;
-}
- double CMPWlkgTm_flat::arrivalpos() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.arrivalPos)
-  return arrivalpos_;
-}
- void CMPWlkgTm_flat::set_arrivalpos(double value) {
-  
-  arrivalpos_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.arrivalPos)
-}
-
-// optional double maxSpeed = 12;
-void CMPWlkgTm_flat::clear_maxspeed() {
-  maxspeed_ = 0;
-}
- double CMPWlkgTm_flat::maxspeed() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.maxSpeed)
-  return maxspeed_;
-}
- void CMPWlkgTm_flat::set_maxspeed(double value) {
-  
-  maxspeed_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.maxSpeed)
-}
-
-// optional double time = 13;
-void CMPWlkgTm_flat::clear_time() {
-  time_ = 0;
-}
- double CMPWlkgTm_flat::time() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.time)
-  return time_;
-}
- void CMPWlkgTm_flat::set_time(double value) {
-  
-  time_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.time)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int GetPos::kStageFieldNumber;
-const int GetPos::kSumoTimeFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-GetPos::GetPos()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.GetPos)
-}
-
-void GetPos::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-  stage_ = const_cast< ::noninteracting::PBMSPersonStage_Walking*>(&::noninteracting::PBMSPersonStage_Walking::default_instance());
-  sumotime_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
-}
-
-GetPos::GetPos(const GetPos& from)
-  : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.GetPos)
-}
-
-void GetPos::SharedCtor() {
-    _is_default_instance_ = false;
-  _cached_size_ = 0;
-  stage_ = NULL;
-  sumotime_ = NULL;
-}
-
-GetPos::~GetPos() {
-  // @@protoc_insertion_point(destructor:noninteracting.GetPos)
-  SharedDtor();
-}
-
-void GetPos::SharedDtor() {
-  if (this != default_instance_) {
-    delete stage_;
-    delete sumotime_;
-  }
-}
-
-void GetPos::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* GetPos::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return GetPos_descriptor_;
-}
-
-const GetPos& GetPos::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
-  return *default_instance_;
-}
-
-GetPos* GetPos::default_instance_ = NULL;
-
-GetPos* GetPos::New(::google::protobuf::Arena* arena) const {
-  GetPos* n = new GetPos;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void GetPos::Clear() {
-  if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
-  stage_ = NULL;
-  if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
-  sumotime_ = NULL;
-}
-
-bool GetPos::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.GetPos)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-      case 1: {
-        if (tag == 10) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_stage()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(18)) goto parse_sumoTime;
-        break;
-      }
-
-      // optional .noninteracting.PBSUMOTime sumoTime = 2;
-      case 2: {
-        if (tag == 18) {
-         parse_sumoTime:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_sumotime()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:noninteracting.GetPos)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.GetPos)
-  return false;
-#undef DO_
-}
-
-void GetPos::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.GetPos)
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  if (this->has_stage()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->stage_, output);
-  }
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  if (this->has_sumotime()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, *this->sumotime_, output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:noninteracting.GetPos)
-}
-
-::google::protobuf::uint8* GetPos::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.GetPos)
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  if (this->has_stage()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, *this->stage_, target);
-  }
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  if (this->has_sumotime()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, *this->sumotime_, target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.GetPos)
-  return target;
-}
-
-int GetPos::ByteSize() const {
-  int total_size = 0;
-
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  if (this->has_stage()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->stage_);
-  }
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  if (this->has_sumotime()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->sumotime_);
-  }
-
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void GetPos::MergeFrom(const ::google::protobuf::Message& from) {
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const GetPos* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const GetPos>(
-          &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void GetPos::MergeFrom(const GetPos& from) {
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.has_stage()) {
-    mutable_stage()->::noninteracting::PBMSPersonStage_Walking::MergeFrom(from.stage());
-  }
-  if (from.has_sumotime()) {
-    mutable_sumotime()->::noninteracting::PBSUMOTime::MergeFrom(from.sumotime());
-  }
-}
-
-void GetPos::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void GetPos::CopyFrom(const GetPos& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool GetPos::IsInitialized() const {
-
-  return true;
-}
-
-void GetPos::Swap(GetPos* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void GetPos::InternalSwap(GetPos* other) {
-  std::swap(stage_, other->stage_);
-  std::swap(sumotime_, other->sumotime_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata GetPos::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = GetPos_descriptor_;
-  metadata.reflection = GetPos_reflection_;
-  return metadata;
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// GetPos
-
-// optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-bool GetPos::has_stage() const {
-  return !_is_default_instance_ && stage_ != NULL;
-}
-void GetPos::clear_stage() {
-  if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
-  stage_ = NULL;
-}
-const ::noninteracting::PBMSPersonStage_Walking& GetPos::stage() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetPos.stage)
-  return stage_ != NULL ? *stage_ : *default_instance_->stage_;
-}
-::noninteracting::PBMSPersonStage_Walking* GetPos::mutable_stage() {
-  
-  if (stage_ == NULL) {
-    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetPos.stage)
-  return stage_;
-}
-::noninteracting::PBMSPersonStage_Walking* GetPos::release_stage() {
-  
-  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
-  stage_ = NULL;
+  ::noninteracting::PBSUMOTime* temp = duration_;
+  duration_ = NULL;
   return temp;
 }
-void GetPos::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
-  delete stage_;
-  stage_ = stage;
-  if (stage) {
+void CMPWlkgTmRpl::set_allocated_duration(::noninteracting::PBSUMOTime* duration) {
+  delete duration_;
+  duration_ = duration;
+  if (duration) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetPos.stage)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTmRpl.duration)
 }
 
-// optional .noninteracting.PBSUMOTime sumoTime = 2;
-bool GetPos::has_sumotime() const {
-  return !_is_default_instance_ && sumotime_ != NULL;
+// optional double myLastEntryTime = 2;
+void CMPWlkgTmRpl::clear_mylastentrytime() {
+  mylastentrytime_ = 0;
 }
-void GetPos::clear_sumotime() {
-  if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
-  sumotime_ = NULL;
+ double CMPWlkgTmRpl::mylastentrytime() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.myLastEntryTime)
+  return mylastentrytime_;
 }
-const ::noninteracting::PBSUMOTime& GetPos::sumotime() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetPos.sumoTime)
-  return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
-}
-::noninteracting::PBSUMOTime* GetPos::mutable_sumotime() {
+ void CMPWlkgTmRpl::set_mylastentrytime(double value) {
   
-  if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::PBSUMOTime;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetPos.sumoTime)
-  return sumotime_;
+  mylastentrytime_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTmRpl.myLastEntryTime)
 }
-::noninteracting::PBSUMOTime* GetPos::release_sumotime() {
+
+// optional double myCurrentBeginPos = 3;
+void CMPWlkgTmRpl::clear_mycurrentbeginpos() {
+  mycurrentbeginpos_ = 0;
+}
+ double CMPWlkgTmRpl::mycurrentbeginpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.myCurrentBeginPos)
+  return mycurrentbeginpos_;
+}
+ void CMPWlkgTmRpl::set_mycurrentbeginpos(double value) {
   
-  ::noninteracting::PBSUMOTime* temp = sumotime_;
-  sumotime_ = NULL;
-  return temp;
-}
-void GetPos::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
-  delete sumotime_;
-  sumotime_ = sumotime;
-  if (sumotime) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetPos.sumoTime)
+  mycurrentbeginpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTmRpl.myCurrentBeginPos)
 }
 
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int GetAngle::kStageFieldNumber;
-const int GetAngle::kSumoTimeFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-GetAngle::GetAngle()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:noninteracting.GetAngle)
+// optional double myCurrentEndPos = 4;
+void CMPWlkgTmRpl::clear_mycurrentendpos() {
+  mycurrentendpos_ = 0;
 }
-
-void GetAngle::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-  stage_ = const_cast< ::noninteracting::PBMSPersonStage_Walking*>(&::noninteracting::PBMSPersonStage_Walking::default_instance());
-  sumotime_ = const_cast< ::noninteracting::PBSUMOTime*>(&::noninteracting::PBSUMOTime::default_instance());
+ double CMPWlkgTmRpl::mycurrentendpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.myCurrentEndPos)
+  return mycurrentendpos_;
 }
-
-GetAngle::GetAngle(const GetAngle& from)
-  : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:noninteracting.GetAngle)
-}
-
-void GetAngle::SharedCtor() {
-    _is_default_instance_ = false;
-  _cached_size_ = 0;
-  stage_ = NULL;
-  sumotime_ = NULL;
-}
-
-GetAngle::~GetAngle() {
-  // @@protoc_insertion_point(destructor:noninteracting.GetAngle)
-  SharedDtor();
-}
-
-void GetAngle::SharedDtor() {
-  if (this != default_instance_) {
-    delete stage_;
-    delete sumotime_;
-  }
-}
-
-void GetAngle::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* GetAngle::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return GetAngle_descriptor_;
-}
-
-const GetAngle& GetAngle::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_noninteracting_2eproto();
-  return *default_instance_;
-}
-
-GetAngle* GetAngle::default_instance_ = NULL;
-
-GetAngle* GetAngle::New(::google::protobuf::Arena* arena) const {
-  GetAngle* n = new GetAngle;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void GetAngle::Clear() {
-  if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
-  stage_ = NULL;
-  if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
-  sumotime_ = NULL;
-}
-
-bool GetAngle::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:noninteracting.GetAngle)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-      case 1: {
-        if (tag == 10) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_stage()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(18)) goto parse_sumoTime;
-        break;
-      }
-
-      // optional .noninteracting.PBSUMOTime sumoTime = 2;
-      case 2: {
-        if (tag == 18) {
-         parse_sumoTime:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_sumotime()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:noninteracting.GetAngle)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:noninteracting.GetAngle)
-  return false;
-#undef DO_
-}
-
-void GetAngle::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:noninteracting.GetAngle)
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  if (this->has_stage()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->stage_, output);
-  }
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  if (this->has_sumotime()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, *this->sumotime_, output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:noninteracting.GetAngle)
-}
-
-::google::protobuf::uint8* GetAngle::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:noninteracting.GetAngle)
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  if (this->has_stage()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, *this->stage_, target);
-  }
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  if (this->has_sumotime()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, *this->sumotime_, target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:noninteracting.GetAngle)
-  return target;
-}
-
-int GetAngle::ByteSize() const {
-  int total_size = 0;
-
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  if (this->has_stage()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->stage_);
-  }
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  if (this->has_sumotime()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->sumotime_);
-  }
-
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void GetAngle::MergeFrom(const ::google::protobuf::Message& from) {
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const GetAngle* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const GetAngle>(
-          &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void GetAngle::MergeFrom(const GetAngle& from) {
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.has_stage()) {
-    mutable_stage()->::noninteracting::PBMSPersonStage_Walking::MergeFrom(from.stage());
-  }
-  if (from.has_sumotime()) {
-    mutable_sumotime()->::noninteracting::PBSUMOTime::MergeFrom(from.sumotime());
-  }
-}
-
-void GetAngle::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void GetAngle::CopyFrom(const GetAngle& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool GetAngle::IsInitialized() const {
-
-  return true;
-}
-
-void GetAngle::Swap(GetAngle* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void GetAngle::InternalSwap(GetAngle* other) {
-  std::swap(stage_, other->stage_);
-  std::swap(sumotime_, other->sumotime_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata GetAngle::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = GetAngle_descriptor_;
-  metadata.reflection = GetAngle_reflection_;
-  return metadata;
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// GetAngle
-
-// optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-bool GetAngle::has_stage() const {
-  return !_is_default_instance_ && stage_ != NULL;
-}
-void GetAngle::clear_stage() {
-  if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
-  stage_ = NULL;
-}
-const ::noninteracting::PBMSPersonStage_Walking& GetAngle::stage() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetAngle.stage)
-  return stage_ != NULL ? *stage_ : *default_instance_->stage_;
-}
-::noninteracting::PBMSPersonStage_Walking* GetAngle::mutable_stage() {
+ void CMPWlkgTmRpl::set_mycurrentendpos(double value) {
   
-  if (stage_ == NULL) {
-    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetAngle.stage)
-  return stage_;
-}
-::noninteracting::PBMSPersonStage_Walking* GetAngle::release_stage() {
-  
-  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
-  stage_ = NULL;
-  return temp;
-}
-void GetAngle::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
-  delete stage_;
-  stage_ = stage;
-  if (stage) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetAngle.stage)
-}
-
-// optional .noninteracting.PBSUMOTime sumoTime = 2;
-bool GetAngle::has_sumotime() const {
-  return !_is_default_instance_ && sumotime_ != NULL;
-}
-void GetAngle::clear_sumotime() {
-  if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
-  sumotime_ = NULL;
-}
-const ::noninteracting::PBSUMOTime& GetAngle::sumotime() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetAngle.sumoTime)
-  return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
-}
-::noninteracting::PBSUMOTime* GetAngle::mutable_sumotime() {
-  
-  if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::PBSUMOTime;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetAngle.sumoTime)
-  return sumotime_;
-}
-::noninteracting::PBSUMOTime* GetAngle::release_sumotime() {
-  
-  ::noninteracting::PBSUMOTime* temp = sumotime_;
-  sumotime_ = NULL;
-  return temp;
-}
-void GetAngle::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
-  delete sumotime_;
-  sumotime_ = sumotime;
-  if (sumotime) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetAngle.sumoTime)
+  mycurrentendpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTmRpl.myCurrentEndPos)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

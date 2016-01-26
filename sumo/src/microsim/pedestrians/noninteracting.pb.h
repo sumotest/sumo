@@ -37,43 +37,41 @@ void protobuf_AssignDesc_noninteracting_2eproto();
 void protobuf_ShutdownFile_noninteracting_2eproto();
 
 class CMPWlkgTm;
-class CMPWlkgTm_flat;
-class GetAngle;
-class GetPos;
+class CMPWlkgTmRpl;
+class GetEdgePos;
 class PBEdge;
 class PBMSPersonStage_Walking;
-class PBPosition;
 class PBSUMOReal;
 class PBSUMOTime;
 
 // ===================================================================
 
-class PBPosition : public ::google::protobuf::Message {
+class GetEdgePos : public ::google::protobuf::Message {
  public:
-  PBPosition();
-  virtual ~PBPosition();
+  GetEdgePos();
+  virtual ~GetEdgePos();
 
-  PBPosition(const PBPosition& from);
+  GetEdgePos(const GetEdgePos& from);
 
-  inline PBPosition& operator=(const PBPosition& from) {
+  inline GetEdgePos& operator=(const GetEdgePos& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const PBPosition& default_instance();
+  static const GetEdgePos& default_instance();
 
-  void Swap(PBPosition* other);
+  void Swap(GetEdgePos* other);
 
   // implements Message ----------------------------------------------
 
-  inline PBPosition* New() const { return New(NULL); }
+  inline GetEdgePos* New() const { return New(NULL); }
 
-  PBPosition* New(::google::protobuf::Arena* arena) const;
+  GetEdgePos* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PBPosition& from);
-  void MergeFrom(const PBPosition& from);
+  void CopyFrom(const GetEdgePos& from);
+  void MergeFrom(const GetEdgePos& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -88,7 +86,7 @@ class PBPosition : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(PBPosition* other);
+  void InternalSwap(GetEdgePos* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -104,39 +102,59 @@ class PBPosition : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional double x = 1;
-  void clear_x();
-  static const int kXFieldNumber = 1;
-  double x() const;
-  void set_x(double value);
+  // optional double myCurrentBeginPos = 1;
+  void clear_mycurrentbeginpos();
+  static const int kMyCurrentBeginPosFieldNumber = 1;
+  double mycurrentbeginpos() const;
+  void set_mycurrentbeginpos(double value);
 
-  // optional double y = 2;
-  void clear_y();
-  static const int kYFieldNumber = 2;
-  double y() const;
-  void set_y(double value);
+  // optional double myCurrentEndPos = 2;
+  void clear_mycurrentendpos();
+  static const int kMyCurrentEndPosFieldNumber = 2;
+  double mycurrentendpos() const;
+  void set_mycurrentendpos(double value);
 
-  // optional double z = 3;
-  void clear_z();
-  static const int kZFieldNumber = 3;
-  double z() const;
-  void set_z(double value);
+  // optional double myCurrentDuration = 3;
+  void clear_mycurrentduration();
+  static const int kMyCurrentDurationFieldNumber = 3;
+  double mycurrentduration() const;
+  void set_mycurrentduration(double value);
 
-  // @@protoc_insertion_point(class_scope:noninteracting.PBPosition)
+  // optional .noninteracting.PBSUMOTime time = 4;
+  bool has_time() const;
+  void clear_time();
+  static const int kTimeFieldNumber = 4;
+  const ::noninteracting::PBSUMOTime& time() const;
+  ::noninteracting::PBSUMOTime* mutable_time();
+  ::noninteracting::PBSUMOTime* release_time();
+  void set_allocated_time(::noninteracting::PBSUMOTime* time);
+
+  // optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+  bool has_mylastentrytime() const;
+  void clear_mylastentrytime();
+  static const int kMyLastEntryTimeFieldNumber = 5;
+  const ::noninteracting::PBSUMOTime& mylastentrytime() const;
+  ::noninteracting::PBSUMOTime* mutable_mylastentrytime();
+  ::noninteracting::PBSUMOTime* release_mylastentrytime();
+  void set_allocated_mylastentrytime(::noninteracting::PBSUMOTime* mylastentrytime);
+
+  // @@protoc_insertion_point(class_scope:noninteracting.GetEdgePos)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  double x_;
-  double y_;
-  double z_;
+  double mycurrentbeginpos_;
+  double mycurrentendpos_;
+  double mycurrentduration_;
+  ::noninteracting::PBSUMOTime* time_;
+  ::noninteracting::PBSUMOTime* mylastentrytime_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_noninteracting_2eproto();
   friend void protobuf_AssignDesc_noninteracting_2eproto();
   friend void protobuf_ShutdownFile_noninteracting_2eproto();
 
   void InitAsDefaultInstance();
-  static PBPosition* default_instance_;
+  static GetEdgePos* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -611,32 +629,32 @@ class CMPWlkgTm : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class CMPWlkgTm_flat : public ::google::protobuf::Message {
+class CMPWlkgTmRpl : public ::google::protobuf::Message {
  public:
-  CMPWlkgTm_flat();
-  virtual ~CMPWlkgTm_flat();
+  CMPWlkgTmRpl();
+  virtual ~CMPWlkgTmRpl();
 
-  CMPWlkgTm_flat(const CMPWlkgTm_flat& from);
+  CMPWlkgTmRpl(const CMPWlkgTmRpl& from);
 
-  inline CMPWlkgTm_flat& operator=(const CMPWlkgTm_flat& from) {
+  inline CMPWlkgTmRpl& operator=(const CMPWlkgTmRpl& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const CMPWlkgTm_flat& default_instance();
+  static const CMPWlkgTmRpl& default_instance();
 
-  void Swap(CMPWlkgTm_flat* other);
+  void Swap(CMPWlkgTmRpl* other);
 
   // implements Message ----------------------------------------------
 
-  inline CMPWlkgTm_flat* New() const { return New(NULL); }
+  inline CMPWlkgTmRpl* New() const { return New(NULL); }
 
-  CMPWlkgTm_flat* New(::google::protobuf::Arena* arena) const;
+  CMPWlkgTmRpl* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const CMPWlkgTm_flat& from);
-  void MergeFrom(const CMPWlkgTm_flat& from);
+  void CopyFrom(const CMPWlkgTmRpl& from);
+  void MergeFrom(const CMPWlkgTmRpl& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -651,7 +669,7 @@ class CMPWlkgTm_flat : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(CMPWlkgTm_flat* other);
+  void InternalSwap(CMPWlkgTmRpl* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -667,321 +685,49 @@ class CMPWlkgTm_flat : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional string prevFromId = 1;
-  void clear_prevfromid();
-  static const int kPrevFromIdFieldNumber = 1;
-  const ::std::string& prevfromid() const;
-  void set_prevfromid(const ::std::string& value);
-  void set_prevfromid(const char* value);
-  void set_prevfromid(const char* value, size_t size);
-  ::std::string* mutable_prevfromid();
-  ::std::string* release_prevfromid();
-  void set_allocated_prevfromid(::std::string* prevfromid);
+  // optional .noninteracting.PBSUMOTime duration = 1;
+  bool has_duration() const;
+  void clear_duration();
+  static const int kDurationFieldNumber = 1;
+  const ::noninteracting::PBSUMOTime& duration() const;
+  ::noninteracting::PBSUMOTime* mutable_duration();
+  ::noninteracting::PBSUMOTime* release_duration();
+  void set_allocated_duration(::noninteracting::PBSUMOTime* duration);
 
-  // optional string prevToId = 2;
-  void clear_prevtoid();
-  static const int kPrevToIdFieldNumber = 2;
-  const ::std::string& prevtoid() const;
-  void set_prevtoid(const ::std::string& value);
-  void set_prevtoid(const char* value);
-  void set_prevtoid(const char* value, size_t size);
-  ::std::string* mutable_prevtoid();
-  ::std::string* release_prevtoid();
-  void set_allocated_prevtoid(::std::string* prevtoid);
+  // optional double myLastEntryTime = 2;
+  void clear_mylastentrytime();
+  static const int kMyLastEntryTimeFieldNumber = 2;
+  double mylastentrytime() const;
+  void set_mylastentrytime(double value);
 
-  // optional double prevLen = 3;
-  void clear_prevlen();
-  static const int kPrevLenFieldNumber = 3;
-  double prevlen() const;
-  void set_prevlen(double value);
+  // optional double myCurrentBeginPos = 3;
+  void clear_mycurrentbeginpos();
+  static const int kMyCurrentBeginPosFieldNumber = 3;
+  double mycurrentbeginpos() const;
+  void set_mycurrentbeginpos(double value);
 
-  // optional string currentFromId = 4;
-  void clear_currentfromid();
-  static const int kCurrentFromIdFieldNumber = 4;
-  const ::std::string& currentfromid() const;
-  void set_currentfromid(const ::std::string& value);
-  void set_currentfromid(const char* value);
-  void set_currentfromid(const char* value, size_t size);
-  ::std::string* mutable_currentfromid();
-  ::std::string* release_currentfromid();
-  void set_allocated_currentfromid(::std::string* currentfromid);
+  // optional double myCurrentEndPos = 4;
+  void clear_mycurrentendpos();
+  static const int kMyCurrentEndPosFieldNumber = 4;
+  double mycurrentendpos() const;
+  void set_mycurrentendpos(double value);
 
-  // optional string currentToId = 5;
-  void clear_currenttoid();
-  static const int kCurrentToIdFieldNumber = 5;
-  const ::std::string& currenttoid() const;
-  void set_currenttoid(const ::std::string& value);
-  void set_currenttoid(const char* value);
-  void set_currenttoid(const char* value, size_t size);
-  ::std::string* mutable_currenttoid();
-  ::std::string* release_currenttoid();
-  void set_allocated_currenttoid(::std::string* currenttoid);
-
-  // optional double currentLen = 6;
-  void clear_currentlen();
-  static const int kCurrentLenFieldNumber = 6;
-  double currentlen() const;
-  void set_currentlen(double value);
-
-  // optional string nextFromId = 7;
-  void clear_nextfromid();
-  static const int kNextFromIdFieldNumber = 7;
-  const ::std::string& nextfromid() const;
-  void set_nextfromid(const ::std::string& value);
-  void set_nextfromid(const char* value);
-  void set_nextfromid(const char* value, size_t size);
-  ::std::string* mutable_nextfromid();
-  ::std::string* release_nextfromid();
-  void set_allocated_nextfromid(::std::string* nextfromid);
-
-  // optional string nextToId = 8;
-  void clear_nexttoid();
-  static const int kNextToIdFieldNumber = 8;
-  const ::std::string& nexttoid() const;
-  void set_nexttoid(const ::std::string& value);
-  void set_nexttoid(const char* value);
-  void set_nexttoid(const char* value, size_t size);
-  ::std::string* mutable_nexttoid();
-  ::std::string* release_nexttoid();
-  void set_allocated_nexttoid(::std::string* nexttoid);
-
-  // optional double nextLen = 9;
-  void clear_nextlen();
-  static const int kNextLenFieldNumber = 9;
-  double nextlen() const;
-  void set_nextlen(double value);
-
-  // optional double depPos = 10;
-  void clear_deppos();
-  static const int kDepPosFieldNumber = 10;
-  double deppos() const;
-  void set_deppos(double value);
-
-  // optional double arrivalPos = 11;
-  void clear_arrivalpos();
-  static const int kArrivalPosFieldNumber = 11;
-  double arrivalpos() const;
-  void set_arrivalpos(double value);
-
-  // optional double maxSpeed = 12;
-  void clear_maxspeed();
-  static const int kMaxSpeedFieldNumber = 12;
-  double maxspeed() const;
-  void set_maxspeed(double value);
-
-  // optional double time = 13;
-  void clear_time();
-  static const int kTimeFieldNumber = 13;
-  double time() const;
-  void set_time(double value);
-
-  // @@protoc_insertion_point(class_scope:noninteracting.CMPWlkgTm_flat)
+  // @@protoc_insertion_point(class_scope:noninteracting.CMPWlkgTmRpl)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::internal::ArenaStringPtr prevfromid_;
-  ::google::protobuf::internal::ArenaStringPtr prevtoid_;
-  double prevlen_;
-  ::google::protobuf::internal::ArenaStringPtr currentfromid_;
-  ::google::protobuf::internal::ArenaStringPtr currenttoid_;
-  double currentlen_;
-  ::google::protobuf::internal::ArenaStringPtr nextfromid_;
-  ::google::protobuf::internal::ArenaStringPtr nexttoid_;
-  double nextlen_;
-  double deppos_;
-  double arrivalpos_;
-  double maxspeed_;
-  double time_;
+  ::noninteracting::PBSUMOTime* duration_;
+  double mylastentrytime_;
+  double mycurrentbeginpos_;
+  double mycurrentendpos_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_noninteracting_2eproto();
   friend void protobuf_AssignDesc_noninteracting_2eproto();
   friend void protobuf_ShutdownFile_noninteracting_2eproto();
 
   void InitAsDefaultInstance();
-  static CMPWlkgTm_flat* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class GetPos : public ::google::protobuf::Message {
- public:
-  GetPos();
-  virtual ~GetPos();
-
-  GetPos(const GetPos& from);
-
-  inline GetPos& operator=(const GetPos& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const GetPos& default_instance();
-
-  void Swap(GetPos* other);
-
-  // implements Message ----------------------------------------------
-
-  inline GetPos* New() const { return New(NULL); }
-
-  GetPos* New(::google::protobuf::Arena* arena) const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GetPos& from);
-  void MergeFrom(const GetPos& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  void InternalSwap(GetPos* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return _internal_metadata_.arena();
-  }
-  inline void* MaybeArenaPtr() const {
-    return _internal_metadata_.raw_arena_ptr();
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  bool has_stage() const;
-  void clear_stage();
-  static const int kStageFieldNumber = 1;
-  const ::noninteracting::PBMSPersonStage_Walking& stage() const;
-  ::noninteracting::PBMSPersonStage_Walking* mutable_stage();
-  ::noninteracting::PBMSPersonStage_Walking* release_stage();
-  void set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage);
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  bool has_sumotime() const;
-  void clear_sumotime();
-  static const int kSumoTimeFieldNumber = 2;
-  const ::noninteracting::PBSUMOTime& sumotime() const;
-  ::noninteracting::PBSUMOTime* mutable_sumotime();
-  ::noninteracting::PBSUMOTime* release_sumotime();
-  void set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime);
-
-  // @@protoc_insertion_point(class_scope:noninteracting.GetPos)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  bool _is_default_instance_;
-  ::noninteracting::PBMSPersonStage_Walking* stage_;
-  ::noninteracting::PBSUMOTime* sumotime_;
-  mutable int _cached_size_;
-  friend void  protobuf_AddDesc_noninteracting_2eproto();
-  friend void protobuf_AssignDesc_noninteracting_2eproto();
-  friend void protobuf_ShutdownFile_noninteracting_2eproto();
-
-  void InitAsDefaultInstance();
-  static GetPos* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class GetAngle : public ::google::protobuf::Message {
- public:
-  GetAngle();
-  virtual ~GetAngle();
-
-  GetAngle(const GetAngle& from);
-
-  inline GetAngle& operator=(const GetAngle& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const GetAngle& default_instance();
-
-  void Swap(GetAngle* other);
-
-  // implements Message ----------------------------------------------
-
-  inline GetAngle* New() const { return New(NULL); }
-
-  GetAngle* New(::google::protobuf::Arena* arena) const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GetAngle& from);
-  void MergeFrom(const GetAngle& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  void InternalSwap(GetAngle* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return _internal_metadata_.arena();
-  }
-  inline void* MaybeArenaPtr() const {
-    return _internal_metadata_.raw_arena_ptr();
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-  bool has_stage() const;
-  void clear_stage();
-  static const int kStageFieldNumber = 1;
-  const ::noninteracting::PBMSPersonStage_Walking& stage() const;
-  ::noninteracting::PBMSPersonStage_Walking* mutable_stage();
-  ::noninteracting::PBMSPersonStage_Walking* release_stage();
-  void set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage);
-
-  // optional .noninteracting.PBSUMOTime sumoTime = 2;
-  bool has_sumotime() const;
-  void clear_sumotime();
-  static const int kSumoTimeFieldNumber = 2;
-  const ::noninteracting::PBSUMOTime& sumotime() const;
-  ::noninteracting::PBSUMOTime* mutable_sumotime();
-  ::noninteracting::PBSUMOTime* release_sumotime();
-  void set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime);
-
-  // @@protoc_insertion_point(class_scope:noninteracting.GetAngle)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  bool _is_default_instance_;
-  ::noninteracting::PBMSPersonStage_Walking* stage_;
-  ::noninteracting::PBSUMOTime* sumotime_;
-  mutable int _cached_size_;
-  friend void  protobuf_AddDesc_noninteracting_2eproto();
-  friend void protobuf_AssignDesc_noninteracting_2eproto();
-  friend void protobuf_ShutdownFile_noninteracting_2eproto();
-
-  void InitAsDefaultInstance();
-  static GetAngle* default_instance_;
+  static CMPWlkgTmRpl* default_instance_;
 };
 // ===================================================================
 
@@ -989,48 +735,122 @@ class GetAngle : public ::google::protobuf::Message {
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// PBPosition
+// GetEdgePos
 
-// optional double x = 1;
-inline void PBPosition::clear_x() {
-  x_ = 0;
+// optional double myCurrentBeginPos = 1;
+inline void GetEdgePos::clear_mycurrentbeginpos() {
+  mycurrentbeginpos_ = 0;
 }
-inline double PBPosition::x() const {
-  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.x)
-  return x_;
+inline double GetEdgePos::mycurrentbeginpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myCurrentBeginPos)
+  return mycurrentbeginpos_;
 }
-inline void PBPosition::set_x(double value) {
+inline void GetEdgePos::set_mycurrentbeginpos(double value) {
   
-  x_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.x)
-}
-
-// optional double y = 2;
-inline void PBPosition::clear_y() {
-  y_ = 0;
-}
-inline double PBPosition::y() const {
-  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.y)
-  return y_;
-}
-inline void PBPosition::set_y(double value) {
-  
-  y_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.y)
+  mycurrentbeginpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.GetEdgePos.myCurrentBeginPos)
 }
 
-// optional double z = 3;
-inline void PBPosition::clear_z() {
-  z_ = 0;
+// optional double myCurrentEndPos = 2;
+inline void GetEdgePos::clear_mycurrentendpos() {
+  mycurrentendpos_ = 0;
 }
-inline double PBPosition::z() const {
-  // @@protoc_insertion_point(field_get:noninteracting.PBPosition.z)
-  return z_;
+inline double GetEdgePos::mycurrentendpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myCurrentEndPos)
+  return mycurrentendpos_;
 }
-inline void PBPosition::set_z(double value) {
+inline void GetEdgePos::set_mycurrentendpos(double value) {
   
-  z_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.PBPosition.z)
+  mycurrentendpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.GetEdgePos.myCurrentEndPos)
+}
+
+// optional double myCurrentDuration = 3;
+inline void GetEdgePos::clear_mycurrentduration() {
+  mycurrentduration_ = 0;
+}
+inline double GetEdgePos::mycurrentduration() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myCurrentDuration)
+  return mycurrentduration_;
+}
+inline void GetEdgePos::set_mycurrentduration(double value) {
+  
+  mycurrentduration_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.GetEdgePos.myCurrentDuration)
+}
+
+// optional .noninteracting.PBSUMOTime time = 4;
+inline bool GetEdgePos::has_time() const {
+  return !_is_default_instance_ && time_ != NULL;
+}
+inline void GetEdgePos::clear_time() {
+  if (GetArenaNoVirtual() == NULL && time_ != NULL) delete time_;
+  time_ = NULL;
+}
+inline const ::noninteracting::PBSUMOTime& GetEdgePos::time() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.time)
+  return time_ != NULL ? *time_ : *default_instance_->time_;
+}
+inline ::noninteracting::PBSUMOTime* GetEdgePos::mutable_time() {
+  
+  if (time_ == NULL) {
+    time_ = new ::noninteracting::PBSUMOTime;
+  }
+  // @@protoc_insertion_point(field_mutable:noninteracting.GetEdgePos.time)
+  return time_;
+}
+inline ::noninteracting::PBSUMOTime* GetEdgePos::release_time() {
+  
+  ::noninteracting::PBSUMOTime* temp = time_;
+  time_ = NULL;
+  return temp;
+}
+inline void GetEdgePos::set_allocated_time(::noninteracting::PBSUMOTime* time) {
+  delete time_;
+  time_ = time;
+  if (time) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetEdgePos.time)
+}
+
+// optional .noninteracting.PBSUMOTime myLastEntryTime = 5;
+inline bool GetEdgePos::has_mylastentrytime() const {
+  return !_is_default_instance_ && mylastentrytime_ != NULL;
+}
+inline void GetEdgePos::clear_mylastentrytime() {
+  if (GetArenaNoVirtual() == NULL && mylastentrytime_ != NULL) delete mylastentrytime_;
+  mylastentrytime_ = NULL;
+}
+inline const ::noninteracting::PBSUMOTime& GetEdgePos::mylastentrytime() const {
+  // @@protoc_insertion_point(field_get:noninteracting.GetEdgePos.myLastEntryTime)
+  return mylastentrytime_ != NULL ? *mylastentrytime_ : *default_instance_->mylastentrytime_;
+}
+inline ::noninteracting::PBSUMOTime* GetEdgePos::mutable_mylastentrytime() {
+  
+  if (mylastentrytime_ == NULL) {
+    mylastentrytime_ = new ::noninteracting::PBSUMOTime;
+  }
+  // @@protoc_insertion_point(field_mutable:noninteracting.GetEdgePos.myLastEntryTime)
+  return mylastentrytime_;
+}
+inline ::noninteracting::PBSUMOTime* GetEdgePos::release_mylastentrytime() {
+  
+  ::noninteracting::PBSUMOTime* temp = mylastentrytime_;
+  mylastentrytime_ = NULL;
+  return temp;
+}
+inline void GetEdgePos::set_allocated_mylastentrytime(::noninteracting::PBSUMOTime* mylastentrytime) {
+  delete mylastentrytime_;
+  mylastentrytime_ = mylastentrytime;
+  if (mylastentrytime) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetEdgePos.myLastEntryTime)
 }
 
 // -------------------------------------------------------------------
@@ -1410,525 +1230,88 @@ inline void CMPWlkgTm::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumo
 
 // -------------------------------------------------------------------
 
-// CMPWlkgTm_flat
+// CMPWlkgTmRpl
 
-// optional string prevFromId = 1;
-inline void CMPWlkgTm_flat::clear_prevfromid() {
-  prevfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional .noninteracting.PBSUMOTime duration = 1;
+inline bool CMPWlkgTmRpl::has_duration() const {
+  return !_is_default_instance_ && duration_ != NULL;
 }
-inline const ::std::string& CMPWlkgTm_flat::prevfromid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevFromId)
-  return prevfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void CMPWlkgTmRpl::clear_duration() {
+  if (GetArenaNoVirtual() == NULL && duration_ != NULL) delete duration_;
+  duration_ = NULL;
 }
-inline void CMPWlkgTm_flat::set_prevfromid(const ::std::string& value) {
+inline const ::noninteracting::PBSUMOTime& CMPWlkgTmRpl::duration() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.duration)
+  return duration_ != NULL ? *duration_ : *default_instance_->duration_;
+}
+inline ::noninteracting::PBSUMOTime* CMPWlkgTmRpl::mutable_duration() {
   
-  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevFromId)
-}
-inline void CMPWlkgTm_flat::set_prevfromid(const char* value) {
-  
-  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.prevFromId)
-}
-inline void CMPWlkgTm_flat::set_prevfromid(const char* value, size_t size) {
-  
-  prevfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.prevFromId)
-}
-inline ::std::string* CMPWlkgTm_flat::mutable_prevfromid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.prevFromId)
-  return prevfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* CMPWlkgTm_flat::release_prevfromid() {
-  
-  return prevfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_allocated_prevfromid(::std::string* prevfromid) {
-  if (prevfromid != NULL) {
-    
-  } else {
-    
+  if (duration_ == NULL) {
+    duration_ = new ::noninteracting::PBSUMOTime;
   }
-  prevfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prevfromid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.prevFromId)
+  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTmRpl.duration)
+  return duration_;
 }
-
-// optional string prevToId = 2;
-inline void CMPWlkgTm_flat::clear_prevtoid() {
-  prevtoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& CMPWlkgTm_flat::prevtoid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevToId)
-  return prevtoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_prevtoid(const ::std::string& value) {
+inline ::noninteracting::PBSUMOTime* CMPWlkgTmRpl::release_duration() {
   
-  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevToId)
-}
-inline void CMPWlkgTm_flat::set_prevtoid(const char* value) {
-  
-  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.prevToId)
-}
-inline void CMPWlkgTm_flat::set_prevtoid(const char* value, size_t size) {
-  
-  prevtoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.prevToId)
-}
-inline ::std::string* CMPWlkgTm_flat::mutable_prevtoid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.prevToId)
-  return prevtoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* CMPWlkgTm_flat::release_prevtoid() {
-  
-  return prevtoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_allocated_prevtoid(::std::string* prevtoid) {
-  if (prevtoid != NULL) {
-    
-  } else {
-    
-  }
-  prevtoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prevtoid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.prevToId)
-}
-
-// optional double prevLen = 3;
-inline void CMPWlkgTm_flat::clear_prevlen() {
-  prevlen_ = 0;
-}
-inline double CMPWlkgTm_flat::prevlen() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.prevLen)
-  return prevlen_;
-}
-inline void CMPWlkgTm_flat::set_prevlen(double value) {
-  
-  prevlen_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.prevLen)
-}
-
-// optional string currentFromId = 4;
-inline void CMPWlkgTm_flat::clear_currentfromid() {
-  currentfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& CMPWlkgTm_flat::currentfromid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentFromId)
-  return currentfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_currentfromid(const ::std::string& value) {
-  
-  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
-inline void CMPWlkgTm_flat::set_currentfromid(const char* value) {
-  
-  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
-inline void CMPWlkgTm_flat::set_currentfromid(const char* value, size_t size) {
-  
-  currentfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
-inline ::std::string* CMPWlkgTm_flat::mutable_currentfromid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.currentFromId)
-  return currentfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* CMPWlkgTm_flat::release_currentfromid() {
-  
-  return currentfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_allocated_currentfromid(::std::string* currentfromid) {
-  if (currentfromid != NULL) {
-    
-  } else {
-    
-  }
-  currentfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), currentfromid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.currentFromId)
-}
-
-// optional string currentToId = 5;
-inline void CMPWlkgTm_flat::clear_currenttoid() {
-  currenttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& CMPWlkgTm_flat::currenttoid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentToId)
-  return currenttoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_currenttoid(const ::std::string& value) {
-  
-  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentToId)
-}
-inline void CMPWlkgTm_flat::set_currenttoid(const char* value) {
-  
-  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.currentToId)
-}
-inline void CMPWlkgTm_flat::set_currenttoid(const char* value, size_t size) {
-  
-  currenttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.currentToId)
-}
-inline ::std::string* CMPWlkgTm_flat::mutable_currenttoid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.currentToId)
-  return currenttoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* CMPWlkgTm_flat::release_currenttoid() {
-  
-  return currenttoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_allocated_currenttoid(::std::string* currenttoid) {
-  if (currenttoid != NULL) {
-    
-  } else {
-    
-  }
-  currenttoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), currenttoid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.currentToId)
-}
-
-// optional double currentLen = 6;
-inline void CMPWlkgTm_flat::clear_currentlen() {
-  currentlen_ = 0;
-}
-inline double CMPWlkgTm_flat::currentlen() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.currentLen)
-  return currentlen_;
-}
-inline void CMPWlkgTm_flat::set_currentlen(double value) {
-  
-  currentlen_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.currentLen)
-}
-
-// optional string nextFromId = 7;
-inline void CMPWlkgTm_flat::clear_nextfromid() {
-  nextfromid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& CMPWlkgTm_flat::nextfromid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextFromId)
-  return nextfromid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_nextfromid(const ::std::string& value) {
-  
-  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
-inline void CMPWlkgTm_flat::set_nextfromid(const char* value) {
-  
-  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
-inline void CMPWlkgTm_flat::set_nextfromid(const char* value, size_t size) {
-  
-  nextfromid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
-inline ::std::string* CMPWlkgTm_flat::mutable_nextfromid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.nextFromId)
-  return nextfromid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* CMPWlkgTm_flat::release_nextfromid() {
-  
-  return nextfromid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_allocated_nextfromid(::std::string* nextfromid) {
-  if (nextfromid != NULL) {
-    
-  } else {
-    
-  }
-  nextfromid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), nextfromid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.nextFromId)
-}
-
-// optional string nextToId = 8;
-inline void CMPWlkgTm_flat::clear_nexttoid() {
-  nexttoid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& CMPWlkgTm_flat::nexttoid() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextToId)
-  return nexttoid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_nexttoid(const ::std::string& value) {
-  
-  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextToId)
-}
-inline void CMPWlkgTm_flat::set_nexttoid(const char* value) {
-  
-  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:noninteracting.CMPWlkgTm_flat.nextToId)
-}
-inline void CMPWlkgTm_flat::set_nexttoid(const char* value, size_t size) {
-  
-  nexttoid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:noninteracting.CMPWlkgTm_flat.nextToId)
-}
-inline ::std::string* CMPWlkgTm_flat::mutable_nexttoid() {
-  
-  // @@protoc_insertion_point(field_mutable:noninteracting.CMPWlkgTm_flat.nextToId)
-  return nexttoid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* CMPWlkgTm_flat::release_nexttoid() {
-  
-  return nexttoid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void CMPWlkgTm_flat::set_allocated_nexttoid(::std::string* nexttoid) {
-  if (nexttoid != NULL) {
-    
-  } else {
-    
-  }
-  nexttoid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), nexttoid);
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTm_flat.nextToId)
-}
-
-// optional double nextLen = 9;
-inline void CMPWlkgTm_flat::clear_nextlen() {
-  nextlen_ = 0;
-}
-inline double CMPWlkgTm_flat::nextlen() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.nextLen)
-  return nextlen_;
-}
-inline void CMPWlkgTm_flat::set_nextlen(double value) {
-  
-  nextlen_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.nextLen)
-}
-
-// optional double depPos = 10;
-inline void CMPWlkgTm_flat::clear_deppos() {
-  deppos_ = 0;
-}
-inline double CMPWlkgTm_flat::deppos() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.depPos)
-  return deppos_;
-}
-inline void CMPWlkgTm_flat::set_deppos(double value) {
-  
-  deppos_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.depPos)
-}
-
-// optional double arrivalPos = 11;
-inline void CMPWlkgTm_flat::clear_arrivalpos() {
-  arrivalpos_ = 0;
-}
-inline double CMPWlkgTm_flat::arrivalpos() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.arrivalPos)
-  return arrivalpos_;
-}
-inline void CMPWlkgTm_flat::set_arrivalpos(double value) {
-  
-  arrivalpos_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.arrivalPos)
-}
-
-// optional double maxSpeed = 12;
-inline void CMPWlkgTm_flat::clear_maxspeed() {
-  maxspeed_ = 0;
-}
-inline double CMPWlkgTm_flat::maxspeed() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.maxSpeed)
-  return maxspeed_;
-}
-inline void CMPWlkgTm_flat::set_maxspeed(double value) {
-  
-  maxspeed_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.maxSpeed)
-}
-
-// optional double time = 13;
-inline void CMPWlkgTm_flat::clear_time() {
-  time_ = 0;
-}
-inline double CMPWlkgTm_flat::time() const {
-  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTm_flat.time)
-  return time_;
-}
-inline void CMPWlkgTm_flat::set_time(double value) {
-  
-  time_ = value;
-  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTm_flat.time)
-}
-
-// -------------------------------------------------------------------
-
-// GetPos
-
-// optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-inline bool GetPos::has_stage() const {
-  return !_is_default_instance_ && stage_ != NULL;
-}
-inline void GetPos::clear_stage() {
-  if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
-  stage_ = NULL;
-}
-inline const ::noninteracting::PBMSPersonStage_Walking& GetPos::stage() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetPos.stage)
-  return stage_ != NULL ? *stage_ : *default_instance_->stage_;
-}
-inline ::noninteracting::PBMSPersonStage_Walking* GetPos::mutable_stage() {
-  
-  if (stage_ == NULL) {
-    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetPos.stage)
-  return stage_;
-}
-inline ::noninteracting::PBMSPersonStage_Walking* GetPos::release_stage() {
-  
-  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
-  stage_ = NULL;
+  ::noninteracting::PBSUMOTime* temp = duration_;
+  duration_ = NULL;
   return temp;
 }
-inline void GetPos::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
-  delete stage_;
-  stage_ = stage;
-  if (stage) {
+inline void CMPWlkgTmRpl::set_allocated_duration(::noninteracting::PBSUMOTime* duration) {
+  delete duration_;
+  duration_ = duration;
+  if (duration) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetPos.stage)
+  // @@protoc_insertion_point(field_set_allocated:noninteracting.CMPWlkgTmRpl.duration)
 }
 
-// optional .noninteracting.PBSUMOTime sumoTime = 2;
-inline bool GetPos::has_sumotime() const {
-  return !_is_default_instance_ && sumotime_ != NULL;
+// optional double myLastEntryTime = 2;
+inline void CMPWlkgTmRpl::clear_mylastentrytime() {
+  mylastentrytime_ = 0;
 }
-inline void GetPos::clear_sumotime() {
-  if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
-  sumotime_ = NULL;
+inline double CMPWlkgTmRpl::mylastentrytime() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.myLastEntryTime)
+  return mylastentrytime_;
 }
-inline const ::noninteracting::PBSUMOTime& GetPos::sumotime() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetPos.sumoTime)
-  return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
-}
-inline ::noninteracting::PBSUMOTime* GetPos::mutable_sumotime() {
+inline void CMPWlkgTmRpl::set_mylastentrytime(double value) {
   
-  if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::PBSUMOTime;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetPos.sumoTime)
-  return sumotime_;
-}
-inline ::noninteracting::PBSUMOTime* GetPos::release_sumotime() {
-  
-  ::noninteracting::PBSUMOTime* temp = sumotime_;
-  sumotime_ = NULL;
-  return temp;
-}
-inline void GetPos::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
-  delete sumotime_;
-  sumotime_ = sumotime;
-  if (sumotime) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetPos.sumoTime)
+  mylastentrytime_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTmRpl.myLastEntryTime)
 }
 
-// -------------------------------------------------------------------
-
-// GetAngle
-
-// optional .noninteracting.PBMSPersonStage_Walking stage = 1;
-inline bool GetAngle::has_stage() const {
-  return !_is_default_instance_ && stage_ != NULL;
+// optional double myCurrentBeginPos = 3;
+inline void CMPWlkgTmRpl::clear_mycurrentbeginpos() {
+  mycurrentbeginpos_ = 0;
 }
-inline void GetAngle::clear_stage() {
-  if (GetArenaNoVirtual() == NULL && stage_ != NULL) delete stage_;
-  stage_ = NULL;
+inline double CMPWlkgTmRpl::mycurrentbeginpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.myCurrentBeginPos)
+  return mycurrentbeginpos_;
 }
-inline const ::noninteracting::PBMSPersonStage_Walking& GetAngle::stage() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetAngle.stage)
-  return stage_ != NULL ? *stage_ : *default_instance_->stage_;
-}
-inline ::noninteracting::PBMSPersonStage_Walking* GetAngle::mutable_stage() {
+inline void CMPWlkgTmRpl::set_mycurrentbeginpos(double value) {
   
-  if (stage_ == NULL) {
-    stage_ = new ::noninteracting::PBMSPersonStage_Walking;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetAngle.stage)
-  return stage_;
-}
-inline ::noninteracting::PBMSPersonStage_Walking* GetAngle::release_stage() {
-  
-  ::noninteracting::PBMSPersonStage_Walking* temp = stage_;
-  stage_ = NULL;
-  return temp;
-}
-inline void GetAngle::set_allocated_stage(::noninteracting::PBMSPersonStage_Walking* stage) {
-  delete stage_;
-  stage_ = stage;
-  if (stage) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetAngle.stage)
+  mycurrentbeginpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTmRpl.myCurrentBeginPos)
 }
 
-// optional .noninteracting.PBSUMOTime sumoTime = 2;
-inline bool GetAngle::has_sumotime() const {
-  return !_is_default_instance_ && sumotime_ != NULL;
+// optional double myCurrentEndPos = 4;
+inline void CMPWlkgTmRpl::clear_mycurrentendpos() {
+  mycurrentendpos_ = 0;
 }
-inline void GetAngle::clear_sumotime() {
-  if (GetArenaNoVirtual() == NULL && sumotime_ != NULL) delete sumotime_;
-  sumotime_ = NULL;
+inline double CMPWlkgTmRpl::mycurrentendpos() const {
+  // @@protoc_insertion_point(field_get:noninteracting.CMPWlkgTmRpl.myCurrentEndPos)
+  return mycurrentendpos_;
 }
-inline const ::noninteracting::PBSUMOTime& GetAngle::sumotime() const {
-  // @@protoc_insertion_point(field_get:noninteracting.GetAngle.sumoTime)
-  return sumotime_ != NULL ? *sumotime_ : *default_instance_->sumotime_;
-}
-inline ::noninteracting::PBSUMOTime* GetAngle::mutable_sumotime() {
+inline void CMPWlkgTmRpl::set_mycurrentendpos(double value) {
   
-  if (sumotime_ == NULL) {
-    sumotime_ = new ::noninteracting::PBSUMOTime;
-  }
-  // @@protoc_insertion_point(field_mutable:noninteracting.GetAngle.sumoTime)
-  return sumotime_;
-}
-inline ::noninteracting::PBSUMOTime* GetAngle::release_sumotime() {
-  
-  ::noninteracting::PBSUMOTime* temp = sumotime_;
-  sumotime_ = NULL;
-  return temp;
-}
-inline void GetAngle::set_allocated_sumotime(::noninteracting::PBSUMOTime* sumotime) {
-  delete sumotime_;
-  sumotime_ = sumotime;
-  if (sumotime) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:noninteracting.GetAngle.sumoTime)
+  mycurrentendpos_ = value;
+  // @@protoc_insertion_point(field_set:noninteracting.CMPWlkgTmRpl.myCurrentEndPos)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

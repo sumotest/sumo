@@ -20,23 +20,20 @@ option java_package = "de.dlr.sumo.noninteracting";
 option java_outer_classname = "NonInteractingProto";
 
 service PBPState {
-    rpc computeWalkingTime(CMPWlkgTm) returns (PBSUMOTime) {}
-    rpc computeWalkingTime_flat(CMPWlkgTm_flat) returns (PBSUMOTime) {}
-    rpc getPosition(GetPos) returns (PBPosition) {}
-    rpc getAngle(GetAngle) returns (PBSUMOReal) {}
+    rpc computeWalkingTime(CMPWlkgTm) returns (CMPWlkgTmRpl) {}
     rpc getWaitingTime(PBSUMOTime) returns (PBSUMOTime) {}
     rpc getSpeed(PBMSPersonStage_Walking) returns (PBSUMOReal) {}
-    rpc getNextEdge(PBMSPersonStage_Walking) returns (PBEdge) {}
-
+    rpc getEdgePost(GetEdgePos) returns (PBSUMOReal) {}
 }
 
-
-
-message PBPosition {
-    double x = 1;
-    double y = 2;
-    double z = 3;
+message GetEdgePos {
+    double myCurrentBeginPos = 1;
+    double myCurrentEndPos = 2;
+    double myCurrentDuration = 3;
+    PBSUMOTime time = 4;
+    PBSUMOTime myLastEntryTime = 5;
 }
+
 
 message PBEdge {
     string fromJunctionId = 1;
@@ -65,29 +62,13 @@ message CMPWlkgTm {
     PBMSPersonStage_Walking stage = 2;
     PBSUMOTime sumoTime = 3;
 }
-message CMPWlkgTm_flat {
-    string prevFromId = 1;
-    string prevToId = 2;
-    double prevLen = 3;
-    string currentFromId = 4;
-    string currentToId = 5;
-    double currentLen = 6;
-    string nextFromId = 7;
-    string nextToId = 8;
-    double nextLen = 9;
-    double depPos = 10;
-    double arrivalPos = 11;
-    double maxSpeed = 12;
-    double time = 13;
-}
 
-message GetPos {
-    PBMSPersonStage_Walking stage = 1;
-    PBSUMOTime sumoTime = 2;
-}
+message CMPWlkgTmRpl {
+    PBSUMOTime duration = 1;
+    double myLastEntryTime = 2;
+    double myCurrentBeginPos = 3;
+    double myCurrentEndPos = 4;
+    }
 
-message GetAngle {
-    PBMSPersonStage_Walking stage = 1;
-    PBSUMOTime sumoTime = 2;
-}
+
 

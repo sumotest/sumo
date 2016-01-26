@@ -8,40 +8,66 @@ public final class NonInteractingProto {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  public interface PBPositionOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:noninteracting.PBPosition)
+  public interface GetEdgePosOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:noninteracting.GetEdgePos)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional double x = 1;</code>
+     * <code>optional double myCurrentBeginPos = 1;</code>
      */
-    double getX();
+    double getMyCurrentBeginPos();
 
     /**
-     * <code>optional double y = 2;</code>
+     * <code>optional double myCurrentEndPos = 2;</code>
      */
-    double getY();
+    double getMyCurrentEndPos();
 
     /**
-     * <code>optional double z = 3;</code>
+     * <code>optional double myCurrentDuration = 3;</code>
      */
-    double getZ();
+    double getMyCurrentDuration();
+
+    /**
+     * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+     */
+    boolean hasTime();
+    /**
+     * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+     */
+    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getTime();
+    /**
+     * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+     */
+    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getTimeOrBuilder();
+
+    /**
+     * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+     */
+    boolean hasMyLastEntryTime();
+    /**
+     * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+     */
+    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getMyLastEntryTime();
+    /**
+     * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+     */
+    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getMyLastEntryTimeOrBuilder();
   }
   /**
-   * Protobuf type {@code noninteracting.PBPosition}
+   * Protobuf type {@code noninteracting.GetEdgePos}
    */
-  public  static final class PBPosition extends
+  public  static final class GetEdgePos extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:noninteracting.PBPosition)
-      PBPositionOrBuilder {
-    // Use PBPosition.newBuilder() to construct.
-    private PBPosition(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:noninteracting.GetEdgePos)
+      GetEdgePosOrBuilder {
+    // Use GetEdgePos.newBuilder() to construct.
+    private GetEdgePos(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
     }
-    private PBPosition() {
-      x_ = 0D;
-      y_ = 0D;
-      z_ = 0D;
+    private GetEdgePos() {
+      myCurrentBeginPos_ = 0D;
+      myCurrentEndPos_ = 0D;
+      myCurrentDuration_ = 0D;
     }
 
     @java.lang.Override
@@ -49,7 +75,7 @@ public final class NonInteractingProto {
     getUnknownFields() {
       return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
-    private PBPosition(
+    private GetEdgePos(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
       this();
@@ -70,17 +96,43 @@ public final class NonInteractingProto {
             }
             case 9: {
 
-              x_ = input.readDouble();
+              myCurrentBeginPos_ = input.readDouble();
               break;
             }
             case 17: {
 
-              y_ = input.readDouble();
+              myCurrentEndPos_ = input.readDouble();
               break;
             }
             case 25: {
 
-              z_ = input.readDouble();
+              myCurrentDuration_ = input.readDouble();
+              break;
+            }
+            case 34: {
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder subBuilder = null;
+              if (time_ != null) {
+                subBuilder = time_.toBuilder();
+              }
+              time_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(time_);
+                time_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 42: {
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder subBuilder = null;
+              if (myLastEntryTime_ != null) {
+                subBuilder = myLastEntryTime_.toBuilder();
+              }
+              myLastEntryTime_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(myLastEntryTime_);
+                myLastEntryTime_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           }
@@ -97,41 +149,83 @@ public final class NonInteractingProto {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_PBPosition_descriptor;
+      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetEdgePos_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_PBPosition_fieldAccessorTable
+      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetEdgePos_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.class, de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.Builder.class);
+              de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.class, de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.Builder.class);
     }
 
-    public static final int X_FIELD_NUMBER = 1;
-    private double x_;
+    public static final int MYCURRENTBEGINPOS_FIELD_NUMBER = 1;
+    private double myCurrentBeginPos_;
     /**
-     * <code>optional double x = 1;</code>
+     * <code>optional double myCurrentBeginPos = 1;</code>
      */
-    public double getX() {
-      return x_;
+    public double getMyCurrentBeginPos() {
+      return myCurrentBeginPos_;
     }
 
-    public static final int Y_FIELD_NUMBER = 2;
-    private double y_;
+    public static final int MYCURRENTENDPOS_FIELD_NUMBER = 2;
+    private double myCurrentEndPos_;
     /**
-     * <code>optional double y = 2;</code>
+     * <code>optional double myCurrentEndPos = 2;</code>
      */
-    public double getY() {
-      return y_;
+    public double getMyCurrentEndPos() {
+      return myCurrentEndPos_;
     }
 
-    public static final int Z_FIELD_NUMBER = 3;
-    private double z_;
+    public static final int MYCURRENTDURATION_FIELD_NUMBER = 3;
+    private double myCurrentDuration_;
     /**
-     * <code>optional double z = 3;</code>
+     * <code>optional double myCurrentDuration = 3;</code>
      */
-    public double getZ() {
-      return z_;
+    public double getMyCurrentDuration() {
+      return myCurrentDuration_;
+    }
+
+    public static final int TIME_FIELD_NUMBER = 4;
+    private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime time_;
+    /**
+     * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+     */
+    public boolean hasTime() {
+      return time_ != null;
+    }
+    /**
+     * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+     */
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getTime() {
+      return time_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : time_;
+    }
+    /**
+     * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+     */
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getTimeOrBuilder() {
+      return getTime();
+    }
+
+    public static final int MYLASTENTRYTIME_FIELD_NUMBER = 5;
+    private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime myLastEntryTime_;
+    /**
+     * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+     */
+    public boolean hasMyLastEntryTime() {
+      return myLastEntryTime_ != null;
+    }
+    /**
+     * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+     */
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getMyLastEntryTime() {
+      return myLastEntryTime_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : myLastEntryTime_;
+    }
+    /**
+     * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+     */
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getMyLastEntryTimeOrBuilder() {
+      return getMyLastEntryTime();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -146,14 +240,20 @@ public final class NonInteractingProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (x_ != 0D) {
-        output.writeDouble(1, x_);
+      if (myCurrentBeginPos_ != 0D) {
+        output.writeDouble(1, myCurrentBeginPos_);
       }
-      if (y_ != 0D) {
-        output.writeDouble(2, y_);
+      if (myCurrentEndPos_ != 0D) {
+        output.writeDouble(2, myCurrentEndPos_);
       }
-      if (z_ != 0D) {
-        output.writeDouble(3, z_);
+      if (myCurrentDuration_ != 0D) {
+        output.writeDouble(3, myCurrentDuration_);
+      }
+      if (time_ != null) {
+        output.writeMessage(4, getTime());
+      }
+      if (myLastEntryTime_ != null) {
+        output.writeMessage(5, getMyLastEntryTime());
       }
     }
 
@@ -162,70 +262,78 @@ public final class NonInteractingProto {
       if (size != -1) return size;
 
       size = 0;
-      if (x_ != 0D) {
+      if (myCurrentBeginPos_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, x_);
+          .computeDoubleSize(1, myCurrentBeginPos_);
       }
-      if (y_ != 0D) {
+      if (myCurrentEndPos_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, y_);
+          .computeDoubleSize(2, myCurrentEndPos_);
       }
-      if (z_ != 0D) {
+      if (myCurrentDuration_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(3, z_);
+          .computeDoubleSize(3, myCurrentDuration_);
+      }
+      if (time_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, getTime());
+      }
+      if (myLastEntryTime_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, getMyLastEntryTime());
       }
       memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(byte[] data)
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(java.io.InputStream input)
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseDelimitedFrom(java.io.InputStream input)
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseDelimitedFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -236,7 +344,7 @@ public final class NonInteractingProto {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition prototype) {
+    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -251,25 +359,25 @@ public final class NonInteractingProto {
       return builder;
     }
     /**
-     * Protobuf type {@code noninteracting.PBPosition}
+     * Protobuf type {@code noninteracting.GetEdgePos}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:noninteracting.PBPosition)
-        de.dlr.sumo.noninteracting.NonInteractingProto.PBPositionOrBuilder {
+        // @@protoc_insertion_point(builder_implements:noninteracting.GetEdgePos)
+        de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePosOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_PBPosition_descriptor;
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetEdgePos_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_PBPosition_fieldAccessorTable
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetEdgePos_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.class, de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.Builder.class);
+                de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.class, de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.Builder.class);
       }
 
-      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.newBuilder()
+      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -285,60 +393,88 @@ public final class NonInteractingProto {
       }
       public Builder clear() {
         super.clear();
-        x_ = 0D;
+        myCurrentBeginPos_ = 0D;
 
-        y_ = 0D;
+        myCurrentEndPos_ = 0D;
 
-        z_ = 0D;
+        myCurrentDuration_ = 0D;
 
+        if (timeBuilder_ == null) {
+          time_ = null;
+        } else {
+          time_ = null;
+          timeBuilder_ = null;
+        }
+        if (myLastEntryTimeBuilder_ == null) {
+          myLastEntryTime_ = null;
+        } else {
+          myLastEntryTime_ = null;
+          myLastEntryTimeBuilder_ = null;
+        }
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_PBPosition_descriptor;
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetEdgePos_descriptor;
       }
 
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition getDefaultInstanceForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.getDefaultInstance();
+      public de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos getDefaultInstanceForType() {
+        return de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.getDefaultInstance();
       }
 
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition build() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition result = buildPartial();
+      public de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos build() {
+        de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition buildPartial() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition result = new de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition(this);
-        result.x_ = x_;
-        result.y_ = y_;
-        result.z_ = z_;
+      public de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos buildPartial() {
+        de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos result = new de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos(this);
+        result.myCurrentBeginPos_ = myCurrentBeginPos_;
+        result.myCurrentEndPos_ = myCurrentEndPos_;
+        result.myCurrentDuration_ = myCurrentDuration_;
+        if (timeBuilder_ == null) {
+          result.time_ = time_;
+        } else {
+          result.time_ = timeBuilder_.build();
+        }
+        if (myLastEntryTimeBuilder_ == null) {
+          result.myLastEntryTime_ = myLastEntryTime_;
+        } else {
+          result.myLastEntryTime_ = myLastEntryTimeBuilder_.build();
+        }
         onBuilt();
         return result;
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition) {
-          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition)other);
+        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos) {
+          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition other) {
-        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition.getDefaultInstance()) return this;
-        if (other.getX() != 0D) {
-          setX(other.getX());
+      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos other) {
+        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos.getDefaultInstance()) return this;
+        if (other.getMyCurrentBeginPos() != 0D) {
+          setMyCurrentBeginPos(other.getMyCurrentBeginPos());
         }
-        if (other.getY() != 0D) {
-          setY(other.getY());
+        if (other.getMyCurrentEndPos() != 0D) {
+          setMyCurrentEndPos(other.getMyCurrentEndPos());
         }
-        if (other.getZ() != 0D) {
-          setZ(other.getZ());
+        if (other.getMyCurrentDuration() != 0D) {
+          setMyCurrentDuration(other.getMyCurrentDuration());
+        }
+        if (other.hasTime()) {
+          mergeTime(other.getTime());
+        }
+        if (other.hasMyLastEntryTime()) {
+          mergeMyLastEntryTime(other.getMyLastEntryTime());
         }
         onChanged();
         return this;
@@ -352,11 +488,11 @@ public final class NonInteractingProto {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition parsedMessage = null;
+        de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition) e.getUnfinishedMessage();
+          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -366,82 +502,316 @@ public final class NonInteractingProto {
         return this;
       }
 
-      private double x_ ;
+      private double myCurrentBeginPos_ ;
       /**
-       * <code>optional double x = 1;</code>
+       * <code>optional double myCurrentBeginPos = 1;</code>
        */
-      public double getX() {
-        return x_;
+      public double getMyCurrentBeginPos() {
+        return myCurrentBeginPos_;
       }
       /**
-       * <code>optional double x = 1;</code>
+       * <code>optional double myCurrentBeginPos = 1;</code>
        */
-      public Builder setX(double value) {
+      public Builder setMyCurrentBeginPos(double value) {
         
-        x_ = value;
+        myCurrentBeginPos_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional double x = 1;</code>
+       * <code>optional double myCurrentBeginPos = 1;</code>
        */
-      public Builder clearX() {
+      public Builder clearMyCurrentBeginPos() {
         
-        x_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double y_ ;
-      /**
-       * <code>optional double y = 2;</code>
-       */
-      public double getY() {
-        return y_;
-      }
-      /**
-       * <code>optional double y = 2;</code>
-       */
-      public Builder setY(double value) {
-        
-        y_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double y = 2;</code>
-       */
-      public Builder clearY() {
-        
-        y_ = 0D;
+        myCurrentBeginPos_ = 0D;
         onChanged();
         return this;
       }
 
-      private double z_ ;
+      private double myCurrentEndPos_ ;
       /**
-       * <code>optional double z = 3;</code>
+       * <code>optional double myCurrentEndPos = 2;</code>
        */
-      public double getZ() {
-        return z_;
+      public double getMyCurrentEndPos() {
+        return myCurrentEndPos_;
       }
       /**
-       * <code>optional double z = 3;</code>
+       * <code>optional double myCurrentEndPos = 2;</code>
        */
-      public Builder setZ(double value) {
+      public Builder setMyCurrentEndPos(double value) {
         
-        z_ = value;
+        myCurrentEndPos_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional double z = 3;</code>
+       * <code>optional double myCurrentEndPos = 2;</code>
        */
-      public Builder clearZ() {
+      public Builder clearMyCurrentEndPos() {
         
-        z_ = 0D;
+        myCurrentEndPos_ = 0D;
         onChanged();
         return this;
+      }
+
+      private double myCurrentDuration_ ;
+      /**
+       * <code>optional double myCurrentDuration = 3;</code>
+       */
+      public double getMyCurrentDuration() {
+        return myCurrentDuration_;
+      }
+      /**
+       * <code>optional double myCurrentDuration = 3;</code>
+       */
+      public Builder setMyCurrentDuration(double value) {
+        
+        myCurrentDuration_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double myCurrentDuration = 3;</code>
+       */
+      public Builder clearMyCurrentDuration() {
+        
+        myCurrentDuration_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime time_ = null;
+      private com.google.protobuf.SingleFieldBuilder<
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> timeBuilder_;
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public boolean hasTime() {
+        return timeBuilder_ != null || time_ != null;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getTime() {
+        if (timeBuilder_ == null) {
+          return time_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : time_;
+        } else {
+          return timeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public Builder setTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
+        if (timeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          time_ = value;
+          onChanged();
+        } else {
+          timeBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public Builder setTime(
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder builderForValue) {
+        if (timeBuilder_ == null) {
+          time_ = builderForValue.build();
+          onChanged();
+        } else {
+          timeBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public Builder mergeTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
+        if (timeBuilder_ == null) {
+          if (time_ != null) {
+            time_ =
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.newBuilder(time_).mergeFrom(value).buildPartial();
+          } else {
+            time_ = value;
+          }
+          onChanged();
+        } else {
+          timeBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public Builder clearTime() {
+        if (timeBuilder_ == null) {
+          time_ = null;
+          onChanged();
+        } else {
+          time_ = null;
+          timeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder getTimeBuilder() {
+        
+        onChanged();
+        return getTimeFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getTimeOrBuilder() {
+        if (timeBuilder_ != null) {
+          return timeBuilder_.getMessageOrBuilder();
+        } else {
+          return time_ == null ?
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : time_;
+        }
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime time = 4;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> 
+          getTimeFieldBuilder() {
+        if (timeBuilder_ == null) {
+          timeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder>(
+                  getTime(),
+                  getParentForChildren(),
+                  isClean());
+          time_ = null;
+        }
+        return timeBuilder_;
+      }
+
+      private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime myLastEntryTime_ = null;
+      private com.google.protobuf.SingleFieldBuilder<
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> myLastEntryTimeBuilder_;
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public boolean hasMyLastEntryTime() {
+        return myLastEntryTimeBuilder_ != null || myLastEntryTime_ != null;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getMyLastEntryTime() {
+        if (myLastEntryTimeBuilder_ == null) {
+          return myLastEntryTime_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : myLastEntryTime_;
+        } else {
+          return myLastEntryTimeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public Builder setMyLastEntryTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
+        if (myLastEntryTimeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          myLastEntryTime_ = value;
+          onChanged();
+        } else {
+          myLastEntryTimeBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public Builder setMyLastEntryTime(
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder builderForValue) {
+        if (myLastEntryTimeBuilder_ == null) {
+          myLastEntryTime_ = builderForValue.build();
+          onChanged();
+        } else {
+          myLastEntryTimeBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public Builder mergeMyLastEntryTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
+        if (myLastEntryTimeBuilder_ == null) {
+          if (myLastEntryTime_ != null) {
+            myLastEntryTime_ =
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.newBuilder(myLastEntryTime_).mergeFrom(value).buildPartial();
+          } else {
+            myLastEntryTime_ = value;
+          }
+          onChanged();
+        } else {
+          myLastEntryTimeBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public Builder clearMyLastEntryTime() {
+        if (myLastEntryTimeBuilder_ == null) {
+          myLastEntryTime_ = null;
+          onChanged();
+        } else {
+          myLastEntryTime_ = null;
+          myLastEntryTimeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder getMyLastEntryTimeBuilder() {
+        
+        onChanged();
+        return getMyLastEntryTimeFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getMyLastEntryTimeOrBuilder() {
+        if (myLastEntryTimeBuilder_ != null) {
+          return myLastEntryTimeBuilder_.getMessageOrBuilder();
+        } else {
+          return myLastEntryTime_ == null ?
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : myLastEntryTime_;
+        }
+      }
+      /**
+       * <code>optional .noninteracting.PBSUMOTime myLastEntryTime = 5;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> 
+          getMyLastEntryTimeFieldBuilder() {
+        if (myLastEntryTimeBuilder_ == null) {
+          myLastEntryTimeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder>(
+                  getMyLastEntryTime(),
+                  getParentForChildren(),
+                  isClean());
+          myLastEntryTime_ = null;
+        }
+        return myLastEntryTimeBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -454,27 +824,27 @@ public final class NonInteractingProto {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:noninteracting.PBPosition)
+      // @@protoc_insertion_point(builder_scope:noninteracting.GetEdgePos)
     }
 
-    // @@protoc_insertion_point(class_scope:noninteracting.PBPosition)
-    private static final de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:noninteracting.GetEdgePos)
+    private static final de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition();
+      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos();
     }
 
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition getDefaultInstance() {
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<PBPosition>
-        PARSER = new com.google.protobuf.AbstractParser<PBPosition>() {
-      public PBPosition parsePartialFrom(
+    private static final com.google.protobuf.Parser<GetEdgePos>
+        PARSER = new com.google.protobuf.AbstractParser<GetEdgePos>() {
+      public GetEdgePos parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         try {
-          return new PBPosition(input, extensionRegistry);
+          return new GetEdgePos(input, extensionRegistry);
         } catch (RuntimeException e) {
           if (e.getCause() instanceof
               com.google.protobuf.InvalidProtocolBufferException) {
@@ -486,16 +856,16 @@ public final class NonInteractingProto {
       }
     };
 
-    public static com.google.protobuf.Parser<PBPosition> parser() {
+    public static com.google.protobuf.Parser<GetEdgePos> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<PBPosition> getParserForType() {
+    public com.google.protobuf.Parser<GetEdgePos> getParserForType() {
       return PARSER;
     }
 
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBPosition getDefaultInstanceForType() {
+    public de.dlr.sumo.noninteracting.NonInteractingProto.GetEdgePos getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3626,130 +3996,53 @@ public final class NonInteractingProto {
 
   }
 
-  public interface CMPWlkgTm_flatOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:noninteracting.CMPWlkgTm_flat)
+  public interface CMPWlkgTmRplOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:noninteracting.CMPWlkgTmRpl)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string prevFromId = 1;</code>
+     * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
      */
-    java.lang.String getPrevFromId();
+    boolean hasDuration();
     /**
-     * <code>optional string prevFromId = 1;</code>
+     * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
      */
-    com.google.protobuf.ByteString
-        getPrevFromIdBytes();
+    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getDuration();
+    /**
+     * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
+     */
+    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getDurationOrBuilder();
 
     /**
-     * <code>optional string prevToId = 2;</code>
+     * <code>optional double myLastEntryTime = 2;</code>
      */
-    java.lang.String getPrevToId();
-    /**
-     * <code>optional string prevToId = 2;</code>
-     */
-    com.google.protobuf.ByteString
-        getPrevToIdBytes();
+    double getMyLastEntryTime();
 
     /**
-     * <code>optional double prevLen = 3;</code>
+     * <code>optional double myCurrentBeginPos = 3;</code>
      */
-    double getPrevLen();
+    double getMyCurrentBeginPos();
 
     /**
-     * <code>optional string currentFromId = 4;</code>
+     * <code>optional double myCurrentEndPos = 4;</code>
      */
-    java.lang.String getCurrentFromId();
-    /**
-     * <code>optional string currentFromId = 4;</code>
-     */
-    com.google.protobuf.ByteString
-        getCurrentFromIdBytes();
-
-    /**
-     * <code>optional string currentToId = 5;</code>
-     */
-    java.lang.String getCurrentToId();
-    /**
-     * <code>optional string currentToId = 5;</code>
-     */
-    com.google.protobuf.ByteString
-        getCurrentToIdBytes();
-
-    /**
-     * <code>optional double currentLen = 6;</code>
-     */
-    double getCurrentLen();
-
-    /**
-     * <code>optional string nextFromId = 7;</code>
-     */
-    java.lang.String getNextFromId();
-    /**
-     * <code>optional string nextFromId = 7;</code>
-     */
-    com.google.protobuf.ByteString
-        getNextFromIdBytes();
-
-    /**
-     * <code>optional string nextToId = 8;</code>
-     */
-    java.lang.String getNextToId();
-    /**
-     * <code>optional string nextToId = 8;</code>
-     */
-    com.google.protobuf.ByteString
-        getNextToIdBytes();
-
-    /**
-     * <code>optional double nextLen = 9;</code>
-     */
-    double getNextLen();
-
-    /**
-     * <code>optional double depPos = 10;</code>
-     */
-    double getDepPos();
-
-    /**
-     * <code>optional double arrivalPos = 11;</code>
-     */
-    double getArrivalPos();
-
-    /**
-     * <code>optional double maxSpeed = 12;</code>
-     */
-    double getMaxSpeed();
-
-    /**
-     * <code>optional double time = 13;</code>
-     */
-    double getTime();
+    double getMyCurrentEndPos();
   }
   /**
-   * Protobuf type {@code noninteracting.CMPWlkgTm_flat}
+   * Protobuf type {@code noninteracting.CMPWlkgTmRpl}
    */
-  public  static final class CMPWlkgTm_flat extends
+  public  static final class CMPWlkgTmRpl extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:noninteracting.CMPWlkgTm_flat)
-      CMPWlkgTm_flatOrBuilder {
-    // Use CMPWlkgTm_flat.newBuilder() to construct.
-    private CMPWlkgTm_flat(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:noninteracting.CMPWlkgTmRpl)
+      CMPWlkgTmRplOrBuilder {
+    // Use CMPWlkgTmRpl.newBuilder() to construct.
+    private CMPWlkgTmRpl(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
     }
-    private CMPWlkgTm_flat() {
-      prevFromId_ = "";
-      prevToId_ = "";
-      prevLen_ = 0D;
-      currentFromId_ = "";
-      currentToId_ = "";
-      currentLen_ = 0D;
-      nextFromId_ = "";
-      nextToId_ = "";
-      nextLen_ = 0D;
-      depPos_ = 0D;
-      arrivalPos_ = 0D;
-      maxSpeed_ = 0D;
-      time_ = 0D;
+    private CMPWlkgTmRpl() {
+      myLastEntryTime_ = 0D;
+      myCurrentBeginPos_ = 0D;
+      myCurrentEndPos_ = 0D;
     }
 
     @java.lang.Override
@@ -3757,7 +4050,7 @@ public final class NonInteractingProto {
     getUnknownFields() {
       return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
-    private CMPWlkgTm_flat(
+    private CMPWlkgTmRpl(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
       this();
@@ -3777,74 +4070,31 @@ public final class NonInteractingProto {
               break;
             }
             case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder subBuilder = null;
+              if (duration_ != null) {
+                subBuilder = duration_.toBuilder();
+              }
+              duration_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(duration_);
+                duration_ = subBuilder.buildPartial();
+              }
 
-              prevFromId_ = s;
               break;
             }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
+            case 17: {
 
-              prevToId_ = s;
+              myLastEntryTime_ = input.readDouble();
               break;
             }
             case 25: {
 
-              prevLen_ = input.readDouble();
+              myCurrentBeginPos_ = input.readDouble();
               break;
             }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
+            case 33: {
 
-              currentFromId_ = s;
-              break;
-            }
-            case 42: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              currentToId_ = s;
-              break;
-            }
-            case 49: {
-
-              currentLen_ = input.readDouble();
-              break;
-            }
-            case 58: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              nextFromId_ = s;
-              break;
-            }
-            case 66: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              nextToId_ = s;
-              break;
-            }
-            case 73: {
-
-              nextLen_ = input.readDouble();
-              break;
-            }
-            case 81: {
-
-              depPos_ = input.readDouble();
-              break;
-            }
-            case 89: {
-
-              arrivalPos_ = input.readDouble();
-              break;
-            }
-            case 97: {
-
-              maxSpeed_ = input.readDouble();
-              break;
-            }
-            case 105: {
-
-              time_ = input.readDouble();
+              myCurrentEndPos_ = input.readDouble();
               break;
             }
           }
@@ -3861,281 +4111,62 @@ public final class NonInteractingProto {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTmRpl_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable
+      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTmRpl_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.class, de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.Builder.class);
+              de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.class, de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.Builder.class);
     }
 
-    public static final int PREVFROMID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object prevFromId_;
+    public static final int DURATION_FIELD_NUMBER = 1;
+    private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime duration_;
     /**
-     * <code>optional string prevFromId = 1;</code>
+     * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
      */
-    public java.lang.String getPrevFromId() {
-      java.lang.Object ref = prevFromId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        prevFromId_ = s;
-        return s;
-      }
+    public boolean hasDuration() {
+      return duration_ != null;
     }
     /**
-     * <code>optional string prevFromId = 1;</code>
+     * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
      */
-    public com.google.protobuf.ByteString
-        getPrevFromIdBytes() {
-      java.lang.Object ref = prevFromId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        prevFromId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getDuration() {
+      return duration_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : duration_;
+    }
+    /**
+     * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
+     */
+    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getDurationOrBuilder() {
+      return getDuration();
     }
 
-    public static final int PREVTOID_FIELD_NUMBER = 2;
-    private volatile java.lang.Object prevToId_;
+    public static final int MYLASTENTRYTIME_FIELD_NUMBER = 2;
+    private double myLastEntryTime_;
     /**
-     * <code>optional string prevToId = 2;</code>
+     * <code>optional double myLastEntryTime = 2;</code>
      */
-    public java.lang.String getPrevToId() {
-      java.lang.Object ref = prevToId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        prevToId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string prevToId = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getPrevToIdBytes() {
-      java.lang.Object ref = prevToId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        prevToId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public double getMyLastEntryTime() {
+      return myLastEntryTime_;
     }
 
-    public static final int PREVLEN_FIELD_NUMBER = 3;
-    private double prevLen_;
+    public static final int MYCURRENTBEGINPOS_FIELD_NUMBER = 3;
+    private double myCurrentBeginPos_;
     /**
-     * <code>optional double prevLen = 3;</code>
+     * <code>optional double myCurrentBeginPos = 3;</code>
      */
-    public double getPrevLen() {
-      return prevLen_;
+    public double getMyCurrentBeginPos() {
+      return myCurrentBeginPos_;
     }
 
-    public static final int CURRENTFROMID_FIELD_NUMBER = 4;
-    private volatile java.lang.Object currentFromId_;
+    public static final int MYCURRENTENDPOS_FIELD_NUMBER = 4;
+    private double myCurrentEndPos_;
     /**
-     * <code>optional string currentFromId = 4;</code>
+     * <code>optional double myCurrentEndPos = 4;</code>
      */
-    public java.lang.String getCurrentFromId() {
-      java.lang.Object ref = currentFromId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        currentFromId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string currentFromId = 4;</code>
-     */
-    public com.google.protobuf.ByteString
-        getCurrentFromIdBytes() {
-      java.lang.Object ref = currentFromId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        currentFromId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int CURRENTTOID_FIELD_NUMBER = 5;
-    private volatile java.lang.Object currentToId_;
-    /**
-     * <code>optional string currentToId = 5;</code>
-     */
-    public java.lang.String getCurrentToId() {
-      java.lang.Object ref = currentToId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        currentToId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string currentToId = 5;</code>
-     */
-    public com.google.protobuf.ByteString
-        getCurrentToIdBytes() {
-      java.lang.Object ref = currentToId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        currentToId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int CURRENTLEN_FIELD_NUMBER = 6;
-    private double currentLen_;
-    /**
-     * <code>optional double currentLen = 6;</code>
-     */
-    public double getCurrentLen() {
-      return currentLen_;
-    }
-
-    public static final int NEXTFROMID_FIELD_NUMBER = 7;
-    private volatile java.lang.Object nextFromId_;
-    /**
-     * <code>optional string nextFromId = 7;</code>
-     */
-    public java.lang.String getNextFromId() {
-      java.lang.Object ref = nextFromId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        nextFromId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string nextFromId = 7;</code>
-     */
-    public com.google.protobuf.ByteString
-        getNextFromIdBytes() {
-      java.lang.Object ref = nextFromId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        nextFromId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int NEXTTOID_FIELD_NUMBER = 8;
-    private volatile java.lang.Object nextToId_;
-    /**
-     * <code>optional string nextToId = 8;</code>
-     */
-    public java.lang.String getNextToId() {
-      java.lang.Object ref = nextToId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        nextToId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string nextToId = 8;</code>
-     */
-    public com.google.protobuf.ByteString
-        getNextToIdBytes() {
-      java.lang.Object ref = nextToId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        nextToId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int NEXTLEN_FIELD_NUMBER = 9;
-    private double nextLen_;
-    /**
-     * <code>optional double nextLen = 9;</code>
-     */
-    public double getNextLen() {
-      return nextLen_;
-    }
-
-    public static final int DEPPOS_FIELD_NUMBER = 10;
-    private double depPos_;
-    /**
-     * <code>optional double depPos = 10;</code>
-     */
-    public double getDepPos() {
-      return depPos_;
-    }
-
-    public static final int ARRIVALPOS_FIELD_NUMBER = 11;
-    private double arrivalPos_;
-    /**
-     * <code>optional double arrivalPos = 11;</code>
-     */
-    public double getArrivalPos() {
-      return arrivalPos_;
-    }
-
-    public static final int MAXSPEED_FIELD_NUMBER = 12;
-    private double maxSpeed_;
-    /**
-     * <code>optional double maxSpeed = 12;</code>
-     */
-    public double getMaxSpeed() {
-      return maxSpeed_;
-    }
-
-    public static final int TIME_FIELD_NUMBER = 13;
-    private double time_;
-    /**
-     * <code>optional double time = 13;</code>
-     */
-    public double getTime() {
-      return time_;
+    public double getMyCurrentEndPos() {
+      return myCurrentEndPos_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -4150,44 +4181,17 @@ public final class NonInteractingProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getPrevFromIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, prevFromId_);
+      if (duration_ != null) {
+        output.writeMessage(1, getDuration());
       }
-      if (!getPrevToIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 2, prevToId_);
+      if (myLastEntryTime_ != 0D) {
+        output.writeDouble(2, myLastEntryTime_);
       }
-      if (prevLen_ != 0D) {
-        output.writeDouble(3, prevLen_);
+      if (myCurrentBeginPos_ != 0D) {
+        output.writeDouble(3, myCurrentBeginPos_);
       }
-      if (!getCurrentFromIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 4, currentFromId_);
-      }
-      if (!getCurrentToIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 5, currentToId_);
-      }
-      if (currentLen_ != 0D) {
-        output.writeDouble(6, currentLen_);
-      }
-      if (!getNextFromIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 7, nextFromId_);
-      }
-      if (!getNextToIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 8, nextToId_);
-      }
-      if (nextLen_ != 0D) {
-        output.writeDouble(9, nextLen_);
-      }
-      if (depPos_ != 0D) {
-        output.writeDouble(10, depPos_);
-      }
-      if (arrivalPos_ != 0D) {
-        output.writeDouble(11, arrivalPos_);
-      }
-      if (maxSpeed_ != 0D) {
-        output.writeDouble(12, maxSpeed_);
-      }
-      if (time_ != 0D) {
-        output.writeDouble(13, time_);
+      if (myCurrentEndPos_ != 0D) {
+        output.writeDouble(4, myCurrentEndPos_);
       }
     }
 
@@ -4196,104 +4200,74 @@ public final class NonInteractingProto {
       if (size != -1) return size;
 
       size = 0;
-      if (!getPrevFromIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, prevFromId_);
-      }
-      if (!getPrevToIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, prevToId_);
-      }
-      if (prevLen_ != 0D) {
+      if (duration_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(3, prevLen_);
+          .computeMessageSize(1, getDuration());
       }
-      if (!getCurrentFromIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, currentFromId_);
-      }
-      if (!getCurrentToIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, currentToId_);
-      }
-      if (currentLen_ != 0D) {
+      if (myLastEntryTime_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(6, currentLen_);
+          .computeDoubleSize(2, myLastEntryTime_);
       }
-      if (!getNextFromIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(7, nextFromId_);
-      }
-      if (!getNextToIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(8, nextToId_);
-      }
-      if (nextLen_ != 0D) {
+      if (myCurrentBeginPos_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(9, nextLen_);
+          .computeDoubleSize(3, myCurrentBeginPos_);
       }
-      if (depPos_ != 0D) {
+      if (myCurrentEndPos_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(10, depPos_);
-      }
-      if (arrivalPos_ != 0D) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(11, arrivalPos_);
-      }
-      if (maxSpeed_ != 0D) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(12, maxSpeed_);
-      }
-      if (time_ != 0D) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(13, time_);
+          .computeDoubleSize(4, myCurrentEndPos_);
       }
       memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(byte[] data)
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(java.io.InputStream input)
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseDelimitedFrom(java.io.InputStream input)
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseDelimitedFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parseFrom(
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4304,7 +4278,7 @@ public final class NonInteractingProto {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat prototype) {
+    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -4319,25 +4293,25 @@ public final class NonInteractingProto {
       return builder;
     }
     /**
-     * Protobuf type {@code noninteracting.CMPWlkgTm_flat}
+     * Protobuf type {@code noninteracting.CMPWlkgTmRpl}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:noninteracting.CMPWlkgTm_flat)
-        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flatOrBuilder {
+        // @@protoc_insertion_point(builder_implements:noninteracting.CMPWlkgTmRpl)
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRplOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTmRpl_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTmRpl_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.class, de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.Builder.class);
+                de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.class, de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.Builder.class);
       }
 
-      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.newBuilder()
+      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -4353,126 +4327,74 @@ public final class NonInteractingProto {
       }
       public Builder clear() {
         super.clear();
-        prevFromId_ = "";
+        if (durationBuilder_ == null) {
+          duration_ = null;
+        } else {
+          duration_ = null;
+          durationBuilder_ = null;
+        }
+        myLastEntryTime_ = 0D;
 
-        prevToId_ = "";
+        myCurrentBeginPos_ = 0D;
 
-        prevLen_ = 0D;
-
-        currentFromId_ = "";
-
-        currentToId_ = "";
-
-        currentLen_ = 0D;
-
-        nextFromId_ = "";
-
-        nextToId_ = "";
-
-        nextLen_ = 0D;
-
-        depPos_ = 0D;
-
-        arrivalPos_ = 0D;
-
-        maxSpeed_ = 0D;
-
-        time_ = 0D;
+        myCurrentEndPos_ = 0D;
 
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_CMPWlkgTmRpl_descriptor;
       }
 
-      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat getDefaultInstanceForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.getDefaultInstance();
+      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl getDefaultInstanceForType() {
+        return de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.getDefaultInstance();
       }
 
-      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat build() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat result = buildPartial();
+      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl build() {
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat buildPartial() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat result = new de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat(this);
-        result.prevFromId_ = prevFromId_;
-        result.prevToId_ = prevToId_;
-        result.prevLen_ = prevLen_;
-        result.currentFromId_ = currentFromId_;
-        result.currentToId_ = currentToId_;
-        result.currentLen_ = currentLen_;
-        result.nextFromId_ = nextFromId_;
-        result.nextToId_ = nextToId_;
-        result.nextLen_ = nextLen_;
-        result.depPos_ = depPos_;
-        result.arrivalPos_ = arrivalPos_;
-        result.maxSpeed_ = maxSpeed_;
-        result.time_ = time_;
+      public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl buildPartial() {
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl result = new de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl(this);
+        if (durationBuilder_ == null) {
+          result.duration_ = duration_;
+        } else {
+          result.duration_ = durationBuilder_.build();
+        }
+        result.myLastEntryTime_ = myLastEntryTime_;
+        result.myCurrentBeginPos_ = myCurrentBeginPos_;
+        result.myCurrentEndPos_ = myCurrentEndPos_;
         onBuilt();
         return result;
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat) {
-          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat)other);
+        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl) {
+          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat other) {
-        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat.getDefaultInstance()) return this;
-        if (!other.getPrevFromId().isEmpty()) {
-          prevFromId_ = other.prevFromId_;
-          onChanged();
+      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl other) {
+        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl.getDefaultInstance()) return this;
+        if (other.hasDuration()) {
+          mergeDuration(other.getDuration());
         }
-        if (!other.getPrevToId().isEmpty()) {
-          prevToId_ = other.prevToId_;
-          onChanged();
+        if (other.getMyLastEntryTime() != 0D) {
+          setMyLastEntryTime(other.getMyLastEntryTime());
         }
-        if (other.getPrevLen() != 0D) {
-          setPrevLen(other.getPrevLen());
+        if (other.getMyCurrentBeginPos() != 0D) {
+          setMyCurrentBeginPos(other.getMyCurrentBeginPos());
         }
-        if (!other.getCurrentFromId().isEmpty()) {
-          currentFromId_ = other.currentFromId_;
-          onChanged();
-        }
-        if (!other.getCurrentToId().isEmpty()) {
-          currentToId_ = other.currentToId_;
-          onChanged();
-        }
-        if (other.getCurrentLen() != 0D) {
-          setCurrentLen(other.getCurrentLen());
-        }
-        if (!other.getNextFromId().isEmpty()) {
-          nextFromId_ = other.nextFromId_;
-          onChanged();
-        }
-        if (!other.getNextToId().isEmpty()) {
-          nextToId_ = other.nextToId_;
-          onChanged();
-        }
-        if (other.getNextLen() != 0D) {
-          setNextLen(other.getNextLen());
-        }
-        if (other.getDepPos() != 0D) {
-          setDepPos(other.getDepPos());
-        }
-        if (other.getArrivalPos() != 0D) {
-          setArrivalPos(other.getArrivalPos());
-        }
-        if (other.getMaxSpeed() != 0D) {
-          setMaxSpeed(other.getMaxSpeed());
-        }
-        if (other.getTime() != 0D) {
-          setTime(other.getTime());
+        if (other.getMyCurrentEndPos() != 0D) {
+          setMyCurrentEndPos(other.getMyCurrentEndPos());
         }
         onChanged();
         return this;
@@ -4486,11 +4408,11 @@ public final class NonInteractingProto {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat parsedMessage = null;
+        de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat) e.getUnfinishedMessage();
+          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -4500,1286 +4422,199 @@ public final class NonInteractingProto {
         return this;
       }
 
-      private java.lang.Object prevFromId_ = "";
-      /**
-       * <code>optional string prevFromId = 1;</code>
-       */
-      public java.lang.String getPrevFromId() {
-        java.lang.Object ref = prevFromId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          prevFromId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string prevFromId = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getPrevFromIdBytes() {
-        java.lang.Object ref = prevFromId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          prevFromId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string prevFromId = 1;</code>
-       */
-      public Builder setPrevFromId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        prevFromId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string prevFromId = 1;</code>
-       */
-      public Builder clearPrevFromId() {
-        
-        prevFromId_ = getDefaultInstance().getPrevFromId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string prevFromId = 1;</code>
-       */
-      public Builder setPrevFromIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        prevFromId_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object prevToId_ = "";
-      /**
-       * <code>optional string prevToId = 2;</code>
-       */
-      public java.lang.String getPrevToId() {
-        java.lang.Object ref = prevToId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          prevToId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string prevToId = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getPrevToIdBytes() {
-        java.lang.Object ref = prevToId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          prevToId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string prevToId = 2;</code>
-       */
-      public Builder setPrevToId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        prevToId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string prevToId = 2;</code>
-       */
-      public Builder clearPrevToId() {
-        
-        prevToId_ = getDefaultInstance().getPrevToId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string prevToId = 2;</code>
-       */
-      public Builder setPrevToIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        prevToId_ = value;
-        onChanged();
-        return this;
-      }
-
-      private double prevLen_ ;
-      /**
-       * <code>optional double prevLen = 3;</code>
-       */
-      public double getPrevLen() {
-        return prevLen_;
-      }
-      /**
-       * <code>optional double prevLen = 3;</code>
-       */
-      public Builder setPrevLen(double value) {
-        
-        prevLen_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double prevLen = 3;</code>
-       */
-      public Builder clearPrevLen() {
-        
-        prevLen_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object currentFromId_ = "";
-      /**
-       * <code>optional string currentFromId = 4;</code>
-       */
-      public java.lang.String getCurrentFromId() {
-        java.lang.Object ref = currentFromId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          currentFromId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string currentFromId = 4;</code>
-       */
-      public com.google.protobuf.ByteString
-          getCurrentFromIdBytes() {
-        java.lang.Object ref = currentFromId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          currentFromId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string currentFromId = 4;</code>
-       */
-      public Builder setCurrentFromId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        currentFromId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string currentFromId = 4;</code>
-       */
-      public Builder clearCurrentFromId() {
-        
-        currentFromId_ = getDefaultInstance().getCurrentFromId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string currentFromId = 4;</code>
-       */
-      public Builder setCurrentFromIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        currentFromId_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object currentToId_ = "";
-      /**
-       * <code>optional string currentToId = 5;</code>
-       */
-      public java.lang.String getCurrentToId() {
-        java.lang.Object ref = currentToId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          currentToId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string currentToId = 5;</code>
-       */
-      public com.google.protobuf.ByteString
-          getCurrentToIdBytes() {
-        java.lang.Object ref = currentToId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          currentToId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string currentToId = 5;</code>
-       */
-      public Builder setCurrentToId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        currentToId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string currentToId = 5;</code>
-       */
-      public Builder clearCurrentToId() {
-        
-        currentToId_ = getDefaultInstance().getCurrentToId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string currentToId = 5;</code>
-       */
-      public Builder setCurrentToIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        currentToId_ = value;
-        onChanged();
-        return this;
-      }
-
-      private double currentLen_ ;
-      /**
-       * <code>optional double currentLen = 6;</code>
-       */
-      public double getCurrentLen() {
-        return currentLen_;
-      }
-      /**
-       * <code>optional double currentLen = 6;</code>
-       */
-      public Builder setCurrentLen(double value) {
-        
-        currentLen_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double currentLen = 6;</code>
-       */
-      public Builder clearCurrentLen() {
-        
-        currentLen_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object nextFromId_ = "";
-      /**
-       * <code>optional string nextFromId = 7;</code>
-       */
-      public java.lang.String getNextFromId() {
-        java.lang.Object ref = nextFromId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          nextFromId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string nextFromId = 7;</code>
-       */
-      public com.google.protobuf.ByteString
-          getNextFromIdBytes() {
-        java.lang.Object ref = nextFromId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          nextFromId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string nextFromId = 7;</code>
-       */
-      public Builder setNextFromId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        nextFromId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string nextFromId = 7;</code>
-       */
-      public Builder clearNextFromId() {
-        
-        nextFromId_ = getDefaultInstance().getNextFromId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string nextFromId = 7;</code>
-       */
-      public Builder setNextFromIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        nextFromId_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object nextToId_ = "";
-      /**
-       * <code>optional string nextToId = 8;</code>
-       */
-      public java.lang.String getNextToId() {
-        java.lang.Object ref = nextToId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          nextToId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string nextToId = 8;</code>
-       */
-      public com.google.protobuf.ByteString
-          getNextToIdBytes() {
-        java.lang.Object ref = nextToId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          nextToId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string nextToId = 8;</code>
-       */
-      public Builder setNextToId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        nextToId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string nextToId = 8;</code>
-       */
-      public Builder clearNextToId() {
-        
-        nextToId_ = getDefaultInstance().getNextToId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string nextToId = 8;</code>
-       */
-      public Builder setNextToIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        nextToId_ = value;
-        onChanged();
-        return this;
-      }
-
-      private double nextLen_ ;
-      /**
-       * <code>optional double nextLen = 9;</code>
-       */
-      public double getNextLen() {
-        return nextLen_;
-      }
-      /**
-       * <code>optional double nextLen = 9;</code>
-       */
-      public Builder setNextLen(double value) {
-        
-        nextLen_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double nextLen = 9;</code>
-       */
-      public Builder clearNextLen() {
-        
-        nextLen_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double depPos_ ;
-      /**
-       * <code>optional double depPos = 10;</code>
-       */
-      public double getDepPos() {
-        return depPos_;
-      }
-      /**
-       * <code>optional double depPos = 10;</code>
-       */
-      public Builder setDepPos(double value) {
-        
-        depPos_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double depPos = 10;</code>
-       */
-      public Builder clearDepPos() {
-        
-        depPos_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double arrivalPos_ ;
-      /**
-       * <code>optional double arrivalPos = 11;</code>
-       */
-      public double getArrivalPos() {
-        return arrivalPos_;
-      }
-      /**
-       * <code>optional double arrivalPos = 11;</code>
-       */
-      public Builder setArrivalPos(double value) {
-        
-        arrivalPos_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double arrivalPos = 11;</code>
-       */
-      public Builder clearArrivalPos() {
-        
-        arrivalPos_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double maxSpeed_ ;
-      /**
-       * <code>optional double maxSpeed = 12;</code>
-       */
-      public double getMaxSpeed() {
-        return maxSpeed_;
-      }
-      /**
-       * <code>optional double maxSpeed = 12;</code>
-       */
-      public Builder setMaxSpeed(double value) {
-        
-        maxSpeed_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double maxSpeed = 12;</code>
-       */
-      public Builder clearMaxSpeed() {
-        
-        maxSpeed_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double time_ ;
-      /**
-       * <code>optional double time = 13;</code>
-       */
-      public double getTime() {
-        return time_;
-      }
-      /**
-       * <code>optional double time = 13;</code>
-       */
-      public Builder setTime(double value) {
-        
-        time_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double time = 13;</code>
-       */
-      public Builder clearTime() {
-        
-        time_ = 0D;
-        onChanged();
-        return this;
-      }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:noninteracting.CMPWlkgTm_flat)
-    }
-
-    // @@protoc_insertion_point(class_scope:noninteracting.CMPWlkgTm_flat)
-    private static final de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat();
-    }
-
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<CMPWlkgTm_flat>
-        PARSER = new com.google.protobuf.AbstractParser<CMPWlkgTm_flat>() {
-      public CMPWlkgTm_flat parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        try {
-          return new CMPWlkgTm_flat(input, extensionRegistry);
-        } catch (RuntimeException e) {
-          if (e.getCause() instanceof
-              com.google.protobuf.InvalidProtocolBufferException) {
-            throw (com.google.protobuf.InvalidProtocolBufferException)
-                e.getCause();
-          }
-          throw e;
-        }
-      }
-    };
-
-    public static com.google.protobuf.Parser<CMPWlkgTm_flat> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<CMPWlkgTm_flat> getParserForType() {
-      return PARSER;
-    }
-
-    public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTm_flat getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface GetPosOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:noninteracting.GetPos)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    boolean hasStage();
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking getStage();
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder getStageOrBuilder();
-
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    boolean hasSumoTime();
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getSumoTime();
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getSumoTimeOrBuilder();
-  }
-  /**
-   * Protobuf type {@code noninteracting.GetPos}
-   */
-  public  static final class GetPos extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:noninteracting.GetPos)
-      GetPosOrBuilder {
-    // Use GetPos.newBuilder() to construct.
-    private GetPos(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private GetPos() {
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
-    }
-    private GetPos(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
-      this();
-      int mutable_bitField0_ = 0;
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder subBuilder = null;
-              if (stage_ != null) {
-                subBuilder = stage_.toBuilder();
-              }
-              stage_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(stage_);
-                stage_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 18: {
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder subBuilder = null;
-              if (sumoTime_ != null) {
-                subBuilder = sumoTime_.toBuilder();
-              }
-              sumoTime_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(sumoTime_);
-                sumoTime_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw new RuntimeException(e.setUnfinishedMessage(this));
-      } catch (java.io.IOException e) {
-        throw new RuntimeException(
-            new com.google.protobuf.InvalidProtocolBufferException(
-                e.getMessage()).setUnfinishedMessage(this));
-      } finally {
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetPos_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetPos_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.class, de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.Builder.class);
-    }
-
-    public static final int STAGE_FIELD_NUMBER = 1;
-    private de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking stage_;
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    public boolean hasStage() {
-      return stage_ != null;
-    }
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking getStage() {
-      return stage_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.getDefaultInstance() : stage_;
-    }
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder getStageOrBuilder() {
-      return getStage();
-    }
-
-    public static final int SUMOTIME_FIELD_NUMBER = 2;
-    private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime sumoTime_;
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    public boolean hasSumoTime() {
-      return sumoTime_ != null;
-    }
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getSumoTime() {
-      return sumoTime_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : sumoTime_;
-    }
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getSumoTimeOrBuilder() {
-      return getSumoTime();
-    }
-
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (stage_ != null) {
-        output.writeMessage(1, getStage());
-      }
-      if (sumoTime_ != null) {
-        output.writeMessage(2, getSumoTime());
-      }
-    }
-
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (stage_ != null) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, getStage());
-      }
-      if (sumoTime_ != null) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, getSumoTime());
-      }
-      memoizedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.GetPos prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code noninteracting.GetPos}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:noninteracting.GetPos)
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetPosOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetPos_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetPos_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.class, de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.Builder.class);
-      }
-
-      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      public Builder clear() {
-        super.clear();
-        if (stageBuilder_ == null) {
-          stage_ = null;
-        } else {
-          stage_ = null;
-          stageBuilder_ = null;
-        }
-        if (sumoTimeBuilder_ == null) {
-          sumoTime_ = null;
-        } else {
-          sumoTime_ = null;
-          sumoTimeBuilder_ = null;
-        }
-        return this;
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetPos_descriptor;
-      }
-
-      public de.dlr.sumo.noninteracting.NonInteractingProto.GetPos getDefaultInstanceForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.getDefaultInstance();
-      }
-
-      public de.dlr.sumo.noninteracting.NonInteractingProto.GetPos build() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetPos result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public de.dlr.sumo.noninteracting.NonInteractingProto.GetPos buildPartial() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetPos result = new de.dlr.sumo.noninteracting.NonInteractingProto.GetPos(this);
-        if (stageBuilder_ == null) {
-          result.stage_ = stage_;
-        } else {
-          result.stage_ = stageBuilder_.build();
-        }
-        if (sumoTimeBuilder_ == null) {
-          result.sumoTime_ = sumoTime_;
-        } else {
-          result.sumoTime_ = sumoTimeBuilder_.build();
-        }
-        onBuilt();
-        return result;
-      }
-
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.GetPos) {
-          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.GetPos)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.GetPos other) {
-        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.GetPos.getDefaultInstance()) return this;
-        if (other.hasStage()) {
-          mergeStage(other.getStage());
-        }
-        if (other.hasSumoTime()) {
-          mergeSumoTime(other.getSumoTime());
-        }
-        onChanged();
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetPos parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.GetPos) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking stage_ = null;
+      private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime duration_ = null;
       private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder> stageBuilder_;
+          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> durationBuilder_;
       /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public boolean hasStage() {
-        return stageBuilder_ != null || stage_ != null;
+      public boolean hasDuration() {
+        return durationBuilder_ != null || duration_ != null;
       }
       /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking getStage() {
-        if (stageBuilder_ == null) {
-          return stage_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.getDefaultInstance() : stage_;
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getDuration() {
+        if (durationBuilder_ == null) {
+          return duration_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : duration_;
         } else {
-          return stageBuilder_.getMessage();
+          return durationBuilder_.getMessage();
         }
       }
       /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public Builder setStage(de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking value) {
-        if (stageBuilder_ == null) {
+      public Builder setDuration(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
+        if (durationBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          stage_ = value;
+          duration_ = value;
           onChanged();
         } else {
-          stageBuilder_.setMessage(value);
+          durationBuilder_.setMessage(value);
         }
 
         return this;
       }
       /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public Builder setStage(
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder builderForValue) {
-        if (stageBuilder_ == null) {
-          stage_ = builderForValue.build();
-          onChanged();
-        } else {
-          stageBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public Builder mergeStage(de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking value) {
-        if (stageBuilder_ == null) {
-          if (stage_ != null) {
-            stage_ =
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.newBuilder(stage_).mergeFrom(value).buildPartial();
-          } else {
-            stage_ = value;
-          }
-          onChanged();
-        } else {
-          stageBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public Builder clearStage() {
-        if (stageBuilder_ == null) {
-          stage_ = null;
-          onChanged();
-        } else {
-          stage_ = null;
-          stageBuilder_ = null;
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder getStageBuilder() {
-        
-        onChanged();
-        return getStageFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder getStageOrBuilder() {
-        if (stageBuilder_ != null) {
-          return stageBuilder_.getMessageOrBuilder();
-        } else {
-          return stage_ == null ?
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.getDefaultInstance() : stage_;
-        }
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder> 
-          getStageFieldBuilder() {
-        if (stageBuilder_ == null) {
-          stageBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder>(
-                  getStage(),
-                  getParentForChildren(),
-                  isClean());
-          stage_ = null;
-        }
-        return stageBuilder_;
-      }
-
-      private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime sumoTime_ = null;
-      private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> sumoTimeBuilder_;
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public boolean hasSumoTime() {
-        return sumoTimeBuilder_ != null || sumoTime_ != null;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getSumoTime() {
-        if (sumoTimeBuilder_ == null) {
-          return sumoTime_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : sumoTime_;
-        } else {
-          return sumoTimeBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public Builder setSumoTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
-        if (sumoTimeBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          sumoTime_ = value;
-          onChanged();
-        } else {
-          sumoTimeBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public Builder setSumoTime(
+      public Builder setDuration(
           de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder builderForValue) {
-        if (sumoTimeBuilder_ == null) {
-          sumoTime_ = builderForValue.build();
+        if (durationBuilder_ == null) {
+          duration_ = builderForValue.build();
           onChanged();
         } else {
-          sumoTimeBuilder_.setMessage(builderForValue.build());
+          durationBuilder_.setMessage(builderForValue.build());
         }
 
         return this;
       }
       /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public Builder mergeSumoTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
-        if (sumoTimeBuilder_ == null) {
-          if (sumoTime_ != null) {
-            sumoTime_ =
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.newBuilder(sumoTime_).mergeFrom(value).buildPartial();
+      public Builder mergeDuration(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
+        if (durationBuilder_ == null) {
+          if (duration_ != null) {
+            duration_ =
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.newBuilder(duration_).mergeFrom(value).buildPartial();
           } else {
-            sumoTime_ = value;
+            duration_ = value;
           }
           onChanged();
         } else {
-          sumoTimeBuilder_.mergeFrom(value);
+          durationBuilder_.mergeFrom(value);
         }
 
         return this;
       }
       /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public Builder clearSumoTime() {
-        if (sumoTimeBuilder_ == null) {
-          sumoTime_ = null;
+      public Builder clearDuration() {
+        if (durationBuilder_ == null) {
+          duration_ = null;
           onChanged();
         } else {
-          sumoTime_ = null;
-          sumoTimeBuilder_ = null;
+          duration_ = null;
+          durationBuilder_ = null;
         }
 
         return this;
       }
       /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder getSumoTimeBuilder() {
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder getDurationBuilder() {
         
         onChanged();
-        return getSumoTimeFieldBuilder().getBuilder();
+        return getDurationFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getSumoTimeOrBuilder() {
-        if (sumoTimeBuilder_ != null) {
-          return sumoTimeBuilder_.getMessageOrBuilder();
+      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getDurationOrBuilder() {
+        if (durationBuilder_ != null) {
+          return durationBuilder_.getMessageOrBuilder();
         } else {
-          return sumoTime_ == null ?
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : sumoTime_;
+          return duration_ == null ?
+              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : duration_;
         }
       }
       /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
+       * <code>optional .noninteracting.PBSUMOTime duration = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> 
-          getSumoTimeFieldBuilder() {
-        if (sumoTimeBuilder_ == null) {
-          sumoTimeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          getDurationFieldBuilder() {
+        if (durationBuilder_ == null) {
+          durationBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder>(
-                  getSumoTime(),
+                  getDuration(),
                   getParentForChildren(),
                   isClean());
-          sumoTime_ = null;
+          duration_ = null;
         }
-        return sumoTimeBuilder_;
+        return durationBuilder_;
+      }
+
+      private double myLastEntryTime_ ;
+      /**
+       * <code>optional double myLastEntryTime = 2;</code>
+       */
+      public double getMyLastEntryTime() {
+        return myLastEntryTime_;
+      }
+      /**
+       * <code>optional double myLastEntryTime = 2;</code>
+       */
+      public Builder setMyLastEntryTime(double value) {
+        
+        myLastEntryTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double myLastEntryTime = 2;</code>
+       */
+      public Builder clearMyLastEntryTime() {
+        
+        myLastEntryTime_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double myCurrentBeginPos_ ;
+      /**
+       * <code>optional double myCurrentBeginPos = 3;</code>
+       */
+      public double getMyCurrentBeginPos() {
+        return myCurrentBeginPos_;
+      }
+      /**
+       * <code>optional double myCurrentBeginPos = 3;</code>
+       */
+      public Builder setMyCurrentBeginPos(double value) {
+        
+        myCurrentBeginPos_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double myCurrentBeginPos = 3;</code>
+       */
+      public Builder clearMyCurrentBeginPos() {
+        
+        myCurrentBeginPos_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double myCurrentEndPos_ ;
+      /**
+       * <code>optional double myCurrentEndPos = 4;</code>
+       */
+      public double getMyCurrentEndPos() {
+        return myCurrentEndPos_;
+      }
+      /**
+       * <code>optional double myCurrentEndPos = 4;</code>
+       */
+      public Builder setMyCurrentEndPos(double value) {
+        
+        myCurrentEndPos_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double myCurrentEndPos = 4;</code>
+       */
+      public Builder clearMyCurrentEndPos() {
+        
+        myCurrentEndPos_ = 0D;
+        onChanged();
+        return this;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -5792,27 +4627,27 @@ public final class NonInteractingProto {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:noninteracting.GetPos)
+      // @@protoc_insertion_point(builder_scope:noninteracting.CMPWlkgTmRpl)
     }
 
-    // @@protoc_insertion_point(class_scope:noninteracting.GetPos)
-    private static final de.dlr.sumo.noninteracting.NonInteractingProto.GetPos DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:noninteracting.CMPWlkgTmRpl)
+    private static final de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.GetPos();
+      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl();
     }
 
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetPos getDefaultInstance() {
+    public static de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<GetPos>
-        PARSER = new com.google.protobuf.AbstractParser<GetPos>() {
-      public GetPos parsePartialFrom(
+    private static final com.google.protobuf.Parser<CMPWlkgTmRpl>
+        PARSER = new com.google.protobuf.AbstractParser<CMPWlkgTmRpl>() {
+      public CMPWlkgTmRpl parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         try {
-          return new GetPos(input, extensionRegistry);
+          return new CMPWlkgTmRpl(input, extensionRegistry);
         } catch (RuntimeException e) {
           if (e.getCause() instanceof
               com.google.protobuf.InvalidProtocolBufferException) {
@@ -5824,712 +4659,26 @@ public final class NonInteractingProto {
       }
     };
 
-    public static com.google.protobuf.Parser<GetPos> parser() {
+    public static com.google.protobuf.Parser<CMPWlkgTmRpl> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<GetPos> getParserForType() {
+    public com.google.protobuf.Parser<CMPWlkgTmRpl> getParserForType() {
       return PARSER;
     }
 
-    public de.dlr.sumo.noninteracting.NonInteractingProto.GetPos getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface GetAngleOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:noninteracting.GetAngle)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    boolean hasStage();
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking getStage();
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder getStageOrBuilder();
-
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    boolean hasSumoTime();
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getSumoTime();
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getSumoTimeOrBuilder();
-  }
-  /**
-   * Protobuf type {@code noninteracting.GetAngle}
-   */
-  public  static final class GetAngle extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:noninteracting.GetAngle)
-      GetAngleOrBuilder {
-    // Use GetAngle.newBuilder() to construct.
-    private GetAngle(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private GetAngle() {
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
-    }
-    private GetAngle(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
-      this();
-      int mutable_bitField0_ = 0;
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder subBuilder = null;
-              if (stage_ != null) {
-                subBuilder = stage_.toBuilder();
-              }
-              stage_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(stage_);
-                stage_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 18: {
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder subBuilder = null;
-              if (sumoTime_ != null) {
-                subBuilder = sumoTime_.toBuilder();
-              }
-              sumoTime_ = input.readMessage(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(sumoTime_);
-                sumoTime_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw new RuntimeException(e.setUnfinishedMessage(this));
-      } catch (java.io.IOException e) {
-        throw new RuntimeException(
-            new com.google.protobuf.InvalidProtocolBufferException(
-                e.getMessage()).setUnfinishedMessage(this));
-      } finally {
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetAngle_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetAngle_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.class, de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.Builder.class);
-    }
-
-    public static final int STAGE_FIELD_NUMBER = 1;
-    private de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking stage_;
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    public boolean hasStage() {
-      return stage_ != null;
-    }
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking getStage() {
-      return stage_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.getDefaultInstance() : stage_;
-    }
-    /**
-     * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder getStageOrBuilder() {
-      return getStage();
-    }
-
-    public static final int SUMOTIME_FIELD_NUMBER = 2;
-    private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime sumoTime_;
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    public boolean hasSumoTime() {
-      return sumoTime_ != null;
-    }
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getSumoTime() {
-      return sumoTime_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : sumoTime_;
-    }
-    /**
-     * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-     */
-    public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getSumoTimeOrBuilder() {
-      return getSumoTime();
-    }
-
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (stage_ != null) {
-        output.writeMessage(1, getStage());
-      }
-      if (sumoTime_ != null) {
-        output.writeMessage(2, getSumoTime());
-      }
-    }
-
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (stage_ != null) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, getStage());
-      }
-      if (sumoTime_ != null) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, getSumoTime());
-      }
-      memoizedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code noninteracting.GetAngle}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:noninteracting.GetAngle)
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetAngleOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetAngle_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetAngle_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.class, de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.Builder.class);
-      }
-
-      // Construct using de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      public Builder clear() {
-        super.clear();
-        if (stageBuilder_ == null) {
-          stage_ = null;
-        } else {
-          stage_ = null;
-          stageBuilder_ = null;
-        }
-        if (sumoTimeBuilder_ == null) {
-          sumoTime_ = null;
-        } else {
-          sumoTime_ = null;
-          sumoTimeBuilder_ = null;
-        }
-        return this;
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.internal_static_noninteracting_GetAngle_descriptor;
-      }
-
-      public de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle getDefaultInstanceForType() {
-        return de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.getDefaultInstance();
-      }
-
-      public de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle build() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle buildPartial() {
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle result = new de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle(this);
-        if (stageBuilder_ == null) {
-          result.stage_ = stage_;
-        } else {
-          result.stage_ = stageBuilder_.build();
-        }
-        if (sumoTimeBuilder_ == null) {
-          result.sumoTime_ = sumoTime_;
-        } else {
-          result.sumoTime_ = sumoTimeBuilder_.build();
-        }
-        onBuilt();
-        return result;
-      }
-
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle) {
-          return mergeFrom((de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle other) {
-        if (other == de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle.getDefaultInstance()) return this;
-        if (other.hasStage()) {
-          mergeStage(other.getStage());
-        }
-        if (other.hasSumoTime()) {
-          mergeSumoTime(other.getSumoTime());
-        }
-        onChanged();
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking stage_ = null;
-      private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder> stageBuilder_;
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public boolean hasStage() {
-        return stageBuilder_ != null || stage_ != null;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking getStage() {
-        if (stageBuilder_ == null) {
-          return stage_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.getDefaultInstance() : stage_;
-        } else {
-          return stageBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public Builder setStage(de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking value) {
-        if (stageBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          stage_ = value;
-          onChanged();
-        } else {
-          stageBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public Builder setStage(
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder builderForValue) {
-        if (stageBuilder_ == null) {
-          stage_ = builderForValue.build();
-          onChanged();
-        } else {
-          stageBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public Builder mergeStage(de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking value) {
-        if (stageBuilder_ == null) {
-          if (stage_ != null) {
-            stage_ =
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.newBuilder(stage_).mergeFrom(value).buildPartial();
-          } else {
-            stage_ = value;
-          }
-          onChanged();
-        } else {
-          stageBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public Builder clearStage() {
-        if (stageBuilder_ == null) {
-          stage_ = null;
-          onChanged();
-        } else {
-          stage_ = null;
-          stageBuilder_ = null;
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder getStageBuilder() {
-        
-        onChanged();
-        return getStageFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder getStageOrBuilder() {
-        if (stageBuilder_ != null) {
-          return stageBuilder_.getMessageOrBuilder();
-        } else {
-          return stage_ == null ?
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.getDefaultInstance() : stage_;
-        }
-      }
-      /**
-       * <code>optional .noninteracting.PBMSPersonStage_Walking stage = 1;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder> 
-          getStageFieldBuilder() {
-        if (stageBuilder_ == null) {
-          stageBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_Walking.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBMSPersonStage_WalkingOrBuilder>(
-                  getStage(),
-                  getParentForChildren(),
-                  isClean());
-          stage_ = null;
-        }
-        return stageBuilder_;
-      }
-
-      private de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime sumoTime_ = null;
-      private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> sumoTimeBuilder_;
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public boolean hasSumoTime() {
-        return sumoTimeBuilder_ != null || sumoTime_ != null;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime getSumoTime() {
-        if (sumoTimeBuilder_ == null) {
-          return sumoTime_ == null ? de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : sumoTime_;
-        } else {
-          return sumoTimeBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public Builder setSumoTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
-        if (sumoTimeBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          sumoTime_ = value;
-          onChanged();
-        } else {
-          sumoTimeBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public Builder setSumoTime(
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder builderForValue) {
-        if (sumoTimeBuilder_ == null) {
-          sumoTime_ = builderForValue.build();
-          onChanged();
-        } else {
-          sumoTimeBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public Builder mergeSumoTime(de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime value) {
-        if (sumoTimeBuilder_ == null) {
-          if (sumoTime_ != null) {
-            sumoTime_ =
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.newBuilder(sumoTime_).mergeFrom(value).buildPartial();
-          } else {
-            sumoTime_ = value;
-          }
-          onChanged();
-        } else {
-          sumoTimeBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public Builder clearSumoTime() {
-        if (sumoTimeBuilder_ == null) {
-          sumoTime_ = null;
-          onChanged();
-        } else {
-          sumoTime_ = null;
-          sumoTimeBuilder_ = null;
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder getSumoTimeBuilder() {
-        
-        onChanged();
-        return getSumoTimeFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      public de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder getSumoTimeOrBuilder() {
-        if (sumoTimeBuilder_ != null) {
-          return sumoTimeBuilder_.getMessageOrBuilder();
-        } else {
-          return sumoTime_ == null ?
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.getDefaultInstance() : sumoTime_;
-        }
-      }
-      /**
-       * <code>optional .noninteracting.PBSUMOTime sumoTime = 2;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder> 
-          getSumoTimeFieldBuilder() {
-        if (sumoTimeBuilder_ == null) {
-          sumoTimeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTime.Builder, de.dlr.sumo.noninteracting.NonInteractingProto.PBSUMOTimeOrBuilder>(
-                  getSumoTime(),
-                  getParentForChildren(),
-                  isClean());
-          sumoTime_ = null;
-        }
-        return sumoTimeBuilder_;
-      }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:noninteracting.GetAngle)
-    }
-
-    // @@protoc_insertion_point(class_scope:noninteracting.GetAngle)
-    private static final de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle();
-    }
-
-    public static de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<GetAngle>
-        PARSER = new com.google.protobuf.AbstractParser<GetAngle>() {
-      public GetAngle parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        try {
-          return new GetAngle(input, extensionRegistry);
-        } catch (RuntimeException e) {
-          if (e.getCause() instanceof
-              com.google.protobuf.InvalidProtocolBufferException) {
-            throw (com.google.protobuf.InvalidProtocolBufferException)
-                e.getCause();
-          }
-          throw e;
-        }
-      }
-    };
-
-    public static com.google.protobuf.Parser<GetAngle> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<GetAngle> getParserForType() {
-      return PARSER;
-    }
-
-    public de.dlr.sumo.noninteracting.NonInteractingProto.GetAngle getDefaultInstanceForType() {
+    public de.dlr.sumo.noninteracting.NonInteractingProto.CMPWlkgTmRpl getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_noninteracting_PBPosition_descriptor;
+    internal_static_noninteracting_GetEdgePos_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_noninteracting_PBPosition_fieldAccessorTable;
+      internal_static_noninteracting_GetEdgePos_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_noninteracting_PBEdge_descriptor;
   private static
@@ -6556,20 +4705,10 @@ public final class NonInteractingProto {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_noninteracting_CMPWlkgTm_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_noninteracting_CMPWlkgTm_flat_descriptor;
+    internal_static_noninteracting_CMPWlkgTmRpl_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_noninteracting_GetPos_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_noninteracting_GetPos_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_noninteracting_GetAngle_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_noninteracting_GetAngle_fieldAccessorTable;
+      internal_static_noninteracting_CMPWlkgTmRpl_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -6579,48 +4718,37 @@ public final class NonInteractingProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\024noninteracting.proto\022\016noninteracting\"-" +
-      "\n\nPBPosition\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030" +
-      "\003 \001(\001\"F\n\006PBEdge\022\026\n\016fromJunctionId\030\001 \001(\t\022" +
-      "\024\n\014toJunctionId\030\002 \001(\t\022\016\n\006length\030\003 \001(\001\"\036\n" +
-      "\nPBSUMOTime\022\020\n\010sumoTime\030\001 \001(\001\"\036\n\nPBSUMOR" +
-      "eal\022\020\n\010sumoReal\030\001 \001(\001\"\247\001\n\027PBMSPersonStag" +
-      "e_Walking\022$\n\004edge\030\001 \001(\0132\026.noninteracting" +
-      ".PBEdge\022-\n\rnextRouteEdge\030\002 \001(\0132\026.noninte" +
-      "racting.PBEdge\022\021\n\tdepartPos\030\003 \001(\001\022\022\n\narr" +
-      "ivalPos\030\004 \001(\001\022\020\n\010maxSpeed\030\005 \001(\001\"\227\001\n\tCMPW",
-      "lkgTm\022$\n\004prev\030\001 \001(\0132\026.noninteracting.PBE" +
-      "dge\0226\n\005stage\030\002 \001(\0132\'.noninteracting.PBMS" +
-      "PersonStage_Walking\022,\n\010sumoTime\030\003 \001(\0132\032." +
-      "noninteracting.PBSUMOTime\"\202\002\n\016CMPWlkgTm_" +
-      "flat\022\022\n\nprevFromId\030\001 \001(\t\022\020\n\010prevToId\030\002 \001" +
-      "(\t\022\017\n\007prevLen\030\003 \001(\001\022\025\n\rcurrentFromId\030\004 \001" +
-      "(\t\022\023\n\013currentToId\030\005 \001(\t\022\022\n\ncurrentLen\030\006 " +
-      "\001(\001\022\022\n\nnextFromId\030\007 \001(\t\022\020\n\010nextToId\030\010 \001(" +
-      "\t\022\017\n\007nextLen\030\t \001(\001\022\016\n\006depPos\030\n \001(\001\022\022\n\nar" +
-      "rivalPos\030\013 \001(\001\022\020\n\010maxSpeed\030\014 \001(\001\022\014\n\004time",
-      "\030\r \001(\001\"n\n\006GetPos\0226\n\005stage\030\001 \001(\0132\'.nonint" +
-      "eracting.PBMSPersonStage_Walking\022,\n\010sumo" +
-      "Time\030\002 \001(\0132\032.noninteracting.PBSUMOTime\"p" +
-      "\n\010GetAngle\0226\n\005stage\030\001 \001(\0132\'.noninteracti" +
-      "ng.PBMSPersonStage_Walking\022,\n\010sumoTime\030\002" +
-      " \001(\0132\032.noninteracting.PBSUMOTime2\254\004\n\010PBP" +
-      "State\022M\n\022computeWalkingTime\022\031.noninterac" +
-      "ting.CMPWlkgTm\032\032.noninteracting.PBSUMOTi" +
-      "me\"\000\022W\n\027computeWalkingTime_flat\022\036.nonint" +
-      "eracting.CMPWlkgTm_flat\032\032.noninteracting",
-      ".PBSUMOTime\"\000\022C\n\013getPosition\022\026.nonintera" +
-      "cting.GetPos\032\032.noninteracting.PBPosition" +
-      "\"\000\022B\n\010getAngle\022\030.noninteracting.GetAngle" +
-      "\032\032.noninteracting.PBSUMOReal\"\000\022J\n\016getWai" +
-      "tingTime\022\032.noninteracting.PBSUMOTime\032\032.n" +
-      "oninteracting.PBSUMOTime\"\000\022Q\n\010getSpeed\022\'" +
-      ".noninteracting.PBMSPersonStage_Walking\032" +
-      "\032.noninteracting.PBSUMOReal\"\000\022P\n\013getNext" +
-      "Edge\022\'.noninteracting.PBMSPersonStage_Wa" +
-      "lking\032\026.noninteracting.PBEdge\"\000B3\n\032de.dl",
-      "r.sumo.noninteractingB\023NonInteractingPro" +
-      "toP\000b\006proto3"
+      "\n\024noninteracting.proto\022\016noninteracting\"\272" +
+      "\001\n\nGetEdgePos\022\031\n\021myCurrentBeginPos\030\001 \001(\001" +
+      "\022\027\n\017myCurrentEndPos\030\002 \001(\001\022\031\n\021myCurrentDu" +
+      "ration\030\003 \001(\001\022(\n\004time\030\004 \001(\0132\032.noninteract" +
+      "ing.PBSUMOTime\0223\n\017myLastEntryTime\030\005 \001(\0132" +
+      "\032.noninteracting.PBSUMOTime\"F\n\006PBEdge\022\026\n" +
+      "\016fromJunctionId\030\001 \001(\t\022\024\n\014toJunctionId\030\002 " +
+      "\001(\t\022\016\n\006length\030\003 \001(\001\"\036\n\nPBSUMOTime\022\020\n\010sum" +
+      "oTime\030\001 \001(\001\"\036\n\nPBSUMOReal\022\020\n\010sumoReal\030\001 " +
+      "\001(\001\"\247\001\n\027PBMSPersonStage_Walking\022$\n\004edge\030",
+      "\001 \001(\0132\026.noninteracting.PBEdge\022-\n\rnextRou" +
+      "teEdge\030\002 \001(\0132\026.noninteracting.PBEdge\022\021\n\t" +
+      "departPos\030\003 \001(\001\022\022\n\narrivalPos\030\004 \001(\001\022\020\n\010m" +
+      "axSpeed\030\005 \001(\001\"\227\001\n\tCMPWlkgTm\022$\n\004prev\030\001 \001(" +
+      "\0132\026.noninteracting.PBEdge\0226\n\005stage\030\002 \001(\013" +
+      "2\'.noninteracting.PBMSPersonStage_Walkin" +
+      "g\022,\n\010sumoTime\030\003 \001(\0132\032.noninteracting.PBS" +
+      "UMOTime\"\211\001\n\014CMPWlkgTmRpl\022,\n\010duration\030\001 \001" +
+      "(\0132\032.noninteracting.PBSUMOTime\022\027\n\017myLast" +
+      "EntryTime\030\002 \001(\001\022\031\n\021myCurrentBeginPos\030\003 \001",
+      "(\001\022\027\n\017myCurrentEndPos\030\004 \001(\0012\303\002\n\010PBPState" +
+      "\022O\n\022computeWalkingTime\022\031.noninteracting." +
+      "CMPWlkgTm\032\034.noninteracting.CMPWlkgTmRpl\"" +
+      "\000\022J\n\016getWaitingTime\022\032.noninteracting.PBS" +
+      "UMOTime\032\032.noninteracting.PBSUMOTime\"\000\022Q\n" +
+      "\010getSpeed\022\'.noninteracting.PBMSPersonSta" +
+      "ge_Walking\032\032.noninteracting.PBSUMOReal\"\000" +
+      "\022G\n\013getEdgePost\022\032.noninteracting.GetEdge" +
+      "Pos\032\032.noninteracting.PBSUMOReal\"\000B3\n\032de." +
+      "dlr.sumo.noninteractingB\023NonInteractingP",
+      "rotoP\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -6634,12 +4762,12 @@ public final class NonInteractingProto {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_noninteracting_PBPosition_descriptor =
+    internal_static_noninteracting_GetEdgePos_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_noninteracting_PBPosition_fieldAccessorTable = new
+    internal_static_noninteracting_GetEdgePos_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_noninteracting_PBPosition_descriptor,
-        new java.lang.String[] { "X", "Y", "Z", });
+        internal_static_noninteracting_GetEdgePos_descriptor,
+        new java.lang.String[] { "MyCurrentBeginPos", "MyCurrentEndPos", "MyCurrentDuration", "Time", "MyLastEntryTime", });
     internal_static_noninteracting_PBEdge_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_noninteracting_PBEdge_fieldAccessorTable = new
@@ -6670,24 +4798,12 @@ public final class NonInteractingProto {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_noninteracting_CMPWlkgTm_descriptor,
         new java.lang.String[] { "Prev", "Stage", "SumoTime", });
-    internal_static_noninteracting_CMPWlkgTm_flat_descriptor =
+    internal_static_noninteracting_CMPWlkgTmRpl_descriptor =
       getDescriptor().getMessageTypes().get(6);
-    internal_static_noninteracting_CMPWlkgTm_flat_fieldAccessorTable = new
+    internal_static_noninteracting_CMPWlkgTmRpl_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_noninteracting_CMPWlkgTm_flat_descriptor,
-        new java.lang.String[] { "PrevFromId", "PrevToId", "PrevLen", "CurrentFromId", "CurrentToId", "CurrentLen", "NextFromId", "NextToId", "NextLen", "DepPos", "ArrivalPos", "MaxSpeed", "Time", });
-    internal_static_noninteracting_GetPos_descriptor =
-      getDescriptor().getMessageTypes().get(7);
-    internal_static_noninteracting_GetPos_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_noninteracting_GetPos_descriptor,
-        new java.lang.String[] { "Stage", "SumoTime", });
-    internal_static_noninteracting_GetAngle_descriptor =
-      getDescriptor().getMessageTypes().get(8);
-    internal_static_noninteracting_GetAngle_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_noninteracting_GetAngle_descriptor,
-        new java.lang.String[] { "Stage", "SumoTime", });
+        internal_static_noninteracting_CMPWlkgTmRpl_descriptor,
+        new java.lang.String[] { "Duration", "MyLastEntryTime", "MyCurrentBeginPos", "MyCurrentEndPos", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

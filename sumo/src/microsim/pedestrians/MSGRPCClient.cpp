@@ -31,42 +31,17 @@ MSGRPCClient::~MSGRPCClient() {
 
 }
 
-SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime){
+MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime){
 
-	//	noninteracting::CMPWlkgTm_flat r;
-	//	if (prev != 0) {
-	//		r.set_prevfromid(prev->getFromJunction()->getID());
-	//		r.set_prevtoid(prev->getToJunction()->getID());
-	//		r.set_prevlen(prev->getLength());
-	//	}
-	//	r.set_currentfromid(stage.getEdge()->getFromJunction()->getID());
-	//	r.set_currenttoid(stage.getEdge()->getToJunction()->getID());
-	//	r.set_currentlen(stage.getEdge()->getLength());
-	//	if (stage.getNextRouteEdge() != 0) {
-	//		r.set_nextfromid(stage.getNextRouteEdge()->getFromJunction()->getID());
-	//		r.set_nexttoid(stage.ge8tNextRouteEdge()->getToJunction()->getID());
-	//		r.set_nextlen(stage.getNextRouteEdge()->getLength());
-	//	}
-	//	r.set_deppos(stage.getDepartPos());
-	//	r.set_arrivalpos(stage.getArrivalPos());
-	//	r.set_time(currentTime);
-	//	r.set_maxspeed(stage.getMaxSpeed());
+
 	noninteracting::CMPWlkgTm request;
 	if (prev != 0){
 		noninteracting::PBEdge * edge = request.mutable_prev();
 		edge->set_length(prev->getLength());
 		edge->set_fromjunctionid(prev->getFromJunction()->getID());
 		edge->set_tojunctionid(prev->getToJunction()->getID());
-		//		request.set_allocated_prev(&edge);
-	} else {
-		//		noninteracting::PBEdge edge;
-		//		edge.set_length(1.);
-		//		edge.set_fromjunctionid("a");
-		//		edge.set_tojunctionid("b");
-		//		request.set_allocated_prev(&edge);
+
 	}
-
-
 
 	noninteracting::PBEdge * stEdge = request.mutable_stage()->mutable_edge();
 	stEdge->set_length(stage.getEdge()->getLength());
@@ -81,35 +56,83 @@ SUMOTime MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::M
 		nxtStEdge->set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
 	}
 	noninteracting::PBMSPersonStage_Walking * st = request.mutable_stage();
-	//	st.set_allocated_edge(&stEdge);
-	//	st.set_allocated_nextrouteedge(&nxtStEdge);
-	//	} else {
-	//		noninteracting::PBEdge df = noninteracting::PBEdge::default_instance();
-	//		st.set_allocated_nextrouteedge(&df);
-	//	}
 
 	st->set_departpos(stage.getDepartPos());
 	st->set_arrivalpos(stage.getArrivalPos());
 	st->set_maxspeed(stage.getMaxSpeed());
 
-	//	request.set_allocated_stage(&st);
-
 	noninteracting::PBSUMOTime * time = request.mutable_sumotime();
 	time->set_sumotime(currentTime);
-	//	request.set_allocated_sumotime(&time);
 
-	noninteracting::PBSUMOTime replay;
-
+	noninteracting::CMPWlkgTmRpl reply;
 
 	ClientContext context;
 
-	Status status = stub_->computeWalkingTime(&context,request, &replay);
+	Status status = stub_->computeWalkingTime(&context,request, &reply);
 
+
+		CmpWlkTmStruct ret;
+	if (status.ok()){
+//		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
+		ret.wlkTm = MAX2((SUMOTime)1, TIME2STEPS(reply.duration().sumotime()));;
+		ret.currentBeginPos = reply.mycurrentbeginpos();
+		ret.currentEndPos = reply.mycurrentendpos();
+		ret.lastEntrTm = reply.mylastentrytime();
+		return  ret;
+	} else {
+		std::cerr << "something went wrong!" << std::endl;
+		return ret;
+	}
+
+
+}
+
+SUMOReal MSGRPCClient::getEdgePos(SUMOReal myCurrentBeginPos, SUMOReal myCurrentEndPos, SUMOReal myCurrentDuration, SUMOTime myLastEntryTime, SUMOTime now){
+	noninteracting::GetEdgePos req;
+	req.mutable_time()->set_sumotime(now);
+	req.set_mycurrentbeginpos(myCurrentBeginPos);
+	req.set_mycurrentendpos(myCurrentEndPos);
+	req.set_mycurrentduration(myCurrentDuration);
+	req.mutable_mylastentrytime()->set_sumotime(myLastEntryTime);
+
+	noninteracting::PBSUMOReal rpl;
+	ClientContext context;
+
+	Status status = stub_->getEdgePost(&context,req,&rpl);
+
+	if (status.ok()) {
+		return rpl.sumoreal();
+	} else{
+		std::cerr << "something went wrong!" << std::endl;
+		return 0;
+	}
+
+}
+
+SUMOTime MSGRPCClient::getWaitingTime(){
+	noninteracting::PBSUMOTime req;
+	noninteracting::PBSUMOTime rpl;
+	ClientContext context;
+
+	Status status = stub_->getWaitingTime(&context,req,&rpl);
+
+	if (status.ok()) {
+		return 0;
+	} else {
+		std::cerr << "something went wrong!" << std::endl;
+		return -1;
+	}
+}
+SUMOReal MSGRPCClient::getMaxSpeed(const MSPerson::MSPersonStage_Walking& stage){
+	noninteracting::PBMSPersonStage_Walking req;
+	req.set_maxspeed(stage.getMaxSpeed());
+
+	noninteracting::PBSUMOReal rpl;
+	ClientContext context;
+	Status status = stub_->getSpeed(&context,req,&rpl);
 
 	if (status.ok()){
-		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
-		std::cout << ret << std::endl;
-		return  ret;
+		return rpl.sumoreal();
 	} else {
 		std::cerr << "something went wrong!" << std::endl;
 		return 0;

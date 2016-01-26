@@ -68,29 +68,31 @@ public class NonInteractingPedestrian {
     }
 
 
-    public static void main(String[] args) throws Exception{
-    final NonInteractingPedestrian server = new NonInteractingPedestrian();
-    server.start();
-    server.blockUntilShutdown();
+    public static void main(String[] args) throws Exception {
+        final NonInteractingPedestrian server = new NonInteractingPedestrian();
+        server.start();
+        server.blockUntilShutdown();
 
     }
 
     private class PStateImpl implements PBPStateGrpc.PBPState {
 
+
+
         @Override
-        public void computeWalkingTime(NonInteractingProto.CMPWlkgTm request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
+        public void computeWalkingTime(NonInteractingProto.CMPWlkgTm request, StreamObserver<NonInteractingProto.CMPWlkgTmRpl> responseObserver) {
             double currentTime = request.getSumoTime().getSumoTime();
             double time = request.getSumoTime().getSumoTime();
-            System.out.println(time);
+//            System.out.println(time);
 
             NonInteractingProto.PBEdge prev = request.getPrev();
-            printEdge(prev);
+
 
             NonInteractingProto.PBEdge edge = request.getStage().getEdge();
 //            printEdge(edge);
             NonInteractingProto.PBEdge nxt = request.getStage().getNextRouteEdge();
 //            printEdge(nxt);
-            printStage(request.getStage());
+
             int dir = UNDF;
             double beginPos;
             double endPos;
@@ -110,93 +112,17 @@ public class NonInteractingPedestrian {
                 endPos = dir == FWD ? edge.getLength() : 0;
             }
 
-            double duration = MAX2(1, Math.abs(endPos-beginPos)/request.getStage().getMaxSpeed());
+            double duration = MAX2(1, Math.abs(endPos - beginPos) / request.getStage().getMaxSpeed());
 
-            System.out.println("duration:" + duration);
+//            System.out.println("duration:" + duration);
 
-            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(duration).build();
-            responseObserver.onNext(t);
+            NonInteractingProto.CMPWlkgTmRpl rpl = NonInteractingProto.CMPWlkgTmRpl.newBuilder().setDuration(NonInteractingProto.
+                    PBSUMOTime.newBuilder().setSumoTime(duration).build()).setMyCurrentBeginPos(beginPos).setMyCurrentEndPos(endPos)
+                    .setMyLastEntryTime(currentTime).build();
+            responseObserver.onNext(rpl);
             responseObserver.onCompleted();
-
         }
 
-        @Override
-        public void computeWalkingTimeFlat(NonInteractingProto.CMPWlkgTm_flat request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
-            String prevFromId = request.getPrevFromId();
-            String prevToId = request.getPrevToId();
-            double prevLen = request.getPrevLen();
-            String currentFromId = request.getCurrentFromId();
-            String currentToId = request.getCurrentToId();
-            double currentLen = request.getCurrentLen();
-            String nextFromId = request.getNextFromId();
-            String nextToId = request.getNextToId();
-            double nextLen = request.getNextLen();
-            double depPos = request.getDepPos();
-            double arrPos = request.getArrivalPos();
-            double mxSpd = request.getMaxSpeed();
-            double time = request.getTime();
-
-            int dir = UNDF;
-            double beginPos;
-            double endPos;
-            System.out.println(time + " prevFrom: " + prevFromId + " prevTo: " + prevToId + " prevLen: " + prevLen + " currentFrom:" + currentFromId + " currentTo:" +
-            currentToId + " currentLen:" + currentLen + " nextFrom:" + nextFromId + " nextTo:" + nextToId + " depPos:" + depPos + " arrPos:" + arrPos + " mxSpd:" +
-            mxSpd + " time:" + time);
-
-            if (!prevFromId.isEmpty()) {
-                beginPos = depPos;
-            } else {
-                dir = currentToId.equals(prevToId) || currentToId.equals(prevFromId) ? BCKWD : FWD;
-                beginPos = dir == FWD ? 0 : currentLen;
-            }
-            if (!nextFromId.isEmpty()) {
-                endPos = arrPos;
-            } else {
-                if (dir == UNDF) {
-                    dir = currentToId.equals(prevToId) || currentToId.equals(prevFromId) ? BCKWD : FWD;
-                }
-                endPos = dir == FWD ? currentLen : 0;
-            }
-
-            double duration = MAX2(1, Math.abs(endPos-beginPos)/mxSpd);
-
-            System.out.println("duration:" + duration);
-
-
-            NonInteractingProto.PBSUMOTime t = NonInteractingProto.PBSUMOTime.newBuilder().setSumoTime(duration).build();
-            responseObserver.onNext(t);
-            responseObserver.onCompleted();
-
-        }
-
-        private void printStage(NonInteractingProto.PBMSPersonStage_Walking stage) {
-            double spd = stage.getMaxSpeed();
-            System.out.println("max spd: " + spd);
-            printEdge(stage.getEdge());
-            printEdge(stage.getNextRouteEdge());
-        }
-
-        private void printEdge(NonInteractingProto.PBEdge prev) {
-            StringBuffer buf = new StringBuffer();
-            buf.append("Edge length: ");
-            buf.append(prev.getLength());
-            buf.append(" from: ");
-            buf.append(prev.getFromJunctionId().toString());
-            buf.append(" to: ");
-            buf.append(prev.getToJunctionId().toString());
-            buf.append("\n");
-            System.out.println(buf.toString());
-        }
-
-        @Override
-        public void getPosition(NonInteractingProto.GetPos request, StreamObserver<NonInteractingProto.PBPosition> responseObserver) {
-
-        }
-
-        @Override
-        public void getAngle(NonInteractingProto.GetAngle request, StreamObserver<NonInteractingProto.PBSUMOReal> responseObserver) {
-
-        }
 
         @Override
         public void getWaitingTime(NonInteractingProto.PBSUMOTime request, StreamObserver<NonInteractingProto.PBSUMOTime> responseObserver) {
@@ -209,12 +135,24 @@ public class NonInteractingPedestrian {
 
         @Override
         public void getSpeed(NonInteractingProto.PBMSPersonStage_Walking request, StreamObserver<NonInteractingProto.PBSUMOReal> responseObserver) {
-
+            NonInteractingProto.PBSUMOReal rpl = NonInteractingProto.PBSUMOReal.newBuilder().setSumoReal(request.getMaxSpeed()).build();
+            responseObserver.onNext(rpl);
+            responseObserver.onCompleted();
         }
 
         @Override
-        public void getNextEdge(NonInteractingProto.PBMSPersonStage_Walking request, StreamObserver<NonInteractingProto.PBEdge> responseObserver) {
+        public void getEdgePost(NonInteractingProto.GetEdgePos request, StreamObserver<NonInteractingProto.PBSUMOReal> responseObserver) {
+            double beg = request.getMyCurrentBeginPos();
+            double end = request.getMyCurrentEndPos();
+            double dur = request.getMyCurrentDuration();
+            double last = request.getMyLastEntryTime().getSumoTime();
+            double now = request.getTime().getSumoTime();
 
+            double pos = beg + (end-beg)/dur*(now-last);
+
+            NonInteractingProto.PBSUMOReal repl = NonInteractingProto.PBSUMOReal.newBuilder().setSumoReal(pos).build();
+            responseObserver.onNext(repl);
+            responseObserver.onCompleted();
         }
     }
 

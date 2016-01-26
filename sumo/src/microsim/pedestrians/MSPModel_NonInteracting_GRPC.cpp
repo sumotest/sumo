@@ -111,15 +111,18 @@ MSPModel_NonInteracting_GRPC::MoveToNextEdge::execute(SUMOTime currentTime) {
 
 SUMOTime
 MSPModel_NonInteracting_GRPC::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
-	SUMOTime t = grpcClient->computeWalkingTime(prev,stage,currentTime);
-    return t;
+	MSGRPCClient::CmpWlkTmStruct rpl = grpcClient->computeWalkingTime(prev,stage,currentTime);
+	myCurrentBeginPos = rpl.currentBeginPos;
+	myCurrentEndPos = rpl.currentEndPos;
+	myLastEntryTime = rpl.lastEntrTm;
+    return rpl.wlkTm;
 }
 
 
 SUMOReal
 MSPModel_NonInteracting_GRPC::PState::getEdgePos(const MSPerson::MSPersonStage_Walking&, SUMOTime now) const {
-    //std::cout << SIMTIME << " pos=" << (myCurrentBeginPos + (myCurrentEndPos - myCurrentBeginPos) / myCurrentDuration * (now - myLastEntryTime)) << "\n";
-    return myCurrentBeginPos + (myCurrentEndPos - myCurrentBeginPos) / myCurrentDuration * (now - myLastEntryTime);
+	SUMOReal r = grpcClient->getEdgePos(myCurrentBeginPos,myCurrentEndPos,myCurrentDuration,myLastEntryTime,now);
+	return r;
 }
 
 
@@ -128,29 +131,32 @@ MSPModel_NonInteracting_GRPC::PState::getPosition(const MSPerson::MSPersonStage_
     const MSLane* lane = getSidewalk(stage.getEdge());
     const SUMOReal lateral_offset = lane->allowsVehicleClass(SVC_PEDESTRIAN) ? 0 : SIDEWALK_OFFSET;
     return stage.getLanePosition(lane, getEdgePos(stage, now), lateral_offset);
+
 }
 
 
 SUMOReal
 MSPModel_NonInteracting_GRPC::PState::getAngle(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {
-    //std::cout << SIMTIME << " rawAngle=" << stage.getEdgeAngle(stage.getEdge(), getEdgePos(stage, now)) << " angle=" << stage.getEdgeAngle(stage.getEdge(), getEdgePos(stage, now)) + (myCurrentEndPos < myCurrentBeginPos ? 180 : 0) << "\n";
     SUMOReal angle = stage.getEdgeAngle(stage.getEdge(), getEdgePos(stage, now)) + (myCurrentEndPos < myCurrentBeginPos ? M_PI : 0);
     if (angle > M_PI) {
         angle -= 2 * M_PI;
     }
     return angle;
+
 }
 
 
 SUMOTime
 MSPModel_NonInteracting_GRPC::PState::getWaitingTime(const MSPerson::MSPersonStage_Walking&, SUMOTime) const {
-    return 0;
+	SUMOTime t = grpcClient->getWaitingTime();
+	return t;
 }
 
 
 SUMOReal
 MSPModel_NonInteracting_GRPC::PState::getSpeed(const MSPerson::MSPersonStage_Walking& stage) const {
-    return stage.getMaxSpeed();
+	SUMOReal r = grpcClient->getMaxSpeed(stage);
+	return r;
 }
 
 
