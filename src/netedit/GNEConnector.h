@@ -122,16 +122,19 @@ private:
     /// @brief the set of lanes to which the current lane may be connected
     std::set<GNELane*> myPotentialTargets;
 
+    /// @brief pointer to undo list
     GNEUndoList* myUndoList;
 
+    /// @brief number of changes
     unsigned int myNumChanges;
 
-    /* @brief the window to inform when connections are modified */
+    /// @brief the window to inform when connections are modified
     GNEViewNet* myUpdateTarget;
 
     /// @brief the internal lanes belonging the the current junction indexed by their tl-index
     std::map<int, GNEInternalLane*> myInternalLanes;
 
+    /// @brief Width of the connector frame
     static const int WIDTH;
 
     /// @brief color for the from-lane of a connection
@@ -146,8 +149,10 @@ private:
     static RGBColor potentialTargetColor;
 
 private:
+    /// @brief update description
     void updateDescription() const;
 
+    /// @brief init targets
     void initTargets();
 
     /// @brief clean up when deselecting current lane
@@ -167,7 +172,6 @@ private:
 
     /* @brief builds internal lanes for the given node */
     void buildIinternalLanes(NBNode* node);
-
 };
 
 

@@ -56,16 +56,20 @@ class GeoConvHelper;
  */
 class GNEPoly : public GUIPolygon, public GNEAttributeCarrier {
 
-    //friend class GNEChange_POI;
+    /// @brief declare friend class
+    //friend class GNEChange_POI
+
 public:
     class GNEPolyHandler : public SUMOSAXHandler {
     public:
-
+        /// @brief constructor
         GNEPolyHandler(GNENet* net);
+
+        /// @brief
         virtual ~GNEPolyHandler();
+
         /// @name inherited from GenericSAXHandler
         //@{
-
         /** @brief Called on the opening of a tag;
          *
          * @param[in] element ID of the currently opened element
@@ -73,9 +77,7 @@ public:
          * @exception ProcessError If something fails
          * @see GenericSAXHandler::myStartElement
          */
-        virtual void myStartElement(int element,
-                                    const SUMOSAXAttributes& attrs);
-
+        virtual void myStartElement(int element, const SUMOSAXAttributes& attrs);
 
         /** @brief Called when a closing tag occurs
          *

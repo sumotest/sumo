@@ -41,6 +41,7 @@
 #include "GNEUndoList.h"
 #include "GNEEdge.h"
 #include "GNEAttributeCarrier.h"
+#include "GNEAdditional.h"  // PABLO #1916
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -126,6 +127,18 @@ GNEInspector::update() {
     inspect(myACs);
 }
 
+FXFont* 
+GNEInspector::getHeaderFont() const {
+    return myHeaderFont;
+}
+
+
+GNEEdge* 
+GNEInspector::getEdgeTemplate() const {
+    return myEdgeTemplate;
+}
+
+
 void
 GNEInspector::setEdgeTemplate(GNEEdge* tpl) {
     if (myEdgeTemplate) {
@@ -190,7 +203,10 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
             headerString = toString(ACs.size()) + " " + headerString + "s";
         }
         header = new FXLabel(this, headerString.c_str());
-        new FXHorizontalSeparator(this, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
+
+        // Create groupBox for attributes                                               // PABLO #1916
+        FXGroupBox* groupBoxForAttributes = new FXGroupBox(this, "attributes",          // PABLO #1916
+        GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
 
         const std::vector<SumoXMLAttr>& attrs = ACs[0]->getAttrs();
         for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
@@ -210,28 +226,38 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
                 }
                 oss << *it_val;
             }
-            new AttrInput(this, ACs, *it, oss.str(), undoList);
+            new AttrInput(groupBoxForAttributes, ACs, *it, oss.str(), undoList);    // PABLO #1916
         }
 
         if (dynamic_cast<GNEEdge*>(ACs[0])) {
-            new FXHorizontalSeparator(this, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
+            // Create groupBox for templates                                                // PABLO #1916
+            FXGroupBox* groupBoxForTemplates = new FXGroupBox(this, "templates",            // PABLO #1916
+            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
+
             // "Copy Template" (caption supplied via onUpdate)
-            new FXButton(this, "", 0, parent, MID_GNE_COPY_TEMPLATE,
+            new FXButton(this, "", 0, parent, MID_GNE_COPY_TEMPLATE,    // PABLO #1916
                          ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
                          0, 0, 0, 0, 4, 4, 3, 3);
 
             if (ACs.size() == 1) {
                 // "Set As Template"
-                new FXButton(this, "Set as Template\t\t", 0, parent, MID_GNE_SET_TEMPLATE,
+                new FXButton(groupBoxForTemplates, "Set as Template\t\t", 0, parent, MID_GNE_SET_TEMPLATE,  // PABLO #1916
                              ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
                              0, 0, 0, 0, 4, 4, 3, 3);
             }
-        };
+        }
+
+        if(dynamic_cast<GNEAdditional*>(ACs[0])) {                                          // PABLO #1916
+            // Create groupBox for templates                                                // PABLO #1916
+            FXGroupBox* groupBoxForEditor = new FXGroupBox(this, "editor",                  // PABLO #1916
+            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
+        }
+
+
     } else {
         header = new FXLabel(this, "No Object\nselected", 0, JUSTIFY_LEFT);
     }
     header->setFont(parent->getHeaderFont());
-
 }
 
 

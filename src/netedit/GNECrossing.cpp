@@ -127,7 +127,6 @@ GNECrossing::drawGL(const GUIVisualizationSettings& s) const {
         glPopMatrix();
     }
 
-
     glTranslated(0, 0, -.2);
     glPopName();
     glPopMatrix();

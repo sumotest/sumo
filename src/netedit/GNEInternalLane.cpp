@@ -164,6 +164,25 @@ GNEInternalLane::drawGL(const GUIVisualizationSettings& s) const {
 }
 
 
+void 
+GNEInternalLane::setLinkState(LinkState state) {
+    myState = state;
+    myOrigState = state;
+}
+
+
+LinkState 
+GNEInternalLane::getLinkState() const{
+    return (LinkState)myState;
+}
+
+
+int 
+GNEInternalLane::getTLIndex() const {
+    return myTlIndex;
+}
+
+
 GUIGLObjectPopupMenu*
 GNEInternalLane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     myPopup = new GUIGLObjectPopupMenu(app, parent, *this);

@@ -77,8 +77,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent);
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -87,8 +86,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
-            GUISUMOAbstractView& parent);
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -105,24 +103,16 @@ public:
     //@}
 
     /// @brief set the linkState (controls drawing color)
-    void setLinkState(LinkState state) {
-        myState = state;
-        myOrigState = state;
-    }
+    void setLinkState(LinkState state);
 
     /// @brief whether link state has been modfied
-    inline LinkState getLinkState() {
-        return (LinkState)myState;
-    }
-
+    inline LinkState getLinkState() const;
 
     /// @brief multiplexes message to two targets
     long onDefault(FXObject*, FXSelector, void*);
 
-
-    inline int getTLIndex() const {
-        return myTlIndex;
-    }
+    /// @brief get Traffic Light index
+    inline int getTLIndex() const;
 
     /// @brief long names for link states
     static const StringBijection<FXuint> LinkStateNames;
@@ -135,7 +125,6 @@ protected:
     GNEInternalLane();
 
 private:
-
     /// @brief the shape of the edge
     const PositionVector myShape;
 
@@ -167,10 +156,10 @@ private:
     /// @brief the created popup
     GUIGLObjectPopupMenu* myPopup;
 
+    /// @brief linkstates names values
     static StringBijection<FXuint>::Entry linkStateNamesValues[];
 
 private:
-
     /// @brief return the color for each linkstate
     static const std::string& longNameForLinkState(FXuint state);
 
@@ -179,7 +168,6 @@ private:
 
     /// @brief Invalidated assignment operator.
     GNEInternalLane& operator=(const GNEInternalLane&);
-
 };
 
 

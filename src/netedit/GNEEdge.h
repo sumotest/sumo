@@ -59,7 +59,8 @@ class GNELane;
  * @see MSEdge
  */
 class GNEEdge : public GUIGlObject, public GNEAttributeCarrier {
-
+    
+    /// @brief Friend class
     friend class GNEChange_Lane;
     friend class GNEChange_Connection;
 
@@ -89,8 +90,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-            GUISUMOAbstractView& parent);
+    virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -99,8 +99,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
-            GUISUMOAbstractView& parent);
+    virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -151,12 +150,10 @@ public:
      */
     bool deleteGeometry(const Position& pos, GNEUndoList* undoList);
 
-    /** @brief makes pos the new geometry endpoint at the appropriate end
-     */
+    /// @brief makes pos the new geometry endpoint at the appropriate end
     void setEndpoint(Position pos, GNEUndoList* undoList);
 
-    /** @brief restores the endpoint to the junction position at the appropriate end
-     */
+    /// @brief restores the endpoint to the junction position at the appropriate end
     void resetEndpoint(const Position& pos, GNEUndoList* undoList);
 
     //@name inherited from GNEAttributeCarrier
@@ -259,18 +256,16 @@ private:
      */
     void setNumLanes(unsigned int numLanes, GNEUndoList* undoList);
 
-    /** @brief increase number of lanes by one use the given attributes and
-     * restore the GNELane*/
+    /// @brief@brief increase number of lanes by one use the given attributes and restore the GNELane
     void addLane(GNELane* lane, const NBEdge::Lane& laneAttrs);
 
-    /* decrease the number of lanes by one. argument is only used to increase
-     * robustness (assertions) */
+    /// @briefdecrease the number of lanes by one. argument is only used to increase robustness (assertions)
     void removeLane(GNELane* lane);
 
-    /** @brief adds a connection */
+    /// @brief adds a connection
     void addConnection(unsigned int fromLane, const std::string& toEdgeID, unsigned int toLane, bool mayPass);
 
-    /** @brief removes a connection */
+    /// @brief removes a connection
     void removeConnection(unsigned int fromLane, const std::string& toEdgeID, unsigned int toLane);
 };
 

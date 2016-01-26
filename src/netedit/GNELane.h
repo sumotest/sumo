@@ -45,7 +45,7 @@ class PositionVector;
 class GNETLSEditor;
 class GNEEdge;
 class GNENet;
-class GNEAdditional;            // PABLO #1916
+class GNEAdditional;    // PABLO #1916
 
 // ===========================================================================
 // class definitions
@@ -87,8 +87,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent);
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -97,8 +96,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
-            GUISUMOAbstractView& parent);
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /// @brief multiplexes message to two targets
     long onDefault(FXObject*, FXSelector, void*);
@@ -224,7 +222,7 @@ private:
     /// @brief optional special color
     const RGBColor* mySpecialColor;
 
-        /// @brief The color of the shape parts (cached)
+    /// @brief The color of the shape parts (cached)
     mutable std::vector<RGBColor> myShapeColors;
 
     /// @brief the tls-editor for setting multiple links in TLS-mode
@@ -273,8 +271,8 @@ private:
     /// @brief whether to draw this lane as a waterways
     bool drawAsWaterway(const GUIVisualizationSettings& s) const;
 
-    /* @brief draw crossties for railroads
-     * @todo: XXX This duplicates the code of GUILane::drawCrossties and needs to be */
+    /// @brief draw crossties for railroads
+    /// @todo: XXX This duplicates the code of GUILane::drawCrossties and needs to be
     void drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) const;
 };
 

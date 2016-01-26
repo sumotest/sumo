@@ -60,6 +60,7 @@ class NBTrafficLightDefinition;
  */
 class GNEJunction : public GUIGlObject, public GNEAttributeCarrier {
 
+    /// @brief Declare friend class
     friend class GNEChange_TLS;
 
 public:
@@ -82,8 +83,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent);
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -92,8 +92,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(
-        GUIMainWindow& app, GUISUMOAbstractView& parent);
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -118,10 +117,8 @@ public:
     /// @brief removes mark as first junction in createEdge-mode
     void unMarkAsCreateEdgeSource();
 
-
     /// @brief notify the junction of being selected in tls-mode. (used to control drawing)
     void selectTLS(bool selected);
-
 
     /// @brief returns the internal NBNode
     NBNode* getNBNode();
@@ -135,7 +132,6 @@ public:
 
     /// @brief registers completed movement with the undoList
     void registerMove(GNEUndoList* undoList);
-
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -207,9 +203,8 @@ private:
     /// @brief The represented junction's boundary
     Boundary myBoundary;
 
-    /* @brief whether this junction is the first junction for a newly creatededge
-     * @see GNEApplicationWindow::createEdgeSource)
-     */
+    /// @brief whether this junction is the first junction for a newly creatededge
+    /// @see GNEApplicationWindow::createEdgeSource)
     bool myAmCreateEdgeSource;
 
     // the net to inform about updates

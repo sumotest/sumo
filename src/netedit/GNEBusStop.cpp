@@ -540,17 +540,19 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_STARTPOS: {
             myFromPos = parse<SUMOReal>(value);
             updateGeometry();
+            getViewNet()->update();
             break;
             }
         case SUMO_ATTR_ENDPOS: {
             myToPos = parse<SUMOReal>(value);
             updateGeometry();
+            getViewNet()->update();
             break;
             }
         case SUMO_ATTR_LINES: {
             myLines.clear();
             SUMOSAXAttributes::parseStringVector(value, myLines);
-            updateGeometry();
+            getViewNet()->update();
             break;
             }
         default:

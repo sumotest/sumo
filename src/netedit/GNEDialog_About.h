@@ -47,13 +47,10 @@ public:
      */
     GNEDialog_About(FXWindow* parent);
 
-
     /// @brief Destructor
     ~GNEDialog_About();
 
-
-    /** @brief Creates the widget (and the icons)
-     */
+    /// @brief Creates the widget (and the icons)
     void create();
 
 
@@ -63,7 +60,6 @@ private:
 
     /// @brief Font for the widget
     FXFont* myHeadlineFont;
-
 };
 
 

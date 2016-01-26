@@ -647,8 +647,10 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
     } else if (myAdditionalToMove) {                                                                                    // PABLO #1916
         if(dynamic_cast<GNEStoppingPlace*>(myAdditionalToMove)) {                                                       // PABLO #1916
             GNEStoppingPlace *stoppingPlace = dynamic_cast<GNEStoppingPlace*>(myAdditionalToMove);                      // PABLO #1916
+            myUndoList->p_begin("attribute");
             stoppingPlace->setAttribute(SUMO_ATTR_STARTPOS, toString(stoppingPlace->getFromPosition()), myUndoList);    // PABLO #1916
             stoppingPlace->setAttribute(SUMO_ATTR_ENDPOS, toString(stoppingPlace->getToPosition()), myUndoList);        // PABLO #1916
+            myUndoList->p_end();
         }                                                                                                               // PABLO #1916
         // Rest of elements                                                                                             // PABLO #1916
         myAdditionalToMove = 0;                                                                                         // PABLO #1916

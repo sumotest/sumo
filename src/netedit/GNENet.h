@@ -78,15 +78,16 @@ class GNEChargingStation;
  * @brief A NBNetBuilder extended by visualisation and editing capabilities
  */
 class GNENet : public GUIGlObject {
-
+    
+    /// @brief declare friend class
     friend class GNEChange_Junction;
     friend class GNEChange_Edge;
 
 public:
-    ///@brief color of selection
+    /// @brief color of selection
     static const RGBColor selectionColor;
 
-    ///@brief color of selected lane
+    /// @brief color of selected lane
     static const RGBColor selectedLaneColor;
 
     /** @brief Constructor
@@ -107,8 +108,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
-                                       GUISUMOAbstractView& parent);
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -117,8 +117,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow(
-        GUIMainWindow& app, GUISUMOAbstractView& parent);
+    GUIParameterTableWindow* getParameterWindow( GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -139,7 +138,7 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const;
     //@}
 
-    /// returns the bounder of the network
+    /// @brief returns the bounder of the network
     const Boundary& getBoundary() const;
 
     /** @brief Returns the RTree used for visualisation speed-up
@@ -373,7 +372,7 @@ public:
      *                                                                          // PABLO #1916
      * @param[in] additional The additional element to add                      // PABLO #1916
      */                                                                         // PABLO #1916
-    void insertAdditional(GNEAdditional* additional);                            // PABLO #1916
+    void insertAdditional(GNEAdditional* additional);                           // PABLO #1916
 
     /** @brief delete additional element                            // PABLO #1916
      *                                                              // PABLO #1916
@@ -381,7 +380,7 @@ public:
      *                                                              // PABLO #1916
      * @param[in] additional The additional element to remove       // PABLO #1916
      */                                                             // PABLO #1916
-    void deleteAdditional(GNEAdditional* additional);                // PABLO #1916
+    void deleteAdditional(GNEAdditional* additional);               // PABLO #1916
 
     /** @brief Returns the named bus stop                       // PABLO #1916
      * @param[in] id The id of the bus stop to return.          // PABLO #1916
@@ -420,7 +419,7 @@ public:
     int getNumberOfChargingStations();                              // PABLO #1916
 
 private:
-    /// the rtree which contains all GUIGlObjects (so named for historical reasons)
+    /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)
     SUMORTree myGrid;
 
     /// @brief The window to be notofied of about changes
@@ -451,7 +450,7 @@ private:
     IDSupplier myJunctionIDSupplier;
     // @}
 
-    /// the container for additional pois and polygons
+    /// @brief the container for additional pois and polygons
     GUIShapeContainer myShapeContainer;
 
     /// @brief list of edge ids for which turn-arounds must be added explicitly
@@ -461,7 +460,6 @@ private:
     bool myNeedRecompute;
 
 private:
-
     /// @brief Initialises the detector wrappers
     void initDetectors();
 

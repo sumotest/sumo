@@ -59,8 +59,10 @@ public:
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
         // FOX-declarations
-        // FXDECLARE(GNEInspector::AttrPanel)
+        FXDECLARE(GNEInspector::AttrPanel)
+
     public:
+        /// @brief constructor
         AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
 
     protected:
@@ -74,14 +76,16 @@ public:
     class AttrInput : public FXHorizontalFrame {
         // FOX-declarations
         FXDECLARE(GNEInspector::AttrInput)
+
     public:
-        AttrInput(
-            FXComposite* parent,
-            const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue,
-            GNEUndoList* undoList);
+
+        /// @brief
+        AttrInput(FXComposite* parent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, 
+                  std::string initialValue, GNEUndoList* undoList);
 
         /// @brief try to set new attribute value
         long onCmdSetAttribute(FXObject*, FXSelector, void*);
+
         /// @brief open model dialog for more comfortable attribute editing
         long onCmdOpenAttributeEditor(FXObject*, FXSelector, void*);
 
@@ -90,14 +94,25 @@ public:
         AttrInput() {}
 
     private:
+
+        /// @brief actual tag
         SumoXMLTag myTag;
+
+        /// @brief attributos
         SumoXMLAttr myAttr;
+
+        /// @brief attribute carriers
         const std::vector<GNEAttributeCarrier*>* myACs;
+
+        /// @brief pointer to undolist
         GNEUndoList* myUndoList;
+
+        /// @brief pointer to text field
         FXTextField* myTextField;
+
+        /// @brief pointer to combo box choices
         FXComboBox* myChoicesCombo;
     };
-
 
 public:
     /** @brief Constructor
@@ -107,27 +122,23 @@ public:
      */
     GNEInspector(FXComposite* parent, GNEUndoList* undoList);
 
-
     /// @brief Destructor
     ~GNEInspector();
 
     /// @brief Inspect the given multi-selection
     void inspect(const std::vector<GNEAttributeCarrier*>& ACs);
 
-    /** @brief Creates the widget */
+    /// @brief Creates the widget
     void create();
 
-    /** @brief update the widget */
+    /// @brief update the widget
     void update();
 
-    FXFont* getHeaderFont() {
-        return myHeaderFont;
-    }
+    /// @brief get Header Font
+    FXFont* getHeaderFont() const;
 
-    /// @brief the template edge (to copy attributes from)
-    GNEEdge* getEdgeTemplate() {
-        return myEdgeTemplate;
-    }
+    /// @brief get the template edge (to copy attributes from)
+    GNEEdge* getEdgeTemplate() const;
 
     /// @brief seh the template edge (we assume shared responsibility via reference counting)
     void setEdgeTemplate(GNEEdge* tpl);
@@ -144,13 +155,13 @@ protected:
     /// @brief FOX needs this
     GNEInspector() {}
 
-
 private:
     GNEUndoList* myUndoList;
 
     /// @brief Font for the widget
     FXFont* myHeaderFont;
 
+    /// @brief panel of attributes
     AttrPanel* myPanel;
 
     /// @brief the edge template
@@ -159,6 +170,7 @@ private:
     /// @brief the multi-selection currently being inspected
     std::vector<GNEAttributeCarrier*> myACs;
 
+    /// @brief Width of the frame
     static const int WIDTH;
 };
 
