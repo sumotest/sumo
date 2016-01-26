@@ -130,9 +130,9 @@ enum GUIIcon {
     ICON_UNDO,
     ICON_REDO,
     ICON_NETEDIT,
+    ICON_LOCK,  // PABLO #1916
 
     ICON_MAX
-
 };
 
 
