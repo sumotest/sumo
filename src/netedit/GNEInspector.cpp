@@ -55,7 +55,8 @@
 FXDEFMAP(GNEInspector) GNEInspectorMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE, GNEInspector::onCmdCopyTemplate),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,  GNEInspector::onCmdSetTemplate),
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE, GNEInspector::onUpdCopyTemplate)
+    FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE, GNEInspector::onUpdCopyTemplate),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspector::onCmdSetBlocking),  // PABLO #1916
 };
 
 /*
@@ -67,7 +68,6 @@ FXDEFMAP(GNEInspector::AttrPanel) AttrPanelMap[]= {
 
 FXDEFMAP(GNEInspector::AttrInput) AttrInputMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_ATTRIBUTE,         GNEInspector::AttrInput::onCmdSetAttribute),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,          GNEInspector::AttrInput::onCmdSetBlocking),  // PABLO #1916
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspector::AttrInput::onCmdOpenAttributeEditor)
 };
 
@@ -190,6 +190,11 @@ GNEInspector::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
     return 1;
 }
 
+long
+GNEInspector::onCmdSetBlocking(FXObject*, FXSelector, void*) {               // PABLO #1916
+    dynamic_cast<GNEAdditional*>(myACs[0])->setBlocked(myPanel->getCheckBlocked());    // PABLO #1916
+}                                                                                       // PABLO #1916
+
 
 // ===========================================================================
 // AttrPanel method definitions
@@ -254,10 +259,10 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
             FXGroupBox* groupBoxForEditor = new FXGroupBox(this, "editor",                  // PABLO #1916
             GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
 
-            checkBlocked = new FXCheckButton(groupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);         // PABLO #1916
+            myCheckBlocked = new FXCheckButton(groupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);         // PABLO #1916
             
             std::cout << GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS) << std:: endl;
-            checkBlocked->setIcon(GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS));
+            myCheckBlocked->setIcon(GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS));
         }                                                                                   // PABLO #1916
 
 
@@ -355,11 +360,6 @@ GNEInspector::AttrInput::onCmdOpenAttributeEditor(FXObject*, FXSelector, void*) 
     return 1;
 }
 
-
-long
-GNEInspector::AttrInput::onCmdSetBlocking(FXObject*, FXSelector, void*) {               // PABLO #1916
-    dynamic_cast<GNEAdditional*>(myACs[0][0])->setBlocked(checkBlocked->getCheck());    // PABLO #1916
-}                                                                                       // PABLO #1916
 
 long
 GNEInspector::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* data) {

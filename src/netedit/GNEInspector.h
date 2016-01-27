@@ -65,9 +65,16 @@ public:
         /// @brief constructor
         AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
 
+        bool getCheckBlocked() const {
+            return myCheckBlocked->getCheck();
+        }
+
     protected:
         /// @brief FOX needs this
         AttrPanel() {}
+
+        /// @brief pointer to check button blockec
+        FXCheckButton *myCheckBlocked;
     };
 
     // ===========================================================================
@@ -88,9 +95,6 @@ public:
         /// @brief open model dialog for more comfortable attribute editing
         long onCmdOpenAttributeEditor(FXObject*, FXSelector, void*);
         
-        /// @brief try to set new attribute value               // PABLO #1916
-        long onCmdSetBlocking(FXObject*, FXSelector, void*);    // PABLO #1916
-    
     protected:
         /// @brief FOX needs this
         AttrInput() {}
@@ -113,9 +117,6 @@ public:
 
         /// @brief pointer to combo box choices
         FXComboBox* myChoicesCombo;
-
-        /// @brief pointer to check button blockec
-        FXCheckButton *checkBlocked;
     };
 
 public:
@@ -155,6 +156,10 @@ public:
 
     /// @brief update the copy button with the name of the template
     long onUpdCopyTemplate(FXObject*, FXSelector, void*);
+
+    /// @brief try to set new attribute value               // PABLO #1916
+    long onCmdSetBlocking(FXObject*, FXSelector, void*);    // PABLO #1916
+    
 
 protected:
     /// @brief FOX needs this
