@@ -97,17 +97,17 @@ public class NonInteractingPedestrian {
             double beginPos;
             double endPos;
 
-            if (!prev.getFromJunctionId().isEmpty()) {
+            if (prev.getFromJunctionId().isEmpty()) {
                 beginPos = request.getStage().getDepartPos();
             } else {
-                dir = (edge.getToJunctionId() == prev.getToJunctionId() || edge.getToJunctionId() == prev.getFromJunctionId()) ? BCKWD : FWD;
+                dir = (edge.getToJunctionId().equals(prev.getToJunctionId()) || edge.getToJunctionId().equals(prev.getFromJunctionId())) ? BCKWD : FWD;
                 beginPos = dir == FWD ? 0 : edge.getLength();
             }
-            if (!nxt.getFromJunctionId().isEmpty()) {
+            if (nxt.getFromJunctionId().isEmpty()) {
                 endPos = request.getStage().getArrivalPos();
             } else {
                 if (dir == UNDF) {
-                    dir = (edge.getToJunctionId() == prev.getToJunctionId() || edge.getToJunctionId() == prev.getFromJunctionId()) ? BCKWD : FWD;
+                    dir = (edge.getFromJunctionId().equals(nxt.getFromJunctionId()) || edge.getFromJunctionId().equals(nxt.getToJunctionId())) ? BCKWD : FWD;
                 }
                 endPos = dir == FWD ? edge.getLength() : 0;
             }

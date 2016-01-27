@@ -74,7 +74,6 @@ MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * pre
 		CmpWlkTmStruct ret;
 	if (status.ok()){
 //		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
-		ret.currentDuration = reply.duration().sumotime();
 		ret.wlkTm = MAX2((SUMOTime)1, TIME2STEPS(reply.duration().sumotime()));;
 		ret.currentBeginPos = reply.mycurrentbeginpos();
 		ret.currentEndPos = reply.mycurrentendpos();
