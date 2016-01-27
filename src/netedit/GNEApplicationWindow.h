@@ -145,6 +145,9 @@ public:
     /// @brief called when the command/FXCall save network is executed
     long onCmdSaveNetwork(FXObject*, FXSelector, void*);
 
+    /// @brief called when the command/FXCall save additionals is executed  // PABLO #1916
+    long onCmdSaveAdditionals(FXObject*, FXSelector, void*);                // PABLO #1916
+
     /// @brief called when the update/FXCall save network is executed
     long onUpdSaveNetwork(FXObject*, FXSelector, void*);
 

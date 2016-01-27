@@ -185,7 +185,7 @@ protected:
     bool myBlocked;
     
     /// @brief variable to keep GLId of the additional lock image
-    static int additionalLockGlID;
+    static GUIGlID additionalLockGlID;
 
     /// @brief boolean to check if additional lock image was inicializated
     static bool additionalLockInitialized;    

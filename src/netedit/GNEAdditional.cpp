@@ -57,6 +57,7 @@
 #include "GNEViewNet.h"
 
 #include "lockLogo.cpp"
+#include "tlslogo.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -66,7 +67,7 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-int GNEAdditional::additionalLockGlID = 0;
+GUIGlID GNEAdditional::additionalLockGlID = 0;
 bool GNEAdditional::additionalLockInitialized = false;
 
 // ===========================================================================
@@ -131,7 +132,12 @@ GNEAdditional::drawLockIcon(SUMOReal altitude) const{
 
     // load additional lock, if wasn't inicializated
     if (!additionalLockInitialized) {
+        
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), lockLogo, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+
+        /// ¿¿Size 1??
+        std::cout << "Image size: " << i->getWidth() << " " << i->getHeight() << std::endl;
+
         additionalLockGlID = GUITexturesHelper::add(i);
         additionalLockInitialized = true;
         delete i;
@@ -139,6 +145,7 @@ GNEAdditional::drawLockIcon(SUMOReal altitude) const{
     glPushMatrix();
     glTranslated(0, 0, .2);
     glColor3d(1, 1, 1);
+
     GUITexturesHelper::drawTexturedBox(additionalLockGlID, 0.5);
     glPopMatrix();
 }

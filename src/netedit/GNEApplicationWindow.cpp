@@ -140,6 +140,9 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_JOINED,           GNEApplicationWindow::onUpdNeedsNetwork), // same condition
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_POIS,             GNEApplicationWindow::onCmdSavePois),
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_POIS,             GNEApplicationWindow::onUpdNeedsNetwork), // same condition
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onCmdSaveAdditionals),                 // PABLO #1916
+    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onUpdNeedsNetwork), // same condition  // PABLO #1916
+
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_ABORT,                 GNEApplicationWindow::onCmdAbort),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_HOTKEY_DEL,            GNEApplicationWindow::onCmdDel),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_HOTKEY_ENTER,          GNEApplicationWindow::onCmdEnter),
@@ -358,6 +361,9 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCommand(myFileMenu,
                       "&Save POIs As ...\t\tSave the POIs.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_POIS);
+    new FXMenuCommand(myFileMenu,                                                           // PABLO #1916
+                      "&Save additionals...\t\tSave additionals.",                          // PABLO #1916
+                      GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);   // PABLO #1916
     new FXMenuSeparator(myFileMenu);
     new FXMenuCommand(myFileMenu,
                       "Close\tCtrl+W\tClose the network.",
@@ -1203,6 +1209,23 @@ GNEApplicationWindow::onCmdSaveNetwork(FXObject*, FXSelector, void*) {
     getApp()->endWaitCursor();
     return 1;
 }
+
+
+
+long 
+GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {                  // PABLO #1916
+    getApp()->beginWaitCursor();                                                            // PABLO #1916
+    try {                                                                                   // PABLO #1916
+        OptionsCont& oc = OptionsCont::getOptions();                                        // PABLO #1916
+        myNet->saveAdditionals(oc);                                                         // PABLO #1916
+    } catch (IOError& e) {                                                                  // PABLO #1916
+        FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());   // PABLO #1916
+    }                                                                                       // PABLO #1916
+    myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");              // PABLO #1916
+    myMessageWindow->addSeparator();                                                        // PABLO #1916
+    getApp()->endWaitCursor();                                                              // PABLO #1916
+    return 1;                                                                               // PABLO #1916
+}                                                                                           // PABLO #1916
 
 
 long

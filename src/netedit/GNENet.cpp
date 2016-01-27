@@ -533,6 +533,12 @@ GNENet::save(OptionsCont& oc) {
 }
 
 
+void                                        // PABLO #1916
+GNENet::saveAdditionals(OptionsCont& oc) {  // PABLO #1916
+
+}                                           // PABLO #1916
+
+
 void
 GNENet::savePlain(OptionsCont& oc) {
     computeAndUpdate(oc);

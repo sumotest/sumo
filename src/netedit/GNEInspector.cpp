@@ -193,6 +193,7 @@ GNEInspector::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
 long
 GNEInspector::onCmdSetBlocking(FXObject*, FXSelector, void*) {               // PABLO #1916
     dynamic_cast<GNEAdditional*>(myACs[0])->setBlocked(myPanel->getCheckBlocked());    // PABLO #1916
+    return 1;
 }                                                                                       // PABLO #1916
 
 

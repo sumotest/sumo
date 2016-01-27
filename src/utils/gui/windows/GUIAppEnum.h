@@ -449,6 +449,7 @@ enum {
     MID_GNE_SAVE_PLAIN_XML,
     MID_GNE_SAVE_JOINED,
     MID_GNE_SAVE_POIS,
+    MID_GNE_SAVE_ADDITIONALS,   // PABLO #1916
     /** insert contents of another network */
     MID_GNE_INSERT_NETWORK,
     /** attribute edited */
