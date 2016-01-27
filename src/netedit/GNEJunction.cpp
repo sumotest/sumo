@@ -48,7 +48,7 @@
 #include <netbuild/NBOwnTLDef.h>
 #include <netbuild/NBLoadedSUMOTLDef.h>
 #include <netbuild/NBAlgorithms.h>
-#include "tlsLogo.cpp"
+#include "tlslogo.cpp"
 #include "GNENet.h"
 #include "GNEEdge.h"
 #include "GNECrossing.h"
