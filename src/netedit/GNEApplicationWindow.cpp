@@ -341,7 +341,7 @@ GNEApplicationWindow::fillMenuBar() {
                       "Load &Shapes...\tCtrl+P\tLoad shapes into the network view.",
                       GUIIconSubSys::getIcon(ICON_OPEN_SHAPES), this, MID_OPEN_SHAPES);
     new FXMenuCommand(myFileMenu,                                                                   // PABLO #1916
-                      "Load &Additionals...\tCtrl+P\tLoad additional elements.",                    // PABLO #1916
+                      "Load &Additionals...\tCtrl+D\tLoad additional elements.",                    // PABLO #1916
                       GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS), this, MID_OPEN_ADDITIONALS);   // PABLO #1916
     new FXMenuCommand(myFileMenu,
                       "&Reload\tCtrl+R\tReloads the network.",
