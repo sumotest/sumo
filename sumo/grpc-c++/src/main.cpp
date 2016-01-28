@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <grpc++/grpc++.h>
+#include <math.h>
 #include "noninteracting.grpc.pb.h"
 
 
@@ -37,22 +38,49 @@ class PStateImpl final : public PBPState::Service {
         double arrPos = st.arrivalpos();
         double time = req->sumotime().sumotime();
 
-        std::cout << time << std::endl;
+//        std::cout << time << std::endl;
         rpl->set_mylastentrytime(time);
 
         int dir = UNDF;
+        double beg, end, dur;
+        if (prev.length() == 0) {
+            beg = st.departpos();
+        } else {
+            dir = (curr.tojunctionid() == prev.tojunctionid() || curr.tojunctionid() == prev.fromjunctionid()) ? BWD : FWD;
+            beg = dir == FWD ? 0 : curr.length();
+        }
+        if (nxt.length() == 0) {
+            end = arrPos;
+        } else {
+            if (dir == UNDF) {
+                dir = (curr.fromjunctionid() == nxt.fromjunctionid() || curr.fromjunctionid() == nxt.tojunctionid()) ? BWD : FWD;
+            }
+            end = dir == FWD ? curr.length() : 0;
+        }
 
-//        if (prev == 0) {
-//
-//        }
+        dur = fabs(beg-end)/mxSpd;
+
+        rpl->set_mycurrentbeginpos(beg);
+        rpl->set_mycurrentendpos(end);
+        rpl->mutable_duration()->set_sumotime(dur);
 
         return Status::OK;
 
     }
 
     Status getEdgePost(::grpc::ServerContext *context,
-                       const GetEdgePos *request,
-                       PBSUMOReal *response) override {
+                       const GetEdgePos *req,
+                       PBSUMOReal *rpl) override {
+
+        double beg = req->mycurrentbeginpos();
+        double end = req->mycurrentendpos();
+        double dur = req->mycurrentduration();
+        double last = req->mylastentrytime().sumotime();
+        double now = req->time().sumotime();
+
+        double pos = beg + (end-beg)/dur*(now-last);
+        rpl->set_sumoreal(pos);
+
         return Status::OK;
     }
 
