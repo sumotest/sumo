@@ -1,0 +1,2 @@
+#define grpc_test_VERSION_MAJOR @grpc_test_VERSION_MAJOR@
+#define grpc_test_VERSION_MINOR @grpc_test_VERSION_MINOR@
