@@ -73,9 +73,10 @@ public:
     /// @brief Destructor
     ~GNEChargingStation();
 
-    /// @brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. junction moved)
-    void updateGeometry();
+    /** @brief writte additional element into a xml file
+     * @param[in] device device in which write parameters of additional element
+     */
+    void writeAdditional(OutputDevice& device);
 
     /** @brief Returns the charging power of the chargingStation
      * @return The charging power of the chargingStation

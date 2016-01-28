@@ -533,10 +533,17 @@ GNENet::save(OptionsCont& oc) {
 }
 
 
-void                                        // PABLO #1916
-GNENet::saveAdditionals(OptionsCont& oc) {  // PABLO #1916
-
-}                                           // PABLO #1916
+void                                                                                                                            // PABLO #1916
+GNENet::saveAdditionals(OptionsCont& oc) {                                                                                      // PABLO #1916
+    computeAndUpdate(oc);                                                                                                       // PABLO #1916
+    std::string route = oc.getString("output-file");    // Provisional                                                          // PABLO #1916
+    route.erase(route.find(".net.xml"), 8);             // Provisional                                                          // PABLO #1916
+    OutputDevice& device = OutputDevice::getDevice(route + ".add.xml");                                                         // PABLO #1916
+    device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");   // PABLO #1916
+    for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)                               // PABLO #1916
+        i->second->writeAdditional(device);                                                                                     // PABLO #1916
+    device.close();                                                                                                             // PABLO #1916
+}                                                                                                                               // PABLO #1916
 
 
 void
@@ -989,33 +996,33 @@ GNENet::getShapeContainer() {
 
 
 void                                                                                                    // PABLO #1916
-GNENet::insertAdditional(GNEAdditional* additional) {                                                    // PABLO #1916
-    // Check if additional element exists before insertion                                                // PABLO #1916
-    if(myAdditionals.find(additional->getID()) != myAdditionals.end())                                    // PABLO #1916
+GNENet::insertAdditional(GNEAdditional* additional) {                                                   // PABLO #1916
+    // Check if additional element exists before insertion                                              // PABLO #1916
+    if(myAdditionals.find(additional->getID()) != myAdditionals.end())                                  // PABLO #1916
         throw ProcessError("additional element with ID='" + additional->getID() + "' already exist");   // PABLO #1916
-    else {                                                                                                // PABLO #1916
+    else {                                                                                              // PABLO #1916
         myAdditionals[additional->getID()] = additional;                                                // PABLO #1916
-    }                                                                                                    // PABLO #1916
-}                                                                                                        // PABLO #1916
+    }                                                                                                   // PABLO #1916
+}                                                                                                       // PABLO #1916
 
 
-void                                                                                                // PABLO #1916
-GNENet::deleteAdditional(GNEAdditional* additional) {                                                // PABLO #1916
-    GNEAdditionals::iterator positionToRemove = myAdditionals.find(additional->getID());            // PABLO #1916
-    // Check if additional element exists before deletion                                            // PABLO #1916
-    if(positionToRemove == myAdditionals.end())                                                     // PABLO #1916
-        throw ProcessError("additional element with ID='" + additional->getID() + "' don't exist"); // PABLO #1916
-    else                                                                                            // PABLO #1916
-        myAdditionals.erase(positionToRemove);                                                        // PABLO #1916
-}                                                                                                    // PABLO #1916
+void                                                                                                    // PABLO #1916
+GNENet::deleteAdditional(GNEAdditional* additional) {                                                   // PABLO #1916
+    GNEAdditionals::iterator positionToRemove = myAdditionals.find(additional->getID());                // PABLO #1916
+    // Check if additional element exists before deletion                                               // PABLO #1916
+    if(positionToRemove == myAdditionals.end())                                                         // PABLO #1916
+        throw ProcessError("additional element with ID='" + additional->getID() + "' don't exist");     // PABLO #1916
+    else                                                                                                // PABLO #1916
+        myAdditionals.erase(positionToRemove);                                                          // PABLO #1916
+}                                                                                                       // PABLO #1916
 
-GNEBusStop*                                                                        // PABLO #1916
-GNENet::getBusStop(const std::string& id) const {                                // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end())    // PABLO #1916
-        return dynamic_cast<GNEBusStop*>(myAdditionals.at(id));                    // PABLO #1916
-    else                                                                        // PABLO #1916
-        return NULL;                                                            // PABLO #1916
-}                                                                                // PABLO #1916
+GNEBusStop*                                                                         // PABLO #1916
+GNENet::getBusStop(const std::string& id) const {                                   // PABLO #1916
+    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end())     // PABLO #1916
+        return dynamic_cast<GNEBusStop*>(myAdditionals.at(id));                     // PABLO #1916
+    else                                                                            // PABLO #1916
+        return NULL;                                                                // PABLO #1916
+}                                                                                   // PABLO #1916
 
 
 std::string

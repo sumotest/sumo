@@ -102,12 +102,17 @@ public:
      */
     void setBlocked(bool value);
 
-    /** @brief change the position of the additonal geometry without registering undo/redo
+    /** @brief change the position of the additional geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
      * @param[in] undoList pointer to the undo list
      * @return newPos if something was moved, oldPos if nothing was moved
      */
     virtual void moveAdditional(SUMOReal distance, GNEUndoList *undoList) = 0;
+
+    /** @brief writte additional element into a xml file
+     * @param[in] device device in which write parameters of additional element
+     */
+    virtual void writeAdditional(OutputDevice& device) = 0;
 
     /// @name inherited from GUIGlObject
     //@{

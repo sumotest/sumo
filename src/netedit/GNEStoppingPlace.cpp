@@ -77,6 +77,79 @@ GNEStoppingPlace::~GNEStoppingPlace() {
 
 
 void 
+GNEStoppingPlace::updateGeometry() {
+
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+    
+    // Clear shape
+    myShape.clear();
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand");
+
+    // Get shape of lane parent
+    myShape = myLane.getShape();
+    
+    // Move shape to side
+    myShape.move2side(1.65 * offsetSign);
+
+    // Cut shape using as delimitators from start position and end position
+    myShape = myShape.getSubpart(myFromPos, myToPos);
+
+    // Get number of parts of the shape
+    int numberOfSegments = (int) myShape.size() - 1;
+
+    // If number of segments is more than 0
+    if(numberOfSegments >= 0) {
+
+        // Reserve memory (To improve efficiency)
+        myShapeRotations.reserve(numberOfSegments);
+        myShapeLengths.reserve(numberOfSegments);
+
+        // For every part of the shape
+        for (int i = 0; i < numberOfSegments; ++i) {
+
+            // Obtain first position
+            const Position& f = myShape[i];
+
+            // Obtain next position
+            const Position& s = myShape[i + 1];
+
+            // Save distance between position into myShapeLengths
+            myShapeLengths.push_back(f.distanceTo(s));
+
+            // Save rotation (angle) of the vector constructed by points f and s
+            myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+        }
+    }
+
+    // Obtain a copy of the shape
+    PositionVector tmpShape = myShape;
+
+    // Move shape to side 
+    tmpShape.move2side(1.5 * offsetSign);
+
+    // Get position of the sing
+    mySignPos = tmpShape.getLineCenter();
+
+    // If lenght of the shape is distint to 0
+    if (tmpShape.length() != 0) {
+
+        // Obtain rotation of signal rot
+        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+
+        // correct orientation
+        mySignRot -= 90;
+    }
+    else
+        // Value of signal rotation is 0
+        mySignRot = 0;
+}
+
+
+void 
 GNEStoppingPlace::moveAdditional(SUMOReal distance, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {

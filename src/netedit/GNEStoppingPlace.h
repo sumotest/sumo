@@ -67,8 +67,7 @@ public:
     ~GNEStoppingPlace();
 
     /// @brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. lane moved, start or end position changed, etc..)
-    virtual void updateGeometry() = 0;
+    virtual void updateGeometry();
 
     /** @brief change the position of the additonal geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
@@ -76,6 +75,11 @@ public:
      * @return newPos if something was moved, oldPos if nothing was moved
      */
     void moveAdditional(SUMOReal distance, GNEUndoList *undoList);
+
+    /** @brief writte additional element into a xml file
+     * @param[in] device device in which write parameters of additional element
+     */
+    virtual void writeAdditional(OutputDevice& device) = 0;
 
     /** @brief Returns the from position of the stoppingPlace
      * @return The from position of the stopping place

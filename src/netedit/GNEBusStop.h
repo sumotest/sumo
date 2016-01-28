@@ -71,9 +71,10 @@ public:
     /// @brief Destructor
     ~GNEBusStop();
 
-    /// @brief update pre-computed geometry information
-    ///  @note: must be called when geometry changes (i.e. junction moved)
-    void updateGeometry();
+    /** @brief writte additional element into a xml file
+     * @param[in] device device in which write parameters of additional element
+     */
+    void writeAdditional(OutputDevice& device);
 
     /** @brief get lines of busStop
      * @return vector of strings with the lines of the busStop 
