@@ -20,18 +20,21 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 find_package(Protobuf REQUIRED)
 if (PROTOBUF_FOUND)
-    message(STATUS "PROTOBUF VERSION: " $$)
+	#// message(STATUS "PROTOBUF VERSION: " $$)
+	message(STATUS "Protobuf incl"  ${PROTOBUF_INCLUDE_DIRS})
+	message(STATUS "Protobuf libg"  ${PROTOBUF_LINK_DIRS})
+
     include_directories("${PROTOBUF_INCLUDE_DIRS}")
-    link_directories("${PROTOBUF_LINK_DIRS}")
+    link_directories("/usr/local/lib/")
 
 #    target_link_libraries(main grpc++)
-    link_libraries(protobuf)
+#link_libraries(protobuf)
 #    else()
 
 endif(PROTOBUF_FOUND)
 
 find_package(GRPC REQUIRED)
-link_libraries(grpc++ grpc gpr)
+link_libraries(grpc++ grpc gpr protobuf)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
