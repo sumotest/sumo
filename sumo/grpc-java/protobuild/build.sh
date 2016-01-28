@@ -10,4 +10,7 @@ protoc -I ../src/main/proto --grpc_out=../src/main/java/ --plugin=protoc-gen-grp
 protoc -I ../src/main/proto --java_out=../src/main/java/ ../src/main/proto/noninteracting.proto 
 protoc -I ../src/main/proto --grpc_out=../../src/microsim/pedestrians  --plugin=protoc-gen-grpc=$PLUGIN_CPP ../src/main/proto/noninteracting.proto
 protoc -I ../src/main/proto --cpp_out=../../src/microsim/pedestrians ../src/main/proto/noninteracting.proto
+
+protoc -I ../src/main/proto --grpc_out=../../grpc-c++/src/  --plugin=protoc-gen-grpc=$PLUGIN_CPP ../src/main/proto/noninteracting.proto
+protoc -I ../src/main/proto --cpp_out=../../grpc-c++/src/ ../src/main/proto/noninteracting.proto
 echo "done"
