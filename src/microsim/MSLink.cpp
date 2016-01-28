@@ -577,15 +577,30 @@ MSLink::getViaLane() const {
 }
 
 
+bool 
+MSLink::isExitLink() const {
+    /// XXX this only works in networks with internal lanes
+    return getInternalLaneBefore() != 0 && myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL;
+}
+
+
+bool 
+MSLink::isInternalJunctionLink() const {
+    return getInternalLaneBefore() != 0 && myInternalLane != 0;
+}
+
+bool 
+MSLink::fromInternalLane() const {
+    return isExitLink() || isInternalJunctionLink();
+}
+
 MSLink::LinkLeaders
 MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson*>* collectBlockers) const {
     LinkLeaders result;
     //gDebugFlag1 = true;
     // this link needs to start at an internal lane (either an exit link or between two internal lanes)
-    if (MSGlobals::gUsingInternalLanes && (
-                (myInternalLane == 0 && getLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL)
-                || (myInternalLane != 0 && myInternalLane->getLogicalPredecessorLane()->getEdge().isInternal()))) {
-        if (gDebugFlag1) std::cout << SIMTIME << " getLeaderInfo link=" << getViaLaneOrLane()->getID() << "\n";
+    if (fromInternalLane()) {
+        //if (gDebugFlag1) std::cout << SIMTIME << " getLeaderInfo link=" << getViaLaneOrLane()->getID() << "\n";
         // this is an exit link
         for (size_t i = 0; i < myFoeLanes.size(); ++i) {
             const MSLane* foeLane = myFoeLanes[i];

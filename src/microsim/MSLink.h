@@ -399,6 +399,15 @@ public:
     //// @brief @return whether the foe vehicle is a leader for ego
     bool isLeader(const MSVehicle* ego, const MSVehicle* foe);
 
+    /// @brief return whether the fromLane of this link is an internal lane
+    bool fromInternalLane() const;
+
+    /// @brief return whether the fromLane of this link is an internal lane and toLane is a normal lane
+    bool isExitLink() const;
+
+    /// @brief return whether the fromLane and the toLane of this link are internal lanes
+    bool isInternalJunctionLink() const;
+
 private:
     /// @brief return whether the given vehicles may NOT merge safely
     static inline bool unsafeMergeSpeeds(SUMOReal leaderSpeed, SUMOReal followerSpeed, SUMOReal leaderDecel, SUMOReal followerDecel) {

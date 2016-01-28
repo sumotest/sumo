@@ -1200,7 +1200,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // - and unless they are so close that stopping is impossible (i.e. when a green light turns to yellow when close to the junction)
         if (!(*link)->havePriority() && stopDist > cfModel.getMaxDecel() && brakeDist < seen) {
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
-            arrivalSpeed = cfModel.getMaxDecel() + cfModel.getMaxAccel();
+            arrivalSpeed = MIN2(vLinkPass, cfModel.getMaxDecel() + cfModel.getMaxAccel());
             slowedDownForMinor = true;
         }
         // @note intuitively it would make sense to compare arrivalSpeed with getSpeed() instead of v
@@ -1238,7 +1238,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
                                            arrivalTime, arrivalSpeed,
                                            arrivalTimeBraking, arrivalSpeedBraking,
                                            seen,
-                                           estimateLeaveSpeed(*link, vLinkPass)));
+                                           estimateLeaveSpeed(*link, arrivalSpeed)));
 #ifdef HAVE_INTERNAL_LANES
         if ((*link)->getViaLane() == 0) {
             hadNonInternal = true;
