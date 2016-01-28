@@ -2,7 +2,7 @@
 echo "works with Mac and 64bit Linux only"
 echo "for other OSs you need to get, build, and install grpc-java by yourself"
 case "$OSTYPE" in
-  darwin*)  echo "OSX detected"; PLUGIN_JAVA="protoc-gen-grpc-java-osx" ;;
+  darwin*)  echo "OSX detected"; PLUGIN_JAVA="protoc-gen-grpc-java-osx"; PLUGIN_CPP="protoc-gen-grpc-cpp-osx";;
   linux*)   echo "LINUX detected" ; PLUGIN_JAVA="protoc-gen-grpc-java-linux-x86-64"; PLUGIN_CPP="protoc-gen-grpc-cpp-linux-x86-64";;
    *)        echo "unsupported: $OSTYPE" && exit -2;;
 esac
