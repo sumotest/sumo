@@ -144,9 +144,9 @@ public:
      */                                                     // PABLO #1916
     void setIndex(unsigned int index);                      // PABLO #1916
 
-    /// @brief returns the length of the lane                           // PABLO #1916
-    /// @note length is calculated as the sumatorial of myShapeLengths  // PABLO #1916
-    SUMOReal getLength() const;                                         // PABLO #1916
+    /// @brief returns the length of the lane                           // PABLO #1916  (ARREGLAR)
+    /// @note length is calculated as the sumatorial of myShapeLengths  // PABLO #1916  (ARREGLAR)
+    SUMOReal getLength() const;                                         // PABLO #1916  (ARREGLAR)
 
     /* @brief method for adding a reference of a additional element placed in this lane     // PABLO #1916
      * @param[in] additional Pointer to additional element                                  // PABLO #1916
@@ -212,9 +212,6 @@ private:
     /// @brief The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
     //@}
-
-    /// @brief The lengths of the lane (Calculated from myShapeLengths) // PABLO #1916 (QUESTION ERDMANN 01)
-    SUMOReal myLength;                                                  // PABLO #1916 (QUESTION ERDMANN 01)
 
     /// @brief vector with pointers to additional elements placed in this lane  // PABLO #1916
     additionalVector additionalElements;                                        // PABLO #1916

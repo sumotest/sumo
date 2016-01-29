@@ -55,9 +55,7 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
-
-#include "lockLogo.cpp"
-#include "tlslogo.cpp"
+#include "GNELogo_Lock.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -128,16 +126,10 @@ GNEAdditional::getParentName() const {
 
 
 void 
-GNEAdditional::drawLockIcon(SUMOReal altitude) const{
-
+GNEAdditional::drawLockIcon(SUMOReal altitude) const {
     // load additional lock, if wasn't inicializated
     if (!additionalLockInitialized) {
-        
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), lockLogo, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-
-        /// ¿¿Size 1??
-        std::cout << "Image size: " << i->getWidth() << " " << i->getHeight() << std::endl;
-
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
         additionalLockGlID = GUITexturesHelper::add(i);
         additionalLockInitialized = true;
         delete i;

@@ -48,7 +48,7 @@
 #include <netbuild/NBOwnTLDef.h>
 #include <netbuild/NBLoadedSUMOTLDef.h>
 #include <netbuild/NBAlgorithms.h>
-#include "tlslogo.cpp"
+#include "GNELogo_TLS.cpp"
 #include "GNENet.h"
 #include "GNEEdge.h"
 #include "GNECrossing.h"
@@ -208,7 +208,7 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
         if (s.editMode == GNE_MODE_TLS && myNBNode.isTLControlled() && !myAmTLSSelected) {
             // decorate in tls mode
             if (!TLSDecalInitialized) {
-                FXImage* i = new FXGIFImage(myNet->getApp(), tlslogo, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+                FXImage* i = new FXGIFImage(myNet->getApp(), GNELogo_TLS, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
                 TLSDecalGlID = GUITexturesHelper::add(i);
                 TLSDecalInitialized = true;
                 delete i;
