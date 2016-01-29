@@ -144,9 +144,26 @@ public:
      */                                                     // PABLO #1916
     void setIndex(unsigned int index);                      // PABLO #1916
 
-    /// @brief returns the length of the lane                           // PABLO #1916  (ARREGLAR)
-    /// @note length is calculated as the sumatorial of myShapeLengths  // PABLO #1916  (ARREGLAR)
-    SUMOReal getLength() const;                                         // PABLO #1916  (ARREGLAR)
+    /// @brief returns the parameteric length of the lane   // PABLO #1916
+    /// @note is the same as their Edge parent              // PABLO #1916
+    SUMOReal getLaneParametricLenght() const;               // PABLO #1916
+
+    /// @brief returns the length of the lane's shape   // PABLO #1916
+    SUMOReal getLaneShapeLenght() const;                // PABLO #1916
+
+    /* @brief returns the relative position of an element in the lane's shape depending of the parametric lenght                    // PABLO #1916
+     *        Examples: Lane with Parametric lenght = 100 and Shape lenght = 250. Position 50 returns 125, Position 80 returns 200  // PABLO #1916
+     * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneParametricLenght()]         // PABLO #1916
+     * @return the relative position in the lane's shape                                                                            // PABLO #1916
+     */                                                                                                                             // PABLO #1916
+    SUMOReal getPositionRelativeToParametricLenght(SUMOReal position) const;                                                        // PABLO #1916
+
+    /* @brief returns the relative position of an element in the lane's shape depending of the shape's lenght                           // PABLO #1916
+     *        Examples: Lane with Parametric lenght = 100 and Shape lenght = 250. Position = 100 returns 40, Position 220 returns 88    // PABLO #1916
+     * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneShapeLenght]                    // PABLO #1916
+     * @return the relative position in the lane's shape                                                                                // PABLO #1916
+     */                                                                                                                                 // PABLO #1916
+    SUMOReal getPositionRelativeToShapeLenght(SUMOReal position) const;     
 
     /* @brief method for adding a reference of a additional element placed in this lane     // PABLO #1916
      * @param[in] additional Pointer to additional element                                  // PABLO #1916

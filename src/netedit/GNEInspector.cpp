@@ -262,10 +262,8 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
 
             myCheckBlocked = new FXCheckButton(groupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);         // PABLO #1916
             
-            std::cout << GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS) << std:: endl;
             myCheckBlocked->setIcon(GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS));
         }                                                                                   // PABLO #1916
-
 
     } else {
         header = new FXLabel(this, "No Object\nselected", 0, JUSTIFY_LEFT);

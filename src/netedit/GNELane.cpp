@@ -390,9 +390,12 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
         mc->handle(&parent, FXSEL(SEL_COMMAND, FXWindow::ID_DISABLE), 0);
     }
     // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = getShape().nearest_offset_to_point2D(parent.getPositionInformation());
-    const SUMOReal height = getShape().positionAtOffset2D(getShape().nearest_offset_to_point2D(parent.getPositionInformation())).z();
-    new FXMenuCommand(ret, ("pos: " + toString(pos) + " height: " + toString(height)).c_str(), 0, 0, 0);
+    new FXMenuSeparator(ret);                                                                                                           // PABLO #1916
+    const SUMOReal pos = getShape().nearest_offset_to_point2D(parent.getPositionInformation());                                         // PABLO #1916
+    const SUMOReal height = getShape().positionAtOffset2D(getShape().nearest_offset_to_point2D(parent.getPositionInformation())).z();   // PABLO #1916
+    new FXMenuCommand(ret, ("Shape pos: " + toString(pos)).c_str(), 0, 0, 0);                                                           // PABLO #1916
+    new FXMenuCommand(ret, ("Length pos: " + toString(getPositionRelativeToShapeLenght(pos))).c_str(), 0, 0, 0);                        // PABLO #1916
+    new FXMenuCommand(ret, ("Height: " + toString(height)).c_str(), 0, 0, 0);
     // new FXMenuSeparator(ret);
     // buildPositionCopyEntry(ret, false);
 
@@ -469,7 +472,6 @@ GNELane::updateGeometry() {
         (*i)->updateGeometry();                                                                         // PABLO #1916
 }
 
-
 unsigned int 
 GNELane::getIndex() const {
     return myIndex;
@@ -481,10 +483,29 @@ GNELane::setIndex(unsigned int index) {
     setMicrosimID(myParentEdge.getNBEdge()->getLaneID(index));
 }
 
-SUMOReal                        // PABLO #1916
-GNELane::getLength() const {    // PABLO #1916  
-    return 100;            // PABLO #1916
-}                               // PABLO #1916
+
+SUMOReal                                                    // PABLO #1916
+GNELane::getLaneParametricLenght() const  {                 // PABLO #1916
+    return myParentEdge.getNBEdge()->getLoadedLength();     // PABLO #1916
+}                                                           // PABLO #1916
+
+
+SUMOReal 
+GNELane::getLaneShapeLenght() const {   // PABLO #1916
+    return getShape().length();         // PABLO #1916
+}                                       // PABLO #1916
+
+
+SUMOReal 
+GNELane::getPositionRelativeToParametricLenght(SUMOReal position) const {   // PABLO #1916
+    return (position * getLaneShapeLenght()) / getLaneParametricLenght();   // PABLO #1916
+}                                                                           // PABLO #1916
+
+
+SUMOReal 
+GNELane::getPositionRelativeToShapeLenght(SUMOReal position) const {        // PABLO #1916
+    return (position * getLaneParametricLenght()) / getLaneShapeLenght();   // PABLO #1916
+}                                                                           // PABLO #1916
 
 
 void 

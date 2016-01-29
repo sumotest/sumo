@@ -73,6 +73,9 @@ public:
     /// @brief Destructor
     ~GNEChargingStation();
 
+    /// @brief update pre-computed geometry information
+    void updateGeometry();
+
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */

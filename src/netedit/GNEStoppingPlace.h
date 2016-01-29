@@ -67,7 +67,7 @@ public:
     ~GNEStoppingPlace();
 
     /// @brief update pre-computed geometry information
-    virtual void updateGeometry();
+    virtual void updateGeometry() = 0;
 
     /** @brief change the position of the additonal geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left

@@ -229,9 +229,9 @@ GNEAdditionalHandler::parseAndBuildBusStop(GNENet* net, const SUMOSAXAttributes&
     GNELane* lane = getLane(attrs, "busStop", id);
     // get the positions
     SUMOReal frompos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
-    SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLength());
+    SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLaneShapeLenght());
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
-    if (!ok || !checkStopPos(frompos, topos, lane->getLength(), POSITION_EPS, friendlyPos)) {
+    if (!ok || !checkStopPos(frompos, topos, lane->getLaneShapeLenght(), POSITION_EPS, friendlyPos)) {
         throw InvalidArgument("Invalid position for bus stop '" + id + "'.");
     }
     // get the lines
@@ -258,7 +258,7 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
 
     // get the positions
     SUMOReal frompos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
-    SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLength());
+    SUMOReal topos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, lane->getLaneShapeLenght());
     SUMOReal chrgpower = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGINGPOWER, id.c_str(), ok, 0);
     SUMOReal efficiency = attrs.getOpt<SUMOReal>(SUMO_ATTR_EFFICIENCY, id.c_str(), ok, 0);
     SUMOReal chargeInTransit = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEINTRANSIT, id.c_str(), ok, 0);
@@ -266,7 +266,7 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
 
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
 
-    if (!ok || !checkStopPos(frompos, topos, lane->getLength(), POSITION_EPS, friendlyPos)) {
+    if (!ok || !checkStopPos(frompos, topos, lane->getLaneShapeLenght(), POSITION_EPS, friendlyPos)) {
         throw InvalidArgument("Invalid position for Charging Station '" + id + "'.");
     }
 
@@ -429,11 +429,11 @@ GNEAdditionalHandler::getPosition(const SUMOSAXAttributes& attrs, GNELane& lane,
         throw InvalidArgument("Error on parsing a position information.");
     }
     if (pos < 0) {
-        pos = lane.getLength() + pos;
+        pos = lane.getLaneShapeLenght() + pos;         // OJO A ESTO)
     }
-    if (pos > lane.getLength()) {
+    if (pos > lane.getLaneShapeLenght()) {
         if (friendlyPos) {
-            pos = lane.getLength() - (SUMOReal) 0.1;
+            pos = lane.getLaneShapeLenght() - (SUMOReal) 0.1;
         } else {
             throw InvalidArgument("The position of " + tt + " '" + tid + "' lies beyond the lane's '" + lane.getID() + "' length.");
         }

@@ -356,10 +356,10 @@ GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOver
         case GNE_ADDITIONALREFERENCEPOINT_LEFT : {
             startPosition = positionOfTheMouseOverLane;
             // Set end position
-            if(positionOfTheMouseOverLane + size <= lane.getLength() - 0.01)
+            if(positionOfTheMouseOverLane + size <= lane.getLaneShapeLenght() - 0.01)
                 endPosition = positionOfTheMouseOverLane + size;
             else if(myCheckForcePosition->getCheck())
-                endPosition = lane.getLength() - 0.01;
+                endPosition = lane.getLaneShapeLenght() - 0.01;
             else
                 return false;
             break;
@@ -384,10 +384,10 @@ GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOver
             else
                 return false;
             // Set endPosition
-            if(positionOfTheMouseOverLane + size/2 <= lane.getLength() - 0.01)
+            if(positionOfTheMouseOverLane + size/2 <= lane.getLaneShapeLenght() - 0.01)
                 endPosition = positionOfTheMouseOverLane + size/2;
             else if(myCheckForcePosition->getCheck())
-                endPosition = lane.getLength() - 0.01;
+                endPosition = lane.getLaneShapeLenght() - 0.01;
             else
                 return false;
         }

@@ -80,6 +80,75 @@ GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, GNE
 GNEChargingStation::~GNEChargingStation() {}
 
 
+void 
+GNEChargingStation::updateGeometry() {
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+    
+    // Clear shape
+    myShape.clear();
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
+
+    // Get shape of lane parent
+    myShape = myLane.getShape();
+
+    // Cut shape using as delimitators from start position and end position
+    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myFromPos), myLane.getPositionRelativeToParametricLenght(myToPos));
+
+    // Get number of parts of the shape
+    int numberOfSegments = (int) myShape.size() - 1;
+
+    // If number of segments is more than 0
+    if(numberOfSegments >= 0) {
+
+        // Reserve memory (To improve efficiency)
+        myShapeRotations.reserve(numberOfSegments);
+        myShapeLengths.reserve(numberOfSegments);
+
+        // For every part of the shape
+        for (int i = 0; i < numberOfSegments; ++i) {
+
+            // Obtain first position
+            const Position& f = myShape[i];
+
+            // Obtain next position
+            const Position& s = myShape[i + 1];
+
+            // Save distance between position into myShapeLengths
+            myShapeLengths.push_back(f.distanceTo(s));
+
+            // Save rotation (angle) of the vector constructed by points f and s
+            myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+        }
+    }
+
+    // Obtain a copy of the shape
+    PositionVector tmpShape = myShape;
+
+    // Move shape to side 
+    tmpShape.move2side(1.5 * offsetSign);
+
+    // Get position of the sing
+    mySignPos = tmpShape.getLineCenter();
+
+    // If lenght of the shape is distint to 0
+    if (myShape.length() != 0) {
+
+        // Obtain rotation of signal rot
+        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
+
+        // correct orientation
+        mySignRot -= 90;
+    }
+    else
+        // Value of signal rotation is 0
+        mySignRot = 0;
+}
+
+
 SUMOReal 
 GNEChargingStation::getChargingPower() {
     return myChargingPower;
@@ -160,52 +229,8 @@ GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
 
 void
 GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
-    // Declare variables to get colors depending if the chargingStation is selected
-    RGBColor base, sign;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[CHARGINGSTATION_BASE_SELECTED];
-        sign = myRGBColors[CHARGINGSTATION_SIGN_SELECTED];
-    } else {
-        base = myRGBColors[CHARGINGSTATION_BASE];
-        sign = myRGBColors[CHARGINGSTATION_SIGN];
-    }
-
-    // Draw Charging Station
-    glPushName(getGlID());
-    glPushMatrix();
-
-    // draw the area
-    glTranslated(0, 0, getType());
-    GLHelper::setColor(base);
-    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
-
-    // draw details unless zoomed out to far
-    if (s.scale * exaggeration >= 10) {
-        // draw the sign
-        glTranslated(mySignPos.x(), mySignPos.y(), 0);
-        int noPoints = 9;
-        if (s.scale * exaggeration > 25) {
-            noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
-        }
-
-        glScaled(exaggeration, exaggeration, 1);
-        GLHelper::setColor(base);
-        GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
-        glTranslated(0, 0, .1);
-
-        GLHelper::setColor(sign);
-        GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
-
-        if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("C", Position(), .1, 1.6, base, mySignRot);
-        }
-    }
-    glPopMatrix();
-    glPopName();
-    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+    // Additonals element are drawed using a drawGLAdditional
+    drawGLAdditional(0, s);
 }
 
 
