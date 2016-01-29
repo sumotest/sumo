@@ -813,9 +813,9 @@ MSLCM_SL2015::_wantsChangeSublane(
     const int lcaCounter = (right ? LCA_LEFT : LCA_RIGHT);
     const int myLcaCounter = (right ? LCA_MLEFT : LCA_MRIGHT);
     const bool changeToBest = (right && bestLaneOffset < 0) || (left && bestLaneOffset > 0) || (laneOffset == 0 && bestLaneOffset == 0);
-    // keep information about being a leader/follower
+    // keep information about being a leader/follower but remove information
+    // about previous lane change request or urgency
     int ret = (myOwnState & 0xffff0000);
-    int req = 0; // the request to change or stay
 
     // compute the distance when changing to the neighboring lane
     // (ensure we do not lap into the line behind neighLane since there might be unseen blockers)
@@ -968,7 +968,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     if (laneOffset != 0 && changeToBest && bestLaneOffset == curr.bestLaneOffset
             && currentDistDisallows(usableDist, bestLaneOffset, laDist)) {
         /// @brief we urgently need to change lanes to follow our route
-        ret = ret | lca | LCA_STRATEGIC | LCA_URGENT;
+        ret |= lca | LCA_STRATEGIC | LCA_URGENT;
     } else {
         // VARIANT_20 (noOvertakeRight)
         if (!myAllowOvertakingRight && left && !myVehicle.congested() && neighLeaders.hasVehicles()) {
@@ -1005,7 +1005,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             if (gDebugFlag2) {
                 std::cout << " veh=" << myVehicle.getID() << " could not change back and forth in time (1) neighLeftPlace=" << neighLeftPlace << "\n";
             }
-            ret = ret | LCA_STAY | LCA_STRATEGIC;
+            ret |= LCA_STAY | LCA_STRATEGIC;
         } else if (laneOffset != 0 && bestLaneOffset == 0 && (neighLeftPlace * 2. < laDist)) {
             // the current lane is the best and a lane-changing would cause a situation
             //  of which we assume we will not be able to return to the lane we have to be on.
@@ -1014,7 +1014,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             if (gDebugFlag2) {
                 std::cout << " veh=" << myVehicle.getID() << " could not change back and forth in time (2) neighLeftPlace=" << neighLeftPlace << "\n";
             }
-            ret = ret | LCA_STAY | LCA_STRATEGIC;
+            ret |= LCA_STAY | LCA_STRATEGIC;
         } else if (
                 laneOffset != 0
                 && bestLaneOffset == 0
@@ -1028,7 +1028,7 @@ MSLCM_SL2015::_wantsChangeSublane(
             if (gDebugFlag2) {
                 std::cout << " veh=" << myVehicle.getID() << " does not want to leave the bestLane (neighDist=" << neighDist << ")\n";
             }
-            ret = ret | LCA_STAY | LCA_STRATEGIC;
+            ret |= LCA_STAY | LCA_STRATEGIC;
         }
     }
     // check for overriding TraCI requests
@@ -1041,7 +1041,7 @@ MSLCM_SL2015::_wantsChangeSublane(
         ret &= ~(LCA_TRACI | lcaCounter | LCA_URGENT);
     }
     if (gDebugFlag2) {
-        std::cout << " retAfterInfluence=" << ret << "\n";
+        std::cout << " reqAfterInfluence=" << ret << " ret=" << ret << "\n";
     }
 
     if ((ret & LCA_STAY) != 0) {
@@ -1100,16 +1100,16 @@ MSLCM_SL2015::_wantsChangeSublane(
         // try to use the inner lanes of a roundabout to increase throughput
         // unless we are approaching the exit
         if (lca == LCA_LEFT) {
-            req = ret | lca | LCA_COOPERATIVE;
+            ret |= lca | LCA_COOPERATIVE;
         } else {
-            req = ret | LCA_STAY | LCA_COOPERATIVE;
+            ret |= LCA_STAY | LCA_COOPERATIVE;
         }
-        if (!cancelRequest(req)) {
+        if (!cancelRequest(ret)) {
             latDist = latLaneDist;
             blocked = checkBlocking(neighLane, latDist, laneOffset,
                     leaders, followers, blockers,
                     neighLeaders, neighFollowers, neighBlockers);
-            return ret | req;
+            return ret;
         }
     }
 
@@ -1120,9 +1120,9 @@ MSLCM_SL2015::_wantsChangeSublane(
             if (gDebugFlag2) {
                 std::cout << " veh=" << myVehicle.getID() << " does not want to get stranded on the on-ramp of a highway\n";
             }
-            req = ret | LCA_STAY | LCA_STRATEGIC;
-            if (!cancelRequest(req)) {
-                return ret | req;
+            ret |= LCA_STAY | LCA_STRATEGIC;
+            if (!cancelRequest(ret)) {
+                return ret;
             }
         }
     }
@@ -1148,13 +1148,13 @@ MSLCM_SL2015::_wantsChangeSublane(
                       << (((myOwnState & myLcaCounter) != 0) ? " (counter)" : "")
                       << "\n";
         }
-        req = ret | lca | LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
-        if (!cancelRequest(req)) {
+        ret |= lca | LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
+        if (!cancelRequest(ret)) {
             latDist = latLaneDist;
             blocked = checkBlocking(neighLane, latDist, laneOffset,
                     leaders, followers, blockers,
                     neighLeaders, neighFollowers, neighBlockers);
-            return ret | req;
+            return ret;
         }
     }
 
@@ -1322,14 +1322,14 @@ MSLCM_SL2015::_wantsChangeSublane(
                           << "\n";
             }
             if (myKeepRightProbability > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)) {
-                req = ret | lca | LCA_KEEPRIGHT;
+                ret |= lca | LCA_KEEPRIGHT;
                 assert(myVehicle.getLane()->getIndex() > neighLane.getIndex());
-                if (!cancelRequest(req)) {
+                if (!cancelRequest(ret)) {
                     latDist = latLaneDist;
                     blocked = checkBlocking(neighLane, latDist, laneOffset,
                             leaders, followers, blockers,
                             neighLeaders, neighFollowers, neighBlockers);
-                    return ret | req;
+                    return ret;
                 }
             }
         }
@@ -1343,12 +1343,12 @@ MSLCM_SL2015::_wantsChangeSublane(
 
         if (latDist < 0 && mySpeedGainProbabilityRight > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)
                 && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { 
-            req = ret | lca | LCA_SPEEDGAIN;
-            if (!cancelRequest(req)) {
+            ret |= lca | LCA_SPEEDGAIN;
+            if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,
                         leaders, followers, blockers,
                         neighLeaders, neighFollowers, neighBlockers);
-                return ret | req;
+                return ret;
             }
         }
     } 
@@ -1362,12 +1362,12 @@ MSLCM_SL2015::_wantsChangeSublane(
         }
 
         if (latDist > 0 && mySpeedGainProbabilityLeft > CHANGE_PROB_THRESHOLD_LEFT && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { // .1
-            req = ret | lca | LCA_SPEEDGAIN;
-            if (!cancelRequest(req)) {
+            ret |= lca | LCA_SPEEDGAIN;
+            if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,
                         leaders, followers, blockers,
                         neighLeaders, neighFollowers, neighBlockers);
-                return ret | req;
+                return ret;
             }
         }
     }
@@ -1412,12 +1412,12 @@ MSLCM_SL2015::_wantsChangeSublane(
                 << " adapting to preferred alignment=" << toString(myVehicle.getVehicleType().getPreferredLateralAlignment())
                     << " latDist=" << latDist 
                     << "\n";
-            req = ret | lca | LCA_SUBLANE;
-            if (!cancelRequest(req)) {
+            ret |= lca | LCA_SUBLANE;
+            if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,
                         leaders, followers, blockers,
                         neighLeaders, neighFollowers, neighBlockers);
-                return ret | req;
+                return ret;
             }
         }
     }
@@ -1430,13 +1430,13 @@ MSLCM_SL2015::_wantsChangeSublane(
                 ? mySpeedGainProbabilityRight > MAX2((SUMOReal)0, mySpeedGainProbabilityLeft) 
                 : mySpeedGainProbabilityLeft  > MAX2((SUMOReal)0, mySpeedGainProbabilityRight))) {
         // change towards the correct lane, speedwise it does not hurt
-        req = ret | lca | LCA_STRATEGIC;
-        if (!cancelRequest(req)) {
+        ret |= lca | LCA_STRATEGIC;
+        if (!cancelRequest(ret)) {
             latDist = latLaneDist;
             blocked = checkBlocking(neighLane, latDist, laneOffset,
                     leaders, followers, blockers,
                     neighLeaders, neighFollowers, neighBlockers);
-            return ret | req;
+            return ret;
         }
     }
     */
