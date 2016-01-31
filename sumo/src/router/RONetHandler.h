@@ -152,6 +152,13 @@ protected:
      * @param[in] attrs The attributes (of the "containerStop"-element) to parse
      */
     void parseContainerStop(const SUMOSAXAttributes& attrs);
+	
+
+    /** @begin Parses a parking area
+     * Called on the occurence of a "parkingArea" element
+     * @param[in] attrs The attributes (of the "parkingArea"-element) to parse
+     */
+    void parseParkingArea(const SUMOSAXAttributes& attrs);
 
 
     /** @begin Parses a district and creates a pseudo edge for it

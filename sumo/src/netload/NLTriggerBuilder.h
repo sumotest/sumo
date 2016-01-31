@@ -150,6 +150,22 @@ public:
     void parseAndBuildContainerStop(MSNet& net, const SUMOSAXAttributes& attrs);
 
 
+    /** @brief Parses his values and builds a parking area
+     *
+     * @param[in] net The network the parking area belongs to
+     * @param[in] attrs SAX-attributes which define the trigger
+     * @exception InvalidArgument If a parameter (lane/position) is not valid
+     */
+    void parseAndBeginParkingArea(MSNet& net, const SUMOSAXAttributes& attrs);
+
+
+    /** @brief Parses his values and adds a lot entry to current parking area
+     *
+     * @param[in] attrs SAX-attributes which define the lot entry
+     */
+    void parseAndAddLotEntry(const SUMOSAXAttributes& attrs);
+
+
     /** @brief Parses his values and builds a charging station
      *
      * @param[in] net The network the charging station belongs to
@@ -169,6 +185,12 @@ public:
                                  const std::string& base);
     //@}
 
+	
+	/** @brief End a parking area
+     *
+     * @exception InvalidArgument If the current parking area is 0
+     */
+    void endParkingArea();
 
 protected:
     /// @name building methods
@@ -244,6 +266,44 @@ protected:
     virtual void buildContainerStop(MSNet& net,
                                     const std::string& id, const std::vector<std::string>& lines,
                                     MSLane* lane, SUMOReal frompos, SUMOReal topos);
+	
+    /** @brief Begin a parking area
+     *
+     * Simply calls the MSParkingArea constructor.
+     *
+     * @param[in] net The net the parking area belongs to
+     * @param[in] id The id of the parking area
+     * @param[in] lines Names of the lines that halt on this parking area
+     * @param[in] lane The lane the parking area is placed on
+     * @param[in] frompos Begin position of the parking area on the lane
+     * @param[in] topos End position of the parking area on the lane
+     * @param[in] capacity Capacity of the parking area
+     * @param[in] width Width of the default lot rectangle
+     * @param[in] length Length of the default lot rectangle
+     * @param[in] angle Angle of the default lot rectangle
+     * @exception InvalidArgument If the parking area can not be added to the net (is duplicate)
+     */
+    virtual void beginParkingArea(MSNet& net,
+                                  const std::string& id, const std::vector<std::string>& lines,
+                                  MSLane* lane, SUMOReal frompos, SUMOReal topos,
+								  unsigned int capacity,
+								  SUMOReal width, SUMOReal length, SUMOReal angle);
+	
+
+    /** @brief Add a lot entry to current parking area
+     *
+     * Simply calls the addLotEntry method for current parking area.
+     *
+     * @param[in] x X position of the lot center
+     * @param[in] y Y position of the lot center
+     * @param[in] z Z position of the lot center
+     * @param[in] width Width of the lot rectangle
+     * @param[in] length Length of the lot rectangle
+     * @param[in] angle Angle of the lot rectangle
+     * @exception InvalidArgument If the current parking area is 0
+     */
+	virtual void addLotEntry(SUMOReal x, SUMOReal y, SUMOReal z,
+                             SUMOReal width, SUMOReal length, SUMOReal angle);
 
 
     /** @brief builds a microscopic calibrator
@@ -352,7 +412,9 @@ protected:
 protected:
     /// @brief The parent handler to set for subhandlers
     NLHandler* myHandler;
-
+	
+    /// @brief definition of the currently parsed parking area
+    MSParkingArea* myParkingArea;
 
 };
 

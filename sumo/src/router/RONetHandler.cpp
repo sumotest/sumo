@@ -93,6 +93,9 @@ RONetHandler::myStartElement(int element,
         case SUMO_TAG_CONTAINER_STOP:
             parseContainerStop(attrs);
             break;
+        case SUMO_TAG_PARKING_AREA:
+            parseParkingArea(attrs);
+            break;
         case SUMO_TAG_TAZ:
             parseDistrict(attrs);
             break;
@@ -359,6 +362,31 @@ RONetHandler::parseContainerStop(const SUMOSAXAttributes& attrs) {
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
     if (!ok || !SUMORouteHandler::checkStopPos(stop->startPos, stop->endPos, edge->getLength(), POSITION_EPS, friendlyPos)) {
         throw InvalidArgument("Invalid position for container stop '" + id + "'.");
+    }
+    myNet.addContainerStop(id, stop);
+}
+
+void
+RONetHandler::parseParkingArea(const SUMOSAXAttributes& attrs) {
+    bool ok = true;
+    SUMOVehicleParameter::Stop* stop = new SUMOVehicleParameter::Stop();
+    // get the id, throw if not given or empty...
+    std::string id = attrs.get<std::string>(SUMO_ATTR_ID, "parkingArea", ok);
+    // get the lane
+    stop->lane = attrs.get<std::string>(SUMO_ATTR_LANE, "parkingArea", ok);
+    if (!ok) {
+        throw ProcessError();
+    }
+    const ROEdge* edge = myNet.getEdge(stop->lane.substr(0, stop->lane.rfind("_")));
+    if (edge == 0) {
+        throw InvalidArgument("Unknown lane '" + stop->lane + "' for parking area '" + id + "'.");
+    }
+    // get the positions
+    stop->startPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
+    stop->endPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, edge->getLength());
+    const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
+    if (!ok || !SUMORouteHandler::checkStopPos(stop->startPos, stop->endPos, edge->getLength(), POSITION_EPS, friendlyPos)) {
+        throw InvalidArgument("Invalid position for parking area '" + id + "'.");
     }
     myNet.addContainerStop(id, stop);
 }

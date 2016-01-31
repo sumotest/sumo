@@ -94,6 +94,10 @@ enum SumoXMLTag {
     SUMO_TAG_BUS_STOP,
     /// @brief A container stop
     SUMO_TAG_CONTAINER_STOP,
+    /// @brief A parking area
+    SUMO_TAG_LOT_ENTRY,
+    /// @brief A parking area
+    SUMO_TAG_PARKING_AREA,
     /// @brief A Charging Station
     SUMO_TAG_CHARGING_STATION,	// PABLO #1916 (Renamed all references of SUMO_TAG_CHRG_STN)
     /** a vtypeprobe detector */
@@ -446,6 +450,9 @@ enum SumoXMLAttr {
     SUMO_ATTR_PASS,
     SUMO_ATTR_BUS_STOP,
     SUMO_ATTR_CONTAINER_STOP,
+	SUMO_ATTR_PARKING_AREA,
+	SUMO_ATTR_PARKING_CAPACITY,
+	// 
     SUMO_ATTR_LINE,
     SUMO_ATTR_LINES,
     SUMO_ATTR_VALUE,

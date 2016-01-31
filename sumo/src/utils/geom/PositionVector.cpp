@@ -917,7 +917,9 @@ PositionVector::move2side(SUMOReal amount) {
             Position offsets2 = sideOffset(me, to, amount);
             PositionVector l1(from - offsets, me - offsets);
             PositionVector l2(me - offsets2, to - offsets2);
-            shape.push_back(l1.intersectionPosition2D(l2[0], l2[1], 100));
+			Position me_new = l1.intersectionPosition2D(l2[0], l2[1], 100);
+			me_new.set(me_new.x(), me_new.y(), me.z());
+			shape.push_back(me_new);
             if (shape.back() == Position::INVALID) {
                 throw InvalidArgument("no line intersection");
             }

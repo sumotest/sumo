@@ -37,6 +37,7 @@
 #include <guisim/GUITriggeredRerouter.h>
 #include <guisim/GUIBusStop.h>
 #include <guisim/GUIContainerStop.h>
+#include <guisim/GUIParkingArea.h>
 #include <guisim/GUICalibrator.h>
 #include <guisim/GUIChargingStation.h>
 #include "GUITriggerBuilder.h"
@@ -100,6 +101,44 @@ GUITriggerBuilder::buildContainerStop(MSNet& net, const std::string& id,
         throw InvalidArgument("Could not build container stop '" + id + "'; probably declared twice.");
     }
     static_cast<GUINet&>(net).getVisualisationSpeedUp().addAdditionalGLObject(stop);
+}
+
+void
+GUITriggerBuilder::beginParkingArea(MSNet& net, const std::string& id,
+                                    const std::vector<std::string>& lines,
+                                    MSLane* lane,
+                                    SUMOReal frompos, SUMOReal topos, 
+									unsigned int capacity,
+								    SUMOReal width, SUMOReal length, SUMOReal angle) {
+    // Close previous parking area if there are not lots inside
+	if (myParkingArea != 0) endParkingArea();
+	
+	GUIParkingArea* stop = new GUIParkingArea(id, lines, *lane, frompos, topos, capacity, width, length, angle);
+    if (!net.addParkingArea(stop)) {
+        delete stop;
+        throw InvalidArgument("Could not build parking area '" + id + "'; probably declared twice.");
+    } else
+		myParkingArea = stop;
+    static_cast<GUINet&>(net).getVisualisationSpeedUp().addAdditionalGLObject(stop);
+}
+
+void
+GUITriggerBuilder::addLotEntry(SUMOReal x, SUMOReal y, SUMOReal z,
+                              SUMOReal width, SUMOReal length, SUMOReal angle) {						  
+	if (myParkingArea != 0) {
+		if (!myParkingArea->addLotEntry(x, y, z, width, length, angle))
+			throw InvalidArgument("Could not add lot entry to parking area '" + myParkingArea->getID() + "'; probably declared twice.");
+	} else
+		throw InvalidArgument("Could not add lot entry outside a parking area.");
+}
+
+
+void
+GUITriggerBuilder::endParkingArea() {
+    if (myParkingArea != 0) {
+		myParkingArea = 0;
+	} else
+		throw InvalidArgument("Could not end a parking area that is not opened.");
 }
 
 

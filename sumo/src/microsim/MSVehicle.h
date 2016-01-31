@@ -59,6 +59,7 @@ class MSLaneChanger;
 class MSVehicleTransfer;
 class MSAbstractLaneChangeModel;
 class MSStoppingPlace;
+class MSParkingArea;
 class MSChargingStation;
 class MSPerson;
 class MSDevice;
@@ -570,6 +571,8 @@ public:
         MSStoppingPlace* busstop;
         /// @brief (Optional) container stop if one is assigned to the stop
         MSStoppingPlace* containerstop;
+        /// @brief (Optional) parking area if one is assigned to the stop
+        MSParkingArea* parkingarea;
         /// @brief (Optional) charging station if one is assigned to the stop
         MSChargingStation* chargingStation;
         /// @brief The stopping position start

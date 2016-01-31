@@ -258,7 +258,10 @@ SUMOVehicleParameter::writeStops(OutputDevice& dev) const {
         if (stop->containerstop != "") {
             dev.writeAttr(SUMO_ATTR_CONTAINER_STOP, stop->containerstop);
         }
-        if (stop->busstop == "" && stop->containerstop == "") {
+        if (stop->parkingarea != "") {
+            dev.writeAttr(SUMO_ATTR_PARKING_AREA, stop->parkingarea);
+        }
+        if (stop->busstop == "" && stop->containerstop == "" && stop->parkingarea == "") {
             dev.writeAttr(SUMO_ATTR_LANE, stop->lane);
             if ((stop->setParameter & STOP_START_SET) != 0) {
                 dev.writeAttr(SUMO_ATTR_STARTPOS, stop->startPos);

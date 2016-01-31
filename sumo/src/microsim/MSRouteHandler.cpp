@@ -876,6 +876,19 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
         stop.endPos = cs->getEndLanePosition();
         stop.startPos = cs->getBeginLanePosition();
         edge = &l.getEdge();
+    } //try to parse the assigned parking area
+    else if (stop.parkingarea != "") {
+        // ok, we have obviously a parking area
+        MSStoppingPlace* cs = MSNet::getInstance()->getParkingArea(stop.parkingarea);
+        if (cs == 0) {
+            WRITE_ERROR("The parking area '" + stop.parkingarea + "' is not known" + errorSuffix);
+            return;
+        }
+        const MSLane& l = cs->getLane();
+        stop.lane = l.getID();
+        stop.endPos = cs->getEndLanePosition();
+        stop.startPos = cs->getBeginLanePosition();
+        edge = &l.getEdge();
     } else if (stop.chargingStation != "") {
         // ok, we have a Charging station
         MSChargingStation* cs = MSNet::getInstance()->getChargingStation(stop.busstop);
@@ -912,7 +925,7 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
                     stop.startPos = stop.endPos - POSITION_EPS;
                 }
             } else {
-                WRITE_ERROR("A stop must be placed on a bus stop, a container stop or a lane" + errorSuffix);
+                WRITE_ERROR("A stop must be placed on a bus stop, a container stop, a parking area or a lane" + errorSuffix);
                 return;
             }
         }

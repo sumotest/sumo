@@ -619,9 +619,14 @@ MSVehicle::getPosition(const SUMOReal offset) const {
         return Position::INVALID;
     }
     if (isParking()) {
-        PositionVector shp = myLane->getEdge().getLanes()[0]->getShape();
-        shp.move2side(SUMO_const_laneWidth);
-        return shp.positionAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane() + offset));
+		// In this point is positioned outside the line so we can manage parking area
+		if (myStops.begin()->parkingarea != 0) {
+			return myStops.begin()->parkingarea->getVehiclePosition(*this);
+		} else {
+			PositionVector shp = myLane->getEdge().getLanes()[0]->getShape();
+			shp.move2side(SUMO_const_laneWidth);
+			return shp.positionAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane() + offset));
+		}
     }
     const bool changingLanes = getLaneChangeModel().isChangingLanes();
     if (offset == 0. && !changingLanes) {
@@ -664,7 +669,12 @@ MSVehicle::getAngle() const {
     Position p1;
     Position p2;
     if (isParking()) {
-        return myLane->getShape().rotationAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane()));
+		// In this point the parking area must give rotation of spaces
+		if (myStops.begin()->parkingarea != 0) {
+			return myStops.begin()->parkingarea->getVehicleAngle(*this);
+		} else {
+			return myLane->getShape().rotationAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane()));
+		}
     }
     if (getLaneChangeModel().isChangingLanes()) {
         // cannot use getPosition() because it already includes the offset to the side and thus messes up the angle
@@ -705,6 +715,7 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
     }
     stop.busstop = MSNet::getInstance()->getBusStop(stopPar.busstop);
     stop.containerstop = MSNet::getInstance()->getContainerStop(stopPar.containerstop);
+    stop.parkingarea = MSNet::getInstance()->getParkingArea(stopPar.parkingarea);
     stop.startPos = stopPar.startPos;
     stop.endPos = stopPar.endPos;
     stop.duration = stopPar.duration;
@@ -734,6 +745,9 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
     }
     if (stop.containerstop != 0 && myType->getLength() / 2. > stop.endPos - stop.startPos) {
         errorMsg = "Container stop '" + stop.containerstop->getID() + "' on lane '" + stopPar.lane + "' is too short for vehicle '" + myParameter->id + "'.";
+    }
+    if (stop.parkingarea != 0 && myType->getLength() / 2. > stop.endPos - stop.startPos) {
+        errorMsg = "Parking area '" + stop.parkingarea->getID() + "' on lane '" + stopPar.lane + "' is too short for vehicle '" + myParameter->id + "'.";
     }
     stop.edge = find(myCurrEdge, myRoute->end(), &stop.lane->getEdge());
     MSRouteIterator prevStopEdge = myCurrEdge;
@@ -930,9 +944,19 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
                     containerStopsMustHaveSpace = false;
                 }
             }
-            // we use the same offset for container stops as for bus stops. we might have to change it at some point!
+            bool parkingAreasMustHaveSpace = true;
+            // if the stop is a parking area we check if there is a free position on the area
+            if (stop.parkingarea != 0) {
+                // on parking areas, we have to wait for free place if they are in use...
+                endPos = stop.parkingarea->getLastFreePos(*this);
+                if (endPos <= stop.parkingarea->getBeginLanePosition() && 
+					(stop.parkingarea->getOccupancy() == stop.parkingarea->getCapacity())) {
+                    parkingAreasMustHaveSpace = false;
+                }
+            }
+            // wWe use the same offset for container stops as for bus stops. we might have to change it at some point!
             if (myState.pos() + getVehicleType().getMinGap() >= endPos - BUS_STOP_OFFSET && busStopsMustHaveSpace
-                    && containerStopsMustHaveSpace && myLane == stop.lane) {
+                    && containerStopsMustHaveSpace && parkingAreasMustHaveSpace && myLane == stop.lane) {
                 // ok, we may stop (have reached the stop)
                 stop.reached = true;
                 MSNet::getInstance()->getVehicleControl().addWaiting(&myLane->getEdge(), this);
@@ -952,6 +976,10 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
                 if (stop.containerstop != 0) {
                     // let the container stop know the vehicle
                     stop.containerstop->enter(this, myState.pos() + getVehicleType().getMinGap(), myState.pos() - myType->getLength());
+                }
+                if (stop.parkingarea != 0) {
+                    // let the parking area know the vehicle
+                    stop.parkingarea->enter(this, myState.pos() + getVehicleType().getMinGap(), myState.pos() - myType->getLength());
                 }
             }
             // decelerate
@@ -2564,6 +2592,11 @@ MSVehicle::resumeFromStopping() {
         if (myStops.front().containerstop != 0) {
             // inform container stop about leaving it
             myStops.front().containerstop->leaveFrom(this);
+        }
+        // we have waited long enough and fulfilled any container-requirements
+        if (myStops.front().parkingarea != 0) {
+            // inform parking area about leaving it
+            myStops.front().parkingarea->leaveFrom(this);
         }
         // the current stop is no longer valid
         MSNet::getInstance()->getVehicleControl().removeWaiting(&myLane->getEdge(), this);

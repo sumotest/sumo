@@ -134,6 +134,51 @@ protected:
     virtual void buildContainerStop(MSNet& net, const std::string& id,
                                     const std::vector<std::string>& lines, MSLane* lane,
                                     SUMOReal frompos, SUMOReal topos);
+	
+    /** @brief Builds a parking area
+     *
+     * Simply calls the GUIParkingArea constructor.
+     *
+     * @param[in] net The net the parking area belongs to
+     * @param[in] id The id of the parking area
+     * @param[in] lines Names of the lines that halt on this parking area
+     * @param[in] lane The lane the parking area is placed on
+     * @param[in] frompos Begin position of the parking area on the lane
+     * @param[in] topos End position of the parking area on the lane
+     * @param[in] capacity Capacity of the parking area
+     * @param[in] width Width of the default lot rectangle
+     * @param[in] length Length of the default lot rectangle
+     * @param[in] angle Angle of the default lot rectangle
+     * @exception InvalidArgument If the parking area can not be added to the net (is duplicate)
+     */
+    virtual void beginParkingArea(MSNet& net, const std::string& id,
+                                  const std::vector<std::string>& lines, MSLane* lane,
+                                  SUMOReal frompos, SUMOReal topos, 
+								  unsigned int capacity,
+								  SUMOReal width, SUMOReal length, SUMOReal angle);
+	
+
+    /** @brief Add a lot entry to current parking area
+     *
+     * Simply calls the addLotEntry method for current parking area.
+     *
+     * @param[in] x X position of the lot center
+     * @param[in] y Y position of the lot center
+     * @param[in] z Z position of the lot center
+     * @param[in] width Width of the lot rectangle
+     * @param[in] length Length of the lot rectangle
+     * @param[in] angle Angle of the lot rectangle
+     * @exception InvalidArgument If the current parking area is 0
+     */
+	virtual void addLotEntry(SUMOReal x, SUMOReal y, SUMOReal z,
+                             SUMOReal width, SUMOReal length, SUMOReal angle);
+
+	
+	/** @brief End a parking area
+     *
+     * @exception InvalidArgument If the current parking area is 0
+     */
+    virtual void endParkingArea();
 
 
     /** @brief Builds a charging station

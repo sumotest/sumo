@@ -166,6 +166,12 @@ NLHandler::myStartElement(int element,
             case SUMO_TAG_CONTAINER_STOP:
                 myTriggerBuilder.parseAndBuildContainerStop(myNet, attrs);
                 break;
+            case SUMO_TAG_LOT_ENTRY:
+                myTriggerBuilder.parseAndAddLotEntry(attrs);
+                break;
+            case SUMO_TAG_PARKING_AREA:
+                myTriggerBuilder.parseAndBeginParkingArea(myNet, attrs);
+                break;
             case SUMO_TAG_CHARGING_STATION:
                 myTriggerBuilder.parseAndBuildChargingStation(myNet, attrs);
                 break;
@@ -259,6 +265,9 @@ NLHandler::myEndElement(int element) {
         case SUMO_TAG_E3DETECTOR:
         case SUMO_TAG_ENTRY_EXIT_DETECTOR:
             endE3Detector();
+            break;
+        case SUMO_TAG_PARKING_AREA:
+            myTriggerBuilder.endParkingArea();
             break;
         case SUMO_TAG_NET:
             // build junction graph
