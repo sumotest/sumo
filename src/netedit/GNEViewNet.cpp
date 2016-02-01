@@ -793,6 +793,25 @@ GNEViewNet::markPopupPosition() {
     myPopupSpot = getPositionInformation();
 }
 
+
+GNENet*                 // PABLO #1916
+GNEViewNet::getNet() {  // PABLO #1916
+    return myNet;       // PABLO #1916
+};                      // PABLO #1916
+
+
+EditMode                                    // PABLO #1916
+GNEViewNet::getCurrentEditMode() const {    // PABLO #1916
+    return myEditMode;                      // PABLO #1916
+}                                           // PABLO #1916
+
+
+bool                                                                                                            // PABLO #1916
+GNEViewNet::showLockIcon() const {                                                                              // PABLO #1916
+    return(myEditMode == GNE_MODE_MOVE || myEditMode == GNE_MODE_INSPECT || myEditMode == GNE_MODE_ADDITIONAL); // PABLO #1916
+}                                                                                                               // PABLO #1916
+
+
 GNEJunction*
 GNEViewNet::getJunctionAtCursorPosition(Position& /* pos */) {
     GNEJunction* junction = 0;

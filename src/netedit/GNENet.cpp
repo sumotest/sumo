@@ -534,11 +534,8 @@ GNENet::save(OptionsCont& oc) {
 
 
 void                                                                                                                            // PABLO #1916
-GNENet::saveAdditionals(OptionsCont& oc) {                                                                                      // PABLO #1916
-    computeAndUpdate(oc);                                                                                                       // PABLO #1916
-    std::string route = oc.getString("output-file");    // Provisional                                                          // PABLO #1916
-    route.erase(route.find(".net.xml"), 8);             // Provisional                                                          // PABLO #1916
-    OutputDevice& device = OutputDevice::getDevice(route + ".add.xml");                                                         // PABLO #1916
+GNENet::saveAdditionals(const std::string &filename) {                                                                          // PABLO #1916
+    OutputDevice& device = OutputDevice::getDevice(filename);                                                                   // PABLO #1916
     device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");   // PABLO #1916
     for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)                               // PABLO #1916
         i->second->writeAdditional(device);                                                                                     // PABLO #1916

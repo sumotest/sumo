@@ -362,9 +362,9 @@ GNEApplicationWindow::fillMenuBar() {
                       "&Save POIs As ...\t\tSave the POIs.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_POIS);
     new FXMenuCommand(myFileMenu,                                                           // PABLO #1916
-                      "&Save additionals...\t\tSave additionals.",                          // PABLO #1916
+                      "&Save additionals As...\t\tSave additional elements.",               // PABLO #1916
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);   // PABLO #1916
-    new FXMenuSeparator(myFileMenu);
+    new FXMenuSeparator(myFileMenu);                                                        // PABLO #1916
     new FXMenuCommand(myFileMenu,
                       "Close\tCtrl+W\tClose the network.",
                       GUIIconSubSys::getIcon(ICON_CLOSE), this, MID_CLOSE);
@@ -1214,14 +1214,22 @@ GNEApplicationWindow::onCmdSaveNetwork(FXObject*, FXSelector, void*) {
 
 long 
 GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {                  // PABLO #1916
+    FXString file = MFXUtils::getFilename2Write(this,                                       // PABLO #1916
+                    "Select name of the additional file", ".xml",                           // PABLO #1916
+                    GUIIconSubSys::getIcon(ICON_EMPTY),                                     // PABLO #1916
+                    gCurrentFolder);                                                        // PABLO #1916
+    if (file == "") {                                                                       // PABLO #1916
+        return 1;                                                                           // PABLO #1916
+    }                                                                                       // PABLO #1916
+    std::string filename = file.text();                                                     // PABLO #1916
+    // XXX Not yet implemented                                                              // PABLO #1916
     getApp()->beginWaitCursor();                                                            // PABLO #1916
     try {                                                                                   // PABLO #1916
-        OptionsCont& oc = OptionsCont::getOptions();                                        // PABLO #1916
-        myNet->saveAdditionals(oc);                                                         // PABLO #1916
+        myNet->saveAdditionals(filename);                                                   // PABLO #1916
+        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");          // PABLO #1916
     } catch (IOError& e) {                                                                  // PABLO #1916
         FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());   // PABLO #1916
     }                                                                                       // PABLO #1916
-    myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");              // PABLO #1916
     myMessageWindow->addSeparator();                                                        // PABLO #1916
     getApp()->endWaitCursor();                                                              // PABLO #1916
     return 1;                                                                               // PABLO #1916

@@ -41,6 +41,7 @@ class GNENet;
 class GNEEdge;
 class GNEAttributeCarrier;
 class GNEUndoList;
+class GNEAdditional;    // PABLO #1916
 
 // ===========================================================================
 // class definitions
@@ -58,23 +59,26 @@ public:
     // class AttrPanel
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
-        // FOX-declarations isn't needed here because this class don't have callbacks (long onCmd....)
-        // FXDECLARE(GNEInspector::AttrPanel)
+        // FOX-declarations
+        FXDECLARE(GNEInspector::AttrPanel)
 
     public:
         /// @brief constructor
         AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
 
-        bool getCheckBlocked() const {
-            return myCheckBlocked->getCheck();
-        }
+        /// @brief try to set new attribute value               // PABLO #1916
+        long onCmdSetBlocking(FXObject*, FXSelector, void*);    // PABLO #1916
 
     protected:
         /// @brief FOX needs this
         AttrPanel() {}
 
-        /// @brief pointer to check button blockec
+    private:
+        /// @brief pointer to check button block
         FXCheckButton *myCheckBlocked;
+
+        /// @brief pointer to additional element
+        GNEAdditional *myAdditional;
     };
 
     // ===========================================================================
@@ -156,10 +160,6 @@ public:
 
     /// @brief update the copy button with the name of the template
     long onUpdCopyTemplate(FXObject*, FXSelector, void*);
-
-    /// @brief try to set new attribute value               // PABLO #1916
-    long onCmdSetBlocking(FXObject*, FXSelector, void*);    // PABLO #1916
-    
 
 protected:
     /// @brief FOX needs this

@@ -281,9 +281,9 @@ public:
     void save(OptionsCont& oc);
 
     /** @brief save additional elements of the network                  // PABLO #1916
-     * @param[in] oc The OptionsCont which knows how and where to save  // PABLO #1916
+     * @param[in] filename name of the file in wich save additionals    // PABLO #1916
      */                                                                 // PABLO #1916
-    void saveAdditionals(OptionsCont& oc);                              // PABLO #1916
+    void saveAdditionals(const std::string &filename);                  // PABLO #1916
 
     /** @brief save plain xml representation of the network (and nothing else)
      * @param[in] oc The OptionsCont which knows how and where to save

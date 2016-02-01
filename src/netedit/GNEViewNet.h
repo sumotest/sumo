@@ -60,8 +60,8 @@ enum EditMode {
     GNE_MODE_CONNECT,
     /** mode for editing tls */
     GNE_MODE_TLS,
-    /** Mode for editing additionals */                 // PABLO #1916
-    GNE_MODE_ADDITIONAL                                // PABLO #1916
+    /** Mode for editing additionals */     // PABLO #1916
+    GNE_MODE_ADDITIONAL                     // PABLO #1916
 };
 
 // ===========================================================================
@@ -174,9 +174,13 @@ public:
     void markPopupPosition();
 
     /// @brief get the net object
-    GNENet* getNet() {
-        return myNet;
-    };
+    GNENet* getNet();
+
+    /// @brief get the current edit mode    // PABLO #1916
+    EditMode getCurrentEditMode() const;    // PABLO #1916
+
+    /// @brief check if lock icon should be visible     // PABLO #1916
+    bool showLockIcon() const;                          // PABLO #1916
 
     void setStatusBarText(const std::string& text);
 

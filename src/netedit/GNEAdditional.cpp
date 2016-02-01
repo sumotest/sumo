@@ -126,7 +126,7 @@ GNEAdditional::getParentName() const {
 
 
 void 
-GNEAdditional::drawLockIcon(SUMOReal altitude) const {
+GNEAdditional::drawLockIcon() const {
     // load additional lock, if wasn't inicializated
     if (!additionalLockInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);

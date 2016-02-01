@@ -281,6 +281,9 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         if (s.scale * exaggeration >= 4.5) {
             GLHelper::drawText("C", Position(), .1, 1.6, base, mySignRot);
         }
+
+        if(myBlocked && dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+            GNEAdditional::drawLockIcon();
     }
     glPopMatrix();
     glPopName();

@@ -195,10 +195,8 @@ protected:
     /// @brief boolean to check if additional lock image was inicializated
     static bool additionalLockInitialized;    
 
-    /* @brief draw lock icon
-     * @param[in] altitude altitude (Z) in which the lock icon will be draw
-     */
-    void drawLockIcon(SUMOReal altitude) const;
+    // @brief draw lock icon
+    void drawLockIcon() const;
 
 private:    
     /// @brief set attribute after validation
