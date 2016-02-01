@@ -88,6 +88,8 @@
 #define TURN_LANE_DIST (SUMOReal)200.0 // the distance at which a lane leading elsewhere is considered to be a turn-lane that must be avoided
 #define GAIN_PERCEPTION_THRESHOLD (SUMOReal)0.05 // the minimum relative speed gain which affects the behavior
 
+#define SPEED_GAIN_MIN_SECONDS 20.0
+
 //#define DEBUG_COND (myVehicle.getID() == "moped.18" || myVehicle.getID() == "moped.16")
 //#define DEBUG_COND (myVehicle.getID() == "B")
 #define DEBUG_COND (myVehicle.getID() == "disabled")
@@ -1229,6 +1231,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                 ++j;
             }
             const SUMOReal relativeGain = (vMin - defaultNextSpeed) / MAX2(vMin, RELGAIN_NORMALIZATION_MIN_SPEED);
+            // @note this is biased for changing to the left since we compare the sublanes in ascending order
             if (relativeGain > GAIN_PERCEPTION_THRESHOLD && relativeGain > maxGain) {
                 maxGain = relativeGain;
                 sublaneCompact = i;
@@ -1341,7 +1344,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                       << "\n";
         }
 
-        if (latDist < 0 && mySpeedGainProbabilityRight > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)
+        if (latDist < 0 && mySpeedGainProbabilityRight >= MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)
                 && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { 
             ret |= lca | LCA_SPEEDGAIN;
             if (!cancelRequest(ret)) {
@@ -1354,14 +1357,19 @@ MSLCM_SL2015::_wantsChangeSublane(
     } 
     if (!right) {
 
+        const bool stayInLane = myVehicle.getLateralPositionOnLane() + latDist < 0.5 * myVehicle.getLane()->getWidth();
         if (gDebugFlag2) {
             std::cout << STEPS2TIME(currentTime)
                       << " speedGainL=" << mySpeedGainProbabilityLeft
                       << " latDist=" << latDist
+                      << " stayInLane=" << stayInLane
                       << "\n";
         }
 
-        if (latDist > 0 && mySpeedGainProbabilityLeft > CHANGE_PROB_THRESHOLD_LEFT && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { // .1
+        if (latDist > 0 && mySpeedGainProbabilityLeft > CHANGE_PROB_THRESHOLD_LEFT && 
+                // if we leave our lane, we should be able to stay in the new
+                // lane for some time
+                (stayInLane || neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > SPEED_GAIN_MIN_SECONDS)) { 
             ret |= lca | LCA_SPEEDGAIN;
             if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,

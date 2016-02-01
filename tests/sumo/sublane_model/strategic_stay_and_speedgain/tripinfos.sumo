@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Mon Feb  1 15:48:45 2016 by SUMO Version dev-SVN-r19829
+<!-- generated on Mon Feb  1 16:29:16 2016 by SUMO Version dev-SVN-r19829
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -15,7 +15,7 @@
     </output>
 
     <processing>
-        <lateral-resolution value="0.64"/>
+        <lateral-resolution value="0.32"/>
     </processing>
 
     <report>
