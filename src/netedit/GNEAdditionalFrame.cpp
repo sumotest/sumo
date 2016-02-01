@@ -73,8 +73,9 @@ FXIMPLEMENT(GNEAdditionalFrame, FXScrollWindow, GNEAdditionalMap, ARRAYNUMBER(GN
 // static members
 // ===========================================================================
 const int GNEAdditionalFrame::WIDTH = 150;
-const int GNEAdditionalFrame::maximumNumberOfAdditionalParameterTextField = 10;
-const int GNEAdditionalFrame::maximumNumberOfAdditionalParameterCheckButton = 10;
+const int GNEAdditionalFrame::maxNumberOfParameters = 20;
+const int GNEAdditionalFrame::maxNumberOfListParameters = 5;
+const int GNEAdditionalFrame::additionalParameterList::maxNumberOfValuesInParameterList = 10;
 
 // ===========================================================================
 // method definitions
@@ -94,7 +95,7 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myFrameLabel->setFont(myHeaderFont);
     
     // Create groupBox for myAdditionalMatchBox 
-    FXGroupBox* groupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element",
+    groupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element",
                                                       GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
     
     // Create FXListBox in groupBoxForMyAdditionalMatchBox
@@ -102,39 +103,32 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
                                           FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
 
     // Create groupBox for parameters 
-    FXGroupBox* groupBoxForParameters = new FXGroupBox(myContentFrame, "Default parameters",
-                                            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
-    // Create groupBox for reference point
-    FXGroupBox* myReferencePointBox = new FXGroupBox(myContentFrame, "Reference point",
-                                            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+    groupBoxForParameters = new FXGroupBox(myContentFrame, "Default parameters",
+                                           GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+    
+    // Create widgets for parameters
+    for (int i = 0; i < maxNumberOfParameters; i++)
+        myVectorOfAdditionalParameter.push_back(additionalParameter(groupBoxForParameters, this));
+
+    // Create widgets for list parameters
+    for (int i = 0; i < maxNumberOfListParameters; i++)
+        myVectorOfAdditionalParameterList.push_back(additionalParameterList(groupBoxForParameters, this));
+
+    // Create groupBox for editor parameters
+    myReferencePointBox = new FXGroupBox(myContentFrame, "editor",
+                                         GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
     
     // Create FXListBox for the reference points
     myReferencePointMatchBox = new FXComboBox(myReferencePointBox, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
-                                              FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+                                              FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC);
 
     // Create FXMenuCheck for the force option
-    myCheckForcePosition = new FXMenuCheck(myContentFrame, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION);
+    myCheckForcePosition = new FXMenuCheck(myReferencePointBox, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,
+                                           LAYOUT_LEFT | LAYOUT_TOP);
 
-    // Create additionalParameterTextField
-    for(int i = 0; i < maximumNumberOfAdditionalParameterTextField; i++) {
-        additionalParameterTextField additionalParameter;
-        // Create elements
-        additionalParameter.horizontalFrame = new FXHorizontalFrame(groupBoxForParameters, LAYOUT_SIDE_TOP | LAYOUT_FIX_WIDTH | PACK_UNIFORM_WIDTH, 0, 0, WIDTH - 20, 0);
-        additionalParameter.label = new FXLabel(additionalParameter.horizontalFrame, "param", 0, JUSTIFY_RIGHT);
-        additionalParameter.textField = new FXTextField(additionalParameter.horizontalFrame, 10, this, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, TEXTFIELD_NORMAL, 0, 0, 0, 0, 4, 2, 0, 2);
-        // Add to myVectorOfParametersTextFields
-        myVectorOfParametersTextFields.push_back(additionalParameter);
-    }
-
-    // Create additionalParameterCheckButton/
-    for(int i = 0; i < maximumNumberOfAdditionalParameterCheckButton; i++) {
-        additionalParameterCheckButton additionalParameter;
-        additionalParameter.horizontalFrame = new FXHorizontalFrame(groupBoxForParameters, LAYOUT_SIDE_TOP | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0);
-        additionalParameter.label = new FXLabel(additionalParameter.horizontalFrame, "param", 0, JUSTIFY_RIGHT);
-        additionalParameter.menuCheck = new FXMenuCheck(additionalParameter.horizontalFrame, "", this, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL);
-        // Add to myVectorOfParameterCheckButton
-        myVectorOfParameterCheckButton.push_back(additionalParameter);
-    }
+    // Create FXMenuCheck for the force option
+    myCheckBlock = new FXMenuCheck(myReferencePointBox, "Block movement", this, MID_GNE_SET_BLOCKING,
+                                   LAYOUT_LEFT | LAYOUT_TOP);
 
     // Add options to myAdditionalMatchBox
     myAdditionalMatchBox->appendItem("Bus stop");
@@ -153,9 +147,9 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myActualAdditionalType = GNE_ADDITIONAL_BUSSTOP;
 
     // Add options to myReferencePointMatchBox
-    myReferencePointMatchBox->appendItem("left");
-    myReferencePointMatchBox->appendItem("right");
-    myReferencePointMatchBox->appendItem("center");
+    myReferencePointMatchBox->appendItem("ref. left");
+    myReferencePointMatchBox->appendItem("ref. right");
+    myReferencePointMatchBox->appendItem("ref. center");
 
     // Set visible items
     myReferencePointMatchBox->setNumVisible((int)myReferencePointMatchBox->getNumItems());
@@ -178,6 +172,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
     
     // Add adittional element depending of myActualAdditionalType
     switch (myActualAdditionalType) {
+        
         case GNE_ADDITIONAL_BUSSTOP: {
             int numberOfBusStops = myUpdateTarget->getNet()->getNumberOfBusStops();
             // Check that the ID of the new busStop is unique
@@ -189,9 +184,9 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
             // If positions are valid
             if(setPositions(lane, position, startPosition, endPosition)) {
                 // Extract bus lines
-                std::string linesWithoutParse = myVectorOfParametersTextFields.at(1).textField->getText().text();
+                /** ARREGLAR **/ //std::string linesWithoutParse = myVectorOfParametersTextFields.at(1).textField->getText().text();
                 std::vector<std::string> lines;
-                SUMOSAXAttributes::parseStringVector(linesWithoutParse, lines);
+                //SUMOSAXAttributes::parseStringVector(linesWithoutParse, lines);
                 // Create an add new busStop
                 GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, lines);
                 myUndoList->p_begin("add " + busStop->getDescription());
@@ -211,10 +206,10 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 // If positions are valid
                 if(setPositions(lane, position, startPosition, endPosition)) {
                     // Get values of text fields
-                    SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfParametersTextFields.at(1).textField->getText().text());
-                    SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfParametersTextFields.at(2).textField->getText().text());
-                    bool chargeInTransit = myVectorOfParameterCheckButton.at(0).menuCheck->getCheck();
-                    int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfParametersTextFields.at(3).textField->getText().text());
+                    SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1).getTextValue());
+                    SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2).getTextValue());
+                    int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3).getTextValue());
+                    bool chargeInTransit = myVectorOfAdditionalParameter.at(4).getBoolValue();
                     // Create an add new chargingStation
                     GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
                     myUndoList->p_begin("add " + chargingStation->getDescription());
@@ -222,6 +217,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                     myUndoList->p_end();
                 }
             }
+            
             break;
         case GNE_ADDITIONAL_E1: {
                 /** Finish **/
@@ -256,7 +252,6 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
 
 void 
 GNEAdditionalFrame::removeAdditional(GNEAdditional *additional) {
-
     myUndoList->p_begin("delete " + additional->getDescription());
     myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), additional, false), true);
     myUndoList->p_end();
@@ -304,54 +299,39 @@ GNEAdditionalFrame::hide() {
 
 void 
 GNEAdditionalFrame::setParameters() {
-    // Hide all additionalParameterTextField
-    for(std::vector<additionalParameterTextField>::iterator i = myVectorOfParametersTextFields.begin(); i != myVectorOfParametersTextFields.end(); i++) {
-        (*i).horizontalFrame->hide();
-    }
-    // Hide all additionalParameterCheckButton
-    for(std::vector<additionalParameterCheckButton>::iterator i = myVectorOfParameterCheckButton.begin(); i != myVectorOfParameterCheckButton.end(); i++) {
-        (*i).horizontalFrame->hide();
-    }
+    // Hide all parameters
+    for(int i = 0; i < maxNumberOfParameters; i++)
+        myVectorOfAdditionalParameter.at(i).hideParameter();
+    for(int i = 0; i < maxNumberOfListParameters; i++)
+        myVectorOfAdditionalParameterList.at(i).hideParameter();
+
     // Obtain options
     OptionsCont &oc = OptionsCont::getOptions();
+
     // Set parameters depending of myActualAdditionalType
     switch (myActualAdditionalType) {
-        case GNE_ADDITIONAL_BUSSTOP : {
-                myVectorOfParametersTextFields.at(0).label->setText("size");
-                myVectorOfParametersTextFields.at(0).textField->setText(oc.getString("busStop default length").c_str());
-                myVectorOfParametersTextFields.at(0).horizontalFrame->show();
-                myVectorOfParametersTextFields.at(1).label->setText("lines");
-                myVectorOfParametersTextFields.at(1).textField->setText(oc.getString("busStop default lines").c_str());
-                myVectorOfParametersTextFields.at(1).horizontalFrame->show();
-            }
+        case GNE_ADDITIONAL_BUSSTOP :
+            myVectorOfAdditionalParameter.at(0).showTextParameter("size", oc.getString("busStop default length").c_str());   
+            // Lines
             break;
-        case GNE_ADDITIONAL_CHARGINGSTATION : {
-                myVectorOfParametersTextFields.at(0).label->setText("size");
-                myVectorOfParametersTextFields.at(0).textField->setText(oc.getString("chargingStation default length").c_str());
-                myVectorOfParametersTextFields.at(0).horizontalFrame->show();
-                myVectorOfParametersTextFields.at(1).label->setText("chrg. Power");
-                myVectorOfParametersTextFields.at(1).textField->setText(oc.getString("chargingStation default charging power").c_str());
-                myVectorOfParametersTextFields.at(1).horizontalFrame->show();
-                myVectorOfParametersTextFields.at(2).label->setText("efficiency");
-                myVectorOfParametersTextFields.at(2).textField->setText(oc.getString("chargingStation default efficiency").c_str());
-                myVectorOfParametersTextFields.at(2).horizontalFrame->show();
-                myVectorOfParametersTextFields.at(3).label->setText("chrg. delay");
-                myVectorOfParametersTextFields.at(3).textField->setText(oc.getString("chargingStation default charge delay").c_str());
-                myVectorOfParametersTextFields.at(3).horizontalFrame->show();
-                myVectorOfParameterCheckButton.at(0).label->setText("chrg. in transit");
-                myVectorOfParameterCheckButton.at(0).menuCheck->setCheck(oc.getBool("chargingStation default charge in transit"));
-                myVectorOfParameterCheckButton.at(0).horizontalFrame->show();
-            }
+        case GNE_ADDITIONAL_CHARGINGSTATION :
+            myVectorOfAdditionalParameter.at(0).showTextParameter("size", oc.getString("chargingStation default length").c_str());   
+            myVectorOfAdditionalParameter.at(1).showTextParameter("chrg. Power", oc.getString("chargingStation default charging power").c_str());   
+            myVectorOfAdditionalParameter.at(2).showTextParameter("efficiency", oc.getString("chargingStation default efficiency").c_str());   
+            myVectorOfAdditionalParameter.at(3).showTextParameter("chrg. delay", oc.getString("chargingStation default charge delay").c_str());   
+            myVectorOfAdditionalParameter.at(4).showBoolParameter("chrg. in transit", oc.getBool("chargingStation default charge in transit"));   
             break;
         default:
             break;
     }
+    // Recalc groupBox
+    groupBoxForParameters->recalc();
 }
 
 
 bool 
 GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition) {
-    SUMOReal size = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfParametersTextFields.at(0).textField->getText().text());
+    SUMOReal size = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0).getTextValue());
     switch (myActualAdditionalReferencePoint) {
         case GNE_ADDITIONALREFERENCEPOINT_LEFT : {
             startPosition = positionOfTheMouseOverLane;
@@ -399,5 +379,108 @@ GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOver
     else
         return false;
 }
+
+
+GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite *parent, FXObject* tgt) {
+    // Create elements
+    myHorizontalFrame = new FXHorizontalFrame(parent, LAYOUT_SIDE_TOP, 0, 0, WIDTH - 20, 0);
+    myLabel = new FXLabel(myHorizontalFrame, "name", 0, JUSTIFY_RIGHT, 0, 0, 10, 0);
+    myTextField = new FXTextField(myHorizontalFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, TEXTFIELD_NORMAL, 0, 0, 0, 0, 4, 2, 0, 2);
+    myMenuCheck = new FXMenuCheck(myHorizontalFrame, "", tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL);
+    // Hide elements
+    hideParameter();
+}
+
+
+GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::showTextParameter(const std::string& name, const std::string &value) {
+    myHorizontalFrame->show();
+    myLabel->setText(name.c_str());
+    myLabel->show();
+    myTextField->setText(value.c_str());
+    myTextField->show();
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::showBoolParameter(const std::string& name, bool value) {
+    myHorizontalFrame->show();
+    myLabel->setText(name.c_str());
+    myLabel->show();
+    myMenuCheck->setCheck(value);
+    myMenuCheck->show();
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::hideParameter() {
+    myHorizontalFrame->hide();
+    myLabel->hide();
+    myTextField->hide();
+    myMenuCheck->hide();
+}
+
+
+std::string 
+GNEAdditionalFrame::additionalParameter::getTextValue() {
+    return myTextField->getText().text();
+}
+
+
+bool
+GNEAdditionalFrame::additionalParameter::getBoolValue() {
+    return (myMenuCheck->getCheck() == 1)? true : false;
+}
+
+
+
+GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite *parent, FXObject* tgt) {
+    // Create elements
+    myHorizontalFrame = new FXHorizontalFrame(parent, LAYOUT_SIDE_TOP, 0, 0, WIDTH - 20, 0);
+    myLabel = new FXLabel(myHorizontalFrame, "name", 0, JUSTIFY_RIGHT, 0, 0, 10, 0);
+    myVerticalFrame = new FXVerticalFrame(myHorizontalFrame, LAYOUT_SIDE_TOP);
+    for(int i = 0; i < maxNumberOfValuesInParameterList; i++)
+        myTextFields.push_back(new FXTextField(myVerticalFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, TEXTFIELD_NORMAL, 0, 0, 0, 0, 4, 2, 0, 2));
+}
+
+
+GNEAdditionalFrame::additionalParameterList::~additionalParameterList() {}
+
+
+void 
+GNEAdditionalFrame::additionalParameterList::showListParameter(const std::string& name, std::vector<std::string> value) {
+    myLabel->setText(name.c_str());
+    myHorizontalFrame->show();
+    myVerticalFrame->show();
+    myLabel->show();
+    for(int i = 0; (i < maxNumberOfValuesInParameterList) && (i < value.size()); i++) {
+        myTextFields.at(i)->show();
+    }
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameterList::hideParameter() {
+    myHorizontalFrame->hide();
+    myVerticalFrame->hide();
+    myLabel->hide();
+    for(int i = 0; i < maxNumberOfValuesInParameterList; i++)
+        myTextFields.at(i)->hide();
+}
+
+
+std::vector<std::string> 
+GNEAdditionalFrame::additionalParameterList::getVectorOfTextValues() {
+    // Declare, fill and return a list of string
+    std::vector<std::string> listOfStrings;
+    for(int i = 0; i < maxNumberOfValuesInParameterList; i++)
+        if(!myTextFields.at(i)->getText().empty())
+            listOfStrings.push_back(myTextFields.at(i)->getText().text());
+    return listOfStrings;
+}
+
 
 /****************************************************************************/

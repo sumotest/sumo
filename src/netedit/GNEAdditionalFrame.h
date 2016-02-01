@@ -133,25 +133,80 @@ private:
     /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
     bool setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
 
-    /// @brief struct for text field parameters
-    struct additionalParameterTextField {
+    /// @brief Class for text field parameters
+    class additionalParameter {
+    public:
+        /// @brief constructor
+        additionalParameter(FXComposite *parent, FXObject* tgt);
+
+        /// @brief destructor
+        ~additionalParameter();
+
+        /// @brief show name and value of parameters of type textField
+        void showTextParameter(const std::string& name, const std::string &value);
+
+        /// @brief show name and value of parameters of type bool
+        void showBoolParameter(const std::string& name, bool value);
+
+        /// @brief hide all parameters
+        void hideParameter();
+
+        /// @brief return the value of the FXTextField
+        std::string getTextValue();
+
+        /// @brief return the value of the FXMenuCheck
+        bool getBoolValue();
+
+    private:
         /// @brief horizontal frame for label and textField
-        FXHorizontalFrame *horizontalFrame;
+        FXHorizontalFrame *myHorizontalFrame;
+        
         /// @brief lael with the name of the parameter
-        FXLabel *label;
+        FXLabel *myLabel;
+        
         /// @brief textField to modify the value of parameter
-        FXTextField *textField;
+        FXTextField *myTextField;
+        
+        /// @brief menuCheck to enable/disable the value of parameter
+        FXMenuCheck *myMenuCheck;
     };
 
-    /// @brief struct for boolean (menuCheck) parameters
-    struct additionalParameterCheckButton {
-        /// @brief horizontal frame for label and menuCheck
-        FXHorizontalFrame *horizontalFrame;
-        /// @brief label with the name of the parameter
-        FXLabel *label;
-        /// @brief menuCheck to enable/disable the value of parameter
-        FXMenuCheck *menuCheck;
+
+    /// @brief Class for text field parameters of type list
+    class additionalParameterList {
+    public:
+        /// @brief constructor
+        additionalParameterList(FXComposite *parent, FXObject* tgt);
+
+        /// @brief destructor
+        ~additionalParameterList();
+
+        /// @brief show name and value of parameters of type textField
+        void showListParameter(const std::string& name, std::vector<std::string> value);
+
+        /// @brief hide all parameters
+        void hideParameter();
+
+        /// @brief return the value of the FXTextField 
+        std::vector<std::string> getVectorOfTextValues();
+
+    private:
+        /// @brief horizontal frame for label and verticalFrme
+        FXHorizontalFrame *myHorizontalFrame;
+
+        /// @brief vertical frame for list and button
+        FXVerticalFrame *myVerticalFrame;
+        
+        /// @brief lael with the name of the parameter
+        FXLabel *myLabel;
+        
+        /// @brief textField to modify the value of parameter
+        std::vector<FXTextField*> myTextFields;
+
+        /// @brief Number max of values in a parameter of type list
+        static const int maxNumberOfValuesInParameterList;
     };
+
 
     /// @brief the panel to hold all member widgets
     FXVerticalFrame* myContentFrame;
@@ -162,26 +217,35 @@ private:
     /// @brief the label for the frame
     FXLabel* myFrameLabel;
 
-    /// @brief combo box with the list of additional elements
-    FXComboBox* myAdditionalMatchBox;
+    /// @brief groupBox for Match Box of additionals
+    FXGroupBox* groupBoxForMyAdditionalMatchBox;
 
-    /// @brief the window to inform 
-    GNEViewNet* myUpdateTarget;
-
-    /// @brief vector of Labels for the name of default parameters
-    std::vector<additionalParameterTextField> myVectorOfParametersTextFields;
-
-    /// @brief vector of Text fiels with the default text parameters
-    std::vector<additionalParameterCheckButton> myVectorOfParameterCheckButton;
+    /// @briefgroupBox for parameters 
+    FXGroupBox* groupBoxForParameters;
 
     /// @brief the box for the reference point match Box
     FXGroupBox* myReferencePointBox;
+
+    /// @brief combo box with the list of additional elements
+    FXComboBox* myAdditionalMatchBox;
 
     /// @brief match box with the list of reference points
     FXComboBox* myReferencePointMatchBox;
 
     /// @brief checkBox for the option "force position"
     FXMenuCheck* myCheckForcePosition;
+
+    /// @brief checkBox for blocking movement
+    FXMenuCheck* myCheckBlock;
+
+    /// @brief the window to inform 
+    GNEViewNet* myUpdateTarget;
+
+    /// @brief vector with the additional parameters
+    std::vector<additionalParameter> myVectorOfAdditionalParameter;
+    
+    /// @brief vector with the additional parameters of type list
+    std::vector<additionalParameterList> myVectorOfAdditionalParameterList;
 
     /// @brief actual additional type selected in the match Box
     additionalType myActualAdditionalType;
@@ -192,11 +256,11 @@ private:
     /// @brief Width of frame
     static const int WIDTH;
 
-    /// @brief Maximun number (Size of vector) of additionalParameterTextField
-    static const int maximumNumberOfAdditionalParameterTextField;
+    /// @brief Number max of parameters
+    static const int maxNumberOfParameters;
 
-    /// @brief Maximun number (Size of vector) of additionalParameterCheckButton
-    static const int maximumNumberOfAdditionalParameterCheckButton;
+    /// @brief Number max of parameters of type list
+    static const int maxNumberOfListParameters;
 
     /// @brief undo 
     GNEUndoList* myUndoList;
