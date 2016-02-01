@@ -80,18 +80,16 @@ public:
      * @param[in] lane The lane the charging station is placed on
      * @param[in] frompos Begin position of the charging station on the lane
      * @param[in] topos End position of the charging station on the lane
-	 * @param[in] chargingPower
-	 * @param[in] efficiency
-	 * @param[in] chargeInTransit
-	 * @param[in] chargeDelay
+	 * @param[in] chargingPower energy charged in every timeStep
+	 * @param[in] efficiency efficiency of the charge
+	 * @param[in] chargeInTransit enable or disable charge in transit
+	 * @param[in] chargeDelay delay in the charge
      */
     GUIChargingStation(const std::string& id, MSLane& lane, SUMOReal frompos, SUMOReal topos,
-               SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay);
-
+               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
 
     /// @brief Destructor
     ~GUIChargingStation();
-
 
     /// @name inherited from GUIGlObject
     //@{
@@ -106,7 +104,6 @@ public:
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app,
                                        GUISUMOAbstractView& parent);
 
-
     /** @brief Returns an own parameter window
      *
      * Bus stops have no parameter windows (yet).
@@ -119,14 +116,12 @@ public:
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app,
             GUISUMOAbstractView& parent);
 
-
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const;
-
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
@@ -143,7 +138,7 @@ private:
     SUMOReal myEfficiency;
 
     /// @brief allow charge in transit
-    SUMOReal myChargeInTransit;
+    bool myChargeInTransit;
 
     /// @brief charge delay
     SUMOReal myChargeDelay;

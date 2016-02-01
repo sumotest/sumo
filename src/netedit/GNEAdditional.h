@@ -186,6 +186,9 @@ protected:
     /// @brief The shape of the additional element
     PositionVector myShape;
 
+    /// @brief The position of the block icon
+    Position myBlockIconPos;
+
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked;
     

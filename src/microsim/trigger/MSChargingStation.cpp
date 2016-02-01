@@ -1,7 +1,7 @@
 /****************************************************************************/
 /// @file    MSChargingStation_h.h
 /// @author  Daniel Krajzewicz
-/// @author  Tamas Kurzveil
+/// @author  Tamas Kurczveil
 /// @author  Pablo Alvarez Lopez
 /// @date    20-12-13
 /// @version $Id: MSChargingStation.cpp 18762 2015-09-01 16:27:09Z behrisch $
@@ -47,7 +47,7 @@
 // ===========================================================================
 
 MSChargingStation::MSChargingStation(const std::string& chargingStationID, MSLane& lane, SUMOReal startPos, SUMOReal endPos, 
-	               SUMOReal chargingPower, SUMOReal efficency, SUMOReal chargeInTransit, SUMOReal chargeDelay) :
+	               SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, SUMOReal chargeDelay) :
     MSStoppingPlace(chargingStationID, std::vector<std::string>(), lane, startPos, endPos),
     myChargingPower(chargingPower),
     myEfficiency(efficency),

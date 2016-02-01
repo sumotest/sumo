@@ -1,7 +1,7 @@
 /****************************************************************************/
 /// @file    MSChargingStation_h.h
 /// @author  Daniel Krajzewicz
-/// @author  Tamas Kurzveil
+/// @author  Tamas Kurczveil
 /// @author  Pablo Alvarez Lopez
 /// @date    20-12-13
 /// @version $Id: MSChargingStation.h 18762 2015-09-01 16:27:09Z behrisch $
@@ -57,11 +57,11 @@ class OptionsCont;
 class MSChargingStation : public MSStoppingPlace {
 public:
 
-    // CONSTRUCTORES
-
+    /// @brief constructor
     MSChargingStation(const std::string& chargingStationID, MSLane& lane, SUMOReal startPos, SUMOReal endPos, 
-		              SUMOReal chargingPower, SUMOReal efficency, SUMOReal chargeInTransit, SUMOReal chargeDelay);
+		              SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, SUMOReal chargeDelay);
 
+    /// @brief destructor
     ~MSChargingStation();
 
     /// @brief Get parameter 01, charging station's charging power
@@ -82,28 +82,25 @@ public:
     /// @brief Set parameter 06, efficiency of the charging station
     inline void setEfficency(SUMOReal new_Efficency);
 
-
-    // OTHER FUNCTIONS
-
     /** @brief Check if a vehicle is inside in  the Charge Station
      * @param[in] position Position of vehicle in the LANE
-     * @return TRUE if is between StartPostion and EndPostion
+     * @return true if is between StartPostion and EndPostion
      */
     bool vehicleIsInside(const SUMOReal position);
 
 
 private:
 
-    /// @brief Parameter 01, charging station's charging power
+    /// @brief Charging station's charging power
     SUMOReal myChargingPower;
 
-    /// @brief Parameter 02, efficiency of the charging station
+    /// @brief Efficiency of the charging station
     SUMOReal myEfficiency;
 
-    /// @brief Parameter 03, Allow charge in transit
-    SUMOReal myChargeInTransit;
+    /// @brief Allow charge in transit
+    bool myChargeInTransit;
 
-    /// @brief Parameter 03, Charge Delay
+    /// @brief CCharge Delay
     SUMOReal myChargeDelay;
 
     /** @brief convert from SUMOReal to String

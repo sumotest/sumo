@@ -229,7 +229,7 @@ protected:
      */
     virtual void buildChargingStation(MSNet& net, 
 		                              const std::string& id, MSLane* lane, SUMOReal frompos, SUMOReal topos, 
-		                              SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal ChargeDelay);
+		                              SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal ChargeDelay);
 
     /** @brief Builds a container stop
      *

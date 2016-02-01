@@ -61,8 +61,6 @@ FXDEFMAP(GNEInspector) GNEInspectorMap[] = {
 
 
 FXDEFMAP(GNEInspector::AttrPanel) AttrPanelMap[]= {                                                     // PABLO #1916
-    //FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE, GNEInspector::AttrPanelMap::onCmdCopyTemplate),
-    //FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,  GNEInspector::AttrPanelMap::onCmdSetTemplate)
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspector::AttrPanel::onCmdSetBlocking),          // PABLO #1916
 };                                                                                                      // PABLO #1916
 
@@ -76,6 +74,7 @@ FXDEFMAP(GNEInspector::AttrInput) AttrInputMap[] = {
 FXIMPLEMENT(GNEInspector, FXScrollWindow, GNEInspectorMap, ARRAYNUMBER(GNEInspectorMap))
 FXIMPLEMENT(GNEInspector::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))  // PABLO #1916
 FXIMPLEMENT(GNEInspector::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
+
 
 // ===========================================================================
 // static members
@@ -129,6 +128,7 @@ void
 GNEInspector::update() {
     inspect(myACs);
 }
+
 
 FXFont* 
 GNEInspector::getHeaderFont() const {

@@ -60,7 +60,7 @@ public:
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
         // FOX-declarations
-        FXDECLARE(GNEInspector::AttrPanel)
+        FXDECLARE(GNEInspector::AttrPanel)  // PABLO #1916
 
     public:
         /// @brief constructor
@@ -74,11 +74,11 @@ public:
         AttrPanel() {}
 
     private:
-        /// @brief pointer to check button block
-        FXCheckButton *myCheckBlocked;
+        /// @brief pointer to check button block    // PABLO #1916
+        FXCheckButton *myCheckBlocked;              // PABLO #1916
 
-        /// @brief pointer to additional element
-        GNEAdditional *myAdditional;
+        /// @brief pointer to additional element    // PABLO #1916
+        GNEAdditional *myAdditional;                // PABLO #1916
     };
 
     // ===========================================================================

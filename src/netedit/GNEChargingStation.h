@@ -55,7 +55,6 @@ class GNENet;
 class GNEChargingStation : public GNEStoppingPlace
 {
 public:
-
     /** @brief Constructor of charging station
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] lane Lane of this StoppingPlace belongs

@@ -135,9 +135,8 @@ GNEAdditional::drawLockIcon() const {
         delete i;
     }
     glPushMatrix();
-    glTranslated(0, 0, .2);
+    glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), .2);
     glColor3d(1, 1, 1);
-
     GUITexturesHelper::drawTexturedBox(additionalLockGlID, 0.5);
     glPopMatrix();
 }

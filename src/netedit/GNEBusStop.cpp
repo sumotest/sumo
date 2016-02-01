@@ -136,8 +136,11 @@ GNEBusStop::updateGeometry() {
     // Move shape to side 
     tmpShape.move2side(1.5 * offsetSign);
 
-    // Get position of the sing
+    // Get position of the sign
     mySignPos = tmpShape.getLineCenter();
+
+    // Set position of the block icon
+    myBlockIconPos = myShape.getLineCenter();
 
     // If lenght of the shape is distint to 0
     if (myShape.length() != 0) {

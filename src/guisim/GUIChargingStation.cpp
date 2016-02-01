@@ -65,13 +65,13 @@
 // method definitions
 // ===========================================================================
 GUIChargingStation::GUIChargingStation(const std::string& id, MSLane& lane, SUMOReal frompos, SUMOReal topos, 
-	                SUMOReal chargingPower, SUMOReal efficiency, SUMOReal chargeInTransit, SUMOReal chargeDelay) :
+	                SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
     MSChargingStation(id, lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay),
     myChargingPower(chargingPower),
     myEfficiency(efficiency),
     myChargeInTransit(chargeInTransit),
     myChargeDelay(chargeDelay),
-      GUIGlObject_AbstractAdd("chargingStation", GLO_TRIGGER, id) {
+    GUIGlObject_AbstractAdd("chargingStation", GLO_TRIGGER, id) {
     myFGShape = lane.getShape();
     myFGShape = myFGShape.getSubpart(frompos, topos);
     myFGShapeRotations.reserve(myFGShape.size() - 1);
@@ -108,7 +108,7 @@ GUIChargingStation::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("end position [m]", false, myEndPos);
     ret->mkItem("charging power [W]", false, myChargingPower);
     ret->mkItem("charging myEfficiency []", false, myEfficiency);
-    ret->mkItem("charge in transit [0/1]", false, myChargeInTransit);
+    ret->mkItem("charge in transit [true/false]", false, myChargeInTransit);
     ret->mkItem("charge delay [s]", false, myChargeDelay);
 
     // close building
@@ -169,7 +169,7 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
         if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("C", Position(), .1, 1.6, green, myFGSignRot);
+            GLHelper::drawText("C", Position(), .1, 1.6, blue, myFGSignRot);
         }
 
         glTranslated(5, 0, 0);

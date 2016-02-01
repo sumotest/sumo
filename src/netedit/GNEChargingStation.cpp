@@ -134,6 +134,9 @@ GNEChargingStation::updateGeometry() {
     // Get position of the sing
     mySignPos = tmpShape.getLineCenter();
 
+    // Set position of the block icon
+    myBlockIconPos = myShape.getLineCenter();
+
     // If lenght of the shape is distint to 0
     if (myShape.length() != 0) {
 
