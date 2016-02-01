@@ -1237,7 +1237,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                     if (gDebugFlag2) std::cout << "      i=" << i << " newLatDist=" << latDist << " relGain=" << relativeGain << "\n";
                 }
             }
-            if (gDebugFlag2) std::cout << "    i=" << i << " rightmostOnEdge=" << rightmostOnEdge << " relGain=" << relativeGain << " sublaneCompact=" << sublaneCompact << "\n";
+            if (gDebugFlag2) std::cout << "    i=" << i << " rightmostOnEdge=" << rightmostOnEdge << " vMin=" << vMin << " relGain=" << relativeGain << " sublaneCompact=" << sublaneCompact << "\n";
             if (i < rightmostOnEdge) {
                 maxGainRight = MAX2(maxGainRight, relativeGain);
             } else if (i > rightmostOnEdge) {
@@ -1544,11 +1544,11 @@ MSLCM_SL2015::updateExpectedSublaneSpeeds(const MSLeaderInfo& ahead, int sublane
             const MSVehicle* leader = ahead[sublane];
             SUMOReal vSafe;
             if (leader == 0) {
-                vSafe = MIN2(vMax, myCarFollowModel.followSpeed(&myVehicle, myVehicle.getSpeed(), preb[laneIndex].length, 0, 0));
+                vSafe = MIN2(vMax, myCarFollowModel.followSpeed(&myVehicle, vMax, preb[laneIndex].length, 0, 0));
             } else {
                 const SUMOReal gap = leader->getBackPositionOnLane(lane) - myVehicle.getPositionOnLane() - myVehicle.getVehicleType().getMinGap();
                 vSafe = MIN2(vMax, myCarFollowModel.followSpeed(
-                            &myVehicle, myVehicle.getSpeed(), gap, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()));
+                            &myVehicle, vMax, gap, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()));
             }
             // XXX calibrate weightFactor?
             const SUMOReal memoryFactor = 0.5;

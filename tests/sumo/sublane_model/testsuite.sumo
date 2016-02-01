@@ -18,3 +18,6 @@ extra_wide_vehicle
 
 # a lane has two follower lanes on the next edge and vehicle paths might cross
 lane_split_conflict
+
+# a vehicle must stay in its lane for strategic reasons but can still overtake via sublane-changing
+strategic_stay_and_speedgain
