@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sumo-gui", "guisim\guisim.vcxproj", "{F1904C42-F231-4B9D-AD80-E2971969AFA0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{308BEB29-142B-4088-BD41-80E273E20D3A} = {308BEB29-142B-4088-BD41-80E273E20D3A}
@@ -1821,5 +1821,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		VisualSVNWorkingCopyRoot = ..\..
 	EndGlobalSection
 EndGlobal
