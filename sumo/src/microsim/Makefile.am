@@ -22,6 +22,7 @@ MSPersonControl.cpp MSPersonControl.h \
 MSRightOfWayJunction.cpp MSRightOfWayJunction.h \
 MSRoute.cpp MSRoute.h MSRouteHandler.cpp MSRouteHandler.h \
 MSStoppingPlace.cpp MSStoppingPlace.h \
+MSParkingArea.cpp MSParkingArea.h \
 MSVehicle.cpp MSVehicle.h \
 MSVehicleContainer.cpp MSVehicleContainer.h \
 MSVehicleControl.cpp MSVehicleControl.h \

@@ -4,6 +4,7 @@ libguisim_a_SOURCES = GUIBusStop.cpp GUIBusStop.h \
 GUIContainer.cpp GUIContainer.h \
 GUIContainerControl.cpp GUIContainerControl.h \
 GUIContainerStop.cpp GUIContainerStop.h \
+GUIParkingArea.cpp GUIParkingArea.h \
 GUIDetectorWrapper.cpp GUIDetectorWrapper.h \
 GUIE3Collector.cpp GUIE3Collector.h GUIEdge.cpp GUIEdge.h \
 GUIEventControl.cpp GUIEventControl.h \
