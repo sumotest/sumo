@@ -437,7 +437,6 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
-    NBEdge* edge = myLane.getParentEdge().getNBEdge();
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:

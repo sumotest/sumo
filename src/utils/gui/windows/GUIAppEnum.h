@@ -413,7 +413,7 @@ enum {
     MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,         // PABLO #1916
     MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,          // PABLO #1916
     MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT,   // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,  // PABLO #1916
+    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,   // PABLO #1916
 
     /// processing menu messages
     MID_GNE_COMPUTE_JUNCTIONS,
@@ -456,6 +456,10 @@ enum {
     MID_GNE_SET_ATTRIBUTE,
     /** netEdit attribute blocking */   // PABLO #1916
     MID_GNE_SET_BLOCKING,               // PABLO #1916
+    /** netEdit add row */              // PABLO #1916
+    MID_GNE_ADDROW,                     // PABLO #1916
+    /** netEdit remove row */           // PABLO #1916
+    MID_GNE_REMOVEROW,                  // PABLO #1916
     /** open edit dialog */
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
     /** split an edge */

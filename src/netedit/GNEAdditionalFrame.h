@@ -54,7 +54,7 @@ class GNEAdditional;
  * The Widget for setting default parameters of additional elements
  */
 class GNEAdditionalFrame : public FXScrollWindow {
-    // FOX-declarations
+    // FOX-declaration
     FXDECLARE(GNEAdditionalFrame)
 
 public:
@@ -76,6 +76,98 @@ public:
         GNE_ADDITIONALREFERENCEPOINT_LEFT,
         GNE_ADDITIONALREFERENCEPOINT_RIGHT,
         GNE_ADDITIONALREFERENCEPOINT_CENTER
+    };
+
+    // ===========================================================================
+    // class additionalParameter
+    // ===========================================================================
+    class additionalParameter : public FXHorizontalFrame{
+
+    public:
+        /// @brief constructor
+        additionalParameter(FXComposite *parent, FXObject* tgt);
+
+        /// @brief destructor
+        ~additionalParameter();
+
+        /// @brief show name and value of parameters of type textField
+        void showTextParameter(const std::string& name, const std::string &value);
+
+        /// @brief show name and value of parameters of type bool
+        void showBoolParameter(const std::string& name, bool value);
+
+        /// @brief hide all parameters
+        void hideParameter();
+
+        /// @brief return the value of the FXTextField
+        std::string getTextValue();
+
+        /// @brief return the value of the FXMenuCheck
+        bool getBoolValue();
+
+    private:        
+        /// @brief lael with the name of the parameter
+        FXLabel *myLabel;
+        
+        /// @brief textField to modify the value of parameter
+        FXTextField *myTextField;
+        
+        /// @brief menuCheck to enable/disable the value of parameter
+        FXMenuCheck *myMenuCheck;
+    };
+
+
+    // ===========================================================================
+    // class additionalParameterList
+    // ===========================================================================
+    class additionalParameterList : public FXHorizontalFrame {
+        // FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::additionalParameterList)
+
+    public:
+        /// @brief constructor
+        additionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList = 10);
+
+        /// @brief destructor
+        ~additionalParameterList();
+
+        /// @brief show name and value of parameters of type textField
+        void showListParameter(const std::string& name, std::vector<std::string> value);
+
+        /// @brief hide all parameters
+        void hideParameter();
+
+        /// @brief return the value of the FXTextField 
+        std::vector<std::string> getVectorOfTextValues();
+
+        /// @brief add a new row int the list
+        long onCmdAddRow(FXObject*, FXSelector, void*);
+
+        /// @brief add a new row int the list
+        long onCmdRemoveRow(FXObject*, FXSelector, void*);
+
+    protected:
+        /// @brief FOX needs this
+        additionalParameterList() {}
+
+    private:        
+        /// @brief lael with the name of the parameter
+        FXLabel *myLabel;
+        
+        /// @brief textField to modify the value of parameter
+        std::vector<FXTextField*> myTextFields;
+
+        /// @brief Button to increase the number of textFields
+        FXButton *add;
+
+        /// @brief Button to decrease the number of textFields
+        FXButton *remove;
+
+        /// @brief number of visible text fields
+        int numberOfVisibleTextfields;
+
+        /// @brief Number max of values in a parameter of type list
+        int myMaxNumberOfValuesInParameterList;
     };
 
     /** @brief Constructor
@@ -133,88 +225,6 @@ private:
     /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
     bool setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
 
-    /// @brief Class for text field parameters
-    class additionalParameter {
-    public:
-        /// @brief constructor
-        additionalParameter(FXComposite *parent, FXObject* tgt);
-
-        /// @brief destructor
-        ~additionalParameter();
-
-        /// @brief show name and value of parameters of type textField
-        void showTextParameter(const std::string& name, const std::string &value);
-
-        /// @brief show name and value of parameters of type bool
-        void showBoolParameter(const std::string& name, bool value);
-
-        /// @brief hide all parameters
-        void hideParameter();
-
-        /// @brief return the value of the FXTextField
-        std::string getTextValue();
-
-        /// @brief return the value of the FXMenuCheck
-        bool getBoolValue();
-
-    private:
-        /// @brief horizontal frame for label and textField
-        FXHorizontalFrame *myHorizontalFrame;
-        
-        /// @brief lael with the name of the parameter
-        FXLabel *myLabel;
-        
-        /// @brief textField to modify the value of parameter
-        FXTextField *myTextField;
-        
-        /// @brief menuCheck to enable/disable the value of parameter
-        FXMenuCheck *myMenuCheck;
-    };
-
-
-    /// @brief Class for text field parameters of type list
-    class additionalParameterList {
-    public:
-        /// @brief constructor
-        additionalParameterList(FXComposite *parent, FXObject* tgt);
-
-        /// @brief destructor
-        ~additionalParameterList();
-
-        /// @brief show name and value of parameters of type textField
-        void showListParameter(const std::string& name, std::vector<std::string> value);
-
-        /// @brief hide all parameters
-        void hideParameter();
-
-        /// @brief return the value of the FXTextField 
-        std::vector<std::string> getVectorOfTextValues();
-
-    private:
-        /// @brief horizontal frame for label and verticalFrme
-        FXHorizontalFrame *myHorizontalFrame;
-
-        /// @brief vertical frame for list and button
-        FXVerticalFrame *myVerticalFrame;
-        
-        /// @brief lael with the name of the parameter
-        FXLabel *myLabel;
-        
-        /// @brief textField to modify the value of parameter
-        std::vector<FXTextField*> myTextFields;
-
-        FXButton *add;
-
-        FXButton *remove;
-
-        /// @brief number of visible text fields
-        int numberOfVisibleTextfields;
-
-        /// @brief Number max of values in a parameter of type list
-        static const int maxNumberOfValuesInParameterList;
-    };
-
-
     /// @brief the panel to hold all member widgets
     FXVerticalFrame* myContentFrame;
 
@@ -249,10 +259,10 @@ private:
     GNEViewNet* myUpdateTarget;
 
     /// @brief vector with the additional parameters
-    std::vector<additionalParameter> myVectorOfAdditionalParameter;
+    std::vector<additionalParameter*> myVectorOfAdditionalParameter;
     
     /// @brief vector with the additional parameters of type list
-    std::vector<additionalParameterList> myVectorOfAdditionalParameterList;
+    std::vector<additionalParameterList*> myVectorOfAdditionalParameterList;
 
     /// @brief actual additional type selected in the match Box
     additionalType myActualAdditionalType;

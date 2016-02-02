@@ -112,6 +112,8 @@
 #include "redo.xpm"
 #include "netedit.xpm"
 #include "lock.xpm"     // PABLO #1916
+#include "add.xpm"      // PABLO #1916
+#include "remove.xpm"   // PABLO #1916
 
 #include "cut.xpm"
 #include "ext.xpm"
@@ -219,7 +221,9 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
     myIcons[ICON_UNDO]    = new FXXPMIcon(a, undo_xpm);
     myIcons[ICON_REDO]    = new FXXPMIcon(a, redo_xpm);
     myIcons[ICON_NETEDIT] = new FXXPMIcon(a, netedit_xpm);
-    myIcons[ICON_LOCK]    = new FXXPMIcon(a, lock_xpm);    // PABLO #1916
+    myIcons[ICON_LOCK]    = new FXXPMIcon(a, lock_xpm);     // PABLO #1916
+    myIcons[ICON_ADD]     = new FXXPMIcon(a, add_xpm);      // PABLO #1916
+    myIcons[ICON_REMOVE]  = new FXXPMIcon(a, remove_xpm);   // PABLO #1916
 
     myIcons[ICON_EXT]    = new FXXPMIcon(a, ext_xpm);
     myIcons[ICON_CUT_SWELL]    = new FXXPMIcon(a, cut_xpm);
