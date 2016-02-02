@@ -203,6 +203,13 @@ private:
         /// @brief textField to modify the value of parameter
         std::vector<FXTextField*> myTextFields;
 
+        FXButton *add;
+
+        FXButton *remove;
+
+        /// @brief number of visible text fields
+        int numberOfVisibleTextfields;
+
         /// @brief Number max of values in a parameter of type list
         static const int maxNumberOfValuesInParameterList;
     };
