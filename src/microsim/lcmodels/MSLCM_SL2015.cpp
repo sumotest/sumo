@@ -831,7 +831,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     } else if (laneOffset == 1) { 
         leftLimit += neighLane.getWidth(); 
     } 
-    const SUMOReal latLaneDist = MAX2(rightLimit, MIN2(leftLimit, laneOffset * 0.5 * (myVehicle.getLane()->getWidth() + neighLane.getWidth())));
+    const SUMOReal latLaneDist = MAX2(rightLimit, MIN2(leftLimit, laneOffset * SUMOReal(0.5) * (myVehicle.getLane()->getWidth() + neighLane.getWidth())));
 
     /// XXX do not simlpy use latDist = latLaneDist for full-lane changes but rather take blocking and preferred alignment into account as well
 
@@ -1611,7 +1611,7 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneO
         const MSLeaderDistanceInfo& blockers,
         const MSLeaderDistanceInfo& neighLeaders,
         const MSLeaderDistanceInfo& neighFollowers,
-        const MSLeaderDistanceInfo& neighBlockers,
+        const MSLeaderDistanceInfo& /* neighBlockers */,
         std::vector<CLeaderDist>* collectLeadBlockers,
         std::vector<CLeaderDist>* collectFollowBlockers) const {
     // destination sublanes must be safe
@@ -1636,7 +1636,7 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneO
 int 
 MSLCM_SL2015::checkBlockingVehicles(
         const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
-        int laneOffset, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca,
+        int /* laneOffset */, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca,
         std::vector<CLeaderDist>* collectBlockers) {
     // determine borders where safety/no-overlap conditions must hold
     const SUMOReal vehWidth = ego->getVehicleType().getWidth();
