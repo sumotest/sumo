@@ -285,10 +285,11 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
             GLHelper::drawText("C", Position(), .1, 1.6, base, mySignRot);
         }
 
+        glPopMatrix();
+
         if(myBlocked && dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             GNEAdditional::drawLockIcon();
     }
-    glPopMatrix();
     glPopName();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }

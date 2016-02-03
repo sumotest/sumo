@@ -314,13 +314,13 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         if (s.scale * exaggeration >= 4.5)
             GLHelper::drawText("H", Position(), .1, 1.6, letter, mySignRot);
 
+        // pop matrix
+        glPopMatrix();
+
         // Show Lock icon depending of the Edit mode
         if(myBlocked && dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            GNEAdditional::drawLockIcon();
+            drawLockIcon();
     }
-
-    // Pop matrix
-    glPopMatrix();
 
     // Pop name
     glPopName();

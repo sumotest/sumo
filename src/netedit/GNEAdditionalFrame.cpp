@@ -177,7 +177,6 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
     
     // Add adittional element depending of myActualAdditionalType
     switch (myActualAdditionalType) {
-        
         case GNE_ADDITIONAL_BUSSTOP: {
             int numberOfBusStops = myUpdateTarget->getNet()->getNumberOfBusStops();
             // Check that the ID of the new busStop is unique
@@ -192,6 +191,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 std::vector<std::string> lines = myVectorOfAdditionalParameterList.at(0)->getVectorOfTextValues();
                 // Create an add new busStop
                 GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, lines);
+                busStop->setBlocked(myCheckBlock->getCheck() == 1? true : false);
                 myUndoList->p_begin("add " + busStop->getDescription());
                 myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), busStop, true), true);
                 myUndoList->p_end();
@@ -215,12 +215,12 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                     bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
                     // Create an add new chargingStation
                     GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
+                    chargingStation->setBlocked(myCheckBlock->getCheck() == 1? true : false);
                     myUndoList->p_begin("add " + chargingStation->getDescription());
                     myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true), true);
                     myUndoList->p_end();
                 }
             }
-            
             break;
         case GNE_ADDITIONAL_E1: {
                 /** Finish **/
