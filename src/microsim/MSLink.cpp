@@ -529,6 +529,19 @@ MSLink::getViaLane() const {
     return myJunctionInlane;
 }
 
+
+bool 
+MSLink::isExitLink() const {
+    /// XXX this only works in networks with internal lanes
+    return MSGlobals::gUsingInternalLanes && myJunctionInlane == 0 && getLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL;
+}
+
+
+bool 
+MSLink::isInternalJunctionLink() const {
+    return (MSGlobals::gUsingInternalLanes && myJunctionInlane != 0 && myJunctionInlane->getLogicalPredecessorLane()->getEdge().isInternal());
+}
+
 bool 
 MSLink::fromInternalLane() const {
     return (MSGlobals::gUsingInternalLanes && (
