@@ -165,7 +165,7 @@ GNEBusStop::writeAdditional(OutputDevice& device) {
     device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
     device.writeAttr(SUMO_ATTR_STARTPOS, myFromPos);
     device.writeAttr(SUMO_ATTR_ENDPOS, myToPos);
-    device.writeAttr(SUMO_ATTR_LINES, myLines);
+    device.writeAttr(SUMO_ATTR_LINES, getAttribute(SUMO_ATTR_LINES));
     // Close tag
     device.closeTag();
 }
@@ -390,9 +390,9 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
             std::string myLinesStr;
             for(std::vector<std::string>::const_iterator i = myLines.begin(); i != myLines.end(); i++) {
                 if((*i) != myLines.back())
-                    myLinesStr += (myLinesStr + (*i) + " ");
+                    myLinesStr += (*i) + " ";
                 else
-                    myLinesStr += (myLinesStr + (*i));
+                    myLinesStr += (*i);
             }
             return myLinesStr;
         }

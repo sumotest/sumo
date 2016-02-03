@@ -189,10 +189,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
             // If positions are valid
             if(setPositions(lane, position, startPosition, endPosition)) {
                 // Extract bus lines
-                std::vector<std::string> lines = myVectorOfAdditionalParameterList.at(1)->getVectorOfTextValues();
-                
-                for(int i = 0; i < lines.size(); i++)
-                    std::cout << lines[i] << " ";
+                std::vector<std::string> lines = myVectorOfAdditionalParameterList.at(0)->getVectorOfTextValues();
                 // Create an add new busStop
                 GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, lines);
                 myUndoList->p_begin("add " + busStop->getDescription());
@@ -460,11 +457,11 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
         myTextFields.push_back(new FXTextField(myVerticalFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT));
 
     FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(myVerticalFrame);
-    add = new FXButton(buttonsFrame, " ", GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS), this, MID_GNE_ADDROW,
+    add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW,
         ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
         0, 0, 30, 30);
 
-    remove = new FXButton(buttonsFrame, " ", GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS), this, MID_GNE_REMOVEROW,
+    remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW,
         ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
         0, 0, 30, 30);
     }
@@ -506,7 +503,7 @@ GNEAdditionalFrame::additionalParameterList::getVectorOfTextValues() {
     // Declare, fill and return a list of string
     std::vector<std::string> listOfStrings;
     for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++)
-        if(myTextFields.at(i)->getText() != "") {
+        if(myTextFields.at(i)->getText() != "")
             listOfStrings.push_back(myTextFields.at(i)->getText().text());
     return listOfStrings;
 }
