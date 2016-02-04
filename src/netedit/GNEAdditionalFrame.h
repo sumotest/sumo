@@ -118,18 +118,18 @@ public:
 
 
     // ===========================================================================
-    // class additionalParameterList
+    // class AdditionalParameterList
     // ===========================================================================
-    class additionalParameterList : public FXHorizontalFrame {
+    class AdditionalParameterList : public FXHorizontalFrame {
         // FOX-declaration
-        FXDECLARE(GNEAdditionalFrame::additionalParameterList)
+        FXDECLARE(GNEAdditionalFrame::AdditionalParameterList)
 
     public:
         /// @brief constructor
-        additionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList = 10);
+        AdditionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList = 10);
 
         /// @brief destructor
-        ~additionalParameterList();
+        ~AdditionalParameterList();
 
         /// @brief show name and value of parameters of type textField
         void showListParameter(const std::string& name, std::vector<std::string> value);
@@ -148,7 +148,7 @@ public:
 
     protected:
         /// @brief FOX needs this
-        additionalParameterList() {}
+        AdditionalParameterList() {}
 
     private:        
         /// @brief lael with the name of the parameter
@@ -262,7 +262,7 @@ private:
     std::vector<additionalParameter*> myVectorOfAdditionalParameter;
     
     /// @brief vector with the additional parameters of type list
-    std::vector<additionalParameterList*> myVectorOfAdditionalParameterList;
+    std::vector<AdditionalParameterList*> myVectorOfAdditionalParameterList;
 
     /// @brief actual additional type selected in the match Box
     additionalType myActualAdditionalType;

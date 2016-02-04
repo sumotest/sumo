@@ -66,14 +66,14 @@ FXDEFMAP(GNEAdditionalFrame) GNEAdditionalMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEAdditionalFrame::onCmdSelectReferencePoint),
 };
 
-FXDEFMAP(GNEAdditionalFrame::additionalParameterList) additionalParameterListMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_ADDROW,     GNEAdditionalFrame::additionalParameterList::onCmdAddRow),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_REMOVEROW,  GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow),
+FXDEFMAP(GNEAdditionalFrame::AdditionalParameterList) AdditionalParameterListMap[] = {
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_ADDROW,     GNEAdditionalFrame::AdditionalParameterList::onCmdAddRow),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_REMOVEROW,  GNEAdditionalFrame::AdditionalParameterList::onCmdRemoveRow),
 };
 
 // Object implementation
 FXIMPLEMENT(GNEAdditionalFrame, FXScrollWindow, GNEAdditionalMap, ARRAYNUMBER(GNEAdditionalMap))
-FXIMPLEMENT(GNEAdditionalFrame::additionalParameterList, FXHorizontalFrame, additionalParameterListMap, ARRAYNUMBER(additionalParameterListMap))
+FXIMPLEMENT(GNEAdditionalFrame::AdditionalParameterList, FXHorizontalFrame, AdditionalParameterListMap, ARRAYNUMBER(AdditionalParameterListMap))
 
 // ===========================================================================
 // static members
@@ -117,7 +117,7 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
 
     // Create widgets for list parameters
     for (int i = 0; i < maxNumberOfListParameters; i++)
-        myVectorOfAdditionalParameterList.push_back(new additionalParameterList(groupBoxForParameters, this));
+        myVectorOfAdditionalParameterList.push_back(new AdditionalParameterList(groupBoxForParameters, this));
 
     // Create groupBox for editor parameters
     myReferencePointBox = new FXGroupBox(myContentFrame, "editor",
@@ -446,7 +446,7 @@ GNEAdditionalFrame::additionalParameter::getBoolValue() {
 
 
 
-GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList) :
+GNEAdditionalFrame::AdditionalParameterList::AdditionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList) :
     FXHorizontalFrame(parent),
     numberOfVisibleTextfields(1),
     myMaxNumberOfValuesInParameterList(maxNumberOfValuesInParameterList) {
@@ -467,11 +467,11 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
     }
 
 
-GNEAdditionalFrame::additionalParameterList::~additionalParameterList() {}
+GNEAdditionalFrame::AdditionalParameterList::~AdditionalParameterList() {}
 
 
 void 
-GNEAdditionalFrame::additionalParameterList::showListParameter(const std::string& name, std::vector<std::string> value) {
+GNEAdditionalFrame::AdditionalParameterList::showListParameter(const std::string& name, std::vector<std::string> value) {
     myLabel->setText(name.c_str());
     myLabel->show();
     if(value.size() < myMaxNumberOfValuesInParameterList) {
@@ -486,7 +486,7 @@ GNEAdditionalFrame::additionalParameterList::showListParameter(const std::string
 
 
 void 
-GNEAdditionalFrame::additionalParameterList::hideParameter() {
+GNEAdditionalFrame::AdditionalParameterList::hideParameter() {
     myLabel->hide();
     for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++) {
         myTextFields.at(i)->hide();
@@ -499,7 +499,7 @@ GNEAdditionalFrame::additionalParameterList::hideParameter() {
 
 
 std::vector<std::string> 
-GNEAdditionalFrame::additionalParameterList::getVectorOfTextValues() {
+GNEAdditionalFrame::AdditionalParameterList::getVectorOfTextValues() {
     // Declare, fill and return a list of string
     std::vector<std::string> listOfStrings;
     for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++)
@@ -510,7 +510,7 @@ GNEAdditionalFrame::additionalParameterList::getVectorOfTextValues() {
 
 
 long 
-GNEAdditionalFrame::additionalParameterList::onCmdAddRow(FXObject*, FXSelector, void*) {
+GNEAdditionalFrame::AdditionalParameterList::onCmdAddRow(FXObject*, FXSelector, void*) {
     if(numberOfVisibleTextfields < (myMaxNumberOfValuesInParameterList-1)) {
         numberOfVisibleTextfields++;
         myTextFields.at(numberOfVisibleTextfields)->show();
@@ -521,7 +521,7 @@ GNEAdditionalFrame::additionalParameterList::onCmdAddRow(FXObject*, FXSelector, 
 
 
 long 
-GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow(FXObject*, FXSelector, void*) {
+GNEAdditionalFrame::AdditionalParameterList::onCmdRemoveRow(FXObject*, FXSelector, void*) {
     if(numberOfVisibleTextfields > 0) {
         myTextFields.at(numberOfVisibleTextfields)->hide();
         myTextFields.at(numberOfVisibleTextfields)->setText("");
