@@ -1,0 +1,33 @@
+/****************************************************************************/
+// SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+/****************************************************************************/
+//
+//   This file is part of SUMO.
+//   SUMO is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+//
+/****************************************************************************/
+
+syntax = "proto3";
+
+package hybridsim;
+
+option java_multiple_files = false;
+option java_package = "de.dlr.sumo.hybridsim";
+option java_outer_classname = "HybridSimProto";
+
+service HybridSimulation {
+    rpc simulatedTimeInerval(LeftClosedRightOpenTimeInterval) returns (Empty) {}
+
+}
+
+message LeftClosedRightOpenTimeInterval {
+    double fromTimeIncluding = 1;
+    double toTimeExcluding = 2;
+}
+
+message Empty {}
+

@@ -111,7 +111,7 @@ SUMOTime
 MSPModel_NonInteracting::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
     myLastEntryTime = currentTime;
     const MSEdge* edge = stage.getEdge();
-    const MSEdge* next = stage.getNextRouteEdge();
+    const MSEdge* next =
     int dir = UNDEFINED_DIRECTION;
     if (prev == 0) {
         myCurrentBeginPos = stage.getDepartPos();
@@ -174,9 +174,10 @@ MSPModel_NonInteracting::PState::getSpeed(const MSPerson::MSPersonStage_Walking&
 }
 
 
-const MSEdge*
-MSPModel_NonInteracting::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
-    return stage.getNextRouteEdge();
-}
+//const MSEdge*
+//MSPModel_NonInteracting::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
+//
+//    return stage.getPedestrianState()->getNextEdge(stage);
+//}
 
 /****************************************************************************/

@@ -265,7 +265,9 @@ MSPModel_Striping::NextLaneInfo
 MSPModel_Striping::getNextLane(const PState& ped, const MSLane* currentLane, const MSLane* prevLane) {
     const MSEdge* currentEdge = &currentLane->getEdge();
     const MSJunction* junction = ped.myDir == FORWARD ? currentEdge->getToJunction() : currentEdge->getFromJunction();
-    const MSEdge* nextRouteEdge = ped.myStage->getNextRouteEdge();
+
+
+    const MSEdge* nextRouteEdge =  ped.myPerson->getNextEdgePtr();
     const MSLane* nextRouteLane = getSidewalk(nextRouteEdge);
     // result values
     const MSLane* nextLane = nextRouteLane;
@@ -911,7 +913,7 @@ MSPModel_Striping::PState::otherStripe() const {
 
 SUMOReal
 MSPModel_Striping::PState::distToLaneEnd() const {
-    if (myStage->getNextRouteEdge() == 0) {
+    if (myPerson->getNextEdgePtr() == 0) {
         return myDir * (myStage->getArrivalPos() - myRelX) - POSITION_EPS;
     } else {
         const SUMOReal length = myWalkingAreaPath == 0 ? myLane->getLength() : myWalkingAreaPath->length;

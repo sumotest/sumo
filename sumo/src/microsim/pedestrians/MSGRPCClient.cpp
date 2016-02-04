@@ -22,8 +22,10 @@
 #include <microsim/MSJunction.h>
 #include "MSGRPCClient.h"
 
-MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) : stub_(noninteracting::PBPState::NewStub(channel)) {
-
+MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) :
+	stub_(noninteracting::PBPState::NewStub(channel)),
+	hybridsimStub(hybridsim::HybridSimulation::NewStub(channel))
+{
 
 }
 
@@ -139,3 +141,21 @@ SUMOReal MSGRPCClient::getMaxSpeed(const MSPerson::MSPersonStage_Walking& stage)
 	}
 }
 
+
+//hybrid simulation
+void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
+	hybridsim::LeftClosedRightOpenTimeInterval req;
+	req.set_fromtimeincluding(fromIncl);
+	req.set_totimeexcluding(toExcl);
+	hybridsim::Empty rpl;
+
+	ClientContext context;
+
+	Status st = hybridsimStub->simulatedTimeInerval(&context,req,&rpl);
+	if(!st.ok()){
+		std::cerr << "something went wrong!" << std::endl;
+	}
+
+
+
+}

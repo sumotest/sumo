@@ -7,4 +7,7 @@ MSPModel_NonInteracting.cpp MSPModel_NonInteracting.h \
 MSPModel_NonInteracting_GRPC.cpp MSPModel_NonInteracting_GRPC.h \
 noninteracting.grpc.pb.cc noninteracting.grpc.pb.h \
 noninteracting.pb.cc nointeracting.pb.h \
-MSGRPCClient.cpp MSGRPCClient.h
+MSGRPCClient.cpp MSGRPCClient.h \
+MSPModelRemoteControlled.cpp MSPModelRemoteControlled.h \
+hybridsim.grpc.pb.cc hybridsim.grpc.pb.h \
+hybridsim.pb.cc hybridsim.pb.h

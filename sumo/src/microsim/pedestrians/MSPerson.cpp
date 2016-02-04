@@ -79,14 +79,14 @@ MSPerson::MSPersonStage_Walking::~MSPersonStage_Walking() {
 }
 
 
-const MSEdge*
-MSPerson::MSPersonStage_Walking::getEdge() const {
-    if (myCurrentInternalEdge != 0) {
-        return myCurrentInternalEdge;
-    } else {
-        return *myRouteStep;
-    }
-}
+//const MSEdge*
+//MSPerson::MSPersonStage_Walking::getEdge() const {
+//    if (myCurrentInternalEdge != 0) {
+//        return myCurrentInternalEdge;
+//    } else {
+//        return *myRouteStep;
+//    }
+//}
 
 
 const MSEdge*
@@ -128,7 +128,7 @@ MSPerson::MSPersonStage_Walking::getSpeed() const {
 void
 MSPerson::MSPersonStage_Walking::proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous) {
     previous->getEdge()->removePerson(person);
-    myRouteStep = myRoute.begin();
+
     if (myWalkingTime == 0) {
         if (!person->proceed(net, now)) {
             MSNet::getInstance()->getPersonControl().erase(person);
@@ -143,7 +143,7 @@ MSPerson::MSPersonStage_Walking::proceed(MSNet* net, MSTransportable* person, SU
         }
     }
     myPedestrianState = MSPModel::getModel()->add(dynamic_cast<MSPerson*>(person), this, now);
-    (*myRouteStep)->addPerson(person);
+    person->getEdge()->addPerson(person);
 }
 
 
@@ -195,7 +195,8 @@ bool
 MSPerson::MSPersonStage_Walking::moveToNextEdge(MSPerson* person, SUMOTime currentTime, MSEdge* nextInternal) {
     ((MSEdge*)getEdge())->removePerson(person);
     //std::cout << SIMTIME << " moveToNextEdge person=" << person->getID() << "\n";
-    if (myRouteStep == myRoute.end() - 1) {
+
+    if (person->getEdge() == *(myRoute.end() - 1) ) {
         MSNet::getInstance()->getPersonControl().unsetWalking(person);
         if (myDestinationStop != 0) {
             myDestinationStop->addTransportable(person);
@@ -207,7 +208,7 @@ MSPerson::MSPersonStage_Walking::moveToNextEdge(MSPerson* person, SUMOTime curre
         return true;
     } else {
         if (nextInternal == 0) {
-            ++myRouteStep;
+//            ++myRouteStep;
             myCurrentInternalEdge = 0;
         } else {
             myCurrentInternalEdge = nextInternal;

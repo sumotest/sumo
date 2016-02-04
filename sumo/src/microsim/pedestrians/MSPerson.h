@@ -89,7 +89,7 @@ public:
         virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous);
 
         /// Returns the current edge
-        const MSEdge* getEdge() const;
+//        const MSEdge* getEdge() const;
         const MSEdge* getFromEdge() const;
         SUMOReal getEdgePos(SUMOTime now) const;
 
@@ -146,12 +146,12 @@ public:
             return myArrivalPos;
         }
 
-        inline const MSEdge* getRouteEdge() const {
-            return *myRouteStep;
-        }
-        inline const MSEdge* getNextRouteEdge() const {
-            return myRouteStep == myRoute.end() - 1 ? 0 : *(myRouteStep + 1);
-        }
+//        inline const MSEdge* getRouteEdge() const {
+//            return *myRouteStep;
+//        }
+//        inline const MSEdge* getNextRouteEdge() const {
+//            return myRouteStep == myRoute.end() - 1 ? 0 : *(myRouteStep + 1);
+//        }
         inline const ConstMSEdgeVector& getRoute() const {
             return myRoute;
         }
@@ -177,7 +177,7 @@ public:
         ConstMSEdgeVector myRoute;
 
 
-        ConstMSEdgeVector::iterator myRouteStep;
+//        ConstMSEdgeVector::iterator myRouteStep;
 
         /// @brief The current internal edge this person is on or 0
         MSEdge* myCurrentInternalEdge;

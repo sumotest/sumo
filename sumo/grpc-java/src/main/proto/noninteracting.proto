@@ -19,6 +19,8 @@ option java_multiple_files = false;
 option java_package = "de.dlr.sumo.noninteracting";
 option java_outer_classname = "NonInteractingProto";
 
+
+
 service PBPState {
     rpc computeWalkingTime(CMPWlkgTm) returns (CMPWlkgTmRpl) {}
     rpc getWaitingTime(PBSUMOTime) returns (PBSUMOTime) {}
