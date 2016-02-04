@@ -179,8 +179,9 @@ public:
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 
+    typedef std::pair<int, SUMOReal> StateAndDist;
     /// @brief decide in which direction to move in case both directions are desirable
-    virtual SUMOReal decideDirection(int /*stateRight*/, SUMOReal /*latDistRight*/, int /*stateLeft*/, SUMOReal /*latDistLeft*/) const {
+    virtual StateAndDist decideDirection(StateAndDist /*sd1*/, StateAndDist /*sd2*/) const {
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 
@@ -204,6 +205,11 @@ public:
      * the custom variables of each child implementation */
     virtual void changed() = 0;
 
+
+    /// @brief whether the current vehicles shall be debugged
+    virtual bool debugVehicle() const {
+        return false;
+    }
 
     /// @brief called when a vehicle changes between lanes in opposite directions
     void changedToOpposite();

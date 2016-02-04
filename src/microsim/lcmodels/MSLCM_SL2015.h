@@ -45,6 +45,7 @@ class MSLCM_SL2015 : public MSAbstractLaneChangeModel {
 public:
 
     enum MyLCAEnum {
+        LCA_MNone = 0,
         LCA_AMBLOCKINGLEADER = 1 << 16,
         LCA_AMBLOCKINGFOLLOWER = 1 << 17,
         LCA_MRIGHT = 1 << 18,
@@ -100,6 +101,9 @@ public:
     void changed();
 
     void prepareStep();
+
+    /// @brief whether the current vehicles shall be debugged
+    bool debugVehicle() const;
 
 
 protected:
@@ -187,7 +191,7 @@ protected:
     void updateExpectedSublaneSpeeds(const MSLeaderInfo& ahead, int sublaneOffset, int laneIndex); 
 
     /// @brief decide in which direction to move in case both directions are desirable
-    SUMOReal decideDirection(int stateRight, SUMOReal latDistRight, int stateLeft, SUMOReal latDistLeft) const;
+    StateAndDist decideDirection(StateAndDist sd1, StateAndDist sd2) const;
 
     /// @brief send a speed recommendation to the given vehicle
     void msg(const CLeaderDist& cld, SUMOReal speed, int state);
@@ -214,11 +218,14 @@ protected:
 
     /// @brief check whether any of the vehicles overlaps with ego
     static int checkBlockingVehicles(const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
-            int laneOffset, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca,
+            SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction blockType,
             std::vector<CLeaderDist>* collectBlockers = 0); 
 
     /// @brief return whether the given intervals overlap
     static bool overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal left2); 
+
+    /// @brief compute lane change action from desired lateral distance
+    static LaneChangeAction getLCA(int state, SUMOReal latDist);
 
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial

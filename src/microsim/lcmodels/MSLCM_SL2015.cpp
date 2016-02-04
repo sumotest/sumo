@@ -113,12 +113,18 @@ MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
     myLastEdge(0)
 {
     if (MSGlobals::gLateralResolution <= 0) {
-        throw ProcessError("laneChangeModel 'MSLCM_SL2015' is only meant to be used when simulation with '--lateral-resoluion' > 0");
+        throw ProcessError("laneChangeModel 'MSLCM_SL2015' is only meant to be used when simulating with '--lateral-resoluion' > 0");
     }
 }
 
 MSLCM_SL2015::~MSLCM_SL2015() {
     changed();
+}
+
+
+bool 
+MSLCM_SL2015::debugVehicle() const {
+    return DEBUG_COND;
 }
 
 
@@ -153,25 +159,19 @@ MSLCM_SL2015::wantsChangeSublane(
                   << "\n";
     }
 
-    const int result = _wantsChangeSublane(laneOffset,
+    int result = _wantsChangeSublane(laneOffset,
             leaders, followers, blockers,
             neighLeaders, neighFollowers, neighBlockers,
             neighLane, preb, 
             lastBlocked, firstBlocked, latDist, blocked);
+    result |= getLCA(result, latDist);
+
     if (gDebugFlag2) {
         if (result & LCA_WANTS_LANECHANGE) {
             std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                       << " veh=" << myVehicle.getID()
-                      << " wantsChangeTo=" << changeType
                       << " latDist=" << latDist
-                      << ((result & LCA_URGENT) ? " (urgent)" : "")
-                      << ((result & LCA_CHANGE_TO_HELP) ? " (toHelp)" : "")
-                      << ((result & LCA_STRATEGIC) ? " (strat)" : "")
-                      << ((result & LCA_COOPERATIVE) ? " (coop)" : "")
-                      << ((result & LCA_SUBLANE) ? " (sublane)" : "")
-                      << ((result & LCA_SPEEDGAIN) ? " (speed)" : "")
-                      << ((result & LCA_KEEPRIGHT) ? " (keepright)" : "")
-                      << ((result & LCA_TRACI) ? " (traci)" : "")
+                      << " state=" << toString((LaneChangeAction)result) 
                       << ((blocked & LCA_BLOCKED) ? " (blocked)" : "")
                       << ((blocked & LCA_OVERLAPPING) ? " (overlap)" : "")
                       << "\n\n";
@@ -810,8 +810,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     // direction specific constants
     const bool right = (laneOffset == -1);
     const bool left = (laneOffset == 1);
-    const int lca = (right ? LCA_RIGHT : LCA_LEFT);
-    const int myLca = (right ? LCA_MRIGHT : LCA_MLEFT);
+    const int myLca = (right ? LCA_MRIGHT : (left ? LCA_MLEFT : 0));
     const int lcaCounter = (right ? LCA_LEFT : LCA_RIGHT);
     const int myLcaCounter = (right ? LCA_MLEFT : LCA_MRIGHT);
     const bool changeToBest = (right && bestLaneOffset < 0) || (left && bestLaneOffset > 0) || (laneOffset == 0 && bestLaneOffset == 0);
@@ -970,7 +969,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     if (laneOffset != 0 && changeToBest && bestLaneOffset == curr.bestLaneOffset
             && currentDistDisallows(usableDist, bestLaneOffset, laDist)) {
         /// @brief we urgently need to change lanes to follow our route
-        ret |= lca | LCA_STRATEGIC | LCA_URGENT;
+        ret |= LCA_STRATEGIC | LCA_URGENT;
     } else {
         // VARIANT_20 (noOvertakeRight)
         if (!myAllowOvertakingRight && left && !myVehicle.congested() && neighLeaders.hasVehicles()) {
@@ -1101,8 +1100,8 @@ MSLCM_SL2015::_wantsChangeSublane(
     if (roundaboutEdgesAhead > 1) {
         // try to use the inner lanes of a roundabout to increase throughput
         // unless we are approaching the exit
-        if (lca == LCA_LEFT) {
-            ret |= lca | LCA_COOPERATIVE;
+        if (left) {
+            ret |= LCA_COOPERATIVE;
         } else {
             ret |= LCA_STAY | LCA_COOPERATIVE;
         }
@@ -1150,7 +1149,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                       << (((myOwnState & myLcaCounter) != 0) ? " (counter)" : "")
                       << "\n";
         }
-        ret |= lca | LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
+        ret |= LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
         if (!cancelRequest(ret)) {
             latDist = latLaneDist;
             blocked = checkBlocking(neighLane, latDist, laneOffset,
@@ -1325,7 +1324,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                           << "\n";
             }
             if (myKeepRightProbability > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)) {
-                ret |= lca | LCA_KEEPRIGHT;
+                ret |= LCA_KEEPRIGHT;
                 assert(myVehicle.getLane()->getIndex() > neighLane.getIndex());
                 if (!cancelRequest(ret)) {
                     latDist = latLaneDist;
@@ -1346,7 +1345,7 @@ MSLCM_SL2015::_wantsChangeSublane(
 
         if (latDist < 0 && mySpeedGainProbabilityRight >= MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)
                 && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { 
-            ret |= lca | LCA_SPEEDGAIN;
+            ret |= LCA_SPEEDGAIN;
             if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,
                         leaders, followers, blockers,
@@ -1370,7 +1369,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                 // if we leave our lane, we should be able to stay in the new
                 // lane for some time
                 (stayInLane || neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > SPEED_GAIN_MIN_SECONDS)) { 
-            ret |= lca | LCA_SPEEDGAIN;
+            ret |= LCA_SPEEDGAIN;
             if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,
                         leaders, followers, blockers,
@@ -1405,6 +1404,8 @@ MSLCM_SL2015::_wantsChangeSublane(
         }
         if (gDebugFlag2) std::cout << SIMTIME 
                 << " alignment=" << toString(myVehicle.getVehicleType().getPreferredLateralAlignment()) 
+                    << " mySpeedGainR=" << mySpeedGainProbabilityRight
+                    << " mySpeedGainL=" << mySpeedGainProbabilityLeft
                     << " latDist=" << latDist 
                     << "\n";
         if ((latDist < 0 && mySpeedGainProbabilityRight < SPEED_LOSS_PROP_THRESHOLD)
@@ -1420,7 +1421,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                 << " adapting to preferred alignment=" << toString(myVehicle.getVehicleType().getPreferredLateralAlignment())
                     << " latDist=" << latDist 
                     << "\n";
-            ret |= lca | LCA_SUBLANE;
+            ret |= LCA_SUBLANE;
             if (!cancelRequest(ret)) {
                 blocked = checkBlocking(neighLane, latDist, laneOffset,
                         leaders, followers, blockers,
@@ -1438,7 +1439,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                 ? mySpeedGainProbabilityRight > MAX2((SUMOReal)0, mySpeedGainProbabilityLeft) 
                 : mySpeedGainProbabilityLeft  > MAX2((SUMOReal)0, mySpeedGainProbabilityRight))) {
         // change towards the correct lane, speedwise it does not hurt
-        ret |= lca | LCA_STRATEGIC;
+        ret |= LCA_STRATEGIC;
         if (!cancelRequest(ret)) {
             latDist = latLaneDist;
             blocked = checkBlocking(neighLane, latDist, laneOffset,
@@ -1451,9 +1452,9 @@ MSLCM_SL2015::_wantsChangeSublane(
     if (gDebugFlag2) {
         std::cout << STEPS2TIME(currentTime)
                   << " veh=" << myVehicle.getID()
-                  << " mySpeedGainProbabilityR=" << mySpeedGainProbabilityRight
-                  << " mySpeedGainProbabilityL=" << mySpeedGainProbabilityLeft
-                  << " myKeepRightProbability=" << myKeepRightProbability
+                  << " mySpeedGainR=" << mySpeedGainProbabilityRight
+                  << " mySpeedGainL=" << mySpeedGainProbabilityLeft
+                  << " myKeepRight=" << myKeepRightProbability
                   << "\n";
     }
     return ret;
@@ -1621,12 +1622,12 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneO
     // XXX ensure that only changes within the same lane are undertaken if laneOffset = 0
 
     int blocked = 0;
-    blocked |= checkBlockingVehicles(&myVehicle, leaders, laneOffset, latDist, myVehicle.getLane()->getRightSideOnEdge(), true, LCA_BLOCKED_BY_LEADER, collectLeadBlockers);
-    blocked |= checkBlockingVehicles(&myVehicle, followers, laneOffset, latDist, myVehicle.getLane()->getRightSideOnEdge(), false, LCA_BLOCKED_BY_FOLLOWER, collectFollowBlockers);
+    blocked |= checkBlockingVehicles(&myVehicle, leaders, latDist, myVehicle.getLane()->getRightSideOnEdge(), true, LCA_BLOCKED_BY_LEADER, collectLeadBlockers);
+    blocked |= checkBlockingVehicles(&myVehicle, followers, latDist, myVehicle.getLane()->getRightSideOnEdge(), false, LCA_BLOCKED_BY_FOLLOWER, collectFollowBlockers);
     if (laneOffset != 0) {
-        blocked |= checkBlockingVehicles(&myVehicle, neighLeaders, laneOffset, latDist, neighLane.getRightSideOnEdge(), true,
+        blocked |= checkBlockingVehicles(&myVehicle, neighLeaders, latDist, neighLane.getRightSideOnEdge(), true,
                 (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER), collectLeadBlockers);
-        blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, laneOffset, latDist, neighLane.getRightSideOnEdge(), false,
+        blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, latDist, neighLane.getRightSideOnEdge(), false,
                 (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER), collectFollowBlockers);
     }
     return blocked;
@@ -1636,7 +1637,7 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneO
 int 
 MSLCM_SL2015::checkBlockingVehicles(
         const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
-        int /* laneOffset */, SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction lca,
+        SUMOReal latDist, SUMOReal foeOffset, bool leaders, LaneChangeAction blockType,
         std::vector<CLeaderDist>* collectBlockers) {
     // determine borders where safety/no-overlap conditions must hold
     const SUMOReal vehWidth = ego->getVehicleType().getWidth();
@@ -1678,7 +1679,7 @@ MSLCM_SL2015::checkBlockingVehicles(
             if (overlap(rightNoOverlap, leftNoOverlap, foeRight, foeLeft)) {
                 if (vehDist.second < 0) {
                     if (gDebugFlag2) std::cout << "    overlap\n";
-                    result |= (lca | LCA_OVERLAPPING);
+                    result |= (blockType | LCA_OVERLAPPING);
                     if (collectBlockers == 0) {
                         return result;
                     } else {
@@ -1692,7 +1693,7 @@ MSLCM_SL2015::checkBlockingVehicles(
                     }
                     if (vehDist.second < follower->getCarFollowModel().getSecureGap(follower->getSpeed(), leader->getSpeed(), leader->getCarFollowModel().getMaxDecel())) {
                         if (gDebugFlag2) std::cout << "    blocked\n";
-                        result |= lca;
+                        result |= blockType;
                         if (collectBlockers == 0) {
                             return result;
                         } else {
@@ -1716,44 +1717,54 @@ MSLCM_SL2015::overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal l
 }
 
 
-SUMOReal 
-MSLCM_SL2015::decideDirection(int stateRight, SUMOReal latDistRight, int stateLeft, SUMOReal latDistLeft) const {
-    const bool wantChangeRight = ((stateRight & LCA_WANTS_LANECHANGE) != 0);
-    const bool canChangeRight = ((stateRight & LCA_BLOCKED) == 0);
-    const bool wantChangeLeft = ((stateLeft & LCA_WANTS_LANECHANGE) != 0);
-    const bool canChangeLeft = ((stateLeft & LCA_BLOCKED) == 0);
+MSLCM_SL2015::StateAndDist 
+MSLCM_SL2015::decideDirection(StateAndDist sd1, StateAndDist sd2) const {
+    const bool want1 = ((sd1.first & LCA_WANTS_LANECHANGE) != 0);
+    const bool can1 = ((sd1.first & LCA_BLOCKED) == 0);
+    const bool want2 = ((sd2.first & LCA_WANTS_LANECHANGE) != 0);
+    const bool can2 = ((sd2.first & LCA_BLOCKED) == 0);
     if (DEBUG_COND) std::cout << SIMTIME 
         << " veh=" << myVehicle.getID() 
-            << " stateRight=" << toString((LaneChangeAction)stateRight) 
-            << " distRight=" << latDistRight 
-            << " stateLeft=" << toString((LaneChangeAction)stateLeft) 
-            << " distLeft=" << latDistLeft 
+            << " state1=" << toString((LaneChangeAction)sd1.first) 
+            << " want1=" << (sd1.first & LCA_WANTS_LANECHANGE)
+            << " dist1=" << sd1.second 
+            << " state2=" << toString((LaneChangeAction)sd2.first) 
+            << " want2=" << (sd2.first & LCA_WANTS_LANECHANGE)
+            << " dist2=" << sd2.second 
             << "\n";
-    if (wantChangeRight) {
-        if (wantChangeLeft) {
+    if (want1) {
+        if (want2) {
             // decide whether right or left has higher priority (lower value in enum LaneChangeAction)
-            if ((stateRight & LCA_CHANGE_REASONS) < (stateLeft & LCA_CHANGE_REASONS)) {
-                return canChangeRight ? latDistRight : 0;
-            } else if ((stateRight & LCA_CHANGE_REASONS) > (stateLeft & LCA_CHANGE_REASONS)) {
-                return canChangeLeft ? latDistLeft : 0;
+            if ((sd1.first & LCA_CHANGE_REASONS) < (sd2.first & LCA_CHANGE_REASONS)) {
+                //if (DEBUG_COND) std::cout << "   " << (sd1.first & LCA_CHANGE_REASONS) << " < " << (sd2.first & LCA_CHANGE_REASONS) << "\n";
+                return sd1;
+            } else if ((sd1.first & LCA_CHANGE_REASONS) > (sd2.first & LCA_CHANGE_REASONS)) {
+                //if (DEBUG_COND) std::cout << "   " << (sd1.first & LCA_CHANGE_REASONS) << " > " << (sd2.first & LCA_CHANGE_REASONS) << "\n";
+                return sd2;
             } else {
-                // same priority. see which one is allowed
-                if (canChangeRight) {
-                    return latDistRight;
-                } else if (canChangeLeft) {
-                    return latDistLeft;
+                // same priority. 
+                // special treatment LCA_SUBLANE: prefer further right
+                if ((sd1.first & LCA_SUBLANE) != 0) {
+                    return sd1.second <= sd2.second ? sd1 : sd2;
                 } else {
-                    return 0;
+                    // see which one is allowed
+                    return can1 ? sd1 : sd2;
                 }
             }
         } else {
-            return canChangeRight ? latDistRight : 0;
+            return sd1;
         }
-    } else if (wantChangeLeft) {
-        return canChangeLeft ? latDistLeft : 0;
     } else {
-        return 0;
+        return sd2;
     }
+
+}
+
+
+LaneChangeAction
+MSLCM_SL2015::getLCA(int state, SUMOReal latDist) {
+    return ((latDist == 0 || (state & LCA_CHANGE_REASONS) == 0)
+            ? LCA_NONE : (latDist < 0 ? LCA_RIGHT : LCA_LEFT));
 }
 
 /****************************************************************************/

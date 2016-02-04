@@ -21,3 +21,6 @@ lane_split_conflict
 
 # a vehicle must stay in its lane for strategic reasons but can still overtake via sublane-changing
 strategic_stay_and_speedgain
+
+# a vehicle must stay in its lane for strategic reasons but can still overtake via sublane-changing. Both neighboring lanes are prohibited for strategic reasons
+strategic_stay_and_speedgain2

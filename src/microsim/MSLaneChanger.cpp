@@ -188,6 +188,9 @@ MSLaneChanger::findCandidate() {
 
 bool 
 MSLaneChanger::mayChange(int direction) const {
+    if (direction == 0) {
+        return true;
+    }
     if (!myAllowsChanging) {
         return false;
     }

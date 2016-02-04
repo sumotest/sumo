@@ -99,7 +99,6 @@ MSLaneChangerSublane::change() {
     for (int i = 0; i < (int) myChanger.size(); ++i) {
         vehicle->adaptBestLanesOccupation(i, myChanger[i].dens);
     }
-    const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
 
     // update expected speeds
     int sublaneIndex = 0;
@@ -108,50 +107,44 @@ MSLaneChangerSublane::change() {
         sublaneIndex += ce->ahead.numSublanes();
     }
 
-    // check whether the vehicle wants and is able to change to right lane
-    int state1 = 0;
-    SUMOReal latDist1 = 0;
-    if (mayChange(-1) ||
-            vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() - 0.5 * vehicle->getVehicleType().getWidth() > 0) {
-        const int laneOffset = mayChange(-1) ? -1 : 0;
-        state1 = checkChangeSublane(laneOffset, preb, latDist1);
-        if ((state1 & LCA_WANTS_LANECHANGE) != 0 && (state1 & LCA_URGENT) != 0 && (state1 & LCA_BLOCKED) != 0) {
-            (myCandi + laneOffset)->lastBlocked = vehicle;
-            if ((myCandi + laneOffset)->firstBlocked == 0) {
-                (myCandi + laneOffset)->firstBlocked = vehicle;
-            }
-        }
-    }
-    SUMOReal latDist2 = 0; 
-
-    // check whether the vehicle wants and is able to change to left lane
-    int state2 = 0;
-    if (mayChange(1) ||
-            vehicle->getLateralPositionOnLane() + 0.5 * myCandi->lane->getWidth() + 0.5 * vehicle->getVehicleType().getWidth() < myCandi->lane->getWidth()) {
-        const int laneOffset = mayChange(1) ? 1 : 0;
-        state2 = checkChangeSublane(laneOffset, preb, latDist2);
-        if ((state2 & LCA_WANTS_LANECHANGE) != 0 && (state2 & LCA_URGENT) != 0 && (state2 & LCA_BLOCKED) != 0) {
-            (myCandi + laneOffset)->lastBlocked = vehicle;
-            if ((myCandi + laneOffset)->firstBlocked == 0) {
-                (myCandi + laneOffset)->firstBlocked = vehicle;
-            }
-        }
-    }
-    const SUMOReal latDist = vehicle->getLaneChangeModel().decideDirection(state1, latDist1, state2, latDist2);
-    if (latDist != 0) {
+    StateAndDist right = checkChangeHelper(vehicle, -1);
+    StateAndDist left = checkChangeHelper(vehicle, 1);
+    StateAndDist current = checkChangeHelper(vehicle, 0);
+    
+    StateAndDist decision = vehicle->getLaneChangeModel().decideDirection(current, 
+            vehicle->getLaneChangeModel().decideDirection(right, left));
+    if ((decision.first & LCA_WANTS_LANECHANGE) != 0 && (decision.first & LCA_BLOCKED) == 0) {
         // change if the vehicle wants to and is allowed to change
-        return startChangeSublane(vehicle, myCandi, latDist);
+        if (vehicle->getLaneChangeModel().debugVehicle()) std::cout << SIMTIME << " decision=" << toString((LaneChangeAction)decision.first) << " latDist=" << decision.second << "\n";
+        return startChangeSublane(vehicle, myCandi, decision.second);
     }
 
-    if ((state1 & (LCA_URGENT)) != 0 && (state2 & (LCA_URGENT)) != 0) {
+    if ((right.first & (LCA_URGENT)) != 0 && (left.first & (LCA_URGENT)) != 0) {
         // ... wants to go to the left AND to the right
         // just let them go to the right lane...
-        state2 = 0;
+        left.first = 0;
     }
-    vehicle->getLaneChangeModel().setOwnState(state2 | state1);
+    vehicle->getLaneChangeModel().setOwnState(right.first | left.first | current.first);
 
     registerUnchanged(vehicle);
     return false;
+}
+
+
+MSLaneChangerSublane::StateAndDist
+MSLaneChangerSublane::checkChangeHelper(MSVehicle* vehicle, int laneOffset) {
+    StateAndDist result = std::make_pair(0,0);
+    if (mayChange(laneOffset)) { 
+        const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
+        result.first = checkChangeSublane(laneOffset, preb, result.second);
+        if ((result.first & LCA_WANTS_LANECHANGE) != 0 && (result.first & LCA_URGENT) != 0 && (result.first & LCA_BLOCKED) != 0) {
+            (myCandi + laneOffset)->lastBlocked = vehicle;
+            if ((myCandi + laneOffset)->firstBlocked == 0) {
+                (myCandi + laneOffset)->firstBlocked = vehicle;
+            }
+        }
+    }
+    return result;
 }
 
 

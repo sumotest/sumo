@@ -79,6 +79,10 @@ protected:
     /// @brief get leaders for ego on the given lane
     MSLeaderDistanceInfo getLeaders(const ChangerIt& target, const MSVehicle* ego) const; 
 
+    typedef std::pair<int, SUMOReal> StateAndDist;
+    /// @brief helper function that calls checkChangeSublane and sets blocker information
+    StateAndDist checkChangeHelper(MSVehicle* vehicle, int laneOffset);
+
 private:
     /// Default constructor.
     MSLaneChangerSublane();
