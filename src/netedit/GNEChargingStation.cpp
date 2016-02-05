@@ -176,24 +176,6 @@ GNEChargingStation::getChargeDelay() {
 }
 
 
-PositionVector
-GNEChargingStation::getShape() const {
-    return myShape;
-}
-
-
-std::vector<SUMOReal>
-GNEChargingStation::getShapeRotations() const {
-    return myShapeRotations;
-}
-
-
-std::vector<SUMOReal>
-GNEChargingStation::getShapeLengths() const {
-    return myShapeLengths;
-}
-
-
 void 
 GNEChargingStation::setChargingPower(SUMOReal chargingPower) {
     if(chargingPower > 0) {
@@ -328,14 +310,6 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app,
     ret->closeBuilding();
     */
     return ret;
-}
-
-
-Boundary
-GNEChargingStation::getCenteringBoundary() const {
-    Boundary b = myShape.getBoxBoundary();
-    b.grow(20);    // anterior: 10
-    return b;
 }
 
 

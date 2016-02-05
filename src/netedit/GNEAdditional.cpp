@@ -107,6 +107,14 @@ GNEAdditional::getShape() const {
 }
 
 
+Boundary
+GNEAdditional::getCenteringBoundary() const {
+    Boundary b = myShape.getBoxBoundary();
+    b.grow(20);
+    return b;
+}
+
+
 bool 
 GNEAdditional::isBlocked() const {
     return myBlocked;

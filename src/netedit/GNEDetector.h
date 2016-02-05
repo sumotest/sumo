@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    GNEStoppingPlace.h
+/// @file    GNEDetectorE1.h
 /// @author  Pablo Alvarez Lopez
-/// @date    Dec 2015
-/// @version $Id$
+/// @date    Nov 2015
+/// @version $Id: GNEDetectorE1.h 19790 2016-01-25 11:59:12Z palcraft $
 ///
-/// A abstract class to define common parameters of lane area in which vehicles can halt (GNE version)
+/// A abstract class to define common parameters of detectors 
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEStoppingPlace_h
-#define GNEStoppingPlace_h
+#ifndef GNEDetector_h
+#define GNEDetector_h
 
 
 // ===========================================================================
@@ -30,48 +30,39 @@
 #include <config.h>
 #endif
 
-#include <vector>
-#include <string>
-#include <utils/gui/globjects/GLIncludes.h>
-#include <utils/geom/Position.h>
-#include <utils/geom/Boundary.h>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include "GNEAdditional.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-
-class GUIGLObjectPopupMenu;
-class PositionVector;
-class GNENet;
+class GNEAdditional;
+class GNEViewNet;
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
 /**
- * @class GNEStoppingPlace
- * @briefA abstract class to define common parameters and functions of stopping places
+ * @class GNEdetector
+ * @briefA abstract class to define common parameters and functions of detectors
  */
-class GNEStoppingPlace : public GNEAdditional
-{
+class GNEDetector : public GNEAdditional {
 public:
     /** @brief Constructor.
-     * @param[in] id Gl-id of the stopping place (Must be unique)
-     * @param[in] lane Lane of this StoppingPlace belongs
+     * @param[in] id Gl-id of the detector (Must be unique)
+     * @param[in] lane Lane of this detector belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
-     * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
-     * @param[in] fromPos From position of the StoppingPlace
-     * @param[in] toPos To position of the StoppingPlace
+     * @param[in] tag Type of xml tag that define the detector (SUMO_TAG_E1DETECTOR, SUMO_TAG_LANE_AREA_DETECTOR, etc...)
+     * @param[in] pos position of detector in lane
+     * @param[in] freq the aggregation period the values the detector collects shall be summed up.
+     * @param[in] filename The path to the output file.
      */
-    GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos);
+    GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, int freq, const std::string &filename);
 
     /// @brief Destructor
-    ~GNEStoppingPlace();
+    ~GNEDetector();
 
     /// @brief update pre-computed geometry information
-    virtual void updateGeometry() = 0;
+    void updateGeometry();
 
     /** @brief change the position of the additonal geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
@@ -85,42 +76,36 @@ public:
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
 
-    /** @brief Returns the from position of the stoppingPlace
-     * @return The from position of the stopping place
-     */
-    SUMOReal getFromPosition() const;
-        
-    /** @brief Returns the to position of the stoppingPlace
-     * @return The to position of the stopping place
-     */
-    SUMOReal getToPosition() const;
+    /// @brief Returns the position of the detector over lane
+    SUMOReal getPosition() const;
 
-    /** @brief Set a new from Position in StoppingPlace
-     * @param[in] fromPos new From Position of StoppingPlace
-     * @throws InvalidArgument if value of fromPos isn't valid
-     */
-    void setFromPosition(SUMOReal fromPos);
+    /// @brief returns the aggregation period the values the detector collects shall be summed up.
+    int getFrequency() const;
 
-    /** @brief Set a new to Position in StoppingPlace
-     * @param[in] toPos new to Position of StoppingPlace
-     * @throws InvalidArgument if value of toPos isn't valid
-     */
-    void setToPosition(SUMOReal toPos);
+    /// @brief returns the path to the output file
+    std::string getFilename() const;
 
-    /** @brief Returns a copy of the Shape of the stoppingPlace
-     * @return The Shape of the stoppingPlace
+    /** @brief Set a new position in detector
+     * @param[in] pos new position of detector
+     * @throws InvalidArgument if value of pos isn't valid
+     */
+    void setPosition(SUMOReal pos);
+
+    /** @brief Set a new frequency in detector
+     * @param[in] freq new frequency of detector
+     * @throws InvalidArgument if value of frequency isn't valid
+     */
+    void setFrequency(int freq);
+
+    /** @brief Set a new filename in detector
+     * @param[in] filename new filename of detector
+     */
+    void setFilename(std::string filename);
+
+    /** @brief Returns a copy of the Shape of the detector
+     * @return The Shape of the detector
      */
     PositionVector getShape() const;
-
-    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
-     * @return The ShapeRotations of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeRotations() const;
-
-    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
-     * @return The ShapeLengths of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeLengths() const;
 
     /// @name inherited from GNEAdditional
     //@{
@@ -174,26 +159,20 @@ public:
 
 protected:
 
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
+    /// @brief The position this detector is located at
+    SUMOReal myPos;
 
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
+    /// @brief The aggregation period the values the detector collects shall be summed up.
+    int myFreq;
 
-    /// @brief The begin position this stopping place is located at
-    SUMOReal myFromPos;
+    /// @brief The path to the output file
+    std::string myFilename;
 
-    /// @brief The end position this stopping place is located at
-    SUMOReal myToPos;
+    /// @brief The rotation of detector
+    SUMOReal myRotation;
 
-    /// @brief The position of the sign
-    Position mySignPos;
-
-    /// @brief The rotation of the sign
-    SUMOReal mySignRot;
+    /// @brief The rotation of signal detector
+    SUMOReal mySignRotation;
 
     /// @brief vector with the different colors
     std::vector<RGBColor> myRGBColors;
@@ -207,5 +186,5 @@ private:
     virtual void setColors() = 0;
 };
 
-
 #endif
+/****************************************************************************/

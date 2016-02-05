@@ -52,6 +52,9 @@
 #include "GNEChange_Additional.h"
 #include "GNEBusStop.h"
 #include "GNEChargingStation.h"
+#include "GNEDetectorE1.h"
+#include "GNEDetectorE2.h"
+#include "GNEDetectorE3.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -174,7 +177,6 @@ void
 GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
     // Position of the mouse in the lane
     SUMOReal position = lane.getShape().nearest_offset_to_point2D(parent->getPositionInformation());
-    
     // Add adittional element depending of myActualAdditionalType
     switch (myActualAdditionalType) {
         case GNE_ADDITIONAL_BUSSTOP: {
@@ -199,10 +201,10 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
         }
         break;
         case GNE_ADDITIONAL_CHARGINGSTATION: {
-                int numberOfBusStops = myUpdateTarget->getNet()->getNumberOfChargingStations();
+                int numberOfChargingStations = myUpdateTarget->getNet()->getNumberOfChargingStations();
                 // Check that the ID of the new chargingStation is unique
-                while(myUpdateTarget->getNet()->getBusStop("chargingStation" + toString(numberOfBusStops)) != NULL)
-                    numberOfBusStops++;
+                while(myUpdateTarget->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
+                    numberOfChargingStations++;
                 // Declare position of chargingStation
                 SUMOReal startPosition;
                 SUMOReal endPosition;
@@ -213,8 +215,8 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                     SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
                     int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
                     bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
-                    // Create an add new chargingStation
-                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
+                    // Create and add a new chargingStation
+                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfChargingStations), lane, myUpdateTarget, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
                     chargingStation->setBlocked(myCheckBlock->getCheck() == 1? true : false);
                     myUndoList->p_begin("add " + chargingStation->getDescription());
                     myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true), true);
@@ -223,7 +225,24 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
             }
             break;
         case GNE_ADDITIONAL_E1: {
-                /** Finish **/
+                int numberOfDetectorE1 = myUpdateTarget->getNet()->getNumberOfDetectorE1();
+                // Check that the ID of the new detector E1 is unique
+                while(myUpdateTarget->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
+                    numberOfDetectorE1++;
+
+                /** CAMBIAR **/
+                // Get values of text fields
+                SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
+                SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
+                int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
+                bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
+                
+                // Create and add a new detector
+                GNEDetectorE1 *detectorE1 = new GNEDetectorE1("detectorE1_" + toString(numberOfDetectorE1), lane, myUpdateTarget, position, 1, "", true);
+                detectorE1->setBlocked(myCheckBlock->getCheck() == 1? true : false);
+                myUndoList->p_begin("add " + detectorE1->getDescription());
+                myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), detectorE1, true), true);
+                myUndoList->p_end();
             }
             break;
         case GNE_ADDITIONAL_E2: {

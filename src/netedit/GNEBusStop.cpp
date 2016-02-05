@@ -177,24 +177,6 @@ GNEBusStop::getLines() const {
 }
 
 
-PositionVector
-GNEBusStop::getShape() const {
-    return myShape;
-}
-
-
-std::vector<SUMOReal>
-GNEBusStop::getShapeRotations() const {
-    return myShapeRotations;
-}
-
-
-std::vector<SUMOReal>
-GNEBusStop::getShapeLengths() const {
-    return myShapeLengths;
-}
-
-
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
@@ -235,12 +217,9 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
 
     // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-    
-    // Obtain a copy of the shape
-    PositionVector tmpShape = myShape;
 
     // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLines(tmpShape, myShapeRotations, myShapeLengths, exaggeration);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
@@ -351,9 +330,7 @@ GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 
 
 GUIParameterTableWindow*
-GNEBusStop::getParameterWindow(GUIMainWindow& app,
-                            GUISUMOAbstractView&) {
-
+GNEBusStop::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     /* not supported yet
@@ -364,15 +341,6 @@ GNEBusStop::getParameterWindow(GUIMainWindow& app,
     */
     return ret;
 }
-
-
-Boundary
-GNEBusStop::getCenteringBoundary() const {
-    Boundary b = myShape.getBoxBoundary();
-    b.grow(20);    // before: 10
-    return b;
-}
-
 
 std::string
 GNEBusStop::getAttribute(SumoXMLAttr key) const {
@@ -450,24 +418,21 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_STARTPOS: {
+        case SUMO_ATTR_STARTPOS:
             myFromPos = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;
-            }
-        case SUMO_ATTR_ENDPOS: {
+        case SUMO_ATTR_ENDPOS:
             myToPos = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;
-            }
-        case SUMO_ATTR_LINES: {
+        case SUMO_ATTR_LINES: 
             myLines.clear();
             SUMOSAXAttributes::parseStringVector(value, myLines);
             getViewNet()->update();
             break;
-            }
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }

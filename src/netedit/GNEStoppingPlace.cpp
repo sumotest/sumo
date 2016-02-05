@@ -106,7 +106,7 @@ GNEStoppingPlace::setFromPosition(SUMOReal fromPos) {
     if(fromPos < 0)
         throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be greather than 0");
     else if(fromPos >= myToPos)
-        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be smaller than than ToPos '" + toString(myToPos) + "'");
+        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be smaller than ToPos '" + toString(myToPos) + "'");
     else if ((myToPos - fromPos) < 1)
         throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
@@ -119,7 +119,7 @@ GNEStoppingPlace::setToPosition(SUMOReal toPos) {
     if(toPos > myLane.getLaneShapeLenght())
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than lane length");
     else if(myFromPos >= toPos)
-        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than than ToPos '" + toString(myToPos) + "'");
+        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than ToPos '" + toString(myToPos) + "'");
     else if ((toPos - myFromPos) < 1)
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else

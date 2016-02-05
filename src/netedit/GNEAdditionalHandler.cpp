@@ -312,6 +312,24 @@ GNEAdditionalHandler::parseAndBuildCalibrator(GNENet* net, const SUMOSAXAttribut
 }
 
 
+void 
+GNEAdditionalHandler::parseAndBuildDetectorE1(GNENet* net, const SUMOSAXAttributes& attrs, const std::string& base) {
+
+}
+
+
+void 
+GNEAdditionalHandler::parseAndBuildDetectorE2(GNENet* net, const SUMOSAXAttributes& attrs, const std::string& base) {
+
+}
+
+
+void 
+GNEAdditionalHandler::parseAndBuildDetectorE3(GNENet* net, const SUMOSAXAttributes& attrs, const std::string& base) {
+
+}
+
+
 GNELaneSpeedTrigger* 
 GNEAdditionalHandler::buildLaneSpeedTrigger(GNENet* net, const std::string& id, const std::vector<GNELane*>& destLanes, 
                                             const std::string& file)
@@ -349,6 +367,23 @@ GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, G
     } else {
         throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
     }
+}
+
+
+void 
+GNEAdditionalHandler::buildDetectorE1(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType) {
+}
+
+
+void 
+GNEAdditionalHandler::buildDetectorE2(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename, 
+                                      bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool splitByType) {
+}
+
+
+void 
+GNEAdditionalHandler::buildDetectorE3(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename) {
+
 }
 
 

@@ -54,8 +54,6 @@ class GNENet;
 /**
  * @class GNEBusStop
  * @brief A lane area vehicles can halt at (netedit-version)
- *
- * @see MSStoppingPlace
  */
 class GNEBusStop : public GNEStoppingPlace {
 public:
@@ -85,21 +83,6 @@ public:
      */
     const std::vector<std::string> &getLines() const;
 
-    /** @brief Returns a copy of the Shape of the stoppingPlace
-     * @return The Shape of the stoppingPlace
-     */
-    PositionVector getShape() const;
-
-    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
-     * @return The ShapeRotations of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeRotations() const;
-
-    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
-     * @return The ShapeLengths of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeLengths() const;
-
     /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns an own popup-menu
@@ -119,13 +102,6 @@ public:
      * @see GUIGlObject::getParameterWindow
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
-
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
-     *
-     * @return The boundary the object is within
-     * @see GUIGlObject::getCenteringBoundary
-     */
-    Boundary getCenteringBoundary() const;
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
@@ -163,7 +139,7 @@ public:
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
-private:
+protected:
     /// @brief The list of lines that are assigned to this stop
     std::vector<std::string> myLines;
 
@@ -174,7 +150,7 @@ private:
     /// @brief set colors of scheme
     void setColors();
 
-    /// @brief list of colors QUESTION ERDMANN 01
+    /// @brief list of colors
     enum colorTypes {
         BUSSTOP_BASE = 0,
         BUSSTOP_BASE_SELECTED = 1,

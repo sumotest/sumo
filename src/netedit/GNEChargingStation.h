@@ -101,21 +101,6 @@ public:
      */
     SUMOReal getChargeDelay();
 
-    /** @brief Returns a copy of the Shape of the stoppingPlace
-     * @return The Shape of the stoppingPlace
-     */
-    PositionVector getShape() const;
-
-    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
-     * @return The ShapeRotations of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeRotations() const;
-
-    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
-     * @return The ShapeLengths of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeLengths() const;
-
     /** @brief Set a new charging power in the charging station
      * @param[in] chargingPower new charging power 
      * @throws InvalidArgument if value of chargingPower isn't valid
@@ -159,13 +144,6 @@ public:
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
-     *
-     * @return The boundary the object is within
-     * @see GUIGlObject::getCenteringBoundary
-     */
-    Boundary getCenteringBoundary() const;
-
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
@@ -202,7 +180,7 @@ public:
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
-private:
+protected:
     /// @brief Charging power pro timestep
     SUMOReal myChargingPower;
 

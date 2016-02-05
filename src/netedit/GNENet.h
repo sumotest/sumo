@@ -69,6 +69,9 @@ class GNEUndoList;
 class GNEAdditional;
 class GNEBusStop;
 class GNEChargingStation;
+class GNEDetectorE1;
+class GNEDetectorE2;
+class GNEDetectorE3;
 
 // ===========================================================================
 // class definitions
@@ -400,28 +403,82 @@ public:
      */                                                                         // PABLO #1916
     std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
 
-    /** @brief Returns the named charging station                           // PABLO #1916
-     * @param[in] id The id of the charging station to return.              // PABLO #1916
-     * @return The named charging station, or 0 if no such stop exists      // PABLO #1916
-     */                                                                     // PABLO #1916
-    GNEChargingStation* getChargingStation(const std::string& id) const;    // PABLO #1916
-
-    /** @brief Returns the charging station close to the given position                 // PABLO #1916
-     * @param[in] lane the lane of the charging station to return.                      // PABLO #1916
-     * @param[in] pos the position of the bus stop to return.                           // PABLO #1916
-     * @return The charging station id on the location, or "" if no such stop exists    // PABLO #1916
-     */                                                                                 // PABLO #1916
-    std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
-
     /** @brief Returns the number of busStops of the net    // PABLO #1916
      * @return Number of busStops of the net                // PABLO #1916
      */                                                     // PABLO #1916
     int getNumberOfBusStops();                              // PABLO #1916
 
+    /** @brief Returns the named charging station                           // PABLO #1916
+     * @param[in] id The id of the charging station to return.              // PABLO #1916
+     * @return The named charging station, or 0 if don't exists             // PABLO #1916
+     */                                                                     // PABLO #1916
+    GNEChargingStation* getChargingStation(const std::string& id) const;    // PABLO #1916
+
+    /** @brief Returns the charging station close to the given position                 // PABLO #1916
+     * @param[in] lane the lane of the charging station to return.                      // PABLO #1916
+     * @param[in] pos the position of the charging stationsto return.                   // PABLO #1916
+     * @return The charging station id on the location, or "" if don't exists           // PABLO #1916
+     */                                                                                 // PABLO #1916
+    std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
+
     /** @brief Returns the Number of chargingStations of the net    // PABLO #1916
      * @return Number of charging Stations of the net               // PABLO #1916
      */                                                             // PABLO #1916
     int getNumberOfChargingStations();                              // PABLO #1916
+
+    /** @brief Returns the named induction loop detector E1     // PABLO #1916
+     * @param[in] id The id of the detector E1 to return.       // PABLO #1916
+     * @return The named detector E1, or 0 if don't exist       // PABLO #1916
+     */                                                         // PABLO #1916
+    GNEDetectorE1* getdetectorE1(const std::string& id) const;  // PABLO #1916
+
+    /** @brief Returns the induction loop detector E1 close to the given position   // PABLO #1916
+     * @param[in] lane the lane of the detector E1 to return.                       // PABLO #1916
+     * @param[in] pos the position of the detector E1 to return.                    // PABLO #1916
+     * @return The detector E1 id on the location, or "" if don't exists            // PABLO #1916
+     */                                                                             // PABLO #1916
+    std::string getDetectorE1ID(const GNELane* lane, const SUMOReal pos) const;     // PABLO #1916
+
+    /** @brief Returns the number of induction loops detectors E1 of the net    // PABLO #1916
+     * @return Number of E1 detectors of the net                                // PABLO #1916
+     */                                                                         // PABLO #1916
+    int getNumberOfDetectorE1();                                                // PABLO #1916
+
+    /** @brief Returns the named lane area detector E2          // PABLO #1916
+     * @param[in] id The id of the detector E2 to return.       // PABLO #1916
+     * @return The named detector E2, or 0 if don't exist       // PABLO #1916
+     */                                                         // PABLO #1916
+    GNEDetectorE2* getdetectorE2(const std::string& id) const;  // PABLO #1916
+
+    /** @brief Returns the lane area detector E2 close to the given position        // PABLO #1916
+     * @param[in] lane the lane of the detector E2 to return.                       // PABLO #1916
+     * @param[in] pos the position of the detector E2 to return.                    // PABLO #1916
+     * @return The detector E2 id on the location, or "" if don't exists            // PABLO #1916
+     */                                                                             // PABLO #1916
+    std::string getDetectorE2ID(const GNELane* lane, const SUMOReal pos) const;     // PABLO #1916
+
+    /** @brief Returns the number of lane area detectors E2 of the net      // PABLO #1916
+     * @return Number of E2 detectors of the net                            // PABLO #1916
+     */                                                                     // PABLO #1916
+    int getNumberOfDetectorE2();                                            // PABLO #1916
+
+    /** @brief Returns the named multi entry exit detector E3   // PABLO #1916
+     * @param[in] id The id of the detector E3 to return.       // PABLO #1916
+     * @return The named detector E3, or 0 if don't exist       // PABLO #1916
+     */                                                         // PABLO #1916
+    GNEDetectorE3* getdetectorE3(const std::string& id) const;  // PABLO #1916
+
+    /** @brief Returns the multi entry exit detector E3 close to the given position // PABLO #1916
+     * @param[in] lane the lane of the detector E3 to return.                       // PABLO #1916
+     * @param[in] pos the position of the detector E3 to return.                    // PABLO #1916
+     * @return The detector E3 id on the location, or "" if don't exists            // PABLO #1916
+     */                                                                             // PABLO #1916
+    std::string getDetectorE3ID(const GNELane* lane, const SUMOReal pos) const;     // PABLO #1916
+
+    /** @brief Returns the number of multi entry exit detectors E3  of the net  // PABLO #1916
+     * @return Number of E3 detectors of the net                                // PABLO #1916
+     */                                                                         // PABLO #1916
+    int getNumberOfDetectorE3();                                                // PABLO #1916
 
 private:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)

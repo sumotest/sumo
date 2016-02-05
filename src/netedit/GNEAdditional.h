@@ -145,7 +145,7 @@ public:
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
-    virtual Boundary getCenteringBoundary() const = 0;
+    Boundary getCenteringBoundary() const;
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
@@ -191,18 +191,18 @@ protected:
     Position myBlockIconPos;
 
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
-    bool myBlocked;
-    
-    /// @brief variable to keep GLId of the additional lock image
-    static GUIGlID additionalLockGlID;
-
-    /// @brief boolean to check if additional lock image was inicializated
-    static bool additionalLockInitialized;    
+    bool myBlocked; 
 
     // @brief draw lock icon
     void drawLockIcon() const;
 
-private:    
+private:
+    /// @brief variable to keep GLId of the additional lock image
+    static GUIGlID additionalLockGlID;
+
+    /// @brief boolean to check if additional lock image was inicializated
+    static bool additionalLockInitialized;
+
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 

@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEApplicationWindow.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEAttributeCarrier.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEBusStop.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNECalibrator.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Attribute.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Additional.cpp" />
@@ -119,6 +120,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEChargingStation.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEConnector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNECrossing.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEDetector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE1.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE2.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3.cpp" />
@@ -133,12 +135,14 @@
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNERerouter.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNESelector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNETLSEditor.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEUndoList.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEViewNet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEViewParent.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEVSpeedSignal.cpp" />
     <ClCompile Include="..\..\..\src\netedit\netedit_main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +155,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNEApplicationWindow.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEAttributeCarrier.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEBusStop.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNECalibrator.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Attribute.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Additional.h" />
@@ -163,6 +168,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNEChargingStation.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEConnector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNECrossing.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEDetector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE1.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE2.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3.h" />
@@ -179,12 +185,14 @@
     <ClInclude Include="..\..\..\src\netedit\GNEPOI.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEReferenceCounter.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNERerouter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEUndoList.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEViewNet.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEViewParent.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEVSpeedSignal.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\y_libnetbuild\y_libnetbuild.vcxproj">

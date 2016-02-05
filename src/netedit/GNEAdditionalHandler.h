@@ -50,6 +50,9 @@ class GNEChargingStation;
 class GNELaneSpeedTrigger;
 class GNETriggeredRerouter;
 class GNECalibrator;
+class GNEDetectorE1;
+class GNEDetectorE2;
+class GNEDetectorE3;
 class MSRouteProbe;    // Equivalence in GNE?
 class MSEdgeVector;    // Equivalence in GNE?
 
@@ -153,6 +156,36 @@ public:
      */
     void parseAndBuildCalibrator(GNENet* net, const SUMOSAXAttributes& attrs,
                                  const std::string& base);
+
+    /** @brief Parses his values and builds a induction loop detector (E1)
+     *
+     * @param[in] net The network the calibrator belongs to
+     * @param[in] attrs SAX-attributes which define the trigger
+     * @param[in] base The base path
+     * @exception InvalidArgument If a parameter (edge/position) is not valid
+     */
+    void parseAndBuildDetectorE1(GNENet* net, const SUMOSAXAttributes& attrs,
+                                 const std::string& base);
+
+    /** @brief Parses his values and builds a lane area detector (E2)
+     *
+     * @param[in] net The network the calibrator belongs to
+     * @param[in] attrs SAX-attributes which define the trigger
+     * @param[in] base The base path
+     * @exception InvalidArgument If a parameter (edge/position) is not valid
+     */
+    void parseAndBuildDetectorE2(GNENet* net, const SUMOSAXAttributes& attrs,
+                                 const std::string& base);
+
+    /** @brief Parses his values and builds a multi entry exit detector (E3)
+     *
+     * @param[in] net The network the calibrator belongs to
+     * @param[in] attrs SAX-attributes which define the trigger
+     * @param[in] base The base path
+     * @exception InvalidArgument If a parameter (edge/position) is not valid
+     */
+    void parseAndBuildDetectorE3(GNENet* net, const SUMOSAXAttributes& attrs,
+                                 const std::string& base);
     //@}
 
     /// @name building methods
@@ -181,7 +214,7 @@ public:
 
     /** @brief Builds a bus stop
      *
-     * Simply calls the MSStoppingPlace constructor.
+     * Simply calls the GNEBusStop constructor.
      *
      * @param[in] net The net the bus stop belongs to
      * @param[in] id The id of the bus stop
@@ -191,27 +224,76 @@ public:
      * @param[in] lines Names of the bus lines that halt on this bus stop
      * @exception InvalidArgument If the bus stop can not be added to the net (is duplicate)
      */
-    void buildBusStop(GNENet* net, const std::string& id, GNELane& lane, 
-                      SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines);
+    void buildBusStop(GNENet* net, const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
+                      const std::vector<std::string>& lines);
 
     /** @brief Builds a charging Station
      *
-     * Simply calls the MSBusStop constructor.
+     * Simply calls the GNEChargingStation constructor.
      *
      * @param[in] net The net the charging Station belongs to
      * @param[in] id The id of the charging Station
-     * @param[in] lines Names of the bus lines that halt on this charging Station
      * @param[in] lane The lane the charging Station is placed on
      * @param[in] frompos Begin position of the charging Station on the lane
      * @param[in] topos End position of the charging Station on the lane
-     * @param[in] chargingPower
-     * @param[in] efficiency
-     * @param[in] chargeInTransit
-     * @param[in] chargeDelay
+     * @param[in] chargingPower power charged in every timeStep
+     * @param[in] efficiency efficiency of the charge
+     * @param[in] chargeInTransit enable or disable charge in transit
+     * @param[in] chargeDelay delay in the charge
      * @exception InvalidArgument If the charging Station can not be added to the net (is duplicate)
      */
     void buildChargingStation(GNENet* net, const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
                               SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay);
+
+    /** @brief Builds a induction loop detector (E1)
+     *
+     * Simply calls the GNEDetectorE1 constructor.
+     *
+     * @param[in] net The net the charging Station belongs to
+     * @param[in] id The id of the detector
+     * @param[in] lane The lane the detector is placed on
+     * @param[in] pos position of the detector on the lane
+     * @param[in] freq the aggregation period the values the detector collects shall be summed up.
+     * @param[in] filename The path to the output file.
+     * @param[in] splitByType If set, the collected values will be additionally reported on per-vehicle type base.
+     * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
+     */
+    void buildDetectorE1(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename, 
+                         bool splitByType);
+
+    /** @brief Builds a lane Area Detector (E2)
+     *
+     * Simply calls the GNEDetectorE2 constructor.
+     *
+     * @param[in] net The net the charging Station belongs to
+     * @param[in] id The id of the detector
+     * @param[in] lane The lane the detector is placed on
+     * @param[in] pos position of the detector on the lane
+     * @param[in] freq the aggregation period the values the detector collects shall be summed up.
+     * @param[in] filename The path to the output file.
+     * @param[in] cont Holds the information whether detectors longer than a lane shall be cut off or continued
+     * @param[in] timeThreshold The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
+     * @param[in] speedThreshold The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
+     * @param[in] jamThreshold 	The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
+     * @param[in] splitByType If set, the collected values will be additionally reported on per-vehicle type base.
+     * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
+     */
+    void buildDetectorE2(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename, 
+                         bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool splitByType);
+
+    /** @brief Builds a multi entry exit detector (E3)
+     *
+     * Simply calls the GNEDetectorE3 constructor.
+     *
+     * @param[in] net The net the charging Station belongs to
+     * @param[in] id The id of the detector
+     * @param[in] lane The lane the detector is placed on
+     * @param[in] pos position of the detector on the lane
+     * @param[in] freq the aggregation period the values the detector collects shall be summed up.
+     * @param[in] filename The path to the output file.
+     * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
+     */
+    void buildDetectorE3(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename);
 
     /** @brief builds a microscopic calibrator
      *
