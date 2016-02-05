@@ -33,7 +33,7 @@ MSGRPCClient::~MSGRPCClient() {
 
 }
 
-MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime){
+MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime, const MSPerson * pers){
 
 
 	noninteracting::CMPWlkgTm request;
@@ -51,11 +51,12 @@ MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * pre
 	stEdge->set_tojunctionid(stage.getEdge()->getToJunction()->getID());
 
 
-	if (stage.getNextRouteEdge() != 0) {
+
+	if (pers->getNextEdgePtr() != 0) {
 		noninteracting::PBEdge * nxtStEdge = request.mutable_stage()->mutable_nextrouteedge();
-		nxtStEdge->set_length(stage.getNextRouteEdge()->getLength());
-		nxtStEdge->set_fromjunctionid((stage.getNextRouteEdge()->getFromJunction()->getID()));
-		nxtStEdge->set_tojunctionid(stage.getNextRouteEdge()->getToJunction()->getID());
+		nxtStEdge->set_length(pers->getNextEdgePtr()->getLength());
+		nxtStEdge->set_fromjunctionid((pers->getNextEdgePtr()->getFromJunction()->getID()));
+		nxtStEdge->set_tojunctionid(pers->getNextEdgePtr()->getToJunction()->getID());
 	}
 	noninteracting::PBMSPersonStage_Walking * st = request.mutable_stage();
 

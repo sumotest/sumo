@@ -87,8 +87,9 @@ private:
     /// @brief abstract base class for managing callbacks to retrieve various state information from the model
     class PState : public PedestrianState {
     public:
-        PState(MSGRPCClient * client):
-        	grpcClient(client)
+        PState(MSGRPCClient * client, MSPerson * person):
+        	grpcClient(client),
+			myPerson(person)
         {};
 
         /// @brief abstract methods inherited from PedestrianState
@@ -111,6 +112,7 @@ private:
         SUMOReal myCurrentBeginPos;
         SUMOReal myCurrentEndPos;
         MSGRPCClient * grpcClient;
+        MSPerson * myPerson;
 
     };
 

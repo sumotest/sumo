@@ -89,7 +89,7 @@ public:
         virtual void proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous);
 
         /// Returns the current edge
-//        const MSEdge* getEdge() const;
+        const MSEdge* getEdge() const;
         const MSEdge* getFromEdge() const;
         SUMOReal getEdgePos(SUMOTime now) const;
 

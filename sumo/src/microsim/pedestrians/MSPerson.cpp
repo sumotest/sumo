@@ -79,14 +79,14 @@ MSPerson::MSPersonStage_Walking::~MSPersonStage_Walking() {
 }
 
 
-//const MSEdge*
-//MSPerson::MSPersonStage_Walking::getEdge() const {
+const MSEdge*
+MSPerson::MSPersonStage_Walking::getEdge() const {
 //    if (myCurrentInternalEdge != 0) {
-//        return myCurrentInternalEdge;
+        return myCurrentInternalEdge;
 //    } else {
 //        return *myRouteStep;
 //    }
-//}
+}
 
 
 const MSEdge*

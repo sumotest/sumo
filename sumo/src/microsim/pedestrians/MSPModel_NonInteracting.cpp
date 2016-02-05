@@ -74,7 +74,8 @@ MSPModel_NonInteracting::~MSPModel_NonInteracting() {
 
 PedestrianState*
 MSPModel_NonInteracting::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
-    PState* state = new PState();
+    PState* state = new PState(person);
+
     const SUMOTime firstEdgeDuration = state->computeWalkingTime(0, *stage, now);
     myNet->getBeginOfTimestepEvents()->addEvent(new MoveToNextEdge(person, *stage),
             now + firstEdgeDuration, MSEventControl::ADAPT_AFTER_EXECUTION);
@@ -110,8 +111,8 @@ MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
 SUMOTime
 MSPModel_NonInteracting::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
     myLastEntryTime = currentTime;
-    const MSEdge* edge = stage.getEdge();
-    const MSEdge* next =
+    const MSEdge* edge = myPerson->getEdge();
+    const MSEdge* next = myPerson->getNextEdgePtr();
     int dir = UNDEFINED_DIRECTION;
     if (prev == 0) {
         myCurrentBeginPos = stage.getDepartPos();
@@ -174,10 +175,9 @@ MSPModel_NonInteracting::PState::getSpeed(const MSPerson::MSPersonStage_Walking&
 }
 
 
-//const MSEdge*
-//MSPModel_NonInteracting::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
-//
-//    return stage.getPedestrianState()->getNextEdge(stage);
-//}
+const MSEdge*
+MSPModel_NonInteracting::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
+    return myPerson->getNextEdgePtr();
+}
 
 /****************************************************************************/

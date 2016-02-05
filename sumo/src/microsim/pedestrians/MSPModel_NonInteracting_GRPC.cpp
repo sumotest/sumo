@@ -76,7 +76,7 @@ MSPModel_NonInteracting_GRPC::~MSPModel_NonInteracting_GRPC() {
 PedestrianState*
 MSPModel_NonInteracting_GRPC::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
 
-    PState* state = new PState(client);
+    PState* state = new PState(client,person);
     const SUMOTime firstEdgeDuration = state->computeWalkingTime(0, *stage, now);
     myNet->getBeginOfTimestepEvents()->addEvent(new MoveToNextEdge(person, *stage),
             now + firstEdgeDuration, MSEventControl::ADAPT_AFTER_EXECUTION);
@@ -111,7 +111,7 @@ MSPModel_NonInteracting_GRPC::MoveToNextEdge::execute(SUMOTime currentTime) {
 
 SUMOTime
 MSPModel_NonInteracting_GRPC::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
-	MSGRPCClient::CmpWlkTmStruct rpl = grpcClient->computeWalkingTime(prev,stage,currentTime);
+	MSGRPCClient::CmpWlkTmStruct rpl = grpcClient->computeWalkingTime(prev,stage,currentTime,myPerson);
 	myCurrentBeginPos = rpl.currentBeginPos;
 	myCurrentEndPos = rpl.currentEndPos;
 	myLastEntryTime = rpl.lastEntrTm;
@@ -164,7 +164,7 @@ MSPModel_NonInteracting_GRPC::PState::getSpeed(const MSPerson::MSPersonStage_Wal
 
 const MSEdge*
 MSPModel_NonInteracting_GRPC::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
-    return stage.getNextRouteEdge();
+    return myPerson->getNextEdgePtr();
 }
 
 /****************************************************************************/

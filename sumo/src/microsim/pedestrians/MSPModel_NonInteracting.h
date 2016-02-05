@@ -81,11 +81,11 @@ private:
         /// @brief Invalidated assignment operator.
         MoveToNextEdge& operator=(const MoveToNextEdge&);
     };
-
     /// @brief abstract base class for managing callbacks to retrieve various state information from the model
     class PState : public PedestrianState {
     public:
-        PState() {};
+        PState(MSPerson* person): myPerson(person){};
+
 
         /// @brief abstract methods inherited from PedestrianState
         /// @{
@@ -94,8 +94,9 @@ private:
         SUMOReal getAngle(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const;
         SUMOTime getWaitingTime(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const;
         SUMOReal getSpeed(const MSPerson::MSPersonStage_Walking& stage) const;
-//        const MSEdge* getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const;
+        const MSEdge* getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const;
         /// @}
+
 
         /// @brief compute walking time on edge and update state members
         SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime);
@@ -106,7 +107,7 @@ private:
         SUMOTime myCurrentDuration;
         SUMOReal myCurrentBeginPos;
         SUMOReal myCurrentEndPos;
-
+        MSPerson * myPerson;
     };
 
 private:

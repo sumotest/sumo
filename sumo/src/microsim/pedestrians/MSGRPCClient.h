@@ -45,7 +45,7 @@ public:
 	virtual ~MSGRPCClient();
 
 	//noninteracting model function calls for demonstration only
-	MSGRPCClient::CmpWlkTmStruct computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime);
+	MSGRPCClient::CmpWlkTmStruct computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime,const MSPerson * pers);
 	SUMOReal getEdgePos(SUMOReal myCurrentBeginPos, SUMOReal myCurrentEndPos, SUMOReal myCurrentDuration, SUMOTime myLastEntryTime, SUMOTime now);
 	SUMOTime getWaitingTime();
 	SUMOReal getMaxSpeed(const MSPerson::MSPersonStage_Walking& stage);
