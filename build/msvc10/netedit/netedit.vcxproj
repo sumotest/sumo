@@ -119,6 +119,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEChargingStation.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEConnector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNECrossing.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE1.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE2.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDialog_About.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDialog_Wizard.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEEdge.cpp" />
@@ -160,6 +163,9 @@
     <ClInclude Include="..\..\..\src\netedit\GNEChargingStation.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEConnector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNECrossing.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE1.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE2.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDialog_About.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDialog_Wizard.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEEdge.h" />

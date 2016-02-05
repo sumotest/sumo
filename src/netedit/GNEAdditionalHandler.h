@@ -17,8 +17,10 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEADDITIONALHANDLER_H
-#define GNEADDITIONALHANDLER_H
+#ifndef GNEAdditionalHandler_h
+#define GNEAdditionalHandler_h
+
+
 // ===========================================================================
 // included modules
 // ===========================================================================
