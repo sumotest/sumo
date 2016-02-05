@@ -32,15 +32,25 @@ MSPModelRemoteControlled::~MSPModelRemoteControlled() {
 
 PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 		MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
-	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
 
+
+	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
+	 std::cout << "MSPModelRemoteControlled::add was called" << std::endl;
+
+	 PState * state = new PState(person);
+
+	 return 0;
 }
 
 bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 		double distToCrossing, std::vector<const MSPerson*>* collectBlockers) {
+	//for now no interaction btwn cars and peds
+	return false;
 }
 
 SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
+
+	std::cout << "tick" << std::endl;
 	//do all the handling here
 
 	//1. transfer agents as long there is space (SUMO --> external sim)
@@ -51,5 +61,41 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	//3. receive agents as long SUMO has space ( external sim --> SUMO )
 
 	//4. receive events, trajectories ...
+
+	std::cout << "tock" << std::endl;
 	return DELTA_T;
 }
+
+//double MSPModelRemoteControlled::PState::getEdgePos(
+//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {
+//		return myEdgePos;
+//}
+//double MSPModelRemoteControlled::PState::getEdgePos(
+//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
+//	return myEdgePos;
+//}
+//
+//Position MSPModelRemoteControlled::PState::getPosition(
+//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
+//	return myPosition;
+//}
+//
+//double MSPModelRemoteControlled::PState::getAngle(
+//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
+//	return myAngle;
+//}
+//
+//SUMOTime MSPModelRemoteControlled::PState::getWaitingTime(
+//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
+//	return 0.;
+//}
+//
+//double MSPModelRemoteControlled::PState::getSpeed(
+//		const MSPerson::MSPersonStage_Walking& stage) {
+//	return mySpeed;
+//}
+//
+//const MSEdge* MSPModelRemoteControlled::PState::getNextEdge(
+//		const MSPerson::MSPersonStage_Walking& stage) {
+//	return myPerson->getNextEdgePtr();
+//}
