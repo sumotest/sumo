@@ -187,6 +187,15 @@ protected:
     /// @brief The shape of the additional element
     PositionVector myShape;
 
+    /// @name computed only once (for performance) in updateGeometry()
+    //@{
+    /// The rotations of the shape parts
+    std::vector<SUMOReal> myShapeRotations;
+
+    /// The lengths of the shape parts
+    std::vector<SUMOReal> myShapeLengths;
+    //@}
+
     /// @brief The position of the block icon
     Position myBlockIconPos;
 

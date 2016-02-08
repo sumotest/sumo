@@ -173,16 +173,6 @@ public:
     //@}
 
 protected:
-
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
-
     /// @brief The begin position this stopping place is located at
     SUMOReal myFromPos;
 

@@ -53,10 +53,11 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the detector (SUMO_TAG_E1DETECTOR, SUMO_TAG_LANE_AREA_DETECTOR, etc...)
      * @param[in] pos position of detector in lane
+     * @param[in] length length of the detector
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
      */
-    GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, int freq, const std::string &filename);
+    GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename);
 
     /// @brief Destructor
     ~GNEDetector();
@@ -161,7 +162,10 @@ protected:
 
     /// @brief The position this detector is located at
     SUMOReal myPos;
-
+    
+    /// @brief The length of the Detector (Only as parameter in E2)
+    SUMOReal myLength;
+    
     /// @brief The aggregation period the values the detector collects shall be summed up.
     int myFreq;
 

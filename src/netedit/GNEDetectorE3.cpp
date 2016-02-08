@@ -70,7 +70,7 @@ bool GNEDetectorE3::detectorE3Initialized = false;
 // ===========================================================================
 
 GNEDetectorE3::GNEDetectorE3(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType) :
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E3DETECTOR, pos, freq, filename),
+    GNEDetector(id, lane, viewNet, SUMO_TAG_E3DETECTOR, pos, 1 /** provisional **/, freq, filename),
     mySplitByType(splitByType) {
     // Set colors of detector
     setColors();

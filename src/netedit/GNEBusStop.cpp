@@ -88,9 +88,6 @@ GNEBusStop::updateGeometry() {
     myShapeRotations.clear();
     myShapeLengths.clear();
     
-    // Clear shape
-    myShape.clear();
-
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
 
@@ -209,7 +206,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
     // Add a draw matrix
     glPushMatrix();
 
-    // Start with the drawing of the area traslating matrix to origing 
+    // Start with the drawing of the area traslating matrix to origin 
     glTranslated(0, 0, getType());
 
     // Set color of the base
@@ -239,7 +236,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
             // Traslate to positionof signal
             glTranslated(mySignPos.x(), mySignPos.y(), 0);
             
-            // Rotate 180%
+            // Rotate 180 (Eje X -> Mirror)
             glRotated(180, 1, 0, 0);
 
             // Rotate again depending of the option rotSign
@@ -293,13 +290,15 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         if (s.scale * exaggeration >= 4.5)
             GLHelper::drawText("H", Position(), .1, 1.6, letter, mySignRot);
 
-        // pop last matrix
+        // pop draw matrix
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
-    }
+    } else
+        // pop draw matrix
+        glPopMatrix();
 
     // Pop name
     glPopName();

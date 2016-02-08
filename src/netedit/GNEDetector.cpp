@@ -64,9 +64,10 @@
 // member method definitions
 // ===========================================================================
 
-GNEDetector::GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, int freq, const std::string &filename) :
+GNEDetector::GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename) :
     GNEAdditional(id, lane, viewNet, tag),
     myPos(pos),
+    myLength(length),
     myFreq(freq),
     myFilename(filename) {
     // Update geometry
@@ -79,17 +80,48 @@ GNEDetector::~GNEDetector() {}
 
 void 
 GNEDetector::updateGeometry() {
-    // Set Shape
-    myShape = PositionVector(myLane.getShape().positionAtOffset(myPos - 1), myLane.getShape().positionAtOffset(myPos + 1));
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+   
+    // Get shape of lane parent
+    myShape = myLane.getShape();
 
-    // Set rotation of shape
-    myRotation = (SUMOReal) atan2((myShape[1].x() - myShape[0].x()), (myShape[0].y() - myShape[1].y())) * (SUMOReal) 180.0 / (SUMOReal) PI;
+    // Cut shape using as delimitators myPos and their length (myPos + length)
+    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myPos), myLane.getPositionRelativeToParametricLenght(myPos + myLength));
+
+    // Get number of parts of the shape
+    int numberOfSegments = (int) myShape.size() - 1;
+
+    // If number of segments is more than 0
+    if(numberOfSegments >= 0) {
+
+        // Reserve memory (To improve efficiency)
+        myShapeRotations.reserve(numberOfSegments);
+        myShapeLengths.reserve(numberOfSegments);
+
+        // For every part of the shape
+        for (int i = 0; i < numberOfSegments; ++i) {
+
+            // Obtain first position
+            const Position& f = myShape[i];
+
+            // Obtain next position
+            const Position& s = myShape[i + 1];
+
+            // Save distance between position into myShapeLengths
+            myShapeLengths.push_back(f.distanceTo(s));
+
+            // Save rotation (angle) of the vector constructed by points f and s
+            myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+        }
+    }
 
     // Set position of logo
-    myDetectorLogoPosition = myShape.getLineCenter() - Position(0.48, 0);
+    myDetectorLogoPosition = myShape.getLineCenter();
 
     // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter() + Position(0.48, 0);
+    myBlockIconPos = myShape.getLineCenter();
 
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
@@ -106,7 +138,7 @@ GNEDetector::moveAdditional(SUMOReal distance, GNEUndoList *undoList) {
         // Move to Right if distance is positive, to left if distance is negative
         if( ((distance > 0) && ((myPos + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myPos + distance) > 0)) ) {
             // change attribute
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(myPos + distance)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPos + distance)));
         }
     }
 }

@@ -70,7 +70,7 @@ bool GNEDetectorE1::detectorE1Initialized = false;
 // ===========================================================================
 
 GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType) :
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E1DETECTOR, pos, freq, filename),
+    GNEDetector(id, lane, viewNet, SUMO_TAG_E1DETECTOR, pos, 2, freq, filename),
     mySplitByType(splitByType) {
     // Set colors of detector
     setColors();
@@ -164,7 +164,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Add a draw matrix
     glPushMatrix();
 
-    // Start with the drawing of the area traslating matrix to origing 
+    // Start with the drawing of the area traslating matrix to origin 
     glTranslated(0, 0, getType());
 
     // Set color of the base
@@ -172,9 +172,9 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-   
+
     // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLine(myShape[0], myRotation, myShape[0].distanceTo(myShape[1]), exaggeration);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
@@ -186,22 +186,32 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             detectorE1Initialized = true;
             delete i;
         }
+        
+        /* ERROR!!!!!
+        Der Bild DetectorLogo hast unendliche Länge
+        
 
         // draw detector logo
         glPushMatrix();
+        
         glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
         glRotated(mySignRotation, 0, 0, 1);
         glColor3d(1, 1, 1);
         GUITexturesHelper::drawTexturedBox(detectorE1GlID, 0.5);
+        // Pop detector logo matrix
         glPopMatrix();
-
-        // Pop last matrix
+        
+        // Pop draw matrix
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
+        **/
     }
+    else
+        // Pop draw matrix
+        glPopMatrix();
 
     // Pop name
     glPopName();
