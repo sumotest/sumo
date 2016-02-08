@@ -168,6 +168,9 @@ protected:
     /// @brief The path to the output file
     std::string myFilename;
 
+    /// @brief The position of detector
+    Position myDetectorLogoPosition;
+
     /// @brief The rotation of detector
     SUMOReal myRotation;
 

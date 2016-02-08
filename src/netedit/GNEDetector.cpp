@@ -85,24 +85,17 @@ GNEDetector::updateGeometry() {
     // Set rotation of shape
     myRotation = (SUMOReal) atan2((myShape[1].x() - myShape[0].x()), (myShape[0].y() - myShape[1].y())) * (SUMOReal) 180.0 / (SUMOReal) PI;
 
+    // Set position of logo
+    myDetectorLogoPosition = myShape.getLineCenter() - Position(0.48, 0);
+
+    // Set position of the block icon
+    myBlockIconPos = myShape.getLineCenter() + Position(0.48, 0);
+
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
 
-    // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter();
-
-    // If lenght of the shape is distint to 0
-    if (myShape.length() != 0) {
-
-        // Obtain rotation
-        myRotation = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
-
-        // correct orientation
-        myRotation -= 90;
-    }
-    else
-        // Value of rotation is 0
-        myRotation = 0;
+    // Set rotation of the detector icon
+    mySignRotation = (myRotation * offsetSign) - 90;
 }
 
 

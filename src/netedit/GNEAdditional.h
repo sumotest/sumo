@@ -200,8 +200,14 @@ private:
     /// @brief variable to keep GLId of the additional lock image
     static GUIGlID additionalLockGlID;
 
+    /// @brief variable to keep GLId of the additional empty image
+    static GUIGlID additionalEmptyGlID;
+
     /// @brief boolean to check if additional lock image was inicializated
     static bool additionalLockInitialized;
+
+    /// @brief boolean to check if additional empty image was inicializated
+    static bool additionalEmptyInitialized;
 
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;

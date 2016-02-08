@@ -56,6 +56,7 @@
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
 #include "GNELogo_Lock.cpp"
+#include "GNELogo_Empty.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -66,7 +67,9 @@
 // static member definitions
 // ===========================================================================
 GUIGlID GNEAdditional::additionalLockGlID = 0;
+GUIGlID GNEAdditional::additionalEmptyGlID = 0;
 bool GNEAdditional::additionalLockInitialized = false;
+bool GNEAdditional::additionalEmptyInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -135,17 +138,33 @@ GNEAdditional::getParentName() const {
 
 void 
 GNEAdditional::drawLockIcon() const {
-    // load additional lock, if wasn't inicializated
-    if (!additionalLockInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalLockGlID = GUITexturesHelper::add(i);
-        additionalLockInitialized = true;
-        delete i;
-    }
+    // Draw icon
     glPushMatrix();
     glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), getType() + 1);
     glColor3d(1, 1, 1);
-    GUITexturesHelper::drawTexturedBox(additionalLockGlID, 0.5);
+    glRotated(180, 0, 0, 1);
+    // If myBlocked is enable, draw lock, in other case, draw empty square
+    if(myBlocked) {
+        // load additional lock, if wasn't inicializated
+        if (!additionalLockInitialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            additionalLockGlID = GUITexturesHelper::add(i);
+            additionalLockInitialized = true;
+            delete i;
+        }
+        GUITexturesHelper::drawTexturedBox(additionalLockGlID, 0.5);
+    }
+    else {
+        // load additional empty, if wasn't inicializated
+        if (!additionalEmptyInitialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Empty, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            additionalEmptyGlID = GUITexturesHelper::add(i);
+            additionalEmptyInitialized = true;
+            delete i;
+        }
+        GUITexturesHelper::drawTexturedBox(additionalEmptyGlID, 0.5);
+    }
+    // Pop matrix
     glPopMatrix();
 }
 

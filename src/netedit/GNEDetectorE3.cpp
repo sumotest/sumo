@@ -53,6 +53,7 @@
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
+#include "GNELogo_E3.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -69,7 +70,7 @@ bool GNEDetectorE3::detectorE3Initialized = false;
 // ===========================================================================
 
 GNEDetectorE3::GNEDetectorE3(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType) :
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E1DETECTOR, pos, freq, filename),
+    GNEDetector(id, lane, viewNet, SUMO_TAG_E3DETECTOR, pos, freq, filename),
     mySplitByType(splitByType) {
     // Set colors of detector
     setColors();
@@ -144,7 +145,6 @@ GNEDetectorE3::drawGL(const GUIVisualizationSettings& s) const {
 
 void 
 GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    
     // Ignore Warning
     UNUSED_PARAMETER(parent);
     
@@ -178,8 +178,29 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
-        
-        ;
+
+        // load detector logo, if wasn't inicializated
+        if (!detectorE3Initialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            detectorE3GlID = GUITexturesHelper::add(i);
+            detectorE3Initialized = true;
+            delete i;
+        }
+
+        // draw detector logo
+        glPushMatrix();
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
+        glRotated(mySignRotation, 0, 0, 1);
+        glColor3d(1, 1, 1);
+        GUITexturesHelper::drawTexturedBox(detectorE3GlID, 0.5);
+        glPopMatrix();
+
+        // Pop last matrix
+        glPopMatrix();
+
+        // Show Lock icon depending of the Edit mode
+        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+            drawLockIcon();
     }
 
     // Pop name
@@ -283,9 +304,9 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
 void
 GNEDetectorE3::setColors() {
     // Color E1_BASE
-    myRGBColors.push_back(RGBColor(76, 170, 50, 255));  /** PROVISIONAL **/
+    myRGBColors.push_back(RGBColor(0, 204, 0, 255));
     // Color E1_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
+    myRGBColors.push_back(RGBColor(125, 204, 0, 255));
 }
 
 

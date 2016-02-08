@@ -53,6 +53,7 @@
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
+#include "GNELogo_E2.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -144,7 +145,6 @@ GNEDetectorE2::drawGL(const GUIVisualizationSettings& s) const {
 
 void 
 GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    
     // Ignore Warning
     UNUSED_PARAMETER(parent);
     
@@ -178,8 +178,29 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
-        
-        ;
+
+        // load detector logo, if wasn't inicializated
+        if (!detectorE2Initialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E2, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            detectorE2GlID = GUITexturesHelper::add(i);
+            detectorE2Initialized = true;
+            delete i;
+        }
+
+        // draw detector logo
+        glPushMatrix();
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
+        glRotated(mySignRotation, 0, 0, 1);
+        glColor3d(1, 1, 1);
+        GUITexturesHelper::drawTexturedBox(detectorE2GlID, 0.5);
+        glPopMatrix();
+
+        // Pop last matrix
+        glPopMatrix();
+
+        // Show Lock icon depending of the Edit mode
+        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+            drawLockIcon();
     }
 
     // Pop name
@@ -283,9 +304,9 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
 void
 GNEDetectorE2::setColors() {
     // Color E1_BASE
-    myRGBColors.push_back(RGBColor(76, 170, 50, 255));  /** PROVISIONAL **/
+    myRGBColors.push_back(RGBColor(0, 204, 204, 255));
     // Color E1_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
+    myRGBColors.push_back(RGBColor(125, 204, 204, 255));
 }
 
 

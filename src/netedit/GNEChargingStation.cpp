@@ -269,7 +269,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
 
         glPopMatrix();
 
-        if(myBlocked && dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             GNEAdditional::drawLockIcon();
     }
     glPopName();
