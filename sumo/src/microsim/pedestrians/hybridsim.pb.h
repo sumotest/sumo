@@ -36,8 +36,13 @@ void protobuf_AddDesc_hybridsim_2eproto();
 void protobuf_AssignDesc_hybridsim_2eproto();
 void protobuf_ShutdownFile_hybridsim_2eproto();
 
+class Agent;
+class Agents;
+class Boolean;
 class Empty;
 class LeftClosedRightOpenTimeInterval;
+class Trajectories;
+class Trajectory;
 
 // ===================================================================
 
@@ -195,6 +200,477 @@ class Empty : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static Empty* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class Boolean : public ::google::protobuf::Message {
+ public:
+  Boolean();
+  virtual ~Boolean();
+
+  Boolean(const Boolean& from);
+
+  inline Boolean& operator=(const Boolean& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Boolean& default_instance();
+
+  void Swap(Boolean* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Boolean* New() const { return New(NULL); }
+
+  Boolean* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Boolean& from);
+  void MergeFrom(const Boolean& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Boolean* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bool val = 1;
+  void clear_val();
+  static const int kValFieldNumber = 1;
+  bool val() const;
+  void set_val(bool value);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Boolean)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  bool val_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Boolean* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Agent : public ::google::protobuf::Message {
+ public:
+  Agent();
+  virtual ~Agent();
+
+  Agent(const Agent& from);
+
+  inline Agent& operator=(const Agent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Agent& default_instance();
+
+  void Swap(Agent* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Agent* New() const { return New(NULL); }
+
+  Agent* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Agent& from);
+  void MergeFrom(const Agent& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Agent* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  const ::std::string& id() const;
+  void set_id(const ::std::string& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  ::std::string* mutable_id();
+  ::std::string* release_id();
+  void set_allocated_id(::std::string* id);
+
+  // optional string enterId = 2;
+  void clear_enterid();
+  static const int kEnterIdFieldNumber = 2;
+  const ::std::string& enterid() const;
+  void set_enterid(const ::std::string& value);
+  void set_enterid(const char* value);
+  void set_enterid(const char* value, size_t size);
+  ::std::string* mutable_enterid();
+  ::std::string* release_enterid();
+  void set_allocated_enterid(::std::string* enterid);
+
+  // optional string leaveId = 3;
+  void clear_leaveid();
+  static const int kLeaveIdFieldNumber = 3;
+  const ::std::string& leaveid() const;
+  void set_leaveid(const ::std::string& value);
+  void set_leaveid(const char* value);
+  void set_leaveid(const char* value, size_t size);
+  ::std::string* mutable_leaveid();
+  ::std::string* release_leaveid();
+  void set_allocated_leaveid(::std::string* leaveid);
+
+  // optional double x = 4;
+  void clear_x();
+  static const int kXFieldNumber = 4;
+  double x() const;
+  void set_x(double value);
+
+  // optional double y = 5;
+  void clear_y();
+  static const int kYFieldNumber = 5;
+  double y() const;
+  void set_y(double value);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Agent)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr id_;
+  ::google::protobuf::internal::ArenaStringPtr enterid_;
+  ::google::protobuf::internal::ArenaStringPtr leaveid_;
+  double x_;
+  double y_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Agent* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Agents : public ::google::protobuf::Message {
+ public:
+  Agents();
+  virtual ~Agents();
+
+  Agents(const Agents& from);
+
+  inline Agents& operator=(const Agents& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Agents& default_instance();
+
+  void Swap(Agents* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Agents* New() const { return New(NULL); }
+
+  Agents* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Agents& from);
+  void MergeFrom(const Agents& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Agents* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .hybridsim.Agent agents = 1;
+  int agents_size() const;
+  void clear_agents();
+  static const int kAgentsFieldNumber = 1;
+  const ::hybridsim::Agent& agents(int index) const;
+  ::hybridsim::Agent* mutable_agents(int index);
+  ::hybridsim::Agent* add_agents();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Agent >*
+      mutable_agents();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Agent >&
+      agents() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Agents)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Agent > agents_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Agents* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Trajectory : public ::google::protobuf::Message {
+ public:
+  Trajectory();
+  virtual ~Trajectory();
+
+  Trajectory(const Trajectory& from);
+
+  inline Trajectory& operator=(const Trajectory& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Trajectory& default_instance();
+
+  void Swap(Trajectory* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Trajectory* New() const { return New(NULL); }
+
+  Trajectory* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Trajectory& from);
+  void MergeFrom(const Trajectory& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Trajectory* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  const ::std::string& id() const;
+  void set_id(const ::std::string& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  ::std::string* mutable_id();
+  ::std::string* release_id();
+  void set_allocated_id(::std::string* id);
+
+  // optional double x = 2;
+  void clear_x();
+  static const int kXFieldNumber = 2;
+  double x() const;
+  void set_x(double value);
+
+  // optional double y = 3;
+  void clear_y();
+  static const int kYFieldNumber = 3;
+  double y() const;
+  void set_y(double value);
+
+  // optional double spd = 4;
+  void clear_spd();
+  static const int kSpdFieldNumber = 4;
+  double spd() const;
+  void set_spd(double value);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Trajectory)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr id_;
+  double x_;
+  double y_;
+  double spd_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Trajectory* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Trajectories : public ::google::protobuf::Message {
+ public:
+  Trajectories();
+  virtual ~Trajectories();
+
+  Trajectories(const Trajectories& from);
+
+  inline Trajectories& operator=(const Trajectories& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Trajectories& default_instance();
+
+  void Swap(Trajectories* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Trajectories* New() const { return New(NULL); }
+
+  Trajectories* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Trajectories& from);
+  void MergeFrom(const Trajectories& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Trajectories* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .hybridsim.Trajectory trajectories = 1;
+  int trajectories_size() const;
+  void clear_trajectories();
+  static const int kTrajectoriesFieldNumber = 1;
+  const ::hybridsim::Trajectory& trajectories(int index) const;
+  ::hybridsim::Trajectory* mutable_trajectories(int index);
+  ::hybridsim::Trajectory* add_trajectories();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Trajectory >*
+      mutable_trajectories();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Trajectory >&
+      trajectories() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Trajectories)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Trajectory > trajectories_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Trajectories* default_instance_;
+};
 // ===================================================================
 
 
@@ -235,7 +711,353 @@ inline void LeftClosedRightOpenTimeInterval::set_totimeexcluding(double value) {
 
 // Empty
 
+// -------------------------------------------------------------------
+
+// Boolean
+
+// optional bool val = 1;
+inline void Boolean::clear_val() {
+  val_ = false;
+}
+inline bool Boolean::val() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Boolean.val)
+  return val_;
+}
+inline void Boolean::set_val(bool value) {
+  
+  val_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Boolean.val)
+}
+
+// -------------------------------------------------------------------
+
+// Agent
+
+// optional string id = 1;
+inline void Agent::clear_id() {
+  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Agent::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.id)
+  return id_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Agent::set_id(const ::std::string& value) {
+  
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Agent.id)
+}
+inline void Agent::set_id(const char* value) {
+  
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.id)
+}
+inline void Agent::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.id)
+}
+inline ::std::string* Agent::mutable_id() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.id)
+  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Agent::release_id() {
+  
+  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Agent::set_allocated_id(::std::string* id) {
+  if (id != NULL) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.id)
+}
+
+// optional string enterId = 2;
+inline void Agent::clear_enterid() {
+  enterid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Agent::enterid() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterId)
+  return enterid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Agent::set_enterid(const ::std::string& value) {
+  
+  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Agent.enterId)
+}
+inline void Agent::set_enterid(const char* value) {
+  
+  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.enterId)
+}
+inline void Agent::set_enterid(const char* value, size_t size) {
+  
+  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.enterId)
+}
+inline ::std::string* Agent::mutable_enterid() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.enterId)
+  return enterid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Agent::release_enterid() {
+  
+  return enterid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Agent::set_allocated_enterid(::std::string* enterid) {
+  if (enterid != NULL) {
+    
+  } else {
+    
+  }
+  enterid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), enterid);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.enterId)
+}
+
+// optional string leaveId = 3;
+inline void Agent::clear_leaveid() {
+  leaveid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Agent::leaveid() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveId)
+  return leaveid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Agent::set_leaveid(const ::std::string& value) {
+  
+  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Agent.leaveId)
+}
+inline void Agent::set_leaveid(const char* value) {
+  
+  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.leaveId)
+}
+inline void Agent::set_leaveid(const char* value, size_t size) {
+  
+  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.leaveId)
+}
+inline ::std::string* Agent::mutable_leaveid() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.leaveId)
+  return leaveid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Agent::release_leaveid() {
+  
+  return leaveid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Agent::set_allocated_leaveid(::std::string* leaveid) {
+  if (leaveid != NULL) {
+    
+  } else {
+    
+  }
+  leaveid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), leaveid);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.leaveId)
+}
+
+// optional double x = 4;
+inline void Agent::clear_x() {
+  x_ = 0;
+}
+inline double Agent::x() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.x)
+  return x_;
+}
+inline void Agent::set_x(double value) {
+  
+  x_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Agent.x)
+}
+
+// optional double y = 5;
+inline void Agent::clear_y() {
+  y_ = 0;
+}
+inline double Agent::y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.y)
+  return y_;
+}
+inline void Agent::set_y(double value) {
+  
+  y_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Agent.y)
+}
+
+// -------------------------------------------------------------------
+
+// Agents
+
+// repeated .hybridsim.Agent agents = 1;
+inline int Agents::agents_size() const {
+  return agents_.size();
+}
+inline void Agents::clear_agents() {
+  agents_.Clear();
+}
+inline const ::hybridsim::Agent& Agents::agents(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agents.agents)
+  return agents_.Get(index);
+}
+inline ::hybridsim::Agent* Agents::mutable_agents(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agents.agents)
+  return agents_.Mutable(index);
+}
+inline ::hybridsim::Agent* Agents::add_agents() {
+  // @@protoc_insertion_point(field_add:hybridsim.Agents.agents)
+  return agents_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Agent >*
+Agents::mutable_agents() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Agents.agents)
+  return &agents_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Agent >&
+Agents::agents() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Agents.agents)
+  return agents_;
+}
+
+// -------------------------------------------------------------------
+
+// Trajectory
+
+// optional string id = 1;
+inline void Trajectory::clear_id() {
+  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Trajectory::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectory.id)
+  return id_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Trajectory::set_id(const ::std::string& value) {
+  
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Trajectory.id)
+}
+inline void Trajectory::set_id(const char* value) {
+  
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Trajectory.id)
+}
+inline void Trajectory::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Trajectory.id)
+}
+inline ::std::string* Trajectory::mutable_id() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Trajectory.id)
+  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Trajectory::release_id() {
+  
+  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Trajectory::set_allocated_id(::std::string* id) {
+  if (id != NULL) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Trajectory.id)
+}
+
+// optional double x = 2;
+inline void Trajectory::clear_x() {
+  x_ = 0;
+}
+inline double Trajectory::x() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectory.x)
+  return x_;
+}
+inline void Trajectory::set_x(double value) {
+  
+  x_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Trajectory.x)
+}
+
+// optional double y = 3;
+inline void Trajectory::clear_y() {
+  y_ = 0;
+}
+inline double Trajectory::y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectory.y)
+  return y_;
+}
+inline void Trajectory::set_y(double value) {
+  
+  y_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Trajectory.y)
+}
+
+// optional double spd = 4;
+inline void Trajectory::clear_spd() {
+  spd_ = 0;
+}
+inline double Trajectory::spd() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectory.spd)
+  return spd_;
+}
+inline void Trajectory::set_spd(double value) {
+  
+  spd_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Trajectory.spd)
+}
+
+// -------------------------------------------------------------------
+
+// Trajectories
+
+// repeated .hybridsim.Trajectory trajectories = 1;
+inline int Trajectories::trajectories_size() const {
+  return trajectories_.size();
+}
+inline void Trajectories::clear_trajectories() {
+  trajectories_.Clear();
+}
+inline const ::hybridsim::Trajectory& Trajectories::trajectories(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectories.trajectories)
+  return trajectories_.Get(index);
+}
+inline ::hybridsim::Trajectory* Trajectories::mutable_trajectories(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Trajectories.trajectories)
+  return trajectories_.Mutable(index);
+}
+inline ::hybridsim::Trajectory* Trajectories::add_trajectories() {
+  // @@protoc_insertion_point(field_add:hybridsim.Trajectories.trajectories)
+  return trajectories_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Trajectory >*
+Trajectories::mutable_trajectories() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Trajectories.trajectories)
+  return &trajectories_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Trajectory >&
+Trajectories::trajectories() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Trajectories.trajectories)
+  return trajectories_;
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 

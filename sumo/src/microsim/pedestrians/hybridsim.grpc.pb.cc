@@ -16,6 +16,9 @@ namespace hybridsim {
 
 static const char* HybridSimulation_method_names[] = {
   "/hybridsim.HybridSimulation/simulatedTimeInerval",
+  "/hybridsim.HybridSimulation/transferAgent",
+  "/hybridsim.HybridSimulation/receiveTrajectories",
+  "/hybridsim.HybridSimulation/retrieveAgents",
 };
 
 std::unique_ptr< HybridSimulation::Stub> HybridSimulation::NewStub(const std::shared_ptr< ::grpc::Channel>& channel, const ::grpc::StubOptions& options) {
@@ -25,6 +28,9 @@ std::unique_ptr< HybridSimulation::Stub> HybridSimulation::NewStub(const std::sh
 
 HybridSimulation::Stub::Stub(const std::shared_ptr< ::grpc::Channel>& channel)
   : channel_(channel), rpcmethod_simulatedTimeInerval_(HybridSimulation_method_names[0], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_transferAgent_(HybridSimulation_method_names[1], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_receiveTrajectories_(HybridSimulation_method_names[2], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_retrieveAgents_(HybridSimulation_method_names[3], ::grpc::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status HybridSimulation::Stub::simulatedTimeInerval(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::hybridsim::Empty* response) {
@@ -35,7 +41,31 @@ HybridSimulation::Stub::Stub(const std::shared_ptr< ::grpc::Channel>& channel)
   return new ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>(channel_.get(), cq, rpcmethod_simulatedTimeInerval_, context, request);
 }
 
-HybridSimulation::AsyncService::AsyncService() : ::grpc::AsynchronousService(HybridSimulation_method_names, 1) {}
+::grpc::Status HybridSimulation::Stub::transferAgent(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::hybridsim::Boolean* response) {
+  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_transferAgent_, context, request, response);
+}
+
+::grpc::ClientAsyncResponseReader< ::hybridsim::Boolean>* HybridSimulation::Stub::AsynctransferAgentRaw(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::hybridsim::Boolean>(channel_.get(), cq, rpcmethod_transferAgent_, context, request);
+}
+
+::grpc::Status HybridSimulation::Stub::receiveTrajectories(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Trajectories* response) {
+  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_receiveTrajectories_, context, request, response);
+}
+
+::grpc::ClientAsyncResponseReader< ::hybridsim::Trajectories>* HybridSimulation::Stub::AsyncreceiveTrajectoriesRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::hybridsim::Trajectories>(channel_.get(), cq, rpcmethod_receiveTrajectories_, context, request);
+}
+
+::grpc::Status HybridSimulation::Stub::retrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Agents* response) {
+  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_retrieveAgents_, context, request, response);
+}
+
+::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>* HybridSimulation::Stub::AsyncretrieveAgentsRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+  return new ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>(channel_.get(), cq, rpcmethod_retrieveAgents_, context, request);
+}
+
+HybridSimulation::AsyncService::AsyncService() : ::grpc::AsynchronousService(HybridSimulation_method_names, 4) {}
 
 HybridSimulation::Service::Service() {
 }
@@ -54,6 +84,39 @@ void HybridSimulation::AsyncService::RequestsimulatedTimeInerval(::grpc::ServerC
   AsynchronousService::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
 }
 
+::grpc::Status HybridSimulation::Service::transferAgent(::grpc::ServerContext* context, const ::hybridsim::Agent* request, ::hybridsim::Boolean* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+void HybridSimulation::AsyncService::RequesttransferAgent(::grpc::ServerContext* context, ::hybridsim::Agent* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Boolean>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+  AsynchronousService::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+}
+
+::grpc::Status HybridSimulation::Service::receiveTrajectories(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Trajectories* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+void HybridSimulation::AsyncService::RequestreceiveTrajectories(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Trajectories>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+  AsynchronousService::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+}
+
+::grpc::Status HybridSimulation::Service::retrieveAgents(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Agents* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+void HybridSimulation::AsyncService::RequestretrieveAgents(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Agents>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+  AsynchronousService::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+}
+
 ::grpc::RpcService* HybridSimulation::Service::service() {
   if (service_) {
     return service_.get();
@@ -64,6 +127,21 @@ void HybridSimulation::AsyncService::RequestsimulatedTimeInerval(::grpc::ServerC
       ::grpc::RpcMethod::NORMAL_RPC,
       new ::grpc::RpcMethodHandler< HybridSimulation::Service, ::hybridsim::LeftClosedRightOpenTimeInterval, ::hybridsim::Empty>(
           std::mem_fn(&HybridSimulation::Service::simulatedTimeInerval), this)));
+  service_->AddMethod(new ::grpc::RpcServiceMethod(
+      HybridSimulation_method_names[1],
+      ::grpc::RpcMethod::NORMAL_RPC,
+      new ::grpc::RpcMethodHandler< HybridSimulation::Service, ::hybridsim::Agent, ::hybridsim::Boolean>(
+          std::mem_fn(&HybridSimulation::Service::transferAgent), this)));
+  service_->AddMethod(new ::grpc::RpcServiceMethod(
+      HybridSimulation_method_names[2],
+      ::grpc::RpcMethod::NORMAL_RPC,
+      new ::grpc::RpcMethodHandler< HybridSimulation::Service, ::hybridsim::Empty, ::hybridsim::Trajectories>(
+          std::mem_fn(&HybridSimulation::Service::receiveTrajectories), this)));
+  service_->AddMethod(new ::grpc::RpcServiceMethod(
+      HybridSimulation_method_names[3],
+      ::grpc::RpcMethod::NORMAL_RPC,
+      new ::grpc::RpcMethodHandler< HybridSimulation::Service, ::hybridsim::Empty, ::hybridsim::Agents>(
+          std::mem_fn(&HybridSimulation::Service::retrieveAgents), this)));
   return service_.get();
 }
 

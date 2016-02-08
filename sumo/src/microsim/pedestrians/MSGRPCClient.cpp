@@ -23,8 +23,8 @@
 #include "MSGRPCClient.h"
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) :
-	stub_(noninteracting::PBPState::NewStub(channel)),
-	hybridsimStub(hybridsim::HybridSimulation::NewStub(channel))
+stub_(noninteracting::PBPState::NewStub(channel)),
+hybridsimStub(hybridsim::HybridSimulation::NewStub(channel))
 {
 
 }
@@ -74,9 +74,9 @@ MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * pre
 	Status status = stub_->computeWalkingTime(&context,request, &reply);
 
 
-		CmpWlkTmStruct ret;
+	CmpWlkTmStruct ret;
 	if (status.ok()){
-//		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
+		//		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
 		ret.wlkTm = MAX2((SUMOTime)1, TIME2STEPS(reply.duration().sumotime()));;
 		ret.currentBeginPos = reply.mycurrentbeginpos();
 		ret.currentEndPos = reply.mycurrentendpos();
@@ -159,4 +159,58 @@ void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
 
 
 
+}
+
+bool MSGRPCClient::transmitPedestrian(std::string& id, std::string& fromId,
+		std::string& toId) {
+	hybridsim::Agent req;
+	req.set_id(id);
+	req.set_enterid(fromId);
+	req.set_leaveid(toId);
+	hybridsim::Boolean rpl;
+
+	ClientContext context;
+
+	Status st = hybridsimStub->transferAgent(&context,req,&rpl);
+	if (st.ok()) {
+		return rpl.val();
+	} else {
+		std::cerr << "something went wrong!" << std::endl;
+	}
+}
+
+void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates) {
+	hybridsim::Empty req;
+	hybridsim::Trajectories rpl;
+	ClientContext context;
+	Status st = hybridsimStub->receiveTrajectories(&context,req,&rpl);
+	if (st.ok()){
+		for (int i = 0; i < rpl.trajectories_size(); i++) {
+			const hybridsim::Trajectory t = rpl.trajectories(i);
+			MSPRCPState* st = pstates[t.id()];
+			st->setXY(t.x(),t.y());
+			st->setSpeed(t.spd());
+
+		}
+	} else {
+		std::cerr << "something went wrong!" << std::endl;
+	}
+}
+
+void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pstates,MSNet* net, SUMOTime time) {
+	hybridsim::Empty req;
+	hybridsim::Agents rpl;
+	ClientContext context;
+
+	Status st = hybridsimStub->retrieveAgents(&context,req,&rpl);
+	if (st.ok()) {
+		for (int i = 0; i < rpl.agents_size(); i++) {
+			const hybridsim::Agent a = rpl.agents(i);
+			MSPRCPState* st = pstates[a.id()];
+			st->getPerson()->proceed(net,time);
+			pstates.erase(a.id());
+		}
+	} else {
+		std::cerr << "something went wrong!" << std::endl;
+	}
 }

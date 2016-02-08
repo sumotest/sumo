@@ -19,10 +19,13 @@
 #ifndef SRC_MICROSIM_PEDESTRIANS_MSPMODELREMOTECONTROLLED_H_
 #define SRC_MICROSIM_PEDESTRIANS_MSPMODELREMOTECONTROLLED_H_
 
+
+#include <queue>
 #include <utils/common/SUMOTime.h>
 #include <utils/common/Command.h>
 #include "MSPModel.h"
 #include "MSGRPCClient.h"
+#include "MSPRCPState.h"
 
 // ===========================================================================
 // class definitions
@@ -46,31 +49,14 @@ public:
 	SUMOTime execute(SUMOTime currentTime);
 
 private:
-	class PState : public PedestrianState {
-	public:
-		PState(MSPerson * person): myPerson(person){};
 
-		/// @brief abstract methods inherited from PedestrianState
-		/// @{
-		SUMOReal getEdgePos(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {return myEdgePos;};
-		Position getPosition(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const {return myPosition;};
-		SUMOReal getAngle(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const{return myAngle;};
-		SUMOTime getWaitingTime(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const{return 0.;};
-		SUMOReal getSpeed(const MSPerson::MSPersonStage_Walking& stage)const{return mySpeed;};
-		const MSEdge* getNextEdge(const MSPerson::MSPersonStage_Walking& stage)const{return myPerson->getNextEdgePtr();};
-		//		/// @}
-		//
-		//		/// @brief compute walking time on edge and update state members
-		SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime){return 0.;};
-	private:
-		SUMOReal myEdgePos;
-		Position myPosition;
-		SUMOReal myAngle;
-		SUMOReal mySpeed;
-		MSPerson * myPerson;
-	};
 
-	private:
+
+	void handleBuffer(std::queue<MSPRCPState*>* buffer);
+	bool transmitPedestrian(MSPRCPState * st);
+
+	std::map<const std::string,MSPRCPState*> pstates;
+	std::map<const std::string,std::queue<MSPRCPState*>*> buffers;
 	MSGRPCClient * grpcClient;
 	MSNet* myNet;
 };

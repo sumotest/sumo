@@ -34,8 +34,23 @@ class HybridSimulation GRPC_FINAL {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>> AsyncsimulatedTimeInerval(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>>(AsyncsimulatedTimeInervalRaw(context, request, cq));
     }
+    virtual ::grpc::Status transferAgent(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::hybridsim::Boolean* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Boolean>> AsynctransferAgent(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Boolean>>(AsynctransferAgentRaw(context, request, cq));
+    }
+    virtual ::grpc::Status receiveTrajectories(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Trajectories* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Trajectories>> AsyncreceiveTrajectories(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Trajectories>>(AsyncreceiveTrajectoriesRaw(context, request, cq));
+    }
+    virtual ::grpc::Status retrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Agents* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Agents>> AsyncretrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Agents>>(AsyncretrieveAgentsRaw(context, request, cq));
+    }
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>* AsyncsimulatedTimeInervalRaw(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Boolean>* AsynctransferAgentRaw(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Trajectories>* AsyncreceiveTrajectoriesRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Agents>* AsyncretrieveAgentsRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub GRPC_FINAL : public StubInterface {
    public:
@@ -44,11 +59,29 @@ class HybridSimulation GRPC_FINAL {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>> AsyncsimulatedTimeInerval(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>>(AsyncsimulatedTimeInervalRaw(context, request, cq));
     }
+    ::grpc::Status transferAgent(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::hybridsim::Boolean* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Boolean>> AsynctransferAgent(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Boolean>>(AsynctransferAgentRaw(context, request, cq));
+    }
+    ::grpc::Status receiveTrajectories(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Trajectories* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Trajectories>> AsyncreceiveTrajectories(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Trajectories>>(AsyncreceiveTrajectoriesRaw(context, request, cq));
+    }
+    ::grpc::Status retrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Agents* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>> AsyncretrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>>(AsyncretrieveAgentsRaw(context, request, cq));
+    }
 
    private:
     std::shared_ptr< ::grpc::Channel> channel_;
     ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>* AsyncsimulatedTimeInervalRaw(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::hybridsim::Boolean>* AsynctransferAgentRaw(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::hybridsim::Trajectories>* AsyncreceiveTrajectoriesRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>* AsyncretrieveAgentsRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
     const ::grpc::RpcMethod rpcmethod_simulatedTimeInerval_;
+    const ::grpc::RpcMethod rpcmethod_transferAgent_;
+    const ::grpc::RpcMethod rpcmethod_receiveTrajectories_;
+    const ::grpc::RpcMethod rpcmethod_retrieveAgents_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::Channel>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -57,6 +90,9 @@ class HybridSimulation GRPC_FINAL {
     Service();
     virtual ~Service();
     virtual ::grpc::Status simulatedTimeInerval(::grpc::ServerContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval* request, ::hybridsim::Empty* response);
+    virtual ::grpc::Status transferAgent(::grpc::ServerContext* context, const ::hybridsim::Agent* request, ::hybridsim::Boolean* response);
+    virtual ::grpc::Status receiveTrajectories(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Trajectories* response);
+    virtual ::grpc::Status retrieveAgents(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Agents* response);
     ::grpc::RpcService* service() GRPC_OVERRIDE GRPC_FINAL;
    private:
     std::unique_ptr< ::grpc::RpcService> service_;
@@ -66,6 +102,9 @@ class HybridSimulation GRPC_FINAL {
     explicit AsyncService();
     ~AsyncService() {};
     void RequestsimulatedTimeInerval(::grpc::ServerContext* context, ::hybridsim::LeftClosedRightOpenTimeInterval* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequesttransferAgent(::grpc::ServerContext* context, ::hybridsim::Agent* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Boolean>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestreceiveTrajectories(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Trajectories>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    void RequestretrieveAgents(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Agents>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
   };
 };
 

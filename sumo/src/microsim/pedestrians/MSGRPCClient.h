@@ -23,6 +23,7 @@
 #include <utils/geom/Position.h>
 #include <microsim/MSEdge.h>
 #include "MSPerson.h"
+#include "MSPRCPState.h"
 #include "noninteracting.grpc.pb.h"
 #include "hybridsim.grpc.pb.h"
 using grpc::Channel;
@@ -53,7 +54,9 @@ public:
 
 	//hybrid simulation
 	void simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl);
-
+	bool transmitPedestrian(std::string& id, std::string& fromId, std::string& toId);
+	void receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates);
+	void retrieveAgents(std::map<const std::string,MSPRCPState*>& pstates,MSNet* net, SUMOTime time);
 
 private:
 	std::unique_ptr<noninteracting::PBPState::Stub> stub_;

@@ -37,9 +37,19 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
 	 std::cout << "MSPModelRemoteControlled::add was called" << std::endl;
 
-	 PState * state = new PState(person);
+	 MSPRCPState * state = new MSPRCPState(person);
+	 if (buffers.find(person->getEdge()->getID()) == buffers.end()) {
+		 std::queue<MSPRCPState*> * buffer;
+		 buffer->push(state);
+		 buffers[person->getEdge()->getID()] = buffer;
+	 } else {
+		 std::queue<MSPRCPState*> * buffer = buffers[person->getEdge()->getID()];
+		 buffer->push(state);
+	 }
 
-	 return 0;
+//	 MSPRCPState * state = new MSPRCPState(person);
+	 pstates[person->getID()] = state;
+	 return state;
 }
 
 bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
@@ -53,49 +63,46 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	std::cout << "tick" << std::endl;
 	//do all the handling here
 
-	//1. transfer agents as long there is space (SUMO --> external sim)
+	//1. transfer agents as long as there is space (SUMO --> external sim)
+	std::map<const std::string,std::queue<MSPRCPState*>*>::iterator it = buffers.begin();
+	while(it != buffers.end()) {
+		std::queue<MSPRCPState*>* buffer = (*it).second;
+		handleBuffer(buffer);
+		if (buffer->empty()){
+			it = buffers.erase(it);
+		} else {
+			it++;
+		}
+	}
 
 	//2. simulate for one SUMO time step
 	grpcClient->simulateTimeInterval(currentTime,currentTime+DELTA_T);
 
-	//3. receive agents as long SUMO has space ( external sim --> SUMO )
+	//3. receive events, trajectories ...
+	grpcClient->receiveTrajectories(pstates);
 
-	//4. receive events, trajectories ...
+	//4. transfer agents as long as there is space (external sim --> SUMO)
+	grpcClient->retrieveAgents(pstates,myNet,currentTime);
 
 	std::cout << "tock" << std::endl;
 	return DELTA_T;
 }
 
-//double MSPModelRemoteControlled::PState::getEdgePos(
-//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {
-//		return myEdgePos;
-//}
-//double MSPModelRemoteControlled::PState::getEdgePos(
-//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
-//	return myEdgePos;
-//}
-//
-//Position MSPModelRemoteControlled::PState::getPosition(
-//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
-//	return myPosition;
-//}
-//
-//double MSPModelRemoteControlled::PState::getAngle(
-//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
-//	return myAngle;
-//}
-//
-//SUMOTime MSPModelRemoteControlled::PState::getWaitingTime(
-//		const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) {
-//	return 0.;
-//}
-//
-//double MSPModelRemoteControlled::PState::getSpeed(
-//		const MSPerson::MSPersonStage_Walking& stage) {
-//	return mySpeed;
-//}
-//
-//const MSEdge* MSPModelRemoteControlled::PState::getNextEdge(
-//		const MSPerson::MSPersonStage_Walking& stage) {
-//	return myPerson->getNextEdgePtr();
-//}
+void MSPModelRemoteControlled::handleBuffer(std::queue<MSPRCPState*>* buffer) {
+	while(!buffer->empty()){
+		MSPRCPState* st = buffer->front();
+		if (transmitPedestrian(st)) {
+			buffer->pop();
+		} else {
+			return;
+		}
+	}
+}
+
+bool MSPModelRemoteControlled::transmitPedestrian(MSPRCPState* st) {
+	std::string id = st->getPerson()->getID();
+	std::string fromId = st->getPerson()->getEdge()->getID();
+	std::string toId = st->getPerson()->getNextDestination().getID();
+	return grpcClient->transmitPedestrian(id,fromId,toId);
+}
+
