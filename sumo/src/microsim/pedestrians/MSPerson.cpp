@@ -81,11 +81,7 @@ MSPerson::MSPersonStage_Walking::~MSPersonStage_Walking() {
 
 const MSEdge*
 MSPerson::MSPersonStage_Walking::getEdge() const {
-//    if (myCurrentInternalEdge != 0) {
-        return myCurrentInternalEdge;
-//    } else {
-//        return *myRouteStep;
-//    }
+        return myPedestrianState->getEdge();
 }
 
 
@@ -524,33 +520,33 @@ MSPerson::routeOutput(OutputDevice& os) const {
     }
 }
 
-const std::string&
-MSPerson::getNextEdge() const {
+//const std::string&
+//MSPerson::getNextEdge() const {
+////    if (getCurrentStageType() == MOVING_WITHOUT_VEHICLE) {
+////        MSPersonStage_Walking* walkingStage =  dynamic_cast<MSPersonStage_Walking*>(*myStep);
+////        assert(walkingStage != 0);
+////        const MSEdge* nextEdge = walkingStage->getPedestrianState()->getNextEdge(*walkingStage);
+////        if (nextEdge != 0) {
+////            return nextEdge->getID();
+////        }
+////    }
+////    return StringUtils::emptyString;
+//    const MSEdge* nextEdge = getNextEdgePtr();
+//    if (nextEdge != 0) {
+//        return nextEdge->getID();
+//    }
+//    return StringUtils::emptyString;
+//}
+//
+//const MSEdge*
+//MSPerson::getNextEdgePtr() const {
 //    if (getCurrentStageType() == MOVING_WITHOUT_VEHICLE) {
 //        MSPersonStage_Walking* walkingStage =  dynamic_cast<MSPersonStage_Walking*>(*myStep);
 //        assert(walkingStage != 0);
-//        const MSEdge* nextEdge = walkingStage->getPedestrianState()->getNextEdge(*walkingStage);
-//        if (nextEdge != 0) {
-//            return nextEdge->getID();
-//        }
+//        return walkingStage->getPedestrianState()->getNextEdge(*walkingStage);
+//
 //    }
-//    return StringUtils::emptyString;
-    const MSEdge* nextEdge = getNextEdgePtr();
-    if (nextEdge != 0) {
-        return nextEdge->getID();
-    }
-    return StringUtils::emptyString;
-}
-
-const MSEdge*
-MSPerson::getNextEdgePtr() const {
-    if (getCurrentStageType() == MOVING_WITHOUT_VEHICLE) {
-        MSPersonStage_Walking* walkingStage =  dynamic_cast<MSPersonStage_Walking*>(*myStep);
-        assert(walkingStage != 0);
-        return walkingStage->getPedestrianState()->getNextEdge(*walkingStage);
-
-    }
-    return 0;
-}
+//    return 0;
+//}
 /****************************************************************************/
 

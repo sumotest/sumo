@@ -52,11 +52,12 @@ MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * pre
 
 
 
-	if (pers->getNextEdgePtr() != 0) {
+
+	if (stage.getPedestrianState()->getNextEdge() != 0) {
 		noninteracting::PBEdge * nxtStEdge = request.mutable_stage()->mutable_nextrouteedge();
-		nxtStEdge->set_length(pers->getNextEdgePtr()->getLength());
-		nxtStEdge->set_fromjunctionid((pers->getNextEdgePtr()->getFromJunction()->getID()));
-		nxtStEdge->set_tojunctionid(pers->getNextEdgePtr()->getToJunction()->getID());
+		nxtStEdge->set_length(stage.getPedestrianState()->getNextEdge()->getLength());
+		nxtStEdge->set_fromjunctionid((stage.getPedestrianState()->getNextEdge()->getFromJunction()->getID()));
+		nxtStEdge->set_tojunctionid(stage.getPedestrianState()->getNextEdge()->getToJunction()->getID());
 	}
 	noninteracting::PBMSPersonStage_Walking * st = request.mutable_stage();
 

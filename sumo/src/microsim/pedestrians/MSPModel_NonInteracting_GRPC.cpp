@@ -167,8 +167,8 @@ const MSEdge* MSPModel_NonInteracting_GRPC::PState::getEdge() const {
 }
 
 const MSEdge*
-MSPModel_NonInteracting_GRPC::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
-    return myPerson->getNextEdgePtr();
+MSPModel_NonInteracting_GRPC::PState::getNextEdge() const {
+    return 0;
 }
 
 /****************************************************************************/

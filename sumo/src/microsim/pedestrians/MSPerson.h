@@ -408,11 +408,11 @@ public:
      */
     void routeOutput(OutputDevice& os) const;
 
-    /// @brief return the list of internal edges if this person is walking and the pedestrian model allows it
-    const std::string& getNextEdge() const;
-
-    /// @brief returns the next edge ptr if this person is walking and the pedestrian model allows it
-    const MSEdge* getNextEdgePtr() const;
+//    /// @brief return the list of internal edges if this person is walking and the pedestrian model allows it
+//    const std::string& getNextEdge() const;
+//
+//    /// @brief returns the next edge ptr if this person is walking and the pedestrian model allows it
+//    const MSEdge* getNextEdgePtr() const;
 
 private:
     /// @brief Invalidated copy constructor.

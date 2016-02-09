@@ -116,7 +116,7 @@ public:
     virtual const MSEdge* getEdge() const = 0;
 
     /// @brief return the list of internal edges if the pedestrian is on an intersection
-    virtual const MSEdge* getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const = 0;
+    virtual const MSEdge* getNextEdge() const = 0;
 };
 
 

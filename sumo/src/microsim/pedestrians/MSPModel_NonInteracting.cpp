@@ -114,8 +114,8 @@ const MSEdge* MSPModel_NonInteracting::PState::getEdge() const {
 SUMOTime
 MSPModel_NonInteracting::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
     myLastEntryTime = currentTime;
-    const MSEdge* edge = myPerson->getEdge();
-    const MSEdge* next = myPerson->getNextEdgePtr();
+    const MSEdge* edge = getEdge();
+    const MSEdge* next = getNextEdge();
     int dir = UNDEFINED_DIRECTION;
     if (prev == 0) {
         myCurrentBeginPos = stage.getDepartPos();
@@ -179,8 +179,8 @@ MSPModel_NonInteracting::PState::getSpeed(const MSPerson::MSPersonStage_Walking&
 
 
 const MSEdge*
-MSPModel_NonInteracting::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {
-    return myPerson->getNextEdgePtr();
+MSPModel_NonInteracting::PState::getNextEdge() const {
+    return 0;
 }
 
 /****************************************************************************/

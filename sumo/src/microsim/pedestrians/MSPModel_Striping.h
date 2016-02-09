@@ -235,7 +235,7 @@ protected:
         SUMOTime getWaitingTime(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const;
         SUMOReal getSpeed(const MSPerson::MSPersonStage_Walking& stage) const;
         const MSEdge* getEdge() const;
-        const MSEdge* getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const;
+        const MSEdge* getNextEdge() const;
         /// @}
 
         PState(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, const MSLane* lane);
