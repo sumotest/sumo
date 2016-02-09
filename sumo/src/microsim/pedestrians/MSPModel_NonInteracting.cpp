@@ -75,6 +75,7 @@ MSPModel_NonInteracting::~MSPModel_NonInteracting() {
 PedestrianState*
 MSPModel_NonInteracting::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
     PState* state = new PState(person);
+    myRouteStep = stage.getRoute().begin();
 
     const SUMOTime firstEdgeDuration = state->computeWalkingTime(0, *stage, now);
     myNet->getBeginOfTimestepEvents()->addEvent(new MoveToNextEdge(person, *stage),
@@ -94,9 +95,11 @@ MSPModel_NonInteracting::blockedAtDist(const MSLane*, SUMOReal, std::vector<cons
 SUMOTime
 MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
     PState* state = dynamic_cast<PState*>(myParent.getPedestrianState());
-    const MSEdge* old = myParent.getEdge();
-    const bool arrived = myParent.moveToNextEdge(myPerson, currentTime);
-    if (arrived) {
+    const MSEdge* oldEdge = *myRouteStep;
+    myRouteStep++;
+    const MSEdge* newEdge = (myRouteStep == myParent.getRoute().end() ? 0 : *myRouteStep);
+    myParent.moveToNextEdge(myPerson, currentTime, oldEdge, newEdge);
+    if (newEdge == 0) {
         // walk finished. clean up state
         delete state;
         //if DEBUGCOND(myPerson->getID()) std::cout << SIMTIME << " " << myPerson->getID() << " arrived on " << old->getID() << "\n";
@@ -181,6 +184,15 @@ MSPModel_NonInteracting::PState::getSpeed(const MSPerson::MSPersonStage_Walking&
 const MSEdge*
 MSPModel_NonInteracting::PState::getNextEdge() const {
     return 0;
+}
+
+
+const MSEdge* getRouteEdge() const {
+    return *myRouteStep;
+}
+
+const MSEdge* getNextRouteEdge() const {
+    return myRouteStep == myRoute.end() - 1 ? 0 : *(myRouteStep + 1);
 }
 
 /****************************************************************************/

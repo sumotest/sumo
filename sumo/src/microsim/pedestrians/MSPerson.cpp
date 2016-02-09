@@ -188,11 +188,12 @@ MSPerson::MSPersonStage_Walking::endEventOutput(const MSTransportable& p, SUMOTi
 
 
 bool
-MSPerson::MSPersonStage_Walking::moveToNextEdge(MSPerson* person, SUMOTime currentTime, MSEdge* nextInternal) {
-    ((MSEdge*)getEdge())->removePerson(person);
+MSPerson::MSPersonStage_Walking::moveToNextEdge(MSPerson* person, SUMOTime currentTime, MSEdge* oldEdge, MSEdge* newEdge) {
+    assert(oldEdge != 0);
+    oldEdge->removePerson(person);
     //std::cout << SIMTIME << " moveToNextEdge person=" << person->getID() << "\n";
 
-    if (person->getEdge() == *(myRoute.end() - 1) ) {
+    if (newEdge == 0) {
         MSNet::getInstance()->getPersonControl().unsetWalking(person);
         if (myDestinationStop != 0) {
             myDestinationStop->addTransportable(person);
@@ -201,16 +202,8 @@ MSPerson::MSPersonStage_Walking::moveToNextEdge(MSPerson* person, SUMOTime curre
             MSNet::getInstance()->getPersonControl().erase(person);
         }
         //std::cout << " end walk. myRouteStep=" << (*myRouteStep)->getID() << "\n";
-        return true;
     } else {
-        if (nextInternal == 0) {
-//            ++myRouteStep;
-            myCurrentInternalEdge = 0;
-        } else {
-            myCurrentInternalEdge = nextInternal;
-        }
-        ((MSEdge*) getEdge())->addPerson(person);
-        return false;
+        newEdge->addPerson(person);
     }
 }
 

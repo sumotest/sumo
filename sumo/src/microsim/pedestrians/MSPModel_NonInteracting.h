@@ -104,11 +104,11 @@ private:
 
 
     private:
+        ConstMSEdgeVector::iterator myRouteStep;
         SUMOTime myLastEntryTime;
         SUMOTime myCurrentDuration;
         SUMOReal myCurrentBeginPos;
         SUMOReal myCurrentEndPos;
-        MSEdge * myCurrentEdge;
         MSPerson * myPerson;
     };
 
