@@ -53,6 +53,10 @@ GNEAdditionalFrame.h GNEAdditionalFrame.cpp \
 GNEChargingStation.h GNEChargingStation.cpp \
 GNEStoppingPlace.h GNEStoppingPlace.cpp \
 GNEBusStop.h GNEBusStop.cpp \
+GNEDetector.h GNEDetector.cpp \
+GNEDetectorE1.h GNEDetectorE1.cpp \
+GNEDetectorE2.h GNEDetectorE2.cpp \
+GNEDetectorE3.h GNEDetectorE3.cpp \
 GNEReferenceCounter.h \
 GNEEvent_NetworkLoaded.h
 
