@@ -107,6 +107,9 @@ MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
     }
 }
 
+const MSEdge* MSPModel_NonInteracting::PState::getEdge() const {
+	return myCurrentEdge;
+}
 
 SUMOTime
 MSPModel_NonInteracting::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {

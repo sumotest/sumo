@@ -31,7 +31,10 @@
 //    return 0;
 //}
 
+DummyJPS::DummyJPS() { }
 
+
+DummyJPS::~DummyJPS() { }
 
 ::grpc::Status DummyJPS::simulatedTimeInerval(::grpc::ServerContext *context,
                                               const ::hybridsim::LeftClosedRightOpenTimeInterval *request,
@@ -51,7 +54,7 @@
 ::grpc::Status DummyJPS::transferAgent(::grpc::ServerContext *context, const ::hybridsim::Agent *request,
                                        ::hybridsim::Boolean *response) {
 
-    DummyAgent * a = new DummyAgent(request->x(),request->y());
+    DummyAgent * a = new DummyAgent(request->x(),request->y(),request->id());
 
     agents[request->id()] = a;
 
@@ -67,12 +70,10 @@
     std::map<const std::string,DummyAgent*>::iterator it = agents.begin();
 
     while(it != agents.end()) {
-      // (*it).second->proceed();
+        // (*it).second->proceed();
         Trajectory * tr = response->add_trajectories();
         tr->set_x((*it).second->getX());
         tr->set_y((*it).second->getY());
-
-
         it++;
     }
 
@@ -82,7 +83,17 @@
 
 ::grpc::Status DummyJPS::retrieveAgents(::grpc::ServerContext *context, const ::hybridsim::Empty *request,
                                         ::hybridsim::Agents *response) {
+    std::map<const std::string,DummyAgent*>::iterator it = agents.begin();
+    while(it != agents.end()) {
+        if ((*it).second->getX() > 30.) {
+            Agent * agent  = response->add_agents();
+            agent->set_id((*it).second->getID());
+            it = agents.erase(it);
+        } else {
+            it++;
+        }
 
+    }
 
     return Status::OK;
 }

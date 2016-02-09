@@ -122,7 +122,7 @@ MSPModel_Striping::~MSPModel_Striping() {
 PedestrianState*
 MSPModel_Striping::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime) {
     assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
-    const MSLane* lane = getSidewalk(person->getEdge());
+    const MSLane* lane = getSidewalk(*stage->getRoute().begin());
     PState* ped = new PState(person, stage, lane);
     myActiveLanes[lane].push_back(ped);
     myNumActivePedestrians++;
@@ -1265,6 +1265,10 @@ MSPModel_Striping::PState::distanceTo(const Obstacle& obs, const bool includeMin
     return myDir * dist;
 }
 
+const MSEdge* MSPModel_Striping::PState::getEdge() const {
+	return &(myLane->getEdge());
+}
+
 
 void
 MSPModel_Striping::PState::mergeObstacles(Obstacles& into, const Obstacles& obs2) {
@@ -1306,4 +1310,5 @@ MSPModel_Striping::MovePedestrians::execute(SUMOTime currentTime) {
 #endif
     return DELTA_T;
 }
+
 

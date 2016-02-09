@@ -39,9 +39,13 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 	 MSPRCPState * state = new MSPRCPState(person);
 	 if (buffers.find(person->getEdge()->getID()) == buffers.end()) {
-		 std::queue<MSPRCPState*> * buffer;
-		 buffer->push(state);
-		 buffers[person->getEdge()->getID()] = buffer;
+		 std::queue<MSPRCPState*> buffer;
+		 buffer.push(state);
+
+		 const MSEdge* edge = person->getEdge();
+		 std::string str =  edge->getID();
+		 std::cout << "current edge = " << str << std::endl;
+		 buffers[person->getEdge()->getID()] = &buffer;
 	 } else {
 		 std::queue<MSPRCPState*> * buffer = buffers[person->getEdge()->getID()];
 		 buffer->push(state);

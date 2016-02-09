@@ -16,6 +16,9 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
+#ifndef MSGRPC_CLIENT_H
+#define MSGRPC_CLIENT_H
+
 #include <memory>
 #include <iostream>
 #include <grpc++/grpc++.h>
@@ -63,3 +66,4 @@ private:
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
 
 };
+#endif /*MSGRPC_CLIENT_H*/

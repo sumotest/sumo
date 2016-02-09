@@ -37,6 +37,7 @@
 #include "MSPModel_Striping.h"
 #include "MSPModel_NonInteracting.h"
 #include "MSPModel_NonInteracting_GRPC.h"
+#include "MSPModelRemoteControlled.h"
 #include "MSPModel.h"
 
 
@@ -74,7 +75,9 @@ MSPModel::getModel() {
             myModel = new MSPModel_NonInteracting(oc, net);
         } else if (model == "nonInteracting_grpc") {
             myModel = new MSPModel_NonInteracting_GRPC(oc,net);
-        } else {
+        } else if (model == "remote"){
+        	myModel = new MSPModelRemoteControlled(oc, net);
+        }else {
             throw ProcessError("Unknown pedestrian model '" + model + "'");
         }
     }

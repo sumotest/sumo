@@ -161,6 +161,10 @@ MSPModel_NonInteracting_GRPC::PState::getSpeed(const MSPerson::MSPersonStage_Wal
 	return r;
 }
 
+const MSEdge* MSPModel_NonInteracting_GRPC::PState::getEdge() const {
+	MSEdge * e;
+	return e;
+}
 
 const MSEdge*
 MSPModel_NonInteracting_GRPC::PState::getNextEdge(const MSPerson::MSPersonStage_Walking& stage) const {

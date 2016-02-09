@@ -3,7 +3,7 @@
 #include <grpc++/grpc++.h>
 #include <math.h>
 #include "noninteracting.grpc.pb.h"
-
+#include "DummyJPS.h"
 
 
 #define UNDF 0
@@ -99,8 +99,9 @@ class PStateImpl final : public PBPState::Service {
 int main(int argc, char** argv) {
     std::cout << "Hello, World!" << std::endl;
     std::string server_address("0.0.0.0:50051");
-    PStateImpl service;
+//    PStateImpl service;
 
+    DummyJPS  service;
 
     ServerBuilder builder;
 

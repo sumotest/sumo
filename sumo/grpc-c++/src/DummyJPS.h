@@ -21,10 +21,12 @@ using hybridsim::LeftClosedRightOpenTimeInterval;
 using hybridsim::Trajectories;
 using hybridsim::Trajectory;
 
-class DummyJPS : public HybridSimulation::Service {
+class DummyJPS final : public HybridSimulation::Service {
 
 public:
     DummyJPS();
+
+
 
     virtual ~DummyJPS();
 
@@ -41,25 +43,29 @@ public:
     virtual ::grpc::Status retrieveAgents(::grpc::ServerContext *context, const ::hybridsim::Empty *request,
                                           ::hybridsim::Agents *response) override;
 
-private:
-    std::map<const std::string,DummyAgent*> agents;
+
 
 
 
     class DummyAgent {
     public:
 
-        DummyAgent(double x, double y): x(x),y(y){};
+        DummyAgent(double x, double y, const std::string id): id(id),x(x),y(y){};
 
         void proceed(){ x+= 1; y+= 1;}
 
         double getX(){return x;}
         double getY(){return y;}
+        const std::string getID(){return id;}
 
     private:
         double x;
         double y;
+        const std::string id;
     };
+
+private:
+    std::map<const std::string,DummyAgent*> agents;
 };
 
 
