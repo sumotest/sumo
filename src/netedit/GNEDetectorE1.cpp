@@ -209,9 +209,9 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             drawLockIcon();
         **/
     }
-    else
-        // Pop draw matrix
-        glPopMatrix();
+   
+    // Pop draw matrix
+    glPopMatrix();
 
     // Pop name
     glPopName();
