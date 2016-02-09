@@ -51,14 +51,17 @@ public:
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of the detector on the lane
+     * @param[in] length The length of the detector in meters.
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
-     
-     * @param[in] splitByType If set, the collected values will be additionally reported on per-vehicle type base.
-     
+     * @param[in] cont attribute to enable or disable splitByType
+     * @param[in] timeThreshold The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
+     * @param[in] speedThreshold The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
+     * @param[in] speedThreshold The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
      * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
      */
-    GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType);
+    GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
+                  bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold);
 
     /// @brief Destructor
     ~GNEDetectorE2();
@@ -67,11 +70,6 @@ public:
      * @param[in] device device in which write parameters of additional element
      */
     void writeAdditional(OutputDevice& device);
-
-    /** @brief get split by type
-     * @return true if split by type is enabled, false in other case
-     */
-    bool getSplitByType() const;
 
     /// @name inherited from GUIGlObject
     //@{
@@ -131,7 +129,16 @@ public:
 
 protected:
     /// @brief attribute to enable or disable splitByType
-    bool mySplitByType;
+    bool myCont;
+
+    /// @brief The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
+    int myTimeThreshold;
+    
+    /// @brief 	The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
+    SUMOReal mySpeedThreshold;
+    
+    /// @brief 	The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
+    SUMOReal myJamThreshold;
 
 private:
     /// @brief variable to save detectorE2 icon

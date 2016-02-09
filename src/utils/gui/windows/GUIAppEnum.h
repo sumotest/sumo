@@ -460,6 +460,10 @@ enum {
     MID_GNE_ADDROW,                     // PABLO #1916
     /** netEdit remove row */           // PABLO #1916
     MID_GNE_REMOVEROW,                  // PABLO #1916
+    /** netEdit add set */              // PABLO #1916
+    MID_GNE_ADDSET,                     // PABLO #1916
+    /** netEdit remove set */           // PABLO #1916
+    MID_GNE_REMOVESET,                  // PABLO #1916
     /** open edit dialog */
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
     /** split an edge */

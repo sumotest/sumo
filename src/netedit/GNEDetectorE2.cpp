@@ -69,9 +69,13 @@ bool GNEDetectorE2::detectorE2Initialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType) :
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E2DETECTOR, pos, 1 /* provisioanl **/, freq, filename),
-    mySplitByType(splitByType) {
+GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
+                             bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold) : 
+    GNEDetector(id, lane, viewNet, SUMO_TAG_E2DETECTOR, pos, length, freq, filename),
+    myCont(cont),
+    myTimeThreshold(timeThreshold),
+    mySpeedThreshold(speedThreshold),
+    myJamThreshold(jamThreshold) {
     // Set colors of detector
     setColors();
 }
@@ -93,12 +97,6 @@ GNEDetectorE2::writeAdditional(OutputDevice& device) {
     // Rest of parameters
     // Close tag
     device.closeTag();
-}
-
-
-bool 
-GNEDetectorE2::getSplitByType() const {
-    return mySplitByType;
 }
 
 
@@ -224,8 +222,14 @@ GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
             return toString(myFreq);
         case SUMO_ATTR_FILE:
             return myFilename;
-        ///case SUMO_ATTR_LINES:
-        
+        case SUMO_ATTR_CONT:
+            return (myCont? "true" : "false");
+        case SUMO_ATTR_HALTING_TIME_THRESHOLD:
+            return toString(myTimeThreshold);
+        case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
+            return toString(mySpeedThreshold);
+        case SUMO_ATTR_JAM_DIST_THRESHOLD:
+            return toString(myJamThreshold);
         default:
             throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
     }
@@ -244,7 +248,10 @@ if (value == getAttribute(key)) {
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_FILE:
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
+        case SUMO_ATTR_CONT:
+        case SUMO_ATTR_HALTING_TIME_THRESHOLD:
+        case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
+        case SUMO_ATTR_JAM_DIST_THRESHOLD:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -267,7 +274,14 @@ GNEDetectorE2::isValid(SumoXMLAttr key, const std::string& value) {
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
             return canParse<std::string>(value);
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
+        case SUMO_ATTR_CONT:
+            return canParse<bool>(value);
+        case SUMO_ATTR_HALTING_TIME_THRESHOLD:
+            return canParse<int>(value);
+        case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
+            return canParse<SUMOReal>(value);
+        case SUMO_ATTR_JAM_DIST_THRESHOLD:
+            return canParse<SUMOReal>(value);
         default:
             throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
     }
@@ -294,7 +308,18 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_FILE:
             myFilename = parse<std::string>(value);
             break;
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
+        case SUMO_ATTR_CONT:
+            myCont = parse<bool>(value);
+            break;
+        case SUMO_ATTR_HALTING_TIME_THRESHOLD:
+            myTimeThreshold = parse<int>(value);
+            break;
+        case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
+            mySpeedThreshold = parse<SUMOReal>(value);
+            break;
+        case SUMO_ATTR_JAM_DIST_THRESHOLD:
+            myJamThreshold = parse<SUMOReal>(value);
+            break;
         default:
             throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
     }

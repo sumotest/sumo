@@ -66,11 +66,6 @@ public:
      */
     void writeAdditional(OutputDevice& device);
 
-    /** @brief get split by type
-     * @return true if split by type is enabled, false in other case
-     */
-    bool getSplitByType() const;
-
     /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns an own popup-menu

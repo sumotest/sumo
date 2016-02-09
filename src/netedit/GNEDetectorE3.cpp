@@ -62,27 +62,37 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEDetectorE3::detectorE3GlID = 0;
-bool GNEDetectorE3::detectorE3Initialized = false;
+GUIGlID GNEDetectorE3::GNEDetectorE3EntryExit::detectorE3GlID = 0;
+bool GNEDetectorE3::GNEDetectorE3EntryExit::detectorE3Initialized = false;
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE3::GNEDetectorE3(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType) :
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E3DETECTOR, pos, 1 /** provisional **/, freq, filename),
-    mySplitByType(splitByType) {
+
+GNEDetectorE3::GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos) :
+    GNEDetector(id, lane, myViewNet, tag, pos, 1, parent->myFreq, parent->myFilename) {
     // Set colors of detector
     setColors();
 }
 
 
-GNEDetectorE3::~GNEDetectorE3() {
+GNEDetectorE3::GNEDetectorE3EntryExit::~GNEDetectorE3EntryExit() {}
+
+
+GNELane& 
+GNEDetectorE3::GNEDetectorE3EntryExit::getLane() const {
+    return myLane;
+}
+
+
+SUMOReal GNEDetectorE3::GNEDetectorE3EntryExit::getPos() const {
+    return myPos;
 }
 
 
 void 
-GNEDetectorE3::writeAdditional(OutputDevice& device) {
+GNEDetectorE3::GNEDetectorE3EntryExit::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
@@ -96,14 +106,8 @@ GNEDetectorE3::writeAdditional(OutputDevice& device) {
 }
 
 
-bool 
-GNEDetectorE3::getSplitByType() const {
-    return mySplitByType;
-}
-
-
 GUIGLObjectPopupMenu* 
-GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+GNEDetectorE3::GNEDetectorE3EntryExit::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
@@ -123,7 +127,7 @@ GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 
 
 GUIParameterTableWindow* 
-GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+GNEDetectorE3::GNEDetectorE3EntryExit::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     /* not supported yet
@@ -137,14 +141,14 @@ GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 
 
 void 
-GNEDetectorE3::drawGL(const GUIVisualizationSettings& s) const {
+GNEDetectorE3::GNEDetectorE3EntryExit::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
 void 
-GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
+GNEDetectorE3::GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
     
@@ -212,7 +216,7 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
 
 std::string 
-GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
+GNEDetectorE3::GNEDetectorE3EntryExit::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
@@ -224,8 +228,6 @@ GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
             return toString(myFreq);
         case SUMO_ATTR_FILE:
             return myFilename;
-        ///case SUMO_ATTR_LINES:
-        
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
@@ -233,7 +235,7 @@ GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
 
 
 void 
-GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+GNEDetectorE3::GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
 if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
@@ -244,7 +246,6 @@ if (value == getAttribute(key)) {
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_FILE:
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -256,7 +257,7 @@ if (value == getAttribute(key)) {
 
 
 bool 
-GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
+GNEDetectorE3::GNEDetectorE3EntryExit::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
@@ -267,18 +268,13 @@ GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
             return canParse<std::string>(value);
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
 }
 
-// ===========================================================================
-// private
-// ===========================================================================
-
 void
-GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
+GNEDetectorE3::GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
@@ -294,7 +290,6 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_FILE:
             myFilename = parse<std::string>(value);
             break;
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
@@ -302,12 +297,47 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
 
 
 void
-GNEDetectorE3::setColors() {
+GNEDetectorE3::GNEDetectorE3EntryExit::setColors() {
     // Color E1_BASE
     myRGBColors.push_back(RGBColor(0, 204, 0, 255));
     // Color E1_BASE_SELECTED
     myRGBColors.push_back(RGBColor(125, 204, 0, 255));
 }
 
+
+GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, SUMOReal freq, const std::string& filename) :
+    myId(id),
+    myViewNet(viewNet),
+    myFreq(freq),
+    myFilename(filename),
+    myCounterId(0) {
+}
+
+
+GNEDetectorE3::~GNEDetectorE3() {
+}
+
+
+void 
+GNEDetectorE3::addEntry(GNELane& lane, SUMOReal pos) {
+    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_ENTRY, lane, pos));
+}
+
+
+void 
+GNEDetectorE3::removeEntry(GNELane& lane, SUMOReal pos) {
+    
+}
+
+
+void 
+GNEDetectorE3::addExit(GNELane& lane, SUMOReal pos) {
+    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_EXIT, lane, pos));
+}
+
+
+void 
+GNEDetectorE3::removeExit(GNELane& lane, SUMOReal pos) {
+}
 
 /****************************************************************************/

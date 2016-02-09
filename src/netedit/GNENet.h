@@ -55,6 +55,7 @@
 #include <utils/common/IDSupplier.h>
 #include <utils/options/OptionsCont.h>
 #include <utils/iodevices/OutputDevice.h>
+#include "GNEDetectorE3.h"
 
 
 // ===========================================================================
@@ -71,7 +72,6 @@ class GNEBusStop;
 class GNEChargingStation;
 class GNEDetectorE1;
 class GNEDetectorE2;
-class GNEDetectorE3;
 
 // ===========================================================================
 // class definitions
@@ -468,17 +468,28 @@ public:
      */                                                         // PABLO #1916
     GNEDetectorE3* getdetectorE3(const std::string& id) const;  // PABLO #1916
 
-    /** @brief Returns the multi entry exit detector E3 close to the given position // PABLO #1916
-     * @param[in] lane the lane of the detector E3 to return.                       // PABLO #1916
-     * @param[in] pos the position of the detector E3 to return.                    // PABLO #1916
-     * @return The detector E3 id on the location, or "" if don't exists            // PABLO #1916
-     */                                                                             // PABLO #1916
-    std::string getDetectorE3ID(const GNELane* lane, const SUMOReal pos) const;     // PABLO #1916
-
     /** @brief Returns the number of multi entry exit detectors E3  of the net  // PABLO #1916
      * @return Number of E3 detectors of the net                                // PABLO #1916
      */                                                                         // PABLO #1916
     int getNumberOfDetectorE3();                                                // PABLO #1916
+
+    /** @brief Returns the named detector E3 multi entry exit                                   // PABLO #1916
+     * @param[in] id The id of the detector E3 Entry Exit to return.                            // PABLO #1916
+     * @return The named detector E3 Entry Exit, or 0 if don't exist                            // PABLO #1916
+     */                                                                                         // PABLO #1916
+    GNEDetectorE3::GNEDetectorE3EntryExit* getDetectorE3EntryExit(const std::string& id) const; // PABLO #1916
+
+    /** @brief Returns the detector E3 entry exit close to the given position               // PABLO #1916
+     * @param[in] lane the lane of the detector E3 entry exit to return.                    // PABLO #1916
+     * @param[in] pos the position of the detector E3 entry exit to return.                 // PABLO #1916
+     * @return The detector E3 entry exit id on the location, or "" if don't exists         // PABLO #1916
+     */                                                                                     // PABLO #1916
+    std::string getDetectorE3EntryExitID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
+
+    /** @brief Returns the number of detectors E3 entry exit  of the net    // PABLO #1916
+     * @return Number of detectors E3 entry exit of the net                 // PABLO #1916
+     */                                                                     // PABLO #1916
+    int getNumberOfDetectorE3EntryExit();                                   // PABLO #1916
 
 private:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)
@@ -495,6 +506,7 @@ private:
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
     typedef std::map<std::string, GNEAdditional*> GNEAdditionals;   // PABLO #1916
+    typedef std::map<std::string, GNEDetectorE3*> GNEDetectorsE3;   // PABLO #1916
     // @}
 
     /// @brief map with the name and pointer to edges of net
@@ -505,6 +517,9 @@ private:
 
     /// @brief map with the name and pointer to additional elements of net  // PABLO #1916
     GNEAdditionals myAdditionals;                                           // PABLO #1916
+
+    /// @brief map with the Multy Entry Exit Detectors E3   // PABLO #1916
+    GNEDetectorsE3 myDetectorsE3;                           // PABLO #1916
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{

@@ -96,12 +96,6 @@ GNEDetectorE1::writeAdditional(OutputDevice& device) {
 }
 
 
-bool 
-GNEDetectorE1::getSplitByType() const {
-    return mySplitByType;
-}
-
-
 GUIGLObjectPopupMenu* 
 GNEDetectorE1::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
@@ -234,7 +228,8 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
             return toString(myFreq);
         case SUMO_ATTR_FILE:
             return myFilename;
-        ///case SUMO_ATTR_LINES:
+        case SUMO_ATTR_SPLIT_VTYPE:
+            return (mySplitByType? "true" : "false");
         
         default:
             throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
@@ -254,7 +249,7 @@ if (value == getAttribute(key)) {
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_FILE:
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
+        case SUMO_ATTR_SPLIT_VTYPE:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -277,7 +272,8 @@ GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
             return canParse<std::string>(value);
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
+        case SUMO_ATTR_SPLIT_VTYPE:
+            return canParse<bool>(value);
         default:
             throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
     }
@@ -304,7 +300,9 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_FILE:
             myFilename = parse<std::string>(value);
             break;
-        /// case SUMO_ATTR_FILE (RESTO DE ATRIBUTOS):
+        case SUMO_ATTR_SPLIT_VTYPE:
+            mySplitByType = parse<bool>(value);
+            break;
         default:
             throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
     }

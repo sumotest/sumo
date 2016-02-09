@@ -63,9 +63,9 @@ public:
     enum additionalType {
         GNE_ADDITIONAL_BUSSTOP,
         GNE_ADDITIONAL_CHARGINGSTATION,
-        GNE_ADDITIONAL_E1,                  // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_E2,                  // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_E3,                  // NOT YET IMPLEMENTED
+        GNE_ADDITIONAL_E1,
+        GNE_ADDITIONAL_E2,
+        GNE_ADDITIONAL_E3,
         GNE_ADDITIONAL_REROUTERS,           // NOT YET IMPLEMENTED
         GNE_ADDITIONAL_CALIBRATORS,         // NOT YET IMPLEMENTED
         GNE_ADDITIONAL_VARIABLESPEEDSIGNS   // NOT YET IMPLEMENTED
@@ -81,7 +81,8 @@ public:
     // ===========================================================================
     // class additionalParameter
     // ===========================================================================
-    class additionalParameter : public FXHorizontalFrame{
+
+    class additionalParameter : public FXMatrix{
 
     public:
         /// @brief constructor
@@ -116,20 +117,20 @@ public:
         FXMenuCheck *myMenuCheck;
     };
 
+    // ===========================================================================
+    // class additionalParameterList
+    // ===========================================================================
 
-    // ===========================================================================
-    // class AdditionalParameterList
-    // ===========================================================================
-    class AdditionalParameterList : public FXHorizontalFrame {
+    class additionalParameterList : public FXMatrix {
         // FOX-declaration
-        FXDECLARE(GNEAdditionalFrame::AdditionalParameterList)
+        FXDECLARE(GNEAdditionalFrame::additionalParameterList)
 
     public:
         /// @brief constructor
-        AdditionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList = 10);
+        additionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList = 10);
 
         /// @brief destructor
-        ~AdditionalParameterList();
+        ~additionalParameterList();
 
         /// @brief show name and value of parameters of type textField
         void showListParameter(const std::string& name, std::vector<std::string> value);
@@ -140,21 +141,24 @@ public:
         /// @brief return the value of the FXTextField 
         std::vector<std::string> getVectorOfTextValues();
 
+        /// @name FOX-callbacks
+        /// @{
         /// @brief add a new row int the list
         long onCmdAddRow(FXObject*, FXSelector, void*);
 
         /// @brief add a new row int the list
         long onCmdRemoveRow(FXObject*, FXSelector, void*);
+        /// @}
 
     protected:
         /// @brief FOX needs this
-        AdditionalParameterList() {}
+        additionalParameterList() {}
 
     private:        
-        /// @brief lael with the name of the parameter
-        FXLabel *myLabel;
+        /// @brief vector with with the name of every parameter
+        std::vector<FXLabel*> myLabels;
         
-        /// @brief textField to modify the value of parameter
+        /// @brief vector textField to modify the value of parameter
         std::vector<FXTextField*> myTextFields;
 
         /// @brief Button to increase the number of textFields
@@ -170,8 +174,103 @@ public:
         int myMaxNumberOfValuesInParameterList;
     };
 
+    // ===========================================================================
+    // class editorParameter
+    // ===========================================================================
+
+    class editorParameter : public FXGroupBox {
+        // FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::editorParameter)
+
+    public:
+        /// @brief constructor
+        editorParameter(FXComposite *parent, FXObject* tgt);
+
+        /// @brief destructor
+        ~editorParameter();
+
+        /// @brief get actual reference point
+        additionalReferencePoint getActualReferencePoint();
+
+        /// @brief check if block is enabled
+        bool isBlockEnabled();
+
+        /// @brief check if force position is enabled
+        bool isForcePositionEnabled();
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief Called when the user enters another reference point
+        long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        editorParameter() {}
+
+    private:
+        /// @brief the box for the reference point match Box
+        FXGroupBox* myReferencePointBox;
+
+        /// @brief match box with the list of reference points
+        FXComboBox* myReferencePointMatchBox;
+
+        /// @brief actual additional reference point selected in the match Box
+        additionalReferencePoint myActualAdditionalReferencePoint;
+
+        /// @brief checkBox for the option "force position"
+        FXMenuCheck* myCheckForcePosition;
+
+        /// @brief checkBox for blocking movement
+        FXMenuCheck* myCheckBlock;
+    };
+
+    // ===========================================================================
+    // class additionalSet
+    // ===========================================================================
+
+    class additionalSet : public FXGroupBox {
+        // FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::additionalSet)
+
+    public:
+        /// @brief constructor
+        additionalSet(FXComposite *parent, FXObject* tgt);
+
+        /// @brief destructor
+        ~additionalSet();
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief add a new row int the list
+        long onCmdAddSet(FXObject*, FXSelector, void*);
+
+        /// @brief add a new row int the list
+        long onCmdRemoveSet(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        additionalSet() {}
+
+    private:        
+        /// @brief 
+        FXList *myList;
+        
+        /// @brief textField to modify the value of parameter
+        std::vector<FXTextField*> myTextFields;
+
+        /// @brief Button to increase the number of textFields
+        FXButton *addSet;
+
+        /// @brief Button to decrease the number of textFields
+        FXButton *removeSet;
+    };
+
     /** @brief Constructor
      * @param[in] parent The parent window
+     * @param[in] updateTarget view Net of the netEdit
+     * @param[in] undoList pointer to undoList
      */
     GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
 
@@ -189,22 +288,13 @@ public:
      */
     void removeAdditional(GNEAdditional *additional);
 
-    /** @brief get header font
-     * @return font of the header
-     */
+    ///@brief return font of the header
     FXFont* getHeaderFont();
 
     /// @name FOX-callbacks
     /// @{
-    /** @brief Called when the user select another additional Type
-     * set te currently additional type
-     */
+    /// @brief Called when the user select another additional Type
     long onCmdSelectAdditional(FXObject*, FXSelector, void*);
-
-    /** @brief Called when the user enters another reference point
-     * set the currently reference point
-     */
-    long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
     /// @}
 
     /// @brief show additional frame
@@ -236,39 +326,30 @@ private:
 
     /// @brief groupBox for Match Box of additionals
     FXGroupBox* groupBoxForMyAdditionalMatchBox;
-
-    /// @briefgroupBox for parameters 
-    FXGroupBox* groupBoxForParameters;
-
-    /// @brief the box for the reference point match Box
-    FXGroupBox* myReferencePointBox;
-
+    
     /// @brief combo box with the list of additional elements
     FXComboBox* myAdditionalMatchBox;
-
-    /// @brief match box with the list of reference points
-    FXComboBox* myReferencePointMatchBox;
-
-    /// @brief checkBox for the option "force position"
-    FXMenuCheck* myCheckForcePosition;
-
-    /// @brief checkBox for blocking movement
-    FXMenuCheck* myCheckBlock;
-
-    /// @brief the window to inform 
-    GNEViewNet* myUpdateTarget;
+    
+    /// @briefgroupBox for parameters 
+    FXGroupBox* groupBoxForParameters;
 
     /// @brief vector with the additional parameters
     std::vector<additionalParameter*> myVectorOfAdditionalParameter;
     
     /// @brief vector with the additional parameters of type list
-    std::vector<AdditionalParameterList*> myVectorOfAdditionalParameterList;
+    std::vector<additionalParameterList*> myVectorOfadditionalParameterList;
+
+    /// @brief editor parameter 
+    GNEAdditionalFrame::editorParameter *myEditorParameter;
+
+    /// @brief additional Set
+    GNEAdditionalFrame::additionalSet *myAdditionalSet;
+
+    /// @brief the window to inform 
+    GNEViewNet* myUpdateTarget;
 
     /// @brief actual additional type selected in the match Box
     additionalType myActualAdditionalType;
-
-    /// @brief actual additional reference point selected in the match Box
-    additionalReferencePoint myActualAdditionalReferencePoint;
 
     /// @brief Width of frame
     static const int WIDTH;
