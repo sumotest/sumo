@@ -74,8 +74,8 @@ MSPModel_NonInteracting::~MSPModel_NonInteracting() {
 
 PedestrianState*
 MSPModel_NonInteracting::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
-    PState* state = new PState(person);
-    myRouteStep = stage.getRoute().begin();
+    PState* state = new PState(person,stage);
+
 
     const SUMOTime firstEdgeDuration = state->computeWalkingTime(0, *stage, now);
     myNet->getBeginOfTimestepEvents()->addEvent(new MoveToNextEdge(person, *stage),
@@ -95,10 +95,11 @@ MSPModel_NonInteracting::blockedAtDist(const MSLane*, SUMOReal, std::vector<cons
 SUMOTime
 MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
     PState* state = dynamic_cast<PState*>(myParent.getPedestrianState());
-    const MSEdge* oldEdge = *myRouteStep;
-    myRouteStep++;
-    const MSEdge* newEdge = (myRouteStep == myParent.getRoute().end() ? 0 : *myRouteStep);
-    myParent.moveToNextEdge(myPerson, currentTime, oldEdge, newEdge);
+
+    const MSEdge* oldEdge = state->getEdge();
+
+    const MSEdge* newEdge = state->incrEdge();
+    myParent.moveToNextEdge(state->getPerson(),currentTime,oldEdge,newEdge);
     if (newEdge == 0) {
         // walk finished. clean up state
         delete state;
@@ -106,12 +107,32 @@ MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
         return 0;
     } else {
         //if DEBUGCOND(myPerson->getID()) std::cout << SIMTIME << " " << myPerson->getID() << " moves to " << myParent.getEdge()->getID() << "\n";
-        return state->computeWalkingTime(old, myParent, currentTime);
+        return state->computeWalkingTime(oldEdge, myParent, currentTime);
     }
 }
 
+
+
+MSPModel_NonInteracting::PState::PState(MSPerson* person,
+		MSPerson::MSPersonStage_Walking* stage): myPerson(person), myStage(stage) {
+	myRouteStep = myStage->getRoute().begin();
+}
+
 const MSEdge* MSPModel_NonInteracting::PState::getEdge() const {
-	return myCurrentEdge;
+
+	return *myRouteStep;
+}
+
+MSPerson* MSPModel_NonInteracting::PState::getPerson() {
+	return myPerson;
+}
+
+const MSEdge* MSPModel_NonInteracting::PState::incrEdge() {
+	if (myRouteStep == myStage->getRoute().end()-1) {
+		return 0;
+	}
+	myRouteStep++;
+	return *myRouteStep;
 }
 
 SUMOTime
@@ -183,16 +204,18 @@ MSPModel_NonInteracting::PState::getSpeed(const MSPerson::MSPersonStage_Walking&
 
 const MSEdge*
 MSPModel_NonInteracting::PState::getNextEdge() const {
-    return 0;
+
+	return myRouteStep == myStage->getRoute().end() - 1 ? 0 : *(myRouteStep + 1);
 }
 
 
-const MSEdge* getRouteEdge() const {
-    return *myRouteStep;
-}
+//const MSEdge* getRouteEdge() const {
+//    return *myRouteStep;
+//}
+//
+//const MSEdge* getNextRouteEdge() const {
+//    return myRouteStep == myRoute.end() - 1 ? 0 : *(myRouteStep + 1);
+//}
 
-const MSEdge* getNextRouteEdge() const {
-    return myRouteStep == myRoute.end() - 1 ? 0 : *(myRouteStep + 1);
-}
 
 /****************************************************************************/

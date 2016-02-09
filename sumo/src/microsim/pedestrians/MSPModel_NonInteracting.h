@@ -29,6 +29,7 @@
 #include <config.h>
 #endif
 
+#include <vector>
 #include <string>
 #include <limits>
 #include <utils/common/SUMOTime.h>
@@ -84,7 +85,7 @@ private:
     /// @brief abstract base class for managing callbacks to retrieve various state information from the model
     class PState : public PedestrianState {
     public:
-        PState(MSPerson* person): myPerson(person){};
+        PState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage);
 
 
         /// @brief abstract methods inherited from PedestrianState
@@ -103,14 +104,24 @@ private:
         SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime);
 
 
+       MSPerson * getPerson();
+
+        const MSEdge* incrEdge();
+
+        std::vector<const MSEdge*>::const_iterator getMyRouteStep(){
+        	return myRouteStep;
+        }
+
     private:
-        ConstMSEdgeVector::iterator myRouteStep;
+//        std::vector<const MSEdge*>::iterator myRouteStep;
         SUMOTime myLastEntryTime;
         SUMOTime myCurrentDuration;
         SUMOReal myCurrentBeginPos;
         SUMOReal myCurrentEndPos;
         MSPerson * myPerson;
-    };
+        MSPerson::MSPersonStage_Walking* myStage;
+		std::vector<const MSEdge*>::const_iterator myRouteStep;
+	};
 
 private:
     /// @brief the net to which to issue moveToNextEdge commands

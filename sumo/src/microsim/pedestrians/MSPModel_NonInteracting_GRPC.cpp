@@ -96,8 +96,8 @@ SUMOTime
 MSPModel_NonInteracting_GRPC::MoveToNextEdge::execute(SUMOTime currentTime) {
     PState* state = dynamic_cast<PState*>(myParent.getPedestrianState());
     const MSEdge* old = myParent.getEdge();
-    const bool arrived = myParent.moveToNextEdge(myPerson, currentTime);
-    if (arrived) {
+//    const bool arrived = myParent.moveToNextEdge(myPerson, currentTime);
+    if (true) {
         // walk finished. clean up state
         delete state;
         //if DEBUGCOND(myPerson->getID()) std::cout << SIMTIME << " " << myPerson->getID() << " arrived on " << old->getID() << "\n";

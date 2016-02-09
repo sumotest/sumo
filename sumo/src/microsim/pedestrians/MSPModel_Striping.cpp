@@ -948,7 +948,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
                       << " newDir=" << myDir
                       << "\n";
         }
-        myStage->moveToNextEdge(myPerson, currentTime, normalLane ? 0 : &myLane->getEdge());
+//        myStage->moveToNextEdge(myPerson, currentTime, normalLane ? 0 : &myLane->getEdge());
         if (myLane != 0) {
             assert(myDir != UNDEFINED_DIRECTION);
             myNLI = getNextLane(*this, myLane, oldLane);
@@ -968,7 +968,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
                 } else {
                     // disconnnected route. move to the next edge (arbitrariliy, maintaining current direction)
                     if (OptionsCont::getOptions().getBool("ignore-route-errors")) {
-                        myStage->moveToNextEdge(myPerson, currentTime, 0);
+//                        myStage->moveToNextEdge(myPerson, currentTime, 0);
                         myLane = myNLI.lane;
                         assert(myLane != 0);
                         assert(myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL);
