@@ -125,15 +125,18 @@ MSParkingArea::addLotEntry(SUMOReal x, SUMOReal y, SUMOReal z,
 	mySpaceOccupancies[i].myFGLength = length;
 	mySpaceOccupancies[i].myFGRotation = angle;
 
+	myCapacity = mySpaceOccupancies.size();
+
 	return true;
 }
 
 void
 MSParkingArea::enter(SUMOVehicle* what, SUMOReal beg, SUMOReal end) {
-	unsigned int i = (unsigned int)ceil((end - myBegPos) / getSpaceDim());
-	mySpaceOccupancies[i].vehicle = what;
-    myEndPositions[what] = std::pair<SUMOReal, SUMOReal>(beg, end);
-    computeLastFreePos();
+	if (myLastFreeLot >= 1 && myLastFreeLot <= mySpaceOccupancies.size()) {
+		mySpaceOccupancies[myLastFreeLot].vehicle = what;
+		myEndPositions[what] = std::pair<SUMOReal, SUMOReal>(beg, end);
+		computeLastFreePos();
+	}
 }
 
 
@@ -154,10 +157,12 @@ MSParkingArea::leaveFrom(SUMOVehicle* what) {
 
 void
 MSParkingArea::computeLastFreePos() {
+	myLastFreeLot = 1;
 	myLastFreePos = myBegPos;
     std::map<unsigned int, LotSpaceDefinition >::iterator i;
     for (i = mySpaceOccupancies.begin(); i != mySpaceOccupancies.end(); i++) {
-        if ((*i).second.vehicle == 0) {  
+        if ((*i).second.vehicle == 0) {
+			myLastFreeLot = (*i).first;
 			myLastFreePos = myBegPos + getSpaceDim() * ((*i).first);
 			break;
         }

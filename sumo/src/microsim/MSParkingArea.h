@@ -219,6 +219,9 @@ protected:
      */
     void computeLastFreePos();
 
+	/// @brief Last free lot number (0 no free lot)
+    unsigned int myLastFreeLot;
+
     /// @brief Stop area capacity
     unsigned int myCapacity;
 

@@ -136,7 +136,6 @@ GUIParkingArea::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("end position [m]", false, myEndPos);
 	ret->mkItem("occupancy [#]", true, getOccupancy());
 	ret->mkItem("capacity [#]", false, getCapacity());
-    ret->mkItem("container number [#]", true, new FunctionBinding<GUIParkingArea, unsigned int>(this, &MSStoppingPlace::getTransportableNumber));
     // close building
     ret->closeBuilding();
     return ret;
