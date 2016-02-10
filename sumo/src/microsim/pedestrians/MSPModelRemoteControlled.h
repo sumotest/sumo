@@ -59,6 +59,7 @@ private:
 	std::map<const std::string,std::queue<MSPRCPState*>*> buffers;
 	MSGRPCClient * grpcClient;
 	MSNet* myNet;
+
 };
 
 #endif /* SRC_MICROSIM_PEDESTRIANS_MSPMODELREMOTECONTROLLED_H_ */
