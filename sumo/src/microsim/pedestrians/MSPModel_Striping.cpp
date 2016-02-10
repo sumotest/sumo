@@ -947,7 +947,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 				<< " newDir=" << myDir
 				<< "\n";
 	}
-	myStage->moveToNextEdge(myPerson, currentTime, &oldLane->getEdge(), &myLane->getEdge());
+	myStage->moveToNextEdge(myPerson, currentTime, &oldLane->getEdge(),myLane == 0 ? 0 : &myLane->getEdge());
 	if (myLane != 0) {
 		assert(myDir != UNDEFINED_DIRECTION);
 		myNLI = getNextLane(*this, myLane, oldLane);

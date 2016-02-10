@@ -209,10 +209,15 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pst
 		for (int i = 0; i < rpl.agents_size(); i++) {
 			const hybridsim::Agent a = rpl.agents(i);
 			MSPRCPState* st = pstates[a.id()];
-			st->getPerson()->proceed(net,time);
+//			st->getEdge()->removePerson(pstates[a.id()]->getPerson());
+//			st->getPerson()->proceed(net,time);
+			st->getMyStage()->moveToNextEdge(st->getPerson(),time,st->getEdge(),0);
+//			st->getMyStage()->moveToNextEdge(0,0,0,0);
 			pstates.erase(a.id());
+			delete st;
 		}
 	} else {
 		std::cerr << "something went wrong!" << std::endl;
 	}
 }
+

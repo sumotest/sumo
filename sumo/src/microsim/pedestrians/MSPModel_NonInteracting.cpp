@@ -104,7 +104,7 @@ MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
         // walk finished. clean up state
         delete state;
         //if DEBUGCOND(myPerson->getID()) std::cout << SIMTIME << " " << myPerson->getID() << " arrived on " << old->getID() << "\n";
-        return 0;
+//        return 0;
     } else {
         //if DEBUGCOND(myPerson->getID()) std::cout << SIMTIME << " " << myPerson->getID() << " moves to " << myParent.getEdge()->getID() << "\n";
         return state->computeWalkingTime(oldEdge, myParent, currentTime);

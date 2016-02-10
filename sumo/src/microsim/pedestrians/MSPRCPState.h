@@ -62,13 +62,13 @@ class MSPRCPState : public PedestrianState {
 		SUMOReal myAngle;
 		SUMOReal mySpeed;
 		MSPerson * myPerson;
-		const MSPerson::MSPersonStage_Walking* myStage;
+		MSPerson::MSPersonStage_Walking* myStage;
 		std::vector<const MSEdge*>::const_iterator myRoutePt;
 	public:
-	MSPerson * getPerson() const {
+	MSPerson * getPerson()  {
 		return myPerson;
 	}
-	const MSPerson::MSPersonStage_Walking* getMyStage() const {
+	MSPerson::MSPersonStage_Walking* getMyStage() {
 		return myStage;
 	}
 
