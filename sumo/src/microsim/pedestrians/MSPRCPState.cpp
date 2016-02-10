@@ -20,18 +20,22 @@
 
 #include "MSPRCPState.h"
 
-MSPRCPState::MSPRCPState(MSPerson* person,
-		std::vector<const MSEdge*>::const_iterator rp): myPerson(person), myRoutePt(rp) {
+
+MSPRCPState::MSPRCPState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage) : myPerson(person),
+myStage(stage),
+myPosition(0,0){
+	myRoutePt = stage->getRoute().begin();
 }
 
 const MSEdge* MSPRCPState::getEdge() const {
-	const MSEdge * rt = *myRoutePt;
-	return rt;
+	//	const MSEdge * rt =
+	return *myRoutePt;
 }
 
-
+MSPRCPState::~MSPRCPState() {
+}
 
 const MSEdge* MSPRCPState::getNextEdge() const {
-	const MSEdge * rt = *(myRoutePt+1);
-	return rt;
+	//	const MSEdge * rt =
+	return *(myRoutePt+1);
 }

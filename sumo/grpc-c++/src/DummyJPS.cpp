@@ -72,6 +72,7 @@ DummyJPS::~DummyJPS() { }
     while(it != agents.end()) {
         // (*it).second->proceed();
         Trajectory * tr = response->add_trajectories();
+        tr->set_id((*it).second->getID());
         tr->set_x((*it).second->getX());
         tr->set_y((*it).second->getY());
         it++;
@@ -89,6 +90,7 @@ DummyJPS::~DummyJPS() { }
             Agent * agent  = response->add_agents();
             agent->set_id((*it).second->getID());
             it = agents.erase(it);
+            std::cout << "erasing agent: " << agent->id() << "\n";
         } else {
             it++;
         }

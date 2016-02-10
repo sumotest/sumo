@@ -21,9 +21,11 @@
 
 
 #include <queue>
+#include <vector>
 #include <utils/common/SUMOTime.h>
 #include <utils/common/Command.h>
 #include "MSPModel.h"
+
 // ===========================================================================
 // class definitions
 // ===========================================================================
@@ -33,22 +35,22 @@
  */
 class MSPRCPState : public PedestrianState {
 	public:
-		MSPRCPState(MSPerson * person,std::vector<const MSEdge*>::const_iterator rp);//: myPerson(person), myRoutePt(rp){};
+		MSPRCPState(MSPerson * person,MSPerson::MSPersonStage_Walking* stage);//: myPerson(person), myRoutePt(rp){};
 		virtual ~MSPRCPState();
 
 		/// @brief abstract methods inherited from PedestrianState
 		/// @{
-		SUMOReal getEdgePos(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {return myEdgePos;};
-		Position getPosition(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const {return myPosition;};
-		SUMOReal getAngle(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const{return myAngle;};
-		SUMOTime getWaitingTime(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const{return 0.;};
-		SUMOReal getSpeed(const MSPerson::MSPersonStage_Walking& stage)const{return mySpeed;};
+		inline SUMOReal getEdgePos(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {return myEdgePos;};
+		inline Position getPosition(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const {return myPosition;};
+		inline SUMOReal getAngle(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const{return myAngle;};
+		inline SUMOTime getWaitingTime(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now)const{return 0.;};
+		inline SUMOReal getSpeed(const MSPerson::MSPersonStage_Walking& stage)const{return mySpeed;};
 		const MSEdge* getEdge()const;// const {const MSEdge * rt = *myRoutePt;return rt;};
 		const MSEdge* getNextEdge()const; //const{const MSEdge * rt = *(myRoutePt+1); return rt;};
 		//		/// @}
 		//
 		//		/// @brief compute walking time on edge and update state members
-		SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime){return 0.;};
+		inline SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime){return 0.;};
 
 
 		void setXY(const double x, const double y) {myPosition.set(x,y);};
@@ -60,9 +62,17 @@ class MSPRCPState : public PedestrianState {
 		SUMOReal myAngle;
 		SUMOReal mySpeed;
 		MSPerson * myPerson;
+		const MSPerson::MSPersonStage_Walking* myStage;
 		std::vector<const MSEdge*>::const_iterator myRoutePt;
 	public:
-		MSPerson * getPerson() const {return myPerson;};
+	MSPerson * getPerson() const {
+		return myPerson;
+	}
+	const MSPerson::MSPersonStage_Walking* getMyStage() const {
+		return myStage;
+	}
+
+	;
 };
 
 //inline const MSEdge* MSPRCPState::getEdge() const {

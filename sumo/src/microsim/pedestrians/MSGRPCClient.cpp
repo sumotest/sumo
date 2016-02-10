@@ -188,6 +188,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 	if (st.ok()){
 		for (int i = 0; i < rpl.trajectories_size(); i++) {
 			const hybridsim::Trajectory t = rpl.trajectories(i);
+			std::cout << "tr | id: " << t.id() << " | x = " << t.x() << " | y = " << t.y() << " | spd = " << t.spd() << "\n";
 			MSPRCPState* st = pstates[t.id()];
 			st->setXY(t.x(),t.y());
 			st->setSpeed(t.spd());

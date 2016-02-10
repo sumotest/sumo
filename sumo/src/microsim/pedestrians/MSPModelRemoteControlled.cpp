@@ -36,21 +36,21 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
 	 std::cout << "MSPModelRemoteControlled::add was called" << std::endl;
-	 std::vector<const MSEdge*>::const_iterator rp;
-	 rp = stage->getRoute().begin();
-	 MSPRCPState * state = new MSPRCPState(person, rp);
+
+	 MSPRCPState * state = new MSPRCPState(person,stage);
+	 const MSEdge* edge = *(stage->getRoute().begin());;
 //	 MSPRCPState * state = new MSPRCPState(person,rp);
-	 if (buffers.find(person->getEdge()->getID()) == buffers.end()) {
+	 if (buffers.find(edge->getID()) == buffers.end()) {
 		 std::queue<MSPRCPState*> buffer;
 		 buffer.push(state);
 
-		 const MSEdge* edge = person->getEdge();
+
 		 std::string str =  edge->getID();
 		 std::cout << "current edge = " << str << std::endl;
-		 buffers[person->getEdge()->getID()] = &buffer;
+		 buffers[edge->getID()] = buffer;
 	 } else {
-		 std::queue<MSPRCPState*> * buffer = buffers[person->getEdge()->getID()];
-		 buffer->push(state);
+		 std::queue<MSPRCPState*> buffer = buffers[person->getEdge()->getID()];
+		 buffer.push(state);
 	 }
 
 //	 MSPRCPState * state = new MSPRCPState(person);
@@ -70,11 +70,11 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	//do all the handling here
 
 	//1. transfer agents as long as there is space (SUMO --> external sim)
-	std::map<const std::string,std::queue<MSPRCPState*>*>::iterator it = buffers.begin();
+	std::map<const std::string,std::queue<MSPRCPState*>>::iterator it = buffers.begin();
 	while(it != buffers.end()) {
-		std::queue<MSPRCPState*>* buffer = (*it).second;
-		handleBuffer(buffer);
-		if (buffer->empty()){
+		std::queue<MSPRCPState*> buffer = (*it).second;
+		handleBuffer(&buffer);
+		if (buffer.empty()){
 			it = buffers.erase(it);
 		} else {
 			it++;
@@ -91,6 +91,10 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	grpcClient->retrieveAgents(pstates,myNet,currentTime);
 
 	std::cout << "tock" << std::endl;
+	if (pstates.size() == 0) {
+		std::cout << "pstates empty!\n";
+		return 0;
+	}
 	return DELTA_T;
 }
 
@@ -106,9 +110,10 @@ void MSPModelRemoteControlled::handleBuffer(std::queue<MSPRCPState*>* buffer) {
 }
 
 bool MSPModelRemoteControlled::transmitPedestrian(MSPRCPState* st) {
+
 	std::string id = st->getPerson()->getID();
-	std::string fromId = st->getPerson()->getEdge()->getID();
-	std::string toId = st->getPerson()->getNextDestination().getID();
+	std::string fromId = st->getEdge()->getID();
+	std::string toId = (*(st->getMyStage()->getRoute().end()-1))->getID();
 	return grpcClient->transmitPedestrian(id,fromId,toId);
 }
 

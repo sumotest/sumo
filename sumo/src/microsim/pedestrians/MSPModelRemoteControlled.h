@@ -56,10 +56,9 @@ private:
 	bool transmitPedestrian(MSPRCPState * st);
 
 	std::map<const std::string,MSPRCPState*> pstates;
-	std::map<const std::string,std::queue<MSPRCPState*>*> buffers;
+	std::map<const std::string,std::queue<MSPRCPState*>> buffers;
 	MSGRPCClient * grpcClient;
 	MSNet* myNet;
-
 };
 
 #endif /* SRC_MICROSIM_PEDESTRIANS_MSPMODELREMOTECONTROLLED_H_ */
