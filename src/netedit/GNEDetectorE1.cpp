@@ -293,7 +293,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
             myFreq = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_FILE:
-            myFilename = parse<std::string>(value);
+            myFilename = value;
             break;
         case SUMO_ATTR_SPLIT_VTYPE:
             mySplitByType = parse<bool>(value);

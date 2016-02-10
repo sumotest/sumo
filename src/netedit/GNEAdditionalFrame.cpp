@@ -104,7 +104,7 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
     myViewNet(updateTarget),
-    myActualAdditionalType(GNE_ADDITIONAL_BUSSTOP),
+    myActualAdditionalType(SUMO_TAG_BUS_STOP),
     myUndoList(undoList) {
     // Create frame
     myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
@@ -142,16 +142,14 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myAdditionalMatchBox->appendItem("Charging station");
     myAdditionalMatchBox->appendItem("Detector E1");
     myAdditionalMatchBox->appendItem("Detector E2");
-    myAdditionalMatchBox->appendItem("Detector E3");
+    myAdditionalMatchBox->appendItem("Detector E3 Entry");
+    myAdditionalMatchBox->appendItem("Detector E3 Exit");
     myAdditionalMatchBox->appendItem("Rerouters");
     myAdditionalMatchBox->appendItem("Calibrators");
     myAdditionalMatchBox->appendItem("VSpeed signals");
 
     // Set visible items
     myAdditionalMatchBox->setNumVisible((int)myAdditionalMatchBox->getNumItems()); 
-
-    // By default, myActualAdditionalType is busStop
-    myActualAdditionalType = GNE_ADDITIONAL_BUSSTOP;
 }
 
 
@@ -167,28 +165,28 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
     SUMOReal position = lane.getShape().nearest_offset_to_point2D(parent->getPositionInformation());
     // Add adittional element depending of myActualAdditionalType
     switch (myActualAdditionalType) {
-        case GNE_ADDITIONAL_BUSSTOP: {
-            int numberOfBusStops = myViewNet->getNet()->getNumberOfBusStops();
-            // Check that the ID of the new busStop is unique
-            while(myViewNet->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
-                numberOfBusStops++;
-            // Declare position of busStop
-            SUMOReal startPosition;
-            SUMOReal endPosition;
-            // If positions are valid
-            if(setPositions(lane, position, startPosition, endPosition)) {
-                // Extract bus lines
-                std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
-                // Create an add new busStop
-                GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myViewNet, startPosition, endPosition, lines);
-                busStop->setBlocked(myEditorParameter->isBlockEnabled());
-                myUndoList->p_begin("add " + busStop->getDescription());
-                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
-                myUndoList->p_end();
-            } 
-        }
-        break;
-        case GNE_ADDITIONAL_CHARGINGSTATION: {
+        case SUMO_TAG_BUS_STOP: {
+                int numberOfBusStops = myViewNet->getNet()->getNumberOfBusStops();
+                // Check that the ID of the new busStop is unique
+                while(myViewNet->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
+                    numberOfBusStops++;
+                // Declare position of busStop
+                SUMOReal startPosition;
+                SUMOReal endPosition;
+                // If positions are valid
+                if(setPositions(lane, position, startPosition, endPosition)) {
+                    // Extract bus lines
+                    std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
+                    // Create an add new busStop
+                    GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myViewNet, startPosition, endPosition, lines);
+                    busStop->setBlocked(myEditorParameter->isBlockEnabled());
+                    myUndoList->p_begin("add " + busStop->getDescription());
+                    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
+                    myUndoList->p_end();
+                } 
+            }
+            break;
+        case SUMO_TAG_CHARGING_STATION: {
                 int numberOfChargingStations = myViewNet->getNet()->getNumberOfChargingStations();
                 // Check that the ID of the new chargingStation is unique
                 while(myViewNet->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
@@ -212,7 +210,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 }
             }
             break;
-        case GNE_ADDITIONAL_E1: {
+        case SUMO_TAG_E1DETECTOR: {
                 int numberOfDetectorE1 = myViewNet->getNet()->getNumberOfDetectorE1();
                 // Check that the ID of the new detector E1 is unique
                 while(myViewNet->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
@@ -235,25 +233,28 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 myUndoList->p_end();
             }
             break;
-        case GNE_ADDITIONAL_E2: {
-                /** Finish **/
+        case SUMO_TAG_E2DETECTOR: {
+                // Finish
             }
             break;
-        case GNE_ADDITIONAL_E3: {
-                /** Finish **/
+        case SUMO_TAG_DET_ENTRY: {
+                // Finish
             }
             break;
-        case GNE_ADDITIONAL_REROUTERS: {
-                /** Finish **/
+        case SUMO_TAG_DET_EXIT: {
+                // Finish
             }
             break;
-        case GNE_ADDITIONAL_CALIBRATORS: {
-                /** Finish **/
-            
+        case SUMO_TAG_REROUTER: {
+                // Finish
             }
             break;
-        case GNE_ADDITIONAL_VARIABLESPEEDSIGNS: {
-                /** Finish **/
+        case SUMO_TAG_CALIBRATOR: {
+                // Finish
+            }
+            break;
+        case SUMO_TAG_VSS: {
+                // Finish
             }
             break;
         default:
@@ -278,7 +279,35 @@ GNEAdditionalFrame::getHeaderFont() {
 long
 GNEAdditionalFrame::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
     // Cast actual additional type
-    myActualAdditionalType = static_cast<additionalType>(myAdditionalMatchBox->getCurrentItem());
+    switch(myAdditionalMatchBox->getCurrentItem()) {
+        case 0:
+            myActualAdditionalType = SUMO_TAG_BUS_STOP;
+            break;
+        case 1:
+            myActualAdditionalType = SUMO_TAG_CHARGING_STATION;
+            break;
+        case 2:
+            myActualAdditionalType = SUMO_TAG_E1DETECTOR;
+            break;
+        case 3:
+            myActualAdditionalType = SUMO_TAG_E2DETECTOR;
+            break;
+        case 4:
+            myActualAdditionalType = SUMO_TAG_DET_ENTRY;
+            break;
+        case 5:
+            myActualAdditionalType = SUMO_TAG_DET_EXIT;
+            break;
+        case 6:
+            myActualAdditionalType = SUMO_TAG_REROUTER;
+            break;
+        case 7:
+            myActualAdditionalType = SUMO_TAG_CALIBRATOR;
+            break;
+        case 8:
+            myActualAdditionalType = SUMO_TAG_VSS;
+            break;
+    }
     // Set parameters
     setParameters();
     return 1;
@@ -314,7 +343,7 @@ GNEAdditionalFrame::setParameters() {
 
     // Set parameters depending of myActualAdditionalType
     switch (myActualAdditionalType) {
-        case GNE_ADDITIONAL_BUSSTOP : {
+        case SUMO_TAG_BUS_STOP : {
             myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("busStop default length").c_str());
             std::string defaultLinesWithoutParse = oc.getString("busStop default lines");
             std::vector<std::string> lines;
@@ -324,12 +353,33 @@ GNEAdditionalFrame::setParameters() {
             myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
             }
             break;
-        case GNE_ADDITIONAL_CHARGINGSTATION :
+        case SUMO_TAG_CHARGING_STATION :
             myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("chargingStation default length").c_str());   
             myVectorOfAdditionalParameter.at(1)->showTextParameter("power", oc.getString("chargingStation default charging power").c_str());   
             myVectorOfAdditionalParameter.at(2)->showTextParameter("effic.", oc.getString("chargingStation default efficiency").c_str());   
             myVectorOfAdditionalParameter.at(3)->showTextParameter("delay", oc.getString("chargingStation default charge delay").c_str());   
             myVectorOfAdditionalParameter.at(4)->showBoolParameter("transit", oc.getBool("chargingStation default charge in transit"));   
+            break;
+        case SUMO_TAG_E1DETECTOR:
+            // Finish
+            break;
+        case SUMO_TAG_E2DETECTOR:
+            // Finish
+            break;
+        case SUMO_TAG_DET_ENTRY:
+            // Finish
+            break;
+        case SUMO_TAG_DET_EXIT:
+            // Finish
+            break;
+        case SUMO_TAG_REROUTER:
+            // Finish
+            break;
+        case SUMO_TAG_CALIBRATOR:
+            // Finish
+            break;
+        case SUMO_TAG_VSS:
+            // Finish
             break;
         default:
             break;
@@ -343,7 +393,7 @@ bool
 GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition) {
     SUMOReal size = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0)->getTextValue());
     switch (myEditorParameter->getActualReferencePoint()) {
-        case GNE_ADDITIONALREFERENCEPOINT_LEFT : {
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT : {
             startPosition = positionOfTheMouseOverLane;
             // Set end position
             if(positionOfTheMouseOverLane + size <= lane.getLaneShapeLenght() - 0.01)
@@ -354,7 +404,7 @@ GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOver
                 return false;
             break;
         }
-        case GNE_ADDITIONALREFERENCEPOINT_RIGHT : {
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_RIGHT : {
             endPosition = positionOfTheMouseOverLane;
             // Set end position
             if(positionOfTheMouseOverLane - size >= 0.01)
@@ -365,7 +415,7 @@ GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOver
                 return false;
         }
         break;
-        case GNE_ADDITIONALREFERENCEPOINT_CENTER : {
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_CENTER : {
             // Set startPosition
             if(positionOfTheMouseOverLane - size/2 >= 0.01)
                 startPosition = positionOfTheMouseOverLane - size/2;
@@ -403,6 +453,9 @@ GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite *parent
     hideParameter();
 }
 
+// ---------------------------------------------------------------------------
+// GNEAdditionalFrame::additionalParameter - methods
+// ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
@@ -468,8 +521,13 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
     remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW,
         ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
         0, 0, 20, 20);
+    // Hide all para meters
+    hideParameter();
 }
 
+// ---------------------------------------------------------------------------
+// GNEAdditionalFrame::additionalParameterList - methods
+// ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameterList::~additionalParameterList() {}
 
@@ -493,7 +551,6 @@ GNEAdditionalFrame::additionalParameterList::showListParameter(const std::string
 
 void 
 GNEAdditionalFrame::additionalParameterList::hideParameter() {
-    
     for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++) {
         myLabels.at(i)->hide();
         myTextFields.at(i)->hide();
@@ -519,9 +576,10 @@ GNEAdditionalFrame::additionalParameterList::getVectorOfTextValues() {
 long 
 GNEAdditionalFrame::additionalParameterList::onCmdAddRow(FXObject*, FXSelector, void*) {
     if(numberOfVisibleTextfields < (myMaxNumberOfValuesInParameterList-1)) {
-        numberOfVisibleTextfields++;
+        
         myLabels.at(numberOfVisibleTextfields)->show();
         myTextFields.at(numberOfVisibleTextfields)->show();
+        numberOfVisibleTextfields++;
         getParent()->recalc();
     }
     return 1;
@@ -530,16 +588,20 @@ GNEAdditionalFrame::additionalParameterList::onCmdAddRow(FXObject*, FXSelector, 
 
 long 
 GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow(FXObject*, FXSelector, void*) {
-    if(numberOfVisibleTextfields > 0) {
+    if(numberOfVisibleTextfields > 1) {
+        numberOfVisibleTextfields--;
         myLabels.at(numberOfVisibleTextfields)->hide();
         myTextFields.at(numberOfVisibleTextfields)->hide();
         myTextFields.at(numberOfVisibleTextfields)->setText("");
-        numberOfVisibleTextfields--;
+        
         getParent()->recalc();
     }
     return 1;
 }
 
+// ---------------------------------------------------------------------------
+// GNEAdditionalFrame::editorParameter - methods
+// ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::editorParameter::editorParameter(FXComposite *parent, FXObject* tgt) :
     FXGroupBox(parent, "editor parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -573,7 +635,7 @@ GNEAdditionalFrame::editorParameter::editorParameter(FXComposite *parent, FXObje
 GNEAdditionalFrame::editorParameter::~editorParameter() {}
 
 
-GNEAdditionalFrame::additionalReferencePoint 
+GNEAdditionalFrame::editorParameter::additionalReferencePoint 
 GNEAdditionalFrame::editorParameter::getActualReferencePoint() {
     return myActualAdditionalReferencePoint;
 }
@@ -627,6 +689,10 @@ GNEAdditionalFrame::editorParameter::onCmdHelp(FXObject*, FXSelector, void*) {
     return 1;
 }
 
+// ---------------------------------------------------------------------------
+// GNEAdditionalFrame::additionalSet - methods
+// ---------------------------------------------------------------------------
+
 GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* updateTarget) :
     FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0), 
     myViewNet(updateTarget) {
@@ -659,7 +725,7 @@ GNEAdditionalFrame::additionalSet::getAdditionalSet() {
 
 
 void 
-GNEAdditionalFrame::additionalSet::showList(GNEAdditionalFrame::additionalType type) {
+GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
     show();
 }
 

@@ -306,7 +306,7 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
             myFreq = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_FILE:
-            myFilename = parse<std::string>(value);
+            myFilename = value;
             break;
         case SUMO_ATTR_CONT:
             myCont = parse<bool>(value);

@@ -69,6 +69,44 @@ bool GNEDetectorE3::GNEDetectorE3EntryExit::detectorE3Initialized = false;
 // member method definitions
 // ===========================================================================
 
+GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, SUMOReal freq, const std::string& filename) :
+    myId(id),
+    myViewNet(viewNet),
+    myFreq(freq),
+    myFilename(filename),
+    myCounterId(0) {
+}
+
+
+GNEDetectorE3::~GNEDetectorE3() {
+}
+
+
+void 
+GNEDetectorE3::addEntry(GNELane& lane, SUMOReal pos) {
+    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_ENTRY, lane, pos));
+}
+
+
+void 
+GNEDetectorE3::removeEntry(GNELane& lane, SUMOReal pos) {
+    
+}
+
+
+void 
+GNEDetectorE3::addExit(GNELane& lane, SUMOReal pos) {
+    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_EXIT, lane, pos));
+}
+
+
+void 
+GNEDetectorE3::removeExit(GNELane& lane, SUMOReal pos) {
+}
+
+// ---------------------------------------------------------------------------
+// GNEDetectorE3::GNEDetectorE3EntryExit - methods
+// ---------------------------------------------------------------------------
 
 GNEDetectorE3::GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos) :
     GNEDetector(id, lane, myViewNet, tag, pos, 1, parent->myFreq, parent->myFilename) {
@@ -288,7 +326,7 @@ GNEDetectorE3::GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::
             myFreq = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_FILE:
-            myFilename = parse<std::string>(value);
+            myFilename = value;
             break;
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
@@ -302,42 +340,6 @@ GNEDetectorE3::GNEDetectorE3EntryExit::setColors() {
     myRGBColors.push_back(RGBColor(0, 204, 0, 255));
     // Color E1_BASE_SELECTED
     myRGBColors.push_back(RGBColor(125, 204, 0, 255));
-}
-
-
-GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, SUMOReal freq, const std::string& filename) :
-    myId(id),
-    myViewNet(viewNet),
-    myFreq(freq),
-    myFilename(filename),
-    myCounterId(0) {
-}
-
-
-GNEDetectorE3::~GNEDetectorE3() {
-}
-
-
-void 
-GNEDetectorE3::addEntry(GNELane& lane, SUMOReal pos) {
-    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_ENTRY, lane, pos));
-}
-
-
-void 
-GNEDetectorE3::removeEntry(GNELane& lane, SUMOReal pos) {
-    
-}
-
-
-void 
-GNEDetectorE3::addExit(GNELane& lane, SUMOReal pos) {
-    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_EXIT, lane, pos));
-}
-
-
-void 
-GNEDetectorE3::removeExit(GNELane& lane, SUMOReal pos) {
 }
 
 /****************************************************************************/

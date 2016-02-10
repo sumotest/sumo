@@ -60,26 +60,6 @@ class GNEAdditionalFrame : public FXScrollWindow {
 
 public:
 
-    /// @brief list of additional types 
-    /// @note (This list will be erased)
-    enum additionalType {
-        GNE_ADDITIONAL_BUSSTOP,
-        GNE_ADDITIONAL_CHARGINGSTATION,
-        GNE_ADDITIONAL_E1,
-        GNE_ADDITIONAL_E2,
-        GNE_ADDITIONAL_E3,
-        GNE_ADDITIONAL_REROUTERS,           // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_CALIBRATORS,         // NOT YET IMPLEMENTED
-        GNE_ADDITIONAL_VARIABLESPEEDSIGNS   // NOT YET IMPLEMENTED
-    };
-
-    /// @brief list of the reference points
-    enum additionalReferencePoint {
-        GNE_ADDITIONALREFERENCEPOINT_LEFT,
-        GNE_ADDITIONALREFERENCEPOINT_RIGHT,
-        GNE_ADDITIONALREFERENCEPOINT_CENTER
-    };
-
     // ===========================================================================
     // class additionalParameter
     // ===========================================================================
@@ -185,6 +165,13 @@ public:
         FXDECLARE(GNEAdditionalFrame::editorParameter)
 
     public:
+        /// @brief list of the reference points
+        enum additionalReferencePoint {
+            GNE_ADDITIONALREFERENCEPOINT_LEFT,
+            GNE_ADDITIONALREFERENCEPOINT_RIGHT,
+            GNE_ADDITIONALREFERENCEPOINT_CENTER
+        };
+
         /// @brief constructor
         editorParameter(FXComposite *parent, FXObject* tgt);
 
@@ -252,7 +239,7 @@ public:
         GNEDetectorE3* getAdditionalSet();
 
         /// @brief Show list of additionalSet
-        void showList(GNEAdditionalFrame::additionalType type);
+        void showList(SumoXMLTag type);
 
         /// @brief hide additionalSet
         void hide();
@@ -375,7 +362,7 @@ private:
     GNEViewNet* myViewNet;
 
     /// @brief actual additional type selected in the match Box
-    additionalType myActualAdditionalType;
+    SumoXMLTag myActualAdditionalType;
 
     /// @brief Width of frame
     static const int WIDTH;

@@ -401,7 +401,7 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_ENDPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myFromPos);
         case SUMO_ATTR_LINES:
-            return canParse<std::string>(value);
+            return isValidStringVector(value);
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
