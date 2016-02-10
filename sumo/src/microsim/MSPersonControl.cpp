@@ -148,6 +148,7 @@ MSPersonControl::checkWaitingPersons(MSNet* net, const SUMOTime time) {
         const PersonVector& persons = myWaitingUntil[time];
         // we cannot use an iterator here because there might be additions to the vector while proceeding
         for (size_t i = 0; i < persons.size(); ++i) {
+            persons[i]->getEdge()->removePerson(persons[i]);
             if (!persons[i]->proceed(net, time)) {
                 erase(persons[i]);
             }

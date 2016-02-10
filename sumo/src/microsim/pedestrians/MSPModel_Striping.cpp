@@ -938,7 +938,6 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 	const MSLane* oldLane = myLane;
 	myLane = myNLI.lane;
 	myDir = myNLI.dir;
-	const bool normalLane = (myLane == 0 || myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL);
 	if DEBUGCOND(myPerson->getID()) {
 		std::cout << SIMTIME
 				<< " ped=" << myPerson->getID()
@@ -948,7 +947,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 				<< " newDir=" << myDir
 				<< "\n";
 	}
-	myStage->moveToNextEdge(myPerson, currentTime, &oldLane->getEdge(),normalLane ? 0 : &myLane->getEdge());
+	myStage->moveToNextEdge(myPerson, currentTime, &oldLane->getEdge(), &myLane->getEdge());
 	if (myLane != 0) {
 		assert(myDir != UNDEFINED_DIRECTION);
 		myNLI = getNextLane(*this, myLane, oldLane);
@@ -968,7 +967,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 			} else {
 				// disconnnected route. move to the next edge (arbitrariliy, maintaining current direction)
 				if (OptionsCont::getOptions().getBool("ignore-route-errors")) {
-					myStage->moveToNextEdge(myPerson, currentTime,&oldLane->getEdge(), 0);
+					myStage->moveToNextEdge(myPerson, currentTime, &oldLane->getEdge(), &myLane->getEdge());
 					myLane = myNLI.lane;
 					assert(myLane != 0);
 					assert(myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL);

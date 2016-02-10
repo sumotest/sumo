@@ -496,7 +496,6 @@ MSPerson::proceed(MSNet* net, SUMOTime time) {
         */
         return true;
     } else {
-        prior->getEdge()->removePerson(this);
         return false;
     }
 }

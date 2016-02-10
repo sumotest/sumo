@@ -38,7 +38,7 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 	 std::cout << "MSPModelRemoteControlled::add was called" << std::endl;
 	 std::vector<const MSEdge*>::const_iterator rp;
 	 rp = stage->getRoute().begin();
-	 MSPRCPState * state = new MSPRCPState(person,rp);
+	 MSPRCPState * state = new MSPRCPState(person, rp);
 //	 MSPRCPState * state = new MSPRCPState(person,rp);
 	 if (buffers.find(person->getEdge()->getID()) == buffers.end()) {
 		 std::queue<MSPRCPState*> buffer;
