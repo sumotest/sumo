@@ -181,31 +181,26 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             delete i;
         }
         
-        /* ERROR!!!!!
-        Der Bild DetectorLogo hast unendliche Länge
-        
-
         // draw detector logo
         glPushMatrix();
         
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
-        glRotated(mySignRotation, 0, 0, 1);
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 5);
+        //glRotated(mySignRotation, 0, 0, 1);
+        glRotated(180, 0, 0, 1);
         glColor3d(1, 1, 1);
         GUITexturesHelper::drawTexturedBox(detectorE1GlID, 0.5);
-        // Pop detector logo matrix
-        glPopMatrix();
         
-        // Pop draw matrix
+        // Pop detector logo matrix
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
-        **/
-    }
+    } else {
    
-    // Pop draw matrix
-    glPopMatrix();
+        // Pop draw matrix
+        glPopMatrix();
+    }
 
     // Pop name
     glPopName();

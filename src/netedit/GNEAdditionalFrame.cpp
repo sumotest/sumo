@@ -75,11 +75,13 @@ FXDEFMAP(GNEAdditionalFrame::additionalParameterList) additionalParameterListMap
 
 FXDEFMAP(GNEAdditionalFrame::editorParameter) editorParameterMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEAdditionalFrame::editorParameter::onCmdSelectReferencePoint),
+    FXMAPFUNC(SEL_COMMAND,  MID_HELP,               GNEAdditionalFrame::editorParameter::onCmdHelp),
 };
 
 FXDEFMAP(GNEAdditionalFrame::additionalSet) additionalSetMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_ADDSET,     GNEAdditionalFrame::additionalSet::onCmdAddSet),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_REMOVESET,  GNEAdditionalFrame::additionalSet::onCmdRemoveSet),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECTSET,  GNEAdditionalFrame::additionalSet::onCmdSelectSet),
 };
 
 // Object implementation
@@ -101,7 +103,7 @@ const int GNEAdditionalFrame::maxNumberOfListParameters = 5;
 GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
-    myUpdateTarget(updateTarget),
+    myViewNet(updateTarget),
     myActualAdditionalType(GNE_ADDITIONAL_BUSSTOP),
     myUndoList(undoList) {
     // Create frame
@@ -133,7 +135,7 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myEditorParameter = new GNEAdditionalFrame::editorParameter(myContentFrame, this);
 
     // Create additional Set
-    myAdditionalSet = new GNEAdditionalFrame::additionalSet(myContentFrame, this);
+    myAdditionalSet = new GNEAdditionalFrame::additionalSet(myContentFrame, this, myViewNet);
 
     // Add options to myAdditionalMatchBox
     myAdditionalMatchBox->appendItem("Bus stop");
@@ -166,9 +168,9 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
     // Add adittional element depending of myActualAdditionalType
     switch (myActualAdditionalType) {
         case GNE_ADDITIONAL_BUSSTOP: {
-            int numberOfBusStops = myUpdateTarget->getNet()->getNumberOfBusStops();
+            int numberOfBusStops = myViewNet->getNet()->getNumberOfBusStops();
             // Check that the ID of the new busStop is unique
-            while(myUpdateTarget->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
+            while(myViewNet->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
                 numberOfBusStops++;
             // Declare position of busStop
             SUMOReal startPosition;
@@ -178,18 +180,18 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                 // Extract bus lines
                 std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
                 // Create an add new busStop
-                GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myUpdateTarget, startPosition, endPosition, lines);
+                GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myViewNet, startPosition, endPosition, lines);
                 busStop->setBlocked(myEditorParameter->isBlockEnabled());
                 myUndoList->p_begin("add " + busStop->getDescription());
-                myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), busStop, true), true);
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
                 myUndoList->p_end();
             } 
         }
         break;
         case GNE_ADDITIONAL_CHARGINGSTATION: {
-                int numberOfChargingStations = myUpdateTarget->getNet()->getNumberOfChargingStations();
+                int numberOfChargingStations = myViewNet->getNet()->getNumberOfChargingStations();
                 // Check that the ID of the new chargingStation is unique
-                while(myUpdateTarget->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
+                while(myViewNet->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
                     numberOfChargingStations++;
                 // Declare position of chargingStation
                 SUMOReal startPosition;
@@ -202,18 +204,18 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
                     int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
                     bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
                     // Create and add a new chargingStation
-                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfChargingStations), lane, myUpdateTarget, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
+                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfChargingStations), lane, myViewNet, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
                     chargingStation->setBlocked(myEditorParameter->isBlockEnabled());
                     myUndoList->p_begin("add " + chargingStation->getDescription());
-                    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), chargingStation, true), true);
+                    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), chargingStation, true), true);
                     myUndoList->p_end();
                 }
             }
             break;
         case GNE_ADDITIONAL_E1: {
-                int numberOfDetectorE1 = myUpdateTarget->getNet()->getNumberOfDetectorE1();
+                int numberOfDetectorE1 = myViewNet->getNet()->getNumberOfDetectorE1();
                 // Check that the ID of the new detector E1 is unique
-                while(myUpdateTarget->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
+                while(myViewNet->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
                     numberOfDetectorE1++;
 
                 /** CAMBIAR **/
@@ -226,10 +228,10 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
 
 
                 // Create and add a new detector
-                GNEDetectorE1 *detectorE1 = new GNEDetectorE1("detectorE1_" + toString(numberOfDetectorE1), lane, myUpdateTarget, position, 1, "", true);
+                GNEDetectorE1 *detectorE1 = new GNEDetectorE1("detectorE1_" + toString(numberOfDetectorE1), lane, myViewNet, position, 1, "", true);
                 detectorE1->setBlocked(myEditorParameter->isBlockEnabled());
                 myUndoList->p_begin("add " + detectorE1->getDescription());
-                myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), detectorE1, true), true);
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE1, true), true);
                 myUndoList->p_end();
             }
             break;
@@ -263,7 +265,7 @@ GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
 void 
 GNEAdditionalFrame::removeAdditional(GNEAdditional *additional) {
     myUndoList->p_begin("delete " + additional->getDescription());
-    myUndoList->add(new GNEChange_Additional(myUpdateTarget->getNet(), additional, false), true);
+    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), additional, false), true);
     myUndoList->p_end();
 }
 
@@ -455,14 +457,14 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
         myLabels.push_back(new FXLabel(this, "name", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0));
         myTextFields.push_back(new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X));
     }
-
+    // Create label Row
     myLabels.push_back(new FXLabel(this, "Rows", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0));
     FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
-    
+    // Create add button
     add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW,
         ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
         0, 0, 20, 20);
-
+    // Create delete buttons
     remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW,
         ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
         0, 0, 20, 20);
@@ -555,6 +557,9 @@ GNEAdditionalFrame::editorParameter::editorParameter(FXComposite *parent, FXObje
     myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING,
                                    LAYOUT_LEFT | LAYOUT_TOP | LAYOUT_FILL_X);
 
+    // Create help button
+    helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP);
+
     // Add options to myReferencePointMatchBox
     myReferencePointMatchBox->appendItem("reference left");
     myReferencePointMatchBox->appendItem("reference right");
@@ -594,14 +599,75 @@ GNEAdditionalFrame::editorParameter::onCmdSelectReferencePoint(FXObject*, FXSele
 }
 
 
-GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt) :
-    FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0)
-{
+long 
+GNEAdditionalFrame::editorParameter::onCmdHelp(FXObject*, FXSelector, void*) {
+    FXDialogBox* helpDialog = new FXDialogBox(this, "Parameter editor Help", DECOR_CLOSE | DECOR_TITLE);
+    std::ostringstream help;
+    help
+            << "Referece point: Mark the initial position of the additional element.\n"
+            << "Example: If you want to create a busStop with a lenght of 30 in the point 100 of the lane:\n"
+            << "- Reference Left will create it with fromPos = 70 and toPos = 100.\n"
+            << "- Reference Right will create it with fromPos = 100 and toPos = 130.\n"
+            << "- Reference Center will create it with fromPos = 85 and toPos = 115.\n"
+            << "\n"
+            << "Force position: if is enabled, will create the additional adapting size of additional element to lane.\n"
+            << "Example: If you have a lane with lenght = 100, but you try to create a busStop with size = 50\n"
+            << "in the position 80 of the lane, a busStop with fromPos = 80 and toPos = 100 will be created\n"
+            << "instead of a busStop with fromPos = 80 and toPos = 130.\n"
+            << "\n"
+            << "Block movement: if is enabled, the created additional element will be blocked. i.e. cannot be moved with\n"
+            << "the mouse. This option can be modified with the Inspector.";
+    new FXLabel(helpDialog, help.str().c_str(), 0, JUSTIFY_LEFT);
+    // "OK"
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT,
+                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
+                 0, 0, 0, 0, 4, 4, 3, 3);
+    helpDialog->create();
+    helpDialog->show();
+    return 1;
+}
 
+GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* updateTarget) :
+    FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0), 
+    myViewNet(updateTarget) {
+    
+    // Create label with the type of additionalSet
+    mySetLabel = new FXLabel(this, "Set Type:", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
+
+    // Create list
+    myList = new FXList(this, tgt, MID_GNE_SELECTSET, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
+
+    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    
+    addSet = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDSET,
+        ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
+        0, 0, 20, 20);
+
+    removeSet = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVESET,
+        ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
+        0, 0, 20, 20);
 }
 
 
 GNEAdditionalFrame::additionalSet::~additionalSet() {}
+
+
+GNEDetectorE3*
+GNEAdditionalFrame::additionalSet::getAdditionalSet() {
+    return myAdditionalSet;
+}
+
+
+void 
+GNEAdditionalFrame::additionalSet::showList(GNEAdditionalFrame::additionalType type) {
+    show();
+}
+
+
+void 
+GNEAdditionalFrame::additionalSet::hide() {
+    FXGroupBox::hide();
+}
 
 
 long 
@@ -612,6 +678,12 @@ GNEAdditionalFrame::additionalSet::onCmdAddSet(FXObject*, FXSelector, void*) {
 
 long 
 GNEAdditionalFrame::additionalSet::onCmdRemoveSet(FXObject*, FXSelector, void*) {
+    return 1;
+}
+
+
+long 
+GNEAdditionalFrame::additionalSet::onCmdSelectSet(FXObject*, FXSelector, void*) {
     return 1;
 }
 

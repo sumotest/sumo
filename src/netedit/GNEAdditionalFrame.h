@@ -45,6 +45,7 @@ class GNEAttributeCarrier;
 class GNEUndoList;
 class GNELane;
 class GNEAdditional;
+class GNEDetectorE3;    // Will be changed by "GNEAdditionalSet"
 
 // ===========================================================================
 // class definitions
@@ -59,7 +60,8 @@ class GNEAdditionalFrame : public FXScrollWindow {
 
 public:
 
-    /// @brief list of additional types
+    /// @brief list of additional types 
+    /// @note (This list will be erased)
     enum additionalType {
         GNE_ADDITIONAL_BUSSTOP,
         GNE_ADDITIONAL_CHARGINGSTATION,
@@ -202,6 +204,9 @@ public:
         /// @{
         /// @brief Called when the user enters another reference point
         long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
+
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
         /// @}
 
     protected:
@@ -214,6 +219,9 @@ public:
 
         /// @brief match box with the list of reference points
         FXComboBox* myReferencePointMatchBox;
+
+        /// @brief Button for help about the reference point
+        FXButton *helpReferencePoint; 
 
         /// @brief actual additional reference point selected in the match Box
         additionalReferencePoint myActualAdditionalReferencePoint;
@@ -235,10 +243,19 @@ public:
 
     public:
         /// @brief constructor
-        additionalSet(FXComposite *parent, FXObject* tgt);
+        additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* updateTarget);
 
         /// @brief destructor
         ~additionalSet();
+
+        /// @brief get currently additional Set
+        GNEDetectorE3* getAdditionalSet();
+
+        /// @brief Show list of additionalSet
+        void showList(GNEAdditionalFrame::additionalType type);
+
+        /// @brief hide additionalSet
+        void hide();
 
         /// @name FOX-callbacks
         /// @{
@@ -247,6 +264,9 @@ public:
 
         /// @brief add a new row int the list
         long onCmdRemoveSet(FXObject*, FXSelector, void*);
+
+        /// @brief add a new row int the list
+        long onCmdSelectSet(FXObject*, FXSelector, void*);
         /// @}
 
     protected:
@@ -254,17 +274,23 @@ public:
         additionalSet() {}
 
     private:        
-        /// @brief 
+        /// @brief List of Set
         FXList *myList;
-        
-        /// @brief textField to modify the value of parameter
-        std::vector<FXTextField*> myTextFields;
+
+        /// @brief Label with the name of Set
+        FXLabel *mySetLabel;
 
         /// @brief Button to increase the number of textFields
         FXButton *addSet;
 
         /// @brief Button to decrease the number of textFields
         FXButton *removeSet;
+
+        /** This will be changed in the future by other class called "GNEAdditionalSet" */
+        GNEDetectorE3 *myAdditionalSet;
+
+        /// @brief viewNet associated to GNEAdditionalFrame
+        GNEViewNet* myViewNet;
     };
 
     /** @brief Constructor
@@ -346,7 +372,7 @@ private:
     GNEAdditionalFrame::additionalSet *myAdditionalSet;
 
     /// @brief the window to inform 
-    GNEViewNet* myUpdateTarget;
+    GNEViewNet* myViewNet;
 
     /// @brief actual additional type selected in the match Box
     additionalType myActualAdditionalType;
