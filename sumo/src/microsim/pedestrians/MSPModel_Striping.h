@@ -280,7 +280,7 @@ protected:
         SUMOReal distToLaneEnd() const;
 
         /// @brief return whether this pedestrian has passed the end of the current lane and update myRelX if so
-        bool moveToNextLane(SUMOTime currentTime);
+        void moveToNextLane(SUMOTime currentTime);
 
         /// @brief perform position update
         void walk(const Obstacles& obs, SUMOTime currentTime);
