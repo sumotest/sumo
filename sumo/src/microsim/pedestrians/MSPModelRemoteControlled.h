@@ -35,7 +35,7 @@
  * @brief Interface class for remote pedestrian simulation
  *
  */
-class MSPModelRemoteControlled : public MSPModel, Command {
+class MSPModelRemoteControlled : public MSPModel {
 public:
 	MSPModelRemoteControlled(const OptionsCont& oc, MSNet* net);
 	virtual ~MSPModelRemoteControlled();
@@ -48,7 +48,19 @@ public:
 
 	SUMOTime execute(SUMOTime currentTime);
 
-private:
+
+	class Event : public Command {
+	public:
+		Event(MSPModelRemoteControlled * ctr) : myCtr(ctr){}
+
+		SUMOTime execute(SUMOTime currentTime){return myCtr->execute(currentTime);};
+
+	private:
+		MSPModelRemoteControlled * myCtr;
+	};
+
+
+	private:
 
 
 

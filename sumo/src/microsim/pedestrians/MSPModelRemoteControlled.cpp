@@ -23,12 +23,13 @@ MSPModelRemoteControlled::MSPModelRemoteControlled(const OptionsCont& oc,
 		MSNet* net) :
 		myNet(net){
 	grpcClient = new MSGRPCClient(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
-	net->getBeginOfTimestepEvents()->addEvent(this,net->getCurrentTimeStep() + DELTA_T, MSEventControl::ADAPT_AFTER_EXECUTION);
+
+	Event * e = new Event(this);
+	net->getBeginOfTimestepEvents()->addEvent(e,net->getCurrentTimeStep() + DELTA_T, MSEventControl::ADAPT_AFTER_EXECUTION);
 }
 
-MSPModelRemoteControlled::~MSPModelRemoteControlled() {
+MSPModelRemoteControlled::~MSPModelRemoteControlled() {}
 
-}
 
 PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 		MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
