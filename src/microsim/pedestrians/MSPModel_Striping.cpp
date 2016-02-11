@@ -172,6 +172,11 @@ MSPModel_Striping::getPedestrians(const MSLane* lane) {
 
 void
 MSPModel_Striping::cleanupHelper() {
+    for (ActiveLanes::iterator it_lane = myActiveLanes.begin(); it_lane != myActiveLanes.end(); ++it_lane) {
+        for (Pedestrians::iterator it_p = it_lane->second.begin(); it_p != it_lane->second.end(); ++it_p) {
+            delete *it_p;
+        }
+    }
     myActiveLanes.clear();
     myNumActivePedestrians = 0;
     myWalkingAreaPaths.clear(); // need to recompute when lane pointers change
@@ -631,8 +636,7 @@ MSPModel_Striping::moveInDirection(SUMOTime currentTime, std::set<MSPerson*>& ch
                 for (Pedestrians::iterator it_p = toDelete.begin(); it_p != toDelete.end(); ++it_p) {
                     delete *it_p;
                 }
-            };
-
+            }
         } else {
             moveInDirectionOnLane(pedestrians, lane, currentTime, changedLane, dir);
         }
@@ -1106,6 +1110,9 @@ MSPModel_Striping::PState::walk(const Obstacles& obs, SUMOTime currentTime) {
     // XXX preferred gap differs between approaching a standing obstacle or a moving obstacle
     const SUMOReal preferredGap = NUMERICAL_EPS;
     SUMOReal xSpeed = MIN2(vMax, MAX2((SUMOReal)0, DIST2SPEED(xDist - preferredGap)));
+    if (xSpeed < NUMERICAL_EPS) {
+        xSpeed = 0.;
+    }
     if (DEBUGCOND(myPerson->getID())) {
         std::cout << " xSpeedPotential=" << xSpeed << "\n";
     }
@@ -1180,7 +1187,7 @@ MSPModel_Striping::PState::walk(const Obstacles& obs, SUMOTime currentTime) {
     myRelX += SPEED2DIST(xSpeed * myDir);
     myRelY += SPEED2DIST(ySpeed);
     mySpeed = xSpeed;
-    if (xSpeed > 0) {
+    if (xSpeed >= SUMO_const_haltingSpeed) {
         myWaitingToEnter = false;
         myWaitingTime = 0;
     } else {

@@ -146,7 +146,6 @@ MSVehicle::Influencer::Influencer() :
     myConsiderMaxDeceleration(true),
     myRespectJunctionPriority(true),
     myEmergencyBrakeRedLight(true),
-    myAmVTDControlled(false),
     myLastVTDAccess(-TIME2STEPS(20)),
     myStrategicLC(LC_NOCONFLICT),
     myCooperativeLC(LC_NOCONFLICT),
@@ -339,6 +338,29 @@ MSVehicle::Influencer::setLaneChangeMode(int value) {
 }
 
 
+void 
+MSVehicle::Influencer::setVTDControlled(MSLane* l, SUMOReal pos, SUMOReal posLat, SUMOReal angle, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t) {
+    myVTDLane = l;
+    myVTDPos = pos;
+    myVTDPosLat = posLat;
+    myVTDAngle = angle;
+    myVTDEdgeOffset = edgeOffset;
+    myVTDRoute = route;
+    myLastVTDAccess = t;
+}
+
+
+bool 
+MSVehicle::Influencer::isVTDControlled() const {
+    return myLastVTDAccess == MSNet::getInstance()->getCurrentTimeStep();
+}
+
+
+bool 
+MSVehicle::Influencer::isVTDAffected(SUMOTime t) const {
+    return myLastVTDAccess >= t - TIME2STEPS(10);
+}
+
 void
 MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     v->onRemovalFromNet(MSMoveReminder::NOTIFICATION_TELEPORT);
@@ -346,14 +368,16 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     if (myVTDRoute.size() != 0) {
         v->replaceRouteEdges(myVTDRoute, true);
     }
-    v->myCurrEdge += myVTDEdgeOffset;
+    v->myCurrEdge = v->getRoute().begin() + myVTDEdgeOffset;
     if (myVTDPos > myVTDLane->getLength()) {
         myVTDPos = myVTDLane->getLength();
     }
     myVTDLane->forceVehicleInsertion(v, myVTDPos, myVTDPosLat);
     v->updateBestLanes();
-    myAmVTDControlled = false;
+    // inverse of GeomHelper::naviDegree 
+    v->setAngle(M_PI / 2. - DEG2RAD(myVTDAngle));
 }
+
 
 SUMOReal
 MSVehicle::Influencer::implicitSpeedVTD(const MSVehicle* veh, SUMOReal oldSpeed) {
@@ -397,6 +421,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myAmRegisteredAsWaitingForPerson(false),
     myAmRegisteredAsWaitingForContainer(false),
     myHaveToWaitOnNextLink(false),
+    myAngle(0),
     myCachedPosition(Position::INVALID),
     myEdgeWeights(0)
 #ifndef NO_TRACI
@@ -645,9 +670,14 @@ MSVehicle::getRerouteOrigin() const {
     return *myCurrEdge;
 }
 
+void 
+MSVehicle::setAngle(SUMOReal angle) {
+    myAngle = angle;
+}
+
 
 SUMOReal
-MSVehicle::getAngle() const {
+MSVehicle::computeAngle() const {
     Position p1;
     Position p2;
     const SUMOReal posLat = -myState.myPosLat; // @todo get rid of the '-'
@@ -1637,6 +1667,7 @@ MSVehicle::executeMove() {
         }
         // State needs to be reset for all vehicles before the next call to MSEdgeControl::changeLanes
         getLaneChangeModel().prepareStep();
+        myAngle = computeAngle();
     }
     //if (getID() == "disabled") std::cout << SIMTIME << " executeMove finished veh=" << getID() << " lane=" << myLane->getID() << " myPos=" << getPositionOnLane() << " myPosLat=" << getLateralPositionOnLane() << "\n";
     gDebugFlag1 = false;
@@ -2075,6 +2106,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
         }
     }
     if (gDebugFlag4) std::cout << SIMTIME << " enterLaneAtLaneChange new furtherLanes=" << toString(myFurtherLanes) << "\n";
+    myAngle = computeAngle();
 }
 
 
@@ -2106,6 +2138,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
     }
     myState.myBackPos = -leftLength;
     getLaneChangeModel().updateShadowLane();
+    myAngle = computeAngle();
 }
 
 

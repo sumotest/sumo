@@ -153,6 +153,7 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
     //gDebugFlag4 = vehicle->getID() == "Togliatti_80_26";
     // 1) update vehicles lateral position according to latDist and target lane
     vehicle->myState.myPosLat += latDist;
+    vehicle->myCachedPosition = Position::INVALID;
 
     // 2) distinguish several cases 
     //   a) vehicle moves completely within the same lane

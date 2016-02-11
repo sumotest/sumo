@@ -213,7 +213,7 @@ MSLaneChanger::change() {
     // priority.
     myCandi = findCandidate();
     MSVehicle* vehicle = veh(myCandi);
-    gDebugFlag1 = vehicle->getID() == "disabled";
+    //gDebugFlag1 = vehicle->getID() == "disabled";
     
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == vehicle->getID()) {
@@ -381,6 +381,7 @@ MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from) {
     const int direction = lcm.getLaneChangeDirection();
     const bool pastMidpoint = lcm.updateCompletion();
     vehicle->myState.myPosLat += lcm.getLateralSpeed();
+    vehicle->myCachedPosition = Position::INVALID;
     ChangerIt shadow;
     if (pastMidpoint) {
         ChangerIt to = from + direction;
@@ -407,6 +408,7 @@ MSLaneChanger::continueChange(MSVehicle* vehicle, ChangerIt& from) {
         // set as hoppedVeh on the shadow lane so it is found as leader on both lanes
         shadow->hoppedVeh = vehicle;
     }
+    vehicle->myAngle = vehicle->computeAngle();
     if (gDebugFlag1) std::cout << SIMTIME 
         << " continueChange veh=" << vehicle->getID() 
             << " from=" << Named::getIDSecure(from->lane)
@@ -646,16 +648,11 @@ MSLaneChanger::checkChange(
     const int oldstate = state;
     state = vehicle->influenceChangeDecision(state);
     if (gDebugFlag1)  std::cout << SIMTIME 
-        << " veh=" << vehicle->getID() << " oldstate=" << oldstate << " newstate=" << state << "\n  "
-            << ((state & LCA_URGENT) ? " (urgent)" : "")
-            << ((state & LCA_STRATEGIC) ? " (strat)" : "")
-            << ((state & LCA_COOPERATIVE) ? " (coop)" : "")
-            << ((state & LCA_SPEEDGAIN) ? " (speed)" : "")
-            << ((state & LCA_KEEPRIGHT) ? " (keepright)" : "")
-            << ((state & LCA_TRACI) ? " (traci)" : "")
-            << ((state & LCA_BLOCKED) ? " (blocked)" : "")
-            << ((state & LCA_OVERLAPPING) ? " (overlap)" : "")
-            << ((state & LCA_INSUFFICIENT_SPACE) ? " (insufficientSpace)" : "")
+            << " veh=" << vehicle->getID()
+            << " oldState=" << toString((LaneChangeAction)oldstate) 
+            << " newState=" << toString((LaneChangeAction)state) 
+            << ((blocked & LCA_BLOCKED) ? " (blocked)" : "")
+            << ((blocked & LCA_OVERLAPPING) ? " (overlap)" : "")
             << "\n";
 #endif
     return state;
