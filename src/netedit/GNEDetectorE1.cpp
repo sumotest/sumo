@@ -196,11 +196,9 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
-    } else {
-   
-        // Pop draw matrix
-        glPopMatrix();
     }
+    // Pop draw matrix
+    glPopMatrix();
 
     // Pop name
     glPopName();
