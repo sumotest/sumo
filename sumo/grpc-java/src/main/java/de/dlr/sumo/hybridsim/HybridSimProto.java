@@ -1175,6 +1175,19 @@ public final class HybridSimProto {
      * <code>optional double y = 5;</code>
      */
     double getY();
+
+    /**
+     * <code>optional .hybridsim.Leg leg = 6;</code>
+     */
+    boolean hasLeg();
+    /**
+     * <code>optional .hybridsim.Leg leg = 6;</code>
+     */
+    de.dlr.sumo.hybridsim.HybridSimProto.Leg getLeg();
+    /**
+     * <code>optional .hybridsim.Leg leg = 6;</code>
+     */
+    de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder getLegOrBuilder();
   }
   /**
    * Protobuf type {@code hybridsim.Agent}
@@ -1245,6 +1258,19 @@ public final class HybridSimProto {
             case 41: {
 
               y_ = input.readDouble();
+              break;
+            }
+            case 50: {
+              de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder subBuilder = null;
+              if (leg_ != null) {
+                subBuilder = leg_.toBuilder();
+              }
+              leg_ = input.readMessage(de.dlr.sumo.hybridsim.HybridSimProto.Leg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(leg_);
+                leg_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           }
@@ -1391,6 +1417,27 @@ public final class HybridSimProto {
       return y_;
     }
 
+    public static final int LEG_FIELD_NUMBER = 6;
+    private de.dlr.sumo.hybridsim.HybridSimProto.Leg leg_;
+    /**
+     * <code>optional .hybridsim.Leg leg = 6;</code>
+     */
+    public boolean hasLeg() {
+      return leg_ != null;
+    }
+    /**
+     * <code>optional .hybridsim.Leg leg = 6;</code>
+     */
+    public de.dlr.sumo.hybridsim.HybridSimProto.Leg getLeg() {
+      return leg_ == null ? de.dlr.sumo.hybridsim.HybridSimProto.Leg.getDefaultInstance() : leg_;
+    }
+    /**
+     * <code>optional .hybridsim.Leg leg = 6;</code>
+     */
+    public de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder getLegOrBuilder() {
+      return getLeg();
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1418,6 +1465,9 @@ public final class HybridSimProto {
       if (y_ != 0D) {
         output.writeDouble(5, y_);
       }
+      if (leg_ != null) {
+        output.writeMessage(6, getLeg());
+      }
     }
 
     public int getSerializedSize() {
@@ -1441,6 +1491,10 @@ public final class HybridSimProto {
       if (y_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(5, y_);
+      }
+      if (leg_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(6, getLeg());
       }
       memoizedSize = size;
       return size;
@@ -1563,6 +1617,12 @@ public final class HybridSimProto {
 
         y_ = 0D;
 
+        if (legBuilder_ == null) {
+          leg_ = null;
+        } else {
+          leg_ = null;
+          legBuilder_ = null;
+        }
         return this;
       }
 
@@ -1590,6 +1650,11 @@ public final class HybridSimProto {
         result.leaveId_ = leaveId_;
         result.x_ = x_;
         result.y_ = y_;
+        if (legBuilder_ == null) {
+          result.leg_ = leg_;
+        } else {
+          result.leg_ = legBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -1622,6 +1687,9 @@ public final class HybridSimProto {
         }
         if (other.getY() != 0D) {
           setY(other.getY());
+        }
+        if (other.hasLeg()) {
+          mergeLeg(other.getLeg());
         }
         onChanged();
         return this;
@@ -1907,6 +1975,123 @@ public final class HybridSimProto {
         onChanged();
         return this;
       }
+
+      private de.dlr.sumo.hybridsim.HybridSimProto.Leg leg_ = null;
+      private com.google.protobuf.SingleFieldBuilder<
+          de.dlr.sumo.hybridsim.HybridSimProto.Leg, de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder, de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder> legBuilder_;
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public boolean hasLeg() {
+        return legBuilder_ != null || leg_ != null;
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.Leg getLeg() {
+        if (legBuilder_ == null) {
+          return leg_ == null ? de.dlr.sumo.hybridsim.HybridSimProto.Leg.getDefaultInstance() : leg_;
+        } else {
+          return legBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public Builder setLeg(de.dlr.sumo.hybridsim.HybridSimProto.Leg value) {
+        if (legBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          leg_ = value;
+          onChanged();
+        } else {
+          legBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public Builder setLeg(
+          de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder builderForValue) {
+        if (legBuilder_ == null) {
+          leg_ = builderForValue.build();
+          onChanged();
+        } else {
+          legBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public Builder mergeLeg(de.dlr.sumo.hybridsim.HybridSimProto.Leg value) {
+        if (legBuilder_ == null) {
+          if (leg_ != null) {
+            leg_ =
+              de.dlr.sumo.hybridsim.HybridSimProto.Leg.newBuilder(leg_).mergeFrom(value).buildPartial();
+          } else {
+            leg_ = value;
+          }
+          onChanged();
+        } else {
+          legBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public Builder clearLeg() {
+        if (legBuilder_ == null) {
+          leg_ = null;
+          onChanged();
+        } else {
+          leg_ = null;
+          legBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder getLegBuilder() {
+        
+        onChanged();
+        return getLegFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder getLegOrBuilder() {
+        if (legBuilder_ != null) {
+          return legBuilder_.getMessageOrBuilder();
+        } else {
+          return leg_ == null ?
+              de.dlr.sumo.hybridsim.HybridSimProto.Leg.getDefaultInstance() : leg_;
+        }
+      }
+      /**
+       * <code>optional .hybridsim.Leg leg = 6;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.dlr.sumo.hybridsim.HybridSimProto.Leg, de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder, de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder> 
+          getLegFieldBuilder() {
+        if (legBuilder_ == null) {
+          legBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.dlr.sumo.hybridsim.HybridSimProto.Leg, de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder, de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder>(
+                  getLeg(),
+                  getParentForChildren(),
+                  isClean());
+          leg_ = null;
+        }
+        return legBuilder_;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return this;
@@ -1960,6 +2145,1369 @@ public final class HybridSimProto {
     }
 
     public de.dlr.sumo.hybridsim.HybridSimProto.Agent getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface LegOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:hybridsim.Leg)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    java.util.List<de.dlr.sumo.hybridsim.HybridSimProto.Link> 
+        getLinkList();
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    de.dlr.sumo.hybridsim.HybridSimProto.Link getLink(int index);
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    int getLinkCount();
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    java.util.List<? extends de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder> 
+        getLinkOrBuilderList();
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder getLinkOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code hybridsim.Leg}
+   */
+  public  static final class Leg extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:hybridsim.Leg)
+      LegOrBuilder {
+    // Use Leg.newBuilder() to construct.
+    private Leg(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Leg() {
+      link_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    }
+    private Leg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
+      this();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!input.skipField(tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 122: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                link_ = new java.util.ArrayList<de.dlr.sumo.hybridsim.HybridSimProto.Link>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              link_.add(input.readMessage(de.dlr.sumo.hybridsim.HybridSimProto.Link.parser(), extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw new RuntimeException(e.setUnfinishedMessage(this));
+      } catch (java.io.IOException e) {
+        throw new RuntimeException(
+            new com.google.protobuf.InvalidProtocolBufferException(
+                e.getMessage()).setUnfinishedMessage(this));
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          link_ = java.util.Collections.unmodifiableList(link_);
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Leg_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Leg_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.dlr.sumo.hybridsim.HybridSimProto.Leg.class, de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder.class);
+    }
+
+    public static final int LINK_FIELD_NUMBER = 15;
+    private java.util.List<de.dlr.sumo.hybridsim.HybridSimProto.Link> link_;
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    public java.util.List<de.dlr.sumo.hybridsim.HybridSimProto.Link> getLinkList() {
+      return link_;
+    }
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    public java.util.List<? extends de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder> 
+        getLinkOrBuilderList() {
+      return link_;
+    }
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    public int getLinkCount() {
+      return link_.size();
+    }
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    public de.dlr.sumo.hybridsim.HybridSimProto.Link getLink(int index) {
+      return link_.get(index);
+    }
+    /**
+     * <code>repeated .hybridsim.Link link = 15;</code>
+     */
+    public de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder getLinkOrBuilder(
+        int index) {
+      return link_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < link_.size(); i++) {
+        output.writeMessage(15, link_.get(i));
+      }
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < link_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(15, link_.get(i));
+      }
+      memoizedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(de.dlr.sumo.hybridsim.HybridSimProto.Leg prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code hybridsim.Leg}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:hybridsim.Leg)
+        de.dlr.sumo.hybridsim.HybridSimProto.LegOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Leg_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Leg_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.dlr.sumo.hybridsim.HybridSimProto.Leg.class, de.dlr.sumo.hybridsim.HybridSimProto.Leg.Builder.class);
+      }
+
+      // Construct using de.dlr.sumo.hybridsim.HybridSimProto.Leg.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getLinkFieldBuilder();
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        if (linkBuilder_ == null) {
+          link_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          linkBuilder_.clear();
+        }
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Leg_descriptor;
+      }
+
+      public de.dlr.sumo.hybridsim.HybridSimProto.Leg getDefaultInstanceForType() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.Leg.getDefaultInstance();
+      }
+
+      public de.dlr.sumo.hybridsim.HybridSimProto.Leg build() {
+        de.dlr.sumo.hybridsim.HybridSimProto.Leg result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.dlr.sumo.hybridsim.HybridSimProto.Leg buildPartial() {
+        de.dlr.sumo.hybridsim.HybridSimProto.Leg result = new de.dlr.sumo.hybridsim.HybridSimProto.Leg(this);
+        int from_bitField0_ = bitField0_;
+        if (linkBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            link_ = java.util.Collections.unmodifiableList(link_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.link_ = link_;
+        } else {
+          result.link_ = linkBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.dlr.sumo.hybridsim.HybridSimProto.Leg) {
+          return mergeFrom((de.dlr.sumo.hybridsim.HybridSimProto.Leg)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.dlr.sumo.hybridsim.HybridSimProto.Leg other) {
+        if (other == de.dlr.sumo.hybridsim.HybridSimProto.Leg.getDefaultInstance()) return this;
+        if (linkBuilder_ == null) {
+          if (!other.link_.isEmpty()) {
+            if (link_.isEmpty()) {
+              link_ = other.link_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureLinkIsMutable();
+              link_.addAll(other.link_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.link_.isEmpty()) {
+            if (linkBuilder_.isEmpty()) {
+              linkBuilder_.dispose();
+              linkBuilder_ = null;
+              link_ = other.link_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              linkBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getLinkFieldBuilder() : null;
+            } else {
+              linkBuilder_.addAllMessages(other.link_);
+            }
+          }
+        }
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.dlr.sumo.hybridsim.HybridSimProto.Leg parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.dlr.sumo.hybridsim.HybridSimProto.Leg) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<de.dlr.sumo.hybridsim.HybridSimProto.Link> link_ =
+        java.util.Collections.emptyList();
+      private void ensureLinkIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          link_ = new java.util.ArrayList<de.dlr.sumo.hybridsim.HybridSimProto.Link>(link_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.dlr.sumo.hybridsim.HybridSimProto.Link, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder, de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder> linkBuilder_;
+
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public java.util.List<de.dlr.sumo.hybridsim.HybridSimProto.Link> getLinkList() {
+        if (linkBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(link_);
+        } else {
+          return linkBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public int getLinkCount() {
+        if (linkBuilder_ == null) {
+          return link_.size();
+        } else {
+          return linkBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link getLink(int index) {
+        if (linkBuilder_ == null) {
+          return link_.get(index);
+        } else {
+          return linkBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder setLink(
+          int index, de.dlr.sumo.hybridsim.HybridSimProto.Link value) {
+        if (linkBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLinkIsMutable();
+          link_.set(index, value);
+          onChanged();
+        } else {
+          linkBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder setLink(
+          int index, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder builderForValue) {
+        if (linkBuilder_ == null) {
+          ensureLinkIsMutable();
+          link_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          linkBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder addLink(de.dlr.sumo.hybridsim.HybridSimProto.Link value) {
+        if (linkBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLinkIsMutable();
+          link_.add(value);
+          onChanged();
+        } else {
+          linkBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder addLink(
+          int index, de.dlr.sumo.hybridsim.HybridSimProto.Link value) {
+        if (linkBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLinkIsMutable();
+          link_.add(index, value);
+          onChanged();
+        } else {
+          linkBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder addLink(
+          de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder builderForValue) {
+        if (linkBuilder_ == null) {
+          ensureLinkIsMutable();
+          link_.add(builderForValue.build());
+          onChanged();
+        } else {
+          linkBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder addLink(
+          int index, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder builderForValue) {
+        if (linkBuilder_ == null) {
+          ensureLinkIsMutable();
+          link_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          linkBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder addAllLink(
+          java.lang.Iterable<? extends de.dlr.sumo.hybridsim.HybridSimProto.Link> values) {
+        if (linkBuilder_ == null) {
+          ensureLinkIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, link_);
+          onChanged();
+        } else {
+          linkBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder clearLink() {
+        if (linkBuilder_ == null) {
+          link_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          linkBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public Builder removeLink(int index) {
+        if (linkBuilder_ == null) {
+          ensureLinkIsMutable();
+          link_.remove(index);
+          onChanged();
+        } else {
+          linkBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder getLinkBuilder(
+          int index) {
+        return getLinkFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder getLinkOrBuilder(
+          int index) {
+        if (linkBuilder_ == null) {
+          return link_.get(index);  } else {
+          return linkBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public java.util.List<? extends de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder> 
+           getLinkOrBuilderList() {
+        if (linkBuilder_ != null) {
+          return linkBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(link_);
+        }
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder addLinkBuilder() {
+        return getLinkFieldBuilder().addBuilder(
+            de.dlr.sumo.hybridsim.HybridSimProto.Link.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder addLinkBuilder(
+          int index) {
+        return getLinkFieldBuilder().addBuilder(
+            index, de.dlr.sumo.hybridsim.HybridSimProto.Link.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .hybridsim.Link link = 15;</code>
+       */
+      public java.util.List<de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder> 
+           getLinkBuilderList() {
+        return getLinkFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.dlr.sumo.hybridsim.HybridSimProto.Link, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder, de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder> 
+          getLinkFieldBuilder() {
+        if (linkBuilder_ == null) {
+          linkBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              de.dlr.sumo.hybridsim.HybridSimProto.Link, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder, de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder>(
+                  link_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          link_ = null;
+        }
+        return linkBuilder_;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:hybridsim.Leg)
+    }
+
+    // @@protoc_insertion_point(class_scope:hybridsim.Leg)
+    private static final de.dlr.sumo.hybridsim.HybridSimProto.Leg DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new de.dlr.sumo.hybridsim.HybridSimProto.Leg();
+    }
+
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Leg getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Leg>
+        PARSER = new com.google.protobuf.AbstractParser<Leg>() {
+      public Leg parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        try {
+          return new Leg(input, extensionRegistry);
+        } catch (RuntimeException e) {
+          if (e.getCause() instanceof
+              com.google.protobuf.InvalidProtocolBufferException) {
+            throw (com.google.protobuf.InvalidProtocolBufferException)
+                e.getCause();
+          }
+          throw e;
+        }
+      }
+    };
+
+    public static com.google.protobuf.Parser<Leg> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Leg> getParserForType() {
+      return PARSER;
+    }
+
+    public de.dlr.sumo.hybridsim.HybridSimProto.Leg getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface LinkOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:hybridsim.Link)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>optional double x0 = 1;</code>
+     */
+    double getX0();
+
+    /**
+     * <code>optional double y0 = 2;</code>
+     */
+    double getY0();
+
+    /**
+     * <code>optional double x1 = 3;</code>
+     */
+    double getX1();
+
+    /**
+     * <code>optional double y1 = 4;</code>
+     */
+    double getY1();
+
+    /**
+     * <code>optional string id = 5;</code>
+     */
+    java.lang.String getId();
+    /**
+     * <code>optional string id = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
+  }
+  /**
+   * Protobuf type {@code hybridsim.Link}
+   */
+  public  static final class Link extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:hybridsim.Link)
+      LinkOrBuilder {
+    // Use Link.newBuilder() to construct.
+    private Link(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Link() {
+      x0_ = 0D;
+      y0_ = 0D;
+      x1_ = 0D;
+      y1_ = 0D;
+      id_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    }
+    private Link(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry) {
+      this();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!input.skipField(tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 9: {
+
+              x0_ = input.readDouble();
+              break;
+            }
+            case 17: {
+
+              y0_ = input.readDouble();
+              break;
+            }
+            case 25: {
+
+              x1_ = input.readDouble();
+              break;
+            }
+            case 33: {
+
+              y1_ = input.readDouble();
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              id_ = s;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw new RuntimeException(e.setUnfinishedMessage(this));
+      } catch (java.io.IOException e) {
+        throw new RuntimeException(
+            new com.google.protobuf.InvalidProtocolBufferException(
+                e.getMessage()).setUnfinishedMessage(this));
+      } finally {
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Link_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Link_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.dlr.sumo.hybridsim.HybridSimProto.Link.class, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder.class);
+    }
+
+    public static final int X0_FIELD_NUMBER = 1;
+    private double x0_;
+    /**
+     * <code>optional double x0 = 1;</code>
+     */
+    public double getX0() {
+      return x0_;
+    }
+
+    public static final int Y0_FIELD_NUMBER = 2;
+    private double y0_;
+    /**
+     * <code>optional double y0 = 2;</code>
+     */
+    public double getY0() {
+      return y0_;
+    }
+
+    public static final int X1_FIELD_NUMBER = 3;
+    private double x1_;
+    /**
+     * <code>optional double x1 = 3;</code>
+     */
+    public double getX1() {
+      return x1_;
+    }
+
+    public static final int Y1_FIELD_NUMBER = 4;
+    private double y1_;
+    /**
+     * <code>optional double y1 = 4;</code>
+     */
+    public double getY1() {
+      return y1_;
+    }
+
+    public static final int ID_FIELD_NUMBER = 5;
+    private volatile java.lang.Object id_;
+    /**
+     * <code>optional string id = 5;</code>
+     */
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string id = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (x0_ != 0D) {
+        output.writeDouble(1, x0_);
+      }
+      if (y0_ != 0D) {
+        output.writeDouble(2, y0_);
+      }
+      if (x1_ != 0D) {
+        output.writeDouble(3, x1_);
+      }
+      if (y1_ != 0D) {
+        output.writeDouble(4, y1_);
+      }
+      if (!getIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 5, id_);
+      }
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (x0_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(1, x0_);
+      }
+      if (y0_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(2, y0_);
+      }
+      if (x1_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(3, x1_);
+      }
+      if (y1_ != 0D) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(4, y1_);
+      }
+      if (!getIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, id_);
+      }
+      memoizedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(de.dlr.sumo.hybridsim.HybridSimProto.Link prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code hybridsim.Link}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:hybridsim.Link)
+        de.dlr.sumo.hybridsim.HybridSimProto.LinkOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Link_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Link_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.dlr.sumo.hybridsim.HybridSimProto.Link.class, de.dlr.sumo.hybridsim.HybridSimProto.Link.Builder.class);
+      }
+
+      // Construct using de.dlr.sumo.hybridsim.HybridSimProto.Link.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        x0_ = 0D;
+
+        y0_ = 0D;
+
+        x1_ = 0D;
+
+        y1_ = 0D;
+
+        id_ = "";
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.internal_static_hybridsim_Link_descriptor;
+      }
+
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link getDefaultInstanceForType() {
+        return de.dlr.sumo.hybridsim.HybridSimProto.Link.getDefaultInstance();
+      }
+
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link build() {
+        de.dlr.sumo.hybridsim.HybridSimProto.Link result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.dlr.sumo.hybridsim.HybridSimProto.Link buildPartial() {
+        de.dlr.sumo.hybridsim.HybridSimProto.Link result = new de.dlr.sumo.hybridsim.HybridSimProto.Link(this);
+        result.x0_ = x0_;
+        result.y0_ = y0_;
+        result.x1_ = x1_;
+        result.y1_ = y1_;
+        result.id_ = id_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.dlr.sumo.hybridsim.HybridSimProto.Link) {
+          return mergeFrom((de.dlr.sumo.hybridsim.HybridSimProto.Link)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.dlr.sumo.hybridsim.HybridSimProto.Link other) {
+        if (other == de.dlr.sumo.hybridsim.HybridSimProto.Link.getDefaultInstance()) return this;
+        if (other.getX0() != 0D) {
+          setX0(other.getX0());
+        }
+        if (other.getY0() != 0D) {
+          setY0(other.getY0());
+        }
+        if (other.getX1() != 0D) {
+          setX1(other.getX1());
+        }
+        if (other.getY1() != 0D) {
+          setY1(other.getY1());
+        }
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
+        }
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.dlr.sumo.hybridsim.HybridSimProto.Link parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.dlr.sumo.hybridsim.HybridSimProto.Link) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private double x0_ ;
+      /**
+       * <code>optional double x0 = 1;</code>
+       */
+      public double getX0() {
+        return x0_;
+      }
+      /**
+       * <code>optional double x0 = 1;</code>
+       */
+      public Builder setX0(double value) {
+        
+        x0_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double x0 = 1;</code>
+       */
+      public Builder clearX0() {
+        
+        x0_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double y0_ ;
+      /**
+       * <code>optional double y0 = 2;</code>
+       */
+      public double getY0() {
+        return y0_;
+      }
+      /**
+       * <code>optional double y0 = 2;</code>
+       */
+      public Builder setY0(double value) {
+        
+        y0_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double y0 = 2;</code>
+       */
+      public Builder clearY0() {
+        
+        y0_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double x1_ ;
+      /**
+       * <code>optional double x1 = 3;</code>
+       */
+      public double getX1() {
+        return x1_;
+      }
+      /**
+       * <code>optional double x1 = 3;</code>
+       */
+      public Builder setX1(double value) {
+        
+        x1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double x1 = 3;</code>
+       */
+      public Builder clearX1() {
+        
+        x1_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double y1_ ;
+      /**
+       * <code>optional double y1 = 4;</code>
+       */
+      public double getY1() {
+        return y1_;
+      }
+      /**
+       * <code>optional double y1 = 4;</code>
+       */
+      public Builder setY1(double value) {
+        
+        y1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional double y1 = 4;</code>
+       */
+      public Builder clearY1() {
+        
+        y1_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object id_ = "";
+      /**
+       * <code>optional string id = 5;</code>
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string id = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string id = 5;</code>
+       */
+      public Builder setId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string id = 5;</code>
+       */
+      public Builder clearId() {
+        
+        id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string id = 5;</code>
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:hybridsim.Link)
+    }
+
+    // @@protoc_insertion_point(class_scope:hybridsim.Link)
+    private static final de.dlr.sumo.hybridsim.HybridSimProto.Link DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new de.dlr.sumo.hybridsim.HybridSimProto.Link();
+    }
+
+    public static de.dlr.sumo.hybridsim.HybridSimProto.Link getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Link>
+        PARSER = new com.google.protobuf.AbstractParser<Link>() {
+      public Link parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        try {
+          return new Link(input, extensionRegistry);
+        } catch (RuntimeException e) {
+          if (e.getCause() instanceof
+              com.google.protobuf.InvalidProtocolBufferException) {
+            throw (com.google.protobuf.InvalidProtocolBufferException)
+                e.getCause();
+          }
+          throw e;
+        }
+      }
+    };
+
+    public static com.google.protobuf.Parser<Link> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Link> getParserForType() {
+      return PARSER;
+    }
+
+    public de.dlr.sumo.hybridsim.HybridSimProto.Link getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2671,6 +4219,16 @@ public final class HybridSimProto {
      * <code>optional double spd = 4;</code>
      */
     double getSpd();
+
+    /**
+     * <code>optional string linkId = 5;</code>
+     */
+    java.lang.String getLinkId();
+    /**
+     * <code>optional string linkId = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getLinkIdBytes();
   }
   /**
    * Protobuf type {@code hybridsim.Trajectory}
@@ -2688,6 +4246,7 @@ public final class HybridSimProto {
       x_ = 0D;
       y_ = 0D;
       spd_ = 0D;
+      linkId_ = "";
     }
 
     @java.lang.Override
@@ -2733,6 +4292,12 @@ public final class HybridSimProto {
             case 33: {
 
               spd_ = input.readDouble();
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              linkId_ = s;
               break;
             }
           }
@@ -2820,6 +4385,40 @@ public final class HybridSimProto {
       return spd_;
     }
 
+    public static final int LINKID_FIELD_NUMBER = 5;
+    private volatile java.lang.Object linkId_;
+    /**
+     * <code>optional string linkId = 5;</code>
+     */
+    public java.lang.String getLinkId() {
+      java.lang.Object ref = linkId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        linkId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string linkId = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getLinkIdBytes() {
+      java.lang.Object ref = linkId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        linkId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2844,6 +4443,9 @@ public final class HybridSimProto {
       if (spd_ != 0D) {
         output.writeDouble(4, spd_);
       }
+      if (!getLinkIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 5, linkId_);
+      }
     }
 
     public int getSerializedSize() {
@@ -2865,6 +4467,9 @@ public final class HybridSimProto {
       if (spd_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(4, spd_);
+      }
+      if (!getLinkIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, linkId_);
       }
       memoizedSize = size;
       return size;
@@ -2985,6 +4590,8 @@ public final class HybridSimProto {
 
         spd_ = 0D;
 
+        linkId_ = "";
+
         return this;
       }
 
@@ -3011,6 +4618,7 @@ public final class HybridSimProto {
         result.x_ = x_;
         result.y_ = y_;
         result.spd_ = spd_;
+        result.linkId_ = linkId_;
         onBuilt();
         return result;
       }
@@ -3038,6 +4646,10 @@ public final class HybridSimProto {
         }
         if (other.getSpd() != 0D) {
           setSpd(other.getSpd());
+        }
+        if (!other.getLinkId().isEmpty()) {
+          linkId_ = other.linkId_;
+          onChanged();
         }
         onChanged();
         return this;
@@ -3208,6 +4820,75 @@ public final class HybridSimProto {
       public Builder clearSpd() {
         
         spd_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object linkId_ = "";
+      /**
+       * <code>optional string linkId = 5;</code>
+       */
+      public java.lang.String getLinkId() {
+        java.lang.Object ref = linkId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          linkId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string linkId = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getLinkIdBytes() {
+        java.lang.Object ref = linkId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          linkId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string linkId = 5;</code>
+       */
+      public Builder setLinkId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        linkId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string linkId = 5;</code>
+       */
+      public Builder clearLinkId() {
+        
+        linkId_ = getDefaultInstance().getLinkId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string linkId = 5;</code>
+       */
+      public Builder setLinkIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        linkId_ = value;
         onChanged();
         return this;
       }
@@ -3968,6 +5649,16 @@ public final class HybridSimProto {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_hybridsim_Agent_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_hybridsim_Leg_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_hybridsim_Leg_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_hybridsim_Link_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_hybridsim_Link_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_hybridsim_Agents_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -3994,22 +5685,26 @@ public final class HybridSimProto {
       "\n\017hybridsim.proto\022\thybridsim\"U\n\037LeftClos" +
       "edRightOpenTimeInterval\022\031\n\021fromTimeInclu" +
       "ding\030\001 \001(\001\022\027\n\017toTimeExcluding\030\002 \001(\001\"\007\n\005E" +
-      "mpty\"\026\n\007Boolean\022\013\n\003val\030\001 \001(\010\"K\n\005Agent\022\n\n" +
+      "mpty\"\026\n\007Boolean\022\013\n\003val\030\001 \001(\010\"h\n\005Agent\022\n\n" +
       "\002id\030\001 \001(\t\022\017\n\007enterId\030\002 \001(\t\022\017\n\007leaveId\030\003 " +
-      "\001(\t\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\"*\n\006Agents\022 \n\006a" +
-      "gents\030\001 \003(\0132\020.hybridsim.Agent\";\n\nTraject" +
-      "ory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001(\001\022\t\n\001y\030\003 \001(\001\022\013\n" +
-      "\003spd\030\004 \001(\001\";\n\014Trajectories\022+\n\014trajectori" +
-      "es\030\001 \003(\0132\025.hybridsim.Trajectory2\240\002\n\020Hybr",
-      "idSimulation\022V\n\024simulatedTimeInerval\022*.h" +
-      "ybridsim.LeftClosedRightOpenTimeInterval" +
-      "\032\020.hybridsim.Empty\"\000\0227\n\rtransferAgent\022\020." +
-      "hybridsim.Agent\032\022.hybridsim.Boolean\"\000\022B\n" +
-      "\023receiveTrajectories\022\020.hybridsim.Empty\032\027" +
-      ".hybridsim.Trajectories\"\000\0227\n\016retrieveAge" +
-      "nts\022\020.hybridsim.Empty\032\021.hybridsim.Agents" +
-      "\"\000B)\n\025de.dlr.sumo.hybridsimB\016HybridSimPr" +
-      "otoP\000b\006proto3"
+      "\001(\t\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\022\033\n\003leg\030\006 \001(\0132\016" +
+      ".hybridsim.Leg\"$\n\003Leg\022\035\n\004link\030\017 \003(\0132\017.hy" +
+      "bridsim.Link\"B\n\004Link\022\n\n\002x0\030\001 \001(\001\022\n\n\002y0\030\002" +
+      " \001(\001\022\n\n\002x1\030\003 \001(\001\022\n\n\002y1\030\004 \001(\001\022\n\n\002id\030\005 \001(\t" +
+      "\"*\n\006Agents\022 \n\006agents\030\001 \003(\0132\020.hybridsim.A",
+      "gent\"K\n\nTrajectory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001(" +
+      "\001\022\t\n\001y\030\003 \001(\001\022\013\n\003spd\030\004 \001(\001\022\016\n\006linkId\030\005 \001(" +
+      "\t\";\n\014Trajectories\022+\n\014trajectories\030\001 \003(\0132" +
+      "\025.hybridsim.Trajectory2\240\002\n\020HybridSimulat" +
+      "ion\022V\n\024simulatedTimeInerval\022*.hybridsim." +
+      "LeftClosedRightOpenTimeInterval\032\020.hybrid" +
+      "sim.Empty\"\000\0227\n\rtransferAgent\022\020.hybridsim" +
+      ".Agent\032\022.hybridsim.Boolean\"\000\022B\n\023receiveT" +
+      "rajectories\022\020.hybridsim.Empty\032\027.hybridsi" +
+      "m.Trajectories\"\000\0227\n\016retrieveAgents\022\020.hyb",
+      "ridsim.Empty\032\021.hybridsim.Agents\"\000B)\n\025de." +
+      "dlr.sumo.hybridsimB\016HybridSimProtoP\000b\006pr" +
+      "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4046,21 +5741,33 @@ public final class HybridSimProto {
     internal_static_hybridsim_Agent_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_hybridsim_Agent_descriptor,
-        new java.lang.String[] { "Id", "EnterId", "LeaveId", "X", "Y", });
-    internal_static_hybridsim_Agents_descriptor =
+        new java.lang.String[] { "Id", "EnterId", "LeaveId", "X", "Y", "Leg", });
+    internal_static_hybridsim_Leg_descriptor =
       getDescriptor().getMessageTypes().get(4);
+    internal_static_hybridsim_Leg_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_hybridsim_Leg_descriptor,
+        new java.lang.String[] { "Link", });
+    internal_static_hybridsim_Link_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_hybridsim_Link_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_hybridsim_Link_descriptor,
+        new java.lang.String[] { "X0", "Y0", "X1", "Y1", "Id", });
+    internal_static_hybridsim_Agents_descriptor =
+      getDescriptor().getMessageTypes().get(6);
     internal_static_hybridsim_Agents_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_hybridsim_Agents_descriptor,
         new java.lang.String[] { "Agents", });
     internal_static_hybridsim_Trajectory_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_hybridsim_Trajectory_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_hybridsim_Trajectory_descriptor,
-        new java.lang.String[] { "Id", "X", "Y", "Spd", });
+        new java.lang.String[] { "Id", "X", "Y", "Spd", "LinkId", });
     internal_static_hybridsim_Trajectories_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_hybridsim_Trajectories_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_hybridsim_Trajectories_descriptor,

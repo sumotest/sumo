@@ -50,7 +50,7 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 		 std::cout << "current edge = " << str << std::endl;
 		 buffers[edge->getID()] = buffer;
 	 } else {
-		 std::queue<MSPRCPState*> buffer = buffers[person->getEdge()->getID()];
+		 std::queue<MSPRCPState*> buffer = buffers[edge->getID()];
 		 buffer.push(state);
 	 }
 
@@ -86,7 +86,7 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	grpcClient->simulateTimeInterval(currentTime,currentTime+DELTA_T);
 
 	//3. receive events, trajectories ...
-	grpcClient->receiveTrajectories(pstates);
+	grpcClient->receiveTrajectories(pstates, currentTime);
 
 	//4. transfer agents as long as there is space (external sim --> SUMO)
 	grpcClient->retrieveAgents(pstates,myNet,currentTime);
@@ -112,9 +112,7 @@ void MSPModelRemoteControlled::handleBuffer(std::queue<MSPRCPState*>* buffer) {
 
 bool MSPModelRemoteControlled::transmitPedestrian(MSPRCPState* st) {
 
-	std::string id = st->getPerson()->getID();
-	std::string fromId = st->getEdge()->getID();
-	std::string toId = (*(st->getMyStage()->getRoute().end()-1))->getID();
-	return grpcClient->transmitPedestrian(id,fromId,toId);
+
+	return grpcClient->transmitPedestrian(st);
 }
 

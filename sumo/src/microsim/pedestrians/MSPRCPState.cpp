@@ -36,6 +36,14 @@ MSPRCPState::~MSPRCPState() {
 }
 
 const MSEdge* MSPRCPState::getNextEdge() const {
-	//	const MSEdge * rt =
-	return *(myRoutePt+1);
+
+	return myRoutePt == myStage->getRoute().end()-1 ? 0 : *(myRoutePt+1);
+}
+
+const MSEdge* MSPRCPState::incrEdge() {
+	if (myRoutePt == myStage->getRoute().end()-1) {
+		return 0;
+	}
+	myRoutePt++;
+	return *myRoutePt;
 }

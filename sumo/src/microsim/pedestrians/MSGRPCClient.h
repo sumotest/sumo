@@ -49,12 +49,11 @@ public:
 
 	//hybrid simulation
 	void simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl);
-	bool transmitPedestrian(std::string& id, std::string& fromId, std::string& toId);
-	void receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates);
+	bool transmitPedestrian(MSPRCPState* st);
+	void receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates, SUMOTime time);
 	void retrieveAgents(std::map<const std::string,MSPRCPState*>& pstates,MSNet* net, SUMOTime time);
 
 private:
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
-
 };
 #endif /*MSGRPC_CLIENT_H*/
