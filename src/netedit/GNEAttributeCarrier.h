@@ -137,18 +137,6 @@ public:
     /// @brief parses a number of type T from string
     template<typename T>
     static T parse(const std::string& string);
-    template<>
-    static int parse(const std::string& string) {
-        return TplConvert::_str2int(string);
-    }
-    template<>
-    static SUMOReal parse(const std::string& string) {
-        return TplConvert::_str2SUMOReal(string);
-    }
-    template<>                                      // PABLO #1916
-    static bool parse(const std::string& string) {  // PABLO #1916
-        return (string == "true"? true : false);    // PABLO #1916
-    }                                               // PABLO #1916
 
     /// @brief true if a positive number of type T can be parsed from string
     template<typename T>
