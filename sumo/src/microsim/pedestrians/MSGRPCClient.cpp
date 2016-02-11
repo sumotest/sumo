@@ -17,13 +17,11 @@
 //
 /****************************************************************************/
 #include <grpc++/grpc++.h>
-#include <noninteracting.grpc.pb.h>
 #include <utils/common/StdDefs.h>
 #include <microsim/MSJunction.h>
 #include "MSGRPCClient.h"
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) :
-stub_(noninteracting::PBPState::NewStub(channel)),
 hybridsimStub(hybridsim::HybridSimulation::NewStub(channel))
 {
 
@@ -33,115 +31,6 @@ MSGRPCClient::~MSGRPCClient() {
 
 }
 
-MSGRPCClient::CmpWlkTmStruct MSGRPCClient::computeWalkingTime(const MSEdge * prev, const MSPerson::MSPersonStage_Walking & stage,const SUMOTime currentTime, const MSPerson * pers){
-
-
-	noninteracting::CMPWlkgTm request;
-	if (prev != 0){
-		noninteracting::PBEdge * edge = request.mutable_prev();
-		edge->set_length(prev->getLength());
-		edge->set_fromjunctionid(prev->getFromJunction()->getID());
-		edge->set_tojunctionid(prev->getToJunction()->getID());
-
-	}
-
-	noninteracting::PBEdge * stEdge = request.mutable_stage()->mutable_edge();
-	stEdge->set_length(stage.getEdge()->getLength());
-	stEdge->set_fromjunctionid(stage.getEdge()->getFromJunction()->getID());
-	stEdge->set_tojunctionid(stage.getEdge()->getToJunction()->getID());
-
-
-
-
-	if (stage.getPedestrianState()->getNextEdge() != 0) {
-		noninteracting::PBEdge * nxtStEdge = request.mutable_stage()->mutable_nextrouteedge();
-		nxtStEdge->set_length(stage.getPedestrianState()->getNextEdge()->getLength());
-		nxtStEdge->set_fromjunctionid((stage.getPedestrianState()->getNextEdge()->getFromJunction()->getID()));
-		nxtStEdge->set_tojunctionid(stage.getPedestrianState()->getNextEdge()->getToJunction()->getID());
-	}
-	noninteracting::PBMSPersonStage_Walking * st = request.mutable_stage();
-
-	st->set_departpos(stage.getDepartPos());
-	st->set_arrivalpos(stage.getArrivalPos());
-	st->set_maxspeed(stage.getMaxSpeed());
-
-	noninteracting::PBSUMOTime * time = request.mutable_sumotime();
-	time->set_sumotime(currentTime);
-
-	noninteracting::CMPWlkgTmRpl reply;
-
-	ClientContext context;
-
-	Status status = stub_->computeWalkingTime(&context,request, &reply);
-
-
-	CmpWlkTmStruct ret;
-	if (status.ok()){
-		//		SUMOTime ret = MAX2((SUMOTime)1, TIME2STEPS(replay.sumotime()));
-		ret.wlkTm = MAX2((SUMOTime)1, TIME2STEPS(reply.duration().sumotime()));;
-		ret.currentBeginPos = reply.mycurrentbeginpos();
-		ret.currentEndPos = reply.mycurrentendpos();
-		ret.lastEntrTm = reply.mylastentrytime();
-		return  ret;
-	} else {
-		std::cerr << "something went wrong!" << std::endl;
-		return ret;
-	}
-
-
-}
-
-SUMOReal MSGRPCClient::getEdgePos(SUMOReal myCurrentBeginPos, SUMOReal myCurrentEndPos, SUMOReal myCurrentDuration, SUMOTime myLastEntryTime, SUMOTime now){
-	noninteracting::GetEdgePos req;
-	req.mutable_time()->set_sumotime(now);
-	req.set_mycurrentbeginpos(myCurrentBeginPos);
-	req.set_mycurrentendpos(myCurrentEndPos);
-	req.set_mycurrentduration(myCurrentDuration);
-	req.mutable_mylastentrytime()->set_sumotime(myLastEntryTime);
-
-	noninteracting::PBSUMOReal rpl;
-	ClientContext context;
-
-	Status status = stub_->getEdgePost(&context,req,&rpl);
-
-	if (status.ok()) {
-		return rpl.sumoreal();
-	} else{
-		std::cerr << "something went wrong!" << std::endl;
-		return 0;
-	}
-
-}
-
-SUMOTime MSGRPCClient::getWaitingTime(){
-	noninteracting::PBSUMOTime req;
-	noninteracting::PBSUMOTime rpl;
-	ClientContext context;
-
-	Status status = stub_->getWaitingTime(&context,req,&rpl);
-
-	if (status.ok()) {
-		return 0;
-	} else {
-		std::cerr << "something went wrong!" << std::endl;
-		return -1;
-	}
-}
-SUMOReal MSGRPCClient::getMaxSpeed(const MSPerson::MSPersonStage_Walking& stage){
-	noninteracting::PBMSPersonStage_Walking req;
-	req.set_maxspeed(stage.getMaxSpeed());
-
-	noninteracting::PBSUMOReal rpl;
-	ClientContext context;
-	Status status = stub_->getSpeed(&context,req,&rpl);
-
-	if (status.ok()){
-		return rpl.sumoreal();
-	} else {
-		std::cerr << "something went wrong!" << std::endl;
-		return 0;
-	}
-}
 
 
 //hybrid simulation

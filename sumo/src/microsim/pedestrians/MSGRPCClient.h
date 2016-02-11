@@ -27,7 +27,6 @@
 #include <microsim/MSEdge.h>
 #include "MSPerson.h"
 #include "MSPRCPState.h"
-#include "noninteracting.grpc.pb.h"
 #include "hybridsim.grpc.pb.h"
 using grpc::Channel;
 using grpc::ClientContext;
@@ -48,13 +47,6 @@ public:
 	MSGRPCClient(std::shared_ptr<Channel> channel);
 	virtual ~MSGRPCClient();
 
-	//noninteracting model function calls for demonstration only
-	MSGRPCClient::CmpWlkTmStruct computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime,const MSPerson * pers);
-	SUMOReal getEdgePos(SUMOReal myCurrentBeginPos, SUMOReal myCurrentEndPos, SUMOReal myCurrentDuration, SUMOTime myLastEntryTime, SUMOTime now);
-	SUMOTime getWaitingTime();
-	SUMOReal getMaxSpeed(const MSPerson::MSPersonStage_Walking& stage);
-
-
 	//hybrid simulation
 	void simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl);
 	bool transmitPedestrian(std::string& id, std::string& fromId, std::string& toId);
@@ -62,7 +54,6 @@ public:
 	void retrieveAgents(std::map<const std::string,MSPRCPState*>& pstates,MSNet* net, SUMOTime time);
 
 private:
-	std::unique_ptr<noninteracting::PBPState::Stub> stub_;
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
 
 };
