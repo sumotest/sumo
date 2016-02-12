@@ -27,3 +27,6 @@ sublane_offroute
 
 # position with sublane precision while driving across an intersection
 sublane_junction
+
+# place vehicle onto an internal lane that is not on the current route (with sublane precision)
+sublane_offroute_junction
