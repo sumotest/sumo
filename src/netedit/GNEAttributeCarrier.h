@@ -131,12 +131,29 @@ public:
         catch (EmptyData&) {
             return false;
         }
+        catch(BoolFormatException&) {   // PABLO #1916
+            return false;               // PABLO #1916
+        }                               // PABLO #1916
         return true;
     }
 
     /// @brief parses a number of type T from string
     template<typename T>
     static T parse(const std::string& string);
+    template<>
+    static int parse(const std::string& string) {
+        return TplConvert::_str2int(string);
+    }
+    template<>
+    static SUMOReal parse(const std::string& string) {
+        return TplConvert::_str2SUMOReal(string);
+    }
+
+    /// @brief parses a boolean from string         // PABLO #1916
+    template<>                                      // PABLO #1916
+    static bool parse(const std::string& string) {  // PABLO #1916
+        return TplConvert::_str2bool(string);       // PABLO #1916
+    }                                               // PABLO #1916
 
     /// @brief true if a positive number of type T can be parsed from string
     template<typename T>
@@ -144,11 +161,14 @@ public:
         return canParse<T>(string) && parse<T>(string) > 0;
     }
 
-    /// @brief true if value is a valid string vector           // PABLO #1916
-    static bool isValidStringVector(const std::string& value);  // PABLO #1916
-
     /// @brief true if value is a valid sumo ID
     static bool isValidID(const std::string& value);
+
+    /// @brief true if value is a valid text value          // PABLO #1916
+    static bool isValidTextValue(const std::string& value);     // PABLO #1916
+
+    /// @brief true if value is a valid string vector           // PABLO #1916
+    static bool isValidStringVector(const std::string& value);  // PABLO #1916
 
     /// @brief feature is still unchanged after being loaded (implies approval)
     static const std::string LOADED;

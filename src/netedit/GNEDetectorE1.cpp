@@ -196,9 +196,11 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
+    } else {
+   
+        // Pop draw matrix
+        glPopMatrix();
     }
-    // Pop draw matrix
-    glPopMatrix();
 
     // Pop name
     glPopName();
@@ -264,7 +266,7 @@ GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
-            return true;
+            return isValidTextValue(value);
         case SUMO_ATTR_SPLIT_VTYPE:
             return canParse<bool>(value);
         default:

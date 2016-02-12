@@ -95,21 +95,12 @@ GNEAttributeCarrier::isValidID(const std::string& value) {
     return value.find_first_of(" \t\n\r@$%^&/|\\{}*'\";:<>") == std::string::npos;
 }
 
-
-template<> int
-GNEAttributeCarrier::parse(const std::string& string) {
-    return TplConvert::_str2int(string);
-}
-
-template<> SUMOReal
-GNEAttributeCarrier::parse(const std::string& string) {
-    return TplConvert::_str2SUMOReal(string);
-}
-
-template<> bool                                     // PABLO #1916
-GNEAttributeCarrier::parse(const std::string& string) {  // PABLO #1916
-    return TplConvert::_2bool(string.c_str());
-}                                               // PABLO #1916
+bool                                                                                // PABLO #1916
+GNEAttributeCarrier::isValidTextValue(const std::string& value) {                   // PABLO #1916
+    // @note Only characteres that aren't permited in a file path or belong         // PABLO #1916
+    // to XML sintax                                                                // PABLO #1916
+    return value.find_first_of("\t\n\r@$%^&|\{}*'\";:<>") == std::string::npos;     // PABLO #1916
+}                                                                                   // PABLO #1916
 
 
 bool                                                                        // PABLO #1916
@@ -117,16 +108,29 @@ GNEAttributeCarrier::isValidStringVector(const std::string& value) {        // P
     // 1) check if value is empty                                           // PABLO #1916
     if(value.empty())                                                       // PABLO #1916
         return true;                                                        // PABLO #1916
-                                                                            // PABLO #1916
     // 2) Check if there are duplicated spaces                              // PABLO #1916
     for(int i = 1; i < value.size(); i++)                                   // PABLO #1916
         if(value.at(i-1) == ' ' && value.at(i) == ' ')                      // PABLO #1916
             return false;                                                   // PABLO #1916
-                                                                            // PABLO #1916
     // 3) Check if the first and last character aren't spaces               // PABLO #1916
     if((value.at(0) == ' ') || (value.at(value.size()-1) == ' '))           // PABLO #1916
         return false;                                                       // PABLO #1916
+    // 4) Check if every sub-string is valid                                // PABLO #1916
+    int index = 0;                                                          // PABLO #1916
+    std::string subString;                                                  // PABLO #1916
+    while(index < value.size()) {                                           // PABLO #1916
+        if(value.at(index) == ' ') {                                        // PABLO #1916
+            if(!isValidTextValue(subString))                                // PABLO #1916
+                return false;                                               // PABLO #1916
+            else                                                            // PABLO #1916
+                subString.clear();                                          // PABLO #1916
+        }                                                                   // PABLO #1916
+        else                                                                // PABLO #1916
+            subString.push_back(value.at(index));                           // PABLO #1916
+        index++;                                                            // PABLO #1916
+    }                                                                       // PABLO #1916
                                                                             // PABLO #1916
+    // 5) All right, then return true                                       // PABLO #1916
     return true;                                                            // PABLO #1916
 }                                                                           // PABLO #1916
 

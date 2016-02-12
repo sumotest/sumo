@@ -273,7 +273,7 @@ GNEDetectorE2::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
-            return true;
+            return isValidTextValue(value);
         case SUMO_ATTR_CONT:
             return canParse<bool>(value);
         case SUMO_ATTR_HALTING_TIME_THRESHOLD:

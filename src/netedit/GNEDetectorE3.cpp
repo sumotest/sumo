@@ -305,7 +305,7 @@ GNEDetectorE3::GNEDetectorE3EntryExit::isValid(SumoXMLAttr key, const std::strin
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
-            return true;
+            return isValidTextValue(value);
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }

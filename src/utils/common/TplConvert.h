@@ -323,6 +323,14 @@ public:
         }
     }
 
+    /** converts a string into the bool value described by it       // PABLO #1916
+    by calling the char-type converter, which                       // PABLO #1916
+    throws an EmptyData - exception if the given string is empty    // PABLO #1916
+    throws a BoolFormatException - exception when the string does   // PABLO #1916
+    not contain a bool */                                           // PABLO #1916
+    static bool _str2bool(const std::string& sData) {               // PABLO #1916
+        return _2bool(sData.c_str());                               // PABLO #1916
+    }                                                               // PABLO #1916
 
     // conversion methods not throwing an exception
     /** converts a 0-terminated char-type array into std::string
