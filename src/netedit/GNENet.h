@@ -68,10 +68,13 @@ class GNELane;
 class GNEJunction;
 class GNEUndoList;
 class GNEAdditional;
+class GNEAdditionalSet;
 class GNEBusStop;
 class GNEChargingStation;
 class GNEDetectorE1;
 class GNEDetectorE2;
+class GNEDetectorE3;
+class GNEDetectorE3EntryExit;
 
 // ===========================================================================
 // class definitions
@@ -374,21 +377,25 @@ public:
     /// @brief get shape container
     ShapeContainer& getShapeContainer();
 
-    /** @brief Insert a additional element into the net                         // PABLO #1916
-     *                                                                          // PABLO #1916
-     * insert an additional element previously created in GNEAdditionalHandler  // PABLO #1916
-     *                                                                          // PABLO #1916
-     * @param[in] additional The additional element to add                      // PABLO #1916
-     */                                                                         // PABLO #1916
-    void insertAdditional(GNEAdditional* additional);                           // PABLO #1916
+    /** @brief Insert a additional element previously created in GNEAdditionalHandler   // PABLO #1916
+     * @param[in] additional pointer to the additional element to add                   // PABLO #1916
+     */                                                                                 // PABLO #1916
+    void insertAdditional(GNEAdditional* additional);                                   // PABLO #1916
 
-    /** @brief delete additional element                            // PABLO #1916
-     *                                                              // PABLO #1916
-     * delete an additional element of the Net previously inserted  // PABLO #1916
-     *                                                              // PABLO #1916
+    /** @brief delete additional element previously inserted        // PABLO #1916
      * @param[in] additional The additional element to remove       // PABLO #1916
      */                                                             // PABLO #1916
     void deleteAdditional(GNEAdditional* additional);               // PABLO #1916
+
+    /** @brief Insert a additional set element previously created in GNEAdditionalHandler   // PABLO #1916
+     * @param[in] additional pointer to the additional element that will be inserted        // PABLO #1916
+     */                                                                                     // PABLO #1916
+    void insertAdditionalSet(GNEAdditionalSet* additionalSet);                              // PABLO #1916
+
+    /** @brief delete additional set element previously inserted                    // PABLO #1916
+     * @param[in] additional pointer to additional element that will be removed     // PABLO #1916
+     */                                                                             // PABLO #1916
+    void deleteAdditionalSet(GNEAdditionalSet* additionalSet);                      // PABLO #1916
 
     /** @brief Returns the named bus stop                       // PABLO #1916
      * @param[in] id The id of the bus stop to return.          // PABLO #1916
@@ -477,7 +484,7 @@ public:
      * @param[in] id The id of the detector E3 Entry Exit to return.                            // PABLO #1916
      * @return The named detector E3 Entry Exit, or 0 if don't exist                            // PABLO #1916
      */                                                                                         // PABLO #1916
-    GNEDetectorE3::GNEDetectorE3EntryExit* getDetectorE3EntryExit(const std::string& id) const; // PABLO #1916
+    GNEDetectorE3EntryExit* getDetectorE3EntryExit(const std::string& id) const; // PABLO #1916
 
     /** @brief Returns the detector E3 entry exit close to the given position               // PABLO #1916
      * @param[in] lane the lane of the detector E3 entry exit to return.                    // PABLO #1916
@@ -505,8 +512,8 @@ private:
     //@{
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
-    typedef std::map<std::string, GNEAdditional*> GNEAdditionals;   // PABLO #1916
-    typedef std::map<std::string, GNEDetectorE3*> GNEDetectorsE3;   // PABLO #1916
+    typedef std::map<std::string, GNEAdditional*> GNEAdditionals;       // PABLO #1916
+    typedef std::map<std::string, GNEAdditionalSet*> GNEAdditionalSets; // PABLO #1916
     // @}
 
     /// @brief map with the name and pointer to edges of net
@@ -518,8 +525,8 @@ private:
     /// @brief map with the name and pointer to additional elements of net  // PABLO #1916
     GNEAdditionals myAdditionals;                                           // PABLO #1916
 
-    /// @brief map with the Multy Entry Exit Detectors E3   // PABLO #1916
-    GNEDetectorsE3 myDetectorsE3;                           // PABLO #1916
+    /// @brief map with the additional sets     // PABLO #1916
+    GNEAdditionalSets myAdditionalSets;         // PABLO #1916
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{

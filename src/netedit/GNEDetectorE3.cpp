@@ -48,6 +48,7 @@
 #include <utils/xml/SUMOSAXHandler.h>
 
 #include "GNEDetectorE3.h"
+#include "GNEDetectorE3EntryExit.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
@@ -62,8 +63,8 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEDetectorE3::GNEDetectorE3EntryExit::detectorE3GlID = 0;
-bool GNEDetectorE3::GNEDetectorE3EntryExit::detectorE3Initialized = false;
+GUIGlID GNEDetectorE3::detectorE3GlID = 0;
+bool GNEDetectorE3::detectorE3Initialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -84,7 +85,7 @@ GNEDetectorE3::~GNEDetectorE3() {
 
 void 
 GNEDetectorE3::addEntry(GNELane& lane, SUMOReal pos) {
-    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_ENTRY, lane, pos));
+    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_ENTRY, lane, pos));
 }
 
 
@@ -96,250 +97,12 @@ GNEDetectorE3::removeEntry(GNELane& lane, SUMOReal pos) {
 
 void 
 GNEDetectorE3::addExit(GNELane& lane, SUMOReal pos) {
-    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3::GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_EXIT, lane, pos));
+    myGNEDetectorE3EntryExits.push_back(new GNEDetectorE3EntryExit("tmpID", this, SUMO_TAG_DET_EXIT, lane, pos));
 }
 
 
 void 
 GNEDetectorE3::removeExit(GNELane& lane, SUMOReal pos) {
-}
-
-// ---------------------------------------------------------------------------
-// GNEDetectorE3::GNEDetectorE3EntryExit - methods
-// ---------------------------------------------------------------------------
-
-GNEDetectorE3::GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos) :
-    GNEDetector(id, lane, myViewNet, tag, pos, 1, parent->myFreq, parent->myFilename) {
-    // Set colors of detector
-    setColors();
-}
-
-
-GNEDetectorE3::GNEDetectorE3EntryExit::~GNEDetectorE3EntryExit() {}
-
-
-GNELane& 
-GNEDetectorE3::GNEDetectorE3EntryExit::getLane() const {
-    return myLane;
-}
-
-
-SUMOReal GNEDetectorE3::GNEDetectorE3EntryExit::getPos() const {
-    return myPos;
-}
-
-
-void 
-GNEDetectorE3::GNEDetectorE3EntryExit::writeAdditional(OutputDevice& device) {
-    // Write parameters
-    device.openTag(getTag());
-    device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
-    device.writeAttr(SUMO_ATTR_POSITION, myPos);
-    device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
-    device.writeAttr(SUMO_ATTR_FILE, myFilename);
-    // Rest of parameters
-    // Close tag
-    device.closeTag();
-}
-
-
-GUIGLObjectPopupMenu* 
-GNEDetectorE3::GNEDetectorE3EntryExit::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy detector E3 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
-    new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
-GUIParameterTableWindow* 
-GNEDetectorE3::GNEDetectorE3EntryExit::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
-    // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
-    // close building
-    ret->closeBuilding();
-    */
-    return ret;
-}
-
-
-void 
-GNEDetectorE3::GNEDetectorE3EntryExit::drawGL(const GUIVisualizationSettings& s) const {
-    // Additonals element are drawed using a drawGLAdditional
-    drawGLAdditional(0, s);
-}
-
-
-void 
-GNEDetectorE3::GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    // Ignore Warning
-    UNUSED_PARAMETER(parent);
-    
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[E1_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E1_BASE];
-    }
-
-    // Start drawing adding an gl identificator
-    glPushName(getGlID());
-    
-    // Add a draw matrix
-    glPushMatrix();
-
-    // Start with the drawing of the area traslating matrix to origing 
-    glTranslated(0, 0, getType());
-
-    // Set color of the base
-    GLHelper::setColor(base);
-
-    // Obtain exaggeration of the draw
-    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-   
-    // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLine(myShape[0], myRotation, myShape[0].distanceTo(myShape[1]), exaggeration);
-
-    // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {
-
-        // load detector logo, if wasn't inicializated
-        if (!detectorE3Initialized) {
-            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-            detectorE3GlID = GUITexturesHelper::add(i);
-            detectorE3Initialized = true;
-            delete i;
-        }
-
-        // draw detector logo
-        glPushMatrix();
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
-        glRotated(mySignRotation, 0, 0, 1);
-        glColor3d(1, 1, 1);
-        GUITexturesHelper::drawTexturedBox(detectorE3GlID, 0.5);
-        glPopMatrix();
-
-        // Pop last matrix
-        glPopMatrix();
-
-        // Show Lock icon depending of the Edit mode
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            drawLockIcon();
-    }
-
-    // Pop name
-    glPopName();
-
-    // Draw name
-    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-}
-
-
-std::string 
-GNEDetectorE3::GNEDetectorE3EntryExit::getAttribute(SumoXMLAttr key) const {
-    switch (key) {
-        case SUMO_ATTR_ID:
-            return getMicrosimID();
-        case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
-        case SUMO_ATTR_POSITION:
-            return toString(myPos);
-        case SUMO_ATTR_FREQUENCY:
-            return toString(myFreq);
-        case SUMO_ATTR_FILE:
-            return myFilename;
-        default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
-    }
-}
-
-
-void 
-GNEDetectorE3::GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-if (value == getAttribute(key)) {
-        return; //avoid needless changes, later logic relies on the fact that attributes have changed
-    }
-    switch (key) {
-        case SUMO_ATTR_ID:
-        case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_POSITION:
-        case SUMO_ATTR_FREQUENCY:
-        case SUMO_ATTR_FILE:
-            undoList->p_add(new GNEChange_Attribute(this, key, value));
-            updateGeometry();
-            break;
-        default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
-    }
-
-}
-
-
-bool 
-GNEDetectorE3::GNEDetectorE3EntryExit::isValid(SumoXMLAttr key, const std::string& value) {
-    switch (key) {
-        case SUMO_ATTR_ID:
-        case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_POSITION:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane.getLaneParametricLenght()));
-        case SUMO_ATTR_FREQUENCY:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
-        case SUMO_ATTR_FILE:
-            return isValidTextValue(value);
-        default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
-    }
-}
-
-void
-GNEDetectorE3::GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value) {
-    switch (key) {
-        case SUMO_ATTR_ID:
-        case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_POSITION:
-            myPos = parse<SUMOReal>(value);
-            updateGeometry();
-            getViewNet()->update();
-            break;
-        case SUMO_ATTR_FREQUENCY:
-            myFreq = parse<SUMOReal>(value);
-            break;
-        case SUMO_ATTR_FILE:
-            myFilename = value;
-            break;
-        default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
-    }
-}
-
-
-void
-GNEDetectorE3::GNEDetectorE3EntryExit::setColors() {
-    // Color E1_BASE
-    myRGBColors.push_back(RGBColor(0, 204, 0, 255));
-    // Color E1_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(125, 204, 0, 255));
 }
 
 /****************************************************************************/
