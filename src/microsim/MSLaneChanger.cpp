@@ -213,7 +213,6 @@ MSLaneChanger::change() {
     // priority.
     myCandi = findCandidate();
     MSVehicle* vehicle = veh(myCandi);
-    //gDebugFlag1 = vehicle->getID() == "disabled";
     
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == vehicle->getID()) {
@@ -520,7 +519,7 @@ MSLaneChanger::checkChange(
         const std::vector<MSVehicle::LaneQ>& preb) const {
 
     MSVehicle* vehicle = veh(myCandi);
-    //gDebugFlag1 = vehicle->getID() == "disabled";
+    gDebugFlag1 = vehicle->getLaneChangeModel().debugVehicle();
     int blocked = 0;
     int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
     int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
@@ -677,8 +676,6 @@ MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leade
     if (opposite == 0) {
         return false;
     }
-    //gDebugFlag1 = vehicle->getID() == "overtaking";
-
 
     const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
     std::pair<MSVehicle* const, SUMOReal> neighLead = opposite->getOppositeLeader(vehicle);
