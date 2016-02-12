@@ -24,3 +24,6 @@ sublane
 
 # position with sublane precision when vehicle jumps to an edge not on its route
 sublane_offroute
+
+# position with sublane precision while driving across an intersection
+sublane_junction
