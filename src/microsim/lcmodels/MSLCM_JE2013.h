@@ -102,6 +102,8 @@ public:
 
     void prepareStep();
 
+    /// @brief whether the current vehicles shall be debugged
+    bool debugVehicle() const;
 
 protected:
 

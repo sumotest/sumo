@@ -112,6 +112,12 @@ MSLCM_JE2013::~MSLCM_JE2013() {
 }
 
 
+bool 
+MSLCM_JE2013::debugVehicle() const {
+    return DEBUG_COND;
+}
+
+
 int
 MSLCM_JE2013::wantsChange(
     int laneOffset,
