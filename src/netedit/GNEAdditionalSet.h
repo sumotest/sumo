@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNEAdditional.h
+/// @file    GNEAdditionalSet.h
 /// @author  Pablo Alvarez Lopez
-/// @date    Jan 2016
-/// @version $Id$
+/// @date    Feb 2016
+/// @version $Id: GNEAdditionalSet.h 19909 2016-02-08 12:22:59Z palcraft $
 ///
 /// A abstract class for representation of additional elements
 /****************************************************************************/
@@ -17,13 +17,13 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEAdditional_h
-#define GNEAdditional_h
+#ifndef GNEAdditionalSet_h
+#define GNEAdditionalSet_h
+
 
 // ===========================================================================
 // included modules
 // ===========================================================================
-
 #ifdef _MSC_VER
 #include <windows_config.h>
 #else
@@ -43,7 +43,7 @@
 
 class GUIGLObjectPopupMenu;
 class PositionVector;
-class GNELane;
+class GNEAdditional;
 class GNENet;
 class GNEViewNet;
 
@@ -52,34 +52,39 @@ class GNEViewNet;
 // ===========================================================================
 
 /**
- * @class GNEAdditional
- * @brief An Element which don't belongs to GNENet but has influency in the simulation
+ * @class GNEAdditionalSet
+ * @brief An Element wich group additional elements
  */
-
-class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier
+class GNEAdditionalSet : public GUIGlObject, public GNEAttributeCarrier
 {
 public:
 
     /** @brief Constructor.
      * @param[in] id Gl-id of the additional element (Must be unique)
-     * @param[in] lane GNELane of this additional element belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      */
-    GNEAdditional(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
+    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
 
     /// @brief Destructor
-    ~GNEAdditional();
+    ~GNEAdditionalSet();
 
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
-    /** @brief Returns parent lane
-     * @return The GNElane parent lane
+    /** @brief add additional element to this set
+     * @param[in] additional pointer to GNEAdditional element to add
+     * @throw ProcessError if this additional element was already vinculated with another additionalSet
      */
-    GNELane &getLane() const;
+    void addAdditional(GNEAdditional *additional);
+
+    /** @brief remove additional element to this set
+     * @param[in] additional pointer to GNEAdditional element to remove
+     * @throw ProcessError if this additional element isn't  vinculated with this additionalSet
+     */
+    void removeAdditional(GNEAdditional *additional);
 
     /** @brief Returns View Net
      * @return The GNEViewNet in which additional element is located
@@ -115,11 +120,6 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns the name of the parent object (if any)
-     * @return This object's parent id
-     */
-    const std::string& getParentName() const; 
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -176,14 +176,14 @@ public:
     //@}
 
 protected:
-    /// @brief The lane this additional element is located at
-    GNELane& myLane;
-
     /// @brief The GNEViewNet this additional element belongs
     GNEViewNet* myViewNet;
 
     /// @brief The shape of the additional element
     PositionVector myShape;
+
+    /// @brief Vector with the GNEAdditionals elementen vinculated to this AdditionalSet
+    std::vector<GNEAdditional*> myAdditionals;
 
     /// @name computed only once (for performance) in updateGeometry()
     //@{
@@ -204,26 +204,26 @@ protected:
     void drawLockIcon() const;
 
 private:
-    /// @brief variable to keep GLId of the additional lock image
-    static GUIGlID additionalLockGlID;
+    /// @brief variable to keep GLId of the additional set lock image
+    static GUIGlID additionalSetLockGlID;
 
-    /// @brief variable to keep GLId of the additional empty image
-    static GUIGlID additionalEmptyGlID;
+    /// @brief variable to keep GLId of the additional set empty image
+    static GUIGlID additionalSetEmptyGlID;
 
     /// @brief boolean to check if additional lock image was inicializated
-    static bool additionalLockInitialized;
+    static bool additionalSetLockInitialized;
 
     /// @brief boolean to check if additional empty image was inicializated
-    static bool additionalEmptyInitialized;
+    static bool additionalSetEmptyInitialized;
 
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
     /// @brief Invalidated copy constructor.
-    GNEAdditional(const GNEAdditional&);
+    GNEAdditionalSet(const GNEAdditionalSet&);
 
     /// @brief Invalidated assignment operator.
-    GNEAdditional& operator=(const GNEAdditional&);
+    GNEAdditionalSet& operator=(const GNEAdditionalSet&);
 };
 
 

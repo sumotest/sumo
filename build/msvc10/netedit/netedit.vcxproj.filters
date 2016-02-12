@@ -144,6 +144,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEVSpeedSignal.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEAdditionalSet.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -281,6 +284,9 @@
       <Filter>Header-Dateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEVSpeedSignal.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEAdditionalSet.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>

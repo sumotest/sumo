@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    GNEAdditional.cpp
+/// @file    GNEAdditionalSet.cpp
 /// @author  Pablo Alvarez Lopez
-/// @date    Dec 2015
-/// @version $Id$
+/// @date    Feb 2015
+/// @version $Id: GNEAdditionalSet.cpp 19909 2016-02-08 12:22:59Z palcraft $
 ///
-/// A abstract class for representation of additional elements
+/// A abstract class for representation of set of additional elements
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -47,8 +47,8 @@
 #include <utils/gui/images/GUITexturesHelper.h>
 #include <utils/xml/SUMOSAXHandler.h>
 
+#include "GNEAdditionalSet.h"
 #include "GNEAdditional.h"
-#include "GNELane.h"
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEViewNet.h"
@@ -63,52 +63,55 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEAdditional::additionalLockGlID = 0;
-GUIGlID GNEAdditional::additionalEmptyGlID = 0;
-bool GNEAdditional::additionalLockInitialized = false;
-bool GNEAdditional::additionalEmptyInitialized = false;
+GUIGlID GNEAdditionalSet::additionalSetLockGlID = 0;
+GUIGlID GNEAdditionalSet::additionalSetEmptyGlID = 0;
+bool GNEAdditionalSet::additionalSetLockInitialized = false;
+bool GNEAdditionalSet::additionalSetEmptyInitialized = false;
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
+GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
     GUIGlObject(GLO_ADDITIONAL, id),
-    myLane(lane),
     myViewNet(viewNet),
     myBlocked(blocked),
     GNEAttributeCarrier(tag) {
-    // Add a reference to this new additional to laneParent
-    myLane.addAdditional(this);
 }
 
 
-GNEAdditional::~GNEAdditional() {
-    // Remove reference to this new additional to laneParent
-    myLane.removeAdditional(this);
+GNEAdditionalSet::~GNEAdditionalSet() {
 }
 
 
-GNELane&
-GNEAdditional::getLane() const {
-    return myLane;
+void 
+GNEAdditionalSet::addAdditional(GNEAdditional *additional) {
+    
+    //throw ProcessError("Attempt to delete instance of GNEReferenceCounter with count " + toString(myCount));
+
+}
+
+
+void 
+GNEAdditionalSet::removeAdditional(GNEAdditional *additional) {
+
 }
 
 
 GNEViewNet* 
-GNEAdditional::getViewNet() const {
+GNEAdditionalSet::getViewNet() const {
     return myViewNet;
 }
 
 
 std::string
-GNEAdditional::getShape() const {
+GNEAdditionalSet::getShape() const {
     return toString(myShape);
 }
 
 
 Boundary
-GNEAdditional::getCenteringBoundary() const {
+GNEAdditionalSet::getCenteringBoundary() const {
     Boundary b = myShape.getBoxBoundary();
     b.grow(20);
     return b;
@@ -116,38 +119,31 @@ GNEAdditional::getCenteringBoundary() const {
 
 
 bool 
-GNEAdditional::isBlocked() const {
+GNEAdditionalSet::isBlocked() const {
     return myBlocked;
 }
 
 
 void 
-GNEAdditional::setBlocked(bool value) {
+GNEAdditionalSet::setBlocked(bool value) {
     myBlocked = value;
 }
 
-
-const std::string& 
-GNEAdditional::getParentName() const {
-    return myLane.getMicrosimID();
-}
-
-
 void 
-GNEAdditional::drawLockIcon() const {
+GNEAdditionalSet::drawLockIcon() const {
     
     // load additional lock, if wasn't inicializated
-    if (!additionalLockInitialized) {
+    if (!additionalSetLockInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalLockGlID = GUITexturesHelper::add(i);
-        additionalLockInitialized = true;
+        additionalSetLockGlID = GUITexturesHelper::add(i);
+        additionalSetLockInitialized = true;
         delete i;
     }
     // load additional empty, if wasn't inicializated
-    if (!additionalEmptyInitialized) {
+    if (!additionalSetEmptyInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Empty, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalEmptyGlID = GUITexturesHelper::add(i);
-        additionalEmptyInitialized = true;
+        additionalSetEmptyGlID = GUITexturesHelper::add(i);
+        additionalSetEmptyInitialized = true;
         delete i;
     }
     
@@ -158,9 +154,9 @@ GNEAdditional::drawLockIcon() const {
     glRotated(180, 0, 0, 1);
     // If myBlocked is enable, draw lock, in other case, draw empty square
     if(myBlocked)
-        GUITexturesHelper::drawTexturedBox(additionalLockGlID, 0.5);
+        GUITexturesHelper::drawTexturedBox(additionalSetLockGlID, 0.5);
     else
-        GUITexturesHelper::drawTexturedBox(additionalEmptyGlID, 0.5);
+        GUITexturesHelper::drawTexturedBox(additionalSetEmptyGlID, 0.5);
     // Pop matrix
     glPopMatrix();
 }
