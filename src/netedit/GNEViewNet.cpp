@@ -613,8 +613,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 break;
 
             case GNE_MODE_ADDITIONAL:                                   // PABLO #1916
-                if(pointed_lane) {                                      // PABLO #1916
-                    myAdditional->addAdditional(*pointed_lane, this);   // PABLO #1916
+                if(myAdditional->addAdditional(pointed_lane, this)) {   // PABLO #1916
                     update();                                           // PABLO #1916
                 }                                                       // PABLO #1916
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);    // PABLO #1916

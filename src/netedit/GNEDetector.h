@@ -181,9 +181,6 @@ protected:
     /// @brief The rotation of signal detector
     SUMOReal mySignRotation;
 
-    /// @brief vector with the different colors
-    std::vector<RGBColor> myRGBColors;
-
 private:
 
     /// @brief set attribute after validation

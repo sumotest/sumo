@@ -38,6 +38,7 @@
 // class declarations
 // ===========================================================================
 class GNEAdditional;
+class GNEAdditionalSet;
 class GNEViewNet;
 
 // ===========================================================================
@@ -57,6 +58,13 @@ public:
      * @param[in] forward Whether to create/delete (true/false)
      */
     GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward);
+
+    /** @brief Constructor for creating/deleting an additional element
+     * @param[in] net The net on which to apply changes
+     * @param[in] additionalSet The additionalSet element to be created/deleted
+     * @param[in] forward Whether to create/delete (true/false)
+     */
+    GNEChange_Additional(GNENet* net, GNEAdditionalSet* additionalSet, bool forward);
 
     /// @brief Destructor
     ~GNEChange_Additional();
@@ -79,6 +87,9 @@ public:
 private:
     /// @brief full information regarding the additional element that is to be created/deleted
     GNEAdditional* myAdditional;
+
+    /// @brief full information regarding the additional element that is to be created/deleted
+    GNEAdditionalSet* myAdditionalSet;
 };
 
 #endif

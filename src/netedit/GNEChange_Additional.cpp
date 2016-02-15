@@ -46,64 +46,120 @@ FXIMPLEMENT_ABSTRACT(GNEChange_Additional, GNEChange, NULL, 0)
 // member method definitions
 // ===========================================================================
 
-
-// Constructor for creating an BusStop
 GNEChange_Additional::GNEChange_Additional(GNENet* net, GNEAdditional* additional, bool forward) :
     GNEChange(net, forward),
-    myAdditional(additional) {
+    myAdditional(additional),
+    myAdditionalSet(NULL) {
     assert(myNet);
     myAdditional->incRef("GNEChange_Additional");
 }
 
 
+GNEChange_Additional::GNEChange_Additional(GNENet* net, GNEAdditionalSet* additionalSet, bool forward) :
+    GNEChange(net, forward),
+    myAdditional(NULL),
+    myAdditionalSet(additionalSet) {
+    assert(myNet);
+    myAdditionalSet->incRef("GNEChange_Additional");
+}
+
+
 GNEChange_Additional::~GNEChange_Additional() {
-    assert(myAdditional);
-    myAdditional->decRef("GNEChange_Additional");
-    if (myAdditional->unreferenced()) {
-        delete myAdditional;
+    if(myAdditional) {
+        assert(myAdditional);
+        myAdditional->decRef("GNEChange_Additional");
+        if (myAdditional->unreferenced()) {
+            delete myAdditional;
+        }
+    } else {
+        assert(myAdditionalSet);
+        myAdditionalSet->decRef("GNEChange_Additional");
+        if (myAdditionalSet->unreferenced()) {
+            delete myAdditionalSet;
+        }
     }
 }
 
 
 void GNEChange_Additional::undo() {
-    if (myForward) {
-        myNet->deleteAdditional(myAdditional);
-        myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
+    if(myAdditional) {
+        if (myForward) {
+            myNet->deleteAdditional(myAdditional);
+            myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
+            myAdditional->getViewNet()->update();
+        } else {
+            myNet->insertAdditional(myAdditional);
+            myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
+            myAdditional->getViewNet()->update();
+        }
     } else {
-        myNet->insertAdditional(myAdditional);
-        myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
+        if (myForward) {
+            myNet->deleteAdditionalSet(myAdditionalSet);
+            myAdditionalSet->getViewNet()->removeAdditionalGLVisualisation(myAdditionalSet);
+            myAdditionalSet->getViewNet()->update();
+        } else {
+            myNet->insertAdditionalSet(myAdditionalSet);
+            myAdditionalSet->getViewNet()->addAdditionalGLVisualisation(myAdditionalSet);
+            myAdditionalSet->getViewNet()->update();
+        }
     }
 }
 
 
 void GNEChange_Additional::redo() {
-    if (myForward) {
-        myNet->insertAdditional(myAdditional);
-        myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
+    if(myAdditional) {
+        if (myForward) {
+            myNet->insertAdditional(myAdditional);
+            myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
+            myAdditional->getViewNet()->update();
+        } else {
+            myNet->deleteAdditional(myAdditional);
+            myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
+            myAdditional->getViewNet()->update();
+        }
     } else {
-        myNet->deleteAdditional(myAdditional);
-        myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
+        if (myForward) {
+            myNet->insertAdditionalSet(myAdditionalSet);
+            myAdditionalSet->getViewNet()->addAdditionalGLVisualisation(myAdditionalSet);
+            myAdditionalSet->getViewNet()->update();
+        } else {
+            myNet->deleteAdditionalSet(myAdditionalSet);
+            myAdditionalSet->getViewNet()->removeAdditionalGLVisualisation(myAdditionalSet);
+            myAdditionalSet->getViewNet()->update();
+        }
     }
 }
 
 
 FXString GNEChange_Additional::undoName() const {
+    if(myAdditional) {    
     if (myForward) {
-        return ("Undo create additional");
+            return ("Undo create additional");
+        } else {
+            return ("Undo delete additional");
+        }
     } else {
-        return ("Undo delete additional");
+        if (myForward) {
+            return ("Undo create additionalSet");
+        } else {
+            return ("Undo delete additionalSet");
+        }
     }
 }
 
 
 FXString GNEChange_Additional::redoName() const {
-    if (myForward) {
-        return ("Redo create additional");
+    if(myAdditional) {  
+        if (myForward) {
+            return ("Redo create additional");
+        } else {
+            return ("Redo delete additional");
+        }
     } else {
-        return ("Redo delete additional");
+        if (myForward) {
+            return ("Redo create additionalSet");
+        } else {
+            return ("Redo delete additionalSet");
+        }
     }
 }

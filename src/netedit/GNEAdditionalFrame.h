@@ -45,7 +45,7 @@ class GNEAttributeCarrier;
 class GNEUndoList;
 class GNELane;
 class GNEAdditional;
-class GNEDetectorE3;    // Will be changed by "GNEAdditionalSet"
+class GNEAdditionalSet;
 
 // ===========================================================================
 // class definitions
@@ -236,24 +236,21 @@ public:
         ~additionalSet();
 
         /// @brief get currently additional Set
-        GNEDetectorE3* getAdditionalSet();
+        GNEAdditionalSet* getAdditionalSet();
 
         /// @brief Show list of additionalSet
         void showList(SumoXMLTag type);
 
         /// @brief hide additionalSet
-        void hide();
+        void hideList();
 
         /// @name FOX-callbacks
         /// @{
         /// @brief add a new row int the list
-        long onCmdAddSet(FXObject*, FXSelector, void*);
-
-        /// @brief add a new row int the list
-        long onCmdRemoveSet(FXObject*, FXSelector, void*);
-
-        /// @brief add a new row int the list
         long onCmdSelectSet(FXObject*, FXSelector, void*);
+
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
         /// @}
 
     protected:
@@ -267,14 +264,11 @@ public:
         /// @brief Label with the name of Set
         FXLabel *mySetLabel;
 
-        /// @brief Button to increase the number of textFields
-        FXButton *addSet;
+        /// @brief button for help
+        FXButton * helpAdditionalSet;
 
-        /// @brief Button to decrease the number of textFields
-        FXButton *removeSet;
-
-        /** This will be changed in the future by other class called "GNEAdditionalSet" */
-        GNEDetectorE3 *myAdditionalSet;
+        /// @brief pointer to additional set 
+        GNEAdditionalSet *myAdditionalSet;
 
         /// @brief viewNet associated to GNEAdditionalFrame
         GNEViewNet* myViewNet;
@@ -291,10 +285,11 @@ public:
     ~GNEAdditionalFrame();
 
     /** @brief add additional element
-     * @param[in] lane lane in which the new element will be inserted
-     * @param[in] parent AbstractView to obtain the position of the mouse over the lane
+     * @param[in] lane clicked lane. if user dind't clicked over lane, will be NULL
+     * @param[in] parent AbstractView to obtain the position of the mouse over the lane. 
+     * @return true if an additional (GNEAdditional or GNEAdditionalSet) was added, false in other case
      */
-    void addAdditional(GNELane &lane, GUISUMOAbstractView* parent);
+    bool addAdditional(GNELane *lane, GUISUMOAbstractView* parent);
 
     /** @brief remove an additional element previously added
      * @param[in] additional element to erase
@@ -321,12 +316,11 @@ protected:
     GNEAdditionalFrame() {}
 
 private:
-
     /// @brief set parameters depending of the additionalType selected
     void setParameters();
 
     /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
-    bool setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
+    bool setPositions(GNELane *lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
 
     /// @brief the panel to hold all member widgets
     FXVerticalFrame* myContentFrame;

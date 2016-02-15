@@ -397,6 +397,12 @@ public:
      */                                                                             // PABLO #1916
     void deleteAdditionalSet(GNEAdditionalSet* additionalSet);                      // PABLO #1916
 
+    /** @brief get vector with additional Sets                                                      // PABLO #1916
+     * @param[in] type type of AdditionalSet to get. SUMO_TAG_NOTHING for get all additionalSets    // PABLO #1916
+     * @return vector with pointer to additionalSet.                                                // PABLO #1916
+     */                                                                                             // PABLO #1916
+    std::vector<GNEAdditionalSet*> getAdditionalSets(SumoXMLTag type = SUMO_TAG_NOTHING);           // PABLO #1916
+
     /** @brief Returns the named bus stop                       // PABLO #1916
      * @param[in] id The id of the bus stop to return.          // PABLO #1916
      * @return The named bus stop, or 0 if no such stop exists  // PABLO #1916

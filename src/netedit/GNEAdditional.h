@@ -150,6 +150,12 @@ public:
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
+
+    /** @brief Draws additionally triggered visualisations
+     * @param[in] parent The view
+     * @param[in] s The settings for the current view (may influence drawing)
+     */
+    virtual void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const = 0;
     //@}
 
     //@name inherited from GNEAttributeCarrier
@@ -200,6 +206,9 @@ protected:
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked; 
 
+    /// @brief vector with the different colors
+    std::vector<RGBColor> myRGBColors;
+
     // @brief draw lock icon
     void drawLockIcon() const;
 
@@ -218,6 +227,9 @@ private:
 
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
+
+    /// @brief set colors of scheme
+    virtual void setColors() = 0;
 
     /// @brief Invalidated copy constructor.
     GNEAdditional(const GNEAdditional&);

@@ -147,6 +147,12 @@ public:
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
+
+    /** @brief Draws additionally triggered visualisations
+     * @param[in] parent The view
+     * @param[in] s The settings for the current view (may influence drawing)
+     */
+    virtual void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const = 0;
     //@}
 
     //@name inherited from GNEAttributeCarrier
@@ -184,9 +190,6 @@ protected:
 
     /// @brief The rotation of the sign
     SUMOReal mySignRot;
-
-    /// @brief vector with the different colors
-    std::vector<RGBColor> myRGBColors;
 
 private:
 

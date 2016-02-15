@@ -64,35 +64,36 @@
 // ===========================================================================
 // FOX callback mapping
 // ===========================================================================
+
 FXDEFMAP(GNEAdditionalFrame) GNEAdditionalMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL_ITEM,           GNEAdditionalFrame::onCmdSelectAdditional),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL_ITEM, GNEAdditionalFrame::onCmdSelectAdditional),
 };
 
-FXDEFMAP(GNEAdditionalFrame::additionalParameterList) additionalParameterListMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_ADDROW,     GNEAdditionalFrame::additionalParameterList::onCmdAddRow),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_REMOVEROW,  GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow),
+FXDEFMAP(GNEAdditionalFrame::additionalParameterList) GNEAdditionalParameterListMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_ADDROW,    GNEAdditionalFrame::additionalParameterList::onCmdAddRow),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_REMOVEROW, GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow),
 };
 
-FXDEFMAP(GNEAdditionalFrame::editorParameter) editorParameterMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEAdditionalFrame::editorParameter::onCmdSelectReferencePoint),
-    FXMAPFUNC(SEL_COMMAND,  MID_HELP,               GNEAdditionalFrame::editorParameter::onCmdHelp),
+FXDEFMAP(GNEAdditionalFrame::editorParameter) GNEEditorParameterMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEAdditionalFrame::editorParameter::onCmdSelectReferencePoint),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,                               GNEAdditionalFrame::editorParameter::onCmdHelp),
 };
 
-FXDEFMAP(GNEAdditionalFrame::additionalSet) additionalSetMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_ADDSET,     GNEAdditionalFrame::additionalSet::onCmdAddSet),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_REMOVESET,  GNEAdditionalFrame::additionalSet::onCmdRemoveSet),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECTSET,  GNEAdditionalFrame::additionalSet::onCmdSelectSet),
+FXDEFMAP(GNEAdditionalFrame::additionalSet) GNEAdditionalSetMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTSET, GNEAdditionalFrame::additionalSet::onCmdSelectSet),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,          GNEAdditionalFrame::additionalSet::onCmdHelp),
 };
 
 // Object implementation
-FXIMPLEMENT(GNEAdditionalFrame, FXScrollWindow, GNEAdditionalMap, ARRAYNUMBER(GNEAdditionalMap))
-FXIMPLEMENT(GNEAdditionalFrame::additionalParameterList, FXMatrix, additionalParameterListMap, ARRAYNUMBER(additionalParameterListMap))
-FXIMPLEMENT(GNEAdditionalFrame::editorParameter, FXGroupBox, editorParameterMap, ARRAYNUMBER(editorParameterMap))
-FXIMPLEMENT(GNEAdditionalFrame::additionalSet, FXGroupBox, additionalSetMap, ARRAYNUMBER(additionalSetMap))
+FXIMPLEMENT(GNEAdditionalFrame,                          FXScrollWindow, GNEAdditionalMap,              ARRAYNUMBER(GNEAdditionalMap))
+FXIMPLEMENT(GNEAdditionalFrame::additionalParameterList, FXMatrix,       GNEAdditionalParameterListMap, ARRAYNUMBER(GNEAdditionalParameterListMap))
+FXIMPLEMENT(GNEAdditionalFrame::editorParameter,         FXGroupBox,     GNEEditorParameterMap,         ARRAYNUMBER(GNEEditorParameterMap))
+FXIMPLEMENT(GNEAdditionalFrame::additionalSet,           FXGroupBox,     GNEAdditionalSetMap,           ARRAYNUMBER(GNEAdditionalSetMap))
 
 // ===========================================================================
 // static members
 // ===========================================================================
+
 const int GNEAdditionalFrame::WIDTH = 140;
 const int GNEAdditionalFrame::maxNumberOfParameters = 20;
 const int GNEAdditionalFrame::maxNumberOfListParameters = 5;
@@ -100,6 +101,7 @@ const int GNEAdditionalFrame::maxNumberOfListParameters = 5;
 // ===========================================================================
 // method definitions
 // ===========================================================================
+
 GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
@@ -142,6 +144,7 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myAdditionalMatchBox->appendItem("Charging station");
     myAdditionalMatchBox->appendItem("Detector E1");
     myAdditionalMatchBox->appendItem("Detector E2");
+    myAdditionalMatchBox->appendItem("Detector E3");
     myAdditionalMatchBox->appendItem("Detector E3 Entry");
     myAdditionalMatchBox->appendItem("Detector E3 Exit");
     myAdditionalMatchBox->appendItem("Rerouters");
@@ -159,107 +162,141 @@ GNEAdditionalFrame::~GNEAdditionalFrame() {
 }
 
 
-void
-GNEAdditionalFrame::addAdditional(GNELane &lane, GUISUMOAbstractView* parent) {
-    // Position of the mouse in the lane
-    SUMOReal position = lane.getShape().nearest_offset_to_point2D(parent->getPositionInformation());
-    // Add adittional element depending of myActualAdditionalType
-    switch (myActualAdditionalType) {
-        case SUMO_TAG_BUS_STOP: {
-                int numberOfBusStops = myViewNet->getNet()->getNumberOfBusStops();
-                // Check that the ID of the new busStop is unique
-                while(myViewNet->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
-                    numberOfBusStops++;
-                // Declare position of busStop
-                SUMOReal startPosition;
-                SUMOReal endPosition;
-                // If positions are valid
-                if(setPositions(lane, position, startPosition, endPosition)) {
-                    // Extract bus lines
-                    std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
-                    // Create an add new busStop
-                    GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), lane, myViewNet, startPosition, endPosition, lines);
-                    busStop->setBlocked(myEditorParameter->isBlockEnabled());
-                    myUndoList->p_begin("add " + busStop->getDescription());
-                    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
-                    myUndoList->p_end();
-                } 
-            }
-            break;
-        case SUMO_TAG_CHARGING_STATION: {
-                int numberOfChargingStations = myViewNet->getNet()->getNumberOfChargingStations();
-                // Check that the ID of the new chargingStation is unique
-                while(myViewNet->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
-                    numberOfChargingStations++;
-                // Declare position of chargingStation
-                SUMOReal startPosition;
-                SUMOReal endPosition;
-                // If positions are valid
-                if(setPositions(lane, position, startPosition, endPosition)) {
+bool
+GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
+    // If user clicked over lane, a GNEAdditional Element will be created. In other case, a GNEAdditionalSet will be created
+    if(lane) {
+        // Position of the mouse in the lane
+        SUMOReal position = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
+        // Add adittional element depending of myActualAdditionalType
+        switch (myActualAdditionalType) {
+            case SUMO_TAG_BUS_STOP: {
+                    int numberOfBusStops = myViewNet->getNet()->getNumberOfBusStops();
+                    // Check that the ID of the new busStop is unique
+                    while(myViewNet->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
+                        numberOfBusStops++;
+                    // Declare position of busStop
+                    SUMOReal startPosition;
+                    SUMOReal endPosition;
+                    // If positions are valid
+                    if(setPositions(lane, position, startPosition, endPosition)) {
+                        // Extract bus lines
+                        std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
+                        // Create an add new busStop
+                        GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), *lane, myViewNet, startPosition, endPosition, lines);
+                        busStop->setBlocked(myEditorParameter->isBlockEnabled());
+                        myUndoList->p_begin("add " + busStop->getDescription());
+                        myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
+                        myUndoList->p_end();
+                        return true;
+                    } else 
+                        return false;
+                }
+            case SUMO_TAG_CHARGING_STATION: {
+                    int numberOfChargingStations = myViewNet->getNet()->getNumberOfChargingStations();
+                    // Check that the ID of the new chargingStation is unique
+                    while(myViewNet->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
+                        numberOfChargingStations++;
+                    // Declare position of chargingStation
+                    SUMOReal startPosition;
+                    SUMOReal endPosition;
+                    // If positions are valid
+                    if(setPositions(lane, position, startPosition, endPosition)) {
+                        // Get values of text fields
+                        SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
+                        SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
+                        int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
+                        bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
+                        // Create and add a new chargingStation
+                        GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfChargingStations), *lane, myViewNet, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
+                        chargingStation->setBlocked(myEditorParameter->isBlockEnabled());
+                        myUndoList->p_begin("add " + chargingStation->getDescription());
+                        myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), chargingStation, true), true);
+                        myUndoList->p_end();
+                        return true;
+                    } else 
+                        return false;
+                }
+            case SUMO_TAG_E1DETECTOR: {
+                    int numberOfDetectorE1 = myViewNet->getNet()->getNumberOfDetectorE1();
+                    // Check that the ID of the new detector E1 is unique
+                    while(myViewNet->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
+                        numberOfDetectorE1++;
+
+                    /** CAMBIAR **/
                     // Get values of text fields
                     SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
                     SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
                     int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
                     bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
-                    // Create and add a new chargingStation
-                    GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfChargingStations), lane, myViewNet, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
-                    chargingStation->setBlocked(myEditorParameter->isBlockEnabled());
-                    myUndoList->p_begin("add " + chargingStation->getDescription());
-                    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), chargingStation, true), true);
-                    myUndoList->p_end();
-                }
-            }
-            break;
-        case SUMO_TAG_E1DETECTOR: {
-                int numberOfDetectorE1 = myViewNet->getNet()->getNumberOfDetectorE1();
-                // Check that the ID of the new detector E1 is unique
-                while(myViewNet->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
-                    numberOfDetectorE1++;
+                    /**/
 
-                /** CAMBIAR **/
+                    // Create and add a new detector
+                    GNEDetectorE1 *detectorE1 = new GNEDetectorE1("detectorE1_" + toString(numberOfDetectorE1), *lane, myViewNet, position, 1, "", true);
+                    detectorE1->setBlocked(myEditorParameter->isBlockEnabled());
+                    myUndoList->p_begin("add " + detectorE1->getDescription());
+                    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE1, true), true);
+                    myUndoList->p_end();
+                    return true;
+                }
+            case SUMO_TAG_E2DETECTOR: {
+                    // Finish
+                    return true;
+                }
+            case SUMO_TAG_DET_ENTRY: {
+                    // Finish
+                    return true;
+                }
+            case SUMO_TAG_DET_EXIT: {
+                    // Finish
+                    return true;
+                }
+            case SUMO_TAG_REROUTER: {
+                    // Finish
+                    return true;
+                }
+            case SUMO_TAG_CALIBRATOR: {
+                    // Finish
+                    return true;
+                }
+            case SUMO_TAG_VSS: {
+                    // Finish
+                    return true;
+                }
+            default:
+                WRITE_WARNING("An additionalSet element of type '" + toString(myActualAdditionalType) + "' cannot be placed over a Lane");
+                return false;
+        }
+    } else {
+        // Add adittionalSet element depending of myActualAdditionalType
+        switch (myActualAdditionalType) {
+            case SUMO_TAG_E3DETECTOR: {
+                int numberOfDetectorE3 = myViewNet->getNet()->getNumberOfDetectorE3();
+                // Check that the ID of the new detector E3 is unique
+                while(myViewNet->getNet()->getdetectorE3("detectorE3_" + toString(numberOfDetectorE3)) != NULL)
+                    numberOfDetectorE3++;
+
+                /** CAMBIAR **
                 // Get values of text fields
                 SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
                 SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
                 int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
                 bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
-                /**/
-
+                **/
 
                 // Create and add a new detector
-                GNEDetectorE1 *detectorE1 = new GNEDetectorE1("detectorE1_" + toString(numberOfDetectorE1), lane, myViewNet, position, 1, "", true);
-                detectorE1->setBlocked(myEditorParameter->isBlockEnabled());
-                myUndoList->p_begin("add " + detectorE1->getDescription());
-                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE1, true), true);
+                std::cout << parent->getPositionInformation() << std::endl;
+
+                GNEDetectorE3 *detectorE3 = new GNEDetectorE3("detectorE3_" + toString(numberOfDetectorE3), myViewNet, parent->getPositionInformation(), 100, "");
+                detectorE3->setBlocked(myEditorParameter->isBlockEnabled());
+                myUndoList->p_begin("add " + detectorE3->getDescription());
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE3, true), true);
                 myUndoList->p_end();
-            }
-            break;
-        case SUMO_TAG_E2DETECTOR: {
-                // Finish
-            }
-            break;
-        case SUMO_TAG_DET_ENTRY: {
-                // Finish
-            }
-            break;
-        case SUMO_TAG_DET_EXIT: {
-                // Finish
-            }
-            break;
-        case SUMO_TAG_REROUTER: {
-                // Finish
-            }
-            break;
-        case SUMO_TAG_CALIBRATOR: {
-                // Finish
-            }
-            break;
-        case SUMO_TAG_VSS: {
-                // Finish
-            }
-            break;
-        default:
-            throw ProcessError("Tag of additional object not supported");
-            break;
+                return true;
+            } 
+            default:
+                return false;
+        }
     }
 }
 
@@ -293,18 +330,21 @@ GNEAdditionalFrame::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
             myActualAdditionalType = SUMO_TAG_E2DETECTOR;
             break;
         case 4:
-            myActualAdditionalType = SUMO_TAG_DET_ENTRY;
+            myActualAdditionalType = SUMO_TAG_E3DETECTOR;
             break;
         case 5:
-            myActualAdditionalType = SUMO_TAG_DET_EXIT;
+            myActualAdditionalType = SUMO_TAG_DET_ENTRY;
             break;
         case 6:
-            myActualAdditionalType = SUMO_TAG_REROUTER;
+            myActualAdditionalType = SUMO_TAG_DET_EXIT;
             break;
         case 7:
-            myActualAdditionalType = SUMO_TAG_CALIBRATOR;
+            myActualAdditionalType = SUMO_TAG_REROUTER;
             break;
         case 8:
+            myActualAdditionalType = SUMO_TAG_CALIBRATOR;
+            break;
+        case 9:
             myActualAdditionalType = SUMO_TAG_VSS;
             break;
     }
@@ -344,42 +384,64 @@ GNEAdditionalFrame::setParameters() {
     // Set parameters depending of myActualAdditionalType
     switch (myActualAdditionalType) {
         case SUMO_TAG_BUS_STOP : {
-            myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("busStop default length").c_str());
-            std::string defaultLinesWithoutParse = oc.getString("busStop default lines");
-            std::vector<std::string> lines;
-            SUMOSAXAttributes::parseStringVector(defaultLinesWithoutParse, lines);
-            if(lines.empty())
-                lines.push_back("");
-            myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
+                myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("busStop default length").c_str());
+                std::string defaultLinesWithoutParse = oc.getString("busStop default lines");
+                std::vector<std::string> lines;
+                SUMOSAXAttributes::parseStringVector(defaultLinesWithoutParse, lines);
+                if(lines.empty())
+                    lines.push_back("");
+                myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
+                myAdditionalSet->hideList();
             }
             break;
-        case SUMO_TAG_CHARGING_STATION :
-            myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("chargingStation default length").c_str());   
-            myVectorOfAdditionalParameter.at(1)->showTextParameter("power", oc.getString("chargingStation default charging power").c_str());   
-            myVectorOfAdditionalParameter.at(2)->showTextParameter("effic.", oc.getString("chargingStation default efficiency").c_str());   
-            myVectorOfAdditionalParameter.at(3)->showTextParameter("delay", oc.getString("chargingStation default charge delay").c_str());   
-            myVectorOfAdditionalParameter.at(4)->showBoolParameter("transit", oc.getBool("chargingStation default charge in transit"));   
+        case SUMO_TAG_CHARGING_STATION : {
+                myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("chargingStation default length").c_str());   
+                myVectorOfAdditionalParameter.at(1)->showTextParameter("power", oc.getString("chargingStation default charging power").c_str());   
+                myVectorOfAdditionalParameter.at(2)->showTextParameter("effic.", oc.getString("chargingStation default efficiency").c_str());   
+                myVectorOfAdditionalParameter.at(3)->showTextParameter("delay", oc.getString("chargingStation default charge delay").c_str());   
+                myVectorOfAdditionalParameter.at(4)->showBoolParameter("transit", oc.getBool("chargingStation default charge in transit"));   
+                myAdditionalSet->hideList();
+            }
             break;
-        case SUMO_TAG_E1DETECTOR:
-            // Finish
+        case SUMO_TAG_E1DETECTOR: {
+                // Finish
+            myAdditionalSet->hideList();
+            }
             break;
-        case SUMO_TAG_E2DETECTOR:
-            // Finish
+        case SUMO_TAG_E2DETECTOR: {
+                // Finish
+                myAdditionalSet->hideList();
+            }
             break;
-        case SUMO_TAG_DET_ENTRY:
-            // Finish
+        case SUMO_TAG_E3DETECTOR: {
+                // Finish
+                myAdditionalSet->hideList();
+            }
             break;
-        case SUMO_TAG_DET_EXIT:
-            // Finish
+        case SUMO_TAG_DET_ENTRY: {
+                // Finish
+                myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
+            }
             break;
-        case SUMO_TAG_REROUTER:
-            // Finish
+        case SUMO_TAG_DET_EXIT: {
+                // Finish
+                myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
+            }
             break;
-        case SUMO_TAG_CALIBRATOR:
-            // Finish
+        case SUMO_TAG_REROUTER: {
+                // Finish
+                myAdditionalSet->hideList();
+            }
             break;
-        case SUMO_TAG_VSS:
-            // Finish
+        case SUMO_TAG_CALIBRATOR: {
+                // Finish
+                myAdditionalSet->hideList();
+            }
+            break;
+        case SUMO_TAG_VSS: {
+                // Finish
+                myAdditionalSet->hideList();
+            }
             break;
         default:
             break;
@@ -390,16 +452,16 @@ GNEAdditionalFrame::setParameters() {
 
 
 bool 
-GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition) {
+GNEAdditionalFrame::setPositions(GNELane *lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition) {
     SUMOReal size = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0)->getTextValue());
     switch (myEditorParameter->getActualReferencePoint()) {
         case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT : {
             startPosition = positionOfTheMouseOverLane;
             // Set end position
-            if(positionOfTheMouseOverLane + size <= lane.getLaneShapeLenght() - 0.01)
+            if(positionOfTheMouseOverLane + size <= lane->getLaneShapeLenght() - 0.01)
                 endPosition = positionOfTheMouseOverLane + size;
             else if(myEditorParameter->isForcePositionEnabled())
-                endPosition = lane.getLaneShapeLenght() - 0.01;
+                endPosition = lane->getLaneShapeLenght() - 0.01;
             else
                 return false;
             break;
@@ -424,10 +486,10 @@ GNEAdditionalFrame::setPositions(GNELane &lane, SUMOReal &positionOfTheMouseOver
             else
                 return false;
             // Set endPosition
-            if(positionOfTheMouseOverLane + size/2 <= lane.getLaneShapeLenght() - 0.01)
+            if(positionOfTheMouseOverLane + size/2 <= lane->getLaneShapeLenght() - 0.01)
                 endPosition = positionOfTheMouseOverLane + size/2;
             else if(myEditorParameter->isForcePositionEnabled())
-                endPosition = lane.getLaneShapeLenght() - 0.01;
+                endPosition = lane->getLaneShapeLenght() - 0.01;
             else
                 return false;
         }
@@ -703,22 +765,18 @@ GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* 
     // Create list
     myList = new FXList(this, tgt, MID_GNE_SELECTSET, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
 
-    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
-    
-    addSet = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDSET,
-        ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
-        0, 0, 20, 20);
+    // Create help button
+    helpAdditionalSet = new FXButton(this, "Help", 0, this, MID_HELP);
 
-    removeSet = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVESET,
-        ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
-        0, 0, 20, 20);
+    // Hide List
+    hideList();
 }
 
 
 GNEAdditionalFrame::additionalSet::~additionalSet() {}
 
 
-GNEDetectorE3*
+GNEAdditionalSet*
 GNEAdditionalFrame::additionalSet::getAdditionalSet() {
     return myAdditionalSet;
 }
@@ -726,30 +784,29 @@ GNEAdditionalFrame::additionalSet::getAdditionalSet() {
 
 void 
 GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
+    mySetLabel->setText(("Type of set: " + toString(type)).c_str());
+    myList->clearItems();
+    std::vector<GNEAdditionalSet*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionalSets(type);
+    for(std::vector<GNEAdditionalSet*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++)
+        myList->appendItem((*i)->getID().c_str());
     show();
 }
 
 
 void 
-GNEAdditionalFrame::additionalSet::hide() {
+GNEAdditionalFrame::additionalSet::hideList() {
     FXGroupBox::hide();
 }
 
 
 long 
-GNEAdditionalFrame::additionalSet::onCmdAddSet(FXObject*, FXSelector, void*) {
-    return 1;
-}
-
-
-long 
-GNEAdditionalFrame::additionalSet::onCmdRemoveSet(FXObject*, FXSelector, void*) {
-    return 1;
-}
-
-
-long 
 GNEAdditionalFrame::additionalSet::onCmdSelectSet(FXObject*, FXSelector, void*) {
+    return 1;
+}
+
+
+long 
+GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
     return 1;
 }
 

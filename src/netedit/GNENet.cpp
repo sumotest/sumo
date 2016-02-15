@@ -1018,14 +1018,14 @@ GNENet::deleteAdditional(GNEAdditional* additional) {                           
 
 
 void 
-GNENet::insertAdditionalSet(GNEAdditionalSet* additionalSet) {                                          // PABLO #1916
-    // Check if additional element exists before insertion                                              // PABLO #1916
-    if(myAdditionalSets.find(additionalSet->getID()) != myAdditionalSets.end())                                  // PABLO #1916
-        throw ProcessError("additional element with ID='" + additionalSet->getID() + "' already exist");   // PABLO #1916
-    else {                                                                                              // PABLO #1916
-        myAdditionalSets[additionalSet->getID()] = additionalSet;                                                // PABLO #1916
-    }                                                                                                   // PABLO #1916
-}                                                                                                       // PABLO #1916
+GNENet::insertAdditionalSet(GNEAdditionalSet* additionalSet) {                                              // PABLO #1916
+    // Check if additional element exists before insertion                                                  // PABLO #1916
+    if(myAdditionalSets.find(additionalSet->getID()) != myAdditionalSets.end())                             // PABLO #1916
+        throw ProcessError("additional element with ID='" + additionalSet->getID() + "' already exist");    // PABLO #1916
+    else {                                                                                                  // PABLO #1916
+        myAdditionalSets[additionalSet->getID()] = additionalSet;                                           // PABLO #1916
+    }                                                                                                       // PABLO #1916
+}                                                                                                           // PABLO #1916
 
 
 void 
@@ -1036,6 +1036,21 @@ GNENet::deleteAdditionalSet(GNEAdditionalSet* additionalSet) {                  
         throw ProcessError("additional element with ID='" + additionalSet->getID() + "' don't exist");  // PABLO #1916
     else                                                                                                // PABLO #1916
         myAdditionalSets.erase(positionToRemove);                                                       // PABLO #1916
+}                                                                                                       // PABLO #1916
+
+
+std::vector<GNEAdditionalSet*>                                                                          // PABLO #1916
+GNENet::getAdditionalSets(SumoXMLTag type) {                                                       // PABLO #1916
+    std::vector<GNEAdditionalSet*> vectorOfAdditionalSets;                                              // PABLO #1916
+    if(type = SUMO_TAG_NOTHING) {                                                                       // PABLO #1916
+        for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
+            vectorOfAdditionalSets.push_back(i->second);                                                // PABLO #1916
+    } else {                                                                                            // PABLO #1916
+        for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
+            if(i->second->getTag() == type)                                                             // PABLO #1916
+                vectorOfAdditionalSets.push_back(i->second);                                            // PABLO #1916
+    }                                                                                                   // PABLO #1916
+    return vectorOfAdditionalSets;                                                                      // PABLO #1916
 }                                                                                                       // PABLO #1916
 
 

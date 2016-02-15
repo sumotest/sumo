@@ -1,7 +1,6 @@
 /****************************************************************************/
 /// @file    GNELogo_E1.cpp
 /// @author  Pablo Alvarez Lopez
-/// @author  Jakob Erdmann
 /// @date    2016-01
 /// @version $Id: GNELogo_E1.cpp 19598 2015-12-10 13:33:22Z palcraft $
 ///
