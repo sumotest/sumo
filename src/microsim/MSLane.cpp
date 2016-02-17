@@ -2126,6 +2126,7 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
             if (gDebugFlag1) std::cout << "  (1) added veh=" << veh->getID() << " latOffset=" << latOffset << " result=" << result.toString() << "\n";
         }
     }
+    if (gDebugFlag1) std::cout << "  result.numFreeSublanes=" << result.numFreeSublanes() << "\n";
     if (result.numFreeSublanes() > 0) {
         const SUMOReal backOffset = ego->getBackPositionOnLane(ego->getLane());
         // do a tree search among all follower lanes and check for the most

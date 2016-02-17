@@ -247,7 +247,7 @@ MSLaneChangerSublane::checkChangeSublane(
     const MSLane& neighLane = *(target->lane);
     int blocked = 0;
 
-    //gDebugFlag1 = vehicle->getID() == "ego";
+    gDebugFlag1 = vehicle->getLaneChangeModel().debugVehicle();
 
     MSLeaderDistanceInfo neighLeaders = getLeaders(target, vehicle);
     MSLeaderDistanceInfo neighFollowers = target->lane->getFollowersOnConsecutive(vehicle, true);

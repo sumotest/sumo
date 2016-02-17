@@ -91,8 +91,10 @@ MSLeaderInfo::addLeader(const MSVehicle* veh, bool beyond, SUMOReal latOffset) {
         if ((egoRightMost < 0 || (egoRightMost <= sublane && sublane <= egoLeftMost))
                 && (!beyond || myVehicles[sublane] == 0)) {
             myVehicles[sublane] = veh;
-            myFreeSublanes--;
             myHasVehicles = true;
+            if (myVehicles[sublane] == 0) {
+                myFreeSublanes--;
+            }
         }
     }
     return myFreeSublanes;
@@ -156,6 +158,7 @@ MSLeaderInfo::toString() const {
             oss << ", ";
         }
     }
+    oss << " free=" << myFreeSublanes;
     return oss.str();
 }
 
@@ -204,8 +207,10 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal gap, SUMOReal lat
         if (gap < myDistances[sublane]) {
             myVehicles[sublane] = veh;
             myDistances[sublane] = gap;
-            myFreeSublanes--;
             myHasVehicles = true;
+            if (myVehicles[sublane] == 0) {
+                myFreeSublanes--;
+            }
         }
         return myFreeSublanes;
     }
@@ -216,8 +221,10 @@ MSLeaderDistanceInfo::addLeader(const MSVehicle* veh, SUMOReal gap, SUMOReal lat
                 && gap < myDistances[sublane]) {
             myVehicles[sublane] = veh;
             myDistances[sublane] = gap;
-            myFreeSublanes--;
             myHasVehicles = true;
+            if (myVehicles[sublane] == 0) {
+                myFreeSublanes--;
+            }
         }
     }
     return myFreeSublanes;
@@ -255,6 +262,7 @@ MSLeaderDistanceInfo::toString() const {
             oss << ", ";
         }
     }
+    oss << " free=" << myFreeSublanes;
     return oss.str();
 }
 
@@ -309,8 +317,10 @@ MSCriticalFollowerDistanceInfo::addFollower(const MSVehicle* veh, const MSVehicl
             myVehicles[sublane] = veh;
             myDistances[sublane] = gap;
             myMissingGaps[sublane] = missingGap;
-            myFreeSublanes--;
             myHasVehicles = true;
+            if (myVehicles[sublane] == 0) {
+                myFreeSublanes--;
+            }
         }
         return myFreeSublanes;
     }
@@ -322,8 +332,10 @@ MSCriticalFollowerDistanceInfo::addFollower(const MSVehicle* veh, const MSVehicl
             myVehicles[sublane] = veh;
             myDistances[sublane] = gap;
             myMissingGaps[sublane] = missingGap;
-            myFreeSublanes--;
             myHasVehicles = true;
+            if (myVehicles[sublane] == 0) {
+                myFreeSublanes--;
+            }
         }
     }
     return myFreeSublanes;
@@ -353,6 +365,7 @@ MSCriticalFollowerDistanceInfo::toString() const {
             oss << ", ";
         }
     }
+    oss << " free=" << myFreeSublanes;
     return oss.str();
 }
 /****************************************************************************/
