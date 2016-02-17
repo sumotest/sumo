@@ -58,6 +58,21 @@ GNEAttributeCarrier::GNEAttributeCarrier(SumoXMLTag tag) :
     myTag(tag) {
 }
 
+template<> int 
+GNEAttributeCarrier::parse(const std::string& string) {
+    return TplConvert::_str2int(string);
+}
+
+template<> SUMOReal 
+GNEAttributeCarrier::parse(const std::string& string) {
+    return TplConvert::_str2SUMOReal(string);
+}
+
+template<> bool 
+GNEAttributeCarrier::parse(const std::string& string) {
+    return TplConvert::_str2bool(string); 
+}                                        
+
 
 bool
 GNEAttributeCarrier::isValid(SumoXMLAttr key, const std::string& value) {

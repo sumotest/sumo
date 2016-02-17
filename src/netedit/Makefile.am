@@ -49,6 +49,7 @@ GNEConnector.h GNEConnector.cpp \
 GNETLSEditor.h GNETLSEditor.cpp \
 GNEAdditionalHandler.h GNEAdditionalHandler.cpp \
 GNEAdditional.h GNEAdditional.cpp \
+GNEAdditionalSet.h GNEAdditionalSet.cpp \
 GNEAdditionalFrame.h GNEAdditionalFrame.cpp \
 GNEChargingStation.h GNEChargingStation.cpp \
 GNEStoppingPlace.h GNEStoppingPlace.cpp \
@@ -57,6 +58,7 @@ GNEDetector.h GNEDetector.cpp \
 GNEDetectorE1.h GNEDetectorE1.cpp \
 GNEDetectorE2.h GNEDetectorE2.cpp \
 GNEDetectorE3.h GNEDetectorE3.cpp \
+GNEDetectorE3EntryExit.h GNEDetectorE3EntryExit.cpp \
 GNEReferenceCounter.h \
 GNEEvent_NetworkLoaded.h
 
