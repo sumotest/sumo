@@ -205,8 +205,8 @@ protected:
     /// @brief get the slowest vehicle in the given info
     static CLeaderDist getSlowest(const MSLeaderDistanceInfo& ldi);
 
-    /// @brief determine blocking state depending on latDist
-    int checkBlocking(const MSLane& neighLane, SUMOReal latDist, int laneOffset,
+    /// @brief restrict latDist to permissible speed and determine blocking state depending on that distance 
+    int checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int laneOffset,
                 const MSLeaderDistanceInfo& leaders,
                 const MSLeaderDistanceInfo& followers,
                 const MSLeaderDistanceInfo& blockers,
@@ -214,7 +214,7 @@ protected:
                 const MSLeaderDistanceInfo& neighFollowers,
                 const MSLeaderDistanceInfo& neighBlockers,
                 std::vector<CLeaderDist>* collectLeadBlockers = 0,
-                std::vector<CLeaderDist>* collectFollowBlockers = 0) const; 
+                std::vector<CLeaderDist>* collectFollowBlockers = 0); 
 
     /// @brief check whether any of the vehicles overlaps with ego
     static int checkBlockingVehicles(const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
@@ -256,6 +256,9 @@ protected:
 
     /// @brief flag to prevent speed adaptation by slowing down
     bool myDontBrake;
+
+    /// @brief whether the current lane changing meneuver can be finished in a single step
+    bool myCanChangeFully;
 
 };
 
