@@ -1,6 +1,9 @@
 # vehicles overtaking a bicycle on a single-lane road
 overtaking_bicycle
 
+# like overtaking_bicyle but with severly reduced lateral speed
+maxSpeedLat
+
 # vehicle behavior on a single edge with 2 lanes (default alignment)
 1edge_2lanes
 
