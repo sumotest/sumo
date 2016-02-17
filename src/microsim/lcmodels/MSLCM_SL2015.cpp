@@ -180,6 +180,7 @@ MSLCM_SL2015::wantsChangeSublane(
             std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                       << " veh=" << myVehicle.getID()
                       << " wantsNoChangeTo=" << changeType
+                      << " state=" << toString((LaneChangeAction)result) 
                       << "\n\n";
         }
     }
@@ -1442,6 +1443,8 @@ MSLCM_SL2015::_wantsChangeSublane(
                         neighLeaders, neighFollowers, neighBlockers);
                 return ret;
             }
+        } else {
+            ret |= LCA_SUBLANE | LCA_STAY;
         }
     }
 
@@ -1742,33 +1745,49 @@ MSLCM_SL2015::overlap(SUMOReal right, SUMOReal left, SUMOReal right2, SUMOReal l
 
 MSLCM_SL2015::StateAndDist 
 MSLCM_SL2015::decideDirection(StateAndDist sd1, StateAndDist sd2) const {
-    const bool want1 = ((sd1.first & LCA_WANTS_LANECHANGE) != 0);
-    const bool can1 = ((sd1.first & LCA_BLOCKED) == 0);
-    const bool want2 = ((sd2.first & LCA_WANTS_LANECHANGE) != 0);
-    const bool can2 = ((sd2.first & LCA_BLOCKED) == 0);
+    // ignore dummy decisions (returned if mayChange() failes)
+    if (sd1.state == 0) {
+        return sd2;
+    } else if (sd2.state == 0) {
+        return sd1;
+    }
+    // LCA_SUBLANE is special because LCA_STAY|LCA_SUBLANE may override another LCA_SUBLANE command
+    const bool want1 = ((sd1.state & LCA_WANTS_LANECHANGE) != 0) || ((sd1.state & LCA_SUBLANE) != 0 && (sd1.state & LCA_STAY) != 0);
+    const bool want2 = ((sd2.state & LCA_WANTS_LANECHANGE) != 0) || ((sd2.state & LCA_SUBLANE) != 0 && (sd2.state & LCA_STAY) != 0);
+    const bool can1 = ((sd1.state & LCA_BLOCKED) == 0);
+    const bool can2 = ((sd2.state & LCA_BLOCKED) == 0);
     if (DEBUG_COND) std::cout << SIMTIME 
         << " veh=" << myVehicle.getID() 
-            << " state1=" << toString((LaneChangeAction)sd1.first) 
-            << " want1=" << (sd1.first & LCA_WANTS_LANECHANGE)
-            << " dist1=" << sd1.second 
-            << " state2=" << toString((LaneChangeAction)sd2.first) 
-            << " want2=" << (sd2.first & LCA_WANTS_LANECHANGE)
-            << " dist2=" << sd2.second 
+            << " state1=" << toString((LaneChangeAction)sd1.state) 
+            << " want1=" << (sd1.state & LCA_WANTS_LANECHANGE)
+            << " dist1=" << sd1.latDist 
+            << " dir1=" << sd1.dir
+            << " state2=" << toString((LaneChangeAction)sd2.state) 
+            << " want2=" << (sd2.state & LCA_WANTS_LANECHANGE)
+            << " dist2=" << sd2.latDist 
+            << " dir2=" << sd2.dir
             << "\n";
     if (want1) {
         if (want2) {
             // decide whether right or left has higher priority (lower value in enum LaneChangeAction)
-            if ((sd1.first & LCA_CHANGE_REASONS) < (sd2.first & LCA_CHANGE_REASONS)) {
-                //if (DEBUG_COND) std::cout << "   " << (sd1.first & LCA_CHANGE_REASONS) << " < " << (sd2.first & LCA_CHANGE_REASONS) << "\n";
+            if ((sd1.state & LCA_CHANGE_REASONS) < (sd2.state & LCA_CHANGE_REASONS)) {
+                //if (DEBUG_COND) std::cout << "   " << (sd1.state & LCA_CHANGE_REASONS) << " < " << (sd2.state & LCA_CHANGE_REASONS) << "\n";
                 return sd1;
-            } else if ((sd1.first & LCA_CHANGE_REASONS) > (sd2.first & LCA_CHANGE_REASONS)) {
-                //if (DEBUG_COND) std::cout << "   " << (sd1.first & LCA_CHANGE_REASONS) << " > " << (sd2.first & LCA_CHANGE_REASONS) << "\n";
+            } else if ((sd1.state & LCA_CHANGE_REASONS) > (sd2.state & LCA_CHANGE_REASONS)) {
+                //if (DEBUG_COND) std::cout << "   " << (sd1.state & LCA_CHANGE_REASONS) << " > " << (sd2.state & LCA_CHANGE_REASONS) << "\n";
                 return sd2;
             } else {
                 // same priority. 
-                // special treatment LCA_SUBLANE: prefer further right
-                if ((sd1.first & LCA_SUBLANE) != 0) {
-                    return sd1.second <= sd2.second ? sd1 : sd2;
+                if ((sd1.state & LCA_SUBLANE) != 0) {
+                    // special treatment: prefer action with dir != 0
+                    if (sd1.dir == 0) {
+                        return sd2;
+                    } else if (sd2.dir == 0) {
+                        return sd1;
+                    } else {
+                        // prefer further right
+                        return sd1.latDist <= sd2.latDist ? sd1 : sd2;
+                    }
                 } else {
                     // see which one is allowed
                     return can1 ? sd1 : sd2;

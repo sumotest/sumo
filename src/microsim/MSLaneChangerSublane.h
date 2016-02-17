@@ -30,6 +30,7 @@
 #include <config.h>
 #endif
 
+#include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include "MSLaneChanger.h"
 
 
@@ -79,7 +80,7 @@ protected:
     /// @brief get leaders for ego on the given lane
     MSLeaderDistanceInfo getLeaders(const ChangerIt& target, const MSVehicle* ego) const; 
 
-    typedef std::pair<int, SUMOReal> StateAndDist;
+    typedef MSAbstractLaneChangeModel::StateAndDist StateAndDist;
     /// @brief helper function that calls checkChangeSublane and sets blocker information
     StateAndDist checkChangeHelper(MSVehicle* vehicle, int laneOffset);
 

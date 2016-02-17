@@ -113,6 +113,20 @@ public:
 
     };
 
+    struct StateAndDist {
+        // @brief LaneChangeAction flags
+        int state;
+        // @brief lateralDistance
+        SUMOReal latDist;
+        // @brief direction that was checked
+        int dir;
+
+        StateAndDist(int _state, SUMOReal _latDist, int _dir) :
+            state(_state),
+            latDist(_latDist),
+            dir(_dir) {}
+    };
+
     /// @brief init global model parameters
     void static initGlobalOptions(const OptionsCont& oc);
 
@@ -179,7 +193,6 @@ public:
         throw ProcessError("Method not implemented by model " + toString(myModel));
     }
 
-    typedef std::pair<int, SUMOReal> StateAndDist;
     /// @brief decide in which direction to move in case both directions are desirable
     virtual StateAndDist decideDirection(StateAndDist /*sd1*/, StateAndDist /*sd2*/) const {
         throw ProcessError("Method not implemented by model " + toString(myModel));
