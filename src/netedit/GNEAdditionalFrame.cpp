@@ -116,22 +116,22 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myFrameLabel->setFont(myHeaderFont);
     
     // Create groupBox for myAdditionalMatchBox 
-    groupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
     
-    // Create FXListBox in groupBoxForMyAdditionalMatchBox
-    myAdditionalMatchBox = new FXComboBox(groupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM, 
+    // Create FXListBox in myGroupBoxForMyAdditionalMatchBox
+    myAdditionalMatchBox = new FXComboBox(myGroupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM, 
                                           FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_X);
 
     // Create groupBox for parameters 
-    groupBoxForParameters = new FXGroupBox(myContentFrame, "Default parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    myGroupBoxForParameters = new FXGroupBox(myContentFrame, "Default parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
     
     // Create widgets for parameters
     for (int i = 0; i < maxNumberOfParameters; i++)
-        myVectorOfAdditionalParameter.push_back(new additionalParameter(groupBoxForParameters, this));
+        myVectorOfAdditionalParameter.push_back(new additionalParameter(myGroupBoxForParameters, this));
 
     // Create widgets for list parameters
     for (int i = 0; i < maxNumberOfListParameters; i++)
-        myVectorOfadditionalParameterList.push_back(new additionalParameterList(groupBoxForParameters, this));
+        myVectorOfadditionalParameterList.push_back(new additionalParameterList(myGroupBoxForParameters, this));
 
     // Create editor parameter
     myEditorParameter = new GNEAdditionalFrame::editorParameter(myContentFrame, this);
@@ -384,17 +384,16 @@ GNEAdditionalFrame::setParameters() {
     // Set parameters depending of myActualAdditionalType
     switch (myActualAdditionalType) {
         case SUMO_TAG_BUS_STOP : {
+                myGroupBoxForParameters->show();
                 myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("busStop default length").c_str());
-                std::string defaultLinesWithoutParse = oc.getString("busStop default lines");
                 std::vector<std::string> lines;
-                SUMOSAXAttributes::parseStringVector(defaultLinesWithoutParse, lines);
-                if(lines.empty())
-                    lines.push_back("");
+                SUMOSAXAttributes::parseStringVector(oc.getString("busStop default lines"), lines);
                 myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_CHARGING_STATION : {
+                myGroupBoxForParameters->show();
                 myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("chargingStation default length").c_str());   
                 myVectorOfAdditionalParameter.at(1)->showTextParameter("power", oc.getString("chargingStation default charging power").c_str());   
                 myVectorOfAdditionalParameter.at(2)->showTextParameter("effic.", oc.getString("chargingStation default efficiency").c_str());   
@@ -403,42 +402,62 @@ GNEAdditionalFrame::setParameters() {
                 myAdditionalSet->hideList();
             }
             break;
-        case SUMO_TAG_E1DETECTOR: {
-                // Finish
-            myAdditionalSet->hideList();
+        case SUMO_TAG_E1DETECTOR: {  
+                myGroupBoxForParameters->show();
+                myVectorOfAdditionalParameter.at(0)->showTextParameter("frequency.", oc.getString("detector E1 default frequency").c_str());   
+                myVectorOfAdditionalParameter.at(1)->showTextParameter("file", oc.getString("detector E1 default file").c_str());    
+                myVectorOfAdditionalParameter.at(2)->showBoolParameter("friendlyPos", oc.getBool("detector E1 default friendlyPos"));
+                myVectorOfAdditionalParameter.at(3)->showBoolParameter("split", oc.getBool("detector E1 default splitByType")); 
+                myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_E2DETECTOR: {
-                // Finish
+                myGroupBoxForParameters->show();
+                myVectorOfAdditionalParameter.at(0)->showTextParameter("length", oc.getString("detector E2 default length").c_str());   
+                myVectorOfAdditionalParameter.at(1)->showTextParameter("frequency", oc.getString("detector E2 default frequency").c_str());   
+                myVectorOfAdditionalParameter.at(2)->showTextParameter("file", oc.getString("detector E2 default file").c_str());  
+                myVectorOfAdditionalParameter.at(3)->showBoolParameter("cont", oc.getBool("detector E2 default cont"));   
+                myVectorOfAdditionalParameter.at(4)->showTextParameter("timeTH", oc.getString("detector E2 default timeThreshold"));   
+                myVectorOfAdditionalParameter.at(5)->showTextParameter("speedTH", oc.getString("detector E2 default speedThreshold").c_str());   
+                myVectorOfAdditionalParameter.at(6)->showTextParameter("jamTH", oc.getString("detector E2 jamThreshold").c_str());   
+                myVectorOfAdditionalParameter.at(7)->showBoolParameter("friendlyPos", oc.getBool("detector E2 default friendlyPos"));   
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_E3DETECTOR: {
-                // Finish
+                myGroupBoxForParameters->show();
+                myVectorOfAdditionalParameter.at(0)->showTextParameter("frequency", oc.getString("detector E3 default frequency").c_str());   
+                myVectorOfAdditionalParameter.at(1)->showTextParameter("file", oc.getString("detector E3 default file").c_str());  
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_DET_ENTRY: {
-                // Finish
+                myGroupBoxForParameters->hide();
                 myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
             }
             break;
         case SUMO_TAG_DET_EXIT: {
-                // Finish
+                myGroupBoxForParameters->hide();
                 myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
             }
             break;
         case SUMO_TAG_REROUTER: {
-                // Finish
+                myGroupBoxForParameters->show();
+                myVectorOfadditionalParameterList.at(0)->showListParameter("edges", std::vector<std::string>());
+                myVectorOfAdditionalParameter.at(0)->showTextParameter("file", oc.getString("rerouter default file").c_str());
+                myVectorOfAdditionalParameter.at(1)->showTextParameter("probability", oc.getString("rerouter default probability").c_str());
+                myVectorOfAdditionalParameter.at(2)->showBoolParameter("off", oc.getString("rerouter default off").c_str());
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_CALIBRATOR: {
+                myGroupBoxForParameters->show();
                 // Finish
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_VSS: {
+                myGroupBoxForParameters->show();
                 // Finish
                 myAdditionalSet->hideList();
             }
@@ -447,7 +466,7 @@ GNEAdditionalFrame::setParameters() {
             break;
     }
     // Recalc groupBox
-    groupBoxForParameters->recalc();
+    myGroupBoxForParameters->recalc();
 }
 
 
@@ -598,6 +617,8 @@ void
 GNEAdditionalFrame::additionalParameterList::showListParameter(const std::string& name, std::vector<std::string> value) {
     if(value.size() < myMaxNumberOfValuesInParameterList) {
         numberOfVisibleTextfields = (int)value.size();
+        if(numberOfVisibleTextfields == 0)
+            numberOfVisibleTextfields++;
         for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++) 
             myLabels.at(i)->setText((name + " " + toString(i)).c_str());
         for(int i = 0; i < numberOfVisibleTextfields; i++) {

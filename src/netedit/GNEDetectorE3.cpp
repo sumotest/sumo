@@ -157,7 +157,7 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
    
     // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLine(myShape[0], 0, myShape[0].distanceTo(myShape[1]), 100);
+    GLHelper::drawBoxLine(myShape[0], 0, myShape[0].distanceTo(myShape[1]), 3);
 
     // Pop name
     glPopName();

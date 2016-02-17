@@ -332,13 +332,13 @@ private:
     FXLabel* myFrameLabel;
 
     /// @brief groupBox for Match Box of additionals
-    FXGroupBox* groupBoxForMyAdditionalMatchBox;
+    FXGroupBox* myGroupBoxForMyAdditionalMatchBox;
     
     /// @brief combo box with the list of additional elements
     FXComboBox* myAdditionalMatchBox;
     
     /// @briefgroupBox for parameters 
-    FXGroupBox* groupBoxForParameters;
+    FXGroupBox* myGroupBoxForParameters;
 
     /// @brief vector with the additional parameters
     std::vector<additionalParameter*> myVectorOfAdditionalParameter;
