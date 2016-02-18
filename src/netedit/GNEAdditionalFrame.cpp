@@ -385,7 +385,7 @@ GNEAdditionalFrame::setParameters() {
     switch (myActualAdditionalType) {
         case SUMO_TAG_BUS_STOP : {
                 myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("busStop default length").c_str());
+                myVectorOfAdditionalParameter.at(0)->showParameter("size", oc.getString("busStop default length"));
                 std::vector<std::string> lines;
                 SUMOSAXAttributes::parseStringVector(oc.getString("busStop default lines"), lines);
                 myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
@@ -394,40 +394,40 @@ GNEAdditionalFrame::setParameters() {
             break;
         case SUMO_TAG_CHARGING_STATION : {
                 myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showTextParameter("size", oc.getString("chargingStation default length").c_str());   
-                myVectorOfAdditionalParameter.at(1)->showTextParameter("power", oc.getString("chargingStation default charging power").c_str());   
-                myVectorOfAdditionalParameter.at(2)->showTextParameter("effic.", oc.getString("chargingStation default efficiency").c_str());   
-                myVectorOfAdditionalParameter.at(3)->showTextParameter("delay", oc.getString("chargingStation default charge delay").c_str());   
-                myVectorOfAdditionalParameter.at(4)->showBoolParameter("transit", oc.getBool("chargingStation default charge in transit"));   
+                myVectorOfAdditionalParameter.at(0)->showParameter("size", oc.getString("chargingStation default length"));   
+                myVectorOfAdditionalParameter.at(1)->showParameter("power", oc.getString("chargingStation default charging power"));   
+                myVectorOfAdditionalParameter.at(2)->showParameter("effic.", oc.getString("chargingStation default efficiency"));   
+                myVectorOfAdditionalParameter.at(3)->showParameter("delay", oc.getString("chargingStation default charge delay"));   
+                myVectorOfAdditionalParameter.at(4)->showParameter("transit", oc.getBool("chargingStation default charge in transit"));   
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_E1DETECTOR: {  
                 myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showTextParameter("frequency.", oc.getString("detector E1 default frequency").c_str());   
-                myVectorOfAdditionalParameter.at(1)->showTextParameter("file", oc.getString("detector E1 default file").c_str());    
-                myVectorOfAdditionalParameter.at(2)->showBoolParameter("friendlyPos", oc.getBool("detector E1 default friendlyPos"));
-                myVectorOfAdditionalParameter.at(3)->showBoolParameter("split", oc.getBool("detector E1 default splitByType")); 
+                myVectorOfAdditionalParameter.at(0)->showParameter("frequency.", oc.getString("detector E1 default frequency"));   
+                myVectorOfAdditionalParameter.at(1)->showParameter("file", oc.getString("detector E1 default file"));    
+                myVectorOfAdditionalParameter.at(2)->showParameter("friendlyPos", oc.getBool("detector E1 default friendlyPos"));
+                myVectorOfAdditionalParameter.at(3)->showParameter("split", oc.getBool("detector E1 default splitByType")); 
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_E2DETECTOR: {
                 myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showTextParameter("length", oc.getString("detector E2 default length").c_str());   
-                myVectorOfAdditionalParameter.at(1)->showTextParameter("frequency", oc.getString("detector E2 default frequency").c_str());   
-                myVectorOfAdditionalParameter.at(2)->showTextParameter("file", oc.getString("detector E2 default file").c_str());  
-                myVectorOfAdditionalParameter.at(3)->showBoolParameter("cont", oc.getBool("detector E2 default cont"));   
-                myVectorOfAdditionalParameter.at(4)->showTextParameter("timeTH", oc.getString("detector E2 default timeThreshold"));   
-                myVectorOfAdditionalParameter.at(5)->showTextParameter("speedTH", oc.getString("detector E2 default speedThreshold").c_str());   
-                myVectorOfAdditionalParameter.at(6)->showTextParameter("jamTH", oc.getString("detector E2 jamThreshold").c_str());   
-                myVectorOfAdditionalParameter.at(7)->showBoolParameter("friendlyPos", oc.getBool("detector E2 default friendlyPos"));   
+                myVectorOfAdditionalParameter.at(0)->showParameter("length", oc.getString("detector E2 default length"));   
+                myVectorOfAdditionalParameter.at(1)->showParameter("frequency", oc.getString("detector E2 default frequency"));   
+                myVectorOfAdditionalParameter.at(2)->showParameter("file", oc.getString("detector E2 default file"));  
+                myVectorOfAdditionalParameter.at(3)->showParameter("cont", oc.getBool("detector E2 default cont"));   
+                myVectorOfAdditionalParameter.at(4)->showParameter("timeTH", oc.getString("detector E2 default timeThreshold"));   
+                myVectorOfAdditionalParameter.at(5)->showParameter("speedTH", oc.getString("detector E2 default speedThreshold"));   
+                myVectorOfAdditionalParameter.at(6)->showParameter("jamTH", oc.getString("detector E2 jamThreshold"));   
+                myVectorOfAdditionalParameter.at(7)->showParameter("friendlyPos", oc.getBool("detector E2 default friendlyPos"));   
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_E3DETECTOR: {
                 myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showTextParameter("frequency", oc.getString("detector E3 default frequency").c_str());   
-                myVectorOfAdditionalParameter.at(1)->showTextParameter("file", oc.getString("detector E3 default file").c_str());  
+                myVectorOfAdditionalParameter.at(0)->showParameter("frequency", oc.getString("detector E3 default frequency"));   
+                myVectorOfAdditionalParameter.at(1)->showParameter("file", oc.getString("detector E3 default file"));  
                 myAdditionalSet->hideList();
             }
             break;
@@ -443,16 +443,18 @@ GNEAdditionalFrame::setParameters() {
             break;
         case SUMO_TAG_REROUTER: {
                 myGroupBoxForParameters->show();
+                myVectorOfAdditionalParameter.at(0)->showParameter("file", oc.getString("rerouter default file"));
+                myVectorOfAdditionalParameter.at(1)->showParameter("probability", oc.getString("rerouter default probability"));
+                myVectorOfAdditionalParameter.at(2)->showParameter("off", oc.getBool("rerouter default off"));
                 myVectorOfadditionalParameterList.at(0)->showListParameter("edges", std::vector<std::string>());
-                myVectorOfAdditionalParameter.at(0)->showTextParameter("file", oc.getString("rerouter default file").c_str());
-                myVectorOfAdditionalParameter.at(1)->showTextParameter("probability", oc.getString("rerouter default probability").c_str());
-                myVectorOfAdditionalParameter.at(2)->showBoolParameter("off", oc.getString("rerouter default off").c_str());
                 myAdditionalSet->hideList();
             }
             break;
         case SUMO_TAG_CALIBRATOR: {
                 myGroupBoxForParameters->show();
-                // Finish
+                myVectorOfAdditionalParameter.at(0)->showParameter("frequency", oc.getString("calibrator default frequency"));   
+                myVectorOfAdditionalParameter.at(1)->showParameter("routeProbe", oc.getString("calibrator default routeProbe"));   
+                myVectorOfAdditionalParameter.at(2)->showParameter("output", oc.getString("calibrator default output"));  
                 myAdditionalSet->hideList();
             }
             break;
@@ -521,6 +523,9 @@ GNEAdditionalFrame::setPositions(GNELane *lane, SUMOReal &positionOfTheMouseOver
         return false;
 }
 
+// ---------------------------------------------------------------------------
+// GNEAdditionalFrame::additionalParameter - methods
+// ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite *parent, FXObject* tgt) :
     FXMatrix(parent, 3, MATRIX_BY_COLUMNS | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0) {
@@ -534,31 +539,8 @@ GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite *parent
     hideParameter();
 }
 
-// ---------------------------------------------------------------------------
-// GNEAdditionalFrame::additionalParameter - methods
-// ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
-
-
-void 
-GNEAdditionalFrame::additionalParameter::showTextParameter(const std::string& name, const std::string &value) {
-    myLabel->setText(name.c_str());
-    myLabel->show();
-    myTextField->setText(value.c_str());
-    myTextField->show();
-    show();
-}
-
-
-void 
-GNEAdditionalFrame::additionalParameter::showBoolParameter(const std::string& name, bool value) {
-    myLabel->setText(name.c_str());
-    myLabel->show();
-    myMenuCheck->setCheck(value);
-    myMenuCheck->show();
-    show();
-}
 
 
 void 
@@ -579,6 +561,38 @@ GNEAdditionalFrame::additionalParameter::getTextValue() {
 bool
 GNEAdditionalFrame::additionalParameter::getBoolValue() {
     return (myMenuCheck->getCheck() == 1)? true : false;
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::showTextParameter(const std::string& name, std::string value) {
+    myLabel->setText(name.c_str());
+    myLabel->show();
+    myTextField->setText(value.c_str());
+    myTextField->show();
+    show();
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::showIntParameter(const std::string& name, int value) {
+    // Finish
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::showFloatParameter(const std::string& name, SUMOReal value) {
+    // Finish
+}
+
+
+void 
+GNEAdditionalFrame::additionalParameter::showBoolParameter(const std::string& name, bool value) {
+    myLabel->setText(name.c_str());
+    myLabel->show();
+    myMenuCheck->setCheck(value);
+    myMenuCheck->show();
+    show();
 }
 
 

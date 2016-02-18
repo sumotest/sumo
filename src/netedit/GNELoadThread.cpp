@@ -286,10 +286,21 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.doRegister("rerouter default off", new Option_Bool(false));                                                  // PABLO #1916
     oc.addDescription("rerouter default off", "Default values", "Whether the router should be inactive initially"); // PABLO #1916 
 
+    oc.doRegister("calibrator default frequency", new Option_String("1"));                                                              // PABLO #1916
+    oc.addDescription("calibrator default frequency", "Default values", "The aggregation interval in which to calibrate the flows");    // PABLO #1916
+
+    oc.doRegister("calibrator default routeProbe", new Option_String(""));                                                                                                              // PABLO #1916
+    oc.addDescription("calibrator default routeProbe", "Default values", "The id of the routeProbe element from which to determine the route distribution for generated vehicles.");    // PABLO #1916
+
+    oc.doRegister("calibrator default output", new Option_String(""));                                                              // PABLO #1916
+    oc.addDescription("calibrator default output", "Default values", "The output file for writing calibrator information or NULL"); // PABLO #1916
+
     oc.doRegister("disable-textures", 'T', new Option_Bool(false)); // !!!
     oc.addDescription("disable-textures", "Visualisation", "");
+
     oc.doRegister("gui-settings-file", new Option_FileName());
     oc.addDescription("gui-settings-file", "Visualisation", "Load visualisation settings from FILE");
+
     oc.doRegister("registry-viewport", new Option_Bool(false));
     oc.addDescription("registry-viewport", "Visualisation", "Load current viewport from registry");
 

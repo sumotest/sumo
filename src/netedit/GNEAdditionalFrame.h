@@ -64,7 +64,7 @@ public:
     // class additionalParameter
     // ===========================================================================
 
-    class additionalParameter : public FXMatrix{
+    class additionalParameter : public FXMatrix {
 
     public:
         /// @brief constructor
@@ -73,11 +73,25 @@ public:
         /// @brief destructor
         ~additionalParameter();
 
-        /// @brief show name and value of parameters of type textField
-        void showTextParameter(const std::string& name, const std::string &value);
-
-        /// @brief show name and value of parameters of type bool
-        void showBoolParameter(const std::string& name, bool value);
+        /// @brief show name and value of parameters depending of their type
+        template<typename T>
+        void showParameter(const std::string& name, T value);
+        template<>
+        void showParameter(const std::string& name, std::string value) {
+            showTextParameter(name, value);
+        }
+        template<>
+        void showParameter(const std::string& name, int value) {
+            showIntParameter(name, value);
+        }
+        template<>
+        void showParameter(const std::string& name, float value) {
+            showFloatParameter(name, value);
+        }
+        template<>
+        void showParameter(const std::string& name, bool value) {
+            showBoolParameter(name, value);
+        }
 
         /// @brief hide all parameters
         void hideParameter();
@@ -97,6 +111,18 @@ public:
         
         /// @brief menuCheck to enable/disable the value of parameter
         FXMenuCheck *myMenuCheck;
+
+        /// @brief show name and value of parameters of type string
+        void showTextParameter(const std::string& name, std::string value);
+        
+        /// @brief show name and value of parameters of type int
+        void showIntParameter(const std::string& name, int value);
+
+        /// @brief show name and value of parameters of type float
+        void showFloatParameter(const std::string& name, SUMOReal value);
+
+        /// @brief show name and value of parameters of type bool
+        void showBoolParameter(const std::string& name, bool value);
     };
 
     // ===========================================================================
