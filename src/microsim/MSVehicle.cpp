@@ -145,7 +145,6 @@ MSVehicle::Influencer::Influencer() :
     myConsiderMaxDeceleration(true),
     myRespectJunctionPriority(true),
     myEmergencyBrakeRedLight(true),
-    myAmVTDControlled(false),
     myLastVTDAccess(-TIME2STEPS(20)),
     myStrategicLC(LC_NOCONFLICT),
     myCooperativeLC(LC_NOCONFLICT),
@@ -334,6 +333,28 @@ MSVehicle::Influencer::setLaneChangeMode(int value) {
 }
 
 
+void 
+MSVehicle::Influencer::setVTDControlled(MSLane* l, SUMOReal pos, SUMOReal angle, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t) {
+    myVTDLane = l;
+    myVTDPos = pos;
+    myVTDAngle = angle;
+    myVTDEdgeOffset = edgeOffset;
+    myVTDRoute = route;
+    myLastVTDAccess = t;
+}
+
+
+bool 
+MSVehicle::Influencer::isVTDControlled() const {
+    return myLastVTDAccess == MSNet::getInstance()->getCurrentTimeStep();
+}
+
+
+bool 
+MSVehicle::Influencer::isVTDAffected(SUMOTime t) const {
+    return myLastVTDAccess >= t - TIME2STEPS(10);
+}
+
 void
 MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     v->onRemovalFromNet(MSMoveReminder::NOTIFICATION_TELEPORT);
@@ -347,8 +368,10 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     }
     myVTDLane->forceVehicleInsertion(v, myVTDPos);
     v->updateBestLanes();
-    myAmVTDControlled = false;
+    // inverse of GeomHelper::naviDegree 
+    v->setAngle(M_PI / 2. - DEG2RAD(myVTDAngle));
 }
+
 
 SUMOReal
 MSVehicle::Influencer::implicitSpeedVTD(const MSVehicle* veh, SUMOReal oldSpeed) {
@@ -414,6 +437,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myAmRegisteredAsWaitingForPerson(false),
     myAmRegisteredAsWaitingForContainer(false),
     myHaveToWaitOnNextLink(false),
+    myAngle(0),
     myCachedPosition(Position::INVALID),
     myEdgeWeights(0)
 #ifndef NO_TRACI
@@ -652,9 +676,14 @@ MSVehicle::getRerouteOrigin() const {
     return *myCurrEdge;
 }
 
+void 
+MSVehicle::setAngle(SUMOReal angle) {
+    myAngle = angle;
+}
+
 
 SUMOReal
-MSVehicle::getAngle() const {
+MSVehicle::computeAngle() const {
     Position p1;
     Position p2;
     if (isParking()) {
@@ -1543,8 +1572,8 @@ MSVehicle::executeMove() {
         }
         // State needs to be reset for all vehicles before the next call to MSEdgeControl::changeLanes
         getLaneChangeModel().prepareStep();
+        myAngle = computeAngle();
     }
-    // State needs to be reset for all vehicles before the next call to MSEdgeControl::changeLanes
     return moved;
 }
 
@@ -1820,6 +1849,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
             }
         }
     }
+    myAngle = computeAngle();
 }
 
 
@@ -1848,6 +1878,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
         myFurtherLanes.push_back(clane);
         leftLength -= (clane)->setPartialOccupation(this, leftLength);
     }
+    myAngle = computeAngle();
 }
 
 
@@ -2032,6 +2063,8 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             q.bestLaneOffset = 0;
             q.length = cl->allowsVehicleClass(myType->getVehicleClass()) ? cl->getLength() : 0;
             q.allowsContinuation = allowed == 0 || find(allowed->begin(), allowed->end(), cl) != allowed->end();
+            q.occupation = 0;
+            q.nextOccupation = 0;
             currentLanes.push_back(q);
         }
         //
