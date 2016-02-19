@@ -845,4 +845,5 @@ GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
     return 1;
 }
 
+
 /****************************************************************************/

@@ -74,21 +74,15 @@ public:
         ~additionalParameter();
 
         /// @brief show name and value of parameters depending of their type
-        template<typename T>
-        void showParameter(const std::string& name, T value);
-        template<>
         void showParameter(const std::string& name, std::string value) {
             showTextParameter(name, value);
         }
-        template<>
         void showParameter(const std::string& name, int value) {
             showIntParameter(name, value);
         }
-        template<>
-        void showParameter(const std::string& name, float value) {
+        void showParameter(const std::string& name, SUMOReal value) {
             showFloatParameter(name, value);
         }
-        template<>
         void showParameter(const std::string& name, bool value) {
             showBoolParameter(name, value);
         }
