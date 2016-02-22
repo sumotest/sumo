@@ -103,29 +103,47 @@ MSCFModel::insertionFollowSpeed(const MSVehicle* const, SUMOReal, SUMOReal gap2p
 
 SUMOReal
 MSCFModel::maximumSafeStopSpeed(SUMOReal gap) const {
-    gap -= NUMERICAL_EPS; // lots of code relies on some slack
-    if (gap <= 0) {
-        return 0;
-    } else if (gap <= ACCEL2SPEED(myDecel)) {
-        return gap;
-    }
-    const SUMOReal g = gap;
-    const SUMOReal b = ACCEL2SPEED(myDecel);
-    const SUMOReal t = myHeadwayTime;
-    const SUMOReal s = TS;
-    // h = the distance that would be covered if it were possible to stop
-    // exactly after gap and decelerate with b every simulation step
-    // h = 0.5 * n * (n-1) * b * s + n * b * t (solve for n)
-    //n = ((1.0/2.0) - ((t + (pow(((s*s) + (4.0*((s*((2.0*h/b) - t)) + (t*t)))), (1.0/2.0))*sign/2.0))/s));
-    const SUMOReal n = floor(.5 - ((t + (sqrt(((s * s) + (4.0 * ((s * (2.0 * g / b - t)) + (t * t))))) * -0.5)) / s));
-    const SUMOReal h = 0.5 * n * (n - 1) * b * s + n * b * t;
-    assert(h <= g + NUMERICAL_EPS);
-    // compute the additional speed that must be used during deceleration to fix
-    // the discrepancy between g and h
-    const SUMOReal r = (g - h) / (n * s + t);
-    const SUMOReal x = n * b + r;
-    assert(x >= 0);
-    return x;
+
+	if(MSGlobals::gSemiImplicitEulerUpdate){
+		gap -= NUMERICAL_EPS; // lots of code relies on some slack
+		if (gap <= 0) {
+			return 0;
+		} else if (gap <= ACCEL2SPEED(myDecel)) {
+			return gap;
+		}
+		const SUMOReal g = gap;
+		const SUMOReal b = ACCEL2SPEED(myDecel);
+		const SUMOReal t = myHeadwayTime;
+		const SUMOReal s = TS;
+
+
+		// h = the distance that would be covered if it were possible to stop
+		// exactly after gap and decelerate with b every simulation step
+		// h = 0.5 * n * (n-1) * b * s + n * b * t (solve for n)
+		//n = ((1.0/2.0) - ((t + (pow(((s*s) + (4.0*((s*((2.0*h/b) - t)) + (t*t)))), (1.0/2.0))*sign/2.0))/s));
+		const SUMOReal n = floor(.5 - ((t + (sqrt(((s * s) + (4.0 * ((s * (2.0 * g / b - t)) + (t * t))))) * -0.5)) / s));
+		const SUMOReal h = 0.5 * n * (n - 1) * b * s + n * b * t;
+		assert(h <= g + NUMERICAL_EPS);
+		// compute the additional speed that must be used during deceleration to fix
+		// the discrepancy between g and h
+		const SUMOReal r = (g - h) / (n * s + t);
+		const SUMOReal x = n * b + r;
+		assert(x >= 0);
+		return x;
+	} else {
+		// Let v_0 be the current speed (unknown), g_0 the initial gap, and b the maximal deceleration.
+		// The minimal time to stop is then: t_stop = tau + v_0/b
+		// The gap after time tau is g(tau) = g_0 - v_0*tau
+		// the gap after an additional time t is g(tau+t) = g(tau) - t*v_0 - b*t^2/2
+		// Thus, the safe initial velocity is given by
+		// 0 = g(t_stop) = g(tau) - v_0*v_0/b - b*v_0^2/(2*b^2) = g_0 - v_0*tau - 3*v_0^2/(2*b)
+		// solving for v_0 >= 0:
+		// v_0 = (sqrt(tau^2 + 3*g_0/b) - tau)*b/3 (assert(b>0))
+		const SUMOReal b = myDecel;
+		const SUMOReal tau = myHeadwayTime;
+		assert(b > 0);
+		return (sqrt(tau^2 + 3*gap/b) - tau)*b/3;
+	}
 }
 
 

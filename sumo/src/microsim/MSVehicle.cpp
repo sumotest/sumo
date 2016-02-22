@@ -1402,6 +1402,7 @@ MSVehicle::executeMove() {
     if (myLane->getEdge().isRoundabout()) {
         myHaveToWaitOnNextLink = false;
     }
+
     vSafe = MIN2(vSafe, vSafeZipper);
 
     // XXX braking due to lane-changing is not registered
@@ -1444,19 +1445,35 @@ MSVehicle::executeMove() {
         switchOffSignal(VEH_SIGNAL_BRAKELIGHT);
     }
     // call reminders after vNext is set
-    const SUMOReal pos = myState.myPos;
+    const SUMOReal oldPos = myState.myPos;
 
     // update position and speed
+    // To enable a stop at times in between t and t + DELTA_T, we would like to
+    // get myAcceleration directly and in case of myState.mySpeed + ACCEL2SPEED(myAcceleration) < 0, we'd
+    // know that the car must have come to halt at some earlier time t+s, with s = -v/a,
+    // In this case, we would calculate the positional update as
+    // deltaPos = -v*v/a + v*v/(2*a) = -v*v/(2*a)
+    //
+    // The corresponding call should be something like:
+    // myAcceleration = getCarFollowModel().getAcceleration(this, vSafe)
     myAcceleration = SPEED2ACCEL(vNext - myState.mySpeed);
+    myState.mySpeed += ACCEL2SPEED(myAcceleration);
 
-    SUMOReal deltaPos = SPEED2DIST(vNext);
+    SUMOReal deltaPos;
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+    	// apply implicit Euler positional update
+    	deltaPos = SPEED2DIST(vNext);
+    }else{
+    	// apply ballistic update
+    	deltaPos = SPEED2DIST(myState.mySpeed + 0.5*ACCEL2SPEED(myAcceleration));
+    }
+
 #ifndef NO_TRACI
     if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
         deltaPos = myInfluencer->implicitDeltaPosVTD(this);
     }
 #endif
     myState.myPos += deltaPos;
-    myState.mySpeed = vNext;
     myCachedPosition = Position::INVALID;
     std::vector<MSLane*> passedLanes;
     for (std::vector<MSLane*>::reverse_iterator i = myFurtherLanes.rbegin(); i != myFurtherLanes.rend(); ++i) {
@@ -1471,7 +1488,7 @@ MSVehicle::executeMove() {
     if (myState.myPos <= myLane->getLength()) {
         // we are staying at our lane
         //  there is no need to go over succeeding lanes
-        workOnMoveReminders(pos, pos + SPEED2DIST(vNext), vNext);
+        workOnMoveReminders(oldPos, myState.myPos, vNext);
     } else {
         // we are moving at least to the next lane (maybe pass even more than one)
         if (myCurrEdge != myRoute->end() - 1) {

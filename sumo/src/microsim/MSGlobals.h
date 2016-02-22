@@ -58,6 +58,10 @@ public:
     /// Information whether empty edges shall be written on dump
     static bool gOmitEmptyEdgesOnDump;
 
+    /// Information whether the old semi-implicit Euler scheme should be used for
+    /// the update of the vehicle state. Otherwise a ballistic update is used.
+    static bool gSemiImplicitEulerUpdate = true;
+
     /** Information how long the simulation shall wait until it recognizes
         a vehicle as a grid lock participant */
     static SUMOTime gTimeToGridlock;
