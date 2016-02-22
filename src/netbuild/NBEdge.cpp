@@ -1539,9 +1539,9 @@ NBEdge::recheckLanes() {
         //  using the standard algorithm.
         for (unsigned int i = 0; i < myLanes.size(); i++) {
             if (connNumbersPerLane[i] == 0 && !isForbidden(getPermissions((int)i))) {
-                if (i > 0 && connNumbersPerLane[i - 1] > 1) {
+                if (i > 0 && connNumbersPerLane[i - 1] > 1 && getPermissions(i) == getPermissions(i - 1)) {
                     moveConnectionToLeft(i - 1);
-                } else if (i < myLanes.size() - 1 && connNumbersPerLane[i + 1] > 1) {
+                } else if (i < myLanes.size() - 1 && connNumbersPerLane[i + 1] > 1 && getPermissions(i) == getPermissions(i + 1)) {
                     moveConnectionToRight(i + 1);
                 }
             }
@@ -1618,7 +1618,18 @@ NBEdge::divideOnEdges(const EdgeVector* outgoing) {
     std::vector<int> availableLanes;
     for (int i = 0; i < (int)myLanes.size(); ++i) {
         const SVCPermissions perms = getPermissions(i);
-        if ((perms & ~(SVC_PEDESTRIAN | SVC_BICYCLE | SVC_BUS)) == 0 || isForbidden(perms)) {
+        if ((getPermissions(i) & SVC_PASSENGER) != 0) {
+            availableLanes.push_back(i);
+        }
+    }
+    if (availableLanes.size() > 0) {
+        divideSelectedLanesOnEdges(outgoing, availableLanes, priorities);
+    }
+    // build connections for miscellaneous further modes (more than bike,peds,bus and without passenger)
+    availableLanes.clear();
+    for (int i = 0; i < (int)myLanes.size(); ++i) {
+        const SVCPermissions perms = getPermissions(i);
+        if ((perms & ~(SVC_PEDESTRIAN | SVC_BICYCLE | SVC_BUS)) == 0 || (perms & SVC_PASSENGER) != 0 || isForbidden(perms)) {
             continue;
         }
         availableLanes.push_back(i);
@@ -1816,7 +1827,7 @@ NBEdge::computePrioritySum(const std::vector<unsigned int>& priorities) {
 
 
 void
-NBEdge::appendTurnaround(bool noTLSControlled) {
+NBEdge::appendTurnaround(bool noTLSControlled, bool checkPermissions) {
     // do nothing if no turnaround is known
     if (myTurnDestination == 0 || myTo->getType() == NODETYPE_RAIL_CROSSING) {
         return;
@@ -1826,7 +1837,20 @@ NBEdge::appendTurnaround(bool noTLSControlled) {
     if (noTLSControlled && myTo->isTLControlled()) {
         return;
     }
-    setConnection((unsigned int)(myLanes.size() - 1), myTurnDestination, myTurnDestination->getNumLanes() - 1, L2L_VALIDATED);
+    const int fromLane = (int)myLanes.size() - 1;
+    const int toLane = (int)myTurnDestination->getNumLanes() - 1;
+    if (checkPermissions) {
+        if ((getPermissions(fromLane) & myTurnDestination->getPermissions(toLane)) == 0) {
+            // exclude connection if fromLane and toEdge have no common permissions
+            return;
+        }
+        if ((getPermissions(fromLane) & myTurnDestination->getPermissions(toLane)) == SVC_PEDESTRIAN) {
+            // exclude connection if the only commonly permitted class are pedestrians
+            // these connections are later built in NBNode::buildWalkingAreas
+            return;
+        }
+    }
+    setConnection(fromLane, myTurnDestination, toLane, L2L_VALIDATED);
 }
 
 

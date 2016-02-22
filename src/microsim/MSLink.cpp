@@ -57,10 +57,10 @@ const SUMOTime MSLink::myLookaheadTime = TIME2STEPS(1);
 // additional caution is needed when approaching a zipper link
 const SUMOTime MSLink::myLookaheadTimeZipper = TIME2STEPS(4);
 
+const SUMOReal MSLink::ZIPPER_ADAPT_DIST(100);
+
 // time to link in seconds below which adaptation should take place
 #define ZIPPER_ADAPT_TIME 10
-// distance to link in m below which adaptation should take place
-#define ZIPPER_ADAPT_DIST 100
 
 // ===========================================================================
 // member method definitions
@@ -771,6 +771,7 @@ MSLink::getZipperSpeed(const MSVehicle* ego, const SUMOReal dist, SUMOReal vSafe
     //    << " numFoes=" << collectFoes->size()
     //    << "\n";
     MSLink* foeLink = myFoeLinks[0];
+    const SUMOReal vSafeOrig = vSafe;
     for (std::vector<const SUMOVehicle*>::const_iterator i = collectFoes->begin(); i != collectFoes->end(); ++i) {
         const MSVehicle* foe = dynamic_cast<const MSVehicle*>(*i);
         assert(foe != 0);
@@ -797,7 +798,7 @@ MSLink::getZipperSpeed(const MSVehicle* ego, const SUMOReal dist, SUMOReal vSafe
         const SUMOReal follow = ego->getCarFollowModel().followSpeed(
                                     ego, ego->getSpeed(), gap, foe->getSpeed(), foe->getCarFollowModel().getMaxDecel());
         // speed adaption to follow the foe can be spread over secondsToArrival
-        const SUMOReal followInTime = vSafe + (follow - vSafe) / MAX2((SUMOReal)1, secondsToArrival / TS);
+        const SUMOReal followInTime = vSafeOrig + (follow - vSafeOrig) / MAX2((SUMOReal)1, secondsToArrival / TS);
         vSafe = MIN2(vSafe, followInTime);
         //if (gDebugFlag1) std::cout << "    adapting to foe=" << foe->getID()
         //    << " foeDist=" << avi.dist

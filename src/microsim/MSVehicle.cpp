@@ -2327,6 +2327,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             q.bestContinuations.push_back(cl);
             q.bestLaneOffset = 0;
             q.length = cl->allowsVehicleClass(myType->getVehicleClass()) ? cl->getLength() : 0;
+            q.currentLength = q.length;
             q.allowsContinuation = allowed == 0 || find(allowed->begin(), allowed->end(), cl) != allowed->end();
             q.occupation = 0;
             q.nextOccupation = 0;
@@ -2339,6 +2340,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                 if (nextStopLane != 0 && nextStopLane != (*q).lane) {
                     (*q).allowsContinuation = false;
                     (*q).length = nextStopPos;
+                    (*q).currentLength = (*q).length;
                 }
             }
         }
@@ -2376,7 +2378,6 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             }
         }
     }
-
     // go backward through the lanes
     // track back best lane and compute the best prior lane(s)
     for (std::vector<std::vector<LaneQ> >::reverse_iterator i = myBestLanes.rbegin() + 1; i != myBestLanes.rend(); ++i) {
@@ -2401,6 +2402,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
                 LaneQ bestConnectedNext;
                 bestConnectedNext.length = -1;
+                const SUMOReal origLength = (*j).length;
                 if ((*j).allowsContinuation) {
                     for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
                         if ((*m).lane->isApproachedFrom(&cE, (*j).lane)) {
@@ -2416,13 +2418,18 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                     }
                     (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
                 }
-                if (clanes[bestThisIndex].length < (*j).length || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))) {
+                copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
+                if (clanes[bestThisIndex].length < (*j).length 
+                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
+                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset) && 
+                            nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
+                        ) {
                     bestThisIndex = index;
                 }
-                copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
             }
 
         } else {
+            // only needed in case of disconnected routes
             int bestNextIndex = 0;
             int bestDistToNeeded = (int) clanes.size();
             index = 0;
@@ -2447,8 +2454,15 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         // set bestLaneOffset for all lanes
         index = 0;
         for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
-            if ((*j).length < clanes[bestThisIndex].length || ((*j).length == clanes[bestThisIndex].length && abs((*j).bestLaneOffset) > abs(clanes[bestThisIndex].bestLaneOffset))) {
+            if ((*j).length < clanes[bestThisIndex].length 
+                    || ((*j).length == clanes[bestThisIndex].length && abs((*j).bestLaneOffset) > abs(clanes[bestThisIndex].bestLaneOffset)) 
+                    || (nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)
+                    ) {
                 (*j).bestLaneOffset = bestThisIndex - index;
+                if ((nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)) {
+                    // try to move away from the lower-priority lane before it ends
+                    (*j).length = (*j).currentLength;
+                }
             } else {
                 (*j).bestLaneOffset = 0;
             }
@@ -2456,6 +2470,22 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
     }
     updateOccupancyAndCurrentBestLane(startLane);
     return;
+}
+
+
+int
+MSVehicle::nextLinkPriority(const std::vector<MSLane*>& conts) {
+    if (conts.size() < 2) {
+        return -1;
+    } else {
+        MSLink* link = MSLinkContHelper::getConnectingLink(*conts[0], *conts[1]);
+        if (link != 0) {
+            return link->havePriority() ? 1 : 0;
+        } else {
+            // disconnected route
+            return -1;
+        }
+    }
 }
 
 
@@ -2835,6 +2865,53 @@ MSVehicle::removeApproachingInformation(DriveItemVector& lfLinks) const {
 }
 
 
+bool 
+MSVehicle::unsafeZipperLinkAhead(const MSLane* lane) const {
+    // consider the zipper link blocked if it close enough and has any approaching vehicles
+    SUMOReal seen = myLane->getLength() - getPositionOnLane();
+    const SUMOReal dist = MIN2(MSLink::ZIPPER_ADAPT_DIST, getCarFollowModel().brakeGap(getSpeed()) + getVehicleType().getMinGap());
+    if (seen < dist) {
+        const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(lane);
+        unsigned int view = 1;
+        MSLinkCont::const_iterator link = MSLane::succLinkSec(*this, view, *lane, bestLaneConts);
+        DriveItemVector::const_iterator di = myLFLinkLanes.begin();
+        while (!lane->isLinkEnd(link) && seen <= dist) {
+            if ((*link)->getState() == LINKSTATE_ZIPPER) {
+                // find the drive item corresponding to this link
+                bool found = false;
+                while (di != myLFLinkLanes.end() && !found) {
+                    if ((*di).myLink != 0) {
+                        const MSLane* diPredLane = (*di).myLink->getApproachingLane();
+                        if (diPredLane != 0) {
+                            if (&diPredLane->getEdge() == &lane->getEdge()) {
+                                found = true;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        di++;
+                    }
+                }
+                if (found) {
+                    const SUMOTime leaveTime = (*link)->getLeaveTime((*di).myArrivalTime, (*di).myArrivalSpeed,
+                             (*di).getLeaveSpeed(), getVehicleType().getLength());
+                    if ((*link)->hasApproachingFoe((*di).myArrivalTime, leaveTime, (*di).myArrivalSpeed, getCarFollowModel().getMaxDecel())) {
+                        return true;
+                    }
+                }
+                // no drive item is found if the vehicle aborts it's request within dist
+            }
+            lane = (*link)->getLane();
+            view++;
+            // ignoring internal lanes here
+            seen += lane->getLength();
+            link = MSLane::succLinkSec(*this, view, *lane, bestLaneConts);
+        }
+    }
+    return false;
+}
+
+
 #ifndef NO_TRACI
 bool
 MSVehicle::addTraciStop(MSLane* const lane, const SUMOReal startPos, const SUMOReal endPos, const SUMOTime duration, const SUMOTime until,
@@ -3033,6 +3110,5 @@ MSVehicle::loadState(const SUMOSAXAttributes& attrs, const SUMOTime offset) {
     myState.myPosLat = attrs.getFloat(SUMO_ATTR_POSITION_LAT);
     // no need to reset myCachedPosition here since state loading happens directly after creation
 }
-
 
 /****************************************************************************/

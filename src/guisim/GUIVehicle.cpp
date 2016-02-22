@@ -391,7 +391,6 @@ GUIVehicle::drawBestLanes() const {
     myLock.lock();
     std::vector<std::vector<MSVehicle::LaneQ> > bestLanes = myBestLanes;
     myLock.unlock();
-    SUMOReal width = 0.5;
     for (std::vector<std::vector<MSVehicle::LaneQ> >::iterator j = bestLanes.begin(); j != bestLanes.end(); ++j) {
         std::vector<MSVehicle::LaneQ>& lanes = *j;
         SUMOReal gmax = -1;
@@ -405,6 +404,7 @@ GUIVehicle::drawBestLanes() const {
             SUMOReal g = (*i).length / gmax;
             SUMOReal r = (*i).occupation / rmax;
             glColor3d(r, g, 0);
+            SUMOReal width = 0.5 / (1 + abs((*i).bestLaneOffset));
             GLHelper::drawBoxLines(shape, width);
 
             PositionVector s1 = shape;
@@ -416,9 +416,7 @@ GUIVehicle::drawBestLanes() const {
             GLHelper::drawLine(s1);
 
             glColor3d(r, g, 0);
-            Position lastPos = shape[-1];
         }
-        width = .2;
     }
 }
 

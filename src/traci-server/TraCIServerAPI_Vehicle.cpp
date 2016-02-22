@@ -1588,6 +1588,7 @@ TraCIServerAPI_Vehicle::vtdMap_matchingRoutePosition(const Position& pos, const 
     
     // look forward along the route
     const MSEdge* prev = 0;
+    UNUSED_PARAMETER(prev); // silence 'unused variable' warning when built without INTERNAL_LANES
     for (ConstMSEdgeVector::const_iterator i = v.getCurrentRouteEdge(); i != edges.end(); ++i) {
 #ifdef HAVE_INTERNAL_LANES
         while (prev != 0) {
@@ -1604,6 +1605,7 @@ TraCIServerAPI_Vehicle::vtdMap_matchingRoutePosition(const Position& pos, const 
     }
     // look backward along the route
     const MSEdge* next = *v.getCurrentRouteEdge();
+    UNUSED_PARAMETER(next); // silence 'unused variable' warning when built without INTERNAL_LANES
     for (ConstMSEdgeVector::const_iterator i = v.getCurrentRouteEdge(); i != edges.begin(); --i) {
         prev = *i;
 #ifdef HAVE_INTERNAL_LANES
