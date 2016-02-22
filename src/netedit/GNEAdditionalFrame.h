@@ -73,19 +73,17 @@ public:
         /// @brief destructor
         ~additionalParameter();
 
-        /// @brief show name and value of parameters depending of their type
-        void showParameter(const std::string& name, std::string value) {
-            showTextParameter(name, value);
-        }
-        void showParameter(const std::string& name, int value) {
-            showIntParameter(name, value);
-        }
-        void showParameter(const std::string& name, SUMOReal value) {
-            showFloatParameter(name, value);
-        }
-        void showParameter(const std::string& name, bool value) {
-            showBoolParameter(name, value);
-        }
+        /// @brief show name and value of parameters of type string
+        void showParameter(const std::string& name, std::string value);
+
+        /// @brief show name and value of parameters of type int
+        void showParameter(const std::string& name, int value);
+
+        /// @brief show name and value of parameters of type float/real
+        void showParameter(const std::string& name, SUMOReal value);
+
+        /// @brief show name and value of parameters of type bool
+        void showParameter(const std::string& name, bool value);
 
         /// @brief hide all parameters
         void hideParameter();

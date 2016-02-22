@@ -372,101 +372,47 @@ GNEAdditionalFrame::hide() {
 
 void 
 GNEAdditionalFrame::setParameters() {
-    // Hide all parameters
+    // Hide all parameters boxes
     for(int i = 0; i < maxNumberOfParameters; i++)
         myVectorOfAdditionalParameter.at(i)->hideParameter();
     for(int i = 0; i < maxNumberOfListParameters; i++)
         myVectorOfadditionalParameterList.at(i)->hideParameter();
+    // Obtain attributes of actual myActualAdditionalType
+    std::vector<std::pair <SumoXMLAttr, std::string> > attrs = GNEAttributeCarrier::allowedAttributes(myActualAdditionalType);
+    int counter = 0;
+    // Iterate over attributes of myActualAdditionalType
+    for(std::vector<std::pair <SumoXMLAttr, std::string> >::iterator i = attrs.begin(); i != attrs.end(); i++)
+        switch(GNEAttributeCarrier::getDefaultValueType(myActualAdditionalType, (i->first))) {
+            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_int:
+                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<int>(myActualAdditionalType, i->first));
+                counter++;
+                break;
+            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_float:
+                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<SUMOReal>(myActualAdditionalType, i->first));
+                counter++;
+                break;
+            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_string:
+                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<std::string>(myActualAdditionalType, i->first));
+                counter++;
+                break;
+            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_bool:
+                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<bool>(myActualAdditionalType, i->first));
+                counter++;
+                break;
+            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_stringList:
+                break;
+            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_NULL:
+                break;
+            }
+        
 
-    // Obtain options
-    OptionsCont &oc = OptionsCont::getOptions();
+    //std::vector<std::string> lines;
+    //SUMOSAXAttributes::parseStringVector(oc.getString("busStop default lines"), lines);
+    //myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
+    myGroupBoxForParameters->show();
+    myAdditionalSet->hideList();
 
-    // Set parameters depending of myActualAdditionalType
-    switch (myActualAdditionalType) {
-        case SUMO_TAG_BUS_STOP : {
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("size", oc.getString("busStop default length"));
-                std::vector<std::string> lines;
-                SUMOSAXAttributes::parseStringVector(oc.getString("busStop default lines"), lines);
-                myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_CHARGING_STATION : {
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("size", oc.getString("chargingStation default length"));   
-                myVectorOfAdditionalParameter.at(1)->showParameter("power", oc.getString("chargingStation default charging power"));   
-                myVectorOfAdditionalParameter.at(2)->showParameter("effic.", oc.getString("chargingStation default efficiency"));   
-                myVectorOfAdditionalParameter.at(3)->showParameter("delay", oc.getString("chargingStation default charge delay"));   
-                myVectorOfAdditionalParameter.at(4)->showParameter("transit", oc.getBool("chargingStation default charge in transit"));   
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_E1DETECTOR: {  
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("frequency.", oc.getString("detector E1 default frequency"));   
-                myVectorOfAdditionalParameter.at(1)->showParameter("file", oc.getString("detector E1 default file"));    
-                myVectorOfAdditionalParameter.at(2)->showParameter("friendlyPos", oc.getBool("detector E1 default friendlyPos"));
-                myVectorOfAdditionalParameter.at(3)->showParameter("split", oc.getBool("detector E1 default splitByType")); 
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_E2DETECTOR: {
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("length", oc.getString("detector E2 default length"));   
-                myVectorOfAdditionalParameter.at(1)->showParameter("frequency", oc.getString("detector E2 default frequency"));   
-                myVectorOfAdditionalParameter.at(2)->showParameter("file", oc.getString("detector E2 default file"));  
-                myVectorOfAdditionalParameter.at(3)->showParameter("cont", oc.getBool("detector E2 default cont"));   
-                myVectorOfAdditionalParameter.at(4)->showParameter("timeTH", oc.getString("detector E2 default timeThreshold"));   
-                myVectorOfAdditionalParameter.at(5)->showParameter("speedTH", oc.getString("detector E2 default speedThreshold"));   
-                myVectorOfAdditionalParameter.at(6)->showParameter("jamTH", oc.getString("detector E2 jamThreshold"));   
-                myVectorOfAdditionalParameter.at(7)->showParameter("friendlyPos", oc.getBool("detector E2 default friendlyPos"));   
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_E3DETECTOR: {
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("frequency", oc.getString("detector E3 default frequency"));   
-                myVectorOfAdditionalParameter.at(1)->showParameter("file", oc.getString("detector E3 default file"));  
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_DET_ENTRY: {
-                myGroupBoxForParameters->hide();
-                myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
-            }
-            break;
-        case SUMO_TAG_DET_EXIT: {
-                myGroupBoxForParameters->hide();
-                myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
-            }
-            break;
-        case SUMO_TAG_REROUTER: {
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("file", oc.getString("rerouter default file"));
-                myVectorOfAdditionalParameter.at(1)->showParameter("probability", oc.getString("rerouter default probability"));
-                myVectorOfAdditionalParameter.at(2)->showParameter("off", oc.getBool("rerouter default off"));
-                myVectorOfadditionalParameterList.at(0)->showListParameter("edges", std::vector<std::string>());
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_CALIBRATOR: {
-                myGroupBoxForParameters->show();
-                myVectorOfAdditionalParameter.at(0)->showParameter("frequency", oc.getString("calibrator default frequency"));   
-                myVectorOfAdditionalParameter.at(1)->showParameter("routeProbe", oc.getString("calibrator default routeProbe"));   
-                myVectorOfAdditionalParameter.at(2)->showParameter("output", oc.getString("calibrator default output"));  
-                myAdditionalSet->hideList();
-            }
-            break;
-        case SUMO_TAG_VSS: {
-                myGroupBoxForParameters->show();
-                // Finish
-                myAdditionalSet->hideList();
-            }
-            break;
-        default:
-            break;
-    }
+
     // Recalc groupBox
     myGroupBoxForParameters->recalc();
 }
@@ -542,6 +488,29 @@ GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite *parent
 
 GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
+
+void
+GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, std::string value) {
+    showTextParameter(name, value);
+}
+
+
+void
+GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, int value) {
+    showIntParameter(name, value);
+}
+
+
+void
+GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, SUMOReal value) {
+    showFloatParameter(name, value);
+}
+
+
+void
+GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, bool value) {
+    showBoolParameter(name, value);
+}
 
 void 
 GNEAdditionalFrame::additionalParameter::hideParameter() {

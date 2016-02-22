@@ -209,91 +209,9 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.addOptionSubTopic("Ramp Guessing");
     oc.addOptionSubTopic("Edge Removal");
     oc.addOptionSubTopic("Unregulated Nodes");
-    oc.addOptionSubTopic("Default values"); // PABLO #1916
     oc.addOptionSubTopic("Processing");
     oc.addOptionSubTopic("Building Defaults");
     oc.addOptionSubTopic("Visualisation");
-
-    oc.doRegister("busStop default length", new Option_String("10"));                                   // PABLO #1916
-    oc.addDescription("busStop default length", "Default values", "Default lenght of the busStops");    // PABLO #1916
-
-    oc.doRegister("busStop default lines", new Option_String());                                    // PABLO #1916
-    oc.addDescription("busStop default lines", "Default values", "Default lines of the busStops");  // PABLO #1916
-
-    oc.doRegister("chargingStation default length", new Option_String("10"));                                       // PABLO #1916
-    oc.addDescription("chargingStation default length", "Default values", "Default length of the chargingStation"); // PABLO #1916
-
-    oc.doRegister("chargingStation default charging power", new Option_String("22000"));                                            // PABLO #1916
-    oc.addDescription("chargingStation default charging power", "Default values", "Default charging power of the chargingStation"); // PABLO #1916
-
-    oc.doRegister("chargingStation default efficiency", new Option_String("0.95"));                                                     // PABLO #1916
-    oc.addDescription("chargingStation default efficiency", "Default values", "Default charging efficiency of the chargingStation");    // PABLO #1916
-
-    oc.doRegister("chargingStation default charge in transit", new Option_Bool(false));                                                     // PABLO #1916
-    oc.addDescription("chargingStation default charge in transit", "Default values", "Default charge in transit of the chargingStation");   // PABLO #1916
-
-    oc.doRegister("chargingStation default charge delay", new Option_String("0"));                                              // PABLO #1916
-    oc.addDescription("chargingStation default charge delay", "Default values", "Default charge delay of the chargingStation"); // PABLO #1916
-
-    oc.doRegister("detector E1 default frequency", new Option_String("100"));                                                                           // PABLO #1916
-    oc.addDescription("detector E1 default frequency", "Default values", "The aggregation period the values the detector collects shall be summed up"); // PABLO #1916
-
-    oc.doRegister("detector E1 default file", new Option_String(""));                               // PABLO #1916
-    oc.addDescription("detector E1 default file", "Default values", "The path to the output file"); // PABLO #1916
-
-    oc.doRegister("detector E1 default friendlyPos", new Option_Bool(false));                                                                               // PABLO #1916
-    oc.addDescription("detector E1 default friendlyPos", "Default values", "If set, no error will be reported if the detector is placed behind the lane");  // PABLO #1916
-
-    oc.doRegister("detector E1 default splitByType", new Option_Bool(false));                                                                                       // PABLO #1916
-    oc.addDescription("detector E1 default splitByType", "Default values", "If set, the collected values will be additionally reported on per-vehicle type base");  // PABLO #1916
-
-    oc.doRegister("detector E2 default length", new Option_String("10"));                                       // PABLO #1916
-    oc.addDescription("detector E2 default length", "Default values", "The length of the detector in meters");  // PABLO #1916
-    
-    oc.doRegister("detector E2 default frequency", new Option_String("100"));                                                                           // PABLO #1916
-    oc.addDescription("detector E2 default frequency", "Default values", "The aggregation period the values the detector collects shall be summed up"); // PABLO #1916
-
-    oc.doRegister("detector E2 default file", new Option_String(""));                               // PABLO #1916
-    oc.addDescription("detector E2 default file", "Default values", "The path to the output file"); // PABLO #1916
-    
-    oc.doRegister("detector E2 default cont", new Option_Bool(false));                                                                                              // PABLO #1916
-    oc.addDescription("detector E2 default cont", "Default values", "Holds the information whether detectors longer than a lane shall be cut off or continued");    // PABLO #1916
-   
-    oc.doRegister("detector E2 default timeThreshold", new Option_String("1"));                                                                                                             // PABLO #1916
-    oc.addDescription("detector E2 default timeThreshold", "Default values", "The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting"); // PABLO #1916
-    
-    oc.doRegister("detector E2 default speedThreshold", new Option_String("1.39"));                                                                                                 // PABLO #1916
-    oc.addDescription("detector E2 default speedThreshold", "Default values", "The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting"); // PABLO #1916
-   
-    oc.doRegister("detector E2 jamThreshold", new Option_String("10"));                                                                                                                     // PABLO #1916
-    oc.addDescription("detector E2 jamThreshold", "Default values", "The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam");   // PABLO #1916
-
-    oc.doRegister("detector E2 default friendlyPos", new Option_Bool(false));                                                                               // PABLO #1916
-    oc.addDescription("detector E2 default friendlyPos", "Default values", "If set, no error will be reported if the detector is placed behind the lane");  // PABLO #1916 
-
-    oc.doRegister("detector E3 default frequency", new Option_String("100"));                                                                           // PABLO #1916
-    oc.addDescription("detector E3 default frequency", "Default values", "The aggregation period the values the detector collects shall be summed up"); // PABLO #1916
-    
-    oc.doRegister("detector E3 default file", new Option_String(""));                               // PABLO #1916
-    oc.addDescription("detector E3 default file", "Default values", "The path to the output file"); // PABLO #1916
-
-    oc.doRegister("rerouter default file", new Option_String(""));                                      // PABLO #1916
-    oc.addDescription("rerouter default file", "Default values", "The path to the definition file");    // PABLO #1916
-
-    oc.doRegister("rerouter default probability", new Option_String("1"));                                          // PABLO #1916
-    oc.addDescription("rerouter default probability", "Default values", "The probability for vehicle rerouting");   // PABLO #1916
-
-    oc.doRegister("rerouter default off", new Option_Bool(false));                                                  // PABLO #1916
-    oc.addDescription("rerouter default off", "Default values", "Whether the router should be inactive initially"); // PABLO #1916 
-
-    oc.doRegister("calibrator default frequency", new Option_String("1"));                                                              // PABLO #1916
-    oc.addDescription("calibrator default frequency", "Default values", "The aggregation interval in which to calibrate the flows");    // PABLO #1916
-
-    oc.doRegister("calibrator default routeProbe", new Option_String(""));                                                                                                              // PABLO #1916
-    oc.addDescription("calibrator default routeProbe", "Default values", "The id of the routeProbe element from which to determine the route distribution for generated vehicles.");    // PABLO #1916
-
-    oc.doRegister("calibrator default output", new Option_String(""));                                                              // PABLO #1916
-    oc.addDescription("calibrator default output", "Default values", "The output file for writing calibrator information or NULL"); // PABLO #1916
 
     oc.doRegister("disable-textures", 'T', new Option_Bool(false)); // !!!
     oc.addDescription("disable-textures", "Visualisation", "");

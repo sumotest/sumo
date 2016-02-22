@@ -241,10 +241,12 @@ GNESelector::onCmdSelMBTag(FXObject*, FXSelector, void*) {
     const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
     SumoXMLTag tag = tags[myMatchTagBox->getCurrentItem()];
     myMatchAttrBox->clearItems();
-    const std::vector<SumoXMLAttr>& attrs = GNEAttributeCarrier::allowedAttributes(tag);
-    for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
-        myMatchAttrBox->appendItem(toString(*it).c_str());
+    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = GNEAttributeCarrier::allowedAttributes(tag);
+    for (std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
+        myMatchAttrBox->appendItem(toString(it->first).c_str());
     }
+
+    // PABLO: Here can be placed a butto to set the default value
     myMatchAttrBox->setNumVisible(myMatchAttrBox->getNumItems());
     update();
     return 1;
@@ -255,8 +257,8 @@ long
 GNESelector::onCmdSelMBString(FXObject*, FXSelector, void*) {
     const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
     SumoXMLTag tag = tags[myMatchTagBox->getCurrentItem()];
-    const std::vector<SumoXMLAttr>& attrs = GNEAttributeCarrier::allowedAttributes(tag);
-    SumoXMLAttr attr = attrs[myMatchAttrBox->getCurrentItem()];
+    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = GNEAttributeCarrier::allowedAttributes(tag);
+    SumoXMLAttr attr = attrs.at(myMatchAttrBox->getCurrentItem()).first;
     std::string expr(myMatchString->getText().text());
     bool valid = true;
 

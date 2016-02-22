@@ -60,6 +60,16 @@ class GNEAttributeCarrier : public GNEReferenceCounter {
 
 public:
 
+    /// @brief type of default attribute
+    enum defaultAttrType {
+        defaultAttrType_NULL,
+        defaultAttrType_int,
+        defaultAttrType_float,
+        defaultAttrType_string,
+        defaultAttrType_stringList,
+        defaultAttrType_bool,
+    };
+
     /** @brief Constructor
      * @param[in] tag SUMO Tag assigned to this type of object
      */
@@ -96,13 +106,13 @@ public:
     SumoXMLTag getTag() const;
 
     /// @brief get vector of attributes
-    const std::vector<SumoXMLAttr>& getAttrs() const;
+    std::vector<SumoXMLAttr> getAttrs() const;
 
     /// @brief function to support debugging
     const std::string getID() const;
 
-    /// @brief get all editable attributes for tag.
-    static const std::vector<SumoXMLAttr>& allowedAttributes(SumoXMLTag tag);
+    /// @brief get all editable attributes for tag and their default values.
+    static const std::vector<std::pair <SumoXMLAttr, std::string> >& allowedAttributes(SumoXMLTag tag);
 
     /// @brief get all editable attributes for tag.
     static const std::vector<SumoXMLTag>& allowedTags();
@@ -118,6 +128,14 @@ public:
 
     /// @brief return whether the given attribute allows for a combination of discrete values
     static bool discreteCombinableChoices(SumoXMLTag tag, SumoXMLAttr attr);
+
+    /// @brief check type of default attribute                                      // PABLO #1916
+    static defaultAttrType getDefaultValueType(SumoXMLTag tag, SumoXMLAttr attr);   // PABLO #1916
+
+    /// @brief return the default value of the attribute of an element                                  // PABLO #1916
+    /// @note It's advisable to check before with function hasDefaultValue if  exits a default value    // PABLO #1916
+    template<typename T>                                                                                // PABLO #1916
+    static T getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr);                                         // PABLO #1916
 
     /// @brief true if a number of type T can be parsed from string
     template<typename T>
@@ -150,8 +168,8 @@ public:
     /// @brief true if value is a valid sumo ID
     static bool isValidID(const std::string& value);
 
-    /// @brief true if value is a valid text value          // PABLO #1916
-    static bool isValidTextValue(const std::string& value);     // PABLO #1916
+    /// @brief true if value is a valid file value              // PABLO #1916
+    static bool isValidFileValue(const std::string& value);     // PABLO #1916
 
     /// @brief true if value is a valid string vector           // PABLO #1916
     static bool isValidStringVector(const std::string& value);  // PABLO #1916
@@ -177,7 +195,7 @@ private:
     const SumoXMLTag myTag;
 
     /// @brief map with the allowed attributes
-    static std::map<SumoXMLTag, std::vector<SumoXMLAttr> > _allowedAttributes;
+    static std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > _allowedAttributes;    // PABLO #1916
 
     /// @brief map with the allowed tags
     static std::vector<SumoXMLTag> _allowedTags;
