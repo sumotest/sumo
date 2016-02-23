@@ -65,8 +65,7 @@
 // ===========================================================================
 
 GNEDetector::GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename) :
-    GNEAdditional(id, lane, viewNet, tag),
-    myPos(pos),
+    GNEAdditional(id, lane, pos, viewNet, tag),
     myLength(length),
     myFreq(freq),
     myFilename(filename) {

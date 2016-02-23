@@ -159,10 +159,6 @@ public:
     //@}
 
 protected:
-
-    /// @brief The position this detector is located at
-    SUMOReal myPos;
-    
     /// @brief The length of the Detector (Only as parameter in E2)
     SUMOReal myLength;
     

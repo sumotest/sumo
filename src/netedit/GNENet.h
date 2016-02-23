@@ -387,6 +387,33 @@ public:
      */                                                             // PABLO #1916
     void deleteAdditional(GNEAdditional* additional);               // PABLO #1916
 
+    /** @brief Returns the named additional                                     // PABLO #1916
+     * @param[in] type tag with the type of additional                          // PABLO #1916
+     * @param[in] id The id of the additional to return.                        // PABLO #1916
+     * @return The named additional, or 0 if don't exists                       // PABLO #1916
+     */                                                                         // PABLO #1916
+    GNEAdditional* getAdditional(SumoXMLTag type, const std::string& id) const; // PABLO #1916
+
+    /** @brief Returns the additional close to the given position                                   // PABLO #1916
+     * @param[in] type tag with the type of additional                                              // PABLO #1916
+     * @param[in] lane the lane of the additional to return.                                        // PABLO #1916
+     * @param[in] pos the position of the additional to return.                                     // PABLO #1916
+     * @return The additional id on the location, or "" if don't exists                             // PABLO #1916
+     */                                                                                             // PABLO #1916
+    std::string getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
+
+    /** @brief get vector with additionals                                                  // PABLO #1916
+     * @param[in] type type of additional to get. SUMO_TAG_NOTHING will get all additionals // PABLO #1916
+     * @return vector with pointers to additionals.                                         // PABLO #1916
+     */                                                                                     // PABLO #1916
+    std::vector<GNEAdditional*> getAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);         // PABLO #1916
+
+    /** @brief Returns the number of additionals of the net                                     // PABLO #1916
+     * @param[in] type type of additional to count. SUMO_TAG_NOTHING will count all additionals // PABLO #1916
+     * @return Number of additionals of the net                                                 // PABLO #1916
+     */                                                                                         // PABLO #1916
+    int getNumberOfAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);                             // PABLO #1916
+
     /** @brief Insert a additional set element previously created in GNEAdditionalHandler   // PABLO #1916
      * @param[in] additional pointer to the additional element that will be inserted        // PABLO #1916
      */                                                                                     // PABLO #1916
@@ -397,112 +424,24 @@ public:
      */                                                                             // PABLO #1916
     void deleteAdditionalSet(GNEAdditionalSet* additionalSet);                      // PABLO #1916
 
+    /** @brief Returns the named additionalSet                                          // PABLO #1916
+     * @param[in] type tag with the type of additionalSet                               // PABLO #1916
+     * @param[in] id The id of the additionalSet to return.                             // PABLO #1916
+     * @return The named additionalSet, or 0 if don't exists                            // PABLO #1916
+     */                                                                                 // PABLO #1916
+    GNEAdditionalSet* getAdditionalSet(SumoXMLTag type, const std::string& id) const;   // PABLO #1916
+
     /** @brief get vector with additional Sets                                                      // PABLO #1916
      * @param[in] type type of AdditionalSet to get. SUMO_TAG_NOTHING for get all additionalSets    // PABLO #1916
      * @return vector with pointer to additionalSet.                                                // PABLO #1916
      */                                                                                             // PABLO #1916
     std::vector<GNEAdditionalSet*> getAdditionalSets(SumoXMLTag type = SUMO_TAG_NOTHING);           // PABLO #1916
 
-    /** @brief Returns the named bus stop                       // PABLO #1916
-     * @param[in] id The id of the bus stop to return.          // PABLO #1916
-     * @return The named bus stop, or 0 if no such stop exists  // PABLO #1916
-     */                                                         // PABLO #1916
-    GNEBusStop* getBusStop(const std::string& id) const;        // PABLO #1916
-
-    /** @brief Returns the bus stop close to the given position                 // PABLO #1916
-     * @param[in] lane the lane of the bus stop to return.                      // PABLO #1916
-     * @param[in] pos the position of the bus stop to return.                   // PABLO #1916
-     * @return The bus stop id on the location, or "" if no such stop exists    // PABLO #1916
-     */                                                                         // PABLO #1916
-    std::string getBusStopID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
-
-    /** @brief Returns the number of busStops of the net    // PABLO #1916
-     * @return Number of busStops of the net                // PABLO #1916
-     */                                                     // PABLO #1916
-    int getNumberOfBusStops();                              // PABLO #1916
-
-    /** @brief Returns the named charging station                           // PABLO #1916
-     * @param[in] id The id of the charging station to return.              // PABLO #1916
-     * @return The named charging station, or 0 if don't exists             // PABLO #1916
-     */                                                                     // PABLO #1916
-    GNEChargingStation* getChargingStation(const std::string& id) const;    // PABLO #1916
-
-    /** @brief Returns the charging station close to the given position                 // PABLO #1916
-     * @param[in] lane the lane of the charging station to return.                      // PABLO #1916
-     * @param[in] pos the position of the charging stationsto return.                   // PABLO #1916
-     * @return The charging station id on the location, or "" if don't exists           // PABLO #1916
-     */                                                                                 // PABLO #1916
-    std::string getChargingStationID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
-
-    /** @brief Returns the Number of chargingStations of the net    // PABLO #1916
-     * @return Number of charging Stations of the net               // PABLO #1916
-     */                                                             // PABLO #1916
-    int getNumberOfChargingStations();                              // PABLO #1916
-
-    /** @brief Returns the named induction loop detector E1     // PABLO #1916
-     * @param[in] id The id of the detector E1 to return.       // PABLO #1916
-     * @return The named detector E1, or 0 if don't exist       // PABLO #1916
-     */                                                         // PABLO #1916
-    GNEDetectorE1* getdetectorE1(const std::string& id) const;  // PABLO #1916
-
-    /** @brief Returns the induction loop detector E1 close to the given position   // PABLO #1916
-     * @param[in] lane the lane of the detector E1 to return.                       // PABLO #1916
-     * @param[in] pos the position of the detector E1 to return.                    // PABLO #1916
-     * @return The detector E1 id on the location, or "" if don't exists            // PABLO #1916
-     */                                                                             // PABLO #1916
-    std::string getDetectorE1ID(const GNELane* lane, const SUMOReal pos) const;     // PABLO #1916
-
-    /** @brief Returns the number of induction loops detectors E1 of the net    // PABLO #1916
-     * @return Number of E1 detectors of the net                                // PABLO #1916
-     */                                                                         // PABLO #1916
-    int getNumberOfDetectorE1();                                                // PABLO #1916
-
-    /** @brief Returns the named lane area detector E2          // PABLO #1916
-     * @param[in] id The id of the detector E2 to return.       // PABLO #1916
-     * @return The named detector E2, or 0 if don't exist       // PABLO #1916
-     */                                                         // PABLO #1916
-    GNEDetectorE2* getdetectorE2(const std::string& id) const;  // PABLO #1916
-
-    /** @brief Returns the lane area detector E2 close to the given position        // PABLO #1916
-     * @param[in] lane the lane of the detector E2 to return.                       // PABLO #1916
-     * @param[in] pos the position of the detector E2 to return.                    // PABLO #1916
-     * @return The detector E2 id on the location, or "" if don't exists            // PABLO #1916
-     */                                                                             // PABLO #1916
-    std::string getDetectorE2ID(const GNELane* lane, const SUMOReal pos) const;     // PABLO #1916
-
-    /** @brief Returns the number of lane area detectors E2 of the net      // PABLO #1916
-     * @return Number of E2 detectors of the net                            // PABLO #1916
-     */                                                                     // PABLO #1916
-    int getNumberOfDetectorE2();                                            // PABLO #1916
-
-    /** @brief Returns the named multi entry exit detector E3   // PABLO #1916
-     * @param[in] id The id of the detector E3 to return.       // PABLO #1916
-     * @return The named detector E3, or 0 if don't exist       // PABLO #1916
-     */                                                         // PABLO #1916
-    GNEDetectorE3* getdetectorE3(const std::string& id) const;  // PABLO #1916
-
-    /** @brief Returns the number of multi entry exit detectors E3  of the net  // PABLO #1916
-     * @return Number of E3 detectors of the net                                // PABLO #1916
-     */                                                                         // PABLO #1916
-    int getNumberOfDetectorE3();                                                // PABLO #1916
-
-    /** @brief Returns the named detector E3 multi entry exit                                   // PABLO #1916
-     * @param[in] id The id of the detector E3 Entry Exit to return.                            // PABLO #1916
-     * @return The named detector E3 Entry Exit, or 0 if don't exist                            // PABLO #1916
-     */                                                                                         // PABLO #1916
-    GNEDetectorE3EntryExit* getDetectorE3EntryExit(const std::string& id) const; // PABLO #1916
-
-    /** @brief Returns the detector E3 entry exit close to the given position               // PABLO #1916
-     * @param[in] lane the lane of the detector E3 entry exit to return.                    // PABLO #1916
-     * @param[in] pos the position of the detector E3 entry exit to return.                 // PABLO #1916
-     * @return The detector E3 entry exit id on the location, or "" if don't exists         // PABLO #1916
-     */                                                                                     // PABLO #1916
-    std::string getDetectorE3EntryExitID(const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
-
-    /** @brief Returns the number of detectors E3 entry exit  of the net    // PABLO #1916
-     * @return Number of detectors E3 entry exit of the net                 // PABLO #1916
-     */                                                                     // PABLO #1916
-    int getNumberOfDetectorE3EntryExit();                                   // PABLO #1916
+    /** @brief Returns the number of additionalSets of the net                                          // PABLO #1916
+     * @param[in] type type of additionalSet to count. SUMO_TAG_NOTHING will count all additionalSets   // PABLO #1916
+     * @return Number of additionalSets of the net                                                      // PABLO #1916
+     */                                                                                                 // PABLO #1916
+    int getNumberOfAdditionalSets(SumoXMLTag type = SUMO_TAG_NOTHING);                                  // PABLO #1916
 
 private:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)

@@ -119,8 +119,7 @@ GNEAdditionalHandler::buildVaporizer(const SUMOSAXAttributes& attrs)
 
 
 void 
-GNEAdditionalHandler::parseAndBuildLaneSpeedTrigger(GNENet* net, const SUMOSAXAttributes& attrs, 
-                                                    const std::string& base)
+GNEAdditionalHandler::parseAndBuildLaneSpeedTrigger(GNENet* net, const SUMOSAXAttributes& attrs, const std::string& base)
 {
     std::cout << "Function buildLaneSpeedTrigger of class GNEAdditionalHandler not implemented yet";
     /*
@@ -163,8 +162,7 @@ GNEAdditionalHandler::parseAndBuildLaneSpeedTrigger(GNENet* net, const SUMOSAXAt
 
 
 void 
-GNEAdditionalHandler::parseAndBuildRerouter(GNENet* net, const SUMOSAXAttributes& attrs, 
-                                            const std::string& base)
+GNEAdditionalHandler::parseAndBuildRerouter(GNENet* net, const SUMOSAXAttributes& attrs, const std::string& base)
 {
     std::cout << "Function buildRerouter of class GNEAdditionalHandler not implemented yet";
     /*
@@ -235,6 +233,7 @@ GNEAdditionalHandler::parseAndBuildBusStop(GNENet* net, const SUMOSAXAttributes&
     buildBusStop(net, id, *lane, frompos, topos, lines);
 }
 
+
 void 
 GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAttributes& attrs)
 {
@@ -274,8 +273,7 @@ GNEAdditionalHandler::parseAndBuildChargingStation(GNENet* net, const SUMOSAXAtt
 
 
 void 
-GNEAdditionalHandler::parseAndBuildCalibrator(GNENet* net, const SUMOSAXAttributes& attrs, 
-                                              const std::string& base)
+GNEAdditionalHandler::parseAndBuildCalibrator(GNENet* net, const SUMOSAXAttributes& attrs, const std::string& base)
 {
     std::cout << "Function buildCalibrator of class GNEAdditionalHandler not implemented yet";
     /*
@@ -331,8 +329,7 @@ GNEAdditionalHandler::parseAndBuildDetectorE3(GNENet* net, const SUMOSAXAttribut
 
 
 GNELaneSpeedTrigger* 
-GNEAdditionalHandler::buildLaneSpeedTrigger(GNENet* net, const std::string& id, const std::vector<GNELane*>& destLanes, 
-                                            const std::string& file)
+GNEAdditionalHandler::buildLaneSpeedTrigger(GNENet* net, const std::string& id, const std::vector<GNELane*>& destLanes, const std::string& file)
 {
     std::cout << "Function buildLaneSpeedTrigger of class GNEAdditionalHandler not implemented yet";
 
@@ -344,7 +341,7 @@ void
 GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, GNELane& lane, 
                                    SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines)
 {
-    if (net->getBusStop(id) == NULL) {
+    if (net->getAdditional(SUMO_TAG_BUS_STOP, id) == NULL) {
         GNEBusStop* busStop = new GNEBusStop(id, lane, myViewNet, frompos, topos, lines);
         myUndoList->p_begin("add busStop");
         myUndoList->add(new GNEChange_Additional(net, busStop, true), true);
@@ -356,10 +353,9 @@ GNEAdditionalHandler::buildBusStop(GNENet* net, const std::string& id, GNELane& 
 
 
 void 
-GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, 
-                                           SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
+GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, GNELane& lane, SUMOReal frompos, SUMOReal topos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay)
 {
-    if (net->getChargingStation(id) == NULL) {
+    if (net->getAdditional(SUMO_TAG_CHARGING_STATION, id) == NULL) {
         GNEChargingStation* chargingStation = new GNEChargingStation(id, lane, myViewNet, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
         myUndoList->p_begin("add chargingStation");
         myUndoList->add(new GNEChange_Additional(net, chargingStation, true), true);
@@ -372,6 +368,7 @@ GNEAdditionalHandler::buildChargingStation(GNENet* net, const std::string& id, G
 
 void 
 GNEAdditionalHandler::buildDetectorE1(GNENet* net, const std::string& id, GNELane& lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType) {
+
 }
 
 
@@ -388,8 +385,7 @@ GNEAdditionalHandler::buildDetectorE3(GNENet* net, const std::string& id, GNELan
 
 
 GNECalibrator* 
-GNEAdditionalHandler::buildCalibrator(GNENet* net, const std::string& id, GNEEdge* edge, SUMOReal pos, const std::string& file, 
-                                      const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe)
+GNEAdditionalHandler::buildCalibrator(GNENet* net, const std::string& id, GNEEdge* edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe)
 {
     std::cout << "Function buildCalibrator of class GNEAdditionalHandler not implemented yet";
 
@@ -398,8 +394,7 @@ GNEAdditionalHandler::buildCalibrator(GNENet* net, const std::string& id, GNEEdg
 
 
 GNETriggeredRerouter* 
-GNEAdditionalHandler::buildRerouter(GNENet* net, const std::string& id, MSEdgeVector& edges, SUMOReal prob, 
-                                    const std::string& file, bool off)
+GNEAdditionalHandler::buildRerouter(GNENet* net, const std::string& id, MSEdgeVector& edges, SUMOReal prob, const std::string& file, bool off)
 {
     std::cout << "Function buildRerouter of class GNEAdditionalHandler not implemented yet";
 

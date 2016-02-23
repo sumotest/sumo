@@ -72,9 +72,10 @@ bool GNEAdditional::additionalEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
+GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, SUMOReal pos, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
     GUIGlObject(GLO_ADDITIONAL, id),
     myLane(lane),
+    myPos(pos),
     myViewNet(viewNet),
     myBlocked(blocked),
     GNEAttributeCarrier(tag) {
@@ -92,6 +93,12 @@ GNEAdditional::~GNEAdditional() {
 GNELane&
 GNEAdditional::getLane() const {
     return myLane;
+}
+
+
+SUMOReal 
+GNEAdditional::getPos() const {
+    return myPos;
 }
 
 
@@ -126,6 +133,11 @@ GNEAdditional::setBlocked(bool value) {
     myBlocked = value;
 }
 
+
+void 
+GNEAdditional::setPos(SUMOReal pos) {
+    myPos = pos;
+}
 
 const std::string& 
 GNEAdditional::getParentName() const {

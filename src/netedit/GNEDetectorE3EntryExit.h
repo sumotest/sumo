@@ -55,9 +55,6 @@ public:
     /// @brief getLane
     GNELane& getLane() const;
 
-    /// @brief getPosition
-    SUMOReal getPos() const;
-
     /// @brief get E3 parentecto
     GNEDetectorE3* getE3Parent() const;
 

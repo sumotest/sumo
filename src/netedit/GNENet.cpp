@@ -68,12 +68,8 @@
 #include "GNEChange_Lane.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
-#include "GNEBusStop.h"                 // PABLO #1916
-#include "GNEChargingStation.h"         // PABLO #1916
-#include "GNEDetectorE1.h"              // PABLO #1916
-#include "GNEDetectorE2.h"              // PABLO #1916
-#include "GNEDetectorE3.h"              // PABLO #1916
-#include "GNEDetectorE3EntryExit.h"     // PABLO #1916
+#include "GNEAdditional.h"              // PABLO #1916
+#include "GNEAdditionalSet.h"           // PABLO #1916
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -657,13 +653,21 @@ GNENet::retrieveAttributeCarriers(const std::set<GUIGlID>& ids, GUIGlObjectType 
                 case GLO_LANE:
                     ac = dynamic_cast<GNELane*>(object);
                     break;
-                case GLO_ADDITIONAL:                                           // PABLO #1916
+                case GLO_ADDITIONAL:                                        // PABLO #1916
+                    if(dynamic_cast<GNEAdditional*>(object)) {              // PABLO #1916
+                        ac = dynamic_cast<GNEAdditional*>(object);          // PABLO #1916
+                    } else if(dynamic_cast<GNEAdditionalSet*>(object)) {    // PABLO #1916
+                        ac = dynamic_cast<GNEAdditionalSet*>(object);       // PABLO #1916
+                    }                                                       // PABLO #1916
+                    break;                                                  // PABLO #1916
+                    /*
                     if(dynamic_cast<GNEBusStop*>(object)) {                 // PABLO #1916
                         ac = dynamic_cast<GNEBusStop*>(object);             // PABLO #1916
                     } else if(dynamic_cast<GNEChargingStation*>(object)) {  // PABLO #1916
                         ac = dynamic_cast<GNEChargingStation*>(object);     // PABLO #1916
                     }                                                       // PABLO #1916
                     break;                                                  // PABLO #1916
+                    */
                 default:
                     break;
             }
@@ -1017,11 +1021,53 @@ GNENet::deleteAdditional(GNEAdditional* additional) {                           
 }                                                                                                       // PABLO #1916
 
 
+
+GNEAdditional*                                                                                                              // PABLO #1916
+GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {                                                       // PABLO #1916
+    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end() && myAdditionals.at(id)->getTag() == type)   // PABLO #1916
+        return myAdditionals.at(id);                                                                                        // PABLO #1916
+    else                                                                                                                    // PABLO #1916
+        return NULL;                                                                                                        // PABLO #1916
+}                                                                                                                           // PABLO #1916
+
+
+std::string                                                                                             // PABLO #1916
+GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {               // PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {  // PABLO #1916                                                // PABLO #1916
+        if (&(it->second->getLane()) == lane && fabs(it->second->getPos() - pos) < POSITION_EPS) {      // PABLO #1916
+            return it->second->getID();                                                                 // PABLO #1916
+        }                                                                                               // PABLO #1916
+    }                                                                                                   // PABLO #1916
+    return "";                                                                                          // PABLO #1916
+}                                                                                                       // PABLO #1916
+
+
+std::vector<GNEAdditional*>                                                                 // PABLO #1916
+GNENet::getAdditionals(SumoXMLTag type) {                                                   // PABLO #1916
+    std::vector<GNEAdditional*> vectorOfAdditionals;                                        // PABLO #1916
+    for(GNEAdditionals::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)  // PABLO #1916
+        if(type == SUMO_TAG_NOTHING || type == i->second->getTag())                         // PABLO #1916
+            vectorOfAdditionals.push_back(i->second);                                       // PABLO #1916
+    return vectorOfAdditionals;                                                             // PABLO #1916
+}                                                                                           // PABLO #1916
+
+
+int                                                                                         // PABLO #1916
+GNENet::getNumberOfAdditionals(SumoXMLTag type) {                                           // PABLO #1916
+    int counter = 0;                                                                        // PABLO #1916
+    for(GNEAdditionals::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)  // PABLO #1916
+        if(type == SUMO_TAG_NOTHING || type == i->second->getTag())                         // PABLO #1916
+            counter++;                                                                      // PABLO #1916
+    return counter;                                                                         // PABLO #1916
+}                                                                                           // PABLO #1916
+
+
+
 void 
 GNENet::insertAdditionalSet(GNEAdditionalSet* additionalSet) {                                              // PABLO #1916
     // Check if additional element exists before insertion                                                  // PABLO #1916
     if(myAdditionalSets.find(additionalSet->getID()) != myAdditionalSets.end())                             // PABLO #1916
-        throw ProcessError("additional element with ID='" + additionalSet->getID() + "' already exist");    // PABLO #1916
+        throw ProcessError("additionalSet element with ID='" + additionalSet->getID() + "' already exist"); // PABLO #1916
     else {                                                                                                  // PABLO #1916
         myAdditionalSets[additionalSet->getID()] = additionalSet;                                           // PABLO #1916
     }                                                                                                       // PABLO #1916
@@ -1029,203 +1075,43 @@ GNENet::insertAdditionalSet(GNEAdditionalSet* additionalSet) {                  
 
 
 void 
-GNENet::deleteAdditionalSet(GNEAdditionalSet* additionalSet) {                                          // PABLO #1916
-    GNEAdditionalSets::iterator positionToRemove = myAdditionalSets.find(additionalSet->getID());       // PABLO #1916
-    // Check if additional element exists before deletion                                               // PABLO #1916
-    if(positionToRemove == myAdditionalSets.end())                                                      // PABLO #1916
-        throw ProcessError("additional element with ID='" + additionalSet->getID() + "' don't exist");  // PABLO #1916
-    else                                                                                                // PABLO #1916
-        myAdditionalSets.erase(positionToRemove);                                                       // PABLO #1916
-}                                                                                                       // PABLO #1916
+GNENet::deleteAdditionalSet(GNEAdditionalSet* additionalSet) {                                              // PABLO #1916
+    GNEAdditionalSets::iterator positionToRemove = myAdditionalSets.find(additionalSet->getID());           // PABLO #1916
+    // Check if additional element exists before deletion                                                   // PABLO #1916
+    if(positionToRemove == myAdditionalSets.end())                                                          // PABLO #1916
+        throw ProcessError("additionalSet element with ID='" + additionalSet->getID() + "' don't exist");   // PABLO #1916
+    else                                                                                                    // PABLO #1916
+        myAdditionalSets.erase(positionToRemove);                                                           // PABLO #1916
+}                                                                                                           // PABLO #1916
 
 
-std::vector<GNEAdditionalSet*>                                                                          // PABLO #1916
-GNENet::getAdditionalSets(SumoXMLTag type) {                                                       // PABLO #1916
-    std::vector<GNEAdditionalSet*> vectorOfAdditionalSets;                                              // PABLO #1916
-    if(type = SUMO_TAG_NOTHING) {                                                                       // PABLO #1916
-        for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
-            vectorOfAdditionalSets.push_back(i->second);                                                // PABLO #1916
-    } else {                                                                                            // PABLO #1916
-        for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
-            if(i->second->getTag() == type)                                                             // PABLO #1916
-                vectorOfAdditionalSets.push_back(i->second);                                            // PABLO #1916
-    }                                                                                                   // PABLO #1916
-    return vectorOfAdditionalSets;                                                                      // PABLO #1916
-}                                                                                                       // PABLO #1916
+GNEAdditionalSet*                                                                                                                       // PABLO #1916
+GNENet::getAdditionalSet(SumoXMLTag type, const std::string& id) const {                                                                // PABLO #1916
+    if(!myAdditionalSets.empty() && myAdditionalSets.find(id) != myAdditionalSets.end() && myAdditionalSets.at(id)->getTag() == type)   // PABLO #1916
+        return myAdditionalSets.at(id);                                                                                                 // PABLO #1916
+    else                                                                                                                                // PABLO #1916
+        return NULL;                                                                                                                    // PABLO #1916
+}                                                                                                                                       // PABLO #1916
 
 
-GNEBusStop*                                                                         // PABLO #1916
-GNENet::getBusStop(const std::string& id) const {                                   // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end())     // PABLO #1916
-        return dynamic_cast<GNEBusStop*>(myAdditionals.at(id));                     // PABLO #1916
-    else                                                                            // PABLO #1916
-        return NULL;                                                                // PABLO #1916
-}                                                                                   // PABLO #1916
+std::vector<GNEAdditionalSet*>                                                                      // PABLO #1916
+GNENet::getAdditionalSets(SumoXMLTag type) {                                                        // PABLO #1916
+    std::vector<GNEAdditionalSet*> vectorOfAdditionalSets;                                          // PABLO #1916
+    for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
+        if(type == SUMO_TAG_NOTHING || i->second->getTag() == type)                                 // PABLO #1916
+            vectorOfAdditionalSets.push_back(i->second);                                            // PABLO #1916
+    return vectorOfAdditionalSets;                                                                  // PABLO #1916
+}                                                                                                   // PABLO #1916
 
 
-std::string
-GNENet::getBusStopID(const GNELane* lane, const SUMOReal pos) const {                                                   // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                  // PABLO #1916
-        GNEBusStop* busStop = dynamic_cast<GNEBusStop*>(it->second);                                                    // PABLO #1916
-        if (busStop != NULL && &busStop->getLane() == lane && fabs(busStop->getToPosition() - pos) < POSITION_EPS) {    // PABLO #1916
-            return busStop->getID();                                                                                    // PABLO #1916
-        }                                                                                                               // PABLO #1916
-    }                                                                                                                   // PABLO #1916
-    return "";                                                                                                          // PABLO #1916
-}                                                                                                                       // PABLO #1916                                                                                                    // PABLO #1916
-
-
-int                                                                                                     // PABLO #1916
-GNENet::getNumberOfBusStops() {                                                                         // PABLO #1916
-    int counter = 0;                                                                                    // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
-        if(dynamic_cast<GNEBusStop*>(it->second))                                                       // PABLO #1916
-            counter++;                                                                                  // PABLO #1916
-    return counter;                                                                                     // PABLO #1916
-}                                                                                                       // PABLO #1916
-
-
-GNEChargingStation*                                                             // PABLO #1916
-GNENet::getChargingStation(const std::string& id) const {                       // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end()) // PABLO #1916
-        return dynamic_cast<GNEChargingStation*>(myAdditionals.at(id));         // PABLO #1916
-    else                                                                        // PABLO #1916
-        return NULL;                                                            // PABLO #1916
-}                                                                               // PABLO #1916
-
-
-std::string                                                                                                                                     // PABLO #1916
-GNENet::getChargingStationID(const GNELane* lane, const SUMOReal pos) const {                                                                   // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                                          // PABLO #1916
-        GNEChargingStation* chargingStation = dynamic_cast<GNEChargingStation*>(it->second);                                                    // PABLO #1916
-        if (chargingStation != NULL && &chargingStation->getLane() == lane && fabs(chargingStation->getToPosition() - pos) < POSITION_EPS) {    // PABLO #1916
-            return chargingStation->getID();                                                                                                    // PABLO #1916
-        }                                                                                                                                       // PABLO #1916
-    }                                                                                                                                           // PABLO #1916
-    return "";                                                                                                                                  // PABLO #1916
-}                                                                                                                                               // PABLO #1916
-
-
-int                                                                                                     // PABLO #1916
-GNENet::getNumberOfChargingStations() {                                                                 // PABLO #1916
-    int counter = 0;                                                                                    // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
-        if(dynamic_cast<GNEChargingStation*>(it->second))                                               // PABLO #1916
-            counter++;                                                                                  // PABLO #1916
-    return counter;                                                                                     // PABLO #1916
-}                                                                                                       // PABLO #1916
-    
-
-
-GNEDetectorE1* 
-GNENet::getdetectorE1(const std::string& id) const {                            // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end()) // PABLO #1916
-        return dynamic_cast<GNEDetectorE1*>(myAdditionals.at(id));              // PABLO #1916
-    else                                                                        // PABLO #1916
-        return NULL;                                                            // PABLO #1916
-}                                                                               // PABLO #1916
-
-
-std::string 
-GNENet::getDetectorE1ID(const GNELane* lane, const SUMOReal pos) const {                                                // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                  // PABLO #1916
-        GNEDetectorE1* detector = dynamic_cast<GNEDetectorE1*>(it->second);                                             // PABLO #1916
-        if (detector != NULL && &detector->getLane() == lane && fabs(detector->getPosition() - pos) < POSITION_EPS) {   // PABLO #1916
-            return detector->getID();                                                                                   // PABLO #1916
-        }                                                                                                               // PABLO #1916
-    }                                                                                                                   // PABLO #1916
-    return "";                                                                                                          // PABLO #1916
-}                                                                                                                       // PABLO #1916 
-
-
-int 
-GNENet::getNumberOfDetectorE1() {                                                                       // PABLO #1916
-    int counter = 0;                                                                                    // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
-        if(dynamic_cast<GNEDetectorE1*>(it->second))                                                    // PABLO #1916
-            counter++;                                                                                  // PABLO #1916
-    return counter;                                                                                     // PABLO #1916
-}                                                                                                       // PABLO #1916
-
-
-GNEDetectorE2*                                                                  // PABLO #1916
-GNENet::getdetectorE2(const std::string& id) const {                            // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end()) // PABLO #1916
-        return dynamic_cast<GNEDetectorE2*>(myAdditionals.at(id));              // PABLO #1916
-    else                                                                        // PABLO #1916
-        return NULL;                                                            // PABLO #1916
-}                                                                               // PABLO #1916
-
-
-std::string                                                                                                             // PABLO #1916
-GNENet::getDetectorE2ID(const GNELane* lane, const SUMOReal pos) const {                                                // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                  // PABLO #1916
-        GNEDetectorE2* detector = dynamic_cast<GNEDetectorE2*>(it->second);                                             // PABLO #1916
-        if (detector != NULL && &detector->getLane() == lane && fabs(detector->getPosition() - pos) < POSITION_EPS) {   // PABLO #1916
-            return detector->getID();                                                                                   // PABLO #1916
-        }                                                                                                               // PABLO #1916
-    }                                                                                                                   // PABLO #1916
-    return "";                                                                                                          // PABLO #1916
-}                                                                                                                       // PABLO #1916
-
-
-int                                                                                                     // PABLO #1916
-GNENet::getNumberOfDetectorE2() {                                                                       // PABLO #1916
-    int counter = 0;                                                                                    // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
-        if(dynamic_cast<GNEDetectorE2*>(it->second))                                                    // PABLO #1916
-            counter++;                                                                                  // PABLO #1916
-    return counter;                                                                                     // PABLO #1916
-}
-
-
-GNEDetectorE3*                                                                              // PABLO #1916
-GNENet::getdetectorE3(const std::string& id) const {                                        // PABLO #1916
-    if(!myAdditionalSets.empty() && myAdditionalSets.find(id) != myAdditionalSets.end())    // PABLO #1916
-        return dynamic_cast<GNEDetectorE3*>(myAdditionalSets.at(id));                       // PABLO #1916
-    else                                                                                    // PABLO #1916
-        return NULL;                                                                        // PABLO #1916
-}                                                                                           // PABLO #1916
-
-
-int                                                                                                             // PABLO #1916
-GNENet::getNumberOfDetectorE3() {                                                                               // PABLO #1916
-    int counter = 0;                                                                                            // PABLO #1916
-    for (GNEAdditionalSets::const_iterator it = myAdditionalSets.begin(); it != myAdditionalSets.end(); ++it)   // PABLO #1916
-        if(dynamic_cast<GNEDetectorE3*>(it->second))                                                            // PABLO #1916
-            counter++;                                                                                          // PABLO #1916
-    return counter;                                                                                             // PABLO #1916
-}                                                                                                               // PABLO #1916
-
-
-GNEDetectorE3EntryExit* 
-GNENet::getDetectorE3EntryExit(const std::string& id) const {                               // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end())             // PABLO #1916
-        return dynamic_cast<GNEDetectorE3EntryExit*>(myAdditionals.at(id));                 // PABLO #1916
-    else                                                                                    // PABLO #1916
-        return NULL;                                                                        // PABLO #1916
-}
-
-
-std::string 
-GNENet::getDetectorE3EntryExitID(const GNELane* lane, const SUMOReal pos) const {                                           // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {                      // PABLO #1916
-        GNEDetectorE3EntryExit* detector = dynamic_cast<GNEDetectorE3EntryExit*>(it->second);                               // PABLO #1916
-        if (detector != NULL && &detector->getLane() == lane && fabs(detector->getPosition() - pos) < POSITION_EPS)         // PABLO #1916
-            return detector->getID();                                                                                       // PABLO #1916
-    }                                                                                                                       // PABLO #1916                                                                            
-    return "";                                                                                                              // PABLO #1916
-}                                                                                                                           // PABLO #1916
-
-
-int 
-GNENet::getNumberOfDetectorE3EntryExit() {                                                              // PABLO #1916
-    int counter = 0;                                                                                    // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)    // PABLO #1916
-        if(dynamic_cast<GNEDetectorE3EntryExit*>(it->second))                                           // PABLO #1916
-            counter++;                                                                                  // PABLO #1916
-    return counter;                                                                                     // PABLO #1916
-}
+int                                                                                                 // PABLO #1916
+GNENet::getNumberOfAdditionalSets(SumoXMLTag type) {                                                // PABLO #1916
+    int counter = 0;                                                                                // PABLO #1916
+    for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
+        if(type == SUMO_TAG_NOTHING || i->second->getTag() == type)                                 // PABLO #1916
+            counter++;                                                                              // PABLO #1916
+    return counter;                                                                                 // PABLO #1916
+}                                                                                                   // PABLO #1916
 
 // ===========================================================================
 // private

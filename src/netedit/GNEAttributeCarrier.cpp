@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <utils/common/MsgHandler.h>
+#include <utils/xml/SUMOSAXAttributes.h>
 #include "GNEAttributeCarrier.h"
 #include "GNEUndoList.h"
 
@@ -150,7 +151,6 @@ GNEAttributeCarrier::isValidStringVector(const std::string& value) {        // P
             subString.push_back(value.at(index));                           // PABLO #1916
         index++;                                                            // PABLO #1916
     }                                                                       // PABLO #1916
-                                                                            // PABLO #1916
     // 5) All right, then return true                                       // PABLO #1916
     return true;                                                            // PABLO #1916
 }                                                                           // PABLO #1916
@@ -219,14 +219,14 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
             case SUMO_TAG_BUS_STOP:                                                                                 // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, "f0"));                     // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, "#"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "f10"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LINES, "l"));                         // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_CHARGING_STATION:                                                                         // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, "f0"));                     // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, "#"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "f10"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGINGPOWER, "i22000"));            // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EFFICIENCY, "f0.95"));                // PABLO #1916
@@ -236,7 +236,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
             case SUMO_TAG_E1DETECTOR:                                                                               // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "f0"));                     // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPLIT_VTYPE, "bfalse"));              // PABLO #1916
@@ -244,7 +244,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
             case SUMO_TAG_E2DETECTOR:                                                                               // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "f0"));                     // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));                     // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LENGTH, "f10"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
@@ -252,7 +252,6 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_TIME_THRESHOLD, "i1"));       // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, "f1.39"));   // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_JAM_DIST_THRESHOLD, "f10"));          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LENGTH, "f10"));                      // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_E3DETECTOR:                                                                               // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
@@ -262,7 +261,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
             case SUMO_TAG_DET_ENTRY:                                                                                // PABLO #1916
             case SUMO_TAG_DET_EXIT:                                                                                 // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "f0"));                     // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));                      // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_VSS:                                                                                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
@@ -283,7 +282,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PROB, "f1"));                         // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OFF, "bfalse"));                      // PABLO #1916
-                break; 
+                break;                                                                                              // PABLO #1916
             default:
                 WRITE_WARNING("allowed attributes for tag '" + toString(tag) + "' not defined");
         }
@@ -471,6 +470,15 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {        
             return (*i).second.substr(1, (*i).second.size() - 1);                                                                                       // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
+template<> std::vector<std::string>                                                                                                                     // PABLO #1916
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
+    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
+        if((*i).first == attr) {                                                                                                                        // PABLO #1916
+            std::vector<std::string> myVectorString;                                                                                                    // PABLO #1916
+            SUMOSAXAttributes::parseStringVector((*i).second.substr(1, (*i).second.size() - 1), myVectorString);                                        // PABLO #1916
+            return myVectorString;                                                                                                                      // PABLO #1916
+        }                                                                                                                                               // PABLO #1916
+}                                                                                                                                                       // PABLO #1916
 
 /****************************************************************************/
 

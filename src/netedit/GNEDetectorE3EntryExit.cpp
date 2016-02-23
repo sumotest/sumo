@@ -85,11 +85,6 @@ GNEDetectorE3EntryExit::getLane() const {
 }
 
 
-SUMOReal GNEDetectorE3EntryExit::getPos() const {
-    return myPos;
-}
-
-
 void 
 GNEDetectorE3EntryExit::writeAdditional(OutputDevice& device) {
     // Write parameters

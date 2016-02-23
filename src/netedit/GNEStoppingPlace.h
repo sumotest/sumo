@@ -179,10 +179,8 @@ public:
     //@}
 
 protected:
-    /// @brief The begin position this stopping place is located at
-    SUMOReal myFromPos;
-
     /// @brief The end position this stopping place is located at
+    /// @note fromPos corresponds to parameter "getPos()" of GNEAdditional
     SUMOReal myToPos;
 
     /// @brief The position of the sign

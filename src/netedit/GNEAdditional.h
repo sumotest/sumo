@@ -63,11 +63,12 @@ public:
     /** @brief Constructor.
      * @param[in] id Gl-id of the additional element (Must be unique)
      * @param[in] lane GNELane of this additional element belongs
+     * @param[in] pos position in the lane in which additional is located
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      */
-    GNEAdditional(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
+    GNEAdditional(const std::string& id, GNELane& lane, SUMOReal pos, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
 
     /// @brief Destructor
     ~GNEAdditional();
@@ -76,19 +77,16 @@ public:
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
-    /** @brief Returns parent lane
-     * @return The GNElane parent lane
-     */
+    /// @brief Returns parent lane
     GNELane &getLane() const;
 
-    /** @brief Returns View Net
-     * @return The GNEViewNet in which additional element is located
-     */
+    /// @brief Returns pos in the lane
+    SUMOReal getPos() const;
+
+    /// @brief Returns GNEViewNet in which additional element is located
     GNEViewNet* getViewNet() const;
 
-    /** @brief Returns string with the information of the shape
-     * @return The string with the shape of the additional element
-     */
+    /// @brief Returns string with the information of additional element's shape
     std::string getShape() const;
 
     /** @brief Check if item is blocked (i.e. cannot be moved with mouse)
@@ -96,10 +94,12 @@ public:
      */
     bool isBlocked() const;
 
-    /** @brief Block or unblock additional element(i.e. cannot be moved with mouse)
-     * @param[in] value true or false
-     */
+    /// @brief Block or unblock additional element(i.e. cannot be moved with mouse)
     void setBlocked(bool value);
+
+    /// @brief set new positin in the lane
+    /// @note pos must be <= that lane lenght
+    void setPos(SUMOReal pos);
 
     /** @brief change the position of the additional geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
@@ -184,6 +184,9 @@ public:
 protected:
     /// @brief The lane this additional element is located at
     GNELane& myLane;
+
+    /// @brief The position in the lane in which this additional element is located at
+    SUMOReal myPos;
 
     /// @brief The GNEViewNet this additional element belongs
     GNEViewNet* myViewNet;

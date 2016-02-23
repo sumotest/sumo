@@ -166,82 +166,96 @@ bool
 GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
     // If user clicked over lane, a GNEAdditional Element will be created. In other case, a GNEAdditionalSet will be created
     if(lane) {
-        // Position of the mouse in the lane
-        SUMOReal position = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
+        // obtain a new unique id
+        int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
+        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex)) != NULL)
+            additionalIndex++;
+        std::string additionalId = toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex);
+        // Obtain position of the mouse in the lane
+        SUMOReal positionOfTheMouseOverLane = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         // Add adittional element depending of myActualAdditionalType
         switch (myActualAdditionalType) {
             case SUMO_TAG_BUS_STOP: {
-                    int numberOfBusStops = myViewNet->getNet()->getNumberOfBusStops();
-                    // Check that the ID of the new busStop is unique
-                    while(myViewNet->getNet()->getBusStop("busStop" + toString(numberOfBusStops)) != NULL)
-                        numberOfBusStops++;
-                    // Declare position of busStop
-                    SUMOReal startPosition;
-                    SUMOReal endPosition;
-                    // If positions are valid
-                    if(setPositions(lane, position, startPosition, endPosition)) {
-                        // Extract bus lines
-                        std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
-                        // Create an add new busStop
-                        GNEBusStop *busStop = new GNEBusStop("busStop" + toString(numberOfBusStops), *lane, myViewNet, startPosition, endPosition, lines);
-                        busStop->setBlocked(myEditorParameter->isBlockEnabled());
-                        myUndoList->p_begin("add " + busStop->getDescription());
-                        myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
-                        myUndoList->p_end();
-                        return true;
-                    } else 
-                        return false;
-                }
+                // get Length    
+                SUMOReal length = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0)->getTextValue());
+                // get positions
+                SUMOReal fromPosition = setStartPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, length);
+                SUMOReal toPosition = setEndPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, length);
+                // Check if position are valid
+                if(fromPosition == -1 || toPosition== -1)
+                    return false;
+                // get bus lines
+                std::vector<std::string> lines = myVectorOfadditionalParameterList.at(0)->getVectorOfTextValues();
+                // Create an add new busStop
+                GNEBusStop *busStop = new GNEBusStop(additionalId, *lane, myViewNet, fromPosition, toPosition, lines);
+                busStop->setBlocked(myEditorParameter->isBlockEnabled());
+                myUndoList->p_begin("add " + busStop->getDescription());
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), busStop, true), true);
+                myUndoList->p_end();
+                return true;
+            }
             case SUMO_TAG_CHARGING_STATION: {
-                    int numberOfChargingStations = myViewNet->getNet()->getNumberOfChargingStations();
-                    // Check that the ID of the new chargingStation is unique
-                    while(myViewNet->getNet()->getChargingStation("chargingStation" + toString(numberOfChargingStations)) != NULL)
-                        numberOfChargingStations++;
-                    // Declare position of chargingStation
-                    SUMOReal startPosition;
-                    SUMOReal endPosition;
-                    // If positions are valid
-                    if(setPositions(lane, position, startPosition, endPosition)) {
-                        // Get values of text fields
-                        SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
-                        SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
-                        int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
-                        bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
-                        // Create and add a new chargingStation
-                        GNEChargingStation *chargingStation = new GNEChargingStation("chargingStation" + toString(numberOfChargingStations), *lane, myViewNet, startPosition, endPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
-                        chargingStation->setBlocked(myEditorParameter->isBlockEnabled());
-                        myUndoList->p_begin("add " + chargingStation->getDescription());
-                        myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), chargingStation, true), true);
-                        myUndoList->p_end();
-                        return true;
-                    } else 
-                        return false;
-                }
+                // get Length    
+                SUMOReal length = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0)->getTextValue());
+                // get positions
+                SUMOReal fromPosition = setStartPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, length);
+                SUMOReal toPosition = setEndPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, length);
+                // Check if position are valid
+                if(fromPosition == -1 || toPosition== -1)
+                    return false;
+                // Get chargingPower
+                SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
+                // Get chargingEfficiency
+                SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
+                // get charge Delay
+                int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
+                // Get chargeInTransit
+                bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
+                // Create and add a new chargingStation
+                GNEChargingStation *chargingStation = new GNEChargingStation(additionalId, *lane, myViewNet, fromPosition, toPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
+                chargingStation->setBlocked(myEditorParameter->isBlockEnabled());
+                myUndoList->p_begin("add " + chargingStation->getDescription());
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), chargingStation, true), true);
+                myUndoList->p_end();
+                return true;
+            }
             case SUMO_TAG_E1DETECTOR: {
-                    int numberOfDetectorE1 = myViewNet->getNet()->getNumberOfDetectorE1();
-                    // Check that the ID of the new detector E1 is unique
-                    while(myViewNet->getNet()->getdetectorE1("detectorE1_" + toString(numberOfDetectorE1)) != NULL)
-                        numberOfDetectorE1++;
-
-                    /** CAMBIAR **/
-                    // Get values of text fields
-                    SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
-                    SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
-                    int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
-                    bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
-                    /**/
-
-                    // Create and add a new detector
-                    GNEDetectorE1 *detectorE1 = new GNEDetectorE1("detectorE1_" + toString(numberOfDetectorE1), *lane, myViewNet, position, 1, "", true);
-                    detectorE1->setBlocked(myEditorParameter->isBlockEnabled());
-                    myUndoList->p_begin("add " + detectorE1->getDescription());
-                    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE1, true), true);
-                    myUndoList->p_end();
-                    return true;
-                }
+                // set freq
+                int freq = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(0)->getTextValue());
+                // get file
+                std::string file = myVectorOfAdditionalParameter.at(1)->getTextValue();
+                // get splitByType
+                bool splitByType = myVectorOfAdditionalParameter.at(2)->getBoolValue();
+                // Create and add a new detector E1
+                GNEDetectorE1 *detectorE1 = new GNEDetectorE1(additionalId, *lane, myViewNet, positionOfTheMouseOverLane, freq, file, splitByType);
+                detectorE1->setBlocked(myEditorParameter->isBlockEnabled());
+                myUndoList->p_begin("add " + detectorE1->getDescription());
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE1, true), true);
+                myUndoList->p_end();
+                return true;
+            }
             case SUMO_TAG_E2DETECTOR: {
-                    // Finish
-                    return true;
+                // get Length    
+                SUMOReal length = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0)->getTextValue());
+                // set freq
+                int freq = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(1)->getTextValue());
+                // get file
+                std::string file = myVectorOfAdditionalParameter.at(2)->getTextValue();
+                // get cont
+                bool cont = myVectorOfAdditionalParameter.at(3)->getBoolValue();
+                // get tth
+                SUMOReal tth = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(4)->getTextValue());
+                // get sth
+                SUMOReal sth = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(5)->getTextValue());
+                // get jth
+                SUMOReal jth = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(6)->getTextValue());
+                // Create and add a new detector E2
+                GNEDetectorE2 *detectorE2 = new GNEDetectorE2(additionalId, *lane, myViewNet, positionOfTheMouseOverLane, length, freq, file, cont, tth, sth, jth);
+                detectorE2->setBlocked(myEditorParameter->isBlockEnabled());
+                myUndoList->p_begin("add " + detectorE2->getDescription());
+                myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE2, true), true);
+                myUndoList->p_end();
+                return true;
                 }
             case SUMO_TAG_DET_ENTRY: {
                     // Finish
@@ -268,26 +282,20 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
                 return false;
         }
     } else {
+        // obtain a new unique id
+        int additionalSetIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
+        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalSetIndex)) != NULL)
+            additionalSetIndex++;
+        std::string additionalSetId = toString(myActualAdditionalType) + "_" + toString(additionalSetIndex);
         // Add adittionalSet element depending of myActualAdditionalType
         switch (myActualAdditionalType) {
             case SUMO_TAG_E3DETECTOR: {
-                int numberOfDetectorE3 = myViewNet->getNet()->getNumberOfDetectorE3();
-                // Check that the ID of the new detector E3 is unique
-                while(myViewNet->getNet()->getdetectorE3("detectorE3_" + toString(numberOfDetectorE3)) != NULL)
-                    numberOfDetectorE3++;
-
-                /** CAMBIAR **
-                // Get values of text fields
-                SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(1)->getTextValue());
-                SUMOReal chargingEfficiency = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(2)->getTextValue());
-                int chargeDelay = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(3)->getTextValue());
-                bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
-                **/
-
-                // Create and add a new detector
-                std::cout << parent->getPositionInformation() << std::endl;
-
-                GNEDetectorE3 *detectorE3 = new GNEDetectorE3("detectorE3_" + toString(numberOfDetectorE3), myViewNet, parent->getPositionInformation(), 100, "");
+                // set freq
+                int freq = GNEAttributeCarrier::parse<int>(myVectorOfAdditionalParameter.at(0)->getTextValue());
+                // get file
+                std::string file = myVectorOfAdditionalParameter.at(1)->getTextValue();
+                // Create and add a new detector E3
+                GNEDetectorE3 *detectorE3 = new GNEDetectorE3(additionalSetId, myViewNet, parent->getPositionInformation(), freq, file);
                 detectorE3->setBlocked(myEditorParameter->isBlockEnabled());
                 myUndoList->p_begin("add " + detectorE3->getDescription());
                 myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), detectorE3, true), true);
@@ -379,94 +387,99 @@ GNEAdditionalFrame::setParameters() {
         myVectorOfadditionalParameterList.at(i)->hideParameter();
     // Obtain attributes of actual myActualAdditionalType
     std::vector<std::pair <SumoXMLAttr, std::string> > attrs = GNEAttributeCarrier::allowedAttributes(myActualAdditionalType);
-    int counter = 0;
+    int counterParameter = 0;
+    int counterParameterList = 0;
     // Iterate over attributes of myActualAdditionalType
-    for(std::vector<std::pair <SumoXMLAttr, std::string> >::iterator i = attrs.begin(); i != attrs.end(); i++)
-        switch(GNEAttributeCarrier::getDefaultValueType(myActualAdditionalType, (i->first))) {
+    for(std::vector<std::pair <SumoXMLAttr, std::string> >::iterator i = attrs.begin(); i != attrs.end(); i++) {
+        SumoXMLAttr attrName = i->first;
+        // Interpretation of attribute SUMO_ATTR_ENDPOS as SUMO_ATTR_LENGHT
+        if(attrName == SUMO_ATTR_ENDPOS)
+            attrName = SUMO_ATTR_LENGTH;
+        // Switch depending of the parameter's type
+        switch(GNEAttributeCarrier::getDefaultValueType(myActualAdditionalType, i->first)) {
             case GNEAttributeCarrier::defaultAttrType::defaultAttrType_int:
-                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<int>(myActualAdditionalType, i->first));
-                counter++;
+                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<int>(myActualAdditionalType, i->first));
+                counterParameter++;
                 break;
             case GNEAttributeCarrier::defaultAttrType::defaultAttrType_float:
-                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<SUMOReal>(myActualAdditionalType, i->first));
-                counter++;
+                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<SUMOReal>(myActualAdditionalType, i->first));
+                counterParameter++;
                 break;
             case GNEAttributeCarrier::defaultAttrType::defaultAttrType_string:
-                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<std::string>(myActualAdditionalType, i->first));
-                counter++;
+                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<std::string>(myActualAdditionalType, i->first));
+                counterParameter++;
                 break;
             case GNEAttributeCarrier::defaultAttrType::defaultAttrType_bool:
-                myVectorOfAdditionalParameter.at(counter)->showParameter(toString(i->first), GNEAttributeCarrier::getDefaultValue<bool>(myActualAdditionalType, i->first));
-                counter++;
+                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<bool>(myActualAdditionalType, i->first));
+                counterParameter++;
                 break;
             case GNEAttributeCarrier::defaultAttrType::defaultAttrType_stringList:
+                myVectorOfadditionalParameterList.at(counterParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(myActualAdditionalType, i->first));
+                counterParameterList++;
                 break;
             case GNEAttributeCarrier::defaultAttrType::defaultAttrType_NULL:
                 break;
-            }
-        
-
-    //std::vector<std::string> lines;
-    //SUMOSAXAttributes::parseStringVector(oc.getString("busStop default lines"), lines);
-    //myVectorOfadditionalParameterList.at(0)->showListParameter("line", lines);
-    myGroupBoxForParameters->show();
-    myAdditionalSet->hideList();
-
-
-    // Recalc groupBox
-    myGroupBoxForParameters->recalc();
+        }
+    }
+    // Show box parameter if had parameters
+    if(!attrs.empty()) {
+        // show and Recalc groupBox
+        myGroupBoxForParameters->show();
+        myGroupBoxForParameters->recalc();
+    } else
+        myGroupBoxForParameters->hide();
+    // Hide hide list
+    if(myActualAdditionalType == SUMO_TAG_DET_ENTRY || myActualAdditionalType == SUMO_TAG_DET_EXIT) {
+        myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
+        myAdditionalSet->show();
+    } else
+        myAdditionalSet->hideList();
 }
 
 
-bool 
-GNEAdditionalFrame::setPositions(GNELane *lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition) {
-    SUMOReal size = GNEAttributeCarrier::parse<SUMOReal>(myVectorOfAdditionalParameter.at(0)->getTextValue());
+SUMOReal 
+GNEAdditionalFrame::setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional) {
     switch (myEditorParameter->getActualReferencePoint()) {
-        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT : {
-            startPosition = positionOfTheMouseOverLane;
-            // Set end position
-            if(positionOfTheMouseOverLane + size <= lane->getLaneShapeLenght() - 0.01)
-                endPosition = positionOfTheMouseOverLane + size;
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT :
+            return positionOfTheMouseOverLane;
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_RIGHT :
+            if(positionOfTheMouseOverLane - lenghtOfAdditional >= 0.01)
+                 return positionOfTheMouseOverLane - lenghtOfAdditional;
             else if(myEditorParameter->isForcePositionEnabled())
-                endPosition = lane->getLaneShapeLenght() - 0.01;
+                return 0.01;
             else
-                return false;
-            break;
-        }
-        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_RIGHT : {
-            endPosition = positionOfTheMouseOverLane;
-            // Set end position
-            if(positionOfTheMouseOverLane - size >= 0.01)
-                 startPosition = positionOfTheMouseOverLane - size;
+                return -1;
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_CENTER :
+            if(positionOfTheMouseOverLane - lenghtOfAdditional/2 >= 0.01)
+                return positionOfTheMouseOverLane - lenghtOfAdditional/2;
             else if(myEditorParameter->isForcePositionEnabled())
-                endPosition = 0.01;
+                return 0;
             else
-                return false;
-        }
-        break;
-        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_CENTER : {
-            // Set startPosition
-            if(positionOfTheMouseOverLane - size/2 >= 0.01)
-                startPosition = positionOfTheMouseOverLane - size/2;
-            else if(myEditorParameter->isForcePositionEnabled())
-                startPosition = 0;
-            else
-                return false;
-            // Set endPosition
-            if(positionOfTheMouseOverLane + size/2 <= lane->getLaneShapeLenght() - 0.01)
-                endPosition = positionOfTheMouseOverLane + size/2;
-            else if(myEditorParameter->isForcePositionEnabled())
-                endPosition = lane->getLaneShapeLenght() - 0.01;
-            else
-                return false;
-        }
-        break;
+                return -1;
     }
-    // check if the size of busStop/ChargingStation is enough (>= 1)
-    if(endPosition - startPosition >= 1)
-        return true;
-    else
-        return false;
+}
+
+
+SUMOReal 
+GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional) {
+    switch (myEditorParameter->getActualReferencePoint()) {
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT :
+            if(positionOfTheMouseOverLane + lenghtOfAdditional <= laneLenght - 0.01)
+                return positionOfTheMouseOverLane + lenghtOfAdditional;
+            else if(myEditorParameter->isForcePositionEnabled())
+                return laneLenght - 0.01;
+            else
+                return -1;
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_RIGHT :
+            return positionOfTheMouseOverLane;
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_CENTER :
+            if(positionOfTheMouseOverLane + lenghtOfAdditional/2 <= laneLenght - 0.01)
+                return positionOfTheMouseOverLane + lenghtOfAdditional/2;
+            else if(myEditorParameter->isForcePositionEnabled())
+                return laneLenght - 0.01;
+            else
+                return -1;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -490,26 +503,26 @@ GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, std::string value) {
-    showTextParameter(name, value);
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::string value) {
+    showTextParameter(toString(attr), value);
 }
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, int value) {
-    showIntParameter(name, value);
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, int value) {
+    showIntParameter(toString(attr), value);
 }
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, SUMOReal value) {
-    showFloatParameter(name, value);
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, SUMOReal value) {
+    showFloatParameter(toString(attr), value);
 }
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(const std::string& name, bool value) {
-    showBoolParameter(name, value);
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, bool value) {
+    showBoolParameter(toString(attr), value);
 }
 
 void 
@@ -545,13 +558,21 @@ GNEAdditionalFrame::additionalParameter::showTextParameter(const std::string& na
 
 void 
 GNEAdditionalFrame::additionalParameter::showIntParameter(const std::string& name, int value) {
-    // Finish
+    myLabel->setText(name.c_str());
+    myLabel->show();
+    myTextField->setText(toString(value).c_str());
+    myTextField->show();
+    show();
 }
 
 
 void 
 GNEAdditionalFrame::additionalParameter::showFloatParameter(const std::string& name, SUMOReal value) {
-    // Finish
+    myLabel->setText(name.c_str());
+    myLabel->show();
+    myTextField->setText(toString(value).c_str());
+    myTextField->show();
+    show();
 }
 
 
@@ -597,13 +618,13 @@ GNEAdditionalFrame::additionalParameterList::~additionalParameterList() {}
 
 
 void 
-GNEAdditionalFrame::additionalParameterList::showListParameter(const std::string& name, std::vector<std::string> value) {
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<std::string> value) {
     if(value.size() < myMaxNumberOfValuesInParameterList) {
         numberOfVisibleTextfields = (int)value.size();
         if(numberOfVisibleTextfields == 0)
             numberOfVisibleTextfields++;
         for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++) 
-            myLabels.at(i)->setText((name + " " + toString(i)).c_str());
+            myLabels.at(i)->setText((toString(attr) + ": " + toString(i)).c_str());
         for(int i = 0; i < numberOfVisibleTextfields; i++) {
             myLabels.at(i)->show();
             myTextFields.at(i)->show();
@@ -791,8 +812,10 @@ GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
     mySetLabel->setText(("Type of set: " + toString(type)).c_str());
     myList->clearItems();
     std::vector<GNEAdditionalSet*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionalSets(type);
-    for(std::vector<GNEAdditionalSet*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++)
+    for(std::vector<GNEAdditionalSet*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++) {
+        std::cout << "etiqueta: " << (*i)->getID() << std::endl;
         myList->appendItem((*i)->getID().c_str());
+    }
     show();
 }
 

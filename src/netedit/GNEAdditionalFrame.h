@@ -73,17 +73,17 @@ public:
         /// @brief destructor
         ~additionalParameter();
 
-        /// @brief show name and value of parameters of type string
-        void showParameter(const std::string& name, std::string value);
+        /// @brief show name and value of attribute of type string
+        void showParameter(SumoXMLAttr attr, std::string value);
 
         /// @brief show name and value of parameters of type int
-        void showParameter(const std::string& name, int value);
+        void showParameter(SumoXMLAttr attr, int value);
 
         /// @brief show name and value of parameters of type float/real
-        void showParameter(const std::string& name, SUMOReal value);
+        void showParameter(SumoXMLAttr attr, SUMOReal value);
 
         /// @brief show name and value of parameters of type bool
-        void showParameter(const std::string& name, bool value);
+        void showParameter(SumoXMLAttr attr, bool value);
 
         /// @brief hide all parameters
         void hideParameter();
@@ -133,7 +133,7 @@ public:
         ~additionalParameterList();
 
         /// @brief show name and value of parameters of type textField
-        void showListParameter(const std::string& name, std::vector<std::string> value);
+        void showListParameter(SumoXMLAttr attr, std::vector<std::string> value);
 
         /// @brief hide all parameters
         void hideParameter();
@@ -337,8 +337,11 @@ private:
     /// @brief set parameters depending of the additionalType selected
     void setParameters();
 
-    /// @brief obtain the position values of busStop and chargingStation over the lane (return false if isn't possible)
-    bool setPositions(GNELane *lane, SUMOReal &positionOfTheMouseOverLane, SUMOReal &startPosition, SUMOReal &endPosition);
+    /// @brief obtain the from position values of StoppingPlaces and E2 detector over the lane
+    SUMOReal setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
+
+    /// @brief obtain the to position values of StoppingPlaces and E2 detector over the lane
+    SUMOReal setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
 
     /// @brief the panel to hold all member widgets
     FXVerticalFrame* myContentFrame;
