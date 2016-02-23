@@ -227,6 +227,23 @@ protected:
     /// @brief compute lane change action from desired lateral distance
     static LaneChangeAction getLCA(int state, SUMOReal latDist);
 
+    /// @brief compute strategic lane change actions
+    int checkStrategicChange(int ret, 
+            int laneOffset,
+            const std::vector<MSVehicle::LaneQ>& preb,
+            const MSLeaderDistanceInfo& leaders,
+            const MSLeaderDistanceInfo& neighLeaders,
+            int currIdx,
+            int bestLaneOffset,
+            bool changeToBest,
+            bool left,
+            int lcaCounter,
+            SUMOReal currentDist,
+            SUMOReal neighDist,
+            SUMOReal laDist,
+            int roundaboutEdgesAhead
+            );
+
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial
     SUMOReal mySpeedGainProbabilityRight;
