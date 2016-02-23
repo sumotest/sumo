@@ -236,7 +236,6 @@ protected:
             int currIdx,
             int bestLaneOffset,
             bool changeToBest,
-            bool left,
             int lcaCounter,
             SUMOReal currentDist,
             SUMOReal neighDist,

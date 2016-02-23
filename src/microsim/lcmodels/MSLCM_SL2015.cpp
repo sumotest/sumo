@@ -967,7 +967,6 @@ MSLCM_SL2015::_wantsChangeSublane(
             currIdx,
             bestLaneOffset,
             changeToBest,
-            left,
             lcaCounter,
             currentDist,
             neighDist,
@@ -1045,19 +1044,6 @@ MSLCM_SL2015::_wantsChangeSublane(
         }
     }
 
-    // let's also regard the case where the vehicle is driving on a highway...
-    //  in this case, we do not want to get to the dead-end of an on-ramp
-    if (right) {
-        if (bestLaneOffset == 0 && myVehicle.getLane()->getSpeedLimit() > 80. / 3.6 && myLookAheadSpeed > SUMO_const_haltingSpeed) {
-            if (gDebugFlag2) {
-                std::cout << " veh=" << myVehicle.getID() << " does not want to get stranded on the on-ramp of a highway\n";
-            }
-            ret |= LCA_STAY | LCA_STRATEGIC;
-            if (!cancelRequest(ret)) {
-                return ret;
-            }
-        }
-    }
     // --------
 
     // -------- make place on current lane if blocking follower
@@ -1735,13 +1721,14 @@ MSLCM_SL2015::checkStrategicChange(int ret,
             int currIdx,
             int bestLaneOffset,
             bool changeToBest,
-            bool left,
             int lcaCounter,
             SUMOReal currentDist,
             SUMOReal neighDist,
             SUMOReal laDist,
             int roundaboutEdgesAhead
         ) {
+    const bool right = (laneOffset == -1);
+    const bool left = (laneOffset == 1);
     const MSVehicle::LaneQ& curr = preb[currIdx];
     const MSVehicle::LaneQ& neigh = preb[currIdx + laneOffset];
     const MSVehicle::LaneQ& best = preb[currIdx + bestLaneOffset];
@@ -1829,6 +1816,17 @@ MSLCM_SL2015::checkStrategicChange(int ret,
                 std::cout << " veh=" << myVehicle.getID() << " does not want to leave the bestLane (neighDist=" << neighDist << ")\n";
             }
             ret |= LCA_STAY | LCA_STRATEGIC;
+        } else if (right
+                && bestLaneOffset == 0 
+                && myVehicle.getLane()->getSpeedLimit() > 80. / 3.6 
+                && myLookAheadSpeed > SUMO_const_haltingSpeed   
+                ) {
+            // let's also regard the case where the vehicle is driving on a highway...
+            //  in this case, we do not want to get to the dead-end of an on-ramp
+            if (gDebugFlag2) {
+                std::cout << " veh=" << myVehicle.getID() << " does not want to get stranded on the on-ramp of a highway\n";
+            }
+            ret |= LCA_STAY | LCA_STRATEGIC;
         }
     }
     // check for overriding TraCI requests
@@ -1844,7 +1842,6 @@ MSLCM_SL2015::checkStrategicChange(int ret,
         std::cout << " reqAfterInfluence=" << ret << " ret=" << ret << "\n";
     }
     return ret;
-
 }
 
 
