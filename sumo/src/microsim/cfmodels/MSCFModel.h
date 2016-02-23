@@ -225,7 +225,8 @@ public:
     virtual SUMOReal maxNextSpeed(SUMOReal speed, const MSVehicle* const veh) const;
 
 
-    /** @brief Returns the distance the vehicle needs to halt including driver's reaction time
+    /** @brief Returns the distance the vehicle needs to halt including driver's reaction time,
+     * assuming that during the reaction time, the speed remains constant
      * @param[in] speed The vehicle's current speed
      * @return The distance needed to halt
      */
@@ -235,11 +236,16 @@ public:
 
 
     inline static SUMOReal brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal headwayTime) {
-        /* one possiblity to speed this up is to precalculate speedReduction * steps * (steps+1) / 2
-        for small values of steps (up to 10 maybe) and store them in an array */
-        const SUMOReal speedReduction = ACCEL2SPEED(decel);
-        const int steps = int(speed / speedReduction);
-        return SPEED2DIST(steps * speed - speedReduction * steps * (steps + 1) / 2) + speed * headwayTime;
+    	if(MSGlobals::gSemiImplicitEulerUpdate){
+			/* one possiblity to speed this up is to precalculate speedReduction * steps * (steps+1) / 2
+			for small values of steps (up to 10 maybe) and store them in an array */
+			const SUMOReal speedReduction = ACCEL2SPEED(decel);
+			const int steps = int(speed / speedReduction);
+			return SPEED2DIST(steps * speed - speedReduction * steps * (steps + 1) / 2) + speed * headwayTime;
+    	} else {
+    		SUMOReal t2s = decel/speed; // time to stop when braking
+    		return (t2s+headwayTime)*speed - t2s*t2s*decel/2.
+    	}
     }
 
 
