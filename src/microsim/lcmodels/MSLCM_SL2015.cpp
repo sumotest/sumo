@@ -1626,7 +1626,7 @@ int
 MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int laneOffset,
         const MSLeaderDistanceInfo& leaders,
         const MSLeaderDistanceInfo& followers,
-        const MSLeaderDistanceInfo& blockers,
+        const MSLeaderDistanceInfo& /*blockers */,
         const MSLeaderDistanceInfo& neighLeaders,
         const MSLeaderDistanceInfo& neighFollowers,
         const MSLeaderDistanceInfo& /* neighBlockers */,
