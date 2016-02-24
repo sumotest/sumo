@@ -139,7 +139,7 @@ public:
      * @return The place before the vehicle
      */
     SUMOReal getMinGapLat() const {
-        return myParameter.minGap;
+        return myParameter.minGapLat;
     }
 
 
