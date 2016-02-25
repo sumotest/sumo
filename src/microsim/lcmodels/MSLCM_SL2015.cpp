@@ -836,15 +836,14 @@ MSLCM_SL2015::_wantsChangeSublane(
     const SUMOReal latPos = myVehicle.getLateralPositionOnLane(); 
     SUMOReal leftLimit = halfCurrentLaneWidth - halfVehWidth - latPos; 
     SUMOReal rightLimit = -halfCurrentLaneWidth + halfVehWidth - latPos; 
+    SUMOReal latLaneDist = 0;  // minimum distance to move the vehicle fully onto the new lane 
     if (laneOffset == -1) { 
+        latLaneDist = rightLimit - myVehicle.getVehicleType().getWidth(); 
         rightLimit -= neighLane.getWidth(); 
     } else if (laneOffset == 1) { 
+        latLaneDist = leftLimit + myVehicle.getVehicleType().getWidth(); 
         leftLimit += neighLane.getWidth(); 
     } 
-    const SUMOReal latLaneDist = MAX2(rightLimit, MIN2(leftLimit, laneOffset * SUMOReal(0.5) * (myVehicle.getLane()->getWidth() + neighLane.getWidth())));
-
-    /// XXX do not simlpy use latDist = latLaneDist for full-lane changes but rather take blocking and preferred alignment into account as well
-
     // VARIANT_5 (disableAMBACKBLOCKER1)
     /*
     if (leader.first != 0
