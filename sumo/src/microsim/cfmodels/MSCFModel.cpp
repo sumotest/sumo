@@ -258,11 +258,12 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	// Such a negative return value gives responsibility to the caller to interpret it
 	// correctly, e.g. process a stop in the middle of a time step.
 	SUMOReal b = myDecel;
-	SUMOReal D = pow((DELTA_T + 2*myHeadwayTime)*b, 2)/4 + 2*b*g - v*DELTA_T*b;
+	SUMOReal dt = STEPS2TIME(DELTA_T);
+	SUMOReal D = pow((dt + 2*myHeadwayTime)*b, 2)/4 + 2*b*g - v*dt*b;
 	if(D < 0){
 		return v - ACCEL2SPEED(b);
 	} else {
-		return -(DELTA_T + 2*myHeadwayTime)*b/2 + sqrt(D);
+		return -(dt/2 + myHeadwayTime)*b + sqrt(D);
 	}
 }
 

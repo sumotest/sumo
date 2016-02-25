@@ -1031,7 +1031,13 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
     }
 #endif
 
-    const SUMOReal dist = SPEED2DIST((myState.mySpeed + maxV)/2) + cfModel.brakeGap(maxV); // distance covered after max acceleration in this step and then constant deceleration after reaction time
+    SUMOReal dist;
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        SUMOReal dist = SPEED2DIST(maxV) + cfModel.brakeGap(maxV);
+    } else {
+        // distance covered after max acceleration in this step and then constant deceleration after reaction time
+        SUMOReal dist = SPEED2DIST((myState.mySpeed + maxV)/2) + cfModel.brakeGap(maxV);
+    }
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation();
     assert(bestLaneConts.size() > 0);
 #ifdef HAVE_INTERNAL_LANES
@@ -1253,7 +1259,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
         seen += lane->getLength();
         leaderInfo = lane->getLastVehicleInformation();
         leaderInfo.second = leaderInfo.second + seen - lane->getLength() - getVehicleType().getMinGap();
-        vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
+        vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(lane->getLength(), v, cfModel.getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
 
@@ -1452,16 +1458,22 @@ MSVehicle::executeMove() {
     // The corresponding call should be something like:
     // myAcceleration = getCarFollowModel().getAcceleration(this, vSafe)
     myAcceleration = SPEED2ACCEL(vNext - myState.mySpeed);
-    myState.mySpeed += ACCEL2SPEED(myAcceleration);
-
     SUMOReal deltaPos;
     if(MSGlobals::gSemiImplicitEulerUpdate){
     	// apply implicit Euler positional update
     	deltaPos = SPEED2DIST(vNext);
     }else{
     	// apply ballistic update
-    	deltaPos = SPEED2DIST(myState.mySpeed + 0.5*ACCEL2SPEED(myAcceleration));
+    	if(vNext >= 0){
+    		// assume constant acceleration during this time step
+    		deltaPos = SPEED2DIST(myState.mySpeed + 0.5*ACCEL2SPEED(myAcceleration));
+    	} else {
+    		// negative vNext indicates a stop within the middle of time step
+    		deltaPos = 0.5*myState.mySpeed*myState.mySpeed/myAcceleration;
+    	}
     }
+    myState.mySpeed = MAX2(vNext,0.);
+
 
 #ifndef NO_TRACI
     if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
