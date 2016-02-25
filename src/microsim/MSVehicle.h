@@ -469,6 +469,8 @@ public:
         MSLane* lane;
         /// @brief The overall length which may be driven when using this lane without a lane change
         SUMOReal length;
+        /// @brief The length which may be driven on this lane
+        SUMOReal currentLength;
         /// @brief The overall vehicle sum on consecutive lanes which can be passed without a lane change
         SUMOReal occupation;
         /// @brief As occupation, but without the first lane
@@ -854,6 +856,10 @@ public:
     /// @}
 
 
+    /// @brief whether the vehicle may safely move to the given lane with regard to upcoming zipper links
+    bool unsafeZipperLinkAhead(const MSLane* lane) const;
+
+
 #ifndef NO_TRACI
     /** @brief Returns the uninfluenced velocity
      *
@@ -1116,6 +1122,9 @@ public:
     /// @brief compute safe speed for following the given leader
     SUMOReal getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                                 const SUMOReal seen, const MSLane* const lane, SUMOReal distToCrossing) const;
+
+    /// @brief get a numerical value for the priority of the  upcoming link
+    static int nextLinkPriority(const std::vector<MSLane*>& conts); 
 
 #endif
 
