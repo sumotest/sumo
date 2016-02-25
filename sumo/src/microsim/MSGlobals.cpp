@@ -60,5 +60,7 @@ bool MSGlobals::gMesoLimitedJunctionControl;
 bool MSGlobals::gMesoOvertaking;
 MELoop* MSGlobals::gMesoNet;
 
+bool MSGlobals::gSemiImplicitEulerUpdate = true; // for testing (branch ticket 860)
+
 /****************************************************************************/
 

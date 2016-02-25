@@ -57,6 +57,7 @@ class MSLane;
  * It provides methods to compute a vehicles velocity for a simulation step.
  */
 class MSCFModel {
+
 public:
 
     class VehicleVariables {
@@ -207,6 +208,7 @@ public:
 
 
 
+
     /// @name Currently fixed methods
     /// @{
 
@@ -234,39 +236,9 @@ public:
         return brakeGap(speed, myDecel, myHeadwayTime);
     }
 
+    static SUMOReal brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal headwayTime);
 
-    inline static SUMOReal brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal headwayTime) {
-    	if(MSGlobals::gSemiImplicitEulerUpdate){
-			/* one possiblity to speed this up is to precalculate speedReduction * steps * (steps+1) / 2
-			for small values of steps (up to 10 maybe) and store them in an array */
-			const SUMOReal speedReduction = ACCEL2SPEED(decel);
-			const int steps = int(speed / speedReduction);
-			return SPEED2DIST(steps * speed - speedReduction * steps * (steps + 1) / 2) + speed * headwayTime;
-    	} else {
-    		SUMOReal t2s = decel/speed; // time to stop when braking
-    		return (t2s+headwayTime)*speed - t2s*t2s*decel/2.
-    	}
-    }
-
-
-    inline static SUMOReal freeSpeed(const SUMOReal decel, const SUMOReal seen, const SUMOReal maxSpeed, const bool onInsertion) {
-        // adapt speed to succeeding lane, no reaction time is involved
-        // when breaking for y steps the following distance g is covered
-        // (drive with v in the final step)
-        // g = (y^2 + y) * 0.5 * b + y * v
-        // y = ((((sqrt((b + 2.0*v)*(b + 2.0*v) + 8.0*b*g)) - b)*0.5 - v)/b)
-        const SUMOReal v = SPEED2DIST(maxSpeed);
-        if (seen < v) {
-            return maxSpeed;
-        }
-        const SUMOReal b = ACCEL2DIST(decel);
-        const SUMOReal y = MAX2(0.0, ((sqrt((b + 2.0 * v) * (b + 2.0 * v) + 8.0 * b * seen) - b) * 0.5 - v) / b);
-        const SUMOReal yFull = floor(y);
-        const SUMOReal exactGap = (yFull * yFull + yFull) * 0.5 * b + yFull * v + (y > yFull ? v : 0.0);
-        const SUMOReal fullSpeedGain = (yFull + (onInsertion ? 1. : 0.)) * ACCEL2SPEED(decel);
-        return DIST2SPEED(MAX2((SUMOReal)0.0, seen - exactGap) / (yFull + 1)) + fullSpeedGain + maxSpeed;
-    }
-
+    static SUMOReal freeSpeed(const SUMOReal decel, const SUMOReal dist, const SUMOReal maxSpeed, const bool onInsertion);
 
     /** @brief Returns the minimum gap to reserve if the leader is braking at maximum
       * @param[in] speed EGO's speed
@@ -281,7 +253,6 @@ public:
         return MAX2((SUMOReal) 0, brakeGap(speed, followDecel, myHeadwayTime) - brakeGap(leaderSpeed, leaderMaxDecel, 0));
     }
 
-
     /** @brief Returns the velocity after maximum deceleration
      * @param[in] v The velocity
      * @return The velocity after maximum deceleration
@@ -291,6 +262,34 @@ public:
     }
     /// @}
 
+    /** @brief Computes the minimal time needed to cover a distance given the desired speed at arrival.
+     * @param[in] dist Distance to be covered
+     * @param[in] currentSpeed Actual speed of vehicle
+     * @param[in] arrivalSpeed Desired speed at arrival
+     */
+    SUMOReal getMinimalArrivalTime(SUMOReal dist, SUMOReal currentSpeed, SUMOReal arrivalSpeed) const;
+
+
+    /** @brief Computes the minimal possible arrival speed after covering a given distance
+     * @param[in] dist Distance to be covered
+     * @param[in] currentSpeed Actual speed of vehicle
+     */
+    SUMOReal getMinimalArrivalSpeed(SUMOReal dist, SUMOReal currentSpeed) const;
+
+    /** @brief Computes the minimal possible arrival speed after covering a given distance for Euler update
+     * @param[in] dist Distance to be covered
+     * @param[in] currentSpeed Actual speed of vehicle
+     */
+    SUMOReal getMinimalArrivalSpeedEuler(SUMOReal dist, SUMOReal currentSpeed) const;
+
+    /* @brief estimate speed while accelerating for the given distance
+     * @param[in] dist The distance during which accelerating takes place
+     * @param[in] v The initial speed
+     * @param[in] accel The acceleration
+     * XXX affected by ticket #860 (the formula is invalid for the Euler position update rule)
+     * XXX (Leo) Migrated estimateSpeedAfterDistance() to MSCFModel from MSVehicle as Jakob suggested (removed inline property, because myType is fw-declared)
+     */
+    SUMOReal estimateSpeedAfterDistance(const SUMOReal dist, const SUMOReal v, const SUMOReal accel) const;
 
     /// @name Setter methods
     /// @{
@@ -330,18 +329,38 @@ public:
 protected:
     /** @brief Returns the maximum safe velocity for following the given leader
      * @param[in] gap2pred The (netto) distance to the LEADER
+     * @param[in] egoSpeed The FOLLOWERS's speed
      * @param[in] predSpeed The LEADER's speed
      * @param[in] predMaxDecel The LEADER's maximum deceleration
      * @return the safe velocity
      */
-    SUMOReal maximumSafeFollowSpeed(SUMOReal gap, SUMOReal predSpeed, SUMOReal predMaxDecel) const;
+    SUMOReal maximumSafeFollowSpeed(SUMOReal gap,  SUMOReal egoSpeed, SUMOReal predSpeed, SUMOReal predMaxDecel) const;
 
 
-    /** @brief Returns the maximum velocity for stopping within gap
-     * This depends stronlgy on the position update model
+    /** @brief Returns the maximum next velocity for stopping within gap
+     * @param[in] gap The (netto) distance to the desired stopping point
+     * @param[in] currentSpeed The current speed of the ego vehicle
+     */
+    SUMOReal maximumSafeStopSpeed(SUMOReal gap, SUMOReal currentSpeed) const;
+
+
+    /** @brief Returns the maximum next velocity for stopping within gap
+     * when using the semi-implicit Euler update
      * @param[in] gap The (netto) distance to the LEADER
      */
-    SUMOReal maximumSafeStopSpeed(SUMOReal gap) const;
+    SUMOReal maximumSafeStopSpeedEuler(SUMOReal gap) const;
+
+
+    /** @brief Returns the maximum next velocity for stopping within gap
+     * when using the ballistic positional update.
+     * This takes into account the driver's reaction time.
+     * @param[in] gap The (netto) distance to the desired stopping point
+     * @param[in] currentSpeed The current speed of the ego vehicle
+     * @return the safe velocity (to be attained at the end of the following time step) that assures the possibility of stopping within gap.
+     * If a negative value is returned, the required stop has to take place before the end of the time step.
+     */
+    SUMOReal maximumSafeStopSpeedBallistic(SUMOReal gap, SUMOReal currentSpeed) const;
+
 
 protected:
     /// @brief The type to which this model definition belongs to
@@ -355,6 +374,7 @@ protected:
 
     /// @brief The driver's desired time headway (aka reaction time tau) [s]
     SUMOReal myHeadwayTime;
+
 };
 
 

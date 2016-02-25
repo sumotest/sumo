@@ -1292,19 +1292,7 @@ protected:
         // l=linkLength, a=accel, t=continuousTime, v=vLeave
         // l=v*t + 0.5*a*t^2, solve for t and multiply with a, then add v
         return MIN2(link->getViaLaneOrLane()->getVehicleMaxSpeed(this),
-                    estimateSpeedAfterDistance(link->getLength(), vLinkPass, getVehicleType().getCarFollowModel().getMaxAccel()));
-    }
-
-    /* @brief estimate speed while accelerating for the given distance
-     * @param[in] dist The distance during which accelerating takes place
-     * @param[in] v The initial speed
-     * @param[in] accel The acceleration
-     * XXX affected by ticket #860 (the formula is invalid for the current position update rule)
-     */
-    inline SUMOReal estimateSpeedAfterDistance(const SUMOReal dist, const SUMOReal v, const SUMOReal accel) const {
-        // dist=v*t + 0.5*accel*t^2, solve for t and multiply with accel, then add v
-        return MIN2(getVehicleType().getMaxSpeed(),
-                    (SUMOReal)sqrt(2 * dist * accel + v * v));
+                    getCarFollowModel().estimateSpeedAfterDistance(link->getLength(), vLinkPass, getVehicleType().getCarFollowModel().getMaxAccel()));
     }
 
 

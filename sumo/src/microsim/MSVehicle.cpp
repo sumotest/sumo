@@ -1022,7 +1022,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
     const SUMOReal vehicleLength = getVehicleType().getLength();
     const SUMOReal maxV = cfModel.maxNextSpeed(myState.mySpeed, this);
     SUMOReal laneMaxV = myLane->getVehicleMaxSpeed(this);
-    // vBeg is the initial maximum velocity of this vehicle in this step
+    // v is the initial maximum velocity of this vehicle in this step
     SUMOReal v = MIN2(maxV, laneMaxV);
 #ifndef NO_TRACI
     if (myInfluencer != 0) {
@@ -1031,7 +1031,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
     }
 #endif
 
-    const SUMOReal dist = SPEED2DIST(maxV) + cfModel.brakeGap(maxV);
+    const SUMOReal dist = SPEED2DIST((myState.mySpeed + maxV)/2) + cfModel.brakeGap(maxV); // distance covered after max acceleration in this step and then constant deceleration after reaction time
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation();
     assert(bestLaneConts.size() > 0);
 #ifdef HAVE_INTERNAL_LANES
@@ -1041,7 +1041,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
 #endif
     SUMOReal seen = myLane->getLength() - myState.myPos; // the distance already "seen"; in the following always up to the end of the current "lane"
     SUMOReal seenNonInternal = 0;
-    SUMOReal vLinkPass = MIN2(estimateSpeedAfterDistance(seen, v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
+    SUMOReal vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(seen, v, cfModel.getMaxAccel()), laneMaxV); // upper bound
     unsigned int view = 0;
     DriveProcessItem* lastLink = 0;
     bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
@@ -1117,7 +1117,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
                                  (*link)->getState() == LINKSTATE_TL_YELLOW_MINOR;
         // We distinguish 3 cases when determining the point at which a vehicle stops:
         // - links that require stopping: here the vehicle needs to stop close to the stop line
-        //   to ensure it gets onto the junction in the next step. Othwise the vehicle would 'forget'
+        //   to ensure it gets onto the junction in the next step. Otherwise the vehicle would 'forget'
         //   that it already stopped and need to stop again. This is necessary pending implementation of #999
         // - red/yellow light: here the vehicle 'knows' that it will have priority eventually and does not need to stop on a precise spot
         // - other types of minor links: the vehicle needs to stop as close to the junction as necessary
@@ -1149,7 +1149,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
         bool setRequest = (v > 0 && !abortRequestAfterMinor) || (leavingCurrentIntersection);
 
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
-        const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed) - myState.mySpeed * cfModel.getHeadwayTime();
+        const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed, cfModel.getMaxDecel(),0.);
         if (yellowOrRed && seen >= brakeDist) {
             // the vehicle is able to brake in front of a yellow/red traffic light
             lfLinks.push_back(DriveProcessItem(*link, vLinkWait, vLinkWait, false, t + TIME2STEPS(seen / MAX2(vLinkWait, NUMERICAL_EPS)), vLinkWait, 0, 0, seen));
@@ -1193,40 +1193,35 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
         // vehicles should decelerate when approaching a minor link
         // - unless they are close enough to have clear visibility and may start to accelerate again
         // - and unless they are so close that stopping is impossible (i.e. when a green light turns to yellow when close to the junction)
-        if (!(*link)->havePriority() && stopDist > cfModel.getMaxDecel() && brakeDist < seen) {
+        if (!(*link)->havePriority() && stopDist > cfModel.getMaxDecel() && brakeDist < seen) {   // XXX: (Leo) the middle condition is dependent on the time step (seems to assume DELTA_T=1sec., related to #2123)...
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
-            arrivalSpeed = MIN2(vLinkPass, cfModel.getMaxDecel() + cfModel.getMaxAccel());
+            arrivalSpeed = MIN2(vLinkPass, cfModel.getMaxDecel() + cfModel.getMaxAccel());        // XXX: (Leo) a speed as the sum of two accelerations??? (similarly related to #2123)
             slowedDownForMinor = true;
         }
-        // @note intuitively it would make sense to compare arrivalSpeed with getSpeed() instead of v
-        // however, due to the current position update rule (ticket #860) the vehicle moves with v in this step
-        const SUMOReal accel = (arrivalSpeed >= v) ? cfModel.getMaxAccel() : -cfModel.getMaxDecel();
-        const SUMOReal accelTime = (arrivalSpeed - v) / accel;
-        const SUMOReal accelWay = accelTime * (arrivalSpeed + v) * 0.5;
-        const SUMOReal nonAccelWay = MAX2(SUMOReal(0), seen - accelWay);
-        // will either drive as fast as possible and decelerate as late as possible
-        // or accelerate as fast as possible and then hold that speed
-        const SUMOReal nonAccelSpeed = MAX3(v, arrivalSpeed, SUMO_const_haltingSpeed);
-        // subtract DELTA_T because t is the time at the end of this step and the movement is not carried out yet
-        const SUMOTime arrivalTime = t - DELTA_T + TIME2STEPS(accelTime + nonAccelWay / nonAccelSpeed);
 
-        // compute speed, time if vehicle starts braking now
+        SUMOTime arrivalTime;
+        if(MSGlobals::gSemiImplicitEulerUpdate){
+            // @note intuitively it would make sense to compare arrivalSpeed with getSpeed() instead of v
+            // however, due to the current position update rule (ticket #860) the vehicle moves with v in this step
+            // subtract DELTA_T because t is the time at the end of this step and the movement is not carried out yet
+        	arrivalTime = t - DELTA_T + cfModel.getMinimalArrivalTime(seen, v, arrivalSpeed);
+        } else {
+        	arrivalTime = t - DELTA_T + cfModel.getMinimalArrivalTime(seen, myState.mySpeed, arrivalSpeed);
+        }
+
+        // compute arrival speed and arrival time if vehicle starts braking now
         // if stopping is possible, arrivalTime can be arbitrarily large. A small value keeps fractional times (impatience) meaningful
         SUMOReal arrivalSpeedBraking = 0;
         SUMOTime arrivalTimeBraking = arrivalTime + TIME2STEPS(30);
         if (seen < cfModel.brakeGap(v)) {
             // vehicle cannot come to a complete stop in time
-            // Because we use a continuous formula for computiing the possible slow-down
-            // we need to handle the mismatch with the discrete dynamics
-            if (seen < v) {
-                arrivalSpeedBraking = arrivalSpeed; // no time left for braking after this step
-            } else if (2 * (seen - v * cfModel.getHeadwayTime()) * -cfModel.getMaxDecel() + v * v >= 0) {
-                arrivalSpeedBraking = estimateSpeedAfterDistance(seen - v * cfModel.getHeadwayTime(), v, -cfModel.getMaxDecel());
-            } else {
-                arrivalSpeedBraking = cfModel.getMaxDecel();
-            }
-            // due to discrecte/continuous mismatch we have to ensure that braking actually helps
-            arrivalSpeedBraking = MIN2(arrivalSpeedBraking, arrivalSpeed);
+        	if(MSGlobals::gSemiImplicitEulerUpdate){
+				arrivalSpeedBraking = cfModel.getMinimalArrivalSpeedEuler(seen, v);
+				// due to discrete/continuous mismatch (when using Euler update) we have to ensure that braking actually helps
+				arrivalSpeedBraking = MIN2(arrivalSpeedBraking, arrivalSpeed);
+        	} else {
+            	arrivalSpeedBraking = cfModel.getMinimalArrivalSpeed(seen, myState.mySpeed);
+        	}
             arrivalTimeBraking = MAX2(arrivalTime, t + TIME2STEPS(seen / ((v + arrivalSpeedBraking) * 0.5)));
         }
         lfLinks.push_back(DriveProcessItem(*link, v, vLinkWait, setRequest,
@@ -1258,7 +1253,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
         seen += lane->getLength();
         leaderInfo = lane->getLastVehicleInformation();
         leaderInfo.second = leaderInfo.second + seen - lane->getLength() - getVehicleType().getMinGap();
-        vLinkPass = MIN2(estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
+        vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
 
@@ -1327,8 +1322,8 @@ MSVehicle::executeMove() {
             const LinkState ls = link->getState();
             // vehicles should brake when running onto a yellow light if the distance allows to halt in front
             const bool yellow = ls == LINKSTATE_TL_YELLOW_MAJOR || ls == LINKSTATE_TL_YELLOW_MINOR;
-            const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed) - getCarFollowModel().getHeadwayTime() * myState.mySpeed;
-            if (yellow && ((*i).myDistance > brakeGap || myState.mySpeed < ACCEL2SPEED(getCarFollowModel().getMaxDecel()))) {
+            const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed, getCarFollowModel().getMaxDecel(), 0.);
+            if (yellow && ((*i).myDistance > brakeGap || MSGlobals::gSemiImplicitEulerUpdate && myState.mySpeed < ACCEL2SPEED(getCarFollowModel().getMaxDecel()))) {
                 vSafe = (*i).myVLinkWait;
                 myHaveToWaitOnNextLink = true;
                 link->removeApproaching(this);
@@ -1348,7 +1343,7 @@ MSVehicle::executeMove() {
                                              ls == LINKSTATE_ZIPPER ? &collectFoes : 0);
             // vehicles should decelerate when approaching a minor link
             if (opened && !influencerPrio && !link->havePriority() && !link->lastWasContMajor() && !link->isCont()) {
-                if ((*i).myDistance > getCarFollowModel().getMaxDecel()) {
+                if ((*i).myDistance > getCarFollowModel().getMaxDecel()) { // I think this is related to #2123 (Leo)
                     vSafe = (*i).myVLinkWait;
                     myHaveToWaitOnNextLink = true;
                     if (ls == LINKSTATE_EQUAL) {
@@ -1749,7 +1744,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
         // abort requests
         if (removalBegin != -1 && !(removalBegin == 0 && myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL)) {
             while (removalBegin < (int)(lfLinks.size())) {
-                const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed) - getCarFollowModel().getHeadwayTime() * myState.mySpeed;
+                const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed,getCarFollowModel().getMaxDecel(), 0.);
                 lfLinks[removalBegin].myVLinkPass = lfLinks[removalBegin].myVLinkWait;
                 if (lfLinks[removalBegin].myDistance >= brakeGap || (lfLinks[removalBegin].myDistance > 0 && myState.mySpeed < ACCEL2SPEED(getCarFollowModel().getMaxDecel()))) {
                     lfLinks[removalBegin].mySetRequest = false;
