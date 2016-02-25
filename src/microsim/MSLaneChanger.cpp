@@ -196,8 +196,10 @@ MSLaneChanger::mayChange(int direction) const {
     }
     if (direction == -1) {
         return (myCandi != myChanger.begin()    && (myCandi - 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass()));
-    } else {
+    } else if (direction == 1) {
         return (myCandi + 1) != myChanger.end() && (myCandi + 1)->lane->allowsVehicleClass(veh(myCandi)->getVehicleType().getVehicleClass()); 
+    } else {
+        return false;
     }
 }
 
