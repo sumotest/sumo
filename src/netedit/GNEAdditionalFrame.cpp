@@ -397,27 +397,27 @@ GNEAdditionalFrame::setParameters() {
             attrName = SUMO_ATTR_LENGTH;
         // Switch depending of the parameter's type
         switch(GNEAttributeCarrier::getDefaultValueType(myActualAdditionalType, i->first)) {
-            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_int:
+            case GNEAttributeCarrier::defaultAttrType_int:
                 myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<int>(myActualAdditionalType, i->first));
                 counterParameter++;
                 break;
-            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_float:
+            case GNEAttributeCarrier::defaultAttrType_float:
                 myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<SUMOReal>(myActualAdditionalType, i->first));
                 counterParameter++;
                 break;
-            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_string:
+            case GNEAttributeCarrier::defaultAttrType_string:
                 myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<std::string>(myActualAdditionalType, i->first));
                 counterParameter++;
                 break;
-            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_bool:
+            case GNEAttributeCarrier::defaultAttrType_bool:
                 myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<bool>(myActualAdditionalType, i->first));
                 counterParameter++;
                 break;
-            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_stringList:
+            case GNEAttributeCarrier::defaultAttrType_stringList:
                 myVectorOfadditionalParameterList.at(counterParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(myActualAdditionalType, i->first));
                 counterParameterList++;
                 break;
-            case GNEAttributeCarrier::defaultAttrType::defaultAttrType_NULL:
+            case GNEAttributeCarrier::defaultAttrType_NULL:
                 break;
         }
     }
