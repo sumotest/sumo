@@ -166,122 +166,122 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
         std::vector<std::pair<SumoXMLAttr, std::string> >& attrs = _allowedAttributes[tag];
         switch (tag) {
             case SUMO_TAG_EDGE:
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FROM, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TO, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPEED, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PRIORITY, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_NUMLANES, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TYPE, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ALLOW, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_DISALLOW, "#"));
-                //attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PREFER, ));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SHAPE, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LENGTH, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPREADTYPE, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_NAME, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDOFFSET, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_FROM, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_TO, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_SPEED, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_PRIORITY, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_NUMLANES, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_TYPE, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ALLOW, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_DISALLOW, "#"));
+                //attrs.push_back(std::make_pair(SUMO_ATTR_PREFER, ));
+                attrs.push_back(std::make_pair(SUMO_ATTR_SHAPE, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_LENGTH, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_SPREADTYPE, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_NAME, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_WIDTH, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ENDOFFSET, "#"));
                 break;
             case SUMO_TAG_JUNCTION:
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));
                 /* virtual attribute from the combination of the actuall
                  * attributes SUMO_ATTR_X, SUMO_ATTR_Y */
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TYPE, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SHAPE, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_RADIUS, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_KEEP_CLEAR, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_POSITION, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_TYPE, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_SHAPE, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_RADIUS, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_KEEP_CLEAR, "#"));
                 break;
             case SUMO_TAG_LANE:
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPEED, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ALLOW, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_DISALLOW, "#"));
-                //attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PREFER, ));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDOFFSET, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_INDEX, "#")); // read-only attribute
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_SPEED, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ALLOW, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_DISALLOW, "#"));
+                //attrs.push_back(std::make_pair(SUMO_ATTR_PREFER, ));
+                attrs.push_back(std::make_pair(SUMO_ATTR_WIDTH, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ENDOFFSET, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_INDEX, "#")); // read-only attribute
                 break;
             case SUMO_TAG_POI:
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));
                 /* virtual attribute from the combination of the actuall
                  * attributes SUMO_ATTR_X, SUMO_ATTR_Y */
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TYPE, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_POSITION, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_TYPE, "#"));
                 break;
             case SUMO_TAG_CROSSING:
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PRIORITY, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, "#"));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_PRIORITY, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_WIDTH, "#"));
+                attrs.push_back(std::make_pair(SUMO_ATTR_EDGES, "#"));
                 break;
             case SUMO_TAG_BUS_STOP:                                                                                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, "#"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "f10"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LINES, "l"));                         // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_STARTPOS, "#"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ENDPOS, "f10"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LINES, "l"));                         // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_CHARGING_STATION:                                                                         // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, "#"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "f10"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGINGPOWER, "i22000"));            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EFFICIENCY, "f0.95"));                // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGEINTRANSIT, "bfalse"));          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGEDELAY, "i0"));                  // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_STARTPOS, "#"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ENDPOS, "f10"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_CHARGINGPOWER, "i22000"));            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_EFFICIENCY, "f0.95"));                // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_CHARGEINTRANSIT, "bfalse"));          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_CHARGEDELAY, "i0"));                  // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_E1DETECTOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPLIT_VTYPE, "bfalse"));              // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_POSITION, "#"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_SPLIT_VTYPE, "bfalse"));              // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_E2DETECTOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));                     // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LENGTH, "f10"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CONT, "bfalse"));                     // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_TIME_THRESHOLD, "i1"));       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, "f1.39"));   // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_JAM_DIST_THRESHOLD, "f10"));          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_POSITION, "#"));                     // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LENGTH, "f10"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_CONT, "bfalse"));                     // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_HALTING_TIME_THRESHOLD, "i1"));       // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_HALTING_SPEED_THRESHOLD, "f1.39"));   // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_JAM_DIST_THRESHOLD, "f10"));          // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_E3DETECTOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_DET_ENTRY:                                                                                // PABLO #1916
             case SUMO_TAG_DET_EXIT:                                                                                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "#"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_POSITION, "#"));                      // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_VSS:                                                                                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANES, "#"));                         // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANES, "#"));                         // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_CALIBRATOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "f0"));                     // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ROUTEPROBE, "#"));                    // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OUTPUT, "s"));                        // PABLO #1916  
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_LANE, "#"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_POSITION, "f0"));                     // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FREQUENCY, "i100"));                  // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ROUTEPROBE, "#"));                    // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_OUTPUT, "s"));                        // PABLO #1916  
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_REROUTER:                                                                                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, "#"));                            // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, "#"));                         // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PROB, "f1"));                         // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OFF, "bfalse"));                      // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_ID, "#"));                            // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_EDGES, "#"));                         // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_FILE, "s"));                          // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_PROB, "f1"));                         // PABLO #1916
+                attrs.push_back(std::make_pair(SUMO_ATTR_OFF, "bfalse"));                      // PABLO #1916
                 break;                                                                                              // PABLO #1916
             default:
                 WRITE_WARNING("allowed attributes for tag '" + toString(tag) + "' not defined");
