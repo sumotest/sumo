@@ -254,7 +254,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	// v*dt*b - 2b*g >  (dt + 2*tau)^2*b^2/4 (is this a good interpretation?)
 	// In that case, we return the minimal possible next velocity ( == v-b*dt)
 	// Further, vn can become negative if v > 2g/d, but the discriminant is positive.
-	// This indicates a required stop within [t, t+dt], I think.
+	// This indicates a required stop within [t, t+dt]!
 	// Such a negative return value gives responsibility to the caller to interpret it
 	// correctly, e.g. process a stop in the middle of a time step.
 	SUMOReal b = myDecel;

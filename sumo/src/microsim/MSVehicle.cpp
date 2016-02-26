@@ -1370,7 +1370,8 @@ MSVehicle::executeMove() {
             // have waited; may pass if opened...
             if (opened) {
                 vSafe = (*i).myVLinkPass;
-                if (vSafe < getCarFollowModel().getMaxDecel() && vSafe <= (*i).myVLinkWait && vSafe < getCarFollowModel().maxNextSpeed(getSpeed(), this)) {
+                if (vSafe < getCarFollowModel().getMaxDecel() /* XXX comparing velocity and acceleration ?! (Leo)*/
+                		&& vSafe <= (*i).myVLinkWait && vSafe < getCarFollowModel().maxNextSpeed(getSpeed(), this)) {
                     // this vehicle is probably not gonna drive accross the next junction (heuristic)
                     myHaveToWaitOnNextLink = true;
                 }
@@ -1407,7 +1408,7 @@ MSVehicle::executeMove() {
     vSafe = MIN2(vSafe, vSafeZipper);
 
     // XXX braking due to lane-changing is not registered
-    bool braking = vSafe < getSpeed();
+    bool braking = vSafe + NUMERICAL_EPS < getSpeed();
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
 
@@ -1422,7 +1423,9 @@ MSVehicle::executeMove() {
     //            + toString(vSafe, 4) + ", moving at " + toString(vNext, 4) + " instead. time="
     //            + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
     //}
+
     vNext = MAX2(vNext, (SUMOReal) 0.);
+
 #ifndef NO_TRACI
     if (myInfluencer != 0) {
         if (myInfluencer->isVTDControlled()) {
