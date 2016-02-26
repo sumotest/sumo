@@ -103,7 +103,7 @@ GUIParameterTableWindow*
 GUIVehicle::getParameterWindow(GUIMainWindow& app,
                                GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 44);
+        new GUIParameterTableWindow(app, *this, 45);
     // add items
     ret->mkItem("lane [id]", false, myLane->getID());
     if (MSGlobals::gLaneChangeDuration > 0 || MSGlobals::gLateralResolution > 0) {
