@@ -193,6 +193,8 @@ protected:
     /// @brief decide in which direction to move in case both directions are desirable
     StateAndDist decideDirection(StateAndDist sd1, StateAndDist sd2) const;
 
+protected:
+
     /// @brief send a speed recommendation to the given vehicle
     void msg(const CLeaderDist& cld, SUMOReal speed, int state);
 
@@ -242,6 +244,16 @@ protected:
             SUMOReal laDist,
             int roundaboutEdgesAhead
             );
+
+    /// @brief check whether lateral gap requirements are met override the current maneuver if necessary
+    int keepLatGap(int state, 
+                const MSLeaderDistanceInfo& leaders,
+                const MSLeaderDistanceInfo& followers,
+                const MSLeaderDistanceInfo& neighLeaders,
+                const MSLeaderDistanceInfo& neighFollowers,
+                int laneOffset, 
+                SUMOReal& latDist, 
+                int& blocked) const;
 
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial

@@ -165,6 +165,9 @@ MSLCM_SL2015::wantsChangeSublane(
             neighLeaders, neighFollowers, neighBlockers,
             neighLane, preb, 
             lastBlocked, firstBlocked, latDist, blocked);
+
+    result = keepLatGap(result, leaders, followers, neighLeaders, neighFollowers, laneOffset, latDist, blocked);
+
     result |= getLCA(result, latDist);
 
     if (gDebugFlag2) {
@@ -1537,6 +1540,10 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
     const SUMOReal origLatDist = latDist;
     const SUMOReal maxDist = SPEED2DIST(myVehicle.getVehicleType().getMaxSpeedLat());
     latDist = MAX2(MIN2(latDist, maxDist), -maxDist);
+    // XXX aggressive drivers immediately start moving towards potential
+    // blockers and only check that the start of their maneuver (latDist) is safe. In
+    // contrast, cautious drivers need to check latDist and origLatDist to
+    // ensure that the maneuver can be finished without encroaching on other vehicles.
     myCanChangeFully = (latDist == origLatDist);
     if (gDebugFlag2) {
         std::cout << "    checkBlocking fully=" << myCanChangeFully << " latDist=" << latDist << " origLatDist=" << origLatDist << "\n";
@@ -1844,6 +1851,58 @@ MSLCM_SL2015::checkStrategicChange(int ret,
 }
 
 
+int
+MSLCM_SL2015::keepLatGap(int state, 
+        const MSLeaderDistanceInfo& leaders,
+        const MSLeaderDistanceInfo& followers,
+        const MSLeaderDistanceInfo& neighLeaders,
+        const MSLeaderDistanceInfo& neighFollowers,
+        int laneOffset, 
+        SUMOReal& latDist, 
+        int& blocked) const {
+
+    /* @notes
+     * vehicles may need to compromise between fulfilling lane change objectives
+     * (LCA_STRATEGIC, LCA_SPEED etc) and maintaining lateral gap. The minimum
+     * acceptable lateral gap depends on
+     * - the cultural context (China vs Europe)
+     * - the driver agressiveness (willingness to encroach on other vehicles to force them to move laterally as well)
+     *    - see @note in checkBlocking
+     * - the vehicle type (car vs motorcycle)
+     * - the current speed
+     * - the speed difference
+     * - the importance / urgency of the desired maneuver 
+     *
+     * the object of this method is to evaluate the above circumstances and
+     * either:
+     * - allow the current maneuver (state, latDist)
+     * - to override the current maneuver with a distance-keeping maneuver
+     * 
+     *
+     * laneChangeModel/driver parameters
+     * - bool pushy (willingness to encroach)
+     * - float minGap at 100km/h (to be interpolated for lower speeds (assume 0 at speed 0)
+     * - gapFactors (a factor for each of the change reasons
+     *
+     * further assumptions
+     * - the maximum of egoSpeed and deltaSpeed can be used when interpolating minGap
+     *
+     * currentMinGap =  minGap * min(1.0, max(v, abs(v - vOther)) / 100) * gapFactor[lc_reason]
+     *
+     * */
+
+    /// XXX to be made configurable
+    const SUMOReal gapFactor = ((state & LCA_STRATEGIC) != 0) ? 0.5: 1.0; 
+    const SUMOReal pushy = true;
+    const SUMOReal minGap = myVehicle.getVehicleType().getMinGapLat();
+
+    /// XXX todo
+    // - compute lateral gap after executing the current maneuver (may be LCA_NONE)
+    // - decide if override is needed
+    //   - compute alternative maneuver to improve lateralGap 
+    //   - update blocking (checkBlocking)
+    return state;
+}
 
 
 /****************************************************************************/
