@@ -103,18 +103,6 @@ public:
         
         /// @brief menuCheck to enable/disable the value of parameter
         FXMenuCheck *myMenuCheck;
-
-        /// @brief show name and value of parameters of type string
-        void showTextParameter(const std::string& name, std::string value);
-        
-        /// @brief show name and value of parameters of type int
-        void showIntParameter(const std::string& name, int value);
-
-        /// @brief show name and value of parameters of type float
-        void showFloatParameter(const std::string& name, SUMOReal value);
-
-        /// @brief show name and value of parameters of type bool
-        void showBoolParameter(const std::string& name, bool value);
     };
 
     // ===========================================================================
@@ -132,7 +120,16 @@ public:
         /// @brief destructor
         ~additionalParameterList();
 
-        /// @brief show name and value of parameters of type textField
+        /// @brief show name and value of parameters of type int
+        void showListParameter(SumoXMLAttr attr, std::vector<int> value);
+
+        /// @brief show name and value of parameters of type float
+        void showListParameter(SumoXMLAttr attr, std::vector<SUMOReal> value);
+
+        /// @brief show name and value of parameters of type bool
+        void showListParameter(SumoXMLAttr attr, std::vector<bool> value);
+
+        /// @brief show name and value of parameters of type string
         void showListParameter(SumoXMLAttr attr, std::vector<std::string> value);
 
         /// @brief hide all parameters
@@ -196,8 +193,17 @@ public:
         /// @brief destructor
         ~editorParameter();
 
+        /// @brief show length field
+        void showLengthField();
+
+        /// @brief hide length field
+        void hideLengthField();
+
         /// @brief get actual reference point
         additionalReferencePoint getActualReferencePoint();
+
+        /// @brief get value of lenght
+        SUMOReal getLenght();
 
         /// @brief check if block is enabled
         bool isBlockEnabled();
@@ -230,6 +236,12 @@ public:
 
         /// @brief actual additional reference point selected in the match Box
         additionalReferencePoint myActualAdditionalReferencePoint;
+
+        /// @brief Label for lenght
+        FXLabel* myLengthLabel;
+
+        /// @brief textField for lenght
+        FXTextField* myLengthTextField;
 
         /// @brief checkBox for the option "force position"
         FXMenuCheck* myCheckForcePosition;
@@ -283,7 +295,7 @@ public:
         FXLabel *mySetLabel;
 
         /// @brief button for help
-        FXButton * helpAdditionalSet;
+        FXButton *helpAdditionalSet;
 
         /// @brief pointer to additional set 
         GNEAdditionalSet *myAdditionalSet;
@@ -334,8 +346,8 @@ protected:
     GNEAdditionalFrame() {}
 
 private:
-    /// @brief set parameters depending of the additionalType selected
-    void setParameters();
+    /// @brief set parameters depending of the new additionalType
+    void setParameters(SumoXMLTag actualAdditionalType);
 
     /// @brief obtain the from position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);

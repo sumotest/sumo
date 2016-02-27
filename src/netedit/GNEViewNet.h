@@ -176,6 +176,9 @@ public:
     /// @brief get the net object
     GNENet* getNet();
 
+    /// @brief get the undoList object  // PABLO #1916
+    GNEUndoList* getUndoList();         // PABLO #1916
+
     /// @brief get the current edit mode    // PABLO #1916
     EditMode getCurrentEditMode() const;    // PABLO #1916
 
@@ -212,9 +215,9 @@ public:
         return myTLSEditor;
     }
 
-    GNEAdditionalFrame* getAdditional() {    // PABLO #1916
-        return myAdditional;            // PABLO #1916
-    }                                   // PABLO #1916
+    GNEAdditionalFrame* getAdditional() {   // PABLO #1916
+        return myAdditional;                // PABLO #1916
+    }                                       // PABLO #1916
 
     bool changeAllPhases() const {
         return myChangeAllPhases->getCheck() != FALSE;

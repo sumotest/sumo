@@ -799,6 +799,12 @@ GNEViewNet::getNet() {  // PABLO #1916
 };                      // PABLO #1916
 
 
+GNEUndoList*                // PABLO #1916
+GNEViewNet::getUndoList() { // PABLO #1916
+    return myUndoList;      // PABLO #1916
+}                           // PABLO #1916
+
+
 EditMode                                    // PABLO #1916
 GNEViewNet::getCurrentEditMode() const {    // PABLO #1916
     return myEditMode;                      // PABLO #1916

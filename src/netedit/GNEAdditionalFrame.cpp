@@ -56,6 +56,11 @@
 #include "GNEDetectorE2.h"
 #include "GNEDetectorE3.h"
 
+
+
+
+#include "GNEAdditionalHandler.h"
+
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
@@ -140,16 +145,9 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTa
     myAdditionalSet = new GNEAdditionalFrame::additionalSet(myContentFrame, this, myViewNet);
 
     // Add options to myAdditionalMatchBox
-    myAdditionalMatchBox->appendItem("Bus stop");
-    myAdditionalMatchBox->appendItem("Charging station");
-    myAdditionalMatchBox->appendItem("Detector E1");
-    myAdditionalMatchBox->appendItem("Detector E2");
-    myAdditionalMatchBox->appendItem("Detector E3");
-    myAdditionalMatchBox->appendItem("Detector E3 Entry");
-    myAdditionalMatchBox->appendItem("Detector E3 Exit");
-    myAdditionalMatchBox->appendItem("Rerouters");
-    myAdditionalMatchBox->appendItem("Calibrators");
-    myAdditionalMatchBox->appendItem("VSpeed signals");
+    const std::vector<SumoXMLTag>& additionalTags = GNEAttributeCarrier::allowedAdditionalTags();
+    for(std::vector<SumoXMLTag>::const_iterator i = additionalTags.begin(); i != additionalTags.end(); i++)
+        myAdditionalMatchBox->appendItem(toString(*i).c_str());
 
     // Set visible items
     myAdditionalMatchBox->setNumVisible((int)myAdditionalMatchBox->getNumItems()); 
@@ -212,11 +210,16 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
                 // Get chargeInTransit
                 bool chargeInTransit = myVectorOfAdditionalParameter.at(4)->getBoolValue();
                 // Create and add a new chargingStation
+                
+                GNEAdditionalHandler::buildAdditional(myViewNet, this->myActualAdditionalType, std::map<SumoXMLAttr, std::string>());
+
+                /*
                 GNEChargingStation *chargingStation = new GNEChargingStation(additionalId, *lane, myViewNet, fromPosition, toPosition, chargingPower, chargingEfficiency, chargeInTransit, chargeDelay);
                 chargingStation->setBlocked(myEditorParameter->isBlockEnabled());
                 myUndoList->p_begin("add " + chargingStation->getDescription());
                 myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), chargingStation, true), true);
                 myUndoList->p_end();
+                */
                 return true;
             }
             case SUMO_TAG_E1DETECTOR: {
@@ -323,49 +326,17 @@ GNEAdditionalFrame::getHeaderFont() {
 
 long
 GNEAdditionalFrame::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
-    // Cast actual additional type
-    switch(myAdditionalMatchBox->getCurrentItem()) {
-        case 0:
-            myActualAdditionalType = SUMO_TAG_BUS_STOP;
-            break;
-        case 1:
-            myActualAdditionalType = SUMO_TAG_CHARGING_STATION;
-            break;
-        case 2:
-            myActualAdditionalType = SUMO_TAG_E1DETECTOR;
-            break;
-        case 3:
-            myActualAdditionalType = SUMO_TAG_E2DETECTOR;
-            break;
-        case 4:
-            myActualAdditionalType = SUMO_TAG_E3DETECTOR;
-            break;
-        case 5:
-            myActualAdditionalType = SUMO_TAG_DET_ENTRY;
-            break;
-        case 6:
-            myActualAdditionalType = SUMO_TAG_DET_EXIT;
-            break;
-        case 7:
-            myActualAdditionalType = SUMO_TAG_REROUTER;
-            break;
-        case 8:
-            myActualAdditionalType = SUMO_TAG_CALIBRATOR;
-            break;
-        case 9:
-            myActualAdditionalType = SUMO_TAG_VSS;
-            break;
-    }
-    // Set parameters
-    setParameters();
+    // set myActualAdditionalType
+    const std::vector<SumoXMLTag>& additionalTags = GNEAttributeCarrier::allowedAdditionalTags();
+    for(std::vector<SumoXMLTag>::const_iterator i = additionalTags.begin(); i != additionalTags.end(); i++)
+        if(toString(*i) == myAdditionalMatchBox->getText().text())
+            setParameters(*i);
     return 1;
 }
 
 
 void
 GNEAdditionalFrame::show() {
-    // Set parameters
-    setParameters();
     // Show Scroll window
     FXScrollWindow::show();
 }
@@ -379,60 +350,66 @@ GNEAdditionalFrame::hide() {
 
 
 void 
-GNEAdditionalFrame::setParameters() {
+GNEAdditionalFrame::setParameters(SumoXMLTag actualAdditionalType) {
+    // Set new actualAdditionalType
+    myActualAdditionalType = actualAdditionalType;
     // Hide all parameters boxes
     for(int i = 0; i < maxNumberOfParameters; i++)
         myVectorOfAdditionalParameter.at(i)->hideParameter();
     for(int i = 0; i < maxNumberOfListParameters; i++)
         myVectorOfadditionalParameterList.at(i)->hideParameter();
+    // Hide lenght field
+    myEditorParameter->hideLengthField();
     // Obtain attributes of actual myActualAdditionalType
     std::vector<std::pair <SumoXMLAttr, std::string> > attrs = GNEAttributeCarrier::allowedAttributes(myActualAdditionalType);
-    int counterParameter = 0;
-    int counterParameterList = 0;
+    // Declare indexes
+    int indexParameter = 0;
+    int indexParameterList = 0;
     // Iterate over attributes of myActualAdditionalType
     for(std::vector<std::pair <SumoXMLAttr, std::string> >::iterator i = attrs.begin(); i != attrs.end(); i++) {
         SumoXMLAttr attrName = i->first;
-        // Interpretation of attribute SUMO_ATTR_ENDPOS as SUMO_ATTR_LENGHT
-        if(attrName == SUMO_ATTR_ENDPOS)
-            attrName = SUMO_ATTR_LENGTH;
-        // Switch depending of the parameter's type
-        switch(GNEAttributeCarrier::getDefaultValueType(myActualAdditionalType, i->first)) {
-            case GNEAttributeCarrier::defaultAttrType_int:
-                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<int>(myActualAdditionalType, i->first));
-                counterParameter++;
-                break;
-            case GNEAttributeCarrier::defaultAttrType_float:
-                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<SUMOReal>(myActualAdditionalType, i->first));
-                counterParameter++;
-                break;
-            case GNEAttributeCarrier::defaultAttrType_string:
-                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<std::string>(myActualAdditionalType, i->first));
-                counterParameter++;
-                break;
-            case GNEAttributeCarrier::defaultAttrType_bool:
-                myVectorOfAdditionalParameter.at(counterParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<bool>(myActualAdditionalType, i->first));
-                counterParameter++;
-                break;
-            case GNEAttributeCarrier::defaultAttrType_stringList:
-                myVectorOfadditionalParameterList.at(counterParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(myActualAdditionalType, i->first));
-                counterParameterList++;
-                break;
-            case GNEAttributeCarrier::defaultAttrType_NULL:
-                break;
-        }
+        if(!GNEAttributeCarrier::isUnique(attrName)) {
+            if(GNEAttributeCarrier::isList(attrName)) {
+                // Check type of list    
+                if(GNEAttributeCarrier::isInt(attrName))
+                    myVectorOfadditionalParameterList.at(indexParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<int> >(myActualAdditionalType, i->first));
+                else if(GNEAttributeCarrier::isFloat(attrName))
+                    myVectorOfadditionalParameterList.at(indexParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<SUMOReal> >(myActualAdditionalType, i->first));
+                else if(GNEAttributeCarrier::isBool(attrName))
+                    myVectorOfadditionalParameterList.at(indexParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<bool> >(myActualAdditionalType, i->first));
+                else if(GNEAttributeCarrier::isString(attrName))
+                    myVectorOfadditionalParameterList.at(indexParameterList)->showListParameter(attrName, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(myActualAdditionalType, i->first));
+                // Update index 
+                indexParameterList++;
+            }
+            else if(GNEAttributeCarrier::isInt(attrName))
+                myVectorOfAdditionalParameter.at(indexParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<int>(myActualAdditionalType, i->first));
+            else if(GNEAttributeCarrier::isFloat(attrName))
+                myVectorOfAdditionalParameter.at(indexParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<SUMOReal>(myActualAdditionalType, i->first));
+            else if(GNEAttributeCarrier::isBool(attrName))
+                myVectorOfAdditionalParameter.at(indexParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<bool>(myActualAdditionalType, i->first));
+            else if(GNEAttributeCarrier::isString(attrName))
+                myVectorOfAdditionalParameter.at(indexParameter)->showParameter(attrName, GNEAttributeCarrier::getDefaultValue<std::string>(myActualAdditionalType, i->first));
+            else
+                WRITE_WARNING("Attribute '" + toString(attrName) + "' don't have a defined type. Check definition in GNEAttributeCarrier");
+            // Update index parameter
+            indexParameter++;
+        } else if(attrName == SUMO_ATTR_ENDPOS)
+            myEditorParameter->showLengthField();
     }
-    // Show box parameter if had parameters
-    if(!attrs.empty()) {
-        // show and Recalc groupBox
+        
+    // if there are parmeters, show and Recalc groupBox
+    if(indexParameter > 0 || indexParameterList > 0) {
         myGroupBoxForParameters->show();
         myGroupBoxForParameters->recalc();
-    } else
+    }
+    else
         myGroupBoxForParameters->hide();
-    // Hide hide list
-    if(myActualAdditionalType == SUMO_TAG_DET_ENTRY || myActualAdditionalType == SUMO_TAG_DET_EXIT) {
+
+    // Show set parameter if we're adding a detectorEntry
+    if(myActualAdditionalType == SUMO_TAG_DET_ENTRY || myActualAdditionalType == SUMO_TAG_DET_EXIT)
         myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
-        myAdditionalSet->show();
-    } else
+    else
         myAdditionalSet->hideList();
 }
 
@@ -504,25 +481,41 @@ GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::string value) {
-    showTextParameter(toString(attr), value);
+    myLabel->setText(toString(attr).c_str());
+    myLabel->show();
+    myTextField->setText(value.c_str());
+    myTextField->show();
+    show();
 }
 
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, int value) {
-    showIntParameter(toString(attr), value);
+    myLabel->setText(toString(attr).c_str());
+    myLabel->show();
+    myTextField->setText(toString(value).c_str());
+    myTextField->show();
+    show();
 }
 
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, SUMOReal value) {
-    showFloatParameter(toString(attr), value);
+    myLabel->setText(toString(attr).c_str());
+    myLabel->show();
+    myTextField->setText(toString(value).c_str());
+    myTextField->show();
+    show();
 }
 
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, bool value) {
-    showBoolParameter(toString(attr), value);
+    myLabel->setText(toString(attr).c_str());
+    myLabel->show();
+    myMenuCheck->setCheck(value);
+    myMenuCheck->show();
+    show();
 }
 
 void 
@@ -543,46 +536,6 @@ GNEAdditionalFrame::additionalParameter::getTextValue() {
 bool
 GNEAdditionalFrame::additionalParameter::getBoolValue() {
     return (myMenuCheck->getCheck() == 1)? true : false;
-}
-
-
-void 
-GNEAdditionalFrame::additionalParameter::showTextParameter(const std::string& name, std::string value) {
-    myLabel->setText(name.c_str());
-    myLabel->show();
-    myTextField->setText(value.c_str());
-    myTextField->show();
-    show();
-}
-
-
-void 
-GNEAdditionalFrame::additionalParameter::showIntParameter(const std::string& name, int value) {
-    myLabel->setText(name.c_str());
-    myLabel->show();
-    myTextField->setText(toString(value).c_str());
-    myTextField->show();
-    show();
-}
-
-
-void 
-GNEAdditionalFrame::additionalParameter::showFloatParameter(const std::string& name, SUMOReal value) {
-    myLabel->setText(name.c_str());
-    myLabel->show();
-    myTextField->setText(toString(value).c_str());
-    myTextField->show();
-    show();
-}
-
-
-void 
-GNEAdditionalFrame::additionalParameter::showBoolParameter(const std::string& name, bool value) {
-    myLabel->setText(name.c_str());
-    myLabel->show();
-    myMenuCheck->setCheck(value);
-    myMenuCheck->show();
-    show();
 }
 
 
@@ -618,6 +571,21 @@ GNEAdditionalFrame::additionalParameterList::~additionalParameterList() {}
 
 
 void 
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<int> value) {
+    std::cout << "FINISH" << std::endl;
+}
+
+void 
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<SUMOReal> value) {
+    std::cout << "FINISH" << std::endl;
+}
+
+void 
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<bool> value) {
+    std::cout << "FINISH" << std::endl;
+}
+
+void 
 GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<std::string> value) {
     if(value.size() < myMaxNumberOfValuesInParameterList) {
         numberOfVisibleTextfields = (int)value.size();
@@ -634,7 +602,6 @@ GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr,
         show();
     }
 }
-
 
 void 
 GNEAdditionalFrame::additionalParameterList::hideParameter() {
@@ -693,18 +660,26 @@ GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow(FXObject*, FXSelecto
 GNEAdditionalFrame::editorParameter::editorParameter(FXComposite *parent, FXObject* tgt) :
     FXGroupBox(parent, "editor parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
     myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT) {
-
     // Create FXListBox for the reference points
     myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
-                                              FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_FILL_X);
+                                              FRAME_SUNKEN | LAYOUT_LEFT  | COMBOBOX_STATIC | LAYOUT_FILL_X);
+
+    // Create Frame for Label and TextField
+    FXHorizontalFrame *lengthFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X | LAYOUT_LEFT , 0, 0, 0, 0, 0, 0, 0, 0);
+
+    /// Create length label
+    myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
+
+    /// Create length text field
+    myLengthTextField = new FXTextField(lengthFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
 
     // Create FXMenuCheck for the force option
     myCheckForcePosition = new FXMenuCheck(this, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,
-                                           LAYOUT_LEFT | LAYOUT_TOP | LAYOUT_FILL_X);
+                                           LAYOUT_LEFT | LAYOUT_FILL_X);
 
     // Create FXMenuCheck for the force option
     myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING,
-                                   LAYOUT_LEFT | LAYOUT_TOP | LAYOUT_FILL_X);
+                                   LAYOUT_LEFT | LAYOUT_FILL_X);
 
     // Create help button
     helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP);
@@ -722,9 +697,29 @@ GNEAdditionalFrame::editorParameter::editorParameter(FXComposite *parent, FXObje
 GNEAdditionalFrame::editorParameter::~editorParameter() {}
 
 
+void 
+GNEAdditionalFrame::editorParameter::showLengthField() {
+    myLengthLabel->show();
+    myLengthTextField->show();
+}
+
+
+void 
+GNEAdditionalFrame::editorParameter::hideLengthField() {
+    myLengthLabel->hide();
+    myLengthTextField->hide();
+}
+
+
 GNEAdditionalFrame::editorParameter::additionalReferencePoint 
 GNEAdditionalFrame::editorParameter::getActualReferencePoint() {
     return myActualAdditionalReferencePoint;
+}
+
+
+SUMOReal 
+GNEAdditionalFrame::editorParameter::getLenght() {
+    return GNEAttributeCarrier::parse<SUMOReal>(myLengthTextField->getText().text());
 }
 
 

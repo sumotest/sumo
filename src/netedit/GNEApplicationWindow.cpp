@@ -668,7 +668,7 @@ GNEApplicationWindow::onCmdOpenAdditionals(FXObject*, FXSelector, void*) {      
         // Start operation for undo/redo                                                // PABLO #1916
         myUndoList->p_begin("load additionals");                                        // PABLO #1916
         // Create additional handler                                                    // PABLO #1916
-        GNEAdditionalHandler additionalHandler(file, getView(), myNet, myUndoList);     // PABLO #1916
+        GNEAdditionalHandler additionalHandler(file, getView());                        // PABLO #1916
         // Run parser                                                                   // PABLO #1916
         if (!XMLSubSys::runParser(additionalHandler, file, false)) {                    // PABLO #1916
             WRITE_MESSAGE("Loading of " + file + " failed.");                           // PABLO #1916

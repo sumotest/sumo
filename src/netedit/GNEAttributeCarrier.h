@@ -59,17 +59,6 @@ class GNEAttributeCarrier : public GNEReferenceCounter {
     friend class GNEChange_Attribute;
 
 public:
-
-    /// @brief type of default attribute
-    enum defaultAttrType {
-        defaultAttrType_NULL,
-        defaultAttrType_int,
-        defaultAttrType_float,
-        defaultAttrType_string,
-        defaultAttrType_stringList,
-        defaultAttrType_bool,
-    };
-
     /** @brief Constructor
      * @param[in] tag SUMO Tag assigned to this type of object
      */
@@ -117,10 +106,29 @@ public:
     /// @brief get all editable attributes for tag.
     static const std::vector<SumoXMLTag>& allowedTags();
 
-    /// @brief whether an attribute is numerical
+    /// @brief get editable attributes for additional tags.
+    static const std::vector<SumoXMLTag>& allowedAdditionalTags();
+
+    /// @brief whether an attribute is numerical (int or float)
     static bool isNumerical(SumoXMLAttr attr);
 
+    /// @brief whether an attribute is numerical or type int    // PABLO #1916
+    static bool isInt(SumoXMLAttr attr);                        // PABLO #1916
+
+    /// @brief whether an attribute is numerical of type float  // PABLO #1916
+    static bool isFloat(SumoXMLAttr attr);                      // PABLO #1916
+
+    /// @brief whether an attribute is of type bool             // PABLO #1916
+    static bool isBool(SumoXMLAttr attr);                       // PABLO #1916
+
+    /// @brief whether an attribute is of type string           // PABLO #1916
+    static bool isString(SumoXMLAttr attr);                     // PABLO #1916
+
+    /// @brief whether an attribute is of type bool             // PABLO #1916
+    static bool isList(SumoXMLAttr attr);                       // PABLO #1916
+
     /// @brief whether an attribute is unique (may not be edited for a multi-selection)
+    /// @note unique attributes don't have a default value
     static bool isUnique(SumoXMLAttr attr);
 
     /// @brief return a list of discrete choices for this attribute or an empty vector
@@ -128,9 +136,6 @@ public:
 
     /// @brief return whether the given attribute allows for a combination of discrete values
     static bool discreteCombinableChoices(SumoXMLTag tag, SumoXMLAttr attr);
-
-    /// @brief check type of default attribute                                      // PABLO #1916
-    static defaultAttrType getDefaultValueType(SumoXMLTag tag, SumoXMLAttr attr);   // PABLO #1916
 
     /// @brief return the default value of the attribute of an element                                  // PABLO #1916
     /// @note It's advisable to check before with function hasDefaultValue if  exits a default value    // PABLO #1916
@@ -186,7 +191,6 @@ public:
     /// @brief feature has been approved but not changed (i.e. after being reguessed)
     static const std::string APPROVED;
 
-
 private:
     /// @brief method for setting the attribute and nothing else (used in GNEChange_Attribute)
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
@@ -198,16 +202,25 @@ private:
     static std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > _allowedAttributes;    // PABLO #1916
 
     /// @brief map with the allowed tags
-    static std::vector<SumoXMLTag> _allowedTags;
+    static std::vector<SumoXMLTag> myAllowedTags;
 
-    /// @brief map with the numerical attributes
-    static std::set<SumoXMLAttr> _numericalAttrs;
+    /// @brief map with the allowed tags                        // PABLO #1916
+    static std::vector<SumoXMLTag> myAllowedAdditionalTags;     // PABLO #1916
 
-    /// @brief map with the unique attributes
-    static std::set<SumoXMLAttr> _uniqueAttrs;
+    /// @brief map with the numerical attributes of type Int    // PABLO #1916
+    static std::set<SumoXMLAttr> myNumericalIntAttrs;           // PABLO #1916
+
+    /// @brief map with the numerical attributes of type Float  // PABLO #1916
+    static std::set<SumoXMLAttr> myNumericalFloatAttrs;         // PABLO #1916
+
+    /// @brief map with the attributes of type list             // PABLO #1916
+    static std::set<SumoXMLAttr> myListAttrs;                   // PABLO #1916    
+
+    /// @brief map with the unique attributes (i.e. attributes without default values)
+    static std::set<SumoXMLAttr> myUniqueAttrs;
 
     /// @brief map with the values of discrete choices
-    static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > _discreteChoices;
+    static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > myDiscreteChoices;
 
 private:
     /// @brief Invalidated assignment operator
