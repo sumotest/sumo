@@ -469,12 +469,13 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "carPreference",  AGEN_ATTR_CARPREF },
     { "meanTimePerKmInCity", AGEN_ATTR_CITYSPEED },
     { "freeTimeActivityRate", AGEN_ATTR_FREETIMERATE },
-    { "uniformRandomTraffic", AGEN_ATTR_UNI_RAND_TRAFFIC},
-    { "departureVariation", AGEN_ATTR_DEP_VARIATION},
+    { "uniformRandomTraffic", AGEN_ATTR_UNI_RAND_TRAFFIC },
+    { "departureVariation", AGEN_ATTR_DEP_VARIATION },
 
-    { "modificationStatusNotForPrinting", GNE_ATTR_MODIFICATION_STATUS},
-    { "shapeStartNotForPrinting", GNE_ATTR_SHAPE_START},
-    { "shapeEndNotForPrinting", GNE_ATTR_SHAPE_END},
+    { "modificationStatusNotForPrinting", GNE_ATTR_MODIFICATION_STATUS },
+    { "shapeStartNotForPrinting", GNE_ATTR_SHAPE_START },
+    { "shapeEndNotForPrinting", GNE_ATTR_SHAPE_END },
+    { "movementOfElementBlocked", GNE_ATTR_BLOCK_MOVEMENT },    // PABLO #1916
 
     { "targetLanes",   SUMO_ATTR_TARGETLANE },
 
@@ -516,8 +517,8 @@ StringBijection<SumoXMLEdgeFunc>::Entry SUMOXMLDefinitions::sumoEdgeFuncValues[]
 
 
 StringBijection<LaneSpreadFunction>::Entry SUMOXMLDefinitions::laneSpreadFunctionValues[] = {
-    {"right",             LANESPREAD_RIGHT}, // default
-    {"center",            LANESPREAD_CENTER}
+    {"right",             LANESPREAD_RIGHT }, // default
+    {"center",            LANESPREAD_CENTER }
 };
 
 

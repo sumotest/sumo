@@ -64,8 +64,9 @@ public:
      * @param[in] fromPos From position of the StoppingPlace
      * @param[in] toPos To position of the StoppingPlace
      * @param[in] lines lines of the busStop
+     * @param[in] blocked set initial blocking state of item 
      */
-    GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines);
+    GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines, bool blocked);
 
     /// @brief Destructor
     ~GNEBusStop();

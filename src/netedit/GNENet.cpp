@@ -614,6 +614,19 @@ GNENet::retrieveLanes(bool onlySelected) {
 }
 
 
+GNELane*
+GNENet::getLane(const std::string &id) {
+    for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); ++it) {
+        const GNEEdge::LaneVector& lanes = it->second->getLanes();
+        for (GNEEdge::LaneVector::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
+            if ((*it_lane)->getID() == id)
+                return (*it_lane);
+        }
+    }
+    return NULL;
+}
+
+
 std::vector<GNEJunction*>
 GNENet::retrieveJunctions(bool onlySelected) {
     std::vector<GNEJunction*> result;
@@ -1022,13 +1035,13 @@ GNENet::deleteAdditional(GNEAdditional* additional) {                           
 
 
 
-GNEAdditional*                                                                                                              // PABLO #1916
-GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {                                                       // PABLO #1916
-    if(!myAdditionals.empty() && myAdditionals.find(id) != myAdditionals.end() && myAdditionals.at(id)->getTag() == type)   // PABLO #1916
-        return myAdditionals.at(id);                                                                                        // PABLO #1916
-    else                                                                                                                    // PABLO #1916
-        return NULL;                                                                                                        // PABLO #1916
-}                                                                                                                           // PABLO #1916
+GNEAdditional*                                                                                                                  // PABLO #1916
+GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {                                                           // PABLO #1916
+    if(!myAdditionals.empty() && (myAdditionals.find(id) != myAdditionals.end()) && (myAdditionals.at(id)->getTag() == type))   // PABLO #1916
+        return myAdditionals.at(id);                                                                                            // PABLO #1916
+    else                                                                                                                        // PABLO #1916
+        return NULL;                                                                                                            // PABLO #1916
+}                                                                                                                               // PABLO #1916
 
 
 std::string                                                                                             // PABLO #1916

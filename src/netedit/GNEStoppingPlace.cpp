@@ -65,8 +65,8 @@
 // member method definitions
 // ===========================================================================
 
-GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos) :
-    GNEAdditional(id, lane, fromPos, viewNet, tag),
+GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos, bool blocked) :
+    GNEAdditional(id, lane, fromPos, viewNet, tag, blocked),
     myToPos(toPos){
 }
 

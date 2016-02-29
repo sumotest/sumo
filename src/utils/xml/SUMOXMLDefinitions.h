@@ -95,7 +95,7 @@ enum SumoXMLTag {
     /// @brief A container stop
     SUMO_TAG_CONTAINER_STOP,
     /// @brief A Charging Station
-    SUMO_TAG_CHARGING_STATION,	// PABLO #1916 (Renamed all references of SUMO_TAG_CHRG_STN)
+    SUMO_TAG_CHARGING_STATION,	// PABLO #1916
     /** a vtypeprobe detector */
     SUMO_TAG_VTYPEPROBE,
     /** a routeprobe detector */
@@ -586,6 +586,8 @@ enum SumoXMLAttr {
     GNE_ATTR_SHAPE_START,
     /* last coordinate of edge shape */
     GNE_ATTR_SHAPE_END,
+    /* block movement of a graphic element*/    // PABLO #1916
+    GNE_ATTR_BLOCK_MOVEMENT,                    // PABLO #1916
     //@}
 
     SUMO_ATTR_TARGETLANE

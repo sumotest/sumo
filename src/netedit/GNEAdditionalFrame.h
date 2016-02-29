@@ -87,14 +87,17 @@ public:
 
         /// @brief hide all parameters
         void hideParameter();
+        
+        /// @brief return Attr 
+        SumoXMLAttr getAttr() const;
 
-        /// @brief return the value of the FXTextField
-        std::string getTextValue();
-
-        /// @brief return the value of the FXMenuCheck
-        bool getBoolValue();
+        /// @brief return value
+        std::string getValue() const ;
 
     private:        
+        /// @brief XML attribute
+        SumoXMLAttr myAttr;
+        
         /// @brief lael with the name of the parameter
         FXLabel *myLabel;
         
@@ -215,6 +218,9 @@ public:
         /// @{
         /// @brief Called when the user enters another reference point
         long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
+
+/*** HAY QUE HACER UN CALLBACK PARA EL LENGTH **/
+
 
         /// @brief Called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
@@ -374,10 +380,16 @@ private:
     FXGroupBox* myGroupBoxForParameters;
 
     /// @brief vector with the additional parameters
-    std::vector<additionalParameter*> myVectorOfAdditionalParameter;
-    
-    /// @brief vector with the additional parameters of type list
-    std::vector<additionalParameterList*> myVectorOfadditionalParameterList;
+    std::vector<additionalParameter*> myVectorOfAdditionalParameter;            // MERGE
+                                                                                // MERGE
+    /// @brief vector with the additional parameters of type list               // MERGE
+    int myIndexParameter;                                                       // MERGE
+
+    /// @brief vector with the additional parameters of type list               // MERGE
+    std::vector<additionalParameterList*> myVectorOfadditionalParameterList;    // MERGE
+                                                                                // MERGE
+    /// @brief vector with the additional parameters of type list               // MERGE
+    int myIndexParameterList;                                                   // MERGE
 
     /// @brief editor parameter 
     GNEAdditionalFrame::editorParameter *myEditorParameter;

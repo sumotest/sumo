@@ -131,6 +131,9 @@ public:
     /// @note unique attributes don't have a default value
     static bool isUnique(SumoXMLAttr attr);
 
+    /// @brief check if a element with certain tag has a certain attribute  // PABLO #1916
+    static bool hasAttribute(SumoXMLTag tag, SumoXMLAttr attr);             // PABLO #1916
+
     /// @brief return a list of discrete choices for this attribute or an empty vector
     static const std::vector<std::string>& discreteChoices(SumoXMLTag tag, SumoXMLAttr attr);
 

@@ -419,11 +419,21 @@ GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
         myUniqueAttrs.insert(SUMO_ATTR_SHAPE);
         myUniqueAttrs.insert(SUMO_ATTR_POSITION);
         myUniqueAttrs.insert(SUMO_ATTR_EDGES);
-        myUniqueAttrs.insert(SUMO_ATTR_STARTPOS);    // PABLO #1916
-        myUniqueAttrs.insert(SUMO_ATTR_ENDPOS);      // PABLO #1916
-        myUniqueAttrs.insert(SUMO_ATTR_LANE);        // PABLO #1916
+        myUniqueAttrs.insert(SUMO_ATTR_STARTPOS);   // PABLO #1916
+        myUniqueAttrs.insert(SUMO_ATTR_ENDPOS);     // PABLO #1916
+        myUniqueAttrs.insert(SUMO_ATTR_LANE);       // PABLO #1916
     }
     return myUniqueAttrs.count(attr) == 1;
+}
+
+
+bool 
+GNEAttributeCarrier::hasAttribute(SumoXMLTag tag, SumoXMLAttr attr) {
+    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = allowedAttributes(tag);
+    for(std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator i = attrs.begin(); i != attrs.end(); i++)
+        if(i->first == attr)
+            return true;
+    return false;
 }
 
 

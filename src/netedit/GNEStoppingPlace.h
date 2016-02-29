@@ -64,8 +64,9 @@ public:
      * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
      * @param[in] fromPos From position of the StoppingPlace
      * @param[in] toPos To position of the StoppingPlace
+     * @param[in] blocked set initial blocking state of item 
      */
-    GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos);
+    GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos, bool blocked);
 
     /// @brief Destructor
     ~GNEStoppingPlace();

@@ -64,8 +64,8 @@
 // member method definitions
 // ===========================================================================
 
-GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
-    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_CHARGING_STATION, fromPos, toPos),
+GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked) :
+    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_CHARGING_STATION, fromPos, toPos, blocked),
     myChargingPower(chargingPower), 
     myEfficiency(efficiency), 
     myChargeInTransit(chargeInTransit), 

@@ -69,8 +69,8 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEBusStop::GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines) : 
-    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_BUS_STOP, fromPos, toPos),
+GNEBusStop::GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines, bool blocked) : 
+    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_BUS_STOP, fromPos, toPos, blocked),
     myLines(lines) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
