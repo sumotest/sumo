@@ -347,6 +347,13 @@ enum SumoXMLAttr {
     SUMO_ATTR_TMP3,
     SUMO_ATTR_TMP4,
     SUMO_ATTR_TMP5,
+    /* Lane changing model attributes */
+    SUMO_ATTR_LCA_STRATEGIC_PARAM,
+    SUMO_ATTR_LCA_COOPERATIVE_PARAM,
+    SUMO_ATTR_LCA_SPEEDGAIN_PARAM,
+    SUMO_ATTR_LCA_KEEPRIGHT_PARAM,
+    SUMO_ATTR_LCA_SUBLANE_PARAM,
+    SUMO_ATTR_LCA_PUSHY,
     /* route alternatives / distribution attributes */
     SUMO_ATTR_LAST,
     SUMO_ATTR_COST,

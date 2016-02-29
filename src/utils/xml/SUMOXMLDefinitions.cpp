@@ -281,6 +281,13 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "tmp4",           SUMO_ATTR_TMP4 },
     { "tmp5",           SUMO_ATTR_TMP5 },
 
+    { "lcStrategic",    SUMO_ATTR_LCA_STRATEGIC_PARAM },
+    { "lcCooperative",  SUMO_ATTR_LCA_COOPERATIVE_PARAM },
+    { "lcSpeedGain",    SUMO_ATTR_LCA_SPEEDGAIN_PARAM },
+    { "lcKeepRight",    SUMO_ATTR_LCA_KEEPRIGHT_PARAM },
+    { "lcSublane",      SUMO_ATTR_LCA_SUBLANE_PARAM },
+    { "lcPushy",        SUMO_ATTR_LCA_PUSHY },
+
     { "last",           SUMO_ATTR_LAST },
     { "cost",           SUMO_ATTR_COST },
     { "probability",    SUMO_ATTR_PROB },

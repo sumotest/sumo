@@ -50,6 +50,7 @@
 // static members
 // ===========================================================================
 SUMOVehicleParserHelper::CFAttrMap SUMOVehicleParserHelper::allowedCFModelAttrs;
+SUMOVehicleParserHelper::LCAttrMap SUMOVehicleParserHelper::allowedLCModelAttrs;
 
 
 // ===========================================================================
@@ -459,6 +460,7 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
         }
     }
     parseVTypeEmbedded(*vtype, vtype->cfModel, attrs, true);
+    parseLCParams(*vtype, vtype->lcModel, attrs);
     if (!ok) {
         delete vtype;
         throw ProcessError();
@@ -587,6 +589,43 @@ SUMOVehicleParserHelper::getAllowedCFModelAttrs() {
         allowedCFModelAttrs[SUMO_TAG_CF_WIEDEMANN] = wiedemannParams;
     }
     return allowedCFModelAttrs;
+}
+
+
+void
+SUMOVehicleParserHelper::parseLCParams(SUMOVTypeParameter& into, LaneChangeModel model, const SUMOSAXAttributes& attrs) {
+    if (allowedLCModelAttrs.size() == 0) {
+        // init static map
+        std::set<SumoXMLAttr> lc2013Params;
+        lc2013Params.insert(SUMO_ATTR_LCA_STRATEGIC_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_COOPERATIVE_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_SPEEDGAIN_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_KEEPRIGHT_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_SUBLANE_PARAM);
+        allowedLCModelAttrs[LCM_LC2013] = lc2013Params;
+        allowedLCModelAttrs[LCM_JE2013] = lc2013Params;
+
+        std::set<SumoXMLAttr> sl2015Params = lc2013Params;
+        sl2015Params.insert(SUMO_ATTR_LCA_PUSHY);
+        allowedLCModelAttrs[LCM_SL2015] = sl2015Params;
+
+        std::set<SumoXMLAttr> noParams;
+        allowedLCModelAttrs[LCM_DK2008] = noParams;
+
+        // default model may be either LC2013 or SL2013
+        // we allow both sets (sl2015 is a superset of lc2013Params)
+        allowedLCModelAttrs[LCM_DEFAULT] = sl2015Params; 
+    }
+    bool ok = true;
+    std::set<SumoXMLAttr> allowed = allowedLCModelAttrs[model];
+    for (std::set<SumoXMLAttr>::const_iterator it = allowed.begin(); it != allowed.end(); it++) {
+        if (attrs.hasAttribute(*it)) {
+            into.lcParameter[*it] = attrs.get<SUMOReal>(*it, into.id.c_str(), ok);
+        }
+    }
+    if (!ok) {
+        throw ProcessError();
+    }
 }
 
 
