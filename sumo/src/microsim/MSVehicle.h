@@ -469,6 +469,8 @@ public:
         MSLane* lane;
         /// @brief The overall length which may be driven when using this lane without a lane change
         SUMOReal length;
+        /// @brief The length which may be driven on this lane
+        SUMOReal currentLength;
         /// @brief The overall vehicle sum on consecutive lanes which can be passed without a lane change
         SUMOReal occupation;
         /// @brief As occupation, but without the first lane
@@ -852,6 +854,10 @@ public:
         return (mySignals & which) != 0;
     }
     /// @}
+
+
+    /// @brief whether the vehicle may safely move to the given lane with regard to upcoming links
+    bool unsafeLinkAhead(const MSLane* lane) const;
 
 
 #ifndef NO_TRACI

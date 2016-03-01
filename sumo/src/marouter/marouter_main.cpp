@@ -286,9 +286,15 @@ computeRoutes(RONet& net, OptionsCont& oc, ODMatrix& matrix) {
         ROVehicle defaultVehicle(SUMOVehicleParameter(), 0, net.getVehicleTypeSecure(DEFAULT_VTYPE_ID), &net);
         ROMAAssignments a(begin, end, oc.getBool("additive-traffic"), oc.getFloat("weight-adaption"), net, matrix, *router);
         a.resetFlows();
+#ifdef HAVE_FOX
+        const int maxNumThreads = oc.getInt("routing-threads");
+        while ((int)net.getThreadPool().size() < maxNumThreads) {
+            new RONet::WorkerThread(net.getThreadPool(), net.getThreadPool().size() == 0 ? router : router->clone());
+        }
+#endif
         const std::string assignMethod = oc.getString("assignment-method");
         if (assignMethod == "incremental") {
-            a.incremental(oc.getInt("max-iterations"));
+            a.incremental(oc.getInt("max-iterations"), oc.getBool("verbose"));
         } else if (assignMethod == "SUE") {
             a.sue(oc.getInt("max-iterations"), oc.getInt("max-inner-iterations"),
                   oc.getInt("paths"), oc.getFloat("paths.penalty"), oc.getFloat("tolerance"), oc.getString("route-choice-method"));
