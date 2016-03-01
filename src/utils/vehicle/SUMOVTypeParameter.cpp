@@ -301,13 +301,23 @@ SUMOVTypeParameter::write(OutputDevice& dev) const {
 
 
 SUMOReal
-SUMOVTypeParameter::get(const SumoXMLAttr attr, const SUMOReal defaultValue) const {
+SUMOVTypeParameter::getCFParam(const SumoXMLAttr attr, const SUMOReal defaultValue) const {
     if (cfParameter.count(attr)) {
         return cfParameter.find(attr)->second;
     } else {
         return defaultValue;
     }
 }
+
+SUMOReal
+SUMOVTypeParameter::getLCParam(const SumoXMLAttr attr, const SUMOReal defaultValue) const {
+    if (lcParameter.count(attr)) {
+        return lcParameter.find(attr)->second;
+    } else {
+        return defaultValue;
+    }
+}
+
 
 
 SUMOReal
