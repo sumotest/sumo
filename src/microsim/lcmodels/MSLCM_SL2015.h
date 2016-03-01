@@ -249,11 +249,19 @@ protected:
     int keepLatGap(int state, 
                 const MSLeaderDistanceInfo& leaders,
                 const MSLeaderDistanceInfo& followers,
+                const MSLeaderDistanceInfo& blockers,
                 const MSLeaderDistanceInfo& neighLeaders,
                 const MSLeaderDistanceInfo& neighFollowers,
+                const MSLeaderDistanceInfo& neighBlockers,
+                const MSLane& neighLane,
                 int laneOffset, 
                 SUMOReal& latDist, 
-                int& blocked) const;
+                int& blocked);
+
+
+    /// @brief check remaining lateral gaps for the given foe vehicles
+    void updateGaps(const MSLeaderDistanceInfo& others, SUMOReal foeOffset, SUMOReal newCenter, SUMOReal gapFactor, 
+            SUMOReal& surplusGapRight, SUMOReal& surplusGapLeft) const; 
 
 protected:
     /// @brief a value for tracking the probability that a change to the right is beneficial
