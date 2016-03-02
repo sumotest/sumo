@@ -81,6 +81,12 @@ GNEAttributeCarrier::parse(const std::string& string) {
 }                                        
 
 
+template<> Position                                         // PABLO #1916
+GNEAttributeCarrier::parse(const std::string& string) {     // PABLO #1916
+    return TplConvert::_str2Position(string);               // PABLO #1916
+}                                                           // PABLO #1916
+
+
 bool
 GNEAttributeCarrier::isValid(SumoXMLAttr key, const std::string& value) {
     UNUSED_PARAMETER(value);
@@ -124,7 +130,7 @@ bool                                                                            
 GNEAttributeCarrier::isValidFileValue(const std::string& value) {                   // PABLO #1916
     // @note Only characteres that aren't permited in a file path or belong         // PABLO #1916
     // to XML sintax                                                                // PABLO #1916
-    return value.find_first_of("\t\n\r@$%^&|\\{}*'\";:<>") == std::string::npos;     // PABLO #1916
+    return value.find_first_of("\t\n\r@$%^&|\\{}*'\";:<>") == std::string::npos;    // PABLO #1916
 }                                                                                   // PABLO #1916
 
 

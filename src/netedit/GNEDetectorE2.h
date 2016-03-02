@@ -58,10 +58,10 @@ public:
      * @param[in] timeThreshold The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
      * @param[in] speedThreshold The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
      * @param[in] speedThreshold The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
-     * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
+     * @param[in] blocked set initial blocking state of item 
      */
     GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
-                  bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold);
+                  bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked);
 
     /// @brief Destructor
     ~GNEDetectorE2();

@@ -56,8 +56,9 @@ public:
      * @param[in] length length of the detector
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
+     * @param[in] blocked set initial blocking state of item 
      */
-    GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename);
+    GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename, bool blocked);
 
     /// @brief Destructor
     ~GNEDetector();

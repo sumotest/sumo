@@ -70,8 +70,8 @@ bool GNEDetectorE2::detectorE2Initialized = false;
 // ===========================================================================
 
 GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
-                             bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold) : 
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E2DETECTOR, pos, length, freq, filename),
+                             bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) : 
+    GNEDetector(id, lane, viewNet, SUMO_TAG_E2DETECTOR, pos, length, freq, filename, blocked),
     myCont(cont),
     myTimeThreshold(timeThreshold),
     mySpeedThreshold(speedThreshold),

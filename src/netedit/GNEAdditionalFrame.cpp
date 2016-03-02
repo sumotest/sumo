@@ -160,28 +160,28 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         return false;
     // Declare map to keep values
     std::map<SumoXMLAttr, std::string> valuesOfElement;
-    // obtain a new unique id depending if the element needs or not a lane
+    // obtain a new unique id depending if the element needs or not a lane (i.e. is an Additional or an AdditionalSet)
     if(lane) {
+        SUMOReal positionOfTheMouseOverLane = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
         while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex)) != NULL)
             additionalIndex++;
         valuesOfElement[SUMO_ATTR_ID] = toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex);
         // Obtain lane ID
         valuesOfElement[SUMO_ATTR_LANE] = lane->getID();
-        // If element has a start / end Position, obtain values
+        // If element has a position over lane, extract attributes
         if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
-            SUMOReal positionOfTheMouseOverLane = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
             valuesOfElement[SUMO_ATTR_STARTPOS] = toString(setStartPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameter->getLenght()));
             valuesOfElement[SUMO_ATTR_ENDPOS] = toString(setEndPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameter->getLenght()));
         }
+        // Extract position of lane
+        valuesOfElement[SUMO_ATTR_POSITION] = toString(positionOfTheMouseOverLane);
     } else {
-        int additionalSetIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
-        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalSetIndex)) != NULL)
+        int additionalSetIndex = myViewNet->getNet()->getNumberOfAdditionalSets(myActualAdditionalType);
+        while(myViewNet->getNet()->getAdditionalSet(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalSetIndex)) != NULL)
             additionalSetIndex++;
         valuesOfElement[SUMO_ATTR_ID] = toString(myActualAdditionalType) + "_" + toString(additionalSetIndex);
-        // Save position
-        valuesOfElement[SUMO_ATTR_X] = toString(parent->getPositionInformation().x());
-        valuesOfElement[SUMO_ATTR_Y] = toString(parent->getPositionInformation().y());
+        valuesOfElement[SUMO_ATTR_POSITION] = toString(parent->getPositionInformation());
     }
     // Save block value
     valuesOfElement[GNE_ATTR_BLOCK_MOVEMENT] = toString(myEditorParameter->isBlockEnabled());
@@ -702,10 +702,8 @@ GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
     mySetLabel->setText(("Type of set: " + toString(type)).c_str());
     myList->clearItems();
     std::vector<GNEAdditionalSet*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionalSets(type);
-    for(std::vector<GNEAdditionalSet*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++) {
-        std::cout << "etiqueta: " << (*i)->getID() << std::endl;
+    for(std::vector<GNEAdditionalSet*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++)
         myList->appendItem((*i)->getID().c_str());
-    }
     show();
 }
 

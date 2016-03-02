@@ -40,6 +40,7 @@
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/common/SUMOVehicleClass.h>
 #include <utils/common/Named.h>
+#include <utils/geom/Position.h>    // PABLO #1916
 #include "StdDefs.h"
 
 
@@ -117,11 +118,13 @@ inline std::string toString<LinkState>(const LinkState& linkState, std::streamsi
     return SUMOXMLDefinitions::LinkStates.getString(linkState);
 }
 
+
 template <>
 inline std::string toString<LinkDirection>(const LinkDirection& linkDir, std::streamsize accuracy) {
     UNUSED_PARAMETER(accuracy);
     return SUMOXMLDefinitions::LinkDirections.getString(linkDir);
 }
+
 
 template <>
 inline std::string toString<TrafficLightType>(const TrafficLightType& type, std::streamsize accuracy) {
@@ -129,11 +132,19 @@ inline std::string toString<TrafficLightType>(const TrafficLightType& type, std:
     return SUMOXMLDefinitions::TrafficLightTypes.getString(type);
 }
 
+
 template <>
 inline std::string toString<LaneChangeModel>(const LaneChangeModel& model, std::streamsize accuracy) {
     UNUSED_PARAMETER(accuracy);
     return SUMOXMLDefinitions::LaneChangeModels.getString(model);
 }
+
+
+template <>                                                                                     // PABLO #1916
+inline std::string toString<Position>(const Position& pos, std::streamsize accuracy) {          // PABLO #1916
+    UNUSED_PARAMETER(accuracy);                                                                 // PABLO #1916
+    return std::string(toString(pos.x()) + " " + toString(pos.y()) + " " + toString(pos.z()));  // PABLO #1916
+}                                                                                               // PABLO #1916
 
 
 template <typename V>
@@ -224,10 +235,12 @@ inline std::string joinToString(const std::set<T>& s, const T_BETWEEN& between, 
     return oss.str();
 }
 
+
 template <>
 inline std::string toString(const std::set<std::string>& v, std::streamsize) {
     return joinToString(v, " ");
 }
+
 
 template <typename KEY, typename VAL, typename T_BETWEEN, typename T_BETWEEN_KEYVAL>
 inline std::string joinToString(const std::map<KEY, VAL>& s, const T_BETWEEN& between, const T_BETWEEN_KEYVAL& between_keyval, std::streamsize accuracy = OUTPUT_ACCURACY) {
@@ -243,6 +256,7 @@ inline std::string joinToString(const std::map<KEY, VAL>& s, const T_BETWEEN& be
     }
     return oss.str();
 }
+
 
 template <>
 inline std::string toString(const std::map<std::string, std::string>& v, std::streamsize) {

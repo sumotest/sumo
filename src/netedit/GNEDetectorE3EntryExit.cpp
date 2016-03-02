@@ -69,8 +69,8 @@ bool GNEDetectorE3EntryExit::detectorE3Initialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos) :
-    GNEDetector(id, lane, myViewNet, tag, pos, 1, 0, 0) {
+GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos, bool blocked) :
+    GNEDetector(id, lane, myViewNet, tag, pos, 1, 0, 0, blocked) {
     // Set colors of detector
     setColors();
 }

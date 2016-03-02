@@ -29,14 +29,18 @@
 
 #include "GNEAdditionalHandler.h"
 #include "GNEUndoList.h"
-#include "GNEBusStop.h"
-#include "GNEChargingStation.h"
 #include "GNEEdge.h"
 #include "GNELane.h"
 #include "GNEJunction.h"
 #include "GNENet.h"
 #include "GNEViewNet.h"
 #include "GNEChange_Additional.h"
+#include "GNEBusStop.h"
+#include "GNEChargingStation.h"
+#include "GNEDetectorE1.h"
+#include "GNEDetectorE2.h"
+#include "GNEDetectorE3.h"
+
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -343,10 +347,10 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             // get own attributes of chargingStation
             SUMOReal fromPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_STARTPOS]);
             SUMOReal toPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_ENDPOS]);
-            SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_ENDPOS]);
-            SUMOReal efficiency = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_ENDPOS]);
-            bool chargeInTransit = GNEAttributeCarrier::parse<bool>(values[SUMO_ATTR_ENDPOS]);
-            int chargeDelay = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_ENDPOS]);
+            SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_CHARGINGPOWER]);
+            SUMOReal efficiency = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_EFFICIENCY]);
+            bool chargeInTransit = GNEAttributeCarrier::parse<bool>(values[SUMO_ATTR_CHARGEINTRANSIT]);
+            int chargeDelay = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_CHARGEDELAY]);
             // Build chargingStation
             if(lane)
                 return buildChargingStation(viewNet, id, lane, fromPos, toPos, chargingPower, efficiency, chargeInTransit, chargeDelay, blocked);
@@ -355,10 +359,10 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_E1DETECTOR: {
             // get own attributes of detector E1
-            SUMOReal pos;
-            int freq;
-            std::string filename;
-            bool splitByType;
+            SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
+            int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
+            std::string filename = values[SUMO_ATTR_FILE];
+            bool splitByType = GNEAttributeCarrier::parse<bool>(values[SUMO_ATTR_SPLIT_VTYPE]);
             // Build detector E1
             if(lane)
                 return buildDetectorE1(viewNet, id, lane, pos, freq, filename, splitByType, blocked);
@@ -367,25 +371,25 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_E2DETECTOR: {
             // get own attributes of detector E2
-            SUMOReal pos;
-            int freq;
-            std::string filename;
-            bool cont;
-            int timeThreshold;
-            SUMOReal speedThreshold;
-            SUMOReal jamThreshold; 
-            bool splitByType;
+            SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
+            int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
+            SUMOReal lenght = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_LENGTH]);
+            std::string filename = values[SUMO_ATTR_FILE];
+            bool cont = GNEAttributeCarrier::parse<bool>(values[SUMO_ATTR_CONT]);
+            int timeThreshold = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_HALTING_TIME_THRESHOLD]);
+            SUMOReal speedThreshold = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_HALTING_SPEED_THRESHOLD]);
+            SUMOReal jamThreshold = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_JAM_DIST_THRESHOLD]); 
             // Build detector E2
             if(lane)
-                return buildDetectorE2(viewNet, id, lane, pos, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, splitByType, blocked);
+                return buildDetectorE2(viewNet, id, lane, pos, lenght, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, blocked);
             else
                 return false;
         }
         case SUMO_TAG_E3DETECTOR: {
             // get own attributes of detector E3
-            Position pos;
-            int freq;
-            std::string filename;
+            Position pos = GNEAttributeCarrier::parse<Position>(values[SUMO_ATTR_POSITION]);
+            int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
+            std::string filename = values[SUMO_ATTR_FILE];
             // Build detector E3
             if(!lane)
                 return buildDetectorE3(viewNet, id, pos, freq, filename, blocked);
@@ -394,7 +398,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_DET_ENTRY: {
             // get own attributes of detector Entry
-            SUMOReal pos; 
+            SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
             GNEDetectorE3 *detectorParent;
             // Build detector Entry
             if(lane)
@@ -404,7 +408,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_DET_EXIT: {
             // get own attributes of Detector Exit
-            SUMOReal pos; 
+            SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
             GNEDetectorE3 *detectorParent;
             // Build detector Exit
             if(lane)
@@ -415,7 +419,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         case SUMO_TAG_VSS: {
             // get own attributes of variable speed signal
             std::vector<GNELane*> destLanes; 
-            std::string file;
+            std::string file = values[SUMO_ATTR_FILE];
             // Build variable speed signal
             /** NOTA: COMPROBAR SI EFECTIVAMENTE SUMO_TAG_VSS es buildLaneSpeedTrigger **/
             if(lane)
@@ -425,8 +429,8 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_CALIBRATOR: {
             // get own attributes of calibrator
-            SUMOReal pos; 
-            std::string file;
+            SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
+            std::string file = values[SUMO_ATTR_FILE];
             MSRouteProbe* probe; 
             std::string outfile;
             SUMOTime freq;
@@ -454,48 +458,78 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
 }
 
 bool 
-GNEAdditionalHandler::buildBusStop(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines, bool blocked)
-{
+GNEAdditionalHandler::buildBusStop(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_BUS_STOP, id) == NULL) {
         GNEBusStop* busStop = new GNEBusStop(id, *lane, viewNet, frompos, topos, lines, blocked);
-        viewNet->getUndoList()->p_begin("add busStop");
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_BUS_STOP));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), busStop, true), true);
         viewNet->getUndoList()->p_end();
+        return true;
     } else {
-        throw InvalidArgument("Could not build bus stop in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_BUS_STOP) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
     }
 }
 
 
 bool 
-GNEAdditionalHandler::buildChargingStation(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal frompos, SUMOReal topos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked)
-{
+GNEAdditionalHandler::buildChargingStation(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal frompos, SUMOReal topos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_CHARGING_STATION, id) == NULL) {
         GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, viewNet, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay, blocked);
-        viewNet->getUndoList()->p_begin("add chargingStation");
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_CHARGING_STATION));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), chargingStation, true), true);
         viewNet->getUndoList()->p_end();
+        return true;
     } else {
-        throw InvalidArgument("Could not build charging station in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_CHARGING_STATION) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
     }
 }
 
 
 bool 
 GNEAdditionalHandler::buildDetectorE1(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType, bool blocked) {
-    return false;
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_E1DETECTOR, id) == NULL) {
+        GNEDetectorE1 *detectorE1 = new GNEDetectorE1(id, *lane, viewNet, pos, freq, filename, splitByType, blocked);
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E1DETECTOR));
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE1, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else {
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E1DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
+    }
 }
 
 
 bool 
-GNEAdditionalHandler::buildDetectorE2(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool splitByType, bool blocked) {
-    return false;
+GNEAdditionalHandler::buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
+                                      bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) {
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_E2DETECTOR, id) == NULL) {
+        GNEDetectorE2 *detectorE2 = new GNEDetectorE2(id, *lane, viewNet, pos, length, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, blocked);
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E2DETECTOR));
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE2, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else {
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E2DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
+    }
 }
 
 
 bool 
 GNEAdditionalHandler::buildDetectorE3(GNEViewNet *viewNet, const std::string& id, Position pos, int freq, const std::string &filename, bool blocked) {
-    return false;
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR, id) == NULL) {
+        GNEDetectorE3 *detectorE3 = new GNEDetectorE3(id, viewNet, pos, freq, filename, blocked);
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E3DETECTOR));
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE3, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else {
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E3DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
+    }
 }
 
 

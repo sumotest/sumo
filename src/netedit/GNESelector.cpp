@@ -476,7 +476,6 @@ GNESelector::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal 
         }
         ac = dynamic_cast<GNEAttributeCarrier*>(object);
         if (ac && ac->getTag() == tag) { // not all objects need to be attribute carriers
-            std::cout << "ENTRA" << std::endl;
             if (expr == "") {
                 result.push_back(id);
             } else if (numerical) {

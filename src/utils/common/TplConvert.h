@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/StdDefs.h>
+#include <utils/geom/Position.h>    // PABLO #1916
 
 
 // ===========================================================================
@@ -331,6 +332,55 @@ public:
     static bool _str2bool(const std::string& sData) {               // PABLO #1916
         return _2bool(sData.c_str());                               // PABLO #1916
     }                                                               // PABLO #1916
+
+    // convert a string into Position in the three axis (X, Y Z)                                                        // PABLO #1916
+    template<class E>                                                                                                   // PABLO #1916
+    static Position _2Position(const E* const data) {                                                                   // PABLO #1916
+        if (data == 0 || data[0] == 0) {                                                                                // PABLO #1916
+            throw EmptyData();                                                                                          // PABLO #1916
+        }                                                                                                               // PABLO #1916
+        std::string s = _2str(data);                                                                                    // PABLO #1916
+        std::string x, y, z;                                                                                            // PABLO #1916
+        while(!s.empty() && s.back() != ' ') {                                                                          // PABLO #1916
+            if((s.back() >= '0' && s.back() <= '9') || (s.back() == '-') || (s.back() == '+') || (s.back() == '.')) {   // PABLO #1916
+                z.push_back(s.back());                                                                                  // PABLO #1916
+                s.pop_back();                                                                                           // PABLO #1916
+            }                                                                                                           // PABLO #1916
+            else                                                                                                        // PABLO #1916
+                throw PositionFormatException();                                                                        // PABLO #1916
+        }                                                                                                               // PABLO #1916
+        s.pop_back();                                                                                                   // PABLO #1916
+        while(!s.empty() && s.back() != ' ') {                                                                          // PABLO #1916
+            if((s.back() >= '0' && s.back() <= '9') || (s.back() == '-') || (s.back() == '+') || (s.back() == '.')) {   // PABLO #1916
+                y.push_back(s.back());                                                                                  // PABLO #1916
+                s.pop_back();                                                                                           // PABLO #1916
+            }                                                                                                           // PABLO #1916
+            else                                                                                                        // PABLO #1916
+                throw PositionFormatException();                                                                        // PABLO #1916
+        }                                                                                                               // PABLO #1916
+        s.pop_back();                                                                                                   // PABLO #1916
+        while(!s.empty() && s.back() != ' ') {                                                                          // PABLO #1916
+            if((s.back() >= '0' && s.back() <= '9') || (s.back() == '-') || (s.back() == '+') || (s.back() == '.')) {   // PABLO #1916
+                x.push_back(s.back());                                                                                  // PABLO #1916
+                s.pop_back();                                                                                           // PABLO #1916
+            }                                                                                                           // PABLO #1916
+            else                                                                                                        // PABLO #1916
+                throw PositionFormatException();                                                                        // PABLO #1916
+        }                                                                                                               // PABLO #1916
+        std::reverse(x.begin(), x.end());                                                                               // PABLO #1916
+        std::reverse(y.begin(), y.end());                                                                               // PABLO #1916
+        std::reverse(z.begin(), z.end());                                                                               // PABLO #1916
+        return Position(_str2SUMOReal(x), _str2SUMOReal(y), _str2SUMOReal(z));                                          // PABLO #1916
+    }                                                                                                                   // PABLO #1916
+
+    /** convert a string into Position in the three axis (X, Y Z)       // PABLO #1916
+    by calling the Position-type converter, which                       // PABLO #1916
+    throws an EmptyData - exception if the given string is empty        // PABLO #1916
+    throws a PositionFormatException - exception when the string does   // PABLO #1916
+    not contain a Position */                                           // PABLO #1916
+    static Position _str2Position(const std::string& sData) {           // PABLO #1916
+        return _2Position(sData.c_str());                               // PABLO #1916
+    }                                                                   // PABLO #1916
 
     // conversion methods not throwing an exception
     /** converts a 0-terminated char-type array into std::string

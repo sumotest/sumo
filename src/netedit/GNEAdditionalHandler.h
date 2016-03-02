@@ -155,6 +155,7 @@ public:
     static bool buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::map<SumoXMLAttr, std::string> values);
 
     /** @brief Builds a bus stop
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the bus stop
      * @param[in] lane The lane the bus stop is placed on
      * @param[in] frompos Begin position of the bus stop on the lane
@@ -167,6 +168,7 @@ public:
     static bool buildBusStop(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal frompos, SUMOReal topos, const std::vector<std::string>& lines, bool blocked);
 
     /** @brief Builds a charging Station
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the charging Station
      * @param[in] lane The lane the charging Station is placed on
      * @param[in] frompos Begin position of the charging Station on the lane
@@ -182,6 +184,7 @@ public:
     static bool buildChargingStation(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal frompos, SUMOReal topos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked);
 
     /** @brief Builds a induction loop detector (E1)
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the detector
      * @param[in] lane The lane the detector is placed on
      * @param[in] pos position of the detector on the lane
@@ -195,23 +198,26 @@ public:
     static bool buildDetectorE1(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType, bool blocked);
 
     /** @brief Builds a lane Area Detector (E2)
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the detector
      * @param[in] lane The lane the detector is placed on
      * @param[in] pos position of the detector on the lane
+     * @param[in[ length length of the detector
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
      * @param[in] cont Holds the information whether detectors longer than a lane shall be cut off or continued
      * @param[in] timeThreshold The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
      * @param[in] speedThreshold The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
      * @param[in] jamThreshold 	The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
-     * @param[in] splitByType If set, the collected values will be additionally reported on per-vehicle type base.
      * @param[in] blocked set initial blocking state of item 
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
      */
-    static bool buildDetectorE2(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool splitByType, bool blocked);
+    static bool buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
+                                bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked);
 
     /** @brief Builds a multi entry exit detector (E3)
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the detector
      * @param[in] pos position of the detector in the map
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
@@ -223,6 +229,7 @@ public:
     static bool buildDetectorE3(GNEViewNet *viewNet, const std::string& id, Position pos, int freq, const std::string &filename, bool blocked);
 
     /** @brief Builds a entry detector (E3)
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the entry detector
      * @param[in] lane The lane in which the entry detector is placed on
      * @param[in] pos position of the entry detector on the lane
@@ -234,6 +241,7 @@ public:
     static bool buildEntryE3(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked);
 
     /** @brief Builds a exit detector (E3)
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the exit detector
      * @param[in] lane The lane in which the exit detector is placed on
      * @param[in] pos position of the exit detector on the lane
@@ -245,6 +253,7 @@ public:
     static bool buildExitE3(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked);
 
     /** @brief builds a microscopic calibrator
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the calibrator
      * @param[in] edge The edge the calibrator is placed at
      * @param[in] pos The position on the edge the calibrator lies at
@@ -255,6 +264,7 @@ public:
     static bool buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe, bool blocked);
 
     /** @brief builds an rerouter
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the rerouter
      * @param[in] edges The edges the rerouter is placed at
      * @param[in] prob The probability the rerouter reoutes vehicles with
@@ -264,6 +274,7 @@ public:
     static bool buildRerouter(GNEViewNet *viewNet, const std::string& id, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked);
 
     /** @brief Builds a lane speed trigger
+     * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the lane speed trigger
      * @param[in] destLanes List of lanes affected by this speed trigger
      * @param[in] file Name of the file to read the speeds to set from

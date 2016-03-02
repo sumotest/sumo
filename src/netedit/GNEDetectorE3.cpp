@@ -70,8 +70,8 @@ bool GNEDetectorE3::detectorE3Initialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Position pos, SUMOReal freq, const std::string& filename) :
-    GNEAdditionalSet(id, viewNet, SUMO_TAG_E3DETECTOR),
+GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Position pos, SUMOReal freq, const std::string& filename, bool blocked) :
+    GNEAdditionalSet(id, viewNet, SUMO_TAG_E3DETECTOR, blocked),
     myPos(pos),
     myFreq(freq),
     myFilename(filename),

@@ -53,9 +53,9 @@ public:
      * @param[in] pos position (center) of the detector in the map
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file
-     * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
+     * @param[in] blocked set initial blocking state of item 
      */
-    GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Position pos, SUMOReal freq, const std::string& filename);
+    GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Position pos, SUMOReal freq, const std::string& filename, bool blocked);
 
     /// @brief GNEDetectorE3 6Destructor
     ~GNEDetectorE3();

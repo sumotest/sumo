@@ -46,8 +46,15 @@ class GNEDetectorE3;
  */
 class GNEDetectorE3EntryExit  : public GNEDetector {
 public:
-    /// @brief constructor
-    GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos);
+    /** @brief Constructor
+     * @param[in] id The storage of gl-ids to get the one for this lane representation from
+     * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
+     * @param[in] tag
+     * @param[in] lane Lane of this StoppingPlace belongs
+     * @param[in] pos position of the detector on the lane
+     * @param[in] blocked set initial blocking state of item 
+     */
+    GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos, bool blocked);
 
     /// @brief destructor
     ~GNEDetectorE3EntryExit();

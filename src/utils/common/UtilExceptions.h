@@ -48,14 +48,13 @@
  */
 class ProcessError : public std::runtime_error {
 public:
-    /** constructor */
+    /// @brief constructor
     ProcessError()
         : std::runtime_error("Process Error") {}
 
-    /** constructor */
+   /// @brief constructor
     ProcessError(const std::string& msg)
         : std::runtime_error(msg) {}
-
 };
 
 
@@ -66,10 +65,9 @@ public:
  */
 class InvalidArgument : public ProcessError {
 public:
-    /** constructor */
+    /// @brief constructor
     InvalidArgument(const std::string& message)
         : ProcessError(message) {}
-
 };
 
 
@@ -79,10 +77,9 @@ public:
  */
 class EmptyData : public std::runtime_error {
 public:
-    /** constructor */
+    /// @brief constructor
     EmptyData()
         : std::runtime_error("Empty Data") {}
-
 };
 
 
@@ -93,10 +90,9 @@ public:
  */
 class FormatException : public std::runtime_error {
 public:
-    /** constructor */
+    /// @brief constructor
     FormatException(const std::string& msg)
         : std::runtime_error(msg) {}
-
 };
 
 
@@ -108,10 +104,9 @@ public:
  */
 class NumberFormatException : public FormatException {
 public:
-    /** constructor */
+    /// @brief constructor
     NumberFormatException()
         : FormatException("Number Format") {}
-
 };
 
 
@@ -122,11 +117,23 @@ public:
  */
 class BoolFormatException : public FormatException {
 public:
-    /** constructor */
+    /// @brief constructor
     BoolFormatException()
         : FormatException("Bool Format") {}
-
 };
+
+
+/**                                                         // PABLO #1916
+ * PositionFormatException                                  // PABLO #1916
+ * Thrown when the string that shall be converted into a    // PABLO #1916
+ * Position does not match                                  // PABLO #1916
+ */                                                         // PABLO #1916
+class PositionFormatException : public FormatException {    // PABLO #1916
+public:                                                     // PABLO #1916
+    /// @brief constructor                                  // PABLO #1916
+    PositionFormatException()                               // PABLO #1916      
+        : FormatException("Position Format") {}             // PABLO #1916
+};                                                          // PABLO #1916
 
 
 /**
@@ -136,10 +143,9 @@ public:
  */
 class OutOfBoundsException : public std::runtime_error {
 public:
-    /** constructor */
+    /// @brief constructor
     OutOfBoundsException()
         : std::runtime_error("Out Of Bounds") {}
-
 };
 
 
@@ -150,23 +156,21 @@ public:
  */
 class UnknownElement : public std::runtime_error {
 public:
-    /** constructor */
+    /// @brief constructor
     UnknownElement()
         : std::runtime_error("Unknown Element") {}
 
-    /** constructor */
+    /// @brief constructor
     UnknownElement(const std::string& msg)
         : std::runtime_error(msg) {}
-
 };
 
 
 class IOError : public ProcessError {
 public:
-    /** constructor */
+    /// @brief constructor
     IOError(const std::string& message)
         : ProcessError(message) {}
-
 };
 
 
