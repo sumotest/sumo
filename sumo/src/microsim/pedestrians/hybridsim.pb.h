@@ -349,27 +349,17 @@ class Agent : public ::google::protobuf::Message {
   ::std::string* release_id();
   void set_allocated_id(::std::string* id);
 
-  // optional string enterId = 2;
+  // optional int32 enterId = 2;
   void clear_enterid();
   static const int kEnterIdFieldNumber = 2;
-  const ::std::string& enterid() const;
-  void set_enterid(const ::std::string& value);
-  void set_enterid(const char* value);
-  void set_enterid(const char* value, size_t size);
-  ::std::string* mutable_enterid();
-  ::std::string* release_enterid();
-  void set_allocated_enterid(::std::string* enterid);
+  ::google::protobuf::int32 enterid() const;
+  void set_enterid(::google::protobuf::int32 value);
 
-  // optional string leaveId = 3;
+  // optional int32 leaveId = 3;
   void clear_leaveid();
   static const int kLeaveIdFieldNumber = 3;
-  const ::std::string& leaveid() const;
-  void set_leaveid(const ::std::string& value);
-  void set_leaveid(const char* value);
-  void set_leaveid(const char* value, size_t size);
-  ::std::string* mutable_leaveid();
-  ::std::string* release_leaveid();
-  void set_allocated_leaveid(::std::string* leaveid);
+  ::google::protobuf::int32 leaveid() const;
+  void set_leaveid(::google::protobuf::int32 value);
 
   // optional double x = 4;
   void clear_x();
@@ -398,8 +388,8 @@ class Agent : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr id_;
-  ::google::protobuf::internal::ArenaStringPtr enterid_;
-  ::google::protobuf::internal::ArenaStringPtr leaveid_;
+  ::google::protobuf::int32 enterid_;
+  ::google::protobuf::int32 leaveid_;
   double x_;
   double y_;
   ::hybridsim::Leg* leg_;
@@ -777,9 +767,15 @@ class Trajectory : public ::google::protobuf::Message {
   double spd() const;
   void set_spd(double value);
 
-  // optional string linkId = 5;
+  // optional double phi = 5;
+  void clear_phi();
+  static const int kPhiFieldNumber = 5;
+  double phi() const;
+  void set_phi(double value);
+
+  // optional string linkId = 6;
   void clear_linkid();
-  static const int kLinkIdFieldNumber = 5;
+  static const int kLinkIdFieldNumber = 6;
   const ::std::string& linkid() const;
   void set_linkid(const ::std::string& value);
   void set_linkid(const char* value);
@@ -797,6 +793,7 @@ class Trajectory : public ::google::protobuf::Message {
   double x_;
   double y_;
   double spd_;
+  double phi_;
   ::google::protobuf::internal::ArenaStringPtr linkid_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_hybridsim_2eproto();
@@ -995,90 +992,32 @@ inline void Agent::set_allocated_id(::std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.id)
 }
 
-// optional string enterId = 2;
+// optional int32 enterId = 2;
 inline void Agent::clear_enterid() {
-  enterid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  enterid_ = 0;
 }
-inline const ::std::string& Agent::enterid() const {
+inline ::google::protobuf::int32 Agent::enterid() const {
   // @@protoc_insertion_point(field_get:hybridsim.Agent.enterId)
-  return enterid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return enterid_;
 }
-inline void Agent::set_enterid(const ::std::string& value) {
+inline void Agent::set_enterid(::google::protobuf::int32 value) {
   
-  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  enterid_ = value;
   // @@protoc_insertion_point(field_set:hybridsim.Agent.enterId)
 }
-inline void Agent::set_enterid(const char* value) {
-  
-  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.enterId)
-}
-inline void Agent::set_enterid(const char* value, size_t size) {
-  
-  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.enterId)
-}
-inline ::std::string* Agent::mutable_enterid() {
-  
-  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.enterId)
-  return enterid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Agent::release_enterid() {
-  
-  return enterid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Agent::set_allocated_enterid(::std::string* enterid) {
-  if (enterid != NULL) {
-    
-  } else {
-    
-  }
-  enterid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), enterid);
-  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.enterId)
-}
 
-// optional string leaveId = 3;
+// optional int32 leaveId = 3;
 inline void Agent::clear_leaveid() {
-  leaveid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  leaveid_ = 0;
 }
-inline const ::std::string& Agent::leaveid() const {
+inline ::google::protobuf::int32 Agent::leaveid() const {
   // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveId)
-  return leaveid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return leaveid_;
 }
-inline void Agent::set_leaveid(const ::std::string& value) {
+inline void Agent::set_leaveid(::google::protobuf::int32 value) {
   
-  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  leaveid_ = value;
   // @@protoc_insertion_point(field_set:hybridsim.Agent.leaveId)
-}
-inline void Agent::set_leaveid(const char* value) {
-  
-  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.leaveId)
-}
-inline void Agent::set_leaveid(const char* value, size_t size) {
-  
-  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.leaveId)
-}
-inline ::std::string* Agent::mutable_leaveid() {
-  
-  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.leaveId)
-  return leaveid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Agent::release_leaveid() {
-  
-  return leaveid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Agent::set_allocated_leaveid(::std::string* leaveid) {
-  if (leaveid != NULL) {
-    
-  } else {
-    
-  }
-  leaveid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), leaveid);
-  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.leaveId)
 }
 
 // optional double x = 4;
@@ -1406,7 +1345,21 @@ inline void Trajectory::set_spd(double value) {
   // @@protoc_insertion_point(field_set:hybridsim.Trajectory.spd)
 }
 
-// optional string linkId = 5;
+// optional double phi = 5;
+inline void Trajectory::clear_phi() {
+  phi_ = 0;
+}
+inline double Trajectory::phi() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectory.phi)
+  return phi_;
+}
+inline void Trajectory::set_phi(double value) {
+  
+  phi_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Trajectory.phi)
+}
+
+// optional string linkId = 6;
 inline void Trajectory::clear_linkid() {
   linkid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

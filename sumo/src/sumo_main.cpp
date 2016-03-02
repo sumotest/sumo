@@ -130,6 +130,7 @@ main(int argc, char** argv) {
     oc.setApplicationName("sumo", "SUMO Version " + getBuildName(VERSION_STRING));
     int ret = 0;
     MSNet* net = 0;
+
     try {
         // initialise subsystems
         XMLSubSys::init();

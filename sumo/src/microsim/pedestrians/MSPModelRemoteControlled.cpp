@@ -16,13 +16,15 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
+#include <utils/options/OptionsCont.h>
 #include "MSPModelRemoteControlled.h"
 
 
 MSPModelRemoteControlled::MSPModelRemoteControlled(const OptionsCont& oc,
 		MSNet* net) :
 		myNet(net){
-	grpcClient = new MSGRPCClient(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+//	const std::string address = oc.getString("pedestrian.remote.address");
+	grpcClient = new MSGRPCClient(grpc::CreateChannel("localhost:8989", grpc::InsecureChannelCredentials()));
 
 	Event * e = new Event(this);
 	net->getBeginOfTimestepEvents()->addEvent(e,net->getCurrentTimeStep() + DELTA_T, MSEventControl::ADAPT_AFTER_EXECUTION);
@@ -36,7 +38,7 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 
 	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
-	 std::cout << "MSPModelRemoteControlled::add was called" << std::endl;
+	 std::cout << "MSPModelRemoteControlled::add was called. Person id: " << person->getID() << std::endl;
 
 	 MSPRCPState * state = new MSPRCPState(person,stage);
 	 const MSEdge* edge = *(stage->getRoute().begin());;
@@ -94,7 +96,7 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	std::cout << "tock" << std::endl;
 	if (pstates.size() == 0) {
 		std::cout << "pstates empty!\n";
-		return 0;
+//		return 0;
 	}
 	return DELTA_T;
 }

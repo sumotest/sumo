@@ -28,7 +28,13 @@ hybridsimStub(hybridsim::HybridSimulation::NewStub(channel))
 }
 
 MSGRPCClient::~MSGRPCClient() {
-
+	hybridsim::Empty req;
+	hybridsim::Empty rpl;
+	ClientContext context;
+	Status st = hybridsimStub->shutdown(&context,req,&rpl);
+	if(!st.ok()){
+		std::cerr << "something went wrong!" << std::endl;
+	}
 }
 
 
@@ -36,8 +42,9 @@ MSGRPCClient::~MSGRPCClient() {
 //hybrid simulation
 void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
 	hybridsim::LeftClosedRightOpenTimeInterval req;
-	req.set_fromtimeincluding(fromIncl);
-	req.set_totimeexcluding(toExcl);
+
+	req.set_fromtimeincluding(fromIncl/DELTA_T);//hybrid interface requires SI units
+	req.set_totimeexcluding(toExcl/DELTA_T);//hybrid interface requires SI units
 	hybridsim::Empty rpl;
 
 	ClientContext context;
@@ -61,8 +68,9 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 
 	hybridsim::Agent req;
 	req.set_id(id);
-	req.set_enterid(fromId);
-	req.set_leaveid(toId);
+	std::cout << "from" << fromId << " to" << toId << std::endl;
+	req.set_enterid(0);
+	req.set_leaveid(1);
 
 	req.set_x(st->getEdge()->getFromJunction()->getPosition().x());
 	req.set_y(st->getEdge()->getFromJunction()->getPosition().y());
