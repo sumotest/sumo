@@ -353,7 +353,8 @@ protected:
 
     /** @brief Returns the maximum next velocity for stopping within gap
      * when using the ballistic positional update.
-     * This takes into account the driver's reaction time.
+     * @note This takes into account the driver's reaction time and the car's current speed.
+     * (The latter is required to calculate the distance covered in the following timestep.)
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] currentSpeed The current speed of the ego vehicle
      * @return the safe velocity (to be attained at the end of the following time step) that assures the possibility of stopping within gap.

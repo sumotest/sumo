@@ -143,7 +143,11 @@ MSCFModel::freeSpeed(const MSVehicle* const /* veh */, SUMOReal /* speed */, SUM
 
 SUMOReal
 MSCFModel::insertionFollowSpeed(const MSVehicle* const, SUMOReal speed, SUMOReal gap2pred, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
-    return maximumSafeFollowSpeed(gap2pred, speed, predSpeed, predMaxDecel);
+	if(MSGlobals::gSemiImplicitEulerUpdate){
+		return maximumSafeFollowSpeed(gap2pred, speed, predSpeed, predMaxDecel);
+	} else {
+		return maximumSafeFollowSpeed(gap2pred, 0., predSpeed, predMaxDecel);
+	}
 }
 
 
@@ -236,7 +240,7 @@ MSCFModel::maximumSafeStopSpeedEuler(SUMOReal gap) const {
 
 SUMOReal
 MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/) const {
-	// stopping time from time t+dt+tau (braking full strength) on is given as
+	// (Leo) Stopping time from time t+dt+tau (braking full strength) on is given as
 	// ts = vn/b,
 	// with maximal deceleration b and the next step's velocity vn = v(t+dt).
 	// the distance covered in [t, t+dt+tau+ts] is then
@@ -249,21 +253,22 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	// i.e.,
 	// 0 = vn*vn + vn*(dt*b + tau*2b) + v*dt*b - g*2b
 	// giving
-	// vn = -(dt*b + 2*b*tau)/2 + sqrt( (dt + 2*tau)^2*b^2/4 + 2b*g - v*dt*b ),
-	// where the vehicle cannot brake in time if the discriminant is negative, i.e.,
-	// v*dt*b - 2b*g >  (dt + 2*tau)^2*b^2/4 (is this a good interpretation?)
-	// In that case, we return the minimal possible next velocity ( == v-b*dt)
-	// Further, vn can become negative if v > 2g/d, but the discriminant is positive.
-	// This indicates a required stop within [t, t+dt]!
-	// Such a negative return value gives responsibility to the caller to interpret it
-	// correctly, e.g. process a stop in the middle of a time step.
+	// vn = -(dt*b + 2*b*tau)/2 +- sqrt( (dt + 2*tau)^2*b^2/4 + 2b*g - v*dt*b ),
+	// The desired speed is the positive root, if it exists. If it does not exist,
+	// We find that g - v*dt/2 < 0, i.e., a constant deceleration from v to 0 in the
+	// next step would still lead to a positional advance larger than g.
+	// This indicates a required stop within [t, t+dt], which is reported as
+	// a negative return value for the speed at the next time step (linearly extrapolating the required deceleration).
+	// This gives responsibility to the caller to interpret it correctly,
+	// e.g. process a stop in the middle of a time step (currently done in MSVehicle::executeMove()).
 	SUMOReal b = myDecel;
 	SUMOReal dt = STEPS2TIME(DELTA_T);
-	SUMOReal D = pow((dt + 2*myHeadwayTime)*b, 2)/4 + 2*b*g - v*dt*b;
+	SUMOReal D = 2*g - v*dt;
 	if(D < 0){
-		return v - ACCEL2SPEED(b);
+		return D/dt;
 	} else {
-		return -(dt/2 + myHeadwayTime)*b + sqrt(D);
+		SUMOReal p = (dt/2 + myHeadwayTime)*b;
+		return -p + sqrt(pow(p,2) + D*b);
 	}
 }
 

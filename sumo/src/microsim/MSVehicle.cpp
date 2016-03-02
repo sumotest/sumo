@@ -1321,8 +1321,29 @@ MSVehicle::executeMove() {
 
     assert(myLFLinkLanes.size() != 0 || (myInfluencer != 0 && myInfluencer->isVTDControlled()));
     DriveItemVector::iterator i;
+
+    // Debug (Leo)
+    int l_count=0;
+    if(this->myParameter->id == "A"){
+    	int j = 0;
+    	std::cout << "myLane = " << myLane->getID() << std::endl;
+    	for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
+    		std::cout << "myLFLinkLanes[" << j << "]:" << i->myLink->getLane()->getID() << std::endl;
+    		j++;
+    	}
+    }
+
     for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         MSLink* link = (*i).myLink;
+
+        // Debug (Leo)
+        if(this->myParameter->id == "A"){
+        	std::cout << "myLFLinkLanes[" << l_count << "]:" << i->myLink->getLane()->getID() << std::endl;
+        	std::cout << "i->myVLinkWait = " << i->myVLinkWait << std::endl;
+        	std::cout << "i->myVLinkPass = " << i->myVLinkPass << std::endl;
+        	l_count++;
+        }
+
         // the vehicle must change the lane on one of the next lanes
         if (link != 0 && (*i).mySetRequest) {
             const LinkState ls = link->getState();
@@ -1412,6 +1433,13 @@ MSVehicle::executeMove() {
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
 
+    // Debug (Leo)
+    if(this->myParameter->id == "A"){
+    	std::cout << "vSafe = " << vSafe << std::endl;
+    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
+    	std::cout << "vNext = " << vNext << std::endl;
+    }
+
     // vNext may be higher than vSafe without implying a bug:
     //  - when approaching a green light that suddenly switches to yellow
     //  - when using unregulated junctions
@@ -1424,7 +1452,15 @@ MSVehicle::executeMove() {
     //            + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
     //}
 
-    vNext = MAX2(vNext, (SUMOReal) 0.);
+
+    // At this point vNext (as returned from a call to MSCFModel::maximumSafeStopSpeed() ) may also be negative indicating a stop within next step.
+//    vNext = MAX2(vNext, (SUMOReal) 0.); // XXX: Removed, because negative vNext can indicate a stop within next step.
+    									// XXX: reassurance needed, whether the following TRACI-Code needs adjustments.
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        vNext = MAX2(vNext, 0.0);
+    } else {
+    	vNext = MAX2(vNext, myState.mySpeed - ACCEL2SPEED(getCarFollowModel().getMaxDecel()));
+    }
 
 #ifndef NO_TRACI
     if (myInfluencer != 0) {
@@ -1448,23 +1484,16 @@ MSVehicle::executeMove() {
     } else {
         switchOffSignal(VEH_SIGNAL_BRAKELIGHT);
     }
-    // call reminders after vNext is set
-    const SUMOReal oldPos = myState.myPos;
 
-    // update position and speed
-    // To enable a stop at times in between t and t + DELTA_T, we would like to
-    // get myAcceleration directly and in case of myState.mySpeed + ACCEL2SPEED(myAcceleration) < 0, we'd
-    // know that the car must have come to halt at some earlier time t+s, with s = -v/a,
-    // In this case, we would calculate the positional update as
-    // deltaPos = -v*v/a + v*v/(2*a) = -v*v/(2*a)
-    //
-    // The corresponding call should be something like:
-    // myAcceleration = getCarFollowModel().getAcceleration(this, vSafe)
-    myAcceleration = SPEED2ACCEL(vNext - myState.mySpeed);
+    // the mean acceleration during the next step
+    myAcceleration = SPEED2ACCEL(MAX2(vNext,0.) - myState.mySpeed);
+
+    // update position and speedconst
+    SUMOReal oldPos = myState.myPos;
     SUMOReal deltaPos;
     if(MSGlobals::gSemiImplicitEulerUpdate){
     	// apply implicit Euler positional update
-    	deltaPos = SPEED2DIST(vNext);
+    	deltaPos = SPEED2DIST(MAX2(vNext,0.));
     }else{
     	// apply ballistic update
     	if(vNext >= 0){
@@ -1472,7 +1501,11 @@ MSVehicle::executeMove() {
     		deltaPos = SPEED2DIST(myState.mySpeed + 0.5*ACCEL2SPEED(myAcceleration));
     	} else {
     		// negative vNext indicates a stop within the middle of time step
-    		deltaPos = 0.5*myState.mySpeed*myState.mySpeed/myAcceleration;
+    		// The corresponding stop time is s = mySpeed/deceleration \in [0,dt], and the
+    		// covered distance is therefore deltaPos = mySpeed*s - 0.5*deceleration*s^2.
+    		// Here, deceleration = myState.mySpeed - vNext is the constant deceleration
+    		// until the vehicle stops.
+    		deltaPos = 0.5*myState.mySpeed*myState.mySpeed/(myState.mySpeed - vNext);
     	}
     }
     myState.mySpeed = MAX2(vNext,0.);
