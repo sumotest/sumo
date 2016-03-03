@@ -105,6 +105,10 @@ public:
     /// @brief whether the current vehicles shall be debugged
     bool debugVehicle() const;
 
+    void setOwnState(int state) {
+        myOwnState = state;
+        myPreviousState = state;
+    }
 
 protected:
 
@@ -216,7 +220,8 @@ protected:
                 const MSLeaderDistanceInfo& neighFollowers,
                 const MSLeaderDistanceInfo& neighBlockers,
                 std::vector<CLeaderDist>* collectLeadBlockers = 0,
-                std::vector<CLeaderDist>* collectFollowBlockers = 0); 
+                std::vector<CLeaderDist>* collectFollowBlockers = 0,
+                bool saveOriginalLatDist = true); 
 
     /// @brief check whether any of the vehicles overlaps with ego
     static int checkBlockingVehicles(const MSVehicle* ego, const MSLeaderDistanceInfo& vehicles, 
@@ -295,6 +300,12 @@ protected:
 
     /// @brief whether the current lane changing meneuver can be finished in a single step
     bool myCanChangeFully;
+
+    /// @brief lane changing state from the previous simulation step
+    int myPreviousState;
+
+    /// @brief the complete lateral distance the vehicle wants to travel to finish its maneuver
+    SUMOReal myOrigLatDist;
 
     /// @name user configurable model parameters
     //@{

@@ -112,6 +112,8 @@ MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
     myLookAheadSpeed(LOOK_AHEAD_MIN_SPEED),
     myLastEdge(0),
     myCanChangeFully(true),
+    myPreviousState(0),
+    myOrigLatDist(0),
     myPushy(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_PUSHY, 0))
 {
     if (MSGlobals::gLateralResolution <= 0) {
@@ -166,6 +168,13 @@ MSLCM_SL2015::wantsChangeSublane(
             neighLeaders, neighFollowers, neighBlockers,
             neighLane, preb, 
             lastBlocked, firstBlocked, latDist, blocked);
+
+    if ((result & LCA_STAY != 0)) {
+        // checkBlocking was not called yet
+        assert(latDist == 0);
+        myOrigLatDist = 0;
+        myCanChangeFully = true;
+    }
 
     result = keepLatGap(result, leaders, followers, blockers,
             neighLeaders, neighFollowers, neighBlockers,
@@ -671,6 +680,9 @@ void
 MSLCM_SL2015::prepareStep() {
     // keep information about strategic change direction
     myOwnState = (myOwnState & LCA_STRATEGIC) ? (myOwnState & LCA_WANTS_LANECHANGE) : 0;
+    if (myCanChangeFully) {
+        myOrigLatDist = 0;
+    }
     myLeadingBlockerLength = 0;
     myLeftSpace = 0;
     myVSafes.clear();
@@ -1301,8 +1313,8 @@ MSLCM_SL2015::_wantsChangeSublane(
         }
     }
 
-    // factor in preferred lateral alignment
-    if (fabs(latDist) <= NUMERICAL_EPS) {
+    // factor in preferred lateral alignment (unless we are in the middle of an unfinished non-alignment maneuver)
+    if (fabs(latDist) <= NUMERICAL_EPS && (myCanChangeFully || (myPreviousState | LCA_SUBLANE) != 0)) {
         const SUMOReal halfLaneWidth = myVehicle.getLane()->getWidth() * 0.5;
         const SUMOReal halfVehWidth = myVehicle.getVehicleType().getWidth() * 0.5;
         switch (myVehicle.getVehicleType().getPreferredLateralAlignment()) {
@@ -1329,6 +1341,8 @@ MSLCM_SL2015::_wantsChangeSublane(
                     << " mySpeedGainR=" << mySpeedGainProbabilityRight
                     << " mySpeedGainL=" << mySpeedGainProbabilityLeft
                     << " latDist=" << latDist 
+                    << " myCanChangeFully=" << myCanChangeFully
+                    << " prevState=" << toString((LaneChangeAction)myPreviousState)
                     << "\n";
         if ((latDist < 0 && mySpeedGainProbabilityRight < SPEED_LOSS_PROP_THRESHOLD)
                 || (latDist > 0 && mySpeedGainProbabilityLeft < SPEED_LOSS_PROP_THRESHOLD)) {
@@ -1538,9 +1552,12 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
         const MSLeaderDistanceInfo& neighFollowers,
         const MSLeaderDistanceInfo& /* neighBlockers */,
         std::vector<CLeaderDist>* collectLeadBlockers,
-        std::vector<CLeaderDist>* collectFollowBlockers) {
+        std::vector<CLeaderDist>* collectFollowBlockers,
+        bool saveOriginalLatDist) {
     // truncate latDist according to maxSpeedLat
-    const SUMOReal origLatDist = latDist;
+    if (saveOriginalLatDist) {
+        myOrigLatDist = latDist;
+    }
     const SUMOReal maxDist = SPEED2DIST(myVehicle.getVehicleType().getMaxSpeedLat());
     latDist = MAX2(MIN2(latDist, maxDist), -maxDist);
 
@@ -1556,24 +1573,25 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
         updateGaps(neighFollowers, neighLane.getRightSideOnEdge(), center, 0, surplusGapRight, surplusGapLeft);
     }
     if (gDebugFlag2) {
-        std::cout << "    checkBlocking surplusGapRight=" << surplusGapRight<< " surplusGapLeft=" << surplusGapLeft << "\n";
+        std::cout << "    checkBlocking latDist=" << latDist << " surplusGapRight=" << surplusGapRight<< " surplusGapLeft=" << surplusGapLeft << "\n";
     }
-    if (surplusGapLeft <= -NUMERICAL_EPS) {
-        return LCA_BLOCKED_LEFT | LCA_OVERLAPPING;
-    } else if (surplusGapRight <= -NUMERICAL_EPS) {
-        return LCA_BLOCKED_RIGHT | LCA_OVERLAPPING;
-    } else {
-        if (latDist < 0) {
+    if (latDist < 0) {
+        if (surplusGapRight <= 0) {
+            return LCA_BLOCKED_RIGHT | LCA_OVERLAPPING;
+        } else {
             latDist = MAX2(latDist, -surplusGapRight);
+        }
+    } else {
+        if (surplusGapLeft <= 0) {
+            return LCA_BLOCKED_LEFT | LCA_OVERLAPPING;
         } else {
             latDist = MIN2(latDist, surplusGapLeft);
         }
     }
 
-
-    myCanChangeFully = (latDist == origLatDist);
+    myCanChangeFully = (myOrigLatDist == 0 || latDist == myOrigLatDist);
     if (gDebugFlag2) {
-        std::cout << "    checkBlocking fully=" << myCanChangeFully << " latDist=" << latDist << " origLatDist=" << origLatDist << "\n";
+        std::cout << "    checkBlocking fully=" << myCanChangeFully << " latDist=" << latDist << " origLatDist=" << myOrigLatDist << "\n";
     }
     // destination sublanes must be safe
     // intermediate sublanes must not be blocked by overlapping vehicles
@@ -1596,12 +1614,12 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
         // blockers and only check that the start of their maneuver (latDist) is safe. In
         // contrast, cautious drivers need to check latDist and origLatDist to
         // ensure that the maneuver can be finished without encroaching on other vehicles.
-        blocked |= checkBlockingVehicles(&myVehicle, leaders, origLatDist, myVehicle.getLane()->getRightSideOnEdge(), true, LCA_BLOCKED_BY_LEADER, collectLeadBlockers);
-        blocked |= checkBlockingVehicles(&myVehicle, followers, origLatDist, myVehicle.getLane()->getRightSideOnEdge(), false, LCA_BLOCKED_BY_FOLLOWER, collectFollowBlockers);
+        blocked |= checkBlockingVehicles(&myVehicle, leaders, myOrigLatDist, myVehicle.getLane()->getRightSideOnEdge(), true, LCA_BLOCKED_BY_LEADER, collectLeadBlockers);
+        blocked |= checkBlockingVehicles(&myVehicle, followers, myOrigLatDist, myVehicle.getLane()->getRightSideOnEdge(), false, LCA_BLOCKED_BY_FOLLOWER, collectFollowBlockers);
         if (laneOffset != 0) {
-            blocked |= checkBlockingVehicles(&myVehicle, neighLeaders, origLatDist, neighLane.getRightSideOnEdge(), true,
+            blocked |= checkBlockingVehicles(&myVehicle, neighLeaders, myOrigLatDist, neighLane.getRightSideOnEdge(), true,
                     (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER), collectLeadBlockers);
-            blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, origLatDist, neighLane.getRightSideOnEdge(), false,
+            blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, myOrigLatDist, neighLane.getRightSideOnEdge(), false,
                     (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER), collectFollowBlockers);
         }
     }
@@ -1936,7 +1954,6 @@ MSLCM_SL2015::keepLatGap(int state,
      *
      * */
 
-    const SUMOReal origLatDist = latDist;
     /// XXX to be made configurable
     const SUMOReal gapFactor = ((state & LCA_STRATEGIC) != 0) && (state & LCA_STAY) == 0 ? 0.0: 1.0; 
     const SUMOReal minGap = myVehicle.getVehicleType().getMinGapLat();
@@ -1988,7 +2005,10 @@ MSLCM_SL2015::keepLatGap(int state,
         }
     }
     if (blocked == 0 /*&& latDist != origLatDist*/) {
-        blocked = checkBlocking(neighLane, latDist, laneOffset, leaders, followers, blockers, neighLeaders, neighFollowers, neighBlockers);
+        blocked = checkBlocking(neighLane, latDist, laneOffset, leaders, followers, blockers, neighLeaders, neighFollowers, neighBlockers, 0, 0, false);
+    }
+    if (latDist != 0) {
+        state = (state & ~LCA_STAY);
     }
     return state;
 }

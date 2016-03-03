@@ -149,7 +149,7 @@ public:
         return myOwnState;
     }
 
-    inline void setOwnState(int state) {
+    virtual void setOwnState(int state) {
         myOwnState = state;
     }
 
