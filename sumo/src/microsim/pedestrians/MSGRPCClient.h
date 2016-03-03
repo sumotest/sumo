@@ -45,7 +45,7 @@ public :
 	};
 public:
 	MSGRPCClient(std::shared_ptr<Channel> channel);
-	virtual ~MSGRPCClient();
+	~MSGRPCClient();
 
 	//hybrid simulation
 	void simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl);
@@ -55,5 +55,6 @@ public:
 
 private:
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
+//	int inSim = 0;
 };
 #endif /*MSGRPC_CLIENT_H*/

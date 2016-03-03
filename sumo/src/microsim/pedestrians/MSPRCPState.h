@@ -55,6 +55,7 @@ class MSPRCPState : public PedestrianState {
 
 		void setXY(const double x, const double y) {myPosition.set(x,y);};
 		void setSpeed(const double spd) {mySpeed = spd;};
+		void setAngle(const double angle) {myAngle = angle;};
 		const MSEdge* incrEdge();
 
 	private:

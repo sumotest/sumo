@@ -19,6 +19,8 @@
 #include <grpc++/grpc++.h>
 #include <utils/common/StdDefs.h>
 #include <microsim/MSJunction.h>
+#include <microsim/MSLane.h>
+#include <regex>
 #include "MSGRPCClient.h"
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) :
@@ -34,6 +36,7 @@ MSGRPCClient::~MSGRPCClient() {
 	Status st = hybridsimStub->shutdown(&context,req,&rpl);
 	if(!st.ok()){
 		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
 	}
 }
 
@@ -52,9 +55,10 @@ void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
 	Status st = hybridsimStub->simulatedTimeInerval(&context,req,&rpl);
 	if(!st.ok()){
 		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
 	}
 
-
+//	std::cout << "in JuPedSim:" << inSim << std::endl;
 
 }
 
@@ -68,20 +72,41 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 
 	hybridsim::Agent req;
 	req.set_id(id);
-	std::cout << "from" << fromId << " to" << toId << std::endl;
-	req.set_enterid(0);
-	req.set_leaveid(1);
+	//	std::cout << "from" << fromId << " to" << toId << std::endl;
+	//hack!!
+	std::regex e ("(fwd)(.*)");
+	if (std::regex_match(id,e)) {
+		req.set_enterid(0);
+		req.set_leaveid(1);
+	} else {
+		req.set_enterid(1);
+		req.set_leaveid(0);
+	}
+
+
 
 	req.set_x(st->getEdge()->getFromJunction()->getPosition().x());
 	req.set_y(st->getEdge()->getFromJunction()->getPosition().y());
 
 	for (const MSEdge * e : st->getMyStage()->getRoute()) {
-		hybridsim::Link * l =  req.mutable_leg()->add_link();
-		l->set_x0(e->getFromJunction()->getPosition().x());
-		l->set_y0(e->getFromJunction()->getPosition().y());
-		l->set_x1(e->getToJunction()->getPosition().x());
-		l->set_y1(e->getToJunction()->getPosition().y());
-		l->set_id(e->getID());
+		bool fnd = false;
+		for (const MSLane * ln : e->getLanes()) {
+			if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+
+				hybridsim::Link * l =  req.mutable_leg()->add_link();
+				Position p = ln->getShape().getCentroid();
+				hybridsim::Coordinate * cr = l->mutable_centroid();
+				cr->set_x(p.x());
+				cr->set_y(p.y());
+				l->set_id(e->getID());
+				fnd = true;
+				break;
+			}
+		}
+		if (!fnd) {
+			std::cerr << "no pedestrian lane found for edge " << e->getID() << std::endl;
+			exit(-1);
+		}
 	}
 
 
@@ -90,11 +115,14 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 	ClientContext context;
 
 	Status status = hybridsimStub->transferAgent(&context,req,&rpl);
+//	inSim++;
 	if (status.ok()) {
 		return rpl.val();
 	} else {
 		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
 	}
+
 }
 
 void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates,SUMOTime time) {
@@ -105,10 +133,10 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 	if (st.ok()){
 		for (int i = 0; i < rpl.trajectories_size(); i++) {
 			const hybridsim::Trajectory t = rpl.trajectories(i);
-			std::cout << "tr | id: " << t.id() << " | x = " << t.x() << " | y = " << t.y() << " | spd = " << t.spd() << " | edge: " << t.linkid() << "\n";
 			MSPRCPState* st = pstates[t.id()];
 			st->setXY(t.x(),t.y());
 			st->setSpeed(t.spd());
+			st->setAngle(t.phi());
 			if (t.linkid() != "" && t.linkid() != st->getEdge()->getID()) {
 				const MSEdge * oldEdge = st->getEdge();
 				const MSEdge * newEdge = st->incrEdge();
@@ -117,6 +145,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 		}
 	} else {
 		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
 	}
 }
 
@@ -130,15 +159,18 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pst
 		for (int i = 0; i < rpl.agents_size(); i++) {
 			const hybridsim::Agent a = rpl.agents(i);
 			MSPRCPState* st = pstates[a.id()];
-//			st->getEdge()->removePerson(pstates[a.id()]->getPerson());
-//			st->getPerson()->proceed(net,time);
 			st->getMyStage()->moveToNextEdge(st->getPerson(),time,st->getEdge(),0);
-//			st->getMyStage()->moveToNextEdge(0,0,0,0);
+			int s0 = pstates.size();
 			pstates.erase(a.id());
+			int s1 = pstates.size();
+			if (s0 == s1) {
+				std::cerr << "something went wrong!" << std::endl;
+			}
 			delete st;
 		}
 	} else {
 		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
 	}
 }
 

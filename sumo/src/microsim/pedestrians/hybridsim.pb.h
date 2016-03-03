@@ -39,6 +39,7 @@ void protobuf_ShutdownFile_hybridsim_2eproto();
 class Agent;
 class Agents;
 class Boolean;
+class Coordinate;
 class Empty;
 class LeftClosedRightOpenTimeInterval;
 class Leg;
@@ -543,33 +544,18 @@ class Link : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional double x0 = 1;
-  void clear_x0();
-  static const int kX0FieldNumber = 1;
-  double x0() const;
-  void set_x0(double value);
+  // optional .hybridsim.Coordinate centroid = 1;
+  bool has_centroid() const;
+  void clear_centroid();
+  static const int kCentroidFieldNumber = 1;
+  const ::hybridsim::Coordinate& centroid() const;
+  ::hybridsim::Coordinate* mutable_centroid();
+  ::hybridsim::Coordinate* release_centroid();
+  void set_allocated_centroid(::hybridsim::Coordinate* centroid);
 
-  // optional double y0 = 2;
-  void clear_y0();
-  static const int kY0FieldNumber = 2;
-  double y0() const;
-  void set_y0(double value);
-
-  // optional double x1 = 3;
-  void clear_x1();
-  static const int kX1FieldNumber = 3;
-  double x1() const;
-  void set_x1(double value);
-
-  // optional double y1 = 4;
-  void clear_y1();
-  static const int kY1FieldNumber = 4;
-  double y1() const;
-  void set_y1(double value);
-
-  // optional string id = 5;
+  // optional string id = 2;
   void clear_id();
-  static const int kIdFieldNumber = 5;
+  static const int kIdFieldNumber = 2;
   const ::std::string& id() const;
   void set_id(const ::std::string& value);
   void set_id(const char* value);
@@ -583,10 +569,7 @@ class Link : public ::google::protobuf::Message {
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  double x0_;
-  double y0_;
-  double x1_;
-  double y1_;
+  ::hybridsim::Coordinate* centroid_;
   ::google::protobuf::internal::ArenaStringPtr id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_hybridsim_2eproto();
@@ -595,6 +578,91 @@ class Link : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static Link* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Coordinate : public ::google::protobuf::Message {
+ public:
+  Coordinate();
+  virtual ~Coordinate();
+
+  Coordinate(const Coordinate& from);
+
+  inline Coordinate& operator=(const Coordinate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Coordinate& default_instance();
+
+  void Swap(Coordinate* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Coordinate* New() const { return New(NULL); }
+
+  Coordinate* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Coordinate& from);
+  void MergeFrom(const Coordinate& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Coordinate* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional double x = 1;
+  void clear_x();
+  static const int kXFieldNumber = 1;
+  double x() const;
+  void set_x(double value);
+
+  // optional double y = 2;
+  void clear_y();
+  static const int kYFieldNumber = 2;
+  double y() const;
+  void set_y(double value);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Coordinate)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  double x_;
+  double y_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Coordinate* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1123,63 +1191,44 @@ Leg::link() const {
 
 // Link
 
-// optional double x0 = 1;
-inline void Link::clear_x0() {
-  x0_ = 0;
+// optional .hybridsim.Coordinate centroid = 1;
+inline bool Link::has_centroid() const {
+  return !_is_default_instance_ && centroid_ != NULL;
 }
-inline double Link::x0() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.x0)
-  return x0_;
+inline void Link::clear_centroid() {
+  if (GetArenaNoVirtual() == NULL && centroid_ != NULL) delete centroid_;
+  centroid_ = NULL;
 }
-inline void Link::set_x0(double value) {
+inline const ::hybridsim::Coordinate& Link::centroid() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Link.centroid)
+  return centroid_ != NULL ? *centroid_ : *default_instance_->centroid_;
+}
+inline ::hybridsim::Coordinate* Link::mutable_centroid() {
   
-  x0_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.x0)
+  if (centroid_ == NULL) {
+    centroid_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Link.centroid)
+  return centroid_;
+}
+inline ::hybridsim::Coordinate* Link::release_centroid() {
+  
+  ::hybridsim::Coordinate* temp = centroid_;
+  centroid_ = NULL;
+  return temp;
+}
+inline void Link::set_allocated_centroid(::hybridsim::Coordinate* centroid) {
+  delete centroid_;
+  centroid_ = centroid;
+  if (centroid) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Link.centroid)
 }
 
-// optional double y0 = 2;
-inline void Link::clear_y0() {
-  y0_ = 0;
-}
-inline double Link::y0() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.y0)
-  return y0_;
-}
-inline void Link::set_y0(double value) {
-  
-  y0_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.y0)
-}
-
-// optional double x1 = 3;
-inline void Link::clear_x1() {
-  x1_ = 0;
-}
-inline double Link::x1() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.x1)
-  return x1_;
-}
-inline void Link::set_x1(double value) {
-  
-  x1_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.x1)
-}
-
-// optional double y1 = 4;
-inline void Link::clear_y1() {
-  y1_ = 0;
-}
-inline double Link::y1() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.y1)
-  return y1_;
-}
-inline void Link::set_y1(double value) {
-  
-  y1_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.y1)
-}
-
-// optional string id = 5;
+// optional string id = 2;
 inline void Link::clear_id() {
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1220,6 +1269,38 @@ inline void Link::set_allocated_id(::std::string* id) {
   }
   id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Link.id)
+}
+
+// -------------------------------------------------------------------
+
+// Coordinate
+
+// optional double x = 1;
+inline void Coordinate::clear_x() {
+  x_ = 0;
+}
+inline double Coordinate::x() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Coordinate.x)
+  return x_;
+}
+inline void Coordinate::set_x(double value) {
+  
+  x_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Coordinate.x)
+}
+
+// optional double y = 2;
+inline void Coordinate::clear_y() {
+  y_ = 0;
+}
+inline double Coordinate::y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Coordinate.y)
+  return y_;
+}
+inline void Coordinate::set_y(double value) {
+  
+  y_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Coordinate.y)
 }
 
 // -------------------------------------------------------------------
@@ -1437,6 +1518,8 @@ Trajectories::trajectories() const {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

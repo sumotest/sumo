@@ -30,7 +30,9 @@ MSPModelRemoteControlled::MSPModelRemoteControlled(const OptionsCont& oc,
 	net->getBeginOfTimestepEvents()->addEvent(e,net->getCurrentTimeStep() + DELTA_T, MSEventControl::ADAPT_AFTER_EXECUTION);
 }
 
-MSPModelRemoteControlled::~MSPModelRemoteControlled() {}
+MSPModelRemoteControlled::~MSPModelRemoteControlled() {
+	grpcClient->~MSGRPCClient();
+}
 
 
 PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
@@ -38,7 +40,7 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 
 	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
-	 std::cout << "MSPModelRemoteControlled::add was called. Person id: " << person->getID() << std::endl;
+//	 std::cout << "MSPModelRemoteControlled::add was called. Person id: " << person->getID() << std::endl;
 
 	 MSPRCPState * state = new MSPRCPState(person,stage);
 	 const MSEdge* edge = *(stage->getRoute().begin());;
@@ -49,15 +51,15 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 
 		 std::string str =  edge->getID();
-		 std::cout << "current edge = " << str << std::endl;
 		 buffers[edge->getID()] = buffer;
 	 } else {
-		 std::queue<MSPRCPState*> buffer = buffers[edge->getID()];
-		 buffer.push(state);
+		 std::queue<MSPRCPState*> * buffer = &buffers[edge->getID()];
+		 buffer->push(state);
 	 }
 
 //	 MSPRCPState * state = new MSPRCPState(person);
 	 pstates[person->getID()] = state;
+
 	 return state;
 }
 
@@ -69,7 +71,6 @@ bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 
 SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 
-	std::cout << "tick" << std::endl;
 	//do all the handling here
 
 	//1. transfer agents as long as there is space (SUMO --> external sim)
@@ -93,15 +94,13 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 	//4. transfer agents as long as there is space (external sim --> SUMO)
 	grpcClient->retrieveAgents(pstates,myNet,currentTime);
 
-	std::cout << "tock" << std::endl;
-	if (pstates.size() == 0) {
-		std::cout << "pstates empty!\n";
-//		return 0;
-	}
 	return DELTA_T;
 }
 
 void MSPModelRemoteControlled::handleBuffer(std::queue<MSPRCPState*>* buffer) {
+//	if (buffer->size() > 1) {
+//		std::cout << "gt 1" << std::endl;
+//	}
 	while(!buffer->empty()){
 		MSPRCPState* st = buffer->front();
 		if (transmitPedestrian(st)) {
