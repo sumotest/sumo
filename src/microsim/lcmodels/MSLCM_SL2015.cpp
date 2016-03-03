@@ -111,7 +111,8 @@ MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
     myLeftSpace(0),
     myLookAheadSpeed(LOOK_AHEAD_MIN_SPEED),
     myLastEdge(0),
-    myCanChangeFully(true)
+    myCanChangeFully(true),
+    myPushy(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_PUSHY, 0))
 {
     if (MSGlobals::gLateralResolution <= 0) {
         throw ProcessError("laneChangeModel 'MSLCM_SL2015' is only meant to be used when simulating with '--lateral-resoluion' > 0");
@@ -1570,15 +1571,10 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
     }
 
 
-    // XXX aggressive drivers immediately start moving towards potential
-    // blockers and only check that the start of their maneuver (latDist) is safe. In
-    // contrast, cautious drivers need to check latDist and origLatDist to
-    // ensure that the maneuver can be finished without encroaching on other vehicles.
     myCanChangeFully = (latDist == origLatDist);
     if (gDebugFlag2) {
         std::cout << "    checkBlocking fully=" << myCanChangeFully << " latDist=" << latDist << " origLatDist=" << origLatDist << "\n";
     }
-
     // destination sublanes must be safe
     // intermediate sublanes must not be blocked by overlapping vehicles
 
@@ -1593,6 +1589,21 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
                 (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER), collectLeadBlockers);
         blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, latDist, neighLane.getRightSideOnEdge(), false,
                 (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER), collectFollowBlockers);
+    }
+
+    if (blocked == 0 && !myCanChangeFully && myPushy == 0) {
+        // aggressive drivers immediately start moving towards potential
+        // blockers and only check that the start of their maneuver (latDist) is safe. In
+        // contrast, cautious drivers need to check latDist and origLatDist to
+        // ensure that the maneuver can be finished without encroaching on other vehicles.
+        blocked |= checkBlockingVehicles(&myVehicle, leaders, origLatDist, myVehicle.getLane()->getRightSideOnEdge(), true, LCA_BLOCKED_BY_LEADER, collectLeadBlockers);
+        blocked |= checkBlockingVehicles(&myVehicle, followers, origLatDist, myVehicle.getLane()->getRightSideOnEdge(), false, LCA_BLOCKED_BY_FOLLOWER, collectFollowBlockers);
+        if (laneOffset != 0) {
+            blocked |= checkBlockingVehicles(&myVehicle, neighLeaders, origLatDist, neighLane.getRightSideOnEdge(), true,
+                    (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER), collectLeadBlockers);
+            blocked |= checkBlockingVehicles(&myVehicle, neighFollowers, origLatDist, neighLane.getRightSideOnEdge(), false,
+                    (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER), collectFollowBlockers);
+        }
     }
     return blocked;
 }
@@ -1928,7 +1939,6 @@ MSLCM_SL2015::keepLatGap(int state,
     const SUMOReal origLatDist = latDist;
     /// XXX to be made configurable
     const SUMOReal gapFactor = ((state & LCA_STRATEGIC) != 0) && (state & LCA_STAY) == 0 ? 0.0: 1.0; 
-    const SUMOReal pushy = myVehicle.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_PUSHY, 0);
     const SUMOReal minGap = myVehicle.getVehicleType().getMinGapLat();
 
     /// XXX todo

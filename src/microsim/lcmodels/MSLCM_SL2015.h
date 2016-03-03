@@ -296,6 +296,13 @@ protected:
     /// @brief whether the current lane changing meneuver can be finished in a single step
     bool myCanChangeFully;
 
+    /// @name user configurable model parameters
+    //@{
+    // @brief willingness to encroach on other vehicles laterally (pushing them around)
+    SUMOReal myPushy;
+    //@}
+
+
 };
 
 
