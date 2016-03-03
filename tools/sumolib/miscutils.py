@@ -19,6 +19,7 @@ the Free Software Foundation; either version 3 of the License, or
 from __future__ import absolute_import
 from __future__ import print_function
 import sys
+PY3 = sys.version_info > (3,)
 import time
 import os
 import math
@@ -26,7 +27,6 @@ import colorsys
 import socket
 import random
 from collections import defaultdict
-from functools import total_ordering
 
 # append import path stanca:
 #THIS_DIR == os.path.basename(__file__)
@@ -34,7 +34,6 @@ from functools import total_ordering
 
 # http://www.python.org/dev/peps/pep-0326/
 
-@total_ordering
 class _ExtremeType(object):
 
     def __init__(self, isMax, rep):
@@ -43,14 +42,22 @@ class _ExtremeType(object):
         self._rep = rep
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and\
-           other._isMax == self._isMax
+        return isinstance(other, self.__class__) and other._isMax == self._isMax
 
     def __ne__(self, other):
         return not self == other
 
     def __gt__(self, other):
         return self._isMax and not self == other
+
+    def __ge__(self, other):
+        return self._isMax
+
+    def __lt__(self, other):
+        return not self._isMax and not self == other
+
+    def __le__(self, other):
+        return not self._isMax
 
     def __repr__(self):
         return self._rep
@@ -186,7 +193,10 @@ class Statistics:
 
     def quartiles(self):
         s = sorted(self.values)
-        return s[len(self.values) / 4], s[len(self.values) / 2], s[3 * len(self.values) / 4]
+        if(PY3):
+            return s[len(self.values) // 4], s[len(self.values) // 2], s[3 * len(self.values) // 4]
+        else:
+            return s[len(self.values) / 4], s[len(self.values) / 2], s[3 * len(self.values) / 4]
 
     def rank(self, fraction):
         if len(self.values) > 0:

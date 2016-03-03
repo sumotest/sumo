@@ -4,7 +4,7 @@
 /// @author  Jakob Erdmann
 /// @author  Michael Behrisch
 /// @author  Tamas Kurczveil
-/// @author  Pablo Alvarez López
+/// @author  Pablo Alvarez Lopez
 /// @date    20-12-13
 /// @version $Id: GUIChargingStation.h 18762 2015-09-01 16:27:09Z behrisch $
 ///

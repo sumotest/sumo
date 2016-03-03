@@ -1404,8 +1404,12 @@ MSVehicle::executeMove() {
     }
     vSafe = MIN2(vSafe, vSafeZipper);
 
-    // XXX braking due to lane-changing is not registered
-    bool braking = vSafe < getSpeed();
+    // XXX braking due to lane-changing is not registered and due to processing stops is not registered
+    //     To avoid casual blinking brake lights at high speeds due to dawdling of the
+    //	   leading vehicle, we don't show brake lights when the deceleration could be caused
+    //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
+    SUMOReal pseudoFriction = (0.05 +  0.005*getSpeed())*getSpeed();
+    bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
 
@@ -1434,11 +1438,11 @@ MSVehicle::executeMove() {
     // visit waiting time
     if (vNext <= SUMO_const_haltingSpeed) {
         myWaitingTime += DELTA_T;
-        braking = true;
+        brakelightsOn = true;
     } else {
         myWaitingTime = 0;
     }
-    if (braking) {
+    if (brakelightsOn) {
         switchOnSignal(VEH_SIGNAL_BRAKELIGHT);
     } else {
         switchOffSignal(VEH_SIGNAL_BRAKELIGHT);
@@ -2137,7 +2141,6 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
                 LaneQ bestConnectedNext;
                 bestConnectedNext.length = -1;
-                const SUMOReal origLength = (*j).length;
                 if ((*j).allowsContinuation) {
                     for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
                         if ((*m).lane->isApproachedFrom(&cE, (*j).lane)) {
@@ -2518,17 +2521,21 @@ MSVehicle::setTentativeLaneAndPosition(MSLane* lane, const SUMOReal pos) {
 
 
 bool 
-MSVehicle::unsafeZipperLinkAhead(const MSLane* lane) const {
-    // consider the zipper link blocked if it close enough and has any approaching vehicles
+MSVehicle::unsafeLinkAhead(const MSLane* lane) const {
+    // the following links are unsafe:
+    // - zipper links if they are close enough and have approaching vehicles in the relevant time range
+    // - unprioritized links if the vehicle is currently approaching a prioritzed link and unable to stop in time
     SUMOReal seen = myLane->getLength() - getPositionOnLane();
-    const SUMOReal dist = MIN2(MSLink::ZIPPER_ADAPT_DIST, getCarFollowModel().brakeGap(getSpeed()) + getVehicleType().getMinGap());
+    const SUMOReal dist = getCarFollowModel().brakeGap(getSpeed(), getCarFollowModel().getMaxDecel(), 0);
     if (seen < dist) {
         const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(lane);
         unsigned int view = 1;
         MSLinkCont::const_iterator link = MSLane::succLinkSec(*this, view, *lane, bestLaneConts);
         DriveItemVector::const_iterator di = myLFLinkLanes.begin();
         while (!lane->isLinkEnd(link) && seen <= dist) {
-            if ((*link)->getState() == LINKSTATE_ZIPPER) {
+            if (!lane->getEdge().isInternal() 
+                    && (((*link)->getState() == LINKSTATE_ZIPPER && seen < MSLink::ZIPPER_ADAPT_DIST)
+                        || !(*link)->havePriority())) {
                 // find the drive item corresponding to this link
                 bool found = false;
                 while (di != myLFLinkLanes.end() && !found) {
@@ -2548,14 +2555,16 @@ MSVehicle::unsafeZipperLinkAhead(const MSLane* lane) const {
                     const SUMOTime leaveTime = (*link)->getLeaveTime((*di).myArrivalTime, (*di).myArrivalSpeed,
                              (*di).getLeaveSpeed(), getVehicleType().getLength());
                     if ((*link)->hasApproachingFoe((*di).myArrivalTime, leaveTime, (*di).myArrivalSpeed, getCarFollowModel().getMaxDecel())) {
+                        //std::cout << SIMTIME << " veh=" << getID() << " aborting changeTo=" << Named::getIDSecure(bestLaneConts.front()) << " linkState=" << toString((*link)->getState()) << " seen=" << seen << " dist=" << dist << "\n";
                         return true;
                     }
                 }
                 // no drive item is found if the vehicle aborts it's request within dist
             }
-            lane = (*link)->getLane();
-            view++;
-            // ignoring internal lanes here
+            lane = (*link)->getViaLaneOrLane();
+            if (!lane->getEdge().isInternal()) {
+                view++;
+            }
             seen += lane->getLength();
             link = MSLane::succLinkSec(*this, view, *lane, bestLaneConts);
         }
