@@ -77,9 +77,6 @@
 
 #define ROUNDABOUT_DIST_BONUS (SUMOReal)100.0
 
-#define CHANGE_PROB_THRESHOLD_RIGHT (SUMOReal)2.0
-#define CHANGE_PROB_THRESHOLD_LEFT (SUMOReal)0.2
-#define SPEED_LOSS_PROP_THRESHOLD (SUMOReal)-0.01
 #define KEEP_RIGHT_TIME (SUMOReal)5.0 // the number of seconds after which a vehicle should move to the right lane
 #define KEEP_RIGHT_ACCEPTANCE (SUMOReal)7.0 // calibration factor for determining the desire to keep right
 
@@ -114,7 +111,15 @@ MSLCM_SL2015::MSLCM_SL2015(MSVehicle& v) :
     myCanChangeFully(true),
     myPreviousState(0),
     myOrigLatDist(0),
-    myPushy(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_PUSHY, 0))
+    myStrategicParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_STRATEGIC_PARAM, 1)),
+    myCooperativeParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_COOPERATIVE_PARAM, 1)),
+    mySpeedGainParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_SPEEDGAIN_PARAM, 1)),
+    myKeepRightParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_KEEPRIGHT_PARAM, 1)),
+    mySublaneParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_SUBLANE_PARAM, 1)),
+    myPushy(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_PUSHY, 0)),
+    CHANGE_PROB_THRESHOLD_LEFT(0.2 / MAX2(NUMERICAL_EPS, mySpeedGainParam)),
+    CHANGE_PROB_THRESHOLD_RIGHT(2.0 * myKeepRightParam / MAX2(NUMERICAL_EPS, mySpeedGainParam)),
+    SPEED_LOSS_PROP_THRESHOLD(-0.01 + (1 - mySublaneParam)) 
 {
     if (MSGlobals::gLateralResolution <= 0) {
         throw ProcessError("laneChangeModel 'MSLCM_SL2015' is only meant to be used when simulating with '--lateral-resoluion' > 0");
@@ -929,7 +934,7 @@ MSLCM_SL2015::_wantsChangeSublane(
     //SUMOReal laDist = laSpeed > LOOK_FORWARD_SPEED_DIVIDER
     //              ? laSpeed *  LOOK_FORWARD_FAR
     //              : laSpeed *  LOOK_FORWARD_NEAR;
-    SUMOReal laDist = myLookAheadSpeed * (right ? LOOK_FORWARD_RIGHT : LOOK_FORWARD_LEFT);
+    SUMOReal laDist = myLookAheadSpeed * (right ? LOOK_FORWARD_RIGHT : LOOK_FORWARD_LEFT) * myStrategicParam;
     laDist += myVehicle.getVehicleType().getLengthWithGap() * (SUMOReal) 2.;
 
     // react to a stopped leader on the current lane
@@ -967,8 +972,8 @@ MSLCM_SL2015::_wantsChangeSublane(
         }
     }
     if (roundaboutEdgesAhead > 1) {
-        currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS;
-        neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS;
+        currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+        neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
     }
     if (roundaboutEdgesAhead > 0) {
         if (gDebugFlag2) {
@@ -1070,7 +1075,12 @@ MSLCM_SL2015::_wantsChangeSublane(
     //        << " currentDist=" << currentDist
     //        << "\n";
     //}
-    if (amBlockingFollowerPlusNB()
+    const SUMOReal inconvenience = (latLaneDist < 0 
+            ? -mySpeedGainProbabilityRight / CHANGE_PROB_THRESHOLD_RIGHT 
+            : -mySpeedGainProbabilityLeft / CHANGE_PROB_THRESHOLD_LEFT);
+    if (laneOffset != 0
+            && amBlockingFollowerPlusNB()
+            && (inconvenience < myCooperativeParam)
             //&& ((myOwnState & myLcaCounter) == 0) // VARIANT_6 : counterNoHelp
             && (changeToBest || currentDistAllows(neighDist, abs(bestLaneOffset) + 1, laDist))) {
 
@@ -1083,6 +1093,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                       << (((myOwnState & myLcaCounter) != 0) ? " (counter)" : "")
                       << "\n";
         }
+
         ret |= LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
         if (!cancelRequest(ret)) {
             latDist = latLaneDist;
@@ -1257,7 +1268,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                           << " speedGainL=" << mySpeedGainProbabilityLeft
                           << "\n";
             }
-            if (myKeepRightProbability > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)) {
+            if (myKeepRightProbability * myKeepRightParam > MAX2(CHANGE_PROB_THRESHOLD_RIGHT, mySpeedGainProbabilityLeft)) {
                 ret |= LCA_KEEPRIGHT;
                 assert(myVehicle.getLane()->getIndex() > neighLane.getIndex());
                 if (!cancelRequest(ret)) {

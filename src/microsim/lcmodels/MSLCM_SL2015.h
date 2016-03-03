@@ -309,10 +309,22 @@ protected:
 
     /// @name user configurable model parameters
     //@{
+    SUMOReal myStrategicParam;
+    SUMOReal myCooperativeParam;
+    SUMOReal mySpeedGainParam;
+    SUMOReal myKeepRightParam;
+    SUMOReal mySublaneParam;
     // @brief willingness to encroach on other vehicles laterally (pushing them around)
     SUMOReal myPushy;
     //@}
 
+    /// @name derived parameters
+    //@{
+    // @brief willingness to encroach on other vehicles laterally (pushing them around)
+    SUMOReal CHANGE_PROB_THRESHOLD_RIGHT;
+    SUMOReal CHANGE_PROB_THRESHOLD_LEFT;
+    SUMOReal SPEED_LOSS_PROP_THRESHOLD;
+    //@}
 
 };
 
