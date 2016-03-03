@@ -173,6 +173,9 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
 
+        // Add a draw matrix
+        glPushMatrix();
+
         // load detector logo, if wasn't inicializated
         if (!detectorE1Initialized) {
             FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E1, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -181,26 +184,22 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             delete i;
         }
         
-        // draw detector logo
-        glPushMatrix();
-        
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 5);
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType());
         //glRotated(mySignRotation, 0, 0, 1);
         glRotated(180, 0, 0, 1);
         glColor3d(1, 1, 1);
         GUITexturesHelper::drawTexturedBox(detectorE1GlID, 0.5);
-        
+
         // Pop detector logo matrix
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
-    } else {
-   
-        // Pop draw matrix
-        glPopMatrix();
     }
+
+    // pop draw matrix
+    glPopMatrix();
 
     // Pop name
     glPopName();

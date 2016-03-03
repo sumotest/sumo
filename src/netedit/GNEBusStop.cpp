@@ -221,6 +221,9 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
         
+        // Add a draw matrix
+        glPushMatrix();
+
         // Obtain rotation of the sing depeding of the option "lefthand"
         SUMOReal rotSign = OptionsCont::getOptions().getBool("lefthand");
 
@@ -296,9 +299,10 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
-    } else
-        // pop draw matrix
-        glPopMatrix();
+    }
+
+    // pop draw matrix
+    glPopMatrix();
 
     // Pop name
     glPopName();

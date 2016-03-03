@@ -172,10 +172,13 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
    
     // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLine(myShape[0], myRotation, myShape[0].distanceTo(myShape[1]), exaggeration);
+    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
     // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {
+    if (false /*s.scale * exaggeration >= 10*/) {
+
+        // Add a draw matrix
+        glPushMatrix();
 
         // load detector logo, if wasn't inicializated
         if (!detectorE2Initialized) {
@@ -191,15 +194,16 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         glRotated(mySignRotation, 0, 0, 1);
         glColor3d(1, 1, 1);
         GUITexturesHelper::drawTexturedBox(detectorE2GlID, 0.5);
-        glPopMatrix();
-
-        // Pop last matrix
+        
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
     }
+
+    // Pop last matrix
+    glPopMatrix();
 
     // Pop name
     glPopName();

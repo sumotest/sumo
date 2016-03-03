@@ -248,6 +248,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
 
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
+        glPushMatrix();
         // draw the sign
         glTranslated(mySignPos.x(), mySignPos.y(), 0);
         int noPoints = 9;
@@ -272,6 +273,8 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             GNEAdditional::drawLockIcon();
     }
+
+    glPopMatrix();
     glPopName();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }

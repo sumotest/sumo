@@ -165,7 +165,7 @@ GNEAdditional::drawLockIcon() const {
     
     // Draw icon
     glPushMatrix();
-    glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), getType() + 1);
+    glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), getType() + 0.1);
     glColor3d(1, 1, 1);
     glRotated(180, 0, 0, 1);
     // If myBlocked is enable, draw lock, in other case, draw empty square
