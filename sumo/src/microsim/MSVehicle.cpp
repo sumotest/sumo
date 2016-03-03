@@ -1033,10 +1033,10 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
 
     SUMOReal dist;
     if(MSGlobals::gSemiImplicitEulerUpdate){
-        SUMOReal dist = SPEED2DIST(maxV) + cfModel.brakeGap(maxV);
+        dist = SPEED2DIST(maxV) + cfModel.brakeGap(maxV);
     } else {
         // distance covered after max acceleration in this step and then constant deceleration after reaction time
-        SUMOReal dist = SPEED2DIST((myState.mySpeed + maxV)/2) + cfModel.brakeGap(maxV);
+        dist = SPEED2DIST((myState.mySpeed + maxV)/2) + cfModel.brakeGap(maxV);
     }
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation();
     assert(bestLaneConts.size() > 0);
@@ -1087,6 +1087,12 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
             }
             v = MIN2(v, stopSpeed);
             lfLinks.push_back(DriveProcessItem(v, stopDist));
+
+//            // Debug (Leo)
+//            if(this->myParameter->id == "A"){
+//            	std::cout << "breaking look forward for stop at stopDist = " << stopDist << std::endl;
+//            }
+
             break;
         }
 
@@ -1105,6 +1111,13 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
                 lastLink->adaptLeaveSpeed(va);
             }
             lfLinks.push_back(DriveProcessItem(v, seen));
+
+
+//            // Debug (Leo)
+//            if(this->myParameter->id == "A"){
+//            	std::cout << "breaking look forward for being on my final edge. seen = " << seen << std::endl;
+//            }
+
             break;
         }
         // check whether the lane is a dead end
@@ -1115,6 +1128,13 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
             }
             v = MIN2(va, v);
             lfLinks.push_back(DriveProcessItem(v, seen));
+
+
+//            // Debug (Leo)
+//            if(this->myParameter->id == "A"){
+//            	std::cout << "breaking look forward for being on a dead end. seen = " << seen << std::endl;
+//            }
+
             break;
         }
         const bool yellowOrRed = (*link)->getState() == LINKSTATE_TL_RED ||
@@ -1156,10 +1176,17 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
 
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
         const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed, cfModel.getMaxDecel(),0.);
+
         if (yellowOrRed && seen >= brakeDist) {
             // the vehicle is able to brake in front of a yellow/red traffic light
             lfLinks.push_back(DriveProcessItem(*link, vLinkWait, vLinkWait, false, t + TIME2STEPS(seen / MAX2(vLinkWait, NUMERICAL_EPS)), vLinkWait, 0, 0, seen));
             //lfLinks.push_back(DriveProcessItem(0, vLinkWait, vLinkWait, false, 0, 0, stopDist));
+
+//            // Debug (Leo)
+//            if(this->myParameter->id == "A"){
+//            	std::cout << "breaking look forward for stopping on signal. seen = " << seen << std::endl;
+//            }
+
             break;
         }
 
@@ -1245,6 +1272,15 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
 #endif
         // we need to look ahead far enough to see available space for checkRewindLinkLanes
         if ((!setRequest || v <= 0 || seen > dist) && hadNonInternal && seenNonInternal > vehicleLength * CRLL_LOOK_AHEAD) {
+
+//            // Debug (Leo)
+//            if(this->myParameter->id == "A"){
+//            	std::cout << "breaking look forward because I've seen enough:\nseen = " << seen << std::endl;
+//            	std::cout << "dist = " << dist << std::endl;
+//            	std::cout << "v    = " << v << std::endl;
+//            	std::cout << "setR = " << setRequest << std::endl;
+//            }
+
             break;
         }
         // get the following lane
@@ -1322,27 +1358,32 @@ MSVehicle::executeMove() {
     assert(myLFLinkLanes.size() != 0 || (myInfluencer != 0 && myInfluencer->isVTDControlled()));
     DriveItemVector::iterator i;
 
-    // Debug (Leo)
-    int l_count=0;
-    if(this->myParameter->id == "A"){
-    	int j = 0;
-    	std::cout << "myLane = " << myLane->getID() << std::endl;
-    	for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
-    		std::cout << "myLFLinkLanes[" << j << "]:" << i->myLink->getLane()->getID() << std::endl;
-    		j++;
-    	}
-    }
+//    // Debug (Leo)
+//    int l_count=0;
+//    if(this->myParameter->id == "A"){
+//    	int j = 0;
+//    	std::cout << "\nmyLane = " << myLane->getID() << std::endl;
+//    	for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
+//    		if(i->myLink != 0){
+//    			std::cout << "myLFLinkLanes[" << j << "]:" << i->myLink->getLane()->getID() << std::endl;
+//    		}
+//			j++;
+//			std::cout << std::endl;
+//    	}
+//    }
 
     for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         MSLink* link = (*i).myLink;
 
-        // Debug (Leo)
-        if(this->myParameter->id == "A"){
-        	std::cout << "myLFLinkLanes[" << l_count << "]:" << i->myLink->getLane()->getID() << std::endl;
-        	std::cout << "i->myVLinkWait = " << i->myVLinkWait << std::endl;
-        	std::cout << "i->myVLinkPass = " << i->myVLinkPass << std::endl;
-        	l_count++;
-        }
+//        // Debug (Leo)
+//        if(this->myParameter->id == "A"){
+//        	if((*i).myLink !=0){
+//        		std::cout << "myLFLinkLanes[" << l_count << "]:" << i->myLink->getLane()->getID() << std::endl;
+//        		std::cout << "i->myVLinkWait = " << i->myVLinkWait << std::endl;
+//        		std::cout << "i->myVLinkPass = " << i->myVLinkPass << std::endl;
+//        	}
+//        	l_count++;
+//        }
 
         // the vehicle must change the lane on one of the next lanes
         if (link != 0 && (*i).mySetRequest) {
@@ -1437,12 +1478,12 @@ MSVehicle::executeMove() {
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
 
-    // Debug (Leo)
-    if(this->myParameter->id == "A"){
-    	std::cout << "vSafe = " << vSafe << std::endl;
-    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
-    	std::cout << "vNext = " << vNext << std::endl;
-    }
+//    // Debug (Leo)
+//    if(this->myParameter->id == "A"){
+//    	std::cout << "vSafe = " << vSafe << std::endl;
+//    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
+//    	std::cout << "vNext = " << vNext << std::endl;
+//    }
 
     // vNext may be higher than vSafe without implying a bug:
     //  - when approaching a green light that suddenly switches to yellow
