@@ -25,6 +25,7 @@
 #include <utils/common/SUMOTime.h>
 #include <utils/geom/Position.h>
 #include <microsim/MSEdge.h>
+#include <microsim/MSLane.h>
 #include "MSPerson.h"
 #include "MSPRCPState.h"
 #include "hybridsim.grpc.pb.h"
@@ -55,6 +56,9 @@ public:
 
 private:
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
+
+//	void extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPRCPState * st);
+	void extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, SUMOReal pos);
 //	int inSim = 0;
 };
 #endif /*MSGRPC_CLIENT_H*/

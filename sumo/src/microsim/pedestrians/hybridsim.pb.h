@@ -350,17 +350,23 @@ class Agent : public ::google::protobuf::Message {
   ::std::string* release_id();
   void set_allocated_id(::std::string* id);
 
-  // optional int32 enterId = 2;
-  void clear_enterid();
-  static const int kEnterIdFieldNumber = 2;
-  ::google::protobuf::int32 enterid() const;
-  void set_enterid(::google::protobuf::int32 value);
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  bool has_enterlocation() const;
+  void clear_enterlocation();
+  static const int kEnterLocationFieldNumber = 2;
+  const ::hybridsim::Coordinate& enterlocation() const;
+  ::hybridsim::Coordinate* mutable_enterlocation();
+  ::hybridsim::Coordinate* release_enterlocation();
+  void set_allocated_enterlocation(::hybridsim::Coordinate* enterlocation);
 
-  // optional int32 leaveId = 3;
-  void clear_leaveid();
-  static const int kLeaveIdFieldNumber = 3;
-  ::google::protobuf::int32 leaveid() const;
-  void set_leaveid(::google::protobuf::int32 value);
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  bool has_leavelocation() const;
+  void clear_leavelocation();
+  static const int kLeaveLocationFieldNumber = 3;
+  const ::hybridsim::Coordinate& leavelocation() const;
+  ::hybridsim::Coordinate* mutable_leavelocation();
+  ::hybridsim::Coordinate* release_leavelocation();
+  void set_allocated_leavelocation(::hybridsim::Coordinate* leavelocation);
 
   // optional double x = 4;
   void clear_x();
@@ -389,8 +395,8 @@ class Agent : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr id_;
-  ::google::protobuf::int32 enterid_;
-  ::google::protobuf::int32 leaveid_;
+  ::hybridsim::Coordinate* enterlocation_;
+  ::hybridsim::Coordinate* leavelocation_;
   double x_;
   double y_;
   ::hybridsim::Leg* leg_;
@@ -1060,32 +1066,78 @@ inline void Agent::set_allocated_id(::std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.id)
 }
 
-// optional int32 enterId = 2;
-inline void Agent::clear_enterid() {
-  enterid_ = 0;
+// optional .hybridsim.Coordinate enterLocation = 2;
+inline bool Agent::has_enterlocation() const {
+  return !_is_default_instance_ && enterlocation_ != NULL;
 }
-inline ::google::protobuf::int32 Agent::enterid() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterId)
-  return enterid_;
+inline void Agent::clear_enterlocation() {
+  if (GetArenaNoVirtual() == NULL && enterlocation_ != NULL) delete enterlocation_;
+  enterlocation_ = NULL;
 }
-inline void Agent::set_enterid(::google::protobuf::int32 value) {
+inline const ::hybridsim::Coordinate& Agent::enterlocation() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterLocation)
+  return enterlocation_ != NULL ? *enterlocation_ : *default_instance_->enterlocation_;
+}
+inline ::hybridsim::Coordinate* Agent::mutable_enterlocation() {
   
-  enterid_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Agent.enterId)
+  if (enterlocation_ == NULL) {
+    enterlocation_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.enterLocation)
+  return enterlocation_;
+}
+inline ::hybridsim::Coordinate* Agent::release_enterlocation() {
+  
+  ::hybridsim::Coordinate* temp = enterlocation_;
+  enterlocation_ = NULL;
+  return temp;
+}
+inline void Agent::set_allocated_enterlocation(::hybridsim::Coordinate* enterlocation) {
+  delete enterlocation_;
+  enterlocation_ = enterlocation;
+  if (enterlocation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.enterLocation)
 }
 
-// optional int32 leaveId = 3;
-inline void Agent::clear_leaveid() {
-  leaveid_ = 0;
+// optional .hybridsim.Coordinate leaveLocation = 3;
+inline bool Agent::has_leavelocation() const {
+  return !_is_default_instance_ && leavelocation_ != NULL;
 }
-inline ::google::protobuf::int32 Agent::leaveid() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveId)
-  return leaveid_;
+inline void Agent::clear_leavelocation() {
+  if (GetArenaNoVirtual() == NULL && leavelocation_ != NULL) delete leavelocation_;
+  leavelocation_ = NULL;
 }
-inline void Agent::set_leaveid(::google::protobuf::int32 value) {
+inline const ::hybridsim::Coordinate& Agent::leavelocation() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveLocation)
+  return leavelocation_ != NULL ? *leavelocation_ : *default_instance_->leavelocation_;
+}
+inline ::hybridsim::Coordinate* Agent::mutable_leavelocation() {
   
-  leaveid_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Agent.leaveId)
+  if (leavelocation_ == NULL) {
+    leavelocation_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.leaveLocation)
+  return leavelocation_;
+}
+inline ::hybridsim::Coordinate* Agent::release_leavelocation() {
+  
+  ::hybridsim::Coordinate* temp = leavelocation_;
+  leavelocation_ = NULL;
+  return temp;
+}
+inline void Agent::set_allocated_leavelocation(::hybridsim::Coordinate* leavelocation) {
+  delete leavelocation_;
+  leavelocation_ = leavelocation;
+  if (leavelocation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.leaveLocation)
 }
 
 // optional double x = 4;

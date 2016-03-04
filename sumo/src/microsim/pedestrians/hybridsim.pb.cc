@@ -109,8 +109,8 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
   Agent_descriptor_ = file->message_type(3);
   static const int Agent_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, enterid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, leaveid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, enterlocation_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, leavelocation_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, leg_),
@@ -292,28 +292,29 @@ void protobuf_AddDesc_hybridsim_2eproto() {
     "\n\017hybridsim.proto\022\thybridsim\"U\n\037LeftClos"
     "edRightOpenTimeInterval\022\031\n\021fromTimeInclu"
     "ding\030\001 \001(\001\022\027\n\017toTimeExcluding\030\002 \001(\001\"\007\n\005E"
-    "mpty\"\026\n\007Boolean\022\013\n\003val\030\001 \001(\010\"h\n\005Agent\022\n\n"
-    "\002id\030\001 \001(\t\022\017\n\007enterId\030\002 \001(\005\022\017\n\007leaveId\030\003 "
-    "\001(\005\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\022\033\n\003leg\030\006 \001(\0132\016"
-    ".hybridsim.Leg\"$\n\003Leg\022\035\n\004link\030\017 \003(\0132\017.hy"
-    "bridsim.Link\";\n\004Link\022\'\n\010centroid\030\001 \001(\0132\025"
-    ".hybridsim.Coordinate\022\n\n\002id\030\002 \001(\t\"\"\n\nCoo"
-    "rdinate\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\"*\n\006Agents\022"
-    " \n\006agents\030\001 \003(\0132\020.hybridsim.Agent\"X\n\nTra"
-    "jectory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001(\001\022\t\n\001y\030\003 \001("
-    "\001\022\013\n\003spd\030\004 \001(\001\022\013\n\003phi\030\005 \001(\001\022\016\n\006linkId\030\006 "
-    "\001(\t\";\n\014Trajectories\022+\n\014trajectories\030\001 \003("
-    "\0132\025.hybridsim.Trajectory2\322\002\n\020HybridSimul"
-    "ation\022V\n\024simulatedTimeInerval\022*.hybridsi"
-    "m.LeftClosedRightOpenTimeInterval\032\020.hybr"
-    "idsim.Empty\"\000\0227\n\rtransferAgent\022\020.hybrids"
-    "im.Agent\032\022.hybridsim.Boolean\"\000\022B\n\023receiv"
-    "eTrajectories\022\020.hybridsim.Empty\032\027.hybrid"
-    "sim.Trajectories\"\000\0227\n\016retrieveAgents\022\020.h"
-    "ybridsim.Empty\032\021.hybridsim.Agents\"\000\0220\n\010s"
-    "hutdown\022\020.hybridsim.Empty\032\020.hybridsim.Em"
-    "pty\"\000B)\n\025de.dlr.sumo.hybridsimB\016HybridSi"
-    "mProtoP\000b\006proto3", 976);
+    "mpty\"\026\n\007Boolean\022\013\n\003val\030\001 \001(\010\"\242\001\n\005Agent\022\n"
+    "\n\002id\030\001 \001(\t\022,\n\renterLocation\030\002 \001(\0132\025.hybr"
+    "idsim.Coordinate\022,\n\rleaveLocation\030\003 \001(\0132"
+    "\025.hybridsim.Coordinate\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005"
+    " \001(\001\022\033\n\003leg\030\006 \001(\0132\016.hybridsim.Leg\"$\n\003Leg"
+    "\022\035\n\004link\030\017 \003(\0132\017.hybridsim.Link\";\n\004Link\022"
+    "\'\n\010centroid\030\001 \001(\0132\025.hybridsim.Coordinate"
+    "\022\n\n\002id\030\002 \001(\t\"\"\n\nCoordinate\022\t\n\001x\030\001 \001(\001\022\t\n"
+    "\001y\030\002 \001(\001\"*\n\006Agents\022 \n\006agents\030\001 \003(\0132\020.hyb"
+    "ridsim.Agent\"X\n\nTrajectory\022\n\n\002id\030\001 \001(\t\022\t"
+    "\n\001x\030\002 \001(\001\022\t\n\001y\030\003 \001(\001\022\013\n\003spd\030\004 \001(\001\022\013\n\003phi"
+    "\030\005 \001(\001\022\016\n\006linkId\030\006 \001(\t\";\n\014Trajectories\022+"
+    "\n\014trajectories\030\001 \003(\0132\025.hybridsim.Traject"
+    "ory2\322\002\n\020HybridSimulation\022V\n\024simulatedTim"
+    "eInerval\022*.hybridsim.LeftClosedRightOpen"
+    "TimeInterval\032\020.hybridsim.Empty\"\000\0227\n\rtran"
+    "sferAgent\022\020.hybridsim.Agent\032\022.hybridsim."
+    "Boolean\"\000\022B\n\023receiveTrajectories\022\020.hybri"
+    "dsim.Empty\032\027.hybridsim.Trajectories\"\000\0227\n"
+    "\016retrieveAgents\022\020.hybridsim.Empty\032\021.hybr"
+    "idsim.Agents\"\000\0220\n\010shutdown\022\020.hybridsim.E"
+    "mpty\032\020.hybridsim.Empty\"\000B)\n\025de.dlr.sumo."
+    "hybridsimB\016HybridSimProtoP\000b\006proto3", 1035);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hybridsim.proto", &protobuf_RegisterTypes);
   LeftClosedRightOpenTimeInterval::default_instance_ = new LeftClosedRightOpenTimeInterval();
@@ -1039,8 +1040,8 @@ void Boolean::clear_val() {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Agent::kIdFieldNumber;
-const int Agent::kEnterIdFieldNumber;
-const int Agent::kLeaveIdFieldNumber;
+const int Agent::kEnterLocationFieldNumber;
+const int Agent::kLeaveLocationFieldNumber;
 const int Agent::kXFieldNumber;
 const int Agent::kYFieldNumber;
 const int Agent::kLegFieldNumber;
@@ -1054,6 +1055,8 @@ Agent::Agent()
 
 void Agent::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  enterlocation_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+  leavelocation_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
   leg_ = const_cast< ::hybridsim::Leg*>(&::hybridsim::Leg::default_instance());
 }
 
@@ -1070,8 +1073,8 @@ void Agent::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  enterid_ = 0;
-  leaveid_ = 0;
+  enterlocation_ = NULL;
+  leavelocation_ = NULL;
   x_ = 0;
   y_ = 0;
   leg_ = NULL;
@@ -1085,6 +1088,8 @@ Agent::~Agent() {
 void Agent::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
+    delete enterlocation_;
+    delete leavelocation_;
     delete leg_;
   }
 }
@@ -1123,8 +1128,12 @@ void Agent::Clear() {
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  ZR_(enterid_, y_);
+  ZR_(x_, y_);
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && enterlocation_ != NULL) delete enterlocation_;
+  enterlocation_ = NULL;
+  if (GetArenaNoVirtual() == NULL && leavelocation_ != NULL) delete leavelocation_;
+  leavelocation_ = NULL;
   if (GetArenaNoVirtual() == NULL && leg_ != NULL) delete leg_;
   leg_ = NULL;
 
@@ -1155,33 +1164,29 @@ bool Agent::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(16)) goto parse_enterId;
+        if (input->ExpectTag(18)) goto parse_enterLocation;
         break;
       }
 
-      // optional int32 enterId = 2;
+      // optional .hybridsim.Coordinate enterLocation = 2;
       case 2: {
-        if (tag == 16) {
-         parse_enterId:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &enterid_)));
-
+        if (tag == 18) {
+         parse_enterLocation:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_enterlocation()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_leaveId;
+        if (input->ExpectTag(26)) goto parse_leaveLocation;
         break;
       }
 
-      // optional int32 leaveId = 3;
+      // optional .hybridsim.Coordinate leaveLocation = 3;
       case 3: {
-        if (tag == 24) {
-         parse_leaveId:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &leaveid_)));
-
+        if (tag == 26) {
+         parse_leaveLocation:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_leavelocation()));
         } else {
           goto handle_unusual;
         }
@@ -1266,14 +1271,16 @@ void Agent::SerializeWithCachedSizes(
       1, this->id(), output);
   }
 
-  // optional int32 enterId = 2;
-  if (this->enterid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->enterid(), output);
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  if (this->has_enterlocation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->enterlocation_, output);
   }
 
-  // optional int32 leaveId = 3;
-  if (this->leaveid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->leaveid(), output);
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  if (this->has_leavelocation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, *this->leavelocation_, output);
   }
 
   // optional double x = 4;
@@ -1309,14 +1316,18 @@ void Agent::SerializeWithCachedSizes(
         1, this->id(), target);
   }
 
-  // optional int32 enterId = 2;
-  if (this->enterid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->enterid(), target);
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  if (this->has_enterlocation()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, *this->enterlocation_, target);
   }
 
-  // optional int32 leaveId = 3;
-  if (this->leaveid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->leaveid(), target);
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  if (this->has_leavelocation()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, *this->leavelocation_, target);
   }
 
   // optional double x = 4;
@@ -1350,18 +1361,18 @@ int Agent::ByteSize() const {
         this->id());
   }
 
-  // optional int32 enterId = 2;
-  if (this->enterid() != 0) {
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  if (this->has_enterlocation()) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->enterid());
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->enterlocation_);
   }
 
-  // optional int32 leaveId = 3;
-  if (this->leaveid() != 0) {
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  if (this->has_leavelocation()) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->leaveid());
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->leavelocation_);
   }
 
   // optional double x = 4;
@@ -1405,11 +1416,11 @@ void Agent::MergeFrom(const Agent& from) {
 
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
-  if (from.enterid() != 0) {
-    set_enterid(from.enterid());
+  if (from.has_enterlocation()) {
+    mutable_enterlocation()->::hybridsim::Coordinate::MergeFrom(from.enterlocation());
   }
-  if (from.leaveid() != 0) {
-    set_leaveid(from.leaveid());
+  if (from.has_leavelocation()) {
+    mutable_leavelocation()->::hybridsim::Coordinate::MergeFrom(from.leavelocation());
   }
   if (from.x() != 0) {
     set_x(from.x());
@@ -1445,8 +1456,8 @@ void Agent::Swap(Agent* other) {
 }
 void Agent::InternalSwap(Agent* other) {
   id_.Swap(&other->id_);
-  std::swap(enterid_, other->enterid_);
-  std::swap(leaveid_, other->leaveid_);
+  std::swap(enterlocation_, other->enterlocation_);
+  std::swap(leavelocation_, other->leavelocation_);
   std::swap(x_, other->x_);
   std::swap(y_, other->y_);
   std::swap(leg_, other->leg_);
@@ -1508,32 +1519,78 @@ void Agent::clear_id() {
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.id)
 }
 
-// optional int32 enterId = 2;
-void Agent::clear_enterid() {
-  enterid_ = 0;
+// optional .hybridsim.Coordinate enterLocation = 2;
+bool Agent::has_enterlocation() const {
+  return !_is_default_instance_ && enterlocation_ != NULL;
 }
- ::google::protobuf::int32 Agent::enterid() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterId)
-  return enterid_;
+void Agent::clear_enterlocation() {
+  if (GetArenaNoVirtual() == NULL && enterlocation_ != NULL) delete enterlocation_;
+  enterlocation_ = NULL;
 }
- void Agent::set_enterid(::google::protobuf::int32 value) {
+const ::hybridsim::Coordinate& Agent::enterlocation() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterLocation)
+  return enterlocation_ != NULL ? *enterlocation_ : *default_instance_->enterlocation_;
+}
+::hybridsim::Coordinate* Agent::mutable_enterlocation() {
   
-  enterid_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Agent.enterId)
+  if (enterlocation_ == NULL) {
+    enterlocation_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.enterLocation)
+  return enterlocation_;
+}
+::hybridsim::Coordinate* Agent::release_enterlocation() {
+  
+  ::hybridsim::Coordinate* temp = enterlocation_;
+  enterlocation_ = NULL;
+  return temp;
+}
+void Agent::set_allocated_enterlocation(::hybridsim::Coordinate* enterlocation) {
+  delete enterlocation_;
+  enterlocation_ = enterlocation;
+  if (enterlocation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.enterLocation)
 }
 
-// optional int32 leaveId = 3;
-void Agent::clear_leaveid() {
-  leaveid_ = 0;
+// optional .hybridsim.Coordinate leaveLocation = 3;
+bool Agent::has_leavelocation() const {
+  return !_is_default_instance_ && leavelocation_ != NULL;
 }
- ::google::protobuf::int32 Agent::leaveid() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveId)
-  return leaveid_;
+void Agent::clear_leavelocation() {
+  if (GetArenaNoVirtual() == NULL && leavelocation_ != NULL) delete leavelocation_;
+  leavelocation_ = NULL;
 }
- void Agent::set_leaveid(::google::protobuf::int32 value) {
+const ::hybridsim::Coordinate& Agent::leavelocation() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveLocation)
+  return leavelocation_ != NULL ? *leavelocation_ : *default_instance_->leavelocation_;
+}
+::hybridsim::Coordinate* Agent::mutable_leavelocation() {
   
-  leaveid_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Agent.leaveId)
+  if (leavelocation_ == NULL) {
+    leavelocation_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.leaveLocation)
+  return leavelocation_;
+}
+::hybridsim::Coordinate* Agent::release_leavelocation() {
+  
+  ::hybridsim::Coordinate* temp = leavelocation_;
+  leavelocation_ = NULL;
+  return temp;
+}
+void Agent::set_allocated_leavelocation(::hybridsim::Coordinate* leavelocation) {
+  delete leavelocation_;
+  leavelocation_ = leavelocation;
+  if (leavelocation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.leaveLocation)
 }
 
 // optional double x = 4;
