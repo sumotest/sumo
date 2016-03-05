@@ -2038,7 +2038,7 @@ MSLCM_SL2015::updateGaps(const MSLeaderDistanceInfo& others, SUMOReal foeOffset,
                 const SUMOReal foeLeft = foeRight + MSGlobals::gLateralResolution;
                 const SUMOReal foeCenter = foeRight + 0.5 * MSGlobals::gLateralResolution;
                 const SUMOReal gap = MIN2(fabs(foeRight - newCenter), fabs(foeLeft - newCenter)) - halfWidth;
-                const SUMOReal currentMinGap = baseMinGap * MIN2((SUMOReal)1.0, MAX2(myVehicle.getSpeed(), fabs(myVehicle.getSpeed() - foe->getSpeed())) / (100 / 3.6)) * gapFactor;
+                const SUMOReal currentMinGap = baseMinGap * MIN2(1.0, MAX2(myVehicle.getSpeed(), fabs(myVehicle.getSpeed() - foe->getSpeed())) / (100 / 3.6)) * gapFactor;
                 if (gDebugFlag2 && false) std::cout << "  updateGaps"
                     << " foe=" << foe->getID() 
                     << " foeRight=" << foeRight
