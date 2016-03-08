@@ -192,7 +192,7 @@ class Statistics:
 
     def quartiles(self):
         s = sorted(self.values)
-        return s[len(self.values) / 4], s[len(self.values) / 2], s[3 * len(self.values) / 4]
+        return s[len(self.values) // 4], s[len(self.values) // 2], s[3 * len(self.values) // 4]
 
     def rank(self, fraction):
         if len(self.values) > 0:

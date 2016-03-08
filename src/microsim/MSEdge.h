@@ -647,6 +647,12 @@ public:
     /// @brief whether this edge allows changing to the opposite direction edge
     bool canChangeToOpposite();
 
+    /// @brief grant exclusive access to the mesoscopic state
+    virtual void lock() const {}
+
+    /// @brief release exclusive access to the mesoscopic state
+    virtual void unlock() const {};
+
     /** @brief Inserts edge into the static dictionary
         Returns true if the key id isn't already in the dictionary. Otherwise
         returns false. */

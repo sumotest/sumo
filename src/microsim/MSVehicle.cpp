@@ -1503,8 +1503,12 @@ MSVehicle::executeMove() {
     }
     vSafe = MIN2(vSafe, vSafeZipper);
 
-    // XXX braking due to lane-changing is not registered
-    bool braking = vSafe < getSpeed();
+    // XXX braking due to lane-changing is not registered and due to processing stops is not registered
+    //     To avoid casual blinking brake lights at high speeds due to dawdling of the
+    //	   leading vehicle, we don't show brake lights when the deceleration could be caused
+    //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
+    SUMOReal pseudoFriction = (0.05 +  0.005*getSpeed())*getSpeed();
+    bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
     if (gDebugFlag1) std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << vNext << "\n";
@@ -1534,11 +1538,11 @@ MSVehicle::executeMove() {
     // visit waiting time
     if (vNext <= SUMO_const_haltingSpeed) {
         myWaitingTime += DELTA_T;
-        braking = true;
+        brakelightsOn = true;
     } else {
         myWaitingTime = 0;
     }
-    if (braking) {
+    if (brakelightsOn) {
         switchOnSignal(VEH_SIGNAL_BRAKELIGHT);
     } else {
         switchOffSignal(VEH_SIGNAL_BRAKELIGHT);
