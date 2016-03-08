@@ -266,10 +266,7 @@ private:
 
     /// @name the state-variables of the move state-machine
     // @{
-    /* @brief the Junction to be moved
-     * 0 if nothing is grabbed
-     * otherwise the junction being moved
-     */
+    ///@brief the Junction to be moved.
     GNEJunction* myJunctionToMove;
 
     /// @brief the edge of which geometry is being moved
@@ -281,8 +278,8 @@ private:
     /// @brief the stoppingPlace element of which shape is being moved  // PABLO #1916
     GNEStoppingPlace* myStoppingPlaceToMove;                            // PABLO #1916
 
-    /// @brief the Detector element of which shape is being moved   // PABLO #1916
-    GNEDetector* myDetectorToMove;                                  // PABLO #1916
+    /// @brief the Detector element of which shape is being moved       // PABLO #1916
+    GNEDetector* myDetectorToMove;                                      // PABLO #1916
 
     /// @brief variable to save the position of the click over the lane // PABLO #1916
     SUMOReal myAdditionalToMoveFirstPosition;                           // PABLO #1916

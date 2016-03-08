@@ -30,13 +30,6 @@
 #include <config.h>
 #endif
 
-#include <vector>
-#include <string>
-#include <utils/gui/globjects/GLIncludes.h>
-#include <utils/geom/Position.h>
-#include <utils/geom/Boundary.h>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include "GNEAdditional.h"
 
 // ===========================================================================
@@ -65,8 +58,9 @@ public:
      * @param[in] fromPos From position of the StoppingPlace
      * @param[in] toPos To position of the StoppingPlace
      * @param[in] blocked set initial blocking state of item 
+     * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, bool blocked = false);
+    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, bool blocked = false, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEStoppingPlace();
@@ -105,21 +99,6 @@ public:
      * @throws InvalidArgument if value of toPos isn't valid
      */
     void setToPosition(SUMOReal toPos);
-
-    /** @brief Returns a copy of the Shape of the stoppingPlace
-     * @return The Shape of the stoppingPlace
-     */
-    PositionVector getShape() const;
-
-    /** @brief Returns a copy of the ShapeRotations of the stoppingPlace
-     * @return The ShapeRotations of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeRotations() const;
-
-    /** @brief Returns a copy of the ShapeLengths of the stoppingPlace
-     * @return The ShapeLengths of the stoppingPlace
-     */
-    std::vector<SUMOReal> getShapeLengths() const;
 
     /// @name inherited from GNEAdditional
     //@{

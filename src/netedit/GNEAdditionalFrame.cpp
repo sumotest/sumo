@@ -160,7 +160,7 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         return false;
     // Declare map to keep values
     std::map<SumoXMLAttr, std::string> valuesOfElement;
-    // obtain a new unique id depending if the element needs or not a lane (i.e. is an Additional or an AdditionalSet)
+    // obtain a new unique id depending if the element needs or not a lane
     if(lane) {
         SUMOReal positionOfTheMouseOverLane = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
@@ -169,7 +169,7 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         valuesOfElement[SUMO_ATTR_ID] = toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex);
         // Obtain lane ID
         valuesOfElement[SUMO_ATTR_LANE] = lane->getID();
-        // If element has a position over lane, extract attributes
+        // If element has a StartPosition and EndPosition over lane, extract attributes
         if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
             valuesOfElement[SUMO_ATTR_STARTPOS] = toString(setStartPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameter->getLenght()));
             valuesOfElement[SUMO_ATTR_ENDPOS] = toString(setEndPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameter->getLenght()));

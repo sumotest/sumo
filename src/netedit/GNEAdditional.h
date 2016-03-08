@@ -46,6 +46,7 @@ class PositionVector;
 class GNELane;
 class GNENet;
 class GNEViewNet;
+class GNEAdditionalSet;
 
 // ===========================================================================
 // class definitions
@@ -65,8 +66,9 @@ public:
      * @param[in] pos position of view in which additional is located
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
+     * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false);
+    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEAdditional();
@@ -94,13 +96,6 @@ public:
 
     /// @brief set new position in the view
     void setPositionInView(const Position &pos);
-
-    /** @brief change the position of the additional geometry without registering undo/redo
-     * @param[in] distance value for the movement. Positive for right, negative for left
-     * @param[in] undoList pointer to the undo list
-     * @return newPos if something was moved, oldPos if nothing was moved
-     */
-///virtual void moveAdditional(SUMOReal distance, GNEUndoList *undoList) = 0;
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
@@ -134,7 +129,6 @@ public:
     /** @brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
-     * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const;
 
@@ -198,6 +192,9 @@ protected:
 
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked; 
+
+    /// @brief pointer to item parent, if belong to set
+    GNEAdditionalSet *myParent;
 
     /// @brief vector with the different colors
     std::vector<RGBColor> myRGBColors;

@@ -87,33 +87,6 @@ public:
      */
     void removeAdditional(GNEAdditional *additional);
 
-    /** @brief Returns View Net
-     * @return The GNEViewNet in which additionalSet element is located
-     */
-    GNEViewNet* getViewNet() const;
-
-    /** @brief Returns string with the information of the shape
-     * @return The string with the shape of the additionalSet element
-     */
-    std::string getShape() const;
-
-    /** @brief Check if item is blocked (i.e. cannot be moved with mouse)
-     * @return true if element is blocked, false in other case
-     */
-    bool isBlocked() const;
-
-    /** @brief Block or unblock additionalSet element(i.e. cannot be moved with mouse)
-     * @param[in] value true or false
-     */
-    void setBlocked(bool value);
-
-    /** @brief change the position of the additionalSet geometry without registering undo/redo
-     * @param[in] pos new position of additionalSet
-     * @param[in] undoList pointer to the undo list
-     * @return newPos if something was moved, oldPos if nothing was moved
-     */
-    virtual void moveAdditional(Position pos, GNEUndoList *undoList) = 0;
-
     /** @brief writte additionalSet element into a xml file
      * @param[in] device device in which write parameters of additionalSet element
      */
@@ -142,13 +115,6 @@ public:
      * @see GUIGlObject::getParameterWindow
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
-
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
-     *
-     * @return The boundary the object is within
-     * @see GUIGlObject::getCenteringBoundary
-     */
-    Boundary getCenteringBoundary() const;
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
@@ -187,49 +153,19 @@ public:
     //@}
 
 protected:
-    /// @brief The GNEViewNet this additionalSet element belongs
-    GNEViewNet* myViewNet;
-
-    /// @brief The shape of the additionalSet element
-    PositionVector myShape;
-
-    /// @brief Vector with the GNEAdditionals elementen vinculated to this AdditionalSet
+    /// @brief vector with the GNEAdditionals elementen vinculated to this AdditionalSet
     std::vector<GNEAdditional*> myAdditionals;
-
-    /// @name computed only once (for performance) in updateGeometry()
-    //@{
-    /// The rotations of the shape parts
-    std::vector<SUMOReal> myShapeRotations;
-
-    /// The lengths of the shape parts
-    std::vector<SUMOReal> myShapeLengths;
-    //@}
-
-    /// @brief The position of the block icon
-    Position myBlockIconPos;
-
-    /// @brief boolean to check if additionalSet element is blocked (i.e. cannot be moved with mouse)
-    bool myBlocked; 
 
     /// @brief vector with the different colors
     std::vector<RGBColor> myRGBColors;
 
-    // @brief draw lock icon
-    void drawLockIcon() const;
+    /// @brief draw connections.
+    void updateConnections();
+
+    /// @brief draw connections.
+    void drawConnections();
 
 private:
-    /// @brief variable to keep GLId of the additionalSet set lock image
-    static GUIGlID additionalSetLockGlID;
-
-    /// @brief variable to keep GLId of the additionalSet set empty image
-    static GUIGlID additionalSetEmptyGlID;
-
-    /// @brief boolean to check if additionalSet lock image was inicializated
-    static bool additionalSetLockInitialized;
-
-    /// @brief boolean to check if additionalSet empty image was inicializated
-    static bool additionalSetEmptyInitialized;
-
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 

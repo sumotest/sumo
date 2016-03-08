@@ -464,7 +464,7 @@ private:
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
     typedef std::map<std::string, GNEAdditional*> GNEAdditionals;       // PABLO #1916
-    typedef std::map<std::string, GNEAdditionalSet*> GNEAdditionalSets; // PABLO #1916
+    typedef std::map<std::string, GNEAdditionalSet*> GNEAdditionalSets; /** should be erased **/ // PABLO #1916
     // @}
 
     /// @brief map with the name and pointer to edges of net
@@ -539,7 +539,6 @@ private:
     /// @brief marker for whether the z-boundary is initialized
     static const SUMOReal Z_INITIALIZED;
 };
-
 
 #endif
 

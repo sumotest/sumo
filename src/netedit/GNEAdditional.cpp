@@ -72,16 +72,23 @@ bool GNEAdditional::additionalEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked) :
+GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked, GNEAdditionalSet *parent) :
     GUIGlObject(GLO_ADDITIONAL, id),
+    GNEAttributeCarrier(tag),
     myViewNet(viewNet),
     myPosition(pos),
     myBlocked(blocked),
-    GNEAttributeCarrier(tag) {
+    myParent(parent) {
+    // If this additional belongs to a set, add it.
+    if(myParent)
+        myParent->addAdditional(this);
 }
 
 
 GNEAdditional::~GNEAdditional() {
+    // If this additional belongs to a set, remove it.
+    if(myParent)
+        myParent->removeAdditional(this);
 }
 
 const Position&
@@ -102,14 +109,6 @@ GNEAdditional::getShape() const {
 }
 
 
-Boundary
-GNEAdditional::getCenteringBoundary() const {
-    Boundary b = myShape.getBoxBoundary();
-    b.grow(20);
-    return b;
-}
-
-
 bool 
 GNEAdditional::isBlocked() const {
     return myBlocked;
@@ -125,6 +124,14 @@ GNEAdditional::setBlocked(bool value) {
 void 
 GNEAdditional::setPositionInView(const Position &pos) {
     myPosition = pos;
+}
+
+
+Boundary 
+GNEAdditional::getCenteringBoundary() const {
+    Boundary b = myShape.getBoxBoundary();
+    b.grow(20);
+    return b;
 }
 
 

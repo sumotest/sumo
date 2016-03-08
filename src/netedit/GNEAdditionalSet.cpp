@@ -61,14 +61,6 @@
 
 
 // ===========================================================================
-// static member definitions
-// ===========================================================================
-GUIGlID GNEAdditionalSet::additionalSetLockGlID = 0;
-GUIGlID GNEAdditionalSet::additionalSetEmptyGlID = 0;
-bool GNEAdditionalSet::additionalSetLockInitialized = false;
-bool GNEAdditionalSet::additionalSetEmptyInitialized = false;
-
-// ===========================================================================
 // member method definitions
 // ===========================================================================
 
@@ -84,6 +76,9 @@ GNEAdditionalSet::~GNEAdditionalSet() {
 void 
 GNEAdditionalSet::addAdditional(GNEAdditional *additional) {
     
+
+    std::map<GNEAdditional*, PositionVector> myAdditionals;
+
     //throw ProcessError("Attempt to delete instance of GNEReferenceCounter with count " + toString(myCount));
 
 }
@@ -95,67 +90,9 @@ GNEAdditionalSet::removeAdditional(GNEAdditional *additional) {
 }
 
 
-GNEViewNet* 
-GNEAdditionalSet::getViewNet() const {
-    return myViewNet;
-}
-
-
-std::string
-GNEAdditionalSet::getShape() const {
-    return toString(myShape);
-}
-
-
-Boundary
-GNEAdditionalSet::getCenteringBoundary() const {
-    Boundary b = myShape.getBoxBoundary();
-    b.grow(20);
-    return b;
-}
-
-
-bool 
-GNEAdditionalSet::isBlocked() const {
-    return myBlocked;
-}
-
-
 void 
-GNEAdditionalSet::setBlocked(bool value) {
-    myBlocked = value;
-}
+GNEAdditionalSet::drawConnections() {
 
-void 
-GNEAdditionalSet::drawLockIcon() const {
-    
-    // load additional lock, if wasn't inicializated
-    if (!additionalSetLockInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalSetLockGlID = GUITexturesHelper::add(i);
-        additionalSetLockInitialized = true;
-        delete i;
-    }
-    // load additional empty, if wasn't inicializated
-    if (!additionalSetEmptyInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Empty, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalSetEmptyGlID = GUITexturesHelper::add(i);
-        additionalSetEmptyInitialized = true;
-        delete i;
-    }
-    
-    // Draw icon
-    glPushMatrix();
-    glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), getType() + 1);
-    glColor3d(1, 1, 1);
-    glRotated(180, 0, 0, 1);
-    // If myBlocked is enable, draw lock, in other case, draw empty square
-    if(myBlocked)
-        GUITexturesHelper::drawTexturedBox(additionalSetLockGlID, 0.5);
-    else
-        GUITexturesHelper::drawTexturedBox(additionalSetEmptyGlID, 0.5);
-    // Pop matrix
-    glPopMatrix();
 }
 
 

@@ -143,7 +143,7 @@ inline std::string toString<LaneChangeModel>(const LaneChangeModel& model, std::
 template <>                                                                                     // PABLO #1916
 inline std::string toString<Position>(const Position& pos, std::streamsize accuracy) {          // PABLO #1916
     UNUSED_PARAMETER(accuracy);                                                                 // PABLO #1916
-    return std::string(toString(pos.x()) + " " + toString(pos.y()) + " " + toString(pos.z()));  // PABLO #1916
+    return std::string(toString(pos.x()) + "," + toString(pos.y()) + "," + toString(pos.z()));  // PABLO #1916
 }                                                                                               // PABLO #1916
 
 

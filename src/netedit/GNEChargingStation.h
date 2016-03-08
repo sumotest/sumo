@@ -30,13 +30,6 @@
 #include <config.h>
 #endif
 
-#include <vector>
-#include <string>
-#include <utils/gui/globjects/GLIncludes.h>
-#include <utils/geom/Position.h>
-#include <utils/geom/Boundary.h>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include "GNEStoppingPlace.h"
 
 

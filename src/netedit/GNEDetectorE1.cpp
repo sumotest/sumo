@@ -172,7 +172,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
-
+/**
         // Add a draw matrix
         glPushMatrix();
 
@@ -183,8 +183,8 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             detectorE1Initialized = true;
             delete i;
         }
-        
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType());
+
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0);
         //glRotated(mySignRotation, 0, 0, 1);
         glRotated(180, 0, 0, 1);
         glColor3d(1, 1, 1);
@@ -192,10 +192,11 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
         // Pop detector logo matrix
         glPopMatrix();
-
+        
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
+**/
     }
 
     // pop draw matrix
