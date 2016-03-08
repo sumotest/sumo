@@ -70,7 +70,7 @@ bool GNEDetectorE1::detectorE1Initialized = false;
 // ===========================================================================
 
 GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType, bool blocked) :
-    GNEDetector(id, lane, viewNet, SUMO_TAG_E1DETECTOR, pos, 2, freq, filename, blocked),
+    GNEDetector(id, viewNet, SUMO_TAG_E1DETECTOR, lane, pos, 2, freq, filename, blocked),
     mySplitByType(splitByType) {
     // Set colors of detector
     setColors();
@@ -87,7 +87,7 @@ GNEDetectorE1::writeAdditional(OutputDevice& device) {
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
-    device.writeAttr(SUMO_ATTR_POSITION, myPos);
+    device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
     device.writeAttr(SUMO_ATTR_FILE, myFilename);
     // Rest of parameters
@@ -217,7 +217,7 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
-            return toString(myPos);
+            return toString(myPosOverLane);
         case SUMO_ATTR_FREQUENCY:
             return toString(myFreq);
         case SUMO_ATTR_FILE:
@@ -284,7 +284,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-            myPos = parse<SUMOReal>(value);
+            myPosOverLane = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;

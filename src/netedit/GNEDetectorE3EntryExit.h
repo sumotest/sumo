@@ -59,9 +59,6 @@ public:
     /// @brief destructor
     ~GNEDetectorE3EntryExit();
 
-    /// @brief getLane
-    GNELane& getLane() const;
-
     /// @brief get E3 parentecto
     GNEDetectorE3* getE3Parent() const;
 

@@ -81,12 +81,6 @@ GNEAttributeCarrier::parse(const std::string& string) {
 }                                        
 
 
-template<> Position                                         // PABLO #1916
-GNEAttributeCarrier::parse(const std::string& string) {     // PABLO #1916
-    return TplConvert::_str2Position(string);               // PABLO #1916
-}                                                           // PABLO #1916
-
-
 bool
 GNEAttributeCarrier::isValid(SumoXMLAttr key, const std::string& value) {
     UNUSED_PARAMETER(value);

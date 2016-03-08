@@ -79,6 +79,9 @@ class GNEConnector;
 class GNETLSEditor;
 class GNEAdditionalFrame;   // PABLO #1916
 class GNEAdditional;        // PABLO #1916
+class GNEStoppingPlace;     // PABLO #1916
+class GNEDetector;          // PABLO #1916
+class GNEDetector;
 class GNEPoly;
 
 // ===========================================================================
@@ -275,8 +278,11 @@ private:
     /// @brief the poly of which geometry is being moved
     GNEPoly* myPolyToMove;
 
-    /// @brief the additional element of which shape is being moved     // PABLO #1916
-    GNEAdditional* myAdditionalToMove;                                  // PABLO #1916
+    /// @brief the stoppingPlace element of which shape is being moved  // PABLO #1916
+    GNEStoppingPlace* myStoppingPlaceToMove;                            // PABLO #1916
+
+    /// @brief the Detector element of which shape is being moved   // PABLO #1916
+    GNEDetector* myDetectorToMove;                                  // PABLO #1916
 
     /// @brief variable to save the position of the click over the lane // PABLO #1916
     SUMOReal myAdditionalToMoveFirstPosition;                           // PABLO #1916
@@ -370,7 +376,6 @@ private:
 
     /// @brief remove the currently edited polygon
     void removeCurrentPoly();
-
 };
 
 

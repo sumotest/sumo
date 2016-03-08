@@ -64,17 +64,24 @@
 // member method definitions
 // ===========================================================================
 
-GNEDetector::GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename, bool blocked) :
-    GNEAdditional(id, lane, pos, viewNet, tag, blocked),
-    myLength(length),
+GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal posOverLane, SUMOReal lengthOfShape, int freq, const std::string &filename, bool blocked) :
+    GNEAdditional(id, viewNet, Position(), tag, blocked),
+    myLane(lane),
+    myPosOverLane(posOverLane),
+    myLengthOfShape(lengthOfShape),
     myFreq(freq),
     myFilename(filename) {
+    // Add stoppingPlae to lane
+    myLane.addAdditional(this);
     // Update geometry
     updateGeometry();
 }
 
 
-GNEDetector::~GNEDetector() {}
+GNEDetector::~GNEDetector() {
+    // Remove stoppingPlae to lane
+    myLane.removeAdditional(this);
+}
 
 
 void 
@@ -87,7 +94,7 @@ GNEDetector::updateGeometry() {
     myShape = myLane.getShape();
 
     // Cut shape using as delimitators myPos and their length (myPos + length)
-    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myPos), myLane.getPositionRelativeToParametricLenght(myPos + myLength));
+    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myPosOverLane), myLane.getPositionRelativeToParametricLenght(myPosOverLane + myLengthOfShape));
 
     // Get number of parts of the shape
     int numberOfSegments = (int) myShape.size() - 1;
@@ -131,21 +138,27 @@ GNEDetector::updateGeometry() {
 
 
 void 
-GNEDetector::moveAdditional(SUMOReal distance, GNEUndoList *undoList) {
+GNEDetector::moveDetector(SUMOReal distance, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if distance is positive, to left if distance is negative
-        if( ((distance > 0) && ((myPos + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myPos + distance) > 0)) ) {
+        if( ((distance > 0) && ((myPosOverLane + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myPosOverLane + distance) > 0)) ) {
             // change attribute
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPos + distance)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosOverLane + distance)));
         }
     }
 }
 
 
+GNELane& 
+GNEDetector::getLane() const {
+    return myLane;
+}
+
+
 SUMOReal 
-GNEDetector::getPosition() const {
-    return myPos;
+GNEDetector::getPositionOverLane() const {
+    return myPosOverLane;
 }
 
 
@@ -168,7 +181,7 @@ GNEDetector::setPosition(SUMOReal pos) {
     else if(pos > myLane.getLaneShapeLenght())
         throw InvalidArgument("Position '" + toString(pos) + "' not allowed. Must be smaller than lane length");
     else
-        myPos = pos;
+        myPosOverLane = pos;
 }
 
 
@@ -185,5 +198,12 @@ void
 GNEDetector::setFilename(std::string filename) {
     myFilename = filename;
 }
+
+
+const std::string& 
+GNEDetector::getParentName() const {
+    return myLane.getMicrosimID();
+}
+
 
 /****************************************************************************/

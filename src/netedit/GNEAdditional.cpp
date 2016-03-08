@@ -72,33 +72,21 @@ bool GNEAdditional::additionalEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNELane& lane, SUMOReal pos, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
+GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked) :
     GUIGlObject(GLO_ADDITIONAL, id),
-    myLane(lane),
-    myPos(pos),
     myViewNet(viewNet),
+    myPosition(pos),
     myBlocked(blocked),
     GNEAttributeCarrier(tag) {
-    // Add a reference to this new additional to laneParent
-    myLane.addAdditional(this);
 }
 
 
 GNEAdditional::~GNEAdditional() {
-    // Remove reference to this new additional to laneParent
-    myLane.removeAdditional(this);
 }
 
-
-GNELane&
-GNEAdditional::getLane() const {
-    return myLane;
-}
-
-
-SUMOReal 
-GNEAdditional::getPos() const {
-    return myPos;
+const Position&
+GNEAdditional::getPositionInView() const {
+    return myPosition;
 }
 
 
@@ -135,19 +123,13 @@ GNEAdditional::setBlocked(bool value) {
 
 
 void 
-GNEAdditional::setPos(SUMOReal pos) {
-    myPos = pos;
-}
-
-const std::string& 
-GNEAdditional::getParentName() const {
-    return myLane.getMicrosimID();
+GNEAdditional::setPositionInView(const Position &pos) {
+    myPosition = pos;
 }
 
 
 void 
 GNEAdditional::drawLockIcon() const {
-    
     // load additional lock, if wasn't inicializated
     if (!additionalLockInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -162,7 +144,6 @@ GNEAdditional::drawLockIcon() const {
         additionalEmptyInitialized = true;
         delete i;
     }
-    
     // Draw icon
     glPushMatrix();
     glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), getType() + 0.1);

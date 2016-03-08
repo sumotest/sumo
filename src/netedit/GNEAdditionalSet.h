@@ -29,13 +29,14 @@
 #else
 #include <config.h>
 #endif
-
+/*
 #include <string>
 #include <vector>
 #include <utils/gui/globjects/GUIGlObject.h>
 #include <utils/gui/settings/GUIPropertySchemeStorage.h>
 #include <utils/geom/PositionVector.h>
-#include "GNEAttributeCarrier.h"
+*/
+#include "GNEAdditional.h"
 
 // ===========================================================================
 // class declarations
@@ -55,7 +56,7 @@ class GNEViewNet;
  * @class GNEAdditionalSet
  * @brief An Element wich group additionalSet elements
  */
-class GNEAdditionalSet : public GUIGlObject, public GNEAttributeCarrier
+class GNEAdditionalSet : public GNEAdditional
 {
 public:
 
@@ -65,7 +66,7 @@ public:
      * @param[in] tag Type of xml tag that define the additionalSet element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additionalSet element isn't blocked (i.e. value is false)
      */
-    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
+    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false);
 
     /// @brief Destructor
     ~GNEAdditionalSet();
@@ -120,6 +121,10 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
+    /// @brief Returns the name of the parent object (if any)
+    /// @return This object's parent id
+    virtual const std::string& getParentName() const = 0; 
+
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu

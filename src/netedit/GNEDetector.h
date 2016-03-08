@@ -52,13 +52,13 @@ public:
      * @param[in] lane Lane of this detector belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the detector (SUMO_TAG_E1DETECTOR, SUMO_TAG_LANE_AREA_DETECTOR, etc...)
-     * @param[in] pos position of detector in lane
-     * @param[in] length length of the detector
+     * @param[in] posOverLane position of detector in lane
+     * @param[in] lengthOfShape length of the detector's Shape
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEDetector(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal pos, SUMOReal length, int freq, const std::string &filename, bool blocked);
+    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal posOverLane, SUMOReal lengthOfShape, int freq, const std::string &filename, bool blocked = false);
 
     /// @brief Destructor
     ~GNEDetector();
@@ -66,20 +66,22 @@ public:
     /// @brief update pre-computed geometry information
     void updateGeometry();
 
-    /** @brief change the position of the additonal geometry without registering undo/redo
+    /** @brief change the position of the detector geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
      * @param[in] undoList pointer to the undo list
-     * @return newPos if something was moved, oldPos if nothing was moved
      */
-    void moveAdditional(SUMOReal distance, GNEUndoList *undoList);
+    void moveDetector(SUMOReal distance, GNEUndoList *undoList);
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
 
+    /// @brief Returns Detector's lane
+    GNELane& getLane() const;
+
     /// @brief Returns the position of the detector over lane
-    SUMOReal getPosition() const;
+    SUMOReal getPositionOverLane() const;
 
     /// @brief returns the aggregation period the values the detector collects shall be summed up.
     int getFrequency() const;
@@ -104,13 +106,12 @@ public:
      */
     void setFilename(std::string filename);
 
-    /** @brief Returns a copy of the Shape of the detector
-     * @return The Shape of the detector
-     */
-    PositionVector getShape() const;
-
     /// @name inherited from GNEAdditional
     //@{
+    /// @brief Returns the name of the parent object (if any)
+    /// @return This object's parent id
+    const std::string& getParentName() const;
+
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -160,8 +161,14 @@ public:
     //@}
 
 protected:
-    /// @brief The length of the Detector (Only as parameter in E2)
-    SUMOReal myLength;
+    /// @brief Lane in which this detector is placed
+    GNELane &myLane;
+
+    /// @brief Position of lane in which detector is placed
+    SUMOReal myPosOverLane;
+    
+    /// @brief The length of the Detector
+    SUMOReal myLengthOfShape;
     
     /// @brief The aggregation period the values the detector collects shall be summed up.
     int myFreq;
@@ -179,12 +186,17 @@ protected:
     SUMOReal mySignRotation;
 
 private:
-
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
     /// @brief set colors of scheme
     virtual void setColors() = 0;
+
+    /// @brief Invalidate return position of additional
+    const Position &getPositionInView() const;
+
+    /// @brief Invalidate set new position in the view
+    void setPosition(const Position &pos);
 };
 
 #endif

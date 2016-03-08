@@ -27,6 +27,8 @@
 #include <config.h>
 #endif
 
+#include <utils/geom/GeomConvHelper.h>
+
 #include "GNEAdditionalHandler.h"
 #include "GNEUndoList.h"
 #include "GNEEdge.h"
@@ -40,8 +42,6 @@
 #include "GNEDetectorE1.h"
 #include "GNEDetectorE2.h"
 #include "GNEDetectorE3.h"
-
-
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -387,12 +387,13 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_E3DETECTOR: {
             // get own attributes of detector E3
-            Position pos = GNEAttributeCarrier::parse<Position>(values[SUMO_ATTR_POSITION]);
+            bool ok;
+            PositionVector pos = GeomConvHelper::parseShapeReporting(values[SUMO_ATTR_POSITION], "user-supplied position", 0, ok, false);
             int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             std::string filename = values[SUMO_ATTR_FILE];
             // Build detector E3
-            if(!lane)
-                return buildDetectorE3(viewNet, id, pos, freq, filename, blocked);
+            if(!lane && (pos.size() == 1))
+                return buildDetectorE3(viewNet, id, pos[0], freq, filename, blocked);
             else
                 return false;
         }

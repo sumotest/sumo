@@ -38,7 +38,6 @@
 #include <algorithm>
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/StdDefs.h>
-#include <utils/geom/Position.h>    // PABLO #1916
 
 
 // ===========================================================================
@@ -51,16 +50,15 @@
  */
 class TplConvert {
 public:
-    /** converts a 0-terminated char-type array into std::string
-        throws an EmptyData - exception if the given pointer is 0 */
+    /// @brief converts a 0-terminated char-type array into std::string
+    /// @throws an EmptyData - exception if the given pointer is 0
     template<class E>
     static inline std::string _2str(const E* const data) {
         return _2str(data, getLength(data));
     }
 
-
-    /** converts a 0-terminated char array into std::string
-        throws an EmptyData - exception if the given pointer is 0 */
+    /// @brief converts a 0-terminated char array into std::string
+    /// @throw an EmptyDataException if the given pointer is 0
     static inline std::string _2str(const char* const data) {
         if (data == 0) {
             throw EmptyData();
@@ -68,10 +66,8 @@ public:
         return std::string(data);
     }
 
-
-    /** converts a char-type array into std::string considering the given
-            length
-        throws an EmptyData - exception if the given pointer is 0 */
+    /// @brief converts a char-type array into std::string considering the given length
+    /// @throw an EmptyDataException if the given pointer is 0
     template<class E>
     static inline std::string _2str(const E* const data, unsigned length) {
         if (data == 0) {
@@ -95,10 +91,8 @@ public:
         return ret;
     }
 
-
-    /** converts a char array into std::string considering the given
-            length
-        throws an EmptyData - exception if the given pointer is 0 */
+    /// @brief converts a char array into std::string considering the given length
+    /// @throw an EmptyDataException if the given pointer is 0
     static inline std::string _2str(const char* const data, unsigned length) {
         if (data == 0) {
             throw EmptyData();
@@ -106,11 +100,9 @@ public:
         return std::string(data, length);
     }
 
-
-    /** converts a char-type array into the integer value described by it
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain an integer */
+    /// @brief converts a char-type array into the integer value described by it
+    /// @throw an EmptyData - exception if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain an integer
     template<class E>
     static int _2int(const E* const data) {
         long long int result = _2long(data);
@@ -120,21 +112,16 @@ public:
         return (int)result;
     }
 
-
-    /** converts a string into the integer value described by it
-        by calling the char-type converter, which
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain an integer */
+    /// @brief converts a string into the integer value described by it by calling the char-type converter
+    /// @throw an EmptyDataException if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain an integer
     static int _str2int(const std::string& sData) {
         return _2int(sData.c_str());
     }
 
-
-    /** converts a char-type array with a hex value into the integer value described by it
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain an integer */
+    /// @brief converts a char-type array with a hex value into the integer value described by it
+    /// @throw an EmptyDataException if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain an integer
     template<class E>
     static int _hex2int(const E* const data) {
         long long int result = _hex2long(data);
@@ -144,20 +131,16 @@ public:
         return (int)result;
     }
 
-    /** converts a string with a hex value into the integer value described by it
-        by calling the char-type converter, which
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain an integer */
+    /// @brief converts a string with a hex value into the integer value described by it by calling the char-type converter, which
+    /// @throw an EmptyDataException if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain an integer
     static int _strHex2int(const std::string& sData) {
         return _hex2int(sData.c_str());
     }
 
-
-    /** converts a char-type array into the long value described by it
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain a long */
+    /// @brief converts a char-type array into the long value described by it
+    /// @throw an EmptyDataException if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain a long
     template<class E>
     static long long int _2long(const E* const data) {
         if (data == 0 || data[0] == 0) {
@@ -188,11 +171,9 @@ public:
         return ret * sgn;
     }
 
-
-    /** converts a char-type array with a hex value into the long value described by it
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain a long */
+    /// @brief converts a char-type array with a hex value into the long value described by it
+    /// @throw an EmptyDataException if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain a long
     template<class E>
     static long long int _hex2long(const E* const data) {
         if (data == 0 || data[0] == 0) {
@@ -234,11 +215,9 @@ public:
         return ret * sgn;
     }
 
-
-    /** converts a char-type array into the SUMOReal value described by it
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain a SUMOReal */
+    /// @brief converts a char-type array into the SUMOReal value described by it
+    /// @throw an EmptyData - exception if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain a SUMOReal
     template<class E>
     static SUMOReal _2SUMOReal(const E* const data) {
         if (data == 0 || data[0] == 0) {
@@ -288,26 +267,18 @@ public:
         }
     }
 
-
-    /** converts a string into the SUMOReal value described by it
-        by calling the char-type converter, which
-        throws an EmptyData - exception if the given string is empty
-        throws a NumberFormatException - exception when the string does
-            not contain a SUMOReal */
+    /// @brief converts a string into the SUMOReal value described by it by calling the char-type converter
+    /// @throw an EmptyDataException if the given string is empty
+    /// @throw a NumberFormatException - exception when the string does not contain a SUMOReal
     static SUMOReal _str2SUMOReal(const std::string& sData) {
         return _2SUMOReal(sData.c_str());
     }
 
-
-    /** converts a 0-terminated char-type array into the boolean value
-            described by it
-        returns true if the data* is one of the following (case insensitive):
-            '1', 'x', 'true', 'yes', 'on'
-        returns false if the data* is one of the following (case insensitive):
-            '0', '-', 'false', 'no', 'off'
-        throws an EmptyData - exception if the given string is empty or 0 pointer
-        throws a BoolFormatException in any other case
-    */
+    /// @brief converts a 0-terminated char-type array into the boolean value described by it
+    /// @return true if the data* is one of the following (case insensitive): '1', 'x', 'true', 'yes', 'on'
+    /// @return false if the data* is one of the following (case insensitive): '0', '-', 'false', 'no', 'off'
+    /// @throw an EmptyData - exception if the given string is empty or 0 pointer
+    /// @throw a BoolFormatException in any other case
     template<class E>
     static bool _2bool(const E* const data) {
         if (data == 0 || data[0] == 0) {
@@ -324,77 +295,25 @@ public:
         }
     }
 
-    /** converts a string into the bool value described by it       // PABLO #1916
-    by calling the char-type converter, which                       // PABLO #1916
-    throws an EmptyData - exception if the given string is empty    // PABLO #1916
-    throws a BoolFormatException - exception when the string does   // PABLO #1916
-    not contain a bool */                                           // PABLO #1916
-    static bool _str2bool(const std::string& sData) {               // PABLO #1916
-        return _2bool(sData.c_str());                               // PABLO #1916
-    }                                                               // PABLO #1916
-
-    // convert a string into Position in the three axis (X, Y Z)                                                        // PABLO #1916
-    template<class E>                                                                                                   // PABLO #1916
-    static Position _2Position(const E* const data) {                                                                   // PABLO #1916
-        if (data == 0 || data[0] == 0) {                                                                                // PABLO #1916
-            throw EmptyData();                                                                                          // PABLO #1916
-        }                                                                                                               // PABLO #1916
-        std::string s = _2str(data);                                                                                    // PABLO #1916
-        std::string x, y, z;                                                                                            // PABLO #1916
-        while(!s.empty() && s.back() != ' ') {                                                                          // PABLO #1916
-            if((s.back() >= '0' && s.back() <= '9') || (s.back() == '-') || (s.back() == '+') || (s.back() == '.')) {   // PABLO #1916
-                z.push_back(s.back());                                                                                  // PABLO #1916
-                s.pop_back();                                                                                           // PABLO #1916
-            }                                                                                                           // PABLO #1916
-            else                                                                                                        // PABLO #1916
-                throw PositionFormatException();                                                                        // PABLO #1916
-        }                                                                                                               // PABLO #1916
-        s.pop_back();                                                                                                   // PABLO #1916
-        while(!s.empty() && s.back() != ' ') {                                                                          // PABLO #1916
-            if((s.back() >= '0' && s.back() <= '9') || (s.back() == '-') || (s.back() == '+') || (s.back() == '.')) {   // PABLO #1916
-                y.push_back(s.back());                                                                                  // PABLO #1916
-                s.pop_back();                                                                                           // PABLO #1916
-            }                                                                                                           // PABLO #1916
-            else                                                                                                        // PABLO #1916
-                throw PositionFormatException();                                                                        // PABLO #1916
-        }                                                                                                               // PABLO #1916
-        s.pop_back();                                                                                                   // PABLO #1916
-        while(!s.empty() && s.back() != ' ') {                                                                          // PABLO #1916
-            if((s.back() >= '0' && s.back() <= '9') || (s.back() == '-') || (s.back() == '+') || (s.back() == '.')) {   // PABLO #1916
-                x.push_back(s.back());                                                                                  // PABLO #1916
-                s.pop_back();                                                                                           // PABLO #1916
-            }                                                                                                           // PABLO #1916
-            else                                                                                                        // PABLO #1916
-                throw PositionFormatException();                                                                        // PABLO #1916
-        }                                                                                                               // PABLO #1916
-        std::reverse(x.begin(), x.end());                                                                               // PABLO #1916
-        std::reverse(y.begin(), y.end());                                                                               // PABLO #1916
-        std::reverse(z.begin(), z.end());                                                                               // PABLO #1916
-        return Position(_str2SUMOReal(x), _str2SUMOReal(y), _str2SUMOReal(z));                                          // PABLO #1916
-    }                                                                                                                   // PABLO #1916
-
-    /** convert a string into Position in the three axis (X, Y Z)       // PABLO #1916
-    by calling the Position-type converter, which                       // PABLO #1916
-    throws an EmptyData - exception if the given string is empty        // PABLO #1916
-    throws a PositionFormatException - exception when the string does   // PABLO #1916
-    not contain a Position */                                           // PABLO #1916
-    static Position _str2Position(const std::string& sData) {           // PABLO #1916
-        return _2Position(sData.c_str());                               // PABLO #1916
-    }                                                                   // PABLO #1916
+    /// @brief converts a string into the bool value described by it by calling the char-type converter // PABLO #1916
+    /// @throw an EmptyData - exception if the given string is empty                                    // PABLO #1916
+    /// @throw a BoolFormatException - exception when the string does not contain a bool                // PABLO #1916
+    static bool _str2bool(const std::string& sData) {                                                   // PABLO #1916
+        return _2bool(sData.c_str());                                                                   // PABLO #1916
+    }                                                                                                   // PABLO #1916
 
     // conversion methods not throwing an exception
-    /** converts a 0-terminated char-type array into std::string
-        returns the default value if the data is empty */
+
+    /// @brief converts a 0-terminated char-type array into std::string
+    /// @return the default value if the data is empty
     template<class E>
     static std::string _2strSec(const E* const data,
                                 const std::string& def) {
         return _2strSec(data, getLength(data), def);
     }
 
-
-    /** converts a 0-terminated char-type array into the integer value
-            described by it
-        returns the default value if the data is empty */
+    /// @brief converts a 0-terminated char-type array into the integer value described by it
+    /// @return the default value if the data is empty
     template<class E>
     static int _2intSec(const E* const data, int def) {
         if (data == 0 || data[0] == 0) {
@@ -403,10 +322,8 @@ public:
         return _2int(data);
     }
 
-
-    /** converts a 0-terminated char-type array into the long value
-            described by it
-        returns the default value if the data is empty */
+    /// @brief converts a 0-terminated char-type array into the long value described by it
+    /// @return the default value if the data is empty
     template<class E>
     static long long int _2longSec(const E* const data, long def) {
         if (data == 0 || data[0] == 0) {
@@ -415,10 +332,8 @@ public:
         return _2long(data);
     }
 
-
-    /** converts a 0-terminated char-type array into the SUMOReal value
-            described by it
-        returns the default value if the data is empty */
+    /// @brief converts a 0-terminated char-type array into the SUMOReal value described by it
+    /// @return the default value if the data is empty 
     template<class E>
     static SUMOReal _2SUMORealSec(const E* const data, SUMOReal def) {
         if (data == 0 || data[0] == 0) {
@@ -427,14 +342,10 @@ public:
         return _2SUMOReal(data);
     }
 
-
-    /** converts a 0-terminated char-type array into the SUMOReal value
-            described by it
-        returns true if the data* is one of the following (case insensitive):
-            '1', 'x', 'true', 'yes', 'on'
-        returns false if the data* is one of the following (case insensitive):
-            '0', '-', 'false', 'no', 'off'
-        returns the default value if the data is empty */
+    /// @brief converts a 0-terminated char-type array into the SUMOReal value described by it
+    /// @return true if the data* is one of the following (case insensitive): '1', 'x', 'true', 'yes', 'on'
+    /// @return false if the data* is one of the following (case insensitive): '0', '-', 'false', 'no', 'off'
+    /// @return the default value if the data is empty
     template<class E>
     static bool _2boolSec(const E* const data, bool def) {
         if (data == 0 || data[0] == 0) {
@@ -443,10 +354,8 @@ public:
         return _2bool(data);
     }
 
-
-    /** converts a char-type array into std::string considering
-            the given length
-        returns the default value if the data is empty */
+    /// @brief converts a char-type array into std::string considering the given length
+    /// @return the default value if the data is empty
     template<class E>
     static std::string _2strSec(const E* const data, int length,
                                 const std::string& def) {
@@ -456,8 +365,7 @@ public:
         return _2str(data, length);
     }
 
-
-    /** returns the length of the string (the position of the 0-character) */
+    /// @brief return the length of the string (the position of the 0-character) 
     template<class E>
     static unsigned getLength(const E* const data) {
         if (data == 0) {
@@ -469,7 +377,6 @@ public:
         }
         return i;
     }
-
 };
 
 

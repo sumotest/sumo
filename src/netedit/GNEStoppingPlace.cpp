@@ -65,32 +65,45 @@
 // member method definitions
 // ===========================================================================
 
-GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos, bool blocked) :
-    GNEAdditional(id, lane, fromPos, viewNet, tag, blocked),
-    myToPos(toPos){
+GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, bool blocked) :
+    GNEAdditional(id, viewNet, Position(), tag, blocked),
+    myLane(lane),
+    myFromPos(fromPos),
+    myToPos(toPos) {
+    // Add stoppingPlae to lane
+    myLane.addAdditional(this);
 }
 
 
-GNEStoppingPlace::~GNEStoppingPlace() {}
+GNEStoppingPlace::~GNEStoppingPlace() {
+    // Remove stoppingPlae to lane
+    myLane.removeAdditional(this);
+}
 
 
 void 
-GNEStoppingPlace::moveAdditional(SUMOReal distance, GNEUndoList *undoList) {
+GNEStoppingPlace::moveStoppingPlace(SUMOReal distance, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if distance is positive, to left if distance is negative
-        if( ((distance > 0) && ((myToPos + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myPos + distance) > 0)) ) {
+        if( ((distance > 0) && ((myToPos + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myFromPos + distance) > 0)) ) {
             // change attribute
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(myPos + distance)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(myFromPos + distance)));
             undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(myToPos + distance)));
         }
     }
 }
 
 
+GNELane&
+GNEStoppingPlace::getLane() const {
+    return myLane;
+}
+
+
 SUMOReal 
 GNEStoppingPlace::getFromPosition() const {
-    return myPos;
+    return myFromPos;
 }
 
         
@@ -109,7 +122,7 @@ GNEStoppingPlace::setFromPosition(SUMOReal fromPos) {
     else if ((myToPos - fromPos) < 1)
         throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
-        myPos = fromPos;
+        myFromPos = fromPos;
 }
 
 
@@ -117,12 +130,18 @@ void
 GNEStoppingPlace::setToPosition(SUMOReal toPos) {
     if(toPos > myLane.getLaneShapeLenght())
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than lane length");
-    else if(myPos >= toPos)
+    else if(myFromPos >= toPos)
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than ToPos '" + toString(myToPos) + "'");
-    else if ((toPos - myPos) < 1)
+    else if ((toPos - myFromPos) < 1)
         throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
         myToPos = toPos;
+}
+
+
+const std::string& 
+GNEStoppingPlace::getParentName() const {
+    return myLane.getMicrosimID();
 }
 
 

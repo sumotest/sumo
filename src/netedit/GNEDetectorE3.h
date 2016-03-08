@@ -78,6 +78,10 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
+    /// @brief Returns the name of the parent object (if any)
+    /// @return This object's parent id
+    const std::string& getParentName() const;
+
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -133,9 +137,6 @@ public:
     //@}
 
 protected:
-    /// @brief position of the detector 
-    Position myPos;
-
     /// @brief frequency of E3 detector
     SUMOReal myFreq;
 

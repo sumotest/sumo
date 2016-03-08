@@ -59,14 +59,14 @@ class GNEStoppingPlace : public GNEAdditional
 public:
     /** @brief Constructor.
      * @param[in] id Gl-id of the stopping place (Must be unique)
-     * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
+     * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] fromPos From position of the StoppingPlace
      * @param[in] toPos To position of the StoppingPlace
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEStoppingPlace(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SumoXMLTag tag, SUMOReal fromPos, SUMOReal toPos, bool blocked);
+    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, bool blocked = false);
 
     /// @brief Destructor
     ~GNEStoppingPlace();
@@ -74,26 +74,24 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
-    /** @brief change the position of the additonal geometry without registering undo/redo
+    /** @brief change the position of the StoppingPlace geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
      * @param[in] undoList pointer to the undo list
-     * @return newPos if something was moved, oldPos if nothing was moved
      */
-    void moveAdditional(SUMOReal distance, GNEUndoList *undoList);
+    void moveStoppingPlace(SUMOReal distance, GNEUndoList *undoList);
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
 
-    /** @brief Returns the from position of the stoppingPlace
-     * @return The from position of the stopping place
-     */
+    /// @brief Returns the lane in which the stoppingPlace is placed
+    GNELane &getLane() const;
+
+    /// @brief Returns the from position of the stoppingPlace
     SUMOReal getFromPosition() const;
         
-    /** @brief Returns the to position of the stoppingPlace
-     * @return The to position of the stopping place
-     */
+    /// @brief Returns the to position of the stoppingPlace
     SUMOReal getToPosition() const;
 
     /** @brief Set a new from Position in StoppingPlace
@@ -125,6 +123,10 @@ public:
 
     /// @name inherited from GNEAdditional
     //@{
+    /// @brief Returns the name of the parent object (if any)
+    /// @return This object's parent id
+    const std::string& getParentName() const;
+
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -180,8 +182,13 @@ public:
     //@}
 
 protected:
+    /// @brief Lane in which this stopping place is placed
+    GNELane &myLane;
+
+    /// @brief The start position this stopping place is located at
+    SUMOReal myFromPos;
+
     /// @brief The end position this stopping place is located at
-    /// @note fromPos corresponds to parameter "getPos()" of GNEAdditional
     SUMOReal myToPos;
 
     /// @brief The position of the sign
@@ -191,12 +198,17 @@ protected:
     SUMOReal mySignRot;
 
 private:
-
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
     /// @brief set colors of scheme
     virtual void setColors() = 0;
+
+    /// @brief Invalidate return position of additional
+    const Position &getPositionInView() const;
+
+    /// @brief Invalidate set new position in the view
+    void setPosition(const Position &pos);
 };
 
 

@@ -70,7 +70,7 @@ bool GNEDetectorE3EntryExit::detectorE3Initialized = false;
 // ===========================================================================
 
 GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos, bool blocked) :
-    GNEDetector(id, lane, myViewNet, tag, pos, 1, 0, 0, blocked) {
+    GNEDetector(id, myViewNet, tag, lane, pos, 1, 0, 0, blocked) {
     // Set colors of detector
     setColors();
 }
@@ -79,19 +79,13 @@ GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetecto
 GNEDetectorE3EntryExit::~GNEDetectorE3EntryExit() {}
 
 
-GNELane& 
-GNEDetectorE3EntryExit::getLane() const {
-    return myLane;
-}
-
-
 void 
 GNEDetectorE3EntryExit::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
-    device.writeAttr(SUMO_ATTR_POSITION, myPos);
+    device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
     device.writeAttr(SUMO_ATTR_FILE, myFilename);
     // Rest of parameters
@@ -217,7 +211,7 @@ GNEDetectorE3EntryExit::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
-            return toString(myPos);
+            return toString(myPosOverLane);
         case SUMO_ATTR_FREQUENCY:
             return toString(myFreq);
         case SUMO_ATTR_FILE:
@@ -274,7 +268,7 @@ GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value) 
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-            myPos = parse<SUMOReal>(value);
+            myPosOverLane = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;

@@ -65,7 +65,7 @@
 // ===========================================================================
 
 GNEChargingStation::GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked) :
-    GNEStoppingPlace(id, lane, viewNet, SUMO_TAG_CHARGING_STATION, fromPos, toPos, blocked),
+    GNEStoppingPlace(id, viewNet, SUMO_TAG_CHARGING_STATION, lane, fromPos, toPos, blocked),
     myChargingPower(chargingPower), 
     myEfficiency(efficiency), 
     myChargeInTransit(chargeInTransit), 
@@ -96,7 +96,7 @@ GNEChargingStation::updateGeometry() {
     myShape = myLane.getShape();
 
     // Cut shape using as delimitators from start position and end position
-    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myPos), myLane.getPositionRelativeToParametricLenght(myToPos));
+    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myFromPos), myLane.getPositionRelativeToParametricLenght(myToPos));
 
     // Get number of parts of the shape
     int numberOfSegments = (int) myShape.size() - 1;
@@ -320,8 +320,8 @@ void
 GNEChargingStation::writeAdditional(OutputDevice& device) {
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
-    device.writeAttr(SUMO_ATTR_STARTPOS, myPos);
+    device.writeAttr(SUMO_ATTR_LANE, myLane.getID());
+    device.writeAttr(SUMO_ATTR_STARTPOS, myFromPos);
     device.writeAttr(SUMO_ATTR_ENDPOS, myToPos);
     device.writeAttr(SUMO_ATTR_CHARGINGPOWER, myChargingPower);
     device.writeAttr(SUMO_ATTR_EFFICIENCY, myEfficiency);
@@ -343,7 +343,7 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(myPos);
+            return toString(myFromPos);
         case SUMO_ATTR_ENDPOS:
             return toString(myToPos);
         case SUMO_ATTR_CHARGINGPOWER:
@@ -395,7 +395,7 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_STARTPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myToPos-1));
         case SUMO_ATTR_ENDPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myPos);
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myFromPos);
         case SUMO_ATTR_CHARGINGPOWER:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_EFFICIENCY:
@@ -420,7 +420,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            myPos = parse<SUMOReal>(value);
+            myFromPos = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;

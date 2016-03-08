@@ -71,8 +71,7 @@ bool GNEDetectorE3::detectorE3Initialized = false;
 // ===========================================================================
 
 GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Position pos, SUMOReal freq, const std::string& filename, bool blocked) :
-    GNEAdditionalSet(id, viewNet, SUMO_TAG_E3DETECTOR, blocked),
-    myPos(pos),
+    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_E3DETECTOR, blocked),
     myFreq(freq),
     myFilename(filename),
     myCounterId(0) {
@@ -90,8 +89,8 @@ GNEDetectorE3::~GNEDetectorE3() {
 void 
 GNEDetectorE3::updateGeometry() {
     myShape.clear();
-    myShape.push_back(myPos - Position(1, 0));
-    myShape.push_back(myPos + Position(1, 0));
+    myShape.push_back(myPosition - Position(1, 0));
+    myShape.push_back(myPosition + Position(1, 0));
 }
 
 
@@ -106,6 +105,11 @@ GNEDetectorE3::writeAdditional(OutputDevice& device) {
 
 }
 
+
+const std::string& 
+GNEDetectorE3::getParentName() const {
+    return "";
+}
 
 GUIGLObjectPopupMenu* 
 GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {

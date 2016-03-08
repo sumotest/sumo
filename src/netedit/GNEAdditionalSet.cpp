@@ -72,11 +72,8 @@ bool GNEAdditionalSet::additionalSetEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked) :
-    GUIGlObject(GLO_ADDITIONAL, id),
-    myViewNet(viewNet),
-    myBlocked(blocked),
-    GNEAttributeCarrier(tag) {
+GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked) :
+    GNEAdditional(id, viewNet, pos, tag, blocked) {
 }
 
 

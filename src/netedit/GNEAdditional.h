@@ -59,29 +59,24 @@ class GNEViewNet;
 class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier
 {
 public:
-
     /** @brief Constructor.
      * @param[in] id Gl-id of the additional element (Must be unique)
-     * @param[in] lane GNELane of this additional element belongs
-     * @param[in] pos position in the lane in which additional is located
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
+     * @param[in] pos position of view in which additional is located
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      */
-    GNEAdditional(const std::string& id, GNELane& lane, SUMOReal pos, GNEViewNet* viewNet, SumoXMLTag tag, bool blocked = false);
+    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false);
 
     /// @brief Destructor
     ~GNEAdditional();
 
     /// @brief update pre-computed geometry information
-    //  @note: must be called when geometry changes (i.e. lane moved)
+    /// @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
-    /// @brief Returns parent lane
-    GNELane &getLane() const;
-
-    /// @brief Returns pos in the lane
-    SUMOReal getPos() const;
+    /// @brief Returns position of additional in view
+    const Position &getPositionInView() const;
 
     /// @brief Returns GNEViewNet in which additional element is located
     GNEViewNet* getViewNet() const;
@@ -97,16 +92,15 @@ public:
     /// @brief Block or unblock additional element(i.e. cannot be moved with mouse)
     void setBlocked(bool value);
 
-    /// @brief set new positin in the lane
-    /// @note pos must be <= that lane lenght
-    void setPos(SUMOReal pos);
+    /// @brief set new position in the view
+    void setPositionInView(const Position &pos);
 
     /** @brief change the position of the additional geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
      * @param[in] undoList pointer to the undo list
      * @return newPos if something was moved, oldPos if nothing was moved
      */
-    virtual void moveAdditional(SUMOReal distance, GNEUndoList *undoList) = 0;
+///virtual void moveAdditional(SUMOReal distance, GNEUndoList *undoList) = 0;
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
@@ -115,10 +109,9 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns the name of the parent object (if any)
-     * @return This object's parent id
-     */
-    const std::string& getParentName() const; 
+    /// @brief Returns the name of the parent object (if any)
+    /// @return This object's parent id
+    virtual const std::string& getParentName() const = 0; 
 
     /** @brief Returns an own popup-menu
      *
@@ -182,14 +175,11 @@ public:
     //@}
 
 protected:
-    /// @brief The lane this additional element is located at
-    GNELane& myLane;
-
-    /// @brief The position in the lane in which this additional element is located at
-    SUMOReal myPos;
-
     /// @brief The GNEViewNet this additional element belongs
     GNEViewNet* myViewNet;
+
+    /// @brief The position in which this additional element is located
+    Position myPosition;
 
     /// @brief The shape of the additional element
     PositionVector myShape;

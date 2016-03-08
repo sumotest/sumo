@@ -68,8 +68,10 @@
 #include "GNEChange_Lane.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
-#include "GNEAdditional.h"              // PABLO #1916
-#include "GNEAdditionalSet.h"           // PABLO #1916
+#include "GNEAdditional.h"          // PABLO #1916
+#include "GNEAdditionalSet.h"       // PABLO #1916
+#include "GNEStoppingPlace.h"       // PABLO #1916
+#include "GNEDetector.h"            // PABLO #1916
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -1044,15 +1046,21 @@ GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {           
 }                                                                                                                               // PABLO #1916
 
 
-std::string                                                                                             // PABLO #1916
-GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {               // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {  // PABLO #1916                                                // PABLO #1916
-        if (&(it->second->getLane()) == lane && fabs(it->second->getPos() - pos) < POSITION_EPS) {      // PABLO #1916
-            return it->second->getID();                                                                 // PABLO #1916
-        }                                                                                               // PABLO #1916
-    }                                                                                                   // PABLO #1916
-    return "";                                                                                          // PABLO #1916
-}                                                                                                       // PABLO #1916
+std::string                                                                                                         // PABLO #1916
+GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {                           // PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {              // PABLO #1916
+        if(dynamic_cast<GNEStoppingPlace*>(it->second)) {                                                           // PABLO #1916
+            GNEStoppingPlace* stoppingPlace = dynamic_cast<GNEStoppingPlace*>(it->second);                          // PABLO #1916
+            if (&(stoppingPlace->getLane()) == lane && fabs(stoppingPlace->getFromPosition() - pos) < POSITION_EPS) // PABLO #1916
+                return it->second->getID();                                                                         // PABLO #1916
+        } else if(dynamic_cast<GNEDetector*>(it->second)) {                                                         // PABLO #1916
+            GNEDetector* detector = dynamic_cast<GNEDetector*>(it->second);                                         // PABLO #1916
+            if (&(detector->getLane()) == lane && fabs(detector->getPositionOverLane() - pos) < POSITION_EPS)       // PABLO #1916
+                return it->second->getID();                                                                         // PABLO #1916
+        }                                                                                                           // PABLO #1916
+    }                                                                                                               // PABLO #1916
+    return "";                                                                                                      // PABLO #1916
+}                                                                                                                   // PABLO #1916
 
 
 std::vector<GNEAdditional*>                                                                 // PABLO #1916
