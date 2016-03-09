@@ -169,8 +169,7 @@ MSLCM_JE2013::wantsChange(
 
 SUMOReal
 MSLCM_JE2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
-    gDebugFlag2 = DEBUG_COND;
-
+	gDebugFlag2 = DEBUG_COND;
     const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
     if (gDebugFlag2) {
         const std::string patched = (wanted != newSpeed ? " patched=" + toString(newSpeed) : "");

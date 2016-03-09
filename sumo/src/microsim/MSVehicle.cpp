@@ -11,6 +11,7 @@
 /// @author  Michael Behrisch
 /// @author  Axel Wegener
 /// @author  Christoph Sommer
+/// @author  Leonhard Lücken
 /// @date    Mon, 05 Mar 2001
 /// @version $Id$
 ///
@@ -1346,6 +1347,12 @@ MSVehicle::executeMove() {
         int bla = 0;
     }
 #endif
+    // Debug (Leo)
+    std::string debug_id = "always_right.7";
+    if(this->myParameter->id == debug_id){
+    	std::cout << "vehicle '" << debug_id << "' in executeMove()" <<std::endl;
+    }
+
     // get safe velocities from DriveProcessItems
     SUMOReal vSafe = 0; // maximum safe velocity
     SUMOReal vSafeZipper = std::numeric_limits<SUMOReal>::max(); // speed limit due to zipper merging
@@ -1434,7 +1441,7 @@ MSVehicle::executeMove() {
                 vSafe = (*i).myVLinkPass;
                 if (vSafe < getCarFollowModel().getMaxDecel() /* XXX comparing velocity and acceleration ?! (Leo)*/
                 		&& vSafe <= (*i).myVLinkWait && vSafe < getCarFollowModel().maxNextSpeed(getSpeed(), this)) {
-                    // this vehicle is probably not gonna drive accross the next junction (heuristic)
+                    // this vehicle is probably not gonna drive across the next junction (heuristic)
                     myHaveToWaitOnNextLink = true;
                 }
             } else if (link->getState() == LINKSTATE_ZIPPER) {
@@ -1456,34 +1463,64 @@ MSVehicle::executeMove() {
             break;
         }
     }
+
+    // Debug (Leo)
+    if(this->myParameter->id == debug_id){
+    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
+    	std::cout << "vSafeMin = " << vSafeMin << "\n" << std::endl;
+    	std::cout << "vSafeMinDist = " << vSafeMinDist << "\n" << std::endl;
+    }
+
     if (vSafe + NUMERICAL_EPS < vSafeMin) {
         // cannot drive across a link so we need to stop before it
+    	// XXX: (Leo) This often calls stopSpeed with vSafeMinDist==0 (for the ballistic update), since vSafe can become negative
+    	//		For the Euler update the term '+ NUMERICAL_EPS' prevented a call here... However, if this code is not called,
+    	//		vSafe is not computed correctly for the ballistic update (the prior code can give negative, but still to large, vSafe).
+    	//		I still need to understand why.
         vSafe = MIN2(vSafe, getCarFollowModel().stopSpeed(this, getSpeed(), vSafeMinDist));
         vSafeMin = 0;
         myHaveToWaitOnNextLink = true;
     }
+
     // vehicles inside a roundabout should maintain their requests
     if (myLane->getEdge().isRoundabout()) {
         myHaveToWaitOnNextLink = false;
     }
 
     vSafe = MIN2(vSafe, vSafeZipper);
+    // Debug (Leo)
+    if(this->myParameter->id == debug_id){
+    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
+    }
+
 
     // XXX braking due to lane-changing is not registered and due to processing stops is not registered
-    //     To avoid casual blinking brake lights at high speeds due to dawdling of the
+    //     (Leo) To avoid casual blinking brake lights at high speeds due to dawdling of the
     //	   leading vehicle, we don't show brake lights when the deceleration could be caused
     //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
     SUMOReal pseudoFriction = (0.05 +  0.005*getSpeed())*getSpeed();
     bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
-    // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
-    SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
 
-//    // Debug (Leo)
-//    if(this->myParameter->id == "A"){
-//    	std::cout << "vSafe = " << vSafe << std::endl;
-//    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
-//    	std::cout << "vNext = " << vNext << std::endl;
-//    }
+    // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
+    SUMOReal vNext;
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+    	vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
+    } else {
+    	// in case of ballistic position update, negative speeds can indicate desired stops within next timestep.
+    	if(vSafeMin == 0){
+    		// (Leo) This should be an indication that it would even be safe to stop immediately ("implicit Euler logic")
+    		//       Hence, stopping within next timestep (negative vNext) is tolerated.
+    		vNext = getCarFollowModel().moveHelper(this, vSafe);
+    	} else {
+    		vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
+    	}
+    }
+
+    // Debug (Leo)
+    if(this->myParameter->id == debug_id){
+    	std::cout << "vNext = " << vNext << "\n" << std::endl;
+    }
+
 
     // vNext may be higher than vSafe without implying a bug:
     //  - when approaching a green light that suddenly switches to yellow
@@ -1506,6 +1543,16 @@ MSVehicle::executeMove() {
     } else {
     	vNext = MAX2(vNext, myState.mySpeed - ACCEL2SPEED(getCarFollowModel().getMaxDecel()));
     }
+
+    // Debug (Leo)
+    if(this->myParameter->id == debug_id){
+    	std::cout << "mySpeed = " << myState.mySpeed << std::endl;
+    	std::cout << "myDecel = " << getCarFollowModel().getMaxDecel() << std::endl;
+    	std::cout << "vSafe = " << vSafe << std::endl;
+    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
+    	std::cout << "vNext = " << vNext << std::endl;
+    }
+
 
 #ifndef NO_TRACI
     if (myInfluencer != 0) {
@@ -1553,15 +1600,22 @@ MSVehicle::executeMove() {
     		deltaPos = 0.5*myState.mySpeed*myState.mySpeed/(myState.mySpeed - vNext);
     	}
     }
-    myState.mySpeed = MAX2(vNext,0.);
 
+    // Debug (Leo)
+    if(this->myParameter->id == debug_id){
+    	std::cout << "deltaPos = " << deltaPos << std::endl;
+    }
+
+    myState.mySpeed = MAX2(vNext,0.);
 
 #ifndef NO_TRACI
     if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
         deltaPos = myInfluencer->implicitDeltaPosVTD(this);
     }
 #endif
+    // update position
     myState.myPos += deltaPos;
+
     myCachedPosition = Position::INVALID;
     std::vector<MSLane*> passedLanes;
     for (std::vector<MSLane*>::reverse_iterator i = myFurtherLanes.rbegin(); i != myFurtherLanes.rend(); ++i) {
@@ -1586,7 +1640,7 @@ MSVehicle::executeMove() {
                 leaveLane(MSMoveReminder::NOTIFICATION_JUNCTION);
                 MSLink* link = (*i).myLink;
                 // check whether the vehicle was allowed to enter lane
-                //  otherwise it is decelareted and we do not need to test for it's
+                //  otherwise it is decelerated and we do not need to test for it's
                 //  approach on the following lanes when a lane changing is performed
                 // proceed to the next lane
                 if (link != 0) {

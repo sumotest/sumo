@@ -54,18 +54,43 @@ MSCFModel_Krauss::~MSCFModel_Krauss() {}
 
 SUMOReal
 MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap) const {
+	// Debug (Leo)
+	if(veh->getID() == "always_right.7"){
+		std::cout << "vehicle 'always_right.7' in MSCFModel_Krauss::stopSpeed()\n"
+				<< "gap = " << gap
+				<< ", speed = " << speed
+				<< ", maxSafeStopSpeed() = "<< maximumSafeStopSpeed(gap, speed) << std::endl;
+	}
     return MIN2(maximumSafeStopSpeed(gap, speed), maxNextSpeed(speed, veh));
 }
 
 
 SUMOReal
 MSCFModel_Krauss::followSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
+//
+//	// Debug (Leo)
+//	if(veh->getID() == "flow.2"){
+//		MSGlobals::gSemiImplicitEulerUpdate = true;
+//		SUMOReal maxSafeFollowSpeedEuler = maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel);
+//		MSGlobals::gSemiImplicitEulerUpdate = false;
+//		SUMOReal maxSafeFollowSpeedBallistic =  maximumSafeFollowSpeed(gap, 0., predSpeed, predMaxDecel);
+//		std::cout << "\nin MSCFModel_Krauss::followSpeed(veh flow.2):"
+//				<< "\nfollowSpeedEuler = " <<  maxSafeFollowSpeedEuler
+//				<< "\nfollowSpeedBallistic = " <<  maxSafeFollowSpeedBallistic << std::endl;
+//	}
+
 	return MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
 }
 
 
 SUMOReal
 MSCFModel_Krauss::dawdle(SUMOReal speed) const {
+	if(!MSGlobals::gSemiImplicitEulerUpdate){
+		// in case of the ballistic update, negative speeds indicate
+		// a desired stop before the completion of the next timestep.
+		// We do not allow dawdling to overwrite this indication
+		if(speed < 0) return speed;
+	}
     // generate random number out of [0,1)
     const SUMOReal random = RandHelper::rand();
     // Dawdle.

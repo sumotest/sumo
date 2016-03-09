@@ -124,6 +124,16 @@ SUMOReal
 MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
     int state = myOwnState;
 
+//    // Debug (Leo)
+//    std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+//              << " veh=" << myVehicle.getID()
+//              << " lane=" << myVehicle.getLane()->getID()
+//              << " pos=" << myVehicle.getPositionOnLane()
+//              << " v=" << myVehicle.getSpeed()
+//              << " min=" << min
+//              << " wanted=" << wanted<< std::endl;
+
+
     // letting vehicles merge in at the end of the lane in case of counter-lane change, step#2
     SUMOReal MAGIC_offset = 1.;
     //   if we want to change and have a blocking leader and there is enough room for him in front of us
@@ -132,6 +142,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         if (space > 0) {
             // compute speed for decelerating towards a place which allows the blocking leader to merge in in front
             SUMOReal safe = cfModel.stopSpeed(&myVehicle, myVehicle.getSpeed(), space);
+
             // if we are approaching this place
             if (safe < wanted) {
                 // return this speed as the speed to use

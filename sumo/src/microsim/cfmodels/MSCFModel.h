@@ -249,8 +249,19 @@ public:
         // The solution approach leaderBrakeGap >= followerBrakeGap is not
         // secure when the follower can brake harder than the leader because the paths may still cross.
         // As a workaround we lower the value of followerDecel which errs on the side of caution
+    	//
+    	// xxx (Leo) This is somewhat incompatible to the approach in maximumSafeFollowSpeed, where
+    	// the leaderMaxDecel is increased instead. This is no perfect estimate either,
+    	// but without taking into account the reaction time it is less conservative than decreasing followDecel.
+    	// Consider substitution of 'const leaderMaxDecel = MAX2(myDecel, leaderMaxDecel);' below and 'followDecel = myDecel;'
+    	// We should have:
+    	//        SUMOReal maximumSafeSpeed = maximumSafeFollowSpeed(secureGap, speed, leaderSpeed, leaderMaxDecel);
+    	//        assert(maximumSafeSpeed <= speed + NUMERICAL_EPS && maximumSafeSpeed >= speed - NUMERICAL_EPS);
+
         const SUMOReal followDecel = MIN2(myDecel, leaderMaxDecel);
-        return MAX2((SUMOReal) 0, brakeGap(speed, followDecel, myHeadwayTime) - brakeGap(leaderSpeed, leaderMaxDecel, 0));
+        SUMOReal secureGap = MAX2((SUMOReal) 0, brakeGap(speed, followDecel, myHeadwayTime) - brakeGap(leaderSpeed, leaderMaxDecel, 0));
+        return secureGap;
+
     }
 
     /** @brief Returns the velocity after maximum deceleration
@@ -334,14 +345,14 @@ protected:
      * @param[in] predMaxDecel The LEADER's maximum deceleration
      * @return the safe velocity
      */
-    SUMOReal maximumSafeFollowSpeed(SUMOReal gap,  SUMOReal egoSpeed, SUMOReal predSpeed, SUMOReal predMaxDecel) const;
+    SUMOReal maximumSafeFollowSpeed(SUMOReal gap,  SUMOReal egoSpeed, SUMOReal predSpeed, SUMOReal predMaxDecel, bool onInsertion = false) const;
 
 
     /** @brief Returns the maximum next velocity for stopping within gap
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] currentSpeed The current speed of the ego vehicle
      */
-    SUMOReal maximumSafeStopSpeed(SUMOReal gap, SUMOReal currentSpeed) const;
+    SUMOReal maximumSafeStopSpeed(SUMOReal gap, SUMOReal currentSpeed, bool onInsertion = false) const;
 
 
     /** @brief Returns the maximum next velocity for stopping within gap
@@ -357,10 +368,11 @@ protected:
      * (The latter is required to calculate the distance covered in the following timestep.)
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] currentSpeed The current speed of the ego vehicle
+     * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
      * @return the safe velocity (to be attained at the end of the following time step) that assures the possibility of stopping within gap.
      * If a negative value is returned, the required stop has to take place before the end of the time step.
      */
-    SUMOReal maximumSafeStopSpeedBallistic(SUMOReal gap, SUMOReal currentSpeed) const;
+    SUMOReal maximumSafeStopSpeedBallistic(SUMOReal gap, SUMOReal currentSpeed, bool onInsertion = false) const;
 
 
 protected:

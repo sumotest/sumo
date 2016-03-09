@@ -56,7 +56,7 @@ MSCFModel::~MSCFModel() {}
 SUMOReal
 MSCFModel::brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal headwayTime) {
 	if(MSGlobals::gSemiImplicitEulerUpdate){
-		/* one possiblity to speed this up is to precalculate speedReduction * steps * (steps+1) / 2
+		/* one possibility to speed this up is to calculate speedReduction * steps * (steps+1) / 2
 			for small values of steps (up to 10 maybe) and store them in an array */
 		const SUMOReal speedReduction = ACCEL2SPEED(decel);
 		const int steps = int(speed / speedReduction);
@@ -107,7 +107,14 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //  in this case, we neglect dawdling, nonetheless, using
     //  vSafe does not incorporate speed reduction due to interaction
     //  on lane changing
-    const SUMOReal vMin = getSpeedAfterMaxDecel(oldV);
+    SUMOReal vMin;
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+    	vMin = getSpeedAfterMaxDecel(oldV);
+    } else {
+    	// for ballistic update, negative vnext must be allowed to
+    	// indicate a stop within the coming timestep
+    	vMin = oldV - ACCEL2SPEED(getMaxDecel());
+    }
     const SUMOReal vMax = MIN3(veh->getLane()->getVehicleMaxSpeed(veh), maxNextSpeed(oldV, veh), vSafe);
     assert(vMin <= vMax);
     return veh->getLaneChangeModel().patchSpeed(vMin, vMax, vMax, *this);
@@ -142,11 +149,11 @@ MSCFModel::freeSpeed(const MSVehicle* const /* veh */, SUMOReal /* speed */, SUM
 
 
 SUMOReal
-MSCFModel::insertionFollowSpeed(const MSVehicle* const, SUMOReal speed, SUMOReal gap2pred, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
+MSCFModel::insertionFollowSpeed(const MSVehicle* const v, SUMOReal speed, SUMOReal gap2pred, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		return maximumSafeFollowSpeed(gap2pred, speed, predSpeed, predMaxDecel);
 	} else {
-		return maximumSafeFollowSpeed(gap2pred, 0., predSpeed, predMaxDecel);
+		return maximumSafeFollowSpeed(gap2pred, 0., predSpeed, predMaxDecel, true);
 	}
 }
 
@@ -200,11 +207,11 @@ MSCFModel::estimateSpeedAfterDistance(const SUMOReal dist, const SUMOReal v, con
 
 
 SUMOReal
-MSCFModel::maximumSafeStopSpeed(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/) const {
+MSCFModel::maximumSafeStopSpeed(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion) const {
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		return maximumSafeStopSpeedEuler(g);
 	} else {
-		return maximumSafeStopSpeedBallistic(g, v);
+		return maximumSafeStopSpeedBallistic(g, v, onInsertion);
 	}
 }
 
@@ -238,9 +245,16 @@ MSCFModel::maximumSafeStopSpeedEuler(SUMOReal gap) const {
 	return x;
 }
 
+
 SUMOReal
-MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/) const {
-	// (Leo) Stopping time from time t+dt+tau (braking full strength) on is given as
+MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion) const {
+
+	// (Leo) Note that in contrast to the Euler update, for the ballistic update
+	// the distance covered in the coming step depends on the current velocity, in general.
+	// one exception is the situation when the vehicle is just being inserted
+	// in that case, it will not cover any distance until the next timestep by convention.
+	//
+	// Stopping time from time t+dt+tau (braking full strength) on is given as
 	// ts = vn/b,
 	// with maximal deceleration b and the next step's velocity vn = v(t+dt).
 	// the distance covered in [t, t+dt+tau+ts] is then
@@ -262,12 +276,33 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	// This gives responsibility to the caller to interpret it correctly,
 	// e.g. process a stop in the middle of a time step (currently done in MSVehicle::executeMove()).
 	SUMOReal b = myDecel;
-	SUMOReal dt = STEPS2TIME(DELTA_T);
-	SUMOReal D = 2*g - v*dt;
-	if(D < 0){
-		return D/dt;
+	SUMOReal dt;
+	if(onInsertion) {
+		dt = 0; // this assures the correct determination of insertion speed (see above)
 	} else {
-		SUMOReal p = (dt/2 + myHeadwayTime)*b;
+		dt = STEPS2TIME(DELTA_T);
+	}
+	SUMOReal D = 2*g - v*dt;
+	assert(2*g >= 0);
+	if(D < 0){
+		// deceleration -v/dt (i.e. stopping a the end of the coming timestep)
+		// is not sufficient to stop within gap. Therefore a stop has to take place
+		// within the timestep. Denoting the corresponding deceleration by d = -(v+vn)/2,
+		// we have a corresponding stopping time is t_s = v/d, and a covered distance v^2/(2d).
+		// Equating this to g, we find 2gd = v^2, i.e. 2d = -(v+vn) = -v^2/g.
+		// Thus vn = -v^2/g + v
+
+		// if there is no gap, we just demand to brake as hard as possible
+		if(g == 0) return v - ACCEL2SPEED(getMaxDecel());
+		else return -v*v/g + v;
+	} else {
+		// (Leo) considering
+		// tau = myHeadwayTime - dt
+		// for consistency with the Euler model, though this should be discussed.
+		// @note This is maybe related to clarifying the meaning of myHeadwayTime (ticket #2186)
+		assert(myHeadwayTime - dt >= 0.);
+		SUMOReal correctedHeadwayTime = MAX2(myHeadwayTime - dt, 0.);
+		SUMOReal p = (dt/2 + correctedHeadwayTime)*b;
 		return -p + sqrt(pow(p,2) + D*b);
 	}
 }
@@ -275,14 +310,14 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 
 /** Returns the SK-vsafe. */
 SUMOReal
-MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
+MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal predSpeed, SUMOReal predMaxDecel, bool onInsertion) const {
     // the speed is safe if allows the ego vehicle to come to a stop behind the leader even if
     // the leaders starts braking hard until stopped
     // unfortunately it is not sufficient to compare stopping distances if the follower can brake harder than the leader
     // (the trajectories might intersect before both vehicles are stopped even if the follower has a shorter stopping distance than the leader)
     // To make things safe, we ensure that the leaders brake distance is computed with an deceleration that is at least as high as the follower's.
     // @todo: this is a conservative estimate for safe speed which could be increased
-	const SUMOReal x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), egoSpeed);
+	const SUMOReal x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), egoSpeed, onInsertion);
 	assert(x >= 0);
 	assert(!ISNAN(x));
 	return x;

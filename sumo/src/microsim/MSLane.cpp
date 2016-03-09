@@ -152,6 +152,12 @@ MSLane::lastInsertion(MSVehicle& veh, SUMOReal mspeed) {
     const MSVehicle* leader = myVehicles.front();
     const SUMOReal leaderBack = leader->getPositionOnLane() - leader->getVehicleType().getLength();
     const SUMOReal frontGapNeeded = veh.getCarFollowModel().getSecureGap(mspeed, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel()) + veh.getVehicleType().getMinGap() + POSITION_EPS;
+
+//    // Debug (Leo)
+//    if(veh.getID() == "flow.2"){
+//    	std::cout << "\nin lastInsertion(veh flow.2):\nleaderBack = " << leaderBack << "\nfrontGapNeeded = " << frontGapNeeded << std::endl;
+//    }
+
     if (leaderBack >= frontGapNeeded) {
         return isInsertionSuccess(&veh, mspeed, leaderBack - frontGapNeeded, adaptSpeed, MSMoveReminder::NOTIFICATION_DEPARTED);
     }
@@ -354,6 +360,13 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
     std::vector<MSLane*>::const_iterator ri = bestLaneConts.begin();
     SUMOReal seen = getLength() - pos;
     SUMOReal dist = cfModel.brakeGap(speed) + aVehicle->getVehicleType().getMinGap();
+
+//    // Debug (Leo)
+//    if(aVehicle->getID() == "flow.2"){
+//    	std::cout << "\nin isInsertionSuccess(veh flow.2):\ndist = " << dist << "\nseen = " << seen
+//    			<< "\npos = " << pos  << std::endl;
+//    }
+
     const MSRoute& r = aVehicle->getRoute();
     MSRouteIterator ce = r.begin();
     unsigned int nRouteSuccs = 1;
@@ -473,6 +486,13 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
         leader = *predIt;
         gap = MSVehicle::gap(leader->getPositionOnLane(), leader->getVehicleType().getLength(), pos + aVehicle->getVehicleType().getMinGap());
     }
+
+//    // Debug (Leo)
+//    if(aVehicle->getID() == "flow.2"){
+//    	std::cout << "\nin isInsertionSuccess(veh flow.2):\ngap = " << gap
+//    			<< "\nleader = " << (leader == 0 ? 0 : leader->getID()) << std::endl;
+//    }
+
     if (leader == 0 && getPartialOccupator() != 0) {
         leader = getPartialOccupator();
         gap = getPartialOccupatorEnd() - pos - aVehicle->getVehicleType().getMinGap();
@@ -482,6 +502,12 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
             return false;
         }
         const SUMOReal nspeed = cfModel.insertionFollowSpeed(aVehicle, speed, gap, leader->getSpeed(), leader->getCarFollowModel().getMaxDecel());
+
+//        // Debug (Leo)
+//        if(aVehicle->getID() == "flow.2"){
+//        	std::cout << "\nin isInsertionSuccess(veh flow.2):\nnspeed = " <<  nspeed << std::endl;
+//        }
+
         if (checkFailure(aVehicle, speed, dist, nspeed, patchSpeed, "")) {
             // we may not drive with the given velocity - we crash into the leader
             return false;

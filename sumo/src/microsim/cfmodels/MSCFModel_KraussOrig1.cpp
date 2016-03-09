@@ -37,6 +37,8 @@
 #include "MSCFModel_KraussOrig1.h"
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <utils/common/RandHelper.h>
+#include <microsim/MSGlobals.h>
+
 
 
 // ===========================================================================
@@ -59,7 +61,17 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //  in this case, we neglect dawdling, nonetheless, using
     //  vSafe does not incorporate speed reduction due to interaction
     //  on lane changing
-    const SUMOReal vMin = getSpeedAfterMaxDecel(oldV);
+    SUMOReal vMin;
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+    	vMin = getSpeedAfterMaxDecel(oldV);
+    } else {
+    	// for ballistic update, negative vnext must be allowed to
+    	// indicate a stop within the coming timestep
+    	vMin = oldV - ACCEL2SPEED(getMaxDecel());
+    }
+////	 Debug (Leo)
+//	std::cout << "vMin = " << vMin << std::endl;
+
     // do not exceed max decel even if it is unsafe
     SUMOReal vMax = MAX2(vMin,
                          MIN3(veh->getLane()->getVehicleMaxSpeed(veh), maxNextSpeed(oldV, veh), vSafe));
@@ -68,7 +80,12 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //    WRITE_WARNING("Maximum speed of vehicle '" + veh->getID() + "' is lower than the minimum speed (min: " + toString(vMin) + ", max: " + toString(vMax) + ").");
     //}
 #endif
-    return veh->getLaneChangeModel().patchSpeed(vMin, MAX2(vMin, dawdle(vMax)), vMax, *this);
+    const SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, MAX2(vMin, dawdle(vMax)), vMax, *this);
+
+//	// Debug (Leo)
+//	std::cout << "vNext = " << vNext << std::endl;
+
+    return vNext;
 }
 
 
@@ -84,7 +101,12 @@ MSCFModel_KraussOrig1::insertionFollowSpeed(const MSVehicle* const veh, SUMOReal
     // method followSpeed this is also used for insertionFollowSpeed
     // (due to discretization error this may not always be the same value as
     // returned by maximumSafeFollowSpeed)
-    return followSpeed(veh, speed, gap2pred, predSpeed, predMaxDecel);
+	if(MSGlobals::gSemiImplicitEulerUpdate){
+		return followSpeed(veh, speed, gap2pred, predSpeed, predMaxDecel);
+	} else {
+		// ballistic update
+		return maximumSafeFollowSpeed(gap2pred, 0., predSpeed, predMaxDecel, true);
+	}
 }
 
 
@@ -96,13 +118,19 @@ MSCFModel_KraussOrig1::stopSpeed(const MSVehicle* const veh, const SUMOReal spee
 
 SUMOReal
 MSCFModel_KraussOrig1::dawdle(SUMOReal speed) const {
+	if(!MSGlobals::gSemiImplicitEulerUpdate){
+		// in case of the ballistic update, negative speeds indicate
+		// a desired stop before the completion of the next timestep.
+		// We do not allow dawdling to overwrite this indication
+		if(speed < 0) return speed;
+	}
     return MAX2(SUMOReal(0), speed - ACCEL2SPEED(myDawdle * myAccel * RandHelper::rand()));
 }
 
 
 /** Returns the SK-vsafe. */
 SUMOReal MSCFModel_KraussOrig1::vsafe(SUMOReal gap, SUMOReal predSpeed, SUMOReal /* predMaxDecel */) const {
-    if (predSpeed == 0 && gap < 0.01) {
+	if (predSpeed == 0 && gap < 0.01) {
         return 0;
     }
     SUMOReal vsafe = (SUMOReal)(-1. * myTauDecel
