@@ -66,6 +66,10 @@ public:
     /// @brief Destructor
     ~GNEDetectorE2();
 
+    /// @brief update pre-computed geometry information
+    /// @note: must be called when geometry changes (i.e. lane moved)
+    void updateGeometry();
+
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
@@ -128,6 +132,9 @@ public:
     //@}
 
 protected:
+    /// @brief attribute lenght
+    SUMOReal myLength;
+
     /// @brief attribute to enable or disable splitByType
     bool myCont;
 

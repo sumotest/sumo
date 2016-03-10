@@ -61,6 +61,10 @@ public:
     /// @brief Destructor
     ~GNEDetectorE1();
 
+    /// @brief update pre-computed geometry information
+    /// @note: must be called when geometry changes (i.e. lane moved)
+    void updateGeometry();
+
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */

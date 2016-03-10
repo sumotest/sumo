@@ -53,19 +53,18 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the detector (SUMO_TAG_E1DETECTOR, SUMO_TAG_LANE_AREA_DETECTOR, etc...)
      * @param[in] posOverLane position of detector in lane
-     * @param[in] lengthOfShape length of the detector's Shape
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
      * @param[in] blocked set initial blocking state of item 
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal posOverLane, SUMOReal lengthOfShape, int freq, const std::string &filename, bool blocked = false, GNEAdditionalSet *parent = NULL);
+    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked = false, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEDetector();
 
     /// @brief update pre-computed geometry information
-    void updateGeometry();
+    virtual void updateGeometry() = 0;
 
     /** @brief change the position of the detector geometry without registering undo/redo
      * @param[in] distance value for the movement. Positive for right, negative for left
@@ -167,9 +166,6 @@ protected:
 
     /// @brief Position of lane in which detector is placed
     SUMOReal myPosOverLane;
-    
-    /// @brief The length of the Detector
-    SUMOReal myLengthOfShape;
     
     /// @brief The aggregation period the values the detector collects shall be summed up.
     int myFreq;

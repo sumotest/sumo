@@ -71,17 +71,73 @@ bool GNEDetectorE2::detectorE2Initialized = false;
 
 GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
                              bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) : 
-    GNEDetector(id, viewNet, SUMO_TAG_E2DETECTOR, lane, pos, length, freq, filename, blocked),
+    GNEDetector(id, viewNet, SUMO_TAG_E2DETECTOR, lane, pos, freq, filename, blocked),
+    myLength(length),
     myCont(cont),
     myTimeThreshold(timeThreshold),
     mySpeedThreshold(speedThreshold),
     myJamThreshold(jamThreshold) {
+    // Update geometry;
+    updateGeometry();
     // Set colors of detector
     setColors();
 }
 
 
 GNEDetectorE2::~GNEDetectorE2() {
+}
+
+
+void 
+GNEDetectorE2::updateGeometry() {
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+   
+    // Get shape of lane parent
+    myShape = myLane.getShape();
+
+    // Cut shape using as delimitators myPos and their length (myPos + length)
+    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myPosOverLane), myLane.getPositionRelativeToParametricLenght(myPosOverLane + myLength));
+
+    // Get number of parts of the shape
+    int numberOfSegments = (int) myShape.size() - 1;
+
+    // If number of segments is more than 0
+    if(numberOfSegments >= 0) {
+
+        // Reserve memory (To improve efficiency)
+        myShapeRotations.reserve(numberOfSegments);
+        myShapeLengths.reserve(numberOfSegments);
+
+        // For every part of the shape
+        for (int i = 0; i < numberOfSegments; ++i) {
+
+            // Obtain first position
+            const Position& f = myShape[i];
+
+            // Obtain next position
+            const Position& s = myShape[i + 1];
+
+            // Save distance between position into myShapeLengths
+            myShapeLengths.push_back(f.distanceTo(s));
+
+            // Save rotation (angle) of the vector constructed by points f and s
+            myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
+        }
+    }
+
+    // Set position of logo
+    myDetectorLogoPosition = myShape.getLineCenter();
+
+    // Set position of the block icon
+    myBlockIconPos = myShape.getLineCenter();
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
+
+    // Set rotation of the detector icon
+    mySignRotation = (myRotation * offsetSign) - 90;
 }
 
 

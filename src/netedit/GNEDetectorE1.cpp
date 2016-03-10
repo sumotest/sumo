@@ -70,14 +70,53 @@ bool GNEDetectorE1::detectorE1Initialized = false;
 // ===========================================================================
 
 GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType, bool blocked) :
-    GNEDetector(id, viewNet, SUMO_TAG_E1DETECTOR, lane, pos, 2, freq, filename, blocked),
+    GNEDetector(id, viewNet, SUMO_TAG_E1DETECTOR, lane, pos, freq, filename, blocked),
     mySplitByType(splitByType) {
+    // Update geometry;
+    updateGeometry();
     // Set colors of detector
     setColors();
 }
 
 
 GNEDetectorE1::~GNEDetectorE1() {
+}
+
+
+void 
+GNEDetectorE1::updateGeometry() {
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+   
+    // clear Shape
+    myShape.clear();
+
+    // Get shape of lane parent
+    myShape.push_back(myLane.getShape().positionAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)));
+
+    // Obtain first position
+    Position f = myShape[0] - Position(1, 0);
+
+    // Obtain next position
+    Position s = myShape[0] + Position(1, 0);
+
+    // Save rotation (angle) of the vector constructed by points f and s
+    myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * (OptionsCont::getOptions().getBool("lefthand") ? -1 : 1));
+
+    // Set position of logo
+    myDetectorLogoPosition = myShape.getLineCenter();
+
+    // Set position of the block icon
+    myBlockIconPos = myShape.getLineCenter();
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
+
+    // Set rotation of the detector icon
+    mySignRotation = (myRotation * offsetSign) - 90;
+
+    std::cout << "rotation: " << myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) << std::endl;
 }
 
 
@@ -139,6 +178,7 @@ GNEDetectorE1::drawGL(const GUIVisualizationSettings& s) const {
 
 void 
 GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
+
     // Ignore Warning
     UNUSED_PARAMETER(parent);
     
@@ -152,61 +192,54 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         base = myRGBColors[E1_BASE];
     }
 
-    // Start drawing adding an gl identificator
     glPushName(getGlID());
-    
-    // Add a draw matrix
-    glPushMatrix();
-
-    // Start with the drawing of the area traslating matrix to origin 
-    glTranslated(0, 0, getType());
-
-    // Set color of the base
-    GLHelper::setColor(base);
-
-    // Obtain exaggeration of the draw
+    SUMOReal width = (SUMOReal) 2.0 * s.scale;
+    glLineWidth(1.0);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    // shape
+    glColor3d(1, 1, 0);
+    glPushMatrix();
+    glTranslated(0, 0, getType());
+    glTranslated(myShape[0].x(), myShape[0].y(), 0);
+    glRotated(myShapeRotations[0], 0, 0, 1);
+    glScaled(exaggeration, exaggeration, 1);
+    glBegin(GL_QUADS);
+    glVertex2d(0 - 1.0, 2);
+    glVertex2d(-1.0, -2);
+    glVertex2d(1.0, -2);
+    glVertex2d(1.0, 2);
+    glEnd();
+    glTranslated(0, 0, .01);
+    glBegin(GL_LINES);
+    glVertex2d(0, 2 - .1);
+    glVertex2d(0, -2 + .1);
+    glEnd();
 
-    // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
-
-    // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {
-/**
-        // Add a draw matrix
-        glPushMatrix();
-
-        // load detector logo, if wasn't inicializated
-        if (!detectorE1Initialized) {
-            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E1, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-            detectorE1GlID = GUITexturesHelper::add(i);
-            detectorE1Initialized = true;
-            delete i;
-        }
-
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0);
-        //glRotated(mySignRotation, 0, 0, 1);
-        glRotated(180, 0, 0, 1);
+    // outline
+    if (width * exaggeration > 1) {
         glColor3d(1, 1, 1);
-        GUITexturesHelper::drawTexturedBox(detectorE1GlID, 0.5);
-
-        // Pop detector logo matrix
-        glPopMatrix();
-        
-        // Show Lock icon depending of the Edit mode
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            drawLockIcon();
-**/
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glBegin(GL_QUADS);
+        glVertex2f(0 - 1.0, 2);
+        glVertex2f(-1.0, -2);
+        glVertex2f(1.0, -2);
+        glVertex2f(1.0, 2);
+        glEnd();
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    // pop draw matrix
+    // position indicator
+    if (width * exaggeration > 1) {
+        glRotated(90, 0, 0, -1);
+        glColor3d(1, 1, 1);
+        glBegin(GL_LINES);
+        glVertex2d(0, 1.7);
+        glVertex2d(0, -1.7);
+        glEnd();
+    }
     glPopMatrix();
-
-    // Pop name
-    glPopName();
-
-    // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+    glPopName();
 }
 
 

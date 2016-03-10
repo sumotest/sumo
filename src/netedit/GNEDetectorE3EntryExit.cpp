@@ -70,7 +70,7 @@ bool GNEDetectorE3EntryExit::detectorE3Initialized = false;
 // ===========================================================================
 
 GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos, bool blocked) :
-    GNEDetector(id, myViewNet, tag, lane, pos, 1, 0, 0, blocked, parent) {
+    GNEDetector(id, myViewNet, tag, lane, pos, 0, 0, blocked, parent) {
     // Set colors of detector
     setColors();
 }
@@ -152,54 +152,40 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
-    
-    // Add a draw matrix
+ 
     glPushMatrix();
-
-    // Start with the drawing of the area traslating matrix to origing 
     glTranslated(0, 0, getType());
-
-    // Set color of the base
-    GLHelper::setColor(base);
-
-    // Obtain exaggeration of the draw
+    glColor3d(0, .8, 0);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-   
-    // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLine(myShape[0], myRotation, myShape[0].distanceTo(myShape[1]), exaggeration);
 
-    // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPushMatrix();
+    glScaled(exaggeration, exaggeration, 1);
+    glTranslated(myShape[0].x(), myShape[0].y(), 0);
+    glRotated(myShapeRotations[0], 0, 0, 1);
+    glBegin(GL_LINES);
+    glVertex2d(1.7, 0);
+    glVertex2d(-1.7, 0);
+    glEnd();
+    glBegin(GL_QUADS);
+    glVertex2d(-1.7, .5);
+    glVertex2d(-1.7, -.5);
+    glVertex2d(1.7, -.5);
+    glVertex2d(1.7, .5);
+    glEnd();
+    // arrows
+    glTranslated(1.5, 0, 0);
+    GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
+    GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    glTranslated(-3, 0, 0);
+    GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
+    GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    glPopMatrix();
 
-        // load detector logo, if wasn't inicializated
-        if (!detectorE3Initialized) {
-            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-            detectorE3GlID = GUITexturesHelper::add(i);
-            detectorE3Initialized = true;
-            delete i;
-        }
-
-        // draw detector logo
-        glPushMatrix();
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
-        glRotated(mySignRotation, 0, 0, 1);
-        glColor3d(1, 1, 1);
-        GUITexturesHelper::drawTexturedBox(detectorE3GlID, 0.5);
-        glPopMatrix();
-
-        // Pop last matrix
-        glPopMatrix();
-
-        // Show Lock icon depending of the Edit mode
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            drawLockIcon();
-    }
-
-    // Pop name
-    glPopName();
-
-    // Draw name
+    glPopMatrix();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+
+    glPopName();
 }
 
 

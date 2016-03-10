@@ -91,6 +91,7 @@ GNEAdditional::~GNEAdditional() {
         myParent->removeAdditional(this);
 }
 
+
 const Position&
 GNEAdditional::getPositionInView() const {
     return myPosition;
