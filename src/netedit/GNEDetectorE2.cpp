@@ -128,10 +128,10 @@ GNEDetectorE2::updateGeometry() {
     }
 
     // Set position of logo
-    myDetectorLogoPosition = myShape.getLineCenter();
+    myDetectorLogoPosition = myShape.getLineCenter() - Position(0.5, 0);
 
     // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter();
+    myBlockIconPos = myShape.getLineCenter() + Position(0.5, 0);
 
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
@@ -230,8 +230,11 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
+    // Pop last matrix
+    glPopMatrix();
+
     // Check if the distance is enought to draw details
-    if (false /*s.scale * exaggeration >= 10*/) {
+    if (s.scale * exaggeration >= 10) {
 
         // Add a draw matrix
         glPushMatrix();
@@ -246,11 +249,10 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
         // draw detector logo
         glPushMatrix();
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), 0.1);
-        glRotated(mySignRotation, 0, 0, 1);
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType() + 0.1);
         glColor3d(1, 1, 1);
+        glRotated(180, 0, 0, 1);
         GUITexturesHelper::drawTexturedBox(detectorE2GlID, 0.5);
-        
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
@@ -258,14 +260,11 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             drawLockIcon();
     }
 
-    // Pop last matrix
-    glPopMatrix();
-
-    // Pop name
-    glPopName();
-
     // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+    
+    // Pop name
+    glPopName();
 }
 
 

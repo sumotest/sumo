@@ -102,21 +102,19 @@ GNEDetectorE1::updateGeometry() {
     Position s = myShape[0] + Position(1, 0);
 
     // Save rotation (angle) of the vector constructed by points f and s
-    myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * (OptionsCont::getOptions().getBool("lefthand") ? -1 : 1));
+    myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
 
     // Set position of logo
-    myDetectorLogoPosition = myShape.getLineCenter();
+    myDetectorLogoPosition = myShape.getLineCenter() - Position(1, 0);
 
     // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter();
+    myBlockIconPos = myShape.getLineCenter() + Position(1, 0);
 
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
 
     // Set rotation of the detector icon
     mySignRotation = (myRotation * offsetSign) - 90;
-
-    std::cout << "rotation: " << myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) << std::endl;
 }
 
 
@@ -178,7 +176,6 @@ GNEDetectorE1::drawGL(const GUIVisualizationSettings& s) const {
 
 void 
 GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-
     // Ignore Warning
     UNUSED_PARAMETER(parent);
     
@@ -192,11 +189,13 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         base = myRGBColors[E1_BASE];
     }
 
+    // get values
     glPushName(getGlID());
     SUMOReal width = (SUMOReal) 2.0 * s.scale;
     glLineWidth(1.0);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-    // shape
+    
+    // draw shape
     glColor3d(1, 1, 0);
     glPushMatrix();
     glTranslated(0, 0, getType());
@@ -237,7 +236,36 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         glVertex2d(0, -1.7);
         glEnd();
     }
+
+    // Pop shape matrix
     glPopMatrix();
+
+    // Check if the distance is enought to draw details
+    if (s.scale * exaggeration >= 10) {
+        // load detector logo, if wasn't inicializated
+        if (!detectorE1Initialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E1, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            detectorE1GlID = GUITexturesHelper::add(i);
+            detectorE1Initialized = true;
+            delete i;
+        }
+        
+        // Add a draw matrix and draw E1 logo
+        glPushMatrix();
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType() + 0.1);
+        glColor3d(1, 1, 1);
+        glRotated(180, 0, 0, 1);
+        GUITexturesHelper::drawTexturedBox(detectorE1GlID, 0.5);
+        
+        // Pop detector logo matrix
+        glPopMatrix();
+        
+        // Show Lock icon depending of the Edit mode
+        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+            drawLockIcon();
+    }
+
+    // Finish draw
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
     glPopName();
 }
