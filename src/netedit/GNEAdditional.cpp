@@ -72,12 +72,13 @@ bool GNEAdditional::additionalEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked, GNEAdditionalSet *parent) :
+GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked, SumoXMLTag parentTag, GNEAdditionalSet *parent) :
     GUIGlObject(GLO_ADDITIONAL, id),
     GNEAttributeCarrier(tag),
     myViewNet(viewNet),
     myPosition(pos),
     myBlocked(blocked),
+    myParentTag(parentTag),
     myParent(parent) {
     // If this additional belongs to a set, add it.
     if(myParent)
@@ -115,6 +116,17 @@ GNEAdditional::isBlocked() const {
     return myBlocked;
 }
 
+
+bool 
+GNEAdditional::belongToAdditionalSet() const {
+    return (myParentTag != SUMO_TAG_NOTHING);
+}
+
+
+GNEAdditionalSet* 
+GNEAdditional::getAdditionalSetParent() const {
+    return myParent;
+}
 
 void 
 GNEAdditional::setBlocked(bool value) {

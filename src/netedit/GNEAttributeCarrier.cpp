@@ -43,11 +43,12 @@
 // ===========================================================================
 std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > GNEAttributeCarrier::_allowedAttributes;
 std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedTags;
-std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;    // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalIntAttrs;          // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;        // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;                  // PABLO #1916
+std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;                       // PABLO #1916
+std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalIntAttrs;                             // PABLO #1916
+std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;                           // PABLO #1916
+std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;                                     // PABLO #1916
 std::set<SumoXMLAttr> GNEAttributeCarrier::myUniqueAttrs;
+std::map<SumoXMLTag, SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalWithParentTags;    // PABLO #1916
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > GNEAttributeCarrier::myDiscreteChoices;
 
 const std::string GNEAttributeCarrier::LOADED = "loaded";
@@ -115,10 +116,20 @@ GNEAttributeCarrier::getID() const {
 }
 
 
+SumoXMLTag                                              // PABLO #1916
+GNEAttributeCarrier::getParentType(SumoXMLTag tag) {    // PABLO #1916
+    if(hasParent(tag))                                  // PABLO #1916
+        return myAllowedAdditionalWithParentTags[tag];  // PABLO #1916
+    else                                                // PABLO #1916
+        return SUMO_TAG_NOTHING;                        // PABLO #1916
+}                                                       // PABLO #1916
+
+
 bool
 GNEAttributeCarrier::isValidID(const std::string& value) {
     return value.find_first_of(" \t\n\r@$%^&/|\\{}*'\";:<>") == std::string::npos;
 }
+
 
 bool                                                                                // PABLO #1916
 GNEAttributeCarrier::isValidFileValue(const std::string& value) {                   // PABLO #1916
@@ -262,6 +273,9 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));                           // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_DET_ENTRY:                                                                                // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));                       // PABLO #1916
+                break;                                                                                              // PABLO #1916
             case SUMO_TAG_DET_EXIT:                                                                                 // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));                       // PABLO #1916
@@ -277,7 +291,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "0"));                      // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));                   // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ROUTEPROBE, ""));                     // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OUTPUT, ""));                         // PABLO #1916  
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OUTPUT, ""));                         // PABLO #1916
                 break;                                                                                              // PABLO #1916
             case SUMO_TAG_REROUTER:                                                                                 // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
@@ -316,23 +330,23 @@ GNEAttributeCarrier::allowedTags() {
 }
 
 
-const std::vector<SumoXMLTag>&
-GNEAttributeCarrier::allowedAdditionalTags() {
-    // define on first access
-    if (myAllowedAdditionalTags.empty()) {
-        myAllowedAdditionalTags.push_back(SUMO_TAG_BUS_STOP);              // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_CHARGING_STATION);      // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_E1DETECTOR);            // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_E2DETECTOR);            // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_E3DETECTOR);            // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);             // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);              // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);                   // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);            // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);              // PABLO #1916
-    }
-    return myAllowedAdditionalTags;
-}
+const std::vector<SumoXMLTag>&                                          // PABLO #1916
+GNEAttributeCarrier::allowedAdditionalTags() {                          // PABLO #1916
+    // define on first access                                           // PABLO #1916
+    if (myAllowedAdditionalTags.empty()) {                              // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_BUS_STOP);           // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_CHARGING_STATION);   // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_E1DETECTOR);         // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_E2DETECTOR);         // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_E3DETECTOR);         // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);          // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);           // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);                // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);         // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);           // PABLO #1916
+    }                                                                   // PABLO #1916
+    return myAllowedAdditionalTags;                                     // PABLO #1916
+}                                                                       // PABLO #1916
 
 
 bool
@@ -383,7 +397,7 @@ bool                                                                            
 GNEAttributeCarrier::isBool(SumoXMLAttr attr) {                                                                                                             // PABLO #1916
     // Iterate over map                                                                                                                                     // PABLO #1916
     for(std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > >::iterator i = myDiscreteChoices.begin(); i != myDiscreteChoices.end(); i++)   // PABLO #1916
-        if (i->second.find(attr) != i->second.end()) {                                                                                                      // PABLO #1916     
+        if (i->second.find(attr) != i->second.end()) {                                                                                                      // PABLO #1916
             // Obtain values of discrete attribute attr;                                                                                                    // PABLO #1916
             std::vector<std::string> values = i->second.find(attr)->second;                                                                                 // PABLO #1916
             // Check if values are exactly "true" and "false"                                                                                               // PABLO #1916
@@ -427,14 +441,25 @@ GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
 }
 
 
-bool 
-GNEAttributeCarrier::hasAttribute(SumoXMLTag tag, SumoXMLAttr attr) {
-    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = allowedAttributes(tag);
-    for(std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator i = attrs.begin(); i != attrs.end(); i++)
-        if(i->first == attr)
-            return true;
-    return false;
-}
+bool                                                                                    // PABLO #1916
+GNEAttributeCarrier::hasParent(SumoXMLTag tag) {                                        // PABLO #1916
+    // define on first access                                                           // PABLO #1916
+    if (myAllowedAdditionalWithParentTags.empty()) {                                    // PABLO #1916
+        myAllowedAdditionalWithParentTags[SUMO_TAG_DET_ENTRY] = SUMO_TAG_E3DETECTOR;    // PABLO #1916
+        myAllowedAdditionalWithParentTags[SUMO_TAG_DET_EXIT] = SUMO_TAG_E3DETECTOR;     // PABLO #1916
+    }                                                                                   // PABLO #1916
+    return myAllowedAdditionalWithParentTags.count(tag) == 1;                           // PABLO #1916
+}                                                                                       // PABLO #1916
+
+
+bool                                                                                                                    // PABLO #1916
+GNEAttributeCarrier::hasAttribute(SumoXMLTag tag, SumoXMLAttr attr) {                                                   // PABLO #1916
+    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = allowedAttributes(tag);                           // PABLO #1916
+    for(std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator i = attrs.begin(); i != attrs.end(); i++)    // PABLO #1916
+        if(i->first == attr)                                                                                            // PABLO #1916
+            return true;                                                                                                // PABLO #1916
+    return false;                                                                                                       // PABLO #1916
+}                                                                                                                       // PABLO #1916
 
 
 const std::vector<std::string>&

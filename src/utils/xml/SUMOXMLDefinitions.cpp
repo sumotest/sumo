@@ -476,6 +476,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "shapeStartNotForPrinting", GNE_ATTR_SHAPE_START },
     { "shapeEndNotForPrinting", GNE_ATTR_SHAPE_END },
     { "movementOfElementBlocked", GNE_ATTR_BLOCK_MOVEMENT },    // PABLO #1916
+    { "parentOfAdditional", GNE_ATTR_PARENT },                  // PABLO #1916
 
     { "targetLanes",   SUMO_ATTR_TARGETLANE },
 

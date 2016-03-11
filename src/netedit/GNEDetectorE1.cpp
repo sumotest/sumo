@@ -62,6 +62,7 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
+
 GUIGlID GNEDetectorE1::detectorE1GlID = 0;
 bool GNEDetectorE1::detectorE1Initialized = false;
 

@@ -121,8 +121,8 @@ GNEViewNet::GNEViewNet(
     myJunctionToMove(0),
     myEdgeToMove(0),
     myPolyToMove(0),
-    myStoppingPlaceToMove(0),   // PABLO #1916 
-    myDetectorToMove(0),        // PABLO #1916 
+    myStoppingPlaceToMove(0),   // PABLO #1916
+    myDetectorToMove(0),        // PABLO #1916
     myMoveSelection(false),
     myAmInRectSelect(false),
     myToolbar(toolBar),
@@ -540,7 +540,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     update();
                 } else if (pointed_additional) {                        // PABLO #1916
                     myAdditional->removeAdditional(pointed_additional); // PABLO #1916
-                    update();                                           // PABLO #1916                                                                                                                   
+                    update();                                           // PABLO #1916
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }

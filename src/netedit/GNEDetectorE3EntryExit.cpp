@@ -69,14 +69,51 @@ bool GNEDetectorE3EntryExit::detectorE3Initialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos, bool blocked) :
-    GNEDetector(id, myViewNet, tag, lane, pos, 0, 0, blocked, parent) {
+GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane &lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
+    GNEDetector(id, viewNet, tag, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
+    // Update geometry;
+    updateGeometry();
     // Set colors of detector
     setColors();
 }
 
 
 GNEDetectorE3EntryExit::~GNEDetectorE3EntryExit() {}
+
+
+void 
+GNEDetectorE3EntryExit::updateGeometry() {
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+   
+    // clear Shape
+    myShape.clear();
+
+    // Get shape of lane parent
+    myShape.push_back(myLane.getShape().positionAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)));
+
+    // Obtain first position
+    Position f = myShape[0] - Position(1, 0);
+
+    // Obtain next position
+    Position s = myShape[0] + Position(1, 0);
+
+    // Save rotation (angle) of the vector constructed by points f and s
+    myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
+
+    // Set position of logo
+    myDetectorLogoPosition = myShape.getLineCenter() - Position(1, 0);
+
+    // Set position of the block icon
+    myBlockIconPos = myShape.getLineCenter() + Position(1, 0);
+
+    // Get value of option "lefthand"
+    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
+
+    // Set rotation of the detector icon
+    mySignRotation = (myRotation * offsetSign) - 90;
+}
 
 
 void 
@@ -142,27 +179,43 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
     
     // Declare variables to get colors depending if the detector is selected
     RGBColor base;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[E1_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E1_BASE];
+    
+    // Set colors depending of type
+    if(this->getTag() == SUMO_TAG_DET_ENTRY) {
+        // Load logo
+        
+        // Set colors
+        if(gSelected.isSelected(getType(), getGlID()))
+            base = myRGBColors[ENTRY_BASE_SELECTED];
+        else
+            base = myRGBColors[ENTRY_BASE];
+    }
+    else {
+        // Load logo
+        
+        // Set colors
+        if(gSelected.isSelected(getType(), getGlID()))
+            base = myRGBColors[EXIT_BASE_SELECTED];
+        else
+            base = myRGBColors[EXIT_BASE];
     }
 
-    // Start drawing adding an gl identificator
+
+    // Start drawing adding gl identificator
     glPushName(getGlID());
- 
+    // Push detector matrix
     glPushMatrix();
     glTranslated(0, 0, getType());
-    glColor3d(0, .8, 0);
+    //glColor3d(0, .8, 0);
+    glColor3d(base.red(), base.green(), base.blue());
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // Push poligon matrix
     glPushMatrix();
     glScaled(exaggeration, exaggeration, 1);
     glTranslated(myShape[0].x(), myShape[0].y(), 0);
     glRotated(myShapeRotations[0], 0, 0, 1);
+    // Draw poligon
     glBegin(GL_LINES);
     glVertex2d(1.7, 0);
     glVertex2d(-1.7, 0);
@@ -173,18 +226,20 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
     glVertex2d(1.7, -.5);
     glVertex2d(1.7, .5);
     glEnd();
-    // arrows
+    // first Arrow
     glTranslated(1.5, 0, 0);
     GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
     GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    // second Arrow
     glTranslated(-3, 0, 0);
     GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
     GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    // Pop poligon matrix
     glPopMatrix();
-
+    // Pop detector matrix
     glPopMatrix();
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-
+    // pop gl identificator
     glPopName();
 }
 
@@ -198,10 +253,6 @@ GNEDetectorE3EntryExit::getAttribute(SumoXMLAttr key) const {
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
             return toString(myPosOverLane);
-        case SUMO_ATTR_FREQUENCY:
-            return toString(myFreq);
-        case SUMO_ATTR_FILE:
-            return myFilename;
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
@@ -218,8 +269,6 @@ if (value == getAttribute(key)) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-        case SUMO_ATTR_FREQUENCY:
-        case SUMO_ATTR_FILE:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -238,10 +287,6 @@ GNEDetectorE3EntryExit::isValid(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane.getLaneParametricLenght()));
-        case SUMO_ATTR_FREQUENCY:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
-        case SUMO_ATTR_FILE:
-            return isValidFileValue(value);
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
@@ -258,12 +303,6 @@ GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value) 
             updateGeometry();
             getViewNet()->update();
             break;
-        case SUMO_ATTR_FREQUENCY:
-            myFreq = parse<SUMOReal>(value);
-            break;
-        case SUMO_ATTR_FILE:
-            myFilename = value;
-            break;
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
@@ -272,10 +311,14 @@ GNEDetectorE3EntryExit::setAttribute(SumoXMLAttr key, const std::string& value) 
 
 void
 GNEDetectorE3EntryExit::setColors() {
-    // Color E1_BASE
+    // Color ENTRY_BASE
     myRGBColors.push_back(RGBColor(0, 204, 0, 255));
-    // Color E1_BASE_SELECTED
+    // Color ENTRY_BASE_SELECTED
     myRGBColors.push_back(RGBColor(125, 204, 0, 255));
+    // Color EXIT_BASE
+    myRGBColors.push_back(RGBColor(204, 0, 0, 255));
+    // Color EXIT_BASE_SELECTED
+    myRGBColors.push_back(RGBColor(204, 125, 0, 255));
 }
 
 /****************************************************************************/

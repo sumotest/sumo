@@ -588,6 +588,8 @@ enum SumoXMLAttr {
     GNE_ATTR_SHAPE_END,
     /* block movement of a graphic element*/    // PABLO #1916
     GNE_ATTR_BLOCK_MOVEMENT,                    // PABLO #1916
+    /* parent of an additional element*/        // PABLO #1916
+    GNE_ATTR_PARENT,                            // PABLO #1916
     //@}
 
     SUMO_ATTR_TARGETLANE

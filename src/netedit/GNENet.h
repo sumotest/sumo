@@ -420,35 +420,6 @@ public:
      */                                                                                         // PABLO #1916
     int getNumberOfAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);                             // PABLO #1916
 
-    /** @brief Insert a additional set element previously created in GNEAdditionalHandler   // PABLO #1916
-     * @param[in] additional pointer to the additional element that will be inserted        // PABLO #1916
-     */                                                                                     // PABLO #1916
-    void insertAdditionalSet(GNEAdditionalSet* additionalSet);                              // PABLO #1916
-
-    /** @brief delete additional set element previously inserted                    // PABLO #1916
-     * @param[in] additional pointer to additional element that will be removed     // PABLO #1916
-     */                                                                             // PABLO #1916
-    void deleteAdditionalSet(GNEAdditionalSet* additionalSet);                      // PABLO #1916
-
-    /** @brief Returns the named additionalSet                                          // PABLO #1916
-     * @param[in] type tag with the type of additionalSet                               // PABLO #1916
-     * @param[in] id The id of the additionalSet to return.                             // PABLO #1916
-     * @return The named additionalSet, or 0 if don't exists                            // PABLO #1916
-     */                                                                                 // PABLO #1916
-    GNEAdditionalSet* getAdditionalSet(SumoXMLTag type, const std::string& id) const;   // PABLO #1916
-
-    /** @brief get vector with additional Sets                                                      // PABLO #1916
-     * @param[in] type type of AdditionalSet to get. SUMO_TAG_NOTHING for get all additionalSets    // PABLO #1916
-     * @return vector with pointer to additionalSet.                                                // PABLO #1916
-     */                                                                                             // PABLO #1916
-    std::vector<GNEAdditionalSet*> getAdditionalSets(SumoXMLTag type = SUMO_TAG_NOTHING);           // PABLO #1916
-
-    /** @brief Returns the number of additionalSets of the net                                          // PABLO #1916
-     * @param[in] type type of additionalSet to count. SUMO_TAG_NOTHING will count all additionalSets   // PABLO #1916
-     * @return Number of additionalSets of the net                                                      // PABLO #1916
-     */                                                                                                 // PABLO #1916
-    int getNumberOfAdditionalSets(SumoXMLTag type = SUMO_TAG_NOTHING);                                  // PABLO #1916
-
 private:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)
     SUMORTree myGrid;
@@ -464,7 +435,6 @@ private:
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
     typedef std::map<std::string, GNEAdditional*> GNEAdditionals;       // PABLO #1916
-    typedef std::map<std::string, GNEAdditionalSet*> GNEAdditionalSets; /** should be erased **/ // PABLO #1916
     // @}
 
     /// @brief map with the name and pointer to edges of net
@@ -475,9 +445,6 @@ private:
 
     /// @brief map with the name and pointer to additional elements of net  // PABLO #1916
     GNEAdditionals myAdditionals;                                           // PABLO #1916
-
-    /// @brief map with the additional sets     // PABLO #1916
-    GNEAdditionalSets myAdditionalSets;         // PABLO #1916
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{

@@ -177,8 +177,8 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         // Extract position of lane
         valuesOfElement[SUMO_ATTR_POSITION] = toString(positionOfTheMouseOverLane);
     } else {
-        int additionalSetIndex = myViewNet->getNet()->getNumberOfAdditionalSets(myActualAdditionalType);
-        while(myViewNet->getNet()->getAdditionalSet(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalSetIndex)) != NULL)
+        int additionalSetIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
+        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalSetIndex)) != NULL)
             additionalSetIndex++;
         valuesOfElement[SUMO_ATTR_ID] = toString(myActualAdditionalType) + "_" + toString(additionalSetIndex);
         valuesOfElement[SUMO_ATTR_POSITION] = toString(parent->getPositionInformation());
@@ -188,8 +188,16 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
     // Save all editable parameters
     for(int i = 0; i < this->myIndexParameter; i++)
         valuesOfElement[myVectorOfAdditionalParameter.at(i)->getAttr()] = myVectorOfAdditionalParameter.at(i)->getValue();
-    
-    /** FALTAN LISTAS **/
+    // If element belongst to an additional Set, get id of parent from myAdditionalSet
+    if(GNEAttributeCarrier::hasParent(myActualAdditionalType)) {
+        if(this->myAdditionalSet->getIdSelected() != "")
+            valuesOfElement[GNE_ATTR_PARENT] = myAdditionalSet->getIdSelected();
+        else {
+            std::cout << "MOSTRAR ERROR EN CONSOLA" << std::endl;
+            return false;
+        }
+    }
+/** FALTAN LISTAS **/
     
     // Create additional
     return GNEAdditionalHandler::buildAdditional(myViewNet, myActualAdditionalType, valuesOfElement);
@@ -290,9 +298,9 @@ GNEAdditionalFrame::setParameters(SumoXMLTag actualAdditionalType) {
     else
         myGroupBoxForParameters->hide();
 
-    // Show set parameter if we're adding a detectorEntry
-    if(myActualAdditionalType == SUMO_TAG_DET_ENTRY || myActualAdditionalType == SUMO_TAG_DET_EXIT)
-        myAdditionalSet->showList(SUMO_TAG_E3DETECTOR);
+    // Show set parameter if we're adding a additional with parent
+    if(GNEAttributeCarrier::hasParent(myActualAdditionalType))
+        myAdditionalSet->showList(GNEAttributeCarrier::getParentType(myActualAdditionalType));
     else
         myAdditionalSet->hideList();
 }
@@ -691,9 +699,12 @@ GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* 
 GNEAdditionalFrame::additionalSet::~additionalSet() {}
 
 
-GNEAdditionalSet*
-GNEAdditionalFrame::additionalSet::getAdditionalSet() {
-    return myAdditionalSet;
+std::string
+GNEAdditionalFrame::additionalSet::getIdSelected() {
+    if(myList->getCurrentItem() == -1)
+        return "";
+    else
+        return myList->getItem(myList->getCurrentItem())->getText().text();
 }
 
 
@@ -701,8 +712,8 @@ void
 GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
     mySetLabel->setText(("Type of set: " + toString(type)).c_str());
     myList->clearItems();
-    std::vector<GNEAdditionalSet*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionalSets(type);
-    for(std::vector<GNEAdditionalSet*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++)
+    std::vector<GNEAdditional*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionals(type);
+    for(std::vector<GNEAdditional*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++)
         myList->appendItem((*i)->getID().c_str());
     show();
 }

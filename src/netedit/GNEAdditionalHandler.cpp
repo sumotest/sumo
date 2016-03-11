@@ -42,6 +42,7 @@
 #include "GNEDetectorE1.h"
 #include "GNEDetectorE2.h"
 #include "GNEDetectorE3.h"
+#include "GNEDetectorE3EntryExit.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -400,9 +401,9 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         case SUMO_TAG_DET_ENTRY: {
             // get own attributes of detector Entry
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
-            GNEDetectorE3 *detectorParent;
+            GNEDetectorE3 *detectorParent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR ,values[GNE_ATTR_PARENT]));
             // Build detector Entry
-            if(lane)
+            if(lane && detectorParent)
                 return buildEntryE3(viewNet, id, lane, pos, detectorParent, blocked);
             else
                 return false;
@@ -410,9 +411,9 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         case SUMO_TAG_DET_EXIT: {
             // get own attributes of Detector Exit
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
-            GNEDetectorE3 *detectorParent;
+            GNEDetectorE3 *detectorParent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR ,values[GNE_ATTR_PARENT]));
             // Build detector Exit
-            if(lane)
+            if(lane && detectorParent)
                 return buildExitE3(viewNet, id, lane, pos, detectorParent, blocked);
             else
                 return false;
@@ -536,13 +537,31 @@ GNEAdditionalHandler::buildDetectorE3(GNEViewNet *viewNet, const std::string& id
 
 bool 
 GNEAdditionalHandler::buildEntryE3(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked) {
-    return false;
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, id) == NULL) {
+        GNEDetectorE3EntryExit *entry = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_ENTRY, *lane, pos, detectorParent, blocked);
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_ENTRY));
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), entry, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else {
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
+    }
 }
 
 
 bool 
 GNEAdditionalHandler::buildExitE3(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked) {
-    return false;
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_EXIT, id) == NULL) {
+        GNEDetectorE3EntryExit *exit = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_EXIT, *lane, pos, detectorParent, blocked);
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_EXIT));
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), exit, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else {
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_EXIT) + " in netEdit '" + id + "'; probably declared twice.");
+        return false;
+    }
 }
 
 

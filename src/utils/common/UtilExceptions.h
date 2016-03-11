@@ -131,7 +131,7 @@ public:
 class PositionFormatException : public FormatException {    // PABLO #1916
 public:                                                     // PABLO #1916
     /// @brief constructor                                  // PABLO #1916
-    PositionFormatException()                               // PABLO #1916      
+    PositionFormatException()                               // PABLO #1916
         : FormatException("Position Format") {}             // PABLO #1916
 };                                                          // PABLO #1916
 

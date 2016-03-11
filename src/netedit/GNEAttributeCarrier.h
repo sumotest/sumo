@@ -100,14 +100,17 @@ public:
     /// @brief function to support debugging
     const std::string getID() const;
 
+    /// @brief get parent's tag of a certain additional element // PABLO #1916
+    static SumoXMLTag getParentType(SumoXMLTag tag);            // PABLO #1916
+
     /// @brief get all editable attributes for tag and their default values.
     static const std::vector<std::pair <SumoXMLAttr, std::string> >& allowedAttributes(SumoXMLTag tag);
 
     /// @brief get all editable attributes for tag.
     static const std::vector<SumoXMLTag>& allowedTags();
 
-    /// @brief get editable attributes for additional tags.
-    static const std::vector<SumoXMLTag>& allowedAdditionalTags();
+    /// @brief get editable attributes for additional tags.             // PABLO #1916
+    static const std::vector<SumoXMLTag>& allowedAdditionalTags();      // PABLO #1916
 
     /// @brief whether an attribute is numerical (int or float)
     static bool isNumerical(SumoXMLAttr attr);
@@ -130,6 +133,9 @@ public:
     /// @brief whether an attribute is unique (may not be edited for a multi-selection)
     /// @note unique attributes don't have a default value
     static bool isUnique(SumoXMLAttr attr);
+
+    /// @brief check if a element with certain tag has another additional element as parent // PABLO #1916
+    static bool hasParent(SumoXMLTag tag);                                                  // PABLO #1916
 
     /// @brief check if a element with certain tag has a certain attribute  // PABLO #1916
     static bool hasAttribute(SumoXMLTag tag, SumoXMLAttr attr);             // PABLO #1916
@@ -204,23 +210,26 @@ private:
     /// @brief map with the allowed attributes
     static std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > _allowedAttributes;    // PABLO #1916
 
-    /// @brief map with the allowed tags
+    /// @brief vector with the allowed tags
     static std::vector<SumoXMLTag> myAllowedTags;
 
-    /// @brief map with the allowed tags                        // PABLO #1916
+    /// @brief vector with the allowed tags of additionals      // PABLO #1916
     static std::vector<SumoXMLTag> myAllowedAdditionalTags;     // PABLO #1916
 
-    /// @brief map with the numerical attributes of type Int    // PABLO #1916
+    /// @brief set with the numerical attributes of type Int    // PABLO #1916
     static std::set<SumoXMLAttr> myNumericalIntAttrs;           // PABLO #1916
 
-    /// @brief map with the numerical attributes of type Float  // PABLO #1916
+    /// @brief set with the numerical attributes of type Float  // PABLO #1916
     static std::set<SumoXMLAttr> myNumericalFloatAttrs;         // PABLO #1916
 
-    /// @brief map with the attributes of type list             // PABLO #1916
-    static std::set<SumoXMLAttr> myListAttrs;                   // PABLO #1916    
+    /// @brief set with the attributes of type list             // PABLO #1916
+    static std::set<SumoXMLAttr> myListAttrs;                   // PABLO #1916
 
-    /// @brief map with the unique attributes (i.e. attributes without default values)
+    /// @brief set with the unique attributes (i.e. attributes without default values)
     static std::set<SumoXMLAttr> myUniqueAttrs;
+
+    /// @brief map with the allowed tags of additionals with parent and their parent    // PABLO #1916
+    static std::map<SumoXMLTag, SumoXMLTag> myAllowedAdditionalWithParentTags;          // PABLO #1916
 
     /// @brief map with the values of discrete choices
     static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > myDiscreteChoices;

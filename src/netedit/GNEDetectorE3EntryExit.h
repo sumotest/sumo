@@ -48,78 +48,83 @@ class GNEDetectorE3EntryExit  : public GNEDetector {
 public:
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
-     * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
-     * @param[in] tag
+     * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
+     * @param[in] tag with the type of EntryExit
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] pos position of the detector on the lane
+     * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEDetectorE3EntryExit(const std::string &id, GNEDetectorE3 *parent, SumoXMLTag tag, GNELane &lane, SUMOReal pos, bool blocked);
+    GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane &lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
 
     /// @brief destructor
     ~GNEDetectorE3EntryExit();
+
+    /// @brief update pre-computed geometry information
+    /// @note: must be called when geometry changes (i.e. lane moved)
+    void updateGeometry();
 
     /// @brief get E3 parentecto
     GNEDetectorE3* getE3Parent() const;
 
     /** @brief writte additional element into a xml file
-        * @param[in] device device in which write parameters of additional element
-        */
+     * @param[in] device device in which write parameters of additional element
+     */
     void writeAdditional(OutputDevice& device);
 
     /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns an own popup-menu
-        *
-        * @param[in] app The application needed to build the popup-menu
-        * @param[in] parent The parent window needed to build the popup-menu
-        * @return The built popup-menu
-        * @see GUIGlObject::getPopUpMenu
-        */
+     *
+     * @param[in] app The application needed to build the popup-menu
+     * @param[in] parent The parent window needed to build the popup-menu
+     * @return The built popup-menu
+     * @see GUIGlObject::getPopUpMenu
+     */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
-        *
-        * @param[in] app The application needed to build the parameter window
-        * @param[in] parent The parent window needed to build the parameter window
-        * @return The built parameter window
-        * @see GUIGlObject::getParameterWindow
-        */
+     *
+     * @param[in] app The application needed to build the parameter window
+     * @param[in] parent The parent window needed to build the parameter window
+     * @return The built parameter window
+     * @see GUIGlObject::getParameterWindow
+     */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Draws the object
-        * @param[in] s The settings for the current view (may influence drawing)
-        * @see GUIGlObject::drawGL
-        */
+     * @param[in] s The settings for the current view (may influence drawing)
+     * @see GUIGlObject::drawGL
+     */
     void drawGL(const GUIVisualizationSettings& s) const;
 
     /** @brief Draws additionally triggered visualisations
-        * @param[in] parent The view
-        * @param[in] s The settings for the current view (may influence drawing)
-        */
+     * @param[in] parent The view
+     * @param[in] s The settings for the current view (may influence drawing)
+     */
     void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const;
     //@}
 
     //@name inherited from GNEAttributeCarrier
     //@{
     /* @brief method for getting the Attribute of an XML key
-        * @param[in] key The attribute key
-        * @return string with the value associated to key
-        */
+     * @param[in] key The attribute key
+     * @return string with the value associated to key
+     */
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
-        * @param[in] key The attribute key
-        * @param[in] value The new value
-        * @param[in] undoList The undoList on which to register changes
-        */
+     * @param[in] key The attribute key
+     * @param[in] value The new value
+     * @param[in] undoList The undoList on which to register changes
+     */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
     /* @brief method for checking if the key and their correspond attribute are valids
-        * @param[in] key The attribute key
-        * @param[in] value The value asociated to key key
-        * @return true if the value is valid, false in other case
-        */
+     * @param[in] key The attribute key
+     * @param[in] value The value asociated to key key
+     * @return true if the value is valid, false in other case
+     */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
@@ -141,8 +146,10 @@ private:
 
     /// @brief list of colors
     enum colorTypes {
-        E1_BASE = 0,
-        E1_BASE_SELECTED = 1,
+        ENTRY_BASE = 0,
+        ENTRY_BASE_SELECTED = 1,
+        EXIT_BASE = 2,
+        EXIT_BASE_SELECTED = 3,
     };
 
     /// @brief Invalidated copy constructor.

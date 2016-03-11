@@ -1080,59 +1080,7 @@ GNENet::getNumberOfAdditionals(SumoXMLTag type) {                               
         if(type == SUMO_TAG_NOTHING || type == i->second->getTag())                         // PABLO #1916
             counter++;                                                                      // PABLO #1916
     return counter;                                                                         // PABLO #1916
-}                                                                                           // PABLO #1916
-
-
-
-void 
-GNENet::insertAdditionalSet(GNEAdditionalSet* additionalSet) {                                              // PABLO #1916
-    // Check if additional element exists before insertion                                                  // PABLO #1916
-    if(myAdditionalSets.find(additionalSet->getID()) != myAdditionalSets.end())                             // PABLO #1916
-        throw ProcessError("additionalSet element with ID='" + additionalSet->getID() + "' already exist"); // PABLO #1916
-    else {                                                                                                  // PABLO #1916
-        myAdditionalSets[additionalSet->getID()] = additionalSet;                                           // PABLO #1916
-    }                                                                                                       // PABLO #1916
-}                                                                                                           // PABLO #1916
-
-
-void 
-GNENet::deleteAdditionalSet(GNEAdditionalSet* additionalSet) {                                              // PABLO #1916
-    GNEAdditionalSets::iterator positionToRemove = myAdditionalSets.find(additionalSet->getID());           // PABLO #1916
-    // Check if additional element exists before deletion                                                   // PABLO #1916
-    if(positionToRemove == myAdditionalSets.end())                                                          // PABLO #1916
-        throw ProcessError("additionalSet element with ID='" + additionalSet->getID() + "' don't exist");   // PABLO #1916
-    else                                                                                                    // PABLO #1916
-        myAdditionalSets.erase(positionToRemove);                                                           // PABLO #1916
-}                                                                                                           // PABLO #1916
-
-
-GNEAdditionalSet*                                                                                                                       // PABLO #1916
-GNENet::getAdditionalSet(SumoXMLTag type, const std::string& id) const {                                                                // PABLO #1916
-    if(!myAdditionalSets.empty() && myAdditionalSets.find(id) != myAdditionalSets.end() && myAdditionalSets.at(id)->getTag() == type)   // PABLO #1916
-        return myAdditionalSets.at(id);                                                                                                 // PABLO #1916
-    else                                                                                                                                // PABLO #1916
-        return NULL;                                                                                                                    // PABLO #1916
-}                                                                                                                                       // PABLO #1916
-
-
-std::vector<GNEAdditionalSet*>                                                                      // PABLO #1916
-GNENet::getAdditionalSets(SumoXMLTag type) {                                                        // PABLO #1916
-    std::vector<GNEAdditionalSet*> vectorOfAdditionalSets;                                          // PABLO #1916
-    for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
-        if(type == SUMO_TAG_NOTHING || i->second->getTag() == type)                                 // PABLO #1916
-            vectorOfAdditionalSets.push_back(i->second);                                            // PABLO #1916
-    return vectorOfAdditionalSets;                                                                  // PABLO #1916
-}                                                                                                   // PABLO #1916
-
-
-int                                                                                                 // PABLO #1916
-GNENet::getNumberOfAdditionalSets(SumoXMLTag type) {                                                // PABLO #1916
-    int counter = 0;                                                                                // PABLO #1916
-    for(GNEAdditionalSets::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
-        if(type == SUMO_TAG_NOTHING || i->second->getTag() == type)                                 // PABLO #1916
-            counter++;                                                                              // PABLO #1916
-    return counter;                                                                                 // PABLO #1916
-}                                                                                                   // PABLO #1916
+}                                                                                           // PABLO #1916                                                                          // PABLO #1916
 
 // ===========================================================================
 // private

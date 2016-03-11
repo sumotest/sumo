@@ -271,8 +271,8 @@ public:
         /// @brief destructor
         ~additionalSet();
 
-        /// @brief get currently additional Set
-        GNEAdditionalSet* getAdditionalSet();
+        /// @brief get if currently additional Set
+        std::string getIdSelected();
 
         /// @brief Show list of additionalSet
         void showList(SumoXMLTag type);
@@ -302,9 +302,6 @@ public:
 
         /// @brief button for help
         FXButton *helpAdditionalSet;
-
-        /// @brief pointer to additional set 
-        GNEAdditionalSet *myAdditionalSet;
 
         /// @brief viewNet associated to GNEAdditionalFrame
         GNEViewNet* myViewNet;
