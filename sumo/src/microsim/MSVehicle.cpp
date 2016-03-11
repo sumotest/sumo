@@ -1347,11 +1347,11 @@ MSVehicle::executeMove() {
         int bla = 0;
     }
 #endif
-    // Debug (Leo)
-    std::string debug_id = "always_right.7";
-    if(this->myParameter->id == debug_id){
-    	std::cout << "vehicle '" << debug_id << "' in executeMove()" <<std::endl;
-    }
+//    // Debug (Leo)
+//    std::string debug_id = "always_right.7";
+//    if(this->myParameter->id == debug_id){
+//    	std::cout << "vehicle '" << debug_id << "' in executeMove()" <<std::endl;
+//    }
 
     // get safe velocities from DriveProcessItems
     SUMOReal vSafe = 0; // maximum safe velocity
@@ -1464,12 +1464,12 @@ MSVehicle::executeMove() {
         }
     }
 
-    // Debug (Leo)
-    if(this->myParameter->id == debug_id){
-    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
-    	std::cout << "vSafeMin = " << vSafeMin << "\n" << std::endl;
-    	std::cout << "vSafeMinDist = " << vSafeMinDist << "\n" << std::endl;
-    }
+//    // Debug (Leo)
+//    if(this->myParameter->id == debug_id){
+//    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
+//    	std::cout << "vSafeMin = " << vSafeMin << "\n" << std::endl;
+//    	std::cout << "vSafeMinDist = " << vSafeMinDist << "\n" << std::endl;
+//    }
 
     if (vSafe + NUMERICAL_EPS < vSafeMin) {
         // cannot drive across a link so we need to stop before it
@@ -1488,10 +1488,10 @@ MSVehicle::executeMove() {
     }
 
     vSafe = MIN2(vSafe, vSafeZipper);
-    // Debug (Leo)
-    if(this->myParameter->id == debug_id){
-    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
-    }
+//    // Debug (Leo)
+//    if(this->myParameter->id == debug_id){
+//    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
+//    }
 
 
     // XXX braking due to lane-changing is not registered and due to processing stops is not registered
@@ -1516,10 +1516,10 @@ MSVehicle::executeMove() {
     	}
     }
 
-    // Debug (Leo)
-    if(this->myParameter->id == debug_id){
-    	std::cout << "vNext = " << vNext << "\n" << std::endl;
-    }
+//    // Debug (Leo)
+//    if(this->myParameter->id == debug_id){
+//    	std::cout << "vNext = " << vNext << "\n" << std::endl;
+//    }
 
 
     // vNext may be higher than vSafe without implying a bug:
@@ -1544,14 +1544,14 @@ MSVehicle::executeMove() {
     	vNext = MAX2(vNext, myState.mySpeed - ACCEL2SPEED(getCarFollowModel().getMaxDecel()));
     }
 
-    // Debug (Leo)
-    if(this->myParameter->id == debug_id){
-    	std::cout << "mySpeed = " << myState.mySpeed << std::endl;
-    	std::cout << "myDecel = " << getCarFollowModel().getMaxDecel() << std::endl;
-    	std::cout << "vSafe = " << vSafe << std::endl;
-    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
-    	std::cout << "vNext = " << vNext << std::endl;
-    }
+//    // Debug (Leo)
+//    if(this->myParameter->id == debug_id){
+//    	std::cout << "mySpeed = " << myState.mySpeed << std::endl;
+//    	std::cout << "myDecel = " << getCarFollowModel().getMaxDecel() << std::endl;
+//    	std::cout << "vSafe = " << vSafe << std::endl;
+//    	std::cout << "vMin = " << getCarFollowModel().getSpeedAfterMaxDecel(getSpeed()) << std::endl;
+//    	std::cout << "vNext = " << vNext << std::endl;
+//    }
 
 
 #ifndef NO_TRACI
@@ -1580,8 +1580,8 @@ MSVehicle::executeMove() {
     // the mean acceleration during the next step
     myAcceleration = SPEED2ACCEL(MAX2(vNext,0.) - myState.mySpeed);
 
-    // update position and speedconst
-    SUMOReal oldPos = myState.myPos;
+    // update position and speed
+    const SUMOReal oldPos = myState.myPos;
     SUMOReal deltaPos;
     if(MSGlobals::gSemiImplicitEulerUpdate){
     	// apply implicit Euler positional update
@@ -1601,10 +1601,10 @@ MSVehicle::executeMove() {
     	}
     }
 
-    // Debug (Leo)
-    if(this->myParameter->id == debug_id){
-    	std::cout << "deltaPos = " << deltaPos << std::endl;
-    }
+//    // Debug (Leo)
+//    if(this->myParameter->id == debug_id){
+//    	std::cout << "deltaPos = " << deltaPos << std::endl;
+//    }
 
     myState.mySpeed = MAX2(vNext,0.);
 

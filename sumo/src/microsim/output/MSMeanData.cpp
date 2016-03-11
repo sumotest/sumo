@@ -83,16 +83,89 @@ bool
 MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpeed) {
     // if the vehicle has arrived, the reminder must be kept so it can be
     // notified of the arrival subsequently
+
+//    // Debug (Leo)
+//    std::string debug_id = "always_left.1";
+//    if(veh.getID() == debug_id){
+//    	std::cout << "time " << MSNet::getInstance()->getCurrentTimeStep()
+//    			<<"\nvehicle '"<< debug_id <<"' in MeanDataValues::notifyMove(veh, "
+//    			<< oldPos<< ","<<newPos<<","<<newSpeed<<")" << std::endl;
+//    }
+
+
     SUMOReal timeOnLane = TS;
     bool ret = true;
     if (oldPos < 0 && newSpeed != 0) {
-        timeOnLane = newPos / newSpeed;
+    	// (Leo) vehicle just entered this lane
+    	if(MSGlobals::gSemiImplicitEulerUpdate){
+        	// timeOnLane according to implicit Euler update
+    		timeOnLane = newPos / newSpeed;
+    	} else {
+    		SUMOReal oldSpeed = 2*DIST2SPEED(newPos - oldPos) - newSpeed; // from deltaPos = newPos - oldPos = TS*(newSpeed + oldSpeed)/2
+    		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
+
+    		// (Leo) We calculate the time tc until arrival of the beginning of the lane,
+    		// i.e. 0 = x(tc) = x0 + v0*tc + a*tc*tc/2,
+    		// where x0 = oldPos. That is:
+    		// 0 = tc*tc + 2*v0*tc/a + 2*x0/a, thus
+    		// tc = -v0/a +- sqrt( (v0/a)^2 - 2*x0/a )
+    		// 1) Note that we can  exclude  - x0 < v0^2/2*a (negativity of the discriminant)
+    		// since that would mean a stop before x = x(tc) = 0. (the vehicle couldn't have entered the lane)
+    		// 2) If a<0, (x0 is as well) we need to choose the negative sqrt, for a>0 the positive,
+    		// and for a=0 we can use the simple formula.
+    		// 3) Note, that a possible negative newSpeed (indicating stop within time step)
+    		// is processed in the above formula, since the stop must occur after time tc.
+
+    		if(accel > NUMERICAL_EPS){
+    			SUMOReal p_half = oldSpeed/accel; // v0/a
+    			timeOnLane = TS - ( - p_half + sqrt(p_half*p_half - 2*oldPos/accel) );
+    		} else if(accel < -NUMERICAL_EPS) {
+    			SUMOReal p_half = oldSpeed/accel;
+    			timeOnLane = TS - ( - p_half - sqrt(p_half*p_half - 2*oldPos/accel) );
+    		} else { // accel \approx 0
+        		timeOnLane = newPos / newSpeed;
+    		}
+    	}
+
+//        // Debug (Leo)
+//        if(veh.getID() == debug_id){
+//        	std::cout << "time on lane (1)= " << timeOnLane << std::endl;
+//        }
+
     }
     if (newPos - veh.getVehicleType().getLength() > myLaneLength && newSpeed != 0) {
-        timeOnLane -= (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
-        if (fabs(timeOnLane) < 0.001) { // reduce rounding errors
-            timeOnLane = 0.;
-        }
+    	if(MSGlobals::gSemiImplicitEulerUpdate){
+    		timeOnLane = TS - (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
+            if (fabs(timeOnLane) < 0.001) { // reduce rounding errors
+                timeOnLane = 0.;
+            }
+    	} else {
+    		// (Leo) Analogous situation as above. Crossing time for the
+    		// back bumper is tc, with x(tc) = len(veh) + len(lane).
+    		// We end up with:
+    		// tc = -v0/a +- sqrt( (v0/a)^2 - 2*(x0-x(tc))/a )
+
+    		SUMOReal oldSpeed = 2*DIST2SPEED(newPos - oldPos) - newSpeed;
+    		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
+    		SUMOReal dPos = oldPos - (myLaneLength +  veh.getVehicleType().getLength());
+
+    		if(accel > NUMERICAL_EPS){
+    			SUMOReal p_half = oldSpeed/accel; // v0/a
+    			timeOnLane = ( - p_half + sqrt(p_half*p_half - 2*dPos/accel) );
+    		} else if(accel < -NUMERICAL_EPS) {
+    			SUMOReal p_half = oldSpeed/accel;
+    			timeOnLane = ( - p_half - sqrt(p_half*p_half - 2*dPos/accel) );
+    		} else { // accel \approx 0
+        		timeOnLane = TS - (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
+    		}
+
+//    		// Debug (Leo)
+//    		if(veh.getID() == debug_id){
+//    			std::cout << "time on lane (2)= " << timeOnLane << std::endl;
+//    		}
+
+    	}
+
         ret = veh.hasArrived();
     }
     if (timeOnLane < 0) {

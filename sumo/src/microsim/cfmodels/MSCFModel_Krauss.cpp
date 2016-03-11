@@ -54,13 +54,13 @@ MSCFModel_Krauss::~MSCFModel_Krauss() {}
 
 SUMOReal
 MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap) const {
-	// Debug (Leo)
-	if(veh->getID() == "always_right.7"){
-		std::cout << "vehicle 'always_right.7' in MSCFModel_Krauss::stopSpeed()\n"
-				<< "gap = " << gap
-				<< ", speed = " << speed
-				<< ", maxSafeStopSpeed() = "<< maximumSafeStopSpeed(gap, speed) << std::endl;
-	}
+//	// Debug (Leo)
+//	if(veh->getID() == "always_right.7"){
+//		std::cout << "vehicle 'always_right.7' in MSCFModel_Krauss::stopSpeed()\n"
+//				<< "gap = " << gap
+//				<< ", speed = " << speed
+//				<< ", maxSafeStopSpeed() = "<< maximumSafeStopSpeed(gap, speed) << std::endl;
+//	}
     return MIN2(maximumSafeStopSpeed(gap, speed), maxNextSpeed(speed, veh));
 }
 

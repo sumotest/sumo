@@ -254,20 +254,20 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	// one exception is the situation when the vehicle is just being inserted
 	// in that case, it will not cover any distance until the next timestep by convention.
 	//
-	// Stopping time from time t+dt+tau (braking full strength) on is given as
+	// Stopping time from time t+tau (braking full strength) on is given as
 	// ts = vn/b,
 	// with maximal deceleration b and the next step's velocity vn = v(t+dt).
-	// the distance covered in [t, t+dt+tau+ts] is then
-	// ds = (v*dt + a*dt*dt/2) + vn*tau + (vn*ts - b*ts*ts/2).
+	// the distance covered in [t, t+tau+ts] is then
+	// ds = (v*dt + a*dt*dt/2) + vn*(tau-dt) + (vn*ts - b*ts*ts/2).
 	// We wish to choose the acceleration a=(vn-v)/dt such that ds == gap (this gives the safe acceleration).
 	// Thus, we solve
-	// gap = (v*dt + a*dt*dt/2) + vn*tau + (vn*ts - b*ts*ts/2)
-	//     = (v*dt/2 + vn*dt/2) + vn*tau + (vn*vn/b - vn*vn/(2b))
-	//     = v*dt/2 + vn*dt/2 + vn*tau + vn*vn/(2b)
+	// gap = (v*dt + a*dt*dt/2) + vn*(tau-dt) + (vn*ts - b*ts*ts/2)
+	//     = (v*dt/2 + vn*dt/2) + vn*(tau-dt) + (vn*vn/b - vn*vn/(2b))
+	//     = v*dt/2 + vn*dt/2 + vn*(tau-dt) + vn*vn/(2b)
 	// i.e.,
-	// 0 = vn*vn + vn*(dt*b + tau*2b) + v*dt*b - g*2b
+	// 0 = vn*vn + vn*(dt*b + (tau-dt)*2b) + v*dt*b - g*2b
 	// giving
-	// vn = -(dt*b + 2*b*tau)/2 +- sqrt( (dt + 2*tau)^2*b^2/4 + 2b*g - v*dt*b ),
+	// vn = -(dt*b + 2*b*(tau-dt))/2 +- sqrt( (dt + 2*(tau-dt))^2*b^2/4 + 2b*g - v*dt*b ),
 	// The desired speed is the positive root, if it exists. If it does not exist,
 	// We find that g - v*dt/2 < 0, i.e., a constant deceleration from v to 0 in the
 	// next step would still lead to a positional advance larger than g.
@@ -283,7 +283,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		dt = STEPS2TIME(DELTA_T);
 	}
 	SUMOReal D = 2*g - v*dt;
-	assert(2*g >= 0);
+	assert(g >= 0);
 	if(D < 0){
 		// deceleration -v/dt (i.e. stopping a the end of the coming timestep)
 		// is not sufficient to stop within gap. Therefore a stop has to take place
