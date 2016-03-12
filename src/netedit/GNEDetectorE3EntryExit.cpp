@@ -53,7 +53,8 @@
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
-#include "GNELogo_E3.cpp"
+#include "GNELogo_Entry.cpp"
+#include "GNELogo_Exit.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -62,8 +63,10 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEDetectorE3EntryExit::detectorE3GlID = 0;
-bool GNEDetectorE3EntryExit::detectorE3Initialized = false;
+GUIGlID GNEDetectorE3EntryExit::detectorEntryGlID = 0;
+GUIGlID GNEDetectorE3EntryExit::detectorExitGlID = 0;
+bool GNEDetectorE3EntryExit::detectorEntryInitialized = false;
+bool GNEDetectorE3EntryExit::detectorExitInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -103,10 +106,10 @@ GNEDetectorE3EntryExit::updateGeometry() {
     myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
 
     // Set position of logo
-    myDetectorLogoPosition = myShape.getLineCenter() - Position(1, 0);
+    myDetectorLogoPosition = myShape.getLineCenter() + Position(2, 0);
 
     // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter() + Position(1, 0);
+    myBlockIconPos = myShape.getLineCenter();
 
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
@@ -182,8 +185,14 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
     
     // Set colors depending of type
     if(this->getTag() == SUMO_TAG_DET_ENTRY) {
-        // Load logo
-        
+        // load logo, if wasn't inicializated
+        if (!detectorEntryInitialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Entry, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            detectorEntryGlID = GUITexturesHelper::add(i);
+            detectorEntryInitialized = true;
+            delete i;
+        }
+
         // Set colors
         if(gSelected.isSelected(getType(), getGlID()))
             base = myRGBColors[ENTRY_BASE_SELECTED];
@@ -191,8 +200,14 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
             base = myRGBColors[ENTRY_BASE];
     }
     else {
-        // Load logo
-        
+        // load logo, if wasn't inicializated
+        if (!detectorExitInitialized) {
+            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Exit, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+            detectorExitGlID = GUITexturesHelper::add(i);
+            detectorExitInitialized = true;
+            delete i;
+        }
+
         // Set colors
         if(gSelected.isSelected(getType(), getGlID()))
             base = myRGBColors[EXIT_BASE_SELECTED];
@@ -200,21 +215,24 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
             base = myRGBColors[EXIT_BASE];
     }
 
-
     // Start drawing adding gl identificator
     glPushName(getGlID());
+    
     // Push detector matrix
     glPushMatrix();
     glTranslated(0, 0, getType());
+    
     //glColor3d(0, .8, 0);
     glColor3d(base.red(), base.green(), base.blue());
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
     // Push poligon matrix
     glPushMatrix();
     glScaled(exaggeration, exaggeration, 1);
     glTranslated(myShape[0].x(), myShape[0].y(), 0);
     glRotated(myShapeRotations[0], 0, 0, 1);
+    
     // Draw poligon
     glBegin(GL_LINES);
     glVertex2d(1.7, 0);
@@ -226,18 +244,43 @@ GNEDetectorE3EntryExit::drawGLAdditional(GUISUMOAbstractView* const parent, cons
     glVertex2d(1.7, -.5);
     glVertex2d(1.7, .5);
     glEnd();
+    
     // first Arrow
     glTranslated(1.5, 0, 0);
     GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
     GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    
     // second Arrow
     glTranslated(-3, 0, 0);
     GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
     GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    
     // Pop poligon matrix
     glPopMatrix();
+    
     // Pop detector matrix
     glPopMatrix();
+    
+    // Check if the distance is enought to draw details
+    if (s.scale * exaggeration >= 10) {
+        // Add a draw matrix and draw E1 logo
+        glPushMatrix();
+        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType() + 0.1);
+        glColor3d(1, 1, 1);
+        glRotated(180, 0, 0, 1);
+        if(this->getTag() == SUMO_TAG_DET_ENTRY)
+            GUITexturesHelper::drawTexturedBox(detectorEntryGlID, 1.5, 1, -1.5, -1);
+        else
+            GUITexturesHelper::drawTexturedBox(detectorExitGlID, 1.5, 1, -1.5, -1);
+
+        // Pop detector logo matrix
+        glPopMatrix();
+        
+        // Show Lock icon depending of the Edit mode
+        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+            drawLockIcon(0.4);
+    }
+
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
     // pop gl identificator
     glPopName();

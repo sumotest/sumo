@@ -330,7 +330,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
     // Extract common attributes
     std::string id = values[SUMO_ATTR_ID];
     GNELane *lane = viewNet->getNet()->getLane(values[SUMO_ATTR_LANE]);
-    bool blocked = GNEAttributeCarrier::parse<SUMOReal>(values[GNE_ATTR_BLOCK_MOVEMENT]);
+    bool blocked = GNEAttributeCarrier::parse<bool>(values[GNE_ATTR_BLOCK_MOVEMENT]);
     // create additional depending of the tag
     switch(tag) {
         case SUMO_TAG_BUS_STOP: {

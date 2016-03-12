@@ -214,7 +214,7 @@ protected:
     std::vector<RGBColor> myRGBColors;
 
     // @brief draw lock icon
-    void drawLockIcon() const;
+    void drawLockIcon(SUMOReal size = 0.5) const;
 
 private:
     /// @brief variable to keep GLId of the additional lock image

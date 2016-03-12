@@ -236,9 +236,6 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
 
-        // Add a draw matrix
-        glPushMatrix();
-
         // load detector logo, if wasn't inicializated
         if (!detectorE2Initialized) {
             FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E2, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);

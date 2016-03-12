@@ -332,22 +332,24 @@ GNEAdditionalFrame::setStartPosition(SUMOReal laneLenght, SUMOReal positionOfThe
 SUMOReal 
 GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional) {
     switch (myEditorParameter->getActualReferencePoint()) {
-        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT :
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_LEFT:
             if(positionOfTheMouseOverLane + lenghtOfAdditional <= laneLenght - 0.01)
                 return positionOfTheMouseOverLane + lenghtOfAdditional;
             else if(myEditorParameter->isForcePositionEnabled())
                 return laneLenght - 0.01;
             else
                 return -1;
-        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_RIGHT :
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_RIGHT:
             return positionOfTheMouseOverLane;
-        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_CENTER :
+        case editorParameter::GNE_ADDITIONALREFERENCEPOINT_CENTER:
             if(positionOfTheMouseOverLane + lenghtOfAdditional/2 <= laneLenght - 0.01)
                 return positionOfTheMouseOverLane + lenghtOfAdditional/2;
             else if(myEditorParameter->isForcePositionEnabled())
                 return laneLenght - 0.01;
             else
                 return -1;
+        default:
+            return -1;
     }
 }
 

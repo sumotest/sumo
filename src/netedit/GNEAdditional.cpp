@@ -149,7 +149,7 @@ GNEAdditional::getCenteringBoundary() const {
 
 
 void 
-GNEAdditional::drawLockIcon() const {
+GNEAdditional::drawLockIcon(SUMOReal size) const {
     // load additional lock, if wasn't inicializated
     if (!additionalLockInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -171,9 +171,9 @@ GNEAdditional::drawLockIcon() const {
     glRotated(180, 0, 0, 1);
     // If myBlocked is enable, draw lock, in other case, draw empty square
     if(myBlocked)
-        GUITexturesHelper::drawTexturedBox(additionalLockGlID, 0.5);
+        GUITexturesHelper::drawTexturedBox(additionalLockGlID, size);
     else
-        GUITexturesHelper::drawTexturedBox(additionalEmptyGlID, 0.5);
+        GUITexturesHelper::drawTexturedBox(additionalEmptyGlID, size);
     // Pop matrix
     glPopMatrix();
 }

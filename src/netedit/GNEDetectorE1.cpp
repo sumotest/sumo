@@ -251,8 +251,10 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
             delete i;
         }
         
-        // Add a draw matrix and draw E1 logo
+        // Add a draw matrix
         glPushMatrix();
+
+        // Draw logo
         glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType() + 0.1);
         glColor3d(1, 1, 1);
         glRotated(180, 0, 0, 1);

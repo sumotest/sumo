@@ -132,11 +132,17 @@ private:
     /// @brief pointer to GNEDetectorE3 parent
     GNEDetectorE3* myParent;
 
-    /// @brief variable to save detectorE3 icon
-    static GUIGlID detectorE3GlID;
+    /// @brief variable to save detectorEntry icon
+    static GUIGlID detectorEntryGlID;
 
-    /// @brief check if detectorE3 icon was inicilalizated
-    static bool detectorE3Initialized;
+    /// @brief variable to save detectorExit icon
+    static GUIGlID detectorExitGlID;
+
+    /// @brief check if detectorEntry icon was inicilalizated
+    static bool detectorEntryInitialized;
+
+    /// @brief check if detectorExit icon was inicilalizated
+    static bool detectorExitInitialized;
 
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);

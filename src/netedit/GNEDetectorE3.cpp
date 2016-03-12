@@ -89,8 +89,7 @@ GNEDetectorE3::~GNEDetectorE3() {
 void 
 GNEDetectorE3::updateGeometry() {
     myShape.clear();
-    myShape.push_back(myPosition - Position(1, 0));
-    myShape.push_back(myPosition + Position(1, 0));
+    myShape.push_back(myPosition);
 }
 
 
@@ -113,13 +112,34 @@ GNEDetectorE3::getParentName() const {
 
 GUIGLObjectPopupMenu* 
 GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    return NULL;
+    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
+    buildPopupHeader(ret, app);
+    buildCenterPopupEntry(ret);
+    new FXMenuCommand(ret, "Copy detector E1 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
+    buildNameCopyPopupEntry(ret);
+    buildSelectionPopupEntry(ret);
+    buildPositionCopyEntry(ret, false);
+    // buildShowParamsPopupEntry(ret, false);
+    new FXMenuCommand(ret, ("pos: " + toString(myPosition)).c_str(), 0, 0, 0);
+    // new FXMenuSeparator(ret);
+    // buildPositionCopyEntry(ret, false);
+    // let the GNEViewNet store the popup position
+    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
+    return ret;
 }
 
 
 GUIParameterTableWindow* 
 GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    return NULL;
+    GUIParameterTableWindow* ret =
+        new GUIParameterTableWindow(app, *this, 2);
+    /* not supported yet
+    // add items
+    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    // close building
+    ret->closeBuilding();
+    */
+    return ret;
 }
 
 
@@ -148,20 +168,23 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Start drawing adding an gl identificator
     glPushName(getGlID());
     
-    // Add a draw matrix
+    // load detector logo, if wasn't inicializated
+    if (!detectorE3Initialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE3GlID = GUITexturesHelper::add(i);
+        detectorE3Initialized = true;
+        delete i;
+    }
+
+    // Add a draw matrix and draw E1 logo
     glPushMatrix();
+    glTranslated(myShape[0].x(), myShape[0].y(), getType() + 0.1);
+    glColor3d(1, 1, 1);
+    glRotated(180, 0, 0, 1);
+    GUITexturesHelper::drawTexturedBox(detectorE3GlID, 1);
 
-    // Start with the drawing of the area traslating matrix to origing 
-    glTranslated(0, 0, getType());
-
-    // Set color of the base
-    GLHelper::setColor(base);
-
-    // Obtain exaggeration of the draw
-    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-   
-    // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
-    GLHelper::drawBoxLine(myShape[0], 0, myShape[0].distanceTo(myShape[1]), 3);
+    // Pop draw matrix
+    glPopMatrix();
 
     // Pop name
     glPopName();
