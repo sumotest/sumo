@@ -67,6 +67,7 @@ namespace PHEMlightdll
                                                                           strAggBUS,
                                                                           strAggTW};
 
+        //Drive train efficiency
         public static double _DRIVE_TRAIN_EFFICIENCY;
         public static double DRIVE_TRAIN_EFFICIENCY
         {
