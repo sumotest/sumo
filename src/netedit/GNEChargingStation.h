@@ -53,15 +53,15 @@ public:
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
-     * @param[in] fromPos From position of the StoppingPlace
-     * @param[in] toPos To position of the StoppingPlace
+     * @param[in] startPos Start position of the StoppingPlace
+     * @param[in] endPos End position of the StoppingPlace
      * @param[in] chargingPower charging power of the charging station
      * @param[in] efficiency efficiency of the charge [0,1]
      * @param[in] chargeInTransit enable or disable charge in transit
      * @param[in] chargeDelay delay in timeSteps in the charge
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked);
+    GNEChargingStation(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked);
     
     /// @brief Destructor
     ~GNEChargingStation();

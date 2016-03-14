@@ -352,10 +352,10 @@ private:
     /// @brief set parameters depending of the new additionalType
     void setParameters(SumoXMLTag actualAdditionalType);
 
-    /// @brief obtain the from position values of StoppingPlaces and E2 detector over the lane
+    /// @brief obtain the Start position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
 
-    /// @brief obtain the to position values of StoppingPlaces and E2 detector over the lane
+    /// @brief obtain the End position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
 
     /// @brief the panel to hold all member widgets

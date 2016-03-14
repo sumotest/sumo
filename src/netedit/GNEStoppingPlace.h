@@ -55,12 +55,12 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
      * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] fromPos From position of the StoppingPlace
-     * @param[in] toPos To position of the StoppingPlace
+     * @param[in] startPos Start position of the StoppingPlace
+     * @param[in] endPos End position of the StoppingPlace
      * @param[in] blocked set initial blocking state of item 
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, bool blocked = false, GNEAdditionalSet *parent = NULL);
+    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal startPos, SUMOReal endPos, bool blocked = false, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEStoppingPlace();
@@ -82,23 +82,23 @@ public:
     /// @brief Returns the lane in which the stoppingPlace is placed
     GNELane &getLane() const;
 
-    /// @brief Returns the from position of the stoppingPlace
-    SUMOReal getFromPosition() const;
+    /// @brief Returns the Start position of the stoppingPlace
+    SUMOReal getstartPosition() const;
         
-    /// @brief Returns the to position of the stoppingPlace
-    SUMOReal getToPosition() const;
+    /// @brief Returns the End position of the stoppingPlace
+    SUMOReal getendPosition() const;
 
-    /** @brief Set a new from Position in StoppingPlace
-     * @param[in] fromPos new From Position of StoppingPlace
-     * @throws InvalidArgument if value of fromPos isn't valid
+    /** @brief Set a new Start position in StoppingPlace
+     * @param[in] startPos new Start position of StoppingPlace
+     * @throws InvalidArgument if value of startPos isn't valid
      */
-    void setFromPosition(SUMOReal fromPos);
+    void setstartPosition(SUMOReal startPos);
 
-    /** @brief Set a new to Position in StoppingPlace
-     * @param[in] toPos new to Position of StoppingPlace
-     * @throws InvalidArgument if value of toPos isn't valid
+    /** @brief Set a new End position in StoppingPlace
+     * @param[in] endPos new End position of StoppingPlace
+     * @throws InvalidArgument if value of endPos isn't valid
      */
-    void setToPosition(SUMOReal toPos);
+    void setendPosition(SUMOReal endPos);
 
     /// @name inherited from GNEAdditional
     //@{
@@ -165,10 +165,10 @@ protected:
     GNELane &myLane;
 
     /// @brief The start position this stopping place is located at
-    SUMOReal myFromPos;
+    SUMOReal myStartPos;
 
     /// @brief The end position this stopping place is located at
-    SUMOReal myToPos;
+    SUMOReal myendPos;
 
     /// @brief The position of the sign
     Position mySignPos;

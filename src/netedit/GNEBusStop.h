@@ -61,12 +61,12 @@ public:
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
-     * @param[in] fromPos From position of the StoppingPlace
-     * @param[in] toPos To position of the StoppingPlace
+     * @param[in] startPos Start position of the StoppingPlace
+     * @param[in] endPos End position of the StoppingPlace
      * @param[in] lines lines of the busStop
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines, bool blocked);
+    GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked);
 
     /// @brief Destructor
     ~GNEBusStop();

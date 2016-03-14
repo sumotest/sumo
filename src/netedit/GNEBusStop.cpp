@@ -69,8 +69,8 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEBusStop::GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal fromPos, SUMOReal toPos, const std::vector<std::string>& lines, bool blocked) : 
-    GNEStoppingPlace(id, viewNet, SUMO_TAG_BUS_STOP, lane, fromPos, toPos, blocked),
+GNEBusStop::GNEBusStop(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked) : 
+    GNEStoppingPlace(id, viewNet, SUMO_TAG_BUS_STOP, lane, startPos, endPos, blocked),
     myLines(lines) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
@@ -98,7 +98,7 @@ GNEBusStop::updateGeometry() {
     myShape.move2side(1.65 * offsetSign);
 
     // Cut shape using as delimitators from start position and end position
-    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myFromPos), myLane.getPositionRelativeToParametricLenght(myToPos));
+    myShape = myShape.getSubpart(myLane.getPositionRelativeToParametricLenght(myStartPos), myLane.getPositionRelativeToParametricLenght(myendPos));
 
     // Get number of parts of the shape
     int numberOfSegments = (int) myShape.size() - 1;
@@ -160,8 +160,8 @@ GNEBusStop::writeAdditional(OutputDevice& device) {
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, myLane.getID());
-    device.writeAttr(SUMO_ATTR_STARTPOS, myFromPos);
-    device.writeAttr(SUMO_ATTR_ENDPOS, myToPos);
+    device.writeAttr(SUMO_ATTR_STARTPOS, myStartPos);
+    device.writeAttr(SUMO_ATTR_ENDPOS, myendPos);
     device.writeAttr(SUMO_ATTR_LINES, getAttribute(SUMO_ATTR_LINES));
     // Close tag
     device.closeTag();
@@ -236,7 +236,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
             // Add a new push matrix
             glPushMatrix();
 
-            // Traslate to positionof signal
+            // Traslate End positionof signal
             glTranslated(mySignPos.x(), mySignPos.y(), 0);
             
             // Rotate 180 (Eje X -> Mirror)
@@ -353,9 +353,9 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane.getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_STARTPOS:
-            return toString(myFromPos);
+            return toString(myStartPos);
         case SUMO_ATTR_ENDPOS:
-            return toString(myToPos);
+            return toString(myendPos);
         case SUMO_ATTR_LINES: {
             // Convert myLines vector into String with the schema "line1 line2 ... lineN"
             std::string myLinesStr;
@@ -401,9 +401,9 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myToPos-1));
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myendPos-1));
         case SUMO_ATTR_ENDPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myFromPos);
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myStartPos);
         case SUMO_ATTR_LINES:
             return isValidStringVector(value);
         default:
@@ -422,12 +422,12 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
-            myFromPos = parse<SUMOReal>(value);
+            myStartPos = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;
         case SUMO_ATTR_ENDPOS:
-            myToPos = parse<SUMOReal>(value);
+            myendPos = parse<SUMOReal>(value);
             updateGeometry();
             getViewNet()->update();
             break;

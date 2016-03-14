@@ -65,11 +65,11 @@
 // member method definitions
 // ===========================================================================
 
-GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal fromPos, SUMOReal toPos, bool blocked, GNEAdditionalSet *parent) :
+GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal startPos, SUMOReal endPos, bool blocked, GNEAdditionalSet *parent) :
     GNEAdditional(id, viewNet, Position(), tag, blocked),
     myLane(lane),
-    myFromPos(fromPos),
-    myToPos(toPos) {
+    myStartPos(startPos),
+    myendPos(endPos) {
     // Add stoppingPlae to lane
     myLane.addAdditional(this);
 }
@@ -86,10 +86,10 @@ GNEStoppingPlace::moveStoppingPlace(SUMOReal distance, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if distance is positive, to left if distance is negative
-        if( ((distance > 0) && ((myToPos + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myFromPos + distance) > 0)) ) {
+        if( ((distance > 0) && ((myendPos + distance) < myLane.getLaneShapeLenght())) || ((distance < 0) && ((myStartPos + distance) > 0)) ) {
             // change attribute
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(myFromPos + distance)));
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(myToPos + distance)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(myStartPos + distance)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(myendPos + distance)));
         }
     }
 }
@@ -102,40 +102,40 @@ GNEStoppingPlace::getLane() const {
 
 
 SUMOReal 
-GNEStoppingPlace::getFromPosition() const {
-    return myFromPos;
+GNEStoppingPlace::getstartPosition() const {
+    return myStartPos;
 }
 
         
 SUMOReal 
-GNEStoppingPlace::getToPosition() const {
-    return myToPos;
+GNEStoppingPlace::getendPosition() const {
+    return myendPos;
 }
 
 
 void 
-GNEStoppingPlace::setFromPosition(SUMOReal fromPos) {
-    if(fromPos < 0)
-        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be greather than 0");
-    else if(fromPos >= myToPos)
-        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Must be smaller than ToPos '" + toString(myToPos) + "'");
-    else if ((myToPos - fromPos) < 1)
-        throw InvalidArgument("From position '" + toString(fromPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
+GNEStoppingPlace::setstartPosition(SUMOReal startPos) {
+    if(startPos < 0)
+        throw InvalidArgument("Start position '" + toString(startPos) + "' not allowed. Must be greather than 0");
+    else if(startPos >= myendPos)
+        throw InvalidArgument("Start position '" + toString(startPos) + "' not allowed. Must be smaller than endPos '" + toString(myendPos) + "'");
+    else if ((myendPos - startPos) < 1)
+        throw InvalidArgument("Start position '" + toString(startPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
-        myFromPos = fromPos;
+        myStartPos = startPos;
 }
 
 
 void 
-GNEStoppingPlace::setToPosition(SUMOReal toPos) {
-    if(toPos > myLane.getLaneShapeLenght())
-        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than lane length");
-    else if(myFromPos >= toPos)
-        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Must be smaller than ToPos '" + toString(myToPos) + "'");
-    else if ((toPos - myFromPos) < 1)
-        throw InvalidArgument("To position '" + toString(toPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
+GNEStoppingPlace::setendPosition(SUMOReal endPos) {
+    if(endPos > myLane.getLaneShapeLenght())
+        throw InvalidArgument("End position '" + toString(endPos) + "' not allowed. Must be smaller than lane length");
+    else if(myStartPos >= endPos)
+        throw InvalidArgument("End position '" + toString(endPos) + "' not allowed. Must be smaller than endPos '" + toString(myendPos) + "'");
+    else if ((endPos - myStartPos) < 1)
+        throw InvalidArgument("End position '" + toString(endPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
-        myToPos = toPos;
+        myendPos = endPos;
 }
 
 
