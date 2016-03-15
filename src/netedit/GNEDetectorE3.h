@@ -64,12 +64,11 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
-    /** @brief change the position of the additionalSet geometry without registering undo/redo
-     * @param[in] distance new position of additionalSet
+    /** @brief change the position of the detector geometry without registering undo/redo
+     * @param[in] pos new position of detector
      * @param[in] undoList pointer to the undo list
-     * @return newPos if something was moved, oldPos if nothing was moved
      */
-    void moveAdditional(Position pos, GNEUndoList *undoList);
+    void moveDetector(Position pos, GNEUndoList *undoList);
 
     /** @brief writte additionalSet element into a xml file
      * @param[in] device device in which write parameters of additionalSet element
@@ -150,11 +149,17 @@ protected:
     std::vector<GNEDetectorE3EntryExit*> myGNEDetectorE3EntryExits;
 
 private:
-    /// @brief variable to save detectorE2 icon
+    /// @brief variable to save detector E3 icon
     static GUIGlID detectorE3GlID;
 
-    /// @brief check if detectorE2 icon was inicilalizated
+    /// @brief variable to save detector E3 selected icon
+    static GUIGlID detectorE3SelectedGlID;
+
+    /// @brief check if detector E3 icon was inicilalizated
     static bool detectorE3Initialized;
+
+    /// @brief check if detector E3 selected icon was inicilalizated
+    static bool detectorE3SelectedInitialized;
     
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);

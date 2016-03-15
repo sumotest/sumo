@@ -55,6 +55,7 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNELogo_E3.cpp"
+#include "GNELogo_E3Selected.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -64,7 +65,9 @@
 // static member definitions
 // ===========================================================================
 GUIGlID GNEDetectorE3::detectorE3GlID = 0;
+GUIGlID GNEDetectorE3::detectorE3SelectedGlID = 0;
 bool GNEDetectorE3::detectorE3Initialized = false;
+bool GNEDetectorE3::detectorE3SelectedInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -88,14 +91,24 @@ GNEDetectorE3::~GNEDetectorE3() {
 
 void 
 GNEDetectorE3::updateGeometry() {
+    // Clear shape
     myShape.clear();
+
+    // Set position
     myShape.push_back(myPosition);
+
+    // Set block icon position
+    myBlockIconPos = myPosition + Position(-0.5, 0.5);
 }
 
 
 void 
-GNEDetectorE3::moveAdditional(Position pos, GNEUndoList *undoList) {
-
+GNEDetectorE3::moveDetector(Position pos, GNEUndoList *undoList) {
+    // if item isn't blocked
+    if(myBlocked == false) {
+        // change Position
+        undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(pos)));
+    }
 }
 
 
@@ -168,7 +181,7 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Start drawing adding an gl identificator
     glPushName(getGlID());
     
-    // load detector logo, if wasn't inicializated
+    // load detector E3 logo, if wasn't inicializated
     if (!detectorE3Initialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
         detectorE3GlID = GUITexturesHelper::add(i);
@@ -176,15 +189,32 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         delete i;
     }
 
-    // Add a draw matrix and draw E1 logo
+    // load detector E3 selected logo, if wasn't inicializated
+    if (!detectorE3SelectedInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3Selected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE3SelectedGlID = GUITexturesHelper::add(i);
+        detectorE3SelectedInitialized = true;
+        delete i;
+    }
+
+    // Add a draw matrix and draw E3 logo
     glPushMatrix();
-    glTranslated(myShape[0].x(), myShape[0].y(), getType() + 0.1);
+    glTranslated(myShape[0].x(), myShape[0].y(), getType());
     glColor3d(1, 1, 1);
     glRotated(180, 0, 0, 1);
-    GUITexturesHelper::drawTexturedBox(detectorE3GlID, 1);
+
+    // Draw icon depending of detector is or isn't selected
+    if(gSelected.isSelected(getType(), getGlID())) 
+        GUITexturesHelper::drawTexturedBox(detectorE3SelectedGlID, 1);
+    else
+        GUITexturesHelper::drawTexturedBox(detectorE3GlID, 1);
 
     // Pop draw matrix
     glPopMatrix();
+
+    // Show Lock icon depending of the Edit mode
+    if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        drawLockIcon(0.4);
 
     // Pop name
     glPopName();

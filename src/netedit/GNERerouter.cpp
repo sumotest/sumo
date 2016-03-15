@@ -48,7 +48,6 @@
 #include <utils/xml/SUMOSAXHandler.h>
 
 #include "GNERerouter.h"
-#include "GNERerouterEntryExit.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
@@ -70,7 +69,7 @@ bool GNERerouter::rerouterInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, std::vector<GNERoute*> routes, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
+GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNERoute*> routes, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
     GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_E3DETECTOR, blocked),
     myRoutes(routes),
     myFilename(filename),
@@ -95,7 +94,7 @@ GNERerouter::updateGeometry() {
 
 
 void 
-GNERerouter::moveAdditional(Position pos, GNEUndoList *undoList) {
+GNERerouter::moveRerouter(Position pos, GNEUndoList *undoList) {
 
 }
 
@@ -158,14 +157,14 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
 
     // Declare variables to get colors depending if the detector is selected
     RGBColor base;
-    
+    /*
     // Set colors
     if(gSelected.isSelected(getType(), getGlID())) {
         base = myRGBColors[E3_BASE_SELECTED];
     } else {
         base = myRGBColors[E3_BASE];
     }
-    
+    */
     // Start drawing adding an gl identificator
     glPushName(getGlID());
     
@@ -200,8 +199,8 @@ GNERerouter::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
-        case SUMO_ATTR_FREQUENCY:
-            return toString(myFreq);
+        //case SUMO_ATTR_FREQUENCY:
+        //    return toString(myFreq);
         case SUMO_ATTR_FILE:
             return myFilename;
         default:
@@ -253,7 +252,7 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FREQUENCY:
-            myFreq = parse<SUMOReal>(value);
+            //myFreq = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_FILE:
             myFilename = value;

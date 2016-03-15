@@ -50,13 +50,14 @@ public:
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
+     * @param[in] pos position (center) of the rerouter in the map
      * @param[in] routes vector of routes
      * @param[in] filename The path to the definition file
      * @param[in] probability The probability for vehicle rerouting 
      * @param[in] off Whether the router should be inactive initially
      * @param[in] blocked set initial blocking state of item 
      */
-    GNERerouter(const std::string& id, GNEViewNet* viewNet, std::vector<GNERoute*> routes, const std::string& filename, SUMOReal probability, bool off, bool blocked);
+    GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNERoute*> routes, const std::string& filename, SUMOReal probability, bool off, bool blocked);
 
     /// @brief Destructor
     ~GNERerouter();
@@ -65,6 +66,12 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
+    /** @brief change the position of the additionalSet geometry without registering undo/redo
+     * @param[in] pos new position of additionalSet
+     * @param[in] undoList pointer to the undo list
+     */
+    void moveRerouter(Position pos, GNEUndoList *undoList);
+
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
@@ -72,6 +79,10 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
+    /// @brief Returns the name of the parent object (if any)
+    /// @return This object's parent id
+    const std::string& getParentName() const;
+
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
