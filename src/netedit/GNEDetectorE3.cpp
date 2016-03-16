@@ -30,6 +30,7 @@
 #include <string>
 #include <iostream>
 #include <utility>
+#include <utils/geom/GeomConvHelper.h>
 #include <foreign/polyfonts/polyfonts.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/common/RandHelper.h>
@@ -103,11 +104,11 @@ GNEDetectorE3::updateGeometry() {
 
 
 void 
-GNEDetectorE3::moveDetector(Position pos, GNEUndoList *undoList) {
+GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
         // change Position
-        undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(pos)));
+        undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(Position(posx, posy, 0))));
     }
 }
 
@@ -229,6 +230,8 @@ GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
+        case SUMO_ATTR_POSITION:
+            return toString(myPosition);
         case SUMO_ATTR_FREQUENCY:
             return toString(myFreq);
         case SUMO_ATTR_FILE:
@@ -248,6 +251,7 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FREQUENCY:
+        case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FILE:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
@@ -263,6 +267,9 @@ GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_POSITION:
+            bool ok;
+            return GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false).size() == 1;
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
@@ -279,8 +286,13 @@ void
 GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-        case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_POSITION:
+            bool ok;
+            myPosition = GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false)[0];
+            updateGeometry();
+            getViewNet()->update();
+            break;
         case SUMO_ATTR_FREQUENCY:
             myFreq = parse<SUMOReal>(value);
             break;

@@ -66,11 +66,12 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
-    /** @brief change the position of the additionalSet geometry without registering undo/redo
-     * @param[in] pos new position of additionalSet
+    /** @brief change the position of the rerouter geometry without registering undo/redo
+     * @param[in] posx new x position of rerouter in the map
+     * @param[in] posy new y position of rerouter in the map
      * @param[in] undoList pointer to the undo list
      */
-    void moveRerouter(Position pos, GNEUndoList *undoList);
+    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element

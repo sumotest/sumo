@@ -59,7 +59,7 @@ public:
      * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet 
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked = false, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
+    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked = false, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEDetector();
@@ -67,19 +67,17 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
-    /** @brief change the position of the detector geometry without registering undo/redo
-     * @param[in] distance value for the movement. Positive for right, negative for left
+    /** @brief change the position of the additional geometry without registering undo/redo
+     * @param[in] posx new x position of additional over lane
+     * @param[in] posy unused
      * @param[in] undoList pointer to the undo list
      */
-    void moveDetector(SUMOReal distance, GNEUndoList *undoList);
+    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
-
-    /// @brief Returns Detector's lane
-    GNELane& getLane() const;
 
     /// @brief Returns the position of the detector over lane
     SUMOReal getPositionOverLane() const;
@@ -162,9 +160,6 @@ public:
     //@}
 
 protected:
-    /// @brief Lane in which this detector is placed
-    GNELane &myLane;
-
     /// @brief Position of lane in which detector is placed
     SUMOReal myPosOverLane;
     
@@ -191,7 +186,7 @@ private:
     virtual void setColors() = 0;
 
     /// @brief Invalidate return position of additional
-    const Position &getPositionInView() const;
+    const Position &getPosition() const;
 
     /// @brief Invalidate set new position in the view
     void setPosition(const Position &pos);

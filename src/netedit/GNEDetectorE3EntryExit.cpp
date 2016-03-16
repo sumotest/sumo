@@ -72,7 +72,7 @@ bool GNEDetectorE3EntryExit::detectorExitInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane &lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
+GNEDetectorE3EntryExit::GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
     GNEDetector(id, viewNet, tag, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
     // Update geometry;
     updateGeometry();
@@ -94,7 +94,7 @@ GNEDetectorE3EntryExit::updateGeometry() {
     myShape.clear();
 
     // Get shape of lane parent
-    myShape.push_back(myLane.getShape().positionAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)));
+    myShape.push_back(myLane->getShape().positionAtOffset(myLane->getPositionRelativeToParametricLenght(myPosOverLane)));
 
     // Obtain first position
     Position f = myShape[0] - Position(1, 0);
@@ -103,7 +103,7 @@ GNEDetectorE3EntryExit::updateGeometry() {
     Position s = myShape[0] + Position(1, 0);
 
     // Save rotation (angle) of the vector constructed by points f and s
-    myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
+    myShapeRotations.push_back(myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
 
     // Set position of logo
     myDetectorLogoPosition = myShape.getLineCenter() + Position(2, 0);
@@ -124,7 +124,7 @@ GNEDetectorE3EntryExit::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
+    device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
     device.writeAttr(SUMO_ATTR_FILE, myFilename);
@@ -293,7 +293,7 @@ GNEDetectorE3EntryExit::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+            return toString(myLane->getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
             return toString(myPosOverLane);
         default:
@@ -329,7 +329,7 @@ GNEDetectorE3EntryExit::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane.getLaneParametricLenght()));
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }

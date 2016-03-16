@@ -70,7 +70,7 @@ bool GNEDetectorE1::detectorE1Initialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane& lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType, bool blocked) :
+GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType, bool blocked) :
     GNEDetector(id, viewNet, SUMO_TAG_E1DETECTOR, lane, pos, freq, filename, blocked),
     mySplitByType(splitByType) {
     // Update geometry;
@@ -94,7 +94,7 @@ GNEDetectorE1::updateGeometry() {
     myShape.clear();
 
     // Get shape of lane parent
-    myShape.push_back(myLane.getShape().positionAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)));
+    myShape.push_back(myLane->getShape().positionAtOffset(myLane->getPositionRelativeToParametricLenght(myPosOverLane)));
 
     // Obtain first position
     Position f = myShape[0] - Position(1, 0);
@@ -103,7 +103,7 @@ GNEDetectorE1::updateGeometry() {
     Position s = myShape[0] + Position(1, 0);
 
     // Save rotation (angle) of the vector constructed by points f and s
-    myShapeRotations.push_back(myLane.getShape().rotationDegreeAtOffset(myLane.getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
+    myShapeRotations.push_back(myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosOverLane)) * -1);
 
     // Set position of logo
     myDetectorLogoPosition = myShape.getLineCenter() - Position(1, 0);
@@ -124,7 +124,7 @@ GNEDetectorE1::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_LANE, getLane().getID());
+    device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
     device.writeAttr(SUMO_ATTR_FILE, myFilename);
@@ -254,6 +254,9 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         // Add a draw matrix
         glPushMatrix();
 
+        // Check
+        //glRotated(myShapeRotations[0], 0, 0, 1);
+
         // Draw logo
         glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType() + 0.1);
         glColor3d(1, 1, 1);
@@ -280,7 +283,7 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(myLane.getAttribute(SUMO_ATTR_ID));
+            return toString(myLane->getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
             return toString(myPosOverLane);
         case SUMO_ATTR_FREQUENCY:
@@ -298,7 +301,7 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
 
 void 
 GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-if (value == getAttribute(key)) {
+    if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
     switch (key) {
@@ -326,7 +329,7 @@ GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane.getLaneParametricLenght()));
+            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:

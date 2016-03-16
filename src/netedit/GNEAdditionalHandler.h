@@ -151,7 +151,6 @@ public:
     ///
     /// Called with parsed values, these methods build the trigger.
     //@{
-
     /** @brief Builds additional / additionalSet 
      * @param[in] viewNet pointer to viewNet in wich additional will be created
      * @param[in] tag tag of the additiona lto create

@@ -557,7 +557,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
 bool 
 GNEAdditionalHandler::buildBusStop(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_BUS_STOP, id) == NULL) {
-        GNEBusStop* busStop = new GNEBusStop(id, *lane, viewNet, startPos, endPos, lines, blocked);
+        GNEBusStop* busStop = new GNEBusStop(id, lane, viewNet, startPos, endPos, lines, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_BUS_STOP));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), busStop, true), true);
         viewNet->getUndoList()->p_end();
@@ -572,7 +572,7 @@ GNEAdditionalHandler::buildBusStop(GNEViewNet *viewNet, const std::string& id, G
 bool 
 GNEAdditionalHandler::buildChargingStation(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_CHARGING_STATION, id) == NULL) {
-        GNEChargingStation* chargingStation = new GNEChargingStation(id, *lane, viewNet, startPos, endPos, chargingPower, efficiency, chargeInTransit, chargeDelay, blocked);
+        GNEChargingStation* chargingStation = new GNEChargingStation(id, lane, viewNet, startPos, endPos, chargingPower, efficiency, chargeInTransit, chargeDelay, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_CHARGING_STATION));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), chargingStation, true), true);
         viewNet->getUndoList()->p_end();
@@ -587,7 +587,7 @@ GNEAdditionalHandler::buildChargingStation(GNEViewNet *viewNet, const std::strin
 bool 
 GNEAdditionalHandler::buildDetectorE1(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_E1DETECTOR, id) == NULL) {
-        GNEDetectorE1 *detectorE1 = new GNEDetectorE1(id, *lane, viewNet, pos, freq, filename, splitByType, blocked);
+        GNEDetectorE1 *detectorE1 = new GNEDetectorE1(id, lane, viewNet, pos, freq, filename, splitByType, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E1DETECTOR));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE1, true), true);
         viewNet->getUndoList()->p_end();
@@ -602,7 +602,7 @@ GNEAdditionalHandler::buildDetectorE1(GNEViewNet *viewNet, const std::string& id
 bool 
 GNEAdditionalHandler::buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename,  bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_E2DETECTOR, id) == NULL) {
-        GNEDetectorE2 *detectorE2 = new GNEDetectorE2(id, *lane, viewNet, pos, length, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, blocked);
+        GNEDetectorE2 *detectorE2 = new GNEDetectorE2(id, lane, viewNet, pos, length, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E2DETECTOR));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE2, true), true);
         viewNet->getUndoList()->p_end();
@@ -632,7 +632,7 @@ GNEAdditionalHandler::buildDetectorE3(GNEViewNet *viewNet, const std::string& id
 bool 
 GNEAdditionalHandler::buildDetectorEntry(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, id) == NULL) {
-        GNEDetectorE3EntryExit *entry = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_ENTRY, *lane, pos, detectorParent, blocked);
+        GNEDetectorE3EntryExit *entry = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, detectorParent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_ENTRY));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), entry, true), true);
         viewNet->getUndoList()->p_end();
@@ -647,7 +647,7 @@ GNEAdditionalHandler::buildDetectorEntry(GNEViewNet *viewNet, const std::string&
 bool 
 GNEAdditionalHandler::buildDetectorExit(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_EXIT, id) == NULL) {
-        GNEDetectorE3EntryExit *exit = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_EXIT, *lane, pos, detectorParent, blocked);
+        GNEDetectorE3EntryExit *exit = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_EXIT, lane, pos, detectorParent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_EXIT));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), exit, true), true);
         viewNet->getUndoList()->p_end();

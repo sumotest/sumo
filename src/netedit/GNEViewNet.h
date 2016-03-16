@@ -79,9 +79,6 @@ class GNEConnector;
 class GNETLSEditor;
 class GNEAdditionalFrame;   // PABLO #1916
 class GNEAdditional;        // PABLO #1916
-class GNEStoppingPlace;     // PABLO #1916
-class GNEDetector;          // PABLO #1916
-class GNEDetector;
 class GNEPoly;
 
 // ===========================================================================
@@ -236,13 +233,13 @@ protected:
     GNEViewNet() {}
 
 private:
-    // we are not responsible for deletion
+    /// @brief we are not responsible for deletion
     GNENet* myNet;
 
-    // the current edit mode
+    /// @brief the current edit mode
     EditMode myEditMode;
 
-    // the previous edit mode used for toggling
+    /// @brief the previous edit mode used for toggling
     EditMode myPreviousEditMode;
 
     FXMenuCheck* mySelectEdges;
@@ -251,22 +248,17 @@ private:
 
     /// @name the state-variables of the create-edge state-machine
     // @{
-    /* @brief source junction for new edge
-    * 0 if no edge source is selected
-    * an existing (or newly created) junction otherwise
-    */
+    /// @brief source junction for new edge 0 if no edge source is selected an existing (or newly created) junction otherwise
     GNEJunction* myCreateEdgeSource;
 
-    /* @brief whether the endpoint for a created edge should be set as the new
-     * source
-     */
+    /// @brief whether the endpoint for a created edge should be set as the new source
     FXMenuCheck* myChainCreateEdge;
     FXMenuCheck* myAutoCreateOppositeEdge;
     // @}
 
     /// @name the state-variables of the move state-machine
     // @{
-    ///@brief the Junction to be moved.
+    /// @brief the Junction to be moved.
     GNEJunction* myJunctionToMove;
 
     /// @brief the edge of which geometry is being moved
@@ -275,14 +267,11 @@ private:
     /// @brief the poly of which geometry is being moved
     GNEPoly* myPolyToMove;
 
-    /// @brief the stoppingPlace element of which shape is being moved  // PABLO #1916
-    GNEStoppingPlace* myStoppingPlaceToMove;                            // PABLO #1916
+    /// @brief the stoppingPlace element which shape is being moved         // PABLO #1916
+    GNEAdditional* myAdditionalToMove;                                      // PABLO #1916
 
-    /// @brief the Detector element of which shape is being moved       // PABLO #1916
-    GNEDetector* myDetectorToMove;                                      // PABLO #1916
-
-    /// @brief variable to save the position of the click over the lane // PABLO #1916
-    SUMOReal myAdditionalToMoveFirstPosition;                           // PABLO #1916
+    /// @brief variable to save the firstposition of the additional before move // PABLO #1916
+    Position myAdditionalFirstPosition;                                         // PABLO #1916
 
     /// @brief position from which to move edge geometry
     Position myMoveSrc;

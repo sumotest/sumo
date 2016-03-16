@@ -58,9 +58,8 @@ public:
      * @param[in] startPos Start position of the StoppingPlace
      * @param[in] endPos End position of the StoppingPlace
      * @param[in] blocked set initial blocking state of item 
-     * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane& lane, SUMOReal startPos, SUMOReal endPos, bool blocked = false, GNEAdditionalSet *parent = NULL);
+    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal startPos, SUMOReal endPos, bool blocked = false);
 
     /// @brief Destructor
     ~GNEStoppingPlace();
@@ -69,18 +68,16 @@ public:
     virtual void updateGeometry() = 0;
 
     /** @brief change the position of the StoppingPlace geometry without registering undo/redo
-     * @param[in] distance value for the movement. Positive for right, negative for left
+     * @param[in] posx new position of StoppingPlaceover lane
+     * @param[in] posy unused
      * @param[in] undoList pointer to the undo list
      */
-    void moveStoppingPlace(SUMOReal distance, GNEUndoList *undoList);
+    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
-
-    /// @brief Returns the lane in which the stoppingPlace is placed
-    GNELane &getLane() const;
 
     /// @brief Returns the Start position of the stoppingPlace
     SUMOReal getstartPosition() const;
@@ -161,14 +158,11 @@ public:
     //@}
 
 protected:
-    /// @brief Lane in which this stopping place is placed
-    GNELane &myLane;
-
     /// @brief The start position this stopping place is located at
     SUMOReal myStartPos;
 
     /// @brief The end position this stopping place is located at
-    SUMOReal myendPos;
+    SUMOReal myEndPos;
 
     /// @brief The position of the sign
     Position mySignPos;

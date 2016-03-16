@@ -55,7 +55,7 @@ public:
      * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane &lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
+    GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
 
     /// @brief destructor
     ~GNEDetectorE3EntryExit();

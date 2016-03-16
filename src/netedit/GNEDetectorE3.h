@@ -64,11 +64,12 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
-    /** @brief change the position of the detector geometry without registering undo/redo
-     * @param[in] pos new position of detector
+    /** @brief change the position of the E3 geometry without registering undo/redo
+     * @param[in] posx new x position of item in the map
+     * @param[in] posy new y position of item in the map
      * @param[in] undoList pointer to the undo list
      */
-    void moveDetector(Position pos, GNEUndoList *undoList);
+    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /** @brief writte additionalSet element into a xml file
      * @param[in] device device in which write parameters of additionalSet element

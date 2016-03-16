@@ -64,8 +64,8 @@
 // member method definitions
 // ===========================================================================
 
-GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked) :
-    GNEAdditional(id, viewNet, pos, tag, blocked) {
+GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked, GNELane *lane) :
+    GNEAdditional(id, viewNet, pos, tag, blocked, lane) {
 }
 
 

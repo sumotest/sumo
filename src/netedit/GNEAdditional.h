@@ -65,14 +65,23 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of view in which additional is located
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
-     * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
+        * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
+     * @param[in] lane Pointer to lane, NULL if additional don't belong to a Lane
      * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet 
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
+    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, GNELane *lane = NULL, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEAdditional();
+
+    /** @brief change the position of the additional geometry without registering undo/redo
+     * @param[in] posx new x position of idem in the map or over lane
+     * @param[in] posy new y position of item in the map
+     * @param[in] undoList pointer to the undo list
+     * @note if additional belongs to a Lane, posx correspond to position over lane
+     */
+    virtual void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) = 0;
 
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)
@@ -83,6 +92,9 @@ public:
 
     /// @brief Returns GNEViewNet in which additional element is located
     GNEViewNet* getViewNet() const;
+
+    /// @brief Returns pointer to Lane (or NULL if additional don't belont to a Lane)
+    GNELane* getLane() const;
 
     /// @brief Returns string with the information of additional element's shape
     std::string getShape() const;
@@ -183,7 +195,11 @@ protected:
     /// @brief The GNEViewNet this additional element belongs
     GNEViewNet* myViewNet;
 
+    /// @brief The GNEViewNet this additional element belongs
+    GNELane* myLane;
+
     /// @brief The position in which this additional element is located
+    /// @note if this element belongs to a Lane, x() value will be the position over Lane
     Position myPosition;
 
     /// @brief The shape of the additional element

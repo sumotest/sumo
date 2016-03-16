@@ -94,8 +94,12 @@ GNERerouter::updateGeometry() {
 
 
 void 
-GNERerouter::moveRerouter(Position pos, GNEUndoList *undoList) {
-
+GNERerouter::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
+    // if item isn't blocked
+    if(myBlocked == false) {
+        // change Position
+        undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(Position(posx, posy, 0))));
+    }
 }
 
 
