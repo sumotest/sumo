@@ -119,6 +119,8 @@ public:
         /// the stored speed
         SUMOReal mySpeed;
 
+        /// the stored speed for the previous time step
+        SUMOReal myPreviousSpeed;
     };
 
 
@@ -293,6 +295,14 @@ public:
      */
     SUMOReal getSpeed() const {
         return myState.mySpeed;
+    }
+
+
+    /** @brief Returns the vehicle's speed before the previous time step
+     * @return The vehicle's speed before the previous time step
+     */
+    SUMOReal getPreviousSpeed() const {
+        return myState.myPreviousSpeed;
     }
 
 

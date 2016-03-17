@@ -468,7 +468,16 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
 void
 MSVehicle::onRemovalFromNet(const MSMoveReminder::Notification reason) {
     MSVehicleTransfer::getInstance()->remove(this);
-    workOnMoveReminders(myState.myPos - SPEED2DIST(myState.mySpeed), myState.myPos, myState.mySpeed);
+
+    SUMOReal oldPos;
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+    	oldPos = myState.myPos - SPEED2DIST(myState.mySpeed);
+    } else {
+    	oldPos = myState.myPos - SPEED2DIST(myState.mySpeed + myState.myPreviousSpeed)/2.;
+    }
+    workOnMoveReminders(oldPos, myState.myPos, myState.mySpeed);
+
+
     for (DriveItemVector::iterator i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         if ((*i).myLink != 0) {
             (*i).myLink->removeApproaching(this);
@@ -1581,8 +1590,7 @@ MSVehicle::executeMove() {
     myAcceleration = SPEED2ACCEL(MAX2(vNext,0.) - myState.mySpeed);
 
     // update position and speed
-    const SUMOReal oldPos = myState.myPos;
-    SUMOReal deltaPos;
+    SUMOReal deltaPos; // positional change
     if(MSGlobals::gSemiImplicitEulerUpdate){
     	// apply implicit Euler positional update
     	deltaPos = SPEED2DIST(MAX2(vNext,0.));
@@ -1606,6 +1614,7 @@ MSVehicle::executeMove() {
 //    	std::cout << "deltaPos = " << deltaPos << std::endl;
 //    }
 
+    myState.myPreviousSpeed = myState.mySpeed;
     myState.mySpeed = MAX2(vNext,0.);
 
 #ifndef NO_TRACI
@@ -1614,6 +1623,7 @@ MSVehicle::executeMove() {
     }
 #endif
     // update position
+    SUMOReal oldPos = myState.myPos;
     myState.myPos += deltaPos;
 
     myCachedPosition = Position::INVALID;

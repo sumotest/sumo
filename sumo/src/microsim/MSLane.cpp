@@ -717,7 +717,15 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
                 // vehicle has entered a new lane (leaveLane was already called in MSVehicle::executeMove)
                 target->myVehBuffer.push_back(veh);
                 SUMOReal pspeed = veh->getSpeed();
-                SUMOReal oldPos = veh->getPositionOnLane() - SPEED2DIST(veh->getSpeed());
+
+                SUMOReal oldPos;
+                if(MSGlobals::gSemiImplicitEulerUpdate){
+                	oldPos = veh->getPositionOnLane() - SPEED2DIST(pspeed);
+                } else {
+                	oldPos = veh->getPositionOnLane() - SPEED2DIST(pspeed + veh->getPreviousSpeed())/2.;
+                }
+
+
                 veh->workOnMoveReminders(oldPos, veh->getPositionOnLane(), pspeed);
                 into.push_back(target);
                 if (veh->getLaneChangeModel().hasShadowVehicle()) {

@@ -293,7 +293,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		// Thus vn = -v^2/g + v
 
 		// if there is no gap, we just demand to brake as hard as possible
-		if(g == 0) return v - ACCEL2SPEED(getMaxDecel());
+		if(g == 0) return -std::numeric_limits<double>::max();
 		else return -v*v/g + v;
 	} else {
 		// (Leo) considering

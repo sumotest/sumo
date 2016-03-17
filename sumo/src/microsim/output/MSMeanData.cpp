@@ -84,8 +84,9 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     // if the vehicle has arrived, the reminder must be kept so it can be
     // notified of the arrival subsequently
 
-//    // Debug (Leo)
+    // Debug (Leo)
 //    std::string debug_id = "always_left.1";
+//    std::string debug_id = "always_left.74";
 //    if(veh.getID() == debug_id){
 //    	std::cout << "time " << MSNet::getInstance()->getCurrentTimeStep()
 //    			<<"\nvehicle '"<< debug_id <<"' in MeanDataValues::notifyMove(veh, "
@@ -116,18 +117,18 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     		// 3) Note, that a possible negative newSpeed (indicating stop within time step)
     		// is processed in the above formula, since the stop must occur after time tc.
 
-    		if(accel > NUMERICAL_EPS){
+    		if(accel > 0){
     			SUMOReal p_half = oldSpeed/accel; // v0/a
     			timeOnLane = TS - ( - p_half + sqrt(p_half*p_half - 2*oldPos/accel) );
-    		} else if(accel < -NUMERICAL_EPS) {
+    		} else if(accel < 0) {
     			SUMOReal p_half = oldSpeed/accel;
     			timeOnLane = TS - ( - p_half - sqrt(p_half*p_half - 2*oldPos/accel) );
     		} else { // accel \approx 0
-        		timeOnLane = newPos / newSpeed;
+        		timeOnLane = newPos / newSpeed;// Debug (Leo)
     		}
     	}
 
-//        // Debug (Leo)
+        // Debug (Leo)
 //        if(veh.getID() == debug_id){
 //        	std::cout << "time on lane (1)= " << timeOnLane << std::endl;
 //        }
@@ -149,10 +150,10 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
     		SUMOReal dPos = oldPos - (myLaneLength +  veh.getVehicleType().getLength());
 
-    		if(accel > NUMERICAL_EPS){
+    		if(accel > 0){
     			SUMOReal p_half = oldSpeed/accel; // v0/a
     			timeOnLane = ( - p_half + sqrt(p_half*p_half - 2*dPos/accel) );
-    		} else if(accel < -NUMERICAL_EPS) {
+    		} else if(accel < 0) {
     			SUMOReal p_half = oldSpeed/accel;
     			timeOnLane = ( - p_half - sqrt(p_half*p_half - 2*dPos/accel) );
     		} else { // accel \approx 0
