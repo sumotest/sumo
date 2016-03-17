@@ -540,7 +540,8 @@ GNENet::saveAdditionals(const std::string &filename) {                          
     OutputDevice& device = OutputDevice::getDevice(filename);                                                                   // PABLO #1916
     device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");   // PABLO #1916
     for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)                               // PABLO #1916
-        i->second->writeAdditional(device);                                                                                     // PABLO #1916
+        if(dynamic_cast<GNEAdditionalSet*>(i->second) == NULL)                                                                  // PABLO #1916
+            i->second->writeAdditional(device);                                                                                 // PABLO #1916
     device.close();                                                                                                             // PABLO #1916
 }                                                                                                                               // PABLO #1916
 

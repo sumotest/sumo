@@ -123,12 +123,8 @@ void
 GNEDetectorE3EntryExit::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
-    device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
-    device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
-    device.writeAttr(SUMO_ATTR_FILE, myFilename);
-    // Rest of parameters
     // Close tag
     device.closeTag();
 }

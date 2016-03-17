@@ -89,11 +89,22 @@ GNEAdditionalSet::removeAdditional(GNEAdditional *additional) {
 
 }
 
+void 
+GNEAdditionalSet::updateConnections() {
+
+}
+
 
 void 
 GNEAdditionalSet::drawConnections() {
 
 }
 
+
+void 
+GNEAdditionalSet::writeAdditionalChildrens(OutputDevice& device) {
+    for(std::vector<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        (*i)->writeAdditional(device);
+}
 
 /****************************************************************************/

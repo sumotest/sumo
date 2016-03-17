@@ -163,6 +163,9 @@ protected:
     /// @brief draw connections.
     void drawConnections();
 
+    /// @brief write children of this additionalSet
+    void writeAdditionalChildrens(OutputDevice& device);
+
 private:
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;

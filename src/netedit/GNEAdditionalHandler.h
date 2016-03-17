@@ -46,7 +46,6 @@ class GNEUndoList;
 class GNEJunction;
 class GNEEdge;
 class GNELane;
-class GNEDetectorE3;
 class MSRouteProbe;    // Equivalence in GNE?
 
 // ===========================================================================
@@ -238,24 +237,24 @@ public:
      * @param[in] id The id of the entry detector
      * @param[in] lane The lane in which the entry detector is placed on
      * @param[in] pos position of the entry detector on the lane
-     * @param[in] detectorParent pointer to parent detectorE3
+     * @param[in] idDetectorE3Parent id to parent detectorE3
      * @param[in] blocked set initial blocking state of item 
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the entry detector can not be added to the net (is duplicate)
      */
-    static bool buildDetectorEntry(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked);
+    static bool buildDetectorEntry(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, std::string idDetectorE3Parent, bool blocked);
 
     /** @brief Builds a exit detector (E3)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the exit detector
      * @param[in] lane The lane in which the exit detector is placed on
      * @param[in] pos position of the exit detector on the lane
-     * @param[in] detectorParent pointer to parent detectorE3
+     * @param[in] idDetectorE3Parent id to parent detectorE3
      * @param[in] blocked set initial blocking state of item 
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the exit detector can not be added to the net (is duplicate)
      */
-    static bool buildDetectorExit(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, GNEDetectorE3 *detectorParent, bool blocked);
+    static bool buildDetectorExit(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, std::string idDetectorE3Parent, bool blocked);
 
     /** @brief builds a microscopic calibrator
      * @param[in] viewNet viewNet in which element will be inserted
@@ -330,6 +329,9 @@ public:
 protected:
     /// @brief pointer to View's Net
     GNEViewNet* myViewNet;
+
+    /// @brief Id of the last inserted GNEAdditionalSet
+    static std::string myAdditionalSetParent;
 };
 
 

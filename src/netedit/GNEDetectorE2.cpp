@@ -148,9 +148,14 @@ GNEDetectorE2::writeAdditional(OutputDevice& device) {
     device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
+    device.writeAttr(SUMO_ATTR_LENGTH, myLength);
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
-    device.writeAttr(SUMO_ATTR_FILE, myFilename);
-    // Rest of parameters
+    if(!myFilename.empty())
+        device.writeAttr(SUMO_ATTR_FILE, myFilename);
+    device.writeAttr(SUMO_ATTR_CONT, myCont);
+    device.writeAttr(SUMO_ATTR_HALTING_TIME_THRESHOLD, myTimeThreshold);
+    device.writeAttr(SUMO_ATTR_HALTING_SPEED_THRESHOLD, mySpeedThreshold);
+    device.writeAttr(SUMO_ATTR_JAM_DIST_THRESHOLD, myJamThreshold);
     // Close tag
     device.closeTag();
 }

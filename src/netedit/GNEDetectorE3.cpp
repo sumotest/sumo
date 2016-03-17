@@ -115,7 +115,17 @@ GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoLis
 
 void 
 GNEDetectorE3::writeAdditional(OutputDevice& device) {
-
+    // Write parameters
+    device.openTag(getTag());
+    device.writeAttr(SUMO_ATTR_ID, getID());
+    device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
+    if(!myFilename.empty())
+        device.writeAttr(SUMO_ATTR_FILE, myFilename);
+    device.writeAttr(SUMO_ATTR_X, myPosition.x());
+    device.writeAttr(SUMO_ATTR_Y, myPosition.y());
+    writeAdditionalChildrens(device);
+    // Close tag
+    device.closeTag();
 }
 
 
