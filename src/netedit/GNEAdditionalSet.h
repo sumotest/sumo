@@ -76,17 +76,17 @@ public:
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
-    /** @brief add additionalSet element to this set
+    /** @brief add additional element to this set
      * @param[in] additionalSet pointer to GNEadditionalSet element to add
      * @throw ProcessError if this additionalSet element was already vinculated with another additionalSet
      */
-    void addAdditional(GNEAdditional *additional);
+    void addAdditionalChild(GNEAdditional *additional);
 
-    /** @brief remove additionalSet element to this set
+    /** @brief remove additional element to this set
      * @param[in] additionalSet pointer to GNEadditionalSet element to remove
      * @throw ProcessError if this additionalSet element isn't  vinculated with this additionalSet
      */
-    void removeAdditional(GNEAdditional *additional);
+    void removeAdditionalChild(GNEAdditional *additional);
 
     /** @brief writte additionalSet element into a xml file
      * @param[in] device device in which write parameters of additionalSet element
@@ -95,10 +95,6 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
-    /// @brief Returns the name of the parent object (if any)
-    /// @return This object's parent id
-    virtual const std::string& getParentName() const = 0; 
-
     /** @brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
@@ -154,14 +150,15 @@ public:
     //@}
 
 protected:
-    /// @brief vector with the GNEAdditionals elementen vinculated to this AdditionalSet
-    std::vector<GNEAdditional*> myAdditionals;
+    /// @brief Map with the GNEAdditionals elementen vinculated to this AdditionalSet and their middle point
+    std::map<GNEAdditional*, Position> myAdditionals;
 
-    /// @brief draw connections.
+    /// @brief update connections.
+    /// @note must be called at end of function updateGeometry of AdditionalSet parent
     void updateConnections();
 
     /// @brief draw connections.
-    void drawConnections();
+    void drawConnections() const;
 
     /// @brief write children of this additionalSet
     void writeAdditionalChildrens(OutputDevice& device);

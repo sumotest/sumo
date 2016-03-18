@@ -1037,7 +1037,6 @@ GNENet::deleteAdditional(GNEAdditional* additional) {                           
 }                                                                                                       // PABLO #1916
 
 
-
 GNEAdditional*                                                                                                                  // PABLO #1916
 GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {                                                           // PABLO #1916
     if(!myAdditionals.empty() && (myAdditionals.find(id) != myAdditionals.end()) && (myAdditionals.at(id)->getTag() == type))   // PABLO #1916

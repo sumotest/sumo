@@ -132,11 +132,4 @@ GNEDetector::setFilename(std::string filename) {
     myFilename = filename;
 }
 
-
-const std::string& 
-GNEDetector::getParentName() const {
-    return myLane->getMicrosimID();
-}
-
-
 /****************************************************************************/

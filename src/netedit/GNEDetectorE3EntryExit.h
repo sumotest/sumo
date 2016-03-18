@@ -129,9 +129,6 @@ public:
     //@}
 
 private:
-    /// @brief pointer to GNEDetectorE3 parent
-    GNEDetectorE3* myParent;
-
     /// @brief variable to save detectorEntry icon
     static GUIGlID detectorEntryGlID;
 

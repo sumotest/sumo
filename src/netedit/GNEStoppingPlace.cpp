@@ -127,10 +127,4 @@ GNEStoppingPlace::setendPosition(SUMOReal endPos) {
 }
 
 
-const std::string& 
-GNEStoppingPlace::getParentName() const {
-    return myLane->getMicrosimID();
-}
-
-
 /****************************************************************************/

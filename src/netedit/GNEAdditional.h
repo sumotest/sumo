@@ -96,8 +96,11 @@ public:
     /// @brief Returns pointer to Lane (or NULL if additional don't belont to a Lane)
     GNELane* getLane() const;
 
+    /// @brief Returns additional element's shape
+    PositionVector getShape() const;
+
     /// @brief Returns string with the information of additional element's shape
-    std::string getShape() const;
+    std::string getShapeInformation() const;
 
     /** @brief Check if item is blocked (i.e. cannot be moved with mouse)
      * @return true if element is blocked, false in other case
@@ -129,7 +132,7 @@ public:
     //@{
     /// @brief Returns the name of the parent object (if any)
     /// @return This object's parent id
-    virtual const std::string& getParentName() const = 0; 
+    const std::string& getParentName() const;
 
     /** @brief Returns an own popup-menu
      *

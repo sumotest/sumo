@@ -74,37 +74,58 @@ GNEAdditionalSet::~GNEAdditionalSet() {
 
 
 void 
-GNEAdditionalSet::addAdditional(GNEAdditional *additional) {
-    
-
-    std::map<GNEAdditional*, PositionVector> myAdditionals;
-
-    //throw ProcessError("Attempt to delete instance of GNEReferenceCounter with count " + toString(myCount));
-
+GNEAdditionalSet::addAdditionalChild(GNEAdditional *additional) {
+    myAdditionals[additional] = myPosition;
 }
 
 
 void 
-GNEAdditionalSet::removeAdditional(GNEAdditional *additional) {
-
+GNEAdditionalSet::removeAdditionalChild(GNEAdditional *additional) {
+    myAdditionals.erase(myAdditionals.find(additional));
 }
+
 
 void 
 GNEAdditionalSet::updateConnections() {
-
+    // Iterate over map
+    for(std::map<GNEAdditional*, Position>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        // If shape isn't empty, calculate middle point.
+        if(i->first->getShape().size() > 0) {
+            Position PositionOfChild = i->first->getShape()[0];
+            SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(PositionOfChild);
+            SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(PositionOfChild);
+            i->second = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
+        }
+    }
 }
 
 
 void 
-GNEAdditionalSet::drawConnections() {
+GNEAdditionalSet::drawConnections() const {
+    // Iterate over map
+    for(std::map<GNEAdditional*, Position>::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        // Add a draw matrix
+        glPushMatrix();
 
+        // Set color of the base
+        GLHelper::setColor(RGBColor(255, 235, 0, 255));
+
+        // Draw line if shape of child isn't empty
+        if(i->first->getShape().size() > 0) {
+            GLHelper::drawLine(myPosition, i->second);
+            GLHelper::drawLine(i->second, i->first->getShape()[0]);
+        }
+
+        // Pop draw matrix
+        glPopMatrix();
+    }
 }
 
 
 void 
 GNEAdditionalSet::writeAdditionalChildrens(OutputDevice& device) {
-    for(std::vector<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
-        (*i)->writeAdditional(device);
+    for(std::map<GNEAdditional*, Position>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        i->first->writeAdditional(device);
 }
 
 /****************************************************************************/

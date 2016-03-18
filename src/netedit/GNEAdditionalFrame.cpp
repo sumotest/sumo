@@ -186,14 +186,14 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
     // Save block value
     valuesOfElement[GNE_ATTR_BLOCK_MOVEMENT] = toString(myEditorParameter->isBlockEnabled());
     // Save all editable parameters
-    for(int i = 0; i < this->myIndexParameter; i++)
+    for(int i = 0; i < myIndexParameter; i++)
         valuesOfElement[myVectorOfAdditionalParameter.at(i)->getAttr()] = myVectorOfAdditionalParameter.at(i)->getValue();
     // If element belongst to an additional Set, get id of parent from myAdditionalSet
     if(GNEAttributeCarrier::hasParent(myActualAdditionalType)) {
-        if(this->myAdditionalSet->getIdSelected() != "")
+        if(myAdditionalSet->getIdSelected() != "")
             valuesOfElement[GNE_ATTR_PARENT] = myAdditionalSet->getIdSelected();
         else {
-            std::cout << "MOSTRAR ERROR EN CONSOLA" << std::endl;
+            WRITE_ERROR("A " + toString(myAdditionalSet->getCurrentlyTag()) + " must be selected before insertion of " + toString(myActualAdditionalType) + ".");
             return false;
         }
     }
@@ -325,6 +325,8 @@ GNEAdditionalFrame::setStartPosition(SUMOReal laneLenght, SUMOReal positionOfThe
                 return 0;
             else
                 return -1;
+        default:
+            return -1;
     }
 }
 
@@ -682,7 +684,8 @@ GNEAdditionalFrame::editorParameter::onCmdHelp(FXObject*, FXSelector, void*) {
 
 GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* updateTarget) :
     FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0), 
-    myViewNet(updateTarget) {
+    myViewNet(updateTarget),
+    myType(SUMO_TAG_NOTHING) {
     
     // Create label with the type of additionalSet
     mySetLabel = new FXLabel(this, "Set Type:", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
@@ -702,19 +705,26 @@ GNEAdditionalFrame::additionalSet::~additionalSet() {}
 
 
 std::string
-GNEAdditionalFrame::additionalSet::getIdSelected() {
-    if(myList->getCurrentItem() == -1)
-        return "";
-    else
-        return myList->getItem(myList->getCurrentItem())->getText().text();
+GNEAdditionalFrame::additionalSet::getIdSelected() const {
+    for(int i = 0; i < myList->getNumItems(); i++)
+        if(myList->isItemSelected(i))
+            return myList->getItem(i)->getText().text();
+    return "";
+}
+
+
+SumoXMLTag 
+GNEAdditionalFrame::additionalSet::getCurrentlyTag() const {
+    return myType;
 }
 
 
 void 
 GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
-    mySetLabel->setText(("Type of set: " + toString(type)).c_str());
+    myType = type;
+    mySetLabel->setText(("Type of set: " + toString(myType)).c_str());
     myList->clearItems();
-    std::vector<GNEAdditional*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionals(type);
+    std::vector<GNEAdditional*> vectorOfAdditionalSets = myViewNet->getNet()->getAdditionals(myType);
     for(std::vector<GNEAdditional*>::iterator i = vectorOfAdditionalSets.begin(); i != vectorOfAdditionalSets.end(); i++)
         myList->appendItem((*i)->getID().c_str());
     show();
@@ -723,6 +733,7 @@ GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
 
 void 
 GNEAdditionalFrame::additionalSet::hideList() {
+    myType = SUMO_TAG_NOTHING;
     FXGroupBox::hide();
 }
 

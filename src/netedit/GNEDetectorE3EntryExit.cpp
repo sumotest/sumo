@@ -48,6 +48,7 @@
 #include <utils/xml/SUMOSAXHandler.h>
 
 #include "GNEDetectorE3EntryExit.h"
+#include "GNEDetectorE3.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
@@ -116,6 +117,9 @@ GNEDetectorE3EntryExit::updateGeometry() {
 
     // Set rotation of the detector icon
     mySignRotation = (myRotation * offsetSign) - 90;
+
+    // Update parent geometry
+    myParent->updateGeometry();
 }
 
 

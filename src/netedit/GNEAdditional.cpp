@@ -83,7 +83,7 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     myParent(parent) {
     // If this additional belongs to a set, add it.
     if(myParent)
-        myParent->addAdditional(this);
+        myParent->addAdditionalChild(this);
     // If this additional belongs to a Lane, add it
     if(myLane)
         myLane->addAdditional(this);
@@ -93,7 +93,7 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
 GNEAdditional::~GNEAdditional() {
     // If this additional belongs to a set, remove it.
     if(myParent)
-        myParent->removeAdditional(this);
+        myParent->removeAdditionalChild(this);
     // If this additional belongs to a lane, remove it.
     if(myLane)
         myLane->removeAdditional(this);
@@ -117,8 +117,15 @@ GNEAdditional::getLane() const {
     return myLane;
 }
 
-std::string
+
+PositionVector
 GNEAdditional::getShape() const {
+    return myShape;
+}
+
+
+std::string
+GNEAdditional::getShapeInformation() const {
     return toString(myShape);
 }
 
@@ -140,6 +147,7 @@ GNEAdditional::getAdditionalSetParent() const {
     return myParent;
 }
 
+
 void 
 GNEAdditional::setBlocked(bool value) {
     myBlocked = value;
@@ -149,6 +157,15 @@ GNEAdditional::setBlocked(bool value) {
 void 
 GNEAdditional::setPositionInView(const Position &pos) {
     myPosition = pos;
+}
+
+
+const std::string& 
+GNEAdditional::getParentName() const {
+    if(myLane)
+        return myLane->getMicrosimID();
+    else
+        myViewNet->getNet()->getMicrosimID();
 }
 
 

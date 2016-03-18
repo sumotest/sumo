@@ -272,7 +272,10 @@ public:
         ~additionalSet();
 
         /// @brief get if currently additional Set
-        std::string getIdSelected();
+        std::string getIdSelected() const;
+
+        /// @brief get current tag
+        SumoXMLTag getCurrentlyTag() const;
 
         /// @brief Show list of additionalSet
         void showList(SumoXMLTag type);
@@ -294,6 +297,9 @@ public:
         additionalSet() {}
 
     private:        
+        /// @brief current type
+        SumoXMLTag myType;
+
         /// @brief List of Set
         FXList *myList;
 

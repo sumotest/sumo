@@ -100,6 +100,9 @@ GNEDetectorE3::updateGeometry() {
 
     // Set block icon position
     myBlockIconPos = myPosition + Position(-0.5, 0.5);
+
+    // Update connections
+    updateConnections();
 }
 
 
@@ -128,11 +131,6 @@ GNEDetectorE3::writeAdditional(OutputDevice& device) {
     device.closeTag();
 }
 
-
-const std::string& 
-GNEDetectorE3::getParentName() const {
-    return "";
-}
 
 GUIGLObjectPopupMenu* 
 GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
@@ -226,6 +224,9 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Show Lock icon depending of the Edit mode
     if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
         drawLockIcon(0.4);
+
+    // Draw connections
+    drawConnections();
 
     // Pop name
     glPopName();

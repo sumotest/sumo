@@ -109,11 +109,6 @@ GNERerouter::writeAdditional(OutputDevice& device) {
 }
 
 
-const std::string& 
-GNERerouter::getParentName() const {
-    return "";
-}
-
 GUIGLObjectPopupMenu* 
 GNERerouter::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);

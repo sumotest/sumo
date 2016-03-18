@@ -331,7 +331,7 @@ protected:
     GNEViewNet* myViewNet;
 
     /// @brief Id of the last inserted GNEAdditionalSet
-    static std::string myAdditionalSetParent;
+    std::string myAdditionalSetParent;
 };
 
 

@@ -48,11 +48,6 @@
 #include <foreign/nvwa/debug_new.h>
 #endif
 
-// ===========================================================================
-// static members
-// ===========================================================================
-
-std::string GNEAdditionalHandler::myAdditionalSetParent;
 
 // ===========================================================================
 // member method definitions
@@ -531,20 +526,20 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         case SUMO_TAG_DET_ENTRY: {
             // get own attributes of detector Entry
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
-            GNEDetectorE3 *detectorParent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR ,values[GNE_ATTR_PARENT]));
+            std::string detectorE3ParentID = values[GNE_ATTR_PARENT];
             // Build detector Entry
-            if(lane && detectorParent)
-                return buildDetectorEntry(viewNet, id, lane, pos, myAdditionalSetParent, blocked);
+            if(lane && !detectorE3ParentID.empty())
+                return buildDetectorEntry(viewNet, id, lane, pos, detectorE3ParentID, blocked);
             else
                 return false;
         }
         case SUMO_TAG_DET_EXIT: {
             // get own attributes of Detector Exit
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]); 
-            GNEDetectorE3 *detectorParent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR ,values[GNE_ATTR_PARENT]));
+            std::string detectorE3ParentID = values[GNE_ATTR_PARENT];
             // Build detector Exit
-            if(lane && detectorParent)
-                return buildDetectorExit(viewNet, id, lane, pos, myAdditionalSetParent, blocked);
+            if(lane && !detectorE3ParentID.empty())
+                return buildDetectorExit(viewNet, id, lane, pos, detectorE3ParentID, blocked);
             else
                 return false;
         }
