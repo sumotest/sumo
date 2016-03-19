@@ -1,4 +1,5 @@
-﻿#include <fstream>
+#include <cstdlib>
+#include <fstream>
 #include "Start.h"
 #include "CEPHandler.h"
 #include "Helpers.h"
@@ -21,7 +22,13 @@ namespace PHEMlightdll {
         //Borrow
         Helper->setCommentPrefix(CommentPref);
         Helper->setPHEMDataV(PHEMDataV);
-        _DataPath = VEH.substr(0, VEH.rfind("\\"));
+        std::vector<std::string> phemPath;
+        if (getenv("PHEMLIGHT_PATH") != 0) {
+            phemPath.push_back(std::string(getenv("PHEMLIGHT_PATH")) + "/");
+        }
+        if (getenv("SUMO_HOME") != 0) {
+            phemPath.push_back(std::string(getenv("SUMO_HOME")) + "/data/emissions/PHEMlight/");
+        }
 
         {
             //Get vehicle string
@@ -34,7 +41,7 @@ namespace PHEMlightdll {
             DataInput = new CEPHandler();
 
             //Read the vehicle and emission data
-            if (!DataInput->GetCEP(_DataPath, Helper)) {
+            if (!DataInput->GetCEP(phemPath, Helper)) {
                 VehicleResultsOrg.clear();
                 return false;
             }
@@ -46,7 +53,7 @@ namespace PHEMlightdll {
             acc = (Velocity[i] - Velocity[i - 1]) / (Time[i] - Time[i - 1]);
 
             //Calculate and save the data in the List
-            _VehicleResult.push_back(PHEMLight::CreateVehicleStateData(Helper, DataInput->getCEPS()[Helper->getgClass()], Time[i - 1], Velocity[i - 1], acc, Gradient[i - 1]));
+            _VehicleResult.push_back(PHEMLight::CreateVehicleStateData(Helper, DataInput->getCEPS().find(Helper->getgClass())->second, Time[i - 1], Velocity[i - 1], acc, Gradient[i - 1]));
             if (Helper->getErrMsg() != "") {
                 VehicleResultsOrg.clear();
                 return false;
@@ -64,7 +71,13 @@ namespace PHEMlightdll {
         //Borrow
         Helper->setCommentPrefix(CommentPref);
         Helper->setPHEMDataV(PHEMDataV);
-        _DataPath = VEH.substr(0, VEH.rfind("\\"));
+        std::vector<std::string> phemPath;
+        if (getenv("PHEMLIGHT_PATH") != 0) {
+            phemPath.push_back(std::string(getenv("PHEMLIGHT_PATH")) + "/");
+        }
+        if (getenv("SUMO_HOME") != 0) {
+            phemPath.push_back(std::string(getenv("SUMO_HOME")) + "/data/emissions/PHEMlight/");
+        }
 
         {
         //Read the vehicle and emission data
@@ -78,14 +91,14 @@ namespace PHEMlightdll {
             DataInput = new CEPHandler();
 
             //Read the vehicle and emission data
-            if (!DataInput->GetCEP(_DataPath, Helper)) {
+            if (!DataInput->GetCEP(phemPath, Helper)) {
                 VehicleResultsOrg.clear();
                 return false;
             }
         }
 
         //Calculate and save the data in the List
-        _VehicleResult.push_back(PHEMLight::CreateVehicleStateData(Helper, DataInput->getCEPS()[Helper->getgClass()], Time, Velocity, acc, Gradient));
+        _VehicleResult.push_back(PHEMLight::CreateVehicleStateData(Helper, DataInput->getCEPS().find(Helper->getgClass())->second, Time, Velocity, acc, Gradient));
         VehicleResultsOrg = _VehicleResult;
         return true;
     }
@@ -139,7 +152,7 @@ namespace PHEMlightdll {
 
         // Write the string to a file.
         try {
-            std::ofstream file(path);
+            std::ofstream file(path.c_str());
             file << allLines->toString();
             return true;
         }
@@ -196,7 +209,7 @@ namespace PHEMlightdll {
 
         // Write the string to a file.
         try {
-            std::ofstream file(path);
+            std::ofstream file(path.c_str());
             file << allLines->toString();
             return true;
         }

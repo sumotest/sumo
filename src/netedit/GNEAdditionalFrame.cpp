@@ -250,8 +250,9 @@ GNEAdditionalFrame::setParameters(SumoXMLTag actualAdditionalType) {
         myVectorOfAdditionalParameter.at(i)->hideParameter();
     for(int i = 0; i < maxNumberOfListParameters; i++)
         myVectorOfadditionalParameterList.at(i)->hideParameter();
-    // Hide lenght field
+    // Hide lenght field and editorParameter
     myEditorParameter->hideLengthField();
+    /** NOTA: Hay que poner aquí lo de ocultar los puntos de referencia **/
     // Obtain attributes of actual myActualAdditionalType
     std::vector<std::pair <SumoXMLAttr, std::string> > attrs = GNEAttributeCarrier::allowedAttributes(myActualAdditionalType);
     // reset indexes

@@ -1,4 +1,4 @@
-﻿#ifndef PHEMlightSTART
+#ifndef PHEMlightSTART
 #define PHEMlightSTART
 
 #include <string>
@@ -16,7 +16,6 @@ namespace PHEMlightdll { class CEP; }
 namespace PHEMlightdll {
     class Start {
     private:
-        std::string _DataPath;
         CEPHandler* DataInput;
     public:
         Helpers* Helper;

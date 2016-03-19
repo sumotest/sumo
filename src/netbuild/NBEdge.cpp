@@ -1885,9 +1885,7 @@ NBEdge::moveOutgoingConnectionsFrom(NBEdge* e, unsigned int laneOff) {
         for (std::vector<NBEdge::Connection>::iterator j = elv.begin(); j != elv.end(); j++) {
             NBEdge::Connection el = *j;
             assert(el.tlID == "");
-            bool ok = addLane2LaneConnection(i + laneOff, el.toEdge, el.toLane, L2L_COMPUTED);
-            assert(ok);
-            UNUSED_PARAMETER(ok); // only used for assertion
+            addLane2LaneConnection(i + laneOff, el.toEdge, el.toLane, L2L_COMPUTED);
         }
     }
 }
@@ -2200,7 +2198,7 @@ NBEdge::incLaneNo(unsigned int by) {
     unsigned int newLaneNo = (unsigned int) myLanes.size() + by;
     while (myLanes.size() < newLaneNo) {
         // recompute shapes on last addition
-        const bool recompute = myLanes.size() == newLaneNo - 1;
+        const bool recompute = (myLanes.size() == newLaneNo - 1) && myStep < LANES2LANES_USER;
         addLane((unsigned int)myLanes.size(), recompute);
     }
 }
@@ -2227,7 +2225,7 @@ NBEdge::decLaneNo(unsigned int by) {
     assert(newLaneNo > 0);
     while (myLanes.size() > newLaneNo) {
         // recompute shapes on last removal
-        const bool recompute = myLanes.size() == newLaneNo + 1;
+        const bool recompute = myLanes.size() == newLaneNo + 1 && myStep < LANES2LANES_USER;
         deleteLane((unsigned int)((int)myLanes.size() - 1), recompute);
     }
 }
@@ -2538,6 +2536,23 @@ NBEdge::shiftPositionAtNode(NBNode* node, NBEdge* other) {
             myGeom[i] = tmp[i];
         }
     }
+}
+
+
+SUMOReal 
+NBEdge::getFinalLength() const {
+    SUMOReal result = getLoadedLength();
+    if (OptionsCont::getOptions().getBool("no-internal-links") && !hasLoadedLength()) {
+        // use length to junction center even if a modified geometry was given
+        PositionVector geom = cutAtIntersection(myGeom);
+        geom.push_back_noDoublePos(getToNode()->getCenter());
+        geom.push_front_noDoublePos(getFromNode()->getCenter());
+        result = geom.length();
+    }
+    if (result <= 0) {
+        result = POSITION_EPS;
+    }
+    return result;
 }
 
 /****************************************************************************/

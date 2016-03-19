@@ -1,4 +1,6 @@
-﻿#include "CEP.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include "CEP.h"
 #include "Constants.h"
 #include "Helpers.h"
 
@@ -211,7 +213,7 @@ namespace PHEMlightdll {
         int upperIndex;
         int lowerIndex;
 
-        if (VehicleClass->gettClass() != Constants::strBEV) {
+        if (_fuelType != Constants::strBEV) {
             if (std::abs(speed) <= Constants::ZERO_SPEED_ACCURACY) {
                 if (pollutant == "FC") {
                     return _idlingValueFC;
@@ -308,7 +310,7 @@ namespace PHEMlightdll {
 
         double iTot = iGear * _axleRatio;
 
-        double n = (30 * speed * iTot) / ((_effectiveWheelDiameter / 2) * Constants::M_PI);
+        double n = (30 * speed * iTot) / ((_effectiveWheelDiameter / 2) * M_PI);
         double nNorm = (n - _engineIdlingSpeed) / (_engineRatedSpeed - _engineIdlingSpeed);
 
         FindLowerUpperInPattern(lowerIndex, upperIndex, _nNormTable, nNorm);

@@ -104,20 +104,18 @@ void
 GNEAdditionalSet::drawConnections() const {
     // Iterate over map
     for(std::map<GNEAdditional*, Position>::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        // Add a draw matrix
-        glPushMatrix();
-
-        // Set color of the base
-        GLHelper::setColor(RGBColor(255, 235, 0, 255));
-
-        // Draw line if shape of child isn't empty
-        if(i->first->getShape().size() > 0) {
+        // Draw only if additional GL Visualitation is enabled
+        if(myViewNet->isAdditionalGLVisualisationEnabled(i->first) && (i->first->getShape().size() > 0)) {
+            // Add a draw matrix
+            glPushMatrix();
+            // Set color of the base
+            GLHelper::setColor(RGBColor(255, 235, 0, 255));
+            // Draw Line
             GLHelper::drawLine(myPosition, i->second);
             GLHelper::drawLine(i->second, i->first->getShape()[0]);
+            // Pop draw matrix
+            glPopMatrix();
         }
-
-        // Pop draw matrix
-        glPopMatrix();
     }
 }
 

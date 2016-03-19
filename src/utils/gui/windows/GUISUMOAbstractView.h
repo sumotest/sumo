@@ -258,6 +258,13 @@ public:
      * @see GUIGlObject::drawGLAdditional
      */
     bool removeAdditionalGLVisualisation(GUIGlObject* const which);
+
+    /** @brief Check if an object is added in the additional GL visualitation   // PABLO #1916
+     * @param[in] which The object to check                                     // PABLO #1916
+     * @return Always true                                                      // PABLO #1916
+     * @see GUIGlObject::drawGLAdditional                                       // PABLO #1916
+     */                                                                         // PABLO #1916
+    bool isAdditionalGLVisualisationEnabled(GUIGlObject* const which) const;    // PABLO #1916
     /// @}
 
 

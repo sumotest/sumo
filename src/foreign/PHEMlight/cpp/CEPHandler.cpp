@@ -1,4 +1,4 @@
-﻿#include <fstream>
+#include <fstream>
 #include <sstream>
 #include "CEPHandler.h"
 #include "CEP.h"
@@ -12,11 +12,11 @@ namespace PHEMlightdll {
         _ceps = std::map<std::string, CEP*>();
     }
 
-    std::map<std::string, CEP*> CEPHandler::getCEPS() const {
+    const std::map<std::string, CEP*>& CEPHandler::getCEPS() const {
         return _ceps;
     }
 
-    bool CEPHandler::GetCEP(const std::string& DataPath, Helpers* Helper) {
+    bool CEPHandler::GetCEP(const std::vector<std::string>& DataPath, Helpers* Helper) {
         if (getCEPS().find(Helper->getgClass()) == getCEPS().end()) {
             if (!Load(DataPath, Helper)) {
                 return false;
@@ -25,7 +25,7 @@ namespace PHEMlightdll {
         return true;
     }
 
-    bool CEPHandler::Load(const std::string& DataPath, Helpers* Helper) {
+    bool CEPHandler::Load(const std::vector<std::string>& DataPath, Helpers* Helper) {
         //Deklaration
         // get string identifier for PHEM emission class
 //C# TO C++ CONVERTER TODO TASK: There is no native C++ equivalent to 'ToString':
@@ -82,7 +82,7 @@ namespace PHEMlightdll {
         return true;
     }
 
-    bool CEPHandler::ReadVehicleFile(const std::string& DataPath, const std::string& emissionClass, Helpers* Helper, double& vehicleMass, double& vehicleLoading, double& vehicleMassRot, double& crossArea, double& cWValue, double& f0, double& f1, double& f2, double& f3, double& f4, double& axleRatio, double& auxPower, double& ratedPower, double& engineIdlingSpeed, double& engineRatedSpeed, double& effectiveWheelDiameter, std::vector<double>& transmissionGearRatios, std::string& vehicleMassType, std::string& vehicleFuelType, double& pNormV0, double& pNormP0, double& pNormV1, double& pNormP1, std::vector<std::vector<double> >& matrixSpeedInertiaTable, std::vector<std::vector<double> >& normedDragTable) {
+    bool CEPHandler::ReadVehicleFile(const std::vector<std::string>& DataPath, const std::string& emissionClass, Helpers* Helper, double& vehicleMass, double& vehicleLoading, double& vehicleMassRot, double& crossArea, double& cWValue, double& f0, double& f1, double& f2, double& f3, double& f4, double& axleRatio, double& auxPower, double& ratedPower, double& engineIdlingSpeed, double& engineRatedSpeed, double& effectiveWheelDiameter, std::vector<double>& transmissionGearRatios, std::string& vehicleMassType, std::string& vehicleFuelType, double& pNormV0, double& pNormP0, double& pNormV1, double& pNormP1, std::vector<std::vector<double> >& matrixSpeedInertiaTable, std::vector<std::vector<double> >& normedDragTable) {
         vehicleMass = 0;
         vehicleLoading = 0;
         vehicleMassRot = 0;
@@ -113,10 +113,15 @@ namespace PHEMlightdll {
         int dataCount = 0;
 
         //Open file
-        std::string path = DataPath + std::string("\\") + emissionClass + std::string(".PHEMLight.veh");
-        std::ifstream vehicleReader(path);
+        std::ifstream vehicleReader;
+        for (std::vector<std::string>::const_iterator i = DataPath.begin(); i != DataPath.end(); i++) {
+            vehicleReader.open(((*i) + emissionClass + ".PHEMLight.veh").c_str());
+            if (vehicleReader.good()) {
+                break;
+            }
+        }
         if (!vehicleReader.good()) {
-            Helper->setErrMsg(std::string("File do not exist! (") + path + std::string(")"));
+            Helper->setErrMsg("File does not exist! (" + emissionClass + ".PHEMLight.veh)");
             return false;
         }
 
@@ -253,8 +258,7 @@ namespace PHEMlightdll {
                 continue;
             }
 
-            std::vector<double>& entries = todoubleList(split(line, ','));
-            matrixSpeedInertiaTable.push_back(entries);
+            matrixSpeedInertiaTable.push_back(todoubleList(split(line, ',')));
         }
 
         while ((line = ReadLine(vehicleReader)) != "") {
@@ -262,14 +266,13 @@ namespace PHEMlightdll {
                 continue;
             }
 
-            std::vector<double>& entries = todoubleList(split(line, ','));
-            normedDragTable.push_back(entries);
+            normedDragTable.push_back(todoubleList(split(line, ',')));
         }
 
         return true;
     }
 
-    bool CEPHandler::ReadEmissionData(bool readFC, const std::string& DataPath, const std::string& emissionClass, Helpers* Helper, std::vector<std::string>& header, std::vector<std::vector<double> >& matrix, std::vector<double>& idlingValues) {
+    bool CEPHandler::ReadEmissionData(bool readFC, const std::vector<std::string>& DataPath, const std::string& emissionClass, Helpers* Helper, std::vector<std::string>& header, std::vector<std::vector<double> >& matrix, std::vector<double>& idlingValues) {
         // declare file stream
         std::string line;
         header = std::vector<std::string>();
@@ -281,16 +284,21 @@ namespace PHEMlightdll {
             pollutantExtension += std::string("_FC");
         }
 
-        std::string path = DataPath + std::string("\\") + emissionClass + pollutantExtension + std::string(".csv");
-        std::ifstream fileReader(path);
+        std::ifstream fileReader;
+        for (std::vector<std::string>::const_iterator i = DataPath.begin(); i != DataPath.end(); i++) {
+            fileReader.open(((*i) + emissionClass + pollutantExtension + ".csv").c_str());
+            if (fileReader.good()) {
+                break;
+            }
+        }
         if (!fileReader.good()) {
-            Helper->setErrMsg(std::string("File do not exist! (") + path + std::string(")"));
+            Helper->setErrMsg("File does not exist! (" + emissionClass + pollutantExtension + ".csv)");
             return false;
         }
 
         // read header line for pollutant identifiers
         if ((line = ReadLine(fileReader)) != "") {
-            std::vector<std::string>& entries = split(line, ',');
+            std::vector<std::string> entries = split(line, ',');
             // skip first entry "Pe"
             for (int i = 1; i < entries.size(); i++) {
                 header.push_back(entries[i]);
@@ -312,8 +320,7 @@ namespace PHEMlightdll {
         idlingValues = todoubleList(stringIdlings);
 
         while ((line = ReadLine(fileReader)) != "") {
-            std::vector<double>& vi = todoubleList(split(line, ','));
-            matrix.push_back(vi);
+            matrix.push_back(todoubleList(split(line, ',')));
         }
         return true;
     }
@@ -335,7 +342,7 @@ namespace PHEMlightdll {
         return item;
     }
 
-    std::vector<double> CEPHandler::todoubleList(std::vector<std::string>& s) {
+    std::vector<double> CEPHandler::todoubleList(const std::vector<std::string>& s) {
         std::vector<double> result;
         for (std::vector<std::string>::const_iterator i = s.begin(); i != s.end(); ++i) {
             result.push_back(todouble(*i));
