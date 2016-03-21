@@ -462,7 +462,8 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             // get own attributes of busStop
             SUMOReal startPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_STARTPOS]);
             SUMOReal endPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_ENDPOS]);
-            std::vector<std::string> lines; /** FALTA **/
+            std::vector<std::string> lines;
+            SUMOSAXAttributes::parseStringVector(values[SUMO_ATTR_LINES], lines);
             // Build busStop
             if(lane)
                 return buildBusStop(viewNet, id, lane, startPos, endPos, lines, blocked);

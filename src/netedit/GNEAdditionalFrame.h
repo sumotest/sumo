@@ -118,7 +118,7 @@ public:
 
     public:
         /// @brief constructor
-        additionalParameterList(FXComposite *parent, FXObject* tgt, int maxNumberOfValuesInParameterList = 10);
+        additionalParameterList(FXComposite *parent, FXObject* tgt);
 
         /// @brief destructor
         ~additionalParameterList();
@@ -138,8 +138,11 @@ public:
         /// @brief hide all parameters
         void hideParameter();
 
-        /// @brief return the value of the FXTextField 
-        std::vector<std::string> getVectorOfTextValues();
+        /// @brief return attribute of list
+        SumoXMLAttr getAttr() const;
+
+        /// @brief return the value of list
+        std::string getListValues();
 
         /// @name FOX-callbacks
         /// @{
@@ -155,6 +158,9 @@ public:
         additionalParameterList() {}
 
     private:        
+        /// @brief XML attribute
+        SumoXMLAttr myAttr;
+        
         /// @brief vector with with the name of every parameter
         std::vector<FXLabel*> myLabels;
         
@@ -175,12 +181,72 @@ public:
     };
 
     // ===========================================================================
-    // class editorParameter
+    // class additionalParameters
+    // ===========================================================================
+    
+    class additionalParameters : public FXGroupBox {
+        // FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::additionalParameters)
+
+    public:
+        /// @brief constructor
+        additionalParameters(FXComposite *parent, FXObject* tgt);
+
+        /// @brief destructor
+        ~additionalParameters();
+
+        /// @brief clear attributes
+        void clearAttributes();
+
+        /// @brief add attribute
+        void addAttribute(SumoXMLTag additional, SumoXMLAttr attribute);
+
+        /// @brief show group box
+        void showAdditionalParameters();
+
+        /// @brief hide group box
+        void hideAdditionalParameters();
+        
+        /// @brief get attributes
+        std::map<SumoXMLAttr, std::string> getAttributes() const;
+
+        /// @brief get number of added attributes
+        int getNumberOfAddedAttributes() const;
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        additionalParameters() {}
+
+    private:
+        /// @brief vector with the additional parameters
+        std::vector<additionalParameter*> myVectorOfAdditionalParameter;
+                                                                  
+        /// @brief Index for myVectorOfAdditionalParameter
+        int myIndexParameter;                                              
+
+        /// @brief vector with the additional parameters of type list         
+        std::vector<additionalParameterList*> myVectorOfAdditionalParameterList;
+                                                            
+        /// @brief index for myIndexParameterList
+        int myIndexParameterList;
+
+        /// @brief max number of parameters (Defined in constructor)
+        int maxNumberOfParameters;
+    };
+
+    // ===========================================================================
+    // class editorParameters
     // ===========================================================================
 
-    class editorParameter : public FXGroupBox {
+    class editorParameters : public FXGroupBox {
         // FOX-declaration
-        FXDECLARE(GNEAdditionalFrame::editorParameter)
+        FXDECLARE(GNEAdditionalFrame::editorParameters)
 
     public:
         /// @brief list of the reference points
@@ -191,16 +257,22 @@ public:
         };
 
         /// @brief constructor
-        editorParameter(FXComposite *parent, FXObject* tgt);
+        editorParameters(FXComposite *parent, FXObject* tgt);
 
         /// @brief destructor
-        ~editorParameter();
+        ~editorParameters();
 
         /// @brief show length field
         void showLengthField();
 
         /// @brief hide length field
         void hideLengthField();
+
+        /// @brief show refence point comboBox
+        void showReferencePoint();
+
+        /// @brief hide refence point comboBox
+        void hideReferencePoint();
 
         /// @brief get actual reference point
         additionalReferencePoint getActualReferencePoint();
@@ -228,12 +300,9 @@ public:
 
     protected:
         /// @brief FOX needs this
-        editorParameter() {}
+        editorParameters() {}
 
     private:
-        /// @brief the box for the reference point match Box
-        FXGroupBox* myReferencePointBox;
-
         /// @brief match box with the list of reference points
         FXComboBox* myReferencePointMatchBox;
 
@@ -356,7 +425,7 @@ protected:
 
 private:
     /// @brief set parameters depending of the new additionalType
-    void setParameters(SumoXMLTag actualAdditionalType);
+    void setParametersOfAdditional(SumoXMLTag actualAdditionalType);
 
     /// @brief obtain the Start position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
@@ -379,23 +448,11 @@ private:
     /// @brief combo box with the list of additional elements
     FXComboBox* myAdditionalMatchBox;
     
-    /// @briefgroupBox for parameters 
-    FXGroupBox* myGroupBoxForParameters;
-
-    /// @brief vector with the additional parameters
-    std::vector<additionalParameter*> myVectorOfAdditionalParameter;            // MERGE
-                                                                                // MERGE
-    /// @brief vector with the additional parameters of type list               // MERGE
-    int myIndexParameter;                                                       // MERGE
-
-    /// @brief vector with the additional parameters of type list               // MERGE
-    std::vector<additionalParameterList*> myVectorOfadditionalParameterList;    // MERGE
-                                                                                // MERGE
-    /// @brief vector with the additional parameters of type list               // MERGE
-    int myIndexParameterList;                                                   // MERGE
+    /// @brief additional default parameters
+    GNEAdditionalFrame::additionalParameters *myAdditionalParameters;
 
     /// @brief editor parameter 
-    GNEAdditionalFrame::editorParameter *myEditorParameter;
+    GNEAdditionalFrame::editorParameters *myEditorParameters;
 
     /// @brief additional Set
     GNEAdditionalFrame::additionalSet *myAdditionalSet;
@@ -408,12 +465,6 @@ private:
 
     /// @brief Width of frame
     static const int WIDTH;
-
-    /// @brief Number max of parameters
-    static const int maxNumberOfParameters;
-
-    /// @brief Number max of parameters of type list
-    static const int maxNumberOfListParameters;
 
     /// @brief undo 
     GNEUndoList* myUndoList;
