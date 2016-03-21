@@ -2117,6 +2117,9 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
 void
 MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed, SUMOReal posLat, MSMoveReminder::Notification notification) {
     myState = State(pos, speed, posLat, pos - getVehicleType().getLength());
+    if (myDeparture == NOT_YET_DEPARTED) {
+        onDepart();
+    }
     myCachedPosition = Position::INVALID;
     assert(myState.myPos >= 0);
     assert(myState.mySpeed >= 0);

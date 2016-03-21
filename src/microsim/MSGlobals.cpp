@@ -60,6 +60,7 @@ bool MSGlobals::gStateLoaded;
 bool MSGlobals::gUseMesoSim;
 bool MSGlobals::gMesoLimitedJunctionControl;
 bool MSGlobals::gMesoOvertaking;
+SUMOReal MSGlobals::gMesoTLSPenalty;
 MELoop* MSGlobals::gMesoNet;
 
 /****************************************************************************/

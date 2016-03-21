@@ -95,6 +95,9 @@ public:
     /** Information whether overtaking is enabled in the mesoscopic simulation */
     static bool gMesoOvertaking;
 
+    /** scaling factor for macroscopic time penalty when passing tls controlled intersection */
+    static SUMOReal gMesoTLSPenalty;
+
     /// mesoscopic simulation infrastructure
     static MELoop* gMesoNet;
 

@@ -71,7 +71,7 @@ MSLink::MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState 
     myLaneBefore(predLane),
     myIndex(-1),
     myState(state),
-    myLastStateChange(-1),
+    myLastStateChange(SUMOTime_MIN),
     myDirection(dir),
     myLength(length),
     myHasFoes(false),
@@ -79,6 +79,7 @@ MSLink::MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState 
     myKeepClear(keepClear),
     myParallelLeft(computeParallelLink(1)), 
     myParallelRight(computeParallelLink(-1)),
+    myMesoTLSPenalty(0),
     myJunction(0)
 #else
 MSLink::MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
@@ -86,13 +87,14 @@ MSLink::MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection di
     myLaneBefore(predLane),
     myIndex(-1),
     myState(state),
-    myLastStateChange(-1),
+    myLastStateChange(SUMOTime_MIN),
     myDirection(dir),
     myLength(length),
     myHasFoes(false),
     myAmCont(false),
     myKeepClear(keepClear),
     myInternalLane(via),
+    myMesoTLSPenalty(0),
     myInternalLaneBefore(0),
     myParallelLeft(computeParallelLink(1)), 
     myParallelRight(computeParallelLink(-1)),

@@ -111,7 +111,26 @@ MEVehicle::getPosition(const SUMOReal offset) const {
 
 SUMOReal
 MEVehicle::getSpeed() const {
+    if (getWaitingTime() > 0) {
+        return 0;
+    } else {
+        return getAverageSpeed();
+    }
+}
+
+
+SUMOReal
+MEVehicle::getAverageSpeed() const {
     return mySegment->getLength() / STEPS2TIME(myEventTime - myLastEntryTime);
+}
+
+
+SUMOReal
+MEVehicle::estimateLeaveSpeed(const MSLink* link) const {
+    /// @see MSVehicle.cpp::estimateLeaveSpeed
+    const SUMOReal v = getSpeed();
+    return MIN2(link->getViaLaneOrLane()->getVehicleMaxSpeed(this),
+            (SUMOReal)sqrt(2 * link->getLength() * getVehicleType().getCarFollowModel().getMaxAccel() + v * v));
 }
 
 

@@ -1,4 +1,4 @@
-SUMO Version dev-SVN-r19790D
+SUMO Version dev-SVN-r20250
  Copyright (C) 2001-2015 DLR and contributors; http://sumo.dlr.de
 A microscopic road traffic simulation.
 
@@ -266,6 +266,10 @@ Mesoscopic Options:
                                          saturated links. This prevents faulty
                                          traffic lights from hindering flow in
                                          low-traffic situations
+  --meso-tls-penalty FLOAT             Apply scaled time penalties when driving
+                                         across tls controlled junctions based
+                                         on green split instead of checking
+                                         actual phases
   --meso-overtaking                    Enable mesoscopic overtaking
   --meso-recheck TIME                  Time interval for rechecking insertion
                                          into the next segment after failure

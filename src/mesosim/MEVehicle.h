@@ -40,6 +40,7 @@
 #include "MESegment.h"
 
 class MSLane;
+class MSLink;
 
 // ===========================================================================
 // class definitions
@@ -106,6 +107,15 @@ public:
      * @note This is only an upper bound. The speed will be lower if the preceeding vehicle is delayed
      */
     SUMOReal getSpeed() const;
+
+    /** @brief Returns the vehicle's estimated average speed on the segment assuming no further delays
+     * @return The vehicle's estimated average speed
+     * @note This is only an upper bound. The speed will be lower if the preceeding vehicle is delayed
+     */
+    SUMOReal getAverageSpeed() const;
+
+    /// @brief Returns the vehicle's estimated speed after driving accross the link
+    SUMOReal estimateLeaveSpeed(const MSLink* link) const;
 
 
     /** @brief Returns the vehicle's estimated speed taking into account delays
@@ -263,6 +273,20 @@ public:
     }
 
 
+    /// @brief Returns the earliest leave time for the current segment
+    SUMOReal getEventTimeSeconds() const {
+        return STEPS2TIME(getEventTime());
+    }
+
+    /// @brief Returns the entry time for the current segment
+    SUMOReal getLastEntryTimeSeconds() const {
+        return STEPS2TIME(getLastEntryTime());
+    }
+
+    /// @brief Returns the time at which the vehicle was blocked on the current segment
+    SUMOReal getBlockTimeSeconds() const {
+        return STEPS2TIME(getBlockTime());
+    }
 
 
     /// Replaces the current route by the given one
