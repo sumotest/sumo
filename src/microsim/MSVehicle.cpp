@@ -1080,8 +1080,8 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
     // iterator over subsequent lanes and fill lfLinks until stopping distance or stopped
     const MSLane* lane = opposite ? myLane->getOpposite() : myLane;
+    const MSLane* leaderLane = myLane;
     while (true) {
-        const MSLane* leaderLane = opposite ? lane->getOpposite() : lane;
         // check leader on lane
         //  leader is given for the first edge only
         adaptToLeaders(ahead, 0, seen, lastLink, leaderLane, v, vLinkPass);
@@ -1292,7 +1292,8 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         seenNonInternal += lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL ? 0 : lane->getLength();
         //gDebugFlag1 = getID() == "13";
         // do not restrict results to the current vehicle to allow caching for the current time step
-        ahead = (opposite ? lane->getOpposite() : lane)->getLastVehicleInformation(0, 0);
+        leaderLane = (opposite && lane->getOpposite() != 0) ? lane->getOpposite() : lane;
+        ahead = leaderLane->getLastVehicleInformation(0, 0);
         //gDebugFlag1 = false;
         seen += lane->getLength();
         //if (getID() == "from3.5") std::cout << SIMTIME << " seen=" << seen << " includes lane=" << lane->getID() << " with length " << lane->getLength() << "\n";
@@ -1673,9 +1674,15 @@ MSVehicle::executeMove() {
     //if (getID() == "disabled") std::cout << SIMTIME << " executeMove finished veh=" << getID() << " lane=" << myLane->getID() << " myPos=" << getPositionOnLane() << " myPosLat=" << getLateralPositionOnLane() << "\n";
     if (getLaneChangeModel().isOpposite()) {
         // transform back to the opposite-direction lane
-        myState.myPos = myLane->getOppositePos(myState.myPos);
-        myLane = myLane->getOpposite();
-        myCachedPosition = Position::INVALID;
+        if (myLane->getOpposite() == 0) {
+            WRITE_WARNING("Unexpected end of opposite lane for vehicle '" + getID() + " at lane '" + myLane->getID() + "', time=" + 
+                    time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
+            getLaneChangeModel().changedToOpposite();
+        } else {
+            myState.myPos = myLane->getOppositePos(myState.myPos);
+            myLane = myLane->getOpposite();
+            myCachedPosition = Position::INVALID;
+        }
     }
     gDebugFlag1 = false;
     return moved;
