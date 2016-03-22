@@ -267,7 +267,7 @@ SUMOVTypeParameter::write(OutputDevice& dev) const {
     if (wasSet(VTYPEPARS_MINGAP_LAT_SET)) {
         dev.writeAttr(SUMO_ATTR_MINGAP_LAT, minGapLat);
     }
-    if (wasSet(VTYPEPARS_LANE_CHANGE_MODEL_SET) || cfParameter.size() != 0) {
+    if (wasSet(VTYPEPARS_LANE_CHANGE_MODEL_SET) || lcParameter.size() != 0) {
         dev.writeAttr(SUMO_ATTR_LANE_CHANGE_MODEL, lcModel);
         std::vector<SumoXMLAttr> attrs;
         for (SubParams::const_iterator i = lcParameter.begin(); i != lcParameter.end(); ++i) {
