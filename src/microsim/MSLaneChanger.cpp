@@ -569,7 +569,7 @@ MSLaneChanger::checkChange(
     }
     if (blocked == 0 && (state & LCA_WANTS_LANECHANGE)) {
         // ensure that merging is safe for any upcoming zipper links after changing
-        if (vehicle->unsafeLinkAhead((myCandi + laneOffset)->lane)) {
+        if (vehicle->unsafeLinkAhead(targetLane)) {
             state |= blockedByLeader;
         }
     }
