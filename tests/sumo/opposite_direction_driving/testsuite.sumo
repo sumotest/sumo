@@ -18,3 +18,6 @@ forklifter_demo
 
 # a stopped vehicle is overtaken ahead of a geometry node
 overtaking_noconflict_2edges
+
+# opposite direction lane is not long enough for overtaking (and has no continuation)
+opposite_ends
