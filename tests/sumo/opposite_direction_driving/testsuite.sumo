@@ -15,3 +15,6 @@ overtaking_slow
 
 # old vs new behavior with forklifters
 forklifter_demo
+
+# a stopped vehicle is overtaken ahead of a geometry node
+overtaking_noconflict_2edges
