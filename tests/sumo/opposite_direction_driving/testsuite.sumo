@@ -4,6 +4,9 @@ overtaking_noconflict
 # a stopped vehicle is overtake as soon as there is a safe gap in the oncoming traffic
 overtaking_stopped
 
+# two stopped vehicles are overtake as soon as there is a safe gap in the oncoming traffic
+overtaking_2stopped
+
 # same as overtaking_stopped but with step-length 0.2
 overtaking_stopped_subsecond
 
