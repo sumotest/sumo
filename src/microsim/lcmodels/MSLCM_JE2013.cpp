@@ -669,7 +669,8 @@ MSLCM_JE2013::_wantsChange(
         // internal edges are not kept inside the bestLanes structure
         prebLane = prebLane->getLinkCont()[0]->getLane();
     }
-    const int prebOffset = (&neighLane.getEdge() == &myVehicle.getLane()->getEdge() ? laneOffset : 0);
+    const bool checkOpposite = &neighLane.getEdge() != &myVehicle.getLane()->getEdge();
+    const int prebOffset = (checkOpposite ? 0 : laneOffset);
     for (int p = 0; p < (int) preb.size(); ++p) {
         if (preb[p].lane == prebLane && p + laneOffset >= 0) {
             assert(p + prebOffset < (int)preb.size());
