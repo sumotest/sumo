@@ -708,9 +708,47 @@ MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leade
     // preliminary sanity checks for overtaking space
     if (!isOpposite) {
         assert(leader.first != 0);
+        // find a leader vehicle with sufficient space ahead for merging back
+        const SUMOReal overtakingSpeed = source->getVehicleMaxSpeed(vehicle); // just a guess
+        const SUMOReal mergeBrakeGap = vehicle->getCarFollowModel().brakeGap(overtakingSpeed);
+        const SUMOReal maxLookAhead = 150; // just a guess
+        std::pair<MSVehicle*, SUMOReal> columnLeader = leader;
+        SUMOReal egoGap = leader.second;
+        bool foundSpaceAhead = false;
+        SUMOReal seen = leader.second + leader.first->getVehicleType().getLengthWithGap();
+        while(!foundSpaceAhead) {
+            const SUMOReal requiredSpaceAfterLeader = (columnLeader.first->getCarFollowModel().getSecureGap(
+                    columnLeader.first->getSpeed(), overtakingSpeed, vehicle->getCarFollowModel().getMaxDecel())
+                    + vehicle->getVehicleType().getLengthWithGap());
+
+                    
+            std::pair<MSVehicle* const, SUMOReal> leadLead = columnLeader.first->getLane()->getLeader(columnLeader.first, columnLeader.first->getPositionOnLane(), true, requiredSpaceAfterLeader + mergeBrakeGap, true);
+            if (gDebugFlag1) std::cout << "   leadLead=" << Named::getIDSecure(leadLead.first) << " gap=" << leadLead.second << "\n";
+            if (leadLead.first == 0) {
+                foundSpaceAhead = true;
+            } else {
+                const SUMOReal requiredSpace = (requiredSpaceAfterLeader
+                        + vehicle->getCarFollowModel().getSecureGap(overtakingSpeed, leadLead.first->getSpeed(), leadLead.first->getCarFollowModel().getMaxDecel()));
+                if (leadLead.second > requiredSpace) {
+                    foundSpaceAhead = true;
+                } else {
+                    if (gDebugFlag1) std::cout << "   not enough space after columnLeader=" << leadLead.first->getID() << " gap=" << leadLead.second << " required=" << requiredSpace << "\n";
+                    seen += leadLead.second + leadLead.first->getVehicleType().getLengthWithGap();
+                    if (seen > maxLookAhead) {
+                        if (gDebugFlag1) std::cout << "   cannot changeOpposite due to insufficient free space after columnLeader (seen=" << seen << " columnLeader=" << leadLead.first->getID() << ")\n";
+                        return false;
+                    }
+                    // see if merging after leadLead is possible
+                    egoGap += columnLeader.first->getVehicleType().getLengthWithGap() + leadLead.second;
+                    columnLeader = leadLead;
+                    if (gDebugFlag1) std::cout << "   new columnLeader=" << columnLeader.first->getID() << "\n";
+                }
+            }
+        }
+        if (gDebugFlag1) std::cout << "   compute time/space to overtake for columnLeader=" << columnLeader.first->getID() << " gap=" << columnLeader.second << "\n";
         SUMOReal timeToOvertake;
         SUMOReal spaceToOvertake;
-        computeOvertakingTime(vehicle, leader.first, leader.second, timeToOvertake, spaceToOvertake);
+        computeOvertakingTime(vehicle, columnLeader.first, egoGap, timeToOvertake, spaceToOvertake);
         // check for upcoming stops
         if (vehicle->nextStopDist() < spaceToOvertake) {
                 if (gDebugFlag1) std::cout << "   cannot changeOpposite due to upcoming stop (dist=" << vehicle->nextStopDist() << " spaceToOvertake=" << spaceToOvertake << ")\n";
@@ -733,7 +771,7 @@ MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leade
             }
         }
         // check for sufficient space on the opposite side
-        SUMOReal seen = source->getLength() - vehicle->getPositionOnLane();
+        seen = source->getLength() - vehicle->getPositionOnLane();
         if (!vehicle->getLaneChangeModel().isOpposite() && seen < spaceToOvertake) {
             const std::vector<MSLane*>& bestLaneConts = vehicle->getBestLanesContinuation();
             assert(bestLaneConts.size() >= 1);

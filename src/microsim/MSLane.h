@@ -710,9 +710,11 @@ public:
      * @param[in] veh The vehicle for which the information shall be computed
      * @param[in] vehPos The vehicle position relative to this lane (may be negative)
      * @param[in] checkNext Whether lanes after this one shall be checked
+     * @param[in] dist Optional distance to override default (ego stopDist)
+     * @param[in] checkTmpVehicles Whether myTmpVehicles should be used instead of myVehicles
      * @return
      */
-    std::pair<MSVehicle* const, SUMOReal> getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext) const;
+    std::pair<MSVehicle* const, SUMOReal> getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext, SUMOReal dist=-1, bool checkTmpVehicles=false) const;
 
     /** @brief Returns the immediate leader and the distance to him
      *

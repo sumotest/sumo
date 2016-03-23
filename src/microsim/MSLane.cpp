@@ -1540,22 +1540,37 @@ MSLane::getFollowerOnConsecutive(
 }
 
 std::pair<MSVehicle* const, SUMOReal>
-MSLane::getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext) const {
+MSLane::getLeader(const MSVehicle* veh, const SUMOReal vehPos, bool checkNext, SUMOReal dist, bool checkTmpVehicles) const {
     // get the leading vehicle for (shadow) veh
     // XXX this only works as long as all lanes of an edge have equal length
-    for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
-        // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
-        MSVehicle* pred = (MSVehicle*)*last;
-        if (gDebugFlag1) std::cout << "   getLeader lane=" << getID() << " egoPos=" << vehPos << " pred=" << pred->getID() << " predPos=" << pred->getPositionOnLane() << "\n";
-        if (pred->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
-            return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
+    if (gDebugFlag1) std::cout << "   getLeader lane=" << getID() << " ego=" << veh->getID() << " vehs=" << toString(myVehicles) << " tmpVehs=" << toString(myTmpVehicles) << "\n";
+    if (checkTmpVehicles) {
+        for (VehCont::const_iterator last = myTmpVehicles.begin(); last != myTmpVehicles.end(); ++last) {
+            // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
+            MSVehicle* pred = (MSVehicle*)*last;
+            if (gDebugFlag1) std::cout << "   getLeader lane=" << getID() << " ego=" << veh->getID() << " egoPos=" << vehPos << " pred=" << pred->getID() << " predPos=" << pred->getPositionOnLane() << "\n";
+            if (pred->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
+                return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
+            }
+        }
+    } else {
+        for (AnyVehicleIterator last = anyVehiclesBegin(); last != anyVehiclesEnd(); ++last) {
+            // XXX refactor leaderInfo to use a const vehicle all the way through the call hierarchy
+            MSVehicle* pred = (MSVehicle*)*last;
+            if (gDebugFlag1) std::cout << "   getLeader lane=" << getID() << " ego=" << veh->getID() << " egoPos=" << vehPos << " pred=" << pred->getID() << " predPos=" << pred->getPositionOnLane() << "\n";
+            if (pred->getPositionOnLane() > vehPos + NUMERICAL_EPS) {
+                return std::pair<MSVehicle* const, SUMOReal>(pred, pred->getBackPositionOnLane(this) - veh->getVehicleType().getMinGap() - vehPos);
+            }
         }
     }
     // XXX from here on the code mirrors MSLaneChanger::getRealLeader
     if (checkNext) {
         SUMOReal seen = getLength() - vehPos;
         SUMOReal speed = veh->getSpeed();
-        SUMOReal dist = veh->getCarFollowModel().brakeGap(speed) + veh->getVehicleType().getMinGap();
+        if (dist < 0) {
+            dist = veh->getCarFollowModel().brakeGap(speed) + veh->getVehicleType().getMinGap();
+        }
+        if (gDebugFlag1) std::cout << "   getLeader lane=" << getID() << " seen=" << vehPos << " dist=" << dist << "\n";
         if (seen > dist) {
             return std::pair<MSVehicle* const, SUMOReal>(static_cast<MSVehicle*>(0), -1);
         }
