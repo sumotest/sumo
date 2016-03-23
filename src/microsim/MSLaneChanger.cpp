@@ -722,7 +722,8 @@ MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leade
                     + vehicle->getVehicleType().getLengthWithGap());
 
                     
-            std::pair<MSVehicle* const, SUMOReal> leadLead = columnLeader.first->getLane()->getLeader(columnLeader.first, columnLeader.first->getPositionOnLane(), true, requiredSpaceAfterLeader + mergeBrakeGap, true);
+            std::pair<MSVehicle* const, SUMOReal> leadLead = columnLeader.first->getLane()->getLeader(
+                    columnLeader.first, columnLeader.first->getPositionOnLane(), true, requiredSpaceAfterLeader + mergeBrakeGap, true);
             if (gDebugFlag1) std::cout << "   leadLead=" << Named::getIDSecure(leadLead.first) << " gap=" << leadLead.second << "\n";
             if (leadLead.first == 0) {
                 foundSpaceAhead = true;
