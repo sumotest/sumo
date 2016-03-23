@@ -69,9 +69,6 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     	// indicate a stop within the coming timestep
     	vMin = oldV - ACCEL2SPEED(getMaxDecel());
     }
-////	 Debug (Leo)
-//	std::cout << "vMin = " << vMin << std::endl;
-
     // do not exceed max decel even if it is unsafe
     SUMOReal vMax = MAX2(vMin,
                          MIN3(veh->getLane()->getVehicleMaxSpeed(veh), maxNextSpeed(oldV, veh), vSafe));
@@ -83,7 +80,7 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     const SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, MAX2(vMin, dawdle(vMax)), vMax, *this);
 
 //	// Debug (Leo)
-//	std::cout << "vNext = " << vNext << std::endl;
+//    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
 
     return vNext;
 }

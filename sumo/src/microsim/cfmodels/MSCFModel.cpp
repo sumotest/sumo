@@ -282,8 +282,12 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	} else {
 		dt = STEPS2TIME(DELTA_T);
 	}
-	SUMOReal D = 2*g - v*dt;
+
 	assert(g >= 0);
+	// decrease gap slightly (to avoid passing end of lane by values of magnitude ~1e-12, when exact stop is required)
+	g = MAX2(0., g - NUMERICAL_EPS);
+
+	SUMOReal D = 2*g - v*dt;
 	if(D < 0){
 		// deceleration -v/dt (i.e. stopping a the end of the coming timestep)
 		// is not sufficient to stop within gap. Therefore a stop has to take place
@@ -296,14 +300,12 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		if(g == 0) return -std::numeric_limits<double>::max();
 		else return -v*v/g + v;
 	} else {
-		// (Leo) considering
-		// tau = myHeadwayTime - dt
-		// for consistency with the Euler model, though this should be discussed.
+		// (Leo) considering tau = myHeadwayTime - dt
 		// @note This is maybe related to clarifying the meaning of myHeadwayTime (ticket #2186)
 		assert(myHeadwayTime - dt >= 0.);
 		SUMOReal correctedHeadwayTime = MAX2(myHeadwayTime - dt, 0.);
 		SUMOReal p = (dt/2 + correctedHeadwayTime)*b;
-		return -p + sqrt(pow(p,2) + D*b);
+		return -p + sqrt(p*p + D*b);
 	}
 }
 

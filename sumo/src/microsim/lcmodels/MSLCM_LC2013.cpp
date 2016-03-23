@@ -124,21 +124,33 @@ SUMOReal
 MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
     int state = myOwnState;
 
-//    // Debug (Leo)
-//    std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
-//              << " veh=" << myVehicle.getID()
-//              << " lane=" << myVehicle.getLane()->getID()
-//              << " pos=" << myVehicle.getPositionOnLane()
-//              << " v=" << myVehicle.getSpeed()
-//              << " min=" << min
-//              << " wanted=" << wanted<< std::endl;
+    // Debug (Leo)
+    if(gDebugFlag1){
+    std::cout << "patchSpeed() at time" <<STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+              << " \nveh=" << myVehicle.getID()
+              << " \nlane=" << myVehicle.getLane()->getID()
+              << " \npos=" << myVehicle.getPositionOnLane()
+              << " \nv=" << myVehicle.getSpeed()
+              << " min=" << min
+              << " wanted=" << wanted<< std::endl;
+    }
 
 
     // letting vehicles merge in at the end of the lane in case of counter-lane change, step#2
     SUMOReal MAGIC_offset = 1.;
     //   if we want to change and have a blocking leader and there is enough room for him in front of us
     if (myLeadingBlockerLength != 0) {
+        // Debug (Leo)
+        if(gDebugFlag1){
+        	std::cout << "myLeadingBlockerLength != 0" << std::endl;
+        }
         SUMOReal space = myLeftSpace - myLeadingBlockerLength - MAGIC_offset - myVehicle.getVehicleType().getMinGap();
+
+        // Debug (Leo)
+        if(gDebugFlag1){
+        	std::cout << "space = " << space << std::endl;
+        }
+
         if (space > 0) {
             // compute speed for decelerating towards a place which allows the blocking leader to merge in in front
             SUMOReal safe = cfModel.stopSpeed(&myVehicle, myVehicle.getSpeed(), space);
@@ -155,14 +167,24 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     bool gotOne = false;
     for (std::vector<SUMOReal>::const_iterator i = myVSafes.begin(); i != myVSafes.end(); ++i) {
         SUMOReal v = (*i);
-        if (v >= min && v <= max) {
+        // (Leo): testing for v>MAX2(min,0.) instead of simply v>min (fix in frame of ballistic update intro)
+        // Since LaneChanging returns -1 to indicate no restrictions, negative min provided from the "ballistic calculus"
+        // (indicating stops within the next time step) should be overridden, here.
+        if (v >= MAX2(min,0.) && v <= max) {
             nVSafe = MIN2(v, nVSafe);
             gotOne = true;
-        } else {
+        }
+        // Debug (Leo)
+        if(gDebugFlag1){
+        	std::cout << "nVSafe = " << nVSafe << std::endl;
         }
     }
 
     if (gotOne && !myDontBrake) {
+        // Debug (Leo)
+        if(gDebugFlag1){
+        	std::cout << "returning here" << std::endl;
+        }
         return nVSafe;
     }
 
@@ -192,7 +214,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     if ((state & LCA_AMBLOCKINGFOLLOWER_DONTBRAKE) != 0) {
     }
     if (myVehicle.getLane()->getEdge().getLanes().size() == 1) {
-        // remove chaning information if on a road with a single lane
+        // remove changing information if on a road with a single lane
         changed(0);
     }
     return wanted;
@@ -200,8 +222,17 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
 
 
 void*
-MSLCM_LC2013::inform(void* info, MSVehicle* /* sender */) {
+MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
+
+	//	Debug (Leo)
+	std::string debug_id = "right1.8";
+	gDebugFlag1 = myVehicle.getID() == debug_id;
+	if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << " informed by " << sender->getID() << std::endl;
+
     Info* pinfo = (Info*) info;
+
+	if(gDebugFlag1) std::cout << "pushing vSafe " << pinfo->first << std::endl;
+
     myVSafes.push_back(pinfo->first);
     myOwnState |= pinfo->second;
     delete pinfo;
@@ -241,6 +272,11 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 || myLeftSpace < overtakeDist
                 // not enough time to overtake?
                 || dv * remainingSeconds < overtakeDist) {
+
+            // Debug (Leo)
+        	gDebugFlag1 = myVehicle.getID()=="right0.0" || myVehicle.getID()=="left1.0";
+            if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << " informing NeighLeader (not overtaking)" << std::endl;
+
             // cannot overtake
             msgPass.informNeighLeader(new Info(-1, dir | LCA_AMBLOCKINGLEADER), &myVehicle);
             // slow down smoothly to follow leader
@@ -260,6 +296,10 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             }
         } else {
             // overtaking, leader should not accelerate
+
+            // Debug (Leo)
+            if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << "informing NeighLeader (overtaking) " << std::endl;
+
             msgPass.informNeighLeader(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGLEADER), &myVehicle);
             return -1;
         }
@@ -295,6 +335,11 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             const SUMOReal neededGap = nv->getCarFollowModel().getSecureGap(nv->getSpeed(), plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel());
             if ((neededGap - neighFollow.second) / remainingSeconds < (plannedSpeed - nv->getSpeed())) {
                 // follower might even accelerate but not to much
+
+                // Debug (Leo)
+            	gDebugFlag1 = myVehicle.getID()=="right0.0" || myVehicle.getID()=="left1.0";
+                if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << "informing NeighFollower " << std::endl;
+
                 msgPass.informNeighFollower(new Info(plannedSpeed - HELP_OVERTAKE, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
                 return;
             }
@@ -406,6 +451,7 @@ MSLCM_LC2013::_wantsChange(
     const std::vector<MSVehicle::LaneQ>& preb,
     MSVehicle** lastBlocked,
     MSVehicle** firstBlocked) {
+
     assert(laneOffset == 1 || laneOffset == -1);
     const SUMOTime currentTime = MSNet::getInstance()->getCurrentTimeStep();
     // compute bestLaneOffset
