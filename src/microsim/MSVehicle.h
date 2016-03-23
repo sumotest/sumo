@@ -709,6 +709,10 @@ public:
      */
     bool isParking() const;
 
+    /// @brief return the distance to the next stop or SUMORealMax if there is none.
+    SUMOReal nextStopDist() const {
+        return myStopDist;
+    }
 
     /** @brief Returns whether the vehicle is on a triggered stop
      * @return whether the vehicle is on a triggered stop
@@ -1315,6 +1319,9 @@ protected:
     /// @brief the angle (@todo consider moving this into myState)
     SUMOReal myAngle;
 
+    /// @brief distance to the next stop or -1 if there is none
+    SUMOReal myStopDist;
+
     mutable Position myCachedPosition;
 
 protected:
@@ -1374,7 +1381,7 @@ protected:
     typedef std::vector< DriveProcessItem > DriveItemVector;
     DriveItemVector myLFLinkLanes;
 
-    void planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks) const;
+    void planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks, SUMOReal& myStopDist) const;
     void checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& lfLinks) const;
 
     /// @brief unregister approach from all upcoming links

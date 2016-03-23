@@ -422,6 +422,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myAmRegisteredAsWaitingForContainer(false),
     myHaveToWaitOnNextLink(false),
     myAngle(0),
+    myStopDist(std::numeric_limits<SUMOReal>::max()),
     myCachedPosition(Position::INVALID),
     myEdgeWeights(0)
 #ifndef NO_TRACI
@@ -1006,7 +1007,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
             << " speed=" << getSpeed()
             << "\n";
     }
-    planMoveInternal(t, ahead, myLFLinkLanes);
+    planMoveInternal(t, ahead, myLFLinkLanes, myStopDist);
     if (gDebugFlag1) {
         DriveItemVector::iterator i;
         for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
@@ -1039,7 +1040,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
 
 
 void
-MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks) const {
+MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVector& lfLinks, SUMOReal& myStopDist) const {
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
     if (gDebugSelectedVehicle == getID()) {
         int bla = 0;
@@ -1048,6 +1049,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     // remove information about approaching links, will be reset later in this step
     removeApproachingInformation(lfLinks);
     lfLinks.clear();
+    myStopDist = std::numeric_limits<SUMOReal>::max();
     //
     const MSCFModel& cfModel = getCarFollowModel();
     const SUMOReal vehicleLength = getVehicleType().getLength();
@@ -1102,13 +1104,13 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             // we are approaching a stop on the edge; must not drive further
             const Stop& stop = *myStops.begin();
             const SUMOReal endPos = stop.busstop == 0 ? stop.endPos : stop.busstop->getLastFreePos(*this);
-            const SUMOReal stopDist = seen + endPos - lane->getLength();
-            const SUMOReal stopSpeed = cfModel.stopSpeed(this, getSpeed(), stopDist);
+            myStopDist = seen + endPos - lane->getLength();
+            const SUMOReal stopSpeed = cfModel.stopSpeed(this, getSpeed(), myStopDist);
             if (lastLink != 0) {
                 lastLink->adaptLeaveSpeed(cfModel.stopSpeed(this, vLinkPass, endPos));
             }
             v = MIN2(v, stopSpeed);
-            lfLinks.push_back(DriveProcessItem(v, stopDist));
+            lfLinks.push_back(DriveProcessItem(v, myStopDist));
             break;
         }
 

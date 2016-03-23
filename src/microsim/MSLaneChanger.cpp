@@ -673,7 +673,13 @@ MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leade
     MSVehicle* vehicle = veh(myCandi);
     gDebugFlag1 = vehicle->getLaneChangeModel().debugVehicle();
     MSLane* source = vehicle->getLane();
-    if (!vehicle->getLaneChangeModel().isOpposite() && leader.first == 0) {
+    if (vehicle->isStopped()) {
+        // stopped vehicles obviously should not change lanes. Usually this is
+        // prevent by appropriate bestLane distances
+        return false;
+    }
+    const bool isOpposite = vehicle->getLaneChangeModel().isOpposite();
+    if (!isOpposite && leader.first == 0) {
         // no reason to change unless there is a leader
         // or we are changing back to the propper direction
         // XXX also check whether the leader is so far away as to be irrelevant
@@ -700,10 +706,17 @@ MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leade
             << "\n";
     }
     // preliminary sanity checks for overtaking space
-    if (leader.first != 0) {
+    if (!isOpposite) {
+        assert(leader.first != 0);
         SUMOReal timeToOvertake;
         SUMOReal spaceToOvertake;
         computeOvertakingTime(vehicle, leader.first, leader.second, timeToOvertake, spaceToOvertake);
+        // check for upcoming stops
+        if (vehicle->nextStopDist() < spaceToOvertake) {
+                if (gDebugFlag1) std::cout << "   cannot changeOpposite due to upcoming stop (dist=" << vehicle->nextStopDist() << " spaceToOvertake=" << spaceToOvertake << ")\n";
+                return false;
+        }
+
         // check for dangerous oncoming leader
         if (!vehicle->getLaneChangeModel().isOpposite() && neighLead.first != 0) {
             const MSVehicle* oncoming = neighLead.first;
