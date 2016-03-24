@@ -1358,7 +1358,8 @@ MSVehicle::executeMove() {
     }
 #endif
     // Debug (Leo)
-    std::string debug_veh_id = "right1.8";
+//    std::string debug_veh_id = "right1.8";
+    std::string debug_veh_id = "vertical.56";
     gDebugFlag1 = getID()==debug_veh_id;
 
     // get safe velocities from DriveProcessItems
@@ -1377,7 +1378,7 @@ MSVehicle::executeMove() {
     if(gDebugFlag1){
     	std::cout << ("\ncalled executeMove() for vehicle "+debug_veh_id+" at time "
     			+toString(MSNet::getInstance()->getCurrentTimeStep())+" :"
-    			+"\nposition = " + toString(myState.myPos)
+    			+"\nposition = " + toString(myState.myPos,20)
     			+"\non lane " + getLane()->getID()
     			+"\nspeed = " + toString(myState.mySpeed)
     			+"\nDrive Process items:"
@@ -1387,30 +1388,30 @@ MSVehicle::executeMove() {
 
     for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
 
-    	// Debug (Leo)
-        if(gDebugFlag1){
-        	if(i->myLink!=0){
-        	std::cout << ("\nitem "+toString(pcount) +":"
-        			+"\nlinkLane = " + i->myLink->getLane()->getID()
-//        			+"\nlinkApproachingLane = " + i->myLink->getApproachingLane()->getID()
-//        			+"\nlinkViaLane = " + i->myLink->getViaLane()->getID()
-        			+"\nlinkViaLaneOrLane = " + i->myLink->getViaLaneOrLane()->getID()
-//        			+"\nlinkInternalLaneBefore = " + i->myLink->getInternalLaneBefore()->getID()
-        			+"\nlinkIndex = " + toString(i->myLink->getIndex())
-        			+"\nmyDistance =" + toString(i->myDistance)
-        			+"\narrivalTime =" + toString(i->myArrivalTime)
-        			+"\narrivalSpeed =" + toString(i->myArrivalSpeed)
-        			+"\narrivalTimeBraking =" + toString(i->myArrivalTimeBraking)
-        			+"\narrivalSpeedBraking =" + toString(i->myArrivalSpeedBraking)
-        			+"\nsetRequest =" + toString(i->mySetRequest)
-        			+"\nhasFoes =" + toString(i->myLink->hasFoes())
-        			+"\nhasApproachingFoe =" + toString(i->myLink->hasApproachingFoe(i->myArrivalTime, i->myArrivalTime+1000,i->getLeaveSpeed(), getCarFollowModel().getMaxDecel()))
-        			) << std::endl;
-        	} else {
-        	 	std::cout << ("\nitem "+toString(pcount) + "\nlink == 0...") << std::endl;
-        	}
-        	pcount++;
-        }
+//    	// Debug (Leo)
+//        if(gDebugFlag1){
+//        	if(i->myLink!=0){
+//        	std::cout << ("\nitem "+toString(pcount) +":"
+//        			+"\nlinkLane = " + i->myLink->getLane()->getID()
+////        			+"\nlinkApproachingLane = " + i->myLink->getApproachingLane()->getID()
+////        			+"\nlinkViaLane = " + i->myLink->getViaLane()->getID()
+//        			+"\nlinkViaLaneOrLane = " + i->myLink->getViaLaneOrLane()->getID()
+////        			+"\nlinkInternalLaneBefore = " + i->myLink->getInternalLaneBefore()->getID()
+//        			+"\nlinkIndex = " + toString(i->myLink->getIndex())
+//        			+"\nmyDistance =" + toString(i->myDistance)
+//        			+"\narrivalTime =" + toString(i->myArrivalTime)
+//        			+"\narrivalSpeed =" + toString(i->myArrivalSpeed)
+//        			+"\narrivalTimeBraking =" + toString(i->myArrivalTimeBraking)
+//        			+"\narrivalSpeedBraking =" + toString(i->myArrivalSpeedBraking)
+//        			+"\nsetRequest =" + toString(i->mySetRequest)
+//        			+"\nhasFoes =" + toString(i->myLink->hasFoes())
+//        			+"\nhasApproachingFoe =" + toString(i->myLink->hasApproachingFoe(i->myArrivalTime, i->myArrivalTime+1000,i->getLeaveSpeed(), getCarFollowModel().getMaxDecel()))
+//        			) << std::endl;
+//        	} else {
+//        	 	std::cout << ("\nitem "+toString(pcount) + "\nlink == 0...") << std::endl;
+//        	}
+//        	pcount++;
+//        }
         MSLink* link = (*i).myLink;
 
         // the vehicle must change the lane on one of the next lanes
@@ -1487,14 +1488,14 @@ MSVehicle::executeMove() {
 
     // Debug (Leo)
     if(gDebugFlag1){
-    	std::cout << "\nvCurrent = " << getSpeed() << "" << std::endl;
-    	std::cout << "vSafe = " << vSafe << "" << std::endl;
-    	std::cout << "vSafeMin = " << vSafeMin << "" << std::endl;
-    	std::cout << "vSafeMinDist = " << vSafeMinDist << "" << std::endl;
+    	std::cout << "\nvCurrent = " << toString(getSpeed(),24) << "" << std::endl;
+    	std::cout << "vSafe = " << toString(vSafe,24) << "" << std::endl;
+    	std::cout << "vSafeMin = " << toString(vSafeMin,24) << "" << std::endl;
+    	std::cout << "vSafeMinDist = " << toString(vSafeMinDist,24) << "" << std::endl;
 
     	SUMOReal gap = getLeader().second;
-    	std::cout << "gap = " << gap << std::endl;
-    	std::cout << "vSafeStoppedLeader = " << getCarFollowModel().stopSpeed(this, getSpeed(), gap) << "\n" << std::endl;
+    	std::cout << "gap = " << toString(gap,24) << std::endl;
+    	std::cout << "vSafeStoppedLeader = " << toString(getCarFollowModel().stopSpeed(this, getSpeed(), gap),24)  << "\n" << std::endl;
     }
 
     if (vSafe + NUMERICAL_EPS < vSafeMin) {
@@ -1516,7 +1517,7 @@ MSVehicle::executeMove() {
     vSafe = MIN2(vSafe, vSafeZipper);
     // Debug (Leo)
     if(gDebugFlag1){
-    	std::cout << "vSafe = " << vSafe << "\n" << std::endl;
+    	std::cout << "vSafe = " << toString(vSafe,12) << "\n" << std::endl;
     }
 
 
@@ -1540,11 +1541,13 @@ MSVehicle::executeMove() {
     	} else {
     		vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
     	}
+    	// (Leo) to avoid oscillations (< 1e-10) of vNext in a standing vehicle column, we cap off vNext
+    	if(fabs(vNext) < NUMERICAL_EPS) vNext = 0.;
     }
 
     // Debug (Leo)
     if(gDebugFlag1){
-    	std::cout << "\nvNext = " << vNext << "\n" << std::endl;
+    	std::cout << "\nvNext = " << toString(vNext,24) << "\n" << std::endl;
     }
 
 
@@ -1561,12 +1564,13 @@ MSVehicle::executeMove() {
     //}
 
 
-    // At this point vNext (as returned from a call to MSCFModel::maximumSafeStopSpeed() ) may also be negative indicating a stop within next step.
 //    vNext = MAX2(vNext, (SUMOReal) 0.); // XXX: Removed, because negative vNext can indicate a stop within next step.
     									// XXX: reassurance needed, whether the following TRACI-Code needs adjustments.
     if(MSGlobals::gSemiImplicitEulerUpdate){
         vNext = MAX2(vNext, 0.0);
     } else {
+        // Ballistic:
+    	// At this point vNext (as returned from a call to MSCFModel::maximumSafeStopSpeed() ) may also be negative indicating a stop within next step.
     	vNext = MAX2(vNext, myState.mySpeed - ACCEL2SPEED(getCarFollowModel().getMaxDecel()));
     }
 

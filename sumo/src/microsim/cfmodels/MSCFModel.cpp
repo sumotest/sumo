@@ -5,6 +5,7 @@
 /// @author  Jakob Erdmann
 /// @author  Michael Behrisch
 /// @author  Laura Bieker
+/// @author  Leonhard Lücken
 /// @date    Mon, 27 Jul 2009
 /// @version $Id$
 ///
@@ -251,8 +252,8 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 
 	// (Leo) Note that in contrast to the Euler update, for the ballistic update
 	// the distance covered in the coming step depends on the current velocity, in general.
-	// one exception is the situation when the vehicle is just being inserted
-	// in that case, it will not cover any distance until the next timestep by convention.
+	// one exception is the situation when the vehicle is just being inserted.
+	// In that case, it will not cover any distance until the next timestep by convention.
 	//
 	// Stopping time from time t+tau (braking full strength) on is given as
 	// ts = vn/b,
@@ -283,9 +284,9 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		dt = STEPS2TIME(DELTA_T);
 	}
 
-	assert(g >= 0);
 	// decrease gap slightly (to avoid passing end of lane by values of magnitude ~1e-12, when exact stop is required)
 	g = MAX2(0., g - NUMERICAL_EPS);
+	assert(g >= 0);
 
 	SUMOReal D = 2*g - v*dt;
 	if(D < 0){

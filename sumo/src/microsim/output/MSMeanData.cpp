@@ -124,7 +124,7 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     			SUMOReal p_half = oldSpeed/accel;
     			timeOnLane = TS - ( - p_half - sqrt(p_half*p_half - 2*oldPos/accel) );
     		} else { // accel \approx 0
-        		timeOnLane = newPos / newSpeed;// Debug (Leo)
+        		timeOnLane = newPos / newSpeed;
     		}
     	}
 

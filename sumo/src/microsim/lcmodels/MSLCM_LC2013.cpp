@@ -124,32 +124,32 @@ SUMOReal
 MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
     int state = myOwnState;
 
-    // Debug (Leo)
-    if(gDebugFlag1){
-    std::cout << "patchSpeed() at time" <<STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
-              << " \nveh=" << myVehicle.getID()
-              << " \nlane=" << myVehicle.getLane()->getID()
-              << " \npos=" << myVehicle.getPositionOnLane()
-              << " \nv=" << myVehicle.getSpeed()
-              << " min=" << min
-              << " wanted=" << wanted<< std::endl;
-    }
+//    // Debug (Leo)
+//    if(gDebugFlag1){
+//    std::cout << "patchSpeed() at time" <<STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+//              << " \nveh=" << myVehicle.getID()
+//              << " \nlane=" << myVehicle.getLane()->getID()
+//              << " \npos=" << myVehicle.getPositionOnLane()
+//              << " \nv=" << myVehicle.getSpeed()
+//              << " min=" << min
+//              << " wanted=" << wanted<< std::endl;
+//    }
 
 
     // letting vehicles merge in at the end of the lane in case of counter-lane change, step#2
     SUMOReal MAGIC_offset = 1.;
     //   if we want to change and have a blocking leader and there is enough room for him in front of us
     if (myLeadingBlockerLength != 0) {
-        // Debug (Leo)
-        if(gDebugFlag1){
-        	std::cout << "myLeadingBlockerLength != 0" << std::endl;
-        }
+//        // Debug (Leo)
+//        if(gDebugFlag1){
+//        	std::cout << "myLeadingBlockerLength != 0" << std::endl;
+//        }
         SUMOReal space = myLeftSpace - myLeadingBlockerLength - MAGIC_offset - myVehicle.getVehicleType().getMinGap();
 
-        // Debug (Leo)
-        if(gDebugFlag1){
-        	std::cout << "space = " << space << std::endl;
-        }
+//        // Debug (Leo)
+//        if(gDebugFlag1){
+//        	std::cout << "space = " << space << std::endl;
+//        }
 
         if (space > 0) {
             // compute speed for decelerating towards a place which allows the blocking leader to merge in in front
@@ -174,17 +174,17 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
             nVSafe = MIN2(v, nVSafe);
             gotOne = true;
         }
-        // Debug (Leo)
-        if(gDebugFlag1){
-        	std::cout << "nVSafe = " << nVSafe << std::endl;
-        }
+//        // Debug (Leo)
+//        if(gDebugFlag1){
+//        	std::cout << "nVSafe = " << nVSafe << std::endl;
+//        }
     }
 
     if (gotOne && !myDontBrake) {
-        // Debug (Leo)
-        if(gDebugFlag1){
-        	std::cout << "returning here" << std::endl;
-        }
+//        // Debug (Leo)
+//        if(gDebugFlag1){
+//        	std::cout << "returning here" << std::endl;
+//        }
         return nVSafe;
     }
 
@@ -225,12 +225,14 @@ void*
 MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
 
 	//	Debug (Leo)
-	std::string debug_id = "right1.8";
+//	std::string debug_id = "right1.8";
+	std::string debug_id = "NA";
 	gDebugFlag1 = myVehicle.getID() == debug_id;
 	if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << " informed by " << sender->getID() << std::endl;
 
     Info* pinfo = (Info*) info;
 
+    // Debug (Leo)
 	if(gDebugFlag1) std::cout << "pushing vSafe " << pinfo->first << std::endl;
 
     myVSafes.push_back(pinfo->first);
@@ -274,7 +276,8 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 || dv * remainingSeconds < overtakeDist) {
 
             // Debug (Leo)
-        	gDebugFlag1 = myVehicle.getID()=="right0.0" || myVehicle.getID()=="left1.0";
+//        	gDebugFlag1 = myVehicle.getID()=="right0.0" || myVehicle.getID()=="left1.0";
+        	gDebugFlag1 = myVehicle.getID()=="NA";
             if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << " informing NeighLeader (not overtaking)" << std::endl;
 
             // cannot overtake
@@ -337,7 +340,8 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 // follower might even accelerate but not to much
 
                 // Debug (Leo)
-            	gDebugFlag1 = myVehicle.getID()=="right0.0" || myVehicle.getID()=="left1.0";
+//            	gDebugFlag1 = myVehicle.getID()=="right0.0" || myVehicle.getID()=="left1.0";
+            	gDebugFlag1 = myVehicle.getID()=="NA";
                 if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << "informing NeighFollower " << std::endl;
 
                 msgPass.informNeighFollower(new Info(plannedSpeed - HELP_OVERTAKE, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
