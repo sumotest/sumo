@@ -24,3 +24,6 @@ overtaking_noconflict_2edges
 
 # opposite direction lane is not long enough for overtaking (and has no continuation)
 opposite_ends
+
+# a stopped vehicle ends it stop before it is fully overtaken.
+overtaking_stopped_failure
