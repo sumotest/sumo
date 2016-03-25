@@ -95,6 +95,7 @@
 // static value definitions
 // ===========================================================================
 std::vector<MSLane*> MSVehicle::myEmptyLaneVector;
+std::vector<MSTransportable*> MSVehicle::myEmptyTransportableVector;
 
 
 // ===========================================================================
@@ -1859,10 +1860,10 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
 
 void
 MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal speed, MSMoveReminder::Notification notification) {
+    myState = State(pos, speed);
     if (myDeparture == NOT_YET_DEPARTED) {
         onDepart();
     }
-    myState = State(pos, speed);
     myCachedPosition = Position::INVALID;
     assert(myState.myPos >= 0);
     assert(myState.mySpeed >= 0);
@@ -2392,6 +2393,12 @@ MSVehicle::getFuelConsumption() const {
 
 
 SUMOReal
+MSVehicle::getElectricityConsumption() const {
+    return PollutantsInterface::compute(myType->getEmissionClass(), PollutantsInterface::ELEC, myState.speed(), myAcceleration, getSlope());
+}
+
+
+SUMOReal
 MSVehicle::getHarmonoise_NoiseEmissions() const {
     return HelpersHarmonoise::computeNoise(myType->getEmissionClass(), myState.speed(), myAcceleration);
 }
@@ -2436,6 +2443,36 @@ MSVehicle::addContainer(MSTransportable* container) {
             myStops.front().duration = 0;
         }
     }
+}
+
+
+std::vector<MSTransportable*>
+MSVehicle::getSortedPersons() const {
+    if (myPersonDevice == 0) {
+        return myEmptyTransportableVector;
+    } else {
+        std::vector<MSTransportable*> result = myPersonDevice->getPersons();
+        sort(result.begin(), result.end(), transportable_by_id_sorter());
+        return result;
+    }
+}
+
+
+std::vector<MSTransportable*>
+MSVehicle::getSortedContainers() const {
+    if (myContainerDevice == 0) {
+        return myEmptyTransportableVector;
+    } else {
+        std::vector<MSTransportable*> result = myContainerDevice->getContainers();
+        sort(result.begin(), result.end(), transportable_by_id_sorter());
+        return result;
+    }
+}
+
+
+int
+MSVehicle::transportable_by_id_sorter::operator()(const MSTransportable* const c1, const MSTransportable* const c2) const {
+    return c1->getID() < c2->getID();
 }
 
 

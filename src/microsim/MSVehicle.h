@@ -722,9 +722,15 @@ public:
 
 
     /** @brief Returns fuel consumption of the current state
-     * @return The current fuel consumption
-     */
+    * @return The current fuel consumption
+    */
     SUMOReal getFuelConsumption() const;
+
+
+    /** @brief Returns electricity consumption of the current state
+    * @return The current electricity consumption
+    */
+    SUMOReal getElectricityConsumption() const;
 
 
     /** @brief Returns noise emissions of the current state
@@ -751,6 +757,11 @@ public:
      */
     void addContainer(MSTransportable* container);
 
+    /// @brief retrieve riding persons
+    std::vector<MSTransportable*> getSortedPersons() const;
+
+    /// @brief retrieve riding containers
+    std::vector<MSTransportable*> getSortedContainers() const;
 
     /** @brief Returns the number of persons
      * @return The number of passengers on-board
@@ -1197,6 +1208,7 @@ protected:
     std::vector<std::vector<LaneQ> > myBestLanes;
     std::vector<LaneQ>::iterator myCurrentLaneInBestLanes;
     static std::vector<MSLane*> myEmptyLaneVector;
+    static std::vector<MSTransportable*> myEmptyTransportableVector;
 
     /// @brief The vehicle's list of stops
     std::list<Stop> myStops;
@@ -1329,6 +1341,20 @@ protected:
                        const SUMOReal seen, DriveProcessItem* const lastLink,
                        const MSLane* const lane, SUMOReal& v, SUMOReal& vLinkPass,
                        SUMOReal distToCrossing = -1) const;
+
+    /** @class transportable_by_position_sorter
+     * @brief Sorts transportables by their positions
+     */
+    class transportable_by_id_sorter {
+    public:
+        /// @brief constructor
+        explicit transportable_by_id_sorter() { }
+
+        /// @brief comparing operator
+        int operator()(const MSTransportable* const c1, const MSTransportable* const c2) const;
+    };
+
+
 
 private:
     /* @brief The vehicle's knowledge about edge efforts/travel times; @see MSEdgeWeightsStorage
