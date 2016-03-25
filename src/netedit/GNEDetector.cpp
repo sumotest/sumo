@@ -59,14 +59,12 @@
 #include <foreign/nvwa/debug_new.h>
 #endif
 
-
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
 GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked, SumoXMLTag parentTag, GNEAdditionalSet *parent) :
-    GNEAdditional(id, viewNet, Position(), tag, blocked, lane, parentTag, parent),
-    myPosOverLane(posOverLane),
+    GNEAdditional(id, viewNet, Position(posOverLane, 0), tag, blocked, lane, parentTag, parent),
     myFreq(freq),
     myFilename(filename) {
 }
@@ -81,9 +79,9 @@ GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if posx is positive, to left if posx is negative
-        if( ((posx > 0) && ((myPosOverLane + posx) < myLane->getLaneShapeLenght())) || ((posx < 0) && ((myPosOverLane + posx) > 0)) ) {
+        if( ((posx > 0) && ((myPosition.x() + posx) < myLane->getLaneShapeLenght())) || ((posx < 0) && ((myPosition.x() + posx) > 0)) ) {
             // change attribute
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosOverLane + posx)));
+            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x() + posx)));
         }
     }
 }
@@ -91,7 +89,7 @@ GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
 
 SUMOReal 
 GNEDetector::getPositionOverLane() const {
-    return myPosOverLane;
+    return myPosition.x();
 }
 
 
@@ -108,13 +106,13 @@ GNEDetector::getFilename() const {
 
 
 void 
-GNEDetector::setPosition(SUMOReal pos) {
+GNEDetector::setPositionOverLane(SUMOReal pos) {
     if(pos < 0)
         throw InvalidArgument("Position '" + toString(pos) + "' not allowed. Must be greather than 0");
     else if(pos > myLane->getLaneShapeLenght())
         throw InvalidArgument("Position '" + toString(pos) + "' not allowed. Must be smaller than lane length");
     else
-        myPosOverLane = pos;
+        myPosition = Position(pos, 0);
 }
 
 
@@ -130,6 +128,27 @@ GNEDetector::setFrequency(int freq) {
 void 
 GNEDetector::setFilename(std::string filename) {
     myFilename = filename;
+}
+
+
+void 
+GNEDetector::drawDetectorIcon(const unsigned int GNELogoID, SUMOReal sizex, SUMOReal sizey) const {
+    // Add a draw matrix
+    glPushMatrix();
+    // Traslate to center
+    glTranslated(myShape.getLineCenter().x(), myShape.getLineCenter().y(), getType() + 0.1);
+    // Set color
+    glColor3d(1, 1, 1);
+    // Set first rotation
+    glRotated(myBlockIconRotation, 0, 0, -1);
+    // Set second rotation
+    glRotated(180, 0, 0, 1);
+    //Traslate offset
+    glTranslated(myDetectorLogoOffset.x(), myDetectorLogoOffset.y(), 0);
+    // Draw detector logo
+    GUITexturesHelper::drawTexturedBox(GNELogoID, sizex, sizey, (-1*sizex), (-1*sizey));
+    // Pop detector logo matrix
+    glPopMatrix();
 }
 
 /****************************************************************************/

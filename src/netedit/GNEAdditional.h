@@ -208,6 +208,12 @@ protected:
     /// @brief The shape of the additional element
     PositionVector myShape;
 
+    /// @brief type of tag of the parent
+    SumoXMLTag myParentTag;
+
+    /// @brief pointer to item parent, if belong to set
+    GNEAdditionalSet *myParent;
+
     /// @name computed only once (for performance) in updateGeometry()
     //@{
     /// The rotations of the shape parts
@@ -217,23 +223,29 @@ protected:
     std::vector<SUMOReal> myShapeLengths;
     //@}
 
-    /// @brief The position of the block icon
-    Position myBlockIconPos;
+    /// @name members and functions relative to block icon
+    //@{
+    /// @brief set Rotation of block Icon
+    /// @note must be called in updateGeometry() after setting of Shape
+    void setBlockIconRotation();
+
+    /// @brief draw lock icon
+    void drawLockIcon(SUMOReal size = 0.5) const;
+
+    /// @brief The offSet of the block icon
+    /// @note by default position of blockIcon is the center of shape
+    Position myBlockIconOffset;
+
+    /// @brief The rotation of the block icon
+    SUMOReal myBlockIconRotation;
 
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked; 
+    //@}
 
-    /// @brief type of tag of the parent
-    SumoXMLTag myParentTag;
-
-    /// @brief pointer to item parent, if belong to set
-    GNEAdditionalSet *myParent;
-
+    
     /// @brief vector with the different colors
     std::vector<RGBColor> myRGBColors;
-
-    // @brief draw lock icon
-    void drawLockIcon(SUMOReal size = 0.5) const;
 
 private:
     /// @brief variable to keep GLId of the additional lock image

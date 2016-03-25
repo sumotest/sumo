@@ -1,5 +1,5 @@
 /****************************************************************************/
-/// @file    GNEDetectorE3EntryExit.h
+/// @file    GNEDetectorE3Exit.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE3.h 19790 2016-01-25 11:59:12Z palcraft $
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEDetectorE3EntryExit_h
-#define GNEDetectorE3EntryExit_h
+#ifndef GNEDetectorE3Exit_h
+#define GNEDetectorE3Exit_h
 
 
 // ===========================================================================
@@ -41,24 +41,23 @@ class GNEDetectorE3;
 // class definitions
 // ===========================================================================
 /**
- * @class GNEDetectorE3EntryExit
+ * @class GNEDetectorE3Exit
  * ------------
  */
-class GNEDetectorE3EntryExit  : public GNEDetector {
+class GNEDetectorE3Exit  : public GNEDetector {
 public:
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
-     * @param[in] tag with the type of EntryExit
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] pos position of the detector on the lane
      * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEDetectorE3EntryExit(const std::string &id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
+    GNEDetectorE3Exit(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
 
     /// @brief destructor
-    ~GNEDetectorE3EntryExit();
+    ~GNEDetectorE3Exit();
 
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)
@@ -129,17 +128,11 @@ public:
     //@}
 
 private:
-    /// @brief variable to save detectorEntry icon
-    static GUIGlID detectorEntryGlID;
-
     /// @brief variable to save detectorExit icon
-    static GUIGlID detectorExitGlID;
-
-    /// @brief check if detectorEntry icon was inicilalizated
-    static bool detectorEntryInitialized;
+    static GUIGlID detectorE3ExitGlID;
 
     /// @brief check if detectorExit icon was inicilalizated
-    static bool detectorExitInitialized;
+    static bool detectorE3ExitInitialized;
 
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
@@ -149,17 +142,27 @@ private:
 
     /// @brief list of colors
     enum colorTypes {
-        ENTRY_BASE = 0,
-        ENTRY_BASE_SELECTED = 1,
-        EXIT_BASE = 2,
-        EXIT_BASE_SELECTED = 3,
+        EXIT_BASE = 0,
+        EXIT_BASE_SELECTED = 1,
     };
 
     /// @brief Invalidated copy constructor.
-    GNEDetectorE3EntryExit(const GNEDetectorE3EntryExit&);
+    GNEDetectorE3Exit(const GNEDetectorE3Exit&);
 
     /// @brief Invalidated assignment operator.
-    GNEDetectorE3EntryExit& operator=(const GNEDetectorE3EntryExit&);
+    GNEDetectorE3Exit& operator=(const GNEDetectorE3Exit&);
+
+    /// @brief Invalidated get filename
+    std::string getFilename() const;
+
+    /// @brief Invalidated set frequency
+    int getFrequency() const;
+
+    /// @brief Invalidated set filename
+    void setFrequency(int freq);
+
+    /// @brief Invalidated
+    void setFilename(std::string filename);
 };
 
 

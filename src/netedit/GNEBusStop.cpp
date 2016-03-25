@@ -136,21 +136,8 @@ GNEBusStop::updateGeometry() {
     // Get position of the sign
     mySignPos = tmpShape.getLineCenter();
 
-    // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter();
-
-    // If lenght of the shape is distint to 0
-    if (myShape.length() != 0) {
-
-        // Obtain rotation of signal rot
-        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
-
-        // correct orientation
-        mySignRot -= 90;
-    }
-    else
-        // Value of signal rotation is 0
-        mySignRot = 0;
+    // Set block icon rotation, and using their rotation for sign
+    setBlockIconRotation();
 }
 
 
@@ -243,7 +230,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
             glRotated(180, 1, 0, 0);
 
             // Rotate again depending of the option rotSign
-            glRotated(rotSign * mySignRot, 0, 0, 1);
+            glRotated(rotSign * myBlockIconRotation, 0, 0, 1);
             
             // Set poligon mode
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -291,7 +278,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
 
         // If the scale * exageration is equal or more than 4.5, draw H
         if (s.scale * exaggeration >= 4.5)
-            GLHelper::drawText("H", Position(), .1, 1.6, letter, mySignRot);
+            GLHelper::drawText("H", Position(), .1, 1.6, letter, myBlockIconRotation);
 
         // pop draw matrix
         glPopMatrix();

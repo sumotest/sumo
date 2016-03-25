@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNEDetectorE1.cpp
+/// @file    GNEDetectorE3Entry.cpp
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
-/// @version $Id: GNEDetectorE1.cpp 19861 2016-02-01 09:08:47Z palcraft $
+/// @version $Id: GNEDetectorE3.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
 /// 
 /****************************************************************************/
@@ -47,13 +47,14 @@
 #include <utils/gui/images/GUITexturesHelper.h>
 #include <utils/xml/SUMOSAXHandler.h>
 
-#include "GNEDetectorE1.h"
+#include "GNEDetectorE3Entry.h"
+#include "GNEDetectorE3.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
-#include "GNELogo_E1.cpp"
+#include "GNELogo_Entry.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -62,37 +63,34 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-
-GUIGlID GNEDetectorE1::detectorE1GlID = 0;
-bool GNEDetectorE1::detectorE1Initialized = false;
+GUIGlID GNEDetectorE3Entry::detectorE3EntryGlID = 0;
+bool GNEDetectorE3Entry::detectorE3EntryInitialized = false;
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal freq, const std::string& filename, bool splitByType, bool blocked) :
-    GNEDetector(id, viewNet, SUMO_TAG_E1DETECTOR, lane, pos, freq, filename, blocked),
-    mySplitByType(splitByType) {
+GNEDetectorE3Entry::GNEDetectorE3Entry(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
+    GNEDetector(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
     // Update geometry;
     updateGeometry();
     // Set colors of detector
     setColors();
-    // load detector logo, if wasn't inicializated
-    if (!detectorE1Initialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E1, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE1GlID = GUITexturesHelper::add(i);
-        detectorE1Initialized = true;
+    // load logo, if wasn't inicializated
+    if (!detectorE3EntryInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Entry, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE3EntryGlID = GUITexturesHelper::add(i);
+        detectorE3EntryInitialized = true;
         delete i;
     }
 }
 
 
-GNEDetectorE1::~GNEDetectorE1() {
-}
+GNEDetectorE3Entry::~GNEDetectorE3Entry() {}
 
 
 void 
-GNEDetectorE1::updateGeometry() {
+GNEDetectorE3Entry::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
@@ -113,38 +111,33 @@ GNEDetectorE1::updateGeometry() {
     myShapeRotations.push_back(myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())) * -1);
 
     // Set offset of logo
-    myDetectorLogoOffset = Position(1,0);
-
-    // Set offset of the block icon
-    myBlockIconOffset = Position(-1, 0);
+    myDetectorLogoOffset = Position(-2, 0);
 
     // Set block icon rotation, and using their rotation for logo
     setBlockIconRotation();
+
+    // Update parent geometry
+    myParent->updateGeometry();
 }
 
 
 void 
-GNEDetectorE1::writeAdditional(OutputDevice& device) {
+GNEDetectorE3Entry::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
-    device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosition.x());
-    device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
-    if(!myFilename.empty())
-        device.writeAttr(SUMO_ATTR_FILE, myFilename);
-    device.writeAttr(SUMO_ATTR_SPLIT_VTYPE, mySplitByType);
     // Close tag
     device.closeTag();
 }
 
 
 GUIGLObjectPopupMenu* 
-GNEDetectorE1::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+GNEDetectorE3Entry::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy detector E1 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
+    new FXMenuCommand(ret, "Copy detector E3 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
     buildNameCopyPopupEntry(ret);
     buildSelectionPopupEntry(ret);
     buildPositionCopyEntry(ret, false);
@@ -160,7 +153,7 @@ GNEDetectorE1::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 
 
 GUIParameterTableWindow* 
-GNEDetectorE1::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+GNEDetectorE3Entry::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     /* not supported yet
@@ -174,96 +167,91 @@ GNEDetectorE1::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 
 
 void 
-GNEDetectorE1::drawGL(const GUIVisualizationSettings& s) const {
+GNEDetectorE3Entry::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
 void 
-GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
+GNEDetectorE3Entry::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
     
     // Declare variables to get colors depending if the detector is selected
     RGBColor base;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[E1_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E1_BASE];
-    }
-
-    // get values
-    glPushName(getGlID());
-    SUMOReal width = (SUMOReal) 2.0 * s.scale;
-    glLineWidth(1.0);
-    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     
-    // draw shape
-    glColor3d(1, 1, 0);
+    // Set colors
+    if(gSelected.isSelected(getType(), getGlID()))
+        base = myRGBColors[ENTRY_BASE_SELECTED];
+    else
+        base = myRGBColors[ENTRY_BASE];
+
+    // Start drawing adding gl identificator
+    glPushName(getGlID());
+    
+    // Push detector matrix
     glPushMatrix();
     glTranslated(0, 0, getType());
+    
+    //glColor3d(0, .8, 0);
+    glColor3d(base.red(), base.green(), base.blue());
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+    // Push poligon matrix
+    glPushMatrix();
+    glScaled(exaggeration, exaggeration, 1);
     glTranslated(myShape[0].x(), myShape[0].y(), 0);
     glRotated(myShapeRotations[0], 0, 0, 1);
-    glScaled(exaggeration, exaggeration, 1);
-    glBegin(GL_QUADS);
-    glVertex2d(0 - 1.0, 2);
-    glVertex2d(-1.0, -2);
-    glVertex2d(1.0, -2);
-    glVertex2d(1.0, 2);
-    glEnd();
-    glTranslated(0, 0, .01);
+    
+    // Draw poligon
     glBegin(GL_LINES);
-    glVertex2d(0, 2 - .1);
-    glVertex2d(0, -2 + .1);
+    glVertex2d(1.7, 0);
+    glVertex2d(-1.7, 0);
     glEnd();
-
-    // outline
-    if (width * exaggeration > 1) {
-        glColor3d(1, 1, 1);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glBegin(GL_QUADS);
-        glVertex2f(0 - 1.0, 2);
-        glVertex2f(-1.0, -2);
-        glVertex2f(1.0, -2);
-        glVertex2f(1.0, 2);
-        glEnd();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-
-    // position indicator
-    if (width * exaggeration > 1) {
-        glRotated(90, 0, 0, -1);
-        glColor3d(1, 1, 1);
-        glBegin(GL_LINES);
-        glVertex2d(0, 1.7);
-        glVertex2d(0, -1.7);
-        glEnd();
-    }
-
-    // Pop shape matrix
+    glBegin(GL_QUADS);
+    glVertex2d(-1.7, .5);
+    glVertex2d(-1.7, -.5);
+    glVertex2d(1.7, -.5);
+    glVertex2d(1.7, .5);
+    glEnd();
+    
+    // first Arrow
+    glTranslated(1.5, 0, 0);
+    GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
+    GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    
+    // second Arrow
+    glTranslated(-3, 0, 0);
+    GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
+    GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
+    
+    // Pop poligon matrix
     glPopMatrix();
-
+    
+    // Pop detector matrix
+    glPopMatrix();
+    
     // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {        
-        // Add a draw matrix
-        this->drawDetectorIcon(detectorE1GlID);
+    if (s.scale * exaggeration >= 10) {
+        // Draw icon
+        drawDetectorIcon(detectorE3EntryGlID, 1.5, 1);
         
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            drawLockIcon();
+            drawLockIcon(0.4);
     }
-
-    // Finish draw
+    // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+    
+    // pop gl identificator
     glPopName();
 }
 
 
 std::string 
-GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
+GNEDetectorE3Entry::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
@@ -271,98 +259,68 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
             return toString(myLane->getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
             return toString(myPosition.x());
-        case SUMO_ATTR_FREQUENCY:
-            return toString(myFreq);
-        case SUMO_ATTR_FILE:
-            return myFilename;
-        case SUMO_ATTR_SPLIT_VTYPE:
-            return (mySplitByType? "true" : "false");
-        
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
 }
 
 
 void 
-GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-    if (value == getAttribute(key)) {
+GNEDetectorE3Entry::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-        case SUMO_ATTR_FREQUENCY:
-        case SUMO_ATTR_FILE:
-        case SUMO_ATTR_SPLIT_VTYPE:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
 
 }
 
 
 bool 
-GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
+GNEDetectorE3Entry::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
-        case SUMO_ATTR_FREQUENCY:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
-        case SUMO_ATTR_FILE:
-            return isValidFileValue(value);
-        case SUMO_ATTR_SPLIT_VTYPE:
-            return canParse<bool>(value);
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
 }
 
-// ===========================================================================
-// private
-// ===========================================================================
-
 void
-GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
+GNEDetectorE3Entry::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             myPosition = Position(parse<SUMOReal>(value), 0);
             updateGeometry();
             getViewNet()->update();
             break;
-        case SUMO_ATTR_FREQUENCY:
-            myFreq = parse<SUMOReal>(value);
-            break;
-        case SUMO_ATTR_FILE:
-            myFilename = value;
-            break;
-        case SUMO_ATTR_SPLIT_VTYPE:
-            mySplitByType = parse<bool>(value);
-            break;
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
 }
 
 
 void
-GNEDetectorE1::setColors() {
-    // Color E1_BASE
-    myRGBColors.push_back(RGBColor(255, 255, 50, 0));
-    // Color E1_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(255, 255, 125, 255));
+GNEDetectorE3Entry::setColors() {
+    // Color ENTRY_BASE
+    myRGBColors.push_back(RGBColor(0, 204, 0, 255));
+    // Color ENTRY_BASE_SELECTED
+    myRGBColors.push_back(RGBColor(125, 204, 0, 255));
 }
-
 
 /****************************************************************************/

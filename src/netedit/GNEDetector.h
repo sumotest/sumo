@@ -88,11 +88,11 @@ public:
     /// @brief returns the path to the output file
     std::string getFilename() const;
 
-    /** @brief Set a new position in detector
-     * @param[in] pos new position of detector
+    /** @brief Set a new position of detector over lane
+     * @param[in] pos new position of detector over lane
      * @throws InvalidArgument if value of pos isn't valid
      */
-    void setPosition(SUMOReal pos);
+    void setPositionOverLane(SUMOReal pos);
 
     /** @brief Set a new frequency in detector
      * @param[in] freq new frequency of detector
@@ -156,23 +156,20 @@ public:
     //@}
 
 protected:
-    /// @brief Position of lane in which detector is placed
-    SUMOReal myPosOverLane;
-    
     /// @brief The aggregation period the values the detector collects shall be summed up.
     int myFreq;
 
     /// @brief The path to the output file
     std::string myFilename;
 
+    /// @name members and functions relative to detector icon
+    //@{
+    /// @brief set Rotation of block Icon
+    void drawDetectorIcon(const unsigned int GNELogoID, SUMOReal sizex = 0.5, SUMOReal sizey = 0.5) const;
+
     /// @brief The position of detector
-    Position myDetectorLogoPosition;
-
-    /// @brief The rotation of detector
-    SUMOReal myRotation;
-
-    /// @brief The rotation of signal detector
-    SUMOReal mySignRotation;
+    Position myDetectorLogoOffset;
+    //@}
 
 private:
     /// @brief set attribute after validation
@@ -189,4 +186,5 @@ private:
 };
 
 #endif
+
 /****************************************************************************/

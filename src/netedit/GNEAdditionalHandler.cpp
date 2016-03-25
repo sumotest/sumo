@@ -42,7 +42,8 @@
 #include "GNEDetectorE1.h"
 #include "GNEDetectorE2.h"
 #include "GNEDetectorE3.h"
-#include "GNEDetectorE3EntryExit.h"
+#include "GNEDetectorE3Entry.h"
+#include "GNEDetectorE3Exit.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -671,7 +672,7 @@ GNEAdditionalHandler::buildDetectorEntry(GNEViewNet *viewNet, const std::string&
     }
     // Create detector Entry if don't exist already in the net
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, id) == NULL) {
-        GNEDetectorE3EntryExit *entry = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, detectorE3Parent, blocked);
+        GNEDetectorE3Entry *entry = new GNEDetectorE3Entry(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_ENTRY));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), entry, true), true);
         viewNet->getUndoList()->p_end();
@@ -694,7 +695,7 @@ GNEAdditionalHandler::buildDetectorExit(GNEViewNet *viewNet, const std::string& 
     }
     // Create detector Exit if don't exist already in the net
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_EXIT, id) == NULL) {
-        GNEDetectorE3EntryExit *exit = new GNEDetectorE3EntryExit(id, viewNet, SUMO_TAG_DET_EXIT, lane, pos, detectorE3Parent, blocked);
+        GNEDetectorE3Exit *exit = new GNEDetectorE3Exit(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_EXIT));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), exit, true), true);
         viewNet->getUndoList()->p_end();

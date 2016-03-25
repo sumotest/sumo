@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    GNEStoppingPlace.h
+/// @file    GNEDetectorE3Entry.h
 /// @author  Pablo Alvarez Lopez
-/// @date    Dec 2015
-/// @version $Id$
+/// @date    Nov 2015
+/// @version $Id: GNEDetectorE3.h 19790 2016-01-25 11:59:12Z palcraft $
 ///
-/// A abstract class to define common parameters of lane area in which vehicles can halt (GNE version)
+/// 
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEStoppingPlace_h
-#define GNEStoppingPlace_h
+#ifndef GNEDetectorE3Entry_h
+#define GNEDetectorE3Entry_h
 
 
 // ===========================================================================
@@ -30,74 +30,48 @@
 #include <config.h>
 #endif
 
-#include "GNEAdditional.h"
+#include "GNEDetector.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-
-class GUIGLObjectPopupMenu;
-class PositionVector;
-class GNENet;
+class GNEDetectorE3;
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
 /**
- * @class GNEStoppingPlace
- * @briefA abstract class to define common parameters and functions of stopping places
+ * @class GNEDetectorE3Entry
+ * ------------
  */
-class GNEStoppingPlace : public GNEAdditional
-{
+class GNEDetectorE3Entry  : public GNEDetector {
 public:
-    /** @brief Constructor.
-     * @param[in] id Gl-id of the stopping place (Must be unique)
+    /** @brief Constructor
+     * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
-     * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
      * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] startPos Start position of the StoppingPlace
-     * @param[in] endPos End position of the StoppingPlace
+     * @param[in] pos position of the detector on the lane
+     * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
      * @param[in] blocked set initial blocking state of item 
      */
-    GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal startPos, SUMOReal endPos, bool blocked = false);
+    GNEDetectorE3Entry(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
 
-    /// @brief Destructor
-    ~GNEStoppingPlace();
+    /// @brief destructor
+    ~GNEDetectorE3Entry();
 
     /// @brief update pre-computed geometry information
-    virtual void updateGeometry() = 0;
+    /// @note: must be called when geometry changes (i.e. lane moved)
+    void updateGeometry();
 
-    /** @brief change the position of the StoppingPlace geometry without registering undo/redo
-     * @param[in] posx new position of StoppingPlaceover lane
-     * @param[in] posy unused
-     * @param[in] undoList pointer to the undo list
-     */
-    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
+    /// @brief get E3 parentecto
+    GNEDetectorE3* getE3Parent() const;
 
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
-    virtual void writeAdditional(OutputDevice& device) = 0;
+    void writeAdditional(OutputDevice& device);
 
-    /// @brief Returns the Start position of the stoppingPlace
-    SUMOReal getstartPosition() const;
-        
-    /// @brief Returns the End position of the stoppingPlace
-    SUMOReal getendPosition() const;
-
-    /** @brief Set a new Start position in StoppingPlace
-     * @param[in] startPos new Start position of StoppingPlace
-     * @throws InvalidArgument if value of startPos isn't valid
-     */
-    void setstartPosition(SUMOReal startPos);
-
-    /** @brief Set a new End position in StoppingPlace
-     * @param[in] endPos new End position of StoppingPlace
-     * @throws InvalidArgument if value of endPos isn't valid
-     */
-    void setendPosition(SUMOReal endPos);
-
-    /// @name inherited from GNEAdditional
+    /// @name inherited from GUIGlObject
     //@{
     /** @brief Returns an own popup-menu
      *
@@ -106,7 +80,7 @@ public:
      * @return The built popup-menu
      * @see GUIGlObject::getPopUpMenu
      */
-    virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
+    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Returns an own parameter window
      *
@@ -115,19 +89,19 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /** @brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
-    virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
+    void drawGL(const GUIVisualizationSettings& s) const;
 
     /** @brief Draws additionally triggered visualisations
      * @param[in] parent The view
      * @param[in] s The settings for the current view (may influence drawing)
      */
-    virtual void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const = 0;
+    void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const;
     //@}
 
     //@name inherited from GNEAttributeCarrier
@@ -136,46 +110,61 @@ public:
      * @param[in] key The attribute key
      * @return string with the value associated to key
      */
-    virtual std::string getAttribute(SumoXMLAttr key) const = 0;
+    std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
      * @param[in] value The new value
      * @param[in] undoList The undoList on which to register changes
      */
-    virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
+    void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
-    /* @brief method for checking if the key and their conrrespond attribute are valids
+    /* @brief method for checking if the key and their correspond attribute are valids
      * @param[in] key The attribute key
      * @param[in] value The value asociated to key key
      * @return true if the value is valid, false in other case
      */
-    virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
+    bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
 
-protected:
-    /// @brief The start position this stopping place is located at
-    SUMOReal myStartPos;
-
-    /// @brief The end position this stopping place is located at
-    SUMOReal myEndPos;
-
-    /// @brief The position of the sign
-    Position mySignPos;
-
 private:
+    /// @brief variable to save detectorEntry icon
+    static GUIGlID detectorE3EntryGlID;
+
+    /// @brief check if detectorEntry icon was inicilalizated
+    static bool detectorE3EntryInitialized;
+
     /// @brief set attribute after validation
-    virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
+    void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief set colors of scheme
-    virtual void setColors() = 0;
+    void setColors();
 
-    /// @brief Invalidate return position of additional
-    const Position &getPositionInView() const;
+    /// @brief list of colors
+    enum colorTypes {
+        ENTRY_BASE = 0,
+        ENTRY_BASE_SELECTED = 1,
+    };
 
-    /// @brief Invalidate set new position in the view
-    void setPosition(const Position &pos);
+    /// @brief Invalidated copy constructor.
+    GNEDetectorE3Entry(const GNEDetectorE3Entry&);
+
+    /// @brief Invalidated assignment operator.
+    GNEDetectorE3Entry& operator=(const GNEDetectorE3Entry&);
+
+    /// @brief Invalidated get filename
+    std::string getFilename() const;
+
+    /// @brief Invalidated set frequency
+    int getFrequency() const;
+
+    /// @brief Invalidated set filename
+    void setFrequency(int freq);
+
+    /// @brief Invalidated
+    void setFilename(std::string filename);
 };
 
 
 #endif
+/****************************************************************************/

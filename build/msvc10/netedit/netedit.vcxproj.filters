@@ -147,7 +147,10 @@
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalSet.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3EntryExit.cpp">
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3Entry.cpp">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3Exit.cpp">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -292,7 +295,10 @@
     <ClInclude Include="..\..\..\src\netedit\GNEAdditionalSet.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3EntryExit.h">
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3Entry.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3Exit.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>

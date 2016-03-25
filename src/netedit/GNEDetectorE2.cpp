@@ -81,6 +81,13 @@ GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane* lane, GNEViewNet* v
     updateGeometry();
     // Set colors of detector
     setColors();
+    // load detector logo, if wasn't inicializated
+    if (!detectorE2Initialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E2, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE2GlID = GUITexturesHelper::add(i);
+        detectorE2Initialized = true;
+        delete i;
+    }
 }
 
 
@@ -98,7 +105,7 @@ GNEDetectorE2::updateGeometry() {
     myShape = myLane->getShape();
 
     // Cut shape using as delimitators myPos and their length (myPos + length)
-    myShape = myShape.getSubpart(myLane->getPositionRelativeToParametricLenght(myPosOverLane), myLane->getPositionRelativeToParametricLenght(myPosOverLane + myLength));
+    myShape = myShape.getSubpart(myLane->getPositionRelativeToParametricLenght(myPosition.x()), myLane->getPositionRelativeToParametricLenght(myPosition.x() + myLength));
 
     // Get number of parts of the shape
     int numberOfSegments = (int) myShape.size() - 1;
@@ -127,17 +134,14 @@ GNEDetectorE2::updateGeometry() {
         }
     }
 
-    // Set position of logo
-    myDetectorLogoPosition = myShape.getLineCenter() - Position(0.5, 0);
+    // Set offset of logo
+    myDetectorLogoOffset = Position(0.5, 0);
 
-    // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter() + Position(0.5, 0);
+    // Set offset of the block icon
+    myBlockIconOffset = Position(-0.5, 0);
 
-    // Get value of option "lefthand"
-    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
-
-    // Set rotation of the detector icon
-    mySignRotation = (myRotation * offsetSign) - 90;
+    // Set block icon rotation, and using their rotation for draw logo
+    setBlockIconRotation();
 }
 
 
@@ -147,7 +151,7 @@ GNEDetectorE2::writeAdditional(OutputDevice& device) {
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
     device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
-    device.writeAttr(SUMO_ATTR_POSITION, myPosOverLane);
+    device.writeAttr(SUMO_ATTR_POSITION, myPosition.x());
     device.writeAttr(SUMO_ATTR_LENGTH, myLength);
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
     if(!myFilename.empty())
@@ -240,22 +244,8 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
-
-        // load detector logo, if wasn't inicializated
-        if (!detectorE2Initialized) {
-            FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E2, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-            detectorE2GlID = GUITexturesHelper::add(i);
-            detectorE2Initialized = true;
-            delete i;
-        }
-
-        // draw detector logo
-        glPushMatrix();
-        glTranslated(myDetectorLogoPosition.x(), myDetectorLogoPosition.y(), getType() + 0.1);
-        glColor3d(1, 1, 1);
-        glRotated(180, 0, 0, 1);
-        GUITexturesHelper::drawTexturedBox(detectorE2GlID, 0.5);
-        glPopMatrix();
+        // Draw icon
+        this->drawDetectorIcon(detectorE2GlID);
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
@@ -278,7 +268,7 @@ GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_LANE:
             return toString(myLane->getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
-            return toString(myPosOverLane);
+            return toString(myPosition.x());
         case SUMO_ATTR_FREQUENCY:
             return toString(myFreq);
         case SUMO_ATTR_FILE:
@@ -358,7 +348,7 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E2 attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-            myPosOverLane = parse<SUMOReal>(value);
+            myPosition = Position(parse<SUMOReal>(value), 0);
             updateGeometry();
             getViewNet()->update();
             break;

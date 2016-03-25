@@ -80,13 +80,28 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     myBlocked(blocked),
     myParentTag(parentTag),
     myLane(lane),
-    myParent(parent) {
+    myParent(parent),
+    myBlockIconRotation(0) {
     // If this additional belongs to a set, add it.
     if(myParent)
         myParent->addAdditionalChild(this);
     // If this additional belongs to a Lane, add it
     if(myLane)
         myLane->addAdditional(this);
+    // load additional lock, if wasn't already initialized
+    if (!additionalLockInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        additionalLockGlID = GUITexturesHelper::add(i);
+        additionalLockInitialized = true;
+        delete i;
+    }
+    // load additional empty, if wasn't already inicializated
+    if (!additionalEmptyInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Empty, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        additionalEmptyGlID = GUITexturesHelper::add(i);
+        additionalEmptyInitialized = true;
+        delete i;
+    }
 }
 
 
@@ -178,26 +193,33 @@ GNEAdditional::getCenteringBoundary() const {
 
 
 void 
+GNEAdditional::setBlockIconRotation() {
+    if (myShape.length() != 0)
+        // If lenght of the shape is distint to 0, Obtain rotation of center of shape
+        myBlockIconRotation = myShape.rotationDegreeAtOffset((myShape.length() / 2.)) - 90;
+    else if(myLane != NULL)
+        // If additional is over a lane, set rotation in the position over lane
+        myBlockIconRotation = myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())) - 90;
+    else
+        // In other case, rotation is 0
+        myBlockIconRotation = 0;
+}
+
+
+void 
 GNEAdditional::drawLockIcon(SUMOReal size) const {
-    // load additional lock, if wasn't inicializated
-    if (!additionalLockInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalLockGlID = GUITexturesHelper::add(i);
-        additionalLockInitialized = true;
-        delete i;
-    }
-    // load additional empty, if wasn't inicializated
-    if (!additionalEmptyInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Empty, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalEmptyGlID = GUITexturesHelper::add(i);
-        additionalEmptyInitialized = true;
-        delete i;
-    }
-    // Draw icon
+    // Start pushing matrix
     glPushMatrix();
-    glTranslated(myBlockIconPos.x(), myBlockIconPos.y(), getType() + 0.1);
+    // Traslate to middle of shape
+    glTranslated(myShape.getLineCenter().x(), myShape.getLineCenter().y(), getType() + 0.1);
+    // Set draw color
     glColor3d(1, 1, 1);
+    // Rotate depending of myBlockIconRotation
+    glRotated(myBlockIconRotation, 0, 0, -1);
+    // Rotate 180º
     glRotated(180, 0, 0, 1);
+    // Traslate depending of the offset
+    glTranslated(myBlockIconOffset.x(), myBlockIconOffset.y(), 0);
     // If myBlocked is enable, draw lock, in other case, draw empty square
     if(myBlocked)
         GUITexturesHelper::drawTexturedBox(additionalLockGlID, size);

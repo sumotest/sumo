@@ -134,21 +134,8 @@ GNEChargingStation::updateGeometry() {
     // Get position of the sing
     mySignPos = tmpShape.getLineCenter();
 
-    // Set position of the block icon
-    myBlockIconPos = myShape.getLineCenter();
-
-    // If lenght of the shape is distint to 0
-    if (myShape.length() != 0) {
-
-        // Obtain rotation of signal rot
-        mySignRot = myShape.rotationDegreeAtOffset(SUMOReal((myShape.length() / 2.)));
-
-        // correct orientation
-        mySignRot -= 90;
-    }
-    else
-        // Value of signal rotation is 0
-        mySignRot = 0;
+    // Set block icon rotation, and using their rotation for sign
+    setBlockIconRotation();
 }
 
 
@@ -265,7 +252,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
         if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("C", Position(), .1, 1.6, base, mySignRot);
+            GLHelper::drawText("C", Position(), .1, 1.6, base, myBlockIconRotation);
         }
 
         glPopMatrix();

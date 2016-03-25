@@ -98,8 +98,11 @@ GNEDetectorE3::updateGeometry() {
     // Set position
     myShape.push_back(myPosition);
 
-    // Set block icon position
-    myBlockIconPos = myPosition + Position(-0.5, 0.5);
+    // Set block icon offset
+    myBlockIconOffset = Position(0.5, -0.5);
+
+    // Set block icon rotation, and using their rotation for draw logo
+    setBlockIconRotation();
 
     // Update connections
     updateConnections();
@@ -211,7 +214,6 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     glTranslated(myShape[0].x(), myShape[0].y(), getType());
     glColor3d(1, 1, 1);
     glRotated(180, 0, 0, 1);
-
     // Draw icon depending of detector is or isn't selected
     if(gSelected.isSelected(getType(), getGlID())) 
         GUITexturesHelper::drawTexturedBox(detectorE3SelectedGlID, 1);
