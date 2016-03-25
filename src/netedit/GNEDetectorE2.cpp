@@ -79,8 +79,6 @@ GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane* lane, GNEViewNet* v
     myJamThreshold(jamThreshold) {
     // Update geometry;
     updateGeometry();
-    // Set colors of detector
-    setColors();
     // load detector logo, if wasn't inicializated
     if (!detectorE2Initialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E2, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -88,6 +86,9 @@ GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane* lane, GNEViewNet* v
         detectorE2Initialized = true;
         delete i;
     }
+    // Set Colors
+    myBaseColor = RGBColor(0, 204, 204, 255);
+    myBaseColorSelected = RGBColor(125, 204, 204, 255);
 }
 
 
@@ -210,16 +211,6 @@ void
 GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-    
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[E1_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E1_BASE];
-    }
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
@@ -231,7 +222,10 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     glTranslated(0, 0, getType());
 
     // Set color of the base
-    GLHelper::setColor(base);
+    if(isAdditionalSelected())
+        GLHelper::setColor(myBaseColorSelected);
+    else
+        GLHelper::setColor(myBaseColor);
 
     // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
@@ -374,15 +368,5 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
     }
 }
-
-
-void
-GNEDetectorE2::setColors() {
-    // Color E1_BASE
-    myRGBColors.push_back(RGBColor(0, 204, 204, 255));
-    // Color E1_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(125, 204, 204, 255));
-}
-
 
 /****************************************************************************/

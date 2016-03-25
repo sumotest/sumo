@@ -72,8 +72,13 @@ GNEChargingStation::GNEChargingStation(const std::string& id, GNELane* lane, GNE
     myChargeDelay(chargeDelay) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
-    // And color must be configured
-    setColors();
+    // Set Colors
+    myBaseColor = RGBColor(114, 210, 252, 255);
+    myBaseColorSelected = RGBColor(125, 255, 255, 255);
+    mySignColor = RGBColor(255, 235, 0, 255);
+    mySignColorSelected = RGBColor(255, 235, 0, 255);
+    myTextColor = RGBColor(114, 210, 252, 255);
+    myTextColorSelected = RGBColor(125, 255, 255, 255);
 }
 
 
@@ -211,50 +216,63 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
-    // Declare variables to get colors depending if the chargingStation is selected
-    RGBColor base, sign;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[CHARGINGSTATION_BASE_SELECTED];
-        sign = myRGBColors[CHARGINGSTATION_SIGN_SELECTED];
-    } else {
-        base = myRGBColors[CHARGINGSTATION_BASE];
-        sign = myRGBColors[CHARGINGSTATION_SIGN];
-    }
-
     // Draw Charging Station
     glPushName(getGlID());
     glPushMatrix();
 
-    // draw the area
+    // Traslate matrix
     glTranslated(0, 0, getType());
-    GLHelper::setColor(base);
+
+    // Set Color
+    if(isAdditionalSelected())
+        GLHelper::setColor(myBaseColorSelected);
+    else
+        GLHelper::setColor(myBaseColor);
+
+    // Draw base
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
+        // Push sign matrix
         glPushMatrix();
-        // draw the sign
         glTranslated(mySignPos.x(), mySignPos.y(), 0);
         int noPoints = 9;
-        if (s.scale * exaggeration > 25) {
+        if (s.scale * exaggeration > 25)
             noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
-        }
-
+        // Scale matrix
         glScaled(exaggeration, exaggeration, 1);
-        GLHelper::setColor(base);
+        
+        // Set base color
+        if(isAdditionalSelected())
+            GLHelper::setColor(myBaseColorSelected);
+        else
+            GLHelper::setColor(myBaseColor);
+        
+        // Draw extern
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+        
+        // Move to top
         glTranslated(0, 0, .1);
-
-        GLHelper::setColor(sign);
+        
+        // Set sign color
+        if(isAdditionalSelected())
+            GLHelper::setColor(mySignColorSelected);
+        else
+            GLHelper::setColor(mySignColor);
+        
+        // Draw internt sign
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
-        if (s.scale * exaggeration >= 4.5) {
-            GLHelper::drawText("C", Position(), .1, 1.6, base, myBlockIconRotation);
-        }
-
+        // Draw sign 'C'
+        if (s.scale * exaggeration >= 4.5)
+            if(isAdditionalSelected())
+                GLHelper::drawText("C", Position(), .1, 1.6, myBaseColorSelected, myBlockIconRotation);
+            else
+                GLHelper::drawText("C", Position(), .1, 1.6, myBaseColor, myBlockIconRotation);
+        
+        // Pop sign matrix
         glPopMatrix();
 
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
@@ -434,19 +452,6 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
     }
-}
-
-
-void
-GNEChargingStation::setColors() {
-    // Color CHARGINGSTATION_BASE
-    myRGBColors.push_back(RGBColor(114, 210, 252, 255));
-    // Color CHARGINGSTATION_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(125, 255, 255, 255));
-    // Color CHARGINGSTATION_SIGN
-    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
-    // Color CHARGINGSTATION_SIGN_SELECTED
-    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
 }
 
 /****************************************************************************/

@@ -161,15 +161,6 @@ private:
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
-    /// @brief set colors of scheme
-    void setColors();
-
-    /// @brief list of colors
-    enum colorTypes {
-        E3_BASE = 0,
-        E3_BASE_SELECTED = 1,
-    };
-
     /// @brief Invalidated copy constructor.
     GNEDetectorE3(const GNEDetectorE3&);
 

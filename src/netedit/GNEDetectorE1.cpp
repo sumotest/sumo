@@ -75,8 +75,6 @@ GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane* lane, GNEViewNet* v
     mySplitByType(splitByType) {
     // Update geometry;
     updateGeometry();
-    // Set colors of detector
-    setColors();
     // load detector logo, if wasn't inicializated
     if (!detectorE1Initialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E1, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -84,6 +82,9 @@ GNEDetectorE1::GNEDetectorE1(const std::string& id, GNELane* lane, GNEViewNet* v
         detectorE1Initialized = true;
         delete i;
     }
+    // Set Colors
+    myBaseColor = RGBColor(255, 255, 50, 0);
+    myBaseColorSelected = RGBColor(255, 255, 125, 255);
 }
 
 
@@ -184,16 +185,6 @@ void
 GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-    
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[E1_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E1_BASE];
-    }
 
     // get values
     glPushName(getGlID());
@@ -249,7 +240,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {        
         // Add a draw matrix
-        this->drawDetectorIcon(detectorE1GlID);
+        drawDetectorIcon(detectorE1GlID);
         
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
@@ -354,15 +345,5 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
             throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
     }
 }
-
-
-void
-GNEDetectorE1::setColors() {
-    // Color E1_BASE
-    myRGBColors.push_back(RGBColor(255, 255, 50, 0));
-    // Color E1_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(255, 255, 125, 255));
-}
-
 
 /****************************************************************************/

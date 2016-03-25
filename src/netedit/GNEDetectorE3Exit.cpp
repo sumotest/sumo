@@ -74,8 +74,6 @@ GNEDetectorE3Exit::GNEDetectorE3Exit(const std::string &id, GNEViewNet* viewNet,
     GNEDetector(id, viewNet, SUMO_TAG_DET_EXIT, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
     // Update geometry;
     updateGeometry();
-    // Set colors of detector
-    setColors();
     // load logo, if wasn't inicializated
     if (!detectorE3ExitInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Exit, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -83,6 +81,9 @@ GNEDetectorE3Exit::GNEDetectorE3Exit(const std::string &id, GNEViewNet* viewNet,
         detectorE3ExitInitialized = true;
         delete i;
     }
+    // Set colors
+    myBaseColor = RGBColor(204, 0, 0, 255);
+    myBaseColorSelected = RGBColor(204, 125, 0, 255);
 }
 
 
@@ -177,15 +178,6 @@ void
 GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-    
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-    
-    // Set colors depending of type
-    if(gSelected.isSelected(getType(), getGlID()))
-        base = myRGBColors[EXIT_BASE_SELECTED];
-    else
-        base = myRGBColors[EXIT_BASE];
 
     // Start drawing adding gl identificator
     glPushName(getGlID());
@@ -194,8 +186,11 @@ GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUI
     glPushMatrix();
     glTranslated(0, 0, getType());
     
-    //glColor3d(0, .8, 0);
-    glColor3d(base.red(), base.green(), base.blue());
+    // Set initial values
+    if(isAdditionalSelected())
+        glColor3d(myBaseColorSelected.red(), myBaseColorSelected.green(), myBaseColorSelected.blue());
+    else
+        glColor3d(myBaseColor.red(), myBaseColor.green(), myBaseColor.blue());
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
@@ -312,15 +307,6 @@ GNEDetectorE3Exit::setAttribute(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
-}
-
-
-void
-GNEDetectorE3Exit::setColors() {
-    // Color EXIT_BASE
-    myRGBColors.push_back(RGBColor(204, 0, 0, 255));
-    // Color EXIT_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(204, 125, 0, 255));
 }
 
 /****************************************************************************/

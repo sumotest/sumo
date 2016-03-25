@@ -49,7 +49,6 @@
 #include <utils/xml/SUMOSAXHandler.h>
 
 #include "GNEDetectorE3.h"
-#include "GNEDetectorE3EntryExit.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
@@ -82,7 +81,8 @@ GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Positio
     // Update geometry;
     updateGeometry();
     // Set colors
-    setColors();
+    myBaseColor = RGBColor(76, 170, 50, 255);
+    myBaseColorSelected = RGBColor(161, 255, 135, 255);
 }
 
 
@@ -180,16 +180,6 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-    
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[E3_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E3_BASE];
-    }
-    
     // Start drawing adding an gl identificator
     glPushName(getGlID());
     
@@ -215,7 +205,7 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     glColor3d(1, 1, 1);
     glRotated(180, 0, 0, 1);
     // Draw icon depending of detector is or isn't selected
-    if(gSelected.isSelected(getType(), getGlID())) 
+    if(isAdditionalSelected()) 
         GUITexturesHelper::drawTexturedBox(detectorE3SelectedGlID, 1);
     else
         GUITexturesHelper::drawTexturedBox(detectorE3GlID, 1);
@@ -315,16 +305,6 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
-}
-
-
-void 
-GNEDetectorE3::setColors() {
-    // Color E3_BASE
-    myRGBColors.push_back(RGBColor(76, 170, 50, 255));
-    // Color E3_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
-
 }
 
 /****************************************************************************/

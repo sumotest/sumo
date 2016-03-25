@@ -74,8 +74,6 @@ GNEDetectorE3Entry::GNEDetectorE3Entry(const std::string &id, GNEViewNet* viewNe
     GNEDetector(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
     // Update geometry;
     updateGeometry();
-    // Set colors of detector
-    setColors();
     // load logo, if wasn't inicializated
     if (!detectorE3EntryInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Entry, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -83,6 +81,9 @@ GNEDetectorE3Entry::GNEDetectorE3Entry(const std::string &id, GNEViewNet* viewNe
         detectorE3EntryInitialized = true;
         delete i;
     }
+    // Set colors
+    myBaseColor = RGBColor(0, 204, 0, 255);
+    myBaseColorSelected = RGBColor(125, 204, 0, 255);
 }
 
 
@@ -177,15 +178,6 @@ void
 GNEDetectorE3Entry::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-    
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-    
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID()))
-        base = myRGBColors[ENTRY_BASE_SELECTED];
-    else
-        base = myRGBColors[ENTRY_BASE];
 
     // Start drawing adding gl identificator
     glPushName(getGlID());
@@ -194,8 +186,11 @@ GNEDetectorE3Entry::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
     glPushMatrix();
     glTranslated(0, 0, getType());
     
-    //glColor3d(0, .8, 0);
-    glColor3d(base.red(), base.green(), base.blue());
+    // Set initial values
+    if(isAdditionalSelected())
+        glColor3d(myBaseColorSelected.red(), myBaseColorSelected.green(), myBaseColorSelected.blue());
+    else
+        glColor3d(myBaseColor.red(), myBaseColor.green(), myBaseColor.blue());
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
@@ -281,7 +276,6 @@ if (value == getAttribute(key)) {
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
-
 }
 
 
@@ -312,15 +306,6 @@ GNEDetectorE3Entry::setAttribute(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
-}
-
-
-void
-GNEDetectorE3Entry::setColors() {
-    // Color ENTRY_BASE
-    myRGBColors.push_back(RGBColor(0, 204, 0, 255));
-    // Color ENTRY_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(125, 204, 0, 255));
 }
 
 /****************************************************************************/

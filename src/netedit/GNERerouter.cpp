@@ -78,7 +78,8 @@ GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position po
     // Update geometry;
     updateGeometry();
     // Set colors
-    setColors();
+    myBaseColor = RGBColor(76, 170, 50, 255);
+    myBaseColorSelected = RGBColor(161, 255, 135, 255);
 }
 
 
@@ -158,7 +159,7 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
     RGBColor base;
     /*
     // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
+    if(selected) {
         base = myRGBColors[E3_BASE_SELECTED];
     } else {
         base = myRGBColors[E3_BASE];
@@ -259,16 +260,6 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
     }
-}
-
-
-void 
-GNERerouter::setColors() {
-    // Color E3_BASE
-    myRGBColors.push_back(RGBColor(76, 170, 50, 255));
-    // Color E3_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
-
 }
 
 /****************************************************************************/

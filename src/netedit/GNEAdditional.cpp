@@ -81,7 +81,9 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     myParentTag(parentTag),
     myLane(lane),
     myParent(parent),
-    myBlockIconRotation(0) {
+    myBlockIconRotation(0),
+    myBaseColor(RGBColor::GREEN),
+    myBaseColorSelected(RGBColor::BLUE) {
     // If this additional belongs to a set, add it.
     if(myParent)
         myParent->addAdditionalChild(this);
@@ -148,6 +150,12 @@ GNEAdditional::getShapeInformation() const {
 bool 
 GNEAdditional::isBlocked() const {
     return myBlocked;
+}
+
+
+bool 
+GNEAdditional::isAdditionalSelected() const {
+    return gSelected.isSelected(getType(), getGlID());
 }
 
 

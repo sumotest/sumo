@@ -227,7 +227,7 @@ GNESelector::onCmdInvert(FXObject*, FXSelector, void*) {
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
-    ids = myUpdateTarget->getNet()->getGlIDs(GLO_ADDITIONAL);                              // PABLO #1916
+    ids = myUpdateTarget->getNet()->getGlIDs(GLO_ADDITIONAL);                           // PABLO #1916
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {   // PABLO #1916
         gSelected.toggleSelection(*it);                                                 // PABLO #1916
     }

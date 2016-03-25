@@ -207,7 +207,7 @@ public:
     /* @brief method for setting the special color of the lane
      * @param[in] color Pointer to new special color
      */
-    void setSpecialColor(const RGBColor* color);
+    void setSpecialColor(const RGBColor* Color2);
 
 protected:
     /// @brief FOX needs this

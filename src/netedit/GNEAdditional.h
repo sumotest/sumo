@@ -57,8 +57,7 @@ class GNEAdditionalSet;
  * @brief An Element which don't belongs to GNENet but has influency in the simulation
  */
 
-class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier
-{
+class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier {
 public:
     /** @brief Constructor.
      * @param[in] id Gl-id of the additional element (Must be unique)
@@ -102,19 +101,16 @@ public:
     /// @brief Returns string with the information of additional element's shape
     std::string getShapeInformation() const;
 
-    /** @brief Check if item is blocked (i.e. cannot be moved with mouse)
-     * @return true if element is blocked, false in other case
-     */
+    /// @brief Check if additional item is blocked (i.e. cannot be moved with mouse)
     bool isBlocked() const;
 
-    /** @brief Check if this item belongs to an additionalSet
-     * @return true if element belongs to an additionalSet, false in other case
-     */
+    // @brief Check if additional item is selected
+    bool isAdditionalSelected() const;
+
+    /// @brief Check if this item belongs to an additionalSet
     bool belongToAdditionalSet() const;
 
-    /** @brief get additionalSet parent
-     * @return pointer to additionalSet, or NULL if don't belongs to an additionalSet
-     */
+    /// @brief get additionalSet parent, or NULL if don't belongs to an additionalSet
     GNEAdditionalSet* getAdditionalSetParent() const;
 
     /// @brief Block or unblock additional element(i.e. cannot be moved with mouse)
@@ -214,6 +210,12 @@ protected:
     /// @brief pointer to item parent, if belong to set
     GNEAdditionalSet *myParent;
 
+    /// @brief base color (Default green)
+    RGBColor myBaseColor;
+
+    /// @brief base color selected (Default blue)
+    RGBColor myBaseColorSelected;
+
     /// @name computed only once (for performance) in updateGeometry()
     //@{
     /// The rotations of the shape parts
@@ -243,10 +245,6 @@ protected:
     bool myBlocked; 
     //@}
 
-    
-    /// @brief vector with the different colors
-    std::vector<RGBColor> myRGBColors;
-
 private:
     /// @brief variable to keep GLId of the additional lock image
     static GUIGlID additionalLockGlID;
@@ -262,9 +260,6 @@ private:
 
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
-
-    /// @brief set colors of scheme
-    virtual void setColors() = 0;
 
     /// @brief Invalidated copy constructor.
     GNEAdditional(const GNEAdditional&);

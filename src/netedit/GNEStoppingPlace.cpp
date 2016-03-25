@@ -68,7 +68,11 @@
 GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal startPos, SUMOReal endPos, bool blocked) :
     GNEAdditional(id, viewNet, Position(), tag, blocked, lane),
     myStartPos(startPos),
-    myEndPos(endPos) {
+    myEndPos(endPos),
+    mySignColor(RGBColor::YELLOW),
+    mySignColorSelected(RGBColor::BLUE),
+    myTextColor(RGBColor::CYAN),
+    myTextColorSelected(RGBColor::BLUE) {
 }
 
 

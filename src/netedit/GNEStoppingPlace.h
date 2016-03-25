@@ -163,12 +163,21 @@ protected:
     /// @brief The position of the sign
     Position mySignPos;
 
+    /// @brief sign color (Default yellow)
+    RGBColor mySignColor;
+
+    /// @brief sign selected color (Default blue)
+    RGBColor mySignColorSelected;
+
+     /// @brief Text color (Default cyan)
+    RGBColor myTextColor;
+
+    /// @brief Text color selected (Default blue)
+    RGBColor myTextColorSelected;
+
 private:
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
-
-    /// @brief set colors of scheme
-    virtual void setColors() = 0;
 
     /// @brief Invalidate return position of additional
     const Position &getPositionInView() const;

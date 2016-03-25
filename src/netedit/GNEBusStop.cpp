@@ -74,8 +74,13 @@ GNEBusStop::GNEBusStop(const std::string& id, GNELane* lane, GNEViewNet* viewNet
     myLines(lines) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
-    // And colors must be configured
-    setColors();
+    // Set colors
+    myBaseColor = RGBColor(76, 170, 50, 255);
+    myBaseColorSelected = RGBColor(161, 255, 135, 255);
+    mySignColor = RGBColor(255, 235, 0, 255);
+    mySignColorSelected = RGBColor(255, 235, 0, 255);
+    myTextColor = RGBColor(76, 170, 50, 255);
+    myTextColorSelected = RGBColor(161, 255, 135, 255);
 }
 
 
@@ -172,20 +177,6 @@ void
 GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-    
-    // Declare variables to get colors depending if the busStop is selected
-    RGBColor base, sign, letter;
-
-    // Set colors
-    if(gSelected.isSelected(getType(), getGlID())) {
-        base = myRGBColors[BUSSTOP_BASE_SELECTED];
-        sign = myRGBColors[BUSSTOP_SIGN_SELECTED];
-        letter = myRGBColors[BUSSTOP_LETTER_SELECTED];
-    } else {
-        base = myRGBColors[BUSSTOP_BASE];
-        sign = myRGBColors[BUSSTOP_SIGN];
-        letter = myRGBColors[BUSSTOP_LETTER];
-    }
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
@@ -197,7 +188,10 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
     glTranslated(0, 0, getType());
 
     // Set color of the base
-    GLHelper::setColor(base);
+    if(isAdditionalSelected())
+        GLHelper::setColor(myBaseColorSelected);
+    else
+        GLHelper::setColor(myBaseColor);
 
     // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
@@ -215,11 +209,13 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         SUMOReal rotSign = OptionsCont::getOptions().getBool("lefthand");
 
         // Set color of the lines
-        GLHelper::setColor(letter);
+        if(isAdditionalSelected())
+            GLHelper::setColor(myTextColorSelected);
+        else
+            GLHelper::setColor(myTextColor);
 
         // Iterate over every line
         for (size_t i = 0; i != myLines.size(); ++i) {
-
             // Add a new push matrix
             glPushMatrix();
 
@@ -271,14 +267,20 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         glTranslated(0, 0, .1);
 
         // Set color of the lines
-        GLHelper::setColor(sign);
+        if(isAdditionalSelected())
+            GLHelper::setColor(mySignColorSelected);
+        else
+            GLHelper::setColor(mySignColor);
 
         // draw another circle in the same position, but a little bit more small
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
         // If the scale * exageration is equal or more than 4.5, draw H
         if (s.scale * exaggeration >= 4.5)
-            GLHelper::drawText("H", Position(), .1, 1.6, letter, myBlockIconRotation);
+            if(isAdditionalSelected())
+                GLHelper::drawText("H", Position(), .1, 1.6, myBaseColorSelected, myBlockIconRotation);
+            else
+                GLHelper::drawText("H", Position(), .1, 1.6, myBaseColor, myBlockIconRotation);
 
         // pop draw matrix
         glPopMatrix();
@@ -426,23 +428,6 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
         default:
             throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
     }
-}
-
-
-void
-GNEBusStop::setColors() {
-    // Color BUSSTOP_BASE
-    myRGBColors.push_back(RGBColor(76, 170, 50, 255));
-    // Color BUSSTOP_BASE_SELECTED
-    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
-    // Color BUSSTOP_SIGN
-    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
-    // Color BUSSTOP_SIGN_SELECTED
-    myRGBColors.push_back(RGBColor(255, 235, 0, 255));
-    // Color BUSSTOP_LINES
-    myRGBColors.push_back(RGBColor(76, 170, 50, 255));
-    // Color BUSSTOP_LINES_SELECTED
-    myRGBColors.push_back(RGBColor(161, 255, 135, 255));
 }
 
 /****************************************************************************/

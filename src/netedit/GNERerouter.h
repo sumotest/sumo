@@ -157,15 +157,6 @@ private:
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
-    /// @brief set colors of scheme
-    void setColors();
-
-    /// @brief list of colors
-    enum colorTypes {
-        E1_BASE = 0,
-        E1_BASE_SELECTED = 1,
-    };
-
     /// @brief Invalidated copy constructor.
     GNERerouter(const GNERerouter&);
 

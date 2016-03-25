@@ -148,19 +148,6 @@ private:
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
-    /// @brief set colors of scheme
-    void setColors();
-
-    /// @brief list of colors
-    enum colorTypes {
-        BUSSTOP_BASE = 0,
-        BUSSTOP_BASE_SELECTED = 1,
-        BUSSTOP_SIGN = 2,
-        BUSSTOP_SIGN_SELECTED = 3,
-        BUSSTOP_LETTER = 4,             // Currently the same as BUSSTOP_BASE
-        BUSSTOP_LETTER_SELECTED = 5,    // Currently the same as BUSSTOP_BASE_SELECTED
-    };
-
     /// @brief Invalidated copy constructor.
     GNEBusStop(const GNEBusStop&);
 

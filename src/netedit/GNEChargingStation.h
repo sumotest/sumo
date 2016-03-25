@@ -190,17 +190,6 @@ private:
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
-    /// @brief set colors of scheme
-    void setColors();
-
-    /// @brief list of colors
-    enum colorTypes {
-        CHARGINGSTATION_BASE = 0,
-        CHARGINGSTATION_BASE_SELECTED = 1,
-        CHARGINGSTATION_SIGN = 2,
-        CHARGINGSTATION_SIGN_SELECTED = 3,
-    };
-
     /// @brief Invalidated copy constructor.
     GNEChargingStation(const GNEChargingStation&);
 

@@ -175,9 +175,6 @@ private:
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
 
-    /// @brief set colors of scheme
-    virtual void setColors() = 0;
-
     /// @brief Invalidate return position of additional
     const Position &getPosition() const;
 
