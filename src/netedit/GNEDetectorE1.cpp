@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE1.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -92,12 +92,12 @@ GNEDetectorE1::~GNEDetectorE1() {
 }
 
 
-void 
+void
 GNEDetectorE1::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-   
+
     // clear Shape
     myShape.clear();
 
@@ -124,7 +124,7 @@ GNEDetectorE1::updateGeometry() {
 }
 
 
-void 
+void
 GNEDetectorE1::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
@@ -140,7 +140,7 @@ GNEDetectorE1::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu* 
+GUIGLObjectPopupMenu*
 GNEDetectorE1::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
@@ -160,7 +160,7 @@ GNEDetectorE1::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 }
 
 
-GUIParameterTableWindow* 
+GUIParameterTableWindow*
 GNEDetectorE1::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
@@ -174,14 +174,14 @@ GNEDetectorE1::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 }
 
 
-void 
+void
 GNEDetectorE1::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
-void 
+void
 GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
@@ -191,7 +191,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     SUMOReal width = (SUMOReal) 2.0 * s.scale;
     glLineWidth(1.0);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-    
+
     // draw shape
     glColor3d(1, 1, 0);
     glPushMatrix();
@@ -241,7 +241,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     if (s.scale * exaggeration >= 10) {        
         // Add a draw matrix
         drawDetectorIcon(detectorE1GlID);
-        
+
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
@@ -253,7 +253,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 }
 
 
-std::string 
+std::string
 GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -268,14 +268,14 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
             return myFilename;
         case SUMO_ATTR_SPLIT_VTYPE:
             return (mySplitByType? "true" : "false");
-        
+
         default:
             throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
     }
 }
 
 
-void 
+void
 GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
     if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
@@ -298,7 +298,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
 }
 
 
-bool 
+bool
 GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:

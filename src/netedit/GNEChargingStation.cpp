@@ -90,7 +90,7 @@ GNEChargingStation::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-    
+
     // Clear shape
     myShape.clear();
 
@@ -263,7 +263,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         // Set poligon mode
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        // set polyfront position on 0,0     
+        // set polyfront position on 0,0
         pfSetPosition(0, 0);
 
         // Set polyfront scale to 1

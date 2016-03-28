@@ -57,7 +57,7 @@ public:
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] startPos Start position of the StoppingPlace
      * @param[in] endPos End position of the StoppingPlace
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      */
     GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal startPos, SUMOReal endPos, bool blocked = false);
 
@@ -81,7 +81,7 @@ public:
 
     /// @brief Returns the Start position of the stoppingPlace
     SUMOReal getstartPosition() const;
-        
+
     /// @brief Returns the End position of the stoppingPlace
     SUMOReal getendPosition() const;
 

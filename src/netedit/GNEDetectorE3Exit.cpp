@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE3.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -90,12 +90,12 @@ GNEDetectorE3Exit::GNEDetectorE3Exit(const std::string &id, GNEViewNet* viewNet,
 GNEDetectorE3Exit::~GNEDetectorE3Exit() {}
 
 
-void 
+void
 GNEDetectorE3Exit::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-   
+
     // clear Shape
     myShape.clear();
 
@@ -122,7 +122,7 @@ GNEDetectorE3Exit::updateGeometry() {
 }
 
 
-void 
+void
 GNEDetectorE3Exit::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
@@ -133,7 +133,7 @@ GNEDetectorE3Exit::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu* 
+GUIGLObjectPopupMenu*
 GNEDetectorE3Exit::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
@@ -153,7 +153,7 @@ GNEDetectorE3Exit::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent)
 }
 
 
-GUIParameterTableWindow* 
+GUIParameterTableWindow*
 GNEDetectorE3Exit::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
@@ -167,25 +167,25 @@ GNEDetectorE3Exit::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& p
 }
 
 
-void 
+void
 GNEDetectorE3Exit::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
-void 
+void
 GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
     // Start drawing adding gl identificator
     glPushName(getGlID());
-    
+
     // Push detector matrix
     glPushMatrix();
     glTranslated(0, 0, getType());
-    
+
     // Set initial values
     if(isAdditionalSelected())
         glColor3d(myBaseColorSelected.red(), myBaseColorSelected.green(), myBaseColorSelected.blue());
@@ -193,13 +193,13 @@ GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUI
         glColor3d(myBaseColor.red(), myBaseColor.green(), myBaseColor.blue());
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
+
     // Push poligon matrix
     glPushMatrix();
     glScaled(exaggeration, exaggeration, 1);
     glTranslated(myShape[0].x(), myShape[0].y(), 0);
     glRotated(myShapeRotations[0], 0, 0, 1);
-    
+
     // Draw poligon
     glBegin(GL_LINES);
     glVertex2d(1.7, 0);
@@ -211,41 +211,41 @@ GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUI
     glVertex2d(1.7, -.5);
     glVertex2d(1.7, .5);
     glEnd();
-    
+
     // first Arrow
     glTranslated(1.5, 0, 0);
     GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
     GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
-    
+
     // second Arrow
     glTranslated(-3, 0, 0);
     GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
     GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
-    
+
     // Pop poligon matrix
     glPopMatrix();
-    
+
     // Pop detector matrix
     glPopMatrix();
-    
+
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
         // Draw icon
         drawDetectorIcon(detectorE3ExitGlID, 1.5, 1);
-        
+
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon(0.4);
     }
     // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-    
+
     // pop gl identificator
     glPopName();
 }
 
 
-std::string 
+std::string
 GNEDetectorE3Exit::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -260,7 +260,7 @@ GNEDetectorE3Exit::getAttribute(SumoXMLAttr key) const {
 }
 
 
-void 
+void
 GNEDetectorE3Exit::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
 if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
@@ -280,7 +280,7 @@ if (value == getAttribute(key)) {
 }
 
 
-bool 
+bool
 GNEDetectorE3Exit::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:

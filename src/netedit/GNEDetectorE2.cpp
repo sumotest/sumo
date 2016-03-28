@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE2.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -69,8 +69,8 @@ bool GNEDetectorE2::detectorE2Initialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
-                             bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) : 
+GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename,
+                             bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) :
     GNEDetector(id, viewNet, SUMO_TAG_E2DETECTOR, lane, pos, freq, filename, blocked),
     myLength(length),
     myCont(cont),
@@ -96,12 +96,12 @@ GNEDetectorE2::~GNEDetectorE2() {
 }
 
 
-void 
+void
 GNEDetectorE2::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-   
+
     // Get shape of lane parent
     myShape = myLane->getShape();
 
@@ -146,7 +146,7 @@ GNEDetectorE2::updateGeometry() {
 }
 
 
-void 
+void
 GNEDetectorE2::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
@@ -166,7 +166,7 @@ GNEDetectorE2::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu* 
+GUIGLObjectPopupMenu*
 GNEDetectorE2::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
@@ -186,7 +186,7 @@ GNEDetectorE2::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 }
 
 
-GUIParameterTableWindow* 
+GUIParameterTableWindow*
 GNEDetectorE2::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
@@ -200,25 +200,25 @@ GNEDetectorE2::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 }
 
 
-void 
+void
 GNEDetectorE2::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
-void 
+void
 GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
-    
+
     // Add a draw matrix
     glPushMatrix();
 
-    // Start with the drawing of the area traslating matrix to origing 
+    // Start with the drawing of the area traslating matrix to origing
     glTranslated(0, 0, getType());
 
     // Set color of the base
@@ -229,7 +229,7 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Obtain exaggeration of the draw
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-   
+
     // Draw the area using shape, shapeRotations, shapeLenghts and value of exaggeration
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
@@ -248,13 +248,13 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-    
+
     // Pop name
     glPopName();
 }
 
 
-std::string 
+std::string
 GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -281,7 +281,7 @@ GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
 }
 
 
-void 
+void
 GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
 if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
@@ -306,7 +306,7 @@ if (value == getAttribute(key)) {
 }
 
 
-bool 
+bool
 GNEDetectorE2::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:

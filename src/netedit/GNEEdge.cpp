@@ -212,7 +212,7 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
     setGeometry(geom, false);
 }
 
-NBEdge* 
+NBEdge*
 GNEEdge::getNBEdge() {
     return &myNBEdge;
 }
@@ -400,13 +400,13 @@ GNEEdge::getLaneGlIDs() {
 }
 
 
-const GNEEdge::LaneVector& 
+const GNEEdge::LaneVector&
 GNEEdge::getLanes() {
     return myLanes;
 }
 
 
-bool 
+bool
 GNEEdge::wasSplit() {
     return myWasSplit;
 }
@@ -608,7 +608,7 @@ GNEEdge::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
-void 
+void
 GNEEdge::setResponsible(bool newVal) {
     myAmResponsible = newVal;
 }

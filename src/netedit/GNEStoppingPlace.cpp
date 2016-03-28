@@ -80,7 +80,7 @@ GNEStoppingPlace::~GNEStoppingPlace() {
 }
 
 
-void 
+void
 GNEStoppingPlace::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // Due a stoppingplace is placed over an lane i gnore Warning of posy
     UNUSED_PARAMETER(posy);
@@ -95,19 +95,19 @@ GNEStoppingPlace::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undo
     }
 }
 
-SUMOReal 
+SUMOReal
 GNEStoppingPlace::getstartPosition() const {
     return myStartPos;
 }
 
-        
-SUMOReal 
+
+SUMOReal
 GNEStoppingPlace::getendPosition() const {
     return myEndPos;
 }
 
 
-void 
+void
 GNEStoppingPlace::setstartPosition(SUMOReal startPos) {
     if(startPos < 0)
         throw InvalidArgument("Start position '" + toString(startPos) + "' not allowed. Must be greather than 0");
@@ -120,7 +120,7 @@ GNEStoppingPlace::setstartPosition(SUMOReal startPos) {
 }
 
 
-void 
+void
 GNEStoppingPlace::setendPosition(SUMOReal endPos) {
     if(endPos > myLane->getLaneShapeLenght())
         throw InvalidArgument("End position '" + toString(endPos) + "' not allowed. Must be smaller than lane length");

@@ -108,7 +108,7 @@ public:
         FXDECLARE(GNEDialog_Wizard::InputInt)
 
     public:
-        /// @brief 
+        /// @brief
         InputInt(FXComposite* parent, const std::string& name);
 
         /// @brief try to set new attribute value

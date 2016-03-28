@@ -164,20 +164,20 @@ GNEInternalLane::drawGL(const GUIVisualizationSettings& s) const {
 }
 
 
-void 
+void
 GNEInternalLane::setLinkState(LinkState state) {
     myState = state;
     myOrigState = state;
 }
 
 
-LinkState 
+LinkState
 GNEInternalLane::getLinkState() const{
     return (LinkState)myState;
 }
 
 
-int 
+int
 GNEInternalLane::getTLIndex() const {
     return myTlIndex;
 }

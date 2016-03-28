@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNERerouter.h 19790 2016-01-25 11:59:12Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -85,10 +85,10 @@ public:
         /// @brief get closed edge Id
         std::string getClosedEdgeId() const;
 
-    private:        
+    private:
         /// @brief edge ID
         std::string myClosedEdgeId;
-        
+
         /// @brief vector of allow vehicles
         std::vector<std::string> myAllowVehicles;
 
@@ -118,10 +118,10 @@ public:
         /// @throw InvalidArgument if probability isn't valid
         void setProbability(SUMOReal probability);
 
-    private:        
+    private:
         /// @brief id of new edge destination
         std::string myNewDestinationId;
-        
+
         /// @brief probability with which a vehicle will use the given edge as destination
         SUMOReal myProbability;
     };
@@ -148,10 +148,10 @@ public:
         /// @throw InvalidArgument if probability isn't valid
         void setProbability(SUMOReal probability);
 
-    private:        
+    private:
         /// @brief id of new route
         std::string myNewRouteId;
-        
+
         /// @brief probability with which a vehicle will use the given edge as destination
         SUMOReal myProbability;
     };
@@ -215,10 +215,10 @@ public:
         /// @throw InvalidArgument if end time isn't valid
         void setEnd(SUMOTime end);
 
-    private:        
+    private:
         /// @brief begin of interval
         SUMOTime myBegin;
-        
+
         /// @brief end of interval
         SUMOTime myEnd;
 
@@ -238,9 +238,9 @@ public:
      * @param[in] pos position (center) of the rerouter in the map
      * @param[in] edges vector with the edges of rerotuer
      * @param[in] filename The path to the definition file
-     * @param[in] probability The probability for vehicle rerouting 
+     * @param[in] probability The probability for vehicle rerouting
      * @param[in] off Whether the router should be inactive initially
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      */
     GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, bool blocked);
 
@@ -321,14 +321,14 @@ public:
 
 protected:
     /// @brief list of edges
-    std::vector<GNEEdge*> myEdges; 
-    
+    std::vector<GNEEdge*> myEdges;
+
     /// @brief filename of rerouter
-    std::string myFilename; 
-    
+    std::string myFilename;
+
     /// @brief probability of rerouter
-    SUMOReal myProbability; 
-    
+    SUMOReal myProbability;
+
     /// @brief attribute to enable or disable inactive initially
     bool myOff;
 

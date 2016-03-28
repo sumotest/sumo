@@ -179,7 +179,7 @@ GNEConnector::~GNEConnector() {
 }
 
 
-FXFont* 
+FXFont*
 GNEConnector::getHeaderFont() {
     return myHeaderFont;
 }

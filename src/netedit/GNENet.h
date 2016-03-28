@@ -84,7 +84,7 @@ class GNEDetectorE3EntryExit;
  * @brief A NBNetBuilder extended by visualisation and editing capabilities
  */
 class GNENet : public GUIGlObject {
-    
+
     /// @brief declare friend class
     friend class GNEChange_Junction;
     friend class GNEChange_Edge;

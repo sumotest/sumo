@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE1.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -74,7 +74,7 @@ GNEDetector::~GNEDetector() {
 }
 
 
-void 
+void
 GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
@@ -87,25 +87,25 @@ GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
 }
 
 
-SUMOReal 
+SUMOReal
 GNEDetector::getPositionOverLane() const {
     return myPosition.x();
 }
 
 
-int 
+int
 GNEDetector::getFrequency() const {
     return myFreq;
 }
 
 
-std::string 
+std::string
 GNEDetector::getFilename() const {
     return myFilename;
 }
 
 
-void 
+void
 GNEDetector::setPositionOverLane(SUMOReal pos) {
     if(pos < 0)
         throw InvalidArgument("Position '" + toString(pos) + "' not allowed. Must be greather than 0");
@@ -116,7 +116,7 @@ GNEDetector::setPositionOverLane(SUMOReal pos) {
 }
 
 
-void 
+void
 GNEDetector::setFrequency(int freq) {
     if (freq >= 0)
         myFreq = freq;
@@ -125,13 +125,13 @@ GNEDetector::setFrequency(int freq) {
 }
 
 
-void 
+void
 GNEDetector::setFilename(std::string filename) {
     myFilename = filename;
 }
 
 
-void 
+void
 GNEDetector::drawDetectorIcon(const unsigned int GNELogoID, SUMOReal sizex, SUMOReal sizey) const {
     // Add a draw matrix
     glPushMatrix();

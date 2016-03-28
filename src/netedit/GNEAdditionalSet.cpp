@@ -73,19 +73,19 @@ GNEAdditionalSet::~GNEAdditionalSet() {
 }
 
 
-void 
+void
 GNEAdditionalSet::addAdditionalChild(GNEAdditional *additional) {
     myAdditionals[additional] = myPosition;
 }
 
 
-void 
+void
 GNEAdditionalSet::removeAdditionalChild(GNEAdditional *additional) {
     myAdditionals.erase(myAdditionals.find(additional));
 }
 
 
-void 
+void
 GNEAdditionalSet::updateConnections() {
     // Iterate over map
     for(std::map<GNEAdditional*, Position>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
@@ -100,7 +100,7 @@ GNEAdditionalSet::updateConnections() {
 }
 
 
-void 
+void
 GNEAdditionalSet::drawConnections() const {
     // Iterate over map
     for(std::map<GNEAdditional*, Position>::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
@@ -120,7 +120,7 @@ GNEAdditionalSet::drawConnections() const {
 }
 
 
-void 
+void
 GNEAdditionalSet::writeAdditionalChildrens(OutputDevice& device) {
     for(std::map<GNEAdditional*, Position>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
         i->first->writeAdditional(device);

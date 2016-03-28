@@ -150,7 +150,7 @@ public:
     ///
     /// Called with parsed values, these methods build the trigger.
     //@{
-    /** @brief Builds additional / additionalSet 
+    /** @brief Builds additional / additionalSet
      * @param[in] viewNet pointer to viewNet in wich additional will be created
      * @param[in] tag tag of the additiona lto create
      * @param[in] values map with the attributes and values of the additional to create
@@ -165,7 +165,7 @@ public:
      * @param[in] startPos Begin position of the bus stop on the lane
      * @param[in] endPos End position of the bus stop on the lane
      * @param[in] lines Names of the bus lines that halt on this bus stop
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the bus stop can not be added to the net (is duplicate)
      */
@@ -181,7 +181,7 @@ public:
      * @param[in] efficiency efficiency of the charge
      * @param[in] chargeInTransit enable or disable charge in transit
      * @param[in] chargeDelay delay in the charge
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the charging Station can not be added to the net (is duplicate)
      */
@@ -195,7 +195,7 @@ public:
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
      * @param[in] splitByType If set, the collected values will be additionally reported on per-vehicle type base.
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
      */
@@ -213,11 +213,11 @@ public:
      * @param[in] timeThreshold The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
      * @param[in] speedThreshold The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
      * @param[in] jamThreshold 	The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
      */
-    static bool buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename, 
+    static bool buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename,
                                 bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked);
 
     /** @brief Builds a multi entry exit detector (E3)
@@ -226,7 +226,7 @@ public:
      * @param[in] pos position of the detector in the map
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the detector can not be added to the net (is duplicate)
      */
@@ -238,7 +238,7 @@ public:
      * @param[in] lane The lane in which the entry detector is placed on
      * @param[in] pos position of the entry detector on the lane
      * @param[in] idDetectorE3Parent id to parent detectorE3
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the entry detector can not be added to the net (is duplicate)
      */
@@ -250,7 +250,7 @@ public:
      * @param[in] lane The lane in which the exit detector is placed on
      * @param[in] pos position of the exit detector on the lane
      * @param[in] idDetectorE3Parent id to parent detectorE3
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the exit detector can not be added to the net (is duplicate)
      */
@@ -262,7 +262,7 @@ public:
      * @param[in] edge The edge the calibrator is placed at
      * @param[in] pos The position on the edge the calibrator lies at
      * @param[in] file The file to read the flows from
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @todo Is the position correct/needed
      */
     static bool buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe, bool blocked);
@@ -273,7 +273,7 @@ public:
      * @param[in] edges The edges the rerouter is placed at
      * @param[in] prob The probability the rerouter reoutes vehicles with
      * @param[in] file The file to read the reroute definitions from
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      */
     static bool buildRerouter(GNEViewNet *viewNet, const std::string& id, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked);
 
@@ -282,7 +282,7 @@ public:
      * @param[in] id The id of the lane speed trigger
      * @param[in] destLanes List of lanes affected by this speed trigger
      * @param[in] file Name of the file to read the speeds to set from
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception ProcessError If the XML definition file is errornous
      * @see GNELaneSpeedTrigger
@@ -306,7 +306,7 @@ public:
      */
     GNELane* getLane(const SUMOSAXAttributes& attrs, SumoXMLTag triggerType, const std::string& triggerId);
 
-    /** @brief extracts the position, checks whether it shall be mirrored and checks whether it is within the lane. 
+    /** @brief extracts the position, checks whether it shall be mirrored and checks whether it is within the lane.
      * @param[in] attrs The attributes to obtain the position from
      * @param[in] lane The lane the position shall be valid for
      * @param[in] tt The trigger type (for user output)

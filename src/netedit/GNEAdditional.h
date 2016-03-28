@@ -66,7 +66,7 @@ public:
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      * @param[in] lane Pointer to lane, NULL if additional don't belong to a Lane
-     * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet 
+     * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
     GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, GNELane *lane = NULL, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
@@ -227,7 +227,7 @@ protected:
     /// The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
     //@}
-    
+
     /// @brief rotation depending of the option "Lefthand"
     bool myRotationLefthand;
 
@@ -248,7 +248,7 @@ protected:
     SUMOReal myBlockIconRotation;
 
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
-    bool myBlocked; 
+    bool myBlocked;
     //@}
 
 private:

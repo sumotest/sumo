@@ -53,29 +53,29 @@ GNEChange::GNEChange(GNENet* net, bool forward) :
 GNEChange::~GNEChange() {};
 
 
-FXuint 
+FXuint
 GNEChange::size() const {
     return 1;
 }
 
 
-FXString 
+FXString
 GNEChange::undoName() const {
     return "Undo";
 }
 
 
-FXString 
+FXString
 GNEChange::redoName() const {
     return "Redo";
 }
 
 
-void 
+void
 GNEChange::undo() {};
 
 
-void 
+void
 GNEChange::redo() {};
 
 /****************************************************************************/

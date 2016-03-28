@@ -87,23 +87,23 @@ public:
 
         /// @brief hide all parameters
         void hideParameter();
-        
-        /// @brief return Attr 
+
+        /// @brief return Attr
         SumoXMLAttr getAttr() const;
 
         /// @brief return value
         std::string getValue() const ;
 
-    private:        
+    private:
         /// @brief XML attribute
         SumoXMLAttr myAttr;
-        
+
         /// @brief lael with the name of the parameter
         FXLabel *myLabel;
-        
+
         /// @brief textField to modify the value of parameter
         FXTextField *myTextField;
-        
+
         /// @brief menuCheck to enable/disable the value of parameter
         FXMenuCheck *myMenuCheck;
     };
@@ -157,13 +157,13 @@ public:
         /// @brief FOX needs this
         additionalParameterList() {}
 
-    private:        
+    private:
         /// @brief XML attribute
         SumoXMLAttr myAttr;
-        
+
         /// @brief vector with with the name of every parameter
         std::vector<FXLabel*> myLabels;
-        
+
         /// @brief vector textField to modify the value of parameter
         std::vector<FXTextField*> myTextFields;
 
@@ -183,7 +183,7 @@ public:
     // ===========================================================================
     // class additionalParameters
     // ===========================================================================
-    
+
     class additionalParameters : public FXGroupBox {
         // FOX-declaration
         FXDECLARE(GNEAdditionalFrame::additionalParameters)
@@ -206,7 +206,7 @@ public:
 
         /// @brief hide group box
         void hideAdditionalParameters();
-        
+
         /// @brief get attributes
         std::map<SumoXMLAttr, std::string> getAttributes() const;
 
@@ -226,13 +226,13 @@ public:
     private:
         /// @brief vector with the additional parameters
         std::vector<additionalParameter*> myVectorOfAdditionalParameter;
-                                                                  
-        /// @brief Index for myVectorOfAdditionalParameter
-        int myIndexParameter;                                              
 
-        /// @brief vector with the additional parameters of type list         
+        /// @brief Index for myVectorOfAdditionalParameter
+        int myIndexParameter;
+
+        /// @brief vector with the additional parameters of type list
         std::vector<additionalParameterList*> myVectorOfAdditionalParameterList;
-                                                            
+
         /// @brief index for myIndexParameterList
         int myIndexParameterList;
 
@@ -307,7 +307,7 @@ public:
         FXComboBox* myReferencePointMatchBox;
 
         /// @brief Button for help about the reference point
-        FXButton *helpReferencePoint; 
+        FXButton *helpReferencePoint;
 
         /// @brief actual additional reference point selected in the match Box
         additionalReferencePoint myActualAdditionalReferencePoint;
@@ -365,7 +365,7 @@ public:
         /// @brief FOX needs this
         additionalSet() {}
 
-    private:        
+    private:
         /// @brief current type
         SumoXMLTag myType;
 
@@ -394,7 +394,7 @@ public:
 
     /** @brief add additional element
      * @param[in] lane clicked lane. if user dind't clicked over lane, will be NULL
-     * @param[in] parent AbstractView to obtain the position of the mouse over the lane. 
+     * @param[in] parent AbstractView to obtain the position of the mouse over the lane.
      * @return true if an additional (GNEAdditional or GNEAdditionalSet) was added, false in other case
      */
     bool addAdditional(GNELane *lane, GUISUMOAbstractView* parent);
@@ -444,20 +444,20 @@ private:
 
     /// @brief groupBox for Match Box of additionals
     FXGroupBox* myGroupBoxForMyAdditionalMatchBox;
-    
+
     /// @brief combo box with the list of additional elements
     FXComboBox* myAdditionalMatchBox;
-    
+
     /// @brief additional default parameters
     GNEAdditionalFrame::additionalParameters *myAdditionalParameters;
 
-    /// @brief editor parameter 
+    /// @brief editor parameter
     GNEAdditionalFrame::editorParameters *myEditorParameters;
 
     /// @brief additional Set
     GNEAdditionalFrame::additionalSet *myAdditionalSet;
 
-    /// @brief the window to inform 
+    /// @brief the window to inform
     GNEViewNet* myViewNet;
 
     /// @brief actual additional type selected in the match Box
@@ -466,7 +466,7 @@ private:
     /// @brief Width of frame
     static const int WIDTH;
 
-    /// @brief undo 
+    /// @brief undo
     GNEUndoList* myUndoList;
 };
 

@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE1.h 19790 2016-01-25 11:59:12Z palcraft $
 ///
-/// A abstract class to define common parameters of detectors 
+/// A abstract class to define common parameters of detectors
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -55,8 +55,8 @@ public:
      * @param[in] posOverLane position of detector in lane
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
-     * @param[in] blocked set initial blocking state of item 
-     * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet 
+     * @param[in] blocked set initial blocking state of item
+     * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
     GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked = false, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);

@@ -90,7 +90,7 @@ public:
 
     public:
         /// @brief constructor
-        AttrInput(FXComposite* parent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, 
+        AttrInput(FXComposite* parent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr,
                   std::string initialValue, GNEUndoList* undoList);
 
         /// @brief try to set new attribute value
@@ -98,7 +98,7 @@ public:
 
         /// @brief open model dialog for more comfortable attribute editing
         long onCmdOpenAttributeEditor(FXObject*, FXSelector, void*);
-        
+
     protected:
         /// @brief FOX needs this
         AttrInput() {}
@@ -154,7 +154,7 @@ public:
 
     /// @brief copy edge attributes from edge template
     long onCmdCopyTemplate(FXObject*, FXSelector, void*);
-    
+
     /// @brief set current edge as new template
     long onCmdSetTemplate(FXObject*, FXSelector, void*);
 

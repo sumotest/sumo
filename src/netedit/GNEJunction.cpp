@@ -234,31 +234,31 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
     glPopName();
 }
 
-Boundary 
+Boundary
 GNEJunction::getBoundary() const {
     return myBoundary;
 }
 
 
-void 
+void
 GNEJunction::markAsCreateEdgeSource() {
     myAmCreateEdgeSource = true;
 }
 
 
-void 
+void
 GNEJunction::unMarkAsCreateEdgeSource() {
     myAmCreateEdgeSource = false;
 }
 
 
-void 
+void
 GNEJunction::selectTLS(bool selected) {
     myAmTLSSelected = selected;
 }
 
 
-NBNode* 
+NBNode*
 GNEJunction::getNBNode() {
     return &myNBNode;
 }
@@ -381,13 +381,13 @@ GNEJunction::removeFromCrossings(GNEEdge* edge, GNEUndoList* undoList) {
 }
 
 
-bool 
+bool
 GNEJunction::isLogicValid() {
     return myHasValidLogic;
 }
 
 
-void 
+void
 GNEJunction::resetDecal() {
     TLSDecalInitialized = false;
 }
@@ -492,7 +492,7 @@ GNEJunction::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
-void 
+void
 GNEJunction::setResponsible(bool newVal) {
     myAmResponsible = newVal;
 }

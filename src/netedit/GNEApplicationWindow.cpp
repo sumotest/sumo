@@ -883,13 +883,13 @@ GNEApplicationWindow::getBuildGLCanvas() const {
 }
 
 
-SUMOTime 
+SUMOTime
 GNEApplicationWindow::getCurrentSimTime() const {
     return 0;
 }
 
 
-GNEUndoList* 
+GNEUndoList*
 GNEApplicationWindow::getUndoList() {
     return myUndoList;
 }
@@ -1212,7 +1212,7 @@ GNEApplicationWindow::onCmdSaveNetwork(FXObject*, FXSelector, void*) {
 
 
 
-long 
+long
 GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {                  // PABLO #1916
     FXString file = MFXUtils::getFilename2Write(this,                                       // PABLO #1916
                     "Select name of the additional file", ".xml",                           // PABLO #1916

@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNERerouter.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -74,8 +74,8 @@ bool GNERerouter::rerouterInitialized = false;
 // ---------------------------------------------------------------------------
 
 GNERerouter::closingReroute::closingReroute(std::string closedEdgeId, std::vector<std::string> allowVehicles, std::vector<std::string> disallowVehicles) :
-    myClosedEdgeId(closedEdgeId), 
-    myAllowVehicles(allowVehicles), 
+    myClosedEdgeId(closedEdgeId),
+    myAllowVehicles(allowVehicles),
     myDisallowVehicles(disallowVehicles) {
 }
 
@@ -84,7 +84,7 @@ GNERerouter::closingReroute::~closingReroute() {
 }
 
 
-void 
+void
 GNERerouter::closingReroute::insertAllowVehicle(std::string vehicleid) {
     // Check if was already inserted
     for(std::vector<std::string>::iterator i = myAllowVehicles.begin(); i != myAllowVehicles.end(); i++)
@@ -95,7 +95,7 @@ GNERerouter::closingReroute::insertAllowVehicle(std::string vehicleid) {
 }
 
 
-void 
+void
 GNERerouter::closingReroute::removeAllowVehicle(std::string vehicleid) {
     // find and remove
     for(std::vector<std::string>::iterator i = myAllowVehicles.begin(); i != myAllowVehicles.end(); i++)
@@ -108,7 +108,7 @@ GNERerouter::closingReroute::removeAllowVehicle(std::string vehicleid) {
 }
 
 
-void 
+void
 GNERerouter::closingReroute::insertDisallowVehicle(std::string vehicleid) {
     // Check if was already inserted
     for(std::vector<std::string>::iterator i = myDisallowVehicles.begin(); i != myDisallowVehicles.end(); i++)
@@ -119,7 +119,7 @@ GNERerouter::closingReroute::insertDisallowVehicle(std::string vehicleid) {
 }
 
 
-void 
+void
 GNERerouter::closingReroute::removeDisallowVehicle(std::string vehicleid) {
     // find and remove
     for(std::vector<std::string>::iterator i = myDisallowVehicles.begin(); i != myDisallowVehicles.end(); i++)
@@ -132,19 +132,19 @@ GNERerouter::closingReroute::removeDisallowVehicle(std::string vehicleid) {
 }
 
 
-std::vector<std::string> 
+std::vector<std::string>
 GNERerouter::closingReroute::getAllowVehicles() const {
     return myAllowVehicles;
 }
 
 
-std::vector<std::string> 
+std::vector<std::string>
 GNERerouter::closingReroute::getDisallowVehicles() const {
     return myDisallowVehicles;
 }
 
 
-std::string 
+std::string
 GNERerouter::closingReroute::getClosedEdgeId() const {
     return myClosedEdgeId;
 }
@@ -163,19 +163,19 @@ GNERerouter::destProbReroute::~destProbReroute() {
 }
 
 
-std::string 
+std::string
 GNERerouter::destProbReroute::getNewDestinationId() const {
     return myNewDestinationId;
 }
 
 
-SUMOReal 
+SUMOReal
 GNERerouter::destProbReroute::getProbability() const {
     return myProbability;
 }
 
 
-void 
+void
 GNERerouter::destProbReroute::setProbability(SUMOReal probability) {
     if(probability >= 0 && probability <= 1)
         myProbability = probability;
@@ -188,7 +188,7 @@ GNERerouter::destProbReroute::setProbability(SUMOReal probability) {
 // ---------------------------------------------------------------------------
 
 GNERerouter::routeProbReroute::routeProbReroute(std::string newRouteId, SUMOReal probability) :
-    myNewRouteId(newRouteId), 
+    myNewRouteId(newRouteId),
     myProbability(probability) {
 }
 
@@ -197,19 +197,19 @@ GNERerouter::routeProbReroute::~routeProbReroute() {
 }
 
 
-std::string 
+std::string
 GNERerouter::routeProbReroute::getNewRouteId() const {
     return myNewRouteId;
 }
 
 
-SUMOReal 
+SUMOReal
 GNERerouter::routeProbReroute::getProbability() const {
     return myProbability;
 }
 
 
-void 
+void
 GNERerouter::routeProbReroute::setProbability(SUMOReal probability) {
     if(probability >= 0 && probability <= 1)
         myProbability = probability;
@@ -231,7 +231,7 @@ GNERerouter::rerouterInterval::~rerouterInterval() {
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::insertClosingReroutes(GNERerouter::closingReroute *cr) {
     // Check if was already inserted
     for(std::vector<closingReroute*>::iterator i = myClosingReroutes.begin(); i != myClosingReroutes.end(); i++)
@@ -242,7 +242,7 @@ GNERerouter::rerouterInterval::insertClosingReroutes(GNERerouter::closingReroute
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::removeClosingReroutes(GNERerouter::closingReroute *cr) {
     // find and remove
     for(std::vector<closingReroute*>::iterator i = myClosingReroutes.begin(); i != myClosingReroutes.end(); i++)
@@ -255,7 +255,7 @@ GNERerouter::rerouterInterval::removeClosingReroutes(GNERerouter::closingReroute
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::insertDestProbReroutes(GNERerouter::destProbReroute *dpr) {
     // Check if was already inserted
     for(std::vector<destProbReroute*>::iterator i = myDestProbReroutes.begin(); i != myDestProbReroutes.end(); i++)
@@ -266,7 +266,7 @@ GNERerouter::rerouterInterval::insertDestProbReroutes(GNERerouter::destProbRerou
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::removeDestProbReroutes(GNERerouter::destProbReroute *dpr) {
     // find and remove
     for(std::vector<destProbReroute*>::iterator i = myDestProbReroutes.begin(); i != myDestProbReroutes.end(); i++)
@@ -279,7 +279,7 @@ GNERerouter::rerouterInterval::removeDestProbReroutes(GNERerouter::destProbRerou
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::insertRouteProbReroute(GNERerouter::routeProbReroute *rpr) {
     // Check if was already inserted
     for(std::vector<routeProbReroute*>::iterator i = myRouteProbReroutes.begin(); i != myRouteProbReroutes.end(); i++)
@@ -290,7 +290,7 @@ GNERerouter::rerouterInterval::insertRouteProbReroute(GNERerouter::routeProbRero
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::removeRouteProbReroute(GNERerouter::routeProbReroute *rpr) {
     // find and remove
     for(std::vector<routeProbReroute*>::iterator i = myRouteProbReroutes.begin(); i != myRouteProbReroutes.end(); i++)
@@ -303,37 +303,37 @@ GNERerouter::rerouterInterval::removeRouteProbReroute(GNERerouter::routeProbRero
 }
 
 
-SUMOTime 
+SUMOTime
 GNERerouter::rerouterInterval::getBegin() const {
     return myBegin;
 }
 
 
-SUMOTime 
+SUMOTime
 GNERerouter::rerouterInterval::getEnd() const {
     return myEnd;
 }
 
 
-std::vector<GNERerouter::closingReroute*> 
+std::vector<GNERerouter::closingReroute*>
 GNERerouter::rerouterInterval::getClosingReroutes() const {
     return myClosingReroutes;
 }
 
 
-std::vector<GNERerouter::destProbReroute*> 
+std::vector<GNERerouter::destProbReroute*>
 GNERerouter::rerouterInterval::getDestProbReroutes() const {
     return myDestProbReroutes;
 }
 
 
-std::vector<GNERerouter::routeProbReroute*> 
+std::vector<GNERerouter::routeProbReroute*>
 GNERerouter::rerouterInterval::getRouteProbReroutes() const {
     return myRouteProbReroutes;
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::setBegin(SUMOTime begin) {
     if(begin >= 0 && begin >= myEnd)
         myBegin = begin;
@@ -342,7 +342,7 @@ GNERerouter::rerouterInterval::setBegin(SUMOTime begin) {
 }
 
 
-void 
+void
 GNERerouter::rerouterInterval::setEnd(SUMOTime end) {
     if(end >= 0 && myBegin >= end)
         myEnd = myEnd;
@@ -358,7 +358,7 @@ GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position po
     GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_E3DETECTOR, blocked),
     myEdges(edges),
     myFilename(filename),
-    myProbability(probability), 
+    myProbability(probability),
     myOff(off) {
     // Update geometry;
     updateGeometry();
@@ -414,7 +414,7 @@ GNERerouter::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 }
 
 
-GUIParameterTableWindow* 
+GUIParameterTableWindow*
 GNERerouter::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
@@ -428,14 +428,14 @@ GNERerouter::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent)
 }
 
 
-void 
+void
 GNERerouter::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
-void 
+void
 GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
@@ -452,7 +452,7 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
     */
     // Start drawing adding an gl identificator
     glPushName(getGlID());
-    
+
     // load detector logo, if wasn't inicializated
     if (!rerouterInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -479,7 +479,7 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
 }
 
 
-std::string 
+std::string
 GNERerouter::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -494,7 +494,7 @@ GNERerouter::getAttribute(SumoXMLAttr key) const {
 }
 
 
-void 
+void
 GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
     if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
@@ -513,7 +513,7 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
 }
 
 
-bool 
+bool
 GNERerouter::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -530,7 +530,7 @@ GNERerouter::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
-void 
+void
 GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:

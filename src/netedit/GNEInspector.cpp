@@ -130,13 +130,13 @@ GNEInspector::update() {
 }
 
 
-FXFont* 
+FXFont*
 GNEInspector::getHeaderFont() const {
     return myHeaderFont;
 }
 
 
-GNEEdge* 
+GNEEdge*
 GNEInspector::getEdgeTemplate() const {
     return myEdgeTemplate;
 }

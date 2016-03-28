@@ -59,7 +59,7 @@ class GNELane;
  * @see MSEdge
  */
 class GNEEdge : public GUIGlObject, public GNEAttributeCarrier {
-    
+
     /// @brief Friend class
     friend class GNEChange_Lane;
     friend class GNEChange_Connection;

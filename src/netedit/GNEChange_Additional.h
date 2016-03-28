@@ -61,7 +61,7 @@ public:
 
     /// @brief Destructor
     ~GNEChange_Additional();
-    
+
     //@name inherited from GNEChange
     //@{
     /// @brief get undo Name

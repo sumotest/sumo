@@ -64,22 +64,22 @@ GNEAttributeCarrier::GNEAttributeCarrier(SumoXMLTag tag) :
 }
 
 
-template<> int 
+template<> int
 GNEAttributeCarrier::parse(const std::string& string) {
     return TplConvert::_str2int(string);
 }
 
 
-template<> SUMOReal 
+template<> SUMOReal
 GNEAttributeCarrier::parse(const std::string& string) {
     return TplConvert::_str2SUMOReal(string);
 }
 
 
-template<> bool 
+template<> bool
 GNEAttributeCarrier::parse(const std::string& string) {
-    return TplConvert::_str2bool(string); 
-}                                        
+    return TplConvert::_str2bool(string);
+}
 
 
 bool
@@ -89,13 +89,13 @@ GNEAttributeCarrier::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
-std::string 
+std::string
 GNEAttributeCarrier::getDescription() {
     return toString(myTag);
 }
 
 
-SumoXMLTag 
+SumoXMLTag
 GNEAttributeCarrier::getTag() const {
     return myTag;
 }
@@ -110,7 +110,7 @@ GNEAttributeCarrier::getAttrs() const {
 }
 
 
-const std::string 
+const std::string
 GNEAttributeCarrier::getID() const {
     return getAttribute(SUMO_ATTR_ID);
 }
@@ -551,7 +551,7 @@ template<> std::vector<int>                                                     
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
     std::cout << "FINISH" << std::endl;
     return std::vector<int>();                                                                                                 // PABLO #1916
-}  
+}
 
 template<> std::vector<SUMOReal>                                                                                                                        // PABLO #1916
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916

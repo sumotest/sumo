@@ -69,7 +69,7 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEBusStop::GNEBusStop(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked) : 
+GNEBusStop::GNEBusStop(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked) :
     GNEStoppingPlace(id, viewNet, SUMO_TAG_BUS_STOP, lane, startPos, endPos, blocked),
     myLines(lines) {
     // When a new additional element is created, updateGeometry() must be called
@@ -87,12 +87,12 @@ GNEBusStop::GNEBusStop(const std::string& id, GNELane* lane, GNEViewNet* viewNet
 GNEBusStop::~GNEBusStop() {}
 
 
-void 
+void
 GNEBusStop::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-    
+
     // Get value of option "lefthand"
     SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
 
@@ -135,7 +135,7 @@ GNEBusStop::updateGeometry() {
     // Obtain a copy of the shape
     PositionVector tmpShape = myShape;
 
-    // Move shape to side 
+    // Move shape to side
     tmpShape.move2side(1.5 * offsetSign);
 
     // Get position of the sign
@@ -146,7 +146,7 @@ GNEBusStop::updateGeometry() {
 }
 
 
-void 
+void
 GNEBusStop::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
@@ -173,18 +173,18 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
 }
 
 
-void 
+void
 GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
-    
+
     // Add a draw matrix
     glPushMatrix();
 
-    // Start with the drawing of the area traslating matrix to origin 
+    // Start with the drawing of the area traslating matrix to origin
     glTranslated(0, 0, getType());
 
     // Set color of the base
@@ -201,7 +201,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
 
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
-        
+
         // Add a draw matrix
         glPushMatrix();
 
@@ -221,22 +221,22 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
 
             // Traslate End positionof signal
             glTranslated(mySignPos.x(), mySignPos.y(), 0);
-            
+
             // Rotate 180 (Eje X -> Mirror)
             glRotated(180, 1, 0, 0);
 
             // Rotate again depending of the option rotSign
             glRotated(rotSign * myBlockIconRotation, 0, 0, 1);
-            
+
             // Set poligon mode
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-            // set polyfront position ot 0 
+            // set polyfront position ot 0
             pfSetPosition(0, 0);
 
             // Set polyfront scale to 1
             pfSetScale(1.f);
-            
+
             // traslate matrix for every line
             glTranslated(1.2, -(double)i, 0);
 
@@ -254,9 +254,9 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         int noPoints = 9;
 
         // If the scale * exaggeration is more than 25, recalculate nº points
-        if (s.scale * exaggeration > 25) 
+        if (s.scale * exaggeration > 25)
             noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
-        
+
         // scale matrix depending of the exaggeration
         glScaled(exaggeration, exaggeration, 1);
 
@@ -420,7 +420,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             updateGeometry();
             getViewNet()->update();
             break;
-        case SUMO_ATTR_LINES: 
+        case SUMO_ATTR_LINES:
             myLines.clear();
             SUMOSAXAttributes::parseStringVector(value, myLines);
             getViewNet()->update();

@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE3.cpp 19861 2016-02-01 09:08:47Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -90,7 +90,7 @@ GNEDetectorE3::~GNEDetectorE3() {
 }
 
 
-void 
+void
 GNEDetectorE3::updateGeometry() {
     // Clear shape
     myShape.clear();
@@ -109,7 +109,7 @@ GNEDetectorE3::updateGeometry() {
 }
 
 
-void 
+void
 GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
@@ -119,7 +119,7 @@ GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoLis
 }
 
 
-void 
+void
 GNEDetectorE3::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
@@ -135,7 +135,7 @@ GNEDetectorE3::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu* 
+GUIGLObjectPopupMenu*
 GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
@@ -154,7 +154,7 @@ GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 }
 
 
-GUIParameterTableWindow* 
+GUIParameterTableWindow*
 GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
@@ -168,21 +168,21 @@ GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 }
 
 
-void 
+void
 GNEDetectorE3::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
-void 
+void
 GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
     // Start drawing adding an gl identificator
     glPushName(getGlID());
-    
+
     // load detector E3 logo, if wasn't inicializated
     if (!detectorE3Initialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -228,7 +228,7 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 }
 
 
-std::string 
+std::string
 GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -245,7 +245,7 @@ GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
 }
 
 
-void 
+void
 GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
     if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
@@ -265,7 +265,7 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
 }
 
 
-bool 
+bool
 GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
@@ -285,7 +285,7 @@ GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
-void 
+void
 GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:

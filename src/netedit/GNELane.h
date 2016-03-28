@@ -162,7 +162,7 @@ public:
      * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneShapeLenght]                    // PABLO #1916
      * @return the relative position in the lane's shape                                                                                // PABLO #1916
      */                                                                                                                                 // PABLO #1916
-    SUMOReal getPositionRelativeToShapeLenght(SUMOReal position) const;     
+    SUMOReal getPositionRelativeToShapeLenght(SUMOReal position) const;
 
     /* @brief method for adding a reference of a additional element placed in this lane     // PABLO #1916
      * @param[in] additional Pointer to additional element                                  // PABLO #1916
@@ -195,7 +195,7 @@ public:
      * @param[in] undoList The undoList on which to register changes
      */
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
-    
+
     /* @brief method for checking if the key and their correspond attribute are valids
      * @param[in] key The attribute key
      * @param[in] value The value asociated to key key

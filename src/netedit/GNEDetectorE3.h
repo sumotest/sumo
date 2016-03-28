@@ -4,7 +4,7 @@
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE3.h 19790 2016-01-25 11:59:12Z palcraft $
 ///
-/// 
+///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -53,7 +53,7 @@ public:
      * @param[in] pos position (center) of the detector in the map
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      */
     GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Position pos, SUMOReal freq, const std::string& filename, bool blocked);
 
@@ -157,7 +157,7 @@ private:
 
     /// @brief check if detector E3 selected icon was inicilalizated
     static bool detectorE3SelectedInitialized;
-    
+
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);
 

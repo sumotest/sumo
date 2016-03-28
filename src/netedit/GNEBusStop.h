@@ -64,7 +64,7 @@ public:
      * @param[in] startPos Start position of the StoppingPlace
      * @param[in] endPos End position of the StoppingPlace
      * @param[in] lines lines of the busStop
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      */
     GNEBusStop(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked);
 
@@ -80,7 +80,7 @@ public:
     void writeAdditional(OutputDevice& device);
 
     /** @brief get lines of busStop
-     * @return vector of strings with the lines of the busStop 
+     * @return vector of strings with the lines of the busStop
      */
     const std::vector<std::string> &getLines() const;
 

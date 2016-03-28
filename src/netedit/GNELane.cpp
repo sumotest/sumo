@@ -472,7 +472,7 @@ GNELane::updateGeometry() {
         (*i)->updateGeometry();                                                                         // PABLO #1916
 }
 
-unsigned int 
+unsigned int
 GNELane::getIndex() const {
     return myIndex;
 }
@@ -490,31 +490,31 @@ GNELane::getLaneParametricLenght() const  {                 // PABLO #1916
 }                                                           // PABLO #1916
 
 
-SUMOReal 
+SUMOReal
 GNELane::getLaneShapeLenght() const {   // PABLO #1916
     return getShape().length();         // PABLO #1916
 }                                       // PABLO #1916
 
 
-SUMOReal 
+SUMOReal
 GNELane::getPositionRelativeToParametricLenght(SUMOReal position) const {   // PABLO #1916
     return (position * getLaneShapeLenght()) / getLaneParametricLenght();   // PABLO #1916
 }                                                                           // PABLO #1916
 
 
-SUMOReal 
+SUMOReal
 GNELane::getPositionRelativeToShapeLenght(SUMOReal position) const {        // PABLO #1916
     return (position * getLaneParametricLenght()) / getLaneShapeLenght();   // PABLO #1916
 }                                                                           // PABLO #1916
 
 
-void 
+void
 GNELane::addAdditional(GNEAdditional *additional) { // PABLO #1916
     additionalElements.push_back(additional);       // PABLO #1916
 }                                                   // PABLO #1916
 
 
-bool 
+bool
 GNELane::removeAdditional(GNEAdditional *additional) {                                                      // PABLO #1916
     // Find and remove stoppingPlace                                                                        // PABLO #1916
     for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++) {    // PABLO #1916
@@ -605,7 +605,7 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 
-void 
+void
 GNELane::setSpecialColor(const RGBColor* color) {
     mySpecialColor = color;
 }
@@ -779,7 +779,7 @@ GNELane::onDefault(FXObject* obj, FXSelector sel, void* data) {
     return 1;
 }
 
-GNEEdge& 
+GNEEdge&
 GNELane::getParentEdge() {
     return myParentEdge;
 };

@@ -62,7 +62,7 @@ public:
      * @param[in] blocked set initial blocking state of item
      */
     GNEChargingStation(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked);
-    
+
     /// @brief Destructor
     ~GNEChargingStation();
 

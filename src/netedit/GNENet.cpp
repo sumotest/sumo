@@ -210,19 +210,19 @@ GNENet::getCenteringBoundary() const {
 }
 
 
-const Boundary& 
+const Boundary&
 GNENet::getZBoundary() const {
     return myZBoundary;
 }
 
 
-SUMORTree& 
+SUMORTree&
 GNENet::getVisualisationSpeedUp() {
     return myGrid;
 }
 
 
-const SUMORTree& 
+const SUMORTree&
 GNENet::getVisualisationSpeedUp() const {
     return myGrid;
 }
@@ -560,7 +560,7 @@ GNENet::saveJoined(OptionsCont& oc) {
 }
 
 
-void 
+void
 GNENet::setUpdateTarget(FXWindow* updateTarget) {
     myUpdateTarget = updateTarget;
 }
@@ -809,13 +809,13 @@ GNENet::computeJunction(GNEJunction* junction) {
 }
 
 
-void 
+void
 GNENet::requireRecompute() {
     myNeedRecompute = true;
 }
 
 
-FXApp* 
+FXApp*
 GNENet::getApp() {
     return myUpdateTarget->getApp();
 }
@@ -928,7 +928,7 @@ GNENet::changeEdgeEndpoints(GNEEdge* edge, const std::string& newSource, const s
 }
 
 
-NBTrafficLightLogicCont& 
+NBTrafficLightLogicCont&
 GNENet::getTLLogicCont() {
     return myNetBuilder->getTLLogicCont();
 };
@@ -1009,7 +1009,7 @@ GNENet::finishMoveSelection(GNEUndoList* undoList) {
 }
 
 
-ShapeContainer& 
+ShapeContainer&
 GNENet::getShapeContainer() {
     return myShapeContainer;
 }
