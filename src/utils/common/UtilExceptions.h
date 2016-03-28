@@ -123,19 +123,6 @@ public:
 };
 
 
-/**                                                         // PABLO #1916
- * PositionFormatException                                  // PABLO #1916
- * Thrown when the string that shall be converted into a    // PABLO #1916
- * Position does not match                                  // PABLO #1916
- */                                                         // PABLO #1916
-class PositionFormatException : public FormatException {    // PABLO #1916
-public:                                                     // PABLO #1916
-    /// @brief constructor                                  // PABLO #1916
-    PositionFormatException()                               // PABLO #1916
-        : FormatException("Position Format") {}             // PABLO #1916
-};                                                          // PABLO #1916
-
-
 /**
  * OutOfBoundsException
  * Thrown when an array element out of the array's

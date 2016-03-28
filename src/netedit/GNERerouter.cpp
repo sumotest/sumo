@@ -69,9 +69,294 @@ bool GNERerouter::rerouterInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNERoute*> routes, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
+// ---------------------------------------------------------------------------
+// GNERerouter::closingReroute - methods
+// ---------------------------------------------------------------------------
+
+GNERerouter::closingReroute::closingReroute(std::string closedEdgeId, std::vector<std::string> allowVehicles, std::vector<std::string> disallowVehicles) :
+    myClosedEdgeId(closedEdgeId), 
+    myAllowVehicles(allowVehicles), 
+    myDisallowVehicles(disallowVehicles) {
+}
+
+
+GNERerouter::closingReroute::~closingReroute() {
+}
+
+
+void 
+GNERerouter::closingReroute::insertAllowVehicle(std::string vehicleid) {
+    // Check if was already inserted
+    for(std::vector<std::string>::iterator i = myAllowVehicles.begin(); i != myAllowVehicles.end(); i++)
+        if((*i) == vehicleid)
+            throw ProcessError(vehicleid + " already inserted");
+    // insert in vector
+    myAllowVehicles.push_back(vehicleid);
+}
+
+
+void 
+GNERerouter::closingReroute::removeAllowVehicle(std::string vehicleid) {
+    // find and remove
+    for(std::vector<std::string>::iterator i = myAllowVehicles.begin(); i != myAllowVehicles.end(); i++)
+        if((*i) == vehicleid) {
+            myAllowVehicles.erase(i);
+            return;
+        }
+    // Throw error if don't exist
+    throw ProcessError(vehicleid + " not exist");
+}
+
+
+void 
+GNERerouter::closingReroute::insertDisallowVehicle(std::string vehicleid) {
+    // Check if was already inserted
+    for(std::vector<std::string>::iterator i = myDisallowVehicles.begin(); i != myDisallowVehicles.end(); i++)
+        if((*i) == vehicleid)
+            throw ProcessError(vehicleid + " already inserted");
+    // insert in vector
+    myDisallowVehicles.push_back(vehicleid);
+}
+
+
+void 
+GNERerouter::closingReroute::removeDisallowVehicle(std::string vehicleid) {
+    // find and remove
+    for(std::vector<std::string>::iterator i = myDisallowVehicles.begin(); i != myDisallowVehicles.end(); i++)
+        if((*i) == vehicleid) {
+            myDisallowVehicles.erase(i);
+            return;
+        }
+    // Throw error if don't exist
+    throw ProcessError(vehicleid + " not exist");
+}
+
+
+std::vector<std::string> 
+GNERerouter::closingReroute::getAllowVehicles() const {
+    return myAllowVehicles;
+}
+
+
+std::vector<std::string> 
+GNERerouter::closingReroute::getDisallowVehicles() const {
+    return myDisallowVehicles;
+}
+
+
+std::string 
+GNERerouter::closingReroute::getClosedEdgeId() const {
+    return myClosedEdgeId;
+}
+
+// ---------------------------------------------------------------------------
+// GNERerouter::destProbReroute - methods
+// ---------------------------------------------------------------------------
+
+GNERerouter::destProbReroute::destProbReroute(std::string newDestinationId, SUMOReal probability):
+    myNewDestinationId(newDestinationId),
+    myProbability(probability) {
+}
+
+
+GNERerouter::destProbReroute::~destProbReroute() {
+}
+
+
+std::string 
+GNERerouter::destProbReroute::getNewDestinationId() const {
+    return myNewDestinationId;
+}
+
+
+SUMOReal 
+GNERerouter::destProbReroute::getProbability() const {
+    return myProbability;
+}
+
+
+void 
+GNERerouter::destProbReroute::setProbability(SUMOReal probability) {
+    if(probability >= 0 && probability <= 1)
+        myProbability = probability;
+    else
+        throw InvalidArgument(toString(probability) + " isn't a probability");
+}
+
+// ---------------------------------------------------------------------------
+// GNERerouter::routeProbReroute - methods
+// ---------------------------------------------------------------------------
+
+GNERerouter::routeProbReroute::routeProbReroute(std::string newRouteId, SUMOReal probability) :
+    myNewRouteId(newRouteId), 
+    myProbability(probability) {
+}
+
+
+GNERerouter::routeProbReroute::~routeProbReroute() {
+}
+
+
+std::string 
+GNERerouter::routeProbReroute::getNewRouteId() const {
+    return myNewRouteId;
+}
+
+
+SUMOReal 
+GNERerouter::routeProbReroute::getProbability() const {
+    return myProbability;
+}
+
+
+void 
+GNERerouter::routeProbReroute::setProbability(SUMOReal probability) {
+    if(probability >= 0 && probability <= 1)
+        myProbability = probability;
+    else
+        throw InvalidArgument(toString(probability) + " isn't a probability");
+}
+
+// ---------------------------------------------------------------------------
+// GNERerouter::rerouterInterval - methods
+// ---------------------------------------------------------------------------
+
+GNERerouter::rerouterInterval::rerouterInterval(SUMOTime begin, SUMOTime end) :
+    myBegin(begin),
+    myEnd(end) {
+}
+
+
+GNERerouter::rerouterInterval::~rerouterInterval() {
+}
+
+
+void 
+GNERerouter::rerouterInterval::insertClosingReroutes(GNERerouter::closingReroute *cr) {
+    // Check if was already inserted
+    for(std::vector<closingReroute*>::iterator i = myClosingReroutes.begin(); i != myClosingReroutes.end(); i++)
+        if((*i) == cr)
+            throw ProcessError("closing reroute " + cr->getClosedEdgeId() + " already inserted");
+    // insert in vector
+    myClosingReroutes.push_back(cr);
+}
+
+
+void 
+GNERerouter::rerouterInterval::removeClosingReroutes(GNERerouter::closingReroute *cr) {
+    // find and remove
+    for(std::vector<closingReroute*>::iterator i = myClosingReroutes.begin(); i != myClosingReroutes.end(); i++)
+        if((*i) == cr) {
+            myClosingReroutes.erase(i);
+            return;
+        }
+    // Throw error if don't exist
+    throw ProcessError("closing reroute " + cr->getClosedEdgeId() + " not exist");
+}
+
+
+void 
+GNERerouter::rerouterInterval::insertDestProbReroutes(GNERerouter::destProbReroute *dpr) {
+    // Check if was already inserted
+    for(std::vector<destProbReroute*>::iterator i = myDestProbReroutes.begin(); i != myDestProbReroutes.end(); i++)
+        if((*i) == dpr)
+            throw ProcessError("destiny probability reroute " + dpr->getNewDestinationId() + " already inserted");
+    // insert in vector
+    myDestProbReroutes.push_back(dpr);
+}
+
+
+void 
+GNERerouter::rerouterInterval::removeDestProbReroutes(GNERerouter::destProbReroute *dpr) {
+    // find and remove
+    for(std::vector<destProbReroute*>::iterator i = myDestProbReroutes.begin(); i != myDestProbReroutes.end(); i++)
+        if((*i) == dpr) {
+            myDestProbReroutes.erase(i);
+            return;
+        }
+    // Throw error if don't exist
+    throw ProcessError("destiny probability reroute " + dpr->getNewDestinationId() + " not exist");
+}
+
+
+void 
+GNERerouter::rerouterInterval::insertRouteProbReroute(GNERerouter::routeProbReroute *rpr) {
+    // Check if was already inserted
+    for(std::vector<routeProbReroute*>::iterator i = myRouteProbReroutes.begin(); i != myRouteProbReroutes.end(); i++)
+        if((*i) == rpr)
+            throw ProcessError("route probability reroute " + rpr->getNewRouteId() + " already inserted");
+    // insert in vector
+    myRouteProbReroutes.push_back(rpr);
+}
+
+
+void 
+GNERerouter::rerouterInterval::removeRouteProbReroute(GNERerouter::routeProbReroute *rpr) {
+    // find and remove
+    for(std::vector<routeProbReroute*>::iterator i = myRouteProbReroutes.begin(); i != myRouteProbReroutes.end(); i++)
+        if((*i) == rpr) {
+            myRouteProbReroutes.erase(i);
+            return;
+        }
+    // Throw error if don't exist
+    throw ProcessError("route probability reroute " + rpr->getNewRouteId() + " not exist");
+}
+
+
+SUMOTime 
+GNERerouter::rerouterInterval::getBegin() const {
+    return myBegin;
+}
+
+
+SUMOTime 
+GNERerouter::rerouterInterval::getEnd() const {
+    return myEnd;
+}
+
+
+std::vector<GNERerouter::closingReroute*> 
+GNERerouter::rerouterInterval::getClosingReroutes() const {
+    return myClosingReroutes;
+}
+
+
+std::vector<GNERerouter::destProbReroute*> 
+GNERerouter::rerouterInterval::getDestProbReroutes() const {
+    return myDestProbReroutes;
+}
+
+
+std::vector<GNERerouter::routeProbReroute*> 
+GNERerouter::rerouterInterval::getRouteProbReroutes() const {
+    return myRouteProbReroutes;
+}
+
+
+void 
+GNERerouter::rerouterInterval::setBegin(SUMOTime begin) {
+    if(begin >= 0 && begin >= myEnd)
+        myBegin = begin;
+    else
+        throw InvalidArgument("Begin time not valid");
+}
+
+
+void 
+GNERerouter::rerouterInterval::setEnd(SUMOTime end) {
+    if(end >= 0 && myBegin >= end)
+        myEnd = myEnd;
+    else
+        throw InvalidArgument("Begin time not valid");
+}
+
+// ---------------------------------------------------------------------------
+// GNERerouter - methods
+// ---------------------------------------------------------------------------
+
+GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
     GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_E3DETECTOR, blocked),
-    myRoutes(routes),
+    myEdges(edges),
     myFilename(filename),
     myProbability(probability), 
     myOff(off) {
@@ -87,14 +372,14 @@ GNERerouter::~GNERerouter() {
 }
 
 
-void 
+void
 GNERerouter::updateGeometry() {
     myShape.clear();
     myShape.push_back(myPosition);
 }
 
 
-void 
+void
 GNERerouter::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // if item isn't blocked
     if(myBlocked == false) {
@@ -104,13 +389,13 @@ GNERerouter::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
 }
 
 
-void 
+void
 GNERerouter::writeAdditional(OutputDevice& device) {
 
 }
 
 
-GUIGLObjectPopupMenu* 
+GUIGLObjectPopupMenu*
 GNERerouter::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);

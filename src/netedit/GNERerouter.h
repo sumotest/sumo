@@ -36,7 +36,7 @@
 // class declarations
 // ===========================================================================
 
-class GNERoute;
+class GNEEdge;
 
 // ===========================================================================
 // class definitions
@@ -47,17 +47,202 @@ class GNERoute;
  */
 class GNERerouter : public GNEAdditionalSet {
 public:
+
+    // ===========================================================================
+    // class closingReroute
+    // ===========================================================================
+
+    class closingReroute {
+    public:
+        /// @brief constructor
+        closingReroute(std::string closedEdgeId, std::vector<std::string> allowVehicles, std::vector<std::string> disallowVehicles);
+
+        /// @brief destructor
+        ~closingReroute();
+
+        /// @brief insert an allow vehicle
+        /// @throw ProcessError if allowed vehicle was already inserted
+        void insertAllowVehicle(std::string vehicleid);
+
+        /// @brief remove a previously inserted allow vehicle
+        /// @throw ProcessError if allowed vehicle cannot be found in the container
+        void removeAllowVehicle(std::string vehicleid);
+
+        /// @brief insert a disallow vehicle
+        /// @throw ProcessError if disallowed vehicle was already inserted
+        void insertDisallowVehicle(std::string vehicleid);
+
+        /// @brief remove a previously inserted disallow vehicle
+        /// @throw ProcessError if disallowed vehicle cannot be found in the container
+        void removeDisallowVehicle(std::string vehicleid);
+
+        /// @brief get allow vehicles
+        std::vector<std::string> getAllowVehicles() const;
+
+        /// @brief get disallow vehicles
+        std::vector<std::string> getDisallowVehicles() const;
+
+        /// @brief get closed edge Id
+        std::string getClosedEdgeId() const;
+
+    private:        
+        /// @brief edge ID
+        std::string myClosedEdgeId;
+        
+        /// @brief vector of allow vehicles
+        std::vector<std::string> myAllowVehicles;
+
+        /// @brief vector of disallow vehicles
+        std::vector<std::string> myDisallowVehicles;
+    };
+
+    // ===========================================================================
+    // class destProbReroute
+    // ===========================================================================
+
+    class destProbReroute {
+    public:
+        /// @brief constructor
+        destProbReroute(std::string newDestinationId, SUMOReal probability);
+
+        /// @brief destructor
+        ~destProbReroute();
+
+        /// @brief id of new edge destination
+        std::string getNewDestinationId() const;
+
+        /// @brief get probability
+        SUMOReal getProbability() const;
+
+        /// @brief set probability
+        /// @throw InvalidArgument if probability isn't valid
+        void setProbability(SUMOReal probability);
+
+    private:        
+        /// @brief id of new edge destination
+        std::string myNewDestinationId;
+        
+        /// @brief probability with which a vehicle will use the given edge as destination
+        SUMOReal myProbability;
+    };
+
+    // ===========================================================================
+    // class routeProbReroute
+    // ===========================================================================
+
+    class routeProbReroute {
+    public:
+        /// @brief constructor
+        routeProbReroute(std::string newRouteId, SUMOReal probability);
+
+        /// @brief destructor
+        ~routeProbReroute();
+
+        /// @brief get new route id
+        std::string getNewRouteId() const;
+
+        /// @brief get probability
+        SUMOReal getProbability() const;
+
+        /// @brief set probability
+        /// @throw InvalidArgument if probability isn't valid
+        void setProbability(SUMOReal probability);
+
+    private:        
+        /// @brief id of new route
+        std::string myNewRouteId;
+        
+        /// @brief probability with which a vehicle will use the given edge as destination
+        SUMOReal myProbability;
+    };
+
+    // ===========================================================================
+    // class rerouterInterval
+    // ===========================================================================
+
+    class rerouterInterval {
+    public:
+        /// @brief constructor
+        rerouterInterval(SUMOTime begin, SUMOTime end);
+
+        /// @brief destructor
+        ~rerouterInterval();
+
+        /// @brief insert a new closing reroute
+        /// @throw ProcessError if closing reroute was already inserted
+        void insertClosingReroutes(closingReroute *cr);
+
+        /// @brief remove a previously inserted closing reroute
+        /// @throw ProcessError if closing reroute cannot be found in the container
+        void removeClosingReroutes(closingReroute *cr);
+
+        /// @brief insert destiny probability reroute
+        /// @throw ProcessError if destiny probability reroute was already inserted
+        void insertDestProbReroutes(destProbReroute *dpr);
+
+        /// @brief remove a previously inserted destiny probability reroute
+        /// @throw ProcessError if destiny probability reroute cannot be found in the container
+        void removeDestProbReroutes(destProbReroute *dpr);
+
+        /// @brief insert route probability reroute
+        /// @throw ProcessError if route probability reroute was already inserted
+        void insertRouteProbReroute(routeProbReroute *rpr);
+
+        /// @brief remove a previously inserted route probability reroute
+        /// @throw ProcessError if route probability reroute cannot be found in the container
+        void removeRouteProbReroute(routeProbReroute *rpr);
+
+        /// @brief get time begin
+        SUMOTime getBegin() const;
+
+        /// @brief get time end
+        SUMOTime getEnd() const;
+
+        /// @brief get closing reroutes
+        std::vector<closingReroute*> getClosingReroutes() const;
+
+        /// @brief get destiny probability reroutes
+        std::vector<destProbReroute*> getDestProbReroutes() const;
+
+        /// @brief get reoute probability reroutes
+        std::vector<routeProbReroute*> getRouteProbReroutes() const;
+
+        /// @brief set time begin
+        /// @throw InvalidArgument if begin time isn't valid
+        void setBegin(SUMOTime begin);
+
+        /// @brief set time end
+        /// @throw InvalidArgument if end time isn't valid
+        void setEnd(SUMOTime end);
+
+    private:        
+        /// @brief begin of interval
+        SUMOTime myBegin;
+        
+        /// @brief end of interval
+        SUMOTime myEnd;
+
+        /// @brief vector with the closingReroutes
+        std::vector<closingReroute*> myClosingReroutes;
+
+        /// @brief vector with the destProbReroutes
+        std::vector<destProbReroute*> myDestProbReroutes;
+
+        /// @brief vector with the routeProbReroutes
+        std::vector<routeProbReroute*> myRouteProbReroutes;
+    };
+
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position (center) of the rerouter in the map
-     * @param[in] routes vector of routes
+     * @param[in] edges vector with the edges of rerotuer
      * @param[in] filename The path to the definition file
      * @param[in] probability The probability for vehicle rerouting 
      * @param[in] off Whether the router should be inactive initially
      * @param[in] blocked set initial blocking state of item 
      */
-    GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNERoute*> routes, const std::string& filename, SUMOReal probability, bool off, bool blocked);
+    GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, bool blocked);
 
     /// @brief Destructor
     ~GNERerouter();
@@ -135,16 +320,16 @@ public:
     //@}
 
 protected:
-    /// @brief list of routes
-    std::vector<GNERoute*> myRoutes; 
+    /// @brief list of edges
+    std::vector<GNEEdge*> myEdges; 
     
-    /// @brief afilename of rerouter
+    /// @brief filename of rerouter
     std::string myFilename; 
     
-    /// @brief probabiliry of rerouter
+    /// @brief probability of rerouter
     SUMOReal myProbability; 
     
-    /// @brief attribute to enable or disable off
+    /// @brief attribute to enable or disable inactive initially
     bool myOff;
 
 private:
@@ -165,4 +350,5 @@ private:
 };
 
 #endif
+
 /****************************************************************************/

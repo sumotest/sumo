@@ -139,6 +139,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEJunction.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELane.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELoadThread.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_RerouterSelected.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEReferenceCounter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouter.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNERerouterIntervalConfig.h" />
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h" />

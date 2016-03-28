@@ -82,6 +82,8 @@ GNEStoppingPlace::~GNEStoppingPlace() {
 
 void 
 GNEStoppingPlace::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
+    // Due a stoppingplace is placed over an lane i gnore Warning of posy
+    UNUSED_PARAMETER(posy);
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if distance is positive, to left if distance is negative

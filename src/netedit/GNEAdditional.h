@@ -64,7 +64,7 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of view in which additional is located
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
-        * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
+     * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      * @param[in] lane Pointer to lane, NULL if additional don't belong to a Lane
      * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet 
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
@@ -202,6 +202,7 @@ protected:
     Position myPosition;
 
     /// @brief The shape of the additional element
+    /// @note must be configured in updateGeometry()
     PositionVector myShape;
 
     /// @brief type of tag of the parent
@@ -211,9 +212,11 @@ protected:
     GNEAdditionalSet *myParent;
 
     /// @brief base color (Default green)
+    /// @note default color can be defined in the constructor of every additional
     RGBColor myBaseColor;
 
     /// @brief base color selected (Default blue)
+    /// @note default color can be defined in the constructor of every additional
     RGBColor myBaseColorSelected;
 
     /// @name computed only once (for performance) in updateGeometry()
@@ -224,6 +227,9 @@ protected:
     /// The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
     //@}
+    
+    /// @brief rotation depending of the option "Lefthand"
+    bool myRotationLefthand;
 
     /// @name members and functions relative to block icon
     //@{
@@ -235,7 +241,7 @@ protected:
     void drawLockIcon(SUMOReal size = 0.5) const;
 
     /// @brief The offSet of the block icon
-    /// @note by default position of blockIcon is the center of shape
+    /// @note by default position of blockIcon is in the center of shape
     Position myBlockIconOffset;
 
     /// @brief The rotation of the block icon
@@ -267,6 +273,5 @@ private:
     /// @brief Invalidated assignment operator.
     GNEAdditional& operator=(const GNEAdditional&);
 };
-
 
 #endif

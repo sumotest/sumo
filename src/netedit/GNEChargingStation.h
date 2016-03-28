@@ -59,7 +59,7 @@ public:
      * @param[in] efficiency efficiency of the charge [0,1]
      * @param[in] chargeInTransit enable or disable charge in transit
      * @param[in] chargeDelay delay in timeSteps in the charge
-     * @param[in] blocked set initial blocking state of item 
+     * @param[in] blocked set initial blocking state of item
      */
     GNEChargingStation(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked);
     
@@ -82,20 +82,18 @@ public:
     /** @brief Returns the charging efficiency of the chargingStation
      * @return The charging efficiency of the chargingStation
      */
-    SUMOReal getEfficiency(); 
-
+    SUMOReal getEfficiency();
     /** @brief Returns the value of charge in transit of the chargingStation
      * @return True if charge in transit is enabled, false in other case
      */
-    bool getChargeInTransit(); 
-
+    bool getChargeInTransit();
     /** @brief Returns the charge delay of the chargingStation
      * @return The charge delay of the chargingStation
      */
     SUMOReal getChargeDelay();
 
     /** @brief Set a new charging power in the charging station
-     * @param[in] chargingPower new charging power 
+     * @param[in] chargingPower new charging power
      * @throws InvalidArgument if value of chargingPower isn't valid
      */
     void setChargingPower(SUMOReal chargingPower);
@@ -104,13 +102,11 @@ public:
      * @param[in] efficiency new efficiency
      * @throws InvalidArgument if value of efficiency isn't valid
      */
-    void setEfficiency(SUMOReal efficiency); 
-
+    void setEfficiency(SUMOReal efficiency);
     /** @brief Enable or disable charge in transit in the charging station
      * @param[in] chargeInTransit new charge in Transit value (0 or 1)
      */
-    void setChargeInTransit(bool chargeInTransit); 
-
+    void setChargeInTransit(bool chargeInTransit);
     /** @brief Set a new charge delay in the charging station
      * @param[in] chargeDelay new charge delay value (true or false)
      * @throws InvalidArgument if value of chargeDelay isn't valid
@@ -178,10 +174,10 @@ protected:
     SUMOReal myChargingPower;
 
     /// @brief efficiency of the charge
-    SUMOReal myEfficiency; 
+    SUMOReal myEfficiency;
 
     /// @brief enable or disable charge in transit
-    bool myChargeInTransit; 
+    bool myChargeInTransit;
 
     /// @brief delay in the starting of charge
     SUMOReal myChargeDelay;

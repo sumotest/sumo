@@ -84,6 +84,8 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     myBlockIconRotation(0),
     myBaseColor(RGBColor::GREEN),
     myBaseColorSelected(RGBColor::BLUE) {
+    // Set rotation left hand
+    myRotationLefthand = OptionsCont::getOptions().getBool("lefthand");
     // If this additional belongs to a set, add it.
     if(myParent)
         myParent->addAdditionalChild(this);
@@ -123,13 +125,13 @@ GNEAdditional::getPositionInView() const {
 }
 
 
-GNEViewNet* 
+GNEViewNet*
 GNEAdditional::getViewNet() const {
     return myViewNet;
 }
 
 
-GNELane* 
+GNELane*
 GNEAdditional::getLane() const {
     return myLane;
 }
@@ -147,43 +149,43 @@ GNEAdditional::getShapeInformation() const {
 }
 
 
-bool 
+bool
 GNEAdditional::isBlocked() const {
     return myBlocked;
 }
 
 
-bool 
+bool
 GNEAdditional::isAdditionalSelected() const {
     return gSelected.isSelected(getType(), getGlID());
 }
 
 
-bool 
+bool
 GNEAdditional::belongToAdditionalSet() const {
     return (myParentTag != SUMO_TAG_NOTHING);
 }
 
 
-GNEAdditionalSet* 
+GNEAdditionalSet*
 GNEAdditional::getAdditionalSetParent() const {
     return myParent;
 }
 
 
-void 
+void
 GNEAdditional::setBlocked(bool value) {
     myBlocked = value;
 }
 
 
-void 
+void
 GNEAdditional::setPositionInView(const Position &pos) {
     myPosition = pos;
 }
 
 
-const std::string& 
+const std::string&
 GNEAdditional::getParentName() const {
     if(myLane)
         return myLane->getMicrosimID();
@@ -192,7 +194,7 @@ GNEAdditional::getParentName() const {
 }
 
 
-Boundary 
+Boundary
 GNEAdditional::getCenteringBoundary() const {
     Boundary b = myShape.getBoxBoundary();
     b.grow(20);
@@ -200,7 +202,7 @@ GNEAdditional::getCenteringBoundary() const {
 }
 
 
-void 
+void
 GNEAdditional::setBlockIconRotation() {
     if (myShape.length() != 0)
         // If lenght of the shape is distint to 0, Obtain rotation of center of shape
@@ -214,7 +216,7 @@ GNEAdditional::setBlockIconRotation() {
 }
 
 
-void 
+void
 GNEAdditional::drawLockIcon(SUMOReal size) const {
     // Start pushing matrix
     glPushMatrix();

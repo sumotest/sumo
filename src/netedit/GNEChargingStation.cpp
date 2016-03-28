@@ -66,9 +66,9 @@
 
 GNEChargingStation::GNEChargingStation(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked) :
     GNEStoppingPlace(id, viewNet, SUMO_TAG_CHARGING_STATION, lane, startPos, endPos, blocked),
-    myChargingPower(chargingPower), 
-    myEfficiency(efficiency), 
-    myChargeInTransit(chargeInTransit), 
+    myChargingPower(chargingPower),
+    myEfficiency(efficiency),
+    myChargeInTransit(chargeInTransit),
     myChargeDelay(chargeDelay) {
     // When a new additional element is created, updateGeometry() must be called
     updateGeometry();
@@ -85,7 +85,7 @@ GNEChargingStation::GNEChargingStation(const std::string& id, GNELane* lane, GNE
 GNEChargingStation::~GNEChargingStation() {}
 
 
-void 
+void
 GNEChargingStation::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
@@ -93,9 +93,6 @@ GNEChargingStation::updateGeometry() {
     
     // Clear shape
     myShape.clear();
-
-    // Get value of option "lefthand"
-    SUMOReal offsetSign = OptionsCont::getOptions().getBool("lefthand") ? -1 : 1;
 
     // Get shape of lane parent
     myShape = myLane->getShape();
@@ -133,10 +130,13 @@ GNEChargingStation::updateGeometry() {
     // Obtain a copy of the shape
     PositionVector tmpShape = myShape;
 
-    // Move shape to side 
-    tmpShape.move2side(1.5 * offsetSign);
+    // Move shape to side
+    if(myRotationLefthand)
+        tmpShape.move2side(-1.5);
+    else
+        tmpShape.move2side(1.5);
 
-    // Get position of the sing
+    // Get position of the sign
     mySignPos = tmpShape.getLineCenter();
 
     // Set block icon rotation, and using their rotation for sign
@@ -144,31 +144,31 @@ GNEChargingStation::updateGeometry() {
 }
 
 
-SUMOReal 
+SUMOReal
 GNEChargingStation::getChargingPower() {
     return myChargingPower;
 }
 
 
-SUMOReal 
+SUMOReal
 GNEChargingStation::getEfficiency() {
     return myEfficiency;
 }
 
 
-bool 
+bool
 GNEChargingStation::getChargeInTransit() {
     return myChargeInTransit;
 }
 
 
-SUMOReal 
+SUMOReal
 GNEChargingStation::getChargeDelay() {
     return myChargeDelay;
 }
 
 
-void 
+void
 GNEChargingStation::setChargingPower(SUMOReal chargingPower) {
     if(chargingPower > 0) {
         myChargingPower = chargingPower;
@@ -178,7 +178,7 @@ GNEChargingStation::setChargingPower(SUMOReal chargingPower) {
 }
 
 
-void 
+void
 GNEChargingStation::setEfficiency(SUMOReal efficiency) {
     if(efficiency >= 0 && efficiency <= 1) {
         myEfficiency = efficiency;
@@ -188,13 +188,13 @@ GNEChargingStation::setEfficiency(SUMOReal efficiency) {
 }
 
 
-void 
+void
 GNEChargingStation::setChargeInTransit(bool chargeInTransit) {
     myChargeInTransit = chargeInTransit;
 }
 
 
-void 
+void
 GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
     if(chargeDelay < 0) {
         myChargeDelay = chargeDelay;
@@ -211,13 +211,15 @@ GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
 }
 
 
-void 
+void
 GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
-    // Draw Charging Station
+    // Push name
     glPushName(getGlID());
+
+    // Push base matrix
     glPushMatrix();
 
     // Traslate matrix
@@ -229,39 +231,83 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
     else
         GLHelper::setColor(myBaseColor);
 
-    // Draw base
+    // Get exaggeration
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+
+    // Draw base
     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, exaggeration);
 
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
         // Push sign matrix
         glPushMatrix();
+
+        // Set color of the charging power
+        if(isAdditionalSelected())
+            GLHelper::setColor(myTextColorSelected);
+        else
+            GLHelper::setColor(myTextColor);
+
+        // push charging power matrix
+        glPushMatrix();
+
+        // Traslate End positionof signal
         glTranslated(mySignPos.x(), mySignPos.y(), 0);
+
+        // Rotate 180 (Eje X -> Mirror)
+        glRotated(180, 1, 0, 0);
+
+        // Rotate again using myBlockIconRotation
+        glRotated(myBlockIconRotation, 0, 0, 1);
+
+        // Set poligon mode
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        // set polyfront position on 0,0     
+        pfSetPosition(0, 0);
+
+        // Set polyfront scale to 1
+        pfSetScale(1.f);
+
+         // traslate matrix
+        glTranslated(1.2, 0, 0);
+
+        // draw charging power
+        pfDrawString(toString(myChargingPower).c_str());
+
+        // pop charging power matrix
+        glPopMatrix();
+
+        // Set position over sign
+        glTranslated(mySignPos.x(), mySignPos.y(), 0);
+
+        // Define nº points (for efficiency)
         int noPoints = 9;
+
+        // If the scale * exaggeration is more than 25, recalculate nº points
         if (s.scale * exaggeration > 25)
             noPoints = MIN2((int)(9.0 + (s.scale * exaggeration) / 10.0), 36);
+
         // Scale matrix
         glScaled(exaggeration, exaggeration, 1);
-        
+
         // Set base color
         if(isAdditionalSelected())
             GLHelper::setColor(myBaseColorSelected);
         else
             GLHelper::setColor(myBaseColor);
-        
+
         // Draw extern
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
-        
+
         // Move to top
         glTranslated(0, 0, .1);
-        
+
         // Set sign color
         if(isAdditionalSelected())
             GLHelper::setColor(mySignColorSelected);
         else
             GLHelper::setColor(mySignColor);
-        
         // Draw internt sign
         GLHelper::drawFilledCircle((SUMOReal) 0.9, noPoints);
 
@@ -271,16 +317,21 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
                 GLHelper::drawText("C", Position(), .1, 1.6, myBaseColorSelected, myBlockIconRotation);
             else
                 GLHelper::drawText("C", Position(), .1, 1.6, myBaseColor, myBlockIconRotation);
-        
         // Pop sign matrix
         glPopMatrix();
 
+        // Draw icon
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             GNEAdditional::drawLockIcon();
     }
 
+    // Pop base matrix
     glPopMatrix();
+
+    // Pop name matrix
     glPopName();
+
+    // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
 }
 
@@ -321,7 +372,7 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app,
 }
 
 
-void 
+void
 GNEChargingStation::writeAdditional(OutputDevice& device) {
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
