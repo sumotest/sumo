@@ -144,8 +144,9 @@ public:
          */
         void* informLeader(void* info, MSVehicle* sender) {
             assert(myLeader != 0);
-        	gDebugFlag1 = sender->getID()=="right0.0" || sender->getID()=="left1.0";
-            if(gDebugFlag1) std::cout << "vehicle " << sender->getID() << "informing Leader"<< std::endl;
+//            // Debug (Leo)
+//        	gDebugFlag1 = sender->getID()=="right0.0" || sender->getID()=="left1.0";
+//            if(gDebugFlag1) std::cout << "vehicle " << sender->getID() << "informing Leader"<< std::endl;
             return myLeader->getLaneChangeModel().inform(info, sender);
         }
 
@@ -157,8 +158,9 @@ public:
          */
         void* informNeighLeader(void* info, MSVehicle* sender) {
             assert(myNeighLeader != 0);
-        	gDebugFlag1 = sender->getID()=="right0.0" || sender->getID()=="left1.0";
-            if(gDebugFlag1) std::cout << "vehicle " << sender->getID() << "informing NeighLeader "<< std::endl;
+//            // Debug (Leo)
+//        	gDebugFlag1 = sender->getID()=="right0.0" || sender->getID()=="left1.0";
+//            if(gDebugFlag1) std::cout << "vehicle " << sender->getID() << "informing NeighLeader "<< std::endl;
             return myNeighLeader->getLaneChangeModel().inform(info, sender);
         }
 
@@ -170,8 +172,9 @@ public:
          */
         void* informNeighFollower(void* info, MSVehicle* sender) {
             assert(myNeighFollower != 0);
-        	gDebugFlag1 = sender->getID()=="right0.0" ||sender->getID()=="left1.0";
-            if(gDebugFlag1) std::cout << "vehicle " << sender->getID() << "informing NeighFollower "<< std::endl;
+//            // Debug (Leo)
+//        	gDebugFlag1 = sender->getID()=="right0.0" ||sender->getID()=="left1.0";
+//            if(gDebugFlag1) std::cout << "vehicle " << sender->getID() << "informing NeighFollower "<< std::endl;
             return myNeighFollower->getLaneChangeModel().inform(info, sender);
         }
 

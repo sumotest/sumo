@@ -70,33 +70,58 @@ MSCFModel::brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal h
 
 
 SUMOReal
-MSCFModel::freeSpeed(const SUMOReal decel, const SUMOReal dist, const SUMOReal maxSpeed, const bool onInsertion) {
+MSCFModel::freeSpeed(const SUMOReal currentSpeed, const SUMOReal decel, const SUMOReal dist, const SUMOReal targetSpeed, const bool onInsertion) {
+	// XXX: (Leo) This seems to be exclusively called with decel = myDecel (max deceleration) and is not overridden
+	// by any specific CFModel. That may cause undesirable hard braking (at junctions where the vehicle
+	// changes to a road with a lower speed limit). It relies on the same logic as the maximalSafeSpeed calculations.
+
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		// adapt speed to succeeding lane, no reaction time is involved
 		// when breaking for y steps the following distance g is covered
 		// (drive with v in the final step)
 		// g = (y^2 + y) * 0.5 * b + y * v
 		// y = ((((sqrt((b + 2.0*v)*(b + 2.0*v) + 8.0*b*g)) - b)*0.5 - v)/b)
-		const SUMOReal v = SPEED2DIST(maxSpeed);
+		const SUMOReal v = SPEED2DIST(targetSpeed);
 		if (dist < v) {
-			return maxSpeed;
+			return targetSpeed;
 		}
 		const SUMOReal b = ACCEL2DIST(decel);
 		const SUMOReal y = MAX2(0.0, ((sqrt((b + 2.0 * v) * (b + 2.0 * v) + 8.0 * b * dist) - b) * 0.5 - v) / b);
 		const SUMOReal yFull = floor(y);
 		const SUMOReal exactGap = (yFull * yFull + yFull) * 0.5 * b + yFull * v + (y > yFull ? v : 0.0);
 		const SUMOReal fullSpeedGain = (yFull + (onInsertion ? 1. : 0.)) * ACCEL2SPEED(decel);
-		return DIST2SPEED(MAX2((SUMOReal)0.0, dist - exactGap) / (yFull + 1)) + fullSpeedGain + maxSpeed;
+		return DIST2SPEED(MAX2((SUMOReal)0.0, dist - exactGap) / (yFull + 1)) + fullSpeedGain + targetSpeed;
 	} else {
 		// ballistic update (Leo)
-		// calculate maximum speed that is adjustable to maxSpeed after a distance dist and given a maximal deceleration decel
-		// we have v(t) = v0 - decel*t == maxSpeed iff t = (v0 - maxSpeed)/decel,
-		// hence dist(v0) = v0*t - decel*t*t/2 = v0*(v0 - maxSpeed)/decel - (v0 - maxSpeed)* (v0 - maxSpeed)/(2*decel)
-		//				  = 0.5*(v0 + maxSpeed)*(v0 - maxSpeed)/decel = 0.5*(v0*v0 - maxSpeed*maxSpeed)/decel
-		// Solving dist == dist(v0), we obtain
-		// v0 = sqrt( 2*decel*dist + pow(maxSpeed,2) )
-		// XXX: disregarding onInsertion (what's its purpose? Probably needs adjustment)
-		return sqrt(2*decel*dist + pow(maxSpeed,2));
+		// calculate maximum next speed vN that is adjustable to vT=targetSpeed after a distance d=dist
+		// and given a maximal deceleration b=decel, denote the current speed by v0.
+		// the distance covered by a trajectory that attains vN in the next timestep and decelerates afterwards
+		// with b is given as
+		// d = dt*(v0+vN) + (t-dt)*vN - 0.5*b*(t-dt)^2, (1)
+		// where time t of arrival at d with speed vT is
+		// t = dt + (vT-vN)/b.  (2)
+		// We insert (2) into (1) to obtain
+		// d = dt*(v0+vN) + vN*(vT-vN)/b - 0.5*b*((vT-vN)/b)^2
+		//   = dt*v0 + dt*vN + vN*vT/b - vN*vN/b - 0.5*(vT^2 - 2*vT*vN + vN^2)/b
+		//   = dt*v0 + dt*vN + vN*vT/b - vT^2*0.5/b + 2*vT*vN*0.5/b - vN^2*0.5/b - vN*vN/b
+		//   = dt*v0 - vT^2*0.5/b + (dt + 2*vT/b)*vN - vN^2*1.5/b
+
+		SUMOReal dt = onInsertion ? 0 : TS; // handles case that vehicle is inserted just now (at the end of move)
+		SUMOReal v0 = currentSpeed;
+		SUMOReal vT = targetSpeed;
+		SUMOReal b = decel;
+
+		// Solvability is not guaranteed if d is small (relative to v0):
+		// Therefore, for small d, such that vN = vT leads to (v0+vN)*dt > d, we set vN=vT.
+		// (In case vT<v0, this implies that on the interpolated trajectory there are points beyond d where
+		//  the interpolated velocity is larger than vT, but at least on the temporal discretization grid, vT is not exceeded)
+		if((v0+vT)*dt >= dist) return vT;
+
+		SUMOReal d = dist - NUMERICAL_EPS; // take care of rounding errors
+
+		SUMOReal q = (dt*v0 - vT*vT*0.5/b - d)*b/1.5;
+		SUMOReal p = (dt + 2*vT/b)*b/3.; // (q < 0 is fulfilled because dist is not too small)
+		return -p + sqrt(p*p - q);
 	}
 }
 
@@ -118,7 +143,15 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     }
     const SUMOReal vMax = MIN3(veh->getLane()->getVehicleMaxSpeed(veh), maxNextSpeed(oldV, veh), vSafe);
     assert(vMin <= vMax);
-    return veh->getLaneChangeModel().patchSpeed(vMin, vMax, vMax, *this);
+
+    SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vMax, vMax, *this);
+
+	// (Leo) At this point vNext may also be negative indicating a stop within next step.
+    // This would have resulted from a call to maximumSafeStopSpeed(), which does not
+    // consider deceleration bounds. Therefore, we cap vNext here.
+	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
+
+    return vNext;
 }
 
 
@@ -144,8 +177,8 @@ MSCFModel::maxNextSpeed(SUMOReal speed, const MSVehicle* const /*veh*/) const {
 
 
 SUMOReal
-MSCFModel::freeSpeed(const MSVehicle* const /* veh */, SUMOReal /* speed */, SUMOReal seen, SUMOReal maxSpeed, const bool onInsertion) const {
-    return freeSpeed(myDecel, seen, maxSpeed, onInsertion);
+MSCFModel::freeSpeed(const MSVehicle* const /* veh */, SUMOReal speed, SUMOReal seen, SUMOReal maxSpeed, const bool onInsertion) const {
+    return freeSpeed(speed, myDecel, seen, maxSpeed, onInsertion);
 }
 
 

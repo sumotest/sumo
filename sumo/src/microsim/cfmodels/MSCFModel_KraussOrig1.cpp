@@ -39,15 +39,12 @@
 #include <utils/common/RandHelper.h>
 #include <microsim/MSGlobals.h>
 
-
-
 // ===========================================================================
 // method definitions
 // ===========================================================================
 MSCFModel_KraussOrig1::MSCFModel_KraussOrig1(const MSVehicleType* vtype,  SUMOReal accel, SUMOReal decel,
         SUMOReal dawdle, SUMOReal headwayTime)
-    : MSCFModel(vtype, accel, decel, headwayTime), myDawdle(dawdle), myTauDecel(decel* headwayTime) {
-}
+    : MSCFModel(vtype, accel, decel, headwayTime), myDawdle(dawdle), myTauDecel(decel* headwayTime) {}
 
 
 MSCFModel_KraussOrig1::~MSCFModel_KraussOrig1() {}
@@ -77,10 +74,18 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //    WRITE_WARNING("Maximum speed of vehicle '" + veh->getID() + "' is lower than the minimum speed (min: " + toString(vMin) + ", max: " + toString(vMax) + ").");
     //}
 #endif
-    const SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, MAX2(vMin, dawdle(vMax)), vMax, *this);
+    SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, MAX2(vMin, dawdle(vMax)), vMax, *this);
 
-//	// Debug (Leo)
-//    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
+    //	// Debug (Leo)
+    //    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
+
+	// (Leo) At this point vNext may also be negative indicating a stop within next step.
+    // This would have resulted from a call to maximumSafeStopSpeed(), which does not
+    // consider deceleration bounds. Therefore, we cap vNext here.
+	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
+
+	//	// Debug (Leo)
+	//    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
 
     return vNext;
 }

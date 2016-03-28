@@ -238,7 +238,7 @@ public:
 
     static SUMOReal brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal headwayTime);
 
-    static SUMOReal freeSpeed(const SUMOReal decel, const SUMOReal dist, const SUMOReal maxSpeed, const bool onInsertion);
+    static SUMOReal freeSpeed(const SUMOReal currentSpeed, const SUMOReal decel, const SUMOReal dist, const SUMOReal maxSpeed, const bool onInsertion);
 
     /** @brief Returns the minimum gap to reserve if the leader is braking at maximum
       * @param[in] speed EGO's speed

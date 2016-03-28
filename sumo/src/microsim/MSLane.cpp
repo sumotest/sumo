@@ -698,6 +698,12 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
         const SUMOReal length = veh->getVehicleType().getLengthWithGap();
         const SUMOReal nettoLength = veh->getVehicleType().getLength();
         bool moved = veh->executeMove();
+
+//        // Debug (Leo)
+//        if(gDebugFlag1){
+//        	std::cout << "vehicle " << veh->getID() << " moved? " << moved << std::endl;
+//        }
+
         MSLane* target = veh->getLane();
 #ifndef NO_TRACI
         bool vtdControlled = veh->hasInfluencer() && veh->getInfluencer().isVTDControlled();
@@ -706,9 +712,21 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
         if (veh->hasArrived()) {
 #endif
             // vehicle has reached its arrival position
+
+//            // Debug (Leo)
+//            if(gDebugFlag1){
+//            	std::cout << "vehicle " << veh->getID() << " will be removed because it has arrived." << std::endl;
+//            }
+
             veh->onRemovalFromNet(MSMoveReminder::NOTIFICATION_ARRIVED);
             MSNet::getInstance()->getVehicleControl().scheduleVehicleRemoval(veh);
         } else if (target != 0 && moved) {
+
+//            // Debug (Leo)
+//            if(gDebugFlag1){
+//            	std::cout << "vehicle " << veh->getID() << " has reached the next lane." << std::endl;
+//            }
+
             if (target->getEdge().isVaporizing()) {
                 // vehicle has reached a vaporizing edge
                 veh->onRemovalFromNet(MSMoveReminder::NOTIFICATION_VAPORIZED);
@@ -737,6 +755,10 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
                 }
             }
         } else if (veh->isParking()) {
+//            // Debug (Leo)
+//            if(gDebugFlag1){
+//            	std::cout << "vehicle " << veh->getID() << " is parking." << std::endl;
+//            }
             // vehicle started to park
             MSVehicleTransfer::getInstance()->add(t, veh);
         } else if (veh->getPositionOnLane() > getLength()) {
@@ -748,9 +770,21 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
             MSNet::getInstance()->getVehicleControl().registerCollision();
             MSVehicleTransfer::getInstance()->add(t, veh);
         } else {
+
+//            // Debug (Leo)
+//            if(gDebugFlag1){
+//            	std::cout << "nothing special happend for vehicle " << veh->getID() << std::endl;
+//            }
+
             ++i;
             continue;
         }
+
+//        // Debug (Leo)
+//        if(gDebugFlag1){
+//        	std::cout << "I'm still here with vehicle " << veh->getID() << std::endl;
+//        }
+
         myBruttoVehicleLengthSum -= length;
         myNettoVehicleLengthSum -= nettoLength;
         ++i;
@@ -784,7 +818,7 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& into) {
                     }
                     MSVehicleTransfer::getInstance()->add(t, veh);
                 }
-            } // else look for a vehicle that isn't stopped?
+            } // else look for a (waiting) vehicle that isn't stopped?
         }
     }
     return myVehicles.size() == 0;
