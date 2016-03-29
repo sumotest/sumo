@@ -92,18 +92,12 @@ public:
      * @param[in] device device in which write parameters of additionalSet element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
+    
+    /// @brief get number of childs of this additionalSet
+    int getNumberOfChilds() const;
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns an own popup-menu
-     *
-     * @param[in] app The application needed to build the popup-menu
-     * @param[in] parent The parent window needed to build the popup-menu
-     * @return The built popup-menu
-     * @see GUIGlObject::getPopUpMenu
-     */
-    virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window

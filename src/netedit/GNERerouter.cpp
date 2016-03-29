@@ -395,35 +395,17 @@ GNERerouter::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu*
-GNERerouter::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy detector E1 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    new FXMenuCommand(ret, ("pos: " + toString(myPosition)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
 GUIParameterTableWindow*
 GNERerouter::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
+    /** NOT YET SUPPORTED **/
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("id", false, getID());
+    /** @TODO complet with the rest of parameters **/
     // close building
     ret->closeBuilding();
-    */
     return ret;
 }
 
@@ -440,16 +422,6 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
-    // Declare variables to get colors depending if the detector is selected
-    RGBColor base;
-    /*
-    // Set colors
-    if(selected) {
-        base = myRGBColors[E3_BASE_SELECTED];
-    } else {
-        base = myRGBColors[E3_BASE];
-    }
-    */
     // Start drawing adding an gl identificator
     glPushName(getGlID());
 
@@ -484,12 +456,16 @@ GNERerouter::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
-        //case SUMO_ATTR_FREQUENCY:
-        //    return toString(myFreq);
+        case SUMO_ATTR_EDGES:
+            /** completar **/
         case SUMO_ATTR_FILE:
             return myFilename;
+        case SUMO_ATTR_PROB:
+            return toString(myProbability);
+        case SUMO_ATTR_OFF:
+            return toString(myOff);
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -501,14 +477,16 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_FREQUENCY:
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_EDGES:
         case SUMO_ATTR_FILE:
+        case SUMO_ATTR_PROB:
+        case SUMO_ATTR_OFF:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -517,15 +495,19 @@ bool
 GNERerouter::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
+        case SUMO_ATTR_EDGES:
+            /** completar **/
         case SUMO_ATTR_FILE:
             return isValidFileValue(value);
-        case SUMO_ATTR_LINES:
-            return isValidStringVector(value);
+        case SUMO_ATTR_PROB:
+            return canParse<SUMOReal>(value);
+        case SUMO_ATTR_OFF:
+            return canParse<bool>(value);
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -536,11 +518,17 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
             throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_FREQUENCY:
-            //myFreq = parse<SUMOReal>(value);
+        case SUMO_ATTR_EDGES:
+            /** completar **/
             break;
         case SUMO_ATTR_FILE:
             myFilename = value;
+            break;
+        case SUMO_ATTR_PROB:
+            myProbability = parse<SUMOReal>(value);
+            break;
+        case SUMO_ATTR_OFF:
+            myOff = parse<bool>(value);
             break;
         default:
             throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");

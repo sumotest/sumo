@@ -172,7 +172,7 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         valuesOfElement[SUMO_ATTR_LANE] = lane->getID();
         // If element has a StartPosition and EndPosition over lane, extract attributes
         if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
-            valuesOfElement[SUMO_ATTR_STARTPOS] = toString(setStartPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameters->getLenght()));
+            valuesOfElement[SUMO_ATTR_STARTPOS] = toString(setStartPosition(positionOfTheMouseOverLane, myEditorParameters->getLenght()));
             valuesOfElement[SUMO_ATTR_ENDPOS] = toString(setEndPosition(lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameters->getLenght()));
         }
         // Extract position of lane
@@ -271,7 +271,7 @@ GNEAdditionalFrame::setParametersOfAdditional(SumoXMLTag actualAdditionalType) {
 
 
 SUMOReal
-GNEAdditionalFrame::setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional) {
+GNEAdditionalFrame::setStartPosition(SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional) {
     switch (myEditorParameters->getActualReferencePoint()) {
         case editorParameters::GNE_ADDITIONALREFERENCEPOINT_LEFT :
             return positionOfTheMouseOverLane;
@@ -546,8 +546,8 @@ GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite *pare
 
     // Create widgets for parameters
     for (int i = 0; i < maxNumberOfParameters; i++) {
-        myVectorOfAdditionalParameter.push_back(new additionalParameter(this, this));
-        myVectorOfAdditionalParameterList.push_back(new additionalParameterList(this, this));
+        myVectorOfAdditionalParameter.push_back(new additionalParameter(this, tgt));
+        myVectorOfAdditionalParameterList.push_back(new additionalParameterList(this, tgt));
     }
 }
 

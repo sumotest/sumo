@@ -115,15 +115,6 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns an own popup-menu
-     *
-     * @param[in] app The application needed to build the popup-menu
-     * @param[in] parent The parent window needed to build the popup-menu
-     * @return The built popup-menu
-     * @see GUIGlObject::getPopUpMenu
-     */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window

@@ -140,36 +140,17 @@ GNEDetectorE1::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu*
-GNEDetectorE1::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy detector E1 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
-    new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
 GUIParameterTableWindow*
 GNEDetectorE1::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
+    /** NOT YET SUPPORTED **/
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("id", false, getID());
+    /** @TODO complet with the rest of parameters **/
     // close building
     ret->closeBuilding();
-    */
     return ret;
 }
 
@@ -267,10 +248,9 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_FILE:
             return myFilename;
         case SUMO_ATTR_SPLIT_VTYPE:
-            return (mySplitByType? "true" : "false");
-
+            return toString(mySplitByType);
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -283,7 +263,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_FILE:
@@ -292,7 +272,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
             updateGeometry();
             break;
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 
 }
@@ -303,7 +283,7 @@ GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
         case SUMO_ATTR_FREQUENCY:
@@ -313,7 +293,7 @@ GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_SPLIT_VTYPE:
             return canParse<bool>(value);
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -326,7 +306,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             myPosition = Position(parse<SUMOReal>(value), 0);
             updateGeometry();
@@ -342,7 +322,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
             mySplitByType = parse<bool>(value);
             break;
         default:
-            throw InvalidArgument("detector E1 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 

@@ -1051,7 +1051,7 @@ GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos
     for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {              // PABLO #1916
         if(dynamic_cast<GNEStoppingPlace*>(it->second)) {                                                           // PABLO #1916
             GNEStoppingPlace* stoppingPlace = dynamic_cast<GNEStoppingPlace*>(it->second);                          // PABLO #1916
-            if (stoppingPlace->getLane() == lane && fabs(stoppingPlace->getstartPosition() - pos) < POSITION_EPS) // PABLO #1916
+            if (stoppingPlace->getLane() == lane && fabs(stoppingPlace->getStartPosition() - pos) < POSITION_EPS) // PABLO #1916
                 return it->second->getID();                                                                         // PABLO #1916
         } else if(dynamic_cast<GNEDetector*>(it->second)) {                                                         // PABLO #1916
             GNEDetector* detector = dynamic_cast<GNEDetector*>(it->second);                                         // PABLO #1916

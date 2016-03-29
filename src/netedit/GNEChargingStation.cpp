@@ -336,38 +336,17 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
 }
 
 
-GUIGLObjectPopupMenu*
-GNEChargingStation::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy chargingStation name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
-    new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
 GUIParameterTableWindow*
-GNEChargingStation::getParameterWindow(GUIMainWindow& app,
-                            GUISUMOAbstractView&) {
-
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
+GNEChargingStation::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+    /** NOT YET SUPPORTED **/
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("id", false, getID());
+    /** @TODO complet with the rest of parameters **/
     // close building
     ret->closeBuilding();
-    */
     return ret;
 }
 
@@ -407,14 +386,11 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_EFFICIENCY:
             return toString(myEfficiency);
         case SUMO_ATTR_CHARGEINTRANSIT:
-            if(myChargeInTransit == true)
-                return "true";
-            else
-                return "false";
+            return toString(myChargeInTransit);
         case SUMO_ATTR_CHARGEDELAY:
             return toString(myChargeDelay);
         default:
-            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -427,7 +403,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEU
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
         case SUMO_ATTR_ENDPOS:
         case SUMO_ATTR_CHARGINGPOWER:
@@ -437,7 +413,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEU
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             break;
         default:
-            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -447,7 +423,7 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myEndPos-1));
         case SUMO_ATTR_ENDPOS:
@@ -457,11 +433,11 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_EFFICIENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= 1);
         case SUMO_ATTR_CHARGEINTRANSIT:
-            return (value == "true" || value == "false");
+            return canParse<bool>(value);
         case SUMO_ATTR_CHARGEDELAY:
             return (canParse<int>(value) && parse<int>(value) >= 0);
         default:
-            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -474,7 +450,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             myStartPos = parse<SUMOReal>(value);
             updateGeometry();
@@ -501,7 +477,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
             myChargeDelay = parse<int>(value);
             break;
         default:
-            throw InvalidArgument("chargingStation attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + "attribute '" + toString(key) + "' not allowed");
     }
 }
 

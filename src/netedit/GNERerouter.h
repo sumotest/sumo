@@ -265,15 +265,6 @@ public:
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns an own popup-menu
-     *
-     * @param[in] app The application needed to build the popup-menu
-     * @param[in] parent The parent window needed to build the popup-menu
-     * @return The built popup-menu
-     * @see GUIGlObject::getPopUpMenu
-     */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -333,7 +324,7 @@ protected:
     bool myOff;
 
 private:
-    /// @brief variable to save detectorE1 icon
+    /// @brief variable to save rerouter icon
     static GUIGlID rerouterGlID;
 
     /// @brief check if detectorE1 icon was inicilalizated

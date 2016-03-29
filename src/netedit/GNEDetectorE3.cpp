@@ -135,35 +135,17 @@ GNEDetectorE3::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu*
-GNEDetectorE3::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy detector E1 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    new FXMenuCommand(ret, ("pos: " + toString(myPosition)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
 GUIParameterTableWindow*
 GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
+    /** NOT YET SUPPORTED **/
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("id", false, getID());
+    /** @TODO complet with the rest of parameters **/
     // close building
     ret->closeBuilding();
-    */
     return ret;
 }
 
@@ -240,7 +222,7 @@ GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_FILE:
             return myFilename;
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -252,7 +234,7 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FILE:
@@ -260,7 +242,7 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
             updateGeometry();
             break;
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -269,7 +251,7 @@ bool
 GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             bool ok;
             return GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false).size() == 1;
@@ -280,7 +262,7 @@ GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LINES:
             return isValidStringVector(value);
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -289,7 +271,7 @@ void
 GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             bool ok;
             myPosition = GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false)[0];
@@ -303,7 +285,7 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
             myFilename = value;
             break;
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 

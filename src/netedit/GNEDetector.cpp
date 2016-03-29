@@ -76,6 +76,8 @@ GNEDetector::~GNEDetector() {
 
 void
 GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
+    // Due a detector is placed over an lane ignore Warning of posy
+    UNUSED_PARAMETER(posy);
     // if item isn't blocked
     if(myBlocked == false) {
         // Move to Right if posx is positive, to left if posx is negative

@@ -126,4 +126,10 @@ GNEAdditionalSet::writeAdditionalChildrens(OutputDevice& device) {
         i->first->writeAdditional(device);
 }
 
+
+int 
+GNEAdditionalSet::getNumberOfChilds() const {
+    return myAdditionals.size();
+}
+
 /****************************************************************************/

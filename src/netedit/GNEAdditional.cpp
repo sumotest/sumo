@@ -190,8 +190,43 @@ GNEAdditional::getParentName() const {
     if(myLane)
         return myLane->getMicrosimID();
     else
-        myViewNet->getNet()->getMicrosimID();
+        return myViewNet->getNet()->getMicrosimID();
 }
+
+
+GUIGLObjectPopupMenu*
+GNEAdditional::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
+    buildPopupHeader(ret, app);
+    buildCenterPopupEntry(ret);
+    new FXMenuCommand(ret, ("Copy " + toString(getTag()) + " name to clipboard").c_str(), 0, ret, MID_COPY_NAME);
+    new FXMenuCommand(ret, ("Copy " + toString(getTag()) + " typed name to clipboard").c_str(), 0, ret, MID_COPY_TYPED_NAME);
+    buildSelectionPopupEntry(ret);
+    buildPositionCopyEntry(ret, false);
+    // buildShowParamsPopupEntry(ret, false);
+    // Show positions
+    if(getLane() != 0) {
+        const SUMOReal innerPos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
+        new FXMenuCommand(ret, ("inner position: " + toString(innerPos)).c_str(), 0, 0, 0);
+        if(myShape.size() > 0) {
+            const SUMOReal lanePos = myLane->getShape().nearest_offset_to_point2D(myShape[0]);
+            new FXMenuCommand(ret, ("lane position: " + toString(innerPos + lanePos)).c_str(), 0, 0, 0);
+        }
+    } else
+        new FXMenuCommand(ret, ("position: " + toString(myPosition.x()) + "," + toString(myPosition.y())).c_str(), 0, 0, 0);
+    // Show childs (if this is is an additionalSet)
+    GNEAdditionalSet* additionalSet = dynamic_cast<GNEAdditionalSet*>(this);
+    if(additionalSet) {
+        new FXMenuSeparator(ret);
+        new FXMenuCommand(ret, ("number of childs: " + toString(additionalSet->getNumberOfChilds())).c_str(), 0, 0, 0);
+    }
+    // new FXMenuSeparator(ret);
+    // buildPositionCopyEntry(ret, false);
+    // let the GNEViewNet store the popup position
+    dynamic_cast<GNEViewNet&>(parent).markPopupPosition();
+    return ret;
+}
+
 
 
 Boundary

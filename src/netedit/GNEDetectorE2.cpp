@@ -166,36 +166,17 @@ GNEDetectorE2::writeAdditional(OutputDevice& device) {
 }
 
 
-GUIGLObjectPopupMenu*
-GNEDetectorE2::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy detector E2 name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
-    new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
 GUIParameterTableWindow*
 GNEDetectorE2::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
+    /** NOT YET SUPPORTED **/
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("id", false, getID());
+    /** @TODO complet with the rest of parameters **/
     // close building
     ret->closeBuilding();
-    */
     return ret;
 }
 
@@ -268,7 +249,7 @@ GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_FILE:
             return myFilename;
         case SUMO_ATTR_CONT:
-            return (myCont? "true" : "false");
+            return toString(myCont);
         case SUMO_ATTR_HALTING_TIME_THRESHOLD:
             return toString(myTimeThreshold);
         case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
@@ -276,7 +257,7 @@ GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_JAM_DIST_THRESHOLD:
             return toString(myJamThreshold);
         default:
-            throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -289,7 +270,7 @@ if (value == getAttribute(key)) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_FILE:
@@ -301,7 +282,7 @@ if (value == getAttribute(key)) {
             updateGeometry();
             break;
         default:
-            throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -311,7 +292,7 @@ GNEDetectorE2::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
         case SUMO_ATTR_FREQUENCY:
@@ -327,7 +308,7 @@ GNEDetectorE2::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_JAM_DIST_THRESHOLD:
             return canParse<SUMOReal>(value);
         default:
-            throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -340,7 +321,7 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             myPosition = Position(parse<SUMOReal>(value), 0);
             updateGeometry();
@@ -365,7 +346,7 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
             myJamThreshold = parse<SUMOReal>(value);
             break;
         default:
-            throw InvalidArgument("detector E2 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 

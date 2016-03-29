@@ -428,7 +428,7 @@ private:
     void setParametersOfAdditional(SumoXMLTag actualAdditionalType);
 
     /// @brief obtain the Start position values of StoppingPlaces and E2 detector over the lane
-    SUMOReal setStartPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
+    SUMOReal setStartPosition(SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
 
     /// @brief obtain the End position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);

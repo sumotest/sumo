@@ -60,15 +60,10 @@
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
-
-// ===========================================================================
-// static member definitions
-// ===========================================================================
-
-
 // ===========================================================================
 // method definitions
 // ===========================================================================
+
 GNEBusStop::GNEBusStop(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked) :
     GNEStoppingPlace(id, viewNet, SUMO_TAG_BUS_STOP, lane, startPos, endPos, blocked),
     myLines(lines) {
@@ -160,7 +155,7 @@ GNEBusStop::writeAdditional(OutputDevice& device) {
 }
 
 
-const  std::vector<std::string>&
+std::vector<std::string>
 GNEBusStop::getLines() const {
     return myLines;
 }
@@ -301,38 +296,20 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
 };
 
 
-GUIGLObjectPopupMenu*
-GNEBusStop::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
-    buildPopupHeader(ret, app);
-    buildCenterPopupEntry(ret);
-    new FXMenuCommand(ret, "Copy busStop name to clipboard", 0, ret, MID_COPY_EDGE_NAME);
-    buildNameCopyPopupEntry(ret);
-    buildSelectionPopupEntry(ret);
-    buildPositionCopyEntry(ret, false);
-    // buildShowParamsPopupEntry(ret, false);
-    const SUMOReal pos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
-    new FXMenuCommand(ret, ("pos: " + toString(pos)).c_str(), 0, 0, 0);
-    // new FXMenuSeparator(ret);
-    // buildPositionCopyEntry(ret, false);
-    // let the GNEViewNet store the popup position
-    (dynamic_cast<GNEViewNet&>(parent)).markPopupPosition();
-    return ret;
-}
-
-
 GUIParameterTableWindow*
 GNEBusStop::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 2);
-    /* not supported yet
+    /** NOT YET SUPPORTED **/
+    // Ignore Warning
+    UNUSED_PARAMETER(parent);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 2);
     // add items
-    ret->mkItem("length [m]", false, getLane().getParentEdge().getNBEdge()->getLength());
+    ret->mkItem("id", false, getID());
+    /** @TODO complet with the rest of parameters **/
     // close building
     ret->closeBuilding();
-    */
     return ret;
 }
+
 
 std::string
 GNEBusStop::getAttribute(SumoXMLAttr key) const {
@@ -357,7 +334,7 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
             return myLinesStr;
         }
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -370,7 +347,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + "  attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
         case SUMO_ATTR_ENDPOS:
         case SUMO_ATTR_LINES:
@@ -378,7 +355,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
             updateGeometry();
             break;
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -388,7 +365,7 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myEndPos-1));
         case SUMO_ATTR_ENDPOS:
@@ -396,7 +373,7 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LINES:
             return isValidStringVector(value);
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
@@ -409,7 +386,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_STARTPOS:
             myStartPos = parse<SUMOReal>(value);
             updateGeometry();
@@ -426,7 +403,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             getViewNet()->update();
             break;
         default:
-            throw InvalidArgument("busStop attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 

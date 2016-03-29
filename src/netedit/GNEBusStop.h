@@ -20,10 +20,10 @@
 #ifndef GNEBusStop_h
 #define GNEBusStop_h
 
-
 // ===========================================================================
 // included modules
 // ===========================================================================
+
 #ifdef _MSC_VER
 #include <windows_config.h>
 #else
@@ -38,10 +38,10 @@
 #include "GNEAttributeCarrier.h"
 #include "GNEStoppingPlace.h"
 
-
 // ===========================================================================
 // class declarations
 // ===========================================================================
+
 class GUIGLObjectPopupMenu;
 class PositionVector;
 class GNELane;
@@ -79,22 +79,11 @@ public:
      */
     void writeAdditional(OutputDevice& device);
 
-    /** @brief get lines of busStop
-     * @return vector of strings with the lines of the busStop
-     */
-    const std::vector<std::string> &getLines() const;
+    /// @brief get string vector with the lines of the busStop
+    std::vector<std::string> getLines() const;
 
     /// @name inherited from GUIGlObject
     //@{
-    /** @brief Returns an own popup-menu
-     *
-     * @param[in] app The application needed to build the popup-menu
-     * @param[in] parent The parent window needed to build the popup-menu
-     * @return The built popup-menu
-     * @see GUIGlObject::getPopUpMenu
-     */
-    GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window

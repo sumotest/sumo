@@ -47,8 +47,7 @@ class GNENet;
  * @class GNEStoppingPlace
  * @briefA abstract class to define common parameters and functions of stopping places
  */
-class GNEStoppingPlace : public GNEAdditional
-{
+class GNEStoppingPlace : public GNEAdditional {
 public:
     /** @brief Constructor.
      * @param[in] id Gl-id of the stopping place (Must be unique)
@@ -80,34 +79,25 @@ public:
     virtual void writeAdditional(OutputDevice& device) = 0;
 
     /// @brief Returns the Start position of the stoppingPlace
-    SUMOReal getstartPosition() const;
+    SUMOReal getStartPosition() const;
 
     /// @brief Returns the End position of the stoppingPlace
-    SUMOReal getendPosition() const;
+    SUMOReal getEndPosition() const;
 
     /** @brief Set a new Start position in StoppingPlace
      * @param[in] startPos new Start position of StoppingPlace
      * @throws InvalidArgument if value of startPos isn't valid
      */
-    void setstartPosition(SUMOReal startPos);
+    void setStartPosition(SUMOReal startPos);
 
     /** @brief Set a new End position in StoppingPlace
      * @param[in] endPos new End position of StoppingPlace
      * @throws InvalidArgument if value of endPos isn't valid
      */
-    void setendPosition(SUMOReal endPos);
+    void setEndPosition(SUMOReal endPos);
 
     /// @name inherited from GNEAdditional
     //@{
-    /** @brief Returns an own popup-menu
-     *
-     * @param[in] app The application needed to build the popup-menu
-     * @param[in] parent The parent window needed to build the popup-menu
-     * @return The built popup-menu
-     * @see GUIGlObject::getPopUpMenu
-     */
-    virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
-
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
