@@ -42,8 +42,8 @@
 #include "GNEDetectorE1.h"
 #include "GNEDetectorE2.h"
 #include "GNEDetectorE3.h"
-#include "GNEDetectorE3Entry.h"
-#include "GNEDetectorE3Exit.h"
+#include "GNEDetectorEntry.h"
+#include "GNEDetectorExit.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -339,7 +339,6 @@ GNEAdditionalHandler::parseAndBuildDetectorE1(const SUMOSAXAttributes& attrs) {
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
     const SUMOTime frequency = attrs.getSUMOTimeReporting(SUMO_ATTR_FREQUENCY, id.c_str(), ok);
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, id.c_str(), ok);
-    const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false, false);
     const bool splitByType = attrs.getOpt<bool>(SUMO_ATTR_SPLIT_VTYPE, id.c_str(), ok, false, false);
     const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
     // Check if parsing of parameters was correct
@@ -366,7 +365,6 @@ GNEAdditionalHandler::parseAndBuildDetectorE2(const SUMOSAXAttributes& attrs) {
     const SUMOReal jamDistThreshold = attrs.getOpt<SUMOReal>(SUMO_ATTR_JAM_DIST_THRESHOLD, id.c_str(), ok, 10.0f);
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, id.c_str(), ok);
     const SUMOReal length = attrs.get<SUMOReal>(SUMO_ATTR_LENGTH, id.c_str(), ok);
-    const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
     const bool cont = attrs.getOpt<bool>(SUMO_ATTR_CONT, id.c_str(), ok, false);
     const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
     // Check if parsing of parameter was correct
@@ -388,8 +386,6 @@ GNEAdditionalHandler::parseAndBuildDetectorE3(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
     const SUMOTime frequency = attrs.getSUMOTimeReporting(SUMO_ATTR_FREQUENCY, id.c_str(), ok);
-    const SUMOTime haltingTimeThreshold = attrs.getOptSUMOTimeReporting(SUMO_ATTR_HALTING_TIME_THRESHOLD, id.c_str(), ok, TIME2STEPS(1));
-    const SUMOReal haltingSpeedThreshold = attrs.getOpt<SUMOReal>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, id.c_str(), ok, 5.0f / 3.6f);
     const SUMOReal posx = attrs.getOpt<SUMOReal>(SUMO_ATTR_X, id.c_str(), ok, 0);
     const SUMOReal posy = attrs.getOpt<SUMOReal>(SUMO_ATTR_Y, id.c_str(), ok, 0);
     const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
@@ -571,6 +567,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_REROUTER: {
             // get own attributes of rerouter
+/** TERMINAR **/
             std::vector<GNEEdge*> edges;
             SUMOReal prob;
             std::string file;
@@ -594,10 +591,8 @@ GNEAdditionalHandler::buildBusStop(GNEViewNet *viewNet, const std::string& id, G
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), busStop, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_BUS_STOP) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -609,10 +604,8 @@ GNEAdditionalHandler::buildChargingStation(GNEViewNet *viewNet, const std::strin
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), chargingStation, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_CHARGING_STATION) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -624,10 +617,8 @@ GNEAdditionalHandler::buildDetectorE1(GNEViewNet *viewNet, const std::string& id
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE1, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_E1DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -639,10 +630,8 @@ GNEAdditionalHandler::buildDetectorE2(GNEViewNet* viewNet, const std::string& id
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE2, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_E2DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -654,10 +643,8 @@ GNEAdditionalHandler::buildDetectorE3(GNEViewNet *viewNet, const std::string& id
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE3, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_E3DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -666,21 +653,17 @@ GNEAdditionalHandler::buildDetectorEntry(GNEViewNet *viewNet, const std::string&
     // get DetectorE3 parent
     GNEDetectorE3 *detectorE3Parent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR, idDetectorE3Parent));
     // Check if DetectorE3 parent is correct
-    if(detectorE3Parent == NULL) {
+    if(detectorE3Parent == NULL)
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; " + toString(SUMO_TAG_E3DETECTOR) + " '" + idDetectorE3Parent + "' don't valid.");
-        return false;
-    }
     // Create detector Entry if don't exist already in the net
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, id) == NULL) {
-        GNEDetectorE3Entry *entry = new GNEDetectorE3Entry(id, viewNet, lane, pos, detectorE3Parent, blocked);
+        GNEDetectorEntry *entry = new GNEDetectorEntry(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_ENTRY));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), entry, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -689,21 +672,17 @@ GNEAdditionalHandler::buildDetectorExit(GNEViewNet *viewNet, const std::string& 
     // get DetectorE3 parent
     GNEDetectorE3 *detectorE3Parent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR, idDetectorE3Parent));
     // Check if DetectorE3 parent is correct
-    if(detectorE3Parent == NULL) {
+    if(detectorE3Parent == NULL)
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; " + toString(SUMO_TAG_E3DETECTOR) + " '" + idDetectorE3Parent + "' don't valid.");
-        return false;
-    }
     // Create detector Exit if don't exist already in the net
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_EXIT, id) == NULL) {
-        GNEDetectorE3Exit *exit = new GNEDetectorE3Exit(id, viewNet, lane, pos, detectorE3Parent, blocked);
+        GNEDetectorExit *exit = new GNEDetectorExit(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_EXIT));
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), exit, true), true);
         viewNet->getUndoList()->p_end();
         return true;
-    } else {
+    } else
         throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_EXIT) + " in netEdit '" + id + "'; probably declared twice.");
-        return false;
-    }
 }
 
 
@@ -764,7 +743,6 @@ GNEAdditionalHandler::getLane(const SUMOSAXAttributes& attrs, SumoXMLTag trigger
             return (*i);
     // if lane wasn't founded throw exception and return null
     throw InvalidArgument("The lane " + objectid + " to use within the " + toString(triggerType) + " '" + triggerId + "' is not known.");
-    return NULL;
 }
 
 

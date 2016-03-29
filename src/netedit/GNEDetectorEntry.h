@@ -1,5 +1,5 @@
 /****************************************************************************/
-/// @file    GNEDetectorE3Entry.h
+/// @file    GNEDetectorEntry.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE3.h 19790 2016-01-25 11:59:12Z palcraft $
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEDetectorE3Entry_h
-#define GNEDetectorE3Entry_h
+#ifndef GNEDetectorEntry_h
+#define GNEDetectorEntry_h
 
 
 // ===========================================================================
@@ -41,10 +41,10 @@ class GNEDetectorE3;
 // class definitions
 // ===========================================================================
 /**
- * @class GNEDetectorE3Entry
+ * @class GNEDetectorEntry
  * ------------
  */
-class GNEDetectorE3Entry  : public GNEDetector {
+class GNEDetectorEntry  : public GNEDetector {
 public:
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
@@ -54,10 +54,10 @@ public:
      * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
      * @param[in] blocked set initial blocking state of item
      */
-    GNEDetectorE3Entry(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
+    GNEDetectorEntry(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked = false);
 
     /// @brief destructor
-    ~GNEDetectorE3Entry();
+    ~GNEDetectorEntry();
 
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)
@@ -129,10 +129,10 @@ private:
     void setAttribute(SumoXMLAttr key, const std::string& value);
 
     /// @brief Invalidated copy constructor.
-    GNEDetectorE3Entry(const GNEDetectorE3Entry&);
+    GNEDetectorEntry(const GNEDetectorEntry&);
 
     /// @brief Invalidated assignment operator.
-    GNEDetectorE3Entry& operator=(const GNEDetectorE3Entry&);
+    GNEDetectorEntry& operator=(const GNEDetectorEntry&);
 
     /// @brief Invalidated get filename
     std::string getFilename() const;
@@ -147,6 +147,6 @@ private:
     void setFilename(std::string filename);
 };
 
-
 #endif
+
 /****************************************************************************/

@@ -129,8 +129,8 @@
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE1.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE2.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3Entry.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3Exit.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorEntry.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorExit.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDialog_About.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDialog_Wizard.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEEdge.cpp" />
@@ -155,6 +155,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouter.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNERerouterEdge.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouterIntervalConfig.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNESelector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp" />
@@ -193,8 +194,8 @@
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE1.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE2.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3Entry.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3Exit.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorEntry.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorExit.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDialog_About.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDialog_Wizard.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEEdge.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEReferenceCounter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouter.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNERerouterEdge.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouterIntervalConfig.h" />
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />

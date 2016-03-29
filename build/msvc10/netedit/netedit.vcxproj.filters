@@ -231,16 +231,10 @@
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE1.cpp">
       <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3Exit.cpp">
-      <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE2.cpp">
       <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3.cpp">
-      <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEDetectorE3Entry.cpp">
       <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEDetector.cpp">
@@ -254,6 +248,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp">
       <Filter>Quellcodedateien\Items\Additionals\StoppingPlaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNERerouterEdge.cpp">
+      <Filter>Quellcodedateien\Items\Additionals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorEntry.cpp">
+      <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEDetectorExit.cpp">
+      <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -382,9 +385,6 @@
     <ClInclude Include="..\..\..\src\netedit\GNEDetector.h">
       <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3Exit.h">
-      <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE1.h">
       <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
     </ClInclude>
@@ -392,9 +392,6 @@
       <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3.h">
-      <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEDetectorE3Entry.h">
       <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEBusStop.h">
@@ -405,6 +402,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h">
       <Filter>Header-Dateien\Items\Additionals\StoppingPlaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNERerouterEdge.h">
+      <Filter>Header-Dateien\Items\Additionals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorEntry.h">
+      <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEDetectorExit.h">
+      <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

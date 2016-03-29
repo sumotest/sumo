@@ -64,12 +64,14 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of view in which additional is located
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
-     * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      * @param[in] lane Pointer to lane, NULL if additional don't belong to a Lane
      * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
+     * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
+     * @param[in] inspectionable enable or disable inspection by GNEInspector
+     * @param[in] selectable enable or disable selection
      */
-    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, GNELane *lane = NULL, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
+    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNELane *lane = NULL, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL, bool blocked = false, bool inspectionable = true, bool selectable = true);
 
     /// @brief Destructor
     ~GNEAdditional();
@@ -246,10 +248,16 @@ protected:
 
     /// @brief The rotation of the block icon
     SUMOReal myBlockIconRotation;
-
+    //@}
+    
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked;
-    //@}
+
+    /// @brief boolean to check if additional element is inspectionable (With GNEInspector)
+    bool myInspectionable;
+
+    /// @brief boolean to check if additional element is selectable (With GNESelector)
+    bool mySelectable;
 
 private:
     /// @brief variable to keep GLId of the additional lock image

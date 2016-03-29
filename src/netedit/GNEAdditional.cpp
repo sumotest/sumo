@@ -72,15 +72,17 @@ bool GNEAdditional::additionalEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked, GNELane *lane, SumoXMLTag parentTag, GNEAdditionalSet *parent) :
+GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNELane *lane, SumoXMLTag parentTag, GNEAdditionalSet *parent, bool blocked, bool inspectionable, bool selectable) :
     GUIGlObject(GLO_ADDITIONAL, id),
     GNEAttributeCarrier(tag),
     myViewNet(viewNet),
     myPosition(pos),
-    myBlocked(blocked),
     myParentTag(parentTag),
     myLane(lane),
     myParent(parent),
+    myBlocked(blocked),
+    myInspectionable(inspectionable),
+    mySelectable(selectable),
     myBlockIconRotation(0),
     myBaseColor(RGBColor::GREEN),
     myBaseColorSelected(RGBColor::BLUE) {

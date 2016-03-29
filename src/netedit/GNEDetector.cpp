@@ -64,7 +64,7 @@
 // ===========================================================================
 
 GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked, SumoXMLTag parentTag, GNEAdditionalSet *parent) :
-    GNEAdditional(id, viewNet, Position(posOverLane, 0), tag, blocked, lane, parentTag, parent),
+    GNEAdditional(id, viewNet, Position(posOverLane, 0), tag, lane, parentTag, parent, blocked),
     myFreq(freq),
     myFilename(filename) {
 }

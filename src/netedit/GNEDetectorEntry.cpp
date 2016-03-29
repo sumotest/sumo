@@ -1,5 +1,5 @@
 /****************************************************************************/
-/// @file    GNEDetectorE3Exit.cpp
+/// @file    GNEDetectorEntry.cpp
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
 /// @version $Id: GNEDetectorE3.cpp 19861 2016-02-01 09:08:47Z palcraft $
@@ -47,14 +47,14 @@
 #include <utils/gui/images/GUITexturesHelper.h>
 #include <utils/xml/SUMOSAXHandler.h>
 
-#include "GNEDetectorE3Exit.h"
+#include "GNEDetectorEntry.h"
 #include "GNEDetectorE3.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
-#include "GNELogo_Exit.cpp"
+#include "GNELogo_Entry.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -63,35 +63,35 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEDetectorE3Exit::detectorE3ExitGlID = 0;
-bool GNEDetectorE3Exit::detectorE3ExitInitialized = false;
+GUIGlID GNEDetectorEntry::detectorE3EntryGlID = 0;
+bool GNEDetectorEntry::detectorE3EntryInitialized = false;
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
-GNEDetectorE3Exit::GNEDetectorE3Exit(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
-    GNEDetector(id, viewNet, SUMO_TAG_DET_EXIT, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
+GNEDetectorEntry::GNEDetectorEntry(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
+    GNEDetector(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
     // Update geometry;
     updateGeometry();
     // load logo, if wasn't inicializated
-    if (!detectorE3ExitInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Exit, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE3ExitGlID = GUITexturesHelper::add(i);
-        detectorE3ExitInitialized = true;
+    if (!detectorE3EntryInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Entry, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE3EntryGlID = GUITexturesHelper::add(i);
+        detectorE3EntryInitialized = true;
         delete i;
     }
     // Set colors
-    myBaseColor = RGBColor(204, 0, 0, 255);
-    myBaseColorSelected = RGBColor(204, 125, 0, 255);
+    myBaseColor = RGBColor(0, 204, 0, 255);
+    myBaseColorSelected = RGBColor(125, 204, 0, 255);
 }
 
 
-GNEDetectorE3Exit::~GNEDetectorE3Exit() {}
+GNEDetectorEntry::~GNEDetectorEntry() {}
 
 
 void
-GNEDetectorE3Exit::updateGeometry() {
+GNEDetectorEntry::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
     myShapeLengths.clear();
@@ -123,7 +123,7 @@ GNEDetectorE3Exit::updateGeometry() {
 
 
 void
-GNEDetectorE3Exit::writeAdditional(OutputDevice& device) {
+GNEDetectorEntry::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
@@ -134,7 +134,7 @@ GNEDetectorE3Exit::writeAdditional(OutputDevice& device) {
 
 
 GUIParameterTableWindow*
-GNEDetectorE3Exit::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+GNEDetectorEntry::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     /** NOT YET SUPPORTED **/
     // Ignore Warning
     UNUSED_PARAMETER(parent);
@@ -149,14 +149,14 @@ GNEDetectorE3Exit::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& p
 
 
 void
-GNEDetectorE3Exit::drawGL(const GUIVisualizationSettings& s) const {
+GNEDetectorEntry::drawGL(const GUIVisualizationSettings& s) const {
     // Additonals element are drawed using a drawGLAdditional
     drawGLAdditional(0, s);
 }
 
 
 void
-GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
+GNEDetectorEntry::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
@@ -212,7 +212,7 @@ GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUI
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
         // Draw icon
-        drawDetectorIcon(detectorE3ExitGlID, 1.5, 1);
+        drawDetectorIcon(detectorE3EntryGlID, 1.5, 1);
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
@@ -227,7 +227,7 @@ GNEDetectorE3Exit::drawGLAdditional(GUISUMOAbstractView* const parent, const GUI
 
 
 std::string
-GNEDetectorE3Exit::getAttribute(SumoXMLAttr key) const {
+GNEDetectorEntry::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
@@ -242,7 +242,7 @@ GNEDetectorE3Exit::getAttribute(SumoXMLAttr key) const {
 
 
 void
-GNEDetectorE3Exit::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+GNEDetectorEntry::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
 if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
@@ -257,12 +257,11 @@ if (value == getAttribute(key)) {
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
-
 }
 
 
 bool
-GNEDetectorE3Exit::isValid(SumoXMLAttr key, const std::string& value) {
+GNEDetectorEntry::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
@@ -275,7 +274,7 @@ GNEDetectorE3Exit::isValid(SumoXMLAttr key, const std::string& value) {
 }
 
 void
-GNEDetectorE3Exit::setAttribute(SumoXMLAttr key, const std::string& value) {
+GNEDetectorEntry::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
