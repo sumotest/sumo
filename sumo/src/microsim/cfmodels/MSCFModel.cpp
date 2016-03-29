@@ -97,30 +97,35 @@ MSCFModel::freeSpeed(const SUMOReal currentSpeed, const SUMOReal decel, const SU
 		// and given a maximal deceleration b=decel, denote the current speed by v0.
 		// the distance covered by a trajectory that attains vN in the next timestep and decelerates afterwards
 		// with b is given as
-		// d = dt*(v0+vN) + (t-dt)*vN - 0.5*b*(t-dt)^2, (1)
+		// d = 0.5*dt*(v0+vN) + (t-dt)*vN - 0.5*b*(t-dt)^2, (1)
 		// where time t of arrival at d with speed vT is
-		// t = dt + (vT-vN)/b.  (2)
+		// t = dt + (vN-vT)/b.  (2)
 		// We insert (2) into (1) to obtain
-		// d = dt*(v0+vN) + vN*(vT-vN)/b - 0.5*b*((vT-vN)/b)^2
-		//   = dt*v0 + dt*vN + vN*vT/b - vN*vN/b - 0.5*(vT^2 - 2*vT*vN + vN^2)/b
-		//   = dt*v0 + dt*vN + vN*vT/b - vT^2*0.5/b + 2*vT*vN*0.5/b - vN^2*0.5/b - vN*vN/b
-		//   = dt*v0 - vT^2*0.5/b + (dt + 2*vT/b)*vN - vN^2*1.5/b
+		// d = 0.5*dt*(v0+vN) + vN*(vN-vT)/b - 0.5*b*((vN-vT)/b)^2
+		// 0 = (dt*b*v0 - vT*vT - 2*b*d) + dt*b*vN + vN*vN
+		// and solve for vN
+
+		assert(currentSpeed >= 0);
+		assert(targetSpeed >= 0);
 
 		SUMOReal dt = onInsertion ? 0 : TS; // handles case that vehicle is inserted just now (at the end of move)
 		SUMOReal v0 = currentSpeed;
 		SUMOReal vT = targetSpeed;
 		SUMOReal b = decel;
 
-		// Solvability is not guaranteed if d is small (relative to v0):
-		// Therefore, for small d, such that vN = vT leads to (v0+vN)*dt > d, we set vN=vT.
+		// Solvability for positive vN (if d is small relative to v0):
+		// 1) If 0.5*(v0+vT)*dt > d, we set vN=vT.
 		// (In case vT<v0, this implies that on the interpolated trajectory there are points beyond d where
 		//  the interpolated velocity is larger than vT, but at least on the temporal discretization grid, vT is not exceeded)
-		if((v0+vT)*dt >= dist) return vT;
+		// 2) We ignore the (possible) constraint vN >= v0 - b*dt, which could lead to a problem if v0 - t*b > vT.
+		//    (moveHelper() is responsible for assuring that the next velocity is chosen in accordance with maximal decelerations)
 
-		SUMOReal d = dist - NUMERICAL_EPS; // take care of rounding errors
+		if(0.5*(v0+vT)*dt >= dist) return vT; // (#)
 
-		SUMOReal q = (dt*v0 - vT*vT*0.5/b - d)*b/1.5;
-		SUMOReal p = (dt + 2*vT/b)*b/3.; // (q < 0 is fulfilled because dist is not too small)
+		SUMOReal d = dist - NUMERICAL_EPS; // prevent returning a value > targetSpeed due to rounding errors
+
+		SUMOReal q = ((dt*v0 - 2*d)*b - vT*vT); // (q < 0 is fulfilled because of (#))
+		SUMOReal p = 0.5*b*dt;
 		return -p + sqrt(p*p - q);
 	}
 }
@@ -146,7 +151,9 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
 
     SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vMax, vMax, *this);
 
-	// (Leo) At this point vNext may also be negative indicating a stop within next step.
+	// (Leo) moveHelper() is responsible for assuring that the next
+    // velocity is chosen in accordance with maximal decelerations.
+    // At this point vNext may also be negative indicating a stop within next step.
     // This would have resulted from a call to maximumSafeStopSpeed(), which does not
     // consider deceleration bounds. Therefore, we cap vNext here.
 	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
@@ -177,8 +184,31 @@ MSCFModel::maxNextSpeed(SUMOReal speed, const MSVehicle* const /*veh*/) const {
 
 
 SUMOReal
-MSCFModel::freeSpeed(const MSVehicle* const /* veh */, SUMOReal speed, SUMOReal seen, SUMOReal maxSpeed, const bool onInsertion) const {
-    return freeSpeed(speed, myDecel, seen, maxSpeed, onInsertion);
+MSCFModel::freeSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal seen, SUMOReal maxSpeed, const bool onInsertion) const {
+
+    // Debug (Leo)
+	if(gDebugFlag1){
+    	std::cout
+    	<< "called freeSpeed() for vehicle " << veh->getID()
+    	<< (onInsertion ? " on insertion":"")
+    	<< "\nspeed = " << speed
+    	<< "\ndist = " << seen
+    	<< "\nmax speed = " << maxSpeed
+    	<< "\nmyDecel = " << myDecel
+    	<< std::endl;
+    }
+
+	SUMOReal vSafe = freeSpeed(speed, myDecel, seen, maxSpeed, onInsertion);
+
+    // Debug (Leo)
+	if(gDebugFlag1){
+    	std::cout
+    	<< "vSafe " << vSafe
+    	<< std::endl;
+	}
+
+	return vSafe;
+
 }
 
 

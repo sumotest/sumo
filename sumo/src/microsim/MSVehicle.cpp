@@ -490,14 +490,14 @@ MSVehicle::onRemovalFromNet(const MSMoveReminder::Notification reason) {
 // ------------ interaction with the route
 bool
 MSVehicle::hasArrived() const {
-//	// Debug (Leo)
-//	if (gDebugFlag1) {
-//		std::cout << "hasArrived():" << "\ncurrentEdge: "
-//				<< (*myCurrEdge)->getID() << "\nroute end: "
-//				<< (*(myRoute->end() - 1))->getID() << "\nmyStops.empty(): "
-//				<< myStops.empty() << "\nmyArrivalPos: " << myArrivalPos
-//				<< std::endl;
-//	}
+	// Debug (Leo)
+	if (gDebugFlag1) {
+		std::cout << "hasArrived():" << "\ncurrentEdge: "
+				<< (*myCurrEdge)->getID() << "\nroute end: "
+				<< (*(myRoute->end() - 1))->getID() << "\nmyStops.empty(): "
+				<< myStops.empty() << "\nmyArrivalPos: " << myArrivalPos
+				<< std::endl;
+	}
     return myCurrEdge == myRoute->end() - 1 && (myStops.empty() || myStops.front().edge != myCurrEdge)
            && myState.myPos > myArrivalPos - POSITION_EPS;
 }
@@ -1029,7 +1029,8 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
     }
 #endif
     // Debug (Leo)
-    std::string debug_id = "flow_dest_forbidden.1";
+//    std::string debug_id = "flow_dest_forbidden.1";
+    std::string debug_id = "flow_dest_forbidden.4";
 //    std::string debug_id = "flow_dest_forbidden.3";
     gDebugFlag1 = debug_id == this->getID();
 //    gDebugFlag1 = false;
@@ -1141,6 +1142,8 @@ MSVehicle::planMoveInternal(const SUMOTime t, const MSVehicle* pred, DriveItemVe
 //			std::cout << "\nI'm here..." << std::endl;
             std::string nextLaneID = (*link) == 0 ? "NA" : "not null"; //(*link)->getViaLaneOrLane()->getID();
             std::cout << "\nlane " << ++lcount << ": " << nextLaneID << std::endl;
+            std::cout << "\nseen = " << seen << std::endl;
+            std::cout << "\nmyArrivalPos = " << toString(myArrivalPos,20) << std::endl;
         }
 
         //  check whether the vehicle is on its final edge
@@ -1404,12 +1407,11 @@ MSVehicle::executeMove() {
     }
 #endif
     // Debug (Leo)
-//    std::string debug_veh_id = "right1.8";
-//    std::string debug_veh_id = "follower";
-    std::string debug_veh_id = "flow_dest_forbidden.1";
-//	std::string debug_veh_id = "flow_dest_forbidden.3";
-    gDebugFlag1 = getID() == debug_veh_id;
-//    gDebugFlag1 = false;
+//    std::string debug_id = "flow_dest_forbidden.1";
+    std::string debug_id = "flow_dest_forbidden.4";
+//	std::string debug_id = "flow_dest_forbidden.3";
+    gDebugFlag1 = getID() == debug_id;
+    gDebugFlag1 = false;
 
     // get safe velocities from DriveProcessItems
     SUMOReal vSafe = 0; // maximum safe velocity
@@ -1426,7 +1428,7 @@ MSVehicle::executeMove() {
     int pcount = 0;
     if (gDebugFlag1) {
         std::cout
-                << ("\ncalled executeMove() for vehicle " + debug_veh_id + " at time "
+                << ("\ncalled executeMove() for vehicle " + debug_id + " at time "
                         + toString(MSNet::getInstance()->getCurrentTimeStep()) + " :" + "\nposition = "
                         + toString(myState.myPos, 20) + "\non lane '" + getLane()->getID() + "' with speed limit "
                         + toString(getLane()->getSpeedLimit()) + "\nspeed = " + toString(myState.mySpeed)

@@ -277,6 +277,17 @@ MSLane::getDepartSpeed(const MSVehicle& veh, bool& patchSpeed) {
 
 bool
 MSLane::insertVehicle(MSVehicle& veh) {
+
+//	// Debug (Leo)
+////	std::string debug_id = "flow_dest_forbidden.1";
+//	std::string debug_id = "flow_dest_forbidden.2";
+//	gDebugFlag1 = debug_id == veh.getID();
+//	if(gDebugFlag1){
+//		std::cout << "inserting vehicle "<< veh.getID() << " into lane " << getID() << " at time " << MSNet::getInstance()->getCurrentTimeStep() << std::endl;
+//	}
+
+
+
     SUMOReal pos = 0;
     bool patchSpeed = true; // whether the speed shall be adapted to infrastructure/traffic in front
     const SUMOVehicleParameter& pars = veh.getParameter();
