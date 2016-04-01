@@ -44,6 +44,8 @@
 #include "GNEDetectorE3.h"
 #include "GNEDetectorEntry.h"
 #include "GNEDetectorExit.h"
+#include "GNERerouter.h"
+#include "GNERerouterEdge.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -567,14 +569,26 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_REROUTER: {
             // get own attributes of rerouter
-/** TERMINAR **/
+            bool ok;
+            PositionVector pos = GeomConvHelper::parseShapeReporting(values[SUMO_ATTR_POSITION], "user-supplied position", 0, ok, false);
             std::vector<GNEEdge*> edges;
-            SUMOReal prob;
-            std::string file;
-            bool off;
+            /** TERMINAR **/
+            SUMOReal prob = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_PROB]);
+            std::string file = values[SUMO_ATTR_FILE];
+            bool off = GNEAttributeCarrier::parse<bool>(values[SUMO_ATTR_OFF]);
+            // Build rerouter
+            if(!lane && (pos.size() == 1))
+                return buildRerouter(viewNet, id, pos[0], edges, prob, file, off, blocked);
+            else
+                return false;
+        }
+        case SUMO_TAG_REROUTEREDGE: {
+            // get own attributes of rerouter
+            std::string idRerouterParent = values[GNE_ATTR_PARENT];
+            bool closedEdge = false;
             // Build rerouter
             if(lane)
-                return buildRerouter(viewNet, id, edges, prob, file, off, blocked);
+                return buildRerouterEdge(viewNet, lane, idRerouterParent, closedEdge);
             else
                 return false;
         }
@@ -586,65 +600,65 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
 bool
 GNEAdditionalHandler::buildBusStop(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_BUS_STOP, id) == NULL) {
-        GNEBusStop* busStop = new GNEBusStop(id, lane, viewNet, startPos, endPos, lines, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_BUS_STOP));
+        GNEBusStop* busStop = new GNEBusStop(id, lane, viewNet, startPos, endPos, lines, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), busStop, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_BUS_STOP) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_BUS_STOP) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
 bool
 GNEAdditionalHandler::buildChargingStation(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_CHARGING_STATION, id) == NULL) {
-        GNEChargingStation* chargingStation = new GNEChargingStation(id, lane, viewNet, startPos, endPos, chargingPower, efficiency, chargeInTransit, chargeDelay, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_CHARGING_STATION));
+        GNEChargingStation* chargingStation = new GNEChargingStation(id, lane, viewNet, startPos, endPos, chargingPower, efficiency, chargeInTransit, chargeDelay, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), chargingStation, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_CHARGING_STATION) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_CHARGING_STATION) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
 bool
 GNEAdditionalHandler::buildDetectorE1(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_E1DETECTOR, id) == NULL) {
-        GNEDetectorE1 *detectorE1 = new GNEDetectorE1(id, lane, viewNet, pos, freq, filename, splitByType, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E1DETECTOR));
+        GNEDetectorE1 *detectorE1 = new GNEDetectorE1(id, lane, viewNet, pos, freq, filename, splitByType, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE1, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E1DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E1DETECTOR) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
 bool
 GNEAdditionalHandler::buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename,  bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_E2DETECTOR, id) == NULL) {
-        GNEDetectorE2 *detectorE2 = new GNEDetectorE2(id, lane, viewNet, pos, length, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E2DETECTOR));
+        GNEDetectorE2 *detectorE2 = new GNEDetectorE2(id, lane, viewNet, pos, length, freq, filename, cont, timeThreshold, speedThreshold, jamThreshold, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE2, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E2DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E2DETECTOR) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
 bool
 GNEAdditionalHandler::buildDetectorE3(GNEViewNet *viewNet, const std::string& id, Position pos, int freq, const std::string &filename, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR, id) == NULL) {
-        GNEDetectorE3 *detectorE3 = new GNEDetectorE3(id, viewNet, pos, freq, filename, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_E3DETECTOR));
+        GNEDetectorE3 *detectorE3 = new GNEDetectorE3(id, viewNet, pos, freq, filename, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), detectorE3, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E3DETECTOR) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_E3DETECTOR) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
@@ -654,16 +668,16 @@ GNEAdditionalHandler::buildDetectorEntry(GNEViewNet *viewNet, const std::string&
     GNEDetectorE3 *detectorE3Parent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR, idDetectorE3Parent));
     // Check if DetectorE3 parent is correct
     if(detectorE3Parent == NULL)
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; " + toString(SUMO_TAG_E3DETECTOR) + " '" + idDetectorE3Parent + "' don't valid.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " '" + id + "' in netEdit; '" + toString(SUMO_TAG_E3DETECTOR) + " '" + idDetectorE3Parent + "' don't valid.");
     // Create detector Entry if don't exist already in the net
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, id) == NULL) {
-        GNEDetectorEntry *entry = new GNEDetectorEntry(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_ENTRY));
+        GNEDetectorEntry *entry = new GNEDetectorEntry(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), entry, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
@@ -673,16 +687,16 @@ GNEAdditionalHandler::buildDetectorExit(GNEViewNet *viewNet, const std::string& 
     GNEDetectorE3 *detectorE3Parent = dynamic_cast<GNEDetectorE3*>(viewNet->getNet()->getAdditional(SUMO_TAG_E3DETECTOR, idDetectorE3Parent));
     // Check if DetectorE3 parent is correct
     if(detectorE3Parent == NULL)
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_ENTRY) + " in netEdit '" + id + "'; " + toString(SUMO_TAG_E3DETECTOR) + " '" + idDetectorE3Parent + "' don't valid.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_EXIT) + " '" + id + "' in netEdit; '" + idDetectorE3Parent + "' don't valid.");
     // Create detector Exit if don't exist already in the net
     if (viewNet->getNet()->getAdditional(SUMO_TAG_DET_EXIT, id) == NULL) {
-        GNEDetectorExit *exit = new GNEDetectorExit(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_DET_EXIT));
+        GNEDetectorExit *exit = new GNEDetectorExit(id, viewNet, lane, pos, detectorE3Parent, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), exit, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_EXIT) + " in netEdit '" + id + "'; probably declared twice.");
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_DET_EXIT) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
@@ -696,11 +710,41 @@ GNEAdditionalHandler::buildCalibrator(GNEViewNet *viewNet, const std::string& id
 
 
 bool
-GNEAdditionalHandler::buildRerouter(GNEViewNet *viewNet, const std::string& id, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked)
-{
-    std::cout << "Function buildRerouter of class GNEAdditionalHandler not implemented yet";
+GNEAdditionalHandler::buildRerouter(GNEViewNet *viewNet, const std::string& id, Position pos, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked) {
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_REROUTER, id) == NULL) {
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_REROUTER));
+        GNERerouter *rerouter = new GNERerouter(id, viewNet, pos, edges, file, prob, off, blocked);
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), rerouter, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_REROUTER) + "'" + id + "' in netEdit; probably declared twice.");
+}
 
-    return NULL;
+
+bool 
+GNEAdditionalHandler::buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, const std::string & idRerouterParent, bool closedEdge) {
+    // get rerouter parent
+    GNERerouter *rerouterParent = dynamic_cast<GNERerouter*>(viewNet->getNet()->getAdditional(SUMO_TAG_REROUTER, idRerouterParent));
+    // Check if rerouter parent is correct
+    if(rerouterParent == NULL)
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_REROUTEREDGE) + " in netEdit; " + toString(SUMO_TAG_REROUTER) + " '" + idRerouterParent + "' don't valid.");
+    // Get edge parent
+    GNEEdge &edgeParent = lane->getParentEdge();
+    viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_REROUTEREDGE));
+    // For every lane of edge create a reruterEdge
+    for(std::vector<GNELane*>::const_iterator i = edgeParent.getLanes().begin(); i !=  edgeParent.getLanes().end(); i++) {
+        std::string idOfRerouteredge = idRerouterParent + (*i)->getID();
+        // Create detector Exit if don't exist already in the net
+        if (viewNet->getNet()->getAdditional(SUMO_TAG_REROUTEREDGE, idOfRerouteredge) == NULL) {
+            GNERerouterEdge *rerouterEdge = new GNERerouterEdge(idOfRerouteredge, viewNet, *i, rerouterParent, closedEdge);
+            viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), rerouterEdge, true), true);
+        }
+        else
+            WRITE_WARNING("A " + toString(SUMO_TAG_REROUTEREDGE) + " was already inserted in lane '" +  (*i)->getID() +"'");
+    }   
+    viewNet->getUndoList()->p_end();
+    return true;
 }
 
 

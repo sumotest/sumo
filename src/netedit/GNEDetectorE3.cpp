@@ -83,6 +83,20 @@ GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Positio
     // Set colors
     myBaseColor = RGBColor(76, 170, 50, 255);
     myBaseColorSelected = RGBColor(161, 255, 135, 255);
+    // load detector E3 logo, if wasn't inicializated
+    if (!detectorE3Initialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE3GlID = GUITexturesHelper::add(i);
+        detectorE3Initialized = true;
+        delete i;
+    }
+    // load detector E3 selected logo, if wasn't inicializated
+    if (!detectorE3SelectedInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3Selected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        detectorE3SelectedGlID = GUITexturesHelper::add(i);
+        detectorE3SelectedInitialized = true;
+        delete i;
+    }
 }
 
 
@@ -165,34 +179,19 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Start drawing adding an gl identificator
     glPushName(getGlID());
 
-    // load detector E3 logo, if wasn't inicializated
-    if (!detectorE3Initialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE3GlID = GUITexturesHelper::add(i);
-        detectorE3Initialized = true;
-        delete i;
-    }
-
-    // load detector E3 selected logo, if wasn't inicializated
-    if (!detectorE3SelectedInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3Selected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE3SelectedGlID = GUITexturesHelper::add(i);
-        detectorE3SelectedInitialized = true;
-        delete i;
-    }
-
-    // Add a draw matrix and draw E3 logo
+    // Add a draw matrix for drawing logo
     glPushMatrix();
     glTranslated(myShape[0].x(), myShape[0].y(), getType());
     glColor3d(1, 1, 1);
     glRotated(180, 0, 0, 1);
+
     // Draw icon depending of detector is or isn't selected
     if(isAdditionalSelected()) 
         GUITexturesHelper::drawTexturedBox(detectorE3SelectedGlID, 1);
     else
         GUITexturesHelper::drawTexturedBox(detectorE3GlID, 1);
 
-    // Pop draw matrix
+    // Pop logo matrix
     glPopMatrix();
 
     // Show Lock icon depending of the Edit mode

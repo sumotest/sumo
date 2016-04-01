@@ -102,12 +102,6 @@ GNEDetectorEntry::updateGeometry() {
     // Get shape of lane parent
     myShape.push_back(myLane->getShape().positionAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())));
 
-    // Obtain first position
-    Position f = myShape[0] - Position(1, 0);
-
-    // Obtain next position
-    Position s = myShape[0] + Position(1, 0);
-
     // Save rotation (angle) of the vector constructed by points f and s
     myShapeRotations.push_back(myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())) * -1);
 

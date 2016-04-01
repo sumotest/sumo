@@ -270,12 +270,22 @@ public:
     /** @brief builds an rerouter
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the rerouter
+     * @param[in] pos position of the rerouter in the map
      * @param[in] edges The edges the rerouter is placed at
      * @param[in] prob The probability the rerouter reoutes vehicles with
      * @param[in] file The file to read the reroute definitions from
      * @param[in] blocked set initial blocking state of item
      */
-    static bool buildRerouter(GNEViewNet *viewNet, const std::string& id, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked);
+    static bool buildRerouter(GNEViewNet *viewNet, const std::string& id, Position pos, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked);
+
+    /** @brief builds an rerouterEdge
+     * @param[in] viewNet viewNet in which element will be inserted
+     * @param[in] lane edge in which the rerouterEdge is placed at
+     * @param[in] rerouterParent rerouter parent of rerouterEdge
+     * @param[in] closedEdge draw rerouterEdge as an Closed edge
+     * @note this function will place rerouterEdges in all lanes of lane->getParentEdge();
+     */
+    static bool buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, const std::string & idRerouterParent, bool closedEdge);
 
     /** @brief Builds a lane speed trigger
      * @param[in] viewNet viewNet in which element will be inserted

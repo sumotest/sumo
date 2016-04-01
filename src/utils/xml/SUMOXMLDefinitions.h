@@ -90,6 +90,8 @@ enum SumoXMLTag {
     SUMO_TAG_CALIBRATOR,
     /// @brief A rerouter
     SUMO_TAG_REROUTER,
+    /// @brief A rerouteredge   // PABLO #1916 QUESTION ERDMANN
+    SUMO_TAG_REROUTEREDGE,      // PABLO #1916 QUESTION ERDMANN
     /// @brief A bus stop
     SUMO_TAG_BUS_STOP,
     /// @brief A container stop

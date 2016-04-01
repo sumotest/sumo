@@ -37,6 +37,7 @@
 // ===========================================================================
 
 class GNERerouter;
+class GNEEdge;
 
 // ===========================================================================
 // class definitions
@@ -51,11 +52,10 @@ public:
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] lane Lane of this StoppingPlace belongs
-     * @param[in] pos position of the detector on the lane
-     * @param[in] parent pointer to GNEDetectorE3 of this additional element belongs
-     * @param[in] blocked set initial blocking state of item
+     * @param[in] parent
+     * @param[in] edge
      */
-    GNERerouterEdge(const std::string &id, GNEViewNet* viewNet, GNELane *lane, GNERerouter *parent);
+    GNERerouterEdge(const std::string &id, GNEViewNet* viewNet, GNELane *lane, GNERerouter *parent, bool amClosedEdge);
 
     /// @brief destructor
     ~GNERerouterEdge();
@@ -63,6 +63,14 @@ public:
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
+
+    /** @brief change the position of the additional geometry without registering undo/redo
+     * @param[in] posx new x position of additional over lane
+     * @param[in] posy unused
+     * @param[in] undoList pointer to the undo list
+     * @note due a rerouteEdge is placed in a concrete position of lane, this function don't have any effect
+     */
+    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /// @brief get E3 parentecto
     GNEAdditional* getAdditionalParent() const;
@@ -118,6 +126,10 @@ public:
      */
     bool isValid(SumoXMLAttr key, const std::string& value);
     //@}
+
+protected:
+        /// @brief whether this edge instance visualizes a closed edge
+        const bool myAmClosedEdge;
 
 private:
     /// @brief set attribute after validation

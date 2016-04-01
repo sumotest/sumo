@@ -165,13 +165,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEVSpeedSignal.cpp">
       <Filter>Quellcodedateien\Items\Additionals</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEAdditionalHandler.cpp">
-      <Filter>Quellcodedateien\Main</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEApplicationWindow.cpp">
-      <Filter>Quellcodedateien\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEAttributeCarrier.cpp">
       <Filter>Quellcodedateien\Main</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNELoadThread.cpp">
@@ -257,6 +251,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorExit.cpp">
       <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEAdditionalHandler.cpp">
+      <Filter>Quellcodedateien\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEAttributeCarrier.cpp">
+      <Filter>Quellcodedateien\Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,16 +352,10 @@
     <ClInclude Include="..\..\..\src\netedit\GNERerouterIntervalConfig.h">
       <Filter>Header-Dateien\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEAdditionalHandler.h">
-      <Filter>Header-Dateien\Main</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEViewParent.h">
       <Filter>Header-Dateien\Main</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEApplicationWindow.h">
-      <Filter>Header-Dateien\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEAttributeCarrier.h">
       <Filter>Header-Dateien\Main</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEEvent_NetworkLoaded.h">
@@ -411,6 +405,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorExit.h">
       <Filter>Header-Dateien\Items\Additionals\Detectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEAdditionalHandler.h">
+      <Filter>Header-Dateien\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEAttributeCarrier.h">
+      <Filter>Header-Dateien\Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

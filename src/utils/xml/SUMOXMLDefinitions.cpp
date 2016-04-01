@@ -70,6 +70,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "variableSpeedSign", SUMO_TAG_VSS },
     { "calibrator",       SUMO_TAG_CALIBRATOR },
     { "rerouter",         SUMO_TAG_REROUTER },
+    { "rerouterEdge",     SUMO_TAG_REROUTEREDGE },  // PABLO #1916
     { "busStop",          SUMO_TAG_BUS_STOP },
     { "containerStop",    SUMO_TAG_CONTAINER_STOP },
     { "chargingStation",  SUMO_TAG_CHARGING_STATION },

@@ -231,7 +231,7 @@ public:
         /// @brief vector with the routeProbReroutes
         std::vector<routeProbReroute*> myRouteProbReroutes;
     };
-
+    
     /** @brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
@@ -262,6 +262,24 @@ public:
      * @param[in] device device in which write parameters of additional element
      */
     void writeAdditional(OutputDevice& device);
+
+    /// @brief get filename of rerouter
+    std::string getFilename() const;
+
+    /// @brief get probability of rerouter
+    SUMOReal getProbability() const;
+
+    /// @brief get attribute to enable or disable inactive initially
+    bool getOff() const;
+
+    /// @brief set filename of rerouter
+    void setFilename(std::string filename);
+
+    /// @brief set probability of rerouter
+    void setProbability(SUMOReal probability);
+
+    /// @brief set attribute to enable or disable inactive initially
+    void setOff(bool off);
 
     /// @name inherited from GUIGlObject
     //@{
@@ -323,12 +341,21 @@ protected:
     /// @brief attribute to enable or disable inactive initially
     bool myOff;
 
+    /// @brief position of rerouter text id
+    Position myIdTextOffset;
+
 private:
     /// @brief variable to save rerouter icon
     static GUIGlID rerouterGlID;
 
-    /// @brief check if detectorE1 icon was inicilalizated
+    /// @brief variable to save rerouter selected icon
+    static GUIGlID rerouterSelectedGlID;
+
+    /// @brief check if rerouter icon was inicilalizated
     static bool rerouterInitialized;
+
+    /// @brief check if rerouter selected icon was inicilalizated
+    static bool rerouterSelectedInitialized;
 
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);

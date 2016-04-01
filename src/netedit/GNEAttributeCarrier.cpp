@@ -300,6 +300,8 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PROB, "1"));                          // PABLO #1916
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OFF, "false"));                       // PABLO #1916
                 break;                                                                                              // PABLO #1916
+            case SUMO_TAG_REROUTEREDGE:
+                break;
             default:
                 WRITE_WARNING("allowed attributes for tag '" + toString(tag) + "' not defined");
         }
@@ -325,6 +327,7 @@ GNEAttributeCarrier::allowedTags() {
         myAllowedTags.push_back(SUMO_TAG_VSS);                   // PABLO #1916
         myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);            // PABLO #1916
         myAllowedTags.push_back(SUMO_TAG_REROUTER);              // PABLO #1916
+        myAllowedTags.push_back(SUMO_TAG_REROUTEREDGE);          // PABLO #1916
     }
     return myAllowedTags;
 }
@@ -344,6 +347,7 @@ GNEAttributeCarrier::allowedAdditionalTags() {                          // PABLO
         myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);                // PABLO #1916
         myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);         // PABLO #1916
         myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);           // PABLO #1916
+        myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTEREDGE);       // PABLO #1916
     }                                                                   // PABLO #1916
     return myAllowedAdditionalTags;                                     // PABLO #1916
 }                                                                       // PABLO #1916
@@ -447,6 +451,7 @@ GNEAttributeCarrier::hasParent(SumoXMLTag tag) {                                
     if (myAllowedAdditionalWithParentTags.empty()) {                                    // PABLO #1916
         myAllowedAdditionalWithParentTags[SUMO_TAG_DET_ENTRY] = SUMO_TAG_E3DETECTOR;    // PABLO #1916
         myAllowedAdditionalWithParentTags[SUMO_TAG_DET_EXIT] = SUMO_TAG_E3DETECTOR;     // PABLO #1916
+        myAllowedAdditionalWithParentTags[SUMO_TAG_REROUTEREDGE] = SUMO_TAG_REROUTER;   // PABLO #1916
     }                                                                                   // PABLO #1916
     return myAllowedAdditionalWithParentTags.count(tag) == 1;                           // PABLO #1916
 }                                                                                       // PABLO #1916

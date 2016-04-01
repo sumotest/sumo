@@ -78,8 +78,9 @@
 // member method definitions
 // ===========================================================================
 
-GNERerouterEdge::GNERerouterEdge(const std::string &id, GNEViewNet* viewNet, GNELane *lane, GNERerouter *parent) :
-    GNEAdditional(id, viewNet, Position(0,0), SUMO_TAG_REROUTER, lane, SUMO_TAG_REROUTER, parent, false, false, false) {
+GNERerouterEdge::GNERerouterEdge(const std::string &id, GNEViewNet* viewNet, GNELane *lane, GNERerouter *parent, bool amClosedEdge) :
+    GNEAdditional(id, viewNet, Position(0,0), SUMO_TAG_REROUTEREDGE, lane, SUMO_TAG_REROUTER, parent, false, false, false),
+     myAmClosedEdge(amClosedEdge) {
     // Update geometry;
     updateGeometry();
     // Set colors
@@ -101,25 +102,32 @@ GNERerouterEdge::updateGeometry() {
     // clear Shape
     myShape.clear();
 
-    // Get shape of lane parent
-    myShape.push_back(myLane->getShape().positionAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())));
+    if(myAmClosedEdge)
+        myPosition = Position(3,0);
+    else
+        myPosition = Position(myLane->getShape().length() - (SUMOReal) 6., 0);
 
-    // Obtain first position
-    Position f = myShape[0] - Position(1, 0);
+    myShape.push_back(myLane->getShape().positionAtOffset(myPosition.x()));
 
-    // Obtain next position
-    Position s = myShape[0] + Position(1, 0);
-
-    // Save rotation (angle) of the vector constructed by points f and s
     myShapeRotations.push_back(myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())) * -1);
 
-    // Set block icon rotation, and using their rotation for logo
+    //myBoundary.add(myFGPositions.back());
+
+    // Set block icon rotation
     setBlockIconRotation();
 
     // Update parent geometry
     myParent->updateGeometry();
 }
 
+
+void
+GNERerouterEdge::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
+    // Due a rerouterEdge is placed over a concrete position of lane, ignore Warnings
+    UNUSED_PARAMETER(posx);
+    UNUSED_PARAMETER(posy);
+    UNUSED_PARAMETER(undoList);
+}
 
 void
 GNERerouterEdge::writeAdditional(OutputDevice& device) {
@@ -158,65 +166,102 @@ void
 GNERerouterEdge::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
     // Ignore Warning
     UNUSED_PARAMETER(parent);
-
-    // Start drawing adding gl identificator
-    glPushName(getGlID());
-
-    // Push detector matrix
-    glPushMatrix();
-    glTranslated(0, 0, getType());
-
-    // Set initial values
-    if(isAdditionalSelected())
-        glColor3d(myBaseColorSelected.red(), myBaseColorSelected.green(), myBaseColorSelected.blue());
-    else
-        glColor3d(myBaseColor.red(), myBaseColor.green(), myBaseColor.blue());
+    // Get exaggeration
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // If Z distance is correct for drawing
+    if (s.scale * exaggeration >= 3) {
+        // Push draw matrix
+        glPushName(getGlID());
+        // Obtain probability of RerouterParent
+        const SUMOReal prob = dynamic_cast<GNERerouter*>(myParent)->getProbability();
+        // If this is an closed edge
+        if (myAmClosedEdge) {
+            ;
+            /*
+            // draw closing symbol onto all lanes
+            const RerouteInterval* const ri =
+                myParent->getCurrentReroute(MSNet::getInstance()->getCurrentTimeStep());
+            if (ri != 0 && prob > 0) {
+                // draw only if the edge is closed at this time
+                if (std::find(ri->closed.begin(), ri->closed.end(), myEdge) != ri->closed.end()) {
+                    const size_t noLanes = myFGPositions.size();
+                    for (size_t j = 0; j < noLanes; ++j) {
+                        Position pos = myFGPositions[j];
+                        SUMOReal rot = myFGRotations[j];
+                        glPushMatrix();
+                        glTranslated(pos.x(), pos.y(), 0);
+                        glRotated(rot, 0, 0, 1);
+                        glTranslated(0, -1.5, 0);
+                        int noPoints = 9;
+                        if (s.scale > 25) {
+                            noPoints = (int)(9.0 + s.scale / 10.0);
+                            if (noPoints > 36) {
+                                noPoints = 36;
+                            }
+                        }
+                        glTranslated(0, 0, getType());
+                        //glScaled(exaggeration, exaggeration, 1);
+                        glColor3d(0.7, 0, 0);
+                        GLHelper::drawFilledCircle((SUMOReal) 1.3, noPoints);
+                        glTranslated(0, 0, .1);
+                        glColor3d(1, 0, 0);
+                        GLHelper::drawFilledCircle((SUMOReal) 1.3, noPoints, 0, prob * 360);
+                        glTranslated(0, 0, .1);
+                        glColor3d(1, 1, 1);
+                        glRotated(-90, 0, 0, 1);
+                        glBegin(GL_TRIANGLES);
+                        glVertex2d(0 - .3, -1.);
+                        glVertex2d(0 - .3, 1.);
+                        glVertex2d(0 + .3, 1.);
+                        glVertex2d(0 + .3, -1.);
+                        glVertex2d(0 - .3, -1.);
+                        glVertex2d(0 + .3, 1.);
+                        glEnd();
+                        glPopMatrix();
+                    }
+                }
+            }
+            */
+        } else {
+            // draw rerouter symbol over lane
+            glPushMatrix();
+            glTranslated(myShape[0].x(), myShape[0].y(), 0);
+            glRotated(myShapeRotations[0], 0, 0, 1);
+            glTranslated(0, 0, getType());
+            glScaled(exaggeration, exaggeration, 1);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    // Push poligon matrix
-    glPushMatrix();
-    glScaled(exaggeration, exaggeration, 1);
-    glTranslated(myShape[0].x(), myShape[0].y(), 0);
-    glRotated(myShapeRotations[0], 0, 0, 1);
+            glBegin(GL_TRIANGLES);
+            glColor3d(1, .8f, 0);
+            // base
+            glVertex2d(0 - 1.4, 0);
+            glVertex2d(0 - 1.4, 6);
+            glVertex2d(0 + 1.4, 6);
+            glVertex2d(0 + 1.4, 0);
+            glVertex2d(0 - 1.4, 0);
+            glVertex2d(0 + 1.4, 6);
+            glEnd();
 
-    // Draw poligon
-    glBegin(GL_LINES);
-    glVertex2d(1.7, 0);
-    glVertex2d(-1.7, 0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glVertex2d(-1.7, .5);
-    glVertex2d(-1.7, -.5);
-    glVertex2d(1.7, -.5);
-    glVertex2d(1.7, .5);
-    glEnd();
+            glTranslated(0, 0, .1);
+            glColor3d(0, 0, 0);
+            pfSetPosition(0, 0);
+            pfSetScale(3.f);
+            SUMOReal w = pfdkGetStringWidth("U");
+            glRotated(180, 0, 1, 0);
+            glTranslated(-w / 2., 2, 0);
+            pfDrawString("U");
 
-    // first Arrow
-    glTranslated(1.5, 0, 0);
-    GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
-    GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
-
-    // second Arrow
-    glTranslated(-3, 0, 0);
-    GLHelper::drawBoxLine(Position(0, 4), 0, 2, .05);
-    GLHelper::drawTriangleAtEnd(Position(0, 4), Position(0, 1), (SUMOReal) 1, (SUMOReal) .25);
-
-    // Pop poligon matrix
-    glPopMatrix();
-
-    // Pop detector matrix
-    glPopMatrix();
-
-    // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {
-        ;
+            glTranslated(w / 2., -2, 0);
+            std::string str = toString((int)(prob * 100)) + "%";
+            pfSetPosition(0, 0);
+            pfSetScale(.7f);
+            w = pfdkGetStringWidth(str.c_str());
+            glTranslated(-w / 2., 4, 0);
+            pfDrawString(str.c_str());
+            glPopMatrix();
+        }
+        glPopName();
     }
-    // Draw name
-    drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-
-    // pop gl identificator
-    glPopName();
 }
 
 

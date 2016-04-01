@@ -30,6 +30,7 @@
 #include <string>
 #include <iostream>
 #include <utility>
+#include <utils/geom/GeomConvHelper.h>
 #include <foreign/polyfonts/polyfonts.h>
 #include <utils/geom/PositionVector.h>
 #include <utils/common/RandHelper.h>
@@ -53,7 +54,8 @@
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
-#include "GNELogo_E3.cpp"
+#include "GNELogo_Rerouter.cpp"
+#include "GNELogo_RerouterSelected.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -63,7 +65,9 @@
 // static member definitions
 // ===========================================================================
 GUIGlID GNERerouter::rerouterGlID = 0;
+GUIGlID GNERerouter::rerouterSelectedGlID = 0;
 bool GNERerouter::rerouterInitialized = false;
+bool GNERerouter::rerouterSelectedInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -355,7 +359,7 @@ GNERerouter::rerouterInterval::setEnd(SUMOTime end) {
 // ---------------------------------------------------------------------------
 
 GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
-    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_E3DETECTOR, blocked),
+    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, blocked),
     myEdges(edges),
     myFilename(filename),
     myProbability(probability),
@@ -365,6 +369,21 @@ GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position po
     // Set colors
     myBaseColor = RGBColor(76, 170, 50, 255);
     myBaseColorSelected = RGBColor(161, 255, 135, 255);
+    // load rerouter logo, if wasn't inicializated
+    if (!rerouterInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Rerouter, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        rerouterGlID = GUITexturesHelper::add(i);
+        rerouterInitialized = true;
+        delete i;
+    }
+
+    // load rerouter selected logo, if wasn't inicializated
+    if (!rerouterSelectedInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_RerouterSelected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        rerouterSelectedGlID = GUITexturesHelper::add(i);
+        rerouterSelectedInitialized = true;
+        delete i;
+    }
 }
 
 
@@ -374,8 +393,23 @@ GNERerouter::~GNERerouter() {
 
 void
 GNERerouter::updateGeometry() {
+    // Clear shape
     myShape.clear();
+
+    // Set position
     myShape.push_back(myPosition);
+
+    // Set block icon offset
+    myBlockIconOffset = Position(-0.5, 0.5);
+
+    // Set id text offset
+    myIdTextOffset = Position(0, -0.5);
+
+    // Set block icon rotation, and using their rotation for draw logo
+    setBlockIconRotation();
+
+    // Update connections
+    updateConnections();
 }
 
 
@@ -392,6 +426,42 @@ GNERerouter::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
 void
 GNERerouter::writeAdditional(OutputDevice& device) {
 
+}
+
+
+std::string 
+GNERerouter::getFilename() const {
+    return myFilename;
+}
+
+
+SUMOReal 
+GNERerouter::getProbability() const {
+    return myProbability;
+}
+
+
+bool 
+GNERerouter::getOff() const {
+    return myOff;
+}
+
+
+void 
+GNERerouter::setFilename(std::string filename) {
+    myFilename = filename;
+}
+
+
+void 
+GNERerouter::setProbability(SUMOReal probability) {
+    myProbability = probability;
+}
+
+
+void 
+GNERerouter::setOff(bool off) {
+    myOff = off;
 }
 
 
@@ -425,23 +495,50 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
     // Start drawing adding an gl identificator
     glPushName(getGlID());
 
-    // load detector logo, if wasn't inicializated
-    if (!rerouterInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        rerouterGlID = GUITexturesHelper::add(i);
-        rerouterInitialized = true;
-        delete i;
-    }
-
-    // Add a draw matrix and draw E1 logo
+    // Add a draw matrix for drawing logo
     glPushMatrix();
-    glTranslated(myShape[0].x(), myShape[0].y(), getType() + 0.1);
+    glTranslated(myShape[0].x(), myShape[0].y(), getType());
     glColor3d(1, 1, 1);
     glRotated(180, 0, 0, 1);
-    GUITexturesHelper::drawTexturedBox(rerouterGlID, 1);
+
+    // Draw icon depending of rerouter is or isn't selected
+    if(isAdditionalSelected()) 
+        GUITexturesHelper::drawTexturedBox(rerouterSelectedGlID, 1);
+    else
+        GUITexturesHelper::drawTexturedBox(rerouterGlID, 1);
 
     // Pop draw matrix
     glPopMatrix();
+/***
+    // Add a draw matrix for id
+    glPushMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glTranslated(myShape.getLineCenter().x(), myShape.getLineCenter().y(), getType() + 0.1);
+    glColor3d(1, 1, 1);
+    glRotated(180, 0, 0, 1);
+    glTranslated(myIdTextOffset.x(), myIdTextOffset.y(), 0);
+
+    std::string drawText = getID();
+    for(int i = 0; i < drawText.size(); i++)
+        if(drawText[i] == '_')
+            drawText[i] = ' ';
+
+    // Draw id depending of rerouter is or isn't selected
+    if(isAdditionalSelected()) 
+        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColorSelected, 180);
+    else
+        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColor, 180);
+    
+    // Pop matrix id
+    glPopMatrix();
+***/
+
+    // Show Lock icon depending of the Edit mode
+    if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        drawLockIcon(0.4);
+
+    // Draw connections
+    drawConnections();
 
     // Pop name
     glPopName();
@@ -458,6 +555,8 @@ GNERerouter::getAttribute(SumoXMLAttr key) const {
             return getMicrosimID();
         case SUMO_ATTR_EDGES:
             /** completar **/
+        case SUMO_ATTR_POSITION:
+            return toString(myPosition);
         case SUMO_ATTR_FILE:
             return myFilename;
         case SUMO_ATTR_PROB:
@@ -479,6 +578,7 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_EDGES:
+        case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FILE:
         case SUMO_ATTR_PROB:
         case SUMO_ATTR_OFF:
@@ -496,8 +596,9 @@ GNERerouter::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
             throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_FREQUENCY:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
+        case SUMO_ATTR_POSITION:
+            bool ok;
+            return GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false).size() == 1;
         case SUMO_ATTR_EDGES:
             /** completar **/
         case SUMO_ATTR_FILE:
@@ -517,9 +618,15 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_EDGES:
             /** completar **/
+            break;
+        case SUMO_ATTR_POSITION:
+            bool ok;
+            myPosition = GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false)[0];
+            updateGeometry();
+            getViewNet()->update();
             break;
         case SUMO_ATTR_FILE:
             myFilename = value;
@@ -531,7 +638,7 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
             myOff = parse<bool>(value);
             break;
         default:
-            throw InvalidArgument("detector E3 attribute '" + toString(key) + "' not allowed");
+            throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
 }
 
