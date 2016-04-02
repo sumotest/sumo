@@ -162,9 +162,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNECrossing.cpp">
       <Filter>Quellcodedateien\Items\Net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEVSpeedSignal.cpp">
-      <Filter>Quellcodedateien\Items\Additionals</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEApplicationWindow.cpp">
       <Filter>Quellcodedateien\Main</Filter>
     </ClCompile>
@@ -258,6 +255,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEAttributeCarrier.cpp">
       <Filter>Quellcodedateien\Items</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEVariableSpeedSignal.cpp">
+      <Filter>Quellcodedateien\Items\Additionals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -306,9 +306,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNENet.h">
       <Filter>Header-Dateien\Items\Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEVSpeedSignal.h">
-      <Filter>Header-Dateien\Items\Additionals</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNERerouter.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
@@ -411,6 +408,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEAttributeCarrier.h">
       <Filter>Header-Dateien\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEVariableSpeedSignal.h">
+      <Filter>Header-Dateien\Items\Additionals</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

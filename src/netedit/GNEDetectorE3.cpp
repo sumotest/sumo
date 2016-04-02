@@ -113,7 +113,7 @@ GNEDetectorE3::updateGeometry() {
     myShape.push_back(myPosition);
 
     // Set block icon offset
-    myBlockIconOffset = Position(0.5, -0.5);
+    myBlockIconOffset = Position(-0.5, -0.5);
 
     // Set block icon rotation, and using their rotation for draw logo
     setBlockIconRotation();

@@ -341,9 +341,6 @@ protected:
     /// @brief attribute to enable or disable inactive initially
     bool myOff;
 
-    /// @brief position of rerouter text id
-    Position myIdTextOffset;
-
 private:
     /// @brief variable to save rerouter icon
     static GUIGlID rerouterGlID;

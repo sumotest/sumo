@@ -150,7 +150,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_Rerouter.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_RerouterSelected.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_VSpeedSignal.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
@@ -161,9 +160,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNETLSEditor.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEUndoList.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEVariableSpeedSignal.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEViewNet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEViewParent.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNEVSpeedSignal.cpp" />
     <ClCompile Include="..\..\..\src\netedit\netedit_main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -216,9 +215,9 @@
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEUndoList.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEVariableSpeedSignal.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEViewNet.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEViewParent.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNEVSpeedSignal.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\y_libnetbuild\y_libnetbuild.vcxproj">

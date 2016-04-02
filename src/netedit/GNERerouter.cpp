@@ -400,10 +400,7 @@ GNERerouter::updateGeometry() {
     myShape.push_back(myPosition);
 
     // Set block icon offset
-    myBlockIconOffset = Position(-0.5, 0.5);
-
-    // Set id text offset
-    myIdTextOffset = Position(0, -0.5);
+    myBlockIconOffset = Position(-0.5, -0.5);
 
     // Set block icon rotation, and using their rotation for draw logo
     setBlockIconRotation();
