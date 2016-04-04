@@ -1,8 +1,7 @@
-﻿#ifndef PHEMlightCONSTANTS
+#ifndef PHEMlightCONSTANTS
 #define PHEMlightCONSTANTS
 
 #include <string>
-#include <vector>
 
 
 namespace PHEMlightdll {
@@ -18,7 +17,6 @@ namespace PHEMlightdll {
         static const double DRIVE_TRAIN_EFFICIENCY_All;
         static const double DRIVE_TRAIN_EFFICIENCY_CB;
         static const bool calcCB = false;
-        static const double M_PI;
 
         //Fleetmix constants
         static const double SPEED_ROTATIONAL_INCREMENT;
@@ -57,15 +55,7 @@ namespace PHEMlightdll {
         static const std::string strSII;
         static const std::string strSIII;
 
-        //Fleetmix
-    private:
-        static const std::string strAggPC;
-        static const std::string strAggBUS;
-        static const std::string strAggHDV;
-        static const std::string strAggTW;
-    public:
-        static std::vector<std::string> AGGREGATED_VEHICLECLASSES;
-
+        //Drive train efficiency
         static double _DRIVE_TRAIN_EFFICIENCY;
         const static double&  getDRIVE_TRAIN_EFFICIENCY();
         static void setDRIVE_TRAIN_EFFICIENCY(const double&  value);

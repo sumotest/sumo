@@ -87,6 +87,7 @@ MSFrame::fillOptions() {
     oc.doRegister("net-file", 'n', new Option_FileName());
     oc.addSynonyme("net-file", "net");
     oc.addDescription("net-file", "Input", "Load road network description from FILE");
+    oc.addXMLDefault("net-file", "net");
 
     oc.doRegister("route-files", 'r', new Option_FileName());
     oc.addSynonyme("route-files", "routes");
@@ -251,8 +252,12 @@ MSFrame::fillOptions() {
 
     oc.doRegister("time-to-teleport", new Option_String("300", "TIME"));
     oc.addDescription("time-to-teleport", "Processing", "Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting");
+
     oc.doRegister("time-to-teleport.highways", new Option_String("0", "TIME"));
     oc.addDescription("time-to-teleport.highways", "Processing", "The waiting time after which vehicles on a fast road (speed > 69m/s) are teleported if they are on a non-continuing lane");
+
+    oc.doRegister("waiting-time-memory", new Option_String("100", "TIME"));
+    oc.addDescription("waiting-time-memory", "Processing", "Length of time interval, over which accumulated waiting time is taken into account");
 
     oc.doRegister("max-depart-delay", new Option_String("-1", "TIME"));
     oc.addDescription("max-depart-delay", "Processing", "How long vehicles wait for departure before being skipped, defaults to -1 which means vehicles are never skipped");
@@ -344,13 +349,18 @@ MSFrame::fillOptions() {
     oc.doRegister("meso-taujj", new Option_String("2", "TIME"));
     oc.addDescription("meso-taujj", "Mesoscopic", "Factor for calculating the jam-jam headway time");
     oc.doRegister("meso-jam-threshold", new Option_Float(-1));
-    oc.addDescription("meso-jam-threshold", "Mesoscopic", "Minimum percentage of occupied space to consider a segment jammed. A negative argument causes thresholds to be computed based on edge speed and tauff (default)");
+    oc.addDescription("meso-jam-threshold", "Mesoscopic", 
+            "Minimum percentage of occupied space to consider a segment jammed. A negative argument causes thresholds to be computed based on edge speed and tauff (default)");
     oc.doRegister("meso-multi-queue", new Option_Bool(true));
     oc.addDescription("meso-multi-queue", "Mesoscopic", "Enable multiple queues at edge ends");
     oc.doRegister("meso-junction-control", new Option_Bool(false));
     oc.addDescription("meso-junction-control", "Mesoscopic", "Enable mesoscopic traffic light and priority junction handling");
     oc.doRegister("meso-junction-control.limited", new Option_Bool(false));
-    oc.addDescription("meso-junction-control.limited", "Mesoscopic", "Enable mesoscopic traffic light and priority junction handling for saturated links. This prevents faulty traffic lights from hindering flow in low-traffic situations");
+    oc.addDescription("meso-junction-control.limited", "Mesoscopic", 
+            "Enable mesoscopic traffic light and priority junction handling for saturated links. This prevents faulty traffic lights from hindering flow in low-traffic situations");
+    oc.doRegister("meso-tls-penalty", new Option_Float(0));
+    oc.addDescription("meso-tls-penalty", "Mesoscopic", 
+            "Apply scaled time penalties when driving across tls controlled junctions based on green split instead of checking actual phases");
     oc.doRegister("meso-overtaking", new Option_Bool(false));
     oc.addDescription("meso-overtaking", "Mesoscopic", "Enable mesoscopic overtaking");
     oc.doRegister("meso-recheck", new Option_String("0", "TIME"));
@@ -494,10 +504,12 @@ MSFrame::setMSGlobals(OptionsCont& oc) {
     MSGlobals::gUseMesoSim = oc.getBool("mesosim");
     MSGlobals::gMesoLimitedJunctionControl = oc.getBool("meso-junction-control.limited");
     MSGlobals::gMesoOvertaking = oc.getBool("meso-overtaking");
+    MSGlobals::gMesoTLSPenalty = oc.getFloat("meso-tls-penalty");
     MSGlobals::gSemiImplicitEulerUpdate = oc.getBool("euler");
     if (MSGlobals::gUseMesoSim) {
         MSGlobals::gUsingInternalLanes = false;
     }
+    MSGlobals::gWaitingTimeMemory = string2time(oc.getString("waiting-time-memory"));
     MSAbstractLaneChangeModel::initGlobalOptions(oc);
 
     DELTA_T = string2time(oc.getString("step-length"));

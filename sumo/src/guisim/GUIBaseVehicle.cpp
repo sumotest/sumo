@@ -53,8 +53,6 @@
 #include <microsim/MSVehicleControl.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <microsim/devices/MSDevice_Vehroutes.h>
-#include <microsim/devices/MSDevice_Person.h>
-#include <microsim/devices/MSDevice_Container.h>
 #include <microsim/devices/MSDevice_BTreceiver.h>
 #include <gui/GUIApplicationWindow.h>
 #include <gui/GUIGlobals.h>
@@ -1170,4 +1168,3 @@ GUIBaseVehicle::getSeatPosition(size_t personIndex) const {
 
 
 /****************************************************************************/
-

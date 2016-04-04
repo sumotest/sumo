@@ -539,6 +539,23 @@ MSEdge::getInternalFollowingEdge(const MSEdge* followerAfterInternal) const {
 
 
 SUMOReal
+MSEdge::getMesoMeanSpeed() const {
+    SUMOReal v = 0;
+    SUMOReal no = 0;
+    for (MESegment* segment = MSGlobals::gMesoNet->getSegmentForEdge(*this); segment != 0; segment = segment->getNextSegment()) {
+        SUMOReal vehNo = (SUMOReal) segment->getCarNumber();
+        v += vehNo * segment->getMeanSpeed();
+        no += vehNo;
+    }
+    if (no == 0) {
+        return getSpeedLimit();
+    }
+    return v / no;
+}
+
+
+
+SUMOReal
 MSEdge::getCurrentTravelTime(SUMOReal minSpeed) const {
     assert(minSpeed > 0);
     if (!myAmDelayed) {
@@ -546,14 +563,7 @@ MSEdge::getCurrentTravelTime(SUMOReal minSpeed) const {
     }
     SUMOReal v = 0;
     if (MSGlobals::gUseMesoSim) {
-        MESegment* first = MSGlobals::gMesoNet->getSegmentForEdge(*this);
-        unsigned segments = 0;
-        do {
-            v += first->getMeanSpeed();
-            first = first->getNextSegment();
-            segments++;
-        } while (first != 0);
-        v /= (SUMOReal) segments;
+        v = getMesoMeanSpeed();
     } else {
         for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
             v += (*i)->getMeanSpeed();
@@ -679,6 +689,17 @@ MSEdge::getVehicleMaxSpeed(const SUMOVehicle* const veh) const {
     // @note lanes might have different maximum speeds in theory
     return getLanes()[0]->getVehicleMaxSpeed(veh);
 }
+
+
+void
+MSEdge::setMaxSpeed(SUMOReal val) const {
+    if (myLanes != 0) {
+        for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
+            (*i)->setMaxSpeed(val);
+        }
+    }
+}
+
 
 
 std::vector<MSTransportable*>

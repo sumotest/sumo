@@ -188,9 +188,9 @@ public:
 
     /** @brief Returns this edge's persons set.
      *  @brief Avoids the creation of new vector as in getSortedPersons
-    	 *
-    	 * @return This edge's persons.
-    	 */
+     *
+     * @return This edge's persons.
+     */
     inline const std::set<MSTransportable*>& getPersons() const {
         return myPersons;
     }
@@ -577,6 +577,10 @@ public:
      */
     SUMOReal getSpeedLimit() const;
 
+    /** @brief Sets a new maximum speed for all lanes (used by TraCI and MSCalibrator)
+     * @param[in] val the new speed in m/s
+     */
+    void setMaxSpeed(SUMOReal val) const;
 
     /** @brief Returns the maximum speed the vehicle may use on this edge
      *
@@ -620,6 +624,9 @@ public:
     void markDelayed() const {
         myAmDelayed = true;
     }
+
+    /// @brief get the mean speed for mesoscopic simulation
+    SUMOReal getMesoMeanSpeed() const;
 
     /// @brief grant exclusive access to the mesoscopic state
     virtual void lock() const {}
