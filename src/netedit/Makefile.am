@@ -58,7 +58,10 @@ GNEDetector.h GNEDetector.cpp \
 GNEDetectorE1.h GNEDetectorE1.cpp \
 GNEDetectorE2.h GNEDetectorE2.cpp \
 GNEDetectorE3.h GNEDetectorE3.cpp \
-GNEDetectorE3EntryExit.h GNEDetectorE3EntryExit.cpp \
+GNEDetectorEntry.h GNEDetectorEntry.cpp \
+GNEDetectorExit.h GNEDetectorExit.cpp \
+GNERerouter.h GNERerouter.cpp \
+GNERerouterEdge.h GNERerouterEdge.cpp \
 GNEReferenceCounter.h \
 GNEEvent_NetworkLoaded.h
 
