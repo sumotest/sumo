@@ -364,11 +364,16 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		if(g == 0) return -std::numeric_limits<double>::max();
 		else return -v*v/g + v;
 	} else {
-		// (Leo) considering tau = myHeadwayTime - dt
-		// @note This is maybe related to clarifying the meaning of myHeadwayTime (ticket #2186)
 		assert(myHeadwayTime - dt >= 0.);
-		SUMOReal correctedHeadwayTime = MAX2(myHeadwayTime - dt, 0.);
-		SUMOReal p = (dt/2 + correctedHeadwayTime)*b;
+		// if myHeadwayTime < dt, there are different options to deal with that.
+		// 1) Set myHeadwayTime equal dt. (chosen here)
+		// 2) Replace the acceleration phase (chosen as dt) by myHeadwayTime,
+		//    then either (i) return the resulting vN (exceeding the appropriate distance, when braking) or
+		//    (ii) adapt it to fit the distance that would be covered in the next time step, when accelerating
+		//    for time myHeadwayTime and then going on with vN for (dt-myHeadwayTime)
+		//    ((ii) exceeds the appropriate next speed, when braking).
+		SUMOReal constantSpeedTime = MAX2(myHeadwayTime - dt, 0.);
+		SUMOReal p = (dt/2 + constantSpeedTime)*b;
 		return -p + sqrt(p*p + D*b);
 	}
 }

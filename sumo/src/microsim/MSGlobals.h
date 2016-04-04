@@ -72,7 +72,7 @@ public:
     /// Information whether the simulation regards internal lanes
     static bool gUsingInternalLanes;
 
-    /// Information whether the simulation regards internal lanes
+    /// Information whether the simulation regards internal lanes FIXME: (Leo) add appropriate description
     static SUMOTime gIgnoreJunctionBlocker;
 
     /** information whether the network shall check for collisions */

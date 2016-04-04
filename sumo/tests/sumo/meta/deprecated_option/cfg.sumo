@@ -7,6 +7,10 @@
         <route-files value="input_routes.rou.xml"/>
     </input>
 
+    <processing>
+        <euler value="true"/>
+    </processing>
+
     <random_number>
         <random value="true"/>
     </random_number>

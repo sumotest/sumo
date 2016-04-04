@@ -275,6 +275,9 @@ MSFrame::fillOptions() {
     oc.doRegister("lanechange.overtake-right", new Option_Bool(false));
     oc.addDescription("lanechange.overtake-right", "Processing", "Whether overtaking on the right on motorways is permitted");
 
+    oc.doRegister("euler", new Option_Bool(false));
+    oc.addDescription("euler", "Processing", "Whether to use semi-implicit Euler integration method (default previous to version 0.27)");
+
     // pedestrian model
     oc.doRegister("pedestrian.model", new Option_String("striping"));
     oc.addDescription("pedestrian.model", "Processing", "Select among pedestrian models ['nonInteracting', 'striping']");
@@ -491,6 +494,7 @@ MSFrame::setMSGlobals(OptionsCont& oc) {
     MSGlobals::gUseMesoSim = oc.getBool("mesosim");
     MSGlobals::gMesoLimitedJunctionControl = oc.getBool("meso-junction-control.limited");
     MSGlobals::gMesoOvertaking = oc.getBool("meso-overtaking");
+    MSGlobals::gSemiImplicitEulerUpdate = oc.getBool("euler");
     if (MSGlobals::gUseMesoSim) {
         MSGlobals::gUsingInternalLanes = false;
     }

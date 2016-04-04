@@ -293,6 +293,13 @@ bool
 MSLink::opened(SUMOTime arrivalTime, SUMOReal arrivalSpeed, SUMOReal leaveSpeed, SUMOReal vehicleLength,
                SUMOReal impatience, SUMOReal decel, SUMOTime waitingTime,
                std::vector<const SUMOVehicle*>* collectFoes) const {
+
+//	// Debug (Leo)
+//	if(gDebugFlag1){
+//		std::cout << "link '" << getApproachingLane()->getID() << "'->'" <<  getViaLaneOrLane()->getID() << "' opened() called."
+//				"\narrivalTime ="<< arrivalTime << "\narrivalSpeed = "<< arrivalSpeed << std::endl;
+//	}
+
     if (haveRed()) {
         return false;
     }
@@ -315,6 +322,20 @@ MSLink::opened(SUMOTime arrivalTime, SUMOReal arrivalSpeed, SUMOReal leaveSpeed,
         }
         if ((*i)->blockedAtTime(arrivalTime, leaveTime, arrivalSpeed, leaveSpeed, myLane == (*i)->getLane(),
                                 impatience, decel, waitingTime, collectFoes)) {
+
+//        	// Debug (Leo)
+//        	if(gDebugFlag1){
+//        		std::cout << "link '" << (*i)->getApproachingLane()->getID() << "'->'" << (*i)->getViaLaneOrLane()->getID()
+//        				<< "' is blocked.\nt has approaching vehicles:"
+//        				<< std::endl;
+//        		const std::map<const SUMOVehicle*, ApproachingVehicleInformation>& foes = (*i)->getApproaching();
+//        		std::map<const SUMOVehicle*, ApproachingVehicleInformation>::const_iterator it;
+//        		for(it=foes.begin(); it!=foes.end(); it++){
+//        			std::cout << it->first->getID() << "with arrivalTime "<< it->second.arrivalTime << std::endl;
+//        		}
+//        	}
+
+
             return false;
         }
     }
