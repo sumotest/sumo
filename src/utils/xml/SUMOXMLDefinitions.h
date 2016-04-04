@@ -86,12 +86,14 @@ enum SumoXMLTag {
     SUMO_TAG_INSTANT_INDUCTION_LOOP,
     /// @brief A variable speed sign
     SUMO_TAG_VSS,
+    /// @brief A variable speed sign over lane  // PABLO #1916 QUESTION ERDMANN 01
+    SUMO_TAG_VSSLANE,                           // PABLO #1916 QUESTION ERDMANN 01
     /// @brief A calibrator
     SUMO_TAG_CALIBRATOR,
     /// @brief A rerouter
     SUMO_TAG_REROUTER,
-    /// @brief A rerouteredge   // PABLO #1916 QUESTION ERDMANN
-    SUMO_TAG_REROUTEREDGE,      // PABLO #1916 QUESTION ERDMANN
+    /// @brief A rerouteredge   // PABLO #1916 QUESTION ERDMANN 02
+    SUMO_TAG_REROUTEREDGE,      // PABLO #1916 QUESTION ERDMANN 02
     /// @brief A bus stop
     SUMO_TAG_BUS_STOP,
     /// @brief A container stop

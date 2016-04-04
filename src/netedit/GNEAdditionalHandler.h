@@ -84,12 +84,12 @@ public:
      */
     void parseAndBuildVaporizer(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a lane speed trigger
+    /** @brief Parses his values and builds a Variable Speed Signal (lane speed trigger)
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid or the read definition is errornous
      * @see buildLaneSpeedTrigger
      */
-    void parseAndBuildLaneSpeedTrigger(const SUMOSAXAttributes& attrs);
+    void parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& attrs);
 
     /** @brief Parses his values and builds a rerouter
      * @param[in] attrs SAX-attributes which define the trigger
@@ -287,7 +287,7 @@ public:
      */
     static bool buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, const std::string & idRerouterParent, bool closedEdge);
 
-    /** @brief Builds a lane speed trigger
+    /** @brief Builds a VariableSpeedSignal (lane speed trigger)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the lane speed trigger
      * @param[in] destLanes List of lanes affected by this speed trigger
@@ -297,7 +297,7 @@ public:
      * @exception ProcessError If the XML definition file is errornous
      * @see GNELaneSpeedTrigger
      */
-    static bool buildLaneSpeedTrigger(GNEViewNet *viewNet, const std::string& id, const std::vector<GNELane*>& destLanes, const std::string& file, bool blocked);
+    static bool buildVariableSpeedSignal(GNEViewNet *viewNet, const std::string& id, Position pos, const std::vector<GNELane*>& destLanes, const std::string& file, bool blocked);
 
     /** @brief Helper method to obtain the filename
      * @param[in] attrs The attributes to obtain the file name from

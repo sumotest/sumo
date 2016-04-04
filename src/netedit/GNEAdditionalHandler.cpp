@@ -46,6 +46,7 @@
 #include "GNEDetectorExit.h"
 #include "GNERerouter.h"
 #include "GNERerouterEdge.h"
+#include "GNEVariableSpeedSignal.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -94,7 +95,7 @@ GNEAdditionalHandler::myStartElement(int element, const SUMOSAXAttributes& attrs
                 parseAndBuildDetectorExit(attrs);
                 break;
             case SUMO_TAG_VSS:
-                parseAndBuildLaneSpeedTrigger(attrs);
+                parseAndBuildVariableSpeedSignal(attrs);
                 break;
             case SUMO_TAG_REROUTER:
                 parseAndBuildRerouter(attrs);
@@ -150,7 +151,7 @@ GNEAdditionalHandler::parseAndBuildVaporizer(const SUMOSAXAttributes& attrs)
 
 
 void
-GNEAdditionalHandler::parseAndBuildLaneSpeedTrigger(const SUMOSAXAttributes& attrs)
+GNEAdditionalHandler::parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& attrs)
 {
     std::cout << "Function buildLaneSpeedTrigger of class GNEAdditionalHandler not implemented yet";
     /*
@@ -545,15 +546,20 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_VSS: {
             // get own attributes of variable speed signal
-            std::vector<GNELane*> destLanes;
+            bool ok;
+            PositionVector pos = GeomConvHelper::parseShapeReporting(values[SUMO_ATTR_POSITION], "user-supplied position", 0, ok, false);
+            std::vector<GNELane*> lanes;
+            /** TERMINAR **/
             std::string file = values[SUMO_ATTR_FILE];
-            // Build variable speed signal
-            /** NOTA: COMPROBAR SI EFECTIVAMENTE SUMO_TAG_VSS es buildLaneSpeedTrigger **/
             if(lane)
-                return buildLaneSpeedTrigger(viewNet, id, destLanes, file, blocked);
+                return buildVariableSpeedSignal(viewNet, id, pos[0], lanes, file, blocked);
             else
                 return false;
         }
+
+
+
+
         case SUMO_TAG_CALIBRATOR: {
             // get own attributes of calibrator
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
@@ -749,11 +755,16 @@ GNEAdditionalHandler::buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, cons
 
 
 bool
-GNEAdditionalHandler::buildLaneSpeedTrigger(GNEViewNet *viewNet,const std::string& id, const std::vector<GNELane*>& destLanes, const std::string& file, bool blocked)
+GNEAdditionalHandler::buildVariableSpeedSignal(GNEViewNet *viewNet,const std::string& id, Position pos, const std::vector<GNELane*>& lanes, const std::string& file, bool blocked)
 {
-    std::cout << "Function buildLaneSpeedTrigger of class GNEAdditionalHandler not implemented yet";
-
-    return NULL;
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_VSS, id) == NULL) {
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_VSS));
+        GNEVariableSpeedSignal *variableSpeedSignal = new GNEVariableSpeedSignal(id, viewNet, pos, lanes, file, blocked);
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), variableSpeedSignal, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_VSS) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 
