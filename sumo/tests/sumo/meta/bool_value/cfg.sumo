@@ -7,10 +7,6 @@
         <route-files value="input_routes.rou.xml"/>
     </input>
 
-    <processing>
-        <euler value="true"/>
-    </processing>
-
     <report>
         <duration-log.disable value="true"/>
     </report>

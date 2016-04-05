@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 02/18/15 16:58:12 by SUMO Version dev-SVN-r17893
+<!-- generated on Tue Apr  5 13:40:39 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -21,7 +21,7 @@
 
     <report>
         <xml-validation value="never"/>
-        <no-duration-log value="true"/>
+        <duration-log.disable value="true"/>
         <no-step-log value="true"/>
     </report>
 
@@ -132,7 +132,7 @@
     <tlsState time="50.00" id="gneJ2" programID="0" phase="0" state="r"/>
     <tlsState time="50.00" id="gneJ4" programID="0" phase="0" state="G"/>
     <tlsState time="51.00" id="gneJ2" programID="0" phase="0" state="r"/>
-    <tlsState time="51.00" id="gneJ4" programID="0" phase="0" state="r"/>
+    <tlsState time="51.00" id="gneJ4" programID="0" phase="0" state="G"/>
     <tlsState time="52.00" id="gneJ2" programID="0" phase="0" state="r"/>
     <tlsState time="52.00" id="gneJ4" programID="0" phase="0" state="r"/>
     <tlsState time="53.00" id="gneJ2" programID="0" phase="0" state="r"/>
@@ -151,7 +151,7 @@
     <tlsState time="59.00" id="gneJ4" programID="0" phase="0" state="r"/>
     <tlsState time="60.00" id="gneJ2" programID="0" phase="0" state="r"/>
     <tlsState time="60.00" id="gneJ4" programID="0" phase="0" state="r"/>
-    <tlsState time="61.00" id="gneJ2" programID="0" phase="0" state="G"/>
+    <tlsState time="61.00" id="gneJ2" programID="0" phase="0" state="r"/>
     <tlsState time="61.00" id="gneJ4" programID="0" phase="0" state="r"/>
     <tlsState time="62.00" id="gneJ2" programID="0" phase="0" state="G"/>
     <tlsState time="62.00" id="gneJ4" programID="0" phase="0" state="r"/>
@@ -168,7 +168,7 @@
     <tlsState time="68.00" id="gneJ2" programID="0" phase="0" state="G"/>
     <tlsState time="68.00" id="gneJ4" programID="0" phase="0" state="r"/>
     <tlsState time="69.00" id="gneJ2" programID="0" phase="0" state="G"/>
-    <tlsState time="69.00" id="gneJ4" programID="0" phase="0" state="G"/>
+    <tlsState time="69.00" id="gneJ4" programID="0" phase="0" state="r"/>
     <tlsState time="70.00" id="gneJ2" programID="0" phase="0" state="G"/>
     <tlsState time="70.00" id="gneJ4" programID="0" phase="0" state="G"/>
     <tlsState time="71.00" id="gneJ2" programID="0" phase="0" state="G"/>

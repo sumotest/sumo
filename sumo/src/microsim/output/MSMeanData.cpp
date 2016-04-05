@@ -84,20 +84,21 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     // if the vehicle has arrived, the reminder must be kept so it can be
     // notified of the arrival subsequently
 
-    // Debug (Leo)
-//    std::string debug_id = "always_left.1";
-//    std::string debug_id = "always_left.74";
-//    if(veh.getID() == debug_id){
+//    // Debug (Leo)
+//	gDebugFlag1 = myLane->getID() == ":absEnd_0";
+//    if(gDebugFlag1){
 //    	std::cout << "time " << MSNet::getInstance()->getCurrentTimeStep()
-//    			<<"\nvehicle '"<< debug_id <<"' in MeanDataValues::notifyMove(veh, "
+//    			<<"\nvehicle '"<< veh.getID() <<"' in MeanDataValues::notifyMove(veh, "
 //    			<< oldPos<< ","<<newPos<<","<<newSpeed<<")" << std::endl;
 //    }
+
+
 
 
     SUMOReal timeOnLane = TS;
     bool ret = true;
     if (oldPos < 0 && newSpeed != 0) {
-    	// (Leo) vehicle just entered this lane
+    	// (Leo) vehicle was not on this lane before
     	if(MSGlobals::gSemiImplicitEulerUpdate){
         	// timeOnLane according to implicit Euler update
     		timeOnLane = newPos / newSpeed;
@@ -127,24 +128,27 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
         		timeOnLane = newPos / newSpeed;
     		}
     	}
-
-        // Debug (Leo)
-//        if(veh.getID() == debug_id){
+//
+//        // Debug (Leo)
+//        if(gDebugFlag1){
 //        	std::cout << "time on lane (1)= " << timeOnLane << std::endl;
 //        }
 
     }
     if (newPos - veh.getVehicleType().getLength() > myLaneLength && newSpeed != 0) {
+    	// (Leo) vehicle left this lane (it can also have skipped over it in one time step -> therefore we use "timeOnLane -= ..." and ( ... - timeOnLane) below)
     	if(MSGlobals::gSemiImplicitEulerUpdate){
-    		timeOnLane = TS - (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
+    		timeOnLane -= (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
             if (fabs(timeOnLane) < 0.001) { // reduce rounding errors
                 timeOnLane = 0.;
             }
     	} else {
     		// (Leo) Analogous situation as above. Crossing time for the
     		// back bumper is tc, with x(tc) = len(veh) + len(lane).
-    		// We end up with:
+    		// given by:
     		// tc = -v0/a +- sqrt( (v0/a)^2 - 2*(x0-x(tc))/a )
+    		// Taking into account the possibility that this lane was not the origin (i.e. oldPos < 0),
+    		// we have to substract (TS-tc) from the timeOnLane value computed before
 
     		SUMOReal oldSpeed = 2*DIST2SPEED(newPos - oldPos) - newSpeed;
     		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
@@ -152,16 +156,16 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
 
     		if(accel > 0){
     			SUMOReal p_half = oldSpeed/accel; // v0/a
-    			timeOnLane = ( - p_half + sqrt(p_half*p_half - 2*dPos/accel) );
+    			timeOnLane = ( - p_half + sqrt(p_half*p_half - 2*dPos/accel) - (TS - timeOnLane));
     		} else if(accel < 0) {
     			SUMOReal p_half = oldSpeed/accel;
-    			timeOnLane = ( - p_half - sqrt(p_half*p_half - 2*dPos/accel) );
+    			timeOnLane = ( - p_half - sqrt(p_half*p_half - 2*dPos/accel) - (TS - timeOnLane));
     		} else { // accel \approx 0
-        		timeOnLane = TS - (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
+        		timeOnLane -= (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
     		}
 
 //    		// Debug (Leo)
-//    		if(veh.getID() == debug_id){
+//    		if(gDebugFlag1){
 //    			std::cout << "time on lane (2)= " << timeOnLane << std::endl;
 //    		}
 
