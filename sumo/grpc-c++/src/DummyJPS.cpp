@@ -41,12 +41,12 @@ DummyJPS::~DummyJPS() { }
                                               ::hybridsim::Empty *response) {
     std::cout << "simulateing from: " << request->fromtimeincluding() << " to: " << request->totimeexcluding() << "\n";
     std::map<const std::string,DummyAgent*>::iterator it = agents.begin();
-
+    std::cout << "number of agents: " << agents.size() << std::endl;
     while(it != agents.end()) {
         (*it).second->proceed();
         it++;
     }
-
+    std::cout << "sim step done." << std::endl;
 
     return Status::OK;
 }
@@ -55,6 +55,8 @@ DummyJPS::~DummyJPS() { }
                                        ::hybridsim::Boolean *response) {
 
 
+
+    std::cout << "transfer" << std::endl;
     std::vector<Link> links;
     auto it = request->leg().link().begin();
     while (it != request->leg().link().end()) {
@@ -75,6 +77,7 @@ DummyJPS::~DummyJPS() { }
 
     response->set_val(true);
 
+    std::cout << "transfer done." << std::endl;
 
     return Status::OK;
 }
@@ -82,24 +85,37 @@ DummyJPS::~DummyJPS() { }
 ::grpc::Status DummyJPS::receiveTrajectories(::grpc::ServerContext *context, const ::hybridsim::Empty *request,
                                              ::hybridsim::Trajectories *response) {
 
-    std::map<const std::string,DummyAgent*>::iterator it = agents.begin();
 
+    std::cout << "trajectories" << std::endl;
+    std::map<const std::string,DummyAgent*>::iterator it = agents.begin();
+    std::cout << "map" << std::endl;
     while(it != agents.end()) {
         // (*it).second->proceed();
+        DummyAgent * a = (*it).second;
+
+        std::cout << "agent:" << a->getID() << std::endl;
+
+
         Trajectory * tr = response->add_trajectories();
-        tr->set_id((*it).second->getID());
-        tr->set_x((*it).second->getX());
-        tr->set_y((*it).second->getY());
-        tr->set_linkid((*it).second->getCurrentLinkID());
+
+        std::cout << "tr created" << std::endl;
+        tr->set_id(a->getID());
+        tr->set_x(a->getX());
+        tr->set_y(a->getY());
+        tr->set_linkid(a->getCurrentLinkID());
         it++;
     }
 
+    std::cout << "trajectories done." << std::endl;
 
     return Status::OK;
 }
 
 ::grpc::Status DummyJPS::retrieveAgents(::grpc::ServerContext *context, const ::hybridsim::Empty *request,
                                         ::hybridsim::Agents *response) {
+
+
+    std::cout << "retrieve" << std::endl;
     std::map<const std::string,DummyAgent*>::iterator it = agents.begin();
     while(it != agents.end()) {
         if ((*it).second->getX() > 30.) {
@@ -113,6 +129,7 @@ DummyJPS::~DummyJPS() { }
 
     }
 
+    std::cout << "retrieve done." << std::endl;
     return Status::OK;
 }
 

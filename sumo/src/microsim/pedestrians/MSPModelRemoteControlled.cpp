@@ -24,7 +24,7 @@ MSPModelRemoteControlled::MSPModelRemoteControlled(const OptionsCont& oc,
 		MSNet* net) :
 		myNet(net){
 //	const std::string address = oc.getString("pedestrian.remote.address");
-	grpcClient = new MSGRPCClient(grpc::CreateChannel("localhost:8989", grpc::InsecureChannelCredentials()));
+	grpcClient = new MSGRPCClient(grpc::CreateChannel("localhost:8989", grpc::InsecureChannelCredentials()), net);
 
 	Event * e = new Event(this);
 	net->getBeginOfTimestepEvents()->addEvent(e,net->getCurrentTimeStep() + DELTA_T, MSEventControl::ADAPT_AFTER_EXECUTION);

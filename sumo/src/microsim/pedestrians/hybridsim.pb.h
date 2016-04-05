@@ -26,6 +26,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 
@@ -37,17 +38,1836 @@ void protobuf_AssignDesc_hybridsim_2eproto();
 void protobuf_ShutdownFile_hybridsim_2eproto();
 
 class Agent;
+class AgentParams;
 class Agents;
 class Boolean;
 class Coordinate;
+class Distribution;
 class Empty;
+class Environment;
+class Force;
+class Goal;
+class Gompertz;
+class Group;
 class LeftClosedRightOpenTimeInterval;
 class Leg;
 class Link;
+class Model;
+class Polygon;
+class Room;
+class Router;
+class Scenario;
+class Source;
+class Subroom;
 class Trajectories;
 class Trajectory;
+class Transition;
 
+enum Model_Type {
+  Model_Type_Gompertz = 0,
+  Model_Type_Model_Type_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  Model_Type_Model_Type_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool Model_Type_IsValid(int value);
+const Model_Type Model_Type_Type_MIN = Model_Type_Gompertz;
+const Model_Type Model_Type_Type_MAX = Model_Type_Gompertz;
+const int Model_Type_Type_ARRAYSIZE = Model_Type_Type_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* Model_Type_descriptor();
+inline const ::std::string& Model_Type_Name(Model_Type value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    Model_Type_descriptor(), value);
+}
+inline bool Model_Type_Parse(
+    const ::std::string& name, Model_Type* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<Model_Type>(
+    Model_Type_descriptor(), name, value);
+}
 // ===================================================================
+
+class Scenario : public ::google::protobuf::Message {
+ public:
+  Scenario();
+  virtual ~Scenario();
+
+  Scenario(const Scenario& from);
+
+  inline Scenario& operator=(const Scenario& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Scenario& default_instance();
+
+  void Swap(Scenario* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Scenario* New() const { return New(NULL); }
+
+  Scenario* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Scenario& from);
+  void MergeFrom(const Scenario& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Scenario* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 seed = 1;
+  void clear_seed();
+  static const int kSeedFieldNumber = 1;
+  ::google::protobuf::uint32 seed() const;
+  void set_seed(::google::protobuf::uint32 value);
+
+  // optional .hybridsim.Environment environment = 2;
+  bool has_environment() const;
+  void clear_environment();
+  static const int kEnvironmentFieldNumber = 2;
+  const ::hybridsim::Environment& environment() const;
+  ::hybridsim::Environment* mutable_environment();
+  ::hybridsim::Environment* release_environment();
+  void set_allocated_environment(::hybridsim::Environment* environment);
+
+  // repeated .hybridsim.Goal goal = 3;
+  int goal_size() const;
+  void clear_goal();
+  static const int kGoalFieldNumber = 3;
+  const ::hybridsim::Goal& goal(int index) const;
+  ::hybridsim::Goal* mutable_goal(int index);
+  ::hybridsim::Goal* add_goal();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Goal >*
+      mutable_goal();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Goal >&
+      goal() const;
+
+  // repeated .hybridsim.Group group = 4;
+  int group_size() const;
+  void clear_group();
+  static const int kGroupFieldNumber = 4;
+  const ::hybridsim::Group& group(int index) const;
+  ::hybridsim::Group* mutable_group(int index);
+  ::hybridsim::Group* add_group();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Group >*
+      mutable_group();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Group >&
+      group() const;
+
+  // repeated .hybridsim.Source source = 5;
+  int source_size() const;
+  void clear_source();
+  static const int kSourceFieldNumber = 5;
+  const ::hybridsim::Source& source(int index) const;
+  ::hybridsim::Source* mutable_source(int index);
+  ::hybridsim::Source* add_source();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Source >*
+      mutable_source();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Source >&
+      source() const;
+
+  // optional .hybridsim.Model model = 6;
+  bool has_model() const;
+  void clear_model();
+  static const int kModelFieldNumber = 6;
+  const ::hybridsim::Model& model() const;
+  ::hybridsim::Model* mutable_model();
+  ::hybridsim::Model* release_model();
+  void set_allocated_model(::hybridsim::Model* model);
+
+  // repeated .hybridsim.Router router = 7;
+  int router_size() const;
+  void clear_router();
+  static const int kRouterFieldNumber = 7;
+  const ::hybridsim::Router& router(int index) const;
+  ::hybridsim::Router* mutable_router(int index);
+  ::hybridsim::Router* add_router();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Router >*
+      mutable_router();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Router >&
+      router() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Scenario)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::hybridsim::Environment* environment_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Goal > goal_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Group > group_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Source > source_;
+  ::hybridsim::Model* model_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Router > router_;
+  ::google::protobuf::uint32 seed_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Scenario* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Router : public ::google::protobuf::Message {
+ public:
+  Router();
+  virtual ~Router();
+
+  Router(const Router& from);
+
+  inline Router& operator=(const Router& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Router& default_instance();
+
+  void Swap(Router* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Router* New() const { return New(NULL); }
+
+  Router* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Router& from);
+  void MergeFrom(const Router& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Router* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 router_id = 1;
+  void clear_router_id();
+  static const int kRouterIdFieldNumber = 1;
+  ::google::protobuf::int32 router_id() const;
+  void set_router_id(::google::protobuf::int32 value);
+
+  // optional string description = 2;
+  void clear_description();
+  static const int kDescriptionFieldNumber = 2;
+  const ::std::string& description() const;
+  void set_description(const ::std::string& value);
+  void set_description(const char* value);
+  void set_description(const char* value, size_t size);
+  ::std::string* mutable_description();
+  ::std::string* release_description();
+  void set_allocated_description(::std::string* description);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Router)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr description_;
+  ::google::protobuf::int32 router_id_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Router* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Model : public ::google::protobuf::Message {
+ public:
+  Model();
+  virtual ~Model();
+
+  Model(const Model& from);
+
+  inline Model& operator=(const Model& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Model& default_instance();
+
+  void Swap(Model* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Model* New() const { return New(NULL); }
+
+  Model* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Model& from);
+  void MergeFrom(const Model& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Model* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef Model_Type Type;
+  static const Type Gompertz = Model_Type_Gompertz;
+  static inline bool Type_IsValid(int value) {
+    return Model_Type_IsValid(value);
+  }
+  static const Type Type_MIN =
+    Model_Type_Type_MIN;
+  static const Type Type_MAX =
+    Model_Type_Type_MAX;
+  static const int Type_ARRAYSIZE =
+    Model_Type_Type_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Type_descriptor() {
+    return Model_Type_descriptor();
+  }
+  static inline const ::std::string& Type_Name(Type value) {
+    return Model_Type_Name(value);
+  }
+  static inline bool Type_Parse(const ::std::string& name,
+      Type* value) {
+    return Model_Type_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // optional .hybridsim.Model.Type type = 1;
+  void clear_type();
+  static const int kTypeFieldNumber = 1;
+  ::hybridsim::Model_Type type() const;
+  void set_type(::hybridsim::Model_Type value);
+
+  // optional .hybridsim.Gompertz gompertz = 2;
+  bool has_gompertz() const;
+  void clear_gompertz();
+  static const int kGompertzFieldNumber = 2;
+  const ::hybridsim::Gompertz& gompertz() const;
+  ::hybridsim::Gompertz* mutable_gompertz();
+  ::hybridsim::Gompertz* release_gompertz();
+  void set_allocated_gompertz(::hybridsim::Gompertz* gompertz);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Model)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::hybridsim::Gompertz* gompertz_;
+  int type_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Model* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Gompertz : public ::google::protobuf::Message {
+ public:
+  Gompertz();
+  virtual ~Gompertz();
+
+  Gompertz(const Gompertz& from);
+
+  inline Gompertz& operator=(const Gompertz& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Gompertz& default_instance();
+
+  void Swap(Gompertz* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Gompertz* New() const { return New(NULL); }
+
+  Gompertz* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Gompertz& from);
+  void MergeFrom(const Gompertz& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Gompertz* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string solver = 1;
+  void clear_solver();
+  static const int kSolverFieldNumber = 1;
+  const ::std::string& solver() const;
+  void set_solver(const ::std::string& value);
+  void set_solver(const char* value);
+  void set_solver(const char* value, size_t size);
+  ::std::string* mutable_solver();
+  ::std::string* release_solver();
+  void set_allocated_solver(::std::string* solver);
+
+  // optional double stepsize = 2;
+  void clear_stepsize();
+  static const int kStepsizeFieldNumber = 2;
+  double stepsize() const;
+  void set_stepsize(double value);
+
+  // optional int32 exit_crossing_strategy = 3;
+  void clear_exit_crossing_strategy();
+  static const int kExitCrossingStrategyFieldNumber = 3;
+  ::google::protobuf::int32 exit_crossing_strategy() const;
+  void set_exit_crossing_strategy(::google::protobuf::int32 value);
+
+  // optional bool linked_cells_enabled = 4;
+  void clear_linked_cells_enabled();
+  static const int kLinkedCellsEnabledFieldNumber = 4;
+  bool linked_cells_enabled() const;
+  void set_linked_cells_enabled(bool value);
+
+  // optional double cell_size = 5;
+  void clear_cell_size();
+  static const int kCellSizeFieldNumber = 5;
+  double cell_size() const;
+  void set_cell_size(double value);
+
+  // optional .hybridsim.Force force_ped = 6;
+  bool has_force_ped() const;
+  void clear_force_ped();
+  static const int kForcePedFieldNumber = 6;
+  const ::hybridsim::Force& force_ped() const;
+  ::hybridsim::Force* mutable_force_ped();
+  ::hybridsim::Force* release_force_ped();
+  void set_allocated_force_ped(::hybridsim::Force* force_ped);
+
+  // optional .hybridsim.Force force_wall = 7;
+  bool has_force_wall() const;
+  void clear_force_wall();
+  static const int kForceWallFieldNumber = 7;
+  const ::hybridsim::Force& force_wall() const;
+  ::hybridsim::Force* mutable_force_wall();
+  ::hybridsim::Force* release_force_wall();
+  void set_allocated_force_wall(::hybridsim::Force* force_wall);
+
+  // optional .hybridsim.AgentParams agent_params = 8;
+  bool has_agent_params() const;
+  void clear_agent_params();
+  static const int kAgentParamsFieldNumber = 8;
+  const ::hybridsim::AgentParams& agent_params() const;
+  ::hybridsim::AgentParams* mutable_agent_params();
+  ::hybridsim::AgentParams* release_agent_params();
+  void set_allocated_agent_params(::hybridsim::AgentParams* agent_params);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Gompertz)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr solver_;
+  double stepsize_;
+  ::google::protobuf::int32 exit_crossing_strategy_;
+  bool linked_cells_enabled_;
+  double cell_size_;
+  ::hybridsim::Force* force_ped_;
+  ::hybridsim::Force* force_wall_;
+  ::hybridsim::AgentParams* agent_params_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Gompertz* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AgentParams : public ::google::protobuf::Message {
+ public:
+  AgentParams();
+  virtual ~AgentParams();
+
+  AgentParams(const AgentParams& from);
+
+  inline AgentParams& operator=(const AgentParams& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentParams& default_instance();
+
+  void Swap(AgentParams* other);
+
+  // implements Message ----------------------------------------------
+
+  inline AgentParams* New() const { return New(NULL); }
+
+  AgentParams* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentParams& from);
+  void MergeFrom(const AgentParams& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(AgentParams* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .hybridsim.Distribution v0 = 1;
+  bool has_v0() const;
+  void clear_v0();
+  static const int kV0FieldNumber = 1;
+  const ::hybridsim::Distribution& v0() const;
+  ::hybridsim::Distribution* mutable_v0();
+  ::hybridsim::Distribution* release_v0();
+  void set_allocated_v0(::hybridsim::Distribution* v0);
+
+  // optional .hybridsim.Distribution b_max = 2;
+  bool has_b_max() const;
+  void clear_b_max();
+  static const int kBMaxFieldNumber = 2;
+  const ::hybridsim::Distribution& b_max() const;
+  ::hybridsim::Distribution* mutable_b_max();
+  ::hybridsim::Distribution* release_b_max();
+  void set_allocated_b_max(::hybridsim::Distribution* b_max);
+
+  // optional .hybridsim.Distribution b_min = 3;
+  bool has_b_min() const;
+  void clear_b_min();
+  static const int kBMinFieldNumber = 3;
+  const ::hybridsim::Distribution& b_min() const;
+  ::hybridsim::Distribution* mutable_b_min();
+  ::hybridsim::Distribution* release_b_min();
+  void set_allocated_b_min(::hybridsim::Distribution* b_min);
+
+  // optional .hybridsim.Distribution a_min = 4;
+  bool has_a_min() const;
+  void clear_a_min();
+  static const int kAMinFieldNumber = 4;
+  const ::hybridsim::Distribution& a_min() const;
+  ::hybridsim::Distribution* mutable_a_min();
+  ::hybridsim::Distribution* release_a_min();
+  void set_allocated_a_min(::hybridsim::Distribution* a_min);
+
+  // optional .hybridsim.Distribution tau = 5;
+  bool has_tau() const;
+  void clear_tau();
+  static const int kTauFieldNumber = 5;
+  const ::hybridsim::Distribution& tau() const;
+  ::hybridsim::Distribution* mutable_tau();
+  ::hybridsim::Distribution* release_tau();
+  void set_allocated_tau(::hybridsim::Distribution* tau);
+
+  // optional .hybridsim.Distribution atau = 6;
+  bool has_atau() const;
+  void clear_atau();
+  static const int kAtauFieldNumber = 6;
+  const ::hybridsim::Distribution& atau() const;
+  ::hybridsim::Distribution* mutable_atau();
+  ::hybridsim::Distribution* release_atau();
+  void set_allocated_atau(::hybridsim::Distribution* atau);
+
+  // optional .hybridsim.Distribution v0_upstairs = 7;
+  bool has_v0_upstairs() const;
+  void clear_v0_upstairs();
+  static const int kV0UpstairsFieldNumber = 7;
+  const ::hybridsim::Distribution& v0_upstairs() const;
+  ::hybridsim::Distribution* mutable_v0_upstairs();
+  ::hybridsim::Distribution* release_v0_upstairs();
+  void set_allocated_v0_upstairs(::hybridsim::Distribution* v0_upstairs);
+
+  // optional .hybridsim.Distribution v0_downstairs = 8;
+  bool has_v0_downstairs() const;
+  void clear_v0_downstairs();
+  static const int kV0DownstairsFieldNumber = 8;
+  const ::hybridsim::Distribution& v0_downstairs() const;
+  ::hybridsim::Distribution* mutable_v0_downstairs();
+  ::hybridsim::Distribution* release_v0_downstairs();
+  void set_allocated_v0_downstairs(::hybridsim::Distribution* v0_downstairs);
+
+  // optional .hybridsim.Distribution v0_escalator_up = 9;
+  bool has_v0_escalator_up() const;
+  void clear_v0_escalator_up();
+  static const int kV0EscalatorUpFieldNumber = 9;
+  const ::hybridsim::Distribution& v0_escalator_up() const;
+  ::hybridsim::Distribution* mutable_v0_escalator_up();
+  ::hybridsim::Distribution* release_v0_escalator_up();
+  void set_allocated_v0_escalator_up(::hybridsim::Distribution* v0_escalator_up);
+
+  // optional .hybridsim.Distribution v0_escalator_down = 10;
+  bool has_v0_escalator_down() const;
+  void clear_v0_escalator_down();
+  static const int kV0EscalatorDownFieldNumber = 10;
+  const ::hybridsim::Distribution& v0_escalator_down() const;
+  ::hybridsim::Distribution* mutable_v0_escalator_down();
+  ::hybridsim::Distribution* release_v0_escalator_down();
+  void set_allocated_v0_escalator_down(::hybridsim::Distribution* v0_escalator_down);
+
+  // optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+  bool has_v0_idle_escalator_up() const;
+  void clear_v0_idle_escalator_up();
+  static const int kV0IdleEscalatorUpFieldNumber = 11;
+  const ::hybridsim::Distribution& v0_idle_escalator_up() const;
+  ::hybridsim::Distribution* mutable_v0_idle_escalator_up();
+  ::hybridsim::Distribution* release_v0_idle_escalator_up();
+  void set_allocated_v0_idle_escalator_up(::hybridsim::Distribution* v0_idle_escalator_up);
+
+  // optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+  bool has_v0_idle_escalator_down() const;
+  void clear_v0_idle_escalator_down();
+  static const int kV0IdleEscalatorDownFieldNumber = 12;
+  const ::hybridsim::Distribution& v0_idle_escalator_down() const;
+  ::hybridsim::Distribution* mutable_v0_idle_escalator_down();
+  ::hybridsim::Distribution* release_v0_idle_escalator_down();
+  void set_allocated_v0_idle_escalator_down(::hybridsim::Distribution* v0_idle_escalator_down);
+
+  // optional .hybridsim.Distribution T = 13;
+  bool has_t() const;
+  void clear_t();
+  static const int kTFieldNumber = 13;
+  const ::hybridsim::Distribution& t() const;
+  ::hybridsim::Distribution* mutable_t();
+  ::hybridsim::Distribution* release_t();
+  void set_allocated_t(::hybridsim::Distribution* t);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.AgentParams)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::hybridsim::Distribution* v0_;
+  ::hybridsim::Distribution* b_max_;
+  ::hybridsim::Distribution* b_min_;
+  ::hybridsim::Distribution* a_min_;
+  ::hybridsim::Distribution* tau_;
+  ::hybridsim::Distribution* atau_;
+  ::hybridsim::Distribution* v0_upstairs_;
+  ::hybridsim::Distribution* v0_downstairs_;
+  ::hybridsim::Distribution* v0_escalator_up_;
+  ::hybridsim::Distribution* v0_escalator_down_;
+  ::hybridsim::Distribution* v0_idle_escalator_up_;
+  ::hybridsim::Distribution* v0_idle_escalator_down_;
+  ::hybridsim::Distribution* t_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static AgentParams* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Distribution : public ::google::protobuf::Message {
+ public:
+  Distribution();
+  virtual ~Distribution();
+
+  Distribution(const Distribution& from);
+
+  inline Distribution& operator=(const Distribution& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Distribution& default_instance();
+
+  void Swap(Distribution* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Distribution* New() const { return New(NULL); }
+
+  Distribution* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Distribution& from);
+  void MergeFrom(const Distribution& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Distribution* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional double mu = 1;
+  void clear_mu();
+  static const int kMuFieldNumber = 1;
+  double mu() const;
+  void set_mu(double value);
+
+  // optional double sigma = 2;
+  void clear_sigma();
+  static const int kSigmaFieldNumber = 2;
+  double sigma() const;
+  void set_sigma(double value);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Distribution)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  double mu_;
+  double sigma_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Distribution* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Force : public ::google::protobuf::Message {
+ public:
+  Force();
+  virtual ~Force();
+
+  Force(const Force& from);
+
+  inline Force& operator=(const Force& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Force& default_instance();
+
+  void Swap(Force* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Force* New() const { return New(NULL); }
+
+  Force* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Force& from);
+  void MergeFrom(const Force& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Force* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional double nu = 1;
+  void clear_nu();
+  static const int kNuFieldNumber = 1;
+  double nu() const;
+  void set_nu(double value);
+
+  // optional double a = 2;
+  void clear_a();
+  static const int kAFieldNumber = 2;
+  double a() const;
+  void set_a(double value);
+
+  // optional double b = 3;
+  void clear_b();
+  static const int kBFieldNumber = 3;
+  double b() const;
+  void set_b(double value);
+
+  // optional double c = 4;
+  void clear_c();
+  static const int kCFieldNumber = 4;
+  double c() const;
+  void set_c(double value);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Force)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  double nu_;
+  double a_;
+  double b_;
+  double c_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Force* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Group : public ::google::protobuf::Message {
+ public:
+  Group();
+  virtual ~Group();
+
+  Group(const Group& from);
+
+  inline Group& operator=(const Group& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Group& default_instance();
+
+  void Swap(Group* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Group* New() const { return New(NULL); }
+
+  Group* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Group& from);
+  void MergeFrom(const Group& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Group* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 group_id = 1;
+  void clear_group_id();
+  static const int kGroupIdFieldNumber = 1;
+  ::google::protobuf::int32 group_id() const;
+  void set_group_id(::google::protobuf::int32 value);
+
+  // optional int32 room_id = 2;
+  void clear_room_id();
+  static const int kRoomIdFieldNumber = 2;
+  ::google::protobuf::int32 room_id() const;
+  void set_room_id(::google::protobuf::int32 value);
+
+  // optional int32 subroom_id = 3;
+  void clear_subroom_id();
+  static const int kSubroomIdFieldNumber = 3;
+  ::google::protobuf::int32 subroom_id() const;
+  void set_subroom_id(::google::protobuf::int32 value);
+
+  // optional int32 number = 4;
+  void clear_number();
+  static const int kNumberFieldNumber = 4;
+  ::google::protobuf::int32 number() const;
+  void set_number(::google::protobuf::int32 value);
+
+  // optional int32 router_id = 5;
+  void clear_router_id();
+  static const int kRouterIdFieldNumber = 5;
+  ::google::protobuf::int32 router_id() const;
+  void set_router_id(::google::protobuf::int32 value);
+
+  // optional int32 agent_parameter_id = 6;
+  void clear_agent_parameter_id();
+  static const int kAgentParameterIdFieldNumber = 6;
+  ::google::protobuf::int32 agent_parameter_id() const;
+  void set_agent_parameter_id(::google::protobuf::int32 value);
+
+  // optional .hybridsim.Coordinate min_x_y = 7;
+  bool has_min_x_y() const;
+  void clear_min_x_y();
+  static const int kMinXYFieldNumber = 7;
+  const ::hybridsim::Coordinate& min_x_y() const;
+  ::hybridsim::Coordinate* mutable_min_x_y();
+  ::hybridsim::Coordinate* release_min_x_y();
+  void set_allocated_min_x_y(::hybridsim::Coordinate* min_x_y);
+
+  // optional .hybridsim.Coordinate max_x_y = 8;
+  bool has_max_x_y() const;
+  void clear_max_x_y();
+  static const int kMaxXYFieldNumber = 8;
+  const ::hybridsim::Coordinate& max_x_y() const;
+  ::hybridsim::Coordinate* mutable_max_x_y();
+  ::hybridsim::Coordinate* release_max_x_y();
+  void set_allocated_max_x_y(::hybridsim::Coordinate* max_x_y);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Group)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 group_id_;
+  ::google::protobuf::int32 room_id_;
+  ::google::protobuf::int32 subroom_id_;
+  ::google::protobuf::int32 number_;
+  ::google::protobuf::int32 router_id_;
+  ::google::protobuf::int32 agent_parameter_id_;
+  ::hybridsim::Coordinate* min_x_y_;
+  ::hybridsim::Coordinate* max_x_y_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Group* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Source : public ::google::protobuf::Message {
+ public:
+  Source();
+  virtual ~Source();
+
+  Source(const Source& from);
+
+  inline Source& operator=(const Source& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Source& default_instance();
+
+  void Swap(Source* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Source* New() const { return New(NULL); }
+
+  Source* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Source& from);
+  void MergeFrom(const Source& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Source* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
+
+  // optional int32 frequency = 2;
+  void clear_frequency();
+  static const int kFrequencyFieldNumber = 2;
+  ::google::protobuf::int32 frequency() const;
+  void set_frequency(::google::protobuf::int32 value);
+
+  // optional int32 max_agents = 3;
+  void clear_max_agents();
+  static const int kMaxAgentsFieldNumber = 3;
+  ::google::protobuf::int32 max_agents() const;
+  void set_max_agents(::google::protobuf::int32 value);
+
+  // optional int32 group_id = 4;
+  void clear_group_id();
+  static const int kGroupIdFieldNumber = 4;
+  ::google::protobuf::int32 group_id() const;
+  void set_group_id(::google::protobuf::int32 value);
+
+  // optional string caption = 5;
+  void clear_caption();
+  static const int kCaptionFieldNumber = 5;
+  const ::std::string& caption() const;
+  void set_caption(const ::std::string& value);
+  void set_caption(const char* value);
+  void set_caption(const char* value, size_t size);
+  ::std::string* mutable_caption();
+  ::std::string* release_caption();
+  void set_allocated_caption(::std::string* caption);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Source)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 id_;
+  ::google::protobuf::int32 frequency_;
+  ::google::protobuf::int32 max_agents_;
+  ::google::protobuf::int32 group_id_;
+  ::google::protobuf::internal::ArenaStringPtr caption_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Source* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Goal : public ::google::protobuf::Message {
+ public:
+  Goal();
+  virtual ~Goal();
+
+  Goal(const Goal& from);
+
+  inline Goal& operator=(const Goal& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Goal& default_instance();
+
+  void Swap(Goal* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Goal* New() const { return New(NULL); }
+
+  Goal* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Goal& from);
+  void MergeFrom(const Goal& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Goal* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
+
+  // optional bool final = 2;
+  void clear_final();
+  static const int kFinalFieldNumber = 2;
+  bool final() const;
+  void set_final(bool value);
+
+  // optional string caption = 3;
+  void clear_caption();
+  static const int kCaptionFieldNumber = 3;
+  const ::std::string& caption() const;
+  void set_caption(const ::std::string& value);
+  void set_caption(const char* value);
+  void set_caption(const char* value, size_t size);
+  ::std::string* mutable_caption();
+  ::std::string* release_caption();
+  void set_allocated_caption(::std::string* caption);
+
+  // optional .hybridsim.Polygon p = 4;
+  bool has_p() const;
+  void clear_p();
+  static const int kPFieldNumber = 4;
+  const ::hybridsim::Polygon& p() const;
+  ::hybridsim::Polygon* mutable_p();
+  ::hybridsim::Polygon* release_p();
+  void set_allocated_p(::hybridsim::Polygon* p);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Goal)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 id_;
+  bool final_;
+  ::google::protobuf::internal::ArenaStringPtr caption_;
+  ::hybridsim::Polygon* p_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Goal* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Environment : public ::google::protobuf::Message {
+ public:
+  Environment();
+  virtual ~Environment();
+
+  Environment(const Environment& from);
+
+  inline Environment& operator=(const Environment& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Environment& default_instance();
+
+  void Swap(Environment* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Environment* New() const { return New(NULL); }
+
+  Environment* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Environment& from);
+  void MergeFrom(const Environment& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Environment* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .hybridsim.Room room = 1;
+  int room_size() const;
+  void clear_room();
+  static const int kRoomFieldNumber = 1;
+  const ::hybridsim::Room& room(int index) const;
+  ::hybridsim::Room* mutable_room(int index);
+  ::hybridsim::Room* add_room();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Room >*
+      mutable_room();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Room >&
+      room() const;
+
+  // repeated .hybridsim.Transition transition = 2;
+  int transition_size() const;
+  void clear_transition();
+  static const int kTransitionFieldNumber = 2;
+  const ::hybridsim::Transition& transition(int index) const;
+  ::hybridsim::Transition* mutable_transition(int index);
+  ::hybridsim::Transition* add_transition();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >*
+      mutable_transition();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >&
+      transition() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Environment)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Room > room_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition > transition_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Environment* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Transition : public ::google::protobuf::Message {
+ public:
+  Transition();
+  virtual ~Transition();
+
+  Transition(const Transition& from);
+
+  inline Transition& operator=(const Transition& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Transition& default_instance();
+
+  void Swap(Transition* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Transition* New() const { return New(NULL); }
+
+  Transition* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Transition& from);
+  void MergeFrom(const Transition& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Transition* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
+
+  // optional string caption = 2;
+  void clear_caption();
+  static const int kCaptionFieldNumber = 2;
+  const ::std::string& caption() const;
+  void set_caption(const ::std::string& value);
+  void set_caption(const char* value);
+  void set_caption(const char* value, size_t size);
+  ::std::string* mutable_caption();
+  ::std::string* release_caption();
+  void set_allocated_caption(::std::string* caption);
+
+  // optional string type = 3;
+  void clear_type();
+  static const int kTypeFieldNumber = 3;
+  const ::std::string& type() const;
+  void set_type(const ::std::string& value);
+  void set_type(const char* value);
+  void set_type(const char* value, size_t size);
+  ::std::string* mutable_type();
+  ::std::string* release_type();
+  void set_allocated_type(::std::string* type);
+
+  // optional int32 room1_id = 4;
+  void clear_room1_id();
+  static const int kRoom1IdFieldNumber = 4;
+  ::google::protobuf::int32 room1_id() const;
+  void set_room1_id(::google::protobuf::int32 value);
+
+  // optional int32 subroom1_id = 5;
+  void clear_subroom1_id();
+  static const int kSubroom1IdFieldNumber = 5;
+  ::google::protobuf::int32 subroom1_id() const;
+  void set_subroom1_id(::google::protobuf::int32 value);
+
+  // optional int32 room2_id = 6;
+  void clear_room2_id();
+  static const int kRoom2IdFieldNumber = 6;
+  ::google::protobuf::int32 room2_id() const;
+  void set_room2_id(::google::protobuf::int32 value);
+
+  // optional int32 subroom2_id = 7;
+  void clear_subroom2_id();
+  static const int kSubroom2IdFieldNumber = 7;
+  ::google::protobuf::int32 subroom2_id() const;
+  void set_subroom2_id(::google::protobuf::int32 value);
+
+  // optional .hybridsim.Coordinate vert1 = 8;
+  bool has_vert1() const;
+  void clear_vert1();
+  static const int kVert1FieldNumber = 8;
+  const ::hybridsim::Coordinate& vert1() const;
+  ::hybridsim::Coordinate* mutable_vert1();
+  ::hybridsim::Coordinate* release_vert1();
+  void set_allocated_vert1(::hybridsim::Coordinate* vert1);
+
+  // optional .hybridsim.Coordinate vert2 = 9;
+  bool has_vert2() const;
+  void clear_vert2();
+  static const int kVert2FieldNumber = 9;
+  const ::hybridsim::Coordinate& vert2() const;
+  ::hybridsim::Coordinate* mutable_vert2();
+  ::hybridsim::Coordinate* release_vert2();
+  void set_allocated_vert2(::hybridsim::Coordinate* vert2);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Transition)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr caption_;
+  ::google::protobuf::int32 id_;
+  ::google::protobuf::int32 room1_id_;
+  ::google::protobuf::internal::ArenaStringPtr type_;
+  ::google::protobuf::int32 subroom1_id_;
+  ::google::protobuf::int32 room2_id_;
+  ::hybridsim::Coordinate* vert1_;
+  ::hybridsim::Coordinate* vert2_;
+  ::google::protobuf::int32 subroom2_id_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Transition* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Room : public ::google::protobuf::Message {
+ public:
+  Room();
+  virtual ~Room();
+
+  Room(const Room& from);
+
+  inline Room& operator=(const Room& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Room& default_instance();
+
+  void Swap(Room* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Room* New() const { return New(NULL); }
+
+  Room* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Room& from);
+  void MergeFrom(const Room& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Room* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
+
+  // optional string caption = 2;
+  void clear_caption();
+  static const int kCaptionFieldNumber = 2;
+  const ::std::string& caption() const;
+  void set_caption(const ::std::string& value);
+  void set_caption(const char* value);
+  void set_caption(const char* value, size_t size);
+  ::std::string* mutable_caption();
+  ::std::string* release_caption();
+  void set_allocated_caption(::std::string* caption);
+
+  // repeated .hybridsim.Subroom subroom = 3;
+  int subroom_size() const;
+  void clear_subroom();
+  static const int kSubroomFieldNumber = 3;
+  const ::hybridsim::Subroom& subroom(int index) const;
+  ::hybridsim::Subroom* mutable_subroom(int index);
+  ::hybridsim::Subroom* add_subroom();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom >*
+      mutable_subroom();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom >&
+      subroom() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Room)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr caption_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom > subroom_;
+  ::google::protobuf::int32 id_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Room* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Subroom : public ::google::protobuf::Message {
+ public:
+  Subroom();
+  virtual ~Subroom();
+
+  Subroom(const Subroom& from);
+
+  inline Subroom& operator=(const Subroom& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Subroom& default_instance();
+
+  void Swap(Subroom* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Subroom* New() const { return New(NULL); }
+
+  Subroom* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Subroom& from);
+  void MergeFrom(const Subroom& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Subroom* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
+
+  // optional int32 closed = 2;
+  void clear_closed();
+  static const int kClosedFieldNumber = 2;
+  ::google::protobuf::int32 closed() const;
+  void set_closed(::google::protobuf::int32 value);
+
+  // optional string class = 3;
+  void clear_class_();
+  static const int kClassFieldNumber = 3;
+  const ::std::string& class_() const;
+  void set_class_(const ::std::string& value);
+  void set_class_(const char* value);
+  void set_class_(const char* value, size_t size);
+  ::std::string* mutable_class_();
+  ::std::string* release_class_();
+  void set_allocated_class_(::std::string* class_);
+
+  // repeated .hybridsim.Polygon polygon = 4;
+  int polygon_size() const;
+  void clear_polygon();
+  static const int kPolygonFieldNumber = 4;
+  const ::hybridsim::Polygon& polygon(int index) const;
+  ::hybridsim::Polygon* mutable_polygon(int index);
+  ::hybridsim::Polygon* add_polygon();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon >*
+      mutable_polygon();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon >&
+      polygon() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Subroom)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 id_;
+  ::google::protobuf::int32 closed_;
+  ::google::protobuf::internal::ArenaStringPtr class__;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon > polygon_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Subroom* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Polygon : public ::google::protobuf::Message {
+ public:
+  Polygon();
+  virtual ~Polygon();
+
+  Polygon(const Polygon& from);
+
+  inline Polygon& operator=(const Polygon& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Polygon& default_instance();
+
+  void Swap(Polygon* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Polygon* New() const { return New(NULL); }
+
+  Polygon* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Polygon& from);
+  void MergeFrom(const Polygon& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Polygon* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string caption = 1;
+  void clear_caption();
+  static const int kCaptionFieldNumber = 1;
+  const ::std::string& caption() const;
+  void set_caption(const ::std::string& value);
+  void set_caption(const char* value);
+  void set_caption(const char* value, size_t size);
+  ::std::string* mutable_caption();
+  ::std::string* release_caption();
+  void set_allocated_caption(::std::string* caption);
+
+  // repeated .hybridsim.Coordinate coordinate = 2;
+  int coordinate_size() const;
+  void clear_coordinate();
+  static const int kCoordinateFieldNumber = 2;
+  const ::hybridsim::Coordinate& coordinate(int index) const;
+  ::hybridsim::Coordinate* mutable_coordinate(int index);
+  ::hybridsim::Coordinate* add_coordinate();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate >*
+      mutable_coordinate();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate >&
+      coordinate() const;
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Polygon)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr caption_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate > coordinate_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Polygon* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class LeftClosedRightOpenTimeInterval : public ::google::protobuf::Message {
  public:
@@ -967,6 +2787,2073 @@ class Trajectories : public ::google::protobuf::Message {
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
+// Scenario
+
+// optional uint32 seed = 1;
+inline void Scenario::clear_seed() {
+  seed_ = 0u;
+}
+inline ::google::protobuf::uint32 Scenario::seed() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.seed)
+  return seed_;
+}
+inline void Scenario::set_seed(::google::protobuf::uint32 value) {
+  
+  seed_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Scenario.seed)
+}
+
+// optional .hybridsim.Environment environment = 2;
+inline bool Scenario::has_environment() const {
+  return !_is_default_instance_ && environment_ != NULL;
+}
+inline void Scenario::clear_environment() {
+  if (GetArenaNoVirtual() == NULL && environment_ != NULL) delete environment_;
+  environment_ = NULL;
+}
+inline const ::hybridsim::Environment& Scenario::environment() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.environment)
+  return environment_ != NULL ? *environment_ : *default_instance_->environment_;
+}
+inline ::hybridsim::Environment* Scenario::mutable_environment() {
+  
+  if (environment_ == NULL) {
+    environment_ = new ::hybridsim::Environment;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.environment)
+  return environment_;
+}
+inline ::hybridsim::Environment* Scenario::release_environment() {
+  
+  ::hybridsim::Environment* temp = environment_;
+  environment_ = NULL;
+  return temp;
+}
+inline void Scenario::set_allocated_environment(::hybridsim::Environment* environment) {
+  delete environment_;
+  environment_ = environment;
+  if (environment) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Scenario.environment)
+}
+
+// repeated .hybridsim.Goal goal = 3;
+inline int Scenario::goal_size() const {
+  return goal_.size();
+}
+inline void Scenario::clear_goal() {
+  goal_.Clear();
+}
+inline const ::hybridsim::Goal& Scenario::goal(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.goal)
+  return goal_.Get(index);
+}
+inline ::hybridsim::Goal* Scenario::mutable_goal(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.goal)
+  return goal_.Mutable(index);
+}
+inline ::hybridsim::Goal* Scenario::add_goal() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.goal)
+  return goal_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Goal >*
+Scenario::mutable_goal() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.goal)
+  return &goal_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Goal >&
+Scenario::goal() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.goal)
+  return goal_;
+}
+
+// repeated .hybridsim.Group group = 4;
+inline int Scenario::group_size() const {
+  return group_.size();
+}
+inline void Scenario::clear_group() {
+  group_.Clear();
+}
+inline const ::hybridsim::Group& Scenario::group(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.group)
+  return group_.Get(index);
+}
+inline ::hybridsim::Group* Scenario::mutable_group(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.group)
+  return group_.Mutable(index);
+}
+inline ::hybridsim::Group* Scenario::add_group() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.group)
+  return group_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Group >*
+Scenario::mutable_group() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.group)
+  return &group_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Group >&
+Scenario::group() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.group)
+  return group_;
+}
+
+// repeated .hybridsim.Source source = 5;
+inline int Scenario::source_size() const {
+  return source_.size();
+}
+inline void Scenario::clear_source() {
+  source_.Clear();
+}
+inline const ::hybridsim::Source& Scenario::source(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.source)
+  return source_.Get(index);
+}
+inline ::hybridsim::Source* Scenario::mutable_source(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.source)
+  return source_.Mutable(index);
+}
+inline ::hybridsim::Source* Scenario::add_source() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.source)
+  return source_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Source >*
+Scenario::mutable_source() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.source)
+  return &source_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Source >&
+Scenario::source() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.source)
+  return source_;
+}
+
+// optional .hybridsim.Model model = 6;
+inline bool Scenario::has_model() const {
+  return !_is_default_instance_ && model_ != NULL;
+}
+inline void Scenario::clear_model() {
+  if (GetArenaNoVirtual() == NULL && model_ != NULL) delete model_;
+  model_ = NULL;
+}
+inline const ::hybridsim::Model& Scenario::model() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.model)
+  return model_ != NULL ? *model_ : *default_instance_->model_;
+}
+inline ::hybridsim::Model* Scenario::mutable_model() {
+  
+  if (model_ == NULL) {
+    model_ = new ::hybridsim::Model;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.model)
+  return model_;
+}
+inline ::hybridsim::Model* Scenario::release_model() {
+  
+  ::hybridsim::Model* temp = model_;
+  model_ = NULL;
+  return temp;
+}
+inline void Scenario::set_allocated_model(::hybridsim::Model* model) {
+  delete model_;
+  model_ = model;
+  if (model) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Scenario.model)
+}
+
+// repeated .hybridsim.Router router = 7;
+inline int Scenario::router_size() const {
+  return router_.size();
+}
+inline void Scenario::clear_router() {
+  router_.Clear();
+}
+inline const ::hybridsim::Router& Scenario::router(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.router)
+  return router_.Get(index);
+}
+inline ::hybridsim::Router* Scenario::mutable_router(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.router)
+  return router_.Mutable(index);
+}
+inline ::hybridsim::Router* Scenario::add_router() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.router)
+  return router_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Router >*
+Scenario::mutable_router() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.router)
+  return &router_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Router >&
+Scenario::router() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.router)
+  return router_;
+}
+
+// -------------------------------------------------------------------
+
+// Router
+
+// optional int32 router_id = 1;
+inline void Router::clear_router_id() {
+  router_id_ = 0;
+}
+inline ::google::protobuf::int32 Router::router_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Router.router_id)
+  return router_id_;
+}
+inline void Router::set_router_id(::google::protobuf::int32 value) {
+  
+  router_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Router.router_id)
+}
+
+// optional string description = 2;
+inline void Router::clear_description() {
+  description_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Router::description() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Router.description)
+  return description_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Router::set_description(const ::std::string& value) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Router.description)
+}
+inline void Router::set_description(const char* value) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Router.description)
+}
+inline void Router::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Router.description)
+}
+inline ::std::string* Router::mutable_description() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Router.description)
+  return description_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Router::release_description() {
+  
+  return description_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Router::set_allocated_description(::std::string* description) {
+  if (description != NULL) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Router.description)
+}
+
+// -------------------------------------------------------------------
+
+// Model
+
+// optional .hybridsim.Model.Type type = 1;
+inline void Model::clear_type() {
+  type_ = 0;
+}
+inline ::hybridsim::Model_Type Model::type() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Model.type)
+  return static_cast< ::hybridsim::Model_Type >(type_);
+}
+inline void Model::set_type(::hybridsim::Model_Type value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Model.type)
+}
+
+// optional .hybridsim.Gompertz gompertz = 2;
+inline bool Model::has_gompertz() const {
+  return !_is_default_instance_ && gompertz_ != NULL;
+}
+inline void Model::clear_gompertz() {
+  if (GetArenaNoVirtual() == NULL && gompertz_ != NULL) delete gompertz_;
+  gompertz_ = NULL;
+}
+inline const ::hybridsim::Gompertz& Model::gompertz() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Model.gompertz)
+  return gompertz_ != NULL ? *gompertz_ : *default_instance_->gompertz_;
+}
+inline ::hybridsim::Gompertz* Model::mutable_gompertz() {
+  
+  if (gompertz_ == NULL) {
+    gompertz_ = new ::hybridsim::Gompertz;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Model.gompertz)
+  return gompertz_;
+}
+inline ::hybridsim::Gompertz* Model::release_gompertz() {
+  
+  ::hybridsim::Gompertz* temp = gompertz_;
+  gompertz_ = NULL;
+  return temp;
+}
+inline void Model::set_allocated_gompertz(::hybridsim::Gompertz* gompertz) {
+  delete gompertz_;
+  gompertz_ = gompertz;
+  if (gompertz) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Model.gompertz)
+}
+
+// -------------------------------------------------------------------
+
+// Gompertz
+
+// optional string solver = 1;
+inline void Gompertz::clear_solver() {
+  solver_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Gompertz::solver() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.solver)
+  return solver_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Gompertz::set_solver(const ::std::string& value) {
+  
+  solver_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.solver)
+}
+inline void Gompertz::set_solver(const char* value) {
+  
+  solver_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Gompertz.solver)
+}
+inline void Gompertz::set_solver(const char* value, size_t size) {
+  
+  solver_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Gompertz.solver)
+}
+inline ::std::string* Gompertz::mutable_solver() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.solver)
+  return solver_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Gompertz::release_solver() {
+  
+  return solver_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Gompertz::set_allocated_solver(::std::string* solver) {
+  if (solver != NULL) {
+    
+  } else {
+    
+  }
+  solver_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), solver);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.solver)
+}
+
+// optional double stepsize = 2;
+inline void Gompertz::clear_stepsize() {
+  stepsize_ = 0;
+}
+inline double Gompertz::stepsize() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.stepsize)
+  return stepsize_;
+}
+inline void Gompertz::set_stepsize(double value) {
+  
+  stepsize_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.stepsize)
+}
+
+// optional int32 exit_crossing_strategy = 3;
+inline void Gompertz::clear_exit_crossing_strategy() {
+  exit_crossing_strategy_ = 0;
+}
+inline ::google::protobuf::int32 Gompertz::exit_crossing_strategy() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.exit_crossing_strategy)
+  return exit_crossing_strategy_;
+}
+inline void Gompertz::set_exit_crossing_strategy(::google::protobuf::int32 value) {
+  
+  exit_crossing_strategy_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.exit_crossing_strategy)
+}
+
+// optional bool linked_cells_enabled = 4;
+inline void Gompertz::clear_linked_cells_enabled() {
+  linked_cells_enabled_ = false;
+}
+inline bool Gompertz::linked_cells_enabled() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.linked_cells_enabled)
+  return linked_cells_enabled_;
+}
+inline void Gompertz::set_linked_cells_enabled(bool value) {
+  
+  linked_cells_enabled_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.linked_cells_enabled)
+}
+
+// optional double cell_size = 5;
+inline void Gompertz::clear_cell_size() {
+  cell_size_ = 0;
+}
+inline double Gompertz::cell_size() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.cell_size)
+  return cell_size_;
+}
+inline void Gompertz::set_cell_size(double value) {
+  
+  cell_size_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.cell_size)
+}
+
+// optional .hybridsim.Force force_ped = 6;
+inline bool Gompertz::has_force_ped() const {
+  return !_is_default_instance_ && force_ped_ != NULL;
+}
+inline void Gompertz::clear_force_ped() {
+  if (GetArenaNoVirtual() == NULL && force_ped_ != NULL) delete force_ped_;
+  force_ped_ = NULL;
+}
+inline const ::hybridsim::Force& Gompertz::force_ped() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.force_ped)
+  return force_ped_ != NULL ? *force_ped_ : *default_instance_->force_ped_;
+}
+inline ::hybridsim::Force* Gompertz::mutable_force_ped() {
+  
+  if (force_ped_ == NULL) {
+    force_ped_ = new ::hybridsim::Force;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.force_ped)
+  return force_ped_;
+}
+inline ::hybridsim::Force* Gompertz::release_force_ped() {
+  
+  ::hybridsim::Force* temp = force_ped_;
+  force_ped_ = NULL;
+  return temp;
+}
+inline void Gompertz::set_allocated_force_ped(::hybridsim::Force* force_ped) {
+  delete force_ped_;
+  force_ped_ = force_ped;
+  if (force_ped) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.force_ped)
+}
+
+// optional .hybridsim.Force force_wall = 7;
+inline bool Gompertz::has_force_wall() const {
+  return !_is_default_instance_ && force_wall_ != NULL;
+}
+inline void Gompertz::clear_force_wall() {
+  if (GetArenaNoVirtual() == NULL && force_wall_ != NULL) delete force_wall_;
+  force_wall_ = NULL;
+}
+inline const ::hybridsim::Force& Gompertz::force_wall() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.force_wall)
+  return force_wall_ != NULL ? *force_wall_ : *default_instance_->force_wall_;
+}
+inline ::hybridsim::Force* Gompertz::mutable_force_wall() {
+  
+  if (force_wall_ == NULL) {
+    force_wall_ = new ::hybridsim::Force;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.force_wall)
+  return force_wall_;
+}
+inline ::hybridsim::Force* Gompertz::release_force_wall() {
+  
+  ::hybridsim::Force* temp = force_wall_;
+  force_wall_ = NULL;
+  return temp;
+}
+inline void Gompertz::set_allocated_force_wall(::hybridsim::Force* force_wall) {
+  delete force_wall_;
+  force_wall_ = force_wall;
+  if (force_wall) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.force_wall)
+}
+
+// optional .hybridsim.AgentParams agent_params = 8;
+inline bool Gompertz::has_agent_params() const {
+  return !_is_default_instance_ && agent_params_ != NULL;
+}
+inline void Gompertz::clear_agent_params() {
+  if (GetArenaNoVirtual() == NULL && agent_params_ != NULL) delete agent_params_;
+  agent_params_ = NULL;
+}
+inline const ::hybridsim::AgentParams& Gompertz::agent_params() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.agent_params)
+  return agent_params_ != NULL ? *agent_params_ : *default_instance_->agent_params_;
+}
+inline ::hybridsim::AgentParams* Gompertz::mutable_agent_params() {
+  
+  if (agent_params_ == NULL) {
+    agent_params_ = new ::hybridsim::AgentParams;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.agent_params)
+  return agent_params_;
+}
+inline ::hybridsim::AgentParams* Gompertz::release_agent_params() {
+  
+  ::hybridsim::AgentParams* temp = agent_params_;
+  agent_params_ = NULL;
+  return temp;
+}
+inline void Gompertz::set_allocated_agent_params(::hybridsim::AgentParams* agent_params) {
+  delete agent_params_;
+  agent_params_ = agent_params;
+  if (agent_params) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.agent_params)
+}
+
+// -------------------------------------------------------------------
+
+// AgentParams
+
+// optional .hybridsim.Distribution v0 = 1;
+inline bool AgentParams::has_v0() const {
+  return !_is_default_instance_ && v0_ != NULL;
+}
+inline void AgentParams::clear_v0() {
+  if (GetArenaNoVirtual() == NULL && v0_ != NULL) delete v0_;
+  v0_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0)
+  return v0_ != NULL ? *v0_ : *default_instance_->v0_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0() {
+  
+  if (v0_ == NULL) {
+    v0_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0)
+  return v0_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0() {
+  
+  ::hybridsim::Distribution* temp = v0_;
+  v0_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0(::hybridsim::Distribution* v0) {
+  delete v0_;
+  v0_ = v0;
+  if (v0) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0)
+}
+
+// optional .hybridsim.Distribution b_max = 2;
+inline bool AgentParams::has_b_max() const {
+  return !_is_default_instance_ && b_max_ != NULL;
+}
+inline void AgentParams::clear_b_max() {
+  if (GetArenaNoVirtual() == NULL && b_max_ != NULL) delete b_max_;
+  b_max_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::b_max() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.b_max)
+  return b_max_ != NULL ? *b_max_ : *default_instance_->b_max_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_b_max() {
+  
+  if (b_max_ == NULL) {
+    b_max_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.b_max)
+  return b_max_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_b_max() {
+  
+  ::hybridsim::Distribution* temp = b_max_;
+  b_max_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_b_max(::hybridsim::Distribution* b_max) {
+  delete b_max_;
+  b_max_ = b_max;
+  if (b_max) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.b_max)
+}
+
+// optional .hybridsim.Distribution b_min = 3;
+inline bool AgentParams::has_b_min() const {
+  return !_is_default_instance_ && b_min_ != NULL;
+}
+inline void AgentParams::clear_b_min() {
+  if (GetArenaNoVirtual() == NULL && b_min_ != NULL) delete b_min_;
+  b_min_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::b_min() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.b_min)
+  return b_min_ != NULL ? *b_min_ : *default_instance_->b_min_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_b_min() {
+  
+  if (b_min_ == NULL) {
+    b_min_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.b_min)
+  return b_min_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_b_min() {
+  
+  ::hybridsim::Distribution* temp = b_min_;
+  b_min_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_b_min(::hybridsim::Distribution* b_min) {
+  delete b_min_;
+  b_min_ = b_min;
+  if (b_min) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.b_min)
+}
+
+// optional .hybridsim.Distribution a_min = 4;
+inline bool AgentParams::has_a_min() const {
+  return !_is_default_instance_ && a_min_ != NULL;
+}
+inline void AgentParams::clear_a_min() {
+  if (GetArenaNoVirtual() == NULL && a_min_ != NULL) delete a_min_;
+  a_min_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::a_min() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.a_min)
+  return a_min_ != NULL ? *a_min_ : *default_instance_->a_min_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_a_min() {
+  
+  if (a_min_ == NULL) {
+    a_min_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.a_min)
+  return a_min_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_a_min() {
+  
+  ::hybridsim::Distribution* temp = a_min_;
+  a_min_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_a_min(::hybridsim::Distribution* a_min) {
+  delete a_min_;
+  a_min_ = a_min;
+  if (a_min) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.a_min)
+}
+
+// optional .hybridsim.Distribution tau = 5;
+inline bool AgentParams::has_tau() const {
+  return !_is_default_instance_ && tau_ != NULL;
+}
+inline void AgentParams::clear_tau() {
+  if (GetArenaNoVirtual() == NULL && tau_ != NULL) delete tau_;
+  tau_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::tau() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.tau)
+  return tau_ != NULL ? *tau_ : *default_instance_->tau_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_tau() {
+  
+  if (tau_ == NULL) {
+    tau_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.tau)
+  return tau_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_tau() {
+  
+  ::hybridsim::Distribution* temp = tau_;
+  tau_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_tau(::hybridsim::Distribution* tau) {
+  delete tau_;
+  tau_ = tau;
+  if (tau) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.tau)
+}
+
+// optional .hybridsim.Distribution atau = 6;
+inline bool AgentParams::has_atau() const {
+  return !_is_default_instance_ && atau_ != NULL;
+}
+inline void AgentParams::clear_atau() {
+  if (GetArenaNoVirtual() == NULL && atau_ != NULL) delete atau_;
+  atau_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::atau() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.atau)
+  return atau_ != NULL ? *atau_ : *default_instance_->atau_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_atau() {
+  
+  if (atau_ == NULL) {
+    atau_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.atau)
+  return atau_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_atau() {
+  
+  ::hybridsim::Distribution* temp = atau_;
+  atau_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_atau(::hybridsim::Distribution* atau) {
+  delete atau_;
+  atau_ = atau;
+  if (atau) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.atau)
+}
+
+// optional .hybridsim.Distribution v0_upstairs = 7;
+inline bool AgentParams::has_v0_upstairs() const {
+  return !_is_default_instance_ && v0_upstairs_ != NULL;
+}
+inline void AgentParams::clear_v0_upstairs() {
+  if (GetArenaNoVirtual() == NULL && v0_upstairs_ != NULL) delete v0_upstairs_;
+  v0_upstairs_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0_upstairs() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_upstairs)
+  return v0_upstairs_ != NULL ? *v0_upstairs_ : *default_instance_->v0_upstairs_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0_upstairs() {
+  
+  if (v0_upstairs_ == NULL) {
+    v0_upstairs_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_upstairs)
+  return v0_upstairs_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0_upstairs() {
+  
+  ::hybridsim::Distribution* temp = v0_upstairs_;
+  v0_upstairs_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0_upstairs(::hybridsim::Distribution* v0_upstairs) {
+  delete v0_upstairs_;
+  v0_upstairs_ = v0_upstairs;
+  if (v0_upstairs) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_upstairs)
+}
+
+// optional .hybridsim.Distribution v0_downstairs = 8;
+inline bool AgentParams::has_v0_downstairs() const {
+  return !_is_default_instance_ && v0_downstairs_ != NULL;
+}
+inline void AgentParams::clear_v0_downstairs() {
+  if (GetArenaNoVirtual() == NULL && v0_downstairs_ != NULL) delete v0_downstairs_;
+  v0_downstairs_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0_downstairs() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_downstairs)
+  return v0_downstairs_ != NULL ? *v0_downstairs_ : *default_instance_->v0_downstairs_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0_downstairs() {
+  
+  if (v0_downstairs_ == NULL) {
+    v0_downstairs_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_downstairs)
+  return v0_downstairs_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0_downstairs() {
+  
+  ::hybridsim::Distribution* temp = v0_downstairs_;
+  v0_downstairs_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0_downstairs(::hybridsim::Distribution* v0_downstairs) {
+  delete v0_downstairs_;
+  v0_downstairs_ = v0_downstairs;
+  if (v0_downstairs) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_downstairs)
+}
+
+// optional .hybridsim.Distribution v0_escalator_up = 9;
+inline bool AgentParams::has_v0_escalator_up() const {
+  return !_is_default_instance_ && v0_escalator_up_ != NULL;
+}
+inline void AgentParams::clear_v0_escalator_up() {
+  if (GetArenaNoVirtual() == NULL && v0_escalator_up_ != NULL) delete v0_escalator_up_;
+  v0_escalator_up_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0_escalator_up() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_escalator_up)
+  return v0_escalator_up_ != NULL ? *v0_escalator_up_ : *default_instance_->v0_escalator_up_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0_escalator_up() {
+  
+  if (v0_escalator_up_ == NULL) {
+    v0_escalator_up_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_escalator_up)
+  return v0_escalator_up_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0_escalator_up() {
+  
+  ::hybridsim::Distribution* temp = v0_escalator_up_;
+  v0_escalator_up_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0_escalator_up(::hybridsim::Distribution* v0_escalator_up) {
+  delete v0_escalator_up_;
+  v0_escalator_up_ = v0_escalator_up;
+  if (v0_escalator_up) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_escalator_up)
+}
+
+// optional .hybridsim.Distribution v0_escalator_down = 10;
+inline bool AgentParams::has_v0_escalator_down() const {
+  return !_is_default_instance_ && v0_escalator_down_ != NULL;
+}
+inline void AgentParams::clear_v0_escalator_down() {
+  if (GetArenaNoVirtual() == NULL && v0_escalator_down_ != NULL) delete v0_escalator_down_;
+  v0_escalator_down_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0_escalator_down() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_escalator_down)
+  return v0_escalator_down_ != NULL ? *v0_escalator_down_ : *default_instance_->v0_escalator_down_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0_escalator_down() {
+  
+  if (v0_escalator_down_ == NULL) {
+    v0_escalator_down_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_escalator_down)
+  return v0_escalator_down_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0_escalator_down() {
+  
+  ::hybridsim::Distribution* temp = v0_escalator_down_;
+  v0_escalator_down_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0_escalator_down(::hybridsim::Distribution* v0_escalator_down) {
+  delete v0_escalator_down_;
+  v0_escalator_down_ = v0_escalator_down;
+  if (v0_escalator_down) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_escalator_down)
+}
+
+// optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+inline bool AgentParams::has_v0_idle_escalator_up() const {
+  return !_is_default_instance_ && v0_idle_escalator_up_ != NULL;
+}
+inline void AgentParams::clear_v0_idle_escalator_up() {
+  if (GetArenaNoVirtual() == NULL && v0_idle_escalator_up_ != NULL) delete v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0_idle_escalator_up() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_idle_escalator_up)
+  return v0_idle_escalator_up_ != NULL ? *v0_idle_escalator_up_ : *default_instance_->v0_idle_escalator_up_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0_idle_escalator_up() {
+  
+  if (v0_idle_escalator_up_ == NULL) {
+    v0_idle_escalator_up_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_idle_escalator_up)
+  return v0_idle_escalator_up_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0_idle_escalator_up() {
+  
+  ::hybridsim::Distribution* temp = v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0_idle_escalator_up(::hybridsim::Distribution* v0_idle_escalator_up) {
+  delete v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = v0_idle_escalator_up;
+  if (v0_idle_escalator_up) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_idle_escalator_up)
+}
+
+// optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+inline bool AgentParams::has_v0_idle_escalator_down() const {
+  return !_is_default_instance_ && v0_idle_escalator_down_ != NULL;
+}
+inline void AgentParams::clear_v0_idle_escalator_down() {
+  if (GetArenaNoVirtual() == NULL && v0_idle_escalator_down_ != NULL) delete v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::v0_idle_escalator_down() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_idle_escalator_down)
+  return v0_idle_escalator_down_ != NULL ? *v0_idle_escalator_down_ : *default_instance_->v0_idle_escalator_down_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_v0_idle_escalator_down() {
+  
+  if (v0_idle_escalator_down_ == NULL) {
+    v0_idle_escalator_down_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_idle_escalator_down)
+  return v0_idle_escalator_down_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_v0_idle_escalator_down() {
+  
+  ::hybridsim::Distribution* temp = v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_v0_idle_escalator_down(::hybridsim::Distribution* v0_idle_escalator_down) {
+  delete v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = v0_idle_escalator_down;
+  if (v0_idle_escalator_down) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_idle_escalator_down)
+}
+
+// optional .hybridsim.Distribution T = 13;
+inline bool AgentParams::has_t() const {
+  return !_is_default_instance_ && t_ != NULL;
+}
+inline void AgentParams::clear_t() {
+  if (GetArenaNoVirtual() == NULL && t_ != NULL) delete t_;
+  t_ = NULL;
+}
+inline const ::hybridsim::Distribution& AgentParams::t() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.T)
+  return t_ != NULL ? *t_ : *default_instance_->t_;
+}
+inline ::hybridsim::Distribution* AgentParams::mutable_t() {
+  
+  if (t_ == NULL) {
+    t_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.T)
+  return t_;
+}
+inline ::hybridsim::Distribution* AgentParams::release_t() {
+  
+  ::hybridsim::Distribution* temp = t_;
+  t_ = NULL;
+  return temp;
+}
+inline void AgentParams::set_allocated_t(::hybridsim::Distribution* t) {
+  delete t_;
+  t_ = t;
+  if (t) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.T)
+}
+
+// -------------------------------------------------------------------
+
+// Distribution
+
+// optional double mu = 1;
+inline void Distribution::clear_mu() {
+  mu_ = 0;
+}
+inline double Distribution::mu() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Distribution.mu)
+  return mu_;
+}
+inline void Distribution::set_mu(double value) {
+  
+  mu_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Distribution.mu)
+}
+
+// optional double sigma = 2;
+inline void Distribution::clear_sigma() {
+  sigma_ = 0;
+}
+inline double Distribution::sigma() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Distribution.sigma)
+  return sigma_;
+}
+inline void Distribution::set_sigma(double value) {
+  
+  sigma_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Distribution.sigma)
+}
+
+// -------------------------------------------------------------------
+
+// Force
+
+// optional double nu = 1;
+inline void Force::clear_nu() {
+  nu_ = 0;
+}
+inline double Force::nu() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.nu)
+  return nu_;
+}
+inline void Force::set_nu(double value) {
+  
+  nu_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.nu)
+}
+
+// optional double a = 2;
+inline void Force::clear_a() {
+  a_ = 0;
+}
+inline double Force::a() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.a)
+  return a_;
+}
+inline void Force::set_a(double value) {
+  
+  a_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.a)
+}
+
+// optional double b = 3;
+inline void Force::clear_b() {
+  b_ = 0;
+}
+inline double Force::b() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.b)
+  return b_;
+}
+inline void Force::set_b(double value) {
+  
+  b_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.b)
+}
+
+// optional double c = 4;
+inline void Force::clear_c() {
+  c_ = 0;
+}
+inline double Force::c() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.c)
+  return c_;
+}
+inline void Force::set_c(double value) {
+  
+  c_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.c)
+}
+
+// -------------------------------------------------------------------
+
+// Group
+
+// optional int32 group_id = 1;
+inline void Group::clear_group_id() {
+  group_id_ = 0;
+}
+inline ::google::protobuf::int32 Group::group_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.group_id)
+  return group_id_;
+}
+inline void Group::set_group_id(::google::protobuf::int32 value) {
+  
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.group_id)
+}
+
+// optional int32 room_id = 2;
+inline void Group::clear_room_id() {
+  room_id_ = 0;
+}
+inline ::google::protobuf::int32 Group::room_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.room_id)
+  return room_id_;
+}
+inline void Group::set_room_id(::google::protobuf::int32 value) {
+  
+  room_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.room_id)
+}
+
+// optional int32 subroom_id = 3;
+inline void Group::clear_subroom_id() {
+  subroom_id_ = 0;
+}
+inline ::google::protobuf::int32 Group::subroom_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.subroom_id)
+  return subroom_id_;
+}
+inline void Group::set_subroom_id(::google::protobuf::int32 value) {
+  
+  subroom_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.subroom_id)
+}
+
+// optional int32 number = 4;
+inline void Group::clear_number() {
+  number_ = 0;
+}
+inline ::google::protobuf::int32 Group::number() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.number)
+  return number_;
+}
+inline void Group::set_number(::google::protobuf::int32 value) {
+  
+  number_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.number)
+}
+
+// optional int32 router_id = 5;
+inline void Group::clear_router_id() {
+  router_id_ = 0;
+}
+inline ::google::protobuf::int32 Group::router_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.router_id)
+  return router_id_;
+}
+inline void Group::set_router_id(::google::protobuf::int32 value) {
+  
+  router_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.router_id)
+}
+
+// optional int32 agent_parameter_id = 6;
+inline void Group::clear_agent_parameter_id() {
+  agent_parameter_id_ = 0;
+}
+inline ::google::protobuf::int32 Group::agent_parameter_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.agent_parameter_id)
+  return agent_parameter_id_;
+}
+inline void Group::set_agent_parameter_id(::google::protobuf::int32 value) {
+  
+  agent_parameter_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.agent_parameter_id)
+}
+
+// optional .hybridsim.Coordinate min_x_y = 7;
+inline bool Group::has_min_x_y() const {
+  return !_is_default_instance_ && min_x_y_ != NULL;
+}
+inline void Group::clear_min_x_y() {
+  if (GetArenaNoVirtual() == NULL && min_x_y_ != NULL) delete min_x_y_;
+  min_x_y_ = NULL;
+}
+inline const ::hybridsim::Coordinate& Group::min_x_y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.min_x_y)
+  return min_x_y_ != NULL ? *min_x_y_ : *default_instance_->min_x_y_;
+}
+inline ::hybridsim::Coordinate* Group::mutable_min_x_y() {
+  
+  if (min_x_y_ == NULL) {
+    min_x_y_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Group.min_x_y)
+  return min_x_y_;
+}
+inline ::hybridsim::Coordinate* Group::release_min_x_y() {
+  
+  ::hybridsim::Coordinate* temp = min_x_y_;
+  min_x_y_ = NULL;
+  return temp;
+}
+inline void Group::set_allocated_min_x_y(::hybridsim::Coordinate* min_x_y) {
+  delete min_x_y_;
+  min_x_y_ = min_x_y;
+  if (min_x_y) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Group.min_x_y)
+}
+
+// optional .hybridsim.Coordinate max_x_y = 8;
+inline bool Group::has_max_x_y() const {
+  return !_is_default_instance_ && max_x_y_ != NULL;
+}
+inline void Group::clear_max_x_y() {
+  if (GetArenaNoVirtual() == NULL && max_x_y_ != NULL) delete max_x_y_;
+  max_x_y_ = NULL;
+}
+inline const ::hybridsim::Coordinate& Group::max_x_y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.max_x_y)
+  return max_x_y_ != NULL ? *max_x_y_ : *default_instance_->max_x_y_;
+}
+inline ::hybridsim::Coordinate* Group::mutable_max_x_y() {
+  
+  if (max_x_y_ == NULL) {
+    max_x_y_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Group.max_x_y)
+  return max_x_y_;
+}
+inline ::hybridsim::Coordinate* Group::release_max_x_y() {
+  
+  ::hybridsim::Coordinate* temp = max_x_y_;
+  max_x_y_ = NULL;
+  return temp;
+}
+inline void Group::set_allocated_max_x_y(::hybridsim::Coordinate* max_x_y) {
+  delete max_x_y_;
+  max_x_y_ = max_x_y;
+  if (max_x_y) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Group.max_x_y)
+}
+
+// -------------------------------------------------------------------
+
+// Source
+
+// optional int32 id = 1;
+inline void Source::clear_id() {
+  id_ = 0;
+}
+inline ::google::protobuf::int32 Source::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.id)
+  return id_;
+}
+inline void Source::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.id)
+}
+
+// optional int32 frequency = 2;
+inline void Source::clear_frequency() {
+  frequency_ = 0;
+}
+inline ::google::protobuf::int32 Source::frequency() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.frequency)
+  return frequency_;
+}
+inline void Source::set_frequency(::google::protobuf::int32 value) {
+  
+  frequency_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.frequency)
+}
+
+// optional int32 max_agents = 3;
+inline void Source::clear_max_agents() {
+  max_agents_ = 0;
+}
+inline ::google::protobuf::int32 Source::max_agents() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.max_agents)
+  return max_agents_;
+}
+inline void Source::set_max_agents(::google::protobuf::int32 value) {
+  
+  max_agents_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.max_agents)
+}
+
+// optional int32 group_id = 4;
+inline void Source::clear_group_id() {
+  group_id_ = 0;
+}
+inline ::google::protobuf::int32 Source::group_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.group_id)
+  return group_id_;
+}
+inline void Source::set_group_id(::google::protobuf::int32 value) {
+  
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.group_id)
+}
+
+// optional string caption = 5;
+inline void Source::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Source::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Source::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Source.caption)
+}
+inline void Source::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Source.caption)
+}
+inline void Source::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Source.caption)
+}
+inline ::std::string* Source::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Source.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Source::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Source::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Source.caption)
+}
+
+// -------------------------------------------------------------------
+
+// Goal
+
+// optional int32 id = 1;
+inline void Goal::clear_id() {
+  id_ = 0;
+}
+inline ::google::protobuf::int32 Goal::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.id)
+  return id_;
+}
+inline void Goal::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Goal.id)
+}
+
+// optional bool final = 2;
+inline void Goal::clear_final() {
+  final_ = false;
+}
+inline bool Goal::final() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.final)
+  return final_;
+}
+inline void Goal::set_final(bool value) {
+  
+  final_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Goal.final)
+}
+
+// optional string caption = 3;
+inline void Goal::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Goal::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Goal::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Goal.caption)
+}
+inline void Goal::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Goal.caption)
+}
+inline void Goal::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Goal.caption)
+}
+inline ::std::string* Goal::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Goal.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Goal::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Goal::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Goal.caption)
+}
+
+// optional .hybridsim.Polygon p = 4;
+inline bool Goal::has_p() const {
+  return !_is_default_instance_ && p_ != NULL;
+}
+inline void Goal::clear_p() {
+  if (GetArenaNoVirtual() == NULL && p_ != NULL) delete p_;
+  p_ = NULL;
+}
+inline const ::hybridsim::Polygon& Goal::p() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.p)
+  return p_ != NULL ? *p_ : *default_instance_->p_;
+}
+inline ::hybridsim::Polygon* Goal::mutable_p() {
+  
+  if (p_ == NULL) {
+    p_ = new ::hybridsim::Polygon;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Goal.p)
+  return p_;
+}
+inline ::hybridsim::Polygon* Goal::release_p() {
+  
+  ::hybridsim::Polygon* temp = p_;
+  p_ = NULL;
+  return temp;
+}
+inline void Goal::set_allocated_p(::hybridsim::Polygon* p) {
+  delete p_;
+  p_ = p;
+  if (p) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Goal.p)
+}
+
+// -------------------------------------------------------------------
+
+// Environment
+
+// repeated .hybridsim.Room room = 1;
+inline int Environment::room_size() const {
+  return room_.size();
+}
+inline void Environment::clear_room() {
+  room_.Clear();
+}
+inline const ::hybridsim::Room& Environment::room(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Environment.room)
+  return room_.Get(index);
+}
+inline ::hybridsim::Room* Environment::mutable_room(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Environment.room)
+  return room_.Mutable(index);
+}
+inline ::hybridsim::Room* Environment::add_room() {
+  // @@protoc_insertion_point(field_add:hybridsim.Environment.room)
+  return room_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Room >*
+Environment::mutable_room() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Environment.room)
+  return &room_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Room >&
+Environment::room() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Environment.room)
+  return room_;
+}
+
+// repeated .hybridsim.Transition transition = 2;
+inline int Environment::transition_size() const {
+  return transition_.size();
+}
+inline void Environment::clear_transition() {
+  transition_.Clear();
+}
+inline const ::hybridsim::Transition& Environment::transition(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Environment.transition)
+  return transition_.Get(index);
+}
+inline ::hybridsim::Transition* Environment::mutable_transition(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Environment.transition)
+  return transition_.Mutable(index);
+}
+inline ::hybridsim::Transition* Environment::add_transition() {
+  // @@protoc_insertion_point(field_add:hybridsim.Environment.transition)
+  return transition_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >*
+Environment::mutable_transition() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Environment.transition)
+  return &transition_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >&
+Environment::transition() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Environment.transition)
+  return transition_;
+}
+
+// -------------------------------------------------------------------
+
+// Transition
+
+// optional int32 id = 1;
+inline void Transition::clear_id() {
+  id_ = 0;
+}
+inline ::google::protobuf::int32 Transition::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.id)
+  return id_;
+}
+inline void Transition::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.id)
+}
+
+// optional string caption = 2;
+inline void Transition::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Transition::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Transition::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.caption)
+}
+inline void Transition::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Transition.caption)
+}
+inline void Transition::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Transition.caption)
+}
+inline ::std::string* Transition::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Transition::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Transition::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.caption)
+}
+
+// optional string type = 3;
+inline void Transition::clear_type() {
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Transition::type() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.type)
+  return type_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Transition::set_type(const ::std::string& value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.type)
+}
+inline void Transition::set_type(const char* value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Transition.type)
+}
+inline void Transition::set_type(const char* value, size_t size) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Transition.type)
+}
+inline ::std::string* Transition::mutable_type() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.type)
+  return type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Transition::release_type() {
+  
+  return type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Transition::set_allocated_type(::std::string* type) {
+  if (type != NULL) {
+    
+  } else {
+    
+  }
+  type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), type);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.type)
+}
+
+// optional int32 room1_id = 4;
+inline void Transition::clear_room1_id() {
+  room1_id_ = 0;
+}
+inline ::google::protobuf::int32 Transition::room1_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.room1_id)
+  return room1_id_;
+}
+inline void Transition::set_room1_id(::google::protobuf::int32 value) {
+  
+  room1_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.room1_id)
+}
+
+// optional int32 subroom1_id = 5;
+inline void Transition::clear_subroom1_id() {
+  subroom1_id_ = 0;
+}
+inline ::google::protobuf::int32 Transition::subroom1_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.subroom1_id)
+  return subroom1_id_;
+}
+inline void Transition::set_subroom1_id(::google::protobuf::int32 value) {
+  
+  subroom1_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.subroom1_id)
+}
+
+// optional int32 room2_id = 6;
+inline void Transition::clear_room2_id() {
+  room2_id_ = 0;
+}
+inline ::google::protobuf::int32 Transition::room2_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.room2_id)
+  return room2_id_;
+}
+inline void Transition::set_room2_id(::google::protobuf::int32 value) {
+  
+  room2_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.room2_id)
+}
+
+// optional int32 subroom2_id = 7;
+inline void Transition::clear_subroom2_id() {
+  subroom2_id_ = 0;
+}
+inline ::google::protobuf::int32 Transition::subroom2_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.subroom2_id)
+  return subroom2_id_;
+}
+inline void Transition::set_subroom2_id(::google::protobuf::int32 value) {
+  
+  subroom2_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.subroom2_id)
+}
+
+// optional .hybridsim.Coordinate vert1 = 8;
+inline bool Transition::has_vert1() const {
+  return !_is_default_instance_ && vert1_ != NULL;
+}
+inline void Transition::clear_vert1() {
+  if (GetArenaNoVirtual() == NULL && vert1_ != NULL) delete vert1_;
+  vert1_ = NULL;
+}
+inline const ::hybridsim::Coordinate& Transition::vert1() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.vert1)
+  return vert1_ != NULL ? *vert1_ : *default_instance_->vert1_;
+}
+inline ::hybridsim::Coordinate* Transition::mutable_vert1() {
+  
+  if (vert1_ == NULL) {
+    vert1_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.vert1)
+  return vert1_;
+}
+inline ::hybridsim::Coordinate* Transition::release_vert1() {
+  
+  ::hybridsim::Coordinate* temp = vert1_;
+  vert1_ = NULL;
+  return temp;
+}
+inline void Transition::set_allocated_vert1(::hybridsim::Coordinate* vert1) {
+  delete vert1_;
+  vert1_ = vert1;
+  if (vert1) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.vert1)
+}
+
+// optional .hybridsim.Coordinate vert2 = 9;
+inline bool Transition::has_vert2() const {
+  return !_is_default_instance_ && vert2_ != NULL;
+}
+inline void Transition::clear_vert2() {
+  if (GetArenaNoVirtual() == NULL && vert2_ != NULL) delete vert2_;
+  vert2_ = NULL;
+}
+inline const ::hybridsim::Coordinate& Transition::vert2() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.vert2)
+  return vert2_ != NULL ? *vert2_ : *default_instance_->vert2_;
+}
+inline ::hybridsim::Coordinate* Transition::mutable_vert2() {
+  
+  if (vert2_ == NULL) {
+    vert2_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.vert2)
+  return vert2_;
+}
+inline ::hybridsim::Coordinate* Transition::release_vert2() {
+  
+  ::hybridsim::Coordinate* temp = vert2_;
+  vert2_ = NULL;
+  return temp;
+}
+inline void Transition::set_allocated_vert2(::hybridsim::Coordinate* vert2) {
+  delete vert2_;
+  vert2_ = vert2;
+  if (vert2) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.vert2)
+}
+
+// -------------------------------------------------------------------
+
+// Room
+
+// optional int32 id = 1;
+inline void Room::clear_id() {
+  id_ = 0;
+}
+inline ::google::protobuf::int32 Room::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Room.id)
+  return id_;
+}
+inline void Room::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Room.id)
+}
+
+// optional string caption = 2;
+inline void Room::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Room::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Room.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Room::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Room.caption)
+}
+inline void Room::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Room.caption)
+}
+inline void Room::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Room.caption)
+}
+inline ::std::string* Room::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Room.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Room::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Room::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Room.caption)
+}
+
+// repeated .hybridsim.Subroom subroom = 3;
+inline int Room::subroom_size() const {
+  return subroom_.size();
+}
+inline void Room::clear_subroom() {
+  subroom_.Clear();
+}
+inline const ::hybridsim::Subroom& Room::subroom(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Room.subroom)
+  return subroom_.Get(index);
+}
+inline ::hybridsim::Subroom* Room::mutable_subroom(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Room.subroom)
+  return subroom_.Mutable(index);
+}
+inline ::hybridsim::Subroom* Room::add_subroom() {
+  // @@protoc_insertion_point(field_add:hybridsim.Room.subroom)
+  return subroom_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom >*
+Room::mutable_subroom() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Room.subroom)
+  return &subroom_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom >&
+Room::subroom() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Room.subroom)
+  return subroom_;
+}
+
+// -------------------------------------------------------------------
+
+// Subroom
+
+// optional int32 id = 1;
+inline void Subroom::clear_id() {
+  id_ = 0;
+}
+inline ::google::protobuf::int32 Subroom::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.id)
+  return id_;
+}
+inline void Subroom::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Subroom.id)
+}
+
+// optional int32 closed = 2;
+inline void Subroom::clear_closed() {
+  closed_ = 0;
+}
+inline ::google::protobuf::int32 Subroom::closed() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.closed)
+  return closed_;
+}
+inline void Subroom::set_closed(::google::protobuf::int32 value) {
+  
+  closed_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Subroom.closed)
+}
+
+// optional string class = 3;
+inline void Subroom::clear_class_() {
+  class__.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Subroom::class_() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.class)
+  return class__.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Subroom::set_class_(const ::std::string& value) {
+  
+  class__.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Subroom.class)
+}
+inline void Subroom::set_class_(const char* value) {
+  
+  class__.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Subroom.class)
+}
+inline void Subroom::set_class_(const char* value, size_t size) {
+  
+  class__.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Subroom.class)
+}
+inline ::std::string* Subroom::mutable_class_() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Subroom.class)
+  return class__.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Subroom::release_class_() {
+  
+  return class__.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Subroom::set_allocated_class_(::std::string* class_) {
+  if (class_ != NULL) {
+    
+  } else {
+    
+  }
+  class__.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), class_);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Subroom.class)
+}
+
+// repeated .hybridsim.Polygon polygon = 4;
+inline int Subroom::polygon_size() const {
+  return polygon_.size();
+}
+inline void Subroom::clear_polygon() {
+  polygon_.Clear();
+}
+inline const ::hybridsim::Polygon& Subroom::polygon(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.polygon)
+  return polygon_.Get(index);
+}
+inline ::hybridsim::Polygon* Subroom::mutable_polygon(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Subroom.polygon)
+  return polygon_.Mutable(index);
+}
+inline ::hybridsim::Polygon* Subroom::add_polygon() {
+  // @@protoc_insertion_point(field_add:hybridsim.Subroom.polygon)
+  return polygon_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon >*
+Subroom::mutable_polygon() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Subroom.polygon)
+  return &polygon_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon >&
+Subroom::polygon() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Subroom.polygon)
+  return polygon_;
+}
+
+// -------------------------------------------------------------------
+
+// Polygon
+
+// optional string caption = 1;
+inline void Polygon::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Polygon::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Polygon.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Polygon::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Polygon.caption)
+}
+inline void Polygon::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Polygon.caption)
+}
+inline void Polygon::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Polygon.caption)
+}
+inline ::std::string* Polygon::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Polygon.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Polygon::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Polygon::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Polygon.caption)
+}
+
+// repeated .hybridsim.Coordinate coordinate = 2;
+inline int Polygon::coordinate_size() const {
+  return coordinate_.size();
+}
+inline void Polygon::clear_coordinate() {
+  coordinate_.Clear();
+}
+inline const ::hybridsim::Coordinate& Polygon::coordinate(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Polygon.coordinate)
+  return coordinate_.Get(index);
+}
+inline ::hybridsim::Coordinate* Polygon::mutable_coordinate(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Polygon.coordinate)
+  return coordinate_.Mutable(index);
+}
+inline ::hybridsim::Coordinate* Polygon::add_coordinate() {
+  // @@protoc_insertion_point(field_add:hybridsim.Polygon.coordinate)
+  return coordinate_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate >*
+Polygon::mutable_coordinate() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Polygon.coordinate)
+  return &coordinate_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate >&
+Polygon::coordinate() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Polygon.coordinate)
+  return coordinate_;
+}
+
+// -------------------------------------------------------------------
+
 // LeftClosedRightOpenTimeInterval
 
 // optional double fromTimeIncluding = 1;
@@ -1588,10 +5475,54 @@ Trajectories::trajectories() const {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace hybridsim
+
+#ifndef SWIG
+namespace google {
+namespace protobuf {
+
+template <> struct is_proto_enum< ::hybridsim::Model_Type> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::hybridsim::Model_Type>() {
+  return ::hybridsim::Model_Type_descriptor();
+}
+
+}  // namespace protobuf
+}  // namespace google
+#endif  // SWIG
 
 // @@protoc_insertion_point(global_scope)
 

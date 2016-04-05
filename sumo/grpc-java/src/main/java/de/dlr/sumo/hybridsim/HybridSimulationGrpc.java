@@ -57,6 +57,24 @@ public class HybridSimulationGrpc {
               "hybridsim.HybridSimulation", "retrieveAgents"),
           io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.hybridsim.HybridSimProto.Empty.getDefaultInstance()),
           io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.hybridsim.HybridSimProto.Agents.getDefaultInstance()));
+  @io.grpc.ExperimentalApi
+  public static final io.grpc.MethodDescriptor<de.dlr.sumo.hybridsim.HybridSimProto.Empty,
+      de.dlr.sumo.hybridsim.HybridSimProto.Empty> METHOD_SHUTDOWN =
+      io.grpc.MethodDescriptor.create(
+          io.grpc.MethodDescriptor.MethodType.UNARY,
+          generateFullMethodName(
+              "hybridsim.HybridSimulation", "shutdown"),
+          io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.hybridsim.HybridSimProto.Empty.getDefaultInstance()),
+          io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.hybridsim.HybridSimProto.Empty.getDefaultInstance()));
+  @io.grpc.ExperimentalApi
+  public static final io.grpc.MethodDescriptor<de.dlr.sumo.hybridsim.HybridSimProto.Scenario,
+      de.dlr.sumo.hybridsim.HybridSimProto.Empty> METHOD_INIT_SCENARIO =
+      io.grpc.MethodDescriptor.create(
+          io.grpc.MethodDescriptor.MethodType.UNARY,
+          generateFullMethodName(
+              "hybridsim.HybridSimulation", "initScenario"),
+          io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.hybridsim.HybridSimProto.Scenario.getDefaultInstance()),
+          io.grpc.protobuf.ProtoUtils.marshaller(de.dlr.sumo.hybridsim.HybridSimProto.Empty.getDefaultInstance()));
 
   public static HybridSimulationStub newStub(io.grpc.Channel channel) {
     return new HybridSimulationStub(channel);
@@ -85,6 +103,12 @@ public class HybridSimulationGrpc {
 
     public void retrieveAgents(de.dlr.sumo.hybridsim.HybridSimProto.Empty request,
         io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Agents> responseObserver);
+
+    public void shutdown(de.dlr.sumo.hybridsim.HybridSimProto.Empty request,
+        io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Empty> responseObserver);
+
+    public void initScenario(de.dlr.sumo.hybridsim.HybridSimProto.Scenario request,
+        io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Empty> responseObserver);
   }
 
   public static interface HybridSimulationBlockingClient {
@@ -96,6 +120,10 @@ public class HybridSimulationGrpc {
     public de.dlr.sumo.hybridsim.HybridSimProto.Trajectories receiveTrajectories(de.dlr.sumo.hybridsim.HybridSimProto.Empty request);
 
     public de.dlr.sumo.hybridsim.HybridSimProto.Agents retrieveAgents(de.dlr.sumo.hybridsim.HybridSimProto.Empty request);
+
+    public de.dlr.sumo.hybridsim.HybridSimProto.Empty shutdown(de.dlr.sumo.hybridsim.HybridSimProto.Empty request);
+
+    public de.dlr.sumo.hybridsim.HybridSimProto.Empty initScenario(de.dlr.sumo.hybridsim.HybridSimProto.Scenario request);
   }
 
   public static interface HybridSimulationFutureClient {
@@ -111,6 +139,12 @@ public class HybridSimulationGrpc {
 
     public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.hybridsim.HybridSimProto.Agents> retrieveAgents(
         de.dlr.sumo.hybridsim.HybridSimProto.Empty request);
+
+    public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.hybridsim.HybridSimProto.Empty> shutdown(
+        de.dlr.sumo.hybridsim.HybridSimProto.Empty request);
+
+    public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.hybridsim.HybridSimProto.Empty> initScenario(
+        de.dlr.sumo.hybridsim.HybridSimProto.Scenario request);
   }
 
   public static class HybridSimulationStub extends io.grpc.stub.AbstractStub<HybridSimulationStub>
@@ -157,6 +191,20 @@ public class HybridSimulationGrpc {
       asyncUnaryCall(
           getChannel().newCall(METHOD_RETRIEVE_AGENTS, getCallOptions()), request, responseObserver);
     }
+
+    @java.lang.Override
+    public void shutdown(de.dlr.sumo.hybridsim.HybridSimProto.Empty request,
+        io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Empty> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(METHOD_SHUTDOWN, getCallOptions()), request, responseObserver);
+    }
+
+    @java.lang.Override
+    public void initScenario(de.dlr.sumo.hybridsim.HybridSimProto.Scenario request,
+        io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Empty> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(METHOD_INIT_SCENARIO, getCallOptions()), request, responseObserver);
+    }
   }
 
   public static class HybridSimulationBlockingStub extends io.grpc.stub.AbstractStub<HybridSimulationBlockingStub>
@@ -198,6 +246,18 @@ public class HybridSimulationGrpc {
     public de.dlr.sumo.hybridsim.HybridSimProto.Agents retrieveAgents(de.dlr.sumo.hybridsim.HybridSimProto.Empty request) {
       return blockingUnaryCall(
           getChannel().newCall(METHOD_RETRIEVE_AGENTS, getCallOptions()), request);
+    }
+
+    @java.lang.Override
+    public de.dlr.sumo.hybridsim.HybridSimProto.Empty shutdown(de.dlr.sumo.hybridsim.HybridSimProto.Empty request) {
+      return blockingUnaryCall(
+          getChannel().newCall(METHOD_SHUTDOWN, getCallOptions()), request);
+    }
+
+    @java.lang.Override
+    public de.dlr.sumo.hybridsim.HybridSimProto.Empty initScenario(de.dlr.sumo.hybridsim.HybridSimProto.Scenario request) {
+      return blockingUnaryCall(
+          getChannel().newCall(METHOD_INIT_SCENARIO, getCallOptions()), request);
     }
   }
 
@@ -244,6 +304,20 @@ public class HybridSimulationGrpc {
         de.dlr.sumo.hybridsim.HybridSimProto.Empty request) {
       return futureUnaryCall(
           getChannel().newCall(METHOD_RETRIEVE_AGENTS, getCallOptions()), request);
+    }
+
+    @java.lang.Override
+    public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.hybridsim.HybridSimProto.Empty> shutdown(
+        de.dlr.sumo.hybridsim.HybridSimProto.Empty request) {
+      return futureUnaryCall(
+          getChannel().newCall(METHOD_SHUTDOWN, getCallOptions()), request);
+    }
+
+    @java.lang.Override
+    public com.google.common.util.concurrent.ListenableFuture<de.dlr.sumo.hybridsim.HybridSimProto.Empty> initScenario(
+        de.dlr.sumo.hybridsim.HybridSimProto.Scenario request) {
+      return futureUnaryCall(
+          getChannel().newCall(METHOD_INIT_SCENARIO, getCallOptions()), request);
     }
   }
 
@@ -300,6 +374,32 @@ public class HybridSimulationGrpc {
                 de.dlr.sumo.hybridsim.HybridSimProto.Empty request,
                 io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Agents> responseObserver) {
               serviceImpl.retrieveAgents(request, responseObserver);
+            }
+          }))
+      .addMethod(
+        METHOD_SHUTDOWN,
+        asyncUnaryCall(
+          new io.grpc.stub.ServerCalls.UnaryMethod<
+              de.dlr.sumo.hybridsim.HybridSimProto.Empty,
+              de.dlr.sumo.hybridsim.HybridSimProto.Empty>() {
+            @java.lang.Override
+            public void invoke(
+                de.dlr.sumo.hybridsim.HybridSimProto.Empty request,
+                io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Empty> responseObserver) {
+              serviceImpl.shutdown(request, responseObserver);
+            }
+          }))
+      .addMethod(
+        METHOD_INIT_SCENARIO,
+        asyncUnaryCall(
+          new io.grpc.stub.ServerCalls.UnaryMethod<
+              de.dlr.sumo.hybridsim.HybridSimProto.Scenario,
+              de.dlr.sumo.hybridsim.HybridSimProto.Empty>() {
+            @java.lang.Override
+            public void invoke(
+                de.dlr.sumo.hybridsim.HybridSimProto.Scenario request,
+                io.grpc.stub.StreamObserver<de.dlr.sumo.hybridsim.HybridSimProto.Empty> responseObserver) {
+              serviceImpl.initScenario(request, responseObserver);
             }
           })).build();
   }

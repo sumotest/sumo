@@ -6,18 +6,17 @@
 
 #include "hybridsim.pb.h"
 
-#include <grpc++/support/async_stream.h>
-#include <grpc++/impl/rpc_method.h>
-#include <grpc++/impl/proto_utils.h>
-#include <grpc++/impl/service_type.h>
-#include <grpc++/support/async_unary_call.h>
-#include <grpc++/support/status.h>
-#include <grpc++/support/stub_options.h>
-#include <grpc++/support/sync_stream.h>
+#include <grpc++/impl/codegen/async_stream.h>
+#include <grpc++/impl/codegen/async_unary_call.h>
+#include <grpc++/impl/codegen/proto_utils.h>
+#include <grpc++/impl/codegen/rpc_method.h>
+#include <grpc++/impl/codegen/service_type.h>
+#include <grpc++/impl/codegen/status.h>
+#include <grpc++/impl/codegen/stub_options.h>
+#include <grpc++/impl/codegen/sync_stream.h>
 
 namespace grpc {
 class CompletionQueue;
-class Channel;
 class RpcService;
 class ServerCompletionQueue;
 class ServerContext;
@@ -46,15 +45,25 @@ class HybridSimulation GRPC_FINAL {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Agents>> AsyncretrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Agents>>(AsyncretrieveAgentsRaw(context, request, cq));
     }
+    virtual ::grpc::Status shutdown(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>> Asyncshutdown(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>>(AsyncshutdownRaw(context, request, cq));
+    }
+    virtual ::grpc::Status initScenario(::grpc::ClientContext* context, const ::hybridsim::Scenario& request, ::hybridsim::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>> AsyncinitScenario(::grpc::ClientContext* context, const ::hybridsim::Scenario& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>>(AsyncinitScenarioRaw(context, request, cq));
+    }
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>* AsyncsimulatedTimeInervalRaw(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Boolean>* AsynctransferAgentRaw(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Trajectories>* AsyncreceiveTrajectoriesRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Agents>* AsyncretrieveAgentsRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>* AsyncshutdownRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::hybridsim::Empty>* AsyncinitScenarioRaw(::grpc::ClientContext* context, const ::hybridsim::Scenario& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub GRPC_FINAL : public StubInterface {
    public:
-    Stub(const std::shared_ptr< ::grpc::Channel>& channel);
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
     ::grpc::Status simulatedTimeInerval(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::hybridsim::Empty* response) GRPC_OVERRIDE;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>> AsyncsimulatedTimeInerval(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>>(AsyncsimulatedTimeInervalRaw(context, request, cq));
@@ -71,21 +80,33 @@ class HybridSimulation GRPC_FINAL {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>> AsyncretrieveAgents(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>>(AsyncretrieveAgentsRaw(context, request, cq));
     }
+    ::grpc::Status shutdown(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::hybridsim::Empty* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>> Asyncshutdown(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>>(AsyncshutdownRaw(context, request, cq));
+    }
+    ::grpc::Status initScenario(::grpc::ClientContext* context, const ::hybridsim::Scenario& request, ::hybridsim::Empty* response) GRPC_OVERRIDE;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>> AsyncinitScenario(::grpc::ClientContext* context, const ::hybridsim::Scenario& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>>(AsyncinitScenarioRaw(context, request, cq));
+    }
 
    private:
-    std::shared_ptr< ::grpc::Channel> channel_;
+    std::shared_ptr< ::grpc::ChannelInterface> channel_;
     ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>* AsyncsimulatedTimeInervalRaw(::grpc::ClientContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
     ::grpc::ClientAsyncResponseReader< ::hybridsim::Boolean>* AsynctransferAgentRaw(::grpc::ClientContext* context, const ::hybridsim::Agent& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
     ::grpc::ClientAsyncResponseReader< ::hybridsim::Trajectories>* AsyncreceiveTrajectoriesRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
     ::grpc::ClientAsyncResponseReader< ::hybridsim::Agents>* AsyncretrieveAgentsRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>* AsyncshutdownRaw(::grpc::ClientContext* context, const ::hybridsim::Empty& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
+    ::grpc::ClientAsyncResponseReader< ::hybridsim::Empty>* AsyncinitScenarioRaw(::grpc::ClientContext* context, const ::hybridsim::Scenario& request, ::grpc::CompletionQueue* cq) GRPC_OVERRIDE;
     const ::grpc::RpcMethod rpcmethod_simulatedTimeInerval_;
     const ::grpc::RpcMethod rpcmethod_transferAgent_;
     const ::grpc::RpcMethod rpcmethod_receiveTrajectories_;
     const ::grpc::RpcMethod rpcmethod_retrieveAgents_;
+    const ::grpc::RpcMethod rpcmethod_shutdown_;
+    const ::grpc::RpcMethod rpcmethod_initScenario_;
   };
-  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::Channel>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
-  class Service : public ::grpc::SynchronousService {
+  class Service : public ::grpc::Service {
    public:
     Service();
     virtual ~Service();
@@ -93,18 +114,231 @@ class HybridSimulation GRPC_FINAL {
     virtual ::grpc::Status transferAgent(::grpc::ServerContext* context, const ::hybridsim::Agent* request, ::hybridsim::Boolean* response);
     virtual ::grpc::Status receiveTrajectories(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Trajectories* response);
     virtual ::grpc::Status retrieveAgents(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Agents* response);
-    ::grpc::RpcService* service() GRPC_OVERRIDE GRPC_FINAL;
-   private:
-    std::unique_ptr< ::grpc::RpcService> service_;
+    virtual ::grpc::Status shutdown(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Empty* response);
+    virtual ::grpc::Status initScenario(::grpc::ServerContext* context, const ::hybridsim::Scenario* request, ::hybridsim::Empty* response);
   };
-  class AsyncService GRPC_FINAL : public ::grpc::AsynchronousService {
+  template <class BaseClass>
+  class WithAsyncMethod_simulatedTimeInerval : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
    public:
-    explicit AsyncService();
-    ~AsyncService() {};
-    void RequestsimulatedTimeInerval(::grpc::ServerContext* context, ::hybridsim::LeftClosedRightOpenTimeInterval* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequesttransferAgent(::grpc::ServerContext* context, ::hybridsim::Agent* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Boolean>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestreceiveTrajectories(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Trajectories>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
-    void RequestretrieveAgents(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Agents>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag);
+    WithAsyncMethod_simulatedTimeInerval() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_simulatedTimeInerval() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status simulatedTimeInerval(::grpc::ServerContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval* request, ::hybridsim::Empty* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestsimulatedTimeInerval(::grpc::ServerContext* context, ::hybridsim::LeftClosedRightOpenTimeInterval* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_transferAgent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithAsyncMethod_transferAgent() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_transferAgent() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status transferAgent(::grpc::ServerContext* context, const ::hybridsim::Agent* request, ::hybridsim::Boolean* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequesttransferAgent(::grpc::ServerContext* context, ::hybridsim::Agent* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Boolean>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_receiveTrajectories : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithAsyncMethod_receiveTrajectories() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_receiveTrajectories() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status receiveTrajectories(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Trajectories* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestreceiveTrajectories(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Trajectories>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_retrieveAgents : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithAsyncMethod_retrieveAgents() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_retrieveAgents() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status retrieveAgents(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Agents* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestretrieveAgents(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Agents>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithAsyncMethod_shutdown() {
+      ::grpc::Service::MarkMethodAsync(4);
+    }
+    ~WithAsyncMethod_shutdown() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status shutdown(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Empty* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestshutdown(::grpc::ServerContext* context, ::hybridsim::Empty* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_initScenario : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithAsyncMethod_initScenario() {
+      ::grpc::Service::MarkMethodAsync(5);
+    }
+    ~WithAsyncMethod_initScenario() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status initScenario(::grpc::ServerContext* context, const ::hybridsim::Scenario* request, ::hybridsim::Empty* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestinitScenario(::grpc::ServerContext* context, ::hybridsim::Scenario* request, ::grpc::ServerAsyncResponseWriter< ::hybridsim::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_simulatedTimeInerval<WithAsyncMethod_transferAgent<WithAsyncMethod_receiveTrajectories<WithAsyncMethod_retrieveAgents<WithAsyncMethod_shutdown<WithAsyncMethod_initScenario<Service > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithGenericMethod_simulatedTimeInerval : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithGenericMethod_simulatedTimeInerval() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_simulatedTimeInerval() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status simulatedTimeInerval(::grpc::ServerContext* context, const ::hybridsim::LeftClosedRightOpenTimeInterval* request, ::hybridsim::Empty* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_transferAgent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithGenericMethod_transferAgent() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_transferAgent() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status transferAgent(::grpc::ServerContext* context, const ::hybridsim::Agent* request, ::hybridsim::Boolean* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_receiveTrajectories : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithGenericMethod_receiveTrajectories() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_receiveTrajectories() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status receiveTrajectories(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Trajectories* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_retrieveAgents : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithGenericMethod_retrieveAgents() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_retrieveAgents() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status retrieveAgents(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Agents* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithGenericMethod_shutdown() {
+      ::grpc::Service::MarkMethodGeneric(4);
+    }
+    ~WithGenericMethod_shutdown() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status shutdown(::grpc::ServerContext* context, const ::hybridsim::Empty* request, ::hybridsim::Empty* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_initScenario : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(Service *service) {}
+   public:
+    WithGenericMethod_initScenario() {
+      ::grpc::Service::MarkMethodGeneric(5);
+    }
+    ~WithGenericMethod_initScenario() GRPC_OVERRIDE {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status initScenario(::grpc::ServerContext* context, const ::hybridsim::Scenario* request, ::hybridsim::Empty* response) GRPC_FINAL GRPC_OVERRIDE {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
   };
 };
 

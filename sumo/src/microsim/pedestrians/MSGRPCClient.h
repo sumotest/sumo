@@ -33,9 +33,6 @@ using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
 
-
-
-
 class MSGRPCClient {
 public :
 	struct CmpWlkTmStruct {
@@ -45,7 +42,7 @@ public :
 		SUMOReal lastEntrTm;
 	};
 public:
-	MSGRPCClient(std::shared_ptr<Channel> channel);
+	MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net);
 	~MSGRPCClient();
 
 	//hybrid simulation
@@ -56,9 +53,13 @@ public:
 
 private:
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
+	MSNet* net;
+
 
 //	void extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPRCPState * st);
 	void extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, SUMOReal pos);
 //	int inSim = 0;
+
+	void initalized();
 };
 #endif /*MSGRPC_CLIENT_H*/

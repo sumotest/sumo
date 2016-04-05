@@ -21,6 +21,52 @@ namespace hybridsim {
 
 namespace {
 
+const ::google::protobuf::Descriptor* Scenario_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Scenario_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Router_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Router_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Model_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Model_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* Model_Type_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* Gompertz_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Gompertz_reflection_ = NULL;
+const ::google::protobuf::Descriptor* AgentParams_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  AgentParams_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Distribution_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Distribution_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Force_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Force_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Group_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Group_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Source_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Source_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Goal_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Goal_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Environment_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Environment_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Transition_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Transition_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Room_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Room_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Subroom_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Subroom_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Polygon_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Polygon_reflection_ = NULL;
 const ::google::protobuf::Descriptor* LeftClosedRightOpenTimeInterval_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LeftClosedRightOpenTimeInterval_reflection_ = NULL;
@@ -39,6 +85,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Link_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Link_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Coordinate_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Coordinate_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Agents_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Agents_reflection_ = NULL;
@@ -58,7 +107,293 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "hybridsim.proto");
   GOOGLE_CHECK(file != NULL);
-  LeftClosedRightOpenTimeInterval_descriptor_ = file->message_type(0);
+  Scenario_descriptor_ = file->message_type(0);
+  static const int Scenario_offsets_[7] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, seed_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, environment_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, goal_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, group_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, source_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, model_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, router_),
+  };
+  Scenario_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Scenario_descriptor_,
+      Scenario::default_instance_,
+      Scenario_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Scenario),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, _is_default_instance_));
+  Router_descriptor_ = file->message_type(1);
+  static const int Router_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, router_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, description_),
+  };
+  Router_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Router_descriptor_,
+      Router::default_instance_,
+      Router_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Router),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, _is_default_instance_));
+  Model_descriptor_ = file->message_type(2);
+  static const int Model_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, gompertz_),
+  };
+  Model_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Model_descriptor_,
+      Model::default_instance_,
+      Model_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Model),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, _is_default_instance_));
+  Model_Type_descriptor_ = Model_descriptor_->enum_type(0);
+  Gompertz_descriptor_ = file->message_type(3);
+  static const int Gompertz_offsets_[8] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, solver_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, stepsize_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, exit_crossing_strategy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, linked_cells_enabled_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, cell_size_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, force_ped_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, force_wall_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, agent_params_),
+  };
+  Gompertz_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Gompertz_descriptor_,
+      Gompertz::default_instance_,
+      Gompertz_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Gompertz),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, _is_default_instance_));
+  AgentParams_descriptor_ = file->message_type(4);
+  static const int AgentParams_offsets_[13] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, b_max_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, b_min_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, a_min_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, tau_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, atau_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_upstairs_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_downstairs_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_escalator_up_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_escalator_down_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_idle_escalator_up_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_idle_escalator_down_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, t_),
+  };
+  AgentParams_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      AgentParams_descriptor_,
+      AgentParams::default_instance_,
+      AgentParams_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(AgentParams),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, _is_default_instance_));
+  Distribution_descriptor_ = file->message_type(5);
+  static const int Distribution_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, mu_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, sigma_),
+  };
+  Distribution_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Distribution_descriptor_,
+      Distribution::default_instance_,
+      Distribution_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Distribution),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, _is_default_instance_));
+  Force_descriptor_ = file->message_type(6);
+  static const int Force_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, nu_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, a_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, b_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, c_),
+  };
+  Force_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Force_descriptor_,
+      Force::default_instance_,
+      Force_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Force),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, _is_default_instance_));
+  Group_descriptor_ = file->message_type(7);
+  static const int Group_offsets_[8] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, group_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, room_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, subroom_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, number_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, router_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, agent_parameter_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, min_x_y_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, max_x_y_),
+  };
+  Group_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Group_descriptor_,
+      Group::default_instance_,
+      Group_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Group),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, _is_default_instance_));
+  Source_descriptor_ = file->message_type(8);
+  static const int Source_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, frequency_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, max_agents_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, group_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, caption_),
+  };
+  Source_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Source_descriptor_,
+      Source::default_instance_,
+      Source_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Source),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, _is_default_instance_));
+  Goal_descriptor_ = file->message_type(9);
+  static const int Goal_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, final_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, caption_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, p_),
+  };
+  Goal_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Goal_descriptor_,
+      Goal::default_instance_,
+      Goal_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Goal),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, _is_default_instance_));
+  Environment_descriptor_ = file->message_type(10);
+  static const int Environment_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, room_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, transition_),
+  };
+  Environment_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Environment_descriptor_,
+      Environment::default_instance_,
+      Environment_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Environment),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, _is_default_instance_));
+  Transition_descriptor_ = file->message_type(11);
+  static const int Transition_offsets_[9] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, caption_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, room1_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, subroom1_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, room2_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, subroom2_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, vert1_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, vert2_),
+  };
+  Transition_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Transition_descriptor_,
+      Transition::default_instance_,
+      Transition_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Transition),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, _is_default_instance_));
+  Room_descriptor_ = file->message_type(12);
+  static const int Room_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, caption_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, subroom_),
+  };
+  Room_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Room_descriptor_,
+      Room::default_instance_,
+      Room_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Room),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, _is_default_instance_));
+  Subroom_descriptor_ = file->message_type(13);
+  static const int Subroom_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, closed_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, class__),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, polygon_),
+  };
+  Subroom_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Subroom_descriptor_,
+      Subroom::default_instance_,
+      Subroom_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Subroom),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, _is_default_instance_));
+  Polygon_descriptor_ = file->message_type(14);
+  static const int Polygon_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, caption_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, coordinate_),
+  };
+  Polygon_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Polygon_descriptor_,
+      Polygon::default_instance_,
+      Polygon_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Polygon),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, _is_default_instance_));
+  LeftClosedRightOpenTimeInterval_descriptor_ = file->message_type(15);
   static const int LeftClosedRightOpenTimeInterval_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, fromtimeincluding_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, totimeexcluding_),
@@ -74,7 +409,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(LeftClosedRightOpenTimeInterval),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, _is_default_instance_));
-  Empty_descriptor_ = file->message_type(1);
+  Empty_descriptor_ = file->message_type(16);
   static const int Empty_offsets_[1] = {
   };
   Empty_reflection_ =
@@ -88,7 +423,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Empty),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Empty, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Empty, _is_default_instance_));
-  Boolean_descriptor_ = file->message_type(2);
+  Boolean_descriptor_ = file->message_type(17);
   static const int Boolean_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Boolean, val_),
   };
@@ -103,11 +438,11 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Boolean),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Boolean, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Boolean, _is_default_instance_));
-  Agent_descriptor_ = file->message_type(3);
+  Agent_descriptor_ = file->message_type(18);
   static const int Agent_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, enterid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, leaveid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, enterlocation_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, leavelocation_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, leg_),
@@ -123,7 +458,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Agent),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, _is_default_instance_));
-  Leg_descriptor_ = file->message_type(4);
+  Leg_descriptor_ = file->message_type(19);
   static const int Leg_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Leg, link_),
   };
@@ -138,12 +473,9 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Leg),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Leg, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Leg, _is_default_instance_));
-  Link_descriptor_ = file->message_type(5);
-  static const int Link_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, x0_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, y0_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, x1_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, y1_),
+  Link_descriptor_ = file->message_type(20);
+  static const int Link_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, centroid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, id_),
   };
   Link_reflection_ =
@@ -157,7 +489,23 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Link),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, _is_default_instance_));
-  Agents_descriptor_ = file->message_type(6);
+  Coordinate_descriptor_ = file->message_type(21);
+  static const int Coordinate_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, y_),
+  };
+  Coordinate_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Coordinate_descriptor_,
+      Coordinate::default_instance_,
+      Coordinate_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Coordinate),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, _is_default_instance_));
+  Agents_descriptor_ = file->message_type(22);
   static const int Agents_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agents, agents_),
   };
@@ -172,12 +520,13 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Agents),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agents, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agents, _is_default_instance_));
-  Trajectory_descriptor_ = file->message_type(7);
-  static const int Trajectory_offsets_[5] = {
+  Trajectory_descriptor_ = file->message_type(23);
+  static const int Trajectory_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, spd_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, phi_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, linkid_),
   };
   Trajectory_reflection_ =
@@ -191,7 +540,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Trajectory),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, _is_default_instance_));
-  Trajectories_descriptor_ = file->message_type(8);
+  Trajectories_descriptor_ = file->message_type(24);
   static const int Trajectories_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectories, trajectories_),
   };
@@ -219,6 +568,36 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Scenario_descriptor_, &Scenario::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Router_descriptor_, &Router::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Model_descriptor_, &Model::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Gompertz_descriptor_, &Gompertz::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      AgentParams_descriptor_, &AgentParams::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Distribution_descriptor_, &Distribution::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Force_descriptor_, &Force::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Group_descriptor_, &Group::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Source_descriptor_, &Source::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Goal_descriptor_, &Goal::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Environment_descriptor_, &Environment::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Transition_descriptor_, &Transition::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Room_descriptor_, &Room::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Subroom_descriptor_, &Subroom::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Polygon_descriptor_, &Polygon::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       LeftClosedRightOpenTimeInterval_descriptor_, &LeftClosedRightOpenTimeInterval::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Empty_descriptor_, &Empty::default_instance());
@@ -231,6 +610,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Link_descriptor_, &Link::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Coordinate_descriptor_, &Coordinate::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Agents_descriptor_, &Agents::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Trajectory_descriptor_, &Trajectory::default_instance());
@@ -241,6 +622,36 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_hybridsim_2eproto() {
+  delete Scenario::default_instance_;
+  delete Scenario_reflection_;
+  delete Router::default_instance_;
+  delete Router_reflection_;
+  delete Model::default_instance_;
+  delete Model_reflection_;
+  delete Gompertz::default_instance_;
+  delete Gompertz_reflection_;
+  delete AgentParams::default_instance_;
+  delete AgentParams_reflection_;
+  delete Distribution::default_instance_;
+  delete Distribution_reflection_;
+  delete Force::default_instance_;
+  delete Force_reflection_;
+  delete Group::default_instance_;
+  delete Group_reflection_;
+  delete Source::default_instance_;
+  delete Source_reflection_;
+  delete Goal::default_instance_;
+  delete Goal_reflection_;
+  delete Environment::default_instance_;
+  delete Environment_reflection_;
+  delete Transition::default_instance_;
+  delete Transition_reflection_;
+  delete Room::default_instance_;
+  delete Room_reflection_;
+  delete Subroom::default_instance_;
+  delete Subroom_reflection_;
+  delete Polygon::default_instance_;
+  delete Polygon_reflection_;
   delete LeftClosedRightOpenTimeInterval::default_instance_;
   delete LeftClosedRightOpenTimeInterval_reflection_;
   delete Empty::default_instance_;
@@ -253,6 +664,8 @@ void protobuf_ShutdownFile_hybridsim_2eproto() {
   delete Leg_reflection_;
   delete Link::default_instance_;
   delete Link_reflection_;
+  delete Coordinate::default_instance_;
+  delete Coordinate_reflection_;
   delete Agents::default_instance_;
   delete Agents_reflection_;
   delete Trajectory::default_instance_;
@@ -268,46 +681,139 @@ void protobuf_AddDesc_hybridsim_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\017hybridsim.proto\022\thybridsim\"U\n\037LeftClos"
-    "edRightOpenTimeInterval\022\031\n\021fromTimeInclu"
-    "ding\030\001 \001(\001\022\027\n\017toTimeExcluding\030\002 \001(\001\"\007\n\005E"
-    "mpty\"\026\n\007Boolean\022\013\n\003val\030\001 \001(\010\"h\n\005Agent\022\n\n"
-    "\002id\030\001 \001(\t\022\017\n\007enterId\030\002 \001(\t\022\017\n\007leaveId\030\003 "
-    "\001(\t\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\022\033\n\003leg\030\006 \001(\0132\016"
-    ".hybridsim.Leg\"$\n\003Leg\022\035\n\004link\030\017 \003(\0132\017.hy"
-    "bridsim.Link\"B\n\004Link\022\n\n\002x0\030\001 \001(\001\022\n\n\002y0\030\002"
-    " \001(\001\022\n\n\002x1\030\003 \001(\001\022\n\n\002y1\030\004 \001(\001\022\n\n\002id\030\005 \001(\t"
-    "\"*\n\006Agents\022 \n\006agents\030\001 \003(\0132\020.hybridsim.A"
-    "gent\"K\n\nTrajectory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001("
-    "\001\022\t\n\001y\030\003 \001(\001\022\013\n\003spd\030\004 \001(\001\022\016\n\006linkId\030\005 \001("
-    "\t\";\n\014Trajectories\022+\n\014trajectories\030\001 \003(\0132"
-    "\025.hybridsim.Trajectory2\240\002\n\020HybridSimulat"
-    "ion\022V\n\024simulatedTimeInerval\022*.hybridsim."
-    "LeftClosedRightOpenTimeInterval\032\020.hybrid"
-    "sim.Empty\"\000\0227\n\rtransferAgent\022\020.hybridsim"
-    ".Agent\032\022.hybridsim.Boolean\"\000\022B\n\023receiveT"
-    "rajectories\022\020.hybridsim.Empty\032\027.hybridsi"
-    "m.Trajectories\"\000\0227\n\016retrieveAgents\022\020.hyb"
-    "ridsim.Empty\032\021.hybridsim.Agents\"\000B)\n\025de."
-    "dlr.sumo.hybridsimB\016HybridSimProtoP\000b\006pr"
-    "oto3", 884);
+    "\n\017hybridsim.proto\022\thybridsim\"\354\001\n\010Scenari"
+    "o\022\014\n\004seed\030\001 \001(\r\022+\n\013environment\030\002 \001(\0132\026.h"
+    "ybridsim.Environment\022\035\n\004goal\030\003 \003(\0132\017.hyb"
+    "ridsim.Goal\022\037\n\005group\030\004 \003(\0132\020.hybridsim.G"
+    "roup\022!\n\006source\030\005 \003(\0132\021.hybridsim.Source\022"
+    "\037\n\005model\030\006 \001(\0132\020.hybridsim.Model\022!\n\006rout"
+    "er\030\007 \003(\0132\021.hybridsim.Router\"0\n\006Router\022\021\n"
+    "\trouter_id\030\001 \001(\005\022\023\n\013description\030\002 \001(\t\"i\n"
+    "\005Model\022#\n\004type\030\001 \001(\0162\025.hybridsim.Model.T"
+    "ype\022%\n\010gompertz\030\002 \001(\0132\023.hybridsim.Gomper"
+    "tz\"\024\n\004Type\022\014\n\010Gompertz\020\000\"\366\001\n\010Gompertz\022\016\n"
+    "\006solver\030\001 \001(\t\022\020\n\010stepsize\030\002 \001(\001\022\036\n\026exit_"
+    "crossing_strategy\030\003 \001(\005\022\034\n\024linked_cells_"
+    "enabled\030\004 \001(\010\022\021\n\tcell_size\030\005 \001(\001\022#\n\tforc"
+    "e_ped\030\006 \001(\0132\020.hybridsim.Force\022$\n\nforce_w"
+    "all\030\007 \001(\0132\020.hybridsim.Force\022,\n\014agent_par"
+    "ams\030\010 \001(\0132\026.hybridsim.AgentParams\"\317\004\n\013Ag"
+    "entParams\022#\n\002v0\030\001 \001(\0132\027.hybridsim.Distri"
+    "bution\022&\n\005b_max\030\002 \001(\0132\027.hybridsim.Distri"
+    "bution\022&\n\005b_min\030\003 \001(\0132\027.hybridsim.Distri"
+    "bution\022&\n\005a_min\030\004 \001(\0132\027.hybridsim.Distri"
+    "bution\022$\n\003tau\030\005 \001(\0132\027.hybridsim.Distribu"
+    "tion\022%\n\004atau\030\006 \001(\0132\027.hybridsim.Distribut"
+    "ion\022,\n\013v0_upstairs\030\007 \001(\0132\027.hybridsim.Dis"
+    "tribution\022.\n\rv0_downstairs\030\010 \001(\0132\027.hybri"
+    "dsim.Distribution\0220\n\017v0_escalator_up\030\t \001"
+    "(\0132\027.hybridsim.Distribution\0222\n\021v0_escala"
+    "tor_down\030\n \001(\0132\027.hybridsim.Distribution\022"
+    "5\n\024v0_idle_escalator_up\030\013 \001(\0132\027.hybridsi"
+    "m.Distribution\0227\n\026v0_idle_escalator_down"
+    "\030\014 \001(\0132\027.hybridsim.Distribution\022\"\n\001T\030\r \001"
+    "(\0132\027.hybridsim.Distribution\")\n\014Distribut"
+    "ion\022\n\n\002mu\030\001 \001(\001\022\r\n\005sigma\030\002 \001(\001\"4\n\005Force\022"
+    "\n\n\002nu\030\001 \001(\001\022\t\n\001a\030\002 \001(\001\022\t\n\001b\030\003 \001(\001\022\t\n\001c\030\004"
+    " \001(\001\"\315\001\n\005Group\022\020\n\010group_id\030\001 \001(\005\022\017\n\007room"
+    "_id\030\002 \001(\005\022\022\n\nsubroom_id\030\003 \001(\005\022\016\n\006number\030"
+    "\004 \001(\005\022\021\n\trouter_id\030\005 \001(\005\022\032\n\022agent_parame"
+    "ter_id\030\006 \001(\005\022&\n\007min_x_y\030\007 \001(\0132\025.hybridsi"
+    "m.Coordinate\022&\n\007max_x_y\030\010 \001(\0132\025.hybridsi"
+    "m.Coordinate\"^\n\006Source\022\n\n\002id\030\001 \001(\005\022\021\n\tfr"
+    "equency\030\002 \001(\005\022\022\n\nmax_agents\030\003 \001(\005\022\020\n\010gro"
+    "up_id\030\004 \001(\005\022\017\n\007caption\030\005 \001(\t\"Q\n\004Goal\022\n\n\002"
+    "id\030\001 \001(\005\022\r\n\005final\030\002 \001(\010\022\017\n\007caption\030\003 \001(\t"
+    "\022\035\n\001p\030\004 \001(\0132\022.hybridsim.Polygon\"W\n\013Envir"
+    "onment\022\035\n\004room\030\001 \003(\0132\017.hybridsim.Room\022)\n"
+    "\ntransition\030\002 \003(\0132\025.hybridsim.Transition"
+    "\"\321\001\n\nTransition\022\n\n\002id\030\001 \001(\005\022\017\n\007caption\030\002"
+    " \001(\t\022\014\n\004type\030\003 \001(\t\022\020\n\010room1_id\030\004 \001(\005\022\023\n\013"
+    "subroom1_id\030\005 \001(\005\022\020\n\010room2_id\030\006 \001(\005\022\023\n\013s"
+    "ubroom2_id\030\007 \001(\005\022$\n\005vert1\030\010 \001(\0132\025.hybrid"
+    "sim.Coordinate\022$\n\005vert2\030\t \001(\0132\025.hybridsi"
+    "m.Coordinate\"H\n\004Room\022\n\n\002id\030\001 \001(\005\022\017\n\007capt"
+    "ion\030\002 \001(\t\022#\n\007subroom\030\003 \003(\0132\022.hybridsim.S"
+    "ubroom\"Y\n\007Subroom\022\n\n\002id\030\001 \001(\005\022\016\n\006closed\030"
+    "\002 \001(\005\022\r\n\005class\030\003 \001(\t\022#\n\007polygon\030\004 \003(\0132\022."
+    "hybridsim.Polygon\"E\n\007Polygon\022\017\n\007caption\030"
+    "\001 \001(\t\022)\n\ncoordinate\030\002 \003(\0132\025.hybridsim.Co"
+    "ordinate\"U\n\037LeftClosedRightOpenTimeInter"
+    "val\022\031\n\021fromTimeIncluding\030\001 \001(\001\022\027\n\017toTime"
+    "Excluding\030\002 \001(\001\"\007\n\005Empty\"\026\n\007Boolean\022\013\n\003v"
+    "al\030\001 \001(\010\"\242\001\n\005Agent\022\n\n\002id\030\001 \001(\t\022,\n\renterL"
+    "ocation\030\002 \001(\0132\025.hybridsim.Coordinate\022,\n\r"
+    "leaveLocation\030\003 \001(\0132\025.hybridsim.Coordina"
+    "te\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\022\033\n\003leg\030\006 \001(\0132\016."
+    "hybridsim.Leg\"$\n\003Leg\022\035\n\004link\030\017 \003(\0132\017.hyb"
+    "ridsim.Link\";\n\004Link\022\'\n\010centroid\030\001 \001(\0132\025."
+    "hybridsim.Coordinate\022\n\n\002id\030\002 \001(\t\"\"\n\nCoor"
+    "dinate\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\"*\n\006Agents\022 "
+    "\n\006agents\030\001 \003(\0132\020.hybridsim.Agent\"X\n\nTraj"
+    "ectory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001(\001\022\t\n\001y\030\003 \001(\001"
+    "\022\013\n\003spd\030\004 \001(\001\022\013\n\003phi\030\005 \001(\001\022\016\n\006linkId\030\006 \001"
+    "(\t\";\n\014Trajectories\022+\n\014trajectories\030\001 \003(\013"
+    "2\025.hybridsim.Trajectory2\213\003\n\020HybridSimula"
+    "tion\022V\n\024simulatedTimeInerval\022*.hybridsim"
+    ".LeftClosedRightOpenTimeInterval\032\020.hybri"
+    "dsim.Empty\"\000\0227\n\rtransferAgent\022\020.hybridsi"
+    "m.Agent\032\022.hybridsim.Boolean\"\000\022B\n\023receive"
+    "Trajectories\022\020.hybridsim.Empty\032\027.hybrids"
+    "im.Trajectories\"\000\0227\n\016retrieveAgents\022\020.hy"
+    "bridsim.Empty\032\021.hybridsim.Agents\"\000\0220\n\010sh"
+    "utdown\022\020.hybridsim.Empty\032\020.hybridsim.Emp"
+    "ty\"\000\0227\n\014initScenario\022\023.hybridsim.Scenari"
+    "o\032\020.hybridsim.Empty\"\000B)\n\025de.dlr.sumo.hyb"
+    "ridsimB\016HybridSimProtoP\000b\006proto3", 3352);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hybridsim.proto", &protobuf_RegisterTypes);
+  Scenario::default_instance_ = new Scenario();
+  Router::default_instance_ = new Router();
+  Model::default_instance_ = new Model();
+  Gompertz::default_instance_ = new Gompertz();
+  AgentParams::default_instance_ = new AgentParams();
+  Distribution::default_instance_ = new Distribution();
+  Force::default_instance_ = new Force();
+  Group::default_instance_ = new Group();
+  Source::default_instance_ = new Source();
+  Goal::default_instance_ = new Goal();
+  Environment::default_instance_ = new Environment();
+  Transition::default_instance_ = new Transition();
+  Room::default_instance_ = new Room();
+  Subroom::default_instance_ = new Subroom();
+  Polygon::default_instance_ = new Polygon();
   LeftClosedRightOpenTimeInterval::default_instance_ = new LeftClosedRightOpenTimeInterval();
   Empty::default_instance_ = new Empty();
   Boolean::default_instance_ = new Boolean();
   Agent::default_instance_ = new Agent();
   Leg::default_instance_ = new Leg();
   Link::default_instance_ = new Link();
+  Coordinate::default_instance_ = new Coordinate();
   Agents::default_instance_ = new Agents();
   Trajectory::default_instance_ = new Trajectory();
   Trajectories::default_instance_ = new Trajectories();
+  Scenario::default_instance_->InitAsDefaultInstance();
+  Router::default_instance_->InitAsDefaultInstance();
+  Model::default_instance_->InitAsDefaultInstance();
+  Gompertz::default_instance_->InitAsDefaultInstance();
+  AgentParams::default_instance_->InitAsDefaultInstance();
+  Distribution::default_instance_->InitAsDefaultInstance();
+  Force::default_instance_->InitAsDefaultInstance();
+  Group::default_instance_->InitAsDefaultInstance();
+  Source::default_instance_->InitAsDefaultInstance();
+  Goal::default_instance_->InitAsDefaultInstance();
+  Environment::default_instance_->InitAsDefaultInstance();
+  Transition::default_instance_->InitAsDefaultInstance();
+  Room::default_instance_->InitAsDefaultInstance();
+  Subroom::default_instance_->InitAsDefaultInstance();
+  Polygon::default_instance_->InitAsDefaultInstance();
   LeftClosedRightOpenTimeInterval::default_instance_->InitAsDefaultInstance();
   Empty::default_instance_->InitAsDefaultInstance();
   Boolean::default_instance_->InitAsDefaultInstance();
   Agent::default_instance_->InitAsDefaultInstance();
   Leg::default_instance_->InitAsDefaultInstance();
   Link::default_instance_->InitAsDefaultInstance();
+  Coordinate::default_instance_->InitAsDefaultInstance();
   Agents::default_instance_->InitAsDefaultInstance();
   Trajectory::default_instance_->InitAsDefaultInstance();
   Trajectories::default_instance_->InitAsDefaultInstance();
@@ -330,6 +836,7874 @@ static void MergeFromFail(int line) {
 
 }  // namespace
 
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Scenario::kSeedFieldNumber;
+const int Scenario::kEnvironmentFieldNumber;
+const int Scenario::kGoalFieldNumber;
+const int Scenario::kGroupFieldNumber;
+const int Scenario::kSourceFieldNumber;
+const int Scenario::kModelFieldNumber;
+const int Scenario::kRouterFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Scenario::Scenario()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Scenario)
+}
+
+void Scenario::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  environment_ = const_cast< ::hybridsim::Environment*>(&::hybridsim::Environment::default_instance());
+  model_ = const_cast< ::hybridsim::Model*>(&::hybridsim::Model::default_instance());
+}
+
+Scenario::Scenario(const Scenario& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Scenario)
+}
+
+void Scenario::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  seed_ = 0u;
+  environment_ = NULL;
+  model_ = NULL;
+}
+
+Scenario::~Scenario() {
+  // @@protoc_insertion_point(destructor:hybridsim.Scenario)
+  SharedDtor();
+}
+
+void Scenario::SharedDtor() {
+  if (this != default_instance_) {
+    delete environment_;
+    delete model_;
+  }
+}
+
+void Scenario::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Scenario::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Scenario_descriptor_;
+}
+
+const Scenario& Scenario::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Scenario* Scenario::default_instance_ = NULL;
+
+Scenario* Scenario::New(::google::protobuf::Arena* arena) const {
+  Scenario* n = new Scenario;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Scenario::Clear() {
+  seed_ = 0u;
+  if (GetArenaNoVirtual() == NULL && environment_ != NULL) delete environment_;
+  environment_ = NULL;
+  if (GetArenaNoVirtual() == NULL && model_ != NULL) delete model_;
+  model_ = NULL;
+  goal_.Clear();
+  group_.Clear();
+  source_.Clear();
+  router_.Clear();
+}
+
+bool Scenario::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Scenario)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional uint32 seed = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &seed_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_environment;
+        break;
+      }
+
+      // optional .hybridsim.Environment environment = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_environment:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_environment()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_goal;
+        break;
+      }
+
+      // repeated .hybridsim.Goal goal = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_goal:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_goal:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_goal()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_loop_goal;
+        if (input->ExpectTag(34)) goto parse_loop_group;
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .hybridsim.Group group = 4;
+      case 4: {
+        if (tag == 34) {
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_group:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_group()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_loop_group;
+        if (input->ExpectTag(42)) goto parse_loop_source;
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .hybridsim.Source source = 5;
+      case 5: {
+        if (tag == 42) {
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_source:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_source()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_loop_source;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectTag(50)) goto parse_model;
+        break;
+      }
+
+      // optional .hybridsim.Model model = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_model:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_model()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_router;
+        break;
+      }
+
+      // repeated .hybridsim.Router router = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_router:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_router:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_router()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_loop_router;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Scenario)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Scenario)
+  return false;
+#undef DO_
+}
+
+void Scenario::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Scenario)
+  // optional uint32 seed = 1;
+  if (this->seed() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->seed(), output);
+  }
+
+  // optional .hybridsim.Environment environment = 2;
+  if (this->has_environment()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->environment_, output);
+  }
+
+  // repeated .hybridsim.Goal goal = 3;
+  for (unsigned int i = 0, n = this->goal_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->goal(i), output);
+  }
+
+  // repeated .hybridsim.Group group = 4;
+  for (unsigned int i = 0, n = this->group_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, this->group(i), output);
+  }
+
+  // repeated .hybridsim.Source source = 5;
+  for (unsigned int i = 0, n = this->source_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->source(i), output);
+  }
+
+  // optional .hybridsim.Model model = 6;
+  if (this->has_model()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6, *this->model_, output);
+  }
+
+  // repeated .hybridsim.Router router = 7;
+  for (unsigned int i = 0, n = this->router_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, this->router(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Scenario)
+}
+
+::google::protobuf::uint8* Scenario::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Scenario)
+  // optional uint32 seed = 1;
+  if (this->seed() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->seed(), target);
+  }
+
+  // optional .hybridsim.Environment environment = 2;
+  if (this->has_environment()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, *this->environment_, target);
+  }
+
+  // repeated .hybridsim.Goal goal = 3;
+  for (unsigned int i = 0, n = this->goal_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->goal(i), target);
+  }
+
+  // repeated .hybridsim.Group group = 4;
+  for (unsigned int i = 0, n = this->group_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, this->group(i), target);
+  }
+
+  // repeated .hybridsim.Source source = 5;
+  for (unsigned int i = 0, n = this->source_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, this->source(i), target);
+  }
+
+  // optional .hybridsim.Model model = 6;
+  if (this->has_model()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        6, *this->model_, target);
+  }
+
+  // repeated .hybridsim.Router router = 7;
+  for (unsigned int i = 0, n = this->router_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        7, this->router(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Scenario)
+  return target;
+}
+
+int Scenario::ByteSize() const {
+  int total_size = 0;
+
+  // optional uint32 seed = 1;
+  if (this->seed() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->seed());
+  }
+
+  // optional .hybridsim.Environment environment = 2;
+  if (this->has_environment()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->environment_);
+  }
+
+  // optional .hybridsim.Model model = 6;
+  if (this->has_model()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->model_);
+  }
+
+  // repeated .hybridsim.Goal goal = 3;
+  total_size += 1 * this->goal_size();
+  for (int i = 0; i < this->goal_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->goal(i));
+  }
+
+  // repeated .hybridsim.Group group = 4;
+  total_size += 1 * this->group_size();
+  for (int i = 0; i < this->group_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->group(i));
+  }
+
+  // repeated .hybridsim.Source source = 5;
+  total_size += 1 * this->source_size();
+  for (int i = 0; i < this->source_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->source(i));
+  }
+
+  // repeated .hybridsim.Router router = 7;
+  total_size += 1 * this->router_size();
+  for (int i = 0; i < this->router_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->router(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Scenario::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Scenario* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Scenario>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Scenario::MergeFrom(const Scenario& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  goal_.MergeFrom(from.goal_);
+  group_.MergeFrom(from.group_);
+  source_.MergeFrom(from.source_);
+  router_.MergeFrom(from.router_);
+  if (from.seed() != 0) {
+    set_seed(from.seed());
+  }
+  if (from.has_environment()) {
+    mutable_environment()->::hybridsim::Environment::MergeFrom(from.environment());
+  }
+  if (from.has_model()) {
+    mutable_model()->::hybridsim::Model::MergeFrom(from.model());
+  }
+}
+
+void Scenario::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Scenario::CopyFrom(const Scenario& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Scenario::IsInitialized() const {
+
+  return true;
+}
+
+void Scenario::Swap(Scenario* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Scenario::InternalSwap(Scenario* other) {
+  std::swap(seed_, other->seed_);
+  std::swap(environment_, other->environment_);
+  goal_.UnsafeArenaSwap(&other->goal_);
+  group_.UnsafeArenaSwap(&other->group_);
+  source_.UnsafeArenaSwap(&other->source_);
+  std::swap(model_, other->model_);
+  router_.UnsafeArenaSwap(&other->router_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Scenario::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Scenario_descriptor_;
+  metadata.reflection = Scenario_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Scenario
+
+// optional uint32 seed = 1;
+void Scenario::clear_seed() {
+  seed_ = 0u;
+}
+ ::google::protobuf::uint32 Scenario::seed() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.seed)
+  return seed_;
+}
+ void Scenario::set_seed(::google::protobuf::uint32 value) {
+  
+  seed_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Scenario.seed)
+}
+
+// optional .hybridsim.Environment environment = 2;
+bool Scenario::has_environment() const {
+  return !_is_default_instance_ && environment_ != NULL;
+}
+void Scenario::clear_environment() {
+  if (GetArenaNoVirtual() == NULL && environment_ != NULL) delete environment_;
+  environment_ = NULL;
+}
+const ::hybridsim::Environment& Scenario::environment() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.environment)
+  return environment_ != NULL ? *environment_ : *default_instance_->environment_;
+}
+::hybridsim::Environment* Scenario::mutable_environment() {
+  
+  if (environment_ == NULL) {
+    environment_ = new ::hybridsim::Environment;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.environment)
+  return environment_;
+}
+::hybridsim::Environment* Scenario::release_environment() {
+  
+  ::hybridsim::Environment* temp = environment_;
+  environment_ = NULL;
+  return temp;
+}
+void Scenario::set_allocated_environment(::hybridsim::Environment* environment) {
+  delete environment_;
+  environment_ = environment;
+  if (environment) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Scenario.environment)
+}
+
+// repeated .hybridsim.Goal goal = 3;
+int Scenario::goal_size() const {
+  return goal_.size();
+}
+void Scenario::clear_goal() {
+  goal_.Clear();
+}
+const ::hybridsim::Goal& Scenario::goal(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.goal)
+  return goal_.Get(index);
+}
+::hybridsim::Goal* Scenario::mutable_goal(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.goal)
+  return goal_.Mutable(index);
+}
+::hybridsim::Goal* Scenario::add_goal() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.goal)
+  return goal_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Goal >*
+Scenario::mutable_goal() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.goal)
+  return &goal_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Goal >&
+Scenario::goal() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.goal)
+  return goal_;
+}
+
+// repeated .hybridsim.Group group = 4;
+int Scenario::group_size() const {
+  return group_.size();
+}
+void Scenario::clear_group() {
+  group_.Clear();
+}
+const ::hybridsim::Group& Scenario::group(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.group)
+  return group_.Get(index);
+}
+::hybridsim::Group* Scenario::mutable_group(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.group)
+  return group_.Mutable(index);
+}
+::hybridsim::Group* Scenario::add_group() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.group)
+  return group_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Group >*
+Scenario::mutable_group() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.group)
+  return &group_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Group >&
+Scenario::group() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.group)
+  return group_;
+}
+
+// repeated .hybridsim.Source source = 5;
+int Scenario::source_size() const {
+  return source_.size();
+}
+void Scenario::clear_source() {
+  source_.Clear();
+}
+const ::hybridsim::Source& Scenario::source(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.source)
+  return source_.Get(index);
+}
+::hybridsim::Source* Scenario::mutable_source(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.source)
+  return source_.Mutable(index);
+}
+::hybridsim::Source* Scenario::add_source() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.source)
+  return source_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Source >*
+Scenario::mutable_source() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.source)
+  return &source_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Source >&
+Scenario::source() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.source)
+  return source_;
+}
+
+// optional .hybridsim.Model model = 6;
+bool Scenario::has_model() const {
+  return !_is_default_instance_ && model_ != NULL;
+}
+void Scenario::clear_model() {
+  if (GetArenaNoVirtual() == NULL && model_ != NULL) delete model_;
+  model_ = NULL;
+}
+const ::hybridsim::Model& Scenario::model() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.model)
+  return model_ != NULL ? *model_ : *default_instance_->model_;
+}
+::hybridsim::Model* Scenario::mutable_model() {
+  
+  if (model_ == NULL) {
+    model_ = new ::hybridsim::Model;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.model)
+  return model_;
+}
+::hybridsim::Model* Scenario::release_model() {
+  
+  ::hybridsim::Model* temp = model_;
+  model_ = NULL;
+  return temp;
+}
+void Scenario::set_allocated_model(::hybridsim::Model* model) {
+  delete model_;
+  model_ = model;
+  if (model) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Scenario.model)
+}
+
+// repeated .hybridsim.Router router = 7;
+int Scenario::router_size() const {
+  return router_.size();
+}
+void Scenario::clear_router() {
+  router_.Clear();
+}
+const ::hybridsim::Router& Scenario::router(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Scenario.router)
+  return router_.Get(index);
+}
+::hybridsim::Router* Scenario::mutable_router(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Scenario.router)
+  return router_.Mutable(index);
+}
+::hybridsim::Router* Scenario::add_router() {
+  // @@protoc_insertion_point(field_add:hybridsim.Scenario.router)
+  return router_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Router >*
+Scenario::mutable_router() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Scenario.router)
+  return &router_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Router >&
+Scenario::router() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Scenario.router)
+  return router_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Router::kRouterIdFieldNumber;
+const int Router::kDescriptionFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Router::Router()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Router)
+}
+
+void Router::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Router::Router(const Router& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Router)
+}
+
+void Router::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  router_id_ = 0;
+  description_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+Router::~Router() {
+  // @@protoc_insertion_point(destructor:hybridsim.Router)
+  SharedDtor();
+}
+
+void Router::SharedDtor() {
+  description_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void Router::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Router::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Router_descriptor_;
+}
+
+const Router& Router::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Router* Router::default_instance_ = NULL;
+
+Router* Router::New(::google::protobuf::Arena* arena) const {
+  Router* n = new Router;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Router::Clear() {
+  router_id_ = 0;
+  description_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool Router::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Router)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 router_id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &router_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_description;
+        break;
+      }
+
+      // optional string description = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_description:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_description()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->description().data(), this->description().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Router.description"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Router)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Router)
+  return false;
+#undef DO_
+}
+
+void Router::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Router)
+  // optional int32 router_id = 1;
+  if (this->router_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->router_id(), output);
+  }
+
+  // optional string description = 2;
+  if (this->description().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->description().data(), this->description().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Router.description");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->description(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Router)
+}
+
+::google::protobuf::uint8* Router::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Router)
+  // optional int32 router_id = 1;
+  if (this->router_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->router_id(), target);
+  }
+
+  // optional string description = 2;
+  if (this->description().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->description().data(), this->description().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Router.description");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->description(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Router)
+  return target;
+}
+
+int Router::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 router_id = 1;
+  if (this->router_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->router_id());
+  }
+
+  // optional string description = 2;
+  if (this->description().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->description());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Router::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Router* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Router>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Router::MergeFrom(const Router& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.router_id() != 0) {
+    set_router_id(from.router_id());
+  }
+  if (from.description().size() > 0) {
+
+    description_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+}
+
+void Router::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Router::CopyFrom(const Router& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Router::IsInitialized() const {
+
+  return true;
+}
+
+void Router::Swap(Router* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Router::InternalSwap(Router* other) {
+  std::swap(router_id_, other->router_id_);
+  description_.Swap(&other->description_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Router::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Router_descriptor_;
+  metadata.reflection = Router_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Router
+
+// optional int32 router_id = 1;
+void Router::clear_router_id() {
+  router_id_ = 0;
+}
+ ::google::protobuf::int32 Router::router_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Router.router_id)
+  return router_id_;
+}
+ void Router::set_router_id(::google::protobuf::int32 value) {
+  
+  router_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Router.router_id)
+}
+
+// optional string description = 2;
+void Router::clear_description() {
+  description_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Router::description() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Router.description)
+  return description_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Router::set_description(const ::std::string& value) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Router.description)
+}
+ void Router::set_description(const char* value) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Router.description)
+}
+ void Router::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Router.description)
+}
+ ::std::string* Router::mutable_description() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Router.description)
+  return description_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Router::release_description() {
+  
+  return description_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Router::set_allocated_description(::std::string* description) {
+  if (description != NULL) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Router.description)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* Model_Type_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Model_Type_descriptor_;
+}
+bool Model_Type_IsValid(int value) {
+  switch(value) {
+    case 0:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const Model_Type Model::Gompertz;
+const Model_Type Model::Type_MIN;
+const Model_Type Model::Type_MAX;
+const int Model::Type_ARRAYSIZE;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Model::kTypeFieldNumber;
+const int Model::kGompertzFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Model::Model()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Model)
+}
+
+void Model::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  gompertz_ = const_cast< ::hybridsim::Gompertz*>(&::hybridsim::Gompertz::default_instance());
+}
+
+Model::Model(const Model& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Model)
+}
+
+void Model::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  type_ = 0;
+  gompertz_ = NULL;
+}
+
+Model::~Model() {
+  // @@protoc_insertion_point(destructor:hybridsim.Model)
+  SharedDtor();
+}
+
+void Model::SharedDtor() {
+  if (this != default_instance_) {
+    delete gompertz_;
+  }
+}
+
+void Model::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Model::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Model_descriptor_;
+}
+
+const Model& Model::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Model* Model::default_instance_ = NULL;
+
+Model* Model::New(::google::protobuf::Arena* arena) const {
+  Model* n = new Model;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Model::Clear() {
+  type_ = 0;
+  if (GetArenaNoVirtual() == NULL && gompertz_ != NULL) delete gompertz_;
+  gompertz_ = NULL;
+}
+
+bool Model::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Model)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .hybridsim.Model.Type type = 1;
+      case 1: {
+        if (tag == 8) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_type(static_cast< ::hybridsim::Model_Type >(value));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_gompertz;
+        break;
+      }
+
+      // optional .hybridsim.Gompertz gompertz = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_gompertz:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_gompertz()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Model)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Model)
+  return false;
+#undef DO_
+}
+
+void Model::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Model)
+  // optional .hybridsim.Model.Type type = 1;
+  if (this->type() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->type(), output);
+  }
+
+  // optional .hybridsim.Gompertz gompertz = 2;
+  if (this->has_gompertz()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->gompertz_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Model)
+}
+
+::google::protobuf::uint8* Model::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Model)
+  // optional .hybridsim.Model.Type type = 1;
+  if (this->type() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->type(), target);
+  }
+
+  // optional .hybridsim.Gompertz gompertz = 2;
+  if (this->has_gompertz()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, *this->gompertz_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Model)
+  return target;
+}
+
+int Model::ByteSize() const {
+  int total_size = 0;
+
+  // optional .hybridsim.Model.Type type = 1;
+  if (this->type() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+  }
+
+  // optional .hybridsim.Gompertz gompertz = 2;
+  if (this->has_gompertz()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->gompertz_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Model::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Model* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Model>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Model::MergeFrom(const Model& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.type() != 0) {
+    set_type(from.type());
+  }
+  if (from.has_gompertz()) {
+    mutable_gompertz()->::hybridsim::Gompertz::MergeFrom(from.gompertz());
+  }
+}
+
+void Model::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Model::CopyFrom(const Model& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Model::IsInitialized() const {
+
+  return true;
+}
+
+void Model::Swap(Model* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Model::InternalSwap(Model* other) {
+  std::swap(type_, other->type_);
+  std::swap(gompertz_, other->gompertz_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Model::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Model_descriptor_;
+  metadata.reflection = Model_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Model
+
+// optional .hybridsim.Model.Type type = 1;
+void Model::clear_type() {
+  type_ = 0;
+}
+ ::hybridsim::Model_Type Model::type() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Model.type)
+  return static_cast< ::hybridsim::Model_Type >(type_);
+}
+ void Model::set_type(::hybridsim::Model_Type value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Model.type)
+}
+
+// optional .hybridsim.Gompertz gompertz = 2;
+bool Model::has_gompertz() const {
+  return !_is_default_instance_ && gompertz_ != NULL;
+}
+void Model::clear_gompertz() {
+  if (GetArenaNoVirtual() == NULL && gompertz_ != NULL) delete gompertz_;
+  gompertz_ = NULL;
+}
+const ::hybridsim::Gompertz& Model::gompertz() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Model.gompertz)
+  return gompertz_ != NULL ? *gompertz_ : *default_instance_->gompertz_;
+}
+::hybridsim::Gompertz* Model::mutable_gompertz() {
+  
+  if (gompertz_ == NULL) {
+    gompertz_ = new ::hybridsim::Gompertz;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Model.gompertz)
+  return gompertz_;
+}
+::hybridsim::Gompertz* Model::release_gompertz() {
+  
+  ::hybridsim::Gompertz* temp = gompertz_;
+  gompertz_ = NULL;
+  return temp;
+}
+void Model::set_allocated_gompertz(::hybridsim::Gompertz* gompertz) {
+  delete gompertz_;
+  gompertz_ = gompertz;
+  if (gompertz) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Model.gompertz)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Gompertz::kSolverFieldNumber;
+const int Gompertz::kStepsizeFieldNumber;
+const int Gompertz::kExitCrossingStrategyFieldNumber;
+const int Gompertz::kLinkedCellsEnabledFieldNumber;
+const int Gompertz::kCellSizeFieldNumber;
+const int Gompertz::kForcePedFieldNumber;
+const int Gompertz::kForceWallFieldNumber;
+const int Gompertz::kAgentParamsFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Gompertz::Gompertz()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Gompertz)
+}
+
+void Gompertz::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  force_ped_ = const_cast< ::hybridsim::Force*>(&::hybridsim::Force::default_instance());
+  force_wall_ = const_cast< ::hybridsim::Force*>(&::hybridsim::Force::default_instance());
+  agent_params_ = const_cast< ::hybridsim::AgentParams*>(&::hybridsim::AgentParams::default_instance());
+}
+
+Gompertz::Gompertz(const Gompertz& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Gompertz)
+}
+
+void Gompertz::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  solver_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  stepsize_ = 0;
+  exit_crossing_strategy_ = 0;
+  linked_cells_enabled_ = false;
+  cell_size_ = 0;
+  force_ped_ = NULL;
+  force_wall_ = NULL;
+  agent_params_ = NULL;
+}
+
+Gompertz::~Gompertz() {
+  // @@protoc_insertion_point(destructor:hybridsim.Gompertz)
+  SharedDtor();
+}
+
+void Gompertz::SharedDtor() {
+  solver_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+    delete force_ped_;
+    delete force_wall_;
+    delete agent_params_;
+  }
+}
+
+void Gompertz::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Gompertz::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Gompertz_descriptor_;
+}
+
+const Gompertz& Gompertz::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Gompertz* Gompertz::default_instance_ = NULL;
+
+Gompertz* Gompertz::New(::google::protobuf::Arena* arena) const {
+  Gompertz* n = new Gompertz;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Gompertz::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Gompertz*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(stepsize_, cell_size_);
+  solver_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && force_ped_ != NULL) delete force_ped_;
+  force_ped_ = NULL;
+  if (GetArenaNoVirtual() == NULL && force_wall_ != NULL) delete force_wall_;
+  force_wall_ = NULL;
+  if (GetArenaNoVirtual() == NULL && agent_params_ != NULL) delete agent_params_;
+  agent_params_ = NULL;
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Gompertz::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Gompertz)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string solver = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_solver()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->solver().data(), this->solver().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Gompertz.solver"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(17)) goto parse_stepsize;
+        break;
+      }
+
+      // optional double stepsize = 2;
+      case 2: {
+        if (tag == 17) {
+         parse_stepsize:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &stepsize_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_exit_crossing_strategy;
+        break;
+      }
+
+      // optional int32 exit_crossing_strategy = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_exit_crossing_strategy:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &exit_crossing_strategy_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(32)) goto parse_linked_cells_enabled;
+        break;
+      }
+
+      // optional bool linked_cells_enabled = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_linked_cells_enabled:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &linked_cells_enabled_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(41)) goto parse_cell_size;
+        break;
+      }
+
+      // optional double cell_size = 5;
+      case 5: {
+        if (tag == 41) {
+         parse_cell_size:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &cell_size_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(50)) goto parse_force_ped;
+        break;
+      }
+
+      // optional .hybridsim.Force force_ped = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_force_ped:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_force_ped()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_force_wall;
+        break;
+      }
+
+      // optional .hybridsim.Force force_wall = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_force_wall:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_force_wall()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_agent_params;
+        break;
+      }
+
+      // optional .hybridsim.AgentParams agent_params = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_agent_params:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_agent_params()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Gompertz)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Gompertz)
+  return false;
+#undef DO_
+}
+
+void Gompertz::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Gompertz)
+  // optional string solver = 1;
+  if (this->solver().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->solver().data(), this->solver().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Gompertz.solver");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->solver(), output);
+  }
+
+  // optional double stepsize = 2;
+  if (this->stepsize() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->stepsize(), output);
+  }
+
+  // optional int32 exit_crossing_strategy = 3;
+  if (this->exit_crossing_strategy() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->exit_crossing_strategy(), output);
+  }
+
+  // optional bool linked_cells_enabled = 4;
+  if (this->linked_cells_enabled() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->linked_cells_enabled(), output);
+  }
+
+  // optional double cell_size = 5;
+  if (this->cell_size() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->cell_size(), output);
+  }
+
+  // optional .hybridsim.Force force_ped = 6;
+  if (this->has_force_ped()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6, *this->force_ped_, output);
+  }
+
+  // optional .hybridsim.Force force_wall = 7;
+  if (this->has_force_wall()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->force_wall_, output);
+  }
+
+  // optional .hybridsim.AgentParams agent_params = 8;
+  if (this->has_agent_params()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->agent_params_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Gompertz)
+}
+
+::google::protobuf::uint8* Gompertz::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Gompertz)
+  // optional string solver = 1;
+  if (this->solver().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->solver().data(), this->solver().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Gompertz.solver");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->solver(), target);
+  }
+
+  // optional double stepsize = 2;
+  if (this->stepsize() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->stepsize(), target);
+  }
+
+  // optional int32 exit_crossing_strategy = 3;
+  if (this->exit_crossing_strategy() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->exit_crossing_strategy(), target);
+  }
+
+  // optional bool linked_cells_enabled = 4;
+  if (this->linked_cells_enabled() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->linked_cells_enabled(), target);
+  }
+
+  // optional double cell_size = 5;
+  if (this->cell_size() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->cell_size(), target);
+  }
+
+  // optional .hybridsim.Force force_ped = 6;
+  if (this->has_force_ped()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        6, *this->force_ped_, target);
+  }
+
+  // optional .hybridsim.Force force_wall = 7;
+  if (this->has_force_wall()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        7, *this->force_wall_, target);
+  }
+
+  // optional .hybridsim.AgentParams agent_params = 8;
+  if (this->has_agent_params()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        8, *this->agent_params_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Gompertz)
+  return target;
+}
+
+int Gompertz::ByteSize() const {
+  int total_size = 0;
+
+  // optional string solver = 1;
+  if (this->solver().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->solver());
+  }
+
+  // optional double stepsize = 2;
+  if (this->stepsize() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional int32 exit_crossing_strategy = 3;
+  if (this->exit_crossing_strategy() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->exit_crossing_strategy());
+  }
+
+  // optional bool linked_cells_enabled = 4;
+  if (this->linked_cells_enabled() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // optional double cell_size = 5;
+  if (this->cell_size() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional .hybridsim.Force force_ped = 6;
+  if (this->has_force_ped()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->force_ped_);
+  }
+
+  // optional .hybridsim.Force force_wall = 7;
+  if (this->has_force_wall()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->force_wall_);
+  }
+
+  // optional .hybridsim.AgentParams agent_params = 8;
+  if (this->has_agent_params()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->agent_params_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Gompertz::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Gompertz* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Gompertz>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Gompertz::MergeFrom(const Gompertz& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.solver().size() > 0) {
+
+    solver_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.solver_);
+  }
+  if (from.stepsize() != 0) {
+    set_stepsize(from.stepsize());
+  }
+  if (from.exit_crossing_strategy() != 0) {
+    set_exit_crossing_strategy(from.exit_crossing_strategy());
+  }
+  if (from.linked_cells_enabled() != 0) {
+    set_linked_cells_enabled(from.linked_cells_enabled());
+  }
+  if (from.cell_size() != 0) {
+    set_cell_size(from.cell_size());
+  }
+  if (from.has_force_ped()) {
+    mutable_force_ped()->::hybridsim::Force::MergeFrom(from.force_ped());
+  }
+  if (from.has_force_wall()) {
+    mutable_force_wall()->::hybridsim::Force::MergeFrom(from.force_wall());
+  }
+  if (from.has_agent_params()) {
+    mutable_agent_params()->::hybridsim::AgentParams::MergeFrom(from.agent_params());
+  }
+}
+
+void Gompertz::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Gompertz::CopyFrom(const Gompertz& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Gompertz::IsInitialized() const {
+
+  return true;
+}
+
+void Gompertz::Swap(Gompertz* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Gompertz::InternalSwap(Gompertz* other) {
+  solver_.Swap(&other->solver_);
+  std::swap(stepsize_, other->stepsize_);
+  std::swap(exit_crossing_strategy_, other->exit_crossing_strategy_);
+  std::swap(linked_cells_enabled_, other->linked_cells_enabled_);
+  std::swap(cell_size_, other->cell_size_);
+  std::swap(force_ped_, other->force_ped_);
+  std::swap(force_wall_, other->force_wall_);
+  std::swap(agent_params_, other->agent_params_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Gompertz::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Gompertz_descriptor_;
+  metadata.reflection = Gompertz_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Gompertz
+
+// optional string solver = 1;
+void Gompertz::clear_solver() {
+  solver_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Gompertz::solver() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.solver)
+  return solver_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Gompertz::set_solver(const ::std::string& value) {
+  
+  solver_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.solver)
+}
+ void Gompertz::set_solver(const char* value) {
+  
+  solver_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Gompertz.solver)
+}
+ void Gompertz::set_solver(const char* value, size_t size) {
+  
+  solver_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Gompertz.solver)
+}
+ ::std::string* Gompertz::mutable_solver() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.solver)
+  return solver_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Gompertz::release_solver() {
+  
+  return solver_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Gompertz::set_allocated_solver(::std::string* solver) {
+  if (solver != NULL) {
+    
+  } else {
+    
+  }
+  solver_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), solver);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.solver)
+}
+
+// optional double stepsize = 2;
+void Gompertz::clear_stepsize() {
+  stepsize_ = 0;
+}
+ double Gompertz::stepsize() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.stepsize)
+  return stepsize_;
+}
+ void Gompertz::set_stepsize(double value) {
+  
+  stepsize_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.stepsize)
+}
+
+// optional int32 exit_crossing_strategy = 3;
+void Gompertz::clear_exit_crossing_strategy() {
+  exit_crossing_strategy_ = 0;
+}
+ ::google::protobuf::int32 Gompertz::exit_crossing_strategy() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.exit_crossing_strategy)
+  return exit_crossing_strategy_;
+}
+ void Gompertz::set_exit_crossing_strategy(::google::protobuf::int32 value) {
+  
+  exit_crossing_strategy_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.exit_crossing_strategy)
+}
+
+// optional bool linked_cells_enabled = 4;
+void Gompertz::clear_linked_cells_enabled() {
+  linked_cells_enabled_ = false;
+}
+ bool Gompertz::linked_cells_enabled() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.linked_cells_enabled)
+  return linked_cells_enabled_;
+}
+ void Gompertz::set_linked_cells_enabled(bool value) {
+  
+  linked_cells_enabled_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.linked_cells_enabled)
+}
+
+// optional double cell_size = 5;
+void Gompertz::clear_cell_size() {
+  cell_size_ = 0;
+}
+ double Gompertz::cell_size() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.cell_size)
+  return cell_size_;
+}
+ void Gompertz::set_cell_size(double value) {
+  
+  cell_size_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Gompertz.cell_size)
+}
+
+// optional .hybridsim.Force force_ped = 6;
+bool Gompertz::has_force_ped() const {
+  return !_is_default_instance_ && force_ped_ != NULL;
+}
+void Gompertz::clear_force_ped() {
+  if (GetArenaNoVirtual() == NULL && force_ped_ != NULL) delete force_ped_;
+  force_ped_ = NULL;
+}
+const ::hybridsim::Force& Gompertz::force_ped() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.force_ped)
+  return force_ped_ != NULL ? *force_ped_ : *default_instance_->force_ped_;
+}
+::hybridsim::Force* Gompertz::mutable_force_ped() {
+  
+  if (force_ped_ == NULL) {
+    force_ped_ = new ::hybridsim::Force;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.force_ped)
+  return force_ped_;
+}
+::hybridsim::Force* Gompertz::release_force_ped() {
+  
+  ::hybridsim::Force* temp = force_ped_;
+  force_ped_ = NULL;
+  return temp;
+}
+void Gompertz::set_allocated_force_ped(::hybridsim::Force* force_ped) {
+  delete force_ped_;
+  force_ped_ = force_ped;
+  if (force_ped) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.force_ped)
+}
+
+// optional .hybridsim.Force force_wall = 7;
+bool Gompertz::has_force_wall() const {
+  return !_is_default_instance_ && force_wall_ != NULL;
+}
+void Gompertz::clear_force_wall() {
+  if (GetArenaNoVirtual() == NULL && force_wall_ != NULL) delete force_wall_;
+  force_wall_ = NULL;
+}
+const ::hybridsim::Force& Gompertz::force_wall() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.force_wall)
+  return force_wall_ != NULL ? *force_wall_ : *default_instance_->force_wall_;
+}
+::hybridsim::Force* Gompertz::mutable_force_wall() {
+  
+  if (force_wall_ == NULL) {
+    force_wall_ = new ::hybridsim::Force;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.force_wall)
+  return force_wall_;
+}
+::hybridsim::Force* Gompertz::release_force_wall() {
+  
+  ::hybridsim::Force* temp = force_wall_;
+  force_wall_ = NULL;
+  return temp;
+}
+void Gompertz::set_allocated_force_wall(::hybridsim::Force* force_wall) {
+  delete force_wall_;
+  force_wall_ = force_wall;
+  if (force_wall) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.force_wall)
+}
+
+// optional .hybridsim.AgentParams agent_params = 8;
+bool Gompertz::has_agent_params() const {
+  return !_is_default_instance_ && agent_params_ != NULL;
+}
+void Gompertz::clear_agent_params() {
+  if (GetArenaNoVirtual() == NULL && agent_params_ != NULL) delete agent_params_;
+  agent_params_ = NULL;
+}
+const ::hybridsim::AgentParams& Gompertz::agent_params() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Gompertz.agent_params)
+  return agent_params_ != NULL ? *agent_params_ : *default_instance_->agent_params_;
+}
+::hybridsim::AgentParams* Gompertz::mutable_agent_params() {
+  
+  if (agent_params_ == NULL) {
+    agent_params_ = new ::hybridsim::AgentParams;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Gompertz.agent_params)
+  return agent_params_;
+}
+::hybridsim::AgentParams* Gompertz::release_agent_params() {
+  
+  ::hybridsim::AgentParams* temp = agent_params_;
+  agent_params_ = NULL;
+  return temp;
+}
+void Gompertz::set_allocated_agent_params(::hybridsim::AgentParams* agent_params) {
+  delete agent_params_;
+  agent_params_ = agent_params;
+  if (agent_params) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Gompertz.agent_params)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int AgentParams::kV0FieldNumber;
+const int AgentParams::kBMaxFieldNumber;
+const int AgentParams::kBMinFieldNumber;
+const int AgentParams::kAMinFieldNumber;
+const int AgentParams::kTauFieldNumber;
+const int AgentParams::kAtauFieldNumber;
+const int AgentParams::kV0UpstairsFieldNumber;
+const int AgentParams::kV0DownstairsFieldNumber;
+const int AgentParams::kV0EscalatorUpFieldNumber;
+const int AgentParams::kV0EscalatorDownFieldNumber;
+const int AgentParams::kV0IdleEscalatorUpFieldNumber;
+const int AgentParams::kV0IdleEscalatorDownFieldNumber;
+const int AgentParams::kTFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+AgentParams::AgentParams()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.AgentParams)
+}
+
+void AgentParams::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  v0_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  b_max_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  b_min_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  a_min_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  tau_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  atau_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  v0_upstairs_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  v0_downstairs_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  v0_escalator_up_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  v0_escalator_down_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  v0_idle_escalator_up_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  v0_idle_escalator_down_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+  t_ = const_cast< ::hybridsim::Distribution*>(&::hybridsim::Distribution::default_instance());
+}
+
+AgentParams::AgentParams(const AgentParams& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.AgentParams)
+}
+
+void AgentParams::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  v0_ = NULL;
+  b_max_ = NULL;
+  b_min_ = NULL;
+  a_min_ = NULL;
+  tau_ = NULL;
+  atau_ = NULL;
+  v0_upstairs_ = NULL;
+  v0_downstairs_ = NULL;
+  v0_escalator_up_ = NULL;
+  v0_escalator_down_ = NULL;
+  v0_idle_escalator_up_ = NULL;
+  v0_idle_escalator_down_ = NULL;
+  t_ = NULL;
+}
+
+AgentParams::~AgentParams() {
+  // @@protoc_insertion_point(destructor:hybridsim.AgentParams)
+  SharedDtor();
+}
+
+void AgentParams::SharedDtor() {
+  if (this != default_instance_) {
+    delete v0_;
+    delete b_max_;
+    delete b_min_;
+    delete a_min_;
+    delete tau_;
+    delete atau_;
+    delete v0_upstairs_;
+    delete v0_downstairs_;
+    delete v0_escalator_up_;
+    delete v0_escalator_down_;
+    delete v0_idle_escalator_up_;
+    delete v0_idle_escalator_down_;
+    delete t_;
+  }
+}
+
+void AgentParams::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* AgentParams::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return AgentParams_descriptor_;
+}
+
+const AgentParams& AgentParams::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+AgentParams* AgentParams::default_instance_ = NULL;
+
+AgentParams* AgentParams::New(::google::protobuf::Arena* arena) const {
+  AgentParams* n = new AgentParams;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void AgentParams::Clear() {
+  if (GetArenaNoVirtual() == NULL && v0_ != NULL) delete v0_;
+  v0_ = NULL;
+  if (GetArenaNoVirtual() == NULL && b_max_ != NULL) delete b_max_;
+  b_max_ = NULL;
+  if (GetArenaNoVirtual() == NULL && b_min_ != NULL) delete b_min_;
+  b_min_ = NULL;
+  if (GetArenaNoVirtual() == NULL && a_min_ != NULL) delete a_min_;
+  a_min_ = NULL;
+  if (GetArenaNoVirtual() == NULL && tau_ != NULL) delete tau_;
+  tau_ = NULL;
+  if (GetArenaNoVirtual() == NULL && atau_ != NULL) delete atau_;
+  atau_ = NULL;
+  if (GetArenaNoVirtual() == NULL && v0_upstairs_ != NULL) delete v0_upstairs_;
+  v0_upstairs_ = NULL;
+  if (GetArenaNoVirtual() == NULL && v0_downstairs_ != NULL) delete v0_downstairs_;
+  v0_downstairs_ = NULL;
+  if (GetArenaNoVirtual() == NULL && v0_escalator_up_ != NULL) delete v0_escalator_up_;
+  v0_escalator_up_ = NULL;
+  if (GetArenaNoVirtual() == NULL && v0_escalator_down_ != NULL) delete v0_escalator_down_;
+  v0_escalator_down_ = NULL;
+  if (GetArenaNoVirtual() == NULL && v0_idle_escalator_up_ != NULL) delete v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = NULL;
+  if (GetArenaNoVirtual() == NULL && v0_idle_escalator_down_ != NULL) delete v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = NULL;
+  if (GetArenaNoVirtual() == NULL && t_ != NULL) delete t_;
+  t_ = NULL;
+}
+
+bool AgentParams::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.AgentParams)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .hybridsim.Distribution v0 = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_b_max;
+        break;
+      }
+
+      // optional .hybridsim.Distribution b_max = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_b_max:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_b_max()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_b_min;
+        break;
+      }
+
+      // optional .hybridsim.Distribution b_min = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_b_min:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_b_min()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_a_min;
+        break;
+      }
+
+      // optional .hybridsim.Distribution a_min = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_a_min:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_a_min()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_tau;
+        break;
+      }
+
+      // optional .hybridsim.Distribution tau = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_tau:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_tau()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(50)) goto parse_atau;
+        break;
+      }
+
+      // optional .hybridsim.Distribution atau = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_atau:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_atau()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_v0_upstairs;
+        break;
+      }
+
+      // optional .hybridsim.Distribution v0_upstairs = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_v0_upstairs:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0_upstairs()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_v0_downstairs;
+        break;
+      }
+
+      // optional .hybridsim.Distribution v0_downstairs = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_v0_downstairs:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0_downstairs()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(74)) goto parse_v0_escalator_up;
+        break;
+      }
+
+      // optional .hybridsim.Distribution v0_escalator_up = 9;
+      case 9: {
+        if (tag == 74) {
+         parse_v0_escalator_up:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0_escalator_up()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(82)) goto parse_v0_escalator_down;
+        break;
+      }
+
+      // optional .hybridsim.Distribution v0_escalator_down = 10;
+      case 10: {
+        if (tag == 82) {
+         parse_v0_escalator_down:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0_escalator_down()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(90)) goto parse_v0_idle_escalator_up;
+        break;
+      }
+
+      // optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+      case 11: {
+        if (tag == 90) {
+         parse_v0_idle_escalator_up:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0_idle_escalator_up()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(98)) goto parse_v0_idle_escalator_down;
+        break;
+      }
+
+      // optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+      case 12: {
+        if (tag == 98) {
+         parse_v0_idle_escalator_down:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_v0_idle_escalator_down()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(106)) goto parse_T;
+        break;
+      }
+
+      // optional .hybridsim.Distribution T = 13;
+      case 13: {
+        if (tag == 106) {
+         parse_T:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_t()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.AgentParams)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.AgentParams)
+  return false;
+#undef DO_
+}
+
+void AgentParams::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.AgentParams)
+  // optional .hybridsim.Distribution v0 = 1;
+  if (this->has_v0()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->v0_, output);
+  }
+
+  // optional .hybridsim.Distribution b_max = 2;
+  if (this->has_b_max()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->b_max_, output);
+  }
+
+  // optional .hybridsim.Distribution b_min = 3;
+  if (this->has_b_min()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, *this->b_min_, output);
+  }
+
+  // optional .hybridsim.Distribution a_min = 4;
+  if (this->has_a_min()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, *this->a_min_, output);
+  }
+
+  // optional .hybridsim.Distribution tau = 5;
+  if (this->has_tau()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, *this->tau_, output);
+  }
+
+  // optional .hybridsim.Distribution atau = 6;
+  if (this->has_atau()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6, *this->atau_, output);
+  }
+
+  // optional .hybridsim.Distribution v0_upstairs = 7;
+  if (this->has_v0_upstairs()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->v0_upstairs_, output);
+  }
+
+  // optional .hybridsim.Distribution v0_downstairs = 8;
+  if (this->has_v0_downstairs()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->v0_downstairs_, output);
+  }
+
+  // optional .hybridsim.Distribution v0_escalator_up = 9;
+  if (this->has_v0_escalator_up()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      9, *this->v0_escalator_up_, output);
+  }
+
+  // optional .hybridsim.Distribution v0_escalator_down = 10;
+  if (this->has_v0_escalator_down()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      10, *this->v0_escalator_down_, output);
+  }
+
+  // optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+  if (this->has_v0_idle_escalator_up()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      11, *this->v0_idle_escalator_up_, output);
+  }
+
+  // optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+  if (this->has_v0_idle_escalator_down()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      12, *this->v0_idle_escalator_down_, output);
+  }
+
+  // optional .hybridsim.Distribution T = 13;
+  if (this->has_t()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      13, *this->t_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.AgentParams)
+}
+
+::google::protobuf::uint8* AgentParams::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.AgentParams)
+  // optional .hybridsim.Distribution v0 = 1;
+  if (this->has_v0()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->v0_, target);
+  }
+
+  // optional .hybridsim.Distribution b_max = 2;
+  if (this->has_b_max()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, *this->b_max_, target);
+  }
+
+  // optional .hybridsim.Distribution b_min = 3;
+  if (this->has_b_min()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, *this->b_min_, target);
+  }
+
+  // optional .hybridsim.Distribution a_min = 4;
+  if (this->has_a_min()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, *this->a_min_, target);
+  }
+
+  // optional .hybridsim.Distribution tau = 5;
+  if (this->has_tau()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, *this->tau_, target);
+  }
+
+  // optional .hybridsim.Distribution atau = 6;
+  if (this->has_atau()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        6, *this->atau_, target);
+  }
+
+  // optional .hybridsim.Distribution v0_upstairs = 7;
+  if (this->has_v0_upstairs()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        7, *this->v0_upstairs_, target);
+  }
+
+  // optional .hybridsim.Distribution v0_downstairs = 8;
+  if (this->has_v0_downstairs()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        8, *this->v0_downstairs_, target);
+  }
+
+  // optional .hybridsim.Distribution v0_escalator_up = 9;
+  if (this->has_v0_escalator_up()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        9, *this->v0_escalator_up_, target);
+  }
+
+  // optional .hybridsim.Distribution v0_escalator_down = 10;
+  if (this->has_v0_escalator_down()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        10, *this->v0_escalator_down_, target);
+  }
+
+  // optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+  if (this->has_v0_idle_escalator_up()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        11, *this->v0_idle_escalator_up_, target);
+  }
+
+  // optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+  if (this->has_v0_idle_escalator_down()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        12, *this->v0_idle_escalator_down_, target);
+  }
+
+  // optional .hybridsim.Distribution T = 13;
+  if (this->has_t()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        13, *this->t_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.AgentParams)
+  return target;
+}
+
+int AgentParams::ByteSize() const {
+  int total_size = 0;
+
+  // optional .hybridsim.Distribution v0 = 1;
+  if (this->has_v0()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_);
+  }
+
+  // optional .hybridsim.Distribution b_max = 2;
+  if (this->has_b_max()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->b_max_);
+  }
+
+  // optional .hybridsim.Distribution b_min = 3;
+  if (this->has_b_min()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->b_min_);
+  }
+
+  // optional .hybridsim.Distribution a_min = 4;
+  if (this->has_a_min()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->a_min_);
+  }
+
+  // optional .hybridsim.Distribution tau = 5;
+  if (this->has_tau()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->tau_);
+  }
+
+  // optional .hybridsim.Distribution atau = 6;
+  if (this->has_atau()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->atau_);
+  }
+
+  // optional .hybridsim.Distribution v0_upstairs = 7;
+  if (this->has_v0_upstairs()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_upstairs_);
+  }
+
+  // optional .hybridsim.Distribution v0_downstairs = 8;
+  if (this->has_v0_downstairs()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_downstairs_);
+  }
+
+  // optional .hybridsim.Distribution v0_escalator_up = 9;
+  if (this->has_v0_escalator_up()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_escalator_up_);
+  }
+
+  // optional .hybridsim.Distribution v0_escalator_down = 10;
+  if (this->has_v0_escalator_down()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_escalator_down_);
+  }
+
+  // optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+  if (this->has_v0_idle_escalator_up()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_idle_escalator_up_);
+  }
+
+  // optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+  if (this->has_v0_idle_escalator_down()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->v0_idle_escalator_down_);
+  }
+
+  // optional .hybridsim.Distribution T = 13;
+  if (this->has_t()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->t_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void AgentParams::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const AgentParams* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const AgentParams>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void AgentParams::MergeFrom(const AgentParams& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.has_v0()) {
+    mutable_v0()->::hybridsim::Distribution::MergeFrom(from.v0());
+  }
+  if (from.has_b_max()) {
+    mutable_b_max()->::hybridsim::Distribution::MergeFrom(from.b_max());
+  }
+  if (from.has_b_min()) {
+    mutable_b_min()->::hybridsim::Distribution::MergeFrom(from.b_min());
+  }
+  if (from.has_a_min()) {
+    mutable_a_min()->::hybridsim::Distribution::MergeFrom(from.a_min());
+  }
+  if (from.has_tau()) {
+    mutable_tau()->::hybridsim::Distribution::MergeFrom(from.tau());
+  }
+  if (from.has_atau()) {
+    mutable_atau()->::hybridsim::Distribution::MergeFrom(from.atau());
+  }
+  if (from.has_v0_upstairs()) {
+    mutable_v0_upstairs()->::hybridsim::Distribution::MergeFrom(from.v0_upstairs());
+  }
+  if (from.has_v0_downstairs()) {
+    mutable_v0_downstairs()->::hybridsim::Distribution::MergeFrom(from.v0_downstairs());
+  }
+  if (from.has_v0_escalator_up()) {
+    mutable_v0_escalator_up()->::hybridsim::Distribution::MergeFrom(from.v0_escalator_up());
+  }
+  if (from.has_v0_escalator_down()) {
+    mutable_v0_escalator_down()->::hybridsim::Distribution::MergeFrom(from.v0_escalator_down());
+  }
+  if (from.has_v0_idle_escalator_up()) {
+    mutable_v0_idle_escalator_up()->::hybridsim::Distribution::MergeFrom(from.v0_idle_escalator_up());
+  }
+  if (from.has_v0_idle_escalator_down()) {
+    mutable_v0_idle_escalator_down()->::hybridsim::Distribution::MergeFrom(from.v0_idle_escalator_down());
+  }
+  if (from.has_t()) {
+    mutable_t()->::hybridsim::Distribution::MergeFrom(from.t());
+  }
+}
+
+void AgentParams::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void AgentParams::CopyFrom(const AgentParams& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool AgentParams::IsInitialized() const {
+
+  return true;
+}
+
+void AgentParams::Swap(AgentParams* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void AgentParams::InternalSwap(AgentParams* other) {
+  std::swap(v0_, other->v0_);
+  std::swap(b_max_, other->b_max_);
+  std::swap(b_min_, other->b_min_);
+  std::swap(a_min_, other->a_min_);
+  std::swap(tau_, other->tau_);
+  std::swap(atau_, other->atau_);
+  std::swap(v0_upstairs_, other->v0_upstairs_);
+  std::swap(v0_downstairs_, other->v0_downstairs_);
+  std::swap(v0_escalator_up_, other->v0_escalator_up_);
+  std::swap(v0_escalator_down_, other->v0_escalator_down_);
+  std::swap(v0_idle_escalator_up_, other->v0_idle_escalator_up_);
+  std::swap(v0_idle_escalator_down_, other->v0_idle_escalator_down_);
+  std::swap(t_, other->t_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata AgentParams::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = AgentParams_descriptor_;
+  metadata.reflection = AgentParams_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// AgentParams
+
+// optional .hybridsim.Distribution v0 = 1;
+bool AgentParams::has_v0() const {
+  return !_is_default_instance_ && v0_ != NULL;
+}
+void AgentParams::clear_v0() {
+  if (GetArenaNoVirtual() == NULL && v0_ != NULL) delete v0_;
+  v0_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0)
+  return v0_ != NULL ? *v0_ : *default_instance_->v0_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0() {
+  
+  if (v0_ == NULL) {
+    v0_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0)
+  return v0_;
+}
+::hybridsim::Distribution* AgentParams::release_v0() {
+  
+  ::hybridsim::Distribution* temp = v0_;
+  v0_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0(::hybridsim::Distribution* v0) {
+  delete v0_;
+  v0_ = v0;
+  if (v0) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0)
+}
+
+// optional .hybridsim.Distribution b_max = 2;
+bool AgentParams::has_b_max() const {
+  return !_is_default_instance_ && b_max_ != NULL;
+}
+void AgentParams::clear_b_max() {
+  if (GetArenaNoVirtual() == NULL && b_max_ != NULL) delete b_max_;
+  b_max_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::b_max() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.b_max)
+  return b_max_ != NULL ? *b_max_ : *default_instance_->b_max_;
+}
+::hybridsim::Distribution* AgentParams::mutable_b_max() {
+  
+  if (b_max_ == NULL) {
+    b_max_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.b_max)
+  return b_max_;
+}
+::hybridsim::Distribution* AgentParams::release_b_max() {
+  
+  ::hybridsim::Distribution* temp = b_max_;
+  b_max_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_b_max(::hybridsim::Distribution* b_max) {
+  delete b_max_;
+  b_max_ = b_max;
+  if (b_max) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.b_max)
+}
+
+// optional .hybridsim.Distribution b_min = 3;
+bool AgentParams::has_b_min() const {
+  return !_is_default_instance_ && b_min_ != NULL;
+}
+void AgentParams::clear_b_min() {
+  if (GetArenaNoVirtual() == NULL && b_min_ != NULL) delete b_min_;
+  b_min_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::b_min() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.b_min)
+  return b_min_ != NULL ? *b_min_ : *default_instance_->b_min_;
+}
+::hybridsim::Distribution* AgentParams::mutable_b_min() {
+  
+  if (b_min_ == NULL) {
+    b_min_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.b_min)
+  return b_min_;
+}
+::hybridsim::Distribution* AgentParams::release_b_min() {
+  
+  ::hybridsim::Distribution* temp = b_min_;
+  b_min_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_b_min(::hybridsim::Distribution* b_min) {
+  delete b_min_;
+  b_min_ = b_min;
+  if (b_min) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.b_min)
+}
+
+// optional .hybridsim.Distribution a_min = 4;
+bool AgentParams::has_a_min() const {
+  return !_is_default_instance_ && a_min_ != NULL;
+}
+void AgentParams::clear_a_min() {
+  if (GetArenaNoVirtual() == NULL && a_min_ != NULL) delete a_min_;
+  a_min_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::a_min() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.a_min)
+  return a_min_ != NULL ? *a_min_ : *default_instance_->a_min_;
+}
+::hybridsim::Distribution* AgentParams::mutable_a_min() {
+  
+  if (a_min_ == NULL) {
+    a_min_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.a_min)
+  return a_min_;
+}
+::hybridsim::Distribution* AgentParams::release_a_min() {
+  
+  ::hybridsim::Distribution* temp = a_min_;
+  a_min_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_a_min(::hybridsim::Distribution* a_min) {
+  delete a_min_;
+  a_min_ = a_min;
+  if (a_min) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.a_min)
+}
+
+// optional .hybridsim.Distribution tau = 5;
+bool AgentParams::has_tau() const {
+  return !_is_default_instance_ && tau_ != NULL;
+}
+void AgentParams::clear_tau() {
+  if (GetArenaNoVirtual() == NULL && tau_ != NULL) delete tau_;
+  tau_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::tau() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.tau)
+  return tau_ != NULL ? *tau_ : *default_instance_->tau_;
+}
+::hybridsim::Distribution* AgentParams::mutable_tau() {
+  
+  if (tau_ == NULL) {
+    tau_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.tau)
+  return tau_;
+}
+::hybridsim::Distribution* AgentParams::release_tau() {
+  
+  ::hybridsim::Distribution* temp = tau_;
+  tau_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_tau(::hybridsim::Distribution* tau) {
+  delete tau_;
+  tau_ = tau;
+  if (tau) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.tau)
+}
+
+// optional .hybridsim.Distribution atau = 6;
+bool AgentParams::has_atau() const {
+  return !_is_default_instance_ && atau_ != NULL;
+}
+void AgentParams::clear_atau() {
+  if (GetArenaNoVirtual() == NULL && atau_ != NULL) delete atau_;
+  atau_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::atau() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.atau)
+  return atau_ != NULL ? *atau_ : *default_instance_->atau_;
+}
+::hybridsim::Distribution* AgentParams::mutable_atau() {
+  
+  if (atau_ == NULL) {
+    atau_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.atau)
+  return atau_;
+}
+::hybridsim::Distribution* AgentParams::release_atau() {
+  
+  ::hybridsim::Distribution* temp = atau_;
+  atau_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_atau(::hybridsim::Distribution* atau) {
+  delete atau_;
+  atau_ = atau;
+  if (atau) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.atau)
+}
+
+// optional .hybridsim.Distribution v0_upstairs = 7;
+bool AgentParams::has_v0_upstairs() const {
+  return !_is_default_instance_ && v0_upstairs_ != NULL;
+}
+void AgentParams::clear_v0_upstairs() {
+  if (GetArenaNoVirtual() == NULL && v0_upstairs_ != NULL) delete v0_upstairs_;
+  v0_upstairs_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0_upstairs() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_upstairs)
+  return v0_upstairs_ != NULL ? *v0_upstairs_ : *default_instance_->v0_upstairs_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0_upstairs() {
+  
+  if (v0_upstairs_ == NULL) {
+    v0_upstairs_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_upstairs)
+  return v0_upstairs_;
+}
+::hybridsim::Distribution* AgentParams::release_v0_upstairs() {
+  
+  ::hybridsim::Distribution* temp = v0_upstairs_;
+  v0_upstairs_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0_upstairs(::hybridsim::Distribution* v0_upstairs) {
+  delete v0_upstairs_;
+  v0_upstairs_ = v0_upstairs;
+  if (v0_upstairs) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_upstairs)
+}
+
+// optional .hybridsim.Distribution v0_downstairs = 8;
+bool AgentParams::has_v0_downstairs() const {
+  return !_is_default_instance_ && v0_downstairs_ != NULL;
+}
+void AgentParams::clear_v0_downstairs() {
+  if (GetArenaNoVirtual() == NULL && v0_downstairs_ != NULL) delete v0_downstairs_;
+  v0_downstairs_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0_downstairs() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_downstairs)
+  return v0_downstairs_ != NULL ? *v0_downstairs_ : *default_instance_->v0_downstairs_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0_downstairs() {
+  
+  if (v0_downstairs_ == NULL) {
+    v0_downstairs_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_downstairs)
+  return v0_downstairs_;
+}
+::hybridsim::Distribution* AgentParams::release_v0_downstairs() {
+  
+  ::hybridsim::Distribution* temp = v0_downstairs_;
+  v0_downstairs_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0_downstairs(::hybridsim::Distribution* v0_downstairs) {
+  delete v0_downstairs_;
+  v0_downstairs_ = v0_downstairs;
+  if (v0_downstairs) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_downstairs)
+}
+
+// optional .hybridsim.Distribution v0_escalator_up = 9;
+bool AgentParams::has_v0_escalator_up() const {
+  return !_is_default_instance_ && v0_escalator_up_ != NULL;
+}
+void AgentParams::clear_v0_escalator_up() {
+  if (GetArenaNoVirtual() == NULL && v0_escalator_up_ != NULL) delete v0_escalator_up_;
+  v0_escalator_up_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0_escalator_up() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_escalator_up)
+  return v0_escalator_up_ != NULL ? *v0_escalator_up_ : *default_instance_->v0_escalator_up_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0_escalator_up() {
+  
+  if (v0_escalator_up_ == NULL) {
+    v0_escalator_up_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_escalator_up)
+  return v0_escalator_up_;
+}
+::hybridsim::Distribution* AgentParams::release_v0_escalator_up() {
+  
+  ::hybridsim::Distribution* temp = v0_escalator_up_;
+  v0_escalator_up_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0_escalator_up(::hybridsim::Distribution* v0_escalator_up) {
+  delete v0_escalator_up_;
+  v0_escalator_up_ = v0_escalator_up;
+  if (v0_escalator_up) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_escalator_up)
+}
+
+// optional .hybridsim.Distribution v0_escalator_down = 10;
+bool AgentParams::has_v0_escalator_down() const {
+  return !_is_default_instance_ && v0_escalator_down_ != NULL;
+}
+void AgentParams::clear_v0_escalator_down() {
+  if (GetArenaNoVirtual() == NULL && v0_escalator_down_ != NULL) delete v0_escalator_down_;
+  v0_escalator_down_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0_escalator_down() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_escalator_down)
+  return v0_escalator_down_ != NULL ? *v0_escalator_down_ : *default_instance_->v0_escalator_down_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0_escalator_down() {
+  
+  if (v0_escalator_down_ == NULL) {
+    v0_escalator_down_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_escalator_down)
+  return v0_escalator_down_;
+}
+::hybridsim::Distribution* AgentParams::release_v0_escalator_down() {
+  
+  ::hybridsim::Distribution* temp = v0_escalator_down_;
+  v0_escalator_down_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0_escalator_down(::hybridsim::Distribution* v0_escalator_down) {
+  delete v0_escalator_down_;
+  v0_escalator_down_ = v0_escalator_down;
+  if (v0_escalator_down) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_escalator_down)
+}
+
+// optional .hybridsim.Distribution v0_idle_escalator_up = 11;
+bool AgentParams::has_v0_idle_escalator_up() const {
+  return !_is_default_instance_ && v0_idle_escalator_up_ != NULL;
+}
+void AgentParams::clear_v0_idle_escalator_up() {
+  if (GetArenaNoVirtual() == NULL && v0_idle_escalator_up_ != NULL) delete v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0_idle_escalator_up() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_idle_escalator_up)
+  return v0_idle_escalator_up_ != NULL ? *v0_idle_escalator_up_ : *default_instance_->v0_idle_escalator_up_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0_idle_escalator_up() {
+  
+  if (v0_idle_escalator_up_ == NULL) {
+    v0_idle_escalator_up_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_idle_escalator_up)
+  return v0_idle_escalator_up_;
+}
+::hybridsim::Distribution* AgentParams::release_v0_idle_escalator_up() {
+  
+  ::hybridsim::Distribution* temp = v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0_idle_escalator_up(::hybridsim::Distribution* v0_idle_escalator_up) {
+  delete v0_idle_escalator_up_;
+  v0_idle_escalator_up_ = v0_idle_escalator_up;
+  if (v0_idle_escalator_up) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_idle_escalator_up)
+}
+
+// optional .hybridsim.Distribution v0_idle_escalator_down = 12;
+bool AgentParams::has_v0_idle_escalator_down() const {
+  return !_is_default_instance_ && v0_idle_escalator_down_ != NULL;
+}
+void AgentParams::clear_v0_idle_escalator_down() {
+  if (GetArenaNoVirtual() == NULL && v0_idle_escalator_down_ != NULL) delete v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::v0_idle_escalator_down() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.v0_idle_escalator_down)
+  return v0_idle_escalator_down_ != NULL ? *v0_idle_escalator_down_ : *default_instance_->v0_idle_escalator_down_;
+}
+::hybridsim::Distribution* AgentParams::mutable_v0_idle_escalator_down() {
+  
+  if (v0_idle_escalator_down_ == NULL) {
+    v0_idle_escalator_down_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.v0_idle_escalator_down)
+  return v0_idle_escalator_down_;
+}
+::hybridsim::Distribution* AgentParams::release_v0_idle_escalator_down() {
+  
+  ::hybridsim::Distribution* temp = v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_v0_idle_escalator_down(::hybridsim::Distribution* v0_idle_escalator_down) {
+  delete v0_idle_escalator_down_;
+  v0_idle_escalator_down_ = v0_idle_escalator_down;
+  if (v0_idle_escalator_down) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.v0_idle_escalator_down)
+}
+
+// optional .hybridsim.Distribution T = 13;
+bool AgentParams::has_t() const {
+  return !_is_default_instance_ && t_ != NULL;
+}
+void AgentParams::clear_t() {
+  if (GetArenaNoVirtual() == NULL && t_ != NULL) delete t_;
+  t_ = NULL;
+}
+const ::hybridsim::Distribution& AgentParams::t() const {
+  // @@protoc_insertion_point(field_get:hybridsim.AgentParams.T)
+  return t_ != NULL ? *t_ : *default_instance_->t_;
+}
+::hybridsim::Distribution* AgentParams::mutable_t() {
+  
+  if (t_ == NULL) {
+    t_ = new ::hybridsim::Distribution;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.AgentParams.T)
+  return t_;
+}
+::hybridsim::Distribution* AgentParams::release_t() {
+  
+  ::hybridsim::Distribution* temp = t_;
+  t_ = NULL;
+  return temp;
+}
+void AgentParams::set_allocated_t(::hybridsim::Distribution* t) {
+  delete t_;
+  t_ = t;
+  if (t) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.AgentParams.T)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Distribution::kMuFieldNumber;
+const int Distribution::kSigmaFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Distribution::Distribution()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Distribution)
+}
+
+void Distribution::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Distribution::Distribution(const Distribution& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Distribution)
+}
+
+void Distribution::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  mu_ = 0;
+  sigma_ = 0;
+}
+
+Distribution::~Distribution() {
+  // @@protoc_insertion_point(destructor:hybridsim.Distribution)
+  SharedDtor();
+}
+
+void Distribution::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void Distribution::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Distribution::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Distribution_descriptor_;
+}
+
+const Distribution& Distribution::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Distribution* Distribution::default_instance_ = NULL;
+
+Distribution* Distribution::New(::google::protobuf::Arena* arena) const {
+  Distribution* n = new Distribution;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Distribution::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Distribution*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(mu_, sigma_);
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Distribution::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Distribution)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional double mu = 1;
+      case 1: {
+        if (tag == 9) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &mu_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(17)) goto parse_sigma;
+        break;
+      }
+
+      // optional double sigma = 2;
+      case 2: {
+        if (tag == 17) {
+         parse_sigma:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &sigma_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Distribution)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Distribution)
+  return false;
+#undef DO_
+}
+
+void Distribution::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Distribution)
+  // optional double mu = 1;
+  if (this->mu() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->mu(), output);
+  }
+
+  // optional double sigma = 2;
+  if (this->sigma() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->sigma(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Distribution)
+}
+
+::google::protobuf::uint8* Distribution::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Distribution)
+  // optional double mu = 1;
+  if (this->mu() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->mu(), target);
+  }
+
+  // optional double sigma = 2;
+  if (this->sigma() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->sigma(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Distribution)
+  return target;
+}
+
+int Distribution::ByteSize() const {
+  int total_size = 0;
+
+  // optional double mu = 1;
+  if (this->mu() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double sigma = 2;
+  if (this->sigma() != 0) {
+    total_size += 1 + 8;
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Distribution::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Distribution* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Distribution>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Distribution::MergeFrom(const Distribution& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.mu() != 0) {
+    set_mu(from.mu());
+  }
+  if (from.sigma() != 0) {
+    set_sigma(from.sigma());
+  }
+}
+
+void Distribution::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Distribution::CopyFrom(const Distribution& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Distribution::IsInitialized() const {
+
+  return true;
+}
+
+void Distribution::Swap(Distribution* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Distribution::InternalSwap(Distribution* other) {
+  std::swap(mu_, other->mu_);
+  std::swap(sigma_, other->sigma_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Distribution::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Distribution_descriptor_;
+  metadata.reflection = Distribution_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Distribution
+
+// optional double mu = 1;
+void Distribution::clear_mu() {
+  mu_ = 0;
+}
+ double Distribution::mu() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Distribution.mu)
+  return mu_;
+}
+ void Distribution::set_mu(double value) {
+  
+  mu_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Distribution.mu)
+}
+
+// optional double sigma = 2;
+void Distribution::clear_sigma() {
+  sigma_ = 0;
+}
+ double Distribution::sigma() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Distribution.sigma)
+  return sigma_;
+}
+ void Distribution::set_sigma(double value) {
+  
+  sigma_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Distribution.sigma)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Force::kNuFieldNumber;
+const int Force::kAFieldNumber;
+const int Force::kBFieldNumber;
+const int Force::kCFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Force::Force()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Force)
+}
+
+void Force::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Force::Force(const Force& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Force)
+}
+
+void Force::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  nu_ = 0;
+  a_ = 0;
+  b_ = 0;
+  c_ = 0;
+}
+
+Force::~Force() {
+  // @@protoc_insertion_point(destructor:hybridsim.Force)
+  SharedDtor();
+}
+
+void Force::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void Force::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Force::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Force_descriptor_;
+}
+
+const Force& Force::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Force* Force::default_instance_ = NULL;
+
+Force* Force::New(::google::protobuf::Arena* arena) const {
+  Force* n = new Force;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Force::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Force*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(nu_, c_);
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Force::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Force)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional double nu = 1;
+      case 1: {
+        if (tag == 9) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &nu_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(17)) goto parse_a;
+        break;
+      }
+
+      // optional double a = 2;
+      case 2: {
+        if (tag == 17) {
+         parse_a:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &a_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(25)) goto parse_b;
+        break;
+      }
+
+      // optional double b = 3;
+      case 3: {
+        if (tag == 25) {
+         parse_b:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &b_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(33)) goto parse_c;
+        break;
+      }
+
+      // optional double c = 4;
+      case 4: {
+        if (tag == 33) {
+         parse_c:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &c_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Force)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Force)
+  return false;
+#undef DO_
+}
+
+void Force::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Force)
+  // optional double nu = 1;
+  if (this->nu() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->nu(), output);
+  }
+
+  // optional double a = 2;
+  if (this->a() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->a(), output);
+  }
+
+  // optional double b = 3;
+  if (this->b() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->b(), output);
+  }
+
+  // optional double c = 4;
+  if (this->c() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->c(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Force)
+}
+
+::google::protobuf::uint8* Force::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Force)
+  // optional double nu = 1;
+  if (this->nu() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->nu(), target);
+  }
+
+  // optional double a = 2;
+  if (this->a() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->a(), target);
+  }
+
+  // optional double b = 3;
+  if (this->b() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->b(), target);
+  }
+
+  // optional double c = 4;
+  if (this->c() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->c(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Force)
+  return target;
+}
+
+int Force::ByteSize() const {
+  int total_size = 0;
+
+  // optional double nu = 1;
+  if (this->nu() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double a = 2;
+  if (this->a() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double b = 3;
+  if (this->b() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double c = 4;
+  if (this->c() != 0) {
+    total_size += 1 + 8;
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Force::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Force* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Force>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Force::MergeFrom(const Force& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.nu() != 0) {
+    set_nu(from.nu());
+  }
+  if (from.a() != 0) {
+    set_a(from.a());
+  }
+  if (from.b() != 0) {
+    set_b(from.b());
+  }
+  if (from.c() != 0) {
+    set_c(from.c());
+  }
+}
+
+void Force::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Force::CopyFrom(const Force& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Force::IsInitialized() const {
+
+  return true;
+}
+
+void Force::Swap(Force* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Force::InternalSwap(Force* other) {
+  std::swap(nu_, other->nu_);
+  std::swap(a_, other->a_);
+  std::swap(b_, other->b_);
+  std::swap(c_, other->c_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Force::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Force_descriptor_;
+  metadata.reflection = Force_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Force
+
+// optional double nu = 1;
+void Force::clear_nu() {
+  nu_ = 0;
+}
+ double Force::nu() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.nu)
+  return nu_;
+}
+ void Force::set_nu(double value) {
+  
+  nu_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.nu)
+}
+
+// optional double a = 2;
+void Force::clear_a() {
+  a_ = 0;
+}
+ double Force::a() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.a)
+  return a_;
+}
+ void Force::set_a(double value) {
+  
+  a_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.a)
+}
+
+// optional double b = 3;
+void Force::clear_b() {
+  b_ = 0;
+}
+ double Force::b() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.b)
+  return b_;
+}
+ void Force::set_b(double value) {
+  
+  b_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.b)
+}
+
+// optional double c = 4;
+void Force::clear_c() {
+  c_ = 0;
+}
+ double Force::c() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Force.c)
+  return c_;
+}
+ void Force::set_c(double value) {
+  
+  c_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Force.c)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Group::kGroupIdFieldNumber;
+const int Group::kRoomIdFieldNumber;
+const int Group::kSubroomIdFieldNumber;
+const int Group::kNumberFieldNumber;
+const int Group::kRouterIdFieldNumber;
+const int Group::kAgentParameterIdFieldNumber;
+const int Group::kMinXYFieldNumber;
+const int Group::kMaxXYFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Group::Group()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Group)
+}
+
+void Group::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  min_x_y_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+  max_x_y_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+}
+
+Group::Group(const Group& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Group)
+}
+
+void Group::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  group_id_ = 0;
+  room_id_ = 0;
+  subroom_id_ = 0;
+  number_ = 0;
+  router_id_ = 0;
+  agent_parameter_id_ = 0;
+  min_x_y_ = NULL;
+  max_x_y_ = NULL;
+}
+
+Group::~Group() {
+  // @@protoc_insertion_point(destructor:hybridsim.Group)
+  SharedDtor();
+}
+
+void Group::SharedDtor() {
+  if (this != default_instance_) {
+    delete min_x_y_;
+    delete max_x_y_;
+  }
+}
+
+void Group::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Group::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Group_descriptor_;
+}
+
+const Group& Group::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Group* Group::default_instance_ = NULL;
+
+Group* Group::New(::google::protobuf::Arena* arena) const {
+  Group* n = new Group;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Group::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Group*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(group_id_, agent_parameter_id_);
+  if (GetArenaNoVirtual() == NULL && min_x_y_ != NULL) delete min_x_y_;
+  min_x_y_ = NULL;
+  if (GetArenaNoVirtual() == NULL && max_x_y_ != NULL) delete max_x_y_;
+  max_x_y_ = NULL;
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Group::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Group)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 group_id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &group_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_room_id;
+        break;
+      }
+
+      // optional int32 room_id = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_room_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &room_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_subroom_id;
+        break;
+      }
+
+      // optional int32 subroom_id = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_subroom_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &subroom_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(32)) goto parse_number;
+        break;
+      }
+
+      // optional int32 number = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_number:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &number_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(40)) goto parse_router_id;
+        break;
+      }
+
+      // optional int32 router_id = 5;
+      case 5: {
+        if (tag == 40) {
+         parse_router_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &router_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(48)) goto parse_agent_parameter_id;
+        break;
+      }
+
+      // optional int32 agent_parameter_id = 6;
+      case 6: {
+        if (tag == 48) {
+         parse_agent_parameter_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &agent_parameter_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_min_x_y;
+        break;
+      }
+
+      // optional .hybridsim.Coordinate min_x_y = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_min_x_y:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_min_x_y()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_max_x_y;
+        break;
+      }
+
+      // optional .hybridsim.Coordinate max_x_y = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_max_x_y:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_max_x_y()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Group)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Group)
+  return false;
+#undef DO_
+}
+
+void Group::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Group)
+  // optional int32 group_id = 1;
+  if (this->group_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->group_id(), output);
+  }
+
+  // optional int32 room_id = 2;
+  if (this->room_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->room_id(), output);
+  }
+
+  // optional int32 subroom_id = 3;
+  if (this->subroom_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->subroom_id(), output);
+  }
+
+  // optional int32 number = 4;
+  if (this->number() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->number(), output);
+  }
+
+  // optional int32 router_id = 5;
+  if (this->router_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->router_id(), output);
+  }
+
+  // optional int32 agent_parameter_id = 6;
+  if (this->agent_parameter_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->agent_parameter_id(), output);
+  }
+
+  // optional .hybridsim.Coordinate min_x_y = 7;
+  if (this->has_min_x_y()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->min_x_y_, output);
+  }
+
+  // optional .hybridsim.Coordinate max_x_y = 8;
+  if (this->has_max_x_y()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->max_x_y_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Group)
+}
+
+::google::protobuf::uint8* Group::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Group)
+  // optional int32 group_id = 1;
+  if (this->group_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->group_id(), target);
+  }
+
+  // optional int32 room_id = 2;
+  if (this->room_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->room_id(), target);
+  }
+
+  // optional int32 subroom_id = 3;
+  if (this->subroom_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->subroom_id(), target);
+  }
+
+  // optional int32 number = 4;
+  if (this->number() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->number(), target);
+  }
+
+  // optional int32 router_id = 5;
+  if (this->router_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->router_id(), target);
+  }
+
+  // optional int32 agent_parameter_id = 6;
+  if (this->agent_parameter_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->agent_parameter_id(), target);
+  }
+
+  // optional .hybridsim.Coordinate min_x_y = 7;
+  if (this->has_min_x_y()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        7, *this->min_x_y_, target);
+  }
+
+  // optional .hybridsim.Coordinate max_x_y = 8;
+  if (this->has_max_x_y()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        8, *this->max_x_y_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Group)
+  return target;
+}
+
+int Group::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 group_id = 1;
+  if (this->group_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->group_id());
+  }
+
+  // optional int32 room_id = 2;
+  if (this->room_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->room_id());
+  }
+
+  // optional int32 subroom_id = 3;
+  if (this->subroom_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->subroom_id());
+  }
+
+  // optional int32 number = 4;
+  if (this->number() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->number());
+  }
+
+  // optional int32 router_id = 5;
+  if (this->router_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->router_id());
+  }
+
+  // optional int32 agent_parameter_id = 6;
+  if (this->agent_parameter_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->agent_parameter_id());
+  }
+
+  // optional .hybridsim.Coordinate min_x_y = 7;
+  if (this->has_min_x_y()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->min_x_y_);
+  }
+
+  // optional .hybridsim.Coordinate max_x_y = 8;
+  if (this->has_max_x_y()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->max_x_y_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Group::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Group* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Group>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Group::MergeFrom(const Group& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.group_id() != 0) {
+    set_group_id(from.group_id());
+  }
+  if (from.room_id() != 0) {
+    set_room_id(from.room_id());
+  }
+  if (from.subroom_id() != 0) {
+    set_subroom_id(from.subroom_id());
+  }
+  if (from.number() != 0) {
+    set_number(from.number());
+  }
+  if (from.router_id() != 0) {
+    set_router_id(from.router_id());
+  }
+  if (from.agent_parameter_id() != 0) {
+    set_agent_parameter_id(from.agent_parameter_id());
+  }
+  if (from.has_min_x_y()) {
+    mutable_min_x_y()->::hybridsim::Coordinate::MergeFrom(from.min_x_y());
+  }
+  if (from.has_max_x_y()) {
+    mutable_max_x_y()->::hybridsim::Coordinate::MergeFrom(from.max_x_y());
+  }
+}
+
+void Group::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Group::CopyFrom(const Group& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Group::IsInitialized() const {
+
+  return true;
+}
+
+void Group::Swap(Group* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Group::InternalSwap(Group* other) {
+  std::swap(group_id_, other->group_id_);
+  std::swap(room_id_, other->room_id_);
+  std::swap(subroom_id_, other->subroom_id_);
+  std::swap(number_, other->number_);
+  std::swap(router_id_, other->router_id_);
+  std::swap(agent_parameter_id_, other->agent_parameter_id_);
+  std::swap(min_x_y_, other->min_x_y_);
+  std::swap(max_x_y_, other->max_x_y_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Group::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Group_descriptor_;
+  metadata.reflection = Group_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Group
+
+// optional int32 group_id = 1;
+void Group::clear_group_id() {
+  group_id_ = 0;
+}
+ ::google::protobuf::int32 Group::group_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.group_id)
+  return group_id_;
+}
+ void Group::set_group_id(::google::protobuf::int32 value) {
+  
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.group_id)
+}
+
+// optional int32 room_id = 2;
+void Group::clear_room_id() {
+  room_id_ = 0;
+}
+ ::google::protobuf::int32 Group::room_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.room_id)
+  return room_id_;
+}
+ void Group::set_room_id(::google::protobuf::int32 value) {
+  
+  room_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.room_id)
+}
+
+// optional int32 subroom_id = 3;
+void Group::clear_subroom_id() {
+  subroom_id_ = 0;
+}
+ ::google::protobuf::int32 Group::subroom_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.subroom_id)
+  return subroom_id_;
+}
+ void Group::set_subroom_id(::google::protobuf::int32 value) {
+  
+  subroom_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.subroom_id)
+}
+
+// optional int32 number = 4;
+void Group::clear_number() {
+  number_ = 0;
+}
+ ::google::protobuf::int32 Group::number() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.number)
+  return number_;
+}
+ void Group::set_number(::google::protobuf::int32 value) {
+  
+  number_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.number)
+}
+
+// optional int32 router_id = 5;
+void Group::clear_router_id() {
+  router_id_ = 0;
+}
+ ::google::protobuf::int32 Group::router_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.router_id)
+  return router_id_;
+}
+ void Group::set_router_id(::google::protobuf::int32 value) {
+  
+  router_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.router_id)
+}
+
+// optional int32 agent_parameter_id = 6;
+void Group::clear_agent_parameter_id() {
+  agent_parameter_id_ = 0;
+}
+ ::google::protobuf::int32 Group::agent_parameter_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.agent_parameter_id)
+  return agent_parameter_id_;
+}
+ void Group::set_agent_parameter_id(::google::protobuf::int32 value) {
+  
+  agent_parameter_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Group.agent_parameter_id)
+}
+
+// optional .hybridsim.Coordinate min_x_y = 7;
+bool Group::has_min_x_y() const {
+  return !_is_default_instance_ && min_x_y_ != NULL;
+}
+void Group::clear_min_x_y() {
+  if (GetArenaNoVirtual() == NULL && min_x_y_ != NULL) delete min_x_y_;
+  min_x_y_ = NULL;
+}
+const ::hybridsim::Coordinate& Group::min_x_y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.min_x_y)
+  return min_x_y_ != NULL ? *min_x_y_ : *default_instance_->min_x_y_;
+}
+::hybridsim::Coordinate* Group::mutable_min_x_y() {
+  
+  if (min_x_y_ == NULL) {
+    min_x_y_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Group.min_x_y)
+  return min_x_y_;
+}
+::hybridsim::Coordinate* Group::release_min_x_y() {
+  
+  ::hybridsim::Coordinate* temp = min_x_y_;
+  min_x_y_ = NULL;
+  return temp;
+}
+void Group::set_allocated_min_x_y(::hybridsim::Coordinate* min_x_y) {
+  delete min_x_y_;
+  min_x_y_ = min_x_y;
+  if (min_x_y) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Group.min_x_y)
+}
+
+// optional .hybridsim.Coordinate max_x_y = 8;
+bool Group::has_max_x_y() const {
+  return !_is_default_instance_ && max_x_y_ != NULL;
+}
+void Group::clear_max_x_y() {
+  if (GetArenaNoVirtual() == NULL && max_x_y_ != NULL) delete max_x_y_;
+  max_x_y_ = NULL;
+}
+const ::hybridsim::Coordinate& Group::max_x_y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Group.max_x_y)
+  return max_x_y_ != NULL ? *max_x_y_ : *default_instance_->max_x_y_;
+}
+::hybridsim::Coordinate* Group::mutable_max_x_y() {
+  
+  if (max_x_y_ == NULL) {
+    max_x_y_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Group.max_x_y)
+  return max_x_y_;
+}
+::hybridsim::Coordinate* Group::release_max_x_y() {
+  
+  ::hybridsim::Coordinate* temp = max_x_y_;
+  max_x_y_ = NULL;
+  return temp;
+}
+void Group::set_allocated_max_x_y(::hybridsim::Coordinate* max_x_y) {
+  delete max_x_y_;
+  max_x_y_ = max_x_y;
+  if (max_x_y) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Group.max_x_y)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Source::kIdFieldNumber;
+const int Source::kFrequencyFieldNumber;
+const int Source::kMaxAgentsFieldNumber;
+const int Source::kGroupIdFieldNumber;
+const int Source::kCaptionFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Source::Source()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Source)
+}
+
+void Source::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Source::Source(const Source& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Source)
+}
+
+void Source::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  id_ = 0;
+  frequency_ = 0;
+  max_agents_ = 0;
+  group_id_ = 0;
+  caption_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+Source::~Source() {
+  // @@protoc_insertion_point(destructor:hybridsim.Source)
+  SharedDtor();
+}
+
+void Source::SharedDtor() {
+  caption_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void Source::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Source::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Source_descriptor_;
+}
+
+const Source& Source::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Source* Source::default_instance_ = NULL;
+
+Source* Source::New(::google::protobuf::Arena* arena) const {
+  Source* n = new Source;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Source::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Source*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(id_, group_id_);
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Source::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Source)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_frequency;
+        break;
+      }
+
+      // optional int32 frequency = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_frequency:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &frequency_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_max_agents;
+        break;
+      }
+
+      // optional int32 max_agents = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_max_agents:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &max_agents_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(32)) goto parse_group_id;
+        break;
+      }
+
+      // optional int32 group_id = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_group_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &group_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_caption;
+        break;
+      }
+
+      // optional string caption = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_caption:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_caption()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->caption().data(), this->caption().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Source.caption"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Source)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Source)
+  return false;
+#undef DO_
+}
+
+void Source::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Source)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
+  }
+
+  // optional int32 frequency = 2;
+  if (this->frequency() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->frequency(), output);
+  }
+
+  // optional int32 max_agents = 3;
+  if (this->max_agents() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->max_agents(), output);
+  }
+
+  // optional int32 group_id = 4;
+  if (this->group_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->group_id(), output);
+  }
+
+  // optional string caption = 5;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Source.caption");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->caption(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Source)
+}
+
+::google::protobuf::uint8* Source::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Source)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
+  }
+
+  // optional int32 frequency = 2;
+  if (this->frequency() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->frequency(), target);
+  }
+
+  // optional int32 max_agents = 3;
+  if (this->max_agents() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->max_agents(), target);
+  }
+
+  // optional int32 group_id = 4;
+  if (this->group_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->group_id(), target);
+  }
+
+  // optional string caption = 5;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Source.caption");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->caption(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Source)
+  return target;
+}
+
+int Source::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->id());
+  }
+
+  // optional int32 frequency = 2;
+  if (this->frequency() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->frequency());
+  }
+
+  // optional int32 max_agents = 3;
+  if (this->max_agents() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->max_agents());
+  }
+
+  // optional int32 group_id = 4;
+  if (this->group_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->group_id());
+  }
+
+  // optional string caption = 5;
+  if (this->caption().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->caption());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Source::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Source* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Source>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Source::MergeFrom(const Source& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
+  if (from.frequency() != 0) {
+    set_frequency(from.frequency());
+  }
+  if (from.max_agents() != 0) {
+    set_max_agents(from.max_agents());
+  }
+  if (from.group_id() != 0) {
+    set_group_id(from.group_id());
+  }
+  if (from.caption().size() > 0) {
+
+    caption_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.caption_);
+  }
+}
+
+void Source::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Source::CopyFrom(const Source& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Source::IsInitialized() const {
+
+  return true;
+}
+
+void Source::Swap(Source* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Source::InternalSwap(Source* other) {
+  std::swap(id_, other->id_);
+  std::swap(frequency_, other->frequency_);
+  std::swap(max_agents_, other->max_agents_);
+  std::swap(group_id_, other->group_id_);
+  caption_.Swap(&other->caption_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Source::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Source_descriptor_;
+  metadata.reflection = Source_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Source
+
+// optional int32 id = 1;
+void Source::clear_id() {
+  id_ = 0;
+}
+ ::google::protobuf::int32 Source::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.id)
+  return id_;
+}
+ void Source::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.id)
+}
+
+// optional int32 frequency = 2;
+void Source::clear_frequency() {
+  frequency_ = 0;
+}
+ ::google::protobuf::int32 Source::frequency() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.frequency)
+  return frequency_;
+}
+ void Source::set_frequency(::google::protobuf::int32 value) {
+  
+  frequency_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.frequency)
+}
+
+// optional int32 max_agents = 3;
+void Source::clear_max_agents() {
+  max_agents_ = 0;
+}
+ ::google::protobuf::int32 Source::max_agents() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.max_agents)
+  return max_agents_;
+}
+ void Source::set_max_agents(::google::protobuf::int32 value) {
+  
+  max_agents_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.max_agents)
+}
+
+// optional int32 group_id = 4;
+void Source::clear_group_id() {
+  group_id_ = 0;
+}
+ ::google::protobuf::int32 Source::group_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.group_id)
+  return group_id_;
+}
+ void Source::set_group_id(::google::protobuf::int32 value) {
+  
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Source.group_id)
+}
+
+// optional string caption = 5;
+void Source::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Source::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Source.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Source::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Source.caption)
+}
+ void Source::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Source.caption)
+}
+ void Source::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Source.caption)
+}
+ ::std::string* Source::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Source.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Source::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Source::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Source.caption)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Goal::kIdFieldNumber;
+const int Goal::kFinalFieldNumber;
+const int Goal::kCaptionFieldNumber;
+const int Goal::kPFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Goal::Goal()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Goal)
+}
+
+void Goal::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  p_ = const_cast< ::hybridsim::Polygon*>(&::hybridsim::Polygon::default_instance());
+}
+
+Goal::Goal(const Goal& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Goal)
+}
+
+void Goal::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  id_ = 0;
+  final_ = false;
+  caption_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  p_ = NULL;
+}
+
+Goal::~Goal() {
+  // @@protoc_insertion_point(destructor:hybridsim.Goal)
+  SharedDtor();
+}
+
+void Goal::SharedDtor() {
+  caption_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+    delete p_;
+  }
+}
+
+void Goal::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Goal::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Goal_descriptor_;
+}
+
+const Goal& Goal::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Goal* Goal::default_instance_ = NULL;
+
+Goal* Goal::New(::google::protobuf::Arena* arena) const {
+  Goal* n = new Goal;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Goal::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Goal*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(id_, final_);
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && p_ != NULL) delete p_;
+  p_ = NULL;
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Goal::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Goal)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_final;
+        break;
+      }
+
+      // optional bool final = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_final:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &final_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_caption;
+        break;
+      }
+
+      // optional string caption = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_caption:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_caption()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->caption().data(), this->caption().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Goal.caption"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_p;
+        break;
+      }
+
+      // optional .hybridsim.Polygon p = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_p:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_p()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Goal)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Goal)
+  return false;
+#undef DO_
+}
+
+void Goal::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Goal)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
+  }
+
+  // optional bool final = 2;
+  if (this->final() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->final(), output);
+  }
+
+  // optional string caption = 3;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Goal.caption");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->caption(), output);
+  }
+
+  // optional .hybridsim.Polygon p = 4;
+  if (this->has_p()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, *this->p_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Goal)
+}
+
+::google::protobuf::uint8* Goal::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Goal)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
+  }
+
+  // optional bool final = 2;
+  if (this->final() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->final(), target);
+  }
+
+  // optional string caption = 3;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Goal.caption");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->caption(), target);
+  }
+
+  // optional .hybridsim.Polygon p = 4;
+  if (this->has_p()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, *this->p_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Goal)
+  return target;
+}
+
+int Goal::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->id());
+  }
+
+  // optional bool final = 2;
+  if (this->final() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // optional string caption = 3;
+  if (this->caption().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->caption());
+  }
+
+  // optional .hybridsim.Polygon p = 4;
+  if (this->has_p()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->p_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Goal::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Goal* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Goal>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Goal::MergeFrom(const Goal& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
+  if (from.final() != 0) {
+    set_final(from.final());
+  }
+  if (from.caption().size() > 0) {
+
+    caption_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.caption_);
+  }
+  if (from.has_p()) {
+    mutable_p()->::hybridsim::Polygon::MergeFrom(from.p());
+  }
+}
+
+void Goal::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Goal::CopyFrom(const Goal& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Goal::IsInitialized() const {
+
+  return true;
+}
+
+void Goal::Swap(Goal* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Goal::InternalSwap(Goal* other) {
+  std::swap(id_, other->id_);
+  std::swap(final_, other->final_);
+  caption_.Swap(&other->caption_);
+  std::swap(p_, other->p_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Goal::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Goal_descriptor_;
+  metadata.reflection = Goal_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Goal
+
+// optional int32 id = 1;
+void Goal::clear_id() {
+  id_ = 0;
+}
+ ::google::protobuf::int32 Goal::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.id)
+  return id_;
+}
+ void Goal::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Goal.id)
+}
+
+// optional bool final = 2;
+void Goal::clear_final() {
+  final_ = false;
+}
+ bool Goal::final() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.final)
+  return final_;
+}
+ void Goal::set_final(bool value) {
+  
+  final_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Goal.final)
+}
+
+// optional string caption = 3;
+void Goal::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Goal::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Goal::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Goal.caption)
+}
+ void Goal::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Goal.caption)
+}
+ void Goal::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Goal.caption)
+}
+ ::std::string* Goal::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Goal.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Goal::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Goal::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Goal.caption)
+}
+
+// optional .hybridsim.Polygon p = 4;
+bool Goal::has_p() const {
+  return !_is_default_instance_ && p_ != NULL;
+}
+void Goal::clear_p() {
+  if (GetArenaNoVirtual() == NULL && p_ != NULL) delete p_;
+  p_ = NULL;
+}
+const ::hybridsim::Polygon& Goal::p() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Goal.p)
+  return p_ != NULL ? *p_ : *default_instance_->p_;
+}
+::hybridsim::Polygon* Goal::mutable_p() {
+  
+  if (p_ == NULL) {
+    p_ = new ::hybridsim::Polygon;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Goal.p)
+  return p_;
+}
+::hybridsim::Polygon* Goal::release_p() {
+  
+  ::hybridsim::Polygon* temp = p_;
+  p_ = NULL;
+  return temp;
+}
+void Goal::set_allocated_p(::hybridsim::Polygon* p) {
+  delete p_;
+  p_ = p;
+  if (p) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Goal.p)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Environment::kRoomFieldNumber;
+const int Environment::kTransitionFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Environment::Environment()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Environment)
+}
+
+void Environment::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Environment::Environment(const Environment& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Environment)
+}
+
+void Environment::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+}
+
+Environment::~Environment() {
+  // @@protoc_insertion_point(destructor:hybridsim.Environment)
+  SharedDtor();
+}
+
+void Environment::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void Environment::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Environment::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Environment_descriptor_;
+}
+
+const Environment& Environment::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Environment* Environment::default_instance_ = NULL;
+
+Environment* Environment::New(::google::protobuf::Arena* arena) const {
+  Environment* n = new Environment;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Environment::Clear() {
+  room_.Clear();
+  transition_.Clear();
+}
+
+bool Environment::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Environment)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .hybridsim.Room room = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_room:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_room()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(10)) goto parse_loop_room;
+        if (input->ExpectTag(18)) goto parse_loop_transition;
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .hybridsim.Transition transition = 2;
+      case 2: {
+        if (tag == 18) {
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_transition:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_transition()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_loop_transition;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Environment)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Environment)
+  return false;
+#undef DO_
+}
+
+void Environment::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Environment)
+  // repeated .hybridsim.Room room = 1;
+  for (unsigned int i = 0, n = this->room_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->room(i), output);
+  }
+
+  // repeated .hybridsim.Transition transition = 2;
+  for (unsigned int i = 0, n = this->transition_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->transition(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Environment)
+}
+
+::google::protobuf::uint8* Environment::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Environment)
+  // repeated .hybridsim.Room room = 1;
+  for (unsigned int i = 0, n = this->room_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->room(i), target);
+  }
+
+  // repeated .hybridsim.Transition transition = 2;
+  for (unsigned int i = 0, n = this->transition_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->transition(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Environment)
+  return target;
+}
+
+int Environment::ByteSize() const {
+  int total_size = 0;
+
+  // repeated .hybridsim.Room room = 1;
+  total_size += 1 * this->room_size();
+  for (int i = 0; i < this->room_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->room(i));
+  }
+
+  // repeated .hybridsim.Transition transition = 2;
+  total_size += 1 * this->transition_size();
+  for (int i = 0; i < this->transition_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->transition(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Environment::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Environment* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Environment>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Environment::MergeFrom(const Environment& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  room_.MergeFrom(from.room_);
+  transition_.MergeFrom(from.transition_);
+}
+
+void Environment::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Environment::CopyFrom(const Environment& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Environment::IsInitialized() const {
+
+  return true;
+}
+
+void Environment::Swap(Environment* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Environment::InternalSwap(Environment* other) {
+  room_.UnsafeArenaSwap(&other->room_);
+  transition_.UnsafeArenaSwap(&other->transition_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Environment::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Environment_descriptor_;
+  metadata.reflection = Environment_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Environment
+
+// repeated .hybridsim.Room room = 1;
+int Environment::room_size() const {
+  return room_.size();
+}
+void Environment::clear_room() {
+  room_.Clear();
+}
+const ::hybridsim::Room& Environment::room(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Environment.room)
+  return room_.Get(index);
+}
+::hybridsim::Room* Environment::mutable_room(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Environment.room)
+  return room_.Mutable(index);
+}
+::hybridsim::Room* Environment::add_room() {
+  // @@protoc_insertion_point(field_add:hybridsim.Environment.room)
+  return room_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Room >*
+Environment::mutable_room() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Environment.room)
+  return &room_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Room >&
+Environment::room() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Environment.room)
+  return room_;
+}
+
+// repeated .hybridsim.Transition transition = 2;
+int Environment::transition_size() const {
+  return transition_.size();
+}
+void Environment::clear_transition() {
+  transition_.Clear();
+}
+const ::hybridsim::Transition& Environment::transition(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Environment.transition)
+  return transition_.Get(index);
+}
+::hybridsim::Transition* Environment::mutable_transition(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Environment.transition)
+  return transition_.Mutable(index);
+}
+::hybridsim::Transition* Environment::add_transition() {
+  // @@protoc_insertion_point(field_add:hybridsim.Environment.transition)
+  return transition_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >*
+Environment::mutable_transition() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Environment.transition)
+  return &transition_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >&
+Environment::transition() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Environment.transition)
+  return transition_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Transition::kIdFieldNumber;
+const int Transition::kCaptionFieldNumber;
+const int Transition::kTypeFieldNumber;
+const int Transition::kRoom1IdFieldNumber;
+const int Transition::kSubroom1IdFieldNumber;
+const int Transition::kRoom2IdFieldNumber;
+const int Transition::kSubroom2IdFieldNumber;
+const int Transition::kVert1FieldNumber;
+const int Transition::kVert2FieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Transition::Transition()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Transition)
+}
+
+void Transition::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  vert1_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+  vert2_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+}
+
+Transition::Transition(const Transition& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Transition)
+}
+
+void Transition::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  id_ = 0;
+  caption_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  room1_id_ = 0;
+  subroom1_id_ = 0;
+  room2_id_ = 0;
+  subroom2_id_ = 0;
+  vert1_ = NULL;
+  vert2_ = NULL;
+}
+
+Transition::~Transition() {
+  // @@protoc_insertion_point(destructor:hybridsim.Transition)
+  SharedDtor();
+}
+
+void Transition::SharedDtor() {
+  caption_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+    delete vert1_;
+    delete vert2_;
+  }
+}
+
+void Transition::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Transition::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Transition_descriptor_;
+}
+
+const Transition& Transition::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Transition* Transition::default_instance_ = NULL;
+
+Transition* Transition::New(::google::protobuf::Arena* arena) const {
+  Transition* n = new Transition;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Transition::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Transition*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(id_, room1_id_);
+  ZR_(subroom1_id_, room2_id_);
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  subroom2_id_ = 0;
+  if (GetArenaNoVirtual() == NULL && vert1_ != NULL) delete vert1_;
+  vert1_ = NULL;
+  if (GetArenaNoVirtual() == NULL && vert2_ != NULL) delete vert2_;
+  vert2_ = NULL;
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Transition::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Transition)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_caption;
+        break;
+      }
+
+      // optional string caption = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_caption:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_caption()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->caption().data(), this->caption().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Transition.caption"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_type;
+        break;
+      }
+
+      // optional string type = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_type:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_type()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->type().data(), this->type().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Transition.type"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(32)) goto parse_room1_id;
+        break;
+      }
+
+      // optional int32 room1_id = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_room1_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &room1_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(40)) goto parse_subroom1_id;
+        break;
+      }
+
+      // optional int32 subroom1_id = 5;
+      case 5: {
+        if (tag == 40) {
+         parse_subroom1_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &subroom1_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(48)) goto parse_room2_id;
+        break;
+      }
+
+      // optional int32 room2_id = 6;
+      case 6: {
+        if (tag == 48) {
+         parse_room2_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &room2_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(56)) goto parse_subroom2_id;
+        break;
+      }
+
+      // optional int32 subroom2_id = 7;
+      case 7: {
+        if (tag == 56) {
+         parse_subroom2_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &subroom2_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_vert1;
+        break;
+      }
+
+      // optional .hybridsim.Coordinate vert1 = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_vert1:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_vert1()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(74)) goto parse_vert2;
+        break;
+      }
+
+      // optional .hybridsim.Coordinate vert2 = 9;
+      case 9: {
+        if (tag == 74) {
+         parse_vert2:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_vert2()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Transition)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Transition)
+  return false;
+#undef DO_
+}
+
+void Transition::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Transition)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
+  }
+
+  // optional string caption = 2;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Transition.caption");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->caption(), output);
+  }
+
+  // optional string type = 3;
+  if (this->type().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Transition.type");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->type(), output);
+  }
+
+  // optional int32 room1_id = 4;
+  if (this->room1_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->room1_id(), output);
+  }
+
+  // optional int32 subroom1_id = 5;
+  if (this->subroom1_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->subroom1_id(), output);
+  }
+
+  // optional int32 room2_id = 6;
+  if (this->room2_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->room2_id(), output);
+  }
+
+  // optional int32 subroom2_id = 7;
+  if (this->subroom2_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->subroom2_id(), output);
+  }
+
+  // optional .hybridsim.Coordinate vert1 = 8;
+  if (this->has_vert1()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->vert1_, output);
+  }
+
+  // optional .hybridsim.Coordinate vert2 = 9;
+  if (this->has_vert2()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      9, *this->vert2_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Transition)
+}
+
+::google::protobuf::uint8* Transition::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Transition)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
+  }
+
+  // optional string caption = 2;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Transition.caption");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->caption(), target);
+  }
+
+  // optional string type = 3;
+  if (this->type().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Transition.type");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->type(), target);
+  }
+
+  // optional int32 room1_id = 4;
+  if (this->room1_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->room1_id(), target);
+  }
+
+  // optional int32 subroom1_id = 5;
+  if (this->subroom1_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->subroom1_id(), target);
+  }
+
+  // optional int32 room2_id = 6;
+  if (this->room2_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->room2_id(), target);
+  }
+
+  // optional int32 subroom2_id = 7;
+  if (this->subroom2_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->subroom2_id(), target);
+  }
+
+  // optional .hybridsim.Coordinate vert1 = 8;
+  if (this->has_vert1()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        8, *this->vert1_, target);
+  }
+
+  // optional .hybridsim.Coordinate vert2 = 9;
+  if (this->has_vert2()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        9, *this->vert2_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Transition)
+  return target;
+}
+
+int Transition::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->id());
+  }
+
+  // optional string caption = 2;
+  if (this->caption().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->caption());
+  }
+
+  // optional string type = 3;
+  if (this->type().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->type());
+  }
+
+  // optional int32 room1_id = 4;
+  if (this->room1_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->room1_id());
+  }
+
+  // optional int32 subroom1_id = 5;
+  if (this->subroom1_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->subroom1_id());
+  }
+
+  // optional int32 room2_id = 6;
+  if (this->room2_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->room2_id());
+  }
+
+  // optional int32 subroom2_id = 7;
+  if (this->subroom2_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->subroom2_id());
+  }
+
+  // optional .hybridsim.Coordinate vert1 = 8;
+  if (this->has_vert1()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->vert1_);
+  }
+
+  // optional .hybridsim.Coordinate vert2 = 9;
+  if (this->has_vert2()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->vert2_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Transition::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Transition* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Transition>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Transition::MergeFrom(const Transition& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
+  if (from.caption().size() > 0) {
+
+    caption_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.caption_);
+  }
+  if (from.type().size() > 0) {
+
+    type_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.type_);
+  }
+  if (from.room1_id() != 0) {
+    set_room1_id(from.room1_id());
+  }
+  if (from.subroom1_id() != 0) {
+    set_subroom1_id(from.subroom1_id());
+  }
+  if (from.room2_id() != 0) {
+    set_room2_id(from.room2_id());
+  }
+  if (from.subroom2_id() != 0) {
+    set_subroom2_id(from.subroom2_id());
+  }
+  if (from.has_vert1()) {
+    mutable_vert1()->::hybridsim::Coordinate::MergeFrom(from.vert1());
+  }
+  if (from.has_vert2()) {
+    mutable_vert2()->::hybridsim::Coordinate::MergeFrom(from.vert2());
+  }
+}
+
+void Transition::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Transition::CopyFrom(const Transition& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Transition::IsInitialized() const {
+
+  return true;
+}
+
+void Transition::Swap(Transition* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Transition::InternalSwap(Transition* other) {
+  std::swap(id_, other->id_);
+  caption_.Swap(&other->caption_);
+  type_.Swap(&other->type_);
+  std::swap(room1_id_, other->room1_id_);
+  std::swap(subroom1_id_, other->subroom1_id_);
+  std::swap(room2_id_, other->room2_id_);
+  std::swap(subroom2_id_, other->subroom2_id_);
+  std::swap(vert1_, other->vert1_);
+  std::swap(vert2_, other->vert2_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Transition::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Transition_descriptor_;
+  metadata.reflection = Transition_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Transition
+
+// optional int32 id = 1;
+void Transition::clear_id() {
+  id_ = 0;
+}
+ ::google::protobuf::int32 Transition::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.id)
+  return id_;
+}
+ void Transition::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.id)
+}
+
+// optional string caption = 2;
+void Transition::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Transition::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Transition::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.caption)
+}
+ void Transition::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Transition.caption)
+}
+ void Transition::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Transition.caption)
+}
+ ::std::string* Transition::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Transition::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Transition::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.caption)
+}
+
+// optional string type = 3;
+void Transition::clear_type() {
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Transition::type() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.type)
+  return type_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Transition::set_type(const ::std::string& value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.type)
+}
+ void Transition::set_type(const char* value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Transition.type)
+}
+ void Transition::set_type(const char* value, size_t size) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Transition.type)
+}
+ ::std::string* Transition::mutable_type() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.type)
+  return type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Transition::release_type() {
+  
+  return type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Transition::set_allocated_type(::std::string* type) {
+  if (type != NULL) {
+    
+  } else {
+    
+  }
+  type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), type);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.type)
+}
+
+// optional int32 room1_id = 4;
+void Transition::clear_room1_id() {
+  room1_id_ = 0;
+}
+ ::google::protobuf::int32 Transition::room1_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.room1_id)
+  return room1_id_;
+}
+ void Transition::set_room1_id(::google::protobuf::int32 value) {
+  
+  room1_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.room1_id)
+}
+
+// optional int32 subroom1_id = 5;
+void Transition::clear_subroom1_id() {
+  subroom1_id_ = 0;
+}
+ ::google::protobuf::int32 Transition::subroom1_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.subroom1_id)
+  return subroom1_id_;
+}
+ void Transition::set_subroom1_id(::google::protobuf::int32 value) {
+  
+  subroom1_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.subroom1_id)
+}
+
+// optional int32 room2_id = 6;
+void Transition::clear_room2_id() {
+  room2_id_ = 0;
+}
+ ::google::protobuf::int32 Transition::room2_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.room2_id)
+  return room2_id_;
+}
+ void Transition::set_room2_id(::google::protobuf::int32 value) {
+  
+  room2_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.room2_id)
+}
+
+// optional int32 subroom2_id = 7;
+void Transition::clear_subroom2_id() {
+  subroom2_id_ = 0;
+}
+ ::google::protobuf::int32 Transition::subroom2_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.subroom2_id)
+  return subroom2_id_;
+}
+ void Transition::set_subroom2_id(::google::protobuf::int32 value) {
+  
+  subroom2_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Transition.subroom2_id)
+}
+
+// optional .hybridsim.Coordinate vert1 = 8;
+bool Transition::has_vert1() const {
+  return !_is_default_instance_ && vert1_ != NULL;
+}
+void Transition::clear_vert1() {
+  if (GetArenaNoVirtual() == NULL && vert1_ != NULL) delete vert1_;
+  vert1_ = NULL;
+}
+const ::hybridsim::Coordinate& Transition::vert1() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.vert1)
+  return vert1_ != NULL ? *vert1_ : *default_instance_->vert1_;
+}
+::hybridsim::Coordinate* Transition::mutable_vert1() {
+  
+  if (vert1_ == NULL) {
+    vert1_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.vert1)
+  return vert1_;
+}
+::hybridsim::Coordinate* Transition::release_vert1() {
+  
+  ::hybridsim::Coordinate* temp = vert1_;
+  vert1_ = NULL;
+  return temp;
+}
+void Transition::set_allocated_vert1(::hybridsim::Coordinate* vert1) {
+  delete vert1_;
+  vert1_ = vert1;
+  if (vert1) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.vert1)
+}
+
+// optional .hybridsim.Coordinate vert2 = 9;
+bool Transition::has_vert2() const {
+  return !_is_default_instance_ && vert2_ != NULL;
+}
+void Transition::clear_vert2() {
+  if (GetArenaNoVirtual() == NULL && vert2_ != NULL) delete vert2_;
+  vert2_ = NULL;
+}
+const ::hybridsim::Coordinate& Transition::vert2() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Transition.vert2)
+  return vert2_ != NULL ? *vert2_ : *default_instance_->vert2_;
+}
+::hybridsim::Coordinate* Transition::mutable_vert2() {
+  
+  if (vert2_ == NULL) {
+    vert2_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Transition.vert2)
+  return vert2_;
+}
+::hybridsim::Coordinate* Transition::release_vert2() {
+  
+  ::hybridsim::Coordinate* temp = vert2_;
+  vert2_ = NULL;
+  return temp;
+}
+void Transition::set_allocated_vert2(::hybridsim::Coordinate* vert2) {
+  delete vert2_;
+  vert2_ = vert2;
+  if (vert2) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Transition.vert2)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Room::kIdFieldNumber;
+const int Room::kCaptionFieldNumber;
+const int Room::kSubroomFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Room::Room()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Room)
+}
+
+void Room::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Room::Room(const Room& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Room)
+}
+
+void Room::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  id_ = 0;
+  caption_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+Room::~Room() {
+  // @@protoc_insertion_point(destructor:hybridsim.Room)
+  SharedDtor();
+}
+
+void Room::SharedDtor() {
+  caption_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void Room::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Room::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Room_descriptor_;
+}
+
+const Room& Room::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Room* Room::default_instance_ = NULL;
+
+Room* Room::New(::google::protobuf::Arena* arena) const {
+  Room* n = new Room;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Room::Clear() {
+  id_ = 0;
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  subroom_.Clear();
+}
+
+bool Room::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Room)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_caption;
+        break;
+      }
+
+      // optional string caption = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_caption:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_caption()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->caption().data(), this->caption().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Room.caption"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_subroom;
+        break;
+      }
+
+      // repeated .hybridsim.Subroom subroom = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_subroom:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_subroom:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_subroom()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_loop_subroom;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Room)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Room)
+  return false;
+#undef DO_
+}
+
+void Room::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Room)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
+  }
+
+  // optional string caption = 2;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Room.caption");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->caption(), output);
+  }
+
+  // repeated .hybridsim.Subroom subroom = 3;
+  for (unsigned int i = 0, n = this->subroom_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->subroom(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Room)
+}
+
+::google::protobuf::uint8* Room::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Room)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
+  }
+
+  // optional string caption = 2;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Room.caption");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->caption(), target);
+  }
+
+  // repeated .hybridsim.Subroom subroom = 3;
+  for (unsigned int i = 0, n = this->subroom_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->subroom(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Room)
+  return target;
+}
+
+int Room::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->id());
+  }
+
+  // optional string caption = 2;
+  if (this->caption().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->caption());
+  }
+
+  // repeated .hybridsim.Subroom subroom = 3;
+  total_size += 1 * this->subroom_size();
+  for (int i = 0; i < this->subroom_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->subroom(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Room::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Room* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Room>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Room::MergeFrom(const Room& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  subroom_.MergeFrom(from.subroom_);
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
+  if (from.caption().size() > 0) {
+
+    caption_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.caption_);
+  }
+}
+
+void Room::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Room::CopyFrom(const Room& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Room::IsInitialized() const {
+
+  return true;
+}
+
+void Room::Swap(Room* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Room::InternalSwap(Room* other) {
+  std::swap(id_, other->id_);
+  caption_.Swap(&other->caption_);
+  subroom_.UnsafeArenaSwap(&other->subroom_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Room::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Room_descriptor_;
+  metadata.reflection = Room_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Room
+
+// optional int32 id = 1;
+void Room::clear_id() {
+  id_ = 0;
+}
+ ::google::protobuf::int32 Room::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Room.id)
+  return id_;
+}
+ void Room::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Room.id)
+}
+
+// optional string caption = 2;
+void Room::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Room::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Room.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Room::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Room.caption)
+}
+ void Room::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Room.caption)
+}
+ void Room::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Room.caption)
+}
+ ::std::string* Room::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Room.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Room::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Room::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Room.caption)
+}
+
+// repeated .hybridsim.Subroom subroom = 3;
+int Room::subroom_size() const {
+  return subroom_.size();
+}
+void Room::clear_subroom() {
+  subroom_.Clear();
+}
+const ::hybridsim::Subroom& Room::subroom(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Room.subroom)
+  return subroom_.Get(index);
+}
+::hybridsim::Subroom* Room::mutable_subroom(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Room.subroom)
+  return subroom_.Mutable(index);
+}
+::hybridsim::Subroom* Room::add_subroom() {
+  // @@protoc_insertion_point(field_add:hybridsim.Room.subroom)
+  return subroom_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom >*
+Room::mutable_subroom() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Room.subroom)
+  return &subroom_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Subroom >&
+Room::subroom() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Room.subroom)
+  return subroom_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Subroom::kIdFieldNumber;
+const int Subroom::kClosedFieldNumber;
+const int Subroom::kClassFieldNumber;
+const int Subroom::kPolygonFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Subroom::Subroom()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Subroom)
+}
+
+void Subroom::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Subroom::Subroom(const Subroom& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Subroom)
+}
+
+void Subroom::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  id_ = 0;
+  closed_ = 0;
+  class__.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+Subroom::~Subroom() {
+  // @@protoc_insertion_point(destructor:hybridsim.Subroom)
+  SharedDtor();
+}
+
+void Subroom::SharedDtor() {
+  class__.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void Subroom::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Subroom::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Subroom_descriptor_;
+}
+
+const Subroom& Subroom::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Subroom* Subroom::default_instance_ = NULL;
+
+Subroom* Subroom::New(::google::protobuf::Arena* arena) const {
+  Subroom* n = new Subroom;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Subroom::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Subroom*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(id_, closed_);
+  class__.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+
+#undef ZR_HELPER_
+#undef ZR_
+
+  polygon_.Clear();
+}
+
+bool Subroom::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Subroom)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_closed;
+        break;
+      }
+
+      // optional int32 closed = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_closed:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &closed_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_class;
+        break;
+      }
+
+      // optional string class = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_class:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_class_()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->class_().data(), this->class_().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Subroom.class"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_polygon;
+        break;
+      }
+
+      // repeated .hybridsim.Polygon polygon = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_polygon:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_polygon:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_polygon()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_loop_polygon;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Subroom)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Subroom)
+  return false;
+#undef DO_
+}
+
+void Subroom::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Subroom)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
+  }
+
+  // optional int32 closed = 2;
+  if (this->closed() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->closed(), output);
+  }
+
+  // optional string class = 3;
+  if (this->class_().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->class_().data(), this->class_().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Subroom.class");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->class_(), output);
+  }
+
+  // repeated .hybridsim.Polygon polygon = 4;
+  for (unsigned int i = 0, n = this->polygon_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, this->polygon(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Subroom)
+}
+
+::google::protobuf::uint8* Subroom::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Subroom)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
+  }
+
+  // optional int32 closed = 2;
+  if (this->closed() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->closed(), target);
+  }
+
+  // optional string class = 3;
+  if (this->class_().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->class_().data(), this->class_().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Subroom.class");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->class_(), target);
+  }
+
+  // repeated .hybridsim.Polygon polygon = 4;
+  for (unsigned int i = 0, n = this->polygon_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, this->polygon(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Subroom)
+  return target;
+}
+
+int Subroom::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->id());
+  }
+
+  // optional int32 closed = 2;
+  if (this->closed() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->closed());
+  }
+
+  // optional string class = 3;
+  if (this->class_().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->class_());
+  }
+
+  // repeated .hybridsim.Polygon polygon = 4;
+  total_size += 1 * this->polygon_size();
+  for (int i = 0; i < this->polygon_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->polygon(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Subroom::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Subroom* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Subroom>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Subroom::MergeFrom(const Subroom& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  polygon_.MergeFrom(from.polygon_);
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
+  if (from.closed() != 0) {
+    set_closed(from.closed());
+  }
+  if (from.class_().size() > 0) {
+
+    class__.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.class__);
+  }
+}
+
+void Subroom::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Subroom::CopyFrom(const Subroom& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Subroom::IsInitialized() const {
+
+  return true;
+}
+
+void Subroom::Swap(Subroom* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Subroom::InternalSwap(Subroom* other) {
+  std::swap(id_, other->id_);
+  std::swap(closed_, other->closed_);
+  class__.Swap(&other->class__);
+  polygon_.UnsafeArenaSwap(&other->polygon_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Subroom::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Subroom_descriptor_;
+  metadata.reflection = Subroom_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Subroom
+
+// optional int32 id = 1;
+void Subroom::clear_id() {
+  id_ = 0;
+}
+ ::google::protobuf::int32 Subroom::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.id)
+  return id_;
+}
+ void Subroom::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Subroom.id)
+}
+
+// optional int32 closed = 2;
+void Subroom::clear_closed() {
+  closed_ = 0;
+}
+ ::google::protobuf::int32 Subroom::closed() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.closed)
+  return closed_;
+}
+ void Subroom::set_closed(::google::protobuf::int32 value) {
+  
+  closed_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Subroom.closed)
+}
+
+// optional string class = 3;
+void Subroom::clear_class_() {
+  class__.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Subroom::class_() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.class)
+  return class__.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Subroom::set_class_(const ::std::string& value) {
+  
+  class__.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Subroom.class)
+}
+ void Subroom::set_class_(const char* value) {
+  
+  class__.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Subroom.class)
+}
+ void Subroom::set_class_(const char* value, size_t size) {
+  
+  class__.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Subroom.class)
+}
+ ::std::string* Subroom::mutable_class_() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Subroom.class)
+  return class__.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Subroom::release_class_() {
+  
+  return class__.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Subroom::set_allocated_class_(::std::string* class_) {
+  if (class_ != NULL) {
+    
+  } else {
+    
+  }
+  class__.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), class_);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Subroom.class)
+}
+
+// repeated .hybridsim.Polygon polygon = 4;
+int Subroom::polygon_size() const {
+  return polygon_.size();
+}
+void Subroom::clear_polygon() {
+  polygon_.Clear();
+}
+const ::hybridsim::Polygon& Subroom::polygon(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Subroom.polygon)
+  return polygon_.Get(index);
+}
+::hybridsim::Polygon* Subroom::mutable_polygon(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Subroom.polygon)
+  return polygon_.Mutable(index);
+}
+::hybridsim::Polygon* Subroom::add_polygon() {
+  // @@protoc_insertion_point(field_add:hybridsim.Subroom.polygon)
+  return polygon_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon >*
+Subroom::mutable_polygon() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Subroom.polygon)
+  return &polygon_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Polygon >&
+Subroom::polygon() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Subroom.polygon)
+  return polygon_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Polygon::kCaptionFieldNumber;
+const int Polygon::kCoordinateFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Polygon::Polygon()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Polygon)
+}
+
+void Polygon::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Polygon::Polygon(const Polygon& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Polygon)
+}
+
+void Polygon::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  caption_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+Polygon::~Polygon() {
+  // @@protoc_insertion_point(destructor:hybridsim.Polygon)
+  SharedDtor();
+}
+
+void Polygon::SharedDtor() {
+  caption_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void Polygon::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Polygon::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Polygon_descriptor_;
+}
+
+const Polygon& Polygon::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Polygon* Polygon::default_instance_ = NULL;
+
+Polygon* Polygon::New(::google::protobuf::Arena* arena) const {
+  Polygon* n = new Polygon;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Polygon::Clear() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  coordinate_.Clear();
+}
+
+bool Polygon::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Polygon)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string caption = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_caption()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->caption().data(), this->caption().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hybridsim.Polygon.caption"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_coordinate;
+        break;
+      }
+
+      // repeated .hybridsim.Coordinate coordinate = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_coordinate:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_coordinate:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_coordinate()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_loop_coordinate;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Polygon)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Polygon)
+  return false;
+#undef DO_
+}
+
+void Polygon::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Polygon)
+  // optional string caption = 1;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Polygon.caption");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->caption(), output);
+  }
+
+  // repeated .hybridsim.Coordinate coordinate = 2;
+  for (unsigned int i = 0, n = this->coordinate_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->coordinate(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Polygon)
+}
+
+::google::protobuf::uint8* Polygon::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Polygon)
+  // optional string caption = 1;
+  if (this->caption().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->caption().data(), this->caption().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hybridsim.Polygon.caption");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->caption(), target);
+  }
+
+  // repeated .hybridsim.Coordinate coordinate = 2;
+  for (unsigned int i = 0, n = this->coordinate_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->coordinate(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Polygon)
+  return target;
+}
+
+int Polygon::ByteSize() const {
+  int total_size = 0;
+
+  // optional string caption = 1;
+  if (this->caption().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->caption());
+  }
+
+  // repeated .hybridsim.Coordinate coordinate = 2;
+  total_size += 1 * this->coordinate_size();
+  for (int i = 0; i < this->coordinate_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->coordinate(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Polygon::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Polygon* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Polygon>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Polygon::MergeFrom(const Polygon& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  coordinate_.MergeFrom(from.coordinate_);
+  if (from.caption().size() > 0) {
+
+    caption_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.caption_);
+  }
+}
+
+void Polygon::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Polygon::CopyFrom(const Polygon& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Polygon::IsInitialized() const {
+
+  return true;
+}
+
+void Polygon::Swap(Polygon* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Polygon::InternalSwap(Polygon* other) {
+  caption_.Swap(&other->caption_);
+  coordinate_.UnsafeArenaSwap(&other->coordinate_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Polygon::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Polygon_descriptor_;
+  metadata.reflection = Polygon_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Polygon
+
+// optional string caption = 1;
+void Polygon::clear_caption() {
+  caption_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Polygon::caption() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Polygon.caption)
+  return caption_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Polygon::set_caption(const ::std::string& value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hybridsim.Polygon.caption)
+}
+ void Polygon::set_caption(const char* value) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hybridsim.Polygon.caption)
+}
+ void Polygon::set_caption(const char* value, size_t size) {
+  
+  caption_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hybridsim.Polygon.caption)
+}
+ ::std::string* Polygon::mutable_caption() {
+  
+  // @@protoc_insertion_point(field_mutable:hybridsim.Polygon.caption)
+  return caption_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Polygon::release_caption() {
+  
+  return caption_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Polygon::set_allocated_caption(::std::string* caption) {
+  if (caption != NULL) {
+    
+  } else {
+    
+  }
+  caption_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), caption);
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Polygon.caption)
+}
+
+// repeated .hybridsim.Coordinate coordinate = 2;
+int Polygon::coordinate_size() const {
+  return coordinate_.size();
+}
+void Polygon::clear_coordinate() {
+  coordinate_.Clear();
+}
+const ::hybridsim::Coordinate& Polygon::coordinate(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Polygon.coordinate)
+  return coordinate_.Get(index);
+}
+::hybridsim::Coordinate* Polygon::mutable_coordinate(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Polygon.coordinate)
+  return coordinate_.Mutable(index);
+}
+::hybridsim::Coordinate* Polygon::add_coordinate() {
+  // @@protoc_insertion_point(field_add:hybridsim.Polygon.coordinate)
+  return coordinate_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate >*
+Polygon::mutable_coordinate() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Polygon.coordinate)
+  return &coordinate_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Coordinate >&
+Polygon::coordinate() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Polygon.coordinate)
+  return coordinate_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
 
@@ -1014,8 +9388,8 @@ void Boolean::clear_val() {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Agent::kIdFieldNumber;
-const int Agent::kEnterIdFieldNumber;
-const int Agent::kLeaveIdFieldNumber;
+const int Agent::kEnterLocationFieldNumber;
+const int Agent::kLeaveLocationFieldNumber;
 const int Agent::kXFieldNumber;
 const int Agent::kYFieldNumber;
 const int Agent::kLegFieldNumber;
@@ -1029,6 +9403,8 @@ Agent::Agent()
 
 void Agent::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  enterlocation_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+  leavelocation_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
   leg_ = const_cast< ::hybridsim::Leg*>(&::hybridsim::Leg::default_instance());
 }
 
@@ -1045,8 +9421,8 @@ void Agent::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  enterid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  leaveid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  enterlocation_ = NULL;
+  leavelocation_ = NULL;
   x_ = 0;
   y_ = 0;
   leg_ = NULL;
@@ -1059,9 +9435,9 @@ Agent::~Agent() {
 
 void Agent::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  enterid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  leaveid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
+    delete enterlocation_;
+    delete leavelocation_;
     delete leg_;
   }
 }
@@ -1102,8 +9478,10 @@ void Agent::Clear() {
 
   ZR_(x_, y_);
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  enterid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  leaveid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && enterlocation_ != NULL) delete enterlocation_;
+  enterlocation_ = NULL;
+  if (GetArenaNoVirtual() == NULL && leavelocation_ != NULL) delete leavelocation_;
+  leavelocation_ = NULL;
   if (GetArenaNoVirtual() == NULL && leg_ != NULL) delete leg_;
   leg_ = NULL;
 
@@ -1134,37 +9512,29 @@ bool Agent::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_enterId;
+        if (input->ExpectTag(18)) goto parse_enterLocation;
         break;
       }
 
-      // optional string enterId = 2;
+      // optional .hybridsim.Coordinate enterLocation = 2;
       case 2: {
         if (tag == 18) {
-         parse_enterId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_enterid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->enterid().data(), this->enterid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "hybridsim.Agent.enterId"));
+         parse_enterLocation:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_enterlocation()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_leaveId;
+        if (input->ExpectTag(26)) goto parse_leaveLocation;
         break;
       }
 
-      // optional string leaveId = 3;
+      // optional .hybridsim.Coordinate leaveLocation = 3;
       case 3: {
         if (tag == 26) {
-         parse_leaveId:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_leaveid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->leaveid().data(), this->leaveid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "hybridsim.Agent.leaveId"));
+         parse_leaveLocation:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_leavelocation()));
         } else {
           goto handle_unusual;
         }
@@ -1249,24 +9619,16 @@ void Agent::SerializeWithCachedSizes(
       1, this->id(), output);
   }
 
-  // optional string enterId = 2;
-  if (this->enterid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->enterid().data(), this->enterid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hybridsim.Agent.enterId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->enterid(), output);
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  if (this->has_enterlocation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->enterlocation_, output);
   }
 
-  // optional string leaveId = 3;
-  if (this->leaveid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->leaveid().data(), this->leaveid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hybridsim.Agent.leaveId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->leaveid(), output);
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  if (this->has_leavelocation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, *this->leavelocation_, output);
   }
 
   // optional double x = 4;
@@ -1302,26 +9664,18 @@ void Agent::SerializeWithCachedSizes(
         1, this->id(), target);
   }
 
-  // optional string enterId = 2;
-  if (this->enterid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->enterid().data(), this->enterid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hybridsim.Agent.enterId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->enterid(), target);
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  if (this->has_enterlocation()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, *this->enterlocation_, target);
   }
 
-  // optional string leaveId = 3;
-  if (this->leaveid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->leaveid().data(), this->leaveid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hybridsim.Agent.leaveId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->leaveid(), target);
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  if (this->has_leavelocation()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, *this->leavelocation_, target);
   }
 
   // optional double x = 4;
@@ -1355,18 +9709,18 @@ int Agent::ByteSize() const {
         this->id());
   }
 
-  // optional string enterId = 2;
-  if (this->enterid().size() > 0) {
+  // optional .hybridsim.Coordinate enterLocation = 2;
+  if (this->has_enterlocation()) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->enterid());
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->enterlocation_);
   }
 
-  // optional string leaveId = 3;
-  if (this->leaveid().size() > 0) {
+  // optional .hybridsim.Coordinate leaveLocation = 3;
+  if (this->has_leavelocation()) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->leaveid());
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->leavelocation_);
   }
 
   // optional double x = 4;
@@ -1410,13 +9764,11 @@ void Agent::MergeFrom(const Agent& from) {
 
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
-  if (from.enterid().size() > 0) {
-
-    enterid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.enterid_);
+  if (from.has_enterlocation()) {
+    mutable_enterlocation()->::hybridsim::Coordinate::MergeFrom(from.enterlocation());
   }
-  if (from.leaveid().size() > 0) {
-
-    leaveid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.leaveid_);
+  if (from.has_leavelocation()) {
+    mutable_leavelocation()->::hybridsim::Coordinate::MergeFrom(from.leavelocation());
   }
   if (from.x() != 0) {
     set_x(from.x());
@@ -1452,8 +9804,8 @@ void Agent::Swap(Agent* other) {
 }
 void Agent::InternalSwap(Agent* other) {
   id_.Swap(&other->id_);
-  enterid_.Swap(&other->enterid_);
-  leaveid_.Swap(&other->leaveid_);
+  std::swap(enterlocation_, other->enterlocation_);
+  std::swap(leavelocation_, other->leavelocation_);
   std::swap(x_, other->x_);
   std::swap(y_, other->y_);
   std::swap(leg_, other->leg_);
@@ -1515,90 +9867,78 @@ void Agent::clear_id() {
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.id)
 }
 
-// optional string enterId = 2;
-void Agent::clear_enterid() {
-  enterid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional .hybridsim.Coordinate enterLocation = 2;
+bool Agent::has_enterlocation() const {
+  return !_is_default_instance_ && enterlocation_ != NULL;
 }
- const ::std::string& Agent::enterid() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterId)
-  return enterid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+void Agent::clear_enterlocation() {
+  if (GetArenaNoVirtual() == NULL && enterlocation_ != NULL) delete enterlocation_;
+  enterlocation_ = NULL;
 }
- void Agent::set_enterid(const ::std::string& value) {
+const ::hybridsim::Coordinate& Agent::enterlocation() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.enterLocation)
+  return enterlocation_ != NULL ? *enterlocation_ : *default_instance_->enterlocation_;
+}
+::hybridsim::Coordinate* Agent::mutable_enterlocation() {
   
-  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:hybridsim.Agent.enterId)
+  if (enterlocation_ == NULL) {
+    enterlocation_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.enterLocation)
+  return enterlocation_;
 }
- void Agent::set_enterid(const char* value) {
+::hybridsim::Coordinate* Agent::release_enterlocation() {
   
-  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.enterId)
+  ::hybridsim::Coordinate* temp = enterlocation_;
+  enterlocation_ = NULL;
+  return temp;
 }
- void Agent::set_enterid(const char* value, size_t size) {
-  
-  enterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.enterId)
-}
- ::std::string* Agent::mutable_enterid() {
-  
-  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.enterId)
-  return enterid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* Agent::release_enterid() {
-  
-  return enterid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void Agent::set_allocated_enterid(::std::string* enterid) {
-  if (enterid != NULL) {
+void Agent::set_allocated_enterlocation(::hybridsim::Coordinate* enterlocation) {
+  delete enterlocation_;
+  enterlocation_ = enterlocation;
+  if (enterlocation) {
     
   } else {
     
   }
-  enterid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), enterid);
-  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.enterId)
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.enterLocation)
 }
 
-// optional string leaveId = 3;
-void Agent::clear_leaveid() {
-  leaveid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional .hybridsim.Coordinate leaveLocation = 3;
+bool Agent::has_leavelocation() const {
+  return !_is_default_instance_ && leavelocation_ != NULL;
 }
- const ::std::string& Agent::leaveid() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveId)
-  return leaveid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+void Agent::clear_leavelocation() {
+  if (GetArenaNoVirtual() == NULL && leavelocation_ != NULL) delete leavelocation_;
+  leavelocation_ = NULL;
 }
- void Agent::set_leaveid(const ::std::string& value) {
+const ::hybridsim::Coordinate& Agent::leavelocation() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Agent.leaveLocation)
+  return leavelocation_ != NULL ? *leavelocation_ : *default_instance_->leavelocation_;
+}
+::hybridsim::Coordinate* Agent::mutable_leavelocation() {
   
-  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:hybridsim.Agent.leaveId)
+  if (leavelocation_ == NULL) {
+    leavelocation_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.leaveLocation)
+  return leavelocation_;
 }
- void Agent::set_leaveid(const char* value) {
+::hybridsim::Coordinate* Agent::release_leavelocation() {
   
-  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:hybridsim.Agent.leaveId)
+  ::hybridsim::Coordinate* temp = leavelocation_;
+  leavelocation_ = NULL;
+  return temp;
 }
- void Agent::set_leaveid(const char* value, size_t size) {
-  
-  leaveid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:hybridsim.Agent.leaveId)
-}
- ::std::string* Agent::mutable_leaveid() {
-  
-  // @@protoc_insertion_point(field_mutable:hybridsim.Agent.leaveId)
-  return leaveid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* Agent::release_leaveid() {
-  
-  return leaveid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void Agent::set_allocated_leaveid(::std::string* leaveid) {
-  if (leaveid != NULL) {
+void Agent::set_allocated_leavelocation(::hybridsim::Coordinate* leavelocation) {
+  delete leavelocation_;
+  leavelocation_ = leavelocation;
+  if (leavelocation) {
     
   } else {
     
   }
-  leaveid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), leaveid);
-  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.leaveId)
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Agent.leaveLocation)
 }
 
 // optional double x = 4;
@@ -1916,10 +10256,7 @@ Leg::link() const {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int Link::kX0FieldNumber;
-const int Link::kY0FieldNumber;
-const int Link::kX1FieldNumber;
-const int Link::kY1FieldNumber;
+const int Link::kCentroidFieldNumber;
 const int Link::kIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1931,6 +10268,7 @@ Link::Link()
 
 void Link::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  centroid_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
 }
 
 Link::Link(const Link& from)
@@ -1945,10 +10283,7 @@ void Link::SharedCtor() {
     _is_default_instance_ = false;
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  x0_ = 0;
-  y0_ = 0;
-  x1_ = 0;
-  y1_ = 0;
+  centroid_ = NULL;
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -1960,6 +10295,7 @@ Link::~Link() {
 void Link::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
+    delete centroid_;
   }
 }
 
@@ -1989,20 +10325,9 @@ Link* Link::New(::google::protobuf::Arena* arena) const {
 }
 
 void Link::Clear() {
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<Link*>(16)->f)
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(x0_, y1_);
+  if (GetArenaNoVirtual() == NULL && centroid_ != NULL) delete centroid_;
+  centroid_ = NULL;
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-
-#undef ZR_HELPER_
-#undef ZR_
-
 }
 
 bool Link::MergePartialFromCodedStream(
@@ -2015,68 +10340,21 @@ bool Link::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional double x0 = 1;
+      // optional .hybridsim.Coordinate centroid = 1;
       case 1: {
-        if (tag == 9) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &x0_)));
-
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_centroid()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(17)) goto parse_y0;
+        if (input->ExpectTag(18)) goto parse_id;
         break;
       }
 
-      // optional double y0 = 2;
+      // optional string id = 2;
       case 2: {
-        if (tag == 17) {
-         parse_y0:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &y0_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(25)) goto parse_x1;
-        break;
-      }
-
-      // optional double x1 = 3;
-      case 3: {
-        if (tag == 25) {
-         parse_x1:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &x1_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(33)) goto parse_y1;
-        break;
-      }
-
-      // optional double y1 = 4;
-      case 4: {
-        if (tag == 33) {
-         parse_y1:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &y1_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_id;
-        break;
-      }
-
-      // optional string id = 5;
-      case 5: {
-        if (tag == 42) {
+        if (tag == 18) {
          parse_id:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_id()));
@@ -2115,34 +10393,20 @@ failure:
 void Link::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:hybridsim.Link)
-  // optional double x0 = 1;
-  if (this->x0() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->x0(), output);
+  // optional .hybridsim.Coordinate centroid = 1;
+  if (this->has_centroid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->centroid_, output);
   }
 
-  // optional double y0 = 2;
-  if (this->y0() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->y0(), output);
-  }
-
-  // optional double x1 = 3;
-  if (this->x1() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->x1(), output);
-  }
-
-  // optional double y1 = 4;
-  if (this->y1() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->y1(), output);
-  }
-
-  // optional string id = 5;
+  // optional string id = 2;
   if (this->id().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->id().data(), this->id().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "hybridsim.Link.id");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->id(), output);
+      2, this->id(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:hybridsim.Link)
@@ -2151,27 +10415,14 @@ void Link::SerializeWithCachedSizes(
 ::google::protobuf::uint8* Link::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Link)
-  // optional double x0 = 1;
-  if (this->x0() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->x0(), target);
+  // optional .hybridsim.Coordinate centroid = 1;
+  if (this->has_centroid()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->centroid_, target);
   }
 
-  // optional double y0 = 2;
-  if (this->y0() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->y0(), target);
-  }
-
-  // optional double x1 = 3;
-  if (this->x1() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->x1(), target);
-  }
-
-  // optional double y1 = 4;
-  if (this->y1() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->y1(), target);
-  }
-
-  // optional string id = 5;
+  // optional string id = 2;
   if (this->id().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->id().data(), this->id().length(),
@@ -2179,7 +10430,7 @@ void Link::SerializeWithCachedSizes(
       "hybridsim.Link.id");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->id(), target);
+        2, this->id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Link)
@@ -2189,27 +10440,14 @@ void Link::SerializeWithCachedSizes(
 int Link::ByteSize() const {
   int total_size = 0;
 
-  // optional double x0 = 1;
-  if (this->x0() != 0) {
-    total_size += 1 + 8;
+  // optional .hybridsim.Coordinate centroid = 1;
+  if (this->has_centroid()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->centroid_);
   }
 
-  // optional double y0 = 2;
-  if (this->y0() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional double x1 = 3;
-  if (this->x1() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional double y1 = 4;
-  if (this->y1() != 0) {
-    total_size += 1 + 8;
-  }
-
-  // optional string id = 5;
+  // optional string id = 2;
   if (this->id().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -2236,17 +10474,8 @@ void Link::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Link::MergeFrom(const Link& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.x0() != 0) {
-    set_x0(from.x0());
-  }
-  if (from.y0() != 0) {
-    set_y0(from.y0());
-  }
-  if (from.x1() != 0) {
-    set_x1(from.x1());
-  }
-  if (from.y1() != 0) {
-    set_y1(from.y1());
+  if (from.has_centroid()) {
+    mutable_centroid()->::hybridsim::Coordinate::MergeFrom(from.centroid());
   }
   if (from.id().size() > 0) {
 
@@ -2276,10 +10505,7 @@ void Link::Swap(Link* other) {
   InternalSwap(other);
 }
 void Link::InternalSwap(Link* other) {
-  std::swap(x0_, other->x0_);
-  std::swap(y0_, other->y0_);
-  std::swap(x1_, other->x1_);
-  std::swap(y1_, other->y1_);
+  std::swap(centroid_, other->centroid_);
   id_.Swap(&other->id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -2296,63 +10522,44 @@ void Link::InternalSwap(Link* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Link
 
-// optional double x0 = 1;
-void Link::clear_x0() {
-  x0_ = 0;
+// optional .hybridsim.Coordinate centroid = 1;
+bool Link::has_centroid() const {
+  return !_is_default_instance_ && centroid_ != NULL;
 }
- double Link::x0() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.x0)
-  return x0_;
+void Link::clear_centroid() {
+  if (GetArenaNoVirtual() == NULL && centroid_ != NULL) delete centroid_;
+  centroid_ = NULL;
 }
- void Link::set_x0(double value) {
+const ::hybridsim::Coordinate& Link::centroid() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Link.centroid)
+  return centroid_ != NULL ? *centroid_ : *default_instance_->centroid_;
+}
+::hybridsim::Coordinate* Link::mutable_centroid() {
   
-  x0_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.x0)
+  if (centroid_ == NULL) {
+    centroid_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Link.centroid)
+  return centroid_;
+}
+::hybridsim::Coordinate* Link::release_centroid() {
+  
+  ::hybridsim::Coordinate* temp = centroid_;
+  centroid_ = NULL;
+  return temp;
+}
+void Link::set_allocated_centroid(::hybridsim::Coordinate* centroid) {
+  delete centroid_;
+  centroid_ = centroid;
+  if (centroid) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Link.centroid)
 }
 
-// optional double y0 = 2;
-void Link::clear_y0() {
-  y0_ = 0;
-}
- double Link::y0() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.y0)
-  return y0_;
-}
- void Link::set_y0(double value) {
-  
-  y0_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.y0)
-}
-
-// optional double x1 = 3;
-void Link::clear_x1() {
-  x1_ = 0;
-}
- double Link::x1() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.x1)
-  return x1_;
-}
- void Link::set_x1(double value) {
-  
-  x1_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.x1)
-}
-
-// optional double y1 = 4;
-void Link::clear_y1() {
-  y1_ = 0;
-}
- double Link::y1() const {
-  // @@protoc_insertion_point(field_get:hybridsim.Link.y1)
-  return y1_;
-}
- void Link::set_y1(double value) {
-  
-  y1_ = value;
-  // @@protoc_insertion_point(field_set:hybridsim.Link.y1)
-}
-
-// optional string id = 5;
+// optional string id = 2;
 void Link::clear_id() {
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -2393,6 +10600,292 @@ void Link::clear_id() {
   }
   id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Link.id)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Coordinate::kXFieldNumber;
+const int Coordinate::kYFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Coordinate::Coordinate()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Coordinate)
+}
+
+void Coordinate::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Coordinate::Coordinate(const Coordinate& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Coordinate)
+}
+
+void Coordinate::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  x_ = 0;
+  y_ = 0;
+}
+
+Coordinate::~Coordinate() {
+  // @@protoc_insertion_point(destructor:hybridsim.Coordinate)
+  SharedDtor();
+}
+
+void Coordinate::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void Coordinate::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Coordinate::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Coordinate_descriptor_;
+}
+
+const Coordinate& Coordinate::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Coordinate* Coordinate::default_instance_ = NULL;
+
+Coordinate* Coordinate::New(::google::protobuf::Arena* arena) const {
+  Coordinate* n = new Coordinate;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Coordinate::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Coordinate*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(x_, y_);
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Coordinate::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Coordinate)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional double x = 1;
+      case 1: {
+        if (tag == 9) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &x_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(17)) goto parse_y;
+        break;
+      }
+
+      // optional double y = 2;
+      case 2: {
+        if (tag == 17) {
+         parse_y:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &y_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Coordinate)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Coordinate)
+  return false;
+#undef DO_
+}
+
+void Coordinate::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Coordinate)
+  // optional double x = 1;
+  if (this->x() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->x(), output);
+  }
+
+  // optional double y = 2;
+  if (this->y() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->y(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Coordinate)
+}
+
+::google::protobuf::uint8* Coordinate::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Coordinate)
+  // optional double x = 1;
+  if (this->x() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->x(), target);
+  }
+
+  // optional double y = 2;
+  if (this->y() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->y(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Coordinate)
+  return target;
+}
+
+int Coordinate::ByteSize() const {
+  int total_size = 0;
+
+  // optional double x = 1;
+  if (this->x() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional double y = 2;
+  if (this->y() != 0) {
+    total_size += 1 + 8;
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Coordinate::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Coordinate* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Coordinate>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Coordinate::MergeFrom(const Coordinate& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.x() != 0) {
+    set_x(from.x());
+  }
+  if (from.y() != 0) {
+    set_y(from.y());
+  }
+}
+
+void Coordinate::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Coordinate::CopyFrom(const Coordinate& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Coordinate::IsInitialized() const {
+
+  return true;
+}
+
+void Coordinate::Swap(Coordinate* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Coordinate::InternalSwap(Coordinate* other) {
+  std::swap(x_, other->x_);
+  std::swap(y_, other->y_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Coordinate::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Coordinate_descriptor_;
+  metadata.reflection = Coordinate_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Coordinate
+
+// optional double x = 1;
+void Coordinate::clear_x() {
+  x_ = 0;
+}
+ double Coordinate::x() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Coordinate.x)
+  return x_;
+}
+ void Coordinate::set_x(double value) {
+  
+  x_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Coordinate.x)
+}
+
+// optional double y = 2;
+void Coordinate::clear_y() {
+  y_ = 0;
+}
+ double Coordinate::y() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Coordinate.y)
+  return y_;
+}
+ void Coordinate::set_y(double value) {
+  
+  y_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Coordinate.y)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2649,6 +11142,7 @@ const int Trajectory::kIdFieldNumber;
 const int Trajectory::kXFieldNumber;
 const int Trajectory::kYFieldNumber;
 const int Trajectory::kSpdFieldNumber;
+const int Trajectory::kPhiFieldNumber;
 const int Trajectory::kLinkIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2678,6 +11172,7 @@ void Trajectory::SharedCtor() {
   x_ = 0;
   y_ = 0;
   spd_ = 0;
+  phi_ = 0;
   linkid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -2727,7 +11222,7 @@ void Trajectory::Clear() {
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  ZR_(x_, spd_);
+  ZR_(x_, phi_);
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   linkid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 
@@ -2803,13 +11298,28 @@ bool Trajectory::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_linkId;
+        if (input->ExpectTag(41)) goto parse_phi;
         break;
       }
 
-      // optional string linkId = 5;
+      // optional double phi = 5;
       case 5: {
-        if (tag == 42) {
+        if (tag == 41) {
+         parse_phi:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &phi_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(50)) goto parse_linkId;
+        break;
+      }
+
+      // optional string linkId = 6;
+      case 6: {
+        if (tag == 50) {
          parse_linkId:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_linkid()));
@@ -2873,14 +11383,19 @@ void Trajectory::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->spd(), output);
   }
 
-  // optional string linkId = 5;
+  // optional double phi = 5;
+  if (this->phi() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->phi(), output);
+  }
+
+  // optional string linkId = 6;
   if (this->linkid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->linkid().data(), this->linkid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "hybridsim.Trajectory.linkId");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->linkid(), output);
+      6, this->linkid(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:hybridsim.Trajectory)
@@ -2915,7 +11430,12 @@ void Trajectory::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->spd(), target);
   }
 
-  // optional string linkId = 5;
+  // optional double phi = 5;
+  if (this->phi() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->phi(), target);
+  }
+
+  // optional string linkId = 6;
   if (this->linkid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->linkid().data(), this->linkid().length(),
@@ -2923,7 +11443,7 @@ void Trajectory::SerializeWithCachedSizes(
       "hybridsim.Trajectory.linkId");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->linkid(), target);
+        6, this->linkid(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Trajectory)
@@ -2955,7 +11475,12 @@ int Trajectory::ByteSize() const {
     total_size += 1 + 8;
   }
 
-  // optional string linkId = 5;
+  // optional double phi = 5;
+  if (this->phi() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // optional string linkId = 6;
   if (this->linkid().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -2995,6 +11520,9 @@ void Trajectory::MergeFrom(const Trajectory& from) {
   if (from.spd() != 0) {
     set_spd(from.spd());
   }
+  if (from.phi() != 0) {
+    set_phi(from.phi());
+  }
   if (from.linkid().size() > 0) {
 
     linkid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.linkid_);
@@ -3027,6 +11555,7 @@ void Trajectory::InternalSwap(Trajectory* other) {
   std::swap(x_, other->x_);
   std::swap(y_, other->y_);
   std::swap(spd_, other->spd_);
+  std::swap(phi_, other->phi_);
   linkid_.Swap(&other->linkid_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -3128,7 +11657,21 @@ void Trajectory::clear_spd() {
   // @@protoc_insertion_point(field_set:hybridsim.Trajectory.spd)
 }
 
-// optional string linkId = 5;
+// optional double phi = 5;
+void Trajectory::clear_phi() {
+  phi_ = 0;
+}
+ double Trajectory::phi() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Trajectory.phi)
+  return phi_;
+}
+ void Trajectory::set_phi(double value) {
+  
+  phi_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Trajectory.phi)
+}
+
+// optional string linkId = 6;
 void Trajectory::clear_linkid() {
   linkid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

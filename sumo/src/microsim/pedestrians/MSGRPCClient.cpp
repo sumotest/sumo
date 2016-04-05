@@ -18,6 +18,7 @@
 /****************************************************************************/
 #include <grpc++/grpc++.h>
 #include <utils/common/StdDefs.h>
+#include <microsim/MSEdgeControl.h>
 #include <microsim/MSJunction.h>
 #include <microsim/MSLane.h>
 #include <utils/geom/PositionVector.h>
@@ -30,10 +31,167 @@ const int FWD(1);
 const int BWD(-1);
 const int UNDEF(0);
 
-MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel) :
-hybridsimStub(hybridsim::HybridSimulation::NewStub(channel))
+MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
+										hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
+	initalized();
+}
 
+
+
+void MSGRPCClient::initalized() {
+	hybridsim::Scenario req;
+	req.set_seed(42);
+	hybridsim::Environment* env = req.mutable_environment();
+
+	int trId = 0;
+
+	std::vector<MSEdge*> walkingAreas;
+	std::map<MSEdge*,std::vector<hybridsim::Transition>> walkingAreasTransitionMapping;
+
+	//1. for all edges
+	for (MSEdge * e : net->getEdgeControl().getEdges()){
+		if (e->isInternal()) {
+			continue;
+		}
+		if (e->isWalkingArea()) {
+			walkingAreas.push_back(e);
+		} else {
+			for (MSLane * l : e->getLanes()) {
+				if (l->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+
+					hybridsim::Room * room = env->add_room();
+					room->set_caption(e->getID());
+					room->set_id(e->getNumericalID());
+					hybridsim::Subroom * subroom = room->add_subroom();
+					subroom->set_id(l->getNumericalID());
+					subroom->set_closed(0);
+					subroom->set_class_("TODO: figure out what class means!");
+
+					hybridsim::Transition * t1 = env->add_transition();
+					t1->set_id(trId++);
+					t1->set_caption("transition");
+					t1->set_type("other");
+					t1->set_room1_id(e->getNumericalID());
+					t1->set_subroom1_id(l->getNumericalID());
+
+					hybridsim::Transition * t2 = env->add_transition();
+					t2->set_id(trId++);
+					t2->set_caption("transition");
+					t2->set_type("other");
+					t2->set_room1_id(e->getNumericalID());
+					t2->set_subroom1_id(l->getNumericalID());
+
+					const std::vector<MSLane::IncomingLaneInfo,
+					std::allocator<MSLane::IncomingLaneInfo> > incoming = l->getIncomingLanes();
+					if (incoming.size() > 1) {
+						std::cerr << "inconsistent network, cannot create jupedsim scenario!" << std::endl;
+						exit(-1);
+					}
+					t1->set_room2_id((incoming.begin())->lane->getEdge().getNumericalID());
+					t1->set_subroom2_id((incoming.begin())->lane->getNumericalID());
+					std::vector<const MSLane*>  outgoing = l->getOutgoingLanes();
+					if (outgoing.size() > 1) {
+						std::cerr << "inconsistent network, cannot create jupedsim scenario!" << std::endl;
+						exit(-1);
+					}
+					t2->set_room2_id((*(outgoing.begin()))->getEdge().getNumericalID());
+					t2->set_subroom2_id((*(outgoing.begin()))->getNumericalID());
+
+					PositionVector  s = PositionVector(l->getShape());
+					double width = l->getWidth();
+					s.move2side(width/2);
+					hybridsim::Polygon * p1 = subroom->add_polygon();
+					p1->set_caption("wall");
+					for (Position p : s) {
+						hybridsim::Coordinate * c = p1->add_coordinate();
+						c->set_x(p.x());
+						c->set_y(p.y());
+					}
+					hybridsim::Coordinate * c12 = t1->mutable_vert2();
+					c12->set_x((s.begin())->x());
+					c12->set_y((s.begin())->y());
+
+					hybridsim::Coordinate * c21 = t2->mutable_vert1();
+					c21->set_x((s.end()-1)->x());
+					c21->set_y((s.end()-1)->y());
+					s.move2side(-width);
+					hybridsim::Polygon * p2 = subroom->add_polygon();
+					p1->set_caption("wall");
+					for (Position p : s) {
+						hybridsim::Coordinate * c = p1->add_coordinate();
+						c->set_x(p.x());
+						c->set_y(p.y());
+					}
+					hybridsim::Coordinate * c11 = t1->mutable_vert1();
+					c11->set_x((s.begin())->x());
+					c11->set_y((s.begin())->y());
+
+					hybridsim::Coordinate * c22 = t2->mutable_vert2();
+					c22->set_x((s.end()-1)->x());
+					c22->set_y((s.end()-1)->y());
+					if ((*outgoing.begin())->getEdge().isWalkingArea()) {
+						std::vector<hybridsim::Transition> vec = walkingAreasTransitionMapping[&((*outgoing.begin())->getEdge())];
+						if (&(vec) == 0) {
+							vec = std::vector<hybridsim::Transition>();
+							walkingAreasTransitionMapping[&((*outgoing.begin())->getEdge())] = vec;
+						}
+						vec.push_back(*t2);
+					}
+					if ((incoming.begin())->lane->getEdge().isWalkingArea()) {
+						std::vector<hybridsim::Transition> vec = walkingAreasTransitionMapping[&((incoming.begin())->lane->getEdge())];
+						if (&(vec) == 0) {{
+							vec = std::vector<hybridsim::Transition>();
+							walkingAreasTransitionMapping[&((incoming.begin())->lane->getEdge())] = vec;
+						}
+						vec.push_back(*t1);
+						}
+
+					}
+				}
+			}
+		}
+
+		//		std::cout <<  walkingAreasTransitionMapping.size()<< "\n";
+	}
+
+	//2nd for the walking areas
+	for (MSEdge * w : walkingAreas) {
+		MSLane * l = *(w->getLanes().begin());
+		hybridsim::Room * room = env->add_room();
+		room->set_caption(w->getID());
+		room->set_id(w->getNumericalID());
+		hybridsim::Subroom * subroom = room->add_subroom();
+		subroom->set_id(l->getNumericalID());
+		subroom->set_closed(0);
+		subroom->set_class_("TODO: figure out what class means!");
+		for (hybridsim::Transition t : walkingAreasTransitionMapping[w]) {
+			hybridsim::Transition * tr = env->add_transition();
+			tr->set_id(trId++);
+			tr->set_caption("transition");
+			tr->set_type("other");
+			tr->set_room1_id(t.room2_id());
+			tr->set_subroom1_id(t.subroom2_id());
+			tr->set_room2_id(t.room1_id());
+			tr->set_subroom2_id(t.subroom1_id());
+			hybridsim::Coordinate * c1 = tr->mutable_vert1();
+			c1->set_x(t.vert2().x());
+			c1->set_y(t.vert2().y());
+			hybridsim::Coordinate * c2 = tr->mutable_vert2();
+			c2->set_x(t.vert1().x());
+			c2->set_y(t.vert1().y());
+		}
+
+	}
+
+
+	hybridsim::Empty rpl;
+	ClientContext context;
+	Status st = hybridsimStub->initScenario(&context,req,&rpl);
+	if(!st.ok()){
+		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
+	}
 }
 
 MSGRPCClient::~MSGRPCClient() {
@@ -65,7 +223,7 @@ void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
 		exit(-1);
 	}
 
-//	std::cout << "in JuPedSim:" << inSim << std::endl;
+	//	std::cout << "in JuPedSim:" << inSim << std::endl;
 
 }
 
@@ -152,7 +310,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 	ClientContext context;
 
 	Status status = hybridsimStub->transferAgent(&context,req,&rpl);
-//	inSim++;
+	//	inSim++;
 	if (status.ok()) {
 		return rpl.val();
 	} else {
