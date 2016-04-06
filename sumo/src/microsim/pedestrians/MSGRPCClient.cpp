@@ -235,21 +235,48 @@ MSGRPCClient::~MSGRPCClient() {
 
 
 void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const PositionVector shape,std::vector<hybridsim::Transition>& vec){
+	//TODO: this needs to be handled upstream!
+	if (shape.area() <= 0.) {//dbl precision issue?! [gl apr '16]
+		return;
+	}
+
 	TransitionComparator comp = TransitionComparator(&(shape));
 	std::sort(vec.begin(),vec.end(),comp);
+
+
+//	std::vector<Position>::const_iterator itShp = shape.begin();
+#ifdef DEBUG
+	for (hybridsim::Transition t : vec){
+		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
+	}
+#endif
+	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
+	itTr++;
 	hybridsim::Polygon * p = subroom->add_polygon();
 	p->set_caption("wall");
-	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
-	std::vector<Position>::const_iterator itShp = shape.begin();
-	for (hybridsim::Transition t : vec){
+	for (int i = 1; i < shape.size(); i ++) {
+		hybridsim::Coordinate * c = p->add_coordinate();
+		c->set_x(shape[i].x());
+		c->set_y(shape[i].y());
 #ifdef DEBUG
-		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
+		std::cout << shape[i] << " ";
 #endif
+		if (itTr != vec.end() && shape.indexOfClosest(vert2Pos((*itTr).vert2()))) {
+			p = subroom->add_polygon();
+			p->set_caption("wall");
+			itTr++;
+#ifdef DEBUG
+			std::cout << std::endl;
+#endif
+		}
+
 	}
 //	SUMOReal sqrDist = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert1()));
 //	SUMOReal sqrDist2 = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert2()));
 //	std::cout<<"sqrDist" << sqrDist  << " " << sqrDist2 << std::endl;
-
+#ifdef DEBUG
+			std::cout << std::endl;
+#endif
 
 
 	//		for (Position)
