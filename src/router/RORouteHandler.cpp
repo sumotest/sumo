@@ -569,10 +569,10 @@ RORouteHandler::addStop(const SUMOSAXAttributes& attrs) {
     }
     // try to parse the assigned bus stop
     ROEdge* edge = 0;
-    if (stop.busstop != "") {
-        const SUMOVehicleParameter::Stop* busstop = myNet.getBusStop(stop.busstop);
+    if (stop.stoppingPlace != "") {
+        const SUMOVehicleParameter::Stop* busstop = myNet.getBusStop(stop.stoppingPlace);
         if (busstop == 0) {
-            myErrorOutput->inform("Unknown bus stop '" + stop.busstop + "'" + errorSuffix);
+            myErrorOutput->inform("Unknown stoppingPlace '" + stop.stoppingPlace + "'" + errorSuffix);
             return;
         }
         stop.lane = busstop->lane;

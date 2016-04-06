@@ -269,7 +269,7 @@ public:
     /// @brief Set parameter 21a, increase vehicleStopped
     inline void increaseVehicleStoppedTimer();
 
-private:
+protected:
 
     /// @brief Parameter 01, The actual vehicles' Battery Capacity in kWh
     /// @condition [ActBatKap <= MaxBatKap]
@@ -353,17 +353,10 @@ private:
     /// @brief Parameter 21, How many timestep the vehicle is stopped
     int vehicleStopped;
 
-
-    /** @brief convert from SUMOReal to String
-     * @param[in] var Variable in SUMOReal format
-    * @return Variable var in String format
-    */
-    std::string SUMOReal_str(const SUMOReal& var);
-
+private:
 
     /// @brief Invalidated copy constructor.
     MSDevice_Battery(const MSDevice_Battery&);
-
 
     /// @brief Invalidated assignment operator.
     MSDevice_Battery& operator=(const MSDevice_Battery&);

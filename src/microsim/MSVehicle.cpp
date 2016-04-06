@@ -797,7 +797,7 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
         errorMsg = "Vehicle '" + myParameter->id + "' is not allowed to stop on lane '" + stopPar.lane + "'.";
         return false;
     }
-    stop.busstop = MSNet::getInstance()->getBusStop(stopPar.busstop);
+    stop.busstop = MSNet::getInstance()->getBusStop(stopPar.stoppingPlace);
     stop.containerstop = MSNet::getInstance()->getContainerStop(stopPar.containerstop);
     stop.startPos = stopPar.startPos;
     stop.endPos = stopPar.endPos;
@@ -2746,10 +2746,10 @@ MSVehicle::addTraciBusOrContainerStop(const std::string& stopId, const SUMOTime 
             return false;
         }
     } else {
-        newStop.busstop = stopId;
+        newStop.stoppingPlace = stopId;
         bs = MSNet::getInstance()->getBusStop(stopId);
         if (bs == 0) {
-            errorMsg = "The bus stop '" + stopId + "' is not known for vehicle '" + getID() + "'";
+            errorMsg = "The stoppingPlace '" + stopId + "' is not known for vehicle '" + getID() + "'";
             return false;
         }
     }

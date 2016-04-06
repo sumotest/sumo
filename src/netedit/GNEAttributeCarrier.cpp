@@ -69,6 +69,10 @@ GNEAttributeCarrier::parse(const std::string& string) {
     return TplConvert::_str2int(string);
 }
 
+template<> SUMOTime
+GNEAttributeCarrier::parse(const std::string& string) {
+    return TplConvert::_str2int(string);
+}
 
 template<> SUMOReal
 GNEAttributeCarrier::parse(const std::string& string) {
@@ -526,6 +530,8 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {        
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
         if((*i).first == attr)                                                                                                                          // PABLO #1916
             return TplConvert::_str2int((*i).second);                                                                                                   // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return 0;                                                                                                                                           // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 
@@ -534,6 +540,8 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {        
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
         if((*i).first == attr)                                                                                                                          // PABLO #1916
             return TplConvert::_str2SUMOReal((*i).second);                                                                                              // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return 0;                                                                                                                                           // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 
@@ -542,6 +550,8 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {        
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
         if((*i).first == attr)                                                                                                                          // PABLO #1916
             return TplConvert::_str2bool((*i).second);                                                                                                  // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return false;                                                                                                                                       // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 
@@ -550,25 +560,30 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {        
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
         if((*i).first == attr)                                                                                                                          // PABLO #1916
             return (*i).second;                                                                                                                         // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return "";                                                                                                                                          // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 template<> std::vector<int>                                                                                                                             // PABLO #1916
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
     std::cout << "FINISH" << std::endl;
-    return std::vector<int>();                                                                                                 // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return std::vector<int>();                                                                                                                          // PABLO #1916
 }
 
 template<> std::vector<SUMOReal>                                                                                                                        // PABLO #1916
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
     std::cout << "FINISH" << std::endl;
-    return std::vector<SUMOReal>();                                                                                           // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return std::vector<SUMOReal>();                                                                                                                     // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 
 template<> std::vector<bool>                                                                                                                            // PABLO #1916
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
     std::cout << "FINISH" << std::endl;
-    return std::vector<bool>();
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return std::vector<bool>();                                                                                                                         // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 
@@ -580,6 +595,8 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {        
             SUMOSAXAttributes::parseStringVector((*i).second, myVectorString);                                                                          // PABLO #1916
             return myVectorString;                                                                                                                      // PABLO #1916
         }                                                                                                                                               // PABLO #1916
+    WRITE_WARNING("default value '" + toString(attr) + "' for tag '" + toString(tag) + "' not defined");                                                // PABLO #1916
+    return std::vector<std::string>();                                                                                                                  // PABLO #1916
 }                                                                                                                                                       // PABLO #1916
 
 /****************************************************************************/

@@ -566,7 +566,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             std::string file = values[SUMO_ATTR_FILE];
             MSRouteProbe* probe;
             std::string outfile;
-            SUMOTime freq;
+            SUMOTime freq = GNEAttributeCarrier::parse<SUMOTime>(values[SUMO_ATTR_FREQUENCY]);
             // Build calibrator
             if(lane)
                 return buildCalibrator(viewNet, id, lane->getParentEdge(), pos, file, outfile, freq, probe, blocked);

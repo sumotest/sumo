@@ -460,12 +460,10 @@ public:
     struct Stop {
         /// @brief The lane to stop at
         std::string lane;
-        /// @brief (Optional) bus stop if one is assigned to the stop
-        std::string busstop;
+        /// @brief (Optional) id of bus stop or charging Station, if one is assigned to the stop    // PABLO #1852
+        std::string stoppingPlace;                                                                  // PABLO #1852
         /// @brief (Optional) container stop if one is assigned to the stop
         std::string containerstop;
-        /// @brief (Optional) charging station if one is assigned to the stop
-        std::string chargingStation;
         /// @brief The stopping position start
         SUMOReal startPos;
         /// @brief The stopping position end
