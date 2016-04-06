@@ -1044,6 +1044,23 @@ PositionVector::hasElevation() const {
     return false;
 }
 
+bool PositionVector::isPolyCW() const{
+    if (size() < 3) {
+        return false;
+    }
+    SUMOReal area = 0;
+    PositionVector tmp = *this;
+    if (!isClosed()) { // make sure its closed
+        tmp.push_back(tmp[0]);
+    }
+    const int endIndex = (int)tmp.size() - 1;
+    // http://en.wikipedia.org/wiki/Polygon
+    for (int i = 0; i < endIndex; i++) {
+        area += tmp[i].x() * tmp[i + 1].y() - tmp[i + 1].x() * tmp[i].y();
+    }
+    return area < 0;
+
+}
 
 bool
 PositionVector::intersects(const Position& p11, const Position& p12,

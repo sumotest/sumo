@@ -17,6 +17,8 @@
 //
 /****************************************************************************/
 #include <grpc++/grpc++.h>
+#include <algorithm>
+
 #include <utils/common/StdDefs.h>
 #include <microsim/MSEdgeControl.h>
 #include <microsim/MSJunction.h>
@@ -27,12 +29,14 @@
 #include "MSGRPCClient.h"
 
 
+
 const int FWD(1);
 const int BWD(-1);
 const int UNDEF(0);
+const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-										hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+														hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -131,32 +135,30 @@ void MSGRPCClient::initalized() {
 					c22->set_x((s.end()-1)->x());
 					c22->set_y((s.end()-1)->y());
 					if ((*outgoing.begin())->getEdge().isWalkingArea()) {
-						std::vector<hybridsim::Transition> vec = walkingAreasTransitionMapping[&((*outgoing.begin())->getEdge())];
-						if (&(vec) == 0) {
-							vec = std::vector<hybridsim::Transition>();
-							walkingAreasTransitionMapping[&((*outgoing.begin())->getEdge())] = vec;
-						}
-						vec.push_back(*t2);
+						std::vector<hybridsim::Transition> * vec = &(walkingAreasTransitionMapping[&((*outgoing.begin())->getEdge())]);
+						vec->push_back(*t2);
 					}
 					if ((incoming.begin())->lane->getEdge().isWalkingArea()) {
-						std::vector<hybridsim::Transition> vec = walkingAreasTransitionMapping[&((incoming.begin())->lane->getEdge())];
-						if (&(vec) == 0) {{
-							vec = std::vector<hybridsim::Transition>();
-							walkingAreasTransitionMapping[&((incoming.begin())->lane->getEdge())] = vec;
-						}
-						vec.push_back(*t1);
-						}
-
+						std::vector<hybridsim::Transition> * vec = &(walkingAreasTransitionMapping[&((incoming.begin())->lane->getEdge())]);
+						vec->push_back(*t1);
 					}
+
 				}
 			}
 		}
-
-		//		std::cout <<  walkingAreasTransitionMapping.size()<< "\n";
 	}
+
+	//		std::cout <<  walkingAreasTransitionMapping.size()<< "\n";
+	//}
 
 	//2nd for the walking areas
 	for (MSEdge * w : walkingAreas) {
+		if (walkingAreasTransitionMapping.find(w) == walkingAreasTransitionMapping.end()) {
+			continue;
+		}
+
+
+		std::vector<hybridsim::Transition> vec = walkingAreasTransitionMapping[w];
 		MSLane * l = *(w->getLanes().begin());
 		hybridsim::Room * room = env->add_room();
 		room->set_caption(w->getID());
@@ -165,7 +167,8 @@ void MSGRPCClient::initalized() {
 		subroom->set_id(l->getNumericalID());
 		subroom->set_closed(0);
 		subroom->set_class_("TODO: figure out what class means!");
-		for (hybridsim::Transition t : walkingAreasTransitionMapping[w]) {
+
+		for (hybridsim::Transition t : vec) {
 			hybridsim::Transition * tr = env->add_transition();
 			tr->set_id(trId++);
 			tr->set_caption("transition");
@@ -181,6 +184,17 @@ void MSGRPCClient::initalized() {
 			c2->set_x(t.vert1().x());
 			c2->set_y(t.vert1().y());
 		}
+
+
+
+		if (l->getShape().isPolyCW()){
+			createWalkingAreaSubroom(subroom,l->getShape(),vec);
+		} else {
+			createWalkingAreaSubroom(subroom,l->getShape().reverse(),vec);
+		}
+
+
+
 
 	}
 
@@ -206,6 +220,22 @@ MSGRPCClient::~MSGRPCClient() {
 }
 
 
+void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const PositionVector shape,std::vector<hybridsim::Transition>& vec){
+	TransitionComparator comp = TransitionComparator(&(shape));
+	std::sort(vec.begin(),vec.end(),comp);
+	hybridsim::Polygon * p = subroom->add_polygon();
+	p->set_caption("wall");
+	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
+	std::vector<Position>::const_iterator itShp = shape.begin();
+	SUMOReal sqrDist = itShp->distanceSquaredTo(vert2Pos(itTr->vert2()));
+	std::cout<<"sqrDist" << sqrDist << std::endl;
+
+
+
+	//		for (Position)
+
+
+}
 
 //hybrid simulation
 void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {

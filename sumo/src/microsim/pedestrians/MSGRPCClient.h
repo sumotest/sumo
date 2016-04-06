@@ -24,6 +24,7 @@
 #include <grpc++/grpc++.h>
 #include <utils/common/SUMOTime.h>
 #include <utils/geom/Position.h>
+#include <utils/geom/PositionVector.h>
 #include <microsim/MSEdge.h>
 #include <microsim/MSLane.h>
 #include "MSPerson.h"
@@ -32,6 +33,7 @@
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
+
 
 class MSGRPCClient {
 public :
@@ -56,10 +58,29 @@ private:
 	MSNet* net;
 
 
-//	void extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPRCPState * st);
+	//	void extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPRCPState * st);
 	void extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, SUMOReal pos);
-//	int inSim = 0;
+	//	int inSim = 0;
 
 	void initalized();
+
+	class TransitionComparator {
+	public:
+		TransitionComparator(const PositionVector * ref): ref(ref) {};
+		bool operator() (hybridsim::Transition t1,hybridsim::Transition t2) {
+			double o1 = ref->nearest_offset_to_point2D(vert2Pos(t1.vert2()),false);
+			double o2 = ref->nearest_offset_to_point2D(vert2Pos(t2.vert2()),false);
+			return o1 < o2;
+		}
+
+	private:
+		const PositionVector * ref;
+	};
+
+	static inline Position vert2Pos(const hybridsim::Coordinate& vert) {
+		return Position(vert.x(),vert.y());
+	}
+
+	void createWalkingAreaSubroom(hybridsim::Subroom * subroom, const PositionVector shape, std::vector<hybridsim::Transition>& vec);
 };
 #endif /*MSGRPC_CLIENT_H*/

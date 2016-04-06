@@ -219,6 +219,8 @@ public:
 
     void sortAsPolyCWByAngle();
 
+    bool isPolyCW() const;
+
     void sortByIncreasingXY();
 
     void extrapolate(const SUMOReal val, const bool onlyFirst = false);
