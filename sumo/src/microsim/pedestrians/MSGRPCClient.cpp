@@ -59,8 +59,14 @@ void MSGRPCClient::initalized() {
 			continue;
 		}
 		if (e->isWalkingArea()) {
+#ifdef DEBUG
+			std::cout <<  e->getID() << " " << e->getNumericalID() << " " << (*(e->getLanes().begin()))->getShape().area() << std::endl;
+#endif
 			walkingAreas.push_back(e);
 		} else {
+#ifdef DEBUG
+			std::cout <<  e->getID() << " " << e->getNumericalID() << std::endl;
+#endif
 			for (MSLane * l : e->getLanes()) {
 				if (l->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 
@@ -92,6 +98,7 @@ void MSGRPCClient::initalized() {
 						std::cerr << "inconsistent network, cannot create jupedsim scenario!" << std::endl;
 						exit(-1);
 					}
+					//TODO: check if walking_area && walking_area.area() == 0 --> set_room2_id(-1) && set_subroom2_id(-1)
 					t1->set_room2_id((incoming.begin())->lane->getEdge().getNumericalID());
 					t1->set_subroom2_id((incoming.begin())->lane->getNumericalID());
 					std::vector<const MSLane*>  outgoing = l->getOutgoingLanes();
@@ -236,7 +243,7 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	std::vector<Position>::const_iterator itShp = shape.begin();
 	for (hybridsim::Transition t : vec){
 #ifdef DEBUG
-		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << std::endl;
+		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
 #endif
 	}
 //	SUMOReal sqrDist = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert1()));
