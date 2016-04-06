@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-
+#define DEBUG 1
 
 const int FWD(1);
 const int BWD(-1);
@@ -104,7 +104,7 @@ void MSGRPCClient::initalized() {
 
 					PositionVector  s = PositionVector(l->getShape());
 					double width = l->getWidth();
-					s.move2side(width/2);
+					s.move2side(-width/2);
 					hybridsim::Polygon * p1 = subroom->add_polygon();
 					p1->set_caption("wall");
 					for (Position p : s) {
@@ -119,7 +119,7 @@ void MSGRPCClient::initalized() {
 					hybridsim::Coordinate * c21 = t2->mutable_vert1();
 					c21->set_x((s.end()-1)->x());
 					c21->set_y((s.end()-1)->y());
-					s.move2side(-width);
+					s.move2side(width);
 					hybridsim::Polygon * p2 = subroom->add_polygon();
 					p1->set_caption("wall");
 					for (Position p : s) {
@@ -188,9 +188,16 @@ void MSGRPCClient::initalized() {
 
 
 		if (l->getShape().isPolyCW()){
+#ifdef DEBUG
+			std::cout << "poly is cw" << std::endl;
+#endif
 			createWalkingAreaSubroom(subroom,l->getShape(),vec);
 		} else {
+#ifdef DEBUG
+			std::cout << "poly is ccw" << std::endl;
+#endif
 			createWalkingAreaSubroom(subroom,l->getShape().reverse(),vec);
+
 		}
 
 
@@ -227,8 +234,14 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	p->set_caption("wall");
 	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
 	std::vector<Position>::const_iterator itShp = shape.begin();
-	SUMOReal sqrDist = itShp->distanceSquaredTo(vert2Pos(itTr->vert2()));
-	std::cout<<"sqrDist" << sqrDist << std::endl;
+	for (hybridsim::Transition t : vec){
+#ifdef DEBUG
+		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << std::endl;
+#endif
+	}
+//	SUMOReal sqrDist = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert1()));
+//	SUMOReal sqrDist2 = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert2()));
+//	std::cout<<"sqrDist" << sqrDist  << " " << sqrDist2 << std::endl;
 
 
 
