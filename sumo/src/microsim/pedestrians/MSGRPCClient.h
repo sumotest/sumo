@@ -63,6 +63,9 @@ private:
 	//	int inSim = 0;
 
 	void initalized();
+	void encodeEnvironment(hybridsim::Environment* env);
+	void generateGoals(hybridsim::Scenario * sc);
+	void generateGoal(hybridsim::Scenario * sc, double & dx, double & dy, double & w, int gId,const Position pos);
 
 	class TransitionComparator {
 	public:

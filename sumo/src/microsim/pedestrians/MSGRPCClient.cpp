@@ -36,7 +36,7 @@ const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-														hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+																hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -47,7 +47,78 @@ void MSGRPCClient::initalized() {
 	hybridsim::Scenario req;
 	req.set_seed(42);
 	hybridsim::Environment* env = req.mutable_environment();
+	encodeEnvironment(env);
+	generateGoals(&req);
 
+
+
+
+	hybridsim::Empty rpl;
+	ClientContext context;
+	Status st = hybridsimStub->initScenario(&context,req,&rpl);
+	if(!st.ok()){
+		std::cerr << "something went wrong!" << std::endl;
+		exit(-1);
+	}
+}
+
+void MSGRPCClient::generateGoals(hybridsim::Scenario * sc) {
+
+	int gId = -1;
+
+	//1. for all edges
+	for (MSEdge * e : net->getEdgeControl().getEdges()){
+		if (e->isCrossing() || e->isInternal() || e->isWalkingArea()) {
+			continue;
+		}
+		for (MSLane * l : e->getLanes()) {
+			if (l->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+				const PositionVector v = l->getShape();
+				double w = l->getWidth();
+
+				double denom = v[0].distanceTo(v[1]);
+				double dx1 = (v[1].x()-v[0].x())/denom;
+				double dy1 = (v[1].y()-v[0].y())/denom;
+
+				generateGoal(sc,dx1,dy1,w,++gId,v[0]);
+				double dx2 = (v[v.size()-2].x()-v[v.size()-1].x())/denom;
+				double dy2 = (v[v.size()-2].y()-v[v.size()-1].y())/denom;
+				generateGoal(sc,dx2,dy2,w,++gId,v[0]);
+			}
+		}
+	}
+}
+
+void MSGRPCClient::generateGoal(hybridsim::Scenario * sc, double & dx, double & dy, double & w, int gId,const Position pos){
+	hybridsim::Goal * g = sc->add_goal();
+	g->set_id(gId);
+	g->set_final(true); //TODO: check what effect this has [gl Apr '16]
+	g->set_caption("SUMO generated");
+
+	hybridsim::Polygon * p = g->mutable_p();
+	hybridsim::Coordinate * c0 = p->add_coordinate();
+	c0->set_x(pos.x()+2.0*dy/w);
+	c0->set_y(pos.y()-2.0*dx/w);
+
+	hybridsim::Coordinate * c1 = p->add_coordinate();
+	c0->set_x(pos.x()+dy*w/2.0-dx*2.0*w);
+	c0->set_y(pos.y()-dx*w/2.0-dy*2.0*w);
+
+	hybridsim::Coordinate * c2 = p->add_coordinate();
+	c0->set_x(pos.x()-dy*w/2.0-dx*2.0*w);
+	c0->set_y(pos.y()+dx*w/2.0-dy*2.0*w);
+
+	hybridsim::Coordinate * c3 = p->add_coordinate();
+	c0->set_x(pos.x()-dy*w/2.0);
+	c0->set_y(pos.y()+dx*w/2.0);
+
+	hybridsim::Coordinate * c4 = p->add_coordinate();
+	c4->set_x(pos.x()+2.0*dy/w);
+	c4->set_y(pos.y()-2.0*dx/w);
+
+}
+
+void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 	int trId = 0;
 
 	std::vector<MSEdge*> walkingAreas;
@@ -55,6 +126,9 @@ void MSGRPCClient::initalized() {
 
 	//1. for all edges
 	for (MSEdge * e : net->getEdgeControl().getEdges()){
+#ifdef DEBUG
+		std::cout << "edge: ";// << std::endl;
+#endif
 		if (e->isInternal()) {
 			continue;
 		}
@@ -80,14 +154,14 @@ void MSGRPCClient::initalized() {
 
 					hybridsim::Transition * t1 = env->add_transition();
 					t1->set_id(trId++);
-					t1->set_caption("transition");
+					t1->set_caption("SUMO generated transition");
 					t1->set_type("other");
 					t1->set_room1_id(e->getNumericalID());
 					t1->set_subroom1_id(l->getNumericalID());
 
 					hybridsim::Transition * t2 = env->add_transition();
 					t2->set_id(trId++);
-					t2->set_caption("transition");
+					t2->set_caption("SUMO generated transition");
 					t2->set_type("other");
 					t2->set_room1_id(e->getNumericalID());
 					t2->set_subroom1_id(l->getNumericalID());
@@ -99,21 +173,32 @@ void MSGRPCClient::initalized() {
 						exit(-1);
 					}
 					//TODO: check if walking_area && walking_area.area() == 0 --> set_room2_id(-1) && set_subroom2_id(-1)
-					t1->set_room2_id((incoming.begin())->lane->getEdge().getNumericalID());
-					t1->set_subroom2_id((incoming.begin())->lane->getNumericalID());
+					MSLane * nb1 = (incoming.begin())->lane;
+					if (nb1->getShape().area() <= EPSILON) {//dead end
+						t1->set_room2_id(-1);
+						t1->set_subroom2_id(-1);
+					} else {
+						t1->set_room2_id(nb1->getEdge().getNumericalID());
+						t1->set_subroom2_id(nb1->getNumericalID());
+					}
 					std::vector<const MSLane*>  outgoing = l->getOutgoingLanes();
 					if (outgoing.size() > 1) {
 						std::cerr << "inconsistent network, cannot create jupedsim scenario!" << std::endl;
 						exit(-1);
 					}
-					t2->set_room2_id((*(outgoing.begin()))->getEdge().getNumericalID());
-					t2->set_subroom2_id((*(outgoing.begin()))->getNumericalID());
-
+					const MSLane * nb2 = (*(outgoing.begin()));
+					if (nb2->getShape().area() <= EPSILON) {//dead end
+						t2->set_room2_id(-1);
+						t2->set_subroom2_id(-1);
+					} else {
+						t2->set_room2_id(nb2->getEdge().getNumericalID());
+						t2->set_subroom2_id(nb2->getNumericalID());
+					}
 					PositionVector  s = PositionVector(l->getShape());
 					double width = l->getWidth();
 					s.move2side(-width/2);
 					hybridsim::Polygon * p1 = subroom->add_polygon();
-					p1->set_caption("wall");
+					p1->set_caption("SUMO generated wall");
 					for (Position p : s) {
 						hybridsim::Coordinate * c = p1->add_coordinate();
 						c->set_x(p.x());
@@ -128,7 +213,7 @@ void MSGRPCClient::initalized() {
 					c21->set_y((s.end()-1)->y());
 					s.move2side(width);
 					hybridsim::Polygon * p2 = subroom->add_polygon();
-					p1->set_caption("wall");
+					p1->set_caption("SUMO generated wall");
 					for (Position p : s) {
 						hybridsim::Coordinate * c = p1->add_coordinate();
 						c->set_x(p.x());
@@ -160,13 +245,19 @@ void MSGRPCClient::initalized() {
 
 	//2nd for the walking areas
 	for (MSEdge * w : walkingAreas) {
+#ifdef DEBUG
 		if (walkingAreasTransitionMapping.find(w) == walkingAreasTransitionMapping.end()) {
+			std::cerr << "This should never happen! check and remove [gl apr '16]" << std::endl;
+			continue;
+		}
+#endif
+		MSLane * l = *(w->getLanes().begin());
+		if (l->getShape().area() <= EPSILON) {//dead end
 			continue;
 		}
 
 
 		std::vector<hybridsim::Transition> vec = walkingAreasTransitionMapping[w];
-		MSLane * l = *(w->getLanes().begin());
 		hybridsim::Room * room = env->add_room();
 		room->set_caption(w->getID());
 		room->set_id(w->getNumericalID());
@@ -178,7 +269,7 @@ void MSGRPCClient::initalized() {
 		for (hybridsim::Transition t : vec) {
 			hybridsim::Transition * tr = env->add_transition();
 			tr->set_id(trId++);
-			tr->set_caption("transition");
+			tr->set_caption("SUMO generated transition");
 			tr->set_type("other");
 			tr->set_room1_id(t.room2_id());
 			tr->set_subroom1_id(t.subroom2_id());
@@ -211,15 +302,6 @@ void MSGRPCClient::initalized() {
 
 
 	}
-
-
-	hybridsim::Empty rpl;
-	ClientContext context;
-	Status st = hybridsimStub->initScenario(&context,req,&rpl);
-	if(!st.ok()){
-		std::cerr << "something went wrong!" << std::endl;
-		exit(-1);
-	}
 }
 
 MSGRPCClient::~MSGRPCClient() {
@@ -244,16 +326,22 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	std::sort(vec.begin(),vec.end(),comp);
 
 
-//	std::vector<Position>::const_iterator itShp = shape.begin();
+	//	std::vector<Position>::const_iterator itShp = shape.begin();
 #ifdef DEBUG
+	std::cout << "is closed: " << shape.isClosed() << std::endl;
+	//	shape.closePolygon();
 	for (hybridsim::Transition t : vec){
-		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
+		//		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
+		std::cout << vert2Pos(t.vert2()) << " " << vert2Pos(t.vert1()) << std::endl;
 	}
 #endif
 	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
 	itTr++;
 	hybridsim::Polygon * p = subroom->add_polygon();
-	p->set_caption("wall");
+	p->set_caption("SUMO generated wall");
+#ifdef DEBUG
+	std::cout << "wall: ";
+#endif
 	for (int i = 1; i < shape.size(); i ++) {
 		hybridsim::Coordinate * c = p->add_coordinate();
 		c->set_x(shape[i].x());
@@ -261,21 +349,28 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 #ifdef DEBUG
 		std::cout << shape[i] << " ";
 #endif
-		if (itTr != vec.end() && shape.indexOfClosest(vert2Pos((*itTr).vert2()))) {
+		if (itTr != vec.end() && shape.indexOfClosest(vert2Pos((*itTr).vert2())) == i) {
 			p = subroom->add_polygon();
-			p->set_caption("wall");
+			p->set_caption("SUMO generated wall");
 			itTr++;
 #ifdef DEBUG
 			std::cout << std::endl;
+			std::cout << "wall: ";
 #endif
 		}
 
 	}
-//	SUMOReal sqrDist = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert1()));
-//	SUMOReal sqrDist2 = (itShp++)->distanceSquaredTo(vert2Pos(itTr->vert2()));
-//	std::cout<<"sqrDist" << sqrDist  << " " << sqrDist2 << std::endl;
+	if (!shape.isClosed()) {
+		hybridsim::Coordinate * c = p->add_coordinate();
+		c->set_x(shape[0].x());
+		c->set_y(shape[0].y());
 #ifdef DEBUG
-			std::cout << std::endl;
+		std::cout << shape[0] << " ";
+#endif
+	}
+
+#ifdef DEBUG
+	std::cout << std::endl;
 #endif
 
 
