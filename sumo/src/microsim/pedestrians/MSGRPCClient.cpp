@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-//#define DEBUG 1
+#define DEBUG 1
 
 const int FWD(1);
 const int BWD(-1);
@@ -213,14 +213,14 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					hybridsim::Transition * t1 = env->add_transition();
 					t1->set_id(trId++);
 					t1->set_caption("SUMO generated transition");
-					t1->set_type("other");
+					t1->set_type("emergency");
 					t1->set_room1_id(e->getNumericalID());
 					t1->set_subroom1_id(l->getNumericalID());
 
 					hybridsim::Transition * t2 = env->add_transition();
 					t2->set_id(trId++);
 					t2->set_caption("SUMO generated transition");
-					t2->set_type("other");
+					t2->set_type("emergency");
 					t2->set_room1_id(e->getNumericalID());
 					t2->set_subroom1_id(l->getNumericalID());
 
@@ -232,26 +232,33 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					}
 					//TODO: check if walking_area && walking_area.area() == 0 --> set_room2_id(-1) && set_subroom2_id(-1)
 					MSLane * nb1 = (incoming.begin())->lane;
-					if (nb1->getShape().area() <= EPSILON) {//dead end
+					if (nb1->getEdge().isWalkingArea() && nb1->getShape().area() <= EPSILON) {//dead end
 						t1->set_room2_id(-1);
 						t1->set_subroom2_id(-1);
 					} else {
 						t1->set_room2_id(nb1->getEdge().getNumericalID());
 						t1->set_subroom2_id(nb1->getNumericalID());
 					}
+#ifdef DEBUG
+			std::cout << "link transition:" << t1->room1_id() << " : " << t1->subroom1_id() << " --> " << t1->room2_id() << " : " << t1->subroom2_id() << std::endl;
+#endif
+
 					std::vector<const MSLane*>  outgoing = l->getOutgoingLanes();
 					if (outgoing.size() > 1) {
 						std::cerr << "inconsistent network, cannot create jupedsim scenario!" << std::endl;
 						exit(-1);
 					}
 					const MSLane * nb2 = (*(outgoing.begin()));
-					if (nb2->getShape().area() <= EPSILON) {//dead end
+					if (nb2->getEdge().isWalkingArea() && nb2->getShape().area() <= EPSILON) {//dead end
 						t2->set_room2_id(-1);
 						t2->set_subroom2_id(-1);
 					} else {
 						t2->set_room2_id(nb2->getEdge().getNumericalID());
 						t2->set_subroom2_id(nb2->getNumericalID());
 					}
+#ifdef DEBUG
+			std::cout << "link transition:" << t2->room1_id() << " : " << t2->subroom1_id() << " --> " << t2->room2_id() << " : " << t2->subroom2_id() << std::endl;
+#endif
 					PositionVector  s = PositionVector(l->getShape());
 					double width = l->getWidth();
 					s.move2side(-width/2);
@@ -330,12 +337,17 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 		subroom->set_id(l->getNumericalID());
 		subroom->set_closed(0);
 		subroom->set_class_("TODO: figure out what class means!");
-
+#ifdef DEBUG
+		std::cout << "walking area:" << room->id() << " : " <<  subroom->id() << std::endl;
+#endif
 		for (hybridsim::Transition t : vec) {
 			hybridsim::Transition * tr = env->add_transition();
 			tr->set_id(trId++);
 			tr->set_caption("SUMO generated transition");
-			tr->set_type("other");
+			tr->set_type("emergency");
+#ifdef DEBUG
+			std::cout << "walking area transition:" << t.room2_id() << " : " << t.subroom2_id() << " --> " << t.room1_id() << " : " << t.subroom1_id() << std::endl;
+#endif
 			tr->set_room1_id(t.room2_id());
 			tr->set_subroom1_id(t.subroom2_id());
 			tr->set_room2_id(t.room1_id());
