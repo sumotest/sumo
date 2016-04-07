@@ -153,6 +153,37 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
 
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
+
+        // push charging power matrix
+        glPushMatrix();
+
+        // Traslate End positionof signal
+        glTranslated(myFGSignPos.x(), myFGSignPos.y(), 0);
+
+        // Rotate 180 (Eje X -> Mirror)
+        glRotated(180, 1, 0, 0);
+
+        // Rotate again using myBlockIconRotation
+        glRotated(myFGSignRot, 0, 0, 1);
+
+        // Set poligon mode
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        // set polyfront position on 0,0
+        pfSetPosition(0, 0);
+
+        // Set polyfront scale to 1
+        pfSetScale(1.f);
+
+         // traslate matrix
+        glTranslated(1.2, 0, 0);
+
+        // draw charging power
+        pfDrawString((toString(myChargingPower) + " W").c_str());
+
+        // pop charging power matrix
+        glPopMatrix();
+
         // draw the sign
         glTranslated(myFGSignPos.x(), myFGSignPos.y(), 0);
         int noPoints = 9;
