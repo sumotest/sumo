@@ -66,6 +66,10 @@ private:
 	void encodeEnvironment(hybridsim::Environment* env);
 	void generateGoals(hybridsim::Scenario * sc);
 	void generateGoal(hybridsim::Scenario * sc, double & dx, double & dy, double & w, int gId,const Position pos);
+	void generateGroupsAndSources(hybridsim::Scenario * sc);
+	void generateGroupAndSource(hybridsim::Scenario * sc, MSLane * lane, double & x, double & y, double & w, int & gId);
+
+
 
 	class TransitionComparator {
 	public:
@@ -85,5 +89,50 @@ private:
 	}
 
 	void createWalkingAreaSubroom(hybridsim::Subroom * subroom, const PositionVector shape, std::vector<hybridsim::Transition>& vec);
+
+private:
+	static void CONFIGURE_STATIC_PARAMS(hybridsim::Scenario * sc) {
+		hybridsim::Model * m = sc->mutable_model();
+		m->set_type(hybridsim::Model::Gompertz);
+		hybridsim::Gompertz * gmp = m->mutable_gompertz();
+		gmp->set_solver("euler");
+		gmp->set_stepsize(0.01);
+		gmp->set_exit_crossing_strategy(3);
+		gmp->set_linked_cells_enabled(true);
+		gmp->set_cell_size(2.2);
+		hybridsim::Force * pf = gmp->mutable_force_ped();
+		pf->set_nu(3);
+		pf->set_b(0.25);
+		pf->set_c(3);
+		hybridsim::Force * wf = gmp->mutable_force_wall();
+		wf->set_nu(10);
+		wf->set_b(0.7);
+		wf->set_c(3);
+
+		hybridsim::AgentParams * ap = gmp->mutable_agent_params();
+		hybridsim::Distribution * v0 = ap->mutable_v0();
+		v0->set_mu(0.5);
+		v0->set_sigma(0);
+		hybridsim::Distribution * bMax = ap->mutable_b_max();
+		bMax->set_mu(0.25);
+		bMax->set_sigma(0.001);
+		hybridsim::Distribution * bMin = ap->mutable_b_min();
+		bMin->set_mu(0.2);
+		bMin->set_sigma(0.001);
+		hybridsim::Distribution * aMin = ap->mutable_a_min();
+		aMin->set_mu(0.18);
+		aMin->set_sigma(0.001);
+		hybridsim::Distribution * tau = ap->mutable_tau();
+		tau->set_mu(0.5);
+		tau->set_sigma(0.001);
+		hybridsim::Distribution * aTau = ap->mutable_atau();
+		aTau->set_mu(0.5);
+		aTau->set_sigma(0.001);
+
+		hybridsim::Router * router = sc->add_router();
+		router->set_router_id(1);
+		router->set_description("global_shortest");
+
+	}
 };
 #endif /*MSGRPC_CLIENT_H*/

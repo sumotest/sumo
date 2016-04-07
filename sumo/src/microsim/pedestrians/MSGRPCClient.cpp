@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-#define DEBUG 1
+//#define DEBUG 1
 
 const int FWD(1);
 const int BWD(-1);
@@ -36,7 +36,7 @@ const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-																hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+																						hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -49,8 +49,9 @@ void MSGRPCClient::initalized() {
 	hybridsim::Environment* env = req.mutable_environment();
 	encodeEnvironment(env);
 	generateGoals(&req);
+	generateGroupsAndSources(&req);
 
-
+	MSGRPCClient::CONFIGURE_STATIC_PARAMS(&req);
 
 
 	hybridsim::Empty rpl;
@@ -60,6 +61,62 @@ void MSGRPCClient::initalized() {
 		std::cerr << "something went wrong!" << std::endl;
 		exit(-1);
 	}
+}
+
+void MSGRPCClient::generateGroupsAndSources(hybridsim::Scenario * sc){
+	int gId = -1;
+
+	//1. for all edges
+	for (MSEdge * e : net->getEdgeControl().getEdges()){
+		if (e->isCrossing() || e->isInternal() || e->isWalkingArea()) {
+			continue;
+		}
+		for (MSLane * l : e->getLanes()) {
+			if (l->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+				const PositionVector v = l->getShape();
+				double w = l->getWidth();
+				double denom = v[0].distanceTo(v[1]);
+				double dx1 = (v[1].x()-v[0].x())/denom;
+				double dy1 = (v[1].y()-v[0].y())/denom;
+				double x1 = v[0].x();//+dx1*w;
+				double y1 = v[0].y();//+dy1*w;
+				generateGroupAndSource(sc,l,x1,y1,w,++gId);
+
+				denom = v[v.size()-2].distanceTo(v[v.size()-1]);
+				double dx2 = (v[v.size()-2].x()-v[v.size()-1].x())/denom;
+				double dy2 = (v[v.size()-2].y()-v[v.size()-1].y())/denom;
+				double x2 = v[v.size()-1].x();//+dx2*w;
+				double y2 = v[v.size()-1].y();//+dy2*w;
+				generateGroupAndSource(sc,l,x2,y2,w,++gId);
+			}
+		}
+	}
+}
+
+void MSGRPCClient::generateGroupAndSource(hybridsim::Scenario * sc, MSLane * lane, double & x, double & y, double & w, int &gId){
+	hybridsim::Group * goal = sc->add_group();
+	goal->set_group_id(gId);
+	goal->set_room_id(lane->getEdge().getNumericalID());
+	goal->set_subroom_id(lane->getNumericalID());
+	goal->set_number(0);
+	goal->set_router_id(1);
+
+
+	//TODO: distributes agents in bounding box --> change to distribute agents in subroom; construct subrooms accordingly [gl Apr '16]
+	hybridsim::Coordinate * mx = goal->mutable_max_x_y();
+	mx->set_x(x+w);
+	mx->set_y(y+w);
+	hybridsim::Coordinate * mn = goal->mutable_min_x_y();
+	mn->set_x(x-w);
+	mn->set_y(y-w);
+	hybridsim::Source * source = sc->add_source();
+	source->set_id(gId);
+	source->set_caption("SUMO generated source");
+	source->set_frequency(5);//TODO check inpact of this parameter [gl Apr '16]
+	source->set_max_agents(5);//TODO check inpact of this parameter [gl Apr '16]
+	source->set_group_id(gId);
+
+
 }
 
 void MSGRPCClient::generateGoals(hybridsim::Scenario * sc) {
@@ -79,11 +136,12 @@ void MSGRPCClient::generateGoals(hybridsim::Scenario * sc) {
 				double denom = v[0].distanceTo(v[1]);
 				double dx1 = (v[1].x()-v[0].x())/denom;
 				double dy1 = (v[1].y()-v[0].y())/denom;
-
 				generateGoal(sc,dx1,dy1,w,++gId,v[0]);
+
+				denom = v[v.size()-2].distanceTo(v[v.size()-1]);
 				double dx2 = (v[v.size()-2].x()-v[v.size()-1].x())/denom;
 				double dy2 = (v[v.size()-2].y()-v[v.size()-1].y())/denom;
-				generateGoal(sc,dx2,dy2,w,++gId,v[0]);
+				generateGoal(sc,dx2,dy2,w,++gId,v[v.size()-1]);
 			}
 		}
 	}
@@ -97,24 +155,24 @@ void MSGRPCClient::generateGoal(hybridsim::Scenario * sc, double & dx, double & 
 
 	hybridsim::Polygon * p = g->mutable_p();
 	hybridsim::Coordinate * c0 = p->add_coordinate();
-	c0->set_x(pos.x()+2.0*dy/w);
-	c0->set_y(pos.y()-2.0*dx/w);
+	c0->set_x(pos.x()+2.0*dy/w+dx*w);
+	c0->set_y(pos.y()-2.0*dx/w+dy*w);
 
 	hybridsim::Coordinate * c1 = p->add_coordinate();
-	c0->set_x(pos.x()+dy*w/2.0-dx*2.0*w);
-	c0->set_y(pos.y()-dx*w/2.0-dy*2.0*w);
+	c1->set_x(pos.x()+dy*w/2.0-dx*w);
+	c1->set_y(pos.y()-dx*w/2.0-dy*w);
 
 	hybridsim::Coordinate * c2 = p->add_coordinate();
-	c0->set_x(pos.x()-dy*w/2.0-dx*2.0*w);
-	c0->set_y(pos.y()+dx*w/2.0-dy*2.0*w);
+	c2->set_x(pos.x()-dy*w/2.0-dx*w);
+	c2->set_y(pos.y()+dx*w/2.0-dy*w);
 
 	hybridsim::Coordinate * c3 = p->add_coordinate();
-	c0->set_x(pos.x()-dy*w/2.0);
-	c0->set_y(pos.y()+dx*w/2.0);
+	c3->set_x(pos.x()-dy*w/2.0+dx*w);
+	c3->set_y(pos.y()+dx*w/2.0+dy*w);
 
 	hybridsim::Coordinate * c4 = p->add_coordinate();
-	c4->set_x(pos.x()+2.0*dy/w);
-	c4->set_y(pos.y()-2.0*dx/w);
+	c4->set_x(pos.x()+2.0*dy/w+dx*w);
+	c4->set_y(pos.y()-2.0*dx/w+dy*w);
 
 }
 
@@ -199,6 +257,10 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					s.move2side(-width/2);
 					hybridsim::Polygon * p1 = subroom->add_polygon();
 					p1->set_caption("SUMO generated wall");
+#ifdef DEBUG
+					std::cout <<"wall: " << s << std::endl;
+#endif
+
 					for (Position p : s) {
 						hybridsim::Coordinate * c = p1->add_coordinate();
 						c->set_x(p.x());
@@ -213,9 +275,12 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					c21->set_y((s.end()-1)->y());
 					s.move2side(width);
 					hybridsim::Polygon * p2 = subroom->add_polygon();
-					p1->set_caption("SUMO generated wall");
+					p2->set_caption("SUMO generated wall");
+#ifdef DEBUG
+					std::cout <<"wall_sh: " << s << std::endl;
+#endif
 					for (Position p : s) {
-						hybridsim::Coordinate * c = p1->add_coordinate();
+						hybridsim::Coordinate * c = p2->add_coordinate();
 						c->set_x(p.x());
 						c->set_y(p.y());
 					}
@@ -344,12 +409,13 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 #endif
 	for (int i = 1; i < shape.size(); i ++) {
 		hybridsim::Coordinate * c = p->add_coordinate();
-		c->set_x(shape[i].x());
-		c->set_y(shape[i].y());
+
 #ifdef DEBUG
 		std::cout << shape[i] << " ";
 #endif
 		if (itTr != vec.end() && shape.indexOfClosest(vert2Pos((*itTr).vert2())) == i) {
+			c->set_x((*itTr).vert2().x());
+			c->set_y((*itTr).vert2().y());
 			p = subroom->add_polygon();
 			p->set_caption("SUMO generated wall");
 			itTr++;
@@ -357,6 +423,9 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 			std::cout << std::endl;
 			std::cout << "wall: ";
 #endif
+		} else {
+			c->set_x(shape[i].x());
+			c->set_y(shape[i].y());
 		}
 
 	}
@@ -424,6 +493,9 @@ void MSGRPCClient::extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, 
 }
 
 bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
+#ifdef DEBUG
+	std::cout << "transmitPedestrian" << std::endl;
+#endif
 
 	std::string id = st->getPerson()->getID();
 	std::string fromId = st->getEdge()->getID();
@@ -440,7 +512,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 
 
 
-
+//TODO: this  is not how it works! derive coords from departure pos [gl Apr '16]
 	req.set_x(st->getEdge()->getFromJunction()->getPosition().x());
 	req.set_y(st->getEdge()->getFromJunction()->getPosition().y());
 
@@ -493,6 +565,9 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 }
 
 void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates,SUMOTime time) {
+#ifdef DEBUG
+	std::cout << "receiveTrajectories" << std::endl;
+#endif
 	hybridsim::Empty req;
 	hybridsim::Trajectories rpl;
 	ClientContext context;
@@ -517,6 +592,9 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 }
 
 void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pstates,MSNet* net, SUMOTime time) {
+#ifdef DEBUG
+	std::cout << "retrieveAgents" << std::endl;
+#endif
 	hybridsim::Empty req;
 	hybridsim::Agents rpl;
 	ClientContext context;
