@@ -155,8 +155,8 @@ void MSGRPCClient::generateGoal(hybridsim::Scenario * sc, double & dx, double & 
 
 	hybridsim::Polygon * p = g->mutable_p();
 	hybridsim::Coordinate * c0 = p->add_coordinate();
-	c0->set_x(pos.x()+2.0*dy/w+dx*w);
-	c0->set_y(pos.y()-2.0*dx/w+dy*w);
+	c0->set_x(pos.x()+dy*w/2.0+dx*w);
+	c0->set_y(pos.y()-dx*w/2.0+dy*w);
 
 	hybridsim::Coordinate * c1 = p->add_coordinate();
 	c1->set_x(pos.x()+dy*w/2.0-dx*w);
@@ -171,8 +171,8 @@ void MSGRPCClient::generateGoal(hybridsim::Scenario * sc, double & dx, double & 
 	c3->set_y(pos.y()+dx*w/2.0+dy*w);
 
 	hybridsim::Coordinate * c4 = p->add_coordinate();
-	c4->set_x(pos.x()+2.0*dy/w+dx*w);
-	c4->set_y(pos.y()-2.0*dx/w+dy*w);
+	c4->set_x(pos.x()+dy*w/2.0+dx*w);
+	c4->set_y(pos.y()-dx*w/2.0+dy*w);
 
 }
 
@@ -205,6 +205,9 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					hybridsim::Room * room = env->add_room();
 					room->set_caption(e->getID());
 					room->set_id(e->getNumericalID());
+#ifdef DEBUG
+			std::cout <<  "creating room: " << e->getNumericalID() << std::endl;
+#endif
 					hybridsim::Subroom * subroom = room->add_subroom();
 					subroom->set_id(l->getNumericalID());
 					subroom->set_closed(0);
@@ -231,8 +234,13 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 						exit(-1);
 					}
 					//TODO: check if walking_area && walking_area.area() == 0 --> set_room2_id(-1) && set_subroom2_id(-1)
-					MSLane * nb1 = (incoming.begin())->lane;
-					if (nb1->getEdge().isWalkingArea() && nb1->getShape().area() <= EPSILON) {//dead end
+					MSLane * nb1 = 0;
+					if (incoming.size() > 0){
+						nb1 = (incoming.begin())->lane;
+					}
+
+
+					if (!nb1 ||( nb1->getEdge().isWalkingArea() && nb1->getShape().area() <= EPSILON)) {//dead end
 						t1->set_room2_id(-1);
 						t1->set_subroom2_id(-1);
 					} else {
@@ -248,8 +256,13 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 						std::cerr << "inconsistent network, cannot create jupedsim scenario!" << std::endl;
 						exit(-1);
 					}
-					const MSLane * nb2 = (*(outgoing.begin()));
-					if (nb2->getEdge().isWalkingArea() && nb2->getShape().area() <= EPSILON) {//dead end
+					const MSLane * nb2;
+					bool notNb2 = true;
+					if (outgoing.size() > 0) {
+					 nb2 = (*(outgoing.begin()));
+					 notNb2 = false;
+					}
+					if (notNb2 || (nb2->getEdge().isWalkingArea() && nb2->getShape().area() <= EPSILON)) {//dead end
 						t2->set_room2_id(-1);
 						t2->set_subroom2_id(-1);
 					} else {
@@ -286,7 +299,9 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 #ifdef DEBUG
 					std::cout <<"wall_sh: " << s << std::endl;
 #endif
-					for (Position p : s) {
+
+					for (int i = s.size()-1; i >= 0; i-- ) {
+						Position p = s[i];
 						hybridsim::Coordinate * c = p2->add_coordinate();
 						c->set_x(p.x());
 						c->set_y(p.y());
@@ -298,11 +313,11 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					hybridsim::Coordinate * c22 = t2->mutable_vert2();
 					c22->set_x((s.end()-1)->x());
 					c22->set_y((s.end()-1)->y());
-					if ((*outgoing.begin())->getEdge().isWalkingArea()) {
+					if (!notNb2 && (*outgoing.begin())->getEdge().isWalkingArea()) {
 						std::vector<hybridsim::Transition> * vec = &(walkingAreasTransitionMapping[&((*outgoing.begin())->getEdge())]);
 						vec->push_back(*t2);
 					}
-					if ((incoming.begin())->lane->getEdge().isWalkingArea()) {
+					if (nb1 && (incoming.begin())->lane->getEdge().isWalkingArea()) {
 						std::vector<hybridsim::Transition> * vec = &(walkingAreasTransitionMapping[&((incoming.begin())->lane->getEdge())]);
 						vec->push_back(*t1);
 					}
