@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 const int FWD(1);
 const int BWD(-1);
@@ -36,7 +36,7 @@ const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-																						hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+																								hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -206,7 +206,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					room->set_caption(e->getID());
 					room->set_id(e->getNumericalID());
 #ifdef DEBUG
-			std::cout <<  "creating room: " << e->getNumericalID() << std::endl;
+					std::cout <<  "creating room: " << e->getNumericalID() << std::endl;
 #endif
 					hybridsim::Subroom * subroom = room->add_subroom();
 					subroom->set_id(l->getNumericalID());
@@ -248,7 +248,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 						t1->set_subroom2_id(nb1->getNumericalID());
 					}
 #ifdef DEBUG
-			std::cout << "link transition:" << t1->room1_id() << " : " << t1->subroom1_id() << " --> " << t1->room2_id() << " : " << t1->subroom2_id() << std::endl;
+					std::cout << "link transition:" << t1->room1_id() << " : " << t1->subroom1_id() << " --> " << t1->room2_id() << " : " << t1->subroom2_id() << std::endl;
 #endif
 
 					std::vector<const MSLane*>  outgoing = l->getOutgoingLanes();
@@ -259,8 +259,8 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					const MSLane * nb2;
 					bool notNb2 = true;
 					if (outgoing.size() > 0) {
-					 nb2 = (*(outgoing.begin()));
-					 notNb2 = false;
+						nb2 = (*(outgoing.begin()));
+						notNb2 = false;
 					}
 					if (notNb2 || (nb2->getEdge().isWalkingArea() && nb2->getShape().area() <= EPSILON)) {//dead end
 						t2->set_room2_id(-1);
@@ -270,7 +270,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 						t2->set_subroom2_id(nb2->getNumericalID());
 					}
 #ifdef DEBUG
-			std::cout << "link transition:" << t2->room1_id() << " : " << t2->subroom1_id() << " --> " << t2->room2_id() << " : " << t2->subroom2_id() << std::endl;
+					std::cout << "link transition:" << t2->room1_id() << " : " << t2->subroom1_id() << " --> " << t2->room2_id() << " : " << t2->subroom2_id() << std::endl;
 #endif
 					PositionVector  s = PositionVector(l->getShape());
 					double width = l->getWidth();
@@ -424,52 +424,45 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	//	shape.closePolygon();
 	for (hybridsim::Transition t : vec){
 		//		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
-		std::cout << vert2Pos(t.vert2()) << " " << vert2Pos(t.vert1()) << std::endl;
+		std::cout << "transition "<< vert2Pos(t.vert2()) << " " << vert2Pos(t.vert1()) << std::endl;
 	}
 #endif
+
+
 	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
-	itTr++;
+	do {
+#ifdef DEBUG
+		std::cout << "wall " << vert2Pos((*itTr).vert1());
+#endif
+
+		hybridsim::Polygon * p = subroom->add_polygon();
+		p->set_caption("SUMO generated wall");
+		hybridsim::Coordinate * c = p->add_coordinate();
+		c->set_x((*itTr).vert1().x());
+		c->set_y((*itTr).vert1().y());
+		*itTr++;
+#ifdef DEBUG
+		std::cout << " " << vert2Pos((*itTr).vert2()) << std::endl;
+#endif
+		c = p->add_coordinate();
+		c->set_x((*itTr).vert2().x());
+		c->set_y((*itTr).vert2().y());
+	} while (itTr != vec.end()-1);
+
+#ifdef DEBUG
+	std::cout << "wall " << vert2Pos((*itTr).vert1());
+#endif
+
 	hybridsim::Polygon * p = subroom->add_polygon();
 	p->set_caption("SUMO generated wall");
-#ifdef DEBUG
-	std::cout << "wall: ";
-#endif
-	for (int i = 1; i < shape.size(); i ++) {
-		hybridsim::Coordinate * c = p->add_coordinate();
+	hybridsim::Coordinate * c = p->add_coordinate();
+	c->set_x((*itTr).vert1().x());
+	c->set_y((*itTr).vert1().y());
 
-#ifdef DEBUG
-		std::cout << shape[i] << " ";
-#endif
-		if (itTr != vec.end() && shape.indexOfClosest(vert2Pos((*itTr).vert2())) == i) {
-			c->set_x((*itTr).vert2().x());
-			c->set_y((*itTr).vert2().y());
-			p = subroom->add_polygon();
-			p->set_caption("SUMO generated wall");
-			itTr++;
-#ifdef DEBUG
-			std::cout << std::endl;
-			std::cout << "wall: ";
-#endif
-		} else {
-			c->set_x(shape[i].x());
-			c->set_y(shape[i].y());
-		}
-
-	}
-	if (!shape.isClosed()) {
-		hybridsim::Coordinate * c = p->add_coordinate();
-		c->set_x(shape[0].x());
-		c->set_y(shape[0].y());
-#ifdef DEBUG
-		std::cout << shape[0] << " ";
-#endif
-	}
-
-#ifdef DEBUG
-	std::cout << std::endl;
-#endif
-
-
+	c = p->add_coordinate();
+	c->set_x((vec.begin())->vert2().x());
+	c->set_y((vec.begin())->vert2().y());
+	std::cout << " " << vert2Pos((vec.begin())->vert2()) << std::endl;
 	//		for (Position)
 
 
@@ -539,7 +532,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 
 
 
-//TODO: this  is not how it works! derive coords from departure pos [gl Apr '16]
+	//TODO: this  is not how it works! derive coords from departure pos [gl Apr '16]
 	req.set_x(st->getEdge()->getFromJunction()->getPosition().x());
 	req.set_y(st->getEdge()->getFromJunction()->getPosition().y());
 
@@ -585,7 +578,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 	if (status.ok()) {
 		return rpl.val();
 	} else {
-		std::cerr << "something went wrong!" << std::endl;
+		std::cerr << "Error transferring pedestrian to external simulation" << std::endl;
 		exit(-1);
 	}
 
@@ -613,7 +606,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 			}
 		}
 	} else {
-		std::cerr << "something went wrong!" << std::endl;
+		std::cerr << "Error receiving pedestrian trajectories from external simulation" << std::endl;
 		exit(-1);
 	}
 }
@@ -641,7 +634,7 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pst
 			delete st;
 		}
 	} else {
-		std::cerr << "something went wrong!" << std::endl;
+		std::cerr << "Error retrieving pedestrians from external simulation" << std::endl;
 		exit(-1);
 	}
 }
