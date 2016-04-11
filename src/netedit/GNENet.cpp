@@ -540,7 +540,8 @@ GNENet::saveAdditionals(const std::string &filename) {                          
     OutputDevice& device = OutputDevice::getDevice(filename);                                                                   // PABLO #1916
     device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");   // PABLO #1916
     for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)                               // PABLO #1916
-        if(dynamic_cast<GNEAdditionalSet*>(i->second) == NULL)                                                                  // PABLO #1916
+        // If set belong to additionalSet, their parent will write it															// PABLO #1916
+		if(i->second->belongToAdditionalSet() == false)																			// PABLO #1916
             i->second->writeAdditional(device);                                                                                 // PABLO #1916
     device.close();                                                                                                             // PABLO #1916
 }                                                                                                                               // PABLO #1916
@@ -1046,21 +1047,13 @@ GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {           
 }                                                                                                                               // PABLO #1916
 
 
-std::string                                                                                                         // PABLO #1916
-GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {                           // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it) {              // PABLO #1916
-        if(dynamic_cast<GNEStoppingPlace*>(it->second)) {                                                           // PABLO #1916
-            GNEStoppingPlace* stoppingPlace = dynamic_cast<GNEStoppingPlace*>(it->second);                          // PABLO #1916
-            if (stoppingPlace->getLane() == lane && fabs(stoppingPlace->getStartPosition() - pos) < POSITION_EPS) // PABLO #1916
-                return it->second->getID();                                                                         // PABLO #1916
-        } else if(dynamic_cast<GNEDetector*>(it->second)) {                                                         // PABLO #1916
-            GNEDetector* detector = dynamic_cast<GNEDetector*>(it->second);                                         // PABLO #1916
-            if (detector->getLane() == lane && fabs(detector->getPositionOverLane() - pos) < POSITION_EPS)       // PABLO #1916
-                return it->second->getID();                                                                         // PABLO #1916
-        }                                                                                                           // PABLO #1916
-    }                                                                                                               // PABLO #1916
-    return "";                                                                                                      // PABLO #1916
-}                                                                                                                   // PABLO #1916
+std::string																																													// PABLO #1916
+GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {																									// PABLO #1916
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)																						// PABLO #1916
+			if((it->second->getType() == type) && (it->second->getLane() != NULL) && (it->second->getLane() == lane) && (fabs(it->second->getPositionInView().x() - pos) < POSITION_EPS))	// PABLO #1916
+				return it->second->getID();																																					// PABLO #1916
+    return "";                                                                                                      																		// PABLO #1916
+}                                                                                                                   																		// PABLO #1916
 
 
 std::vector<GNEAdditional*>                                                                 // PABLO #1916
