@@ -356,7 +356,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "uncontrolled",   SUMO_ATTR_UNCONTROLLED },
     { "pass",           SUMO_ATTR_PASS },
     { "busStop",        SUMO_ATTR_BUS_STOP },
-    { "chargingStation",SUMO_ATTR_CHARGING_STATION },    // PABLO #1852
+    { "chargingStation",SUMO_ATTR_CHARGING_STATION },
     { "containerStop",  SUMO_ATTR_CONTAINER_STOP },
     { "line",           SUMO_ATTR_LINE },
     { "lines",          SUMO_ATTR_LINES },

@@ -381,19 +381,19 @@ public:
         return i;
     }
 
-    /// @brief converts a int value into std::string    // PABLO #1852
-    static std::string _int2str(int data) {             // PABLO #1852
-        std::ostringstream convert;                     // PABLO #1852
-        convert << data;                                // PABLO #1852
-        return convert.str();                           // PABLO #1852
-    }                                                   // PABLO #1852
+    /// @brief converts a int value into std::string
+    static std::string _int2str(int data) {
+        std::ostringstream convert;
+        convert << data;
+        return convert.str();
+    }
 
-    /// @brief converts a SUMOReal value into std::string   // PABLO #1852
-    static std::string _SUMOReal2str(SUMOReal data) {       // PABLO #1852
-        std::ostringstream convert;                         // PABLO #1852
-        convert << data;                                    // PABLO #1852
-        return convert.str();                               // PABLO #1852
-    }                                                       // PABLO #1852
+    /// @brief converts a SUMOReal value into std::string
+    static std::string _SUMOReal2str(SUMOReal data) {
+        std::ostringstream convert;
+        convert << data;
+        return convert.str();
+    }
 };
 
 

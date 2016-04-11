@@ -855,23 +855,23 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
         return;
     }
     const MSEdge* edge = 0;
-    // try to parse the assigned stoppingPlace                                                  // PABLO #1852
-    if (stop.stoppingPlace != "") {                                                             // PABLO #1852
-        // ok, we have a bus stop                                                               // PABLO #1852
-        MSStoppingPlace* bs = MSNet::getInstance()->getBusStop(stop.stoppingPlace);             // PABLO #1852
-        MSChargingStation* cs = MSNet::getInstance()->getChargingStation(stop.stoppingPlace);   // PABLO #1852
-        if (bs != 0) {                                                                          // PABLO #1852
-            const MSLane& l = bs->getLane();                                                    // PABLO #1852
-            stop.lane = l.getID();                                                              // PABLO #1852
-            stop.endPos = bs->getEndLanePosition();                                             // PABLO #1852
-            stop.startPos = bs->getBeginLanePosition();                                         // PABLO #1852
-            edge = &l.getEdge();                                                                // PABLO #1852
-        } else if (cs != 0) {                                                                   // PABLO #1852
-            const MSLane& l = cs->getLane();                                                    // PABLO #1852
-            stop.lane = l.getID();                                                              // PABLO #1852
-            stop.endPos = cs->getEndLanePosition();                                             // PABLO #1852
-            stop.startPos = cs->getBeginLanePosition();                                         // PABLO #1852
-            edge = &l.getEdge();                                                                // PABLO #1852
+    // try to parse the assigned stoppingPlace
+    if (stop.stoppingPlace != "") {
+        // ok, we have a bus stop
+        MSStoppingPlace* bs = MSNet::getInstance()->getBusStop(stop.stoppingPlace);
+        MSChargingStation* cs = MSNet::getInstance()->getChargingStation(stop.stoppingPlace);
+        if (bs != 0) {
+            const MSLane& l = bs->getLane();
+            stop.lane = l.getID();
+            stop.endPos = bs->getEndLanePosition();
+            stop.startPos = bs->getBeginLanePosition();
+            edge = &l.getEdge();
+        } else if (cs != 0) {
+            const MSLane& l = cs->getLane();
+            stop.lane = l.getID();
+            stop.endPos = cs->getEndLanePosition();
+            stop.startPos = cs->getBeginLanePosition();
+            edge = &l.getEdge();
         }else {
             WRITE_ERROR("The bus stop or charging Station '" + stop.stoppingPlace + "' is not known" + errorSuffix);
             return;

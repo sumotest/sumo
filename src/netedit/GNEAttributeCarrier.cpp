@@ -401,23 +401,24 @@ GNEAttributeCarrier::isFloat(SumoXMLAttr attr) {                        // PABLO
 }                                                                       // PABLO #1916
 
 
-bool                                                                                                                                                        // PABLO #1916
-GNEAttributeCarrier::isBool(SumoXMLAttr attr) {                                                                                                             // PABLO #1916
-    // Iterate over map                                                                                                                                     // PABLO #1916
-    for(std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > >::iterator i = myDiscreteChoices.begin(); i != myDiscreteChoices.end(); i++)   // PABLO #1916
-        if (i->second.find(attr) != i->second.end()) {                                                                                                      // PABLO #1916
-            // Obtain values of discrete attribute attr;                                                                                                    // PABLO #1916
-            std::vector<std::string> values = i->second.find(attr)->second;                                                                                 // PABLO #1916
-            // Check if values are exactly "true" and "false"                                                                                               // PABLO #1916
-            return (values.size() == 2) && (values.at(0) == "true") && (values.at(1) == "false")?  true : false;                                            // PABLO #1916
-        }                                                                                                                                                   // PABLO #1916
-    return false;                                                                                                                                           // PABLO #1916
-}                                                                                                                                                           // PABLO #1916
+bool                                                                                                        // PABLO #1916
+GNEAttributeCarrier::isBool(SumoXMLAttr attr) {																// PABLO #1916
+	// Iterate over additional tags                                                                         // PABLO #1916
+    for(std::vector<SumoXMLTag>::const_iterator i = allowedTags().begin(); i != allowedTags().end(); i++) {	// PABLO #1916
+		// Obtain choices																					// PABLO #1916
+		std::vector<std::string> choices = discreteChoices(*i, attr);										// PABLO #1916
+		// CHeck if choices are exactly "true" and "false"													// PABLO #1916
+		if ((choices.size() == 2) && (choices.at(0) == "true") && (choices.at(1) == "false"))				// PABLO #1916
+			return true;                                                                                    // PABLO #1916
+	}																										// PABLO #1916
+	return false;                                                                                           // PABLO #1916
+}                                                                                                           // PABLO #1916
 
-bool                                                // PABLO #1916
-GNEAttributeCarrier::isString(SumoXMLAttr attr) {   // PABLO #1916
-    return !isNumerical(attr) || !isBool(attr);     // PABLO #1916
-}                                                   // PABLO #1916
+
+bool																// PABLO #1916
+GNEAttributeCarrier::isString(SumoXMLAttr attr) {					// PABLO #1916
+    return !isNumerical(attr) && !isBool(attr) && !isFloat(attr);   // PABLO #1916
+}																	// PABLO #1916
 
 
 bool                                                        // PABLO #1916

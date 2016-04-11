@@ -281,13 +281,13 @@ SUMORouteHandler::parseStop(SUMOVehicleParameter::Stop& stop, const SUMOSAXAttri
         stop.setParameter |= STOP_EXPECTED_CONTAINERS_SET;
     }
     bool ok = true;
-    // Get ID of busStop or chargingStation                                                     // PABLO #1852
-    if(attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "") != "")                          // PABLO #1852
-        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");          // PABLO #1852
-    else if(attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "") != "")             // PABLO #1852
-        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "");  // PABLO #1852
-    else                                                                                        // PABLO #1852
-        errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;                         // PABLO #1852
+    // Get ID of busStop or chargingStation
+    if(attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "") != "")
+        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");
+    else if(attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "") != "")
+        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "");
+    else
+        errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;
     if (stop.stoppingPlace != "")
         errorSuffix = " at '" + stop.stoppingPlace + "'" + errorSuffix;
     else

@@ -342,7 +342,7 @@ GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::string value) {
-    myAttr = attr;
+	myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
     myTextField->setText(value.c_str());
@@ -353,7 +353,7 @@ GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::st
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, int value) {
-    myAttr = attr;
+	myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
     myTextField->setText(toString(value).c_str());
