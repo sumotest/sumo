@@ -30,9 +30,9 @@
 #include <config.h>
 #endif
 
-#include <fx.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <netbuild/NBEdge.h>
+#include "GNEDynamicFrame.h"	// PABLO #2036
 
 // ===========================================================================
 // class declarations

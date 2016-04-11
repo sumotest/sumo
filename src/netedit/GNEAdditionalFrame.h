@@ -4,7 +4,7 @@
 /// @date    Dec 2015
 /// @version $Id$
 ///
-/// The Widget for setting default parameters of additional elements
+/// The Widget for add additional elements
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
@@ -30,12 +30,12 @@
 #include <config.h>
 #endif
 
-#include <fx.h>
 #include <GL/gl.h>
 #include <utils/foxtools/FXRealSpinDial.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/gui/div/GUISelectedStorage.h>
 #include <utils/xml/SUMOSAXHandler.h>
+#include "GNEDynamicFrame.h"	// PABLO #2036
 
 // ===========================================================================
 // class declarations

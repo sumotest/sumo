@@ -30,10 +30,10 @@
 #include <config.h>
 #endif
 
-#include <fx.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/gui/div/GUISelectedStorage.h>
 #include <netbuild/NBTrafficLightLogic.h>
+#include "GNEDynamicFrame.h"	// PABLO #2036
 
 // ===========================================================================
 // class declarations
