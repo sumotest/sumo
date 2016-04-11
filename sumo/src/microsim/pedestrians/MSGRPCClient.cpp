@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-#define DEBUG 0
+//#define DEBUG 0
 
 const int FWD(1);
 const int BWD(-1);
@@ -480,7 +480,7 @@ void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
 
 	Status st = hybridsimStub->simulatedTimeInerval(&context,req,&rpl);
 	if(!st.ok()){
-		std::cerr << "something went wrong!" << std::endl;
+		std::cerr << "Error simulating time interval on external simulation" << std::endl;
 		exit(-1);
 	}
 
@@ -599,10 +599,13 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 			st->setXY(t.x(),t.y());
 			st->setSpeed(t.spd());
 			st->setAngle(t.phi());
+#ifdef DEBUG
+			std::cout << "link_id: " << t.linkid() << std::endl;
+#endif
 			if (t.linkid() != "" && t.linkid() != st->getEdge()->getID()) {
 				const MSEdge * oldEdge = st->getEdge();
 				const MSEdge * newEdge = st->incrEdge();
-				st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
+//				st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
 			}
 		}
 	} else {
