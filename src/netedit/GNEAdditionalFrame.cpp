@@ -161,14 +161,13 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         return false;
     // Declare map to keep values
     std::map<SumoXMLAttr, std::string> valuesOfElement = myAdditionalParameters->getAttributes();
+	// Generate id of elmement
+    valuesOfElement[SUMO_ATTR_ID] = generateID(lane);
     // obtain a new unique id depending if the element needs or not a lane
     if(lane) {
+		// Obtain positiono of additional over mouse
         SUMOReal positionOfTheMouseOverLane = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
-        int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
-        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex)) != NULL)
-            additionalIndex++;
-        valuesOfElement[SUMO_ATTR_ID] = toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex);
-        // Obtain lane ID
+		// Obtain lane ID
         valuesOfElement[SUMO_ATTR_LANE] = lane->getID();
         // If element has a StartPosition and EndPosition over lane, extract attributes
         if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
@@ -178,12 +177,12 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         // Extract position of lane
         valuesOfElement[SUMO_ATTR_POSITION] = toString(positionOfTheMouseOverLane);
     } else {
-        int additionalSetIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
-        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalSetIndex)) != NULL)
-            additionalSetIndex++;
-        valuesOfElement[SUMO_ATTR_ID] = toString(myActualAdditionalType) + "_" + toString(additionalSetIndex);
+		// get position in map
         valuesOfElement[SUMO_ATTR_POSITION] = toString(parent->getPositionInformation());
     }
+	// If additional own the attribute SUMO_ATTR_FILE but was't defined, will defined as <ID>.txt
+	if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_FILE) && valuesOfElement[SUMO_ATTR_FILE] == "")
+		valuesOfElement[SUMO_ATTR_FILE] = (valuesOfElement[SUMO_ATTR_ID] + ".txt");
     // Save block value
     valuesOfElement[GNE_ATTR_BLOCK_MOVEMENT] = toString(myEditorParameters->isBlockEnabled());
     // If element belongst to an additional Set, get id of parent from myAdditionalSet
@@ -267,6 +266,23 @@ GNEAdditionalFrame::setParametersOfAdditional(SumoXMLTag actualAdditionalType) {
         myAdditionalSet->showList(GNEAttributeCarrier::getParentType(myActualAdditionalType));
     else
         myAdditionalSet->hideList();
+}
+
+
+std::string 
+GNEAdditionalFrame::generateID(GNELane *lane) const {
+	int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
+	if(lane) {
+		// generate ID using lane
+        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex)) != NULL)
+            additionalIndex++;
+        return toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex);
+	} else {
+		// generate ID without lane
+        while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalIndex)) != NULL)
+            additionalIndex++;
+        return toString(myActualAdditionalType) + "_" + toString(additionalIndex);
+	}
 }
 
 
@@ -580,9 +596,9 @@ GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, Su
                 myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<SUMOReal> >(additional, attribute));
             else if(GNEAttributeCarrier::isBool(attribute))
                 myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<bool> >(additional, attribute));
-            else if(GNEAttributeCarrier::isString(attribute))
-                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
-            // Update index
+            else if(GNEAttributeCarrier::isString(attribute)) 
+					myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
+			// Update index
             myIndexParameterList++;
         }
         else if(GNEAttributeCarrier::isInt(attribute))

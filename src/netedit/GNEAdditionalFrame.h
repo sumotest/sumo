@@ -427,6 +427,9 @@ private:
     /// @brief set parameters depending of the new additionalType
     void setParametersOfAdditional(SumoXMLTag actualAdditionalType);
 
+	/// @brief generate a ID for an additiona element
+	std::string generateID(GNELane *lane) const;
+
     /// @brief obtain the Start position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setStartPosition(SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
 
