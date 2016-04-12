@@ -145,9 +145,14 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
     RGBColor blue(114, 210, 252, 255);
     RGBColor green(76, 170, 50, 255);
     RGBColor yellow(255, 235, 0, 255);
-    // draw the area
+	RGBColor yellowCharge(255, 180, 0, 255);
+
+    // draw the area depending if the vehicle is charging
     glTranslated(0, 0, getType());
-    GLHelper::setColor(blue);
+	if(myChargingVehicle)
+		GLHelper::setColor(yellowCharge);
+	else
+		GLHelper::setColor(blue);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myFGShape, myFGShapeRotations, myFGShapeLengths, exaggeration);
 
@@ -192,7 +197,6 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         glScaled(exaggeration, exaggeration, 1);
-        GLHelper::setColor(blue);
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
         glTranslated(0, 0, .1);
 

@@ -173,8 +173,8 @@ public:
     /// @brief Get consum (Strange error with linker)
     SUMOReal getConsum() const;
 
-    /// @brief Get Charging Station ID
-    const std::string& getChargingStationID() const;
+    /// @brief Get current Charging Station ID
+    std::string getChargingStationID() const;
 
     /// @brief Get charging energy
     SUMOReal getChrgEnergy() const;
@@ -313,15 +313,14 @@ protected:
     /// @condition by default is 0.
     SUMOReal myConsum;
 
-    /// @brief Parameter, Vehicle consum during a time step
-    /// @condition by default is "".
-    std::string myActChargingStation;
-
     /// @brief Parameter, Energy charged in each timestep
     SUMOReal myEnergyCharged;
 
     /// @brief Parameter, How many timestep the vehicle is stopped
     int myVehicleStopped;
+
+	/// @brief Parameter, pointer to current charging station
+	MSChargingStation *myCurrentChargingStation;
 
 private:
 
