@@ -48,6 +48,7 @@ class SUMOVehicle;
 class MSVehicle;
 class MSPerson;
 class OutputDevice;
+class MSTrafficLightLogic;
 
 
 // ===========================================================================
@@ -151,7 +152,7 @@ public:
      * @param[in] length The length of this link
      * @param[in] keepClear Whether the junction after this link must be kept clear
      */
-    MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear);
+    MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear, MSTrafficLightLogic* logic, int tlLinkIdx);
 #else
     /** @brief Constructor for simulation which uses internal lanes
      *
@@ -161,7 +162,7 @@ public:
      * @param[in] state The state of this link
      * @param[in] length The length of this link
      */
-    MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear);
+    MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear, MSTrafficLightLogic* logic, int tlLinkIdx);
 #endif
 
 
@@ -308,6 +309,15 @@ public:
         return myIndex;
     }
 
+    /** @brief Returns the TLS index */
+    inline int getTLIndex() const {
+        return myTLIndex;
+    }
+
+    /** @brief Returns the TLS index */
+    inline const MSTrafficLightLogic* getTLLogic() const {
+        return myLogic;
+    }
 
     /** @brief Returns whether this link is a major link
      * @return Whether the link has a large priority
@@ -324,7 +334,7 @@ public:
     }
 
     inline bool isTLSControlled() const {
-        return myLastStateChange != SUMOTime_MIN;
+        return myLogic != 0;
     }
 
     /** @brief Returns the length of this link
@@ -454,6 +464,12 @@ private:
 
     /// @brief The position within this respond
     int myIndex;
+
+    /// @brief the traffic light index
+    const int myTLIndex;
+
+    /// @brief the controlling logic or 0
+    const MSTrafficLightLogic* myLogic;
 
     /// @brief The state of the link
     LinkState myState;

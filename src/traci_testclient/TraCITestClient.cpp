@@ -674,22 +674,34 @@ TraCITestClient::readAndReportTypeDependent(tcpip::Storage& inMsg, int valueData
 void
 TraCITestClient::testAPI() {
     answerLog << "testAPI:\n";
+
     answerLog << "  edge:\n";
     answerLog << "    getIDList: " << joinToString(edge.getIDList(), " ") << "\n";
     answerLog << "    getIDCount: " << edge.getIDCount() << "\n";
+
     answerLog << "  vehicle:\n";
     answerLog << "    getIDList: " << joinToString(vehicle.getIDList(), " ") << "\n";
     answerLog << "    getIDCount: " << vehicle.getIDCount() << "\n";
+    answerLog << "    getWaitingTime: " << vehicle.getWaitingTime("0") << "\n";
+    answerLog << "    getNextTLS:\n";
+    std::vector<VehicleScope::NextTLSData> result = vehicle.getNextTLS("0");
+    for (int i = 0; i < (int)result.size(); ++i) {
+        const VehicleScope::NextTLSData& d = result[i];
+        answerLog << "      tls=" << d.id << " tlIndex=" << d.tlIndex << " dist=" << d.dist << " state=" << d.state << "\n";
+    }
+
     answerLog << "  inductionloop:\n";
     answerLog << "    getIDList: " << joinToString(inductionloop.getIDList(), " ") << "\n";
     answerLog << "    getVehicleData:\n";
-    std::vector<InductionLoopScope::VehicleData> result = inductionloop.getVehicleData("det1");
-    for (int i = 0; i < (int)result.size(); ++i) {
-        const InductionLoopScope::VehicleData& vd = result[i];
+    std::vector<InductionLoopScope::VehicleData> result2 = inductionloop.getVehicleData("det1");
+    for (int i = 0; i < (int)result2.size(); ++i) {
+        const InductionLoopScope::VehicleData& vd = result2[i];
         answerLog << "      veh=" << vd.id << " length=" << vd.length << " entered=" << vd.entryTime << " left=" << vd.leaveTime << " type=" << vd.typeID << "\n";
     }
+
     answerLog << "  simulation:\n";
     answerLog << "    getCurrentTime: " << simulation.getCurrentTime() << "\n";
+
     answerLog << "  gui:\n";
     try {
         answerLog << "    setScheme: \n";

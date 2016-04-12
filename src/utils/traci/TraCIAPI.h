@@ -672,48 +672,66 @@ public:
         VehicleScope(TraCIAPI& parent) : TraCIScopeWrapper(parent) {}
         virtual ~VehicleScope() {}
 
-        std::vector<std::string> getIDList() const;
-	unsigned int getIDCount() const;
-	SUMOReal getSpeed(const std::string& typeID) const;
-	TraCIPosition getPosition(const std::string& typeID) const;
-	SUMOReal getAngle(const std::string& typeID) const;
-	std::string getRoadID(const std::string& typeID) const;
-	std::string getLaneID(const std::string& typeID) const;
-	unsigned int getLaneIndex(const std::string& typeID) const;
-	std::string getTypeID(const std::string& typeID) const;
-	std::string getRouteID(const std::string& typeID) const;
-	unsigned int getRouteIndex(const std::string& typeID) const;
-	std::vector<std::string> getEdges(const std::string& typeID) const;
-	TraCIColor getColor(const std::string& typeID) const;
-	SUMOReal getLanePosition(const std::string& typeID) const;
-	unsigned int getSignalStates(const std::string& typeID) const;
-	SUMOReal getCO2Emissions(const std::string& typeID) const;
-	SUMOReal getCOEmissions(const std::string& typeID) const;
-	SUMOReal getHCEmissions(const std::string& typeID) const;
-	SUMOReal getPMxEmissions(const std::string& typeID) const;
-	SUMOReal getNOxEmissions(const std::string& typeID) const;
-	SUMOReal getFuelConsumption(const std::string& typeID) const;
-	SUMOReal getNoiseEmission(const std::string& typeID) const;
-	unsigned int getBestLanes(const std::string& typeID) const;
-	unsigned int getStopState(const std::string& typeID) const;
-	SUMOReal getLength(const std::string& typeID) const;
-	SUMOReal getMaxSpeed(const std::string& typeID) const;
-	SUMOReal getAccel(const std::string& typeID) const;
-	SUMOReal getDecel(const std::string& typeID) const;
-	SUMOReal getTau(const std::string& typeID) const;
-	SUMOReal getImperfection(const std::string& typeID) const;
-	SUMOReal getSpeedFactor(const std::string& typeID) const;
-	SUMOReal getSpeedDeviation(const std::string& typeID) const;
-	std::string getVClass(const std::string& typeID) const;
-	std::string getEmissionClass(const std::string& typeID) const;
-	std::string getShapeClass(const std::string& typeID) const;
-	SUMOReal getMinGap(const std::string& typeID) const;
-	SUMOReal getWidth(const std::string& typeID) const;
-	SUMOReal getWaitingTime(const std::string& typeID) const;
 
-	void moveTo(const std::string& typeID, const std::string& laneID, SUMOReal position) const;
-	void slowDown(const std::string& typeID, SUMOReal speed, int duration) const;
-	void setSpeed(const std::string& typeID, SUMOReal speed) const;
+        struct NextTLSData {
+            /* @brief Constructor */
+            NextTLSData() {}
+            /// @brief The id of the next tls
+            std::string id;
+            /// @brief The tls index of the controlled link 
+            int tlIndex;
+            /// @brief The distance to the tls
+            SUMOReal dist;
+            /// @brief The current state of the tls
+            char state;
+        };
+
+
+        std::vector<std::string> getIDList() const;
+        unsigned int getIDCount() const;
+        SUMOReal getSpeed(const std::string& typeID) const;
+        TraCIPosition getPosition(const std::string& typeID) const;
+        SUMOReal getAngle(const std::string& typeID) const;
+        std::string getRoadID(const std::string& typeID) const;
+        std::string getLaneID(const std::string& typeID) const;
+        unsigned int getLaneIndex(const std::string& typeID) const;
+        std::string getTypeID(const std::string& typeID) const;
+        std::string getRouteID(const std::string& typeID) const;
+        unsigned int getRouteIndex(const std::string& typeID) const;
+        std::vector<std::string> getEdges(const std::string& typeID) const;
+        TraCIColor getColor(const std::string& typeID) const;
+        SUMOReal getLanePosition(const std::string& typeID) const;
+        SUMOReal getWaitingTime(const std::string& vehID) const;
+        std::vector<NextTLSData> getNextTLS(const std::string& vehID) const;
+
+        /* /// not yet implemented 
+        SUMOReal getCO2Emissions(const std::string& typeID) const;
+        SUMOReal getCOEmissions(const std::string& typeID) const;
+        SUMOReal getHCEmissions(const std::string& typeID) const;
+        SUMOReal getPMxEmissions(const std::string& typeID) const;
+        SUMOReal getNOxEmissions(const std::string& typeID) const;
+        SUMOReal getFuelConsumption(const std::string& typeID) const;
+        SUMOReal getNoiseEmission(const std::string& typeID) const;
+        unsigned int getBestLanes(const std::string& typeID) const;
+        unsigned int getStopState(const std::string& typeID) const;
+        SUMOReal getLength(const std::string& typeID) const;
+        SUMOReal getMaxSpeed(const std::string& typeID) const;
+        SUMOReal getAccel(const std::string& typeID) const;
+        SUMOReal getDecel(const std::string& typeID) const;
+        SUMOReal getTau(const std::string& typeID) const;
+        SUMOReal getImperfection(const std::string& typeID) const;
+        SUMOReal getSpeedFactor(const std::string& typeID) const;
+        SUMOReal getSpeedDeviation(const std::string& typeID) const;
+        std::string getVClass(const std::string& typeID) const;
+        std::string getEmissionClass(const std::string& typeID) const;
+        std::string getShapeClass(const std::string& typeID) const;
+        SUMOReal getMinGap(const std::string& typeID) const;
+        SUMOReal getWidth(const std::string& typeID) const;
+        */
+
+        void moveTo(const std::string& typeID, const std::string& laneID, SUMOReal position) const;
+        void slowDown(const std::string& typeID, SUMOReal speed, int duration) const;
+        void setSpeed(const std::string& typeID, SUMOReal speed) const;
 
     private:
         /// @brief invalidated copy constructor

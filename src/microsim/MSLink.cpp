@@ -66,10 +66,12 @@ const SUMOReal MSLink::ZIPPER_ADAPT_DIST(100);
 // member method definitions
 // ===========================================================================
 #ifndef HAVE_INTERNAL_LANES
-MSLink::MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
+MSLink::MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear, MSTrafficLightLogic* logic, int tlIndex) :
     myLane(succLane),
     myLaneBefore(predLane),
     myIndex(-1),
+    myTLIndex(tlIndex),
+    myLogic(logic),
     myState(state),
     myLastStateChange(SUMOTime_MIN),
     myDirection(dir),
@@ -82,10 +84,12 @@ MSLink::MSLink(MSLane* predLane, MSLane* succLane, LinkDirection dir, LinkState 
     myMesoTLSPenalty(0),
     myJunction(0)
 #else
-MSLink::MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear) :
+MSLink::MSLink(MSLane* predLane, MSLane* succLane, MSLane* via, LinkDirection dir, LinkState state, SUMOReal length, bool keepClear, MSTrafficLightLogic* logic, int tlIndex) :
     myLane(succLane),
     myLaneBefore(predLane),
     myIndex(-1),
+    myTLIndex(tlIndex),
+    myLogic(logic),
     myState(state),
     myLastStateChange(SUMOTime_MIN),
     myDirection(dir),

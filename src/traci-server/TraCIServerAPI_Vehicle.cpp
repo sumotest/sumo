@@ -100,6 +100,7 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
             && variable != ID_COUNT && variable != VAR_STOPSTATE && variable !=  VAR_WAITING_TIME
             && variable != VAR_ROUTE_INDEX
             && variable != VAR_PARAMETER
+            && variable != VAR_NEXT_TLS
        ) {
         return server.writeErrorStatusCmd(CMD_GET_VEHICLE_VARIABLE, "Get Vehicle Variable: unsupported variable " + toHex(variable,2) + " specified", outputStorage);
     }
@@ -373,6 +374,50 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
                     ++cnt;
                 }
                 tempMsg.writeInt((int) cnt);
+                tempMsg.writeStorage(tempContent);
+            }
+            break;
+            case VAR_NEXT_TLS: {
+                int cnt = 0; // number of elements in compound message
+                int tlsLinks = 0; // number of tls links within bestlanes range
+                tcpip::Storage tempContent;
+                if (onRoad) {
+                    const MSLane* lane = v->getLane();
+                    const std::vector<MSLane*>& bestLaneConts = v->getBestLanesContinuation(lane);
+                    SUMOReal seen = v->getLane()->getLength() - v->getPositionOnLane();
+                    unsigned int view = 1;
+                    MSLinkCont::const_iterator link = MSLane::succLinkSec(*v, view, *lane, bestLaneConts);
+                    while (!lane->isLinkEnd(link)) {
+                        if (!lane->getEdge().isInternal()) {
+                            if ((*link)->isTLSControlled()) {
+                                tlsLinks++;
+                                tempContent.writeUnsignedByte(TYPE_STRING);
+                                tempContent.writeString((*link)->getTLLogic()->getID());
+                                ++cnt;
+                                tempContent.writeUnsignedByte(TYPE_INTEGER);
+                                tempContent.writeInt((*link)->getTLIndex());
+                                ++cnt;
+                                tempContent.writeUnsignedByte(TYPE_DOUBLE);
+                                tempContent.writeDouble(seen);
+                                ++cnt;
+                                tempContent.writeUnsignedByte(TYPE_BYTE);
+                                tempContent.writeByte((*link)->getState());
+                                ++cnt;
+                            }
+                        }
+                        lane = (*link)->getViaLaneOrLane();
+                        if (!lane->getEdge().isInternal()) {
+                            view++;
+                        }
+                        seen += lane->getLength();
+                        link = MSLane::succLinkSec(*v, view, *lane, bestLaneConts);
+                    }
+                }
+                ++cnt; // tlsLinks, everyting else was already included 
+                tempMsg.writeUnsignedByte(TYPE_COMPOUND);
+                tempMsg.writeInt((int) cnt);
+                tempMsg.writeUnsignedByte(TYPE_INTEGER);
+                tempMsg.writeInt(tlsLinks);
                 tempMsg.writeStorage(tempContent);
             }
             break;
