@@ -151,45 +151,34 @@ GNEAdditionalHandler::parseAndBuildVaporizer(const SUMOSAXAttributes& attrs)
 
 
 void
-GNEAdditionalHandler::parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& attrs)
-{
-    std::cout << "Function buildLaneSpeedTrigger of class GNEAdditionalHandler not implemented yet";
-    /*
-    // get the id, throw if not given or empty...
+GNEAdditionalHandler::parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& attrs) {
     bool ok = true;
-    // get the id, throw if not given or empty...
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
-    if (!ok) {
-        return;
-    }
-    // get the file name to read further definitions from
-    std::string file = getFileName(attrs, base, true);
-    std::string objectid = attrs.get<std::string>(SUMO_ATTR_LANES, id.c_str(), ok);
-    if (!ok) {
-        throw InvalidArgument("The lanes to use within MSLaneSpeedTrigger '" + id + "' are not known.");
-    }
-    std::vector<MSLane*> lanes;
-    std::vector<std::string> laneIDs;
-    SUMOSAXAttributes::parseStringVector(objectid, laneIDs);
-    for (std::vector<std::string>::iterator i = laneIDs.begin(); i != laneIDs.end(); ++i) {
-        MSLane* lane = MSLane::dictionary(*i);
-        if (lane == 0) {
-            throw InvalidArgument("The lane to use within MSLaneSpeedTrigger '" + id + "' is not known.");
-        }
-        lanes.push_back(lane);
-    }
-    if (lanes.size() == 0) {
-        throw InvalidArgument("No lane defined for MSLaneSpeedTrigger '" + id + "'.");
-    }
+    const SUMOReal posx = attrs.getOpt<SUMOReal>(SUMO_ATTR_X, id.c_str(), ok, 0);
+    const SUMOReal posy = attrs.getOpt<SUMOReal>(SUMO_ATTR_Y, id.c_str(), ok, 0);
+    const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
+    std::vector<std::string> lanesID;
+    SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LANES, id.c_str(), ok, "", false), lanesID);
+    // Check if parsing of parameter was correct
+    if (!ok)
+        throw ProcessError();
+	// Obtain pointer to lanes
+	std::vector<GNELane*> lanes;
+	for(int i = 0; i < lanesID.size(); i++) {
+		GNELane *lane = myViewNet->getNet()->getLane(lanesID.at(i));
+		if(lane)
+			lanes.push_back(lane);
+		else
+			throw ProcessError();
+	}
     try {
-        MSLaneSpeedTrigger* trigger = buildLaneSpeedTrigger(myViewNet->getNet(), id, lanes, file);
-        if (file == "") {
-            trigger->registerParent(SUMO_TAG_VSS, myHandler);
-        }
-    } catch (ProcessError& e) {
-        throw InvalidArgument(e.what());
+        // if operation of build variable speed signal was sucesfully, save Id
+        if(buildVariableSpeedSignal(myViewNet, id, Position(posx,posy), lanes, file, false))
+            myAdditionalSetParent = id;
+
+    } catch (InvalidArgument& e) {
+        WRITE_ERROR(e.what());
     }
-*/
 }
 
 
@@ -551,7 +540,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             std::vector<GNELane*> lanes;
             /** TERMINAR **/
             std::string file = values[SUMO_ATTR_FILE];
-            if(lane)
+            if(!lane && (pos.size() == 1))
                 return buildVariableSpeedSignal(viewNet, id, pos[0], lanes, file, blocked);
             else
                 return false;
@@ -755,8 +744,7 @@ GNEAdditionalHandler::buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, cons
 
 
 bool
-GNEAdditionalHandler::buildVariableSpeedSignal(GNEViewNet *viewNet,const std::string& id, Position pos, const std::vector<GNELane*>& lanes, const std::string& file, bool blocked)
-{
+GNEAdditionalHandler::buildVariableSpeedSignal(GNEViewNet *viewNet,const std::string& id, Position pos, const std::vector<GNELane*>& lanes, const std::string& file, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_VSS, id) == NULL) {
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_VSS));
         GNEVariableSpeedSignal *variableSpeedSignal = new GNEVariableSpeedSignal(id, viewNet, pos, lanes, file, blocked);
