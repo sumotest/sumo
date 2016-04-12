@@ -93,7 +93,11 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
 
 SUMOReal
 MSCFModel_KraussOrig1::followSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
-    return MIN2(vsafe(gap, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
+	if(MSGlobals::gSemiImplicitEulerUpdate){
+		return MIN2(vsafe(gap, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
+	} else {
+		return MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
+	}
 }
 
 
@@ -114,7 +118,11 @@ MSCFModel_KraussOrig1::insertionFollowSpeed(const MSVehicle* const veh, SUMOReal
 
 SUMOReal
 MSCFModel_KraussOrig1::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap) const {
-    return MIN2(vsafe(gap, 0., 0.), maxNextSpeed(speed, veh));
+	if(MSGlobals::gSemiImplicitEulerUpdate){
+		return MIN2(vsafe(gap, 0., 0.), maxNextSpeed(speed, veh));
+	} else {
+		return MIN2(maximumSafeStopSpeedBallistic(gap, speed), maxNextSpeed(speed, veh));
+	}
 }
 
 

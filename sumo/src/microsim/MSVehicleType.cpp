@@ -221,7 +221,6 @@ MSVehicleType::build(SUMOVTypeParameter& from) {
             break;
         case SUMO_TAG_CF_KRAUSS_ORIG1:
             vtype->myCarFollowModel = new MSCFModel_KraussOrig1(vtype, accel, decel, sigma, tau);
-            if(!MSGlobals::gSemiImplicitEulerUpdate) WRITE_WARNING("The car following model 'KrausOrig1' cannot be assumed collision free, if not combined with the semi-implicit Euler update scheme");
             break;
         case SUMO_TAG_CF_KRAUSS_PLUS_SLOPE:
             vtype->myCarFollowModel = new MSCFModel_KraussPS(vtype, accel, decel, sigma, tau);
