@@ -167,12 +167,18 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     bool gotOne = false;
     for (std::vector<SUMOReal>::const_iterator i = myVSafes.begin(); i != myVSafes.end(); ++i) {
         SUMOReal v = (*i);
-        // (Leo): testing for v>MAX2(min,0.) instead of simply v>min (fix in frame of ballistic update intro)
-        // Since LaneChanging returns -1 to indicate no restrictions, negative min provided from the "ballistic calculus"
-        // (indicating stops within the next time step) should be overridden, here.
-        if (v >= MAX2(min,0.) && v <= max) {
-            nVSafe = MIN2(v, nVSafe);
-            gotOne = true;
+        if(MSGlobals::gSemiImplicitEulerUpdate){
+            if (v >= MAX2(min,0.) && v <= max) {
+                nVSafe = MIN2(v, nVSafe);
+                gotOne = true;
+            }
+        } else {
+            // ballistic update: testing for v>min instead of v>MAX2(min,0.)
+            // XXX: LaneChanging returns -1 to indicate no restrictions, which leads to probs here
+            if (v >= MAX2(min,0) && v <= max) {
+                nVSafe = MIN2(v, nVSafe);
+                gotOne = true;
+            }
         }
 //        // Debug (Leo)
 //        if(gDebugFlag1){
@@ -193,6 +199,9 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         if ((state & LCA_STRATEGIC) != 0) {
             // necessary decelerations are controlled via vSafe. If there are
             // none it means we should speed up
+        	// XXX: It seems that this could lead to returning a value > vSafe (==wanted, if we use Krauss)
+        	//      (at least if myDontBrake==true and max>wanted. However, the latter is never true when using Krauss,
+        	//       so this didn't expose itself, yet) (Leo)
             return (max + wanted) / (SUMOReal) 2.0;
         } else if ((state & LCA_COOPERATIVE) != 0) {
             // only minor adjustments in speed should be done
@@ -281,7 +290,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << " informing NeighLeader (not overtaking)" << std::endl;
 
             // cannot overtake
-            msgPass.informNeighLeader(new Info(-1, dir | LCA_AMBLOCKINGLEADER), &myVehicle);
+            msgPass.informNeighLeader(new Info(-1, dir | LCA_AMBLOCKINGLEADER), &myVehicle); // XXX: don't use -1!!! (Leo)
             // slow down smoothly to follow leader
             const SUMOReal targetSpeed = myCarFollowModel.followSpeed(
                                              &myVehicle, myVehicle.getSpeed(), neighLead.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
@@ -304,7 +313,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             if(gDebugFlag1) std::cout << "vehicle " << myVehicle.getID() << "informing NeighLeader (overtaking) " << std::endl;
 
             msgPass.informNeighLeader(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGLEADER), &myVehicle);
-            return -1;
+            return -1;  // XXX: don't use -1 !!! (Leo)
         }
     } else if (neighLead.first != 0) { // (remainUnblocked)
         // we are not blocked now. make sure we stay far enough from the leader
