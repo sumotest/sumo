@@ -161,13 +161,13 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         return false;
     // Declare map to keep values
     std::map<SumoXMLAttr, std::string> valuesOfElement = myAdditionalParameters->getAttributes();
-	// Generate id of elmement
+    // Generate id of elmement
     valuesOfElement[SUMO_ATTR_ID] = generateID(lane);
     // obtain a new unique id depending if the element needs or not a lane
     if(lane) {
-		// Obtain positiono of additional over mouse
+        // Obtain positiono of additional over mouse
         SUMOReal positionOfTheMouseOverLane = lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
-		// Obtain lane ID
+        // Obtain lane ID
         valuesOfElement[SUMO_ATTR_LANE] = lane->getID();
         // If element has a StartPosition and EndPosition over lane, extract attributes
         if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
@@ -177,12 +177,12 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
         // Extract position of lane
         valuesOfElement[SUMO_ATTR_POSITION] = toString(positionOfTheMouseOverLane);
     } else {
-		// get position in map
+        // get position in map
         valuesOfElement[SUMO_ATTR_POSITION] = toString(parent->getPositionInformation());
     }
-	// If additional own the attribute SUMO_ATTR_FILE but was't defined, will defined as <ID>.txt
-	if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_FILE) && valuesOfElement[SUMO_ATTR_FILE] == "")
-		valuesOfElement[SUMO_ATTR_FILE] = (valuesOfElement[SUMO_ATTR_ID] + ".txt");
+    // If additional own the attribute SUMO_ATTR_FILE but was't defined, will defined as <ID>.txt
+    if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_FILE) && valuesOfElement[SUMO_ATTR_FILE] == "")
+        valuesOfElement[SUMO_ATTR_FILE] = (valuesOfElement[SUMO_ATTR_ID] + ".txt");
     // Save block value
     valuesOfElement[GNE_ATTR_BLOCK_MOVEMENT] = toString(myEditorParameters->isBlockEnabled());
     // If element belongst to an additional Set, get id of parent from myAdditionalSet
@@ -271,18 +271,18 @@ GNEAdditionalFrame::setParametersOfAdditional(SumoXMLTag actualAdditionalType) {
 
 std::string 
 GNEAdditionalFrame::generateID(GNELane *lane) const {
-	int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
-	if(lane) {
-		// generate ID using lane
+    int additionalIndex = myViewNet->getNet()->getNumberOfAdditionals(myActualAdditionalType);
+    if(lane) {
+        // generate ID using lane
         while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex)) != NULL)
             additionalIndex++;
         return toString(myActualAdditionalType) + "_" + lane->getID() + "_" + toString(additionalIndex);
-	} else {
-		// generate ID without lane
+    } else {
+        // generate ID without lane
         while(myViewNet->getNet()->getAdditional(myActualAdditionalType, toString(myActualAdditionalType) + "_" + toString(additionalIndex)) != NULL)
             additionalIndex++;
         return toString(myActualAdditionalType) + "_" + toString(additionalIndex);
-	}
+    }
 }
 
 
@@ -358,7 +358,7 @@ GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::string value) {
-	myAttr = attr;
+    myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
     myTextField->setText(value.c_str());
@@ -369,7 +369,7 @@ GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::st
 
 void
 GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, int value) {
-	myAttr = attr;
+    myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
     myTextField->setText(toString(value).c_str());
@@ -494,6 +494,7 @@ GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr,
     }
 }
 
+
 void
 GNEAdditionalFrame::additionalParameterList::hideParameter() {
     myAttr = SUMO_ATTR_NOTHING;
@@ -565,6 +566,9 @@ GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite *pare
         myVectorOfAdditionalParameter.push_back(new additionalParameter(this, tgt));
         myVectorOfAdditionalParameterList.push_back(new additionalParameterList(this, tgt));
     }
+
+        // Create help button
+    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP);
 }
 
 
@@ -587,6 +591,8 @@ GNEAdditionalFrame::additionalParameters::clearAttributes() {
 
 void
 GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, SumoXMLAttr attribute) {
+    // Set current additional
+    myAdditional = additional;
     if((myIndexParameterList + myIndexParameter) < maxNumberOfParameters) {
         if(GNEAttributeCarrier::isList(attribute)) {
             // Check type of list
@@ -597,8 +603,8 @@ GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, Su
             else if(GNEAttributeCarrier::isBool(attribute))
                 myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<bool> >(additional, attribute));
             else if(GNEAttributeCarrier::isString(attribute)) 
-					myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
-			// Update index
+                    myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
+            // Update index
             myIndexParameterList++;
         }
         else if(GNEAttributeCarrier::isInt(attribute))
@@ -652,6 +658,79 @@ GNEAdditionalFrame::additionalParameters::getNumberOfAddedAttributes() const {
 
 long
 GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*) {
+    // Create help dialog
+    FXDialogBox* helpDialog = new FXDialogBox(this, ("Parameters of " + toString(myAdditional)).c_str(), DECOR_CLOSE | DECOR_TITLE);
+    // Create FXTable
+    FXTable *myTable = new FXTable(helpDialog, this, MID_TABLE, TABLE_READONLY);
+    myTable->setVisibleRows((FXint)(myIndexParameter + myIndexParameterList));
+    myTable->setVisibleColumns(3);
+    myTable->setTableSize((FXint)(myIndexParameter + myIndexParameterList), 3);
+    myTable->setBackColor(FXRGB(255, 255, 255));
+    myTable->setColumnText(0, "Name");
+    myTable->setColumnText(1, "Value");
+    myTable->setColumnText(2, "Definition");
+    myTable->getRowHeader()->setWidth(0);
+    FXHeader* header = myTable->getColumnHeader();
+    header->setItemJustify(0, JUSTIFY_CENTER_X);
+    header->setItemSize(0, 120);
+    header->setItemJustify(1, JUSTIFY_CENTER_X);
+    header->setItemSize(1, 80);
+    int maxSizeColumnDefinitions = 0;
+    // Iterate over vector of additional parameters
+    for(int i = 0; i < myIndexParameter; i++) {
+        SumoXMLAttr attr = myVectorOfAdditionalParameter.at(i)->getAttr();
+        // Set name of attribute
+        myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
+        // Set type
+        FXTableItem *type = new FXTableItem("");
+        if(GNEAttributeCarrier::isInt(attr))
+            type->setText("int");
+        else if(GNEAttributeCarrier::isFloat(attr))
+            type->setText("float");
+        else if(GNEAttributeCarrier::isBool(attr))
+            type->setText("bool");
+        else if(GNEAttributeCarrier::isString(attr)) 
+            type->setText("string");
+        type->setJustify(FXTableItem::CENTER_X);
+        myTable->setItem(i, 1, type);
+        // Set definition
+        FXTableItem *definition = new FXTableItem(GNEAttributeCarrier::getDefinition(myAdditional, attr).c_str());
+        definition->setJustify(FXTableItem::LEFT);
+        myTable->setItem(i, 2, definition);
+        if(GNEAttributeCarrier::getDefinition(myAdditional, attr).size()> maxSizeColumnDefinitions)
+            maxSizeColumnDefinitions = GNEAttributeCarrier::getDefinition(myAdditional, attr).size();
+    }
+    // Iterate over vector of additional parameters list
+    for(int i = 0; i < myIndexParameterList; i++) {
+        SumoXMLAttr attr = myVectorOfAdditionalParameterList.at(i)->getAttr();
+        // Set name of attribute
+        myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
+        // Set type
+        FXTableItem *type = new FXTableItem("");
+        if(GNEAttributeCarrier::isInt(attr))
+            type->setText("list of int");
+        else if(GNEAttributeCarrier::isFloat(attr))
+            type->setText("list of float");
+        else if(GNEAttributeCarrier::isBool(attr))
+            type->setText("list of bool");
+        else if(GNEAttributeCarrier::isString(attr)) 
+            type->setText("list of string");
+        type->setJustify(FXTableItem::CENTER_X);
+        myTable->setItem(i, 1, type);
+        // Set definition
+        FXTableItem *definition = new FXTableItem(GNEAttributeCarrier::getDefinition(myAdditional, attr).c_str());
+        definition->setJustify(FXTableItem::LEFT);
+        myTable->setItem(i, 2, definition);
+        if(GNEAttributeCarrier::getDefinition(myAdditional, attr).size()> maxSizeColumnDefinitions)
+            maxSizeColumnDefinitions = GNEAttributeCarrier::getDefinition(myAdditional, attr).size();
+    }
+    // Set size of column
+    header->setItemJustify(2, JUSTIFY_CENTER_X);
+    header->setItemSize(2, maxSizeColumnDefinitions*6);
+    // Button Close
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    helpDialog->create();
+    helpDialog->show();
     return 1;
 }
 

@@ -241,7 +241,7 @@ GNEVariableSpeedSignal::getAttribute(SumoXMLAttr key) const {
             return getMicrosimID();
         case SUMO_ATTR_LANES:
             /** completar **/
-			return "";
+            return "";
         case SUMO_ATTR_POSITION:
             return toString(myPosition);
         case SUMO_ATTR_FILE:

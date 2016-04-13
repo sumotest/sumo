@@ -35,7 +35,7 @@
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/gui/div/GUISelectedStorage.h>
 #include <utils/xml/SUMOSAXHandler.h>
-#include "GNEDynamicFrame.h"	// PABLO #2036
+#include "GNEDynamicFrame.h"    // PABLO #2036
 
 // ===========================================================================
 // class declarations
@@ -224,6 +224,9 @@ public:
         additionalParameters() {}
 
     private:
+        /// @brief current additional
+        SumoXMLTag myAdditional;
+
         /// @brief vector with the additional parameters
         std::vector<additionalParameter*> myVectorOfAdditionalParameter;
 
@@ -238,6 +241,9 @@ public:
 
         /// @brief max number of parameters (Defined in constructor)
         int maxNumberOfParameters;
+
+        /// @brief button for help
+        FXButton *helpAdditional;
     };
 
     // ===========================================================================
@@ -427,8 +433,8 @@ private:
     /// @brief set parameters depending of the new additionalType
     void setParametersOfAdditional(SumoXMLTag actualAdditionalType);
 
-	/// @brief generate a ID for an additiona element
-	std::string generateID(GNELane *lane) const;
+    /// @brief generate a ID for an additiona element
+    std::string generateID(GNELane *lane) const;
 
     /// @brief obtain the Start position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setStartPosition(SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);

@@ -212,7 +212,7 @@ public:
      * @param[in] cont Holds the information whether detectors longer than a lane shall be cut off or continued
      * @param[in] timeThreshold The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
      * @param[in] speedThreshold The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
-     * @param[in] jamThreshold 	The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
+     * @param[in] jamThreshold     The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
      * @param[in] blocked set initial blocking state of item
      * @return true if was sucesfully created, false in other case
      * @exception InvalidArgument If the detector can not be added to the net (is duplicate)

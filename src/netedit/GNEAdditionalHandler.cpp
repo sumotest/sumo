@@ -162,15 +162,15 @@ GNEAdditionalHandler::parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& 
     // Check if parsing of parameter was correct
     if (!ok)
         throw ProcessError();
-	// Obtain pointer to lanes
-	std::vector<GNELane*> lanes;
-	for(int i = 0; i < lanesID.size(); i++) {
-		GNELane *lane = myViewNet->getNet()->getLane(lanesID.at(i));
-		if(lane)
-			lanes.push_back(lane);
-		else
-			throw ProcessError();
-	}
+    // Obtain pointer to lanes
+    std::vector<GNELane*> lanes;
+    for(int i = 0; i < lanesID.size(); i++) {
+        GNELane *lane = myViewNet->getNet()->getLane(lanesID.at(i));
+        if(lane)
+            lanes.push_back(lane);
+        else
+            throw ProcessError();
+    }
     try {
         // if operation of build variable speed signal was sucesfully, save Id
         if(buildVariableSpeedSignal(myViewNet, id, Position(posx,posy), lanes, file, false))
