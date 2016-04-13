@@ -366,6 +366,15 @@ NBEdge::init(unsigned int noLanes, bool tryIgnoreNodePositions, const std::strin
     // prepare container
     myLength = myFrom->getPosition().distanceTo(myTo->getPosition());
     assert(myGeom.size() >= 2);
+    if (myLanes.size() > noLanes) {
+        // remove connections targeting the removed lanes
+        const EdgeVector& incoming = myFrom->getIncomingEdges();
+        for (EdgeVector::const_iterator i = incoming.begin(); i != incoming.end(); i++) {
+            for (int lane = noLanes; lane < (int)myLanes.size(); ++lane) {
+                (*i)->removeFromConnections(this, -1, lane);
+            }
+        }
+    }
     myLanes.clear();
     for (unsigned int i = 0; i < noLanes; i++) {
         myLanes.push_back(Lane(this, origID));
@@ -1584,6 +1593,10 @@ NBEdge::recheckLanes() {
                         i = myConnections.erase(i);
                     }
                 }
+            } else if (isRailway(getPermissions(c.fromLane)) && isRailway(c.toEdge->getPermissions(c.toLane))
+                    && isTurningDirectionAt(c.toEdge))  {
+                // do not allow sharp rail turns
+                i = myConnections.erase(i);
             } else {
                 ++i;
             }
@@ -2532,8 +2545,12 @@ NBEdge::shiftPositionAtNode(NBNode* node, NBEdge* other) {
             PositionVector tmp = myGeom;
             // @note this doesn't work well for vissim networks
             //tmp.move2side(MIN2(neededOffset - dist, neededOffset2 - dist2));
-            tmp.move2side(neededOffset - dist);
-            myGeom[i] = tmp[i];
+            try {
+                tmp.move2side(neededOffset - dist);
+                myGeom[i] = tmp[i];
+            } catch (InvalidArgument&) {
+                WRITE_WARNING("Could not avoid overlapping shape at node '" + node->getID() + "' for edge '" + getID() + "'");
+            }
         }
     }
 }

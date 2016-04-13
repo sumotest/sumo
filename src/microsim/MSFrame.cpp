@@ -87,6 +87,7 @@ MSFrame::fillOptions() {
     oc.doRegister("net-file", 'n', new Option_FileName());
     oc.addSynonyme("net-file", "net");
     oc.addDescription("net-file", "Input", "Load road network description from FILE");
+    oc.addXMLDefault("net-file", "net");
 
     oc.doRegister("route-files", 'r', new Option_FileName());
     oc.addSynonyme("route-files", "routes");
@@ -217,13 +218,13 @@ MSFrame::fillOptions() {
 
     // register the simulation settings
     oc.doRegister("begin", 'b', new Option_String("0", "TIME"));
-    oc.addDescription("begin", "Time", "Defines the begin time; The simulation starts at this time");
+    oc.addDescription("begin", "Time", "Defines the begin time in seconds; The simulation starts at this time");
 
     oc.doRegister("end", 'e', new Option_String("-1", "TIME"));
-    oc.addDescription("end", "Time", "Defines the end time; The simulation ends at this time");
+    oc.addDescription("end", "Time", "Defines the end time in seconds; The simulation ends at this time");
 
     oc.doRegister("step-length", new Option_String("1", "TIME"));
-    oc.addDescription("step-length", "Time", "Defines the step duration");
+    oc.addDescription("step-length", "Time", "Defines the step duration in seconds");
 
     oc.doRegister("lateral-resolution", new Option_Float(-1));
     oc.addDescription("lateral-resolution", "Processing", "Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane");
@@ -254,8 +255,12 @@ MSFrame::fillOptions() {
 
     oc.doRegister("time-to-teleport", new Option_String("300", "TIME"));
     oc.addDescription("time-to-teleport", "Processing", "Specify how long a vehicle may wait until being teleported, defaults to 300, non-positive values disable teleporting");
+
     oc.doRegister("time-to-teleport.highways", new Option_String("0", "TIME"));
     oc.addDescription("time-to-teleport.highways", "Processing", "The waiting time after which vehicles on a fast road (speed > 69m/s) are teleported if they are on a non-continuing lane");
+
+    oc.doRegister("waiting-time-memory", new Option_String("100", "TIME"));
+    oc.addDescription("waiting-time-memory", "Processing", "Length of time interval, over which accumulated waiting time is taken into account");
 
     oc.doRegister("max-depart-delay", new Option_String("-1", "TIME"));
     oc.addDescription("max-depart-delay", "Processing", "How long vehicles wait for departure before being skipped, defaults to -1 which means vehicles are never skipped");
@@ -471,6 +476,9 @@ MSFrame::checkOptions() {
     if (string2time(oc.getString("lanechange.duration")) > 0 && oc.getFloat("lateral-resolution") > 0) {
         WRITE_ERROR("Only one of the options 'lanechange.duration' or 'lateral-resolution' may be given.");
     }
+    if (oc.getBool("lanechange.allow-swap")) {
+        WRITE_WARNING("The option 'lanechange.allow-swap' is deprecated, and will not be supported in future versions of SUMO.");
+    }
     if (oc.getBool("duration-log.statistics") && oc.isDefault("verbose")) {
         oc.set("verbose", "true");
     }
@@ -507,7 +515,9 @@ MSFrame::setMSGlobals(OptionsCont& oc) {
     if (MSGlobals::gUseMesoSim) {
         MSGlobals::gUsingInternalLanes = false;
     }
+    MSGlobals::gWaitingTimeMemory = string2time(oc.getString("waiting-time-memory"));
     MSAbstractLaneChangeModel::initGlobalOptions(oc);
+
 
     DELTA_T = string2time(oc.getString("step-length"));
 #ifdef _DEBUG

@@ -1,4 +1,4 @@
-SUMO Version dev-SVN-r20250
+SUMO Version svn
  Copyright (C) 2001-2015 DLR and contributors; http://sumo.dlr.de
 A microscopic road traffic simulation.
 
@@ -80,11 +80,11 @@ Output Options:
   --save-state.files FILE              Files for network states
 
 Time Options:
-  -b, --begin TIME                     Defines the begin time;
+  -b, --begin TIME                     Defines the begin time in seconds;
                                          The simulation starts at this time
-  -e, --end TIME                       Defines the end time;
+  -e, --end TIME                       Defines the end time in seconds;
                                          The simulation ends at this time
-  --step-length TIME                   Defines the step duration
+  --step-length TIME                   Defines the step duration in seconds
 
 Processing Options:
   --lateral-resolution FLOAT           Defines the resolution in m when
@@ -112,6 +112,9 @@ Processing Options:
                                          a fast road (speed > 69m/s) are
                                          teleported if they are on a
                                          non-continuing lane
+  --waiting-time-memory TIME           Length of time interval, over which
+                                         accumulated waiting time is taken into
+                                         account
   --max-depart-delay TIME              How long vehicles wait for departure
                                          before being skipped, defaults to -1
                                          which means vehicles are never skipped

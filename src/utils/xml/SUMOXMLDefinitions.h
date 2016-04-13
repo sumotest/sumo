@@ -94,6 +94,10 @@ enum SumoXMLTag {
     SUMO_TAG_REROUTER,
     /// @brief A bus stop
     SUMO_TAG_BUS_STOP,
+    /// @brief A train stop (alias for bus stop)
+    SUMO_TAG_TRAIN_STOP,
+    /// @brief An access point for a train stop
+    SUMO_TAG_ACCESS,
     /// @brief A container stop
     SUMO_TAG_CONTAINER_STOP,
     /// @brief A Charging Station
@@ -211,6 +215,7 @@ enum SumoXMLTag {
     SUMO_TAG_CF_WIEDEMANN,
 
     SUMO_TAG_PERSON,
+    SUMO_TAG_PERSONTRIP,
     SUMO_TAG_RIDE,
     SUMO_TAG_WALK,
 
@@ -373,6 +378,7 @@ enum SumoXMLAttr {
     SUMO_ATTR_CONTAINER_CAPACITY,
     SUMO_ATTR_PERSON_NUMBER,
     SUMO_ATTR_CONTAINER_NUMBER,
+    SUMO_ATTR_MODES,
     /* source definitions */
     SUMO_ATTR_FUNCTION,
     SUMO_ATTR_POSITION,

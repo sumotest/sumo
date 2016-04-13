@@ -44,6 +44,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "MSGlobals.h"
 #include "MSVehicleType.h"
 #include "MSBaseVehicle.h"
 #include "MSLink.h"
@@ -65,8 +66,7 @@ class MSDevice;
 class MSEdgeWeightsStorage;
 class OutputDevice;
 class Position;
-class MSDevice_Person;
-class MSDevice_Container;
+class MSDevice_Transportable;
 class MSContainer;
 class MSJunction;
 class MSLeaderInfo;
@@ -143,6 +143,60 @@ public:
         // to the lane occupied by its back
         SUMOReal myBackPos;
 
+    };
+
+
+    /** @class WaitingTimeCollector
+     * @brief Stores the waiting intervals over the previous seconds (memory is to be specified in ms.).
+     */
+    class WaitingTimeCollector {
+        friend class MSVehicle;
+
+        typedef std::list<std::pair<SUMOTime, SUMOTime> > waitingIntervalList;
+
+    public:
+        /// Constructor.
+        WaitingTimeCollector(SUMOTime memory = MSGlobals::gWaitingTimeMemory);
+
+        /// Copy constructor.
+        WaitingTimeCollector(const WaitingTimeCollector& wt);
+
+        /// Assignment operator.
+        WaitingTimeCollector& operator=(const WaitingTimeCollector& wt);
+
+        /// Operator !=
+        bool operator!=(const WaitingTimeCollector& wt) const;
+
+        /// Assignment operator (in place!)
+        WaitingTimeCollector& operator=(SUMOTime t);
+
+        // return the waiting time within the last memory millisecs
+        SUMOTime cumulatedWaitingTime(SUMOTime memory=-1) const;
+
+        // process time passing for dt millisecs
+        void passTime(SUMOTime dt, bool waiting);
+
+        // maximal memory time stored
+        SUMOTime getMemorySize() const {
+           return myMemorySize;
+        }
+
+        // maximal memory time stored
+        const waitingIntervalList& getWaitingIntervals() const {
+           return myWaitingIntervals;
+        }
+
+    private:
+        /// the maximal memory to store
+        SUMOTime myMemorySize;
+
+        /// the stored waiting intervals within the last memory milliseconds
+        /// If the current (ongoing) waiting interval has begun at time t - dt (where t is the current time)
+        /// then waitingIntervalList[0]->first = 0., waitingIntervalList[0]->second = dt
+        waitingIntervalList myWaitingIntervals;
+
+        /// append an amount of dt millisecs to the stored waiting times
+        void appendWaitingTime(SUMOTime dt);
     };
 
 
@@ -430,6 +484,16 @@ public:
     }
 
 
+    /** @brief Returns the SUMOTime waited (speed was lesser than 0.1m/s) within the last t millisecs
+     *
+     * @param[in] t specifies the length of the interval over which the cumulated waiting time is to be summed up (defaults to and must not exceed MSGlobals::gWaitingTimeMemory)
+     * @return The time the vehicle was standing within the last t millisecs
+     */
+    SUMOTime getAccumulatedWaitingTime(SUMOTime t = MSGlobals::gWaitingTimeMemory) const {
+        return myWaitingTimeCollector.cumulatedWaitingTime(t);
+    }
+
+
     /** @brief Returns the number of seconds waited (speed was lesser than 0.1m/s)
      *
      * The value is reset if the vehicle moves faster than 0.1m/s
@@ -438,6 +502,16 @@ public:
      */
     SUMOReal getWaitingSeconds() const {
         return STEPS2TIME(myWaitingTime);
+    }
+
+
+    /** @brief Returns the number of seconds waited (speed was lesser than 0.1m/s) within the last millisecs
+     *
+     * @return The time the vehicle was standing within the last t millisecs
+     */
+
+    SUMOReal getAccumulatedWaitingSeconds() const {
+        return STEPS2TIME(getAccumulatedWaitingTime());
     }
 
 
@@ -800,9 +874,15 @@ public:
 
 
     /** @brief Returns fuel consumption of the current state
-     * @return The current fuel consumption
-     */
+    * @return The current fuel consumption
+    */
     SUMOReal getFuelConsumption() const;
+
+
+    /** @brief Returns electricity consumption of the current state
+    * @return The current electricity consumption
+    */
+    SUMOReal getElectricityConsumption() const;
 
 
     /** @brief Returns noise emissions of the current state
@@ -829,6 +909,11 @@ public:
      */
     void addContainer(MSTransportable* container);
 
+    /// @brief retrieve riding persons
+    const std::vector<MSTransportable*>& getPersons() const;
+
+    /// @brief retrieve riding containers
+    const std::vector<MSTransportable*>& getContainers() const;
 
     /** @brief Returns the number of persons
      * @return The number of passengers on-board
@@ -1270,6 +1355,7 @@ protected:
 
     /// @brief The time the vehicle waits (is not faster than 0.1m/s) in seconds
     SUMOTime myWaitingTime;
+    WaitingTimeCollector myWaitingTimeCollector;
 
     /// @brief This Vehicles driving state (pos and speed)
     State myState;
@@ -1285,15 +1371,16 @@ protected:
     std::vector<std::vector<LaneQ> > myBestLanes;
     std::vector<LaneQ>::iterator myCurrentLaneInBestLanes;
     static std::vector<MSLane*> myEmptyLaneVector;
+    static std::vector<MSTransportable*> myEmptyTransportableVector;
 
     /// @brief The vehicle's list of stops
     std::list<Stop> myStops;
 
     /// @brief The passengers this vehicle may have
-    MSDevice_Person* myPersonDevice;
+    MSDevice_Transportable* myPersonDevice;
 
     /// @brief The containers this vehicle may have
-    MSDevice_Container* myContainerDevice;
+    MSDevice_Transportable* myContainerDevice;
 
     /// @brief The current acceleration after dawdling in m/s
     SUMOReal myAcceleration;
