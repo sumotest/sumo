@@ -286,6 +286,9 @@ MSFrame::fillOptions() {
     oc.doRegister("pedestrian.striping.jamtime", new Option_String("300", "TIME"));
     oc.addDescription("pedestrian.striping.jamtime", "Processing", "Time in seconds after which pedestrians start squeezing through a jam when using model 'striping' (non-positive values disable squeezing)");
 
+    oc.doRegister("pedestrian.remote.address", new Option_String("localhost:9000"));
+    oc.addDescription("pedestrian.remote.address","Processing","host:port at which the remote application is listening.");
+
     // generic routing options
     oc.doRegister("routing-algorithm", new Option_String("dijkstra"));
     oc.addDescription("routing-algorithm", "Routing",

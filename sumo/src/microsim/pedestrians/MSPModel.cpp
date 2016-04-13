@@ -74,6 +74,7 @@ MSPModel::getModel() {
             myModel = new MSPModel_NonInteracting(oc, net);
         } else if (model == "remote"){
         	myModel = new MSPModelRemoteControlled(oc, net);
+
         }else {
             throw ProcessError("Unknown pedestrian model '" + model + "'");
         }
