@@ -43,14 +43,14 @@
 // ===========================================================================
 std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > GNEAttributeCarrier::_allowedAttributes;
 std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedTags;
-std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;                                                // PABLO #1916
+std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;                                               // PABLO #1916
 std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalIntAttrs;                                                     // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;                                                      // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;                                                                // PABLO #1916
+std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;                                                   // PABLO #1916
+std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;                                                             // PABLO #1916
 std::set<SumoXMLAttr> GNEAttributeCarrier::myUniqueAttrs;
 std::map<SumoXMLTag, SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalWithParentTags;                            // PABLO #1916
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > GNEAttributeCarrier::myDiscreteChoices;
-std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string > > GNEAttributeCarrier::myAttrDefinitions;                    // PABLO #1916
+std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string > > GNEAttributeCarrier::myAttrDefinitions;                  // PABLO #1916
 
 const std::string GNEAttributeCarrier::LOADED = "loaded";
 const std::string GNEAttributeCarrier::GUESSED = "guessed";

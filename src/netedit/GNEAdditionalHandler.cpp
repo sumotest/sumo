@@ -232,6 +232,10 @@ void
 GNEAdditionalHandler::parseAndBuildBusStop(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
+    // Check if parsing of id was correct
+    if (!ok) {
+        throw ProcessError();
+    }
     // get positions
     SUMOReal startPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
     SUMOReal endPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, 10);
@@ -239,10 +243,6 @@ GNEAdditionalHandler::parseAndBuildBusStop(const SUMOSAXAttributes& attrs) {
     std::vector<std::string> lines;
     SUMOSAXAttributes::parseStringVector(attrs.getOpt<std::string>(SUMO_ATTR_LINES, id.c_str(), ok, "", false), lines);
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
-    // Check if parsing of parameters was correct
-    if (!ok) {
-        throw ProcessError();
-    }
     try {
         // get the lane
         GNELane* lane = getLane(attrs, SUMO_TAG_BUS_STOP, id);
@@ -261,6 +261,10 @@ void
 GNEAdditionalHandler::parseAndBuildChargingStation(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
+    // Check if parsing of id was correct
+    if (!ok) {
+        throw ProcessError();
+    }
     // get positions
     SUMOReal startPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_STARTPOS, id.c_str(), ok, 0);
     SUMOReal endPos = attrs.getOpt<SUMOReal>(SUMO_ATTR_ENDPOS, id.c_str(), ok, 10);
@@ -270,9 +274,6 @@ GNEAdditionalHandler::parseAndBuildChargingStation(const SUMOSAXAttributes& attr
     bool chargeInTransit = attrs.getOpt<bool>(SUMO_ATTR_CHARGEINTRANSIT, id.c_str(), ok, 0);
     SUMOReal chargeDelay = attrs.getOpt<SUMOReal>(SUMO_ATTR_CHARGEDELAY, id.c_str(), ok, 0);
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
-    // Check if parsing of parameters was correct
-    if (!ok)
-        throw ProcessError();
     try {
         // get the lane
         GNELane* lane = getLane(attrs, SUMO_TAG_CHARGING_STATION, id);
@@ -329,13 +330,14 @@ void
 GNEAdditionalHandler::parseAndBuildDetectorE1(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
+    // Check if parsing of id was correct
+    if (!ok) {
+        throw ProcessError();
+    }
     const SUMOTime frequency = attrs.getSUMOTimeReporting(SUMO_ATTR_FREQUENCY, id.c_str(), ok);
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, id.c_str(), ok);
     const bool splitByType = attrs.getOpt<bool>(SUMO_ATTR_SPLIT_VTYPE, id.c_str(), ok, false, false);
     const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
-    // Check if parsing of parameters was correct
-    if (!ok)
-        throw ProcessError();
     try {
         // get the lane
         GNELane* lane = getLane(attrs, SUMO_TAG_E1DETECTOR, id);
@@ -351,6 +353,10 @@ void
 GNEAdditionalHandler::parseAndBuildDetectorE2(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     const std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
+    // Check if parsing of id was correct
+    if (!ok) {
+        throw ProcessError();
+    }
     const SUMOTime frequency = attrs.getSUMOTimeReporting(SUMO_ATTR_FREQUENCY, id.c_str(), ok);
     const SUMOTime haltingTimeThreshold = attrs.getOptSUMOTimeReporting(SUMO_ATTR_HALTING_TIME_THRESHOLD, id.c_str(), ok, TIME2STEPS(1));
     const SUMOReal haltingSpeedThreshold = attrs.getOpt<SUMOReal>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, id.c_str(), ok, 5.0f / 3.6f);
@@ -359,9 +365,6 @@ GNEAdditionalHandler::parseAndBuildDetectorE2(const SUMOSAXAttributes& attrs) {
     const SUMOReal length = attrs.get<SUMOReal>(SUMO_ATTR_LENGTH, id.c_str(), ok);
     const bool cont = attrs.getOpt<bool>(SUMO_ATTR_CONT, id.c_str(), ok, false);
     const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
-    // Check if parsing of parameter was correct
-    if (!ok)
-        throw ProcessError();
     try {
         // get the lane
         GNELane* lane = getLane(attrs, SUMO_TAG_E2DETECTOR, id);
@@ -377,13 +380,14 @@ void
 GNEAdditionalHandler::parseAndBuildDetectorE3(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     std::string id = attrs.get<std::string>(SUMO_ATTR_ID, 0, ok);
+    // Check if parsing of id was correct
+    if (!ok) {
+        throw ProcessError();
+    }
     const SUMOTime frequency = attrs.getSUMOTimeReporting(SUMO_ATTR_FREQUENCY, id.c_str(), ok);
     const SUMOReal posx = attrs.getOpt<SUMOReal>(SUMO_ATTR_X, id.c_str(), ok, 0);
     const SUMOReal posy = attrs.getOpt<SUMOReal>(SUMO_ATTR_Y, id.c_str(), ok, 0);
     const std::string file = attrs.getOpt<std::string>(SUMO_ATTR_FILE, id.c_str(), ok, "", false);
-    // Check if parsing of parameter was correct
-    if (!ok)
-        throw ProcessError();
     try {
         // if operation of build detector E3 was sucesfully, save Id
         if(buildDetectorE3(myViewNet, id, Position(posx,posy), frequency, file, false))
@@ -399,9 +403,6 @@ void
 GNEAdditionalHandler::parseAndBuildDetectorEntry(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, 0, ok);
-    // Check if parsing of parameter was correct
-    if (!ok)
-        throw ProcessError();
     try {
         // get the lane
         GNELane* lane = getLane(attrs, SUMO_TAG_E2DETECTOR, "");
@@ -421,9 +422,6 @@ void
 GNEAdditionalHandler::parseAndBuildDetectorExit(const SUMOSAXAttributes& attrs) {
     bool ok = true;
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, 0, ok);
-    // Check if parsing of parameter was correct
-    if (!ok)
-        throw ProcessError();
     try {
         // get the lane
         GNELane* lane = getLane(attrs, SUMO_TAG_E2DETECTOR, "");

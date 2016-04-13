@@ -47,6 +47,7 @@
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/images/GUITexturesHelper.h>
 #include <utils/xml/SUMOSAXHandler.h>
+#include <utils/common/MsgHandler.h>
 
 #include "GNEDetectorE3.h"
 #include "GNELane.h"
@@ -135,17 +136,22 @@ GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoLis
 
 void
 GNEDetectorE3::writeAdditional(OutputDevice& device) {
-    // Write parameters
-    device.openTag(getTag());
-    device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
-    if(!myFilename.empty())
-        device.writeAttr(SUMO_ATTR_FILE, myFilename);
-    device.writeAttr(SUMO_ATTR_X, myPosition.x());
-    device.writeAttr(SUMO_ATTR_Y, myPosition.y());
-    writeAdditionalChildrens(device);
-    // Close tag
-    device.closeTag();
+    // Only save E3 if have Entry/Exits
+    if(getNumberOfChilds() > 0) {
+        // Write parameters
+        device.openTag(getTag());
+        device.writeAttr(SUMO_ATTR_ID, getID());
+        device.writeAttr(SUMO_ATTR_FREQUENCY, myFreq);
+        if(!myFilename.empty())
+            device.writeAttr(SUMO_ATTR_FILE, myFilename);
+        device.writeAttr(SUMO_ATTR_X, myPosition.x());
+        device.writeAttr(SUMO_ATTR_Y, myPosition.y());
+        writeAdditionalChildrens(device);
+        // Close tag
+        device.closeTag();
+    }
+    else
+        WRITE_WARNING(toString(getTag()) + " with ID = '" + getID() + "' cannot be writed in additional file because don't have childs.");
 }
 
 
