@@ -71,7 +71,7 @@ public:
     GNELane(GNEEdge& edge, const int index);
 
     /// @brief Destructor
-    virtual ~GNELane();
+    ~GNELane();
 
     /// @name inherited from GUIGlObject
     //@{
@@ -175,11 +175,11 @@ public:
      */                                                                                     // PABLO #1916
     bool removeAdditional(GNEAdditional *additional);                                       // PABLO #1916
 
-    /* @brief method to obtain a set of additional elements associated to this lane     // PABLO #1916
-       @return set with all additional elements                                         // PABLO #1916
-       @todo modify to get only a specific type of additional element                   // PABLO #1916
-     */                                                                                 // PABLO #1916
-    std::set<GUIGlID> getAdditionals();                                                 // PABLO #1916
+    /* @brief method to obtain a vector of additional elements associated to this lane      // PABLO #1916
+       @return set with all additional elements                                             // PABLO #1916
+@todo modify to get only a specific type of additional element                       // PABLO #1916
+     */                                                                                     // PABLO #1916
+    std::vector<GNEAdditional*> getAdditionals();                                           // PABLO #1916
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -230,7 +230,7 @@ private:
     //@}
 
     /// @brief vector with pointers to additional elements placed in this lane  // PABLO #1916
-    additionalVector additionalElements;                                        // PABLO #1916
+    additionalVector myAdditionalElements;                                      // PABLO #1916
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;

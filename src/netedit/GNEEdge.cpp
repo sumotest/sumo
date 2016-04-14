@@ -212,10 +212,19 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
     setGeometry(geom, false);
 }
 
+
+GNENet*                     // PABLO #1916
+GNEEdge::getNet() const {   // PABLO #1916
+    return myNet;           // PABLO #1916
+}                           // PABLO #1916
+
+
 NBEdge*
 GNEEdge::getNBEdge() {
     return &myNBEdge;
 }
+
+
 Position
 GNEEdge::getSplitPos(const Position& clickPos) {
     const PositionVector& geom = myNBEdge.getGeometry();
@@ -400,7 +409,7 @@ GNEEdge::getLaneGlIDs() {
 }
 
 
-const GNEEdge::LaneVector&
+const std::vector<GNELane*>&
 GNEEdge::getLanes() {
     return myLanes;
 }

@@ -118,6 +118,9 @@ public:
     /** @brief update edge geometry after junction move */
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
 
+    /// @brief returns pointer to net   // PABLO #1916
+    GNENet *getNet() const;             // PABLO #1916
+
     /// @brief returns the internal NBEdge
     NBEdge* getNBEdge();
 
@@ -201,7 +204,7 @@ public:
     std::set<GUIGlID> getLaneGlIDs();
 
     /// @brief returns a reference to the lane vector
-    const LaneVector& getLanes();
+    const std::vector<GNELane*>& getLanes();
 
     /// @brief whether this edge was created from a split
     bool wasSplit();

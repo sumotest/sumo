@@ -68,6 +68,7 @@
 #include "GNEChange_Lane.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
+#include "GNEChange_Additional.h"   // PABLO #1916
 #include "GNEAdditional.h"          // PABLO #1916
 #include "GNEAdditionalSet.h"       // PABLO #1916
 #include "GNEStoppingPlace.h"       // PABLO #1916
@@ -322,6 +323,13 @@ GNENet::deleteJunction(GNEJunction* junction, GNEUndoList* undoList) {
 void
 GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("delete edge");
+    // Iterate over lanes to remove additionals                                                                         // PABLO #1916
+    for (std::vector<GNELane*>::const_iterator i = edge->getLanes().begin(); i != edge->getLanes().end(); i++) {        // PABLO #1916
+        std::vector<GNEAdditional*> additionalsOfLane = (*i)->getAdditionals();                                         // PABLO #1916
+        for(std::vector<GNEAdditional*>::iterator j = additionalsOfLane.begin(); j != additionalsOfLane.end(); j++)     // PABLO #1916
+            undoList->add(new GNEChange_Additional(this, *j, false), true);                                             // PABLO #1916
+    }
+
     undoList->add(new GNEChange_Edge(this, edge, false), true);
     if (gSelected.isSelected(GLO_EDGE, edge->getGlID())) {
         std::set<GUIGlID> deselected;
@@ -344,6 +352,12 @@ GNENet::deleteLane(GNELane* lane, GNEUndoList* undoList) {
     const NBEdge::Lane& laneAttrs = edge->getNBEdge()->getLaneStruct(lane->getIndex());
     const bool sidewalk = laneAttrs.permissions == SVC_PEDESTRIAN;
     undoList->add(new GNEChange_Lane(edge, lane, laneAttrs, false), true);
+    
+    // Remove additionals of lane                                                                                   // PABLO #1916
+    std::vector<GNEAdditional*> additionalsOfLane = lane->getAdditionals();                                         // PABLO #1916
+    for(std::vector<GNEAdditional*>::iterator i = additionalsOfLane.begin(); i != additionalsOfLane.end(); i++)     // PABLO #1916
+        undoList->add(new GNEChange_Additional(this, *i, false), true);                                             // PABLO #1916
+        
     if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {
         std::set<GUIGlID> deselected;
         deselected.insert(lane->getGlID());
@@ -747,21 +761,11 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             }
             break;
         }
-        case GLO_ADDITIONAL: {                                                                                                                                 // PABLO #1916
-            // Iterate over every edge                                                                                                                      // PABLO #1916
-            for (GNEEdges::const_iterator itEdges = myEdges.begin(); itEdges != myEdges.end(); itEdges++) {                                                 // PABLO #1916
-                GNEEdge::LaneVector lanesOfEdge = itEdges->second->getLanes();                                                                              // PABLO #1916
-                // Iterate over every lane of edge                                                                                                          // PABLO #1916
-                for (GNEEdge::LaneVector::const_iterator itLanes = lanesOfEdge.begin(); itLanes != lanesOfEdge.end(); itLanes++) {                          // PABLO #1916
-                    std::set<GUIGlID> additionalOfLane = (*itLanes)->getAdditionals();                                                                      // PABLO #1916
-                    // Iterate over every additional of lane                                                                                                // PABLO #1916
-                    for (std::set<GUIGlID>::iterator itAdditionals = additionalOfLane.begin(); itAdditionals != additionalOfLane.end(); itAdditionals++) {  // PABLO #1916
-                        result.insert(*itAdditionals);                                                                                                      // PABLO #1916
-                    }                                                                                                                                       // PABLO #1916
-                }                                                                                                                                           // PABLO #1916
-            }                                                                                                                                               // PABLO #1916
-            break;                                                                                                                                          // PABLO #1916
-        }                                                                                                                                                   // PABLO #1916
+        case GLO_ADDITIONAL: {                                                                          // PABLO #1916
+            for(GNEAdditionals::iterator it = myAdditionals.begin(); it != myAdditionals.end(); it++)   // PABLO #1916
+                result.insert(it->second->getGlID());                                                   // PABLO #1916
+            break;                                                                                      // PABLO #1916
+        }                                                                                               // PABLO #1916
         default: // add other types once we know them
             break;
     }
@@ -1073,7 +1077,7 @@ GNENet::getNumberOfAdditionals(SumoXMLTag type) {                               
         if(type == SUMO_TAG_NOTHING || type == i->second->getTag())                         // PABLO #1916
             counter++;                                                                      // PABLO #1916
     return counter;                                                                         // PABLO #1916
-}                                                                                           // PABLO #1916                                                                          // PABLO #1916
+}                                                                                           // PABLO #1916
 
 // ===========================================================================
 // private
