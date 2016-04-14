@@ -12,7 +12,7 @@
 // The XML-Handler for network loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -161,10 +161,12 @@ NLHandler::myStartElement(int element,
                 myTriggerBuilder.parseAndBuildRerouter(myNet, attrs, getFileName());
                 break;
             case SUMO_TAG_BUS_STOP:
-                myTriggerBuilder.parseAndBuildBusStop(myNet, attrs);
-                break;
+            case SUMO_TAG_TRAIN_STOP:
             case SUMO_TAG_CONTAINER_STOP:
-                myTriggerBuilder.parseAndBuildContainerStop(myNet, attrs);
+                myTriggerBuilder.parseAndBuildStoppingPlace(myNet, attrs, (SumoXMLTag)element);
+                break;
+            case SUMO_TAG_ACCESS:
+                myTriggerBuilder.addAccess(myNet, attrs);
                 break;
             case SUMO_TAG_CHARGING_STATION:
                 myTriggerBuilder.parseAndBuildChargingStation(myNet, attrs);

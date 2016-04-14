@@ -9,7 +9,7 @@
 // Stores the information about how to visualize structures
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -335,10 +335,10 @@ GUIVisualizationSettings::GUIVisualizationSettings()
     scheme.addColor(RGBColor::YELLOW, (SUMOReal)200);
     scheme.addColor(RGBColor::RED, (SUMOReal)300);
     vehicleColorer.addScheme(scheme);
-    vehicleColorer.addScheme(GUIColorScheme("random", RGBColor::YELLOW, "", true));
     scheme = GUIColorScheme("by electricity consumption", RGBColor::GREEN);
     scheme.addColor(RGBColor::RED, (SUMOReal)5);
     vehicleColorer.addScheme(scheme);
+    vehicleColorer.addScheme(GUIColorScheme("random", RGBColor::YELLOW, "", true));
 
     /// add person coloring schemes
     personColorer.addScheme(GUIColorScheme("given person/type color", RGBColor::YELLOW, "", true));

@@ -9,7 +9,7 @@
 // A MSVehicle extended by some values for usage within the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -101,7 +101,7 @@ GUIParameterTableWindow*
 GUIVehicle::getParameterWindow(GUIMainWindow& app,
                                GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 43);
+        new GUIParameterTableWindow(app, *this, 33);
     // add items
     ret->mkItem("lane [id]", false, myLane->getID());
     ret->mkItem("position [m]", true,
@@ -168,7 +168,18 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
                 new FunctionBinding<GUIVehicle, unsigned int>(this, &MSVehicle::getContainerNumber));
 
     ret->mkItem("parameters [key:val]", false, toString(getParameter().getMap()));
-    ret->mkItem("", false, "");
+    // close building
+    ret->closeBuilding();
+    return ret;
+}
+
+
+GUIParameterTableWindow*
+GUIVehicle::getTypeParameterWindow(GUIMainWindow& app,
+                               GUISUMOAbstractView&) {
+    GUIParameterTableWindow* ret =
+        new GUIParameterTableWindow(app, *this, 14);
+    // add items
     ret->mkItem("Type Information:", false, "");
     ret->mkItem("type [id]", false, myType->getID());
     ret->mkItem("length", false, myType->getLength());
@@ -188,6 +199,8 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
     ret->closeBuilding();
     return ret;
 }
+
+
 
 
 void
@@ -339,7 +352,7 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
         case 9:
             return getWaitingSeconds();
         case 10:
-            return 100*getAccumulatedWaitingSeconds()/STEPS2TIME(MSGlobals::gWaitingTimeMemory);
+            return getAccumulatedWaitingSeconds();
         case 11:
             return getLastLaneChangeOffset();
         case 12:
@@ -373,7 +386,7 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
             return getTimeGap();
         case 25:
             return STEPS2TIME(getDepartDelay());
-        case 27:
+        case 26:
             return getElectricityConsumption();
     }
     return 0;
@@ -505,12 +518,13 @@ GUIVehicle::drawAction_drawRailCarriages(const GUIVisualizationSettings& s, SUMO
             }
             backLane = prev;
         }
-        front = lane->getShape().positionAtOffset2D(carriageOffset);
-        back = backLane->getShape().positionAtOffset2D(carriageBackOffset);
+        front = lane->geometryPositionAtOffset(carriageOffset);
+        back = backLane->geometryPositionAtOffset(carriageBackOffset);
         if (front == back) {
             // no place for drawing available
             continue;
         }
+        const SUMOReal drawnCarriageLength = front.distanceTo2D(back);
         angle = atan2((front.x() - back.x()), (back.y() - front.y())) * (SUMOReal) 180.0 / (SUMOReal) PI;
         if (i >= firstPassengerCarriage) {
             computeSeats(front, back, requiredSeats);
@@ -522,10 +536,10 @@ GUIVehicle::drawAction_drawRailCarriages(const GUIVisualizationSettings& s, SUMO
             glBegin(GL_TRIANGLE_FAN);
             glVertex2d(-halfWidth + xCornerCut, 0);
             glVertex2d(-halfWidth, yCornerCut);
-            glVertex2d(-halfWidth, carriageLength - yCornerCut);
-            glVertex2d(-halfWidth + xCornerCut, carriageLength);
-            glVertex2d(halfWidth - xCornerCut, carriageLength);
-            glVertex2d(halfWidth, carriageLength - yCornerCut);
+            glVertex2d(-halfWidth, drawnCarriageLength - yCornerCut);
+            glVertex2d(-halfWidth + xCornerCut, drawnCarriageLength);
+            glVertex2d(halfWidth - xCornerCut, drawnCarriageLength);
+            glVertex2d(halfWidth, drawnCarriageLength - yCornerCut);
             glVertex2d(halfWidth, yCornerCut);
             glVertex2d(halfWidth - xCornerCut, 0);
             glEnd();
@@ -535,7 +549,6 @@ GUIVehicle::drawAction_drawRailCarriages(const GUIVisualizationSettings& s, SUMO
         carriageBackOffset -= carriageLengthWithGap;
         GLHelper::setColor(current);
     }
-    myCarriageLength = front.distanceTo2D(back);
     // restore matrices
     glPushMatrix();
     glTranslated(front.x(), front.y(), getType());

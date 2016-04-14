@@ -8,7 +8,7 @@
 // A single lane the router may use
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -34,7 +34,12 @@
 #include <vector>
 #include <utils/common/Named.h>
 #include <utils/common/SUMOVehicleClass.h>
-#include "ROEdge.h"
+
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class ROEdge;
 
 
 // ===========================================================================
