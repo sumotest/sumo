@@ -213,10 +213,10 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
 }
 
 
-GNENet*                     // PABLO #1916
-GNEEdge::getNet() const {   // PABLO #1916
-    return myNet;           // PABLO #1916
-}                           // PABLO #1916
+GNENet*                         // PABLO #1916
+GNEEdge::getNet() const {       // PABLO #1916
+    return myNet;               // PABLO #1916
+}                               // PABLO #1916
 
 
 NBEdge*
