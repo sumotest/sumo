@@ -62,6 +62,7 @@ GNEDetectorEntry.h GNEDetectorEntry.cpp \
 GNEDetectorExit.h GNEDetectorExit.cpp \
 GNERerouter.h GNERerouter.cpp \
 GNERerouterEdge.h GNERerouterEdge.cpp \
+GNEVariableSpeedSignal.h GNEVariableSpeedSignal.cpp \
 GNEReferenceCounter.h \
 GNEEvent_NetworkLoaded.h
 

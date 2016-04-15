@@ -7,7 +7,7 @@
 // A class for visualizing Lane geometry (adapted from GNELaneWrapper)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -89,10 +89,17 @@ GNELane::GNELane() :
     myParentEdge(*static_cast<GNEEdge*>(0)),
     myIndex(-1),
     mySpecialColor(0),
-    myTLSEditor(0)
-{ }
+    myTLSEditor(0) {
+}
 
-GNELane::~GNELane() {}
+
+GNELane::~GNELane() {
+    // Get additionals of lane and remove it                                                                        // PABLO #1916
+    additionalVector additionalsToRemove = myAdditionalElements;                                                    // PABLO #1916
+    for(std::vector<GNEAdditional*>::iterator i = additionalsToRemove.begin(); i != additionalsToRemove.end(); i++) // PABLO #1916
+        /// @note This must be changed buy delete (*i), see documentation of disableLane()                          // PABLO #1916
+        (*i)->disableLane();                                                                                        // PABLO #1916                                                                                              
+}                                                                                                                   // PABLO #1916
 
 
 void
@@ -467,9 +474,9 @@ GNELane::updateGeometry() {
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
     }
-    // Update geometry of additionalElements                                                            // PABLO #1916
-    for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++)  // PABLO #1916
-        (*i)->updateGeometry();                                                                         // PABLO #1916
+    // Update geometry of additionalElements                                                                // PABLO #1916
+    for(additionalVector::iterator i = myAdditionalElements.begin(); i != myAdditionalElements.end(); i++)  // PABLO #1916
+        (*i)->updateGeometry();                                                                             // PABLO #1916
 }
 
 unsigned int
@@ -510,31 +517,31 @@ GNELane::getPositionRelativeToShapeLenght(SUMOReal position) const {        // P
 
 void
 GNELane::addAdditional(GNEAdditional *additional) { // PABLO #1916
-    additionalElements.push_back(additional);       // PABLO #1916
+    myAdditionalElements.push_back(additional);     // PABLO #1916
 }                                                   // PABLO #1916
 
 
 bool
-GNELane::removeAdditional(GNEAdditional *additional) {                                                      // PABLO #1916
-    // Find and remove stoppingPlace                                                                        // PABLO #1916
-    for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++) {    // PABLO #1916
-        if(*i == additional) {                                                                              // PABLO #1916
-            additionalElements.erase(i);                                                                    // PABLO #1916
-            return true;                                                                                    // PABLO #1916
-        }                                                                                                   // PABLO #1916
-    }                                                                                                       // PABLO #1916
-    return false;                                                                                           // PABLO #1916
-}                                                                                                           // PABLO #1916
+GNELane::removeAdditional(GNEAdditional *additional) {                                                          // PABLO #1916
+    // Find and remove stoppingPlace                                                                            // PABLO #1916
+    for(additionalVector::iterator i = myAdditionalElements.begin(); i != myAdditionalElements.end(); i++) {    // PABLO #1916
+        if(*i == additional) {                                                                                  // PABLO #1916
+            myAdditionalElements.erase(i);                                                                      // PABLO #1916
+            return true;                                                                                        // PABLO #1916
+        }                                                                                                       // PABLO #1916
+    }                                                                                                           // PABLO #1916
+    return false;                                                                                               // PABLO #1916
+}                                                                                                               // PABLO #1916
 
 
-std::set<GUIGlID>                                                                                           // PABLO #1916
-GNELane::getAdditionals() {                                                                                 // PABLO #1916
-    std::set<GUIGlID> result;                                                                               // PABLO #1916
-    for(additionalVector::iterator i = additionalElements.begin(); i != additionalElements.end(); i++) {    // PABLO #1916
-        result.insert((*i)->getGlID());                                                                     // PABLO #1916
-    }                                                                                                       // PABLO #1916
-    return result;                                                                                          // PABLO #1916
-}                                                                                                           // PABLO #1916
+std::vector<GNEAdditional*>                                                                                     // PABLO #1916
+GNELane::getAdditionals() {                                                                                     // PABLO #1916
+    std::vector<GNEAdditional*> result;                                                                         // PABLO #1916
+    for(additionalVector::iterator i = myAdditionalElements.begin(); i != myAdditionalElements.end(); i++) {    // PABLO #1916
+        result.push_back(*i);                                                                                   // PABLO #1916
+    }                                                                                                           // PABLO #1916
+    return result;                                                                                              // PABLO #1916
+}                                                                                                               // PABLO #1916
 
 
 std::string

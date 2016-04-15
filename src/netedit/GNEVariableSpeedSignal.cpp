@@ -54,8 +54,8 @@
 #include "GNEUndoList.h"
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
-#include "GNELogo_Rerouter.cpp"
-#include "GNELogo_RerouterSelected.cpp"
+#include "GNELogo_VariableSpeedSignal.cpp"
+#include "GNELogo_VariableSpeedSignalSelected.cpp"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -64,17 +64,17 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEVariableSpeedSignal::rerouterGlID = 0;
-GUIGlID GNEVariableSpeedSignal::rerouterSelectedGlID = 0;
-bool GNEVariableSpeedSignal::rerouterInitialized = false;
-bool GNEVariableSpeedSignal::rerouterSelectedInitialized = false;
+GUIGlID GNEVariableSpeedSignal::variableSpeedSignalGlID = 0;
+GUIGlID GNEVariableSpeedSignal::variableSpeedSignalSelectedGlID = 0;
+bool GNEVariableSpeedSignal::variableSpeedSignalInitialized = false;
+bool GNEVariableSpeedSignal::variableSpeedSignalSelectedInitialized = false;
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
 GNEVariableSpeedSignal::GNEVariableSpeedSignal(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNELane*> lanes, const std::string& filename, bool blocked) :
-    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, blocked),
+    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_VSS, blocked),
     myLanes(lanes),
     myFilename(filename) {
     // Update geometry;
@@ -83,18 +83,18 @@ GNEVariableSpeedSignal::GNEVariableSpeedSignal(const std::string& id, GNEViewNet
     myBaseColor = RGBColor(76, 170, 50, 255);
     myBaseColorSelected = RGBColor(161, 255, 135, 255);
     // load rerouter logo, if wasn't inicializated
-    if (!rerouterInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Rerouter, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        rerouterGlID = GUITexturesHelper::add(i);
-        rerouterInitialized = true;
+    if (!variableSpeedSignalInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_VariableSpeedSignal, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        variableSpeedSignalGlID = GUITexturesHelper::add(i);
+        variableSpeedSignalInitialized = true;
         delete i;
     }
 
     // load rerouter selected logo, if wasn't inicializated
-    if (!rerouterSelectedInitialized) {
-        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_RerouterSelected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        rerouterSelectedGlID = GUITexturesHelper::add(i);
-        rerouterSelectedInitialized = true;
+    if (!variableSpeedSignalSelectedInitialized) {
+        FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_VariableSpeedSignalSelected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
+        variableSpeedSignalSelectedGlID = GUITexturesHelper::add(i);
+        variableSpeedSignalSelectedInitialized = true;
         delete i;
     }
 }
@@ -189,9 +189,9 @@ GNEVariableSpeedSignal::drawGLAdditional(GUISUMOAbstractView* const parent, cons
 
     // Draw icon depending of rerouter is or isn't selected
     if(isAdditionalSelected()) 
-        GUITexturesHelper::drawTexturedBox(rerouterSelectedGlID, 1);
+        GUITexturesHelper::drawTexturedBox(variableSpeedSignalSelectedGlID, 1);
     else
-        GUITexturesHelper::drawTexturedBox(rerouterGlID, 1);
+        GUITexturesHelper::drawTexturedBox(variableSpeedSignalGlID, 1);
 
     // Pop draw matrix
     glPopMatrix();
@@ -241,6 +241,7 @@ GNEVariableSpeedSignal::getAttribute(SumoXMLAttr key) const {
             return getMicrosimID();
         case SUMO_ATTR_LANES:
             /** completar **/
+            return "";
         case SUMO_ATTR_POSITION:
             return toString(myPosition);
         case SUMO_ATTR_FILE:

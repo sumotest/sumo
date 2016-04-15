@@ -1,13 +1,13 @@
 /****************************************************************************/
-/// @file    GNEChange_Edge.h
-/// @author  Jakob Erdmann
-/// @date    Mar 2011
-/// @version $Id$
+/// @file    GNEDynamicFrame.h
+/// @author  Pablo Alvarez Lopez
+/// @date    Apr 2016
+/// @version $Id: GNESelector.h 19785 2016-01-22 14:39:40Z palcraft $
 ///
-// A network change in which a single edge is created or deleted
+// Abstract class for dynamic frames
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEChange_Edge_h
-#define GNEChange_Edge_h
+#ifndef GNEDynamicFrame_h
+#define GNEDynamicFrame_h
 
 
 // ===========================================================================
@@ -31,58 +31,24 @@
 #endif
 
 #include <fx.h>
-#include <utils/foxtools/fxexdefs.h>
-#include "GNEChange.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNENet;
-class GNEEdge;
+// class GNEViewNet;
 
 // ===========================================================================
 // class definitions
 // ===========================================================================
 /**
- * @class GNEChange_Edge
- * A network change in which a single edge is created or deleted
+ * @class DynamicFrame
+ * Abstract class for dynamic frames
  */
-class GNEChange_Edge : public GNEChange {
-    FXDECLARE_ABSTRACT(GNEChange_Edge)
-
-public:
-    /** @brief Constructor for creating/deleting an edge
-     * @param[in] net The net on which to apply changes
-     * @param[in] edge The edge to be created/deleted
-     * @param[in] forward Whether to create/delete (true/false)
-     */
-    GNEChange_Edge(GNENet* net, GNEEdge* edge, bool forward);
-
-    /// @brief Destructor
-    ~GNEChange_Edge();
-
-    //@name inherited from GNEChange
-    //@{
-    /// @brief get undo Name
-    FXString undoName() const;
-
-    /// @brief get Redo name
-    FXString redoName() const;
-
-    /// @brief undo action
-    void undo();
-
-    /// @brief redo action
-    void redo();
-    //@}
-
-
-private:
-    /** @brief full information regarding the edge that is to be created/deleted
-     * we assume shared responsibility for the pointer (via reference counting)
-     */
-    GNEEdge* myEdge;
+class GNEDynamicFrame : public FXScrollWindow {
+   
 };
 
 #endif
+
 /****************************************************************************/
+

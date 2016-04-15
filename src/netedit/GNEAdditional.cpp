@@ -187,6 +187,12 @@ GNEAdditional::setPositionInView(const Position &pos) {
 }
 
 
+void
+GNEAdditional::disableLane() {
+    myLane = NULL;
+}
+
+
 const std::string&
 GNEAdditional::getParentName() const {
     if(myLane)

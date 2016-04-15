@@ -8,7 +8,7 @@
 // GUIJunctionWrapper)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -111,6 +111,9 @@ public:
     /// @brief Returns the boundary of the junction
     Boundary getBoundary() const;
 
+    /// @brief Return net build node
+    NBNode* getNBNode() const;
+
     /// @brief marks as first junction in createEdge-mode
     void markAsCreateEdgeSource();
 
@@ -120,8 +123,8 @@ public:
     /// @brief notify the junction of being selected in tls-mode. (used to control drawing)
     void selectTLS(bool selected);
 
-    /// @brief returns the internal NBNode
-    NBNode* getNBNode();
+    /** @brief Update the boundary of the junction */
+    void updateBoundary(); 
 
     /** @brief reposition the node at pos and informs the edges
      * @param[in] pos The new position
