@@ -186,26 +186,26 @@ MSCFModel::maxNextSpeed(SUMOReal speed, const MSVehicle* const /*veh*/) const {
 SUMOReal
 MSCFModel::freeSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal seen, SUMOReal maxSpeed, const bool onInsertion) const {
 
-    // Debug (Leo)
-	if(gDebugFlag1){
-    	std::cout
-    	<< "called freeSpeed() for vehicle " << veh->getID()
-    	<< (onInsertion ? " on insertion":"")
-    	<< "\nspeed = " << speed
-    	<< "\ndist = " << seen
-    	<< "\nmax speed = " << maxSpeed
-    	<< "\nmyDecel = " << myDecel
-    	<< std::endl;
-    }
+//    // Debug (Leo)
+//	if(gDebugFlag1){
+//    	std::cout
+//    	<< "called freeSpeed() for vehicle " << veh->getID()
+//    	<< (onInsertion ? " on insertion":"")
+//    	<< "\nspeed = " << speed
+//    	<< "\ndist = " << seen
+//    	<< "\nmax speed = " << maxSpeed
+//    	<< "\nmyDecel = " << myDecel
+//    	<< std::endl;
+//    }
 
 	SUMOReal vSafe = freeSpeed(speed, myDecel, seen, maxSpeed, onInsertion);
 
-    // Debug (Leo)
-	if(gDebugFlag1){
-    	std::cout
-    	<< "vSafe " << vSafe
-    	<< std::endl;
-	}
+//    // Debug (Leo)
+//	if(gDebugFlag1){
+//    	std::cout
+//    	<< "vSafe " << vSafe
+//    	<< std::endl;
+//	}
 
 	return vSafe;
 

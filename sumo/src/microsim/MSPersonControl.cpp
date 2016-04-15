@@ -134,6 +134,12 @@ MSPersonControl::setWaitEnd(const SUMOTime time, MSTransportable* person) {
 
 void
 MSPersonControl::checkWaitingPersons(MSNet* net, const SUMOTime time) {
+
+//	// Debug (Leo)
+//	std::cout << "MSPersonControl::checkWaitingPersons() at time " << time
+//			<< "\nsize of persons=myWaiting4Departure[time]: " << myWaiting4Departure[time].size()
+//			<< std::endl;
+
     while (myWaiting4Departure.find(time) != myWaiting4Departure.end()) {
         const PersonVector& persons = myWaiting4Departure[time];
         // we cannot use an iterator here because there might be additions to the vector while proceeding
@@ -174,14 +180,40 @@ MSPersonControl::isWaiting4Vehicle(const MSEdge* const edge, MSPerson* /* p */) 
 
 bool
 MSPersonControl::boardAnyWaiting(MSEdge* edge, MSVehicle* vehicle, MSVehicle::Stop* stop) {
+
+
+//    // Debug (Leo)
+//    if(gDebugFlag1){
+//    	std::cout << "MSPersonControl::boardAnyWaiting()"
+//    			<< "\nstop->timeToBoardNextPerson = " << stop->timeToBoardNextPerson
+//    			<< "\nstop->startPos = " << stop->startPos
+//    			<< "\nstop->endPos = " << stop->endPos
+//    			<< "\nmyWaiting4Vehicle.size() = " << myWaiting4Vehicle.size()
+//    			<< std::endl;
+//    }
+
     bool ret = false;
     if (myWaiting4Vehicle.find(edge) != myWaiting4Vehicle.end()) {
         PersonVector& waitPersons = myWaiting4Vehicle[edge];
         const std::string& line = vehicle->getParameter().line == "" ? vehicle->getParameter().id : vehicle->getParameter().line;
         SUMOTime currentTime =  MSNet::getInstance()->getCurrentTimeStep();
         for (PersonVector::iterator i = waitPersons.begin(); i != waitPersons.end();) {
+
+//            // Debug (Leo)
+//            if(gDebugFlag1){
+//            	std::cout << "Person '"<< (*i)->getID() << "'->getEdgePos() = " << (*i)->getEdgePos()
+//            	    			<< std::endl;
+//            }
+
             if ((*i)->isWaitingFor(line) && vehicle->getVehicleType().getPersonCapacity() > vehicle->getPersonNumber() && stop->timeToBoardNextPerson <= currentTime && stop->startPos <= (*i)->getEdgePos() && (*i)->getEdgePos() <= stop->endPos) {
-                edge->removePerson(*i);
+
+//                // Debug (Leo)
+//                if(gDebugFlag1){
+//                	std::cout << "Person '"<< (*i)->getID() << "' goes aboard!"
+//                	    			<< std::endl;
+//                }
+
+            	edge->removePerson(*i);
                 vehicle->addPerson(*i);
                 //if the time a person needs to enter the vehicle extends the duration of the stop of the vehicle extend
                 //the duration by setting it to the boarding duration of the person

@@ -175,7 +175,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         } else {
             // ballistic update: testing for v>min instead of v>MAX2(min,0.)
             // XXX: LaneChanging returns -1 to indicate no restrictions, which leads to probs here
-            if (v >= MAX2(min,0) && v <= max) {
+            if (v >= MAX2(min,0.) && v <= max) {
                 nVSafe = MIN2(v, nVSafe);
                 gotOne = true;
             }
@@ -199,7 +199,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         if ((state & LCA_STRATEGIC) != 0) {
             // necessary decelerations are controlled via vSafe. If there are
             // none it means we should speed up
-        	// XXX: It seems that this could lead to returning a value > vSafe (==wanted, if we use Krauss)
+        	// XXX: It seems that this could lead to returning a value > wanted (==vSafe, if we use Krauss)
         	//      (at least if myDontBrake==true and max>wanted. However, the latter is never true when using Krauss,
         	//       so this didn't expose itself, yet) (Leo)
             return (max + wanted) / (SUMOReal) 2.0;

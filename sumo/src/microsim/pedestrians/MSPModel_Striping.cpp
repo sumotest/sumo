@@ -1015,6 +1015,15 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 
 void
 MSPModel_Striping::PState::walk(const Obstacles& obs, SUMOTime currentTime) {
+
+//	// Debug (Leo)
+//	gDebugFlag1 = true;
+//	if(gDebugFlag1){
+//		std::cout << "person '"<< myPerson->getID() <<"' walks..."
+//				<< "\ncurrent position = " << myPerson->getPosition()
+//				<< std::endl;
+//	}
+
     const int stripes = (int)obs.size();
     const int sMax =  stripes - 1;
     assert(stripes == numStripes(myLane));

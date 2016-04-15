@@ -99,7 +99,7 @@ MSVehicleTransfer::checkInsertions(SUMOTime time) {
         VehicleInformation& desc = *i;
 
         if (desc.myParking) {
-            // handle parking vehicles
+            // handle parking vehicles XXX: fixing #1224 required that processNextStop() does not return 0 when a stop is reached (maybe implement abs(...) <= EPS here)
             if (desc.myVeh->processNextStop(1) == 0) {
                 ++i;
                 continue;

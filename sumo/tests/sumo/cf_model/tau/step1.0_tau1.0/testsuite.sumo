@@ -3,6 +3,3 @@ krauss
 
 # test the original krauss model (or at least something closer to it than the default model)
 kraussOrig1
-
-# in the wiedemann model, with follower's max speed 70m/s and leader's max speed 50m/s, collisions appeared during implementation of ballistic update (Leo)
-wiedemann
