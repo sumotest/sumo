@@ -282,10 +282,7 @@ GNERerouterEdge::getAttribute(SumoXMLAttr key) const {
 
 void
 GNERerouterEdge::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-    // ignore Warnings
-    UNUSED_PARAMETER(undoList);
-    UNUSED_PARAMETER(value);
-    if (value == getAttribute(key)) {
+if (value == getAttribute(key)) {
         return; //avoid needless changes, later logic relies on the fact that attributes have changed
     }
     switch (key) {
@@ -300,8 +297,6 @@ GNERerouterEdge::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndo
 
 bool
 GNERerouterEdge::isValid(SumoXMLAttr key, const std::string& value) {
-    // ignore Warning
-    UNUSED_PARAMETER(value);
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
@@ -313,8 +308,6 @@ GNERerouterEdge::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNERerouterEdge::setAttribute(SumoXMLAttr key, const std::string& value) {
-    // ignore Warning
-    UNUSED_PARAMETER(value);
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:

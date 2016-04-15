@@ -7,7 +7,7 @@
 // A single mesoscopic segment (cell)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -339,7 +339,7 @@ MESegment::getNextInsertionTime(SUMOTime earliestEntry) const {
 
 MSLink*
 MESegment::getLink(const MEVehicle* veh, bool tlsPenalty) const {
-    if (myJunctionControl || (tlsPenalty && myNextSegment == 0)) {
+    if (myJunctionControl || tlsPenalty) {
         const MSEdge* const nextEdge = veh->succEdge(1);
         if (nextEdge == 0) {
             return 0;
@@ -630,7 +630,6 @@ MESegment::getTLSPenalty(const MEVehicle* veh) const {
     const bool useTLSPenalty = MSGlobals::gMesoTLSPenalty > 0;
     const MSLink* link = getLink(veh, useTLSPenalty);
     if (link != 0 && link->isTLSControlled()) {
-        // only apply to the last segment of a tls-controlled edge
         return link->getMesoTLSPenalty();
     } else {
         return 0;

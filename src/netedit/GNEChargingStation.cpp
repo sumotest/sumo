@@ -273,7 +273,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         glTranslated(1.2, 0, 0);
 
         // draw charging power
-        pfDrawString((toString(myChargingPower) + " W").c_str());
+        pfDrawString(toString(myChargingPower).c_str());
 
         // pop charging power matrix
         glPopMatrix();

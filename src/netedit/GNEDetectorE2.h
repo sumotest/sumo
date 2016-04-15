@@ -2,7 +2,7 @@
 /// @file    GNEDetectorE2.h
 /// @author  Pablo Alvarez Lopez
 /// @date    Nov 2015
-/// @version $Id: GNEDetectorE2.h 19790 201-601-25 11:59:12Z palcraft $
+/// @version $Id: GNEDetectorE2.h 19790 2016-01-25 11:59:12Z palcraft $
 ///
 ///
 /****************************************************************************/
@@ -132,10 +132,10 @@ protected:
     /// @brief The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting
     int myTimeThreshold;
 
-    /// @brief     The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
+    /// @brief 	The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting
     SUMOReal mySpeedThreshold;
 
-    /// @brief     The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
+    /// @brief 	The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam
     SUMOReal myJamThreshold;
 
 private:

@@ -9,7 +9,7 @@
 // Chargin Station for Electric vehicles
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -77,10 +77,10 @@ public:
     SUMOReal getChargeDelay() const;
 
     /// @brief Set charging station's charging power
-    void setChargingPower(SUMOReal chargingPower);
+    inline void setChargingPower(SUMOReal chargingPower);
 
     /// @brief Set efficiency of the charging station
-    void setEfficency(SUMOReal efficency);
+    inline void setEfficency(SUMOReal efficency);
 
     /// @brief Set charge in transit of the charging station
     void setChargeInTransit(bool chargeInTransit);
@@ -88,17 +88,11 @@ public:
     /// @brief Set charge delay of the charging station
     void setChargeDelay(int chargeDelay);
 
-	/// @brief enable or disable charging vehicle
-    void setChargingVehicle(bool value);
-
     /** @brief Check if a vehicle is inside in  the Charge Station
      * @param[in] position Position of vehicle in the LANE
      * @return true if is between StartPostion and EndPostion
      */
-    bool vehicleIsInside(const SUMOReal position) const;
-
-	/// @brief Return true if in the current time step charging station is charging a vehicle
-	bool isCharging() const;
+    bool vehicleIsInside(const SUMOReal position);
 
 protected:
 
@@ -113,9 +107,6 @@ protected:
 
     /// @brief Charge Delay
     int myChargeDelay;
-
-	/// @brief Check if in the current TimeStep chargingStation is charging a vehicle
-	bool myChargingVehicle;
 
 private:
 

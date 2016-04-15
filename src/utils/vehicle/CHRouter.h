@@ -9,7 +9,7 @@
 // Shortest Path search using a Contraction Hierarchy
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -107,8 +107,8 @@ public:
     class EdgeInfo {
     public:
         /// Constructor
-        EdgeInfo(const E* e) :
-            edge(e),
+        EdgeInfo(size_t id) :
+            edge(E::dictionary(id)),
             traveltime(std::numeric_limits<SUMOReal>::max()),
             prev(0),
             visited(false)
@@ -146,11 +146,11 @@ public:
     class Unidirectional: public PF {
     public:
         /// @brief Constructor
-        Unidirectional(const std::vector<E*>& edges, bool forward):
+        Unidirectional(size_t numEdges, bool forward):
             myAmForward(forward),
             myVehicle(0) {
-            for (typename std::vector<E*>::const_iterator i = edges.begin(); i != edges.end(); ++i) {
-                myEdgeInfos.push_back(EdgeInfo(*i));
+            for (size_t i = 0; i < numEdges; i++) {
+                myEdgeInfos.push_back(EdgeInfo(i));
             }
         }
 
@@ -318,22 +318,21 @@ public:
      *            hierarchy is tailored to the vClass of the defaultVehicle
      * @note: defaultVehicle is not transient and must be kept after constructor finishes
      */
-    CHRouter(const std::vector<E*>& edges, bool unbuildIsWarning, Operation operation,
+    CHRouter(size_t numEdges, bool unbuildIsWarning, Operation operation,
              const SUMOVehicleClass svc,
              SUMOTime weightPeriod,
              bool validatePermissions):
         SUMOAbstractRouter<E, V>(operation, "CHRouter"),
-        myEdges(edges),
         myErrorMsgHandler(unbuildIsWarning ? MsgHandler::getWarningInstance() : MsgHandler::getErrorInstance()),
-        myForwardSearch(edges, true),
-        myBackwardSearch(edges, false),
+        myForwardSearch(numEdges, true),
+        myBackwardSearch(numEdges, false),
         mySPTree(new SPTree<CHInfo, CHConnection>(4, validatePermissions)),
         myWeightPeriod(weightPeriod),
         myValidUntil(0),
         mySVC(svc),
         myUpdateCount(0) {
-        for (typename std::vector<E*>::const_iterator i = edges.begin(); i != edges.end(); ++i) {
-            myCHInfos.push_back(CHInfo(*i));
+        for (size_t i = 0; i < numEdges; i++) {
+            myCHInfos.push_back(CHInfo(i));
         }
     }
 
@@ -343,8 +342,8 @@ public:
     }
 
 
-    virtual SUMOAbstractRouter<E, V>* clone() {
-        return new CHRouter<E, V, PF>(myEdges, myErrorMsgHandler == MsgHandler::getWarningInstance(), this->myOperation,
+    virtual SUMOAbstractRouter<E, V>* clone() const {
+        return new CHRouter<E, V, PF>(myCHInfos.size(), myErrorMsgHandler == MsgHandler::getWarningInstance(), this->myOperation,
                                       mySVC, myWeightPeriod, mySPTree->validatePermissions());
     }
 
@@ -352,7 +351,7 @@ public:
      * @note: since the contracted graph is static (weights averaged over time)
      * the computed routes only approximated shortest paths in the real graph
      * */
-    virtual bool compute(const E* from, const E* to, const V* const vehicle,
+    virtual void compute(const E* from, const E* to, const V* const vehicle,
                          SUMOTime msTime, Result& into) {
         assert(from != 0 && to != 0);
         assert(mySPTree->validatePermissions() || vehicle->getVClass() == mySVC || mySVC == SVC_IGNORING);
@@ -373,7 +372,6 @@ public:
         bool continueBackward = true;
         int num_visited_fw = 0;
         int num_visited_bw = 0;
-        bool result = true;
         while (continueForward || continueBackward) {
             if (continueForward) {
                 continueForward = myForwardSearch.step(myBackwardSearch, minTTSeen, meeting);
@@ -388,13 +386,11 @@ public:
             buildPathFromMeeting(meeting, into);
         } else {
             myErrorMsgHandler->inform("No connection between edge '" + from->getID() + "' and edge '" + to->getID() + "' found.");
-            result = false;
         }
 #ifdef CHRouter_DEBUG_QUERY_PERF
         std::cout << "visited " << num_visited_fw + num_visited_bw << " edges (" << num_visited_fw << "," << num_visited_bw << ") ,final path length: " + toString(into.size()) + ")\n";
 #endif
         this->endQuery(num_visited_bw + num_visited_fw);
-        return result;
     }
 
 
@@ -468,8 +464,8 @@ public:
     class CHInfo {
     public:
         /// @brief Constructor
-        CHInfo(E* e) :
-            edge(e),
+        CHInfo(size_t id) :
+            edge(E::dictionary(id)),
             contractedNeighbors(0),
             rank(-1),
             level(0),
@@ -835,9 +831,6 @@ private:
     }
 
 private:
-    /// @brief all edges with numerical ids
-    const std::vector<E*>& myEdges;
-
     /// @brief the handler for routing errors
     MsgHandler* const myErrorMsgHandler;
 

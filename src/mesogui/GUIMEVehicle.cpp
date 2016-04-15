@@ -9,7 +9,7 @@
 // A MSVehicle extended by some values for usage within the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -69,7 +69,7 @@ GUIParameterTableWindow*
 GUIMEVehicle::getParameterWindow(GUIMainWindow& app,
                                GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 20);
+        new GUIParameterTableWindow(app, *this, 40);
     // add items
     ret->mkItem("edge [id]", false, getEdge()->getID());
     ret->mkItem("segment [#]", false, getSegment()->getIndex());
@@ -134,18 +134,8 @@ GUIMEVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("event time [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getEventTimeSeconds));
     ret->mkItem("entry time [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getLastEntryTimeSeconds));
     ret->mkItem("block time [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getBlockTimeSeconds));
-    // close building
-    ret->closeBuilding();
-    return ret;
-}
 
-
-GUIParameterTableWindow*
-GUIMEVehicle::getTypeParameterWindow(GUIMainWindow& app,
-                               GUISUMOAbstractView&) {
-    GUIParameterTableWindow* ret =
-        new GUIParameterTableWindow(app, *this, 10);
-    // add items
+    ret->mkItem("", false, "");
     ret->mkItem("Type Information:", false, "");
     ret->mkItem("type [id]", false, myType->getID());
     ret->mkItem("length", false, myType->getLength());
@@ -198,38 +188,38 @@ GUIMEVehicle::getColorValue(size_t activeScheme) const {
             return getSpeed();
         case 9:
             return getWaitingSeconds();
-        case 11:
+        case 10:
             return 0; // invalid getLastLaneChangeOffset();
-        case 12:
+        case 11:
             return getSegment()->getEdge().getVehicleMaxSpeed(this);
-        case 13:
+        case 12:
             return 0; // invalid getCO2Emissions();
-        case 14:
+        case 13:
             return 0; // invalid getCOEmissions();
-        case 15:
+        case 14:
             return 0; // invalid getPMxEmissions();
-        case 16:
+        case 15:
             return 0; // invalid  getNOxEmissions();
-        case 17:
+        case 16:
             return 0; // invalid getHCEmissions();
-        case 18:
+        case 17:
             return 0; // invalid getFuelConsumption();
-        case 19:
+        case 18:
             return 0; // invalid getHarmonoise_NoiseEmissions();
-        case 20: // !!! unused!?
+        case 19: // !!! unused!?
             if (getNumberReroutes() == 0) {
                 return -1;
             }
             return getNumberReroutes();
-        case 21:
+        case 20:
             return gSelected.isSelected(GLO_VEHICLE, getGlID());
-        case 22:
+        case 21:
             return 0; // invalid getBestLaneOffset();
-        case 23:
+        case 22:
             return 0; // invalid getAcceleration();
-        case 24:
+        case 23:
             return 0; // invalid getTimeGap();
-        case 25:
+        case 24:
             return STEPS2TIME(getDepartDelay());
     }
     return 0;

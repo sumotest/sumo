@@ -15,9 +15,3 @@ copy_location
 
 # with non-ascii street name
 split_edge
-
-# add and remove pedestrian crossings
-crossing
-
-# add and remove roundabout
-roundabout

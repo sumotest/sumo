@@ -12,7 +12,7 @@
 // Definitions of elements and attributes known by SUMO
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -96,10 +96,6 @@ enum SumoXMLTag {
     SUMO_TAG_REROUTEREDGE,      // PABLO #1916 QUESTION ERDMANN 02
     /// @brief A bus stop
     SUMO_TAG_BUS_STOP,
-    /// @brief A train stop (alias for bus stop)
-    SUMO_TAG_TRAIN_STOP,
-    /// @brief An access point for a train stop
-    SUMO_TAG_ACCESS,
     /// @brief A container stop
     SUMO_TAG_CONTAINER_STOP,
     /// @brief A Charging Station
@@ -217,7 +213,6 @@ enum SumoXMLTag {
     SUMO_TAG_CF_WIEDEMANN,
 
     SUMO_TAG_PERSON,
-    SUMO_TAG_PERSONTRIP,
     SUMO_TAG_RIDE,
     SUMO_TAG_WALK,
 
@@ -369,7 +364,6 @@ enum SumoXMLAttr {
     SUMO_ATTR_CONTAINER_CAPACITY,
     SUMO_ATTR_PERSON_NUMBER,
     SUMO_ATTR_CONTAINER_NUMBER,
-    SUMO_ATTR_MODES,
     /* source definitions */
     SUMO_ATTR_FUNCTION,
     SUMO_ATTR_POSITION,
@@ -454,7 +448,7 @@ enum SumoXMLAttr {
     SUMO_ATTR_UNCONTROLLED,
     SUMO_ATTR_PASS,
     SUMO_ATTR_BUS_STOP,
-    SUMO_ATTR_CHARGING_STATION,
+    SUMO_ATTR_CHARGING_STATION, // PABLO #1852
     SUMO_ATTR_CONTAINER_STOP,
     SUMO_ATTR_LINE,
     SUMO_ATTR_LINES,

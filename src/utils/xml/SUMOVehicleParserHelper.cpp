@@ -11,7 +11,7 @@
 // Helper methods for parsing vehicle attributes
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -133,14 +133,14 @@ SUMOVehicleParserHelper::parseFlowAttributes(const SUMOSAXAttributes& attrs, con
         delete ret;
         throw ProcessError("Negative begin time in the definition of flow '" + id + "'.");
     }
-    ret->repetitionEnd = endDefault;
-    if (ret->repetitionEnd < 0) {
-        ret->repetitionEnd = SUMOTime_MAX;
+    SUMOTime end = endDefault;
+    if (end < 0) {
+        end = SUMOTime_MAX;
     }
     if (attrs.hasAttribute(SUMO_ATTR_END)) {
-        ret->repetitionEnd = attrs.getSUMOTimeReporting(SUMO_ATTR_END, id.c_str(), ok);
+        end = attrs.getSUMOTimeReporting(SUMO_ATTR_END, id.c_str(), ok);
     }
-    if (ok && ret->repetitionEnd <= ret->depart) {
+    if (ok && end <= ret->depart) {
         delete ret;
         throw ProcessError("Flow '" + id + "' ends before or at its begin time.");
     }
@@ -155,23 +155,23 @@ SUMOVehicleParserHelper::parseFlowAttributes(const SUMOSAXAttributes& attrs, con
                 throw ProcessError("Negative repetition number in the definition of flow '" + id + "'.");
             }
             if (ok && ret->repetitionOffset < 0) {
-                ret->repetitionOffset = (ret->repetitionEnd - ret->depart) / ret->repetitionNumber;
+                ret->repetitionOffset = (end - ret->depart) / ret->repetitionNumber;
             }
         }
-        ret->repetitionEnd = ret->depart + ret->repetitionNumber * ret->repetitionOffset;
     } else {
         // interpret repetitionNumber
         if (ok && ret->repetitionProbability > 0) {
             ret->repetitionNumber = std::numeric_limits<int>::max();
+            ret->repetitionEnd = end;
         } else {
             if (ok && ret->repetitionOffset <= 0) {
                 delete ret;
                 throw ProcessError("Invalid repetition rate in the definition of flow '" + id + "'.");
             }
-            if (ret->repetitionEnd == SUMOTime_MAX) {
+            if (end == SUMOTime_MAX) {
                 ret->repetitionNumber = std::numeric_limits<int>::max();
             } else {
-                ret->repetitionNumber = MAX2(1, (int)(((SUMOReal)(ret->repetitionEnd - ret->depart)) / ret->repetitionOffset + 0.5));
+                ret->repetitionNumber = MAX2(1, (int)(((SUMOReal)(end - ret->depart)) / ret->repetitionOffset + 0.5));
             }
         }
     }

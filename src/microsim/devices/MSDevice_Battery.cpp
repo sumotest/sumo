@@ -8,7 +8,7 @@
 // The Battery parameters for the vehicle
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2013-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -48,11 +48,9 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-
 // ---------------------------------------------------------------------------
 // static initialisation methods
 // ---------------------------------------------------------------------------
-
 void
 MSDevice_Battery::insertOptions(OptionsCont& oc) {
     insertDefaultAssignmentOptions("battery", "Battery", oc);
@@ -65,62 +63,75 @@ MSDevice_Battery::buildVehicleDevices(SUMOVehicle& v, std::vector<MSDevice*>& in
         return;
     }
 
-    // MaximumBatteryCapacity
-    SUMOReal maximumBatteryCapacity = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("maximumBatteryCapacity", "0").c_str());
+    // Declare default parameters
+    SUMOReal new_ActBatKap = 0;
+    SUMOReal new_MaxBatKap = 0;
+    SUMOReal new_PowerMax = 100;
+    SUMOReal new_Mass = 1000;
+    SUMOReal new_FrontSurfaceArea = 2;
+    SUMOReal new_AirDragCoefficient = 0.4;
+    SUMOReal new_InternalMomentOfInertia = 10;
+    SUMOReal new_RadialDragCoefficient = 1;
+    SUMOReal new_RollDragCoefficient = 0.5;
+    SUMOReal new_ConstantPowerIntake = 10;
+    SUMOReal new_PropulsionEfficiency = 0.5;
+    SUMOReal new_RecuperationEfficiency = 0;
+    SUMOReal new_LastAngle = 0;
+    SUMOReal new_LastEnergy = 0;
 
-    // ActualBatteryCapacity
-	SUMOReal actualBatteryCapacity = 0;
+    // MaxBatKap
+    new_MaxBatKap = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("maximumBatteryCapacity", "0").c_str());
+
+    // ActBatKap
     if (v.getParameter().getParameter("actualBatteryCapacity", "-") == "-")
-        actualBatteryCapacity = maximumBatteryCapacity / 2.0;
+        new_ActBatKap = new_MaxBatKap / 2.0;
     else
-        actualBatteryCapacity = TplConvert::_2SUMOReal(v.getParameter().getParameter("actualBatteryCapacity", "0").c_str());
+        new_ActBatKap = TplConvert::_2SUMOReal(v.getParameter().getParameter("actualBatteryCapacity", "0").c_str());
 
     // Power
-    SUMOReal powerMax = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("maximumPower", "100").c_str());
+    new_PowerMax = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("maximumPower", "100").c_str());
 
     // Mass
-    SUMOReal mass = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("vehicleMass", "1000").c_str());
+    new_Mass = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("vehicleMass", "1000").c_str());
 
     // FrontSurfaceArea
-    SUMOReal frontSurfaceArea = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("frontSurfaceArea", "2").c_str());
+    new_FrontSurfaceArea = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("frontSurfaceArea", "2").c_str());
 
     // AirDragCoefficient
-    SUMOReal airDragCoefficient = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("airDragCoefficient", "0.4").c_str());
+    new_AirDragCoefficient = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("airDragCoefficient", "0.4").c_str());
 
     // InternalMomentOfInertia
-    SUMOReal internalMomentOfInertia = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("internalMomentOfInertia", "10").c_str());
+    new_InternalMomentOfInertia = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("internalMomentOfInertia", "10").c_str());
 
     // Radial Drag Coefficient
-    SUMOReal radialDragCoefficient = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("radialDragCoefficient", "1").c_str());
+    new_RadialDragCoefficient = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("radialDragCoefficient", "1").c_str());
 
     // RollDragCoefficient
-    SUMOReal rollDragCoefficient = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("rollDragCoefficient", "0.5").c_str());
+    new_RollDragCoefficient = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("rollDragCoefficient", "0.5").c_str());
 
     // ConstantPowerIntake
-    SUMOReal constantPowerIntake = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("constantPowerIntake", "10").c_str());
+    new_ConstantPowerIntake = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("constantPowerIntake", "10").c_str());
 
     // PropulsionEfficiency
-    SUMOReal propulsionEfficiency = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("propulsionEfficiency", "0.5").c_str());
+    new_PropulsionEfficiency = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("propulsionEfficiency", "0.5").c_str());
 
     // RecuperationEfficiency
-    SUMOReal recuperationEfficiency = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("recuperationEfficiency", "0").c_str());
+    new_RecuperationEfficiency = TplConvert::_2SUMOReal(v.getVehicleType().getParameter().getParameter("recuperationEfficiency", "0").c_str());
 
     // constructor
     MSDevice_Battery* device = new MSDevice_Battery(v, "battery_" + v.getID(),
-            actualBatteryCapacity, maximumBatteryCapacity, powerMax, mass, frontSurfaceArea, airDragCoefficient,
-            internalMomentOfInertia, radialDragCoefficient, rollDragCoefficient,
-            constantPowerIntake, propulsionEfficiency, recuperationEfficiency,
-            0, 0);
+            new_ActBatKap, new_MaxBatKap, new_PowerMax, new_Mass, new_FrontSurfaceArea, new_AirDragCoefficient,
+            new_InternalMomentOfInertia, new_RadialDragCoefficient, new_RollDragCoefficient,
+            new_ConstantPowerIntake, new_PropulsionEfficiency, new_RecuperationEfficiency,
+            new_LastAngle, new_LastEnergy);
 
-    // Add device to vehicle
     into.push_back(device);
 }
 
 
-bool
-MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOReal /* newPos */, SUMOReal /* newSpeed */) {
-    // Start vehicleStoppedTimer if the vehicle is stopped. In other case reset timer
-    if (veh.getSpeed() < SUMO_const_haltingSpeed) {
+bool MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOReal /* newPos */, SUMOReal /* newSpeed */) {
+    // Start vehicleStoppedTimer if the vehicle is stopped (that's mean, speed is < 0.2). In other case reset timer
+    if (veh.getSpeed() < 0.2)
         // Increase vehicle stopped timer
         increaseVehicleStoppedTimer();
     else
@@ -129,16 +140,15 @@ MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOReal /
 
     // Update Energy from the battery
     if (getMaximumBatteryCapacity() != 0) {
-        myConsum = getPropEnergy(veh);
+        Consum = getPropEnergy(veh);
 
         // Energy lost/gained from vehicle movement (via vehicle energy model) [kWh]
-        setActualBatteryCapacity(getActualBatteryCapacity() - myConsum);
+        setActualBatteryCapacity(getActualBatteryCapacity() - Consum);
 
-        // Saturate between 0 and myMaximumBatteryCapacity [kWh]
+        // saturate between 0 and MaxBatKap [kWh]
         if (getActualBatteryCapacity() < 0) {
             setActualBatteryCapacity(0);
 
-			// Show warning if battery is depleted
             if (getMaximumBatteryCapacity() > 0)
                 WRITE_WARNING("Battery of vehicle '" + veh.getID() + "' is depleted.");
 
@@ -153,69 +163,63 @@ MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOReal /
 
     // If vehicle is over a charging station
     if (ChargingStationID != "") {
-
         // Declare a pointer to the charging station
-        myCurrentChargingStation = MSNet::getInstance()->getChargingStation(ChargingStationID);
+        MSChargingStation* ChargingStationPointer = MSNet::getInstance()->getChargingStation(ChargingStationID);
 
         // if the vehicle is almost stopped, or charge in transit is enabled, then charge vehicle
-        if ((veh.getSpeed() < SUMO_const_haltingSpeed) || (ChargingStationPointer->getChargeInTransit() == 1)) {
+        if ((veh.getSpeed() < 0.2) || (ChargingStationPointer->getChargeInTransit() == 1)) {
             // Set Flags Stopped/intransit to
-            if (veh.getSpeed() < SUMO_const_haltingSpeed) {
+            if (veh.getSpeed() < 0.2) {
                 // vehicle ist almost stopped, then is charging stopped
-                myChargingStopped = true;
+                ItsChargingStopped = true;
 
                 // therefore isn't charging in transit
-                myChargingInTransit = false;
+                ItsChargingInTransit = false;
             } else {
                 // vehicle is moving, and the Charging station allow charge in transit
-                myChargingStopped = false;
+                ItsChargingStopped = false;
 
                 // Therefore charge in transit
-                myChargingInTransit = true;
+                ItsChargingInTransit = true;
             }
+
+            // Set actChargingStation parameter
+            actChargingStation = ChargingStationID;
 
             // Only update charging start time if vehicle allow charge in transit, or in other case
             // if the vehicle not allow charge in transit but it's stopped.
-            if (ChargingStationPointer->getChargeInTransit() == 1 || veh.getSpeed() < SUMO_const_haltingSpeed) {
+            if (ChargingStationPointer->getChargeInTransit() == 1 || veh.getSpeed() < 0.2)
                 // Update Charging start time
                 increaseChargingStartTime();
 
             // time it takes the vehicle at the station < charging station time delay?
-            if (getChargingStartTime() > myCurrentChargingStation->getChargeDelay()) {
-
-				// Enable charge in charging Station
-				myCurrentChargingStation->setChargingVehicle(true);
-
-                // Calulate energy charged
-                myEnergyCharged = myCurrentChargingStation->getChargingPower() * myCurrentChargingStation->getEfficency();
+            if (getChargingStartTime() > ChargingStationPointer->getChargeDelay()) {
+                // Calulate energy charged (Fix);
+                energyCharged = ChargingStationPointer->getChargingPower() * ChargingStationPointer->getEfficency();
 
                 // Convert from [kWs] to [kWh] (3600s / 1h):
-                myEnergyCharged /= 3600;
+                energyCharged /= 3600;
 
                 // Update Battery charge
-                if ((myEnergyCharged + getActualBatteryCapacity()) > getMaximumBatteryCapacity())
+                if ((energyCharged + getActualBatteryCapacity()) > getMaximumBatteryCapacity()) {
                     setActualBatteryCapacity(getMaximumBatteryCapacity());
-                else
-                    setActualBatteryCapacity(getActualBatteryCapacity() + myEnergyCharged);
+                } else {
+                    setActualBatteryCapacity(getActualBatteryCapacity() + energyCharged);
+                }
             }
         }
     }
     // In other case, vehicle will be not charged
     else {
         // Disable flags
-        myChargingInTransit = false;
-        myChargingStopped = false;
-
-		// If in the las timeSte vehicle war over a charging station
-		if( myCurrentChargingStation != NULL)
-			// Disable charge in charging Station
-			myCurrentChargingStation->setChargingVehicle(false);
+        ItsChargingInTransit = false;
+        ItsChargingStopped = false;
 
         // Disable charging station
-        myCurrentChargingStation = NULL;
+        actChargingStation = "NULL";
 
         // Set energy charged to 0
-        myEnergyCharged = 0.00;
+        energyCharged = 0.00;
 
         // Reset timer
         resetChargingStartTime();
@@ -226,8 +230,7 @@ MSDevice_Battery::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */, SUMOReal /
 }
 
 
-bool
-MSDevice_Battery::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {
+bool MSDevice_Battery::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {
     // Set last Energy ONLY when the vehicle is introduced in the simulation
     if (reason == MSMoveReminder::NOTIFICATION_DEPARTED) {
         setLastEnergy(getMass() * veh.getSpeed() * veh.getSpeed() / 2 + getMass() * 9.81 * veh.getLane()->getShape().front().z() + getInternalMomentOfInertia() * 0.5 * veh.getSpeed() * veh.getSpeed());
@@ -239,382 +242,312 @@ MSDevice_Battery::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification rea
 }
 
 
-void
-MSDevice_Battery::generateOutput() const {
+void MSDevice_Battery::generateOutput() const {
     //Function implemented in MSBatteryExport
 }
+
 
 // ---------------------------------------------------------------------------
 // MSDevice_Battery-methods
 // ---------------------------------------------------------------------------
-
-MSDevice_Battery::MSDevice_Battery(SUMOVehicle& holder, const std::string& id, const SUMOReal actualBatteryCapacity, const SUMOReal maximumBatteryCapacity, const SUMOReal powerMax, const SUMOReal mass, const SUMOReal frontSurfaceArea, const SUMOReal airDragCoefficient, const SUMOReal internalMomentOfInertia, const SUMOReal radialDragCoefficient, const SUMOReal rollDragCoefficient, const SUMOReal constantPowerIntake, const SUMOReal propulsionEfficiency, const SUMOReal recuperationEfficiency, const SUMOReal lastAngle, const SUMOReal lastEnergy) :
+MSDevice_Battery::MSDevice_Battery(SUMOVehicle& holder, const std::string& id, const SUMOReal new_ActBatKap, const SUMOReal new_MaxBatKap, const SUMOReal new_PowerMax, const SUMOReal new_Mass, const SUMOReal new_FrontSurfaceArea, const SUMOReal new_AirDragCoefficient, const SUMOReal new_InternalMomentOfInertia, const SUMOReal new_RadialDragCoefficient, const SUMOReal new_RollDragCoefficient, const SUMOReal new_ConstantPowerIntake, const SUMOReal new_PropulsionEfficiency, const SUMOReal new_RecuperationEfficiency, const SUMOReal new_LastAngle, const SUMOReal new_LastEnergy)
+    :
     MSDevice(holder, id),
-    myActualBatteryCapacity(0),         // [actualBatteryCapacity <= maximumBatteryCapacity]
-    myMaximumBatteryCapacity(0),        // [maximumBatteryCapacity >= 0]
-    myPowerMax(0),                      // [maximumPower >= 0]
-    myMass(0),                          // [vehicleMass >= 0]
-    myFrontSurfaceArea(0),              // [frontSurfaceArea >= 0]
-    myAirDragCoefficient(0),            // [airDragCoefficient >=0]
-    myInternalMomentOfInertia(0),       // [internalMomentOfInertia >= 0]
-    myRadialDragCoefficient(0),         // [radialDragCoefficient >=0]
-    myRollDragCoefficient(0),           // [rollDragCoefficient >= 0]
-    myConstantPowerIntake(0),           // [constantPowerIntake >= 0]
-    myPropulsionEfficiency(0),          // [1 >= propulsionEfficiency >= 0]
-    myRecuperationEfficiency(0),        // [1 >= recuperationEfficiency >= 0]
-    myLastAngle(lastAngle),             // Limit not needed
-    myLastEnergy(lastEnergy),           // Limit not needed
-    myChargingStopped(false),           // Initially vehicle don't charge stopped 
-    myChargingInTransit(false),         // Initially vehicle don't charge in transit
-    myEnergyCharged(0),                 // Initially the energy charged is zero
-    myConsum(0),                        // Initially the Vehicle is stopped and therefore the consum is zero.
-    myVehicleStopped(0),                // Initially the vehicle is stopped and the corresponding variable is 0
-    myCurrentChargingStation(0) {       // Initially the Vehicle isn'tover a Charging Station
+    ActBatKap(new_ActBatKap),									// [actualBatteryCapacity <= maximumBatteryCapacity]
+    MaxBatKap(new_MaxBatKap),									// [maximumBatteryCapacity >= 0]
+    PowerMax(new_PowerMax),										// [maximumPower >= 0]
+    Mass(new_Mass),												// [vehicleMass >= 0]
+    FrontSurfaceArea(new_FrontSurfaceArea),						// [frontSurfaceArea >= 0]
+    AirDragCoefficient(new_AirDragCoefficient),					// [airDragCoefficient >=0]
+    InternalMomentOfInertia(new_InternalMomentOfInertia),		// [internalMomentOfInertia >= 0]
+    RadialDragCoefficient(new_RadialDragCoefficient),			// [radialDragCoefficient >=0]
+    RollDragCoefficient(new_RollDragCoefficient),				// [rollDragCoefficient >= 0]
+    ConstantPowerIntake(new_ConstantPowerIntake),				// [constantPowerIntake >= 0]
+    PropulsionEfficiency(new_PropulsionEfficiency),				// [1 >= propulsionEfficiency >= 0]
+    RecuperationEfficiency(new_RecuperationEfficiency),			// [1 >= recuperationEfficiency >= 0]
+    LastAngle(new_LastAngle),									// Limit not needed
+    LastEnergy(new_LastEnergy) {								// Limit not needed
+    // Initially the Vehicle is not charging and is not in a Chargin Station
+    ItsChargingStopped = false;
+    ItsChargingInTransit = false;
 
-    if (maximumBatteryCapacity < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter maximum battery capacity (" + TplConvert::_SUMOReal2str(maximumBatteryCapacity) + ").")
-    else
-        myMaximumBatteryCapacity = maximumBatteryCapacity;    
+    // Initially the energy charged is null
+    energyCharged = 0;
 
-    if (actualBatteryCapacity > maximumBatteryCapacity) {
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has a actual battery capacity ("  + TplConvert::_SUMOReal2str(actualBatteryCapacity) + ") greater than it's max battery capacity(" + TplConvert::_SUMOReal2str(maximumBatteryCapacity) + "). A max battery capacity value will be asigned");
-        myActualBatteryCapacity = myMaximumBatteryCapacity;
+    // Initially the Vehicle stopped and the consum is zero.
+    Consum = 0;
+
+    // Initially the vehicle is stopped and the corresponding variable is 0
+    vehicleStopped = 0;
+
+    // Initially the Vehicle are not over a Charging Station
+    actChargingStation = "NULL";
+
+    if (ActBatKap > MaxBatKap) {
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has a actual battery capacity ("  + TplConvert::_SUMOReal2str(ActBatKap) + ") greater than it's max battery capacity(" + TplConvert::_SUMOReal2str(MaxBatKap) + "). A max battery capacity value will be asigned");
+        ActBatKap = MaxBatKap;
     }
-    else
-        myActualBatteryCapacity = actualBatteryCapacity;                                
 
-    if (powerMax < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter maximum power (" + TplConvert::_SUMOReal2str(powerMax) + ").")
-    else
-        myPowerMax = powerMax;                                    
+    if (MaxBatKap < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid maximum battery capacity (" + TplConvert::_SUMOReal2str(MaxBatKap) + ").");
 
-    if (mass < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter mass (" + TplConvert::_SUMOReal2str(mass) + ").")
-    else
-        myMass = mass;                                                
+    if (PowerMax < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid maximum power (" + TplConvert::_SUMOReal2str(PowerMax) + ").");
 
-    if (frontSurfaceArea < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter front surface Area (" + TplConvert::_SUMOReal2str(frontSurfaceArea) + ").")
-    else
-        myFrontSurfaceArea = frontSurfaceArea;                        
+    if (Mass < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid mass (" + TplConvert::_SUMOReal2str(Mass) + ").");
 
-    if (airDragCoefficient < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter drag coefficient (" + TplConvert::_SUMOReal2str(airDragCoefficient) + ").")
-    else
-        myAirDragCoefficient = airDragCoefficient;                   
-    
-    if (internalMomentOfInertia < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter internal moment of insertia (" + TplConvert::_SUMOReal2str(internalMomentOfInertia) + ").")
-    else
-        myInternalMomentOfInertia = internalMomentOfInertia;        
-    
-    if (radialDragCoefficient < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter radial friction coefficient (" + TplConvert::_SUMOReal2str(radialDragCoefficient) + ").")
-    else
-        myRadialDragCoefficient = radialDragCoefficient;            
-    
-    if (rollDragCoefficient < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter roll friction coefficient (" + TplConvert::_SUMOReal2str(rollDragCoefficient) + ").")
-    else
-        myRollDragCoefficient = rollDragCoefficient;                
-    
-    if (constantPowerIntake < 0)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter constant power intake (" + TplConvert::_SUMOReal2str(constantPowerIntake) + ").")
-    else
-        myConstantPowerIntake = constantPowerIntake;                
-    
-    if (propulsionEfficiency < 0 || propulsionEfficiency > 1)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter propulsion efficiency (" + TplConvert::_SUMOReal2str(propulsionEfficiency) + ").")
-    else
-        myPropulsionEfficiency = propulsionEfficiency; 
-   
-    if (recuperationEfficiency < 0 || recuperationEfficiency > 1)
-        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' don't have a valid value for parameter Recuparation efficiency (" + TplConvert::_SUMOReal2str(recuperationEfficiency) + ").")
-    else
-         myRecuperationEfficiency = recuperationEfficiency;     
+    if (FrontSurfaceArea < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid front surface Area (" + TplConvert::_SUMOReal2str(FrontSurfaceArea) + ").");
+
+    if (AirDragCoefficient < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid drag coefficient (" + TplConvert::_SUMOReal2str(AirDragCoefficient) + ").");
+
+    if (InternalMomentOfInertia < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid internal moment of inertia (" + TplConvert::_SUMOReal2str(InternalMomentOfInertia) + ").");
+
+    if (RadialDragCoefficient < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid radial friction coefficient (" + TplConvert::_SUMOReal2str(RadialDragCoefficient) + ").");
+
+    if (RollDragCoefficient < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid roll friction coefficient (" + TplConvert::_SUMOReal2str(RollDragCoefficient) + ").");
+
+    if (ConstantPowerIntake < 0)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid constant power intake (" + TplConvert::_SUMOReal2str(ConstantPowerIntake) + ").");
+
+    if (PropulsionEfficiency < 0 || PropulsionEfficiency > 1)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid propulsion efficiency (" + TplConvert::_SUMOReal2str(PropulsionEfficiency) + ").");
+
+    if (RecuperationEfficiency < 0 || RecuperationEfficiency > 1)
+        WRITE_WARNING("Battery builder: Vehicle '" + getID() + "' has not a valid Recuparation efficiency (" + TplConvert::_SUMOReal2str(RecuperationEfficiency) + ").");
 }
 
 
 MSDevice_Battery::~MSDevice_Battery()
 {}
 
-void
-MSDevice_Battery::setActualBatteryCapacity(const SUMOReal actualBatteryCapacity) {
-    if (actualBatteryCapacity < 0)
-        myActualBatteryCapacity = 0;
-    else if (actualBatteryCapacity > myMaximumBatteryCapacity)
-        myActualBatteryCapacity = myMaximumBatteryCapacity;
-    else
-        myActualBatteryCapacity = actualBatteryCapacity;
+
+// SET FUNCTIONS
+
+void MSDevice_Battery::setActualBatteryCapacity(const SUMOReal new_ActBatKap) {
+    ActBatKap = new_ActBatKap;
+
+    if (ActBatKap > MaxBatKap) {
+        WRITE_WARNING("Function setActualBatteryCapacity: Actual battery capacity ("  + TplConvert::_SUMOReal2str(ActBatKap) + ") from Vehicle '" + getID() + "' is greater than it's max battery capacity(" + TplConvert::_SUMOReal2str(MaxBatKap) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setMaximumBatteryCapacity(const SUMOReal maximumBatteryCapacity) {
-    if (maximumBatteryCapacity < 0) 
-        WRITE_WARNING("Function setMaximumBatteryCapacity: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid maximum battery capacity (" + TplConvert::_SUMOReal2str(maximumBatteryCapacity) + ").")
-    else
-        myMaximumBatteryCapacity = maximumBatteryCapacity;
+void MSDevice_Battery::setMaximumBatteryCapacity(const SUMOReal new_MaxBatKap) {
+    MaxBatKap = new_MaxBatKap;
+
+    if (MaxBatKap < 0) {
+        WRITE_WARNING("Function setMaximumBatteryCapacity: Vehicle '" + getID() + "' has not a valid battery capacity (" + TplConvert::_SUMOReal2str(MaxBatKap) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setMass(const SUMOReal mass) {
-    if (mass < 0)
-        WRITE_WARNING("Function setMass: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid mass value (" + TplConvert::_SUMOReal2str(mass) + ").")
-    else
-        myMass = mass;
+void MSDevice_Battery::setMass(const SUMOReal new_Mass) {
+    Mass = new_Mass;
+
+    if (Mass < 0) {
+        WRITE_WARNING("Function setMass: Vehicle '" + getID() + "' has not a valid mass (" + TplConvert::_SUMOReal2str(Mass) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setPowerMax(const SUMOReal powerMax) {
-    if (powerMax < 0)
-        WRITE_WARNING("Function setPowerMax: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid power max value (" + TplConvert::_SUMOReal2str(powerMax) + ").")
-    else
-        myPowerMax = powerMax;
+void MSDevice_Battery::setPowerMax(const SUMOReal new_PowerMax) {
+    PowerMax = new_PowerMax;
+
+    if (PowerMax < 0) {
+        WRITE_WARNING("Function setPowerMax: Vehicle '" + getID() + "' has not a valid power max (" + TplConvert::_SUMOReal2str(PowerMax) + ").");
+    }
+}
+
+void MSDevice_Battery::setFrontSurfaceArea(const SUMOReal new_FrontSurfaceArea) {
+    FrontSurfaceArea = new_FrontSurfaceArea;
+
+    if (FrontSurfaceArea < 0) {
+        WRITE_WARNING("Function setFrontSurfaceArea: Vehicle '" + getID() + "' has not a valid front surface Area (" + TplConvert::_SUMOReal2str(FrontSurfaceArea) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setFrontSurfaceArea(const SUMOReal frontSurfaceArea) {
-    if (frontSurfaceArea < 0)
-        WRITE_WARNING("Function setFrontSurfaceArea: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid front surface Area value (" + TplConvert::_SUMOReal2str(frontSurfaceArea) + ").")
-    else
-        myFrontSurfaceArea = frontSurfaceArea;
+void MSDevice_Battery::setAirDragCoefficient(const SUMOReal new_AirDragCoefficient) {
+    AirDragCoefficient = new_AirDragCoefficient;
+
+    if (AirDragCoefficient < 0) {
+        WRITE_WARNING("Function setAirDragCoefficient: Vehicle '" + getID() + "' has not a valid drag coefficient (" + TplConvert::_SUMOReal2str(AirDragCoefficient) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setAirDragCoefficient(const SUMOReal airDragCoefficient) {
-    if (airDragCoefficient < 0)
-        WRITE_WARNING("Function setAirDragCoefficient: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid drag coefficient value (" + TplConvert::_SUMOReal2str(airDragCoefficient) + ").")
-    else
-        myAirDragCoefficient = airDragCoefficient;
+void MSDevice_Battery::setInternalMomentOfInertia(const SUMOReal new_InternalMomentOfInertia) {
+    InternalMomentOfInertia = new_InternalMomentOfInertia;
+
+    if (InternalMomentOfInertia < 0) {
+        WRITE_WARNING("Function setInternalMomentOfInertia: Vehicle '" + getID() + "' has not a valid internal moment of inertia (" + TplConvert::_SUMOReal2str(InternalMomentOfInertia) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setInternalMomentOfInertia(const SUMOReal internalMomentOfInertia) {
-    if (internalMomentOfInertia < 0)
-        WRITE_WARNING("Function setInternalMomentOfInertia: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid internal moment of insertia value (" + TplConvert::_SUMOReal2str(internalMomentOfInertia) + ").")
-    else
-        myInternalMomentOfInertia = internalMomentOfInertia;
+void MSDevice_Battery::setRadialDragCoefficient(const SUMOReal new_RadialDragCoefficient) {
+    RadialDragCoefficient = new_RadialDragCoefficient;
+
+    if (RadialDragCoefficient < 0) {
+        WRITE_WARNING("Function setRadialDragCoefficient: Vehicle '" + getID() + "' has not a valid radial friction coefficient (" + TplConvert::_SUMOReal2str(RadialDragCoefficient) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setRadialDragCoefficient(const SUMOReal radialDragCoefficient) {
-    if (radialDragCoefficient < 0)
-        WRITE_WARNING("Function setRadialDragCoefficient: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid radial friction coefficient value (" + TplConvert::_SUMOReal2str(radialDragCoefficient) + ").")
-    else
-        myRadialDragCoefficient = radialDragCoefficient;
+void MSDevice_Battery::setRollDragCoefficient(const SUMOReal new_RollDragCoefficient) {
+    RollDragCoefficient = new_RollDragCoefficient;
+
+    if (RollDragCoefficient < 0) {
+        WRITE_WARNING("Function setRollDragCoefficient: Vehicle '" + getID() + "' has not a valid roll friction coefficient (" + TplConvert::_SUMOReal2str(RollDragCoefficient) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setRollDragCoefficient(const SUMOReal rollDragCoefficient) {
-    if (rollDragCoefficient < 0)
-        WRITE_WARNING("Function setRollDragCoefficient: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid roll friction coefficient value (" + TplConvert::_SUMOReal2str(rollDragCoefficient) + ").")
-    else
-        myRollDragCoefficient = rollDragCoefficient;
+void MSDevice_Battery::setConstantPowerIntake(const SUMOReal new_ConstantPowerIntake) {
+    ConstantPowerIntake = new_ConstantPowerIntake;
+
+    if (ConstantPowerIntake < 0) {
+        WRITE_WARNING("Function setConstantPowerIntake: Vehicle '" + getID() + "' has not a valid constant power intake (" + TplConvert::_SUMOReal2str(ConstantPowerIntake) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setConstantPowerIntake(const SUMOReal constantPowerIntake) {
-    if (constantPowerIntake < 0)
-        WRITE_WARNING("Function setConstantPowerIntake: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid constant power intake value (" + TplConvert::_SUMOReal2str(constantPowerIntake) + ").")
-    else
-        myConstantPowerIntake = constantPowerIntake;
+void MSDevice_Battery::setPropulsionEfficiency(const SUMOReal new_PropulsionEfficiency) {
+    PropulsionEfficiency = new_PropulsionEfficiency;
+
+    if (PropulsionEfficiency < 0 || PropulsionEfficiency > 1) {
+        WRITE_WARNING("Function setPropulsionEfficiency: Vehicle '" + getID() + "' has not a valid propulsion efficiency (" + TplConvert::_SUMOReal2str(PropulsionEfficiency) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setPropulsionEfficiency(const SUMOReal propulsionEfficiency) {
-    if (propulsionEfficiency < 0 || propulsionEfficiency > 1)
-        WRITE_WARNING("Function setPropulsionEfficiency: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid propulsion efficiency value (" + TplConvert::_SUMOReal2str(propulsionEfficiency) + ").")
-    else
-        myPropulsionEfficiency = propulsionEfficiency;
+void MSDevice_Battery::setRecuperationEfficiency(const SUMOReal new_RecuperationEfficiency) {
+    RecuperationEfficiency = new_RecuperationEfficiency;
+
+    if (RecuperationEfficiency < 0 || RecuperationEfficiency > 1) {
+        WRITE_WARNING("Function setRecuperationEfficiency: Vehicle '" + getID() + "' has not a valid recuparation efficiency (" + TplConvert::_SUMOReal2str(RecuperationEfficiency) + ").");
+    }
 }
 
 
-void
-MSDevice_Battery::setRecuperationEfficiency(const SUMOReal recuperationEfficiency) {
-    if (recuperationEfficiency < 0 || recuperationEfficiency > 1)
-        WRITE_WARNING("Function setRecuperationEfficiency: Trying to insert into a battery device of vehicle '" + getID() + "' a invalid recuparation efficiency value (" + TplConvert::_SUMOReal2str(recuperationEfficiency) + ").")
-    else
-        myRecuperationEfficiency = recuperationEfficiency;
+void MSDevice_Battery::setLastAngle(const SUMOReal new_LastAngle) {
+    LastAngle = new_LastAngle;
 }
 
 
-void
-MSDevice_Battery::setLastAngle(const SUMOReal lastAngle) {
-    myLastAngle = lastAngle;
+void MSDevice_Battery::setLastEnergy(const SUMOReal new_LastEnergy) {
+    LastEnergy = new_LastEnergy ;
+}
+
+inline void MSDevice_Battery::resetChargingStartTime() {
+    ChargingStartTime = 0;
+}
+
+inline void MSDevice_Battery::increaseChargingStartTime() {
+    ChargingStartTime++;
+}
+
+inline void MSDevice_Battery::resetVehicleStoppedTimer() {
+    vehicleStopped = 0;
+}
+
+inline void MSDevice_Battery::increaseVehicleStoppedTimer() {
+    vehicleStopped++;
+}
+
+SUMOReal MSDevice_Battery::getActualBatteryCapacity() const {
+    return ActBatKap;
+}
+
+SUMOReal MSDevice_Battery::getMaximumBatteryCapacity() const {
+    return MaxBatKap;
+}
+
+SUMOReal MSDevice_Battery::getMaximumPower() const {
+    return PowerMax;
+}
+
+SUMOReal MSDevice_Battery::getMass() const {
+    return Mass;
+}
+
+SUMOReal MSDevice_Battery::getFrontSurfaceArea() const {
+    return FrontSurfaceArea;
+}
+
+SUMOReal MSDevice_Battery::getAirDragCoefficient() const {
+    return AirDragCoefficient;
+}
+
+SUMOReal MSDevice_Battery::getInternalMomentOfInertia() const {
+    return InternalMomentOfInertia;
+}
+
+SUMOReal MSDevice_Battery::getRadialDragCoefficient() const {
+    return RadialDragCoefficient;
+}
+
+SUMOReal MSDevice_Battery::getRollDragCoefficient() const {
+    return RollDragCoefficient;
+}
+
+SUMOReal MSDevice_Battery::getConstantPowerIntake() const {
+    return ConstantPowerIntake;
+}
+
+SUMOReal MSDevice_Battery::getPropulsionEfficiency() const {
+    return PropulsionEfficiency;
+}
+
+SUMOReal MSDevice_Battery::getRecuperationEfficiency() const {
+    return RecuperationEfficiency;
+}
+
+SUMOReal MSDevice_Battery::getLastAngle() const {
+    return LastAngle;
+}
+
+SUMOReal MSDevice_Battery::getLastEnergy() const {
+    return LastEnergy;
+}
+
+SUMOReal MSDevice_Battery::getConsum() const {
+    return Consum;
+}
+
+bool MSDevice_Battery::isChargingStopped() const {
+    return ItsChargingStopped;
+}
+
+bool MSDevice_Battery::isChargingInTransit() const {
+    return ItsChargingInTransit;
+}
+
+SUMOReal MSDevice_Battery::getChargingStartTime() const {
+    return ChargingStartTime;
+}
+
+const std::string& MSDevice_Battery::getChargingStationID() const {
+    return actChargingStation;
+}
+
+SUMOReal MSDevice_Battery::getChrgEnergy() const {
+    return energyCharged;
 }
 
 
-void
-MSDevice_Battery::setLastEnergy(const SUMOReal lastEnergy) {
-    myLastEnergy = lastEnergy ;
+int MSDevice_Battery::getVehicleStopped() const {
+    return vehicleStopped;
 }
 
 
-void
-MSDevice_Battery::resetChargingStartTime() {
-    myChargingStartTime = 0;
-}
-
-
-void
-MSDevice_Battery::increaseChargingStartTime() {
-    myChargingStartTime++;
-}
-
-
-void
-MSDevice_Battery::resetVehicleStoppedTimer() {
-    myVehicleStopped = 0;
-}
-
-
-void
-MSDevice_Battery::increaseVehicleStoppedTimer() {
-    myVehicleStopped++;
-}
-
-
-SUMOReal
-MSDevice_Battery::getActualBatteryCapacity() const {
-    return myActualBatteryCapacity;
-}
-
-
-SUMOReal
-MSDevice_Battery::getMaximumBatteryCapacity() const {
-    return myMaximumBatteryCapacity;
-}
-
-
-SUMOReal
-MSDevice_Battery::getMaximumPower() const {
-    return myPowerMax;
-}
-
-
-SUMOReal
-MSDevice_Battery::getMass() const {
-    return myMass;
-}
-
-
-SUMOReal
-MSDevice_Battery::getFrontSurfaceArea() const {
-    return myFrontSurfaceArea;
-}
-
-
-SUMOReal
-MSDevice_Battery::getAirDragCoefficient() const {
-    return myAirDragCoefficient;
-}
-
-
-SUMOReal
-MSDevice_Battery::getInternalMomentOfInertia() const {
-    return myInternalMomentOfInertia;
-}
-
-
-SUMOReal
-MSDevice_Battery::getRadialDragCoefficient() const {
-    return myRadialDragCoefficient;
-}
-
-
-SUMOReal
-MSDevice_Battery::getRollDragCoefficient() const {
-    return myRollDragCoefficient;
-}
-
-
-SUMOReal
-MSDevice_Battery::getConstantPowerIntake() const {
-    return myConstantPowerIntake;
-}
-
-
-SUMOReal
-MSDevice_Battery::getPropulsionEfficiency() const {
-    return myPropulsionEfficiency;
-}
-
-
-SUMOReal
-MSDevice_Battery::getRecuperationEfficiency() const {
-    return myRecuperationEfficiency;
-}
-
-
-SUMOReal
-MSDevice_Battery::getLastAngle() const {
-    return myLastAngle;
-}
-
-
-SUMOReal
-MSDevice_Battery::getLastEnergy() const {
-    return myLastEnergy;
-}
-
-
-SUMOReal
-MSDevice_Battery::getConsum() const {
-    return myConsum;
-}
-
-
-bool
-MSDevice_Battery::isChargingStopped() const {
-    return myChargingStopped;
-}
-
-
-bool
-MSDevice_Battery::isChargingInTransit() const {
-    return myChargingInTransit;
-}
-
-
-SUMOReal
-MSDevice_Battery::getChargingStartTime() const {
-    return myChargingStartTime;
-}
-
-
-std::string
-MSDevice_Battery::getChargingStationID() const {
-	if(myCurrentChargingStation != NULL)
-		return myCurrentChargingStation->getID();
-	else
-		return "";
-}
-
-
-SUMOReal
-MSDevice_Battery::getChrgEnergy() const {
-    return myEnergyCharged;
-}
-
-
-int
-MSDevice_Battery::getVehicleStopped() const {
-    return myVehicleStopped;
-}
-
-
-SUMOReal
-MSDevice_Battery::getPropEnergy(SUMOVehicle& veh) {
+SUMOReal MSDevice_Battery::getPropEnergy(SUMOVehicle& veh) {
     // calculate current kinetic energy
     SUMOReal height_cur = veh.getPositionOnLane() / veh.getLane()->getLength() * (veh.getLane()->getShape().back().z() - veh.getLane()->getShape().front().z());
 
@@ -649,7 +582,7 @@ MSDevice_Battery::getPropEnergy(SUMOVehicle& veh) {
     setLastEnergy(currentEnergy);
 
     // Calculate energy losses:
-    // EnergyLoss,Air = 1/2 * rho_air [kg/m^3] * myFrontSurfaceArea [m^2] * myAirDragCoefficient [-] * v_Veh^2 [m/s] * s [m]
+    // EnergyLoss,Air = 1/2 * rho_air [kg/m^3] * FrontSurfaceArea [m^2] * AirDragCoefficient [-] * v_Veh^2 [m/s] * s [m]
     //                    ... with rho_air [kg/m^3] = 1,2041 kg/m^3 (at T = 20C)
     //                    ... with s [m] = v_Veh [m/s] * 1 [s]
     EnergyLoss += 0.5 * 1.2041 * getFrontSurfaceArea() * getAirDragCoefficient() * fabs(veh.getSpeed() * veh.getSpeed() * veh.getSpeed());
@@ -657,7 +590,7 @@ MSDevice_Battery::getPropEnergy(SUMOVehicle& veh) {
     // Energy loss through Air resistance [Ws]
     // EnergyLoss,Tire = c_R [-] * F_N [N] * s [m]
     //                    ... with c_R = ~0.012    (car tire on asphalt)
-    //                    ... with F_N [N] = myMass [kg] * g [m/s^2]
+    //                    ... with F_N [N] = Mass [kg] * g [m/s^2]
     EnergyLoss += getRollDragCoefficient() * 9.81 * getMass() * fabs(veh.getSpeed());
 
     // Energy loss through Roll resistance [Ws]
@@ -673,10 +606,10 @@ MSDevice_Battery::getPropEnergy(SUMOVehicle& veh) {
 
     //E_Bat = E_kin_pot + EnergyLoss;
     if (EnergyLoss > 0)
-        // Assumption: Efficiency of myPropulsionEfficiency when accelerating
+        // Assumption: Efficiency of PropulsionEfficiency when accelerating
         EnergyLoss = EnergyLoss / getPropulsionEfficiency();
     else
-        // Assumption: Efficiency of myRecuperationEfficiency when recuperating
+        // Assumption: Efficiency of RecuperationEfficiency when recuperating
         EnergyLoss = EnergyLoss * getRecuperationEfficiency();
 
     // convert from [Ws] to [kWh] (3600s / 1h):

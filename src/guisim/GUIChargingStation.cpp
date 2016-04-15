@@ -11,7 +11,7 @@
 // A lane area vehicles can halt at (gui-version)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -145,50 +145,14 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
     RGBColor blue(114, 210, 252, 255);
     RGBColor green(76, 170, 50, 255);
     RGBColor yellow(255, 235, 0, 255);
-	RGBColor yellowCharge(255, 180, 0, 255);
-
-    // draw the area depending if the vehicle is charging
+    // draw the area
     glTranslated(0, 0, getType());
-	if(myChargingVehicle)
-		GLHelper::setColor(yellowCharge);
-	else
-		GLHelper::setColor(blue);
+    GLHelper::setColor(blue);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myFGShape, myFGShapeRotations, myFGShapeLengths, exaggeration);
 
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
-
-        // push charging power matrix
-        glPushMatrix();
-
-        // Traslate End positionof signal
-        glTranslated(myFGSignPos.x(), myFGSignPos.y(), 0);
-
-        // Rotate 180 (Eje X -> Mirror)
-        glRotated(180, 1, 0, 0);
-
-        // Rotate again using myBlockIconRotation
-        glRotated(myFGSignRot, 0, 0, 1);
-
-        // Set poligon mode
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        // set polyfront position on 0,0
-        pfSetPosition(0, 0);
-
-        // Set polyfront scale to 1
-        pfSetScale(1.f);
-
-         // traslate matrix
-        glTranslated(1.2, 0, 0);
-
-        // draw charging power
-        pfDrawString((toString(myChargingPower) + " W").c_str());
-
-        // pop charging power matrix
-        glPopMatrix();
-
         // draw the sign
         glTranslated(myFGSignPos.x(), myFGSignPos.y(), 0);
         int noPoints = 9;
@@ -197,6 +161,7 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         glScaled(exaggeration, exaggeration, 1);
+        GLHelper::setColor(blue);
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
         glTranslated(0, 0, .1);
 

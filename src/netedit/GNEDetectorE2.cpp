@@ -246,8 +246,6 @@ GNEDetectorE2::getAttribute(SumoXMLAttr key) const {
             return toString(myPosition.x());
         case SUMO_ATTR_FREQUENCY:
             return toString(myFreq);
-        case SUMO_ATTR_LENGTH:
-            return toString(myLength);
         case SUMO_ATTR_FILE:
             return myFilename;
         case SUMO_ATTR_CONT:
@@ -275,7 +273,6 @@ if (value == getAttribute(key)) {
             throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
-        case SUMO_ATTR_LENGTH:
         case SUMO_ATTR_FILE:
         case SUMO_ATTR_CONT:
         case SUMO_ATTR_HALTING_TIME_THRESHOLD:
@@ -300,8 +297,6 @@ GNEDetectorE2::isValid(SumoXMLAttr key, const std::string& value) {
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
-        case SUMO_ATTR_LENGTH:
-            return(canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_FILE:
             return isValidFileValue(value);
         case SUMO_ATTR_CONT:
@@ -334,11 +329,6 @@ GNEDetectorE2::setAttribute(SumoXMLAttr key, const std::string& value) {
             break;
         case SUMO_ATTR_FREQUENCY:
             myFreq = parse<SUMOReal>(value);
-            break;
-        case SUMO_ATTR_LENGTH:
-            myLength = parse<SUMOReal>(value);
-            updateGeometry();
-            getViewNet()->update();
             break;
         case SUMO_ATTR_FILE:
             myFilename = value;

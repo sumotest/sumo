@@ -8,7 +8,7 @@
 // Basically a container for an NBEdge with drawing and editing capabilities
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -118,9 +118,6 @@ public:
     /** @brief update edge geometry after junction move */
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
 
-    /// @brief returns pointer to net   // PABLO #1916
-    GNENet *getNet() const;             // PABLO #1916
-
     /// @brief returns the internal NBEdge
     NBEdge* getNBEdge();
 
@@ -204,7 +201,7 @@ public:
     std::set<GUIGlID> getLaneGlIDs();
 
     /// @brief returns a reference to the lane vector
-    const std::vector<GNELane*>& getLanes();
+    const LaneVector& getLanes();
 
     /// @brief whether this edge was created from a split
     bool wasSplit();

@@ -10,7 +10,7 @@
 // The router's network representation
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -33,18 +33,16 @@
 #include <config.h>
 #endif
 
-#include <queue>
 #include <vector>
-#include <utils/common/MsgHandler.h>
-#include <utils/common/NamedObjectCont.h>
-#include <utils/common/RandomDistributor.h>
-#include <utils/vehicle/PedestrianRouter.h>
-#include <utils/vehicle/SUMOAbstractRouter.h>
-#include <utils/vehicle/SUMOVehicleParameter.h>
-#include <utils/vehicle/SUMOVTypeParameter.h>
-#include "ROLane.h"
-#include "RORoutable.h"
+#include "ROEdge.h"
+#include "RONode.h"
+#include "ROVehicleCont.h"
+#include "ROVehicle.h"
 #include "RORouteDef.h"
+#include <utils/common/MsgHandler.h>
+#include <utils/vehicle/SUMOVTypeParameter.h>
+#include <utils/vehicle/SUMOAbstractRouter.h>
+#include <utils/common/RandomDistributor.h>
 
 #ifdef HAVE_FOX
 #include <utils/foxtools/FXWorkerThread.h>
@@ -54,12 +52,8 @@
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class ROEdge;
-class ROLane;
 class RONode;
-class ROPerson;
-class RORoutable;
-class ROVehicle;
+class RORouteDef;
 class OptionsCont;
 class OutputDevice;
 
@@ -72,12 +66,11 @@ class OutputDevice;
  * @brief The router's network representation.
  *
  * A router network is responsible for watching loaded edges, nodes,!!!
+ *
+ * @todo Vehicle ids are not tracked; it may happen that the same id is added twice...
  */
 class RONet {
 public:
-
-    typedef std::map<const SUMOTime, std::deque<RORoutable*> > RoutablesMap;
-
     /// @brief Constructor
     RONet();
 
@@ -164,16 +157,6 @@ public:
      */
     ROEdge* getEdge(const std::string& name) const {
         return myEdges.get(name);
-    }
-
-
-    /** @brief Retrieves an edge from the network when the lane id is given
-     *
-     * @param[in] laneID The name of the lane to retrieve the edge for
-     * @return The edge of the named lane if known, otherwise 0
-     */
-    ROEdge* getEdgeForLaneID(const std::string& laneID) const {
-        return getEdge(laneID.substr(0, laneID.rfind("_")));
     }
 
 
@@ -358,9 +341,10 @@ public:
 
     /* @brief Adds a person to the network
      *
-     * @param[in] person   The person to add
+     * @param[in] depart The departure time of the person
+     * @param[in] desc   The xml description of the person
      */
-    bool addPerson(ROPerson* person);
+    void addPerson(const SUMOTime depart, const std::string desc);
 
 
     /* @brief Adds a container to the network
@@ -382,12 +366,12 @@ public:
      *  the internal container.
      *
      * @param[in] options The options used during this process
-     * @param[in] provider The router provider for routes computation
+     * @param[in] router The router to use for routes computation
      * @param[in] time The time until which route definitions shall be processed
      * @return The last seen departure time>=time
      */
     SUMOTime saveAndRemoveRoutesUntil(OptionsCont& options,
-                                      const RORouterProvider& provider, SUMOTime time);
+                                      SUMOAbstractRouter<ROEdge, ROVehicle>& router, SUMOTime time);
 
 
     /// Returns the information whether further vehicles, persons or containers are stored
@@ -411,8 +395,8 @@ public:
     void openOutput(const std::string& filename, const std::string altFilename, const std::string typeFilename);
 
 
-    /** @brief closes the file output for computed routes and deletes associated threads if necessary */
-    void cleanup();
+    /** @brief closes the file output for computed routes and deletes routers and associated threads if necessary */
+    void cleanup(SUMOAbstractRouter<ROEdge, ROVehicle>* router);
 
 
     /// Returns the total number of edges the network contains including internal edges
@@ -422,8 +406,6 @@ public:
     int getInternalEdgeNumber() const;
 
     const std::map<std::string, ROEdge*>& getEdgeMap() const;
-
-    static void adaptIntermodalRouter(ROIntermodalRouter& router);
 
     bool hasPermissions() const;
 
@@ -441,21 +423,27 @@ public:
         return myThreadPool;
     }
 
-    class WorkerThread : public FXWorkerThread, public RORouterProvider {
+    class WorkerThread : public FXWorkerThread {
     public:
         WorkerThread(FXWorkerThread::Pool& pool,
-                     const RORouterProvider& original)
-            : FXWorkerThread(pool), RORouterProvider(original) {}
+            SUMOAbstractRouter<ROEdge, ROVehicle>* router)
+            : FXWorkerThread(pool), myRouter(router) {}
+        SUMOAbstractRouter<ROEdge, ROVehicle>& getRouter() const {
+            return *myRouter;
+        }
         virtual ~WorkerThread() {
             stop();
+            delete myRouter;
         }
+    private:
+        SUMOAbstractRouter<ROEdge, ROVehicle>* myRouter;
     };
 
     class BulkmodeTask : public FXWorkerThread::Task {
     public:
         BulkmodeTask(const bool value) : myValue(value) {}
         void run(FXWorkerThread* context) {
-            static_cast<WorkerThread*>(context)->getVehicleRouter().setBulkMode(myValue);
+            static_cast<WorkerThread*>(context)->getRouter().setBulkMode(myValue);
         }
     private:
         const bool myValue;
@@ -463,13 +451,24 @@ public:
         /// @brief Invalidated assignment operator.
         BulkmodeTask& operator=(const BulkmodeTask&);
     };
+
 #endif
 
 
 private:
-    void checkFlows(SUMOTime time, MsgHandler* errorHandler);
+    static bool computeRoute(SUMOAbstractRouter<ROEdge, ROVehicle>& router,
+                             const ROVehicle* const veh, const bool removeLoops,
+                             MsgHandler* errorHandler);
 
-    void createBulkRouteRequests(const RORouterProvider& provider, const SUMOTime time, const bool removeLoops);
+    /// @brief return vehicles for use by RouteAggregator
+    ROVehicleCont& getVehicles() {
+        return myVehicles;
+    }
+
+
+    void checkFlows(SUMOTime time);
+
+    void createBulkRouteRequests(SUMOAbstractRouter<ROEdge, ROVehicle>& router, const SUMOTime time, const bool removeLoops, const std::map<std::string, ROVehicle*>& mmap);
 
 private:
     /// @brief Unique instance of RONet
@@ -477,9 +476,6 @@ private:
 
     /// @brief Known vehicle ids
     std::set<std::string> myVehIDs;
-
-    /// @brief Known person ids
-    std::set<std::string> myPersonIDs;
 
     /// @brief Known nodes
     NamedObjectCont<RONode*> myNodes;
@@ -501,20 +497,21 @@ private:
     /// @brief A distribution of vehicle types (probability->vehicle type)
     VTypeDistDictType myVTypeDistDict;
 
-    /// @brief Whether no vehicle type has been loaded yet
+    /// @brief Whether no vehicle type was loaded
     bool myDefaultVTypeMayBeDeleted;
-
-    /// @brief Whether no pedestrian type has been loaded yet
-    bool myDefaultPedTypeMayBeDeleted;
 
     /// @brief Known routes
     NamedObjectCont<RORouteDef*> myRoutes;
 
-    /// @brief Known routables
-    RoutablesMap myRoutables;
+    /// @brief Known vehicles
+    ROVehicleCont myVehicles;
 
     /// @brief Known flows
     NamedObjectCont<SUMOVehicleParameter*> myFlows;
+
+    /// @brief Known persons
+    typedef std::multimap<const SUMOTime, const std::string> PersonMap;
+    PersonMap myPersons;
 
     /// @brief Known containers
     typedef std::multimap<const SUMOTime, const std::string> ContainerMap;
@@ -560,11 +557,11 @@ private:
 private:
     class RoutingTask : public FXWorkerThread::Task {
     public:
-        RoutingTask(RORoutable* v, const bool removeLoops, MsgHandler* errorHandler)
-            : myRoutable(v), myRemoveLoops(removeLoops), myErrorHandler(errorHandler) {}
+        RoutingTask(ROVehicle* v, const bool removeLoops, MsgHandler* errorHandler)
+            : myVehicle(v), myRemoveLoops(removeLoops), myErrorHandler(errorHandler) {}
         void run(FXWorkerThread* context);
     private:
-        RORoutable* const myRoutable;
+        ROVehicle* const myVehicle;
         const bool myRemoveLoops;
         MsgHandler* const myErrorHandler;
     private:

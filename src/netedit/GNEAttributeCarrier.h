@@ -7,7 +7,7 @@
 // Abstract Base class for gui objects which carry attributes
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -146,9 +146,6 @@ public:
     /// @brief return whether the given attribute allows for a combination of discrete values
     static bool discreteCombinableChoices(SumoXMLTag tag, SumoXMLAttr attr);
 
-    /// @brief return definition of a certain SumoXMLAttr
-    static std::string getDefinition(SumoXMLTag tag, SumoXMLAttr attr);
-
     /// @brief return the default value of the attribute of an element                                  // PABLO #1916
     /// @note It's advisable to check before with function hasDefaultValue if  exits a default value    // PABLO #1916
     template<typename T>                                                                                // PABLO #1916
@@ -236,9 +233,6 @@ private:
 
     /// @brief map with the values of discrete choices
     static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > myDiscreteChoices;
-
-    /// @brief map with the definition of attributes                                                    // PABLO #1916
-    static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string> > myAttrDefinitions;    // PABLO #1916
 
 private:
     /// @brief Invalidated assignment operator

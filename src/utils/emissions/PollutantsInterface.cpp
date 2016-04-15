@@ -8,7 +8,7 @@
 // Interface to capsulate different emission models
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2013-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -142,8 +142,7 @@ PollutantsInterface::Emissions
 PollutantsInterface::computeAll(const SUMOEmissionClass c, const double v, const double a, const double slope) {
     const Helper* const h = myHelpers[c >> 16];
     return Emissions(h->compute(c, CO2, v, a, slope), h->compute(c, CO, v, a, slope), h->compute(c, HC, v, a, slope),
-                     h->compute(c, FUEL, v, a, slope), h->compute(c, NO_X, v, a, slope), h->compute(c, PM_X, v, a, slope),
-                     h->compute(c, ELEC, v, a, slope));
+                     h->compute(c, FUEL, v, a, slope), h->compute(c, NO_X, v, a, slope), h->compute(c, PM_X, v, a, slope));
 }
 
 

@@ -121,10 +121,6 @@ public:
     /// @brief set new position in the view
     void setPositionInView(const Position &pos);
 
-    /// @brief Set lane of Additional to NULL
-    /// @note this function must be removed when the undoRedo list works as ein STACK
-    void disableLane();
-
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */

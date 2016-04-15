@@ -17,7 +17,7 @@
 // Representation of a vehicle in the micro simulation
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -59,7 +59,8 @@
 #include <microsim/MSVehicleTransfer.h>
 #include <microsim/MSGlobals.h>
 #include "MSStoppingPlace.h"
-#include "devices/MSDevice_Transportable.h"
+#include "devices/MSDevice_Person.h"
+#include "devices/MSDevice_Container.h"
 #include "MSEdgeWeightsStorage.h"
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include "MSMoveReminder.h"
@@ -145,58 +146,58 @@ MSVehicle::WaitingTimeCollector::WaitingTimeCollector(const WaitingTimeCollector
 
 MSVehicle::WaitingTimeCollector&
 MSVehicle::WaitingTimeCollector::operator=(const WaitingTimeCollector& wt){
-   myMemorySize = wt.getMemorySize();
-   myWaitingIntervals = wt.getWaitingIntervals();
-   return *this;
+	myMemorySize = wt.getMemorySize();
+	myWaitingIntervals = wt.getWaitingIntervals();
+	return *this;
 }
 
 MSVehicle::WaitingTimeCollector&
 MSVehicle::WaitingTimeCollector::operator=(SUMOTime t){
-   myWaitingIntervals.clear();
-   passTime(t,true);
-   return *this;
+	myWaitingIntervals.clear();
+	passTime(t,true);
+	return *this;
 }
 
 SUMOTime
 MSVehicle::WaitingTimeCollector::cumulatedWaitingTime(SUMOTime memorySpan) const{
-   assert(memorySpan <= myMemorySize);
-   if(memorySpan == -1) memorySpan = myMemorySize;
-   SUMOTime totalWaitingTime = 0;
-   for(waitingIntervalList::const_iterator i = myWaitingIntervals.begin(); i!=myWaitingIntervals.end(); i++){
-      if(i->second >= memorySpan){
-         if(i->first >= memorySpan) break;
-         else totalWaitingTime += memorySpan - i->first;
-      } else {
-         totalWaitingTime += i->second - i->first;
-      }
-   }
-   return totalWaitingTime;
+	assert(memorySpan <= myMemorySize);
+	if(memorySpan == -1) memorySpan = myMemorySize;
+	SUMOTime totalWaitingTime = 0;
+	for(waitingIntervalList::const_iterator i = myWaitingIntervals.begin(); i!=myWaitingIntervals.end(); i++){
+		if(i->second >= memorySpan){
+			if(i->first >= memorySpan) break;
+			else totalWaitingTime += memorySpan - i->first;
+		} else {
+			totalWaitingTime += i->second - i->first;
+		}
+	}
+	return totalWaitingTime;
 }
 
 void
 MSVehicle::WaitingTimeCollector::passTime(SUMOTime dt, bool waiting){
-   waitingIntervalList::iterator i = myWaitingIntervals.begin();
-   waitingIntervalList::iterator end = myWaitingIntervals.end();
-   bool startNewInterval = i==end || (i->first != 0);
-   while(i!=end){
-      i->first += dt;
-      if(i->first >= myMemorySize) break;
-      i->second += dt; i++;
-   }
+	waitingIntervalList::iterator i = myWaitingIntervals.begin();
+	waitingIntervalList::iterator end = myWaitingIntervals.end();
+	bool startNewInterval = i==end || (i->first != 0);
+	while(i!=end){
+		i->first += dt;
+		if(i->first >= myMemorySize) break;
+		i->second += dt; i++;
+	}
 
-   // remove intervals beyond memorySize
-   waitingIntervalList::iterator::difference_type d = std::distance(i,end);
-   while(d > 0) {
-      myWaitingIntervals.pop_back();
-      d--;
-   }
+	// remove intervals beyond memorySize
+	waitingIntervalList::iterator::difference_type d = std::distance(i,end);
+	while(d > 0) {
+		myWaitingIntervals.pop_back();
+		d--;
+	}
 
-   if(!waiting) return;
-   else if(!startNewInterval)
-      myWaitingIntervals.begin()->first = 0;
-   else
-      myWaitingIntervals.push_front(std::make_pair(0,dt));
-   return;
+	if(!waiting) return;
+	else if(!startNewInterval)
+		myWaitingIntervals.begin()->first = 0;
+	else
+		myWaitingIntervals.push_front(std::make_pair(0,dt));
+	return;
 }
 
 
@@ -484,9 +485,6 @@ MSVehicle::~MSVehicle() {
     if (myType->amVehicleSpecific()) {
         delete myType;
     }
-
-    delete myCFVariables;
-
 #ifndef NO_TRACI
     delete myInfluencer;
 #endif
@@ -960,7 +958,7 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
         loaded &= stop.awaitedContainers.size() == 0;
         if (boarded) {
             if (stop.busstop != 0) {
-                const std::vector<MSTransportable*>& persons = myPersonDevice->getTransportables();
+                const std::vector<MSTransportable*>& persons = myPersonDevice->getPersons();
                 for (std::vector<MSTransportable*>::const_iterator i = persons.begin(); i != persons.end(); ++i) {
                     stop.busstop->removeTransportable(*i);
                 }
@@ -974,7 +972,7 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
         }
         if (loaded) {
             if (stop.containerstop != 0) {
-                const std::vector<MSTransportable*>& containers = myContainerDevice->getTransportables();
+                const std::vector<MSTransportable*>& containers = myContainerDevice->getContainers();
                 for (std::vector<MSTransportable*>::const_iterator i = containers.begin(); i != containers.end(); ++i) {
                     stop.containerstop->removeTransportable(*i);
                 }
@@ -1479,7 +1477,7 @@ MSVehicle::executeMove() {
 
     // XXX braking due to lane-changing is not registered and due to processing stops is not registered
     //     To avoid casual blinking brake lights at high speeds due to dawdling of the
-    //      leading vehicle, we don't show brake lights when the deceleration could be caused
+    //	   leading vehicle, we don't show brake lights when the deceleration could be caused
     //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
     SUMOReal pseudoFriction = (0.05 +  0.005*getSpeed())*getSpeed();
     bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
@@ -1510,11 +1508,11 @@ MSVehicle::executeMove() {
 #endif
     // visit waiting time
     if (vNext <= SUMO_const_haltingSpeed) {
-        myWaitingTime += DELTA_T;
+    	 myWaitingTime += DELTA_T;
         myWaitingTimeCollector.passTime(DELTA_T, true);
         brakelightsOn = true;
     } else {
-        myWaitingTime = 0;
+    	 myWaitingTime = 0;
         myWaitingTimeCollector.passTime(DELTA_T, false);
     }
 
@@ -1839,8 +1837,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
 void
 MSVehicle::activateReminders(const MSMoveReminder::Notification reason) {
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end();) {
-        // skip the reminder if it is a lane reminder but not for my lane
-        if (rem->first->getLane() != 0 && rem->second > 0.) {
+        if (rem->first->getLane() != 0 && rem->first->getLane() != getLane()) {
 #ifdef _DEBUG
             if (myTraceMoveReminders) {
                 traceMoveReminder("notifyEnter_skipped", rem->first, rem->second, true);
@@ -1946,13 +1943,11 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
     myWaitingTime = 0;
     myLane = enteredLane;
     myAmOnNet = true;
-    if (notification != MSMoveReminder::NOTIFICATION_TELEPORT) {
-        // set and activate the new lane's reminders, teleports already did that at enterLaneAtMove
-        for (std::vector< MSMoveReminder* >::const_iterator rem = enteredLane->getMoveReminders().begin(); rem != enteredLane->getMoveReminders().end(); ++rem) {
-            addReminder(*rem);
-        }
-        activateReminders(notification);
+    // set and activate the new lane's reminders
+    for (std::vector< MSMoveReminder* >::const_iterator rem = enteredLane->getMoveReminders().begin(); rem != enteredLane->getMoveReminders().end(); ++rem) {
+        addReminder(*rem);
     }
+    activateReminders(notification);
     // build the list of lanes the vehicle is lapping into
     SUMOReal leftLength = myType->getLength() - pos;
     MSLane* clane = enteredLane;
@@ -2410,18 +2405,14 @@ MSVehicle::getLeader(SUMOReal dist) const {
     }
     const MSVehicle* lead = 0;
     const MSLane::VehCont& vehs = myLane->getVehiclesSecure();
-    assert(vehs.size() > 0);
-    MSLane::VehCont::const_iterator it = std::find(vehs.begin(), vehs.end(), this);
-    if (it != vehs.end() && it + 1 != vehs.end()) {
-        lead = *(it + 1);
-    }
-    if (lead != 0) {
-        std::pair<const MSVehicle* const, SUMOReal> result(lead, 
-                lead->getPositionOnLane() - lead->getVehicleType().getLength() - getPositionOnLane() - getVehicleType().getMinGap());
-        myLane->releaseVehicles();
-        return result;
+    MSLane::VehCont::const_iterator pred = std::find(vehs.begin(), vehs.end(), this) + 1;
+    if (pred != vehs.end()) {
+        lead = *pred;
     }
     myLane->releaseVehicles();
+    if (lead != 0) {
+        return std::make_pair(lead, lead->getPositionOnLane() - lead->getVehicleType().getLength() - getPositionOnLane() - getVehicleType().getMinGap());
+    }
     const SUMOReal seen = myLane->getLength() - getPositionOnLane();
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(myLane);
     return myLane->getLeaderOnConsecutive(dist, seen, getSpeed(), *this, bestLaneConts);
@@ -2489,10 +2480,10 @@ MSVehicle::getHarmonoise_NoiseEmissions() const {
 void
 MSVehicle::addPerson(MSTransportable* person) {
     if (myPersonDevice == 0) {
-        myPersonDevice = MSDevice_Transportable::buildVehicleDevices(*this, myDevices, false);
+        myPersonDevice = MSDevice_Person::buildVehicleDevices(*this, myDevices);
         myMoveReminders.push_back(std::make_pair(myPersonDevice, 0.));
     }
-    myPersonDevice->addTransportable(person);
+    myPersonDevice->addPerson(person);
     if (myStops.size() > 0 && myStops.front().reached && myStops.front().triggered) {
         unsigned int numExpected = (unsigned int) myStops.front().awaitedPersons.size();
         if (numExpected != 0) {
@@ -2511,10 +2502,10 @@ MSVehicle::addPerson(MSTransportable* person) {
 void
 MSVehicle::addContainer(MSTransportable* container) {
     if (myContainerDevice == 0) {
-        myContainerDevice = MSDevice_Transportable::buildVehicleDevices(*this, myDevices, true);
+        myContainerDevice = MSDevice_Container::buildVehicleDevices(*this, myDevices);
         myMoveReminders.push_back(std::make_pair(myContainerDevice, 0.));
     }
-    myContainerDevice->addTransportable(container);
+    myContainerDevice->addContainer(container);
     if (myStops.size() > 0 && myStops.front().reached && myStops.front().containerTriggered) {
         unsigned int numExpected = (unsigned int) myStops.front().awaitedContainers.size();
         if (numExpected != 0) {
@@ -2528,23 +2519,33 @@ MSVehicle::addContainer(MSTransportable* container) {
 }
 
 
-const std::vector<MSTransportable*>&
-MSVehicle::getPersons() const {
+std::vector<MSTransportable*>
+MSVehicle::getSortedPersons() const {
     if (myPersonDevice == 0) {
         return myEmptyTransportableVector;
     } else {
-        return myPersonDevice->getTransportables();
+        std::vector<MSTransportable*> result = myPersonDevice->getPersons();
+        sort(result.begin(), result.end(), transportable_by_id_sorter());
+        return result;
     }
 }
 
 
-const std::vector<MSTransportable*>&
-MSVehicle::getContainers() const {
+std::vector<MSTransportable*>
+MSVehicle::getSortedContainers() const {
     if (myContainerDevice == 0) {
         return myEmptyTransportableVector;
     } else {
-        return myContainerDevice->getTransportables();
+        std::vector<MSTransportable*> result = myContainerDevice->getContainers();
+        sort(result.begin(), result.end(), transportable_by_id_sorter());
+        return result;
     }
+}
+
+
+int
+MSVehicle::transportable_by_id_sorter::operator()(const MSTransportable* const c1, const MSTransportable* const c2) const {
+    return c1->getID() < c2->getID();
 }
 
 

@@ -3,7 +3,6 @@
 
 #include <string>
 
-#define FLEET
 
 namespace PHEMlightdll {
     class Constants {
@@ -17,7 +16,13 @@ namespace PHEMlightdll {
         static const double ZERO_SPEED_ACCURACY;
         static const double DRIVE_TRAIN_EFFICIENCY_All;
         static const double DRIVE_TRAIN_EFFICIENCY_CB;
+        static const bool calcCB = false;
 
+        //Fleetmix constants
+        static const double SPEED_ROTATIONAL_INCREMENT;
+        static const double POWER_FC_INCREMENT;
+        static const double POWER_POLLUTANT_INCREMENT;
+        static const double NNORM_INCREMENT;
 
         //Strings
         static const std::string HeavyVehicle;
@@ -37,6 +42,8 @@ namespace PHEMlightdll {
         static const std::string strGasoline;
         static const std::string strDiesel;
         static const std::string strCNG;
+
+        //Propulsionstrings
         static const std::string strHybrid;
         static const std::string strBEV;
 
@@ -47,7 +54,6 @@ namespace PHEMlightdll {
         static const std::string strSI;
         static const std::string strSII;
         static const std::string strSIII;
-
 
         //Drive train efficiency
         static double _DRIVE_TRAIN_EFFICIENCY;

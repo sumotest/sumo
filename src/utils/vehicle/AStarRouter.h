@@ -10,7 +10,7 @@
 // Based on DijkstraRouterTT. For routing by effort a novel heuristic would be needed.
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2012-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -73,6 +73,35 @@ class AStarRouter : public SUMOAbstractRouter<E, V>, public PF {
 public:
     typedef SUMOReal(* Operation)(const E* const, const V* const, SUMOReal);
     typedef std::vector<std::vector<SUMOReal> > LookupTable;
+    /// Constructor
+    AStarRouter(size_t noE, bool unbuildIsWarning, Operation operation, const LookupTable* const lookup = 0):
+        SUMOAbstractRouter<E, V>(operation, "AStarRouter"),
+        myErrorMsgHandler(unbuildIsWarning ? MsgHandler::getWarningInstance() : MsgHandler::getErrorInstance()),
+        myLookupTable(lookup) {
+        for (size_t i = 0; i < noE; i++) {
+            myEdgeInfos.push_back(EdgeInfo(i));
+        }
+    }
+
+    /// Destructor
+    virtual ~AStarRouter() {}
+
+    virtual SUMOAbstractRouter<E, V>* clone() const {
+        return new AStarRouter<E, V, PF>(myEdgeInfos.size(), myErrorMsgHandler == MsgHandler::getWarningInstance(), this->myOperation, myLookupTable);
+    }
+
+    static LookupTable* createLookupTable(const std::string& filename, const int size) {
+        LookupTable* const result = new LookupTable();
+        BinaryInputDevice dev(filename);
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                SUMOReal val;
+                dev >> val;
+                (*result)[i].push_back(val);
+            }
+        }
+        return result;
+    }
 
     /**
      * @struct EdgeInfo
@@ -82,8 +111,8 @@ public:
     class EdgeInfo {
     public:
         /// Constructor
-        EdgeInfo(const E* e) :
-            edge(e),
+        EdgeInfo(size_t id) :
+            edge(E::dictionary(id)),
             traveltime(std::numeric_limits<SUMOReal>::max()),
             heuristicTime(std::numeric_limits<SUMOReal>::max()),
             prev(0),
@@ -128,45 +157,6 @@ public:
         }
     };
 
-    /// Constructor
-    AStarRouter(const std::vector<E*>& edges, bool unbuildIsWarning, Operation operation, const LookupTable* const lookup = 0):
-        SUMOAbstractRouter<E, V>(operation, "AStarRouter"),
-        myErrorMsgHandler(unbuildIsWarning ? MsgHandler::getWarningInstance() : MsgHandler::getErrorInstance()),
-        myLookupTable(lookup) {
-        for (typename std::vector<E*>::const_iterator i = edges.begin(); i != edges.end(); ++i) {
-            myEdgeInfos.push_back(EdgeInfo(*i));
-        }
-    }
-
-    AStarRouter(const std::vector<EdgeInfo>& edgeInfos, bool unbuildIsWarning, Operation operation, const LookupTable* const lookup = 0):
-        SUMOAbstractRouter<E, V>(operation, "AStarRouter"),
-        myErrorMsgHandler(unbuildIsWarning ? MsgHandler::getWarningInstance() : MsgHandler::getErrorInstance()),
-        myLookupTable(lookup) {
-        for (typename std::vector<EdgeInfo>::const_iterator i = edgeInfos.begin(); i != edgeInfos.end(); ++i) {
-            myEdgeInfos.push_back(*i);
-        }
-    }
-
-    /// Destructor
-    virtual ~AStarRouter() {}
-
-    virtual SUMOAbstractRouter<E, V>* clone() {
-        return new AStarRouter<E, V, PF>(myEdgeInfos, myErrorMsgHandler == MsgHandler::getWarningInstance(), this->myOperation, myLookupTable);
-    }
-
-    static LookupTable* createLookupTable(const std::string& filename, const int size) {
-        LookupTable* const result = new LookupTable();
-        BinaryInputDevice dev(filename);
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                SUMOReal val;
-                dev >> val;
-                (*result)[i].push_back(val);
-            }
-        }
-        return result;
-    }
-
     void init() {
         // all EdgeInfos touched in the previous query are either in myFrontierList or myFound: clean those up
         for (typename std::vector<EdgeInfo*>::iterator i = myFrontierList.begin(); i != myFrontierList.end(); i++) {
@@ -181,17 +171,17 @@ public:
 
 
     /** @brief Builds the route between the given edges using the minimum travel time */
-    virtual bool compute(const E* from, const E* to, const V* const vehicle,
+    virtual void compute(const E* from, const E* to, const V* const vehicle,
                          SUMOTime msTime, std::vector<const E*>& into) {
         assert(from != 0 && to != 0);
         // check whether from and to can be used
         if (PF::operator()(from, vehicle)) {
             myErrorMsgHandler->inform("Vehicle  '" + vehicle->getID() + "' is not allowed on from edge '" + from->getID() + "'.");
-            return false;
+            return;
         }
         if (PF::operator()(to, vehicle)) {
             myErrorMsgHandler->inform("Vehicle  '" + vehicle->getID() + "' is not allowed on to edge '" + to->getID() + "'.");
-            return false;
+            return;
         }
         this->startQuery();
         const SUMOVehicleClass vClass = vehicle == 0 ? SVC_IGNORING : vehicle->getVClass();
@@ -201,7 +191,7 @@ public:
             if (toInfo.visited) {
                 buildPathFrom(&toInfo, into);
                 this->endQuery(1);
-                return true;
+                return;
             }
         } else {
             init();
@@ -222,7 +212,7 @@ public:
             if (minEdge == to) {
                 buildPathFrom(minimumInfo, into);
                 this->endQuery(num_visited);
-                return true;
+                return;
             }
             pop_heap(myFrontierList.begin(), myFrontierList.end(), myComparator);
             myFrontierList.pop_back();
@@ -269,7 +259,6 @@ public:
         }
         this->endQuery(num_visited);
         myErrorMsgHandler->inform("No connection between edge '" + from->getID() + "' and edge '" + to->getID() + "' found.");
-        return false;
     }
 
 

@@ -7,7 +7,7 @@
 // The Widget for modifying traffic lights
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -30,10 +30,10 @@
 #include <config.h>
 #endif
 
+#include <fx.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/gui/div/GUISelectedStorage.h>
 #include <netbuild/NBTrafficLightLogic.h>
-#include "GNEDynamicFrame.h"    // PABLO #2036
 
 // ===========================================================================
 // class declarations

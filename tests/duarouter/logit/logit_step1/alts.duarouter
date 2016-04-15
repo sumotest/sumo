@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 10/17/15 15:00:41 by SUMO duarouter Version dev-SVN-r19082
+<!-- generated on Tue Aug 12 11:03:54 2014 by SUMO duarouter Version dev-SVN-r16857ID
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
@@ -33,46 +33,6 @@
         </routeDistribution>
     </vehicle>
     <vehicle id="1" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="2" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="3" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="4" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="5" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="6" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="7" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="8" depart="0.00">
-        <routeDistribution last="0">
-            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
-        </routeDistribution>
-    </vehicle>
-    <vehicle id="9" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
@@ -127,6 +87,11 @@
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
     </vehicle>
+    <vehicle id="2" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
     <vehicle id="20" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
@@ -173,6 +138,11 @@
         </routeDistribution>
     </vehicle>
     <vehicle id="29" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="3" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
@@ -227,6 +197,11 @@
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
     </vehicle>
+    <vehicle id="4" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
     <vehicle id="40" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
@@ -273,6 +248,11 @@
         </routeDistribution>
     </vehicle>
     <vehicle id="49" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="5" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
@@ -327,6 +307,11 @@
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
     </vehicle>
+    <vehicle id="6" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
     <vehicle id="60" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
@@ -373,6 +358,11 @@
         </routeDistribution>
     </vehicle>
     <vehicle id="69" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="7" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
@@ -427,6 +417,11 @@
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>
     </vehicle>
+    <vehicle id="8" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
     <vehicle id="80" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
@@ -473,6 +468,11 @@
         </routeDistribution>
     </vehicle>
     <vehicle id="89" depart="0.00">
+        <routeDistribution last="0">
+            <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="9" depart="0.00">
         <routeDistribution last="0">
             <route cost="71.94" probability="1.00000000" edges="beg middle end"/>
         </routeDistribution>

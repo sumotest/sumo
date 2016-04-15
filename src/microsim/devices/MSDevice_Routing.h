@@ -9,7 +9,7 @@
 // A device that performs vehicle rerouting based on current edge speeds
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -174,9 +174,6 @@ public:
     void skipRouting(const SUMOTime currentTime) {
         mySkipRouting = currentTime;
     }
-
-    /// @brief return current travel speed assumption
-    static SUMOReal getAssumedSpeed(const MSEdge* edge);
 
 
 private:

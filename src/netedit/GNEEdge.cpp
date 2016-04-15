@@ -8,7 +8,7 @@
 // Basically a container for an NBEdge with drawing and editing capabilities
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -212,19 +212,10 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
     setGeometry(geom, false);
 }
 
-
-GNENet*                         // PABLO #1916
-GNEEdge::getNet() const {       // PABLO #1916
-    return myNet;               // PABLO #1916
-}                               // PABLO #1916
-
-
 NBEdge*
 GNEEdge::getNBEdge() {
     return &myNBEdge;
 }
-
-
 Position
 GNEEdge::getSplitPos(const Position& clickPos) {
     const PositionVector& geom = myNBEdge.getGeometry();
@@ -409,7 +400,7 @@ GNEEdge::getLaneGlIDs() {
 }
 
 
-const std::vector<GNELane*>&
+const GNEEdge::LaneVector&
 GNEEdge::getLanes() {
     return myLanes;
 }

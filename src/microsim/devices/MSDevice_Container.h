@@ -1,17 +1,14 @@
 /****************************************************************************/
-/// @file    MSDevice_Transportable.h
-/// @author  Daniel Krajzewicz
-/// @author  Jakob Erdmann
-/// @author  Michael Behrisch
+/// @file    MSDevice_Container.h
 /// @author  Melanie Weber
 /// @author  Andreas Kendziorra
-/// @date    Fri, 30.01.2009
+/// @date    Mon, 16 Jun 2014
 /// @version $Id$
 ///
-// A device which is used to keep track of persons and containers riding with a vehicle
+// A device which is used to keep track of containers riding with a vehicle
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -21,8 +18,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef MSDevice_Transportable_h
-#define MSDevice_Transportable_h
+#ifndef MSDevice_Container_h
+#define MSDevice_Container_h
 
 
 // ===========================================================================
@@ -34,7 +31,9 @@
 #include <config.h>
 #endif
 
+//#include <set>
 #include <vector>
+//#include <map>
 #include "MSDevice.h"
 #include <utils/common/SUMOTime.h>
 #include <microsim/MSVehicle.h>
@@ -42,13 +41,19 @@
 
 
 // ===========================================================================
+// class declarations
+// ===========================================================================
+class MSLane;
+
+
+// ===========================================================================
 // class definitions
 // ===========================================================================
 /**
- * @class MSDevice_Transportable
+ * @class MSDevice_Container
  * @see MSDevice
  */
-class MSDevice_Transportable : public MSDevice {
+class MSDevice_Container : public MSDevice {
 public:
     /** @brief Build devices for the given vehicle, if needed
      *
@@ -57,19 +62,19 @@ public:
      * @param[in] v The vehicle for which a device may be built
      * @param[filled] into The vector to store the built device in
      */
-    static MSDevice_Transportable* buildVehicleDevices(SUMOVehicle& v, std::vector<MSDevice*>& into, const bool isContainer);
+    static MSDevice_Container* buildVehicleDevices(SUMOVehicle& v, std::vector<MSDevice*>& into);
 
 
 
 public:
     /// @brief Destructor.
-    ~MSDevice_Transportable();
+    ~MSDevice_Container();
 
 
     /// @name Methods called on vehicle movement / state change, overwriting MSDevice
     /// @{
 
-    /** @brief Checks whether the vehicle is at a stop and transportable action is needed.
+    /** @brief Checks whether the vehicle is at a stop and container action is needed.
      * @param[in] veh The regarded vehicle
      * @param[in] oldPos Position before the move-micro-timestep.
      * @param[in] newPos Position after the move-micro-timestep.
@@ -81,7 +86,7 @@ public:
     bool notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpeed);
 
 
-    /** @brief Adds passengers on vehicle insertion
+    /** @brief Adds containers on vehicle insertion
      *
      * @param[in] veh The entering vehicle.
      * @param[in] reason how the vehicle enters the lane
@@ -92,7 +97,7 @@ public:
     bool notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason);
 
 
-    /** @brief Passengers leaving on arrival
+    /** @brief Containers leaving on arrival
      *
      * @param[in] veh The leaving vehicle.
      * @param[in] lastPos Position on the lane when leaving.
@@ -107,26 +112,26 @@ public:
 
 
 
-    /** @brief Add a passenger
+    /** @brief Add a container
      *
-     * @param[in] transportable The passenger / container to add.
+     * @param[in] container The container to add.
      */
-    void addTransportable(MSTransportable* transportable);
+    void addContainer(MSTransportable* container);
 
 
-    /** @brief Return the number of passengers / containers
-     * @return The number of stored transportables
+    /** @brief Return the number of containers
+     * @return The number of stored containers
      */
     unsigned int size() const {
-        return static_cast<unsigned int>(myTransportables.size());
+        return static_cast<unsigned int>(myContainers.size());
     }
 
 
-    /** @brief Returns the list of transportables using this vehicle
-     * @return transportables within this vehicle
+    /** @brief Returns the list of containers using this vehicle
+     * @return Containers within this vehicle
      */
-    const std::vector<MSTransportable*>& getTransportables() const {
-        return myTransportables;
+    const std::vector<MSTransportable*>& getContainers() const {
+        return myContainers;
     }
 
 
@@ -137,27 +142,25 @@ private:
      * @param[in] holder The vehicle that holds this device
      * @param[in] id The ID of the device
      */
-    MSDevice_Transportable(SUMOVehicle& holder, const std::string& id, const bool isContainer);
+    MSDevice_Container(SUMOVehicle& holder, const std::string& id);
 
 
 
 private:
-    /// @brief Whether it is a container device
-    bool myAmContainer;
-
-    /// @brief The passengers of the vehicle
-    std::vector<MSTransportable*> myTransportables;
+    /// @brief The containers of the vehicle
+    std::vector<MSTransportable*> myContainers;
 
     /// @brief Whether the vehicle is at a stop
     bool myStopped;
 
 
+
 private:
     /// @brief Invalidated copy constructor.
-    MSDevice_Transportable(const MSDevice_Transportable&);
+    MSDevice_Container(const MSDevice_Container&);
 
     /// @brief Invalidated assignment operator.
-    MSDevice_Transportable& operator=(const MSDevice_Transportable&);
+    MSDevice_Container& operator=(const MSDevice_Container&);
 
 
 };

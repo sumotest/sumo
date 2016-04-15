@@ -134,17 +134,17 @@ protected:
     std::string myFilename;
 
 private:
-    /// @brief variable to save variableSpeedSignal icon
-    static GUIGlID variableSpeedSignalGlID;
+    /// @brief variable to save rerouter icon
+    static GUIGlID rerouterGlID;
 
-    /// @brief variable to save variableSpeedSignal selected icon
-    static GUIGlID variableSpeedSignalSelectedGlID;
+    /// @brief variable to save rerouter selected icon
+    static GUIGlID rerouterSelectedGlID;
 
-    /// @brief check if variableSpeedSignal icon was inicilalizated
-    static bool variableSpeedSignalInitialized;
+    /// @brief check if rerouter icon was inicilalizated
+    static bool rerouterInitialized;
 
-    /// @brief check if variableSpeedSignal selected icon was inicilalizated
-    static bool variableSpeedSignalSelectedInitialized;
+    /// @brief check if rerouter selected icon was inicilalizated
+    static bool rerouterSelectedInitialized;
 
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);

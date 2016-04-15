@@ -37,6 +37,12 @@
     <Filter Include="Quellcodedateien\Main">
       <UniqueIdentifier>{3a1098a6-1410-453c-a3d7-341ce405098f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header-Dateien\Scrollwindows">
+      <UniqueIdentifier>{e856b894-a581-42ba-ba51-720cf8133a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quellcodedateien\Scrollwindows">
+      <UniqueIdentifier>{25dc7873-d099-418e-9340-579db01c9035}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header-Dateien\Items\Routes">
       <UniqueIdentifier>{23d6999b-70f4-4b5f-a148-b6c0003740a0}</UniqueIdentifier>
     </Filter>
@@ -69,12 +75,6 @@
     </Filter>
     <Filter Include="Quellcodedateien\Items\Additionals\Detectors">
       <UniqueIdentifier>{f952e93b-e954-452e-bb88-76ce558653a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header-Dateien\Frames">
-      <UniqueIdentifier>{e856b894-a581-42ba-ba51-720cf8133a3a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Quellcodedateien\Frames">
-      <UniqueIdentifier>{25dc7873-d099-418e-9340-579db01c9035}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -139,19 +139,19 @@
       <Filter>Quellcodedateien\Items\Net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalFrame.cpp">
-      <Filter>Quellcodedateien\Frames</Filter>
+      <Filter>Quellcodedateien\Scrollwindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEConnector.cpp">
-      <Filter>Quellcodedateien\Frames</Filter>
+      <Filter>Quellcodedateien\Scrollwindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEInspector.cpp">
-      <Filter>Quellcodedateien\Frames</Filter>
+      <Filter>Quellcodedateien\Scrollwindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNESelector.cpp">
-      <Filter>Quellcodedateien\Frames</Filter>
+      <Filter>Quellcodedateien\Scrollwindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNETLSEditor.cpp">
-      <Filter>Quellcodedateien\Frames</Filter>
+      <Filter>Quellcodedateien\Scrollwindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEDialog_About.cpp">
       <Filter>Quellcodedateien\Dialogs</Filter>
@@ -193,6 +193,9 @@
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_VSpeedSignal.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNELogo_E1.cpp">
@@ -254,9 +257,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEVariableSpeedSignal.cpp">
       <Filter>Quellcodedateien\Items\Additionals</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEDynamicFrame.cpp">
-      <Filter>Quellcodedateien\Frames</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -320,16 +320,16 @@
       <Filter>Header-Dateien\Items\Additionals</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEAdditionalFrame.h">
-      <Filter>Header-Dateien\Frames</Filter>
+      <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEInspector.h">
-      <Filter>Header-Dateien\Frames</Filter>
+      <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h">
-      <Filter>Header-Dateien\Frames</Filter>
+      <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEConnector.h">
-      <Filter>Header-Dateien\Frames</Filter>
+      <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h">
       <Filter>Header-Dateien\Items\Net</Filter>
@@ -338,7 +338,7 @@
       <Filter>Header-Dateien\Items\Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h">
-      <Filter>Header-Dateien\Frames</Filter>
+      <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNECrossing.h">
       <Filter>Header-Dateien\Items\Net</Filter>
@@ -411,9 +411,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEVariableSpeedSignal.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEDynamicFrame.h">
-      <Filter>Header-Dateien\Frames</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

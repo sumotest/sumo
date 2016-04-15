@@ -7,7 +7,7 @@
 // The main window of Netedit (adapted from GUIApplicationWindow)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -279,7 +279,7 @@ protected:
     /// @brief A window to display messages, warnings and error in
     GUIMessageWindow* myMessageWindow;
 
-    /// @brief The splitter that divides the main window into view and the log window
+    /// @brief The splitter that divides the main window into vies and the log window
     FXSplitter* myMainSplitter;
 
     /// @brief for some menu detaching fun

@@ -8,7 +8,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -57,10 +57,7 @@ with zipfile.ZipFile(inZip) as binZip:
         if "osgPlugins" in f:
             extracted = binZip.extract(f)
             if osgPlugins is None:
-                if f.endswith("/"):
-                    osgPlugins = extracted
-                else:
-                    osgPlugins = os.path.dirname(extracted)
+                osgPlugins = extracted
         elif f.endswith(".dll") or f.endswith("gui.exe") or f.endswith("sumo.exe"):
             extracted = binZip.extract(f)
             dest = os.path.join("dist", os.path.basename(f))

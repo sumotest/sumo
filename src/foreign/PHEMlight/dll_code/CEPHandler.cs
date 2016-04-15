@@ -1,5 +1,4 @@
-﻿#define FLEET
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +36,7 @@ namespace PHEMlightdll
         }
         #endregion
 
-        #if FLEET
+#if FLEET
         #region FleetShares
         private Dictionary<string, Dictionary<string, double>> _fleetShares;
         public Dictionary<string, Dictionary<string, double>> FleetShares
@@ -48,7 +47,7 @@ namespace PHEMlightdll
             }
         }
         #endregion
-        #endif
+#endif
 
         //--------------------------------------------------------------------------------------------------
         // Methods 
@@ -68,7 +67,7 @@ namespace PHEMlightdll
         }
         #endregion
 
-        #if FLEET
+#if FLEET
         #region GetFleetCEP
         public bool GetFleetCEP(string DataPath, string AggClass, Helpers Helper)
         {
@@ -112,8 +111,7 @@ namespace PHEMlightdll
             return true;
         }
         #endregion
-        #endif
-
+#endif
         //--------------------------------------------------------------------------------------------------
         // Methods 
         //--------------------------------------------------------------------------------------------------
@@ -488,7 +486,7 @@ namespace PHEMlightdll
         }
         #endregion
 
-        #if FLEET
+#if FLEET
         #region ReadFleetShares
         public bool ReadFleetShares(string DataPath, Helpers Helper)
         {
@@ -523,8 +521,7 @@ namespace PHEMlightdll
             return true;
         }
         #endregion
-        #endif
-
+#endif
         //--------------------------------------------------------------------------------------------------
         // Functions 
         //--------------------------------------------------------------------------------------------------

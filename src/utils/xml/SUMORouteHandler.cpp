@@ -10,7 +10,7 @@
 // Parser for routes during their loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -64,7 +64,6 @@ SUMORouteHandler::SUMORouteHandler(const std::string& file) :
 
 
 SUMORouteHandler::~SUMORouteHandler() {
-	delete myCurrentVType;
 }
 
 
@@ -88,8 +87,7 @@ SUMORouteHandler::checkLastDepart() {
 
 void
 SUMORouteHandler::registerLastDepart() {
-    // register only non public transport to parse all public transport lines in advance
-    if (myVehicleParameter->line == "" && myVehicleParameter->departProcedure == DEPART_GIVEN) {
+    if (myVehicleParameter->departProcedure == DEPART_GIVEN) {
         myLastDepart = myVehicleParameter->depart;
         if (myFirstDepart == -1) {
             myFirstDepart = myLastDepart;
@@ -283,13 +281,12 @@ SUMORouteHandler::parseStop(SUMOVehicleParameter::Stop& stop, const SUMOSAXAttri
         stop.setParameter |= STOP_EXPECTED_CONTAINERS_SET;
     }
     bool ok = true;
-    // Get ID of busStop or chargingStation
-    if(attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "") != "")
-        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");
-    else if(attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "") != "")
-        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "");
-    else
-        errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;
+    if(attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "") != "")                          // PABLO #1852
+        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");          // PABLO #1852
+    else if(attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "") != "")             // PABLO #1852
+        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "");  // PABLO #1852
+    else                                                                                        // PABLO #1852
+        errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;                         // PABLO #1852
     if (stop.stoppingPlace != "")
         errorSuffix = " at '" + stop.stoppingPlace + "'" + errorSuffix;
     else

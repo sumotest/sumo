@@ -10,7 +10,7 @@
 // Data collector for edges/lanes
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -153,20 +153,13 @@ MSMeanData::MeanDataValueTracker::MeanDataValueTracker(MSLane* const lane,
 
 
 MSMeanData::MeanDataValueTracker::~MeanDataValueTracker() {
-	std::list<TrackerEntry*>::iterator i;
-	for(i= myCurrentData.begin(); i != myCurrentData.end(); i++){
-		delete *i;
-	}
 }
 
 
 void
 MSMeanData::MeanDataValueTracker::reset(bool afterWrite) {
     if (afterWrite) {
-    	if(myCurrentData.begin() != myCurrentData.end()){
-//    		delete myCurrentData.front(); // XXX: not allowed, may still be referenced from myTrackedData. Where to delete this? (Leo)
-			myCurrentData.pop_front();
-    	}
+        myCurrentData.pop_front();
     } else {
         myCurrentData.push_back(new TrackerEntry(myParent->createValues(myLane, myLaneLength, false)));
     }

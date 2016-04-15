@@ -11,7 +11,7 @@
 // A road/street connecting two junctions
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -188,9 +188,9 @@ public:
 
     /** @brief Returns this edge's persons set.
      *  @brief Avoids the creation of new vector as in getSortedPersons
-     *
-     * @return This edge's persons.
-     */
+    	 *
+    	 * @return This edge's persons.
+    	 */
     inline const std::set<MSTransportable*>& getPersons() const {
         return myPersons;
     }
@@ -298,6 +298,13 @@ public:
      */
     const std::vector<std::string>& getCrossingEdges() const {
         return myCrossingEdges;
+    }
+
+    /**@brief Gets the crossed edge ids
+     *@return The list of crossed edge ids in a crossing edge or an empty vector
+     */
+    static const MSEdgeVector& getAllEdges() {
+        return myEdges;
     }
 
 
@@ -635,11 +642,14 @@ public:
     /** @brief Returns the MSEdge associated to the key id if exists, otherwise returns 0. */
     static MSEdge* dictionary(const std::string& id);
 
+    /** @brief Returns the MSEdge at the index */
+    static MSEdge* dictionary(size_t index);
+
     /// @brief Returns the number of edges
     static size_t dictSize();
 
-    /// @brief Returns all edges with a numerical id
-    static const MSEdgeVector& getAllEdges();
+    /// @brief Returns the number of edges with a numerical id
+    static size_t numericalDictSize();
 
     /** @brief Clears the dictionary */
     static void clear();

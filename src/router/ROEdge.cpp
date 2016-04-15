@@ -12,7 +12,7 @@
 // A basic edge for routing applications
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -38,13 +38,13 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include "ROLane.h"
+#include "ROEdge.h"
+#include "RONet.h"
+#include "ROVehicle.h"
 #include <utils/vehicle/SUMOVTypeParameter.h>
 #include <utils/emissions/PollutantsInterface.h>
 #include <utils/emissions/HelpersHarmonoise.h>
-#include "ROLane.h"
-#include "RONet.h"
-#include "ROVehicle.h"
-#include "ROEdge.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -55,6 +55,7 @@
 // static member definitions
 // ===========================================================================
 bool ROEdge::myInterpolate = false;
+bool ROEdge::myAmParallel = false;
 bool ROEdge::myHaveTTWarned = false;
 bool ROEdge::myHaveEWarned = false;
 ROEdgeVector ROEdge::myEdges;
@@ -278,9 +279,10 @@ ROEdge::allFollowersProhibit(const ROVehicle* const vehicle) const {
 }
 
 
-const ROEdgeVector&
-ROEdge::getAllEdges() {
-    return myEdges;
+ROEdge*
+ROEdge::dictionary(size_t id) {
+    assert(myEdges.size() > id);
+    return myEdges[id];
 }
 
 
@@ -290,11 +292,18 @@ ROEdge::getSuccessors(SUMOVehicleClass vClass) const {
         return myFollowingEdges;
     }
 #ifdef HAVE_FOX
-    FXMutexLock locker(myLock);
+    if (myAmParallel) {
+        RONet::getInstance()->getThreadPool().lock();
+    }
 #endif
     std::map<SUMOVehicleClass, ROEdgeVector>::const_iterator i = myClassesSuccessorMap.find(vClass);
     if (i != myClassesSuccessorMap.end()) {
         // can use cached value
+#ifdef HAVE_FOX
+        if (myAmParallel) {
+            RONet::getInstance()->getThreadPool().unlock();
+        }
+#endif
         return i->second;
     } else {
         // this vClass is requested for the first time. rebuild all successors
@@ -319,6 +328,11 @@ ROEdge::getSuccessors(SUMOVehicleClass vClass) const {
         }
         myClassesSuccessorMap[vClass].insert(myClassesSuccessorMap[vClass].begin(),
                                              followers.begin(), followers.end());
+#ifdef HAVE_FOX
+        if (myAmParallel) {
+            RONet::getInstance()->getThreadPool().unlock();
+        }
+#endif
         return myClassesSuccessorMap[vClass];
     }
 
