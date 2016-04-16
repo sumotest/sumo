@@ -10,7 +10,7 @@
 // Parser for routes during their loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -64,6 +64,7 @@ SUMORouteHandler::SUMORouteHandler(const std::string& file) :
 
 
 SUMORouteHandler::~SUMORouteHandler() {
+	delete myCurrentVType;
 }
 
 
@@ -87,7 +88,8 @@ SUMORouteHandler::checkLastDepart() {
 
 void
 SUMORouteHandler::registerLastDepart() {
-    if (myVehicleParameter->departProcedure == DEPART_GIVEN) {
+    // register only non public transport to parse all public transport lines in advance
+    if (myVehicleParameter->line == "" && myVehicleParameter->departProcedure == DEPART_GIVEN) {
         myLastDepart = myVehicleParameter->depart;
         if (myFirstDepart == -1) {
             myFirstDepart = myLastDepart;
@@ -281,16 +283,15 @@ SUMORouteHandler::parseStop(SUMOVehicleParameter::Stop& stop, const SUMOSAXAttri
         stop.setParameter |= STOP_EXPECTED_CONTAINERS_SET;
     }
     bool ok = true;
-    if(attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "") != "")                          // PABLO #1852
-        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");          // PABLO #1852
-    else if(attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "") != "")             // PABLO #1852
-        stop.stoppingPlace = attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "");  // PABLO #1852
-    else                                                                                        // PABLO #1852
-        errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;                         // PABLO #1852
-    if (stop.stoppingPlace != "")
-        errorSuffix = " at '" + stop.stoppingPlace + "'" + errorSuffix;
-    else
+    stop.busstop = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");
+    stop.containerstop = attrs.getOpt<std::string>(SUMO_ATTR_CONTAINER_STOP, 0, ok, "");
+    if (stop.busstop != "") {
+        errorSuffix = " at '" + stop.busstop + "'" + errorSuffix;
+    } else if (stop.containerstop != "") {
+        errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;
+    } else {
         errorSuffix = " on lane '" + stop.lane + "'" + errorSuffix;
+    }
     // get the standing duration
     if (!attrs.hasAttribute(SUMO_ATTR_DURATION) && !attrs.hasAttribute(SUMO_ATTR_UNTIL)) {
         if (attrs.hasAttribute(SUMO_ATTR_CONTAINER_TRIGGERED)) {

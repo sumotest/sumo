@@ -9,7 +9,7 @@
 // Chargin Station for Electric vehicles
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -59,7 +59,7 @@ public:
 
     /// @brief constructor
     MSChargingStation(const std::string& chargingStationID, MSLane& lane, SUMOReal startPos, SUMOReal endPos, 
-		              SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, int chargeDelay);
+		              SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, SUMOReal chargeDelay);
 
     /// @brief destructor
     ~MSChargingStation();
@@ -76,17 +76,11 @@ public:
     /// @brief Get parameter 03, get Charge Delay
     SUMOReal getChargeDelay() const;
 
-    /// @brief Set charging station's charging power
-    inline void setChargingPower(SUMOReal chargingPower);
+    /// @brief Set parameter 05, charging station's charging power
+    inline void setChrgPower(SUMOReal new_ChrgPower);
 
-    /// @brief Set efficiency of the charging station
-    inline void setEfficency(SUMOReal efficency);
-
-    /// @brief Set charge in transit of the charging station
-    void setChargeInTransit(bool chargeInTransit);
-
-    /// @brief Set charge delay of the charging station
-    void setChargeDelay(int chargeDelay);
+    /// @brief Set parameter 06, efficiency of the charging station
+    inline void setEfficency(SUMOReal new_Efficency);
 
     /** @brief Check if a vehicle is inside in  the Charge Station
      * @param[in] position Position of vehicle in the LANE
@@ -94,7 +88,8 @@ public:
      */
     bool vehicleIsInside(const SUMOReal position);
 
-protected:
+
+private:
 
     /// @brief Charging station's charging power
     SUMOReal myChargingPower;
@@ -105,16 +100,14 @@ protected:
     /// @brief Allow charge in transit
     bool myChargeInTransit;
 
-    /// @brief Charge Delay
-    int myChargeDelay;
+    /// @brief CCharge Delay
+    SUMOReal myChargeDelay;
 
-private:
-
-    /// @brief Invalidated copy constructor.
-    MSChargingStation(const MSChargingStation&);
-
-    /// @brief Invalidated assignment operator.
-    MSChargingStation& operator=(const MSChargingStation&);
+    /** @brief convert from SUMOReal to String
+     * @param[in] var Variable in SUMOReal format
+     * @return Variable var in String format
+     */
+    std::string SUMOReal_str(const SUMOReal& var);
 };
 
 #endif

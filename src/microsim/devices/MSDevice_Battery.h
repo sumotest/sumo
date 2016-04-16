@@ -8,7 +8,7 @@
 // The Battery parameters for the vehicle
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2013-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -269,7 +269,7 @@ public:
     /// @brief Set parameter 21a, increase vehicleStopped
     inline void increaseVehicleStoppedTimer();
 
-protected:
+private:
 
     /// @brief Parameter 01, The actual vehicles' Battery Capacity in kWh
     /// @condition [ActBatKap <= MaxBatKap]
@@ -353,10 +353,17 @@ protected:
     /// @brief Parameter 21, How many timestep the vehicle is stopped
     int vehicleStopped;
 
-private:
+
+    /** @brief convert from SUMOReal to String
+     * @param[in] var Variable in SUMOReal format
+    * @return Variable var in String format
+    */
+    std::string SUMOReal_str(const SUMOReal& var);
+
 
     /// @brief Invalidated copy constructor.
     MSDevice_Battery(const MSDevice_Battery&);
+
 
     /// @brief Invalidated assignment operator.
     MSDevice_Battery& operator=(const MSDevice_Battery&);

@@ -9,7 +9,7 @@
 // Chargin Station for Electric vehicles
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -31,7 +31,6 @@
 #endif
 
 #include <cassert>
-#include <utils/common/TplConvert.h>
 #include <utils/vehicle/SUMOVehicle.h>
 #include <microsim/MSVehicleType.h>
 #include <microsim/MSStoppingPlace.h>
@@ -48,29 +47,23 @@
 // ===========================================================================
 
 MSChargingStation::MSChargingStation(const std::string& chargingStationID, MSLane& lane, SUMOReal startPos, SUMOReal endPos, 
-	               SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, int chargeDelay) :
+	               SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, SUMOReal chargeDelay) :
     MSStoppingPlace(chargingStationID, std::vector<std::string>(), lane, startPos, endPos),
-    myChargingPower(0),
-    myEfficiency(0),
+    myChargingPower(chargingPower),
+    myEfficiency(efficency),
     myChargeInTransit(chargeInTransit),
-    myChargeDelay(0) {
-    if (chargingPower < 0)
-        WRITE_WARNING("Charging Station with ID = " + getID() + " doesn't have a valid charging power (" + TplConvert::_SUMOReal2str(getChargingPower()) + ").")
-    else
-        myChargingPower = chargingPower;
+    myChargeDelay(chargeDelay) {
+    if (getChargingPower() < 0) {
+        std::cout << std::string("Warning: Charging Station with ID = " + getID() + " doesn't have a valid charging power(" + SUMOReal_str(getChargingPower()) + ").");
+    }
 
-    if (efficency < 0 || efficency > 1)
-        WRITE_WARNING("Charging Station with ID = " + getID() + " doesn't have a valid efficiency (" + TplConvert::_SUMOReal2str(getEfficency()) + ").")
-    else
-        myEfficiency = efficency;
+    if (getEfficency() < 0 || getEfficency() > 1) {
+        std::cout << std::string("Warning: Charging Station with ID = " + getID() + " doesn't have a valid myEfficiency (" + SUMOReal_str(getEfficency()) + ").");
+    }
 
-    if (chargeDelay < 0)
-        WRITE_WARNING("Charging Station with ID = " + getID() + " doesn't have a valid charge delay (" + TplConvert::_SUMOReal2str(getEfficency()) + ").")
-    else
-        myChargeDelay = chargeDelay;
-
-    if (getBeginLanePosition() > getEndLanePosition())
-        WRITE_WARNING("Charging Station with ID = " + getID() + " doesn't have a valid range (" + TplConvert::_SUMOReal2str(getBeginLanePosition()) + " < " + TplConvert::_SUMOReal2str(getEndLanePosition()) + ").");
+    if (getBeginLanePosition() > getEndLanePosition()) {
+        std::cout << std::string("Warning: Charging Station with ID = " + getID() + " doesn't have a valid range (" + SUMOReal_str(getBeginLanePosition()) + " < " + SUMOReal_str(getEndLanePosition()) + ").");
+    }
 }
 
 
@@ -78,23 +71,23 @@ MSChargingStation::~MSChargingStation()
 {}
 
 
+// GET FUNCTIONS
+
+
 SUMOReal
 MSChargingStation::getChargingPower() const {
     return myChargingPower;
 }
-
 
 SUMOReal
 MSChargingStation::getEfficency() const {
     return myEfficiency;
 }
 
-
 SUMOReal
 MSChargingStation::getChargeInTransit() const {
     return myChargeInTransit;
 }
-
 
 SUMOReal
 MSChargingStation::getChargeDelay() const {
@@ -102,43 +95,37 @@ MSChargingStation::getChargeDelay() const {
 }
 
 
-void 
-MSChargingStation::setChargingPower(SUMOReal chargingPower) {
-    if (chargingPower < 0)
-        WRITE_WARNING("new charging power for Chargin Station with ID = " + getID() + " not valid (" + TplConvert::_SUMOReal2str(chargingPower) + ").")
-    else
-        myChargingPower = chargingPower;
+// SET FUNCTIONS
+
+void MSChargingStation::setChrgPower(SUMOReal new_ChrgPower) {
+    myChargingPower = new_ChrgPower;
+
+    if (new_ChrgPower < 0) {
+        std::cout << std::string("Warning: Chargin Station with ID = " + getID() + " doesn't have a valid charging power(" + SUMOReal_str(getChargingPower()) + ").");
+    }
 }
 
 
-void 
-MSChargingStation::setEfficency(SUMOReal efficency) {
-    if (efficency < 0 || efficency > 1)
-        WRITE_WARNING("new efficiency for Chargin Station with ID = " + getID() + " not valid (" + TplConvert::_SUMOReal2str(efficency) + ").")
-    else
-        myEfficiency = efficency;
+void MSChargingStation::setEfficency(SUMOReal new_Efficency) {
+    if (new_Efficency < 0 || new_Efficency > 1) {
+        std::cout << std::string("Warning: Chargin Station with ID = " + getID() + " doesn't have a valid myEfficiency (" + SUMOReal_str(getEfficency()) + ").");
+    }
+
+    myEfficiency = new_Efficency;
 }
 
-
-void
-MSChargingStation::setChargeInTransit(bool chargeInTransit) {
-        myChargeInTransit = chargeInTransit;
-}
-
-
-void
-MSChargingStation::setChargeDelay(int chargeDelay) {
-    if (chargeDelay < 0)
-        WRITE_WARNING("new charge delay for Chargin Station with ID = " + getID() + " not valid (" + TplConvert::_SUMOReal2str(chargeDelay) + ").")
-    else
-        myChargeDelay = chargeDelay;
-}
-
-
-bool 
-MSChargingStation::vehicleIsInside(const SUMOReal position) {
-    if ((position >= getBeginLanePosition()) && (position <= getEndLanePosition()))
+bool MSChargingStation::vehicleIsInside(const SUMOReal position) {
+    if ((position >= getBeginLanePosition()) && (position <= getEndLanePosition())) {
         return true;
-    else
+    } else {
         return false;
+    }
+}
+
+// Private methods
+
+std::string MSChargingStation::SUMOReal_str(const SUMOReal& var) {
+    std::ostringstream convert;
+    convert << var;
+    return convert.str();
 }

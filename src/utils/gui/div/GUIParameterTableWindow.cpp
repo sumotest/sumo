@@ -10,7 +10,7 @@
 // The window that holds the table of an object's parameter
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -158,6 +158,9 @@ GUIParameterTableWindow::onRightButtonPress(FXObject* sender,
     }
     GUIParameterTableItemInterface* i = myItems[row];
     if (!i->dynamic()) {
+        return 1;
+    }
+    if (myObject == 0) {
         return 1;
     }
 

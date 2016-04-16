@@ -7,7 +7,7 @@
 // A single mesoscopic segment (cell)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -450,6 +450,9 @@ private:
 
     /// @brief Whether junction control is enabled
     const bool myJunctionControl;
+
+    /// @brief Whether tls penalty is enabled
+    const bool myTLSPenalty;
 
     /// @brief The space (in m) which needs to be occupied before the segment is considered jammed
     SUMOReal myJamThreshold;
