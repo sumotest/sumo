@@ -31,7 +31,7 @@
 #endif
 
 #include <utils/xml/SUMOXMLDefinitions.h>
-#include "GNEDynamicFrame.h"    // PABLO #2036
+#include "GNEDynamicFrame.h"
 
 // ===========================================================================
 // class declarations
@@ -40,7 +40,7 @@ class GNENet;
 class GNEEdge;
 class GNEAttributeCarrier;
 class GNEUndoList;
-class GNEAdditional;    // PABLO #1916
+class GNEAdditional;
 
 // ===========================================================================
 // class definitions
@@ -59,25 +59,25 @@ public:
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
         // FOX-declarations
-        FXDECLARE(GNEInspector::AttrPanel)  // PABLO #1916
+        FXDECLARE(GNEInspector::AttrPanel)
 
     public:
         /// @brief constructor
         AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
 
-        /// @brief try to set new attribute value               // PABLO #1916
-        long onCmdSetBlocking(FXObject*, FXSelector, void*);    // PABLO #1916
+        /// @brief try to set new attribute value
+        long onCmdSetBlocking(FXObject*, FXSelector, void*);
 
     protected:
         /// @brief FOX needs this
         AttrPanel() {}
 
     private:
-        /// @brief pointer to check button block    // PABLO #1916
-        FXCheckButton *myCheckBlocked;              // PABLO #1916
+        /// @brief pointer to check button block
+        FXCheckButton *myCheckBlocked;
 
-        /// @brief pointer to additional element    // PABLO #1916
-        GNEAdditional *myAdditional;                // PABLO #1916
+        /// @brief pointer to additional element
+        GNEAdditional *myAdditional;
     };
 
     // ===========================================================================

@@ -139,7 +139,7 @@ public:
     long onCmdOpenShapes(FXObject*, FXSelector, void*);
 
 	/// @brief Called on menu File->Load Shapes
-    long onCmdOpenAdditionals(FXObject*, FXSelector, void*);	// PABLO #1916
+    long onCmdOpenAdditionals(FXObject*, FXSelector, void*);	
 
     /// @brief Called on reload
     long onCmdReload(FXObject*, FXSelector, void*);

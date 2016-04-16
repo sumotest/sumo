@@ -75,8 +75,8 @@ enum {
     MID_OPEN_NETWORK,
     /// Load additional file with poi and polygons
     MID_OPEN_SHAPES,
-	/// Load additional file with additional elements	// PABLO #1916
-    MID_OPEN_ADDITIONALS,								// PABLO #1916
+	/// Load additional file with additional elements	
+    MID_OPEN_ADDITIONALS,								
     /// Reload the previously loaded simulation
     MID_RELOAD,
     /// Loads a file previously loaded
@@ -171,10 +171,10 @@ enum {
     MID_LOCATEPERSON,
     /// Locate TLS - button
     MID_LOCATETLS,
-    /// Locate BusStop - button             // PABLO #1916
-    MID_LOCATEADDITIONAL_BUSSTOP,           // PABLO #1916
-    /// Locate ChargingStation - button     // PABLO #1916
-    MID_LOCATEADDITIONAL_CHARGINGSTATION,   // PABLO #1916
+    /// Locate BusStop - button
+    MID_LOCATEADDITIONAL_BUSSTOP,
+    /// Locate ChargingStation - button
+    MID_LOCATEADDITIONAL_CHARGINGSTATION,
     /// Locate addtional structure - button
     MID_LOCATEADD,
     /// Locate poi - button
@@ -386,8 +386,8 @@ enum {
     /** mode has changed */
     MID_GNE_MODE_CHANGE,
 
-    /** mode has changed */         // PABLO #1916
-    MID_GNE_MODEADDITIONAL_CHANGE,  // PABLO #1916
+    /** mode has changed */
+    MID_GNE_MODEADDITIONAL_CHANGE,
 
     /** mode for adding edges */
     MID_GNE_MODE_CREATE_EDGE,
@@ -403,19 +403,19 @@ enum {
     MID_GNE_MODE_CONNECT,
     /** mode for editing tls */
     MID_GNE_MODE_TLS,
-    /** mode for editing additional */          // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL,                    // PABLO #1916
+    /** mode for editing additional */
+    MID_GNE_MODE_ADDITIONAL,
 
     /// selector match box messages
     MID_GNE_SELMB_TAG,
     MID_GNE_SELMB_STRING,
     
-    /// additional match box messages               // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_ITEM,                   // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,         // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,          // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT,   // PABLO #1916
-    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,   // PABLO #1916
+    /// additional match box messages
+    MID_GNE_MODE_ADDITIONAL_ITEM,
+    MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
+    MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,
+    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT,
+    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,
 
     /// processing menu messages
     MID_GNE_COMPUTE_JUNCTIONS,
@@ -451,23 +451,23 @@ enum {
     MID_GNE_SAVE_PLAIN_XML,
     MID_GNE_SAVE_JOINED,
     MID_GNE_SAVE_POIS,
-    MID_GNE_SAVE_ADDITIONALS,   // PABLO #1916
+    MID_GNE_SAVE_ADDITIONALS,
     /** insert contents of another network */
     MID_GNE_INSERT_NETWORK,
     /** attribute edited */
     MID_GNE_SET_ATTRIBUTE,
-    /** netEdit attribute blocking */   // PABLO #1916
-    MID_GNE_SET_BLOCKING,               // PABLO #1916
-    /** netEdit add row */              // PABLO #1916
-    MID_GNE_ADDROW,                     // PABLO #1916
-    /** netEdit remove row */           // PABLO #1916
-    MID_GNE_REMOVEROW,                  // PABLO #1916
-    /** netEdit add set */              // PABLO #1916
-    MID_GNE_ADDSET,                     // PABLO #1916
-    /** netEdit remove set */           // PABLO #1916
-    MID_GNE_REMOVESET,                  // PABLO #1916
-    /** netEdit select set */           // PABLO #1916
-    MID_GNE_SELECTSET,                  // PABLO #1916
+    /** netEdit attribute blocking */
+    MID_GNE_SET_BLOCKING,
+    /** netEdit add row */
+    MID_GNE_ADDROW,
+    /** netEdit remove row */
+    MID_GNE_REMOVEROW,
+    /** netEdit add set */
+    MID_GNE_ADDSET,
+    /** netEdit remove set */
+    MID_GNE_REMOVESET,
+    /** netEdit select set */
+    MID_GNE_SELECTSET,
     /** open edit dialog */
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
     /** split an edge */

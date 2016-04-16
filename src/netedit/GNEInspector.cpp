@@ -42,8 +42,8 @@
 #include "GNEUndoList.h"
 #include "GNEEdge.h"
 #include "GNEAttributeCarrier.h"
-#include "GNEAdditional.h"  // PABLO #1916
-#include "GNEViewNet.h"     // PABLO #1916
+#include "GNEAdditional.h"
+#include "GNEViewNet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -60,9 +60,9 @@ FXDEFMAP(GNEInspector) GNEInspectorMap[] = {
 };
 
 
-FXDEFMAP(GNEInspector::AttrPanel) AttrPanelMap[]= {                                                     // PABLO #1916
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspector::AttrPanel::onCmdSetBlocking),          // PABLO #1916
-};                                                                                                      // PABLO #1916
+FXDEFMAP(GNEInspector::AttrPanel) AttrPanelMap[]= {
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspector::AttrPanel::onCmdSetBlocking),
+};
 
 
 FXDEFMAP(GNEInspector::AttrInput) AttrInputMap[] = {
@@ -72,7 +72,7 @@ FXDEFMAP(GNEInspector::AttrInput) AttrInputMap[] = {
 
 // Object implementation
 FXIMPLEMENT(GNEInspector, FXScrollWindow, GNEInspectorMap, ARRAYNUMBER(GNEInspectorMap))
-FXIMPLEMENT(GNEInspector::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))  // PABLO #1916
+FXIMPLEMENT(GNEInspector::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))
 FXIMPLEMENT(GNEInspector::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 
 
@@ -192,11 +192,11 @@ GNEInspector::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
 }
 
 long
-GNEInspector::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {       // PABLO #1916
-    myAdditional->setBlocked(myCheckBlocked->getCheck() == 1? true : false);    // PABLO #1916
-    myAdditional->getViewNet()->update();                                       // PABLO #1916
-    return 1;                                                                   // PABLO #1916
-}                                                                               // PABLO #1916
+GNEInspector::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {
+    myAdditional->setBlocked(myCheckBlocked->getCheck() == 1? true : false);
+    myAdditional->getViewNet()->update();
+    return 1;
+}
 
 
 // ===========================================================================
@@ -214,9 +214,9 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
         }
         header = new FXLabel(this, headerString.c_str());
 
-        // Create groupBox for attributes                                               // PABLO #1916
-        FXGroupBox* groupBoxForAttributes = new FXGroupBox(this, "attributes",          // PABLO #1916
-        GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
+        // Create groupBox for attributes
+        FXGroupBox* groupBoxForAttributes = new FXGroupBox(this, "attributes",
+        GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
 
         const std::vector<SumoXMLAttr>& attrs = ACs[0]->getAttrs();
         for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
@@ -236,35 +236,35 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
                 }
                 oss << *it_val;
             }
-            new AttrInput(groupBoxForAttributes, ACs, *it, oss.str(), undoList);    // PABLO #1916
+            new AttrInput(groupBoxForAttributes, ACs, *it, oss.str(), undoList);
         }
 
         if (dynamic_cast<GNEEdge*>(ACs[0])) {
-            // Create groupBox for templates                                                // PABLO #1916
-            FXGroupBox* groupBoxForTemplates = new FXGroupBox(this, "templates",            // PABLO #1916
-            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);  // PABLO #1916
+            // Create groupBox for templates
+            FXGroupBox* groupBoxForTemplates = new FXGroupBox(this, "templates",
+            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
 
             // "Copy Template" (caption supplied via onUpdate)
-            new FXButton(this, "", 0, parent, MID_GNE_COPY_TEMPLATE,    // PABLO #1916
+            new FXButton(this, "", 0, parent, MID_GNE_COPY_TEMPLATE,
                          ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
                          0, 0, 0, 0, 4, 4, 3, 3);
 
             if (ACs.size() == 1) {
                 // "Set As Template"
-                new FXButton(groupBoxForTemplates, "Set as Template\t\t", 0, parent, MID_GNE_SET_TEMPLATE,  // PABLO #1916
+                new FXButton(groupBoxForTemplates, "Set as Template\t\t", 0, parent, MID_GNE_SET_TEMPLATE,
                              ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
                              0, 0, 0, 0, 4, 4, 3, 3);
             }
         }
 
-        if(dynamic_cast<GNEAdditional*>(ACs[0])) {                                                                  // PABLO #1916
-            myAdditional = dynamic_cast<GNEAdditional*>(ACs[0]);                                                    // PABLO #1916
-            // Create groupBox for templates                                                                        // PABLO #1916
-            FXGroupBox* groupBoxForEditor = new FXGroupBox(this, "editor",                                          // PABLO #1916
-            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);                          // PABLO #1916
-            myCheckBlocked = new FXCheckButton(groupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);    // PABLO #1916
-            myCheckBlocked->setCheck(myAdditional->isBlocked());                                                    // PABLO #1916
-        }                                                                                                           // PABLO #1916
+        if(dynamic_cast<GNEAdditional*>(ACs[0])) {
+            myAdditional = dynamic_cast<GNEAdditional*>(ACs[0]);
+            // Create groupBox for templates
+            FXGroupBox* groupBoxForEditor = new FXGroupBox(this, "editor",
+            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+            myCheckBlocked = new FXCheckButton(groupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);
+            myCheckBlocked->setCheck(myAdditional->isBlocked());
+        }
     } else {
         header = new FXLabel(this, "No Object\nselected", 0, JUSTIFY_LEFT);
     }

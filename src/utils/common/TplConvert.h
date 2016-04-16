@@ -295,12 +295,12 @@ public:
         }
     }
 
-    /// @brief converts a string into the bool value described by it by calling the char-type converter // PABLO #1916
-    /// @throw an EmptyData - exception if the given string is empty                                    // PABLO #1916
-    /// @throw a BoolFormatException - exception when the string does not contain a bool                // PABLO #1916
-    static bool _str2bool(const std::string& sData) {                                                   // PABLO #1916
-        return _2bool(sData.c_str());                                                                   // PABLO #1916
-    }                                                                                                   // PABLO #1916
+    /// @brief converts a string into the bool value described by it by calling the char-type converter
+    /// @throw an EmptyData - exception if the given string is empty
+    /// @throw a BoolFormatException - exception when the string does not contain a bool
+    static bool _str2bool(const std::string& sData) {
+        return _2bool(sData.c_str());
+    }
 
     // conversion methods not throwing an exception
 

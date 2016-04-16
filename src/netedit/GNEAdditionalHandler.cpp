@@ -405,13 +405,13 @@ GNEAdditionalHandler::parseAndBuildDetectorEntry(const SUMOSAXAttributes& attrs)
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, 0, ok);
     try {
         // get the lane
-        GNELane* lane = getLane(attrs, SUMO_TAG_E2DETECTOR, "");
+        GNELane* lane = getLane(attrs, SUMO_TAG_DET_ENTRY, "");
         // get the ID (note: This Id is interne, and cannot be defined by user)
         int indexEntry = 0;
-        while(myViewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, toString(SUMO_TAG_DET_ENTRY) + "_" + toString(indexEntry)) != NULL)
+        while(myViewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, toString(SUMO_TAG_DET_ENTRY) + "_" + toString(indexEntry) + "_" + myAdditionalSetParent) != NULL)
             indexEntry++;
         // build detector entry
-        buildDetectorEntry(myViewNet, toString(SUMO_TAG_DET_ENTRY) + "_" + toString(indexEntry), lane, position, myAdditionalSetParent, false);
+        buildDetectorEntry(myViewNet, toString(SUMO_TAG_DET_ENTRY) + "_" + toString(indexEntry) + "_" + myAdditionalSetParent, lane, position, myAdditionalSetParent, false);
     } catch (InvalidArgument& e) {
         WRITE_ERROR(e.what());
     }
@@ -424,13 +424,13 @@ GNEAdditionalHandler::parseAndBuildDetectorExit(const SUMOSAXAttributes& attrs) 
     const SUMOReal position = attrs.get<SUMOReal>(SUMO_ATTR_POSITION, 0, ok);
     try {
         // get the lane
-        GNELane* lane = getLane(attrs, SUMO_TAG_E2DETECTOR, "");
+        GNELane* lane = getLane(attrs, SUMO_TAG_DET_EXIT, "");
         // get the ID (note: This Id is interne, and cannot be defined by user)
         int indexExit = 0;
-        while(myViewNet->getNet()->getAdditional(SUMO_TAG_DET_ENTRY, toString(SUMO_TAG_DET_ENTRY) + "_" + toString(indexExit)) != NULL)
+        while(myViewNet->getNet()->getAdditional(SUMO_TAG_DET_EXIT, toString(SUMO_TAG_DET_EXIT) + "_" + toString(indexExit) + "_" + myAdditionalSetParent) != NULL)
             indexExit++;
         // build detector Exit
-        buildDetectorExit(myViewNet, toString(SUMO_TAG_DET_ENTRY) + "_" + toString(indexExit), lane, position, myAdditionalSetParent, false);
+        buildDetectorExit(myViewNet, toString(SUMO_TAG_DET_EXIT) + "_" + toString(indexExit) + "_" + myAdditionalSetParent, lane, position, myAdditionalSetParent, false);
     } catch (InvalidArgument& e) {
         WRITE_ERROR(e.what());
     }

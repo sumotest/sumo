@@ -68,11 +68,11 @@
 #include "GNEChange_Lane.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
-#include "GNEChange_Additional.h"   // PABLO #1916
-#include "GNEAdditional.h"          // PABLO #1916
-#include "GNEAdditionalSet.h"       // PABLO #1916
-#include "GNEStoppingPlace.h"       // PABLO #1916
-#include "GNEDetector.h"            // PABLO #1916
+#include "GNEChange_Additional.h"
+#include "GNEAdditional.h"
+#include "GNEAdditionalSet.h"
+#include "GNEStoppingPlace.h"
+#include "GNEDetector.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -323,11 +323,11 @@ GNENet::deleteJunction(GNEJunction* junction, GNEUndoList* undoList) {
 void
 GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("delete edge");
-    // Iterate over lanes to remove additionals                                                                         // PABLO #1916
-    for (std::vector<GNELane*>::const_iterator i = edge->getLanes().begin(); i != edge->getLanes().end(); i++) {        // PABLO #1916
-        std::vector<GNEAdditional*> additionalsOfLane = (*i)->getAdditionals();                                         // PABLO #1916
-        for(std::vector<GNEAdditional*>::iterator j = additionalsOfLane.begin(); j != additionalsOfLane.end(); j++)     // PABLO #1916
-            undoList->add(new GNEChange_Additional(this, *j, false), true);                                             // PABLO #1916
+    // Iterate over lanes to remove additionals
+    for (std::vector<GNELane*>::const_iterator i = edge->getLanes().begin(); i != edge->getLanes().end(); i++) {
+        std::vector<GNEAdditional*> additionalsOfLane = (*i)->getAdditionals();
+        for(std::vector<GNEAdditional*>::iterator j = additionalsOfLane.begin(); j != additionalsOfLane.end(); j++)
+            undoList->add(new GNEChange_Additional(this, *j, false), true);
     }
 
     undoList->add(new GNEChange_Edge(this, edge, false), true);
@@ -353,10 +353,10 @@ GNENet::deleteLane(GNELane* lane, GNEUndoList* undoList) {
     const bool sidewalk = laneAttrs.permissions == SVC_PEDESTRIAN;
     undoList->add(new GNEChange_Lane(edge, lane, laneAttrs, false), true);
     
-    // Remove additionals of lane                                                                                   // PABLO #1916
-    std::vector<GNEAdditional*> additionalsOfLane = lane->getAdditionals();                                         // PABLO #1916
-    for(std::vector<GNEAdditional*>::iterator i = additionalsOfLane.begin(); i != additionalsOfLane.end(); i++)     // PABLO #1916
-        undoList->add(new GNEChange_Additional(this, *i, false), true);                                             // PABLO #1916
+    // Remove additionals of lane
+    std::vector<GNEAdditional*> additionalsOfLane = lane->getAdditionals();
+    for(std::vector<GNEAdditional*>::iterator i = additionalsOfLane.begin(); i != additionalsOfLane.end(); i++)
+        undoList->add(new GNEChange_Additional(this, *i, false), true);
         
     if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {
         std::set<GUIGlID> deselected;
@@ -549,16 +549,16 @@ GNENet::save(OptionsCont& oc) {
 }
 
 
-void                                                                                                                            // PABLO #1916
-GNENet::saveAdditionals(const std::string &filename) {                                                                          // PABLO #1916
-    OutputDevice& device = OutputDevice::getDevice(filename);                                                                   // PABLO #1916
-    device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");   // PABLO #1916
-    for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)                               // PABLO #1916
-        // If set belong to additionalSet, their parent will write it                                                            // PABLO #1916
-        if(i->second->belongToAdditionalSet() == false)                                                                            // PABLO #1916
-            i->second->writeAdditional(device);                                                                                 // PABLO #1916
-    device.close();                                                                                                             // PABLO #1916
-}                                                                                                                               // PABLO #1916
+void
+GNENet::saveAdditionals(const std::string &filename) {
+    OutputDevice& device = OutputDevice::getDevice(filename);
+    device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)
+        // If set belong to additionalSet, their parent will write it
+        if(i->second->belongToAdditionalSet() == false)
+            i->second->writeAdditional(device);
+    device.close();
+}
 
 
 void
@@ -684,20 +684,20 @@ GNENet::retrieveAttributeCarriers(const std::set<GUIGlID>& ids, GUIGlObjectType 
                 case GLO_LANE:
                     ac = dynamic_cast<GNELane*>(object);
                     break;
-                case GLO_ADDITIONAL:                                        // PABLO #1916
-                    if(dynamic_cast<GNEAdditional*>(object)) {              // PABLO #1916
-                        ac = dynamic_cast<GNEAdditional*>(object);          // PABLO #1916
-                    } else if(dynamic_cast<GNEAdditionalSet*>(object)) {    // PABLO #1916
-                        ac = dynamic_cast<GNEAdditionalSet*>(object);       // PABLO #1916
-                    }                                                       // PABLO #1916
-                    break;                                                  // PABLO #1916
+                case GLO_ADDITIONAL:
+                    if(dynamic_cast<GNEAdditional*>(object)) {
+                        ac = dynamic_cast<GNEAdditional*>(object);
+                    } else if(dynamic_cast<GNEAdditionalSet*>(object)) {
+                        ac = dynamic_cast<GNEAdditionalSet*>(object);
+                    }
+                    break;
                     /*
-                    if(dynamic_cast<GNEBusStop*>(object)) {                 // PABLO #1916
-                        ac = dynamic_cast<GNEBusStop*>(object);             // PABLO #1916
-                    } else if(dynamic_cast<GNEChargingStation*>(object)) {  // PABLO #1916
-                        ac = dynamic_cast<GNEChargingStation*>(object);     // PABLO #1916
-                    }                                                       // PABLO #1916
-                    break;                                                  // PABLO #1916
+                    if(dynamic_cast<GNEBusStop*>(object)) {
+                        ac = dynamic_cast<GNEBusStop*>(object);
+                    } else if(dynamic_cast<GNEChargingStation*>(object)) {
+                        ac = dynamic_cast<GNEChargingStation*>(object);
+                    }
+                    break;
                     */
                 default:
                     break;
@@ -725,7 +725,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             knownTypes.insert(GLO_EDGE);
             knownTypes.insert(GLO_LANE);
             // knownTypes.insert(GLO_TLLOGIC); makes no sense to include them
-            knownTypes.insert(GLO_ADDITIONAL); // PABLO #1916
+            knownTypes.insert(GLO_ADDITIONAL);
             for (std::set<GUIGlObjectType>::const_iterator it = knownTypes.begin(); it != knownTypes.end(); it++) {
                 const std::set<GUIGlID> tmp = getGlIDs(*it);
                 result.insert(tmp.begin(), tmp.end());
@@ -761,11 +761,11 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             }
             break;
         }
-        case GLO_ADDITIONAL: {                                                                          // PABLO #1916
-            for(GNEAdditionals::iterator it = myAdditionals.begin(); it != myAdditionals.end(); it++)   // PABLO #1916
-                result.insert(it->second->getGlID());                                                   // PABLO #1916
-            break;                                                                                      // PABLO #1916
-        }                                                                                               // PABLO #1916
+        case GLO_ADDITIONAL: {
+            for(GNEAdditionals::iterator it = myAdditionals.begin(); it != myAdditionals.end(); it++)
+                result.insert(it->second->getGlID());
+            break;
+        }
         default: // add other types once we know them
             break;
     }
@@ -1020,64 +1020,64 @@ GNENet::getShapeContainer() {
 }
 
 
-void                                                                                                    // PABLO #1916
-GNENet::insertAdditional(GNEAdditional* additional) {                                                   // PABLO #1916
-    // Check if additional element exists before insertion                                              // PABLO #1916
-    if(myAdditionals.find(additional->getID()) != myAdditionals.end())                                  // PABLO #1916
-        throw ProcessError("additional element with ID='" + additional->getID() + "' already exist");   // PABLO #1916
-    else {                                                                                              // PABLO #1916
-        myAdditionals[additional->getID()] = additional;                                                // PABLO #1916
-    }                                                                                                   // PABLO #1916
-}                                                                                                       // PABLO #1916
+void
+GNENet::insertAdditional(GNEAdditional* additional) {
+    // Check if additional element exists before insertion
+    if(myAdditionals.find(additional->getID()) != myAdditionals.end())
+        throw ProcessError("additional element with ID='" + additional->getID() + "' already exist");
+    else {
+        myAdditionals[additional->getID()] = additional;
+    }
+}
 
 
-void                                                                                                    // PABLO #1916
-GNENet::deleteAdditional(GNEAdditional* additional) {                                                   // PABLO #1916
-    GNEAdditionals::iterator positionToRemove = myAdditionals.find(additional->getID());                // PABLO #1916
-    // Check if additional element exists before deletion                                               // PABLO #1916
-    if(positionToRemove == myAdditionals.end())                                                         // PABLO #1916
-        throw ProcessError("additional element with ID='" + additional->getID() + "' don't exist");     // PABLO #1916
-    else                                                                                                // PABLO #1916
-        myAdditionals.erase(positionToRemove);                                                          // PABLO #1916
-}                                                                                                       // PABLO #1916
+void
+GNENet::deleteAdditional(GNEAdditional* additional) {
+    GNEAdditionals::iterator positionToRemove = myAdditionals.find(additional->getID());
+    // Check if additional element exists before deletion
+    if(positionToRemove == myAdditionals.end())
+        throw ProcessError("additional element with ID='" + additional->getID() + "' don't exist");
+    else
+        myAdditionals.erase(positionToRemove);
+}
 
 
-GNEAdditional*                                                                                                                  // PABLO #1916
-GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {                                                           // PABLO #1916
-    if(!myAdditionals.empty() && (myAdditionals.find(id) != myAdditionals.end()) && (myAdditionals.at(id)->getTag() == type))   // PABLO #1916
-        return myAdditionals.at(id);                                                                                            // PABLO #1916
-    else                                                                                                                        // PABLO #1916
-        return NULL;                                                                                                            // PABLO #1916
-}                                                                                                                               // PABLO #1916
+GNEAdditional*
+GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {
+    if(!myAdditionals.empty() && (myAdditionals.find(id) != myAdditionals.end()) && (myAdditionals.at(id)->getTag() == type))
+        return myAdditionals.at(id);
+    else
+        return NULL;
+}
 
 
-std::string                                                                                                                                                                                    // PABLO #1916
-GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {                                                                                                    // PABLO #1916
-    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)                                                                                        // PABLO #1916
-            if((it->second->getType() == type) && (it->second->getLane() != NULL) && (it->second->getLane() == lane) && (fabs(it->second->getPositionInView().x() - pos) < POSITION_EPS))    // PABLO #1916
-                return it->second->getID();                                                                                                                                                    // PABLO #1916
-    return "";                                                                                                                                                                              // PABLO #1916
-}                                                                                                                                                                                           // PABLO #1916
+std::string
+GNENet::getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const {
+    for (GNEAdditionals::const_iterator it = myAdditionals.begin(); it != myAdditionals.end(); ++it)
+            if((it->second->getType() == type) && (it->second->getLane() != NULL) && (it->second->getLane() == lane) && (fabs(it->second->getPositionInView().x() - pos) < POSITION_EPS))
+                return it->second->getID();
+    return "";
+}
 
 
-std::vector<GNEAdditional*>                                                                 // PABLO #1916
-GNENet::getAdditionals(SumoXMLTag type) {                                                   // PABLO #1916
-    std::vector<GNEAdditional*> vectorOfAdditionals;                                        // PABLO #1916
-    for(GNEAdditionals::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)  // PABLO #1916
-        if(type == SUMO_TAG_NOTHING || type == i->second->getTag())                         // PABLO #1916
-            vectorOfAdditionals.push_back(i->second);                                       // PABLO #1916
-    return vectorOfAdditionals;                                                             // PABLO #1916
-}                                                                                           // PABLO #1916
+std::vector<GNEAdditional*>
+GNENet::getAdditionals(SumoXMLTag type) {
+    std::vector<GNEAdditional*> vectorOfAdditionals;
+    for(GNEAdditionals::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        if(type == SUMO_TAG_NOTHING || type == i->second->getTag())
+            vectorOfAdditionals.push_back(i->second);
+    return vectorOfAdditionals;
+}
 
 
-int                                                                                         // PABLO #1916
-GNENet::getNumberOfAdditionals(SumoXMLTag type) {                                           // PABLO #1916
-    int counter = 0;                                                                        // PABLO #1916
-    for(GNEAdditionals::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)  // PABLO #1916
-        if(type == SUMO_TAG_NOTHING || type == i->second->getTag())                         // PABLO #1916
-            counter++;                                                                      // PABLO #1916
-    return counter;                                                                         // PABLO #1916
-}                                                                                           // PABLO #1916
+int
+GNENet::getNumberOfAdditionals(SumoXMLTag type) {
+    int counter = 0;
+    for(GNEAdditionals::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        if(type == SUMO_TAG_NOTHING || type == i->second->getTag())
+            counter++;
+    return counter;
+}
 
 // ===========================================================================
 // private

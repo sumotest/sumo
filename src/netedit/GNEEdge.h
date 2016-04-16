@@ -118,8 +118,8 @@ public:
     /** @brief update edge geometry after junction move */
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
 
-    /// @brief returns pointer to net   // PABLO #1916
-    GNENet *getNet() const;             // PABLO #1916
+    /// @brief returns pointer to net
+    GNENet *getNet() const;
 
     /// @brief returns the internal NBEdge
     NBEdge* getNBEdge();

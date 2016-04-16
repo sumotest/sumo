@@ -127,8 +127,8 @@ public:
     /// @brief called when the command/FXCall open shapes is executed
     long onCmdOpenShapes(FXObject*, FXSelector, void*);
 
-    /// @brief called when the command/FXCall open additionals is executed  // PABLO #1916
-    long onCmdOpenAdditionals(FXObject*, FXSelector, void*);                // PABLO #1916
+    /// @brief called when the command/FXCall open additionals is executed
+    long onCmdOpenAdditionals(FXObject*, FXSelector, void*);
 
     /// @brief called when the command/FXCall reload is executed
     long onCmdReload(FXObject*, FXSelector, void*);
@@ -145,8 +145,8 @@ public:
     /// @brief called when the command/FXCall save network is executed
     long onCmdSaveNetwork(FXObject*, FXSelector, void*);
 
-    /// @brief called when the command/FXCall save additionals is executed  // PABLO #1916
-    long onCmdSaveAdditionals(FXObject*, FXSelector, void*);                // PABLO #1916
+    /// @brief called when the command/FXCall save additionals is executed
+    long onCmdSaveAdditionals(FXObject*, FXSelector, void*);
 
     /// @brief called when the update/FXCall save network is executed
     long onUpdSaveNetwork(FXObject*, FXSelector, void*);

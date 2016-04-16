@@ -60,8 +60,8 @@ enum EditMode {
     GNE_MODE_CONNECT,
     /** mode for editing tls */
     GNE_MODE_TLS,
-    /** Mode for editing additionals */     // PABLO #1916
-    GNE_MODE_ADDITIONAL                     // PABLO #1916
+    /** Mode for editing additionals */
+    GNE_MODE_ADDITIONAL
 };
 
 // ===========================================================================
@@ -77,8 +77,8 @@ class GNEInspector;
 class GNESelector;
 class GNEConnector;
 class GNETLSEditor;
-class GNEAdditionalFrame;   // PABLO #1916
-class GNEAdditional;        // PABLO #1916
+class GNEAdditionalFrame;
+class GNEAdditional;
 class GNEPoly;
 
 // ===========================================================================
@@ -176,14 +176,14 @@ public:
     /// @brief get the net object
     GNENet* getNet();
 
-    /// @brief get the undoList object  // PABLO #1916
-    GNEUndoList* getUndoList();         // PABLO #1916
+    /// @brief get the undoList object
+    GNEUndoList* getUndoList();
 
-    /// @brief get the current edit mode    // PABLO #1916
-    EditMode getCurrentEditMode() const;    // PABLO #1916
+    /// @brief get the current edit mode
+    EditMode getCurrentEditMode() const;
 
-    /// @brief check if lock icon should be visible     // PABLO #1916
-    bool showLockIcon() const;                          // PABLO #1916
+    /// @brief check if lock icon should be visible
+    bool showLockIcon() const;
 
     void setStatusBarText(const std::string& text);
 
@@ -215,9 +215,9 @@ public:
         return myTLSEditor;
     }
 
-    GNEAdditionalFrame* getAdditional() {   // PABLO #1916
-        return myAdditional;                // PABLO #1916
-    }                                       // PABLO #1916
+    GNEAdditionalFrame* getAdditional() {
+        return myAdditional;
+    }
 
     bool changeAllPhases() const {
         return myChangeAllPhases->getCheck() != FALSE;
@@ -267,11 +267,11 @@ private:
     /// @brief the poly of which geometry is being moved
     GNEPoly* myPolyToMove;
 
-    /// @brief the stoppingPlace element which shape is being moved         // PABLO #1916
-    GNEAdditional* myAdditionalToMove;                                      // PABLO #1916
+    /// @brief the stoppingPlace element which shape is being moved
+    GNEAdditional* myAdditionalToMove;
 
-    /// @brief variable to save the firstposition of the additional before move // PABLO #1916
-    Position myAdditionalFirstPosition;                                         // PABLO #1916
+    /// @brief variable to save the firstposition of the additional before move
+    Position myAdditionalFirstPosition;
 
     /// @brief position from which to move edge geometry
     Position myMoveSrc;
@@ -303,7 +303,7 @@ private:
 
     /// @brief since we cannot switch on strings we map the mode names to an enum
     StringBijection<EditMode> myEditModeNames;
-    StringBijection<EditMode> myEditAdditionalModeNames;    // PABLO #1916
+    StringBijection<EditMode> myEditAdditionalModeNames;
     //@}
 
     /// @brief a reference to the undolist maintained in the application
@@ -321,8 +321,8 @@ private:
     /// @brief the panel for GNE_MODE_TLS
     GNETLSEditor* myTLSEditor;
 
-    /// @brief the panel for GNE_MODE_ADDITIONAL    // PABLO #1916
-    GNEAdditionalFrame* myAdditional;               // PABLO #1916
+    /// @brief the panel for GNE_MODE_ADDITIONAL
+    GNEAdditionalFrame* myAdditional;
 
     Position myPopupSpot;
 

@@ -62,15 +62,15 @@
 #include "GNESelector.h"
 #include "GNEConnector.h"
 #include "GNETLSEditor.h"
-#include "GNEAdditionalFrame.h"     // PABLO #1916
-#include "GNEAdditionalHandler.h"   // PABLO #1916
+#include "GNEAdditionalFrame.h"
+#include "GNEAdditionalHandler.h"
 #include "GNEPoly.h"
 #include "GNECrossing.h"
-#include "GNEStoppingPlace.h"       // PABLO #1916
-#include "GNEDetector.h"            // PABLO #1916
-#include "GNEDetectorE3.h"          // PABLO #1916
-#include "GNERerouter.h"            // PABLO #1916
-#include "GNEChange_Attribute.h"    // PABLO #1916
+#include "GNEStoppingPlace.h"
+#include "GNEDetector.h"
+#include "GNEDetectorE3.h"
+#include "GNERerouter.h"
+#include "GNEChange_Attribute.h"
 
 
 
@@ -123,7 +123,7 @@ GNEViewNet::GNEViewNet(
     myJunctionToMove(0),
     myEdgeToMove(0),
     myPolyToMove(0),
-    myAdditionalToMove(0),   // PABLO #1916
+    myAdditionalToMove(0),
     myMoveSelection(false),
     myAmInRectSelect(false),
     myToolbar(toolBar),
@@ -142,8 +142,8 @@ GNEViewNet::GNEViewNet(
     myConnector->hide();
     myTLSEditor = new GNETLSEditor(actualParent, this, myUndoList);
     myTLSEditor->hide();
-    myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);   // PABLO #1916
-    myAdditional->hide();                                                   // PABLO #1916
+    myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);
+    myAdditional->hide();
     // view must be the final member of actualParent
     reparent(actualParent);
 
@@ -398,7 +398,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
         GNEPOI* pointed_poi = 0;
         GNEPoly* pointed_poly = 0;
         GNECrossing* pointed_crossing = 0;
-        GNEAdditional* pointed_additional = 0;  // PABLO #1916
+        GNEAdditional* pointed_additional = 0;
         if (pointed) {
             switch (pointed->getType()) {
                 case GLO_JUNCTION:
@@ -420,9 +420,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 case GLO_CROSSING:
                     pointed_crossing = (GNECrossing*)pointed;
                     break;
-                case GLO_ADDITIONAL:                                // PABLO #1916
-                    pointed_additional = (GNEAdditional*)pointed;   // PABLO #1916
-                    break;                                          // PABLO #1916
+                case GLO_ADDITIONAL:
+                    pointed_additional = (GNEAdditional*)pointed;
+                    break;
                 default:
                     pointed = 0;
                     break;
@@ -497,19 +497,19 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                         myEdgeToMove = pointed_edge;
                     }
                     myMoveSrc = getPositionInformation();
-                } else if (pointed_additional) {                                                                    // PABLO #1916
-                    if (gSelected.isSelected(GLO_ADDITIONAL, pointed_additional->getGlID())) {                      // PABLO #1916
-                        myMoveSelection = true;                                                                     // PABLO #1916
-                    } else {                                                                                        // PABLO #1916
-                        myAdditionalToMove = pointed_additional;                                                    // PABLO #1916
-                        if(myAdditionalToMove->getLane()) {                                                         // PABLO #1916
-                            myAdditionalFirstPosition.set(pointed_additional->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false), 0, 0);  // PABLO #1916
-                            myUndoList->p_begin("position of " + toString(pointed_additional->getTag()));           // PABLO #1916
-                        } else{                                                                                     // PABLO #1916
-                            myAdditionalFirstPosition = pointed_additional->getPositionInView();                    // PABLO #1916
-                            myUndoList->p_begin("position of " + toString(pointed_additional->getTag()));           // PABLO #1916
-                        }                                                                                           // PABLO #1916
-                    }                                                                                               // PABLO #1916
+                } else if (pointed_additional) {
+                    if (gSelected.isSelected(GLO_ADDITIONAL, pointed_additional->getGlID())) {
+                        myMoveSelection = true;
+                    } else {
+                        myAdditionalToMove = pointed_additional;
+                        if(myAdditionalToMove->getLane()) {
+                            myAdditionalFirstPosition.set(pointed_additional->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false), 0, 0);
+                            myUndoList->p_begin("position of " + toString(pointed_additional->getTag()));
+                        } else{
+                            myAdditionalFirstPosition = pointed_additional->getPositionInView();
+                            myUndoList->p_begin("position of " + toString(pointed_additional->getTag()));
+                        }
+                    }
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
@@ -537,9 +537,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     // XXX this is a dirty dirty hack! implemente GNEChange_POI
                     myNet->getShapeContainer().removePOI(pointed_poi->getMicrosimID());
                     update();
-                } else if (pointed_additional) {                        // PABLO #1916
-                    myAdditional->removeAdditional(pointed_additional); // PABLO #1916
-                    update();                                           // PABLO #1916
+                } else if (pointed_additional) {
+                    myAdditional->removeAdditional(pointed_additional);
+                    update();
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
@@ -565,10 +565,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_crossing) {
                     pointedAC = pointed_crossing;
                     pointedO = pointed_crossing;
-                } else if (pointed_additional) {        // PABLO #1916
-                    pointedAC = pointed_additional;     // PABLO #1916
-                    pointedO = pointed_additional;      // PABLO #1916
-                }                                       // PABLO #1916
+                } else if (pointed_additional) {
+                    pointedAC = pointed_additional;
+                    pointedO = pointed_additional;
+                }
 
                 std::vector<GNEAttributeCarrier*> selected;
                 if (pointedO && gSelected.isSelected(pointedO->getType(), pointedO->getGlID())) {
@@ -618,12 +618,12 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
 
-            case GNE_MODE_ADDITIONAL:                                   // PABLO #1916
-                if(myAdditional->addAdditional(pointed_lane, this)) {   // PABLO #1916
-                    update();                                           // PABLO #1916
-                }                                                       // PABLO #1916
-                GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);    // PABLO #1916
-                break;                                                  // PABLO #1916
+            case GNE_MODE_ADDITIONAL:
+                if(myAdditional->addAdditional(pointed_lane, this)) {
+                    update();
+                }
+                GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
+                break;
 
             default:
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -650,9 +650,9 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
         const std::string& newShape = myEdgeToMove->getAttribute(SUMO_ATTR_SHAPE);
         myEdgeToMove->setAttribute(SUMO_ATTR_SHAPE, newShape, myUndoList);
         myEdgeToMove = 0;
-    } else if (myAdditionalToMove) {    // PABLO #1916
-        myUndoList->p_end();            // PABLO #1916
-        myAdditionalToMove = 0;         // PABLO #1916
+    } else if (myAdditionalToMove) {
+        myUndoList->p_end();
+        myAdditionalToMove = 0;
     } else if (myMoveSelection) {
         // positions and shapes are already up to date but we must register with myUndoList
         myNet->finishMoveSelection(myUndoList);
@@ -683,16 +683,16 @@ GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {
         myJunctionToMove->move(getPositionInformation());
     } else if (myEdgeToMove) {
         myMoveSrc = myEdgeToMove->moveGeometry(myMoveSrc, getPositionInformation());
-    } else if (myAdditionalToMove) {                                                                                                            // PABLO #1916
-        if(myAdditionalToMove->getLane()) {                                                                                                     // PABLO #1916
-            SUMOReal posOfMouseOverLane = myAdditionalToMove->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false); // PABLO #1916
-            myAdditionalToMove->moveAdditional(posOfMouseOverLane - myAdditionalFirstPosition.x(), 0, myUndoList);                              // PABLO #1916
-            myAdditionalFirstPosition.set(posOfMouseOverLane,0, 0);                                                                             // PABLO #1916
-        } else {                                                                                                                                // PABLO #1916
-            myAdditionalToMove->moveAdditional(getPositionInformation().x(), getPositionInformation().y(), myUndoList);                         // PABLO #1916
-            myAdditionalFirstPosition = getPositionInformation();                                                                               // PABLO #1916
-        }                                                                                                                                       // PABLO #1916
-        update();                                                                                                                               // PABLO #1916
+    } else if (myAdditionalToMove) {
+        if(myAdditionalToMove->getLane()) {
+            SUMOReal posOfMouseOverLane = myAdditionalToMove->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false);
+            myAdditionalToMove->moveAdditional(posOfMouseOverLane - myAdditionalFirstPosition.x(), 0, myUndoList);
+            myAdditionalFirstPosition.set(posOfMouseOverLane,0, 0);
+        } else {
+            myAdditionalToMove->moveAdditional(getPositionInformation().x(), getPositionInformation().y(), myUndoList);
+            myAdditionalFirstPosition = getPositionInformation();
+        }
+        update();
     } else if (myMoveSelection) {
         Position moveTarget = getPositionInformation();
         myNet->moveSelection(myMoveSrc, moveTarget);
@@ -787,9 +787,9 @@ GNEViewNet::setEditModeFromHotkey(FXushort selid) {
         case MID_GNE_MODE_TLS:
             setEditMode(GNE_MODE_TLS);
             break;
-        case MID_GNE_MODE_ADDITIONAL:           // PABLO #1916
-            setEditMode(GNE_MODE_ADDITIONAL);   // PABLO #1916
-            break;                              // PABLO #1916
+        case MID_GNE_MODE_ADDITIONAL:
+            setEditMode(GNE_MODE_ADDITIONAL);
+            break;
         default:
             FXMessageBox::error(this, MBOX_OK, "invalid edit mode", "%s", "...");
             break;
@@ -804,28 +804,28 @@ GNEViewNet::markPopupPosition() {
 }
 
 
-GNENet*                 // PABLO #1916
-GNEViewNet::getNet() {  // PABLO #1916
-    return myNet;       // PABLO #1916
-};                      // PABLO #1916
+GNENet*
+GNEViewNet::getNet() {
+    return myNet;
+};
 
 
-GNEUndoList*                // PABLO #1916
-GNEViewNet::getUndoList() { // PABLO #1916
-    return myUndoList;      // PABLO #1916
-}                           // PABLO #1916
+GNEUndoList*
+GNEViewNet::getUndoList() {
+    return myUndoList;
+}
 
 
-EditMode                                    // PABLO #1916
-GNEViewNet::getCurrentEditMode() const {    // PABLO #1916
-    return myEditMode;                      // PABLO #1916
-}                                           // PABLO #1916
+EditMode
+GNEViewNet::getCurrentEditMode() const {
+    return myEditMode;
+}
 
 
-bool                                                                                                            // PABLO #1916
-GNEViewNet::showLockIcon() const {                                                                              // PABLO #1916
-    return(myEditMode == GNE_MODE_MOVE || myEditMode == GNE_MODE_INSPECT || myEditMode == GNE_MODE_ADDITIONAL); // PABLO #1916
-}                                                                                                               // PABLO #1916
+bool
+GNEViewNet::showLockIcon() const {
+    return(myEditMode == GNE_MODE_MOVE || myEditMode == GNE_MODE_INSPECT || myEditMode == GNE_MODE_ADDITIONAL);
+}
 
 
 GNEJunction*
@@ -1135,7 +1135,7 @@ GNEViewNet::buildEditModeControls() {
     myEditModeNames.insert("(s) Select", GNE_MODE_SELECT);
     myEditModeNames.insert("(c) Connect", GNE_MODE_CONNECT);
     myEditModeNames.insert("(t) Traffic Lights", GNE_MODE_TLS);
-    myEditModeNames.insert("(a) Additionals", GNE_MODE_ADDITIONAL);  // PABLO #1916
+    myEditModeNames.insert("(a) Additionals", GNE_MODE_ADDITIONAL);
 
     // initialize combo for modes
     myEditModesCombo =
@@ -1195,10 +1195,10 @@ GNEViewNet::updateModeSpecificControls() {
         widthChange += myTLSEditor->getWidth() + addChange;
         myTLSEditor->hide();
     }
-    if (myAdditional->shown()) {                                // PABLO #1916
-        widthChange += myAdditional->getWidth() + addChange;    // PABLO #1916
-        myAdditional->hide();                                   // PABLO #1916
-    }                                                           // PABLO #1916
+    if (myAdditional->shown()) {
+        widthChange += myAdditional->getWidth() + addChange;
+        myAdditional->hide();
+    }
     // enable selected controls
     switch (myEditMode) {
         case GNE_MODE_CREATE_EDGE:
@@ -1230,10 +1230,10 @@ GNEViewNet::updateModeSpecificControls() {
             myTLSEditor->show();
             myChangeAllPhases->show();
             break;
-        case GNE_MODE_ADDITIONAL:                                   // PABLO #1916
-            widthChange -= myAdditional->getWidth() + addChange;    // PABLO #1916
-            myAdditional->show();                                   // PABLO #1916
-            break;                                                  // PABLO #1916
+        case GNE_MODE_ADDITIONAL:
+            widthChange -= myAdditional->getWidth() + addChange;
+            myAdditional->show();
+            break;
         default:
             break;
     }

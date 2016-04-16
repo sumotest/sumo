@@ -276,11 +276,11 @@ public:
      * */
     std::vector<GNELane*> retrieveLanes(bool onlySelected = false);
 
-    /** @brief return lane                              // PABLO #1916
-     * @param id id of the lane to find                 // PABLO #1916
-     * @return pointer to lane, or NULL if don0t exist  // PABLO #1916
-    */                                                  // PABLO #1916
-    GNELane *getLane(const std::string &id);            // PABLO #1916
+    /** @brief return lane
+     * @param id id of the lane to find
+     * @return pointer to lane, or NULL if don0t exist
+    */
+    GNELane *getLane(const std::string &id);
 
     /** @brief return all junctions
      * @param[in] onlySelected Whether to return only selected junctions
@@ -292,10 +292,10 @@ public:
      */
     void save(OptionsCont& oc);
 
-    /** @brief save additional elements of the network                  // PABLO #1916
-     * @param[in] filename name of the file in wich save additionals    // PABLO #1916
-     */                                                                 // PABLO #1916
-    void saveAdditionals(const std::string &filename);                  // PABLO #1916
+    /** @brief save additional elements of the network
+     * @param[in] filename name of the file in wich save additionals
+     */
+    void saveAdditionals(const std::string &filename);
 
     /** @brief save plain xml representation of the network (and nothing else)
      * @param[in] oc The OptionsCont which knows how and where to save
@@ -383,42 +383,42 @@ public:
     /// @brief get shape container
     ShapeContainer& getShapeContainer();
 
-    /** @brief Insert a additional element previously created in GNEAdditionalHandler   // PABLO #1916
-     * @param[in] additional pointer to the additional element to add                   // PABLO #1916
-     */                                                                                 // PABLO #1916
-    void insertAdditional(GNEAdditional* additional);                                   // PABLO #1916
+    /** @brief Insert a additional element previously created in GNEAdditionalHandler
+     * @param[in] additional pointer to the additional element to add
+     */
+    void insertAdditional(GNEAdditional* additional);
 
-    /** @brief delete additional element previously inserted        // PABLO #1916
-     * @param[in] additional The additional element to remove       // PABLO #1916
-     */                                                             // PABLO #1916
-    void deleteAdditional(GNEAdditional* additional);               // PABLO #1916
+    /** @brief delete additional element previously inserted
+     * @param[in] additional The additional element to remove
+     */
+    void deleteAdditional(GNEAdditional* additional);
 
-    /** @brief Returns the named additional                                     // PABLO #1916
-     * @param[in] type tag with the type of additional                          // PABLO #1916
-     * @param[in] id The id of the additional to return.                        // PABLO #1916
-     * @return The named additional, or 0 if don't exists                       // PABLO #1916
-     */                                                                         // PABLO #1916
-    GNEAdditional* getAdditional(SumoXMLTag type, const std::string& id) const; // PABLO #1916
+    /** @brief Returns the named additional
+     * @param[in] type tag with the type of additional
+     * @param[in] id The id of the additional to return.
+     * @return The named additional, or 0 if don't exists
+     */
+    GNEAdditional* getAdditional(SumoXMLTag type, const std::string& id) const;
 
-    /** @brief Returns the additional close to the given position                                   // PABLO #1916
-     * @param[in] type tag with the type of additional                                              // PABLO #1916
-     * @param[in] lane the lane of the additional to return.                                        // PABLO #1916
-     * @param[in] pos the position of the additional to return.                                     // PABLO #1916
-     * @return The additional id on the location, or "" if don't exists                             // PABLO #1916
-     */                                                                                             // PABLO #1916
-    std::string getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const;    // PABLO #1916
+    /** @brief Returns the additional close to the given position
+     * @param[in] type tag with the type of additional
+     * @param[in] lane the lane of the additional to return.
+     * @param[in] pos the position of the additional to return.
+     * @return The additional id on the location, or "" if don't exists
+     */
+    std::string getAdditionalID(SumoXMLTag type, const GNELane* lane, const SUMOReal pos) const;
 
-    /** @brief get vector with additionals                                                  // PABLO #1916
-     * @param[in] type type of additional to get. SUMO_TAG_NOTHING will get all additionals // PABLO #1916
-     * @return vector with pointers to additionals.                                         // PABLO #1916
-     */                                                                                     // PABLO #1916
-    std::vector<GNEAdditional*> getAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);         // PABLO #1916
+    /** @brief get vector with additionals
+     * @param[in] type type of additional to get. SUMO_TAG_NOTHING will get all additionals
+     * @return vector with pointers to additionals.
+     */
+    std::vector<GNEAdditional*> getAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);
 
-    /** @brief Returns the number of additionals of the net                                     // PABLO #1916
-     * @param[in] type type of additional to count. SUMO_TAG_NOTHING will count all additionals // PABLO #1916
-     * @return Number of additionals of the net                                                 // PABLO #1916
-     */                                                                                         // PABLO #1916
-    int getNumberOfAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);                             // PABLO #1916
+    /** @brief Returns the number of additionals of the net
+     * @param[in] type type of additional to count. SUMO_TAG_NOTHING will count all additionals
+     * @return Number of additionals of the net
+     */
+    int getNumberOfAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);
 
 private:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)
@@ -434,7 +434,7 @@ private:
     //@{
     typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
-    typedef std::map<std::string, GNEAdditional*> GNEAdditionals;       // PABLO #1916
+    typedef std::map<std::string, GNEAdditional*> GNEAdditionals;
     // @}
 
     /// @brief map with the name and pointer to edges of net
@@ -443,8 +443,8 @@ private:
     /// @brief map with the name and pointer to junctions of net
     GNEJunctions myJunctions;
 
-    /// @brief map with the name and pointer to additional elements of net  // PABLO #1916
-    GNEAdditionals myAdditionals;                                           // PABLO #1916
+    /// @brief map with the name and pointer to additional elements of net
+    GNEAdditionals myAdditionals;
 
     /// @name ID Suppliers for newly created edges and junctions
     // @{

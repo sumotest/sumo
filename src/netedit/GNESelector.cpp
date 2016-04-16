@@ -227,9 +227,9 @@ GNESelector::onCmdInvert(FXObject*, FXSelector, void*) {
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
-    ids = myUpdateTarget->getNet()->getGlIDs(GLO_ADDITIONAL);                           // PABLO #1916
-    for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {   // PABLO #1916
-        gSelected.toggleSelection(*it);                                                 // PABLO #1916
+    ids = myUpdateTarget->getNet()->getGlIDs(GLO_ADDITIONAL);
+    for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
+        gSelected.toggleSelection(*it);
     }
     myUpdateTarget->update();
     return 1;
@@ -246,7 +246,7 @@ GNESelector::onCmdSelMBTag(FXObject*, FXSelector, void*) {
         myMatchAttrBox->appendItem(toString(it->first).c_str());
     }
 
-    // PABLO: Here can be placed a butto to set the default value
+    // @ToDo: Here can be placed a butto to set the default value
     myMatchAttrBox->setNumVisible(myMatchAttrBox->getNumItems());
     update();
     return 1;
@@ -334,7 +334,7 @@ GNESelector::onCmdHelp(FXObject*, FXSelector, void*) {
             << "\n"
             << "Examples:\n"
             << "junction; id; 'foo' -> match all junctions that have 'foo' in their id\n"
-            << "junction; type; '=priority' -> match all junctions of type 'priority', but not of type 'priority_stop'\n"    // PABLO #1985
+            << "junction; type; '=priority' -> match all junctions of type 'priority', but not of type 'priority_stop'\n"
             << "edge; speed; '>10' -> match all edges with a speed above 10\n";
     new FXLabel(helpDialog, help.str().c_str(), 0, JUSTIFY_LEFT);
     // "OK"
@@ -376,7 +376,7 @@ GNESelector::getStats() const {
            toString(gSelected.getSelected(GLO_JUNCTION).size()) + " Junctions\n" +
            toString(gSelected.getSelected(GLO_EDGE).size()) + " Edges\n" +
            toString(gSelected.getSelected(GLO_LANE).size()) + " Lanes\n" +
-           toString(gSelected.getSelected(GLO_ADDITIONAL).size()) + " Additionals\n";  // PABLO #1916
+           toString(gSelected.getSelected(GLO_ADDITIONAL).size()) + " Additionals\n";
 }
 
 

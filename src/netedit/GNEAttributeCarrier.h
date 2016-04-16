@@ -100,8 +100,8 @@ public:
     /// @brief function to support debugging
     const std::string getID() const;
 
-    /// @brief get parent's tag of a certain additional element // PABLO #1916
-    static SumoXMLTag getParentType(SumoXMLTag tag);            // PABLO #1916
+    /// @brief get parent's tag of a certain additional element
+    static SumoXMLTag getParentType(SumoXMLTag tag);
 
     /// @brief get all editable attributes for tag and their default values.
     static const std::vector<std::pair <SumoXMLAttr, std::string> >& allowedAttributes(SumoXMLTag tag);
@@ -109,36 +109,36 @@ public:
     /// @brief get all editable attributes for tag.
     static const std::vector<SumoXMLTag>& allowedTags();
 
-    /// @brief get editable attributes for additional tags.             // PABLO #1916
-    static const std::vector<SumoXMLTag>& allowedAdditionalTags();      // PABLO #1916
+    /// @brief get editable attributes for additional tags.
+    static const std::vector<SumoXMLTag>& allowedAdditionalTags();
 
     /// @brief whether an attribute is numerical (int or float)
     static bool isNumerical(SumoXMLAttr attr);
 
-    /// @brief whether an attribute is numerical or type int    // PABLO #1916
-    static bool isInt(SumoXMLAttr attr);                        // PABLO #1916
+    /// @brief whether an attribute is numerical or type int
+    static bool isInt(SumoXMLAttr attr);
 
-    /// @brief whether an attribute is numerical of type float  // PABLO #1916
-    static bool isFloat(SumoXMLAttr attr);                      // PABLO #1916
+    /// @brief whether an attribute is numerical of type float
+    static bool isFloat(SumoXMLAttr attr);
 
-    /// @brief whether an attribute is of type bool             // PABLO #1916
-    static bool isBool(SumoXMLAttr attr);                       // PABLO #1916
+    /// @brief whether an attribute is of type bool
+    static bool isBool(SumoXMLAttr attr);
 
-    /// @brief whether an attribute is of type string           // PABLO #1916
-    static bool isString(SumoXMLAttr attr);                     // PABLO #1916
+    /// @brief whether an attribute is of type string
+    static bool isString(SumoXMLAttr attr);
 
-    /// @brief whether an attribute is of type bool             // PABLO #1916
-    static bool isList(SumoXMLAttr attr);                       // PABLO #1916
+    /// @brief whether an attribute is of type bool
+    static bool isList(SumoXMLAttr attr);
 
     /// @brief whether an attribute is unique (may not be edited for a multi-selection)
     /// @note unique attributes don't have a default value
     static bool isUnique(SumoXMLAttr attr);
 
-    /// @brief check if a element with certain tag has another additional element as parent // PABLO #1916
-    static bool hasParent(SumoXMLTag tag);                                                  // PABLO #1916
+    /// @brief check if a element with certain tag has another additional element as parent
+    static bool hasParent(SumoXMLTag tag);
 
-    /// @brief check if a element with certain tag has a certain attribute  // PABLO #1916
-    static bool hasAttribute(SumoXMLTag tag, SumoXMLAttr attr);             // PABLO #1916
+    /// @brief check if a element with certain tag has a certain attribute
+    static bool hasAttribute(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief return a list of discrete choices for this attribute or an empty vector
     static const std::vector<std::string>& discreteChoices(SumoXMLTag tag, SumoXMLAttr attr);
@@ -149,10 +149,10 @@ public:
     /// @brief return definition of a certain SumoXMLAttr
     static std::string getDefinition(SumoXMLTag tag, SumoXMLAttr attr);
 
-    /// @brief return the default value of the attribute of an element                                  // PABLO #1916
-    /// @note It's advisable to check before with function hasDefaultValue if  exits a default value    // PABLO #1916
-    template<typename T>                                                                                // PABLO #1916
-    static T getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr);                                         // PABLO #1916
+    /// @brief return the default value of the attribute of an element
+    /// @note It's advisable to check before with function hasDefaultValue if  exits a default value
+    template<typename T>
+    static T getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief true if a number of type T can be parsed from string
     template<typename T>
@@ -166,9 +166,9 @@ public:
         catch (EmptyData&) {
             return false;
         }
-        catch(BoolFormatException&) {   // PABLO #1916
-            return false;               // PABLO #1916
-        }                               // PABLO #1916
+        catch(BoolFormatException&) {
+            return false;
+        }
         return true;
     }
 
@@ -185,11 +185,11 @@ public:
     /// @brief true if value is a valid sumo ID
     static bool isValidID(const std::string& value);
 
-    /// @brief true if value is a valid file value              // PABLO #1916
-    static bool isValidFileValue(const std::string& value);     // PABLO #1916
+    /// @brief true if value is a valid file value
+    static bool isValidFileValue(const std::string& value);
 
-    /// @brief true if value is a valid string vector           // PABLO #1916
-    static bool isValidStringVector(const std::string& value);  // PABLO #1916
+    /// @brief true if value is a valid string vector
+    static bool isValidStringVector(const std::string& value);
 
     /// @brief feature is still unchanged after being loaded (implies approval)
     static const std::string LOADED;
@@ -211,34 +211,34 @@ private:
     const SumoXMLTag myTag;
 
     /// @brief map with the allowed attributes
-    static std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > _allowedAttributes;    // PABLO #1916
+    static std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > _allowedAttributes;
 
     /// @brief vector with the allowed tags
     static std::vector<SumoXMLTag> myAllowedTags;
 
-    /// @brief vector with the allowed tags of additionals      // PABLO #1916
-    static std::vector<SumoXMLTag> myAllowedAdditionalTags;     // PABLO #1916
+    /// @brief vector with the allowed tags of additionals
+    static std::vector<SumoXMLTag> myAllowedAdditionalTags;
 
-    /// @brief set with the numerical attributes of type Int    // PABLO #1916
-    static std::set<SumoXMLAttr> myNumericalIntAttrs;           // PABLO #1916
+    /// @brief set with the numerical attributes of type Int
+    static std::set<SumoXMLAttr> myNumericalIntAttrs;
 
-    /// @brief set with the numerical attributes of type Float  // PABLO #1916
-    static std::set<SumoXMLAttr> myNumericalFloatAttrs;         // PABLO #1916
+    /// @brief set with the numerical attributes of type Float
+    static std::set<SumoXMLAttr> myNumericalFloatAttrs;
 
-    /// @brief set with the attributes of type list             // PABLO #1916
-    static std::set<SumoXMLAttr> myListAttrs;                   // PABLO #1916
+    /// @brief set with the attributes of type list
+    static std::set<SumoXMLAttr> myListAttrs;
 
     /// @brief set with the unique attributes (i.e. attributes without default values)
     static std::set<SumoXMLAttr> myUniqueAttrs;
 
-    /// @brief map with the allowed tags of additionals with parent and their parent    // PABLO #1916
-    static std::map<SumoXMLTag, SumoXMLTag> myAllowedAdditionalWithParentTags;          // PABLO #1916
+    /// @brief map with the allowed tags of additionals with parent and their parent
+    static std::map<SumoXMLTag, SumoXMLTag> myAllowedAdditionalWithParentTags;
 
     /// @brief map with the values of discrete choices
     static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > myDiscreteChoices;
 
-    /// @brief map with the definition of attributes                                                    // PABLO #1916
-    static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string> > myAttrDefinitions;    // PABLO #1916
+    /// @brief map with the definition of attributes
+    static std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string> > myAttrDefinitions;
 
 private:
     /// @brief Invalidated assignment operator

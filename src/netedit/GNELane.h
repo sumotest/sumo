@@ -45,7 +45,7 @@ class PositionVector;
 class GNETLSEditor;
 class GNEEdge;
 class GNENet;
-class GNEAdditional;    // PABLO #1916
+class GNEAdditional;
 
 // ===========================================================================
 // class definitions
@@ -135,51 +135,51 @@ public:
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
 
-    /// @brief returns the index of the lane    // PABLO #1916
+    /// @brief returns the index of the lane
     unsigned int getIndex() const;
 
-    /* @brief method for setting the index of the lane      // PABLO #1916
-     * @param[in] index The new index of lane               // PABLO #1916
-     */                                                     // PABLO #1916
-    void setIndex(unsigned int index);                      // PABLO #1916
+    /* @brief method for setting the index of the lane
+     * @param[in] index The new index of lane
+     */
+    void setIndex(unsigned int index);
 
-    /// @brief returns the parameteric length of the lane   // PABLO #1916
-    /// @note is the same as their Edge parent              // PABLO #1916
-    SUMOReal getLaneParametricLenght() const;               // PABLO #1916
+    /// @brief returns the parameteric length of the lane
+    /// @note is the same as their Edge parent
+    SUMOReal getLaneParametricLenght() const;
 
-    /// @brief returns the length of the lane's shape   // PABLO #1916
-    SUMOReal getLaneShapeLenght() const;                // PABLO #1916
+    /// @brief returns the length of the lane's shape
+    SUMOReal getLaneShapeLenght() const;
 
-    /* @brief returns the relative position of an element in the lane's shape depending of the parametric lenght                    // PABLO #1916
-     *        Examples: Lane with Parametric lenght = 100 and Shape lenght = 250. Position 50 returns 125, Position 80 returns 200  // PABLO #1916
-     * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneParametricLenght()]         // PABLO #1916
-     * @return the relative position in the lane's shape                                                                            // PABLO #1916
-     */                                                                                                                             // PABLO #1916
-    SUMOReal getPositionRelativeToParametricLenght(SUMOReal position) const;                                                        // PABLO #1916
+    /* @brief returns the relative position of an element in the lane's shape depending of the parametric lenght
+     *        Examples: Lane with Parametric lenght = 100 and Shape lenght = 250. Position 50 returns 125, Position 80 returns 200
+     * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneParametricLenght()]
+     * @return the relative position in the lane's shape
+     */
+    SUMOReal getPositionRelativeToParametricLenght(SUMOReal position) const;
 
-    /* @brief returns the relative position of an element in the lane's shape depending of the shape's lenght                           // PABLO #1916
-     *        Examples: Lane with Parametric lenght = 100 and Shape lenght = 250. Position = 100 returns 40, Position 220 returns 88    // PABLO #1916
-     * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneShapeLenght]                    // PABLO #1916
-     * @return the relative position in the lane's shape                                                                                // PABLO #1916
-     */                                                                                                                                 // PABLO #1916
+    /* @brief returns the relative position of an element in the lane's shape depending of the shape's lenght
+     *        Examples: Lane with Parametric lenght = 100 and Shape lenght = 250. Position = 100 returns 40, Position 220 returns 88
+     * @param[in] position to calculate their relative position in the lane's shape [0 < position < LaneShapeLenght]
+     * @return the relative position in the lane's shape
+     */
     SUMOReal getPositionRelativeToShapeLenght(SUMOReal position) const;
 
-    /* @brief method for adding a reference of a additional element placed in this lane     // PABLO #1916
-     * @param[in] additional Pointer to additional element                                  // PABLO #1916
-     */                                                                                     // PABLO #1916
-    void addAdditional(GNEAdditional *additional);                                          // PABLO #1916
+    /* @brief method for adding a reference of a additional element placed in this lane
+     * @param[in] additional Pointer to additional element
+     */
+    void addAdditional(GNEAdditional *additional);
 
-    /* @brief method for remove a reference of a additional element placed in this lane     // PABLO #1916
-     * @param[in] additional Pointer to additional element previously added                 // PABLO #1916
-       @return true if additional element was sucesfully removed, flase in other case       // PABLO #1916
-     */                                                                                     // PABLO #1916
-    bool removeAdditional(GNEAdditional *additional);                                       // PABLO #1916
+    /* @brief method for remove a reference of a additional element placed in this lane
+     * @param[in] additional Pointer to additional element previously added
+       @return true if additional element was sucesfully removed, flase in other case
+     */
+    bool removeAdditional(GNEAdditional *additional);
 
-    /* @brief method to obtain a vector of additional elements associated to this lane      // PABLO #1916
-       @return set with all additional elements                                             // PABLO #1916
-@todo modify to get only a specific type of additional element                       // PABLO #1916
-     */                                                                                     // PABLO #1916
-    std::vector<GNEAdditional*> getAdditionals();                                           // PABLO #1916
+    /* @brief method to obtain a vector of additional elements associated to this lane
+       @return set with all additional elements
+@todo modify to get only a specific type of additional element
+     */
+    std::vector<GNEAdditional*> getAdditionals();
 
     //@name inherited from GNEAttributeCarrier
     //@{
@@ -229,8 +229,8 @@ private:
     std::vector<SUMOReal> myShapeLengths;
     //@}
 
-    /// @brief vector with pointers to additional elements placed in this lane  // PABLO #1916
-    additionalVector myAdditionalElements;                                      // PABLO #1916
+    /// @brief vector with pointers to additional elements placed in this lane
+    additionalVector myAdditionalElements;
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;

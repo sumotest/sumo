@@ -43,14 +43,14 @@
 // ===========================================================================
 std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > GNEAttributeCarrier::_allowedAttributes;
 std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedTags;
-std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;                                               // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalIntAttrs;                                                     // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;                                                   // PABLO #1916
-std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;                                                             // PABLO #1916
+std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;
+std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalIntAttrs;
+std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;
+std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;
 std::set<SumoXMLAttr> GNEAttributeCarrier::myUniqueAttrs;
-std::map<SumoXMLTag, SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalWithParentTags;                            // PABLO #1916
+std::map<SumoXMLTag, SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalWithParentTags;
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > GNEAttributeCarrier::myDiscreteChoices;
-std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string > > GNEAttributeCarrier::myAttrDefinitions;                  // PABLO #1916
+std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string > > GNEAttributeCarrier::myAttrDefinitions;
 
 const std::string GNEAttributeCarrier::LOADED = "loaded";
 const std::string GNEAttributeCarrier::GUESSED = "guessed";
@@ -117,13 +117,13 @@ GNEAttributeCarrier::getID() const {
 }
 
 
-SumoXMLTag                                              // PABLO #1916
-GNEAttributeCarrier::getParentType(SumoXMLTag tag) {    // PABLO #1916
-    if(hasParent(tag))                                  // PABLO #1916
-        return myAllowedAdditionalWithParentTags[tag];  // PABLO #1916
-    else                                                // PABLO #1916
-        return SUMO_TAG_NOTHING;                        // PABLO #1916
-}                                                       // PABLO #1916
+SumoXMLTag
+GNEAttributeCarrier::getParentType(SumoXMLTag tag) {
+    if(hasParent(tag))
+        return myAllowedAdditionalWithParentTags[tag];
+    else
+        return SUMO_TAG_NOTHING;
+}
 
 
 bool
@@ -132,43 +132,43 @@ GNEAttributeCarrier::isValidID(const std::string& value) {
 }
 
 
-bool                                                                                // PABLO #1916
-GNEAttributeCarrier::isValidFileValue(const std::string& value) {                   // PABLO #1916
-    // @note Only characteres that aren't permited in a file path or belong         // PABLO #1916
-    // to XML sintax                                                                // PABLO #1916
-    return value.find_first_of("\t\n\r@$%^&|\\{}*'\";:<>") == std::string::npos;    // PABLO #1916
-}                                                                                   // PABLO #1916
+bool
+GNEAttributeCarrier::isValidFileValue(const std::string& value) {
+    // @note Only characteres that aren't permited in a file path or belong
+    // to XML sintax
+    return value.find_first_of("\t\n\r@$%^&|\\{}*'\";:<>") == std::string::npos;
+}
 
 
-bool                                                                        // PABLO #1916
-GNEAttributeCarrier::isValidStringVector(const std::string& value) {        // PABLO #1916
-    // 1) check if value is empty                                           // PABLO #1916
-    if(value.empty())                                                       // PABLO #1916
-        return true;                                                        // PABLO #1916
-    // 2) Check if there are duplicated spaces                              // PABLO #1916
-    for(int i = 1; i < value.size(); i++)                                   // PABLO #1916
-        if(value.at(i-1) == ' ' && value.at(i) == ' ')                      // PABLO #1916
-            return false;                                                   // PABLO #1916
-    // 3) Check if the first and last character aren't spaces               // PABLO #1916
-    if((value.at(0) == ' ') || (value.at(value.size()-1) == ' '))           // PABLO #1916
-        return false;                                                       // PABLO #1916
-    // 4) Check if every sub-string is valid                                // PABLO #1916
-    int index = 0;                                                          // PABLO #1916
-    std::string subString;                                                  // PABLO #1916
-    while(index < value.size()) {                                           // PABLO #1916
-        if(value.at(index) == ' ') {                                        // PABLO #1916
-            if(!isValidFileValue(subString))                                // PABLO #1916
-                return false;                                               // PABLO #1916
-            else                                                            // PABLO #1916
-                subString.clear();                                          // PABLO #1916
-        }                                                                   // PABLO #1916
-        else                                                                // PABLO #1916
-            subString.push_back(value.at(index));                           // PABLO #1916
-        index++;                                                            // PABLO #1916
-    }                                                                       // PABLO #1916
-    // 5) All right, then return true                                       // PABLO #1916
-    return true;                                                            // PABLO #1916
-}                                                                           // PABLO #1916
+bool
+GNEAttributeCarrier::isValidStringVector(const std::string& value) {
+    // 1) check if value is empty
+    if(value.empty())
+        return true;
+    // 2) Check if there are duplicated spaces
+    for(int i = 1; i < value.size(); i++)
+        if(value.at(i-1) == ' ' && value.at(i) == ' ')
+            return false;
+    // 3) Check if the first and last character aren't spaces
+    if((value.at(0) == ' ') || (value.at(value.size()-1) == ' '))
+        return false;
+    // 4) Check if every sub-string is valid
+    int index = 0;
+    std::string subString;
+    while(index < value.size()) {
+        if(value.at(index) == ' ') {
+            if(!isValidFileValue(subString))
+                return false;
+            else
+                subString.clear();
+        }
+        else
+            subString.push_back(value.at(index));
+        index++;
+    }
+    // 5) All right, then return true
+    return true;
+}
 
 // ===========================================================================
 // static methods
@@ -231,76 +231,76 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, ""));
                 break;
-            case SUMO_TAG_BUS_STOP:                                                                                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, ""));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "10"));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LINES, ""));                          // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_CHARGING_STATION:                                                                         // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, ""));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "10"));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGINGPOWER, "22000"));             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EFFICIENCY, "0.95"));                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGEINTRANSIT, "false"));           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGEDELAY, "0"));                   // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_E1DETECTOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));                   // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPLIT_VTYPE, "false"));               // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_E2DETECTOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LENGTH, "10"));                       // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));                   // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CONT, "false"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_TIME_THRESHOLD, "1"));        // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, "1.39"));    // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_JAM_DIST_THRESHOLD, "10"));           // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_E3DETECTOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));                   // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));                           // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_DET_ENTRY:                                                                                // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));                       // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_DET_EXIT:                                                                                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));                       // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_VSS:                                                                                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANES, ""));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));                           // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_CALIBRATOR:                                                                               // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "0"));                      // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));                   // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ROUTEPROBE, ""));                     // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OUTPUT, ""));                         // PABLO #1916
-                break;                                                                                              // PABLO #1916
-            case SUMO_TAG_REROUTER:                                                                                 // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));                             // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, ""));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));                           // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PROB, "1"));                          // PABLO #1916
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OFF, "false"));                       // PABLO #1916
-                break;                                                                                              // PABLO #1916
+            case SUMO_TAG_BUS_STOP:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "10"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LINES, ""));
+                break;
+            case SUMO_TAG_CHARGING_STATION:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_STARTPOS, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDPOS, "10"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGINGPOWER, "22000"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EFFICIENCY, "0.95"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGEINTRANSIT, "false"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CHARGEDELAY, "0"));
+                break;
+            case SUMO_TAG_E1DETECTOR:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SPLIT_VTYPE, "false"));
+                break;
+            case SUMO_TAG_E2DETECTOR:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LENGTH, "10"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CONT, "false"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_TIME_THRESHOLD, "1"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, "1.39"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_JAM_DIST_THRESHOLD, "10"));
+                break;
+            case SUMO_TAG_E3DETECTOR:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));
+                break;
+            case SUMO_TAG_DET_ENTRY:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));
+                break;
+            case SUMO_TAG_DET_EXIT:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));
+                break;
+            case SUMO_TAG_VSS:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANES, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));
+                break;
+            case SUMO_TAG_CALIBRATOR:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "0"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ROUTEPROBE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OUTPUT, ""));
+                break;
+            case SUMO_TAG_REROUTER:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PROB, "1"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OFF, "false"));
+                break;
             case SUMO_TAG_REROUTEREDGE:
                 break;
             default:
@@ -318,40 +318,40 @@ GNEAttributeCarrier::allowedTags() {
         myAllowedTags.push_back(SUMO_TAG_JUNCTION);
         myAllowedTags.push_back(SUMO_TAG_EDGE);
         myAllowedTags.push_back(SUMO_TAG_LANE);
-        myAllowedTags.push_back(SUMO_TAG_BUS_STOP);              // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_CHARGING_STATION);      // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_E1DETECTOR);            // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_E2DETECTOR);            // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_E3DETECTOR);            // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_DET_ENTRY);             // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_DET_EXIT);              // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_VSS);                   // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);            // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_REROUTER);              // PABLO #1916
-        myAllowedTags.push_back(SUMO_TAG_REROUTEREDGE);          // PABLO #1916
+        myAllowedTags.push_back(SUMO_TAG_BUS_STOP);
+        myAllowedTags.push_back(SUMO_TAG_CHARGING_STATION);
+        myAllowedTags.push_back(SUMO_TAG_E1DETECTOR);
+        myAllowedTags.push_back(SUMO_TAG_E2DETECTOR);
+        myAllowedTags.push_back(SUMO_TAG_E3DETECTOR);
+        myAllowedTags.push_back(SUMO_TAG_DET_ENTRY);
+        myAllowedTags.push_back(SUMO_TAG_DET_EXIT);
+        // 0.27 myAllowedTags.push_back(SUMO_TAG_VSS);
+        // 0.27 myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);
+        // 0.27 myAllowedTags.push_back(SUMO_TAG_REROUTER);
+        // 0.27 myAllowedTags.push_back(SUMO_TAG_REROUTEREDGE);
     }
     return myAllowedTags;
 }
 
 
-const std::vector<SumoXMLTag>&                                          // PABLO #1916
-GNEAttributeCarrier::allowedAdditionalTags() {                          // PABLO #1916
-    // define on first access                                           // PABLO #1916
-    if (myAllowedAdditionalTags.empty()) {                              // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_BUS_STOP);           // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_CHARGING_STATION);   // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_E1DETECTOR);         // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_E2DETECTOR);         // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_E3DETECTOR);         // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);          // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);           // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);                // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);         // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);           // PABLO #1916
-        myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTEREDGE);       // PABLO #1916
-    }                                                                   // PABLO #1916
-    return myAllowedAdditionalTags;                                     // PABLO #1916
-}                                                                       // PABLO #1916
+const std::vector<SumoXMLTag>&
+GNEAttributeCarrier::allowedAdditionalTags() {
+    // define on first access
+    if (myAllowedAdditionalTags.empty()) {
+        myAllowedAdditionalTags.push_back(SUMO_TAG_BUS_STOP);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_CHARGING_STATION);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_E1DETECTOR);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_E2DETECTOR);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_E3DETECTOR);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);
+        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);
+        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);
+        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);
+        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTEREDGE);
+    }
+    return myAllowedAdditionalTags;
+}
 
 
 bool
@@ -360,73 +360,73 @@ GNEAttributeCarrier::isNumerical(SumoXMLAttr attr) {
 }
 
 
-bool                                                                    // PABLO #1916
-GNEAttributeCarrier::isInt(SumoXMLAttr attr) {                          // PABLO #1916
-    // define on first access                                           // PABLO #1916
-    if (myNumericalIntAttrs.empty()) {                                  // PABLO #1916
-        myNumericalIntAttrs.insert(SUMO_ATTR_NUMLANES);                 // PABLO #1916
-        myNumericalIntAttrs.insert(SUMO_ATTR_PRIORITY);                 // PABLO #1916
-        myNumericalIntAttrs.insert(SUMO_ATTR_INDEX);                    // PABLO #1916
-        myNumericalIntAttrs.insert(SUMO_ATTR_CHARGEDELAY);              // PABLO #1916
-        myNumericalIntAttrs.insert(SUMO_ATTR_FREQUENCY);                // PABLO #1916
-        myNumericalIntAttrs.insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);   // PABLO #1916
-    }                                                                   // PABLO #1916
-    return myNumericalIntAttrs.count(attr) == 1;                        // PABLO #1916
-}                                                                       // PABLO #1916
+bool
+GNEAttributeCarrier::isInt(SumoXMLAttr attr) {
+    // define on first access
+    if (myNumericalIntAttrs.empty()) {
+        myNumericalIntAttrs.insert(SUMO_ATTR_NUMLANES);
+        myNumericalIntAttrs.insert(SUMO_ATTR_PRIORITY);
+        myNumericalIntAttrs.insert(SUMO_ATTR_INDEX);
+        myNumericalIntAttrs.insert(SUMO_ATTR_CHARGEDELAY);
+        myNumericalIntAttrs.insert(SUMO_ATTR_FREQUENCY);
+        myNumericalIntAttrs.insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
+    }
+    return myNumericalIntAttrs.count(attr) == 1;
+}
 
 
-bool                                                                    // PABLO #1916
-GNEAttributeCarrier::isFloat(SumoXMLAttr attr) {                        // PABLO #1916
-    // define on first access                                           // PABLO #1916
-    if (myNumericalFloatAttrs.empty()) {                                // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_SPEED);                      // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_LENGTH);                     // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_WIDTH);                      // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_ENDOFFSET);                  // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_RADIUS);                     // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_STARTPOS);                   // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_ENDPOS);                     // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_CHARGINGPOWER);              // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_EFFICIENCY);                 // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_POSITION);                   // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_LENGTH);                     // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);    // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_JAM_DIST_THRESHOLD);         // PABLO #1916
-    myNumericalFloatAttrs.insert(SUMO_ATTR_PROB);                       // PABLO #1916
-    }                                                                   // PABLO #1916
-    return myNumericalFloatAttrs.count(attr) == 1;                      // PABLO #1916
-}                                                                       // PABLO #1916
+bool
+GNEAttributeCarrier::isFloat(SumoXMLAttr attr) {
+    // define on first access
+    if (myNumericalFloatAttrs.empty()) {
+    myNumericalFloatAttrs.insert(SUMO_ATTR_SPEED);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_LENGTH);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_WIDTH);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_ENDOFFSET);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_RADIUS);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_STARTPOS);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_ENDPOS);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_CHARGINGPOWER);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_EFFICIENCY);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_POSITION);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_LENGTH);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_PROB);
+    }
+    return myNumericalFloatAttrs.count(attr) == 1;
+}
 
 
-bool                                                                                                        // PABLO #1916
-GNEAttributeCarrier::isBool(SumoXMLAttr attr) {                                                                // PABLO #1916
-    // Iterate over additional tags                                                                         // PABLO #1916
-    for(std::vector<SumoXMLTag>::const_iterator i = allowedTags().begin(); i != allowedTags().end(); i++) {    // PABLO #1916
-        // Obtain choices                                                                                    // PABLO #1916
-        std::vector<std::string> choices = discreteChoices(*i, attr);                                        // PABLO #1916
-        // CHeck if choices are exactly "true" and "false"                                                    // PABLO #1916
-        if ((choices.size() == 2) && (choices.at(0) == "true") && (choices.at(1) == "false"))                // PABLO #1916
-            return true;                                                                                    // PABLO #1916
-    }                                                                                                        // PABLO #1916
-    return false;                                                                                           // PABLO #1916
-}                                                                                                           // PABLO #1916
+bool
+GNEAttributeCarrier::isBool(SumoXMLAttr attr) {
+    // Iterate over additional tags
+    for(std::vector<SumoXMLTag>::const_iterator i = allowedTags().begin(); i != allowedTags().end(); i++) {
+        // Obtain choices
+        std::vector<std::string> choices = discreteChoices(*i, attr);
+        // CHeck if choices are exactly "true" and "false"
+        if ((choices.size() == 2) && (choices.at(0) == "true") && (choices.at(1) == "false"))
+            return true;
+    }
+    return false;
+}
 
 
-bool                                                                // PABLO #1916
-GNEAttributeCarrier::isString(SumoXMLAttr attr) {                    // PABLO #1916
-    return !isNumerical(attr) && !isBool(attr) && !isFloat(attr);   // PABLO #1916
-}                                                                    // PABLO #1916
+bool
+GNEAttributeCarrier::isString(SumoXMLAttr attr) {
+    return !isNumerical(attr) && !isBool(attr) && !isFloat(attr);
+}
 
 
-bool                                                        // PABLO #1916
-GNEAttributeCarrier::isList(SumoXMLAttr attr) {             // PABLO #1916
-    // define on first access                               // PABLO #1916
-    if (myListAttrs.empty()) {                              // PABLO #1916
-        myListAttrs.insert(SUMO_ATTR_LINES);                // PABLO #1916
-        myListAttrs.insert(SUMO_ATTR_EDGES);                // PABLO #1916
-    }                                                       // PABLO #1916
-    return myListAttrs.count(attr) == 1;                    // PABLO #1916
-}                                                           // PABLO #1916
+bool
+GNEAttributeCarrier::isList(SumoXMLAttr attr) {
+    // define on first access
+    if (myListAttrs.empty()) {
+        myListAttrs.insert(SUMO_ATTR_LINES);
+        myListAttrs.insert(SUMO_ATTR_EDGES);
+    }
+    return myListAttrs.count(attr) == 1;
+}
 
 
 bool
@@ -439,34 +439,34 @@ GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
         myUniqueAttrs.insert(SUMO_ATTR_SHAPE);
         myUniqueAttrs.insert(SUMO_ATTR_POSITION);
         myUniqueAttrs.insert(SUMO_ATTR_EDGES);
-        myUniqueAttrs.insert(SUMO_ATTR_STARTPOS);   // PABLO #1916
-        myUniqueAttrs.insert(SUMO_ATTR_ENDPOS);     // PABLO #1916
-        myUniqueAttrs.insert(SUMO_ATTR_LANE);       // PABLO #1916
+        myUniqueAttrs.insert(SUMO_ATTR_STARTPOS);
+        myUniqueAttrs.insert(SUMO_ATTR_ENDPOS);
+        myUniqueAttrs.insert(SUMO_ATTR_LANE);
     }
     return myUniqueAttrs.count(attr) == 1;
 }
 
 
-bool                                                                                    // PABLO #1916
-GNEAttributeCarrier::hasParent(SumoXMLTag tag) {                                        // PABLO #1916
-    // define on first access                                                           // PABLO #1916
-    if (myAllowedAdditionalWithParentTags.empty()) {                                    // PABLO #1916
-        myAllowedAdditionalWithParentTags[SUMO_TAG_DET_ENTRY] = SUMO_TAG_E3DETECTOR;    // PABLO #1916
-        myAllowedAdditionalWithParentTags[SUMO_TAG_DET_EXIT] = SUMO_TAG_E3DETECTOR;     // PABLO #1916
-        myAllowedAdditionalWithParentTags[SUMO_TAG_REROUTEREDGE] = SUMO_TAG_REROUTER;   // PABLO #1916
-    }                                                                                   // PABLO #1916
-    return myAllowedAdditionalWithParentTags.count(tag) == 1;                           // PABLO #1916
-}                                                                                       // PABLO #1916
+bool
+GNEAttributeCarrier::hasParent(SumoXMLTag tag) {
+    // define on first access
+    if (myAllowedAdditionalWithParentTags.empty()) {
+        myAllowedAdditionalWithParentTags[SUMO_TAG_DET_ENTRY] = SUMO_TAG_E3DETECTOR;
+        myAllowedAdditionalWithParentTags[SUMO_TAG_DET_EXIT] = SUMO_TAG_E3DETECTOR;
+        myAllowedAdditionalWithParentTags[SUMO_TAG_REROUTEREDGE] = SUMO_TAG_REROUTER;
+    }
+    return myAllowedAdditionalWithParentTags.count(tag) == 1;
+}
 
 
-bool                                                                                                                    // PABLO #1916
-GNEAttributeCarrier::hasAttribute(SumoXMLTag tag, SumoXMLAttr attr) {                                                   // PABLO #1916
-    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = allowedAttributes(tag);                           // PABLO #1916
-    for(std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator i = attrs.begin(); i != attrs.end(); i++)    // PABLO #1916
-        if(i->first == attr)                                                                                            // PABLO #1916
-            return true;                                                                                                // PABLO #1916
-    return false;                                                                                                       // PABLO #1916
-}                                                                                                                       // PABLO #1916
+bool
+GNEAttributeCarrier::hasAttribute(SumoXMLTag tag, SumoXMLAttr attr) {
+    const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = allowedAttributes(tag);
+    for(std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator i = attrs.begin(); i != attrs.end(); i++)
+        if(i->first == attr)
+            return true;
+    return false;
+}
 
 
 const std::vector<std::string>&
@@ -500,17 +500,17 @@ GNEAttributeCarrier::discreteChoices(SumoXMLTag tag, SumoXMLAttr attr) {
         myDiscreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("true");
         myDiscreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("false");
 
-        myDiscreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("true");     // PABLO #1916
-        myDiscreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("false");    // PABLO #1916
+        myDiscreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("true");
+        myDiscreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("false");
 
-        myDiscreteChoices[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE].push_back("true");     // PABLO #1916
-        myDiscreteChoices[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE].push_back("false");    // PABLO #1916
+        myDiscreteChoices[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE].push_back("true");
+        myDiscreteChoices[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE].push_back("false");
 
-        myDiscreteChoices[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT].push_back("true");     // PABLO #1916
-        myDiscreteChoices[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT].push_back("false");    // PABLO #1916
+        myDiscreteChoices[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT].push_back("true");
+        myDiscreteChoices[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT].push_back("false");
 
-        myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("true");     // PABLO #1916
-        myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("false");    // PABLO #1916
+        myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("true");
+        myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("false");
     }
 
     return myDiscreteChoices[tag][attr];
@@ -524,176 +524,176 @@ GNEAttributeCarrier::discreteCombinableChoices(SumoXMLTag, SumoXMLAttr attr) {
 
 
 std::string 
-GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {                // PABLO #1916
-    // define on first access                                                        // PABLO #1916
-    if (myAttrDefinitions.empty()) {                                                // PABLO #1916
-        // Edge                                                                                            // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ID] = "ID (Must be unique)";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_FROM] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TO] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPEED] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PRIORITY] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NUMLANES] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TYPE] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ALLOW] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_DISALLOW] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PREFER] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SHAPE] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_LENGTH] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPREADTYPE] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NAME] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_WIDTH] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ENDOFFSET] = "";                                                   // PABLO #1916
-        // Junction                                                                                                        // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_ID] = "ID (Must be unique)";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_POSITION] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TYPE] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_SHAPE] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_RADIUS] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_KEEP_CLEAR] = "";                                                   // PABLO #1916
-        // Lane                                                                                                // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ID] = "ID (Must be unique)";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_SPEED] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ALLOW] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_DISALLOW] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_PREFER] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_WIDTH] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ENDOFFSET] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_INDEX] = "";                                                   // PABLO #1916
-        // POI                                                                                                    // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_ID] = "ID (Must be unique)";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_POSITION] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_TYPE] = "";                                                   // PABLO #1916
-        // Crossing                                                                                                    // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_ID] = "ID (Must be unique)";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "";                                                   // PABLO #1916
-        // Bus Stop                                                                                                    // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_ID] = "ID (Must be unique)";                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_LANE] = "The name of the lane the bus stop shall be located at";                                                                                                 // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_STARTPOS] = "The begin position on the lane (the lower position on the lane) in meters";                                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_ENDPOS] = "The end position on the lane (the higher position on the lane) in meters, must be larger than startPos by more than 0.1m";                            // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_LINES] = "meant to be the names of the bus lines that stop at this bus stop. This is only used for visualization purposes";                                      // PABLO #1916
-        // Charging Station                                                                                                                                                                                             // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                             // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_LANE] = "Lane of the charging station location";                                                                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_STARTPOS] = "Begin position in the specified lane";                                                                                                      // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_ENDPOS] = "End position in the specified lane";                                                                                                          // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGINGPOWER] = "Charging power in W";                                                                                                                  // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_EFFICIENCY] = "Charging efficiency [0,1]";                                                                                                               // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT] = "Enable or disable charge in transit, i.e. vehicle must or must not to stop for charging";                                            // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEDELAY] = "Time delay after the vehicles has reached / stopped on the charging station, before the energy transfer (charging) begins";              // PABLO #1916
-        // E1                                                                                                                                                                                                           // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";                                                       // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters. The position must be a value between -1*lane's length and the lane's length";   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_FREQUENCY] = "The aggregation period the values the detector collects shall be summed up";                                                                     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_FILE] = "The path to the output file";                                                                                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE] = "If set, the collected values will be additionally reported on per-vehicle type base, see below";                                               // PABLO #1916
-        // E2                                                                                                                                                                                                           // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";                                                       // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";                                                                                // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_LENGTH] = "The length of the detector in meters";                                                                                                              // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_FREQUENCY] = "The aggregation period the values the detector collects shall be summed up";                                                                     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_FILE] = "The path to the output file";                                                                                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT] = "Holds the information whether detectors longer than a lane shall be cut off or continued (set it to true for the second case); default: false";       // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_HALTING_TIME_THRESHOLD] = "The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting; in s, default: 1s";     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_HALTING_SPEED_THRESHOLD] = "The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting; in m/s, default: 5/3.6m/s";     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_JAM_DIST_THRESHOLD] = "The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam; in m, default: 10m"; // PABLO #1916
-        // E3                                                                                                                                                                                                           // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E3DETECTOR][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E3DETECTOR][SUMO_ATTR_FREQUENCY] = "The aggregation period the values the detector collects shall be summed up";                                                                     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_E3DETECTOR][SUMO_ATTR_FILE] = "The path to the output file";                                                                                                                         // PABLO #1916
-        // Entry                                                                                                                                                                                                        // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_DET_ENTRY][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";                                                        // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_DET_ENTRY][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";                                                                                 // PABLO #1916
-        // Exit                                                                                                                                                                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_DET_EXIT][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_DET_EXIT][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";                                                                                  // PABLO #1916
-        // VSS                                                                                                                                                                                                          // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                                          // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_LANES] = "list of lanes of Variable Speed Signal";                                                                                                                    // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_FILE] = "The path to the output file";                                                                                                                                // PABLO #1916
-        // Calibrator                                                                                                                                                                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                                   // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_LANE] = "List of lanes of calibrator";                                                                                                                         // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_POSITION] = "The position of the calibrator on the specified lane";                                                                                            // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_FREQUENCY] = "The aggregation interval in which to calibrate the flows. default is step-length";                                                               // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_ROUTEPROBE] = "The id of the routeProbe element from which to determine the route distribution for generated vehicles";                                        // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_OUTPUT] = "The output file for writing calibrator information or NULL";                                                                                        // PABLO #1916
-        // Rerouter                                                                                                                                                                                                     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_ID] = "ID (Must be unique)";                                                                                                                                     // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_EDGES] = "An edge id or a list of edge ids where vehicles shall be rerouted";                                                                                    // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_FILE] = "The path to the definition file (alternatively, the intervals may defined as children of the rerouter)";                                                // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_PROB] = "The probability for vehicle rerouting (0-1), default 1";                                                                                                // PABLO #1916
-        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_OFF] = "Whether the router should be inactive initially (and switched on in the gui), default:false";                                                            // PABLO #1916
-    }                                                                                                                                                                                                                   // PABLO #1916
-    return myAttrDefinitions[tag][attr];                                                                                                                                                                                // PABLO #1916
-}                                                                                                                                                                                                                       // PABLO #1916
-
-
-template<> int                                                                                                                                          // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
-    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
-        if((*i).first == attr)                                                                                                                          // PABLO #1916
-            return TplConvert::_str2int((*i).second);                                                                                                   // PABLO #1916
-}                                                                                                                                                       // PABLO #1916
-
-
-template<> SUMOReal                                                                                                                                     // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
-    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
-        if((*i).first == attr)                                                                                                                          // PABLO #1916
-            return TplConvert::_str2SUMOReal((*i).second);                                                                                              // PABLO #1916
-}                                                                                                                                                       // PABLO #1916
-
-
-template<> bool                                                                                                                                         // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
-    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
-        if((*i).first == attr)                                                                                                                          // PABLO #1916
-            return TplConvert::_str2bool((*i).second);                                                                                                  // PABLO #1916
-}                                                                                                                                                       // PABLO #1916
-
-
-template<> std::string                                                                                                                                  // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
-    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
-        if((*i).first == attr)                                                                                                                          // PABLO #1916
-            return (*i).second;                                                                                                                         // PABLO #1916
-}                                                                                                                                                       // PABLO #1916
-
-template<> std::vector<int>                                                                                                                             // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
-    std::cout << "FINISH" << std::endl;
-    return std::vector<int>();                                                                                                 // PABLO #1916
+GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
+    // define on first access
+    if (myAttrDefinitions.empty()) {
+        // Edge
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_FROM] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TO] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPEED] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PRIORITY] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NUMLANES] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TYPE] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ALLOW] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_DISALLOW] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PREFER] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SHAPE] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_LENGTH] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPREADTYPE] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NAME] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_WIDTH] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ENDOFFSET] = "";
+        // Junction
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_POSITION] = "";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TYPE] = "";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_SHAPE] = "";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_RADIUS] = "";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_KEEP_CLEAR] = "";
+        // Lane
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_SPEED] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ALLOW] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_DISALLOW] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_PREFER] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_WIDTH] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ENDOFFSET] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_INDEX] = "";
+        // POI
+        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_POSITION] = "";
+        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_TYPE] = "";
+        // Crossing
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "";
+        // Bus Stop
+        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_LANE] = "The name of the lane the bus stop shall be located at";
+        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_STARTPOS] = "The begin position on the lane (the lower position on the lane) in meters";
+        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_ENDPOS] = "The end position on the lane (the higher position on the lane) in meters, must be larger than startPos by more than 0.1m";
+        myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_LINES] = "meant to be the names of the bus lines that stop at this bus stop. This is only used for visualization purposes";
+        // Charging Station
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_LANE] = "Lane of the charging station location";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_STARTPOS] = "Begin position in the specified lane";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_ENDPOS] = "End position in the specified lane";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGINGPOWER] = "Charging power in W";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_EFFICIENCY] = "Charging efficiency [0,1]";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT] = "Enable or disable charge in transit, i.e. vehicle must or must not to stop for charging";
+        myAttrDefinitions[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEDELAY] = "Time delay after the vehicles has reached / stopped on the charging station, before the energy transfer (charging) begins";
+        // E1
+        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";
+        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters. The position must be a value between -1*lane's length and the lane's length";
+        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_FREQUENCY] = "The aggregation period the values the detector collects shall be summed up";
+        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_FILE] = "The path to the output file";
+        myAttrDefinitions[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE] = "If set, the collected values will be additionally reported on per-vehicle type base, see below";
+        // E2
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_LENGTH] = "The length of the detector in meters";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_FREQUENCY] = "The aggregation period the values the detector collects shall be summed up";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_FILE] = "The path to the output file";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT] = "Holds the information whether detectors longer than a lane shall be cut off or continued (set it to true for the second case); default: false";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_HALTING_TIME_THRESHOLD] = "The time-based threshold that describes how much time has to pass until a vehicle is recognized as halting; in s, default: 1s";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_HALTING_SPEED_THRESHOLD] = "The speed-based threshold that describes how slow a vehicle has to be to be recognized as halting; in m/s, default: 5/3.6m/s";
+        myAttrDefinitions[SUMO_TAG_E2DETECTOR][SUMO_ATTR_JAM_DIST_THRESHOLD] = "The minimum distance to the next standing vehicle in order to make this vehicle count as a participant to the jam; in m, default: 10m";
+        // E3
+        myAttrDefinitions[SUMO_TAG_E3DETECTOR][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_E3DETECTOR][SUMO_ATTR_FREQUENCY] = "The aggregation period the values the detector collects shall be summed up";
+        myAttrDefinitions[SUMO_TAG_E3DETECTOR][SUMO_ATTR_FILE] = "The path to the output file";
+        // Entry
+        myAttrDefinitions[SUMO_TAG_DET_ENTRY][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";
+        myAttrDefinitions[SUMO_TAG_DET_ENTRY][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";
+        // Exit
+        myAttrDefinitions[SUMO_TAG_DET_EXIT][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";
+        myAttrDefinitions[SUMO_TAG_DET_EXIT][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";
+        // VSS
+        myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_LANES] = "list of lanes of Variable Speed Signal";
+        myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_FILE] = "The path to the output file";
+        // Calibrator
+        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_LANE] = "List of lanes of calibrator";
+        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_POSITION] = "The position of the calibrator on the specified lane";
+        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_FREQUENCY] = "The aggregation interval in which to calibrate the flows. default is step-length";
+        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_ROUTEPROBE] = "The id of the routeProbe element from which to determine the route distribution for generated vehicles";
+        myAttrDefinitions[SUMO_TAG_CALIBRATOR][SUMO_ATTR_OUTPUT] = "The output file for writing calibrator information or NULL";
+        // Rerouter
+        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_EDGES] = "An edge id or a list of edge ids where vehicles shall be rerouted";
+        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_FILE] = "The path to the definition file (alternatively, the intervals may defined as children of the rerouter)";
+        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_PROB] = "The probability for vehicle rerouting (0-1), default 1";
+        myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_OFF] = "Whether the router should be inactive initially (and switched on in the gui), default:false";
+    }
+    return myAttrDefinitions[tag][attr];
 }
 
-template<> std::vector<SUMOReal>                                                                                                                        // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
+
+template<> int
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
+    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
+        if((*i).first == attr)
+            return TplConvert::_str2int((*i).second);
+}
+
+
+template<> SUMOReal
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
+    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
+        if((*i).first == attr)
+            return TplConvert::_str2SUMOReal((*i).second);
+}
+
+
+template<> bool
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
+    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
+        if((*i).first == attr)
+            return TplConvert::_str2bool((*i).second);
+}
+
+
+template<> std::string
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
+    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
+        if((*i).first == attr)
+            return (*i).second;
+}
+
+template<> std::vector<int>
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     std::cout << "FINISH" << std::endl;
-    return std::vector<SUMOReal>();                                                                                           // PABLO #1916
-}                                                                                                                                                       // PABLO #1916
+    return std::vector<int>();
+}
+
+template<> std::vector<SUMOReal>
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
+    std::cout << "FINISH" << std::endl;
+    return std::vector<SUMOReal>();
+}
 
 
-template<> std::vector<bool>                                                                                                                            // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
+template<> std::vector<bool>
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     std::cout << "FINISH" << std::endl;
     return std::vector<bool>();
-}                                                                                                                                                       // PABLO #1916
+}
 
 
-template<> std::vector<std::string>                                                                                                                     // PABLO #1916
-GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {                                                                                // PABLO #1916
-    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++) // PABLO #1916
-        if((*i).first == attr) {                                                                                                                        // PABLO #1916
-            std::vector<std::string> myVectorString;                                                                                                    // PABLO #1916
-            SUMOSAXAttributes::parseStringVector((*i).second, myVectorString);                                                                          // PABLO #1916
-            return myVectorString;                                                                                                                      // PABLO #1916
-        }                                                                                                                                               // PABLO #1916
-}                                                                                                                                                       // PABLO #1916
+template<> std::vector<std::string>
+GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
+    for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
+        if((*i).first == attr) {
+            std::vector<std::string> myVectorString;
+            SUMOSAXAttributes::parseStringVector((*i).second, myVectorString);
+            return myVectorString;
+        }
+}
 
 /****************************************************************************/
 

@@ -67,7 +67,7 @@
 #include "GNEJunction.h"
 #include "GNEUndoList.h"
 #include "GNEPOI.h"
-#include "GNEAdditionalHandler.h"    // PABLO #1916
+#include "GNEAdditionalHandler.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -89,7 +89,7 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_OPEN_NETWORK,              GNEApplicationWindow::onCmdOpenNetwork),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_OPEN_FOREIGN,          GNEApplicationWindow::onCmdOpenForeign),
     FXMAPFUNC(SEL_COMMAND,  MID_OPEN_SHAPES,               GNEApplicationWindow::onCmdOpenShapes),
-    FXMAPFUNC(SEL_COMMAND,  MID_OPEN_ADDITIONALS,          GNEApplicationWindow::onCmdOpenAdditionals),    // PABLO #1916
+    FXMAPFUNC(SEL_COMMAND,  MID_OPEN_ADDITIONALS,          GNEApplicationWindow::onCmdOpenAdditionals),
     FXMAPFUNC(SEL_COMMAND,  MID_RECENTFILE,                GNEApplicationWindow::onCmdOpenRecent),
     FXMAPFUNC(SEL_COMMAND,  MID_RELOAD,                    GNEApplicationWindow::onCmdReload),
     FXMAPFUNC(SEL_COMMAND,  MID_CLOSE,                     GNEApplicationWindow::onCmdClose),
@@ -103,7 +103,7 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_OPEN_NETWORK,              GNEApplicationWindow::onUpdOpen),
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_OPEN_FOREIGN,          GNEApplicationWindow::onUpdOpen),
     FXMAPFUNC(SEL_UPDATE,   MID_OPEN_SHAPES,               GNEApplicationWindow::onUpdNeedsNetwork),
-    FXMAPFUNC(SEL_UPDATE,   MID_OPEN_ADDITIONALS,          GNEApplicationWindow::onUpdNeedsNetwork),    // PABLO #1916
+    FXMAPFUNC(SEL_UPDATE,   MID_OPEN_ADDITIONALS,          GNEApplicationWindow::onUpdNeedsNetwork),
     FXMAPFUNC(SEL_UPDATE,   MID_RELOAD,                    GNEApplicationWindow::onUpdReload),
     FXMAPFUNC(SEL_UPDATE,   MID_RECENTFILE,                GNEApplicationWindow::onUpdOpen),
     FXMAPFUNC(SEL_CLIPBOARD_REQUEST, 0,                    GNEApplicationWindow::onClipboardRequest),
@@ -128,7 +128,7 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_SELECT,           GNEApplicationWindow::onCmdSetMode),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_CONNECT,          GNEApplicationWindow::onCmdSetMode),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_TLS,              GNEApplicationWindow::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL,       GNEApplicationWindow::onCmdSetMode), // PABLO #1916
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_ADDITIONAL,       GNEApplicationWindow::onCmdSetMode),
 
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_NETWORK,          GNEApplicationWindow::onCmdSaveNetwork),
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_NETWORK,          GNEApplicationWindow::onUpdSaveNetwork),
@@ -140,8 +140,8 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_JOINED,           GNEApplicationWindow::onUpdNeedsNetwork), // same condition
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_POIS,             GNEApplicationWindow::onCmdSavePois),
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_POIS,             GNEApplicationWindow::onUpdNeedsNetwork), // same condition
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onCmdSaveAdditionals),                 // PABLO #1916
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onUpdNeedsNetwork), // same condition  // PABLO #1916
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onCmdSaveAdditionals),
+    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onUpdNeedsNetwork), // same condition
 
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_ABORT,                 GNEApplicationWindow::onCmdAbort),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_HOTKEY_DEL,            GNEApplicationWindow::onCmdDel),
@@ -254,7 +254,7 @@ GNEApplicationWindow::dependentBuild() {
     getAccelTable()->addAccel(parseAccel("s"), this, FXSEL(SEL_COMMAND, MID_GNE_MODE_SELECT));
     getAccelTable()->addAccel(parseAccel("c"), this, FXSEL(SEL_COMMAND, MID_GNE_MODE_CONNECT));
     getAccelTable()->addAccel(parseAccel("t"), this, FXSEL(SEL_COMMAND, MID_GNE_MODE_TLS));
-    getAccelTable()->addAccel(parseAccel("a"), this, FXSEL(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL));  // PABLO #1916
+    getAccelTable()->addAccel(parseAccel("a"), this, FXSEL(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL));
     getAccelTable()->addAccel(parseAccel("Esc"), this, FXSEL(SEL_COMMAND, MID_GNE_ABORT));
     getAccelTable()->addAccel(parseAccel("Del"), this, FXSEL(SEL_COMMAND, MID_GNE_HOTKEY_DEL));
     getAccelTable()->addAccel(parseAccel("Enter"), this, FXSEL(SEL_COMMAND, MID_GNE_HOTKEY_ENTER));
@@ -340,9 +340,9 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCommand(myFileMenu,
                       "Load &Shapes...\tCtrl+P\tLoad shapes into the network view.",
                       GUIIconSubSys::getIcon(ICON_OPEN_SHAPES), this, MID_OPEN_SHAPES);
-    new FXMenuCommand(myFileMenu,                                                                   // PABLO #1916
-                      "Load &Additionals...\tCtrl+D\tLoad additional elements.",                    // PABLO #1916
-                      GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS), this, MID_OPEN_ADDITIONALS);   // PABLO #1916
+    new FXMenuCommand(myFileMenu,
+                      "Load &Additionals...\tCtrl+D\tLoad additional elements.",
+                      GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS), this, MID_OPEN_ADDITIONALS);
     new FXMenuCommand(myFileMenu,
                       "&Reload\tCtrl+R\tReloads the network.",
                       GUIIconSubSys::getIcon(ICON_RELOAD), this, MID_RELOAD);
@@ -361,10 +361,10 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCommand(myFileMenu,
                       "&Save POIs As ...\t\tSave the POIs.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_POIS);
-    new FXMenuCommand(myFileMenu,                                                           // PABLO #1916
-                      "&Save additionals As...\t\tSave additional elements.",               // PABLO #1916
-                      GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);   // PABLO #1916
-    new FXMenuSeparator(myFileMenu);                                                        // PABLO #1916
+    new FXMenuCommand(myFileMenu,
+                      "&Save additionals As...\t\tSave additional elements.",
+                      GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);
+    new FXMenuSeparator(myFileMenu);
     new FXMenuCommand(myFileMenu,
                       "Close\tCtrl+W\tClose the network.",
                       GUIIconSubSys::getIcon(ICON_CLOSE), this, MID_CLOSE);
@@ -652,36 +652,36 @@ GNEApplicationWindow::onCmdOpenShapes(FXObject*, FXSelector, void*) {
 }
 
 
-long                                                                                    // PABLO #1916
-GNEApplicationWindow::onCmdOpenAdditionals(FXObject*, FXSelector, void*) {              // PABLO #1916
-    // get the shape file name                                                          // PABLO #1916
-    FXFileDialog opendialog(this, "Open Additional");                                   // PABLO #1916
-    opendialog.setIcon(GUIIconSubSys::getIcon(ICON_EMPTY));                             // PABLO #1916
-    opendialog.setSelectMode(SELECTFILE_EXISTING);                                      // PABLO #1916
-    opendialog.setPatternList("Additional files (*.xml)\nAll files (*)");               // PABLO #1916
-    if (gCurrentFolder.length() != 0) {                                                 // PABLO #1916
-        opendialog.setDirectory(gCurrentFolder);                                        // PABLO #1916
-    }                                                                                   // PABLO #1916
-    if (opendialog.execute()) {                                                         // PABLO #1916
-        gCurrentFolder = opendialog.getDirectory();                                     // PABLO #1916
-        std::string file = opendialog.getFilename().text();                             // PABLO #1916
-        // Start operation for undo/redo                                                // PABLO #1916
-        myUndoList->p_begin("load additionals");                                        // PABLO #1916
-        // Create additional handler                                                    // PABLO #1916
-        GNEAdditionalHandler additionalHandler(file, getView());                        // PABLO #1916
-        // Run parser                                                                   // PABLO #1916
-        if (!XMLSubSys::runParser(additionalHandler, file, false)) {                    // PABLO #1916
-            WRITE_MESSAGE("Loading of " + file + " failed.");                           // PABLO #1916
-            // Abort undo/redo                                                          // PABLO #1916
-            myUndoList->abort();                                                        // PABLO #1916
-        } else {                                                                        // PABLO #1916
-            // commit undo/redo operation                                               // PABLO #1916
-            myUndoList->p_end();                                                        // PABLO #1916
-            update();                                                                   // PABLO #1916
-        }                                                                               // PABLO #1916
-    }                                                                                   // PABLO #1916
-    return 1;                                                                           // PABLO #1916
-}                                                                                       // PABLO #1916
+long
+GNEApplicationWindow::onCmdOpenAdditionals(FXObject*, FXSelector, void*) {
+    // get the shape file name
+    FXFileDialog opendialog(this, "Open Additional");
+    opendialog.setIcon(GUIIconSubSys::getIcon(ICON_EMPTY));
+    opendialog.setSelectMode(SELECTFILE_EXISTING);
+    opendialog.setPatternList("Additional files (*.xml)\nAll files (*)");
+    if (gCurrentFolder.length() != 0) {
+        opendialog.setDirectory(gCurrentFolder);
+    }
+    if (opendialog.execute()) {
+        gCurrentFolder = opendialog.getDirectory();
+        std::string file = opendialog.getFilename().text();
+        // Start operation for undo/redo
+        myUndoList->p_begin("load additionals");
+        // Create additional handler
+        GNEAdditionalHandler additionalHandler(file, getView());
+        // Run parser
+        if (!XMLSubSys::runParser(additionalHandler, file, false)) {
+            WRITE_MESSAGE("Loading of " + file + " failed.");
+            // Abort undo/redo
+            myUndoList->abort();
+        } else {
+            // commit undo/redo operation
+            myUndoList->p_end();
+            update();
+        }
+    }
+    return 1;
+}
 
 
 long
@@ -1213,27 +1213,27 @@ GNEApplicationWindow::onCmdSaveNetwork(FXObject*, FXSelector, void*) {
 
 
 long
-GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {                  // PABLO #1916
-    FXString file = MFXUtils::getFilename2Write(this,                                       // PABLO #1916
-                    "Select name of the additional file", ".xml",                           // PABLO #1916
-                    GUIIconSubSys::getIcon(ICON_EMPTY),                                     // PABLO #1916
-                    gCurrentFolder);                                                        // PABLO #1916
-    if (file == "") {                                                                       // PABLO #1916
-        return 1;                                                                           // PABLO #1916
-    }                                                                                       // PABLO #1916
-    std::string filename = file.text();                                                     // PABLO #1916
-    // XXX Not yet implemented                                                              // PABLO #1916
-    getApp()->beginWaitCursor();                                                            // PABLO #1916
-    try {                                                                                   // PABLO #1916
-        myNet->saveAdditionals(filename);                                                   // PABLO #1916
-        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");          // PABLO #1916
-    } catch (IOError& e) {                                                                  // PABLO #1916
-        FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());   // PABLO #1916
-    }                                                                                       // PABLO #1916
-    myMessageWindow->addSeparator();                                                        // PABLO #1916
-    getApp()->endWaitCursor();                                                              // PABLO #1916
-    return 1;                                                                               // PABLO #1916
-}                                                                                           // PABLO #1916
+GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {
+    FXString file = MFXUtils::getFilename2Write(this,
+                    "Select name of the additional file", ".xml",
+                    GUIIconSubSys::getIcon(ICON_EMPTY),
+                    gCurrentFolder);
+    if (file == "") {
+        return 1;
+    }
+    std::string filename = file.text();
+    // XXX Not yet implemented
+    getApp()->beginWaitCursor();
+    try {
+        myNet->saveAdditionals(filename);
+        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");
+    } catch (IOError& e) {
+        FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());
+    }
+    myMessageWindow->addSeparator();
+    getApp()->endWaitCursor();
+    return 1;
+}
 
 
 long

@@ -1112,13 +1112,13 @@ GUISUMOAbstractView::removeAdditionalGLVisualisation(GUIGlObject* const which) {
 }
 
 
-bool                                                                                        // PABLO #1916
-GUISUMOAbstractView::isAdditionalGLVisualisationEnabled(GUIGlObject* const which) const {   // PABLO #1916
-    if (myAdditionallyDrawn.find(which) == myAdditionallyDrawn.end())                       // PABLO #1916
-        return false;                                                                       // PABLO #1916
-    else                                                                                    // PABLO #1916
-        return true;                                                                        // PABLO #1916
-}                                                                                           // PABLO #1916
+bool
+GUISUMOAbstractView::isAdditionalGLVisualisationEnabled(GUIGlObject* const which) const {
+    if (myAdditionallyDrawn.find(which) == myAdditionallyDrawn.end())
+        return false;
+    else
+        return true;
+}
 
 
 void
