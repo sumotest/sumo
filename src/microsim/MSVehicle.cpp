@@ -1146,7 +1146,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
 #endif
     SUMOReal seen = opposite ? myState.myPos : myLane->getLength() - myState.myPos; // the distance already "seen"; in the following always up to the end of the current "lane"
     SUMOReal seenNonInternal = 0;
-    SUMOReal vLinkPass = MIN2(estimateSpeedAfterDistance(seen, v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
+    SUMOReal vLinkPass = MIN2(estimateSpeedAfterDistance(seen, v, cfModel.getMaxAccel()), laneMaxV); // upper bound
     unsigned int view = 0;
     DriveProcessItem* lastLink = 0;
     bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
@@ -1369,7 +1369,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         //gDebugFlag1 = false;
         seen += lane->getLength();
         //if (getID() == "from3.5") std::cout << SIMTIME << " seen=" << seen << " includes lane=" << lane->getID() << " with length " << lane->getLength() << "\n";
-        vLinkPass = MIN2(estimateSpeedAfterDistance(lane->getLength(), v, getVehicleType().getCarFollowModel().getMaxAccel()), laneMaxV); // upper bound
+        vLinkPass = MIN2(estimateSpeedAfterDistance(lane->getLength(), v, cfModel.getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
 
@@ -1827,9 +1827,9 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
     if (lane == myLane 
             || lane == getLaneChangeModel().getShadowLane()) {
         if (getLaneChangeModel().isOpposite()) {
-            return myState.myPos + getVehicleType().getLength();
+            return myState.myPos + myType->getLength();
         } else {
-            return myState.myPos - getVehicleType().getLength();
+            return myState.myPos - myType->getLength();
         }
     } else if ((myFurtherLanes.size() > 0 && lane == myFurtherLanes.back())
             || (getLaneChangeModel().getShadowFurtherLanes().size() > 0 && lane == getLaneChangeModel().getShadowFurtherLanes().back())
@@ -1837,7 +1837,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
         return myState.myBackPos;
     } else {
         //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myFurtherLanes=" << toString(myFurtherLanes) << "\n";
-        SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
+        SUMOReal leftLength = myType->getLength() - myState.myPos;
         std::vector<MSLane*>::const_iterator i = myFurtherLanes.begin();
         while (leftLength > 0 && i != myFurtherLanes.end()) {
             leftLength -= (*i)->getLength();
@@ -1848,7 +1848,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
             ++i;
         }
         //if (gDebugFlag1) std::cout << SIMTIME << " veh=" << getID() << " myShadowFurtherLanes=" << toString(getLaneChangeModel().getShadowFurtherLanes()) << "\n";
-        leftLength = getVehicleType().getLength() - myState.myPos;
+        leftLength = myType->getLength() - myState.myPos;
         i = getLaneChangeModel().getShadowFurtherLanes().begin();
         while (leftLength > 0 && i != getLaneChangeModel().getShadowFurtherLanes().end()) {
             leftLength -= (*i)->getLength();
@@ -1866,7 +1866,7 @@ MSVehicle::getBackPositionOnLane(const MSLane* lane) const {
 
 SUMOReal 
 MSVehicle::getPositionOnLane(const MSLane* lane) const {
-    return getBackPositionOnLane(lane) + getVehicleType().getLength();
+    return getBackPositionOnLane(lane) + myType->getLength();
 }
 
 
