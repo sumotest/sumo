@@ -216,6 +216,9 @@ protected:
      * (finishing a change in progress is always permitted) */
     bool myAllowsChanging;
 
+    /// @brief whether this edge allows changing to the opposite direction edge
+    const bool myChangeToOpposite;
+
 private:
     /// Default constructor.
     MSLaneChanger();

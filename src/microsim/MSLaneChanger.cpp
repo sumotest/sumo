@@ -66,7 +66,8 @@ MSLaneChanger::ChangeElem::ChangeElem(MSLane* _lane) :
 // ===========================================================================
 MSLaneChanger::MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowChanging, bool allowSwap) : 
     myAllowsSwap(allowSwap),
-    myAllowsChanging(allowChanging) 
+    myAllowsChanging(allowChanging),
+    myChangeToOpposite(lanes->front()->getEdge().canChangeToOpposite())
 {
 
     // Fill the changer with the lane-data.
@@ -669,6 +670,9 @@ MSLaneChanger::checkChange(
 
 bool 
 MSLaneChanger::changeOpposite(const std::pair<MSVehicle* const, SUMOReal>& leader) {
+    if (!myChangeToOpposite) {
+        return false;
+    }
     myCandi = findCandidate();
     MSVehicle* vehicle = veh(myCandi);
     gDebugFlag1 = vehicle->getLaneChangeModel().debugVehicle();
