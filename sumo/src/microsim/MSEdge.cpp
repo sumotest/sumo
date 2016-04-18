@@ -13,7 +13,7 @@
 // A road/street connecting two junctions
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -601,22 +601,15 @@ MSEdge::dictionary(const std::string& id) {
 }
 
 
-MSEdge*
-MSEdge::dictionary(size_t id) {
-    assert(myEdges.size() > id);
-    return myEdges[id];
-}
-
-
 size_t
 MSEdge::dictSize() {
     return myDict.size();
 }
 
 
-size_t
-MSEdge::numericalDictSize() {
-    return myEdges.size();
+const MSEdgeVector&
+MSEdge::getAllEdges() {
+    return myEdges;
 }
 
 

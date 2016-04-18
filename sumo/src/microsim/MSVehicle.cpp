@@ -18,7 +18,7 @@
 // Representation of a vehicle in the micro simulation
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -485,6 +485,9 @@ MSVehicle::~MSVehicle() {
     if (myType->amVehicleSpecific()) {
         delete myType;
     }
+
+    delete myCFVariables;
+
 #ifndef NO_TRACI
     delete myInfluencer;
 #endif
@@ -2088,7 +2091,8 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
 void
 MSVehicle::activateReminders(const MSMoveReminder::Notification reason) {
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end();) {
-        if (rem->first->getLane() != 0 && rem->first->getLane() != getLane()) {
+        // skip the reminder if it is a lane reminder but not for my lane
+        if (rem->first->getLane() != 0 && rem->second > 0.) {
 #ifdef _DEBUG
             if (myTraceMoveReminders) {
                 traceMoveReminder("notifyEnter_skipped", rem->first, rem->second, true);
@@ -2194,11 +2198,13 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
     myWaitingTime = 0;
     myLane = enteredLane;
     myAmOnNet = true;
-    // set and activate the new lane's reminders
-    for (std::vector< MSMoveReminder* >::const_iterator rem = enteredLane->getMoveReminders().begin(); rem != enteredLane->getMoveReminders().end(); ++rem) {
-        addReminder(*rem);
+    if (notification != MSMoveReminder::NOTIFICATION_TELEPORT) {
+        // set and activate the new lane's reminders, teleports already did that at enterLaneAtMove
+        for (std::vector< MSMoveReminder* >::const_iterator rem = enteredLane->getMoveReminders().begin(); rem != enteredLane->getMoveReminders().end(); ++rem) {
+            addReminder(*rem);
+        }
+        activateReminders(notification);
     }
-    activateReminders(notification);
     // build the list of lanes the vehicle is lapping into
     SUMOReal leftLength = myType->getLength() - pos;
     MSLane* clane = enteredLane;
@@ -2656,14 +2662,18 @@ MSVehicle::getLeader(SUMOReal dist) const {
     }
     const MSVehicle* lead = 0;
     const MSLane::VehCont& vehs = myLane->getVehiclesSecure();
-    MSLane::VehCont::const_iterator pred = std::find(vehs.begin(), vehs.end(), this) + 1;
-    if (pred != vehs.end()) {
-        lead = *pred;
+    assert(vehs.size() > 0);
+    MSLane::VehCont::const_iterator it = std::find(vehs.begin(), vehs.end(), this);
+    if (it != vehs.end() && it + 1 != vehs.end()) {
+        lead = *(it + 1);
+    }
+    if (lead != 0) {
+        std::pair<const MSVehicle* const, SUMOReal> result(lead, 
+                lead->getPositionOnLane() - lead->getVehicleType().getLength() - getPositionOnLane() - getVehicleType().getMinGap());
+        myLane->releaseVehicles();
+        return result;
     }
     myLane->releaseVehicles();
-    if (lead != 0) {
-        return std::make_pair(lead, lead->getPositionOnLane() - lead->getVehicleType().getLength() - getPositionOnLane() - getVehicleType().getMinGap());
-    }
     const SUMOReal seen = myLane->getLength() - getPositionOnLane();
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(myLane);
     return myLane->getLeaderOnConsecutive(dist, seen, getSpeed(), *this, bestLaneConts);

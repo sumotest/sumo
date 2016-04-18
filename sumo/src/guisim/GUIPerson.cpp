@@ -9,7 +9,7 @@
 // A MSPerson extended by some values for usage within the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -250,8 +250,8 @@ GUIPerson::drawGL(const GUIVisualizationSettings& s) const {
     if (getCurrentStageType() == DRIVING && !isWaiting4Vehicle()) {
         p1 = myPositionInVehicle;
     }
+    glTranslated(p1.x(), p1.y(), getType());
     glRotated(90, 0, 0, 1);
-    // XXX use person specific gui settings
     // set person color
     setColor(s);
     // scale
