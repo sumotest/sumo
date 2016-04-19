@@ -2145,6 +2145,7 @@ MSVehicle::enterLaneAtMove(MSLane* enteredLane, bool onTeleporting) {
     adaptLaneEntering2MoveReminder(*enteredLane);
     // set the entered lane as the current lane
     myLane = enteredLane;
+    myLastBestLanesEdge = 0;
 
     // internal edges are not a part of the route...
     if (enteredLane->getEdge().getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL) {
