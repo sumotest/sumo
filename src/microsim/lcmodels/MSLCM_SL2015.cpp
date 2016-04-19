@@ -981,19 +981,21 @@ MSLCM_SL2015::_wantsChangeSublane(
         }
     }
 
-    ret = checkStrategicChange(ret, 
-            laneOffset,
-            preb,
-            leaders,
-            neighLeaders,
-            currIdx,
-            bestLaneOffset,
-            changeToBest,
-            lcaCounter,
-            currentDist,
-            neighDist,
-            laDist,
-            roundaboutEdgesAhead);
+    if (laneOffset != 0) {
+        ret = checkStrategicChange(ret, 
+                laneOffset,
+                preb,
+                leaders,
+                neighLeaders,
+                currIdx,
+                bestLaneOffset,
+                changeToBest,
+                lcaCounter,
+                currentDist,
+                neighDist,
+                laDist,
+                roundaboutEdgesAhead);
+    }
 
     if ((ret & LCA_STAY) != 0) {
         return ret;
@@ -1967,8 +1969,9 @@ MSLCM_SL2015::keepLatGap(int state,
      * */
 
     /// XXX to be made configurable
-    const SUMOReal gapFactor = ((state & LCA_STRATEGIC) != 0) && (state & LCA_STAY) == 0 ? 0.0: 1.0; 
+    const SUMOReal gapFactor = (state & LCA_STRATEGIC) != 0 ? 0.0: 1.0; 
     const SUMOReal minGap = myVehicle.getVehicleType().getMinGapLat();
+    const bool stayInLane = laneOffset == 0 || ((state & LCA_STRATEGIC != 0) && (state & LCA_STAY) != 0);
 
     /// XXX todo
     // - compute lateral gap after executing the current maneuver (may be LCA_NONE)
@@ -1991,12 +1994,20 @@ MSLCM_SL2015::keepLatGap(int state,
         updateGaps(neighLeaders, neighLane.getRightSideOnEdge(), newCenter, gapFactor, surplusGapRight, surplusGapLeft);
         updateGaps(neighFollowers, neighLane.getRightSideOnEdge(), newCenter, gapFactor, surplusGapRight, surplusGapLeft);
     }
+    if (stayInLane) {
+        // stay fully within the current lane
+        const SUMOReal halfLaneWidth = myVehicle.getLane()->getWidth() * 0.5;
+        surplusGapRight = MIN2(surplusGapRight, halfLaneWidth + myVehicle.getLateralPositionOnLane() - halfWidth);
+        surplusGapLeft = MIN2(surplusGapLeft, halfLaneWidth - myVehicle.getLateralPositionOnLane() - halfWidth);
+    }
     if (gDebugFlag2) {
         std::cout << "    keepLatGap laneOffset=" << laneOffset 
             << " latDist=" << latDist 
             << " gapFactor=" << gapFactor 
+            << " stayInLane=" << stayInLane
             << " surplusGapRight=" << surplusGapRight 
             << " surplusGapLeft=" << surplusGapLeft 
+            << " state=" << toString((LaneChangeAction)state) 
             << " blockedBefore=" << toString((LaneChangeAction)blocked) 
             << "\n";
     }
@@ -2004,14 +2015,14 @@ MSLCM_SL2015::keepLatGap(int state,
     if (surplusGapRight < -NUMERICAL_EPS) {
         if (surplusGapLeft > 0) {
             // move left to increase gap
-            latDist = MIN3(-surplusGapRight, surplusGapLeft, maxDist);
+            latDist = MIN3(latDist - surplusGapRight, latDist + surplusGapLeft, maxDist);
         } else {
             blocked |= LCA_OVERLAPPING | LCA_BLOCKED_RIGHT;
         }
     } else if (surplusGapLeft < -NUMERICAL_EPS) {
         if (surplusGapRight > 0) {
             // move right to increase gap
-            latDist = MIN3(-surplusGapLeft, surplusGapRight, maxDist);
+            latDist = MAX3(latDist + surplusGapLeft, latDist - surplusGapRight, -maxDist);
         } else {
             blocked |= LCA_OVERLAPPING | LCA_BLOCKED_LEFT;
         }
