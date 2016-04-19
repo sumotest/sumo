@@ -49,6 +49,7 @@ class Force;
 class Goal;
 class Gompertz;
 class Group;
+class Hline;
 class LeftClosedRightOpenTimeInterval;
 class Leg;
 class Link;
@@ -232,6 +233,118 @@ class Scenario : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static Scenario* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Hline : public ::google::protobuf::Message {
+ public:
+  Hline();
+  virtual ~Hline();
+
+  Hline(const Hline& from);
+
+  inline Hline& operator=(const Hline& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Hline& default_instance();
+
+  void Swap(Hline* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Hline* New() const { return New(NULL); }
+
+  Hline* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Hline& from);
+  void MergeFrom(const Hline& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Hline* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
+
+  // optional int32 room_id = 2;
+  void clear_room_id();
+  static const int kRoomIdFieldNumber = 2;
+  ::google::protobuf::int32 room_id() const;
+  void set_room_id(::google::protobuf::int32 value);
+
+  // optional int32 subroom_id = 3;
+  void clear_subroom_id();
+  static const int kSubroomIdFieldNumber = 3;
+  ::google::protobuf::int32 subroom_id() const;
+  void set_subroom_id(::google::protobuf::int32 value);
+
+  // optional .hybridsim.Coordinate vert1 = 4;
+  bool has_vert1() const;
+  void clear_vert1();
+  static const int kVert1FieldNumber = 4;
+  const ::hybridsim::Coordinate& vert1() const;
+  ::hybridsim::Coordinate* mutable_vert1();
+  ::hybridsim::Coordinate* release_vert1();
+  void set_allocated_vert1(::hybridsim::Coordinate* vert1);
+
+  // optional .hybridsim.Coordinate vert2 = 5;
+  bool has_vert2() const;
+  void clear_vert2();
+  static const int kVert2FieldNumber = 5;
+  const ::hybridsim::Coordinate& vert2() const;
+  ::hybridsim::Coordinate* mutable_vert2();
+  ::hybridsim::Coordinate* release_vert2();
+  void set_allocated_vert2(::hybridsim::Coordinate* vert2);
+
+  // @@protoc_insertion_point(class_scope:hybridsim.Hline)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 id_;
+  ::google::protobuf::int32 room_id_;
+  ::hybridsim::Coordinate* vert1_;
+  ::hybridsim::Coordinate* vert2_;
+  ::google::protobuf::int32 subroom_id_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_hybridsim_2eproto();
+  friend void protobuf_AssignDesc_hybridsim_2eproto();
+  friend void protobuf_ShutdownFile_hybridsim_2eproto();
+
+  void InitAsDefaultInstance();
+  static Hline* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1393,6 +1506,18 @@ class Environment : public ::google::protobuf::Message {
   const ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >&
       transition() const;
 
+  // repeated .hybridsim.Hline hline = 3;
+  int hline_size() const;
+  void clear_hline();
+  static const int kHlineFieldNumber = 3;
+  const ::hybridsim::Hline& hline(int index) const;
+  ::hybridsim::Hline* mutable_hline(int index);
+  ::hybridsim::Hline* add_hline();
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Hline >*
+      mutable_hline();
+  const ::google::protobuf::RepeatedPtrField< ::hybridsim::Hline >&
+      hline() const;
+
   // @@protoc_insertion_point(class_scope:hybridsim.Environment)
  private:
 
@@ -1400,6 +1525,7 @@ class Environment : public ::google::protobuf::Message {
   bool _is_default_instance_;
   ::google::protobuf::RepeatedPtrField< ::hybridsim::Room > room_;
   ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition > transition_;
+  ::google::protobuf::RepeatedPtrField< ::hybridsim::Hline > hline_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_hybridsim_2eproto();
   friend void protobuf_AssignDesc_hybridsim_2eproto();
@@ -2999,6 +3125,126 @@ Scenario::router() const {
 
 // -------------------------------------------------------------------
 
+// Hline
+
+// optional int32 id = 1;
+inline void Hline::clear_id() {
+  id_ = 0;
+}
+inline ::google::protobuf::int32 Hline::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.id)
+  return id_;
+}
+inline void Hline::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Hline.id)
+}
+
+// optional int32 room_id = 2;
+inline void Hline::clear_room_id() {
+  room_id_ = 0;
+}
+inline ::google::protobuf::int32 Hline::room_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.room_id)
+  return room_id_;
+}
+inline void Hline::set_room_id(::google::protobuf::int32 value) {
+  
+  room_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Hline.room_id)
+}
+
+// optional int32 subroom_id = 3;
+inline void Hline::clear_subroom_id() {
+  subroom_id_ = 0;
+}
+inline ::google::protobuf::int32 Hline::subroom_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.subroom_id)
+  return subroom_id_;
+}
+inline void Hline::set_subroom_id(::google::protobuf::int32 value) {
+  
+  subroom_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Hline.subroom_id)
+}
+
+// optional .hybridsim.Coordinate vert1 = 4;
+inline bool Hline::has_vert1() const {
+  return !_is_default_instance_ && vert1_ != NULL;
+}
+inline void Hline::clear_vert1() {
+  if (GetArenaNoVirtual() == NULL && vert1_ != NULL) delete vert1_;
+  vert1_ = NULL;
+}
+inline const ::hybridsim::Coordinate& Hline::vert1() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.vert1)
+  return vert1_ != NULL ? *vert1_ : *default_instance_->vert1_;
+}
+inline ::hybridsim::Coordinate* Hline::mutable_vert1() {
+  
+  if (vert1_ == NULL) {
+    vert1_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Hline.vert1)
+  return vert1_;
+}
+inline ::hybridsim::Coordinate* Hline::release_vert1() {
+  
+  ::hybridsim::Coordinate* temp = vert1_;
+  vert1_ = NULL;
+  return temp;
+}
+inline void Hline::set_allocated_vert1(::hybridsim::Coordinate* vert1) {
+  delete vert1_;
+  vert1_ = vert1;
+  if (vert1) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Hline.vert1)
+}
+
+// optional .hybridsim.Coordinate vert2 = 5;
+inline bool Hline::has_vert2() const {
+  return !_is_default_instance_ && vert2_ != NULL;
+}
+inline void Hline::clear_vert2() {
+  if (GetArenaNoVirtual() == NULL && vert2_ != NULL) delete vert2_;
+  vert2_ = NULL;
+}
+inline const ::hybridsim::Coordinate& Hline::vert2() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.vert2)
+  return vert2_ != NULL ? *vert2_ : *default_instance_->vert2_;
+}
+inline ::hybridsim::Coordinate* Hline::mutable_vert2() {
+  
+  if (vert2_ == NULL) {
+    vert2_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Hline.vert2)
+  return vert2_;
+}
+inline ::hybridsim::Coordinate* Hline::release_vert2() {
+  
+  ::hybridsim::Coordinate* temp = vert2_;
+  vert2_ = NULL;
+  return temp;
+}
+inline void Hline::set_allocated_vert2(::hybridsim::Coordinate* vert2) {
+  delete vert2_;
+  vert2_ = vert2;
+  if (vert2) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Hline.vert2)
+}
+
+// -------------------------------------------------------------------
+
 // Router
 
 // optional int32 router_id = 1;
@@ -4345,6 +4591,36 @@ Environment::transition() const {
   return transition_;
 }
 
+// repeated .hybridsim.Hline hline = 3;
+inline int Environment::hline_size() const {
+  return hline_.size();
+}
+inline void Environment::clear_hline() {
+  hline_.Clear();
+}
+inline const ::hybridsim::Hline& Environment::hline(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Environment.hline)
+  return hline_.Get(index);
+}
+inline ::hybridsim::Hline* Environment::mutable_hline(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Environment.hline)
+  return hline_.Mutable(index);
+}
+inline ::hybridsim::Hline* Environment::add_hline() {
+  // @@protoc_insertion_point(field_add:hybridsim.Environment.hline)
+  return hline_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hybridsim::Hline >*
+Environment::mutable_hline() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Environment.hline)
+  return &hline_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hybridsim::Hline >&
+Environment::hline() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Environment.hline)
+  return hline_;
+}
+
 // -------------------------------------------------------------------
 
 // Transition
@@ -5457,6 +5733,8 @@ Trajectories::trajectories() const {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

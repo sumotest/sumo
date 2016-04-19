@@ -24,6 +24,9 @@ namespace {
 const ::google::protobuf::Descriptor* Scenario_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Scenario_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Hline_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Hline_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Router_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Router_reflection_ = NULL;
@@ -128,7 +131,26 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Scenario),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Scenario, _is_default_instance_));
-  Router_descriptor_ = file->message_type(1);
+  Hline_descriptor_ = file->message_type(1);
+  static const int Hline_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, room_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, subroom_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, vert1_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, vert2_),
+  };
+  Hline_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Hline_descriptor_,
+      Hline::default_instance_,
+      Hline_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Hline),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hline, _is_default_instance_));
+  Router_descriptor_ = file->message_type(2);
   static const int Router_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, router_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, description_),
@@ -144,7 +166,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Router),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Router, _is_default_instance_));
-  Model_descriptor_ = file->message_type(2);
+  Model_descriptor_ = file->message_type(3);
   static const int Model_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, gompertz_),
@@ -161,7 +183,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Model, _is_default_instance_));
   Model_Type_descriptor_ = Model_descriptor_->enum_type(0);
-  Gompertz_descriptor_ = file->message_type(3);
+  Gompertz_descriptor_ = file->message_type(4);
   static const int Gompertz_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, solver_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, stepsize_),
@@ -183,7 +205,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Gompertz),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gompertz, _is_default_instance_));
-  AgentParams_descriptor_ = file->message_type(4);
+  AgentParams_descriptor_ = file->message_type(5);
   static const int AgentParams_offsets_[13] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, v0_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, b_max_),
@@ -210,7 +232,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(AgentParams),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentParams, _is_default_instance_));
-  Distribution_descriptor_ = file->message_type(5);
+  Distribution_descriptor_ = file->message_type(6);
   static const int Distribution_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, mu_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, sigma_),
@@ -226,7 +248,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Distribution),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Distribution, _is_default_instance_));
-  Force_descriptor_ = file->message_type(6);
+  Force_descriptor_ = file->message_type(7);
   static const int Force_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, nu_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, a_),
@@ -244,7 +266,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Force),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Force, _is_default_instance_));
-  Group_descriptor_ = file->message_type(7);
+  Group_descriptor_ = file->message_type(8);
   static const int Group_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, group_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, room_id_),
@@ -266,7 +288,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Group),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Group, _is_default_instance_));
-  Source_descriptor_ = file->message_type(8);
+  Source_descriptor_ = file->message_type(9);
   static const int Source_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, frequency_),
@@ -285,7 +307,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Source),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Source, _is_default_instance_));
-  Goal_descriptor_ = file->message_type(9);
+  Goal_descriptor_ = file->message_type(10);
   static const int Goal_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, final_),
@@ -303,10 +325,11 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Goal),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Goal, _is_default_instance_));
-  Environment_descriptor_ = file->message_type(10);
-  static const int Environment_offsets_[2] = {
+  Environment_descriptor_ = file->message_type(11);
+  static const int Environment_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, room_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, transition_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, hline_),
   };
   Environment_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -319,7 +342,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Environment),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Environment, _is_default_instance_));
-  Transition_descriptor_ = file->message_type(11);
+  Transition_descriptor_ = file->message_type(12);
   static const int Transition_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, caption_),
@@ -342,7 +365,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Transition),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transition, _is_default_instance_));
-  Room_descriptor_ = file->message_type(12);
+  Room_descriptor_ = file->message_type(13);
   static const int Room_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, caption_),
@@ -359,7 +382,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Room),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Room, _is_default_instance_));
-  Subroom_descriptor_ = file->message_type(13);
+  Subroom_descriptor_ = file->message_type(14);
   static const int Subroom_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, closed_),
@@ -377,7 +400,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Subroom),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subroom, _is_default_instance_));
-  Polygon_descriptor_ = file->message_type(14);
+  Polygon_descriptor_ = file->message_type(15);
   static const int Polygon_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, caption_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, coordinate_),
@@ -393,7 +416,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Polygon),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, _is_default_instance_));
-  LeftClosedRightOpenTimeInterval_descriptor_ = file->message_type(15);
+  LeftClosedRightOpenTimeInterval_descriptor_ = file->message_type(16);
   static const int LeftClosedRightOpenTimeInterval_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, fromtimeincluding_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, totimeexcluding_),
@@ -409,7 +432,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(LeftClosedRightOpenTimeInterval),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LeftClosedRightOpenTimeInterval, _is_default_instance_));
-  Empty_descriptor_ = file->message_type(16);
+  Empty_descriptor_ = file->message_type(17);
   static const int Empty_offsets_[1] = {
   };
   Empty_reflection_ =
@@ -423,7 +446,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Empty),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Empty, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Empty, _is_default_instance_));
-  Boolean_descriptor_ = file->message_type(17);
+  Boolean_descriptor_ = file->message_type(18);
   static const int Boolean_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Boolean, val_),
   };
@@ -438,7 +461,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Boolean),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Boolean, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Boolean, _is_default_instance_));
-  Agent_descriptor_ = file->message_type(18);
+  Agent_descriptor_ = file->message_type(19);
   static const int Agent_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, enterlocation_),
@@ -458,7 +481,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Agent),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agent, _is_default_instance_));
-  Leg_descriptor_ = file->message_type(19);
+  Leg_descriptor_ = file->message_type(20);
   static const int Leg_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Leg, link_),
   };
@@ -473,7 +496,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Leg),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Leg, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Leg, _is_default_instance_));
-  Link_descriptor_ = file->message_type(20);
+  Link_descriptor_ = file->message_type(21);
   static const int Link_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, centroid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, id_),
@@ -489,7 +512,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Link),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Link, _is_default_instance_));
-  Coordinate_descriptor_ = file->message_type(21);
+  Coordinate_descriptor_ = file->message_type(22);
   static const int Coordinate_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, y_),
@@ -505,7 +528,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Coordinate),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Coordinate, _is_default_instance_));
-  Agents_descriptor_ = file->message_type(22);
+  Agents_descriptor_ = file->message_type(23);
   static const int Agents_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agents, agents_),
   };
@@ -520,7 +543,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Agents),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agents, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Agents, _is_default_instance_));
-  Trajectory_descriptor_ = file->message_type(23);
+  Trajectory_descriptor_ = file->message_type(24);
   static const int Trajectory_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, x_),
@@ -540,7 +563,7 @@ void protobuf_AssignDesc_hybridsim_2eproto() {
       sizeof(Trajectory),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectory, _is_default_instance_));
-  Trajectories_descriptor_ = file->message_type(24);
+  Trajectories_descriptor_ = file->message_type(25);
   static const int Trajectories_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trajectories, trajectories_),
   };
@@ -569,6 +592,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Scenario_descriptor_, &Scenario::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Hline_descriptor_, &Hline::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Router_descriptor_, &Router::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -624,6 +649,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_hybridsim_2eproto() {
   delete Scenario::default_instance_;
   delete Scenario_reflection_;
+  delete Hline::default_instance_;
+  delete Hline_reflection_;
   delete Router::default_instance_;
   delete Router_reflection_;
   delete Model::default_instance_;
@@ -687,87 +714,92 @@ void protobuf_AddDesc_hybridsim_2eproto() {
     "ridsim.Goal\022\037\n\005group\030\004 \003(\0132\020.hybridsim.G"
     "roup\022!\n\006source\030\005 \003(\0132\021.hybridsim.Source\022"
     "\037\n\005model\030\006 \001(\0132\020.hybridsim.Model\022!\n\006rout"
-    "er\030\007 \003(\0132\021.hybridsim.Router\"0\n\006Router\022\021\n"
-    "\trouter_id\030\001 \001(\005\022\023\n\013description\030\002 \001(\t\"i\n"
-    "\005Model\022#\n\004type\030\001 \001(\0162\025.hybridsim.Model.T"
-    "ype\022%\n\010gompertz\030\002 \001(\0132\023.hybridsim.Gomper"
-    "tz\"\024\n\004Type\022\014\n\010Gompertz\020\000\"\366\001\n\010Gompertz\022\016\n"
-    "\006solver\030\001 \001(\t\022\020\n\010stepsize\030\002 \001(\001\022\036\n\026exit_"
-    "crossing_strategy\030\003 \001(\005\022\034\n\024linked_cells_"
-    "enabled\030\004 \001(\010\022\021\n\tcell_size\030\005 \001(\001\022#\n\tforc"
-    "e_ped\030\006 \001(\0132\020.hybridsim.Force\022$\n\nforce_w"
-    "all\030\007 \001(\0132\020.hybridsim.Force\022,\n\014agent_par"
-    "ams\030\010 \001(\0132\026.hybridsim.AgentParams\"\317\004\n\013Ag"
-    "entParams\022#\n\002v0\030\001 \001(\0132\027.hybridsim.Distri"
-    "bution\022&\n\005b_max\030\002 \001(\0132\027.hybridsim.Distri"
-    "bution\022&\n\005b_min\030\003 \001(\0132\027.hybridsim.Distri"
-    "bution\022&\n\005a_min\030\004 \001(\0132\027.hybridsim.Distri"
-    "bution\022$\n\003tau\030\005 \001(\0132\027.hybridsim.Distribu"
-    "tion\022%\n\004atau\030\006 \001(\0132\027.hybridsim.Distribut"
-    "ion\022,\n\013v0_upstairs\030\007 \001(\0132\027.hybridsim.Dis"
-    "tribution\022.\n\rv0_downstairs\030\010 \001(\0132\027.hybri"
-    "dsim.Distribution\0220\n\017v0_escalator_up\030\t \001"
-    "(\0132\027.hybridsim.Distribution\0222\n\021v0_escala"
-    "tor_down\030\n \001(\0132\027.hybridsim.Distribution\022"
-    "5\n\024v0_idle_escalator_up\030\013 \001(\0132\027.hybridsi"
-    "m.Distribution\0227\n\026v0_idle_escalator_down"
-    "\030\014 \001(\0132\027.hybridsim.Distribution\022\"\n\001T\030\r \001"
-    "(\0132\027.hybridsim.Distribution\")\n\014Distribut"
-    "ion\022\n\n\002mu\030\001 \001(\001\022\r\n\005sigma\030\002 \001(\001\"4\n\005Force\022"
-    "\n\n\002nu\030\001 \001(\001\022\t\n\001a\030\002 \001(\001\022\t\n\001b\030\003 \001(\001\022\t\n\001c\030\004"
-    " \001(\001\"\315\001\n\005Group\022\020\n\010group_id\030\001 \001(\005\022\017\n\007room"
-    "_id\030\002 \001(\005\022\022\n\nsubroom_id\030\003 \001(\005\022\016\n\006number\030"
-    "\004 \001(\005\022\021\n\trouter_id\030\005 \001(\005\022\032\n\022agent_parame"
-    "ter_id\030\006 \001(\005\022&\n\007min_x_y\030\007 \001(\0132\025.hybridsi"
-    "m.Coordinate\022&\n\007max_x_y\030\010 \001(\0132\025.hybridsi"
-    "m.Coordinate\"^\n\006Source\022\n\n\002id\030\001 \001(\005\022\021\n\tfr"
-    "equency\030\002 \001(\005\022\022\n\nmax_agents\030\003 \001(\005\022\020\n\010gro"
-    "up_id\030\004 \001(\005\022\017\n\007caption\030\005 \001(\t\"Q\n\004Goal\022\n\n\002"
-    "id\030\001 \001(\005\022\r\n\005final\030\002 \001(\010\022\017\n\007caption\030\003 \001(\t"
-    "\022\035\n\001p\030\004 \001(\0132\022.hybridsim.Polygon\"W\n\013Envir"
-    "onment\022\035\n\004room\030\001 \003(\0132\017.hybridsim.Room\022)\n"
-    "\ntransition\030\002 \003(\0132\025.hybridsim.Transition"
-    "\"\321\001\n\nTransition\022\n\n\002id\030\001 \001(\005\022\017\n\007caption\030\002"
-    " \001(\t\022\014\n\004type\030\003 \001(\t\022\020\n\010room1_id\030\004 \001(\005\022\023\n\013"
-    "subroom1_id\030\005 \001(\005\022\020\n\010room2_id\030\006 \001(\005\022\023\n\013s"
-    "ubroom2_id\030\007 \001(\005\022$\n\005vert1\030\010 \001(\0132\025.hybrid"
-    "sim.Coordinate\022$\n\005vert2\030\t \001(\0132\025.hybridsi"
-    "m.Coordinate\"H\n\004Room\022\n\n\002id\030\001 \001(\005\022\017\n\007capt"
-    "ion\030\002 \001(\t\022#\n\007subroom\030\003 \003(\0132\022.hybridsim.S"
-    "ubroom\"Y\n\007Subroom\022\n\n\002id\030\001 \001(\005\022\016\n\006closed\030"
-    "\002 \001(\005\022\r\n\005class\030\003 \001(\t\022#\n\007polygon\030\004 \003(\0132\022."
-    "hybridsim.Polygon\"E\n\007Polygon\022\017\n\007caption\030"
-    "\001 \001(\t\022)\n\ncoordinate\030\002 \003(\0132\025.hybridsim.Co"
-    "ordinate\"U\n\037LeftClosedRightOpenTimeInter"
-    "val\022\031\n\021fromTimeIncluding\030\001 \001(\001\022\027\n\017toTime"
-    "Excluding\030\002 \001(\001\"\007\n\005Empty\"\026\n\007Boolean\022\013\n\003v"
-    "al\030\001 \001(\010\"\242\001\n\005Agent\022\n\n\002id\030\001 \001(\t\022,\n\renterL"
-    "ocation\030\002 \001(\0132\025.hybridsim.Coordinate\022,\n\r"
-    "leaveLocation\030\003 \001(\0132\025.hybridsim.Coordina"
-    "te\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\022\033\n\003leg\030\006 \001(\0132\016."
-    "hybridsim.Leg\"$\n\003Leg\022\035\n\004link\030\017 \003(\0132\017.hyb"
-    "ridsim.Link\";\n\004Link\022\'\n\010centroid\030\001 \001(\0132\025."
-    "hybridsim.Coordinate\022\n\n\002id\030\002 \001(\t\"\"\n\nCoor"
-    "dinate\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\"*\n\006Agents\022 "
-    "\n\006agents\030\001 \003(\0132\020.hybridsim.Agent\"X\n\nTraj"
-    "ectory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001(\001\022\t\n\001y\030\003 \001(\001"
-    "\022\013\n\003spd\030\004 \001(\001\022\013\n\003phi\030\005 \001(\001\022\016\n\006linkId\030\006 \001"
-    "(\t\";\n\014Trajectories\022+\n\014trajectories\030\001 \003(\013"
-    "2\025.hybridsim.Trajectory2\213\003\n\020HybridSimula"
-    "tion\022V\n\024simulatedTimeInerval\022*.hybridsim"
-    ".LeftClosedRightOpenTimeInterval\032\020.hybri"
-    "dsim.Empty\"\000\0227\n\rtransferAgent\022\020.hybridsi"
-    "m.Agent\032\022.hybridsim.Boolean\"\000\022B\n\023receive"
-    "Trajectories\022\020.hybridsim.Empty\032\027.hybrids"
-    "im.Trajectories\"\000\0227\n\016retrieveAgents\022\020.hy"
-    "bridsim.Empty\032\021.hybridsim.Agents\"\000\0220\n\010sh"
-    "utdown\022\020.hybridsim.Empty\032\020.hybridsim.Emp"
-    "ty\"\000\0227\n\014initScenario\022\023.hybridsim.Scenari"
-    "o\032\020.hybridsim.Empty\"\000B)\n\025de.dlr.sumo.hyb"
-    "ridsimB\016HybridSimProtoP\000b\006proto3", 3352);
+    "er\030\007 \003(\0132\021.hybridsim.Router\"\204\001\n\005Hline\022\n\n"
+    "\002id\030\001 \001(\005\022\017\n\007room_id\030\002 \001(\005\022\022\n\nsubroom_id"
+    "\030\003 \001(\005\022$\n\005vert1\030\004 \001(\0132\025.hybridsim.Coordi"
+    "nate\022$\n\005vert2\030\005 \001(\0132\025.hybridsim.Coordina"
+    "te\"0\n\006Router\022\021\n\trouter_id\030\001 \001(\005\022\023\n\013descr"
+    "iption\030\002 \001(\t\"i\n\005Model\022#\n\004type\030\001 \001(\0162\025.hy"
+    "bridsim.Model.Type\022%\n\010gompertz\030\002 \001(\0132\023.h"
+    "ybridsim.Gompertz\"\024\n\004Type\022\014\n\010Gompertz\020\000\""
+    "\366\001\n\010Gompertz\022\016\n\006solver\030\001 \001(\t\022\020\n\010stepsize"
+    "\030\002 \001(\001\022\036\n\026exit_crossing_strategy\030\003 \001(\005\022\034"
+    "\n\024linked_cells_enabled\030\004 \001(\010\022\021\n\tcell_siz"
+    "e\030\005 \001(\001\022#\n\tforce_ped\030\006 \001(\0132\020.hybridsim.F"
+    "orce\022$\n\nforce_wall\030\007 \001(\0132\020.hybridsim.For"
+    "ce\022,\n\014agent_params\030\010 \001(\0132\026.hybridsim.Age"
+    "ntParams\"\317\004\n\013AgentParams\022#\n\002v0\030\001 \001(\0132\027.h"
+    "ybridsim.Distribution\022&\n\005b_max\030\002 \001(\0132\027.h"
+    "ybridsim.Distribution\022&\n\005b_min\030\003 \001(\0132\027.h"
+    "ybridsim.Distribution\022&\n\005a_min\030\004 \001(\0132\027.h"
+    "ybridsim.Distribution\022$\n\003tau\030\005 \001(\0132\027.hyb"
+    "ridsim.Distribution\022%\n\004atau\030\006 \001(\0132\027.hybr"
+    "idsim.Distribution\022,\n\013v0_upstairs\030\007 \001(\0132"
+    "\027.hybridsim.Distribution\022.\n\rv0_downstair"
+    "s\030\010 \001(\0132\027.hybridsim.Distribution\0220\n\017v0_e"
+    "scalator_up\030\t \001(\0132\027.hybridsim.Distributi"
+    "on\0222\n\021v0_escalator_down\030\n \001(\0132\027.hybridsi"
+    "m.Distribution\0225\n\024v0_idle_escalator_up\030\013"
+    " \001(\0132\027.hybridsim.Distribution\0227\n\026v0_idle"
+    "_escalator_down\030\014 \001(\0132\027.hybridsim.Distri"
+    "bution\022\"\n\001T\030\r \001(\0132\027.hybridsim.Distributi"
+    "on\")\n\014Distribution\022\n\n\002mu\030\001 \001(\001\022\r\n\005sigma\030"
+    "\002 \001(\001\"4\n\005Force\022\n\n\002nu\030\001 \001(\001\022\t\n\001a\030\002 \001(\001\022\t\n"
+    "\001b\030\003 \001(\001\022\t\n\001c\030\004 \001(\001\"\315\001\n\005Group\022\020\n\010group_i"
+    "d\030\001 \001(\005\022\017\n\007room_id\030\002 \001(\005\022\022\n\nsubroom_id\030\003"
+    " \001(\005\022\016\n\006number\030\004 \001(\005\022\021\n\trouter_id\030\005 \001(\005\022"
+    "\032\n\022agent_parameter_id\030\006 \001(\005\022&\n\007min_x_y\030\007"
+    " \001(\0132\025.hybridsim.Coordinate\022&\n\007max_x_y\030\010"
+    " \001(\0132\025.hybridsim.Coordinate\"^\n\006Source\022\n\n"
+    "\002id\030\001 \001(\005\022\021\n\tfrequency\030\002 \001(\005\022\022\n\nmax_agen"
+    "ts\030\003 \001(\005\022\020\n\010group_id\030\004 \001(\005\022\017\n\007caption\030\005 "
+    "\001(\t\"Q\n\004Goal\022\n\n\002id\030\001 \001(\005\022\r\n\005final\030\002 \001(\010\022\017"
+    "\n\007caption\030\003 \001(\t\022\035\n\001p\030\004 \001(\0132\022.hybridsim.P"
+    "olygon\"x\n\013Environment\022\035\n\004room\030\001 \003(\0132\017.hy"
+    "bridsim.Room\022)\n\ntransition\030\002 \003(\0132\025.hybri"
+    "dsim.Transition\022\037\n\005hline\030\003 \003(\0132\020.hybrids"
+    "im.Hline\"\321\001\n\nTransition\022\n\n\002id\030\001 \001(\005\022\017\n\007c"
+    "aption\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\020\n\010room1_id\030\004"
+    " \001(\005\022\023\n\013subroom1_id\030\005 \001(\005\022\020\n\010room2_id\030\006 "
+    "\001(\005\022\023\n\013subroom2_id\030\007 \001(\005\022$\n\005vert1\030\010 \001(\0132"
+    "\025.hybridsim.Coordinate\022$\n\005vert2\030\t \001(\0132\025."
+    "hybridsim.Coordinate\"H\n\004Room\022\n\n\002id\030\001 \001(\005"
+    "\022\017\n\007caption\030\002 \001(\t\022#\n\007subroom\030\003 \003(\0132\022.hyb"
+    "ridsim.Subroom\"Y\n\007Subroom\022\n\n\002id\030\001 \001(\005\022\016\n"
+    "\006closed\030\002 \001(\005\022\r\n\005class\030\003 \001(\t\022#\n\007polygon\030"
+    "\004 \003(\0132\022.hybridsim.Polygon\"E\n\007Polygon\022\017\n\007"
+    "caption\030\001 \001(\t\022)\n\ncoordinate\030\002 \003(\0132\025.hybr"
+    "idsim.Coordinate\"U\n\037LeftClosedRightOpenT"
+    "imeInterval\022\031\n\021fromTimeIncluding\030\001 \001(\001\022\027"
+    "\n\017toTimeExcluding\030\002 \001(\001\"\007\n\005Empty\"\026\n\007Bool"
+    "ean\022\013\n\003val\030\001 \001(\010\"\242\001\n\005Agent\022\n\n\002id\030\001 \001(\t\022,"
+    "\n\renterLocation\030\002 \001(\0132\025.hybridsim.Coordi"
+    "nate\022,\n\rleaveLocation\030\003 \001(\0132\025.hybridsim."
+    "Coordinate\022\t\n\001x\030\004 \001(\001\022\t\n\001y\030\005 \001(\001\022\033\n\003leg\030"
+    "\006 \001(\0132\016.hybridsim.Leg\"$\n\003Leg\022\035\n\004link\030\017 \003"
+    "(\0132\017.hybridsim.Link\";\n\004Link\022\'\n\010centroid\030"
+    "\001 \001(\0132\025.hybridsim.Coordinate\022\n\n\002id\030\002 \001(\t"
+    "\"\"\n\nCoordinate\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\"*\n\006"
+    "Agents\022 \n\006agents\030\001 \003(\0132\020.hybridsim.Agent"
+    "\"X\n\nTrajectory\022\n\n\002id\030\001 \001(\t\022\t\n\001x\030\002 \001(\001\022\t\n"
+    "\001y\030\003 \001(\001\022\013\n\003spd\030\004 \001(\001\022\013\n\003phi\030\005 \001(\001\022\016\n\006li"
+    "nkId\030\006 \001(\t\";\n\014Trajectories\022+\n\014trajectori"
+    "es\030\001 \003(\0132\025.hybridsim.Trajectory2\213\003\n\020Hybr"
+    "idSimulation\022V\n\024simulatedTimeInerval\022*.h"
+    "ybridsim.LeftClosedRightOpenTimeInterval"
+    "\032\020.hybridsim.Empty\"\000\0227\n\rtransferAgent\022\020."
+    "hybridsim.Agent\032\022.hybridsim.Boolean\"\000\022B\n"
+    "\023receiveTrajectories\022\020.hybridsim.Empty\032\027"
+    ".hybridsim.Trajectories\"\000\0227\n\016retrieveAge"
+    "nts\022\020.hybridsim.Empty\032\021.hybridsim.Agents"
+    "\"\000\0220\n\010shutdown\022\020.hybridsim.Empty\032\020.hybri"
+    "dsim.Empty\"\000\0227\n\014initScenario\022\023.hybridsim"
+    ".Scenario\032\020.hybridsim.Empty\"\000B)\n\025de.dlr."
+    "sumo.hybridsimB\016HybridSimProtoP\000b\006proto3", 3520);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hybridsim.proto", &protobuf_RegisterTypes);
   Scenario::default_instance_ = new Scenario();
+  Hline::default_instance_ = new Hline();
   Router::default_instance_ = new Router();
   Model::default_instance_ = new Model();
   Gompertz::default_instance_ = new Gompertz();
@@ -793,6 +825,7 @@ void protobuf_AddDesc_hybridsim_2eproto() {
   Trajectory::default_instance_ = new Trajectory();
   Trajectories::default_instance_ = new Trajectories();
   Scenario::default_instance_->InitAsDefaultInstance();
+  Hline::default_instance_->InitAsDefaultInstance();
   Router::default_instance_->InitAsDefaultInstance();
   Model::default_instance_->InitAsDefaultInstance();
   Gompertz::default_instance_->InitAsDefaultInstance();
@@ -1505,6 +1538,509 @@ const ::google::protobuf::RepeatedPtrField< ::hybridsim::Router >&
 Scenario::router() const {
   // @@protoc_insertion_point(field_list:hybridsim.Scenario.router)
   return router_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Hline::kIdFieldNumber;
+const int Hline::kRoomIdFieldNumber;
+const int Hline::kSubroomIdFieldNumber;
+const int Hline::kVert1FieldNumber;
+const int Hline::kVert2FieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Hline::Hline()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hybridsim.Hline)
+}
+
+void Hline::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  vert1_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+  vert2_ = const_cast< ::hybridsim::Coordinate*>(&::hybridsim::Coordinate::default_instance());
+}
+
+Hline::Hline(const Hline& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:hybridsim.Hline)
+}
+
+void Hline::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  id_ = 0;
+  room_id_ = 0;
+  subroom_id_ = 0;
+  vert1_ = NULL;
+  vert2_ = NULL;
+}
+
+Hline::~Hline() {
+  // @@protoc_insertion_point(destructor:hybridsim.Hline)
+  SharedDtor();
+}
+
+void Hline::SharedDtor() {
+  if (this != default_instance_) {
+    delete vert1_;
+    delete vert2_;
+  }
+}
+
+void Hline::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Hline::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Hline_descriptor_;
+}
+
+const Hline& Hline::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_hybridsim_2eproto();
+  return *default_instance_;
+}
+
+Hline* Hline::default_instance_ = NULL;
+
+Hline* Hline::New(::google::protobuf::Arena* arena) const {
+  Hline* n = new Hline;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Hline::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Hline*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(id_, room_id_);
+  subroom_id_ = 0;
+  if (GetArenaNoVirtual() == NULL && vert1_ != NULL) delete vert1_;
+  vert1_ = NULL;
+  if (GetArenaNoVirtual() == NULL && vert2_ != NULL) delete vert2_;
+  vert2_ = NULL;
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool Hline::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hybridsim.Hline)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 id = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_room_id;
+        break;
+      }
+
+      // optional int32 room_id = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_room_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &room_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_subroom_id;
+        break;
+      }
+
+      // optional int32 subroom_id = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_subroom_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &subroom_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_vert1;
+        break;
+      }
+
+      // optional .hybridsim.Coordinate vert1 = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_vert1:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_vert1()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_vert2;
+        break;
+      }
+
+      // optional .hybridsim.Coordinate vert2 = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_vert2:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_vert2()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hybridsim.Hline)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hybridsim.Hline)
+  return false;
+#undef DO_
+}
+
+void Hline::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hybridsim.Hline)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
+  }
+
+  // optional int32 room_id = 2;
+  if (this->room_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->room_id(), output);
+  }
+
+  // optional int32 subroom_id = 3;
+  if (this->subroom_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->subroom_id(), output);
+  }
+
+  // optional .hybridsim.Coordinate vert1 = 4;
+  if (this->has_vert1()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, *this->vert1_, output);
+  }
+
+  // optional .hybridsim.Coordinate vert2 = 5;
+  if (this->has_vert2()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, *this->vert2_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:hybridsim.Hline)
+}
+
+::google::protobuf::uint8* Hline::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:hybridsim.Hline)
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
+  }
+
+  // optional int32 room_id = 2;
+  if (this->room_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->room_id(), target);
+  }
+
+  // optional int32 subroom_id = 3;
+  if (this->subroom_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->subroom_id(), target);
+  }
+
+  // optional .hybridsim.Coordinate vert1 = 4;
+  if (this->has_vert1()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, *this->vert1_, target);
+  }
+
+  // optional .hybridsim.Coordinate vert2 = 5;
+  if (this->has_vert2()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, *this->vert2_, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Hline)
+  return target;
+}
+
+int Hline::ByteSize() const {
+  int total_size = 0;
+
+  // optional int32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->id());
+  }
+
+  // optional int32 room_id = 2;
+  if (this->room_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->room_id());
+  }
+
+  // optional int32 subroom_id = 3;
+  if (this->subroom_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->subroom_id());
+  }
+
+  // optional .hybridsim.Coordinate vert1 = 4;
+  if (this->has_vert1()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->vert1_);
+  }
+
+  // optional .hybridsim.Coordinate vert2 = 5;
+  if (this->has_vert2()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->vert2_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Hline::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Hline* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Hline>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Hline::MergeFrom(const Hline& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
+  if (from.room_id() != 0) {
+    set_room_id(from.room_id());
+  }
+  if (from.subroom_id() != 0) {
+    set_subroom_id(from.subroom_id());
+  }
+  if (from.has_vert1()) {
+    mutable_vert1()->::hybridsim::Coordinate::MergeFrom(from.vert1());
+  }
+  if (from.has_vert2()) {
+    mutable_vert2()->::hybridsim::Coordinate::MergeFrom(from.vert2());
+  }
+}
+
+void Hline::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Hline::CopyFrom(const Hline& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Hline::IsInitialized() const {
+
+  return true;
+}
+
+void Hline::Swap(Hline* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Hline::InternalSwap(Hline* other) {
+  std::swap(id_, other->id_);
+  std::swap(room_id_, other->room_id_);
+  std::swap(subroom_id_, other->subroom_id_);
+  std::swap(vert1_, other->vert1_);
+  std::swap(vert2_, other->vert2_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Hline::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Hline_descriptor_;
+  metadata.reflection = Hline_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Hline
+
+// optional int32 id = 1;
+void Hline::clear_id() {
+  id_ = 0;
+}
+ ::google::protobuf::int32 Hline::id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.id)
+  return id_;
+}
+ void Hline::set_id(::google::protobuf::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Hline.id)
+}
+
+// optional int32 room_id = 2;
+void Hline::clear_room_id() {
+  room_id_ = 0;
+}
+ ::google::protobuf::int32 Hline::room_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.room_id)
+  return room_id_;
+}
+ void Hline::set_room_id(::google::protobuf::int32 value) {
+  
+  room_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Hline.room_id)
+}
+
+// optional int32 subroom_id = 3;
+void Hline::clear_subroom_id() {
+  subroom_id_ = 0;
+}
+ ::google::protobuf::int32 Hline::subroom_id() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.subroom_id)
+  return subroom_id_;
+}
+ void Hline::set_subroom_id(::google::protobuf::int32 value) {
+  
+  subroom_id_ = value;
+  // @@protoc_insertion_point(field_set:hybridsim.Hline.subroom_id)
+}
+
+// optional .hybridsim.Coordinate vert1 = 4;
+bool Hline::has_vert1() const {
+  return !_is_default_instance_ && vert1_ != NULL;
+}
+void Hline::clear_vert1() {
+  if (GetArenaNoVirtual() == NULL && vert1_ != NULL) delete vert1_;
+  vert1_ = NULL;
+}
+const ::hybridsim::Coordinate& Hline::vert1() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.vert1)
+  return vert1_ != NULL ? *vert1_ : *default_instance_->vert1_;
+}
+::hybridsim::Coordinate* Hline::mutable_vert1() {
+  
+  if (vert1_ == NULL) {
+    vert1_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Hline.vert1)
+  return vert1_;
+}
+::hybridsim::Coordinate* Hline::release_vert1() {
+  
+  ::hybridsim::Coordinate* temp = vert1_;
+  vert1_ = NULL;
+  return temp;
+}
+void Hline::set_allocated_vert1(::hybridsim::Coordinate* vert1) {
+  delete vert1_;
+  vert1_ = vert1;
+  if (vert1) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Hline.vert1)
+}
+
+// optional .hybridsim.Coordinate vert2 = 5;
+bool Hline::has_vert2() const {
+  return !_is_default_instance_ && vert2_ != NULL;
+}
+void Hline::clear_vert2() {
+  if (GetArenaNoVirtual() == NULL && vert2_ != NULL) delete vert2_;
+  vert2_ = NULL;
+}
+const ::hybridsim::Coordinate& Hline::vert2() const {
+  // @@protoc_insertion_point(field_get:hybridsim.Hline.vert2)
+  return vert2_ != NULL ? *vert2_ : *default_instance_->vert2_;
+}
+::hybridsim::Coordinate* Hline::mutable_vert2() {
+  
+  if (vert2_ == NULL) {
+    vert2_ = new ::hybridsim::Coordinate;
+  }
+  // @@protoc_insertion_point(field_mutable:hybridsim.Hline.vert2)
+  return vert2_;
+}
+::hybridsim::Coordinate* Hline::release_vert2() {
+  
+  ::hybridsim::Coordinate* temp = vert2_;
+  vert2_ = NULL;
+  return temp;
+}
+void Hline::set_allocated_vert2(::hybridsim::Coordinate* vert2) {
+  delete vert2_;
+  vert2_ = vert2;
+  if (vert2) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:hybridsim.Hline.vert2)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -6392,6 +6928,7 @@ void Goal::set_allocated_p(::hybridsim::Polygon* p) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Environment::kRoomFieldNumber;
 const int Environment::kTransitionFieldNumber;
+const int Environment::kHlineFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Environment::Environment()
@@ -6455,6 +6992,7 @@ Environment* Environment::New(::google::protobuf::Arena* arena) const {
 void Environment::Clear() {
   room_.Clear();
   transition_.Clear();
+  hline_.Clear();
 }
 
 bool Environment::MergePartialFromCodedStream(
@@ -6494,6 +7032,22 @@ bool Environment::MergePartialFromCodedStream(
           goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_loop_transition;
+        if (input->ExpectTag(26)) goto parse_loop_hline;
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .hybridsim.Hline hline = 3;
+      case 3: {
+        if (tag == 26) {
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_hline:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_hline()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_loop_hline;
         input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
@@ -6535,6 +7089,12 @@ void Environment::SerializeWithCachedSizes(
       2, this->transition(i), output);
   }
 
+  // repeated .hybridsim.Hline hline = 3;
+  for (unsigned int i = 0, n = this->hline_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->hline(i), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:hybridsim.Environment)
 }
 
@@ -6553,6 +7113,13 @@ void Environment::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->transition(i), target);
+  }
+
+  // repeated .hybridsim.Hline hline = 3;
+  for (unsigned int i = 0, n = this->hline_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->hline(i), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:hybridsim.Environment)
@@ -6578,6 +7145,14 @@ int Environment::ByteSize() const {
         this->transition(i));
   }
 
+  // repeated .hybridsim.Hline hline = 3;
+  total_size += 1 * this->hline_size();
+  for (int i = 0; i < this->hline_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->hline(i));
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -6600,6 +7175,7 @@ void Environment::MergeFrom(const Environment& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   room_.MergeFrom(from.room_);
   transition_.MergeFrom(from.transition_);
+  hline_.MergeFrom(from.hline_);
 }
 
 void Environment::CopyFrom(const ::google::protobuf::Message& from) {
@@ -6626,6 +7202,7 @@ void Environment::Swap(Environment* other) {
 void Environment::InternalSwap(Environment* other) {
   room_.UnsafeArenaSwap(&other->room_);
   transition_.UnsafeArenaSwap(&other->transition_);
+  hline_.UnsafeArenaSwap(&other->hline_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -6699,6 +7276,36 @@ const ::google::protobuf::RepeatedPtrField< ::hybridsim::Transition >&
 Environment::transition() const {
   // @@protoc_insertion_point(field_list:hybridsim.Environment.transition)
   return transition_;
+}
+
+// repeated .hybridsim.Hline hline = 3;
+int Environment::hline_size() const {
+  return hline_.size();
+}
+void Environment::clear_hline() {
+  hline_.Clear();
+}
+const ::hybridsim::Hline& Environment::hline(int index) const {
+  // @@protoc_insertion_point(field_get:hybridsim.Environment.hline)
+  return hline_.Get(index);
+}
+::hybridsim::Hline* Environment::mutable_hline(int index) {
+  // @@protoc_insertion_point(field_mutable:hybridsim.Environment.hline)
+  return hline_.Mutable(index);
+}
+::hybridsim::Hline* Environment::add_hline() {
+  // @@protoc_insertion_point(field_add:hybridsim.Environment.hline)
+  return hline_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::hybridsim::Hline >*
+Environment::mutable_hline() {
+  // @@protoc_insertion_point(field_mutable_list:hybridsim.Environment.hline)
+  return &hline_;
+}
+const ::google::protobuf::RepeatedPtrField< ::hybridsim::Hline >&
+Environment::hline() const {
+  // @@protoc_insertion_point(field_list:hybridsim.Environment.hline)
+  return hline_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

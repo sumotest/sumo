@@ -36,7 +36,7 @@ const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-																								hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+		hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -178,6 +178,7 @@ void MSGRPCClient::generateGoal(hybridsim::Scenario * sc, double & dx, double & 
 
 void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 	int trId = 0;
+	int hlId = -1;
 
 	std::vector<MSEdge*> walkingAreas;
 	std::map<MSEdge*,std::vector<hybridsim::Transition>> walkingAreasTransitionMapping;
@@ -275,6 +276,20 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					PositionVector  s = PositionVector(l->getShape());
 					double width = l->getWidth();
 					s.move2side(-width/2);
+
+					std::vector<hybridsim::Hline*> lines;
+					for (int i = 1; i < s.size()-1; i++){
+						hybridsim::Hline * hl = env->add_hline();
+						hl->set_id(++hlId);
+						hl->set_room_id(e->getNumericalID());
+						hl->set_subroom_id(l->getNumericalID());
+						hybridsim::Coordinate* vert1 = hl->mutable_vert1();
+						vert1->set_x(s[i].x());
+						vert1->set_y(s[i].y());
+						lines.push_back(hl);
+					}
+
+
 					hybridsim::Polygon * p1 = subroom->add_polygon();
 					p1->set_caption("SUMO generated wall");
 #ifdef DEBUG
@@ -294,6 +309,15 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					c21->set_x((s.end()-1)->x());
 					c21->set_y((s.end()-1)->y());
 					s.move2side(width);
+
+
+					for (int i = 1; i < s.size()-1; i++){
+						hybridsim::Hline * hl = lines.at(i-1);
+						hybridsim::Coordinate* vert2 = hl->mutable_vert2();
+						vert2->set_x(s[i].x());
+						vert2->set_y(s[i].y());
+
+					}
 					hybridsim::Polygon * p2 = subroom->add_polygon();
 					p2->set_caption("SUMO generated wall");
 #ifdef DEBUG
@@ -553,7 +577,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 					extractCoordinate(leaveC,ln,st->getMyStage()->getArrivalPos());
 				}
 				hybridsim::Link * l =  req.mutable_leg()->add_link();
-				Position p = ln->getShape().getCentroid();
+				Position p = ln->getShape().getLineCenter();
 				hybridsim::Coordinate * cr = l->mutable_centroid();
 				cr->set_x(p.x());
 				cr->set_y(p.y());

@@ -38,6 +38,15 @@ message Scenario {
     repeated Router router = 7;
 }
 
+
+message Hline {
+    int32 id = 1;
+    int32 room_id = 2;
+    int32 subroom_id = 3;
+    Coordinate vert1 = 4;
+    Coordinate vert2 = 5;
+}
+
 message Router {
     int32 router_id = 1;
     string description = 2;
@@ -120,6 +129,7 @@ message Goal {
 message Environment {
     repeated Room room = 1;
     repeated Transition transition = 2;
+    repeated Hline hline = 3;
 }
 
 message Transition {
@@ -179,7 +189,7 @@ message Leg {
 }
 
 message Link {
-    Coordinate centroid = 1;
+    Coordinate centroid = 1; //TODO: rename! In SUMO those links correspond to edges that are not necessarily convex
     string id = 2;
 }
 
