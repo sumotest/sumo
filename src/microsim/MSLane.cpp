@@ -1829,12 +1829,6 @@ MSLane::getNettoOccupancy() const {
 
 
 SUMOReal
-MSLane::getBruttoVehLenSum() const {
-    return myBruttoVehicleLengthSum;
-}
-
-
-SUMOReal
 MSLane::getWaitingSeconds() const {
     if (myVehicles.size() == 0) {
         return 0;

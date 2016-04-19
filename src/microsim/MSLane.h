@@ -812,7 +812,9 @@ public:
     /** @brief Returns the sum of lengths of vehicles, including their minGaps, which were on the lane during the last step
      * @return The sum of vehicle lengths of vehicles in the last step
      */
-    SUMOReal getBruttoVehLenSum() const;
+    inline SUMOReal getBruttoVehLenSum() const {
+        return myBruttoVehicleLengthSum;
+    }
 
 
     /** @brief Returns the sum of last step CO2 emissions
