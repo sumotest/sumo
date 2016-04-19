@@ -1376,6 +1376,7 @@ MSLCM_SL2015::_wantsChangeSublane(
                 return ret;
             }
         } else {
+            latDist = 0;
             ret |= LCA_SUBLANE | LCA_STAY;
         }
     }
