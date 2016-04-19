@@ -1395,7 +1395,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead, SUMOReal latOffset,
         if (pred != 0) {
             // @todo avoid multiple adaptations to the same leader
             const SUMOReal predBack = pred->getBackPositionOnLane(lane);
-            const SUMOReal gap = (lane == myLane
+            const SUMOReal gap = (lastLink == 0
                     ? predBack - myState.myPos - getVehicleType().getMinGap()
                     : predBack + seen - lane->getLength() - getVehicleType().getMinGap());
             if (gDebugFlag1) std::cout << "     pred=" << pred->getID() << " predLane=" << pred->getLane()->getID() << " predPos=" << pred->getPositionOnLane() << " gap=" << gap << " predBack=" << predBack << " seen=" << seen << " lane=" << lane->getID() << " myLane=" << myLane->getID() << "\n";
