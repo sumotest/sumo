@@ -288,7 +288,7 @@ MSTrafficLightLogic::setCurrentDurationIncrement(SUMOTime delay) {
 void MSTrafficLightLogic::initMesoTLSPenalties() {
     // set mesoscopic time penalties
     const Phases& phases = getPhases();
-    const int numLinks = phases.front()->getState().size();
+    const int numLinks = (int)phases.front()->getState().size();
     assert(myLinks.size() >= numLinks);
     SUMOTime duration = 0;
     std::vector<SUMOReal> redDuration(numLinks, 0);
@@ -306,7 +306,7 @@ void MSTrafficLightLogic::initMesoTLSPenalties() {
                 redDuration[j] = 0;
             }
         }
-    } 
+    }
     /// XXX penalty for wrap-around red phases is underestimated
     for (int j = 0; j < numLinks; ++j) {
         if (redDuration[j] > 0) {

@@ -52,11 +52,11 @@
 #pragma warning(disable: 4355)
 #endif
 GUIMEVehicle::GUIMEVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
-                       const MSVehicleType* type, const SUMOReal speedFactor) :
+                           const MSVehicleType* type, const SUMOReal speedFactor) :
     MEVehicle(pars, route, type, speedFactor),
-    GUIBaseVehicle((MSBaseVehicle&)*this),
-    myPos(Position::INVALID)
-{ }
+    GUIBaseVehicle((MSBaseVehicle&) * this),
+    myPos(Position::INVALID) {
+}
 #ifdef _MSC_VER
 #pragma warning(default: 4355)
 #endif
@@ -67,7 +67,7 @@ GUIMEVehicle::~GUIMEVehicle() { }
 
 GUIParameterTableWindow*
 GUIMEVehicle::getParameterWindow(GUIMainWindow& app,
-                               GUISUMOAbstractView&) {
+                                 GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 20);
     // add items
@@ -142,7 +142,7 @@ GUIMEVehicle::getParameterWindow(GUIMainWindow& app,
 
 GUIParameterTableWindow*
 GUIMEVehicle::getTypeParameterWindow(GUIMainWindow& app,
-                               GUISUMOAbstractView&) {
+                                     GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 10);
     // add items
@@ -167,7 +167,7 @@ GUIMEVehicle::getTypeParameterWindow(GUIMainWindow& app,
 }
 
 
-Position 
+Position
 GUIMEVehicle::getPosition(const SUMOReal /* offset */) const {
     if (myPos == Position::INVALID && mySegment != 0) {
         // best guess before the actual position is set in GUIEdge::drawMesoVehicles
@@ -178,7 +178,7 @@ GUIMEVehicle::getPosition(const SUMOReal /* offset */) const {
 }
 
 
-SUMOReal 
+SUMOReal
 GUIMEVehicle::getAngle() const {
     return myAngle;
 }
@@ -198,38 +198,38 @@ GUIMEVehicle::getColorValue(size_t activeScheme) const {
             return getSpeed();
         case 9:
             return getWaitingSeconds();
-        case 10:
-            return 0; // invalid getLastLaneChangeOffset();
         case 11:
-            return getSegment()->getEdge().getVehicleMaxSpeed(this);
+            return 0; // invalid getLastLaneChangeOffset();
         case 12:
-            return 0; // invalid getCO2Emissions();
+            return getSegment()->getEdge().getVehicleMaxSpeed(this);
         case 13:
-            return 0; // invalid getCOEmissions();
+            return 0; // invalid getCO2Emissions();
         case 14:
-            return 0; // invalid getPMxEmissions();
+            return 0; // invalid getCOEmissions();
         case 15:
-            return 0; // invalid  getNOxEmissions();
+            return 0; // invalid getPMxEmissions();
         case 16:
-            return 0; // invalid getHCEmissions();
+            return 0; // invalid  getNOxEmissions();
         case 17:
-            return 0; // invalid getFuelConsumption();
+            return 0; // invalid getHCEmissions();
         case 18:
+            return 0; // invalid getFuelConsumption();
+        case 19:
             return 0; // invalid getHarmonoise_NoiseEmissions();
-        case 19: // !!! unused!?
+        case 20: // !!! unused!?
             if (getNumberReroutes() == 0) {
                 return -1;
             }
             return getNumberReroutes();
-        case 20:
-            return gSelected.isSelected(GLO_VEHICLE, getGlID());
         case 21:
-            return 0; // invalid getBestLaneOffset();
+            return gSelected.isSelected(GLO_VEHICLE, getGlID());
         case 22:
-            return 0; // invalid getAcceleration();
+            return 0; // invalid getBestLaneOffset();
         case 23:
-            return 0; // invalid getTimeGap();
+            return 0; // invalid getAcceleration();
         case 24:
+            return 0; // invalid getTimeGap();
+        case 25:
             return STEPS2TIME(getDepartDelay());
     }
     return 0;
@@ -239,12 +239,12 @@ GUIMEVehicle::getColorValue(size_t activeScheme) const {
 
 void
 GUIMEVehicle::drawRouteHelper(const MSRoute& r, SUMOReal exaggeration) const {
-   MSRouteIterator i = r.begin();
-   for (; i != r.end(); ++i) { 
-       const GUILane* lane = static_cast<GUILane*>((*i)->getLanes()[0]); 
-       GLHelper::drawBoxLines(lane->getShape(), lane->getShapeRotations(), lane->getShapeLengths(), 1.0); 
-       GLHelper::drawBoxLines(lane->getShape(), lane->getShapeRotations(), lane->getShapeLengths(), exaggeration); 
-   } 
+    MSRouteIterator i = r.begin();
+    for (; i != r.end(); ++i) {
+        const GUILane* lane = static_cast<GUILane*>((*i)->getLanes()[0]);
+        GLHelper::drawBoxLines(lane->getShape(), lane->getShapeRotations(), lane->getShapeLengths(), 1.0);
+        GLHelper::drawBoxLines(lane->getShape(), lane->getShapeRotations(), lane->getShapeLengths(), exaggeration);
+    }
 }
 
 

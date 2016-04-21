@@ -72,7 +72,7 @@ public:
 
     void addRide(const ROEdge* const from, const ROEdge* const to, const std::string& lines, const std::string& destStop);
 
-    void addWalk(const SUMOReal duration, const SUMOReal speed, const ConstROEdgeVector& edges,
+    void addWalk(const ConstROEdgeVector& edges, const SUMOReal duration, const SUMOReal speed,
                  const SUMOReal departPos, const SUMOReal arrivalPos, const std::string& busStop);
 
     void addStop(const SUMOVehicleParameter::Stop& stopPar, const ROEdge* const stopEdge);
@@ -154,8 +154,8 @@ public:
     class Ride : public TripItem {
     public:
         Ride(const ROEdge* const _from, const ROEdge* const _to,
-             const std::string& _lines, const std::string& _destStop="")
-             : from(_from), to(_to), lines(_lines), destStop(_destStop) {}
+             const std::string& _lines, const std::string& _destStop = "")
+            : from(_from), to(_to), lines(_lines), destStop(_destStop) {}
 
         const ROEdge* getOrigin() const {
             return from;
@@ -183,11 +183,11 @@ public:
      */
     class Walk : public TripItem {
     public:
-        Walk(const ConstROEdgeVector& _edges, const std::string& _destStop="")
-            : dur(-1), v(-1), edges(_edges), dep(std::numeric_limits<SUMOReal>::infinity()), arr(std::numeric_limits<SUMOReal>::infinity()), destStop(_destStop) {}
-        Walk(const SUMOReal duration, const SUMOReal speed, const ConstROEdgeVector& edges,
+        Walk(const ConstROEdgeVector& _edges, const std::string& _destStop = "")
+            : edges(_edges), dur(-1), v(-1), dep(std::numeric_limits<SUMOReal>::infinity()), arr(std::numeric_limits<SUMOReal>::infinity()), destStop(_destStop) {}
+        Walk(const ConstROEdgeVector& edges, const SUMOReal duration, const SUMOReal speed,
              const SUMOReal departPos, const SUMOReal arrivalPos, const std::string& _destStop)
-            : dur(duration), v(speed), edges(edges), dep(departPos), arr(arrivalPos), destStop(_destStop) {}
+             : edges(edges), dur(duration), v(speed), dep(departPos), arr(arrivalPos), destStop(_destStop) {}
         const ROEdge* getOrigin() const {
             return edges.front();
         }
@@ -197,8 +197,8 @@ public:
         void saveAsXML(OutputDevice& os) const;
 
     private:
-        const SUMOReal dur, v, dep, arr;
         const ConstROEdgeVector edges;
+        const SUMOReal dur, v, dep, arr;
         const std::string destStop;
 
     private:

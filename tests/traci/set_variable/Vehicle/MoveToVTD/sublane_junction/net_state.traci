@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Fri Feb 12 08:43:18 2016 by SUMO Version dev-SVN-r19964
+<!-- generated on Thu Apr 21 09:17:39 2016 by SUMO Version dev-SVN-r20511
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -24,7 +24,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="23588"/>
+        <remote-port value="29153"/>
     </traci_server>
 
 </configuration>
@@ -58,7 +58,7 @@
     <timestep time="3.00">
         <edge id=":C_10">
             <lane id=":C_10_0">
-                <vehicle id="veh0" pos="6.65" speed="2.60" posLat="0.00"/>
+                <vehicle id="veh0" pos="6.65" speed="2.60" posLat="-0.05"/>
             </lane>
             <lane id=":C_10_1"/>
         </edge>

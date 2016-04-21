@@ -34,8 +34,10 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include <foreign/tcpip/socket.h>
-#include <utils/common/SUMOTime.h>
+#include <traci-server/TraCIConstants.h>
 
 
 // ===========================================================================
@@ -51,6 +53,11 @@
  * @class TraCIAPI
  * @brief C++ TraCI client API implementation
  */
+
+
+typedef long long int SUMOTime; // <utils/common/SUMOTime.h>
+
+
 class TraCIAPI {
 public:
     /// @name Structures definitions
@@ -689,49 +696,68 @@ public:
 
         std::vector<std::string> getIDList() const;
         unsigned int getIDCount() const;
-        SUMOReal getSpeed(const std::string& typeID) const;
-        TraCIPosition getPosition(const std::string& typeID) const;
-        SUMOReal getAngle(const std::string& typeID) const;
-        std::string getRoadID(const std::string& typeID) const;
-        std::string getLaneID(const std::string& typeID) const;
-        unsigned int getLaneIndex(const std::string& typeID) const;
-        std::string getTypeID(const std::string& typeID) const;
-        std::string getRouteID(const std::string& typeID) const;
-        unsigned int getRouteIndex(const std::string& typeID) const;
-        std::vector<std::string> getEdges(const std::string& typeID) const;
-        TraCIColor getColor(const std::string& typeID) const;
-        SUMOReal getLanePosition(const std::string& typeID) const;
-        SUMOReal getWaitingTime(const std::string& vehID) const;
+        SUMOReal getSpeed(const std::string& vehicleID) const;
+        TraCIPosition getPosition(const std::string& vehicleID) const;
+        SUMOReal getAngle(const std::string& vehicleID) const;
+        std::string getRoadID(const std::string& vehicleID) const;
+        std::string getLaneID(const std::string& vehicleID) const;
+        unsigned int getLaneIndex(const std::string& vehicleID) const;
+        std::string getvehicleID(const std::string& vehicleID) const;
+        std::string getRouteID(const std::string& vehicleID) const;
+        unsigned int getRouteIndex(const std::string& vehicleID) const;
+        std::vector<std::string> getEdges(const std::string& vehicleID) const;
+        TraCIColor getColor(const std::string& vehicleID) const;
+        SUMOReal getLanePosition(const std::string& vehicleID) const;
+        unsigned int getSignalStates(const std::string& vehicleID) const;
+        SUMOReal getWaitingTime(const std::string& vehicleID) const;
         std::vector<NextTLSData> getNextTLS(const std::string& vehID) const;
 
         /* /// not yet implemented 
-        SUMOReal getCO2Emissions(const std::string& typeID) const;
-        SUMOReal getCOEmissions(const std::string& typeID) const;
-        SUMOReal getHCEmissions(const std::string& typeID) const;
-        SUMOReal getPMxEmissions(const std::string& typeID) const;
-        SUMOReal getNOxEmissions(const std::string& typeID) const;
-        SUMOReal getFuelConsumption(const std::string& typeID) const;
-        SUMOReal getNoiseEmission(const std::string& typeID) const;
-        unsigned int getBestLanes(const std::string& typeID) const;
-        unsigned int getStopState(const std::string& typeID) const;
-        SUMOReal getLength(const std::string& typeID) const;
-        SUMOReal getMaxSpeed(const std::string& typeID) const;
-        SUMOReal getAccel(const std::string& typeID) const;
-        SUMOReal getDecel(const std::string& typeID) const;
-        SUMOReal getTau(const std::string& typeID) const;
-        SUMOReal getImperfection(const std::string& typeID) const;
-        SUMOReal getSpeedFactor(const std::string& typeID) const;
-        SUMOReal getSpeedDeviation(const std::string& typeID) const;
-        std::string getVClass(const std::string& typeID) const;
-        std::string getEmissionClass(const std::string& typeID) const;
-        std::string getShapeClass(const std::string& typeID) const;
-        SUMOReal getMinGap(const std::string& typeID) const;
-        SUMOReal getWidth(const std::string& typeID) const;
+        SUMOReal getCO2Emissions(const std::string& vehicleID) const;
+        SUMOReal getCOEmissions(const std::string& vehicleID) const;
+        SUMOReal getHCEmissions(const std::string& vehicleID) const;
+        SUMOReal getPMxEmissions(const std::string& vehicleID) const;
+        SUMOReal getNOxEmissions(const std::string& vehicleID) const;
+        SUMOReal getFuelConsumption(const std::string& vehicleID) const;
+        SUMOReal getNoiseEmission(const std::string& vehicleID) const;
+        unsigned int getBestLanes(const std::string& vehicleID) const;
+        unsigned int getStopState(const std::string& vehicleID) const;
+        SUMOReal getLength(const std::string& vehicleID) const;
+        SUMOReal getMaxSpeed(const std::string& vehicleID) const;
+        SUMOReal getAccel(const std::string& vehicleID) const;
+        SUMOReal getDecel(const std::string& vehicleID) const;
+        SUMOReal getTau(const std::string& vehicleID) const;
+        SUMOReal getImperfection(const std::string& vehicleID) const;
+        SUMOReal getSpeedFactor(const std::string& vehicleID) const;
+        SUMOReal getSpeedDeviation(const std::string& vehicleID) const;
+        std::string getVClass(const std::string& vehicleID) const;
+        std::string getEmissionClass(const std::string& vehicleID) const;
+        std::string getShapeClass(const std::string& vehicleID) const;
+        SUMOReal getMinGap(const std::string& vehicleID) const;
+        SUMOReal getWidth(const std::string& vehicleID) const;
         */
 
-        void moveTo(const std::string& typeID, const std::string& laneID, SUMOReal position) const;
-        void slowDown(const std::string& typeID, SUMOReal speed, int duration) const;
-        void setSpeed(const std::string& typeID, SUMOReal speed) const;
+        void add(const std::string& vehicleID, 
+                const std::string& routeID, 
+                const std::string& typeID="DEFAULT_VEHTYPE", 
+                SUMOTime depart=-1,
+                int departLane=0, 
+                const std::string& departPos ="base", 
+                SUMOReal departSpeed=0, 
+                const std::string& arrivalLane="current", 
+                const std::string& arrivalPos="max", 
+                const std::string& arrivalSpeed="current",
+                const std::string& fromTaz="", 
+                const std::string& toTaz="", 
+                const std::string& line="", 
+                int personCapacity=0, 
+                int personNumber=0) const;
+
+        void moveTo(const std::string& vehicleID, const std::string& laneID, SUMOReal position) const;
+        void moveToXY(const std::string& vehicleID, const std::string& edgeID, int lane, SUMOReal x, SUMOReal y, SUMOReal angle, bool keepRoute) const;
+        void slowDown(const std::string& vehicleID, SUMOReal speed, int duration) const;
+        void setSpeed(const std::string& vehicleID, SUMOReal speed) const;
+        void remove(const std::string& vehicleID, char reason=REMOVE_VAPORIZED) const;
 
     private:
         /// @brief invalidated copy constructor
@@ -844,6 +870,14 @@ protected:
     void processGET(tcpip::Storage& inMsg, int command, int expectedType, bool ignoreCommandId = false) const;
     /// @}
 
+    template <class T>
+    static inline std::string toString(const T& t, std::streamsize accuracy = OUTPUT_ACCURACY) {
+        std::ostringstream oss;
+        oss.setf(std::ios::fixed , std::ios::floatfield);
+        oss << std::setprecision(accuracy);
+        oss << t;
+        return oss.str();
+    }
 
 protected:
     /// @brief The socket

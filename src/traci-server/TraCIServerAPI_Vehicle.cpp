@@ -102,7 +102,7 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
             && variable != VAR_PARAMETER
             && variable != VAR_NEXT_TLS
        ) {
-        return server.writeErrorStatusCmd(CMD_GET_VEHICLE_VARIABLE, "Get Vehicle Variable: unsupported variable " + toHex(variable,2) + " specified", outputStorage);
+        return server.writeErrorStatusCmd(CMD_GET_VEHICLE_VARIABLE, "Get Vehicle Variable: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // begin response building
     tcpip::Storage tempMsg;
@@ -498,7 +498,7 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             && variable != ADD && variable != ADD_FULL && variable != REMOVE
             && variable != VAR_MOVE_TO_VTD && variable != VAR_PARAMETER/* && variable != VAR_SPEED_TIME_LINE && variable != VAR_LANE_TIME_LINE*/
        ) {
-        return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Change Vehicle State: unsupported variable " + toHex(variable,2) + " specified", outputStorage);
+        return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Change Vehicle State: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // id
     std::string id = inputStorage.readString();
@@ -1283,8 +1283,9 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             if (inputStorage.readUnsignedByte() != TYPE_COMPOUND) {
                 return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Setting VTD vehicle requires a compound object.", outputStorage);
             }
-            if (inputStorage.readInt() != 5) {
-                return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Setting VTD vehicle should obtain: edgeID, lane, x, y, angle.", outputStorage);
+            const int numArgs = inputStorage.readInt();
+            if (numArgs != 5 && numArgs != 6) {
+                return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Setting VTD vehicle should obtain: edgeID, lane, x, y, angle and optionally keepRouteFlag.", outputStorage);
             }
             // edge ID
             std::string edgeID;
@@ -1311,6 +1312,14 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             if (!server.readTypeCheckingDouble(inputStorage, origAngle)) {
                 return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "The fifth parameter for setting a VTD vehicle must be the angle given as a double.", outputStorage);
             }
+            bool keepRoute = v->getID() != "VTD_EGO";
+            if (numArgs == 6) {
+                int keepRouteFlag; 
+                if (!server.readTypeCheckingByte(inputStorage, keepRouteFlag)) {
+                    return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "The sixth parameter for setting a VTD vehicle must be the keepRouteFlag given as a byte.", outputStorage);
+                }
+                keepRoute = (keepRouteFlag > 0);
+            }
             // process
             if (!v->isOnRoad()) {
                 break;
@@ -1332,7 +1341,7 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             v->getBestLanes();
 #ifdef DEBUG_VTD
             std::cout << std::endl << "begin vehicle " << v->getID() << " vehPos:" << vehPos << " lane:" << v->getLane()->getID() << std::endl;
-            std::cout << " want pos:" << pos << " edge:" << edgeID << " laneNum:" << laneNum << " origAngle:" << origAngle << " angle:" << angle << std::endl;
+            std::cout << " want pos:" << pos << " edge:" << edgeID << " laneNum:" << laneNum << " origAngle:" << origAngle << " angle:" << angle << " keepRoute:" << keepRoute << std::endl;
 #endif
 
             ConstMSEdgeVector edges;
@@ -1343,7 +1352,6 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             int routeOffset = 0;
             bool found;
             SUMOReal maxRouteDistance = 100;
-            const bool keepRoute = v->getID() != "VTD_EGO"; // @todo #2033
             /* EGO vehicle is known to have a fixed route. @todo make this into a parameter of the TraCI call */
             if (keepRoute) {
                 // case a): vehicle is on its earlier route
@@ -1599,7 +1607,7 @@ TraCIServerAPI_Vehicle::vtdMap(const Position& pos, const std::string& origID, c
 }
 
 
-bool 
+bool
 TraCIServerAPI_Vehicle::findCloserLane(const MSEdge* edge, const Position& pos, SUMOReal& bestDistance, MSLane** lane) {
     if (edge == 0) {
         return false;
@@ -1630,7 +1638,7 @@ TraCIServerAPI_Vehicle::vtdMap_matchingRoutePosition(const Position& pos, const 
     routeOffset = 0;
     // routes may be looped which makes routeOffset ambiguous. We first try to
     // find the closest upcoming edge on the route and then look for closer passed edges
-    
+
     // look forward along the route
     const MSEdge* prev = 0;
     UNUSED_PARAMETER(prev); // silence 'unused variable' warning when built without INTERNAL_LANES

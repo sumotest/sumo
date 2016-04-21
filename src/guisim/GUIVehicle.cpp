@@ -87,7 +87,7 @@
 GUIVehicle::GUIVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
                        const MSVehicleType* type, const SUMOReal speedFactor) :
     MSVehicle(pars, route, type, speedFactor),
-    GUIBaseVehicle((MSBaseVehicle&)*this) {
+    GUIBaseVehicle((MSBaseVehicle&) * this) {
 }
 #ifdef _MSC_VER
 #pragma warning(default: 4355)
@@ -183,7 +183,7 @@ GUIVehicle::getParameterWindow(GUIMainWindow& app,
 
 GUIParameterTableWindow*
 GUIVehicle::getTypeParameterWindow(GUIMainWindow& app,
-                               GUISUMOAbstractView&) {
+                                   GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 14);
     // add items
@@ -384,7 +384,7 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
             return getFuelConsumption();
         case 19:
             return getHarmonoise_NoiseEmissions();
-        case 20: 
+        case 20:
             if (getNumberReroutes() == 0) {
                 return -1;
             }
@@ -399,7 +399,7 @@ GUIVehicle::getColorValue(size_t activeScheme) const {
             return getTimeGap();
         case 25:
             return STEPS2TIME(getDepartDelay());
-        case 27:
+        case 26:
             return getElectricityConsumption();
     }
     return 0;

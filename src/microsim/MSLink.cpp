@@ -583,19 +583,19 @@ MSLink::getViaLane() const {
 }
 
 
-bool 
+bool
 MSLink::isExitLink() const {
     /// XXX this only works in networks with internal lanes
     return getInternalLaneBefore() != 0 && myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_NORMAL;
 }
 
 
-bool 
+bool
 MSLink::isInternalJunctionLink() const {
     return getInternalLaneBefore() != 0 && myInternalLane != 0;
 }
 
-bool 
+bool
 MSLink::fromInternalLane() const {
     return isExitLink() || isInternalJunctionLink();
 }
@@ -787,8 +787,7 @@ MSLink::getZipperSpeed(const MSVehicle* ego, const SUMOReal dist, SUMOReal vSafe
             // also ignore vehicles that are behind us and are able to brake for us
             couldBrakeForLeader(avi.dist, dist, foe, ego) ||
             // resolve ties by lane index
-            (avi.arrivalTime == arrivalTime && avi.dist == dist && ego->getLane()->getIndex() < foe->getLane()->getIndex()))
-        {
+            (avi.arrivalTime == arrivalTime && avi.dist == dist && ego->getLane()->getIndex() < foe->getLane()->getIndex())) {
             //if (gDebugFlag1) std::cout
             //    << "    ignoring foe=" << foe->getID()
             //        << " foeAT=" << avi.arrivalTime

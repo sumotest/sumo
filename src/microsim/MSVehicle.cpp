@@ -140,64 +140,74 @@ MSVehicle::State::State(SUMOReal pos, SUMOReal speed, SUMOReal posLat, SUMOReal 
  * methods of MSVehicle::WaitingTimeCollector
  * ----------------------------------------------------------------------- */
 
-MSVehicle::WaitingTimeCollector::WaitingTimeCollector(SUMOTime memory) : myMemorySize(memory){}
+MSVehicle::WaitingTimeCollector::WaitingTimeCollector(SUMOTime memory) : myMemorySize(memory) {}
 
 MSVehicle::WaitingTimeCollector::WaitingTimeCollector(const WaitingTimeCollector& wt) : myMemorySize(wt.getMemorySize()), myWaitingIntervals(wt.getWaitingIntervals()) {}
 
 MSVehicle::WaitingTimeCollector&
-MSVehicle::WaitingTimeCollector::operator=(const WaitingTimeCollector& wt){
-   myMemorySize = wt.getMemorySize();
-   myWaitingIntervals = wt.getWaitingIntervals();
-   return *this;
+MSVehicle::WaitingTimeCollector::operator=(const WaitingTimeCollector& wt) {
+    myMemorySize = wt.getMemorySize();
+    myWaitingIntervals = wt.getWaitingIntervals();
+    return *this;
 }
 
 MSVehicle::WaitingTimeCollector&
-MSVehicle::WaitingTimeCollector::operator=(SUMOTime t){
-   myWaitingIntervals.clear();
-   passTime(t,true);
-   return *this;
+MSVehicle::WaitingTimeCollector::operator=(SUMOTime t) {
+    myWaitingIntervals.clear();
+    passTime(t, true);
+    return *this;
 }
 
 SUMOTime
-MSVehicle::WaitingTimeCollector::cumulatedWaitingTime(SUMOTime memorySpan) const{
-   assert(memorySpan <= myMemorySize);
-   if(memorySpan == -1) memorySpan = myMemorySize;
-   SUMOTime totalWaitingTime = 0;
-   for(waitingIntervalList::const_iterator i = myWaitingIntervals.begin(); i!=myWaitingIntervals.end(); i++){
-      if(i->second >= memorySpan){
-         if(i->first >= memorySpan) break;
-         else totalWaitingTime += memorySpan - i->first;
-      } else {
-         totalWaitingTime += i->second - i->first;
-      }
-   }
-   return totalWaitingTime;
+MSVehicle::WaitingTimeCollector::cumulatedWaitingTime(SUMOTime memorySpan) const {
+    assert(memorySpan <= myMemorySize);
+    if (memorySpan == -1) {
+        memorySpan = myMemorySize;
+    }
+    SUMOTime totalWaitingTime = 0;
+    for (waitingIntervalList::const_iterator i = myWaitingIntervals.begin(); i != myWaitingIntervals.end(); i++) {
+        if (i->second >= memorySpan) {
+            if (i->first >= memorySpan) {
+                break;
+            } else {
+                totalWaitingTime += memorySpan - i->first;
+            }
+        } else {
+            totalWaitingTime += i->second - i->first;
+        }
+    }
+    return totalWaitingTime;
 }
 
 void
-MSVehicle::WaitingTimeCollector::passTime(SUMOTime dt, bool waiting){
-   waitingIntervalList::iterator i = myWaitingIntervals.begin();
-   waitingIntervalList::iterator end = myWaitingIntervals.end();
-   bool startNewInterval = i==end || (i->first != 0);
-   while(i!=end){
-      i->first += dt;
-      if(i->first >= myMemorySize) break;
-      i->second += dt; i++;
-   }
+MSVehicle::WaitingTimeCollector::passTime(SUMOTime dt, bool waiting) {
+    waitingIntervalList::iterator i = myWaitingIntervals.begin();
+    waitingIntervalList::iterator end = myWaitingIntervals.end();
+    bool startNewInterval = i == end || (i->first != 0);
+    while (i != end) {
+        i->first += dt;
+        if (i->first >= myMemorySize) {
+            break;
+        }
+        i->second += dt;
+        i++;
+    }
 
-   // remove intervals beyond memorySize
-   waitingIntervalList::iterator::difference_type d = std::distance(i,end);
-   while(d > 0) {
-      myWaitingIntervals.pop_back();
-      d--;
-   }
+    // remove intervals beyond memorySize
+    waitingIntervalList::iterator::difference_type d = std::distance(i, end);
+    while (d > 0) {
+        myWaitingIntervals.pop_back();
+        d--;
+    }
 
-   if(!waiting) return;
-   else if(!startNewInterval)
-      myWaitingIntervals.begin()->first = 0;
-   else
-      myWaitingIntervals.push_front(std::make_pair(0,dt));
-   return;
+    if (!waiting) {
+        return;
+    } else if (!startNewInterval) {
+        myWaitingIntervals.begin()->first = 0;
+    } else {
+        myWaitingIntervals.push_front(std::make_pair(0, dt));
+    }
+    return;
 }
 
 
@@ -407,7 +417,7 @@ MSVehicle::Influencer::setLaneChangeMode(int value) {
 }
 
 
-void 
+void
 MSVehicle::Influencer::setVTDControlled(MSLane* l, SUMOReal pos, SUMOReal posLat, SUMOReal angle, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t) {
     myVTDLane = l;
     myVTDPos = pos;
@@ -419,13 +429,13 @@ MSVehicle::Influencer::setVTDControlled(MSLane* l, SUMOReal pos, SUMOReal posLat
 }
 
 
-bool 
+bool
 MSVehicle::Influencer::isVTDControlled() const {
     return myLastVTDAccess == MSNet::getInstance()->getCurrentTimeStep();
 }
 
 
-bool 
+bool
 MSVehicle::Influencer::isVTDAffected(SUMOTime t) const {
     return myLastVTDAccess >= t - TIME2STEPS(10);
 }
@@ -443,7 +453,7 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     }
     myVTDLane->forceVehicleInsertion(v, myVTDPos, myVTDPosLat);
     v->updateBestLanes();
-    // inverse of GeomHelper::naviDegree 
+    // inverse of GeomHelper::naviDegree
     v->setAngle(M_PI / 2. - DEG2RAD(myVTDAngle));
 }
 
@@ -741,7 +751,7 @@ MSVehicle::getRerouteOrigin() const {
     return *myCurrEdge;
 }
 
-void 
+void
 MSVehicle::setAngle(SUMOReal angle) {
     myAngle = angle;
 }
@@ -1580,7 +1590,7 @@ MSVehicle::executeMove() {
     //     To avoid casual blinking brake lights at high speeds due to dawdling of the
     //      leading vehicle, we don't show brake lights when the deceleration could be caused
     //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
-    SUMOReal pseudoFriction = (0.05 +  0.005*getSpeed())*getSpeed();
+    SUMOReal pseudoFriction = (0.05 +  0.005 * getSpeed()) * getSpeed();
     bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
@@ -2517,11 +2527,11 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                     (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
                 }
                 copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
-                if (clanes[bestThisIndex].length < (*j).length 
+                if (clanes[bestThisIndex].length < (*j).length
                         || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
-                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset) && 
+                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset) &&
                             nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
-                        ) {
+                   ) {
                     bestThisIndex = index;
                 }
             }
@@ -2552,10 +2562,10 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         // set bestLaneOffset for all lanes
         index = 0;
         for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
-            if ((*j).length < clanes[bestThisIndex].length 
-                    || ((*j).length == clanes[bestThisIndex].length && abs((*j).bestLaneOffset) > abs(clanes[bestThisIndex].bestLaneOffset)) 
+            if ((*j).length < clanes[bestThisIndex].length
+                    || ((*j).length == clanes[bestThisIndex].length && abs((*j).bestLaneOffset) > abs(clanes[bestThisIndex].bestLaneOffset))
                     || (nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)
-                    ) {
+               ) {
                 (*j).bestLaneOffset = bestThisIndex - index;
                 if ((nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)) {
                     // try to move away from the lower-priority lane before it ends
@@ -2691,7 +2701,10 @@ MSVehicle::getLeader(SUMOReal dist) const {
         lead = *(it + 1);
     }
     if (lead != 0) {
-        return std::make_pair(lead, lead->getBackPositionOnLane(myLane) - getPositionOnLane() - getVehicleType().getMinGap());
+        std::pair<const MSVehicle* const, SUMOReal> result(
+            lead, lead->getBackPositionOnLane(myLane) - getPositionOnLane() - getVehicleType().getMinGap());
+        myLane->releaseVehicles();
+        return result;
     }
     myLane->releaseVehicles();
     const SUMOReal seen = myLane->getLength() - getPositionOnLane();
@@ -3003,7 +3016,7 @@ MSVehicle::unsafeLinkAhead(const MSLane* lane) const {
         MSLinkCont::const_iterator link = MSLane::succLinkSec(*this, view, *lane, bestLaneConts);
         DriveItemVector::const_iterator di = myLFLinkLanes.begin();
         while (!lane->isLinkEnd(link) && seen <= dist) {
-            if (!lane->getEdge().isInternal() 
+            if (!lane->getEdge().isInternal()
                     && (((*link)->getState() == LINKSTATE_ZIPPER && seen < MSLink::ZIPPER_ADAPT_DIST)
                         || !(*link)->havePriority())) {
                 // find the drive item corresponding to this link
@@ -3023,7 +3036,7 @@ MSVehicle::unsafeLinkAhead(const MSLane* lane) const {
                 }
                 if (found) {
                     const SUMOTime leaveTime = (*link)->getLeaveTime((*di).myArrivalTime, (*di).myArrivalSpeed,
-                             (*di).getLeaveSpeed(), getVehicleType().getLength());
+                                               (*di).getLeaveSpeed(), getVehicleType().getLength());
                     if ((*link)->hasApproachingFoe((*di).myArrivalTime, leaveTime, (*di).myArrivalSpeed, getCarFollowModel().getMaxDecel())) {
                         //std::cout << SIMTIME << " veh=" << getID() << " aborting changeTo=" << Named::getIDSecure(bestLaneConts.front()) << " linkState=" << toString((*link)->getState()) << " seen=" << seen << " dist=" << dist << "\n";
                         return true;

@@ -98,10 +98,13 @@ MSTransportable::MSTransportable(const SUMOVehicleParameter* pars, const MSVehic
 }
 
 MSTransportable::~MSTransportable() {
-    for (MSTransportablePlan::const_iterator i = myPlan->begin(); i != myPlan->end(); ++i) {
-        delete *i;
+    if (myPlan != 0) {
+        for (MSTransportablePlan::const_iterator i = myPlan->begin(); i != myPlan->end(); ++i) {
+            delete *i;
+        }
+        delete myPlan;
+        myPlan = 0;
     }
-    delete myPlan;
     delete myParameter;
 }
 

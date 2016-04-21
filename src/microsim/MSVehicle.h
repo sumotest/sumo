@@ -171,19 +171,19 @@ public:
         WaitingTimeCollector& operator=(SUMOTime t);
 
         // return the waiting time within the last memory millisecs
-        SUMOTime cumulatedWaitingTime(SUMOTime memory=-1) const;
+        SUMOTime cumulatedWaitingTime(SUMOTime memory = -1) const;
 
         // process time passing for dt millisecs
         void passTime(SUMOTime dt, bool waiting);
 
         // maximal memory time stored
         SUMOTime getMemorySize() const {
-           return myMemorySize;
+            return myMemorySize;
         }
 
         // maximal memory time stored
         const waitingIntervalList& getWaitingIntervals() const {
-           return myWaitingIntervals;
+            return myWaitingIntervals;
         }
 
     private:
@@ -1298,7 +1298,7 @@ public:
                                 const SUMOReal seen, const MSLane* const lane, SUMOReal distToCrossing) const;
 
     /// @brief get a numerical value for the priority of the  upcoming link
-    static int nextLinkPriority(const std::vector<MSLane*>& conts); 
+    static int nextLinkPriority(const std::vector<MSLane*>& conts);
 
 #endif
 

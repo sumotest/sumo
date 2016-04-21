@@ -153,13 +153,27 @@ MSMeanData::MeanDataValueTracker::MeanDataValueTracker(MSLane* const lane,
 
 
 MSMeanData::MeanDataValueTracker::~MeanDataValueTracker() {
+    std::list<TrackerEntry*>::iterator i;
+    for (i = myCurrentData.begin(); i != myCurrentData.end(); i++) {
+        delete *i;
+    }
+
+    // FIXME: myTrackedData may still hold some undeleted TrackerEntries. When to delete those? (Leo), refers to #2251
+    // code below fails
+
+//	std::map<SUMOVehicle*, TrackerEntry*>::iterator j;
+//	for(j=myTrackedData.begin(); j!=myTrackedData.end();j++){
+//		delete j->second;
+//	}
 }
 
 
 void
 MSMeanData::MeanDataValueTracker::reset(bool afterWrite) {
     if (afterWrite) {
-        myCurrentData.pop_front();
+        if (myCurrentData.begin() != myCurrentData.end()) {
+            myCurrentData.pop_front();
+        }
     } else {
         myCurrentData.push_back(new TrackerEntry(myParent->createValues(myLane, myLaneLength, false)));
     }

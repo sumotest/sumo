@@ -1,4 +1,4 @@
-TraCITestClient output file. Date: Fri Feb 12 08:49:44 2016
+TraCITestClient output file. Date: Thu Apr 21 09:17:39 2016
 
 
 -> Command sent: <SimulationStep2>:
@@ -55,7 +55,7 @@ TraCITestClient output file. Date: Fri Feb 12 08:49:44 2016
 .. Command acknowledged (2), [description: ]
 
 -> Command sent: <SimulationStep2>:
-tcpip::Socket::recvAndCheck @ recv: peer shutdown
+.. Command acknowledged (2), [description: ]
 
 -> Command sent: <Close>:
-tcpip::Socket::recvAndCheck @ recv: peer shutdown
+.. Command acknowledged (127), [description: ]
