@@ -12,5 +12,7 @@ no_overwrite
 
 # try to set invalid opposites
 invalid
-
 wrong_nodes
+
+# guess opposites for internal lanes
+internal_lanes
