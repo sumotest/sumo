@@ -33,3 +33,6 @@ opposite_ends
 
 # a stopped vehicle ends it stop before it is fully overtaken.
 overtaking_stopped_failure
+
+# two stopped vehicles are overtake over two edges with oncoming
+overtaking_2stopped_2edges
