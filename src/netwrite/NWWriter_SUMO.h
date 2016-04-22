@@ -111,7 +111,7 @@ protected:
      * @param[in] origNames Whether original names shall be written as parameter
      * @return Whether an internal edge was written
      */
-    static bool writeInternalEdges(OutputDevice& into, const NBNode& n, bool origNames);
+    static bool writeInternalEdges(OutputDevice& into, const NBEdgeCont& ec, const NBNode& n, bool origNames);
 
 
     /** @brief Writes an edge (<edge ...)
@@ -196,6 +196,8 @@ private:
     static void writeRoundabout(OutputDevice& into, const std::vector<std::string>& r,
                                 const NBEdgeCont& ec);
 
+    /// @brief retrieve the id of the opposite direction internal lane if it exists
+    static std::string getOppositeInternalID(const NBEdgeCont& ec, const NBEdge* from, const NBEdge::Connection& con);
 
 };
 

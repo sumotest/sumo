@@ -93,7 +93,7 @@ NWWriter_SUMO::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
     if (!oc.getBool("no-internal-links")) {
         bool hadAny = false;
         for (std::map<std::string, NBNode*>::const_iterator i = nc.begin(); i != nc.end(); ++i) {
-            hadAny |= writeInternalEdges(device, *(*i).second, origNames);
+            hadAny |= writeInternalEdges(device, ec, *(*i).second, origNames);
         }
         if (hadAny) {
             device.lf();
@@ -219,8 +219,35 @@ NWWriter_SUMO::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
 }
 
 
+std::string 
+NWWriter_SUMO::getOppositeInternalID(const NBEdgeCont& ec, const NBEdge* from, const NBEdge::Connection& con) {
+    const NBEdge::Lane& succ = con.toEdge->getLanes()[con.toLane];
+    const NBEdge::Lane& pred = from->getLanes()[con.fromLane];
+    if (succ.oppositeID != "" && succ.oppositeID != "-" && pred.oppositeID != "" && pred.oppositeID != "-") {
+        // find the connection that connects succ.oppositeID to pred.oppositeID
+        const NBEdge* succOpp = ec.retrieve(succ.oppositeID.substr(0, succ.oppositeID.rfind("_")));
+        const NBEdge* predOpp = ec.retrieve(pred.oppositeID.substr(0, pred.oppositeID.rfind("_")));
+        assert(succOpp != 0);
+        assert(predOpp != 0);
+        const std::vector<NBEdge::Connection>& connections = succOpp->getConnections();
+        for (std::vector<NBEdge::Connection>::const_iterator it_c = connections.begin(); it_c != connections.end(); it_c++) {
+            const NBEdge::Connection& conOpp = *it_c;
+            if (succOpp != from && // turnaround
+                    succOpp->getLaneID(conOpp.fromLane) == succ.oppositeID &&
+                    predOpp == conOpp.toEdge && 
+                    predOpp->getLaneID(conOpp.toLane) == pred.oppositeID) {
+                return conOpp.getInternalLaneID();
+            }
+        }
+        return "";
+    } else {
+        return "";
+    }
+}
+
+
 bool
-NWWriter_SUMO::writeInternalEdges(OutputDevice& into, const NBNode& n, bool origNames) {
+NWWriter_SUMO::writeInternalEdges(OutputDevice& into, const NBEdgeCont& ec, const NBNode& n, bool origNames) {
     bool ret = false;
     const EdgeVector& incoming = n.getIncomingEdges();
     for (EdgeVector::const_iterator i = incoming.begin(); i != incoming.end(); i++) {
@@ -264,7 +291,7 @@ NWWriter_SUMO::writeInternalEdges(OutputDevice& into, const NBNode& n, bool orig
                 writeLane(into, internalEdgeID, (*k).getInternalLaneID(), (*k).vmax,
                           successor.permissions, successor.preferred,
                           NBEdge::UNSPECIFIED_OFFSET, successor.width, (*k).shape, (*k).origID,
-                          length, (*k).internalLaneIndex, origNames, "", &n);
+                          length, (*k).internalLaneIndex, origNames, getOppositeInternalID(ec, *i, *k), &n);
                 haveVia = haveVia || (*k).haveVia;
             }
             ret = true;
