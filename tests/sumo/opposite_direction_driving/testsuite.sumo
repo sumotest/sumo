@@ -1,6 +1,9 @@
 # a stopped vehicle is overtaken
 overtaking_noconflict
 
+# a stopped vehicle is overtaken
+overtaking_noconflict_subsecond
+
 # a stopped vehicle is overtake as soon as there is a safe gap in the oncoming traffic
 overtaking_stopped
 
@@ -21,6 +24,9 @@ forklifter_demo
 
 # a stopped vehicle is overtaken ahead of a geometry node
 overtaking_noconflict_2edges
+
+# a stopped vehicle is overtaken ahead of a geometry node with subsecond resolution
+overtaking_noconflict_2edges_subsec
 
 # opposite direction lane is not long enough for overtaking (and has no continuation)
 opposite_ends
