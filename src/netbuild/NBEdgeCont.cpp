@@ -770,7 +770,7 @@ NBEdgeCont::guessOpposites() {
                     }
                 }
                 if (opposite != 0) {
-                    lastLane.oppositeID = opposite->getID() + "_" + toString(opposite->getNumLanes() - 1);
+                    lastLane.oppositeID = opposite->getLaneID(opposite->getNumLanes() - 1);
                 }
             }
         }
