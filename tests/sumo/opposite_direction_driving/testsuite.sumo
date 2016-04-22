@@ -39,4 +39,7 @@ overtaking_2stopped_2edges
 
 # while overtaking through the opposite direction lane, any minor roads merging into the opposite direction lane have to yield
 overtaking_vehicle_blocks_minor_road
+
+# as above but testing left turn from minor road
+overtaking_vehicle_blocks_minor_road2
 no_overtaking_across_minor_link
