@@ -36,3 +36,7 @@ overtaking_stopped_failure
 
 # two stopped vehicles are overtake over two edges with oncoming
 overtaking_2stopped_2edges
+
+# while overtaking through the opposite direction lane, any minor roads merging into the opposite direction lane have to yield
+overtaking_vehicle_blocks_minor_road
+no_overtaking_across_minor_link
