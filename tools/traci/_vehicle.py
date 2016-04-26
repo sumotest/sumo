@@ -88,6 +88,7 @@ _RETURN_VALUE_FUNC = {tc.VAR_SPEED:           Storage.readDouble,
                       tc.VAR_NOXEMISSION:     Storage.readDouble,
                       tc.VAR_FUELCONSUMPTION: Storage.readDouble,
                       tc.VAR_NOISEEMISSION:   Storage.readDouble,
+                      tc.VAR_PERSON_NUMBER:   Storage.readInt,
                       tc.VAR_EDGE_TRAVELTIME: Storage.readDouble,
                       tc.VAR_EDGE_EFFORT:     Storage.readDouble,
                       tc.VAR_ROUTE_VALID: lambda result: bool(result.read("!B")[0]),
@@ -849,7 +850,7 @@ class VehicleDomain(Domain):
         self._connection._sendExact()
 
     def addFull(self, vehID, routeID, typeID="DEFAULT_VEHTYPE", depart=None,
-                departLane="0", departPos="base", departSpeed="0",
+                departLane="first", departPos="base", departSpeed="0",
                 arrivalLane="current", arrivalPos="max", arrivalSpeed="current",
                 fromTaz="", toTaz="", line="", personCapacity=0, personNumber=0):
         messageString = struct.pack("!Bi", tc.TYPE_COMPOUND, 14)
