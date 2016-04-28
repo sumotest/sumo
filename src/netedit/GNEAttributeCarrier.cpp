@@ -79,7 +79,7 @@ GNEAttributeCarrier::parse(const std::string& string) {
 
 template<> bool
 GNEAttributeCarrier::parse(const std::string& string) {
-    return TplConvert::_str2bool(string);
+    return TplConvert::_str2Bool(string);
 }
 
 
@@ -654,7 +654,7 @@ template<> bool
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
         if((*i).first == attr)
-            return TplConvert::_str2bool((*i).second);
+            return TplConvert::_str2Bool((*i).second);
 }
 
 
