@@ -226,6 +226,9 @@ MSFrame::fillOptions() {
     oc.doRegister("step-length", new Option_String("1", "TIME"));
     oc.addDescription("step-length", "Time", "Defines the step duration in seconds");
 
+    oc.doRegister("lateral-resolution", new Option_Float(-1));
+    oc.addDescription("lateral-resolution", "Processing", "Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane");
+
     // register the processing options
     oc.doRegister("route-steps", 's', new Option_String("200", "TIME"));
     oc.addDescription("route-steps", "Processing", "Load routes for the next number of seconds ahead");
@@ -346,18 +349,18 @@ MSFrame::fillOptions() {
     oc.doRegister("meso-taujj", new Option_String("2", "TIME"));
     oc.addDescription("meso-taujj", "Mesoscopic", "Factor for calculating the jam-jam headway time");
     oc.doRegister("meso-jam-threshold", new Option_Float(-1));
-    oc.addDescription("meso-jam-threshold", "Mesoscopic", 
-            "Minimum percentage of occupied space to consider a segment jammed. A negative argument causes thresholds to be computed based on edge speed and tauff (default)");
+    oc.addDescription("meso-jam-threshold", "Mesoscopic",
+                      "Minimum percentage of occupied space to consider a segment jammed. A negative argument causes thresholds to be computed based on edge speed and tauff (default)");
     oc.doRegister("meso-multi-queue", new Option_Bool(true));
     oc.addDescription("meso-multi-queue", "Mesoscopic", "Enable multiple queues at edge ends");
     oc.doRegister("meso-junction-control", new Option_Bool(false));
     oc.addDescription("meso-junction-control", "Mesoscopic", "Enable mesoscopic traffic light and priority junction handling");
     oc.doRegister("meso-junction-control.limited", new Option_Bool(false));
-    oc.addDescription("meso-junction-control.limited", "Mesoscopic", 
-            "Enable mesoscopic traffic light and priority junction handling for saturated links. This prevents faulty traffic lights from hindering flow in low-traffic situations");
+    oc.addDescription("meso-junction-control.limited", "Mesoscopic",
+                      "Enable mesoscopic traffic light and priority junction handling for saturated links. This prevents faulty traffic lights from hindering flow in low-traffic situations");
     oc.doRegister("meso-tls-penalty", new Option_Float(0));
-    oc.addDescription("meso-tls-penalty", "Mesoscopic", 
-            "Apply scaled time penalties when driving across tls controlled junctions based on green split instead of checking actual phases");
+    oc.addDescription("meso-tls-penalty", "Mesoscopic",
+                      "Apply scaled time penalties when driving across tls controlled junctions based on green split instead of checking actual phases");
     oc.doRegister("meso-overtaking", new Option_Bool(false));
     oc.addDescription("meso-overtaking", "Mesoscopic", "Enable mesoscopic overtaking");
     oc.doRegister("meso-recheck", new Option_String("0", "TIME"));
@@ -470,6 +473,9 @@ MSFrame::checkOptions() {
     if (oc.getBool("sloppy-insert")) {
         WRITE_WARNING("The option 'sloppy-insert' is deprecated, because it is now activated by default, see the new option 'eager-insert'.");
     }
+    if (string2time(oc.getString("lanechange.duration")) > 0 && oc.getFloat("lateral-resolution") > 0) {
+        WRITE_ERROR("Only one of the options 'lanechange.duration' or 'lateral-resolution' may be given.");
+    }
     if (oc.getBool("lanechange.allow-swap")) {
         WRITE_WARNING("The option 'lanechange.allow-swap' is deprecated, and will not be supported in future versions of SUMO.");
     }
@@ -500,6 +506,7 @@ MSFrame::setMSGlobals(OptionsCont& oc) {
     MSGlobals::gCheck4Accidents = !oc.getBool("ignore-accidents");
     MSGlobals::gCheckRoutes = !oc.getBool("ignore-route-errors");
     MSGlobals::gLaneChangeDuration = string2time(oc.getString("lanechange.duration"));
+    MSGlobals::gLateralResolution = oc.getFloat("lateral-resolution");
     MSGlobals::gStateLoaded = oc.isSet("load-state");
     MSGlobals::gUseMesoSim = oc.getBool("mesosim");
     MSGlobals::gMesoLimitedJunctionControl = oc.getBool("meso-junction-control.limited");

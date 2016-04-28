@@ -71,10 +71,11 @@ public:
 
     /** @brief Sets the default values
      * @param[in] defaultNumLanes The default number of lanes an edge has
+     * @param[in] defaultLaneWidth The default width of lanes 
      * @param[in] defaultSpeed The default speed allowed on an edge
      * @param[in] defaultPriority The default priority of an edge
      */
-    void setDefaults(int defaultNumLanes,
+    void setDefaults(int defaultNumLanes, SUMOReal defaultLaneWidth,
                      SUMOReal defaultSpeed, int defaultPriority);
 
 
@@ -239,8 +240,8 @@ private:
             oneWay(true), discard(false),
             width(NBEdge::UNSPECIFIED_WIDTH),
             sidewalkWidth(NBEdge::UNSPECIFIED_WIDTH),
-            bikeLaneWidth(NBEdge::UNSPECIFIED_WIDTH)
-        { }
+            bikeLaneWidth(NBEdge::UNSPECIFIED_WIDTH) {
+        }
 
         /// @brief Constructor
         TypeDefinition(int _numLanes, SUMOReal _speed, int _priority,
@@ -251,8 +252,8 @@ private:
             permissions(_permissions),
             oneWay(_oneWay), discard(false), width(_width),
             sidewalkWidth(_sideWalkWidth),
-            bikeLaneWidth(_bikeLaneWidth)
-        { }
+            bikeLaneWidth(_bikeLaneWidth) {
+        }
 
         /// @brief The number of lanes of an edge
         int numLanes;

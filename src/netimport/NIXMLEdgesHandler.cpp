@@ -79,8 +79,8 @@ NIXMLEdgesHandler::NIXMLEdgesHandler(NBNodeCont& nc,
       myCurrentEdge(0), myHaveReportedAboutOverwriting(false),
       myHaveReportedAboutTypeOverride(false),
       myHaveWarnedAboutDeprecatedLaneId(false),
-      myKeepEdgeShape(!options.getBool("plain.extend-edge-shape"))
-{}
+      myKeepEdgeShape(!options.getBool("plain.extend-edge-shape")) {
+}
 
 
 NIXMLEdgesHandler::~NIXMLEdgesHandler() {}
@@ -95,6 +95,9 @@ NIXMLEdgesHandler::myStartElement(int element,
             break;
         case SUMO_TAG_LANE:
             addLane(attrs);
+            break;
+        case SUMO_TAG_NEIGH:
+            myCurrentEdge->getLaneStruct((int)myCurrentEdge->getNumLanes()-1).oppositeID = attrs.getString(SUMO_ATTR_LANE);
             break;
         case SUMO_TAG_SPLIT:
             addSplit(attrs);

@@ -124,7 +124,7 @@ public:
     void selectTLS(bool selected);
 
     /** @brief Update the boundary of the junction */
-    void updateBoundary(); 
+    void updateBoundary();
 
     /** @brief reposition the node at pos and informs the edges
      * @param[in] pos The new position

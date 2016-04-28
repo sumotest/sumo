@@ -80,7 +80,7 @@ void
 GUITriggerBuilder::buildStoppingPlace(MSNet& net, const std::string& id, const std::vector<std::string>& lines,
                                       MSLane* lane, SUMOReal frompos, SUMOReal topos, const SumoXMLTag element) {
     bool success = false;
-    GUIGlObject* o = 0; 
+    GUIGlObject* o = 0;
     if (element == SUMO_TAG_CONTAINER_STOP) {
         GUIContainerStop* stop = new GUIContainerStop(id, lines, *lane, frompos, topos);
         success = net.addContainerStop(stop);
@@ -101,9 +101,9 @@ GUITriggerBuilder::buildStoppingPlace(MSNet& net, const std::string& id, const s
 
 
 void
-GUITriggerBuilder::buildChargingStation(MSNet& net, const std::string& id, MSLane* lane, SUMOReal frompos, SUMOReal topos,
-                   SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) {
-    GUIChargingStation* chrgStn = new GUIChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
+GUITriggerBuilder::buildChargingStation(MSNet& net, const std::string& id, MSLane* lane, SUMOReal frompos, SUMOReal topos, 
+                                        SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, int chargeDelay) {
+    GUIChargingStation* chrg = new GUIChargingStation(id, *lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay);
 
     if (!net.addChargingStation(chrgStn)) {
         delete chrgStn;

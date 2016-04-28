@@ -65,6 +65,10 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addSynonyme("default.lanenumber", "lanenumber", true);
     oc.addDescription("default.lanenumber", "Building Defaults", "The default number of lanes in an edge");
 
+    oc.doRegister("default.lanewidth", new Option_Float(NBEdge::UNSPECIFIED_WIDTH));
+    oc.addSynonyme("default.lanewidth", "lanewidth", true);
+    oc.addDescription("default.lanewidth", "Building Defaults", "The default width of lanes");
+
     oc.doRegister("default.speed", 'S', new Option_Float((SUMOReal) 13.9));
     oc.addSynonyme("default.speed", "speed", true);
     oc.addDescription("default.speed", "Building Defaults", "The default speed on an edge (in m/s)");
@@ -155,6 +159,9 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("roundabouts.guess", new Option_Bool(false));
     oc.addSynonyme("roundabouts.guess", "guess-roundabouts", true);
     oc.addDescription("roundabouts.guess", "Processing", "Enable roundabout-guessing");
+
+    oc.doRegister("opposites.guess", new Option_Bool(false));
+    oc.addDescription("opposites.guess", "Processing", "Enable guessing of opposite direction lanes usable for overtaking");
 
     oc.doRegister("lefthand", new Option_Bool(false));
     oc.addDescription("lefthand", "Processing", "Assumes left-hand traffic on the network");

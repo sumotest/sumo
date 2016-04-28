@@ -159,11 +159,9 @@ public:
     static bool canParse(const std::string& string) {
         try {
             parse<T>(string);
-        }
-        catch (NumberFormatException&) {
+        } catch (NumberFormatException&) {
             return false;
-        }
-        catch (EmptyData&) {
+        } catch (EmptyData&) {
             return false;
         }
         catch(BoolFormatException&) {

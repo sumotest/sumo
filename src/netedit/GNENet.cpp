@@ -1193,7 +1193,7 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
         it->second->setLogicValid(true);
         // updated shape
         it->second->updateBoundary();
-        refreshElement(it->second); 
+        refreshElement(it->second);
     }
     myNeedRecompute = false;
 }

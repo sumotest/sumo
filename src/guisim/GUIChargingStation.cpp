@@ -64,13 +64,8 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GUIChargingStation::GUIChargingStation(const std::string& id, MSLane& lane, SUMOReal frompos, SUMOReal topos, 
-	                SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay) :
+GUIChargingStation::GUIChargingStation(const std::string& id, MSLane& lane, SUMOReal frompos, SUMOReal topos,  SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, int chargeDelay) :
     MSChargingStation(id, lane, frompos, topos, chargingPower, efficiency, chargeInTransit, chargeDelay),
-    myChargingPower(chargingPower),
-    myEfficiency(efficiency),
-    myChargeInTransit(chargeInTransit),
-    myChargeDelay(chargeDelay),
     GUIGlObject_AbstractAdd("chargingStation", GLO_TRIGGER, id) {
     myFGShape = lane.getShape();
     myFGShape = myFGShape.getSubpart(frompos, topos);
@@ -99,8 +94,8 @@ GUIChargingStation::~GUIChargingStation()
 
 
 GUIParameterTableWindow*
-GUIChargingStation::getParameterWindow(GUIMainWindow& app,
-                                       GUISUMOAbstractView&) {
+GUIChargingStation::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView&) {
+    // Create table items
     GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 6);
 
     // add items
@@ -145,14 +140,51 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
     RGBColor blue(114, 210, 252, 255);
     RGBColor green(76, 170, 50, 255);
     RGBColor yellow(255, 235, 0, 255);
-    // draw the area
+	RGBColor yellowCharge(255, 180, 0, 255);
+
+    // draw the area depending if the vehicle is charging
     glTranslated(0, 0, getType());
-    GLHelper::setColor(blue);
+	
+    if(myChargingVehicle == true)
+		GLHelper::setColor(yellowCharge);
+    else
+		GLHelper::setColor(blue);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     GLHelper::drawBoxLines(myFGShape, myFGShapeRotations, myFGShapeLengths, exaggeration);
 
     // draw details unless zoomed out to far
     if (s.scale * exaggeration >= 10) {
+
+        // push charging power matrix
+        glPushMatrix();
+
+        // Traslate End positionof signal
+        glTranslated(myFGSignPos.x(), myFGSignPos.y(), 0);
+
+        // Rotate 180 (Eje X -> Mirror)
+        glRotated(180, 1, 0, 0);
+
+        // Rotate again using myBlockIconRotation
+        glRotated(myFGSignRot, 0, 0, 1);
+
+        // Set poligon mode
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        // set polyfront position on 0,0
+        pfSetPosition(0, 0);
+
+        // Set polyfront scale to 1
+        pfSetScale(1.f);
+
+         // traslate matrix
+        glTranslated(1.2, 0, 0);
+
+        // draw charging power
+        pfDrawString((toString(myChargingPower) + " W").c_str());
+
+        // pop charging power matrix
+        glPopMatrix();
+
         // draw the sign
         glTranslated(myFGSignPos.x(), myFGSignPos.y(), 0);
         int noPoints = 9;
@@ -161,7 +193,6 @@ GUIChargingStation::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         glScaled(exaggeration, exaggeration, 1);
-        GLHelper::setColor(blue);
         GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
         glTranslated(0, 0, .1);
 

@@ -72,8 +72,6 @@
 
 #define ROUNDABOUT_DIST_BONUS (SUMOReal)80.0
 
-#define CHANGE_PROB_THRESHOLD_RIGHT (SUMOReal)2.0
-#define CHANGE_PROB_THRESHOLD_LEFT (SUMOReal)0.2
 #define KEEP_RIGHT_TIME (SUMOReal)5.0 // the number of seconds after which a vehicle should move to the right lane
 #define KEEP_RIGHT_ACCEPTANCE (SUMOReal)2.0 // calibration factor for determining the desire to keep right
 
@@ -83,16 +81,22 @@
 // member method definitions
 // ===========================================================================
 MSLCM_LC2013::MSLCM_LC2013(MSVehicle& v) :
-    MSAbstractLaneChangeModel(v),
+    MSAbstractLaneChangeModel(v, LCM_LC2013),
     mySpeedGainProbability(0),
     myKeepRightProbability(0),
     myLeadingBlockerLength(0),
     myLeftSpace(0),
-    myLookAheadSpeed(LOOK_AHEAD_MIN_SPEED)
-{}
+    myLookAheadSpeed(LOOK_AHEAD_MIN_SPEED),
+    myStrategicParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_STRATEGIC_PARAM, 1)),
+    myCooperativeParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_COOPERATIVE_PARAM, 1)),
+    mySpeedGainParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_SPEEDGAIN_PARAM, 1)),
+    myKeepRightParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_KEEPRIGHT_PARAM, 1)),
+    CHANGE_PROB_THRESHOLD_LEFT(0.2 / MAX2(NUMERICAL_EPS, mySpeedGainParam)),
+    CHANGE_PROB_THRESHOLD_RIGHT(2.0 * myKeepRightParam / MAX2(NUMERICAL_EPS, mySpeedGainParam)) {
+}
 
 MSLCM_LC2013::~MSLCM_LC2013() {
-    changed(0);
+    changed();
 }
 
 
@@ -123,6 +127,8 @@ MSLCM_LC2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMORe
 SUMOReal
 MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
     int state = myOwnState;
+    //gDebugFlag2 = (myVehicle.getID() == "XXI_Aprile_1_452");
+    if (gDebugFlag2) std::cout << SIMTIME << " patchSpeed state=" << state << " myVSafes=" << toString(myVSafes) << "\n";
 
     // letting vehicles merge in at the end of the lane in case of counter-lane change, step#2
     SUMOReal MAGIC_offset = 1.;
@@ -145,7 +151,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     for (std::vector<SUMOReal>::const_iterator i = myVSafes.begin(); i != myVSafes.end(); ++i) {
         SUMOReal v = (*i);
         if (v >= min && v <= max) {
-            nVSafe = MIN2(v, nVSafe);
+            nVSafe = MIN2(v * myCooperativeParam + (1 - myCooperativeParam) * wanted, nVSafe);
             gotOne = true;
         } else {
         }
@@ -182,17 +188,19 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     }
     if (myVehicle.getLane()->getEdge().getLanes().size() == 1) {
         // remove chaning information if on a road with a single lane
-        changed(0);
+        changed();
     }
     return wanted;
 }
 
 
 void*
-MSLCM_LC2013::inform(void* info, MSVehicle* /* sender */) {
+MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
     Info* pinfo = (Info*) info;
     myVSafes.push_back(pinfo->first);
     myOwnState |= pinfo->second;
+    //gDebugFlag2 = (myVehicle.getID() == "XXI_Aprile_1_452");
+    if (gDebugFlag2) std::cout << SIMTIME << " informed by " << sender->getID() << " speed=" << pinfo->first << " state=" << pinfo->second << "\n";
     delete pinfo;
     return (void*) true;
 }
@@ -366,7 +374,7 @@ MSLCM_LC2013::prepareStep() {
 
 
 void
-MSLCM_LC2013::changed(int dir) {
+MSLCM_LC2013::changed() {
     myOwnState = 0;
     mySpeedGainProbability = 0;
     myKeepRightProbability = 0;
@@ -379,7 +387,6 @@ MSLCM_LC2013::changed(int dir) {
     myLookAheadSpeed = LOOK_AHEAD_MIN_SPEED;
     myVSafes.clear();
     myDontBrake = false;
-    initLastLaneChangeOffset(dir);
 }
 
 
@@ -408,16 +415,18 @@ MSLCM_LC2013::_wantsChange(
         // internal edges are not kept inside the bestLanes structure
         prebLane = prebLane->getLinkCont()[0]->getLane();
     }
+    const bool checkOpposite = &neighLane.getEdge() != &myVehicle.getLane()->getEdge();
+    const int prebOffset = (checkOpposite ? 0 : laneOffset);
     for (int p = 0; p < (int) preb.size(); ++p) {
         if (preb[p].lane == prebLane && p + laneOffset >= 0) {
-            assert(p + laneOffset < (int)preb.size());
+            assert(p + prebOffset < (int)preb.size());
             curr = preb[p];
-            neigh = preb[p + laneOffset];
+            neigh = preb[p + prebOffset];
             currentDist = curr.length;
             neighDist = neigh.length;
             bestLaneOffset = curr.bestLaneOffset;
-            if (bestLaneOffset == 0 && preb[p + laneOffset].bestLaneOffset == 0) {
-                bestLaneOffset = laneOffset;
+            if (bestLaneOffset == 0 && preb[p + prebOffset].bestLaneOffset == 0) {
+                bestLaneOffset = prebOffset;
             }
             best = preb[p + bestLaneOffset];
             currIdx = p;
@@ -426,6 +435,15 @@ MSLCM_LC2013::_wantsChange(
     }
     // direction specific constants
     const bool right = (laneOffset == -1);
+    if (isOpposite() && right) {
+        neigh = preb[preb.size() - 1];
+        curr = neigh;
+        bestLaneOffset = -1;
+        curr.bestLaneOffset = -1;
+        neighDist = neigh.length;
+        currentDist = curr.length;
+    }
+    const SUMOReal posOnLane = isOpposite() ? myVehicle.getLane()->getLength() - myVehicle.getPositionOnLane() : myVehicle.getPositionOnLane();
     const int lca = (right ? LCA_RIGHT : LCA_LEFT);
     const int myLca = (right ? LCA_MRIGHT : LCA_MLEFT);
     const int lcaCounter = (right ? LCA_LEFT : LCA_RIGHT);
@@ -439,6 +457,20 @@ MSLCM_LC2013::_wantsChange(
         ret = slowDownForBlocked(firstBlocked, ret);
     }
 
+    //gDebugFlag2 = (myVehicle.getID() == "XXI_Aprile_1_452");
+    if (gDebugFlag2) std::cout << SIMTIME 
+        << " veh=" << myVehicle.getID()
+        << " _wantsChange state=" << myOwnState 
+        << " myVSafes=" << toString(myVSafes) 
+        << " firstBlocked=" << Named::getIDSecure(*firstBlocked)
+        << " lastBlocked=" << Named::getIDSecure(*lastBlocked)
+        << " leader=" << Named::getIDSecure(leader.first)
+        << " leaderGap=" << leader.second
+        << " neighLead=" << Named::getIDSecure(neighLead.first)
+        << " neighLeadGap=" << neighLead.second
+        << " neighFollow=" << Named::getIDSecure(neighFollow.first)
+        << " neighFollowGap=" << neighFollow.second
+        << "\n";
 
     // we try to estimate the distance which is necessary to get on a lane
     //  we have to get on in order to keep our route
@@ -458,7 +490,7 @@ MSLCM_LC2013::_wantsChange(
         myLookAheadSpeed = MAX2(LOOK_AHEAD_MIN_SPEED,
                                 (LOOK_AHEAD_SPEED_MEMORY * myLookAheadSpeed + (1 - LOOK_AHEAD_SPEED_MEMORY) * myVehicle.getSpeed()));
     }
-    SUMOReal laDist = myLookAheadSpeed * (right ? LOOK_FORWARD_RIGHT : LOOK_FORWARD_LEFT);
+    SUMOReal laDist = myLookAheadSpeed * (right ? LOOK_FORWARD_RIGHT : LOOK_FORWARD_LEFT) * myStrategicParam;
     laDist += myVehicle.getVehicleType().getLengthWithGap() * (SUMOReal) 2.;
 
     // react to a stopped leader on the current lane
@@ -494,13 +526,13 @@ MSLCM_LC2013::_wantsChange(
         }
     }
     if (roundaboutEdgesAhead > 1) {
-        currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS;
-        neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS;
+        currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+        neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
     }
 
-    const SUMOReal usableDist = (currentDist - myVehicle.getPositionOnLane() - best.occupation *  JAM_FACTOR);
-    const SUMOReal maxJam = MAX2(preb[currIdx + laneOffset].occupation, preb[currIdx].occupation);
-    const SUMOReal neighLeftPlace = MAX2((SUMOReal) 0, neighDist - myVehicle.getPositionOnLane() - maxJam);
+    const SUMOReal usableDist = (currentDist - posOnLane - best.occupation *  JAM_FACTOR);
+    const SUMOReal maxJam = MAX2(preb[currIdx + prebOffset].occupation, preb[currIdx].occupation);
+    const SUMOReal neighLeftPlace = MAX2((SUMOReal) 0, neighDist - posOnLane - maxJam);
 
     if (changeToBest && bestLaneOffset == curr.bestLaneOffset
             && currentDistDisallows(usableDist, bestLaneOffset, laDist)) {
@@ -551,7 +583,7 @@ MSLCM_LC2013::_wantsChange(
     if ((ret & LCA_URGENT) != 0) {
         // prepare urgent lane change maneuver
         // save the left space
-        myLeftSpace = currentDist - myVehicle.getPositionOnLane();
+        myLeftSpace = currentDist - posOnLane;
         if (changeToBest && abs(bestLaneOffset) > 1) {
             // there might be a vehicle which needs to counter-lane-change one lane further and we cannot see it yet
             myLeadingBlockerLength = MAX2((SUMOReal)(right ? 20.0 : 40.0), myLeadingBlockerLength);
@@ -608,9 +640,14 @@ MSLCM_LC2013::_wantsChange(
     //        << " currentDist=" << currentDist
     //        << "\n";
     //}
-    if (amBlockingFollowerPlusNB()
-            && (changeToBest || currentDistAllows(neighDist, abs(bestLaneOffset) + 1, laDist))) {
 
+    const SUMOReal inconvenience = MIN2((SUMOReal)1.0, (laneOffset < 0 
+            ? mySpeedGainProbability / CHANGE_PROB_THRESHOLD_RIGHT 
+            : -mySpeedGainProbability / CHANGE_PROB_THRESHOLD_LEFT));
+    if (amBlockingFollowerPlusNB()
+            && (inconvenience <= myCooperativeParam)
+            //&& ((myOwnState & myLcaCounter) == 0) // VARIANT_6 : counterNoHelp
+            && (changeToBest || currentDistAllows(neighDist, abs(bestLaneOffset) + 1, laDist))) {
         req = ret | lca | LCA_COOPERATIVE | LCA_URGENT ;//| LCA_CHANGE_TO_HELP;
         if (!cancelRequest(req)) {
             return ret | req;
@@ -703,7 +740,7 @@ MSLCM_LC2013::_wantsChange(
                           << " dProb=" << deltaProb
                           << "\n";
             }
-            if (myKeepRightProbability < -CHANGE_PROB_THRESHOLD_RIGHT) {
+            if (myKeepRightProbability * myKeepRightParam < -CHANGE_PROB_THRESHOLD_RIGHT) {
                 req = ret | lca | LCA_KEEPRIGHT;
                 if (!cancelRequest(req)) {
                     return ret | req;

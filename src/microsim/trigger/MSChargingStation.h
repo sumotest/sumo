@@ -59,37 +59,48 @@ public:
 
     /// @brief constructor
     MSChargingStation(const std::string& chargingStationID, MSLane& lane, SUMOReal startPos, SUMOReal endPos, 
-		              SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, SUMOReal chargeDelay);
+		              SUMOReal chargingPower, SUMOReal efficency, bool chargeInTransit, int chargeDelay);
 
     /// @brief destructor
     ~MSChargingStation();
 
-    /// @brief Get parameter 01, charging station's charging power
+    /// @brief Get charging station's charging power
     SUMOReal getChargingPower() const;
 
-    /// @brief Get parameter 02, efficiency of the charging station
+    /// @brief Get efficiency of the charging station
     SUMOReal getEfficency() const;
 
-    /// @brief Get parameter 03, get chargeInTransit
-    SUMOReal getChargeInTransit() const;
+    /// @brief Get chargeInTransit
+    bool getChargeInTransit() const;
 
-    /// @brief Get parameter 03, get Charge Delay
+    /// @brief Get Charge Delay
     SUMOReal getChargeDelay() const;
 
-    /// @brief Set parameter 05, charging station's charging power
-    inline void setChrgPower(SUMOReal new_ChrgPower);
+    /// @brief Set charging station's charging power
+    void setChargingPower(SUMOReal chargingPower);
 
-    /// @brief Set parameter 06, efficiency of the charging station
-    inline void setEfficency(SUMOReal new_Efficency);
+    /// @brief Set efficiency of the charging station
+    void setEfficency(SUMOReal efficency);
+
+    /// @brief Set charge in transit of the charging station
+    void setChargeInTransit(bool chargeInTransit);
+
+    /// @brief Set charge delay of the charging station
+    void setChargeDelay(int chargeDelay);
+
+	/// @brief enable or disable charging vehicle
+    void setChargingVehicle(bool value);
 
     /** @brief Check if a vehicle is inside in  the Charge Station
      * @param[in] position Position of vehicle in the LANE
      * @return true if is between StartPostion and EndPostion
      */
-    bool vehicleIsInside(const SUMOReal position);
+    bool vehicleIsInside(const SUMOReal position) const;
 
+	/// @brief Return true if in the current time step charging station is charging a vehicle
+	bool isCharging() const;
 
-private:
+protected:
 
     /// @brief Charging station's charging power
     SUMOReal myChargingPower;
@@ -100,15 +111,19 @@ private:
     /// @brief Allow charge in transit
     bool myChargeInTransit;
 
-    /// @brief CCharge Delay
-    SUMOReal myChargeDelay;
+    /// @brief Charge Delay
+    int myChargeDelay;
 
-    /** @brief convert from SUMOReal to String
-     * @param[in] var Variable in SUMOReal format
-     * @return Variable var in String format
-     */
-    std::string SUMOReal_str(const SUMOReal& var);
+	/// @brief Check if in the current TimeStep chargingStation is charging a vehicle
+	bool myChargingVehicle;
+
+private:
+
+    /// @brief Invalidated copy constructor.
+    MSChargingStation(const MSChargingStation&);
+
+    /// @brief Invalidated assignment operator.
+    MSChargingStation& operator=(const MSChargingStation&);
 };
 
 #endif
-

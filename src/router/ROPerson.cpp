@@ -86,8 +86,8 @@ ROPerson::addTrip(const ROEdge* const from, const ROEdge* const to, const SVCPer
         trip->addVehicle(new ROVehicle(pars, new RORouteDef("!" + pars.id, 0, false, false), type, net));
     }
     if ((modeSet & SVC_PASSENGER) != 0 && trip->getVehicles().empty()) {
-    	pars.id = getID() + "_0";
-    	trip->addVehicle(new ROVehicle(pars, new RORouteDef("!" + pars.id, 0, false, false), net->getVehicleTypeSecure(DEFAULT_VTYPE_ID), net));
+        pars.id = getID() + "_0";
+        trip->addVehicle(new ROVehicle(pars, new RORouteDef("!" + pars.id, 0, false, false), net->getVehicleTypeSecure(DEFAULT_VTYPE_ID), net));
     }
     myPlan.push_back(trip);
 }
@@ -103,11 +103,11 @@ ROPerson::addRide(const ROEdge* const from, const ROEdge* const to, const std::s
 
 
 void
-ROPerson::addWalk(const SUMOReal duration, const SUMOReal speed, const ConstROEdgeVector& edges, const SUMOReal departPos, const SUMOReal arrivalPos, const std::string& busStop) {
+ROPerson::addWalk(const ConstROEdgeVector& edges, const SUMOReal duration, const SUMOReal speed, const SUMOReal departPos, const SUMOReal arrivalPos, const std::string& busStop) {
     if (myPlan.empty() || myPlan.back()->isStop()) {
         myPlan.push_back(new PersonTrip());
     }
-    myPlan.back()->addTripItem(new Walk(duration, speed, edges, departPos, arrivalPos, busStop));
+    myPlan.back()->addTripItem(new Walk(edges, duration, speed, departPos, arrivalPos, busStop));
 }
 
 
@@ -204,7 +204,7 @@ ROPerson::computeRoute(const RORouterProvider& provider,
             if (vehicles.empty()) {
                 computeIntermodal(provider, trip, 0, errorHandler);
             } else {
-                for (std::vector<ROVehicle*>::iterator v = vehicles.begin(); v != vehicles.end(); ) {
+                for (std::vector<ROVehicle*>::iterator v = vehicles.begin(); v != vehicles.end();) {
                     if (!computeIntermodal(provider, trip, *v, errorHandler)) {
                         v = vehicles.erase(v);
                     } else {
