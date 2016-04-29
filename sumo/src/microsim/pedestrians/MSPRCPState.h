@@ -24,7 +24,9 @@
 #include <vector>
 #include <utils/common/SUMOTime.h>
 #include <utils/common/Command.h>
+#include <microsim/MSEdge.h>
 #include "MSPModel.h"
+
 
 // ===========================================================================
 // class definitions
@@ -57,6 +59,7 @@ class MSPRCPState : public PedestrianState {
 		void setSpeed(const double spd) {mySpeed = spd;};
 		void setAngle(const double angle) {myAngle = angle;};
 		const MSEdge* incrEdge();
+		const MSEdge* updateEdge(const std::string edgeId);
 
 	private:
 		SUMOReal myEdgePos;

@@ -486,7 +486,9 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	c = p->add_coordinate();
 	c->set_x((vec.begin())->vert2().x());
 	c->set_y((vec.begin())->vert2().y());
+#ifdef DEBUG
 	std::cout << " " << vert2Pos((vec.begin())->vert2()) << std::endl;
+#endif
 	//		for (Position)
 
 
@@ -512,23 +514,6 @@ void MSGRPCClient::simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl) {
 
 }
 
-
-//void MSGRPCClient::extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPRCPState * st) {
-//    const MSEdge* fromEdge = st->getEdge();
-////    const MSEdge* toEdge = st->getMyStage()->getRoute().end()-1;
-//    double dPos = st->getMyStage()->getDepartPos();
-//    double aPos = st->getMyStage()->getArrivalPos();
-//    std::cout << "dPos: " << dPos << " aPos: " << aPos << std::endl;
-//
-////    fromEdge
-//
-//    enterC->set_x(199.);
-//    enterC->set_y(110.1);
-//
-//    leaveC->set_x(114.0);
-//    leaveC->set_y(110.1);
-//
-//}
 
 void MSGRPCClient::extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, SUMOReal pos) {
 	Position p = l->getShape().positionAtOffset(l->interpolateLanePosToGeometryPos(pos),0.);
@@ -619,17 +604,29 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 	if (st.ok()){
 		for (int i = 0; i < rpl.trajectories_size(); i++) {
 			const hybridsim::Trajectory t = rpl.trajectories(i);
+
+			if (pstates.find(t.id()) == pstates.end()) {
+				std::cerr << "Error receiving pedestrian trajectories from external simulation" << std::endl;
+				exit(-1);
+			}
 			MSPRCPState* st = pstates[t.id()];
 			st->setXY(t.x(),t.y());
 			st->setSpeed(t.spd());
 			st->setAngle(t.phi());
+
+			MSPRCPState tmp = *st;
+
+			const MSEdge * oldEdge = st->getEdge();
+
 #ifdef DEBUG
-			std::cout << "link_id: " << t.linkid() << std::endl;
+			std::cout << "=============================" << std::endl;
+			std::cout << "agent: " << t.id() << " link_id: " << t.linkid() <<  std::endl;
+			std::cout << "old link id:" << oldEdge->getID() << std::endl;
+			std::cout << "=============================" << std::endl;
 #endif
-			if (t.linkid() != "" && t.linkid() != st->getEdge()->getID()) {
-				const MSEdge * oldEdge = st->getEdge();
-				const MSEdge * newEdge = st->incrEdge();
-//				st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
+			if (t.linkid() != "" && t.linkid() != oldEdge->getID()) {
+				const MSEdge * newEdge = st->updateEdge(t.linkid());
+				st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
 			}
 		}
 	} else {
