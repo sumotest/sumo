@@ -76,6 +76,12 @@
     <Filter Include="Quellcodedateien\Items\Additionals\Detectors">
       <UniqueIdentifier>{f952e93b-e954-452e-bb88-76ce558653a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header-Dateien\Dialogs\AdditionalDialogs">
+      <UniqueIdentifier>{ee71b130-ea7e-4a69-be93-8e428cd7d0af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quellcodedateien\Dialogs\AdditionalDialogs">
+      <UniqueIdentifier>{1ec55ee2-0192-42e8-8ad4-436515a63786}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditional.cpp">
@@ -195,9 +201,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_VSpeedSignal.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNELogo_E1.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
@@ -257,6 +260,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEVariableSpeedSignal.cpp">
       <Filter>Quellcodedateien\Items\Additionals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEAdditionalDialog.cpp">
+      <Filter>Quellcodedateien\Dialogs\AdditionalDialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNERerouterDialog.cpp">
+      <Filter>Quellcodedateien\Dialogs\AdditionalDialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEVariableSpeedSignalDialog.cpp">
+      <Filter>Quellcodedateien\Dialogs\AdditionalDialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -411,6 +423,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEVariableSpeedSignal.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEAdditionalDialog.h">
+      <Filter>Header-Dateien\Dialogs\AdditionalDialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNERerouterDialog.h">
+      <Filter>Header-Dateien\Dialogs\AdditionalDialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEVariableSpeedSignalDialog.h">
+      <Filter>Header-Dateien\Dialogs\AdditionalDialogs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
