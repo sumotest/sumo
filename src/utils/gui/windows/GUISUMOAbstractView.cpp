@@ -84,19 +84,20 @@
  * GUISUMOAbstractView - FOX callback mapping
  * ----------------------------------------------------------------------- */
 FXDEFMAP(GUISUMOAbstractView) GUISUMOAbstractViewMap[] = {
-    FXMAPFUNC(SEL_CONFIGURE,           0,                 GUISUMOAbstractView::onConfigure),
-    FXMAPFUNC(SEL_PAINT,               0,                 GUISUMOAbstractView::onPaint),
-    FXMAPFUNC(SEL_LEFTBUTTONPRESS,     0,                 GUISUMOAbstractView::onLeftBtnPress),
-    FXMAPFUNC(SEL_LEFTBUTTONRELEASE,   0,                 GUISUMOAbstractView::onLeftBtnRelease),
-    FXMAPFUNC(SEL_MIDDLEBUTTONPRESS,   0,                 GUISUMOAbstractView::onMiddleBtnPress),
-    FXMAPFUNC(SEL_MIDDLEBUTTONRELEASE, 0,                 GUISUMOAbstractView::onMiddleBtnRelease),
-    FXMAPFUNC(SEL_RIGHTBUTTONPRESS,    0,                 GUISUMOAbstractView::onRightBtnPress),
-    FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,  0,                 GUISUMOAbstractView::onRightBtnRelease),
-    FXMAPFUNC(SEL_MOUSEWHEEL,          0,                 GUISUMOAbstractView::onMouseWheel),
-    FXMAPFUNC(SEL_MOTION,              0,                 GUISUMOAbstractView::onMouseMove),
-    FXMAPFUNC(SEL_LEAVE,               0,                 GUISUMOAbstractView::onMouseLeft),
-    FXMAPFUNC(SEL_KEYPRESS,            0,                 GUISUMOAbstractView::onKeyPress),
-    FXMAPFUNC(SEL_KEYRELEASE,          0,                 GUISUMOAbstractView::onKeyRelease),
+    FXMAPFUNC(SEL_CONFIGURE,            0,      GUISUMOAbstractView::onConfigure),
+    FXMAPFUNC(SEL_PAINT,                0,      GUISUMOAbstractView::onPaint),
+    FXMAPFUNC(SEL_LEFTBUTTONPRESS,      0,      GUISUMOAbstractView::onLeftBtnPress),
+    FXMAPFUNC(SEL_LEFTBUTTONRELEASE,    0,      GUISUMOAbstractView::onLeftBtnRelease),
+    FXMAPFUNC(SEL_MIDDLEBUTTONPRESS,    0,      GUISUMOAbstractView::onMiddleBtnPress),
+    FXMAPFUNC(SEL_MIDDLEBUTTONRELEASE,  0,      GUISUMOAbstractView::onMiddleBtnRelease),
+    FXMAPFUNC(SEL_RIGHTBUTTONPRESS,     0,      GUISUMOAbstractView::onRightBtnPress),
+    FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,   0,      GUISUMOAbstractView::onRightBtnRelease),
+    FXMAPFUNC(SEL_DOUBLECLICKED,        0,      GUISUMOAbstractView::onDoubleClicked),  // PABLO #1916
+    FXMAPFUNC(SEL_MOUSEWHEEL,           0,      GUISUMOAbstractView::onMouseWheel),
+    FXMAPFUNC(SEL_MOTION,               0,      GUISUMOAbstractView::onMouseMove),
+    FXMAPFUNC(SEL_LEAVE,                0,      GUISUMOAbstractView::onMouseLeft),
+    FXMAPFUNC(SEL_KEYPRESS,             0,      GUISUMOAbstractView::onKeyPress),
+    FXMAPFUNC(SEL_KEYRELEASE,           0,      GUISUMOAbstractView::onKeyRelease),
 
 };
 
@@ -107,26 +108,22 @@ FXIMPLEMENT_ABSTRACT(GUISUMOAbstractView, FXGLCanvas, GUISUMOAbstractViewMap, AR
 /* -------------------------------------------------------------------------
  * GUISUMOAbstractView - methods
  * ----------------------------------------------------------------------- */
-GUISUMOAbstractView::GUISUMOAbstractView(FXComposite* p,
-        GUIMainWindow& app,
-        GUIGlChildWindow* parent,
-        const SUMORTree& grid,
-        FXGLVisual* glVis, FXGLCanvas* share)
-    : FXGLCanvas(p, glVis, share, p, MID_GLCANVAS,
-                 LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0),
-      myApp(&app),
-      myParent(parent),
-      myGrid(&((SUMORTree&)grid)),
-      myChanger(0),
-      myMouseHotspotX(app.getDefaultCursor()->getHotX()),
-      myMouseHotspotY(app.getDefaultCursor()->getHotY()),
-      myPopup(0),
-      myUseToolTips(false),
-      myAmInitialised(false),
-      myViewportChooser(0),
-      myWindowCursorPositionX(getWidth() / 2),
-      myWindowCursorPositionY(getHeight() / 2),
-      myVisualizationChanger(0) {
+GUISUMOAbstractView::GUISUMOAbstractView(FXComposite* p, GUIMainWindow& app, GUIGlChildWindow* parent, const SUMORTree& grid, FXGLVisual* glVis, FXGLCanvas* share) : 
+    FXGLCanvas(p, glVis, share, p, MID_GLCANVAS,
+    LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0),
+    myApp(&app),
+    myParent(parent),
+    myGrid(&((SUMORTree&)grid)),
+    myChanger(0),
+    myMouseHotspotX(app.getDefaultCursor()->getHotX()),
+    myMouseHotspotY(app.getDefaultCursor()->getHotY()),
+    myPopup(0),
+    myUseToolTips(false),
+    myAmInitialised(false),
+    myViewportChooser(0),
+    myWindowCursorPositionX(getWidth() / 2),
+    myWindowCursorPositionY(getHeight() / 2),
+    myVisualizationChanger(0) {
     setTarget(this);
     enable();
     flags |= FLAG_ENABLED;
@@ -159,6 +156,12 @@ GUISUMOAbstractView::isInEditMode() {
 }
 
 
+GUIPerspectiveChanger&                      // PABLO #1916
+GUISUMOAbstractView::getChanger() const {   // PABLO #1916
+    return *myChanger;                      // PABLO #1916
+}                                           // PABLO #1916
+
+
 void
 GUISUMOAbstractView::updateToolTip() {
     if (!myUseToolTips) {
@@ -178,25 +181,48 @@ GUISUMOAbstractView::getPositionInformation() const {
 }
 
 
+void                                                                // PABLO #1916
+GUISUMOAbstractView::addDecals(const std::vector<Decal>& decals) {  // PABLO #1916
+    myDecals.insert(myDecals.end(), decals.begin(), decals.end());  // PABLO #1916
+}                                                                   // PABLO #1916
+
+
+GUIVisualizationSettings*                           // PABLO #1916
+GUISUMOAbstractView::getVisualisationSettings() {   // PABLO #1916
+    return myVisualizationSettings;                 // PABLO #1916
+}                                                   // PABLO #1916
+
+
 void
 GUISUMOAbstractView::updatePositionInformation() const {
     Position pos = getPositionInformation();
     std::string text = "x:" + toString(pos.x()) + ", y:" + toString(pos.y());
     myApp->getCartesianLabel().setText(text.c_str());
     GeoConvHelper::getFinal().cartesian2geo(pos);
-    if (GeoConvHelper::getFinal().usingGeoProjection()) {
+    if (GeoConvHelper::getFinal().usingGeoProjection())
         text = "lat:" + toString(pos.y(), GEO_OUTPUT_ACCURACY) + ", lon:" + toString(pos.x(), GEO_OUTPUT_ACCURACY);
-    } else {
+    else
         text = "x:" + toString(pos.x()) + ", y:" + toString(pos.y());
-    }
     myApp->getGeoLabel().setText(text.c_str());
 }
+
+
+int                                                                                     // PABLO #1916
+GUISUMOAbstractView::doPaintGL(int /*mode*/, const Boundary& /*boundary*/) {            // PABLO #1916
+    return 0;                                                                           // PABLO #1916
+}                                                                                       // PABLO #1916
+
+
+void                                                                                // PABLO #1916
+GUISUMOAbstractView::doInit() {                                                     // PABLO #1916
+}                                                                                   // PABLO #1916
 
 
 Boundary
 GUISUMOAbstractView::getVisibleBoundary() const {
     return myChanger->getViewport();
 }
+
 
 void
 GUISUMOAbstractView::paintGL() {
@@ -608,6 +634,9 @@ GUISUMOAbstractView::onLeftBtnPress(FXObject*, FXSelector , void* data) {
     }
     myChanger->onLeftBtnPress(data);
     grab();
+    // Check there are double click                         // PABLO #1916
+    if (e->click_count == 2)                                // PABLO #1916
+        handle(this, FXSEL(SEL_DOUBLECLICKED, 0), data);    // PABLO #1916
     return 1;
 }
 
@@ -622,6 +651,18 @@ GUISUMOAbstractView::onLeftBtnRelease(FXObject*, FXSelector , void* data) {
     ungrab();
     return 1;
 }
+
+
+long                                                                                            // PABLO #1916
+GUISUMOAbstractView::onMiddleBtnPress(FXObject*, FXSelector, void*) {                           // PABLO #1916
+    return 1;                                                                                   // PABLO #1916
+}                                                                                               // PABLO #1916
+
+
+long                                                                                            // PABLO #1916
+GUISUMOAbstractView::onMiddleBtnRelease(FXObject*, FXSelector, void*) {                         // PABLO #1916
+    return 1;                                                                                   // PABLO #1916
+}                                                                                               // PABLO #1916
 
 
 long
@@ -643,6 +684,12 @@ GUISUMOAbstractView::onRightBtnRelease(FXObject* o, FXSelector sel, void* data) 
     ungrab();
     return 1;
 }
+
+
+long                                                                    // PABLO #1916
+GUISUMOAbstractView::onDoubleClicked(FXObject*, FXSelector, void*) {    // PABLO #1916
+    return 1;                                                           // PABLO #1916
+}                                                                       // PABLO #1916
 
 
 long
@@ -882,6 +929,13 @@ GUISUMOAbstractView::makeSnapshot(const std::string& destFile) {
 }
 
 
+void                                                                            // PABLO #1916
+GUISUMOAbstractView::saveFrame(const std::string& destFile, FXColor* buf) {     // PABLO #1916
+    UNUSED_PARAMETER(destFile);                                                 // PABLO #1916
+    UNUSED_PARAMETER(buf);                                                      // PABLO #1916
+}                                                                               // PABLO #1916
+
+
 void
 GUISUMOAbstractView::checkSnapshots() {
     std::map<SUMOTime, std::string>::iterator snapIt = mySnapshots.find(getCurrentTimeStep());
@@ -892,6 +946,12 @@ GUISUMOAbstractView::checkSnapshots() {
         }
     }
 }
+
+
+SUMOTime                                            // PABLO #1916
+GUISUMOAbstractView::getCurrentTimeStep() const {   // PABLO #1916
+        return 0;                                   // PABLO #1916
+}                                                   // PABLO #1916
 
 
 void
@@ -907,6 +967,7 @@ GUISUMOAbstractView::showViewschemeEditor() {
     }
     myVisualizationChanger->show();
 }
+
 
 GUIDialog_EditViewport*
 GUISUMOAbstractView::getViewportEditor() {
@@ -942,6 +1003,29 @@ GUISUMOAbstractView::showToolTips(bool val) {
 }
 
 
+bool                                                        // PABLO #1916
+GUISUMOAbstractView::setColorScheme(const std::string&) {   // PABLO #1916
+    return true;                                            // PABLO #1916
+}                                                           // PABLO #1916
+
+
+GUIVisualizationSettings*                                   // PABLO #1916
+GUISUMOAbstractView::getVisualisationSettings() const {     // PABLO #1916
+    return myVisualizationSettings;                         // PABLO #1916
+}                                                           // PABLO #1916
+
+
+void 
+GUISUMOAbstractView::remove(GUIDialog_EditViewport*) {      // PABLO #1916
+    myViewportChooser = 0;                                  // PABLO #1916
+}                                                           // PABLO #1916
+
+
+void                                                        // PABLO #1916
+GUISUMOAbstractView::remove(GUIDialog_ViewSettings*) {      // PABLO #1916
+    myVisualizationChanger = 0;                             // PABLO #1916
+}                                                           // PABLO #1916
+
 
 SUMOReal
 GUISUMOAbstractView::getGridWidth() const {
@@ -953,6 +1037,27 @@ SUMOReal
 GUISUMOAbstractView::getGridHeight() const {
     return myGrid->getHeight();
 }
+
+
+void                                                                                    // PABLO #1916
+GUISUMOAbstractView::startTrack(int /*id*/) {                                           // PABLO #1916
+}                                                                                       // PABLO #1916
+
+
+void                                                                                    // PABLO #1916
+GUISUMOAbstractView::stopTrack() {                                                      // PABLO #1916
+}                                                                                       // PABLO #1916                
+
+
+int                                                                                     // PABLO #1916
+GUISUMOAbstractView::getTrackedID() const {                                             // PABLO #1916
+    return -1;                                                                          // PABLO #1916
+}                                                                                       // PABLO #1916
+
+
+void                                                                                        // PABLO #1916
+GUISUMOAbstractView::onGamingClick(Position /*pos*/) {                                      // PABLO #1916
+}                                                                                           // PABLO #1916
 
 
 FXComboBox&
@@ -1149,6 +1254,26 @@ void
 GUISUMOAbstractView::setDelay(SUMOReal delay) {
     myApp->setDelay(delay);
 }
+
+
+GUISUMOAbstractView::Decal::Decal() :   // PABLO #1916
+    filename(),                         // PABLO #1916
+    centerX(0),                         // PABLO #1916
+    centerY(0),                         // PABLO #1916
+    centerZ(0),                         // PABLO #1916
+    width(0),                           // PABLO #1916
+    height(0),                          // PABLO #1916
+    altitude(0),                        // PABLO #1916
+    rot(0),                             // PABLO #1916
+    tilt(0),                            // PABLO #1916
+    roll(0),                            // PABLO #1916
+    layer(0),                           // PABLO #1916
+    initialised(false),                 // PABLO #1916
+    skip2D(false),                      // PABLO #1916
+    glID(-1),                           // PABLO #1916
+    image(0) {                          // PABLO #1916
+}                                       // PABLO #1916
+
 
 /****************************************************************************/
 

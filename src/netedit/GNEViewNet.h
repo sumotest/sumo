@@ -114,6 +114,7 @@ public:
     /// @{
     long onLeftBtnPress(FXObject*, FXSelector, void*);
     long onLeftBtnRelease(FXObject*, FXSelector, void*);
+    long onDoubleClicked(FXObject*, FXSelector, void* ptr);     // PABLO #1916
     long onMouseMove(FXObject*, FXSelector, void*);
     /// @}
 

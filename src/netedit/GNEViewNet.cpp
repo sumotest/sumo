@@ -66,9 +66,9 @@
 #include "GNEAdditionalHandler.h"
 #include "GNEPoly.h"
 #include "GNECrossing.h"
-#include "GNEStoppingPlace.h"
-#include "GNEDetector.h"
-#include "GNEDetectorE3.h"
+#include "GNEAdditional.h"
+#include "GNEAdditionalSet.h"
+#include "GNEAdditionalDialog.h"    // PABLO #1916
 #include "GNERerouter.h"
 #include "GNEChange_Attribute.h"
 
@@ -673,6 +673,33 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
     }
     return 1;
 }
+
+
+long                                                                        // PABLO #1916
+GNEViewNet::onDoubleClicked(FXObject* obj, FXSelector sel, void* data) {    // PABLO #1916
+    // If current edit mode is INSPECT or ADDITIONAL
+    if(myEditMode == GNE_MODE_INSPECT || myEditMode == GNE_MODE_ADDITIONAL) {
+        FXEvent* e = (FXEvent*) data;
+        setFocus();
+        // interpret object under curser
+        if (makeCurrent()) {
+            unsigned int id = getObjectUnderCursor();
+            GUIGlObject* pointed = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
+            GUIGlObjectStorage::gIDStorage.unblockObject(id);
+            // If there are a pointed element an is an additional
+            if (pointed && pointed->getType() == GLO_ADDITIONAL) {
+                // Obtain pointer additional
+                GNEAdditional* pointed_additional = (GNEAdditional*)pointed;
+                // if own a additional dialog, open it
+                if(pointed_additional->getAdditionaldialog() != NULL)
+                    pointed_additional->getAdditionaldialog()->openAdditionalDialog();
+            }
+            makeNonCurrent();
+        }
+    }
+    return 1;
+}
+
 
 long
 GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {

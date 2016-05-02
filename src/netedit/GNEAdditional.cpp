@@ -85,7 +85,8 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     mySelectable(selectable),
     myBlockIconRotation(0),
     myBaseColor(RGBColor::GREEN),
-    myBaseColorSelected(RGBColor::BLUE) {
+    myBaseColorSelected(RGBColor::BLUE), 
+    additionalDialog(NULL) {
     // Set rotation left hand
     myRotationLefthand = OptionsCont::getOptions().getBool("lefthand");
     // If this additional belongs to a set, add it.
@@ -136,6 +137,12 @@ GNEAdditional::getViewNet() const {
 GNELane*
 GNEAdditional::getLane() const {
     return myLane;
+}
+
+
+GNEAdditionalDialog* 
+GNEAdditional::getAdditionaldialog() const {
+    return additionalDialog;
 }
 
 

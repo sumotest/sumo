@@ -47,6 +47,7 @@ class GNELane;
 class GNENet;
 class GNEViewNet;
 class GNEAdditionalSet;
+class GNEAdditionalDialog;
 
 // ===========================================================================
 // class definitions
@@ -94,8 +95,11 @@ public:
     /// @brief Returns GNEViewNet in which additional element is located
     GNEViewNet* getViewNet() const;
 
-    /// @brief Returns pointer to Lane (or NULL if additional don't belont to a Lane)
+    /// @brief Returns pointer to Lane (or NULL if additional don't belong to a Lane)
     GNELane* getLane() const;
+
+    /// @brief Returns pointer to additionalDialog (or NULL if additional don't have a AdditionalDialog)
+    GNEAdditionalDialog *getAdditionaldialog() const;
 
     /// @brief Returns additional element's shape
     PositionVector getShape() const;
@@ -224,6 +228,9 @@ protected:
     /// @brief base color selected (Default blue)
     /// @note default color can be defined in the constructor of every additional
     RGBColor myBaseColorSelected;
+
+    /// @brief pointer to additional dialog
+    GNEAdditionalDialog *additionalDialog;
 
     /// @name computed only once (for performance) in updateGeometry()
     //@{
