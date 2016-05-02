@@ -771,7 +771,6 @@ MSVehicle::setAngle(SUMOReal angle) {
 SUMOReal
 MSVehicle::computeAngle() const {
     Position p1;
-    Position p2;
     const SUMOReal posLat = -myState.myPosLat; // @todo get rid of the '-'
     if (isParking()) {
         return myLane->getShape().rotationAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane()));
@@ -782,18 +781,7 @@ MSVehicle::computeAngle() const {
     } else {
         p1 = getPosition();
     }
-    if (myState.myPos >= myType->getLength()) {
-        // vehicle is fully on the new lane
-        p2 = myLane->geometryPositionAtOffset(myState.myPos - myType->getLength(), posLat);
-    } else {
-        p2 = myFurtherLanes.size() > 0 && !getLaneChangeModel().isChangingLanes()
-             ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), -myFurtherLanesPosLat.back())
-             : myLane->geometryPositionAtOffset(0, posLat);
-        if (getLaneChangeModel().isChangingLanes() && myFurtherLanes.size() > 0 && getLaneChangeModel().getShadowLane(myFurtherLanes.back()) == 0) {
-            // special case where the target lane has no predecessor
-            p2 = myLane->geometryPositionAtOffset(0, posLat);
-        }
-    }
+    const Position p2 = getBackPosition();
     SUMOReal result = (p1 != p2 ? p2.angleTo2D(p1) :
                        myLane->getShape().rotationAtOffset(myLane->interpolateLanePosToGeometryPos(getPositionOnLane())));
     if (getLaneChangeModel().isChangingLanes()) {
@@ -802,6 +790,24 @@ MSVehicle::computeAngle() const {
     return result;
 }
 
+
+const Position 
+MSVehicle::getBackPosition() const {
+    const SUMOReal posLat = -myState.myPosLat; // @todo get rid of the '-'
+    if (myState.myPos >= myType->getLength()) {
+        // vehicle is fully on the new lane
+        return myLane->geometryPositionAtOffset(myState.myPos - myType->getLength(), posLat);
+    } else {
+        if (getLaneChangeModel().isChangingLanes() && myFurtherLanes.size() > 0 && getLaneChangeModel().getShadowLane(myFurtherLanes.back()) == 0) {
+            // special case where the target lane has no predecessor
+            return myLane->geometryPositionAtOffset(0, posLat);
+        } else {
+            return myFurtherLanes.size() > 0 && !getLaneChangeModel().isChangingLanes()
+                ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), -myFurtherLanesPosLat.back())
+                : myLane->geometryPositionAtOffset(0, posLat);
+        }
+    }
+}
 
 // ------------
 bool
@@ -3094,6 +3100,55 @@ MSVehicle::unsafeLinkAhead(const MSLane* lane) const {
         }
     }
     return false;
+}
+
+
+PositionVector 
+MSVehicle::getBoundingBox() const {
+    PositionVector centerLine;
+    centerLine.push_back(getPosition());
+    centerLine.push_back(getBackPosition());
+    centerLine.move2side(0.5 * myType->getWidth());
+    PositionVector result = centerLine;
+    centerLine.move2side(-myType->getWidth());
+    result.append(centerLine.reverse(), POSITION_EPS);
+    return result;
+}
+
+
+PositionVector 
+MSVehicle::getBoundingPoly() const {
+    // XXX implement more types
+    switch (myType->getGuiShape()) {
+        case SVS_PASSENGER:
+        case SVS_PASSENGER_SEDAN:
+        case SVS_PASSENGER_HATCHBACK:
+        case SVS_PASSENGER_WAGON:
+        case SVS_PASSENGER_VAN: {
+            PositionVector result;
+            PositionVector centerLine;
+            centerLine.push_back(getPosition());
+            centerLine.push_back(getBackPosition());
+            PositionVector line1 = centerLine;
+            PositionVector line2 = centerLine;
+            line1.move2side(0.3 * myType->getWidth());
+            line2.move2side(0.5 * myType->getWidth());
+            line2.scaleRelative(0.8);
+            result.push_back(line1[0]);
+            result.push_back(line2[0]);
+            result.push_back(line2[1]);
+            result.push_back(line1[1]);
+            line1.move2side(-0.6 * myType->getWidth());
+            line2.move2side(-1.0 * myType->getWidth());
+            result.push_back(line1[1]);
+            result.push_back(line2[1]);
+            result.push_back(line2[0]);
+            result.push_back(line1[0]);
+            return result;
+        }
+        default:
+            return getBoundingBox();
+    }
 }
 
 
