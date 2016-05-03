@@ -79,7 +79,7 @@
 //#define DEBUG_CONTEXT
 //#define DEBUG_OPPOSITE
 #define DEBUG_COND (getID() == "disabled")
-#define DEBUG_COND2(obj) ((obj)->getID() == "disabled")
+#define DEBUG_COND2(obj) ((obj != 0 && (obj)->getID() == "disabled")
 
 // ===========================================================================
 // static member definitions
@@ -211,7 +211,9 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 
 SUMOReal
 MSLane::setPartialOccupation(MSVehicle* v) {
-    if (v->getID() == "disabled") std::cout << SIMTIME << " setPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+#ifdef DEBUG_CONTEXT
+    if (DEBUG_COND2(v)) std::cout << SIMTIME << " setPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+#endif
     // XXX update occupancy here?
     myPartialVehicles.push_back(v);
     return myLength;
@@ -220,7 +222,9 @@ MSLane::setPartialOccupation(MSVehicle* v) {
 
 void
 MSLane::resetPartialOccupation(MSVehicle* v) {
-    if (v->getID() == "disabled") std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+#ifdef DEBUG_CONTEXT
+    if (DEBUG_COND2(v)) std::cout << SIMTIME << " resetPartialOccupation. lane=" << getID() << " veh=" << v->getID() << "\n";
+#endif
     for (VehCont::iterator i = myPartialVehicles.begin(); i != myPartialVehicles.end(); ++i) {
         if (v == *i) {
             myPartialVehicles.erase(i);
@@ -1603,7 +1607,7 @@ MSLane::getFollowerOnConsecutive(
                 }
 #ifdef DEBUG_CONTEXT
                 if (DEBUG_COND) std::cout << SIMTIME << "    "
-                    << " v=" << v->getID()
+                    << " v=" << Named::getIDSecure(v)
                         << " agap=" << agap
                         << " dist=" << dist
                         << "\n";
@@ -2216,10 +2220,10 @@ MSLane::getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const 
                         } else {
                             agap = (*it).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
                         }
-#ifdef DEBUG_CONTEXT
-                        if (DEBUG_COND2(ego)) std::cout << " (2) added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << "\n";
-#endif
                         result.addFollower(v, ego, agap, 0, i);
+#ifdef DEBUG_CONTEXT
+                        if (DEBUG_COND2(ego)) std::cout << " (2) added veh=" << Named::getIDSecure(v) << " agap=" << agap << " next=" << next->getID() << " result=" << result.toString() << "\n";
+#endif
                     }
                 }
                 if ((*it).length < dist) {
