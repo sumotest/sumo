@@ -48,7 +48,9 @@
 #include <utils/gui/images/GUITexturesHelper.h>
 #include <utils/xml/SUMOSAXHandler.h>
 
+#include "GNEViewNet.h"
 #include "GNERerouter.h"
+#include "GNERerouterDialog.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
@@ -384,6 +386,8 @@ GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position po
         rerouterSelectedInitialized = true;
         delete i;
     }
+    // Create dialog
+    myAdditionalDialog = new GNERerouterDialog(this);
 }
 
 

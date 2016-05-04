@@ -30,6 +30,8 @@
 #include <config.h>
 #endif
 
+#include <map>
+#include <utils/common/SUMOTime.h>
 #include "GNEAdditionalDialog.h"
 
 
@@ -37,6 +39,7 @@
 // class declarations
 // ===========================================================================
 
+class GNEVariableSpeedSignal;
 
 // ===========================================================================
 // class definitions
@@ -48,13 +51,44 @@
  */
 
 class GNEVariableSpeedSignalDialog : public GNEAdditionalDialog {
+    // FOX-declaration
+    FXDECLARE(GNEVariableSpeedSignalDialog)
+
 public:
     // Constructor
-    GNEVariableSpeedSignalDialog(FXWindow* parent,const FXString& name);
+    GNEVariableSpeedSignalDialog(GNEVariableSpeedSignal *variableSpeedSignalParent);
+
     // destructor
     ~GNEVariableSpeedSignalDialog();
 
+    /// @name FOX-callbacks
+    /// @{
+    /// @brief event after press accept button
+    long onCmdAccept(FXObject*, FXSelector, void*);
+
+    /// @brief event after press cancel button
+    long onCmdCancel(FXObject*, FXSelector, void*);
+
+    /// @brief event after press cancel button
+    long onCmdReset(FXObject*, FXSelector, void*);
+    /// @}
+
+protected:
+    /// @brief FOX needs this
+    GNEVariableSpeedSignalDialog() {}
+
+    // Pointer to Variable Speed Signal
+    GNEVariableSpeedSignal *myVariableSpeedSignalParent;
+
+    // Map with the temporal VSSData
+    std::map<SUMOTime, SUMOReal> myVSSData;
+
 private:
+    /// @brief Invalidated copy constructor.
+    GNEVariableSpeedSignalDialog(const GNEVariableSpeedSignalDialog&);
+
+    /// @brief Invalidated assignment operator.
+    GNEVariableSpeedSignalDialog& operator=(const GNEVariableSpeedSignalDialog&);
 };
 
 #endif

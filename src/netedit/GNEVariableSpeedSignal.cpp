@@ -56,6 +56,7 @@
 #include "GNEChange_Attribute.h"
 #include "GNELogo_VariableSpeedSignal.cpp"
 #include "GNELogo_VariableSpeedSignalSelected.cpp"
+#include "GNEVariableSpeedSignalDialog.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -97,6 +98,8 @@ GNEVariableSpeedSignal::GNEVariableSpeedSignal(const std::string& id, GNEViewNet
         variableSpeedSignalSelectedInitialized = true;
         delete i;
     }
+    // Create dialog
+    myAdditionalDialog = new GNEVariableSpeedSignalDialog(this);
 }
 
 

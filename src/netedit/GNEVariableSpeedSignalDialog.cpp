@@ -27,12 +27,28 @@
 #include <config.h>
 #endif
 
+#include <iostream>
+#include <utils/gui/windows/GUIAppEnum.h>
 #include "GNEVariableSpeedSignalDialog.h"
+#include "GNEVariableSpeedSignal.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif
 
+
+// ===========================================================================
+// FOX callback mapping
+// ===========================================================================
+
+FXDEFMAP(GNEVariableSpeedSignalDialog) GNERerouterDialogMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONALDIALOG_ACCEPT, GNEVariableSpeedSignalDialog::onCmdAccept),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONALDIALOG_CANCEL, GNEVariableSpeedSignalDialog::onCmdCancel),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONALDIALOG_RESET,  GNEVariableSpeedSignalDialog::onCmdReset),
+};
+
+// Object implementation
+FXIMPLEMENT(GNEVariableSpeedSignalDialog, FXDialogBox, GNERerouterDialogMap, ARRAYNUMBER(GNERerouterDialogMap))
 
 // ===========================================================================
 // static member definitions
@@ -43,11 +59,34 @@
 // member method definitions
 // ===========================================================================
 
-GNEVariableSpeedSignalDialog::GNEVariableSpeedSignalDialog(FXWindow* parent,const FXString& name) : 
-    GNEAdditionalDialog(parent,name) {
+GNEVariableSpeedSignalDialog::GNEVariableSpeedSignalDialog(GNEVariableSpeedSignal *variableSpeedSignalParent) : 
+    GNEAdditionalDialog(variableSpeedSignalParent),
+    myVariableSpeedSignalParent(variableSpeedSignalParent) {
 }
 
 GNEVariableSpeedSignalDialog::~GNEVariableSpeedSignalDialog() {
+}
+
+
+long 
+GNEVariableSpeedSignalDialog::onCmdAccept(FXObject*, FXSelector, void*) {
+    // Close dialog
+    closeAdditionalDialog();
+    return 1;
+}
+
+
+long
+GNEVariableSpeedSignalDialog::onCmdCancel(FXObject*, FXSelector, void*) {
+    // Close dialog
+    closeAdditionalDialog();
+    return 1;
+}
+
+
+long
+GNEVariableSpeedSignalDialog::onCmdReset(FXObject*, FXSelector, void*) {
+    return 1;
 }
 
 /****************************************************************************/

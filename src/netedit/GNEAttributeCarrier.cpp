@@ -325,10 +325,10 @@ GNEAttributeCarrier::allowedTags() {
         myAllowedTags.push_back(SUMO_TAG_E3DETECTOR);
         myAllowedTags.push_back(SUMO_TAG_DET_ENTRY);
         myAllowedTags.push_back(SUMO_TAG_DET_EXIT);
-        // 0.27 myAllowedTags.push_back(SUMO_TAG_VSS);
-        // 0.27 myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);
-        // 0.27 myAllowedTags.push_back(SUMO_TAG_REROUTER);
-        // 0.27 myAllowedTags.push_back(SUMO_TAG_REROUTEREDGE);
+        myAllowedTags.push_back(SUMO_TAG_VSS);
+        myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);
+        myAllowedTags.push_back(SUMO_TAG_REROUTER);
+        //myAllowedTags.push_back(SUMO_TAG_REROUTEREDGE);
     }
     return myAllowedTags;
 }
@@ -345,10 +345,10 @@ GNEAttributeCarrier::allowedAdditionalTags() {
         myAllowedAdditionalTags.push_back(SUMO_TAG_E3DETECTOR);
         myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);
         myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);
-        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);
-        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);
-        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);
-        // 0.27 myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTEREDGE);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);
+        //myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTEREDGE);
     }
     return myAllowedAdditionalTags;
 }
@@ -453,7 +453,7 @@ GNEAttributeCarrier::hasParent(SumoXMLTag tag) {
     if (myAllowedAdditionalWithParentTags.empty()) {
         myAllowedAdditionalWithParentTags[SUMO_TAG_DET_ENTRY] = SUMO_TAG_E3DETECTOR;
         myAllowedAdditionalWithParentTags[SUMO_TAG_DET_EXIT] = SUMO_TAG_E3DETECTOR;
-        myAllowedAdditionalWithParentTags[SUMO_TAG_REROUTEREDGE] = SUMO_TAG_REROUTER;
+        //myAllowedAdditionalWithParentTags[SUMO_TAG_REROUTEREDGE] = SUMO_TAG_REROUTER;
     }
     return myAllowedAdditionalWithParentTags.count(tag) == 1;
 }

@@ -37,6 +37,7 @@
 // class declarations
 // ===========================================================================
 
+class GNEAdditional;
 
 // ===========================================================================
 // class definitions
@@ -50,7 +51,7 @@
 class GNEAdditionalDialog : public FXDialogBox {
 public:
     // Constructor
-    GNEAdditionalDialog(FXWindow* parent,const FXString& name);
+    GNEAdditionalDialog(GNEAdditional *parent);
 
     // destructor
     ~GNEAdditionalDialog();
@@ -61,7 +62,43 @@ public:
     // close Dialog
     void closeAdditionalDialog();
 
+    /// @name FOX-callbacks
+    /// @{
+    /// @brief event after press accept button
+    virtual long onCmdAccept(FXObject*, FXSelector, void*) = 0;
+
+    /// @brief event after press cancel button
+    virtual long onCmdCancel(FXObject*, FXSelector, void*) = 0;
+
+    /// @brief event after press cancel button
+    virtual long onCmdReset(FXObject*, FXSelector, void*) = 0;
+    /// @}
+
+protected:
+    /// @brief FOX needs this
+    GNEAdditionalDialog() {}
+
+    /// @brief frame for contents
+    FXVerticalFrame* myContentFrame;
+
+    /// @brief frame for buttons
+    FXHorizontalFrame* myButtonFrame;
+
+    /// @brief accept button
+    FXButton *myAcceptButton;
+
+    /// @brief cancel button
+    FXButton *myCancelButton;
+
+    /// @brief cancel button
+    FXButton *myResetButton;
+
 private:
+    /// @brief Invalidated copy constructor.
+    GNEAdditionalDialog(const GNEAdditionalDialog&);
+
+    /// @brief Invalidated assignment operator.
+    GNEAdditionalDialog& operator=(const GNEAdditionalDialog&);
 };
 
 #endif

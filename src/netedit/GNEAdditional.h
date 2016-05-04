@@ -230,7 +230,7 @@ protected:
     RGBColor myBaseColorSelected;
 
     /// @brief pointer to additional dialog
-    GNEAdditionalDialog *additionalDialog;
+    GNEAdditionalDialog *myAdditionalDialog;
 
     /// @name computed only once (for performance) in updateGeometry()
     //@{
