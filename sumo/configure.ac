@@ -411,7 +411,7 @@ AC_CHECK_HEADER([libavformat/version.h],
 AC_CHECK_HEADER([grpc++/grpc++.h], 
                 [AM_CPPFLAGS="$CPPFLAGS $AM_CPPFLAGS"
                  AC_DEFINE([HAVE_GRPC], [1], [defined if grpc is available])
-                 GRPC_LIBS="-lgrpc++ -lprotobuf -lgrpc -lgpr" AC_SUBST(GRPC_LIBS)
+                 GRPC_LIBS="-lgrpc++ -lprotobuf -lgrpc" AC_SUBST(GRPC_LIBS)
                  ac_enabled="$ac_enabled grpc"],
                 [ac_disabled="$ac_disabled grpc"])
 
