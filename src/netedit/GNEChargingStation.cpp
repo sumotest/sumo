@@ -144,6 +144,30 @@ GNEChargingStation::updateGeometry() {
 }
 
 
+void 
+GNEChargingStation::openAdditionalDialog() {
+}
+
+
+void
+GNEChargingStation::writeAdditional(OutputDevice& device) {
+    device.openTag(getTag());
+    device.writeAttr(SUMO_ATTR_ID, getID());
+    device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
+    device.writeAttr(SUMO_ATTR_STARTPOS, myStartPos);
+    device.writeAttr(SUMO_ATTR_ENDPOS, myEndPos);
+    device.writeAttr(SUMO_ATTR_CHARGINGPOWER, myChargingPower);
+    device.writeAttr(SUMO_ATTR_EFFICIENCY, myEfficiency);
+    if(myChargeInTransit)
+        device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, "true");
+    else
+        device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, "false");
+    device.writeAttr(SUMO_ATTR_CHARGEDELAY, myChargeDelay);
+    // Close tag
+    device.closeTag();
+}
+
+
 SUMOReal
 GNEChargingStation::getChargingPower() {
     return myChargingPower;
@@ -348,25 +372,6 @@ GNEChargingStation::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& 
     // close building
     ret->closeBuilding();
     return ret;
-}
-
-
-void
-GNEChargingStation::writeAdditional(OutputDevice& device) {
-    device.openTag(getTag());
-    device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
-    device.writeAttr(SUMO_ATTR_STARTPOS, myStartPos);
-    device.writeAttr(SUMO_ATTR_ENDPOS, myEndPos);
-    device.writeAttr(SUMO_ATTR_CHARGINGPOWER, myChargingPower);
-    device.writeAttr(SUMO_ATTR_EFFICIENCY, myEfficiency);
-    if(myChargeInTransit)
-        device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, "true");
-    else
-        device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, "false");
-    device.writeAttr(SUMO_ATTR_CHARGEDELAY, myChargeDelay);
-    // Close tag
-    device.closeTag();
 }
 
 

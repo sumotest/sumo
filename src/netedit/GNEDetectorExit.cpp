@@ -116,6 +116,11 @@ GNEDetectorExit::updateGeometry() {
 }
 
 
+void 
+GNEDetectorExit::openAdditionalDialog() {
+}
+
+
 void
 GNEDetectorExit::writeAdditional(OutputDevice& device) {
     // Write parameters

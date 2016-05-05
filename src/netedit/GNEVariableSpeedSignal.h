@@ -61,6 +61,9 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
+    /// @brief open GNEVariableSpeedSignalDialog
+    void openAdditionalDialog();
+
     /** @brief change the position of the rerouter geometry without registering undo/redo
      * @param[in] posx new x position of rerouter in the map
      * @param[in] posy new y position of rerouter in the map

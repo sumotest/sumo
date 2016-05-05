@@ -140,12 +140,6 @@ GNEAdditional::getLane() const {
 }
 
 
-GNEAdditionalDialog* 
-GNEAdditional::getAdditionaldialog() const {
-    return myAdditionalDialog;
-}
-
-
 PositionVector
 GNEAdditional::getShape() const {
     return myShape;

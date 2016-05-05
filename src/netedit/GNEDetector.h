@@ -67,6 +67,9 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
+    /// @brief open Additional Dialog
+    virtual void openAdditionalDialog() = 0;
+
     /** @brief change the position of the additional geometry without registering undo/redo
      * @param[in] posx new x position of additional over lane
      * @param[in] posy unused

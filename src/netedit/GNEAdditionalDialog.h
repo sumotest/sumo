@@ -56,19 +56,13 @@ public:
     // destructor
     ~GNEAdditionalDialog();
 
-    // open Dialog
-    void openAdditionalDialog();
-
-    // close Dialog
-    void closeAdditionalDialog();
-
     /// @name FOX-callbacks
     /// @{
     /// @brief event after press accept button
-    virtual long onCmdAccept(FXObject*, FXSelector, void*) = 0;
+    virtual long onCmdAccept(FXObject* sender, FXSelector sel, void* ptr) = 0;
 
     /// @brief event after press cancel button
-    virtual long onCmdCancel(FXObject*, FXSelector, void*) = 0;
+    virtual long onCmdCancel(FXObject* sender, FXSelector sel, void* ptr) = 0;
 
     /// @brief event after press cancel button
     virtual long onCmdReset(FXObject*, FXSelector, void*) = 0;
@@ -94,10 +88,10 @@ protected:
     FXButton *myResetButton;
 
 private:
-    /// @brief Invalidated copy constructor.
+    /// @brief Invalidated copy constructor
     GNEAdditionalDialog(const GNEAdditionalDialog&);
 
-    /// @brief Invalidated assignment operator.
+    /// @brief Invalidated assignment operator
     GNEAdditionalDialog& operator=(const GNEAdditionalDialog&);
 };
 

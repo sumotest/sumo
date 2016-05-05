@@ -89,6 +89,10 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
+    /// @brief open Additional Dialog
+    /// @note: only certain Additionals own an AdditionalDialog. 
+    virtual void openAdditionalDialog()= 0;
+
     /// @brief Returns position of additional in view
     const Position &getPositionInView() const;
 
@@ -97,9 +101,6 @@ public:
 
     /// @brief Returns pointer to Lane (or NULL if additional don't belong to a Lane)
     GNELane* getLane() const;
-
-    /// @brief Returns pointer to additionalDialog (or NULL if additional don't have a AdditionalDialog)
-    GNEAdditionalDialog *getAdditionaldialog() const;
 
     /// @brief Returns additional element's shape
     PositionVector getShape() const;

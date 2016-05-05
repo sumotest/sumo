@@ -62,6 +62,21 @@ FXIMPLEMENT(GNEVariableSpeedSignalDialog, FXDialogBox, GNERerouterDialogMap, ARR
 GNEVariableSpeedSignalDialog::GNEVariableSpeedSignalDialog(GNEVariableSpeedSignal *variableSpeedSignalParent) : 
     GNEAdditionalDialog(variableSpeedSignalParent),
     myVariableSpeedSignalParent(variableSpeedSignalParent) {
+
+    // List with the data
+    myDataList = new FXList(this, this);
+
+    // Horizontal frame for row elements
+    myRowFrame = new FXHorizontalFrame(this);
+
+    // Text field with data
+    myRowData = new FXTextField(myRowFrame, 1, this);
+
+    // Button for insert row
+    myAddRow = new FXButton(myRowFrame, "Add", NULL, this);
+
+    // Execute additional dialog (To make it modal)
+    execute();
 }
 
 GNEVariableSpeedSignalDialog::~GNEVariableSpeedSignalDialog() {
@@ -69,17 +84,31 @@ GNEVariableSpeedSignalDialog::~GNEVariableSpeedSignalDialog() {
 
 
 long 
-GNEVariableSpeedSignalDialog::onCmdAccept(FXObject*, FXSelector, void*) {
-    // Close dialog
-    closeAdditionalDialog();
+GNEVariableSpeedSignalDialog::onCMDInsertRow(FXObject*, FXSelector, void*) {
+    return 1;
+}
+
+
+long 
+GNEVariableSpeedSignalDialog::onCmdRemoveRow(FXObject*, FXSelector, void*) {
+    return 1;
+}
+
+
+long 
+GNEVariableSpeedSignalDialog::onCmdAccept(FXObject* sender, FXSelector sel, void* ptr) {
+
+    // Stop Modal
+    getApp()->stopModal(this,TRUE);
     return 1;
 }
 
 
 long
-GNEVariableSpeedSignalDialog::onCmdCancel(FXObject*, FXSelector, void*) {
-    // Close dialog
-    closeAdditionalDialog();
+GNEVariableSpeedSignalDialog::onCmdCancel(FXObject* sender, FXSelector sel, void* ptr) {
+
+    // Stop Modal
+    getApp()->stopModal(this,FALSE);
     return 1;
 }
 

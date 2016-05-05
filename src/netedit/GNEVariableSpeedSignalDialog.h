@@ -63,11 +63,17 @@ public:
 
     /// @name FOX-callbacks
     /// @{
+    /// @brief event after press insert button
+    long onCMDInsertRow(FXObject*, FXSelector, void*);
+
+    /// @brief event after press remove row
+    long onCmdRemoveRow(FXObject*, FXSelector, void*);
+
     /// @brief event after press accept button
-    long onCmdAccept(FXObject*, FXSelector, void*);
+    long onCmdAccept(FXObject* sender, FXSelector sel, void* ptr);
 
     /// @brief event after press cancel button
-    long onCmdCancel(FXObject*, FXSelector, void*);
+    long onCmdCancel(FXObject* sender, FXSelector sel, void* ptr);
 
     /// @brief event after press cancel button
     long onCmdReset(FXObject*, FXSelector, void*);
@@ -82,6 +88,18 @@ protected:
 
     // Map with the temporal VSSData
     std::map<SUMOTime, SUMOReal> myVSSData;
+
+    // List with the data
+    FXList *myDataList;
+
+    // Button for insert row
+    FXButton *myAddRow;
+
+    // Text field with data
+    FXTextField *myRowData;
+
+    // Horizontal frame for row elements
+    FXHorizontalFrame *myRowFrame;
 
 private:
     /// @brief Invalidated copy constructor.

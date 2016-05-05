@@ -121,6 +121,11 @@ GNERerouterEdge::updateGeometry() {
 }
 
 
+void 
+GNERerouterEdge::openAdditionalDialog() {
+}
+
+
 void
 GNERerouterEdge::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // Due a rerouterEdge is placed over a concrete position of lane, ignore Warnings

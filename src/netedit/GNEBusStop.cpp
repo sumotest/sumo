@@ -140,6 +140,10 @@ GNEBusStop::updateGeometry() {
     setBlockIconRotation();
 }
 
+void 
+GNEBusStop::openAdditionalDialog() {
+}
+
 
 void
 GNEBusStop::writeAdditional(OutputDevice& device) {

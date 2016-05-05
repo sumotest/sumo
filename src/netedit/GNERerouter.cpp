@@ -414,6 +414,12 @@ GNERerouter::updateGeometry() {
 }
 
 
+void 
+GNERerouter::openAdditionalDialog() {
+    GNERerouterDialog rerouterDialog(this);
+}
+
+
 void
 GNERerouter::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
     // if item isn't blocked

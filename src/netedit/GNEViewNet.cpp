@@ -688,11 +688,9 @@ GNEViewNet::onDoubleClicked(FXObject* obj, FXSelector sel, void* data) {    // P
             GUIGlObjectStorage::gIDStorage.unblockObject(id);
             // If there are a pointed element an is an additional
             if (pointed && pointed->getType() == GLO_ADDITIONAL) {
-                // Obtain pointer additional
+                // Obtain pointer additional an open an AdditionalDialog if item own it
                 GNEAdditional* pointed_additional = (GNEAdditional*)pointed;
-                // if own a additional dialog, open it
-                if(pointed_additional->getAdditionaldialog() != NULL)
-                    pointed_additional->getAdditionaldialog()->openAdditionalDialog();
+                pointed_additional->openAdditionalDialog();
             }
             makeNonCurrent();
         }

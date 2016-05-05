@@ -47,7 +47,7 @@
 // ===========================================================================
 
 GNEAdditionalDialog::GNEAdditionalDialog(GNEAdditional *parent) : 
-    FXDialogBox(parent->getViewNet()->getApp(), ("Edit " + toString(parent->getTag()) + " '" + parent->getID() + "' data").c_str()) {
+    FXDialogBox(parent->getViewNet(), ("Edit " + toString(parent->getTag()) + " '" + parent->getID() + "' data").c_str()) {
     // Create frames
     myContentFrame = new FXVerticalFrame(this);
     myButtonFrame = new FXHorizontalFrame(this);
@@ -60,18 +60,5 @@ GNEAdditionalDialog::GNEAdditionalDialog(GNEAdditional *parent) :
 
 GNEAdditionalDialog::~GNEAdditionalDialog() {
 }
-
-
-void 
-GNEAdditionalDialog::openAdditionalDialog() {
-    show();
-}
-
-
-void 
-GNEAdditionalDialog::closeAdditionalDialog() {
-    hide();
-}
-
 
 /****************************************************************************/

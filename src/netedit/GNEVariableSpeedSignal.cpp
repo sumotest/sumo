@@ -99,7 +99,7 @@ GNEVariableSpeedSignal::GNEVariableSpeedSignal(const std::string& id, GNEViewNet
         delete i;
     }
     // Create dialog
-    myAdditionalDialog = new GNEVariableSpeedSignalDialog(this);
+    //myAdditionalDialog = new GNEVariableSpeedSignalDialog(this);
 }
 
 
@@ -123,6 +123,12 @@ GNEVariableSpeedSignal::updateGeometry() {
 
     // Update connections
     updateConnections();
+}
+
+
+void 
+GNEVariableSpeedSignal::openAdditionalDialog() {
+    GNEVariableSpeedSignalDialog variableSpeedSignalDialog(this);
 }
 
 

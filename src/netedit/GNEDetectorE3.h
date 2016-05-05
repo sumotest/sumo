@@ -64,6 +64,10 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
+    /// @brief open Additional Dialog
+    /// @note this Additional don't own an AdditionalDialog
+    void openAdditionalDialog();
+
     /** @brief change the position of the E3 geometry without registering undo/redo
      * @param[in] posx new x position of item in the map
      * @param[in] posy new y position of item in the map

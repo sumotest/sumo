@@ -64,6 +64,10 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
+    /// @brief open Additional Dialog
+    /// @note this Additional don't own an AdditionalDialog
+    void openAdditionalDialog();
+
     /** @brief change the position of the additional geometry without registering undo/redo
      * @param[in] posx new x position of additional over lane
      * @param[in] posy unused
@@ -73,6 +77,7 @@ public:
     void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /// @brief get E3 parentecto
+/** MODIFICAR ESTO **/
     GNEAdditional* getAdditionalParent() const;
 
     /** @brief writte additional element into a xml file
