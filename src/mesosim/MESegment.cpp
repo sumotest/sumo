@@ -135,23 +135,45 @@ MESegment::recomputeJamThreshold(SUMOReal jamThresh) {
     }
     if (jamThresh < 0) {
         // compute based on speed
-        myJamThreshold = jamThresholdForSpeed(myEdge.getSpeedLimit());
+        myJamThreshold = jamThresholdForSpeed(myEdge.getSpeedLimit(), jamThresh);
     } else {
         // compute based on specified percentage
         myJamThreshold = jamThresh * myCapacity;
     }
+
+    // update coefficients for the jam-jam headway function
+    // this function models the effect that "empty space" needs to move
+    // backwards through the downstream segment before the upstream segment may
+    // send annother vehicle
+    // the headway function f(x) depends on the number of vehicles in the
+    // downstream segment x
+    // f is a linear function that passes through the following fixed points:
+    // f(n_jam_threshold) = myTau_jf (for continuity)
+    // f(myHeadwayCapacity) = myTau_jj & myHeadwayCapacity
+
+    const SUMOReal n_jam_threshold = myHeadwayCapacity * myJamThreshold / myCapacity; // number of vehicles above which the segment is jammed
+    // solving f(x) = a * x + b 
+    myA = (STEPS2TIME(myTau_jj) * myHeadwayCapacity - STEPS2TIME(myTau_jf)) / (myHeadwayCapacity - n_jam_threshold);
+    myB = myHeadwayCapacity * (STEPS2TIME(myTau_jj) - myA);
+
+    // note that the original Eissfeldt model (p. 69) used different fixed points
+    // f(n_jam_threshold) = n_jam_threshold * myTau_jj
+    // f(myHeadwayCapacity) = myTau_jf * myHeadwayCapacity
+    //
+    // However, this systematically underestimates the backpropagation speed of the jam front (see #2244)
 }
 
 
 SUMOReal
-MESegment::jamThresholdForSpeed(SUMOReal speed) const {
+MESegment::jamThresholdForSpeed(SUMOReal speed, SUMOReal jamThresh) const {
     // vehicles driving freely at maximum speed should not jam
     // we compute how many vehicles could possible enter the segment until the first vehicle leaves
     // and multiply by the space these vehicles would occupy
+    // the jamThresh parameter is scale the resulting value
     if (speed == 0) {
         return std::numeric_limits<double>::max();    // FIXME: This line is just an adhoc-fix to avoid division by zero (Leo)
     }
-    return std::ceil((myLength / (speed * STEPS2TIME(myTau_ff)))) * (SUMOVTypeParameter::getDefault().length + SUMOVTypeParameter::getDefault().minGap);
+    return std::ceil((myLength / (-jamThresh * speed * STEPS2TIME(myTau_ff)))) * (SUMOVTypeParameter::getDefault().length + SUMOVTypeParameter::getDefault().minGap);
 }
 
 
@@ -227,7 +249,7 @@ MESegment::hasSpaceFor(const MEVehicle* veh, SUMOTime entryTime, bool init) cons
     // - initial insertions should not cause additional jamming
     if (init) {
         // inserted vehicle should be able to continue at the current speed
-        return newOccupancy <= jamThresholdForSpeed(getMeanSpeed(false));
+        return newOccupancy <= jamThresholdForSpeed(getMeanSpeed(false), -1);
     }
     // maintain propper spacing between inflow from different lanes
     return entryTime >= myEntryBlockTime;
@@ -327,8 +349,7 @@ MESegment::getTimeHeadway(bool predecessorIsFree) {
         } else {
             // the gap has to move from the start of the segment to its end
             // this allows jams to clear and move upstream
-            const SUMOTime b = (SUMOTime)(myHeadwayCapacity * (myTau_jf - myTau_jj)); // FIXME: unsigned integer overflow (in meso/tau/tau_jj)
-            return (SUMOTime)(myTau_jj * getCarNumber() + b);
+            return TIME2STEPS(myA * getCarNumber() + myB);
         }
     }
 }
