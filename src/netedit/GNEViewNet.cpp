@@ -619,7 +619,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 break;
 
             case GNE_MODE_ADDITIONAL:
-                if(myAdditional->addAdditional(pointed_lane, this)) {
+                if(pointed_additional == NULL && myAdditional->addAdditional(pointed_lane, this)) {
                     update();
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);

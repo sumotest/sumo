@@ -49,9 +49,8 @@ class GNEVariableSpeedSignal;
  * @class GNEAdditionalDialog
  * @brief Dialog to edit sequences, parameters, etc.. of Additionals
  */
-
 class GNEVariableSpeedSignalDialog : public GNEAdditionalDialog {
-    // FOX-declaration
+    /// @brief FOX-declaration
     FXDECLARE(GNEVariableSpeedSignalDialog)
 
 public:
@@ -83,22 +82,28 @@ protected:
     /// @brief FOX needs this
     GNEVariableSpeedSignalDialog() {}
 
-    // Pointer to Variable Speed Signal
+    /// @brief Pointer to Variable Speed Signal
     GNEVariableSpeedSignal *myVariableSpeedSignalParent;
 
-    // Map with the temporal VSSData
+    /// @brief Map with the temporal VSSData
     std::map<SUMOTime, SUMOReal> myVSSData;
 
-    // List with the data
-    FXList *myDataList;
+    /// @brief Table with the data
+    FXTable *myDataList;
 
-    // Button for insert row
+    /// @brief Text field with data
+    FXLabel *myRowLabel;
+
+    /// @bbriefie Text field with step
+    FXTextField *myRowStep;
+
+    /// @brief Text field with speed
+    FXTextField *myRowSpeed;
+
+    /// @brief Button for insert row
     FXButton *myAddRow;
 
-    // Text field with data
-    FXTextField *myRowData;
-
-    // Horizontal frame for row elements
+    /// @brief Horizontal frame for row elements
     FXHorizontalFrame *myRowFrame;
 
 private:

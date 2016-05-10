@@ -157,7 +157,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNERerouter.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouterDialog.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouterEdge.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNERerouterIntervalConfig.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNESelector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNETLSEditor.cpp" />
@@ -215,7 +214,6 @@
     <ClInclude Include="..\..\..\src\netedit\GNERerouter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouterDialog.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouterEdge.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNERerouterIntervalConfig.h" />
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h" />

@@ -183,9 +183,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNEViewParent.cpp">
       <Filter>Quellcodedateien\Main</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNERerouterIntervalConfig.cpp">
-      <Filter>Quellcodedateien\Dialogs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\netedit_main.cpp">
       <Filter>Quellcodedateien\Main</Filter>
     </ClCompile>
@@ -356,9 +353,6 @@
       <Filter>Header-Dateien\Items\Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEDialog_About.h">
-      <Filter>Header-Dateien\Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNERerouterIntervalConfig.h">
       <Filter>Header-Dateien\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEViewParent.h">

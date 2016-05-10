@@ -386,8 +386,6 @@ GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position po
         rerouterSelectedInitialized = true;
         delete i;
     }
-    // Create dialog
-    myAdditionalDialog = new GNERerouterDialog(this);
 }
 
 

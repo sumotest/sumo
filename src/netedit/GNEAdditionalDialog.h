@@ -51,7 +51,7 @@ class GNEAdditional;
 class GNEAdditionalDialog : public FXDialogBox {
 public:
     // Constructor
-    GNEAdditionalDialog(GNEAdditional *parent);
+    GNEAdditionalDialog(GNEAdditional *parent, int width, int height);
 
     // destructor
     ~GNEAdditionalDialog();
@@ -72,11 +72,17 @@ protected:
     /// @brief FOX needs this
     GNEAdditionalDialog() {}
 
+    /// @brief Invalidated show dialog for external calls
+    void show();
+
+    /// @brief Invalidated show dialog for external calls
+    void hide();
+
+    /// @brief Invalidated execute dialog for external calls
+    void execute();
+
     /// @brief frame for contents
     FXVerticalFrame* myContentFrame;
-
-    /// @brief frame for buttons
-    FXHorizontalFrame* myButtonFrame;
 
     /// @brief accept button
     FXButton *myAcceptButton;
@@ -88,6 +94,9 @@ protected:
     FXButton *myResetButton;
 
 private:
+    /// @brief frame for buttons (Not accesible for childs)
+    FXHorizontalFrame* myButtonFrame;
+
     /// @brief Invalidated copy constructor
     GNEAdditionalDialog(const GNEAdditionalDialog&);
 

@@ -156,8 +156,11 @@ GNEAdditionalFrame::~GNEAdditionalFrame() {
 
 bool
 GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
-    // First check if actual type must be placed over a lane
-    if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_LANE) && lane == NULL)
+    // First check if actual type must be placed over a lane but user did't clicke over a lane
+    if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_LANE) == true && lane == NULL)
+        return false;
+    // After check if actual type musn't be placed over an lane but user clicked over a lane
+    if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_LANE) == false && lane != NULL)
         return false;
     // Declare map to keep values
     std::map<SumoXMLAttr, std::string> valuesOfElement = myAdditionalParameters->getAttributes();

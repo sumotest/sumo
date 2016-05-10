@@ -54,27 +54,43 @@ FXIMPLEMENT(GNEVariableSpeedSignalDialog, FXDialogBox, GNERerouterDialogMap, ARR
 // static member definitions
 // ===========================================================================
 
+static int dialogWidth = 240;
+static int dialogHeight = 240;
 
 // ===========================================================================
 // member method definitions
 // ===========================================================================
 
 GNEVariableSpeedSignalDialog::GNEVariableSpeedSignalDialog(GNEVariableSpeedSignal *variableSpeedSignalParent) : 
-    GNEAdditionalDialog(variableSpeedSignalParent),
+    GNEAdditionalDialog(variableSpeedSignalParent, dialogWidth, dialogHeight),
     myVariableSpeedSignalParent(variableSpeedSignalParent) {
 
     // List with the data
-    myDataList = new FXList(this, this);
+    myDataList = new FXTable(myContentFrame, this, MID_GNE_VARIABLESPEEDSIGNAL_REMOVEROW, LAYOUT_FILL_X | LAYOUT_FILL_Y);
+
+    // Configure list
+    myDataList->setTableSize(4, 3);
+    myDataList->setVisibleColumns(3);
+    myDataList->setColumnWidth(0, dialogWidth * 0.35);
+    myDataList->setColumnWidth(1, dialogWidth * 0.35);
+    myDataList->setColumnWidth(2, (dialogWidth * 0.3) - 10);
+    myDataList->setColumnText(0, "timeStep");
+    myDataList->setColumnText(1, "speed");
+    myDataList->setColumnText(2, "remove");
+    myDataList->getRowHeader()->setWidth(0);
 
     // Horizontal frame for row elements
-    myRowFrame = new FXHorizontalFrame(this);
+    myRowFrame = new FXHorizontalFrame(myContentFrame, LAYOUT_FILL_X);
 
-    // Text field with data
-    myRowData = new FXTextField(myRowFrame, 1, this);
+    // Text field with step
+    myRowStep = new FXTextField(myRowFrame, 10, this, MID_GNE_VARIABLESPEEDSIGNAL_CHANGEVALUE, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+
+    // Text field with speed
+    myRowSpeed = new FXTextField(myRowFrame, 10, this, MID_GNE_VARIABLESPEEDSIGNAL_CHANGEVALUE, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
 
     // Button for insert row
-    myAddRow = new FXButton(myRowFrame, "Add", NULL, this);
-
+    myAddRow = new FXButton(myRowFrame, "Add", 0, this, MID_GNE_VARIABLESPEEDSIGNAL_ADDROW);
+        
     // Execute additional dialog (To make it modal)
     execute();
 }
@@ -97,8 +113,7 @@ GNEVariableSpeedSignalDialog::onCmdRemoveRow(FXObject*, FXSelector, void*) {
 
 long 
 GNEVariableSpeedSignalDialog::onCmdAccept(FXObject* sender, FXSelector sel, void* ptr) {
-
-    // Stop Modal
+    // Stop Modal with positive out
     getApp()->stopModal(this,TRUE);
     return 1;
 }
@@ -106,8 +121,7 @@ GNEVariableSpeedSignalDialog::onCmdAccept(FXObject* sender, FXSelector sel, void
 
 long
 GNEVariableSpeedSignalDialog::onCmdCancel(FXObject* sender, FXSelector sel, void* ptr) {
-
-    // Stop Modal
+    // Stop Modal with negative out
     getApp()->stopModal(this,FALSE);
     return 1;
 }

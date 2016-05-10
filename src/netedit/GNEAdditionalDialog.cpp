@@ -46,19 +46,36 @@
 // member method definitions
 // ===========================================================================
 
-GNEAdditionalDialog::GNEAdditionalDialog(GNEAdditional *parent) : 
-    FXDialogBox(parent->getViewNet(), ("Edit " + toString(parent->getTag()) + " '" + parent->getID() + "' data").c_str()) {
+GNEAdditionalDialog::GNEAdditionalDialog(GNEAdditional *parent, int width, int height) : 
+    FXDialogBox(parent->getViewNet(), ("Edit '" + parent->getID() + "' data").c_str(), LAYOUT_EXPLICIT | DECOR_TITLE | DECOR_BORDER, 0, 0, width, height) {
     // Create frames
-    myContentFrame = new FXVerticalFrame(this);
-    myButtonFrame = new FXHorizontalFrame(this);
+    myContentFrame = new FXVerticalFrame(this, LAYOUT_EXPLICIT, 0, 0, width, height - 30);
+    myButtonFrame = new FXHorizontalFrame(this, LAYOUT_EXPLICIT, 0, height - 30, width, 30);
     // create buttons
-    myAcceptButton = new FXButton(myButtonFrame, "accept\t\tclose", 0, this, MID_GNE_MODE_ADDITIONALDIALOG_ACCEPT, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
-    myCancelButton = new FXButton(myButtonFrame, "cancel\t\tclose", 0, this, MID_GNE_MODE_ADDITIONALDIALOG_CANCEL, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
-    myResetButton = new FXButton(myButtonFrame,  "reset\t\tclose",  0, this, MID_GNE_MODE_ADDITIONALDIALOG_RESET,  ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    myAcceptButton = new FXButton(myButtonFrame, "accept\t\tclose", 0, this, MID_GNE_MODE_ADDITIONALDIALOG_ACCEPT, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 120, 30, 4, 4, 3, 3);
+    myCancelButton = new FXButton(myButtonFrame, "cancel\t\tclose", 0, this, MID_GNE_MODE_ADDITIONALDIALOG_CANCEL, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 120, 30, 4, 4, 3, 3);
+    myResetButton = new FXButton(myButtonFrame,  "reset\t\tclose",  0, this, MID_GNE_MODE_ADDITIONALDIALOG_RESET,  ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 120, 30, 4, 4, 3, 3);
 }
 
 
 GNEAdditionalDialog::~GNEAdditionalDialog() {
+}
+
+void 
+GNEAdditionalDialog::show() {
+    FXDialogBox::show();
+}
+
+
+void 
+GNEAdditionalDialog::hide() {
+    FXDialogBox::hide();
+}
+
+
+void 
+GNEAdditionalDialog::execute() {
+    FXDialogBox::execute();
 }
 
 /****************************************************************************/
