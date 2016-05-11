@@ -760,12 +760,12 @@ NBEdgeCont::guessOpposites() {
             NBEdge::Lane& lastLane = edge->getLaneStruct(numLanes - 1);
             if (lastLane.oppositeID == "") {
                 NBEdge* opposite = 0;
-                SUMOReal minOppositeDist = std::numeric_limits<SUMOReal>::max();
+                //SUMOReal minOppositeDist = std::numeric_limits<SUMOReal>::max();
                 for (EdgeVector::const_iterator j = edge->getToNode()->getOutgoingEdges().begin(); j != edge->getToNode()->getOutgoingEdges().end(); ++j) {
                     if ((*j)->getToNode() == edge->getFromNode() && !(*j)->getLanes().empty()) {
                         const SUMOReal distance = VectorHelper<SUMOReal>::maxValue(lastLane.shape.distances((*j)->getLanes().back().shape));
                         if (distance < distanceThreshold) {
-                            minOppositeDist = distance;
+                            //minOppositeDist = distance;
                             opposite = *j;
                         }
                     }
@@ -1091,7 +1091,7 @@ NBEdgeCont::guessSidewalks(SUMOReal width, SUMOReal minSpeed, SUMOReal maxSpeed,
 }
 
 
-int 
+int
 NBEdgeCont::mapToNumericalIDs() {
     IDSupplier idSupplier("", getAllNames());
     EdgeVector toChange;

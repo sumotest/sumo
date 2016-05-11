@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Wed May  4 13:56:46 2016 by SUMO Version dev-SVN-r20637
+<!-- generated on Tue May 10 08:25:17 2016 by SUMO Version dev-SVN-r20678
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -363,30 +363,30 @@
         <edge id="middle">
             <lane id="middle_0">
                 <vehicle id="follower" pos="192.51" speed="4.73"/>
-                <vehicle id="leader" pos="199.55" speed="2.02"/>
+                <vehicle id="leader" pos="200.00" speed="2.48"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="42.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="194.54" speed="2.03"/>
-                <vehicle id="leader" pos="199.98" speed="0.43"/>
+                <vehicle id="follower" pos="195.00" speed="2.48"/>
+                <vehicle id="leader" pos="200.00" speed="0.00"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="43.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="194.98" speed="0.44"/>
-                <vehicle id="leader" pos="200.00" speed="0.02"/>
+                <vehicle id="follower" pos="195.00" speed="0.00"/>
+                <vehicle id="leader" pos="200.00" speed="0.00"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="44.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="195.00" speed="0.02"/>
+                <vehicle id="follower" pos="195.00" speed="0.00"/>
                 <vehicle id="leader" pos="200.00" speed="0.00"/>
             </lane>
         </edge>

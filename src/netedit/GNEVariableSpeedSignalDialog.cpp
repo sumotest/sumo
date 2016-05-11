@@ -29,6 +29,7 @@
 
 #include <iostream>
 #include <utils/gui/windows/GUIAppEnum.h>
+#include <utils/common/TplCheck.h>
 #include "GNEVariableSpeedSignalDialog.h"
 #include "GNEVariableSpeedSignal.h"
 
@@ -45,6 +46,7 @@ FXDEFMAP(GNEVariableSpeedSignalDialog) GNERerouterDialogMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONALDIALOG_ACCEPT, GNEVariableSpeedSignalDialog::onCmdAccept),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONALDIALOG_CANCEL, GNEVariableSpeedSignalDialog::onCmdCancel),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONALDIALOG_RESET,  GNEVariableSpeedSignalDialog::onCmdReset),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_VARIABLESPEEDSIGNAL_ADDROW,   GNEVariableSpeedSignalDialog::onCmdAddRow),
 };
 
 // Object implementation
@@ -129,6 +131,40 @@ GNEVariableSpeedSignalDialog::onCmdCancel(FXObject* sender, FXSelector sel, void
 
 long
 GNEVariableSpeedSignalDialog::onCmdReset(FXObject*, FXSelector, void*) {
+    return 1;
+}
+
+
+long
+GNEVariableSpeedSignalDialog::onCmdAddRow(FXObject* sender, FXSelector sel, void* data) {
+
+
+    // check which value entry was pressed
+    //myDataList->onDoubleClicked(sender, sel, data);
+
+    std::cout << "PASA" << std::endl;
+    /*
+    int row = myTable->getCurrentRow();
+    if (row == -1 || row >= (int)(myItems.size())) {
+        return 1;
+    }
+    GUIParameterTableItemInterface* i = myItems[row];
+    if (!i->dynamic()) {
+        return 1;
+    }
+    if (myObject == 0) {
+        return 1;
+    }
+
+    GUIParam_PopupMenuInterface* p = new GUIParam_PopupMenuInterface(*myApplication, *this, *myObject, i->getName(), i->getSUMORealSourceCopy());
+    new FXMenuCommand(p, "Open in new Tracker", 0, p, MID_OPENTRACKER);
+    // set geometry
+    p->setX(static_cast<FXEvent*>(data)->root_x);
+    p->setY(static_cast<FXEvent*>(data)->root_y);
+    p->create();
+    // show
+    p->show();
+    */
     return 1;
 }
 

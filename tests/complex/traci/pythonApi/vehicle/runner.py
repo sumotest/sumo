@@ -137,7 +137,7 @@ except traci.TraCIException:
     print("recovering from exception after asking for unknown vehicle")
 traci.vehicle.add("1", "horizontal")
 traci.vehicle.setStop(
-    "1", "2fi", pos=50.0, laneIndex=0, duration=2000, flags=1)
+    "1", "2fi", pos=50.0, laneIndex=0, duration=1000, flags=1)
 check("1")
 traci.vehicle.changeTarget("1", "4fi")
 print("routeID", traci.vehicle.getRouteID(vehID))
@@ -175,7 +175,8 @@ print(traci.vehicle.getSubscriptionResults(vehID))
 print("step", step())
 print(traci.vehicle.getSubscriptionResults(vehID))
 print("speed before moveToXY", traci.vehicle.getSpeed(vehID))
-traci.vehicle.moveToVTD(vehID, "1o", 0, 482.49, 501.31, 0) # test deprecated method name
+traci.vehicle.moveToVTD(vehID, "1o", 0, 482.49, 501.31,
+                        0)  # test deprecated method name
 print("step", step())
 print("speed after moveToVTD", traci.vehicle.getSpeed(vehID))
 print(traci.vehicle.getSubscriptionResults(vehID))

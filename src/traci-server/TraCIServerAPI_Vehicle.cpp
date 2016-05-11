@@ -413,7 +413,7 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
                         link = MSLane::succLinkSec(*v, view, *lane, bestLaneConts);
                     }
                 }
-                ++cnt; // tlsLinks, everyting else was already included 
+                ++cnt; // tlsLinks, everyting else was already included
                 tempMsg.writeUnsignedByte(TYPE_COMPOUND);
                 tempMsg.writeInt((int) cnt);
                 tempMsg.writeUnsignedByte(TYPE_INTEGER);
@@ -993,6 +993,10 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
                     continue;
                 }
             }
+            if (!v->isOnRoad()) {
+                MSNet::getInstance()->getInsertionControl().alreadyDeparted(v);
+
+            }
             l->forceVehicleInsertion(v, position, MSMoveReminder::NOTIFICATION_TELEPORT);
         }
         break;
@@ -1322,7 +1326,7 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             }
             bool keepRoute = v->getID() != "VTD_EGO";
             if (numArgs == 6) {
-                int keepRouteFlag; 
+                int keepRouteFlag;
                 if (!server.readTypeCheckingByte(inputStorage, keepRouteFlag)) {
                     return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "The sixth parameter for setting a VTD vehicle must be the keepRouteFlag given as a byte.", outputStorage);
                 }

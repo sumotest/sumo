@@ -346,6 +346,9 @@ computeRoutes(RONet& net, OptionsCont& oc, ODMatrix& matrix) {
                         }
                     }
                 }
+                for (std::vector<RORoute*>::const_iterator j = c->pathsVector.begin(); j != c->pathsVector.end(); ++j) {
+                    delete *j;
+                }
             }
             haveOutput = true;
         }

@@ -259,7 +259,7 @@ TraCIAPI::check_resultState(tcpip::Storage& inMsg, int command, bool ignoreComma
 }
 
 
-void
+int
 TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expectedType, bool ignoreCommandId) const {
     inMsg.position(); // respStart
     int length = inMsg.readUnsignedByte();
@@ -279,6 +279,7 @@ TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expecte
             throw tcpip::SocketException("Expected " + toString(expectedType) + " but got " + toString(valueDataType));
         }
     }
+    return cmdId;
 }
 
 
@@ -428,12 +429,92 @@ TraCIAPI::getColor(int cmd, int var, const std::string& id, tcpip::Storage* add)
     return c;
 }
 
+void
+TraCIAPI::readVariables(tcpip::Storage &inMsg, const std::string &objectID, int variableCount, SubscribedValues& into) {
+    while (variableCount > 0) {
+
+        int variableID = inMsg.readUnsignedByte();
+        int status = inMsg.readUnsignedByte();
+        int type = inMsg.readUnsignedByte();
+
+        if (status == RTYPE_OK) {
+
+            TraCIValue v;
+
+            switch (type) {
+                case TYPE_DOUBLE:
+                    v.scalar = inMsg.readDouble();
+                    break;
+                case TYPE_STRING:
+                    v.string = inMsg.readString();
+                    break;
+                case POSITION_3D:
+                    v.position.x = inMsg.readDouble();
+                    v.position.y = inMsg.readDouble();
+                    v.position.z = inMsg.readDouble();
+                    break;
+                case TYPE_COLOR:
+                    v.color.r = inMsg.readUnsignedByte();
+                    v.color.g = inMsg.readUnsignedByte();
+                    v.color.b = inMsg.readUnsignedByte();
+                    v.color.a = inMsg.readUnsignedByte();
+                    break;
+
+                // TODO Other data types
+
+                default:
+                    throw tcpip::SocketException("Unimplemented subscription type: " + toString(type));
+            }
+
+            into[objectID][variableID] = v;
+        } else {
+            throw tcpip::SocketException("Subscription response error: variableID=" + toString(variableID) + " status=" + toString(status));
+        }
+
+        variableCount--;
+    }
+}
+
+void
+TraCIAPI::readVariableSubscription(tcpip::Storage &inMsg) {
+    std::string objectID = inMsg.readString();
+    int variableCount = inMsg.readUnsignedByte();
+    readVariables(inMsg, objectID, variableCount, mySubscribedValues);
+}
+
+void
+TraCIAPI::readContextSubscription(tcpip::Storage &inMsg) {
+    std::string contextID = inMsg.readString();
+    int contextDomain = inMsg.readUnsignedByte();
+    int variableCount = inMsg.readUnsignedByte();
+    int numObjects = inMsg.readInt();
+
+    while (numObjects > 0) {
+        std::string objectID = inMsg.readString();
+        readVariables(inMsg, objectID, variableCount, mySubscribedContextValues[contextID]);
+        numObjects--;
+    }
+}
 
 void
 TraCIAPI::simulationStep(SUMOTime time) {
     send_commandSimulationStep(time);
     tcpip::Storage inMsg;
     check_resultState(inMsg, CMD_SIMSTEP2);
+
+    mySubscribedValues.clear();
+    mySubscribedContextValues.clear();
+    int numSubs = inMsg.readInt();
+    while (numSubs > 0) {
+        int cmdId = check_commandGetResult(inMsg, 0, -1, true);
+        if (cmdId >= RESPONSE_SUBSCRIBE_INDUCTIONLOOP_VARIABLE && cmdId <= RESPONSE_SUBSCRIBE_PERSON_VARIABLE) {
+            readVariableSubscription(inMsg);
+        }
+        else {
+            readContextSubscription(inMsg);
+        }
+        numSubs--;
+    }
 }
 
 
@@ -1262,6 +1343,56 @@ TraCIAPI::SimulationScope::getMinExpectedNumber() const {
     return myParent.getInt(CMD_GET_SIM_VARIABLE, VAR_MIN_EXPECTED_VEHICLES, "");
 }
 
+void
+TraCIAPI::SimulationScope::subscribe(int domID, const std::string& objID, SUMOTime beginTime, SUMOTime endTime, const std::vector<int>& vars) const {
+    myParent.send_commandSubscribeObjectVariable(domID, objID, beginTime, endTime, vars);
+    tcpip::Storage inMsg;
+    myParent.check_resultState(inMsg, domID);
+    myParent.check_commandGetResult(inMsg, domID);
+    myParent.readVariableSubscription(inMsg);
+}
+
+void
+TraCIAPI::SimulationScope::subscribeContext(int domID, const std::string& objID, SUMOTime beginTime, SUMOTime endTime, int domain, SUMOReal range, const std::vector<int>& vars) const {
+
+    myParent.send_commandSubscribeObjectContext(domID, objID, beginTime, endTime, domain, range, vars);
+    tcpip::Storage inMsg;
+    myParent.check_resultState(inMsg, domID);
+    myParent.check_commandGetResult(inMsg, domID);
+    myParent.readContextSubscription(inMsg);
+}
+
+TraCIAPI::SubscribedValues
+TraCIAPI::SimulationScope::getSubscriptionResults() {
+    return myParent.mySubscribedValues;
+}
+
+
+TraCIAPI::TraCIValues
+TraCIAPI::SimulationScope::getSubscriptionResults(const std::string& objID) {
+    if (myParent.mySubscribedValues.find(objID) != myParent.mySubscribedValues.end()) {
+        return myParent.mySubscribedValues[objID];
+    } else {
+        throw; // Something?
+    }
+}
+
+
+TraCIAPI::SubscribedContextValues 
+TraCIAPI::SimulationScope::getContextSubscriptionResults() {
+    return myParent.mySubscribedContextValues;
+}
+
+
+TraCIAPI::SubscribedValues 
+TraCIAPI::SimulationScope::getContextSubscriptionResults(const std::string& objID) {
+    if (myParent.mySubscribedContextValues.find(objID) != myParent.mySubscribedContextValues.end()) {
+        return myParent.mySubscribedContextValues[objID];
+    }
+    else {
+        throw; // Something?
+    }
+}
 
 
 // ---------------------------------------------------------------------------
@@ -1762,22 +1893,22 @@ TraCIAPI::VehicleScope::getNextTLS(const std::string& vehID) const {
 }
 
 
-void 
-TraCIAPI::VehicleScope::add(const std::string& vehicleID, 
-        const std::string& routeID, 
-        const std::string& typeID, 
-        std::string depart,
-        const std::string& departLane, 
-        const std::string& departPos, 
-        const std::string& departSpeed, 
-        const std::string& arrivalLane,
-        const std::string& arrivalPos, 
-        const std::string& arrivalSpeed,
-        const std::string& fromTaz, 
-        const std::string& toTaz, 
-        const std::string& line, 
-        int personCapacity, 
-        int personNumber) const {
+void
+TraCIAPI::VehicleScope::add(const std::string& vehicleID,
+                            const std::string& routeID,
+                            const std::string& typeID,
+                            std::string depart,
+                            const std::string& departLane,
+                            const std::string& departPos,
+                            const std::string& departSpeed,
+                            const std::string& arrivalLane,
+                            const std::string& arrivalPos,
+                            const std::string& arrivalSpeed,
+                            const std::string& fromTaz,
+                            const std::string& toTaz,
+                            const std::string& line,
+                            int personCapacity,
+                            int personNumber) const {
 
     if (depart == "-1") {
         depart = toString(myParent.simulation.getCurrentTime() / 1000.0);
@@ -1823,7 +1954,7 @@ TraCIAPI::VehicleScope::add(const std::string& vehicleID,
 }
 
 
-void 
+void
 TraCIAPI::VehicleScope::remove(const std::string& vehicleID, char reason) const {
     tcpip::Storage content;
     content.writeUnsignedByte(TYPE_BYTE);
@@ -1849,7 +1980,7 @@ TraCIAPI::VehicleScope::moveTo(const std::string& vehicleID, const std::string& 
     myParent.check_resultState(inMsg, CMD_SET_VEHICLE_VARIABLE);
 }
 
-void 
+void
 TraCIAPI::VehicleScope::moveToXY(const std::string& vehicleID, const std::string& edgeID, int lane, SUMOReal x, SUMOReal y, SUMOReal angle, bool keepRoute) const {
     tcpip::Storage content;
     content.writeUnsignedByte(TYPE_COMPOUND);

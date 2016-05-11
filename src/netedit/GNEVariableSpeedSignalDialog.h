@@ -76,6 +76,9 @@ public:
 
     /// @brief event after press cancel button
     long onCmdReset(FXObject*, FXSelector, void*);
+
+    /// @brief event after press add row button
+    long onCmdAddRow(FXObject* sender, FXSelector sel, void* data);
     /// @}
 
 protected:

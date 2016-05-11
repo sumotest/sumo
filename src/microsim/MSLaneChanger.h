@@ -58,7 +58,7 @@ public:
     MSLaneChanger(const std::vector<MSLane*>* lanes, bool allowChanging, bool allowSwap);
 
     /// Destructor.
-    ~MSLaneChanger();
+    virtual ~MSLaneChanger();
 
     /// Start lane-change-process for all vehicles on the edge'e lanes.
     void laneChange(SUMOTime t);
@@ -85,7 +85,7 @@ public:
 
         SUMOReal dens;
 
-        /// @name Members which are used only by MSLaneChangerSublane 
+        /// @name Members which are used only by MSLaneChangerSublane
         /// @{
         // the vehicles in from of the current vehicle
         MSLeaderInfo ahead;
@@ -164,7 +164,7 @@ protected:
         int laneOffset,
         const std::pair<MSVehicle* const, SUMOReal>& leader,
         const std::vector<MSVehicle::LaneQ>& preb) const;
-    
+
     /* @brief check whether lane changing in the given direction is desirable
      * and possible */
     int checkChange(
