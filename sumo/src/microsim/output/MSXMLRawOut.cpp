@@ -152,6 +152,10 @@ MSXMLRawOut::writeVehicle(OutputDevice& of, const MSBaseVehicle& veh) {
         if (!MSGlobals::gUseMesoSim) {
             const MSVehicle& microVeh = static_cast<const MSVehicle&>(veh);
             // microsim-specific stuff
+            if (MSGlobals::gLateralResolution > 0) {
+                const SUMOReal posLat = microVeh.getLateralPositionOnLane();
+                of.writeAttr(SUMO_ATTR_POSITION_LAT, posLat);
+            }
             const unsigned int personNumber = microVeh.getPersonNumber();
             if (personNumber > 0) {
                 of.writeAttr(SUMO_ATTR_PERSON_NUMBER, personNumber);
@@ -174,7 +178,7 @@ MSXMLRawOut::writeVehicle(OutputDevice& of, const MSBaseVehicle& veh) {
 }
 
 
-void 
+void
 MSXMLRawOut::writeTransportable(OutputDevice& of, const MSTransportable* p, SumoXMLTag tag) {
     of.openTag(tag);
     of.writeAttr(SUMO_ATTR_ID, p->getID());

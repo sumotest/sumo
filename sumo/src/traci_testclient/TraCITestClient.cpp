@@ -674,26 +674,55 @@ TraCITestClient::readAndReportTypeDependent(tcpip::Storage& inMsg, int valueData
 void
 TraCITestClient::testAPI() {
     answerLog << "testAPI:\n";
+
     answerLog << "  edge:\n";
     answerLog << "    getIDList: " << joinToString(edge.getIDList(), " ") << "\n";
     answerLog << "    getIDCount: " << edge.getIDCount() << "\n";
+    answerLog << "  route:\n";
+    answerLog << "    add:\n";
+    std::vector<std::string> edges;
+    edges.push_back("e_u1");
+    route.add("e_u1", edges);
+    answerLog << "    getIDList: " << joinToString(route.getIDList(), " ") << "\n";
     answerLog << "  vehicle:\n";
+    answerLog << "    getRoadID: " << vehicle.getRoadID("0") << "\n";
+    answerLog << "    getLaneID: " << vehicle.getLaneID("0") << "\n";
+    answerLog << "    getNextTLS:\n";
+    std::vector<VehicleScope::NextTLSData> result = vehicle.getNextTLS("0");
+    for (int i = 0; i < (int)result.size(); ++i) {
+        const VehicleScope::NextTLSData& d = result[i];
+        answerLog << "      tls=" << d.id << " tlIndex=" << d.tlIndex << " dist=" << d.dist << " state=" << d.state << "\n";
+    }
+    answerLog << "    moveToVTD, simStep:\n";
+    vehicle.moveToXY("0", "dummy", 0, 2231.61,498.29, 90, true);
+    simulationStep();
+    answerLog << "    getRoadID: " << vehicle.getRoadID("0") << "\n";
+    answerLog << "    getLaneID: " << vehicle.getLaneID("0") << "\n";
+    answerLog << "    add:\n";
+    vehicle.add("1", "e_u1");
+    simulationStep();
     answerLog << "    getIDList: " << joinToString(vehicle.getIDList(), " ") << "\n";
+    answerLog << "    getWaitingTime: " << vehicle.getWaitingTime("0") << "\n";
+    answerLog << "    remove:\n";
+    vehicle.remove("0");
     answerLog << "    getIDCount: " << vehicle.getIDCount() << "\n";
+
     answerLog << "  inductionloop:\n";
     answerLog << "    getIDList: " << joinToString(inductionloop.getIDList(), " ") << "\n";
     answerLog << "    getVehicleData:\n";
-    std::vector<InductionLoopScope::VehicleData> result = inductionloop.getVehicleData("det1");
-    for (int i = 0; i < (int)result.size(); ++i) {
-        const InductionLoopScope::VehicleData& vd = result[i];
+    std::vector<InductionLoopScope::VehicleData> result2 = inductionloop.getVehicleData("det1");
+    for (int i = 0; i < (int)result2.size(); ++i) {
+        const InductionLoopScope::VehicleData& vd = result2[i];
         answerLog << "      veh=" << vd.id << " length=" << vd.length << " entered=" << vd.entryTime << " left=" << vd.leaveTime << " type=" << vd.typeID << "\n";
     }
+
     answerLog << "  simulation:\n";
     answerLog << "    getCurrentTime: " << simulation.getCurrentTime() << "\n";
+
     answerLog << "  gui:\n";
     try {
         answerLog << "    setScheme: \n";
-        gui.setSchema("View #0", "real world"); 
+        gui.setSchema("View #0", "real world");
         answerLog << "    getScheme: " << gui.getSchema("View #0") << "\n";
     } catch (tcpip::SocketException&) {
         answerLog << "    no support for gui commands\n";

@@ -153,6 +153,9 @@
     </time>
 
     <processing>
+        <!-- Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane -->
+        <lateral-resolution value="-1" type="FLOAT"/>
+
         <!-- Load routes for the next number of seconds ahead -->
         <route-steps value="200" synonymes="s" type="TIME"/>
 
@@ -162,11 +165,17 @@
         <!-- Ignore vehicles which block the junction after they have been standing for SECONDS (-1 means never ignore) -->
         <ignore-junction-blocker value="-1" type="TIME"/>
 
+        <!-- Do not check whether routes are connected -->
+        <ignore-route-errors value="false" type="BOOL"/>
+
         <!-- Do not check whether accidents occur -->
         <ignore-accidents value="false" type="BOOL"/>
 
-        <!-- Do not check whether routes are connected -->
-        <ignore-route-errors value="false" type="BOOL"/>
+        <!-- How to deal with collisions: [none,warn,teleport,remove] -->
+        <collision.action value="teleport" type="STR"/>
+
+        <!-- Enables collisions checks on junctions -->
+        <collision.check-junctions value="false" type="BOOL"/>
 
         <!-- Delay vehicle insertion to stay within the given maximum number -->
         <max-num-vehicles value="-1" type="INT"/>

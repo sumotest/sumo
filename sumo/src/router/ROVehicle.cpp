@@ -56,7 +56,7 @@
 ROVehicle::ROVehicle(const SUMOVehicleParameter& pars,
                      RORouteDef* route, const SUMOVTypeParameter* type,
                      const RONet* net, MsgHandler* errorHandler)
- : RORoutable(pars, type), myRoute(route) {
+    : RORoutable(pars, type), myRoute(route) {
     myParameter.stops.clear();
     if (route != 0 && route->getFirstRoute() != 0) {
         for (std::vector<SUMOVehicleParameter::Stop>::const_iterator s = route->getFirstRoute()->getStops().begin(); s != route->getFirstRoute()->getStops().end(); ++s) {
@@ -65,6 +65,15 @@ ROVehicle::ROVehicle(const SUMOVehicleParameter& pars,
     }
     for (std::vector<SUMOVehicleParameter::Stop>::const_iterator s = pars.stops.begin(); s != pars.stops.end(); ++s) {
         addStop(*s, net, errorHandler);
+    }
+    if (pars.via.size() != 0) {
+        // via takes precedence over stop edges
+        // XXX check for inconsistencies #2275
+        myStopEdges.clear();
+        for (std::vector<std::string>::const_iterator it = pars.via.begin(); it != pars.via.end(); ++it) {
+            assert(net->getEdge(*it) != 0);
+            myStopEdges.push_back(net->getEdge(*it));
+        }
     }
 }
 

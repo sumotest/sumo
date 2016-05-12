@@ -62,7 +62,7 @@ public:
 
     class VehicleVariables {
     public:
-    	virtual ~VehicleVariables();
+        virtual ~VehicleVariables();
     };
 
     /** @brief Constructor

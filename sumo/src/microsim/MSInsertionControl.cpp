@@ -59,8 +59,8 @@ MSInsertionControl::MSInsertionControl(MSVehicleControl& vc,
     myVehicleControl(vc),
     myMaxDepartDelay(maxDepartDelay),
     myCheckEdgesOnce(checkEdgesOnce),
-    myMaxVehicleNumber(maxVehicleNumber)
-{}
+    myMaxVehicleNumber(maxVehicleNumber) {
+}
 
 
 MSInsertionControl::~MSInsertionControl() {
@@ -298,6 +298,14 @@ void
 MSInsertionControl::descheduleDeparture(SUMOVehicle* veh) {
     myAbortedEmits.insert(veh);
 }
+
+
+void
+MSInsertionControl::alreadyDeparted(SUMOVehicle* veh) {
+    myPendingEmits.erase(std::remove(myPendingEmits.begin(), myPendingEmits.end(), veh), myPendingEmits.end() ); 
+    myAllVeh.remove(veh);
+}
+
 
 void
 MSInsertionControl::clearPendingVehicles(std::string& route) {

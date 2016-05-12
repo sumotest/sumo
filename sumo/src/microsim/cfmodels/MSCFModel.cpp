@@ -220,6 +220,7 @@ MSCFModel::insertionFollowSpeed(const MSVehicle* const v, SUMOReal speed, SUMORe
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		return maximumSafeFollowSpeed(gap2pred, speed, predSpeed, predMaxDecel);
 	} else {
+		// NOTE: Even for ballistic update, the current speed is irrelevant at insertion, therefore passing 0. (Leo)
 		return maximumSafeFollowSpeed(gap2pred, 0., predSpeed, predMaxDecel, true);
 	}
 }

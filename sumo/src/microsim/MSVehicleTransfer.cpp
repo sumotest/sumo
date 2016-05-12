@@ -99,7 +99,7 @@ MSVehicleTransfer::checkInsertions(SUMOTime time) {
         VehicleInformation& desc = *i;
 
         if (desc.myParking) {
-            // handle parking vehicles XXX: fixing #1224 required that processNextStop() does not return 0 when a stop is reached (maybe implement abs(...) <= EPS here)
+            // handle parking vehicles
             if (desc.myVeh->processNextStop(1) == 0) {
                 ++i;
                 continue;
@@ -120,7 +120,7 @@ MSVehicleTransfer::checkInsertions(SUMOTime time) {
 
         if (desc.myParking) {
             // handle parking vehicles
-            if (l->isInsertionSuccess(desc.myVeh, 0, desc.myVeh->getPositionOnLane(), false, MSMoveReminder::NOTIFICATION_PARKING)) {
+            if (l->isInsertionSuccess(desc.myVeh, 0, desc.myVeh->getPositionOnLane(), desc.myVeh->getLateralPositionOnLane(), false, MSMoveReminder::NOTIFICATION_PARKING)) {
                 MSNet::getInstance()->informVehicleStateListener(desc.myVeh, MSNet::VEHICLE_STATE_ENDING_PARKING);
                 myParkingVehicles[oldLane].erase(desc.myVeh);
                 i = myVehicles.erase(i);

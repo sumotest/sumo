@@ -65,8 +65,8 @@
 // ===========================================================================
 NBNetBuilder::NBNetBuilder() :
     myEdgeCont(myTypeCont),
-    myHaveLoadedNetworkWithoutInternalEdges(false)
-{}
+    myHaveLoadedNetworkWithoutInternalEdges(false) {
+}
 
 
 NBNetBuilder::~NBNetBuilder() {}
@@ -75,7 +75,7 @@ NBNetBuilder::~NBNetBuilder() {}
 void
 NBNetBuilder::applyOptions(OptionsCont& oc) {
     // apply options to type control
-    myTypeCont.setDefaults(oc.getInt("default.lanenumber"), oc.getFloat("default.speed"), oc.getInt("default.priority"));
+    myTypeCont.setDefaults(oc.getInt("default.lanenumber"), oc.getFloat("default.lanewidth"), oc.getFloat("default.speed"), oc.getInt("default.priority"));
     // apply options to edge control
     myEdgeCont.applyOptions(oc);
     // apply options to traffic light logics control
@@ -203,6 +203,11 @@ NBNetBuilder::compute(OptionsCont& oc,
         myJoinedEdges.init(myEdgeCont);
         myNodeCont.joinSimilarEdges(myDistrictCont, myEdgeCont, myTLLCont);
         PROGRESS_TIME_MESSAGE(before);
+    }
+    if (oc.getBool("opposites.guess")) {
+        PROGRESS_BEGIN_MESSAGE("guessing opposite direction edges");
+        myEdgeCont.guessOpposites();
+        PROGRESS_DONE_MESSAGE();
     }
     //
     if (oc.exists("geometry.split") && oc.getBool("geometry.split")) {

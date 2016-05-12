@@ -120,16 +120,19 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-    /** @brief Returns an own type parameter window 
+    /** @brief Returns an own type parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
      * @return The built parameter window
      */
-    virtual GUIParameterTableWindow* getTypeParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0; 
+    virtual GUIParameterTableWindow* getTypeParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
     virtual void drawAction_drawVehicleBlinker(SUMOReal /*length*/) const {}
-    virtual void drawAction_drawVehicleBrakeLight(SUMOReal /*length*/) const {}
+    virtual void drawAction_drawVehicleBrakeLight(SUMOReal length, bool onlyOne=false) const {
+        UNUSED_PARAMETER(length);
+        UNUSED_PARAMETER(onlyOne);
+    }
     virtual void drawAction_drawLinkItems(const GUIVisualizationSettings& /*s*/) const {}
     virtual void drawAction_drawPersonsAndContainers(const GUIVisualizationSettings& /*s*/) const {}
     /** @brief Draws the vehicle's best lanes */
