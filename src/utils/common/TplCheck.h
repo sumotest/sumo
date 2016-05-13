@@ -31,6 +31,7 @@
 #endif
 
 #include <string>
+#include <algorithm>
 
 
 // ===========================================================================
@@ -72,7 +73,7 @@ public:
     /// @brief check if a String can be parsed into a Bool
     static bool _str2bool(const std::string &data) {
         std::string dataToLower = data;
-        std::transform(s.begin(), dataToLower.end(), dataToLower.begin(), ::tolower);
+        std::transform(dataToLower.begin(), dataToLower.end(), dataToLower.begin(), ::tolower);
         if(data == "1" || data == "yes" || data == "true"  || data == "on"  || data == "x" || data == "t" || 
            data == "0" || data == "no"  || data == "false" || data == "off" || data == "-" || data == "f")
             return true;
