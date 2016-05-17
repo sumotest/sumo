@@ -694,7 +694,7 @@ TraCITestClient::testAPI() {
         answerLog << "      tls=" << d.id << " tlIndex=" << d.tlIndex << " dist=" << d.dist << " state=" << d.state << "\n";
     }
     answerLog << "    moveToVTD, simStep:\n";
-    vehicle.moveToXY("0", "dummy", 0, 2231.61,498.29, 90, true);
+    vehicle.moveToXY("0", "dummy", 0, 2231.61, 498.29, 90, true);
     simulationStep();
     answerLog << "    getRoadID: " << vehicle.getRoadID("0") << "\n";
     answerLog << "    getLaneID: " << vehicle.getLaneID("0") << "\n";
@@ -718,12 +718,34 @@ TraCITestClient::testAPI() {
 
     answerLog << "  simulation:\n";
     answerLog << "    getCurrentTime: " << simulation.getCurrentTime() << "\n";
+    answerLog << "    subscribe to road and pos of vehicle '1':\n";
+    std::vector<int> vars;
+    vars.push_back(VAR_ROAD_ID);
+    vars.push_back(VAR_LANEPOSITION);
+    simulation.subscribe(CMD_SUBSCRIBE_VEHICLE_VARIABLE, "1", 0, TIME2STEPS(100), vars);
+    simulationStep();
+    answerLog << "    subscription results:\n";
+    TraCIValues result3 = simulation.getSubscriptionResults("1");
+    answerLog << "      roadID=" << result3[VAR_ROAD_ID].string << " pos=" << result3[VAR_LANEPOSITION].scalar << "\n";
+
+    answerLog << "    subscribe to vehicles around edge 'e_u1':\n";
+    std::vector<int> vars2;
+    vars2.push_back(VAR_LANEPOSITION);
+    simulation.subscribeContext(CMD_SUBSCRIBE_EDGE_CONTEXT, "e_u1", 0, TIME2STEPS(100), CMD_GET_VEHICLE_VARIABLE, 100, vars2);
+    simulationStep();
+    answerLog << "    context subscription results:\n";
+    SubscribedValues result4 = simulation.getContextSubscriptionResults("e_u1");
+    for (SubscribedValues::iterator it = result4.begin(); it != result4.end(); ++it) {
+        answerLog << "      vehicle=" << it->first << " pos=" << it->second[VAR_LANEPOSITION].scalar << "\n";
+    }
 
     answerLog << "  gui:\n";
     try {
         answerLog << "    setScheme: \n";
         gui.setSchema("View #0", "real world");
         answerLog << "    getScheme: " << gui.getSchema("View #0") << "\n";
+        answerLog << "    take screenshot: \n";
+        gui.screenshot("View #0", "image.png");
     } catch (tcpip::SocketException&) {
         answerLog << "    no support for gui commands\n";
     }

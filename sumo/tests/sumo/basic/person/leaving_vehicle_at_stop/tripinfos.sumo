@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:43:46 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Thu May 12 13:36:05 2016 by SUMO Version dev-SVN-r20713
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -29,8 +29,8 @@
 -->
 
 <tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
-    <tripinfo id="train0" depart="50.00" departLane="1/4to1/3_0" departPos="25.10" departSpeed="0.00" departDelay="0.00" arrival="193.00" arrivalLane="1/4to1/3_0" arrivalPos="90.50" arrivalSpeed="13.90" duration="143.00" routeLength="447.98" waitSteps="99" timeLoss="110.36" rerouteNo="0" devices="tripinfo_train0 person_train0" vType="train" vaporized=""/>
-    <tripinfo id="train1" depart="55.00" departLane="1/4to1/3_0" departPos="25.10" departSpeed="0.00" departDelay="5.00" arrival="211.00" arrivalLane="1/4to1/3_0" arrivalPos="90.50" arrivalSpeed="13.90" duration="156.00" routeLength="447.98" waitSteps="104" timeLoss="123.39" rerouteNo="0" devices="tripinfo_train1 person_train1" vType="train" vaporized=""/>
+    <tripinfo id="train0" depart="50.00" departLane="1/4to1/3_0" departPos="25.10" departSpeed="0.00" departDelay="0.00" arrival="193.00" arrivalLane="1/4to1/3_0" arrivalPos="90.50" arrivalSpeed="13.90" duration="143.00" routeLength="447.98" waitSteps="3" timeLoss="14.15" rerouteNo="0" devices="tripinfo_train0 person_train0" vType="train" vaporized=""/>
+    <tripinfo id="train1" depart="55.00" departLane="1/4to1/3_0" departPos="25.10" departSpeed="0.00" departDelay="5.00" arrival="212.00" arrivalLane="1/4to1/3_0" arrivalPos="90.50" arrivalSpeed="13.90" duration="157.00" routeLength="447.98" waitSteps="84" timeLoss="102.39" rerouteNo="0" devices="tripinfo_train1 person_train1" vType="train" vaporized=""/>
     <personinfo id="person0" depart="0.00">
         <stop arrival="0.00"/>
         <walk arrival="47.00"/>
@@ -39,12 +39,12 @@
         <stop arrival="205.00"/>
         <ride depart="205.00" arrival="251.00"/>
     </personinfo>
-    <tripinfo id="car0" depart="205.00" departLane="1/4to2/4_0" departPos="40.00" departSpeed="0.00" departDelay="205.00" arrival="251.00" arrivalLane="3/4to4/4_0" arrivalPos="92.00" arrivalSpeed="13.90" duration="46.00" routeLength="252.00" waitSteps="22" timeLoss="26.75" rerouteNo="0" devices="tripinfo_car0 person_car0" vType="DEFAULT_VEHTYPE" vaporized=""/>
+    <tripinfo id="car0" depart="205.00" departLane="1/4to2/4_0" departPos="40.00" departSpeed="0.00" departDelay="205.00" arrival="251.00" arrivalLane="3/4to4/4_0" arrivalPos="92.00" arrivalSpeed="13.90" duration="46.00" routeLength="252.00" waitSteps="1" timeLoss="5.75" rerouteNo="0" devices="tripinfo_car0 person_car0" vType="DEFAULT_VEHTYPE" vaporized=""/>
     <personinfo id="person1" depart="0.00">
         <stop arrival="0.00"/>
         <walk arrival="47.00"/>
-        <ride depart="139.00" arrival="188.00"/>
-        <walk arrival="232.00"/>
-        <stop arrival="252.00"/>
+        <ride depart="140.00" arrival="189.00"/>
+        <walk arrival="233.00"/>
+        <stop arrival="253.00"/>
     </personinfo>
 </tripinfos>

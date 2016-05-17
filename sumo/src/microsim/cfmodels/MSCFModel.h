@@ -252,7 +252,7 @@ public:
         // secure when the follower can brake harder than the leader because the paths may still cross.
         // As a workaround we lower the value of followerDecel which errs on the side of caution
     	//
-    	// xxx (Leo) This is somewhat incompatible to the approach in maximumSafeFollowSpeed, where
+    	// xxx (Leo) This is somewhat different from the approach in maximumSafeFollowSpeed, where
     	// the leaderMaxDecel is increased instead. This is no perfect estimate either,
     	// but without taking into account the reaction time it is less conservative than decreasing followDecel.
     	// Consider substitution of 'const leaderMaxDecel = MAX2(myDecel, leaderMaxDecel);' below and 'followDecel = myDecel;'

@@ -41,6 +41,7 @@
 #include <utils/common/MsgHandler.h>
 #include <utils/common/ToString.h>
 #include <utils/common/TplConvert.h>
+#include <utils/common/IDSupplier.h>
 #include <utils/options/OptionsCont.h>
 #include "NBNetBuilder.h"
 #include "NBEdgeCont.h"
@@ -759,12 +760,12 @@ NBEdgeCont::guessOpposites() {
             NBEdge::Lane& lastLane = edge->getLaneStruct(numLanes - 1);
             if (lastLane.oppositeID == "") {
                 NBEdge* opposite = 0;
-                SUMOReal minOppositeDist = std::numeric_limits<SUMOReal>::max();
+                //SUMOReal minOppositeDist = std::numeric_limits<SUMOReal>::max();
                 for (EdgeVector::const_iterator j = edge->getToNode()->getOutgoingEdges().begin(); j != edge->getToNode()->getOutgoingEdges().end(); ++j) {
                     if ((*j)->getToNode() == edge->getFromNode() && !(*j)->getLanes().empty()) {
                         const SUMOReal distance = VectorHelper<SUMOReal>::maxValue(lastLane.shape.distances((*j)->getLanes().back().shape));
                         if (distance < distanceThreshold) {
-                            minOppositeDist = distance;
+                            //minOppositeDist = distance;
                             opposite = *j;
                         }
                     }
@@ -1089,5 +1090,25 @@ NBEdgeCont::guessSidewalks(SUMOReal width, SUMOReal minSpeed, SUMOReal maxSpeed,
     return sidewalksCreated;
 }
 
+
+int
+NBEdgeCont::mapToNumericalIDs() {
+    IDSupplier idSupplier("", getAllNames());
+    EdgeVector toChange;
+    for (EdgeCont::iterator it = myEdges.begin(); it != myEdges.end(); it++) {
+        try {
+            TplConvert::_str2int(it->first);
+        } catch (NumberFormatException&) {
+            toChange.push_back(it->second);
+        }
+    }
+    for (EdgeVector::iterator it = toChange.begin(); it != toChange.end(); ++it) {
+        NBEdge* edge = *it;
+        myEdges.erase(edge->getID());
+        edge->setID(idSupplier.getNext());
+        myEdges[edge->getID()] = edge;
+    }
+    return (int)toChange.size();
+}
 
 /****************************************************************************/

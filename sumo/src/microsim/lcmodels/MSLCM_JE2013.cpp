@@ -108,17 +108,16 @@ MSLCM_JE2013::MSLCM_JE2013(MSVehicle& v) :
     myCooperativeParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_COOPERATIVE_PARAM, 1)),
     mySpeedGainParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_SPEEDGAIN_PARAM, 1)),
     myKeepRightParam(v.getVehicleType().getParameter().getLCParam(SUMO_ATTR_LCA_KEEPRIGHT_PARAM, 1)),
-    CHANGE_PROB_THRESHOLD_LEFT(0.2 / MAX2(NUMERICAL_EPS, mySpeedGainParam)),
-    CHANGE_PROB_THRESHOLD_RIGHT(2.0 * myKeepRightParam / MAX2(NUMERICAL_EPS, mySpeedGainParam))
-{
+    myChangeProbThresholdRight(2.0 * myKeepRightParam / MAX2(NUMERICAL_EPS, mySpeedGainParam)),
+    myChangeProbThresholdLeft(0.2 / MAX2(NUMERICAL_EPS, mySpeedGainParam)) {
     if (DEBUG_COND) {
-        std::cout << SIMTIME 
-            << " create lcModel veh=" << myVehicle.getID()
-            << " lcStrategic=" << myStrategicParam
-            << " lcCooperative=" << myCooperativeParam
-            << " lcSpeedGain=" << mySpeedGainParam
-            << " lcKeepRight=" << myKeepRightParam
-            << "\n";
+        std::cout << SIMTIME
+                  << " create lcModel veh=" << myVehicle.getID()
+                  << " lcStrategic=" << myStrategicParam
+                  << " lcCooperative=" << myCooperativeParam
+                  << " lcSpeedGain=" << mySpeedGainParam
+                  << " lcKeepRight=" << myKeepRightParam
+                  << "\n";
     }
 }
 
@@ -127,7 +126,7 @@ MSLCM_JE2013::~MSLCM_JE2013() {
 }
 
 
-bool 
+bool
 MSLCM_JE2013::debugVehicle() const {
     return DEBUG_COND;
 }
@@ -870,7 +869,7 @@ MSLCM_JE2013::_wantsChange(
                                            &myVehicle, myVehicle.getSpeed(), neighLead.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
                 myVSafes.push_back(vSafe);
                 if (vSafe < myVehicle.getSpeed()) {
-                    mySpeedGainProbability += TS * CHANGE_PROB_THRESHOLD_LEFT / 3;
+                    mySpeedGainProbability += TS * myChangeProbThresholdLeft / 3;
                 }
                 if (gDebugFlag2) {
                     std::cout << STEPS2TIME(currentTime)
@@ -1008,9 +1007,9 @@ MSLCM_JE2013::_wantsChange(
     //        << " currentDist=" << currentDist
     //        << "\n";
     //}
-    const SUMOReal inconvenience = MIN2((SUMOReal)1.0, (laneOffset < 0 
-            ? mySpeedGainProbability / CHANGE_PROB_THRESHOLD_RIGHT 
-            : -mySpeedGainProbability / CHANGE_PROB_THRESHOLD_LEFT));
+    const SUMOReal inconvenience = MIN2((SUMOReal)1.0, (laneOffset < 0
+                                        ? mySpeedGainProbability / myChangeProbThresholdRight
+                                        : -mySpeedGainProbability / myChangeProbThresholdLeft));
     if (amBlockingFollowerPlusNB()
             && (inconvenience <= myCooperativeParam)
             //&& ((myOwnState & myLcaCounter) == 0) // VARIANT_6 : counterNoHelp
@@ -1048,9 +1047,9 @@ MSLCM_JE2013::_wantsChange(
 
     // followSpeed returns the speed after accelerating for TS but we are
     // interested in the speed after 1s
-    const SUMOReal correctedSpeed = (myVehicle.getSpeed() 
-            + myVehicle.getCarFollowModel().getMaxAccel() 
-            - ACCEL2SPEED(myVehicle.getCarFollowModel().getMaxAccel()));
+    const SUMOReal correctedSpeed = (myVehicle.getSpeed()
+                                     + myVehicle.getCarFollowModel().getMaxAccel()
+                                     - ACCEL2SPEED(myVehicle.getCarFollowModel().getMaxAccel()));
 
     SUMOReal thisLaneVSafe = myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle);
     SUMOReal neighLaneVSafe = neighLane.getVehicleMaxSpeed(&myVehicle);
@@ -1110,7 +1109,7 @@ MSLCM_JE2013::_wantsChange(
                                                               vMax, neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())));
                 fullSpeedDrivingSeconds = MIN2(fullSpeedDrivingSeconds, fullSpeedGap / (vMax - neighLead.first->getSpeed()));
             }
-            const SUMOReal deltaProb = (CHANGE_PROB_THRESHOLD_RIGHT
+            const SUMOReal deltaProb = (myChangeProbThresholdRight
                                         * STEPS2TIME(DELTA_T)
                                         * (fullSpeedDrivingSeconds / acceptanceTime) / KEEP_RIGHT_TIME);
             myKeepRightProbability -= TS * deltaProb;
@@ -1131,7 +1130,7 @@ MSLCM_JE2013::_wantsChange(
                           << " myKeepRightProbability=" << myKeepRightProbability
                           << "\n";
             }
-            if (myKeepRightProbability * myKeepRightParam < -CHANGE_PROB_THRESHOLD_RIGHT) {
+            if (myKeepRightProbability * myKeepRightParam < -myChangeProbThresholdRight) {
                 req = ret | lca | LCA_KEEPRIGHT;
                 if (!cancelRequest(req)) {
                     return ret | req;
@@ -1151,7 +1150,7 @@ MSLCM_JE2013::_wantsChange(
                       << "\n";
         }
 
-        if (mySpeedGainProbability < -CHANGE_PROB_THRESHOLD_RIGHT
+        if (mySpeedGainProbability < -myChangeProbThresholdRight
                 && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { //./MAX2((SUMOReal) .1, myVehicle.getSpeed())) { // -.1
             req = ret | lca | LCA_SPEEDGAIN;
             if (!cancelRequest(req)) {
@@ -1190,7 +1189,7 @@ MSLCM_JE2013::_wantsChange(
                       << " blocked=" << blocked
                       << "\n";
         }
-        if (mySpeedGainProbability > CHANGE_PROB_THRESHOLD_LEFT && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { // .1
+        if (mySpeedGainProbability > myChangeProbThresholdLeft && neighDist / MAX2((SUMOReal) .1, myVehicle.getSpeed()) > 20.) { // .1
             req = ret | lca | LCA_SPEEDGAIN;
             if (!cancelRequest(req)) {
                 return ret | req;

@@ -121,6 +121,8 @@ MSCFModel_KraussOrig1::stopSpeed(const MSVehicle* const veh, const SUMOReal spee
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		return MIN2(vsafe(gap, 0., 0.), maxNextSpeed(speed, veh));
 	} else {
+		// XXX: using this here is probably in the spirit of Krauss, but we should consider,
+		// if the original vsafe should be kept instead (Leo)
 		return MIN2(maximumSafeStopSpeedBallistic(gap, speed), maxNextSpeed(speed, veh));
 	}
 }
@@ -142,6 +144,9 @@ MSCFModel_KraussOrig1::dawdle(SUMOReal speed) const {
 SUMOReal MSCFModel_KraussOrig1::vsafe(SUMOReal gap, SUMOReal predSpeed, SUMOReal /* predMaxDecel */) const {
 	if (predSpeed == 0 && gap < 0.01) {
         return 0;
+    } else if (predSpeed == 0 &&  gap <= ACCEL2SPEED(myDecel)) {
+        // workaround for #2310
+        return MIN2(ACCEL2SPEED(myDecel), DIST2SPEED(gap));
     }
     SUMOReal vsafe = (SUMOReal)(-1. * myTauDecel
                                 + sqrt(
