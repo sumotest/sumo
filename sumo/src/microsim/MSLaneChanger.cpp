@@ -85,7 +85,7 @@ void
 MSLaneChanger::laneChange(SUMOTime t) {
     // This is what happens in one timestep. After initialization of the
     // changer, each vehicle will try to change. After that the changer
-    // nedds an update to prevent multiple changes of one vehicle.
+    // needs an update to prevent multiple changes of one vehicle.
     // Finally, the change-result has to be given back to the lanes.
     initChanger();
     try {
@@ -249,6 +249,7 @@ MSLaneChanger::change() {
     const std::vector<MSVehicle::LaneQ>& preb = vehicle->getBestLanes();
     // check whether the vehicle wants and is able to change to right lane
     int state1 = 0;
+
     if (mayChange(-1)) {
         state1 = checkChangeWithinEdge(-1, leader, preb);
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
@@ -270,13 +271,45 @@ MSLaneChanger::change() {
     // check whether the vehicle wants and is able to change to left lane
     int state2 = 0;
     if (mayChange(1)) {
+
+        // Debug (Leo)
+    	gDebugFlag2 = vehicle->getID() == "type1.54";
+        if(gDebugFlag2){
+        	std::cout
+        	<< "MSLaneChanger::change(): change left request"
+        	<< "\nvehicle: '" << vehicle->getID() << "'"
+        	<< std::endl;
+        }
+
         state2 = checkChangeWithinEdge(1, leader, preb);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
+
+
+        // Debug (Leo)
+        if(gDebugFlag2){
+        	std::cout
+        	<< "changingAllowed2 = " << changingAllowed2
+        	<< std::endl;
+        }
+
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_LEFT) != 0 && changingAllowed2) {
+
+            // Debug (Leo)
+        	if(gDebugFlag2){
+            	std::cout
+            	<< "startChange() left"
+            	<< std::endl;
+            }
+        	gDebugFlag2 = false;
+
             startChange(vehicle, myCandi, 1);
             return true;
         }
+
+        // Debug (Leo)
+        gDebugFlag2=false;
+
         if ((state2 & LCA_LEFT) != 0 && (state2 & LCA_URGENT) != 0) {
             (myCandi + 1)->lastBlocked = vehicle;
             if ((myCandi + 1)->firstBlocked == 0) {
@@ -522,31 +555,84 @@ MSLaneChanger::checkChange(
 
     MSVehicle* vehicle = veh(myCandi);
     gDebugFlag1 = vehicle->getLaneChangeModel().debugVehicle();
+
+    // Debug (Leo)
+    gDebugFlag2 = vehicle->getID() == "type1.54";
+    if(gDebugFlag2){
+    	std::cout
+    	<< "checkChange() for vehicle '"<<vehicle->getID()<<"'"
+    	<< std::endl;
+    }
+
+
     int blocked = 0;
     int blockedByLeader = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_LEADER : LCA_BLOCKED_BY_LEFT_LEADER);
     int blockedByFollower = (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER);
     // overlap
     if (neighFollow.first != 0 && neighFollow.second < 0) {
         blocked |= (blockedByFollower | LCA_OVERLAPPING);
+
+        // Debug (Leo)
+        if(gDebugFlag2){
+        	std::cout
+        	<< "overlapping with follower..."
+        	<< std::endl;
+        }
+
     }
     if (neighLead.first != 0 && neighLead.second < 0) {
         blocked |= (blockedByLeader | LCA_OVERLAPPING);
+
+        // Debug (Leo)
+        if(gDebugFlag2){
+        	std::cout
+        	<< "overlapping with leader..."
+        	<< std::endl;
+        }
+
     }
+
     // safe back gap
-    if (neighFollow.first != 0) {
+    if ((blocked & blockedByFollower) == 0 && neighFollow.first != 0) {
         // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
         if (neighFollow.second < neighFollow.first->getCarFollowModel().getSecureGap(neighFollow.first->getSpeed(), vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())) {
             blocked |= blockedByFollower;
+
+            // Debug (Leo)
+            if(gDebugFlag2){
+            	std::cout
+            	<< "back gap unsafe: "
+            	<< "gap = " << neighFollow.second
+            	<< ", secureGap = "
+            	<< neighFollow.first->getCarFollowModel().getSecureGap(neighFollow.first->getSpeed(),
+            			vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())
+            	<< std::endl;
+            }
+
         }
     }
 
     // safe front gap
-    if (neighLead.first != 0) {
+    if ((blocked & blockedByLeader) == 0 && neighLead.first != 0) {
         // !!! eigentlich: vsafe braucht die Max. Geschwindigkeit beider Spuren
         if (neighLead.second < vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(), neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())) {
             blocked |= blockedByLeader;
+
+            // Debug (Leo)
+            if(gDebugFlag2){
+            	std::cout
+            	<< "front gap unsafe: "
+            	<< "gap = " << neighLead.second
+            	<< ", secureGap = "
+            	<< vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(),
+            			neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())
+            	<< std::endl;
+            }
+
         }
     }
+
+    gDebugFlag2=false;
 
     MSAbstractLaneChangeModel::MSLCMessager msg(leader.first, neighLead.first, neighFollow.first);
     int state = blocked | vehicle->getLaneChangeModel().wantsChange(

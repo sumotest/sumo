@@ -354,7 +354,9 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 
 	// decrease gap slightly (to avoid passing end of lane by values of magnitude ~1e-12, when exact stop is required)
 	g = MAX2(0., g - NUMERICAL_EPS);
-	assert(g >= 0);
+
+	// if there is no gap, we just demand to brake as hard as possible
+	if(g == 0) return -std::numeric_limits<double>::max();
 
 	SUMOReal D = 2*g - v*dt;
 	if(D < 0){
@@ -364,10 +366,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		// we have a corresponding stopping time is t_s = v/d, and a covered distance v^2/(2d).
 		// Equating this to g, we find 2gd = v^2, i.e. 2d = -(v+vn) = -v^2/g.
 		// Thus vn = -v^2/g + v
-
-		// if there is no gap, we just demand to brake as hard as possible
-		if(g == 0) return -std::numeric_limits<double>::max();
-		else return -v*v/g + v;
+		return -v*v/g + v;
 	} else {
 		assert(myHeadwayTime - dt >= 0.);
 		// if myHeadwayTime < dt, there are different options to deal with that.

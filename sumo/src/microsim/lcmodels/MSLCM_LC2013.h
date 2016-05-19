@@ -119,7 +119,6 @@ protected:
         MSVehicle** lastBlocked,
         MSVehicle** firstBlocked);
 
-
     /* @brief decide whether we will overtake or follow a blocking leader
      * and inform it accordingly
      * If we decide to follow, myVSafes will be extended
@@ -136,6 +135,25 @@ protected:
                         SUMOReal remainingSeconds,
                         SUMOReal plannedSpeed);
 
+
+    /* @brief compute the distance to cover until a safe gap to the vehicle v in front is reached
+     *        assuming the current velocities
+         * @param[in] follower the vehicle behind leader
+         * @param[in] leader the vehicle to be overtaken
+         * @param[in] gap initial between this and v
+         * @return the distance that the relative positions would have to change.
+         */
+    SUMOReal overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap);
+
+
+    /* @brief estimate the time it takes until vehicle v1 has overtaken v2
+         * @param[in] v1 the vehicle behind v2
+         * @param[in] v2 the vehicle to be overtaken
+         * @param[in] overtakeDist estimated relative distance that v1 has to gain
+         * @param[in] remainingSeconds time left to complete overtaking maneuver
+         * @return either the estimated time for the maneuver or something larger, indicating impossibility
+         */
+    SUMOReal estimateOvertakeTime(const MSVehicle* v1, const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds);
 
     /// @brief compute useful slowdowns for blocked vehicles
     int slowDownForBlocked(MSVehicle** blocked, int state);
