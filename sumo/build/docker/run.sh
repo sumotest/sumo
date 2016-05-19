@@ -1,5 +1,4 @@
 #!/bin/bash
-
 OUT_DIR=/root/mnt/`date +%Y-%m-%d-%H-%M-%S`
 SUMO_ROOT=/root/gRPC/sumo/
 SCRIPTS_ROOT=$SUMO_ROOT/build/docker/
