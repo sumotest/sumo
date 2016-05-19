@@ -66,11 +66,13 @@ MSPersonControl::~MSPersonControl() {
 
 
 bool
-MSPersonControl::add(const std::string& id, MSPerson* person) {
-    if (myPersons.find(id) == myPersons.end()) {
-        myPersons[id] = person;
+MSPersonControl::add(MSPerson* person) {
+    const SUMOVehicleParameter& param = person->getParameter();
+    if (myPersons.find(param.id) == myPersons.end()) {
+        myPersons[param.id] = person;
+        const SUMOTime step = param.depart % DELTA_T == 0 ? param.depart : (param.depart / DELTA_T + 1) * DELTA_T;
+        myWaiting4Departure[step].push_back(person);
         myLoadedPersonNumber++;
-        myRunningPersonNumber++;
         return true;
     }
     return false;
@@ -113,21 +115,8 @@ MSPersonControl::erase(MSTransportable* person) {
 
 
 void
-MSPersonControl::setDeparture(const SUMOTime time, MSPerson* person) {
-    const SUMOTime step = time % DELTA_T == 0 ? time : (time / DELTA_T + 1) * DELTA_T;
-    if (myWaiting4Departure.find(step) == myWaiting4Departure.end()) {
-        myWaiting4Departure[step] = PersonVector();
-    }
-    myWaiting4Departure[step].push_back(person);
-}
-
-
-void
 MSPersonControl::setWaitEnd(const SUMOTime time, MSTransportable* person) {
     const SUMOTime step = time % DELTA_T == 0 ? time : (time / DELTA_T + 1) * DELTA_T;
-    if (myWaitingUntil.find(step) == myWaitingUntil.end()) {
-        myWaitingUntil[step] = PersonVector();
-    }
     myWaitingUntil[step].push_back(person);
 }
 
@@ -138,7 +127,9 @@ MSPersonControl::checkWaitingPersons(MSNet* net, const SUMOTime time) {
         const PersonVector& persons = myWaiting4Departure[time];
         // we cannot use an iterator here because there might be additions to the vector while proceeding
         for (size_t i = 0; i < persons.size(); ++i) {
-            if (!persons[i]->proceed(net, time)) {
+            if (persons[i]->proceed(net, time)) {
+                myRunningPersonNumber++;
+            } else {
                 erase(persons[i]);
             }
         }

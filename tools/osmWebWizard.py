@@ -246,6 +246,7 @@ class Builder(object):
 
         self.filename("config", ".sumocfg")
         opts = [sumo, "-n", self.files["net"], "--gui-settings-file", self.files["guisettings"],
+                "--duration-log.statistics",
                 "-v", "--no-step-log", "--save-configuration", self.files["config"], "--ignore-route-errors"]
 
         if self.data["vehicles"]:
@@ -346,6 +347,7 @@ class OSMImporterWebSocket(WebSocket):
 
                 self.sendMessage(unicode("zip " + data))
         except:
+            print(traceback.format_exc())
             # reset 'Generate Scenario' button
             while self.steps > 0:
                 self.report("Recovering")

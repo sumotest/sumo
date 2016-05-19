@@ -217,6 +217,7 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
                      std::vector<SUMOTime> stateDumpTimes,
                      std::vector<std::string> stateDumpFiles,
                      bool hasInternalLinks,
+                     bool hasNeighs,
                      bool lefthand,
                      SUMOReal version) {
     myEdges = edges;
@@ -235,6 +236,7 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
         mySimBeginMillis = SysUtils::getCurrentMillis();
     }
     myHasInternalLinks = hasInternalLinks;
+    myHasNeighs = hasNeighs;
     myHasElevation = checkElevation();
     myLefthand = lefthand;
     myVersion = version;
@@ -474,11 +476,12 @@ MSNet::simulationStep() {
     if (myPersonControl != 0 && myPersonControl->hasPersons()) {
         myPersonControl->checkWaitingPersons(this, myStep);
     }
-    // insert vehicles
-    myInserter->determineCandidates(myStep);    // containers
-    if (myContainerControl != 0) {
+    // containers
+    if (myContainerControl != 0 && myContainerControl->hasContainers()) {
         myContainerControl->checkWaitingContainers(this, myStep);
     }
+    // insert vehicles
+    myInserter->determineCandidates(myStep);
     myInsertionEvents->execute(myStep);
 #ifdef HAVE_FOX
     MSDevice_Routing::waitForAll();
