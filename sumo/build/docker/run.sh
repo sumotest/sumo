@@ -15,12 +15,14 @@ else
 fi
 if [ -f "/usr/local/bin/sumo" ]; then
 	cd
-	sumo -c $CONF_ROOT/sumo.sumocfg --fcd-output $OUT_DIR/fcd.dump
+	sumo -c $CONF_ROOT/sumo.sumocfg 
+	#--fcd-output $OUT_DIR/fcd.dump
 else
 	echo "sumo is not installed; going to build an install the latest version"
 	$SCRIPTS_ROOT/update_sumo.sh
 	cd
-	sumo -c $CONF_ROOT/sumo.sumocfg --fcd-output $OUT_DIR/fcd.dump
+	sumo -c $CONF_ROOT/sumo.sumocfg 
+	#--fcd-output $OUT_DIR/fcd.dump
 fi
 
 
