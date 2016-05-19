@@ -138,34 +138,22 @@ GNEVariableSpeedSignalDialog::onCmdReset(FXObject*, FXSelector, void*) {
 long
 GNEVariableSpeedSignalDialog::onCmdAddRow(FXObject* sender, FXSelector sel, void* data) {
 
+    if(TplCheck::_str2SUMOTime(myRowStep->getText().text()) == false)
+        return 0;
 
-    // check which value entry was pressed
-    //myDataList->onDoubleClicked(sender, sel, data);
+    if(TplCheck::_str2SUMOReal(myRowSpeed->getText().text()) == false)
+        return 0;
 
-    std::cout << "PASA" << std::endl;
-    /*
-    int row = myTable->getCurrentRow();
-    if (row == -1 || row >= (int)(myItems.size())) {
-        return 1;
-    }
-    GUIParameterTableItemInterface* i = myItems[row];
-    if (!i->dynamic()) {
-        return 1;
-    }
-    if (myObject == 0) {
-        return 1;
-    }
+    fillTable
 
-    GUIParam_PopupMenuInterface* p = new GUIParam_PopupMenuInterface(*myApplication, *this, *myObject, i->getName(), i->getSUMORealSourceCopy());
-    new FXMenuCommand(p, "Open in new Tracker", 0, p, MID_OPENTRACKER);
-    // set geometry
-    p->setX(static_cast<FXEvent*>(data)->root_x);
-    p->setY(static_cast<FXEvent*>(data)->root_y);
-    p->create();
-    // show
-    p->show();
-    */
     return 1;
+}
+
+
+long
+GNEVariableSpeedSignalDialog::fillTable()
+{
+
 }
 
 /****************************************************************************/

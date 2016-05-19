@@ -49,9 +49,13 @@ public:
         // Data empty does't mean 0
         if(data.size() == 0)
             return false;
-        for(int i = 0; i < data.size(); i++)
-            if(!(data.at(i) >= '0' || data.at(i) <= '9' || data.at(i) != '+' || data.at(i) != '-'))
+        for(int i = 0; i < data.size(); i++) {
+            if(data.at(i) == '+' || data.at(i) == '-') {
+                if(i != 0)
+                    return false;
+            } else if(data.at(i) < '0' || data.at(i) > '9')
                 return false;
+        }
         return true;
     }
 
@@ -61,12 +65,19 @@ public:
         bool dot = false;
         if(data.size() == 0)
             return false;
-        for(int i = 0; i < data.size(); i++)
-            if(data.at(i) < '0' || data.at(i) > '9')
+        for(int i = 0; i < data.size(); i++) {
+            if(data.at(i) == '+' || data.at(i) == '-') {
+                if(i != 0)
+                    return false;
+            } else if(data.at(i) == '.') {
                 if(data.at(i) == '.' && !dot)
                     dot = true;
                 else
                     return false;
+            }
+            else if(data.at(i) < '0' || data.at(i) > '9')
+                return false;
+        }
         return true;
     }
     
@@ -87,9 +98,16 @@ public:
         // Data empty does't mean 0
         if(data.size() == 0)
             return false;
-        for(int i = 0; i < data.size(); i++)
-            if(!(data.at(i) >= '0' || data.at(i) <= '9'))
+        for(int i = 0; i < data.size(); i++) {
+            if(data.at(i) == '+') {
+                if(i != 0)
+                    return false;
+            }
+            else if(data.at(i) < '0' || data.at(i) > '9') {
+                std::cout << i << " " << data.at(i) << std::endl;
                 return false;
+            }
+        }
         return true;
     }
 };

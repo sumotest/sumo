@@ -110,6 +110,9 @@ protected:
     FXHorizontalFrame *myRowFrame;
 
 private:
+    /// @brif reffill table
+    void fillTable();
+
     /// @brief Invalidated copy constructor.
     GNEVariableSpeedSignalDialog(const GNEVariableSpeedSignalDialog&);
 
