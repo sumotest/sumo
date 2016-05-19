@@ -552,7 +552,7 @@ GNENet::save(OptionsCont& oc) {
 void
 GNENet::saveAdditionals(const std::string &filename) {
     OutputDevice& device = OutputDevice::getDevice(filename);
-    device.writeXMLHeader("additional", NWFrame::MAJOR_VERSION + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    device.openTag("additionals");
     for (GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)
         // If set belong to additionalSet, their parent will write it
         if(i->second->belongToAdditionalSet() == false)

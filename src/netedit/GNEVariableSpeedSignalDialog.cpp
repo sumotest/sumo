@@ -144,13 +144,13 @@ GNEVariableSpeedSignalDialog::onCmdAddRow(FXObject* sender, FXSelector sel, void
     if(TplCheck::_str2SUMOReal(myRowSpeed->getText().text()) == false)
         return 0;
 
-    fillTable
+    fillTable();
 
     return 1;
 }
 
 
-long
+void
 GNEVariableSpeedSignalDialog::fillTable()
 {
 
