@@ -1,0 +1,206 @@
+<routes>
+    <vType id="fwd0" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.18146025765" guiShape="pedestrian" color="blue"/>
+    <person id="fwd0" type="fwd0" depart="1">
+        <walk edges="EC CN" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd1" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.46034168036" guiShape="pedestrian" color="blue"/>
+    <person id="fwd1" type="fwd1" depart="3">
+    <walk edges="EC SC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd2" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.717742551417" guiShape="pedestrian" color="yellow"/>
+    <person id="fwd2" type="fwd2" depart="5">
+    <walk edges="EC CS" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd3" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.966228034014" guiShape="pedestrian" color="orange"/>
+    <person id="fwd3" type="fwd3" depart="6">
+    <walk edges="EC WC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd4" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.48513258082" guiShape="pedestrian" color="green"/>
+    <person id="fwd4" type="fwd4" depart="12">
+    <walk edges="EC CW" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd5" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.979673912579" guiShape="pedestrian" color="cyan"/>
+    <person id="fwd5" type="fwd5" depart="16">
+    <walk edges="EC NC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd6" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.19923726566" guiShape="pedestrian" color="blue"/>
+    <person id="fwd6" type="fwd6" depart="19">
+    <walk edges="WC EC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd7" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.2396243933" guiShape="pedestrian" color="red"/>
+    <person id="fwd7" type="fwd7" depart="20">
+    <walk edges="WC CE" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd8" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.28927831733" guiShape="pedestrian" color="yellow"/>
+    <person id="fwd8" type="fwd8" depart="21">
+    <walk edges="WC CN" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd9" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.09126569704" guiShape="pedestrian" color="orange"/>
+    <person id="fwd9" type="fwd9" depart="22">
+    <walk edges="WC NC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd10" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.31018468613" guiShape="pedestrian" color="green"/>
+    <person id="fwd10" type="fwd10" depart="28">
+        <walk edges="WC SC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd11" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.16286836963" guiShape="pedestrian" color="cyan"/>
+    <person id="fwd11" type="fwd11" depart="36">
+        <walk edges="WC CS" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+        <vType id="fwd12" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.04995736638" guiShape="pedestrian" color="blue"/>
+    <person id="fwd12" type="fwd12" depart="37">
+        <walk edges="NC EC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd13" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.13859657458" guiShape="pedestrian" color="blue"/>
+    <person id="fwd13" type="fwd13" depart="42">
+        <walk edges="NC CE" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd14" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.739237823866" guiShape="pedestrian" color="blue"/>
+    <person id="fwd14" type="fwd14" depart="43">
+        <walk edges="NC SC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd15" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.03927743893" guiShape="pedestrian" color="blue"/>
+    <person id="fwd15" type="fwd15" depart="49">
+        <walk edges="NC CS" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd16" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.27969693994" guiShape="pedestrian" color="blue"/>
+    <person id="fwd16" type="fwd16" depart="55">
+        <walk edges="NC WC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd17" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.20117111311" guiShape="pedestrian" color="blue"/>
+    <person id="fwd17" type="fwd17" depart="57">
+        <walk edges="NC CW" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd18" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.20230832065" guiShape="pedestrian" color="blue"/>
+    <person id="fwd18" type="fwd18" depart="59">
+        <walk edges="CN EC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd19" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.49275501583" guiShape="pedestrian" color="blue"/>
+    <person id="fwd19" type="fwd19" depart="60">
+        <walk edges="CN CE" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd20" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.06699886772" guiShape="pedestrian" color="blue"/>
+    <person id="fwd20" type="fwd20" depart="65">
+        <walk edges="CN SC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd21" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.703460654514" guiShape="pedestrian" color="blue"/>
+    <person id="fwd21" type="fwd21" depart="66">
+        <walk edges="CN CS" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd22" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.31816753389" guiShape="pedestrian" color="blue"/>
+    <person id="fwd22" type="fwd22" depart="71">
+        <walk edges="CN WC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd23" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.14250179045" guiShape="pedestrian" color="blue"/>
+    <person id="fwd23" type="fwd23" depart="73">
+        <walk edges="CN CW" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd24" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.876175614894" guiShape="pedestrian" color="blue"/>
+    <person id="fwd24" type="fwd24" depart="81">
+        <walk edges="CE SC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd25" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.40625116466" guiShape="pedestrian" color="blue"/>
+    <person id="fwd25" type="fwd25" depart="82">
+        <walk edges="CE CS" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd26" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.828873822908" guiShape="pedestrian" color="blue"/>
+    <person id="fwd26" type="fwd26" depart="84">
+        <walk edges="CE SC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd27" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.41934286879" guiShape="pedestrian" color="blue"/>
+    <person id="fwd27" type="fwd27" depart="93">
+        <walk edges="CE WC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd28" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.04622483338" guiShape="pedestrian" color="blue"/>
+    <person id="fwd28" type="fwd28" depart="94">
+        <walk edges="CE CW" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd29" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.47171998045" guiShape="pedestrian" color="blue"/>
+    <person id="fwd29" type="fwd29" depart="97">
+        <walk edges="CE WC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd30" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.757988409177" guiShape="pedestrian" color="blue"/>
+    <person id="fwd30" type="fwd30" depart="101">
+        <walk edges="CE NC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd31" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.49331377145" guiShape="pedestrian" color="blue"/>
+    <person id="fwd31" type="fwd31" depart="103">
+        <walk edges="CE CN" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd32" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.04517178193" guiShape="pedestrian" color="blue"/>
+    <person id="fwd32" type="fwd32" depart="105">
+        <walk edges="SC WC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd33" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.983351005889" guiShape="pedestrian" color="blue"/>
+    <person id="fwd33" type="fwd33" depart="107">
+        <walk edges="SC CW" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd34" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.48133856908" guiShape="pedestrian" color="blue"/>
+    <person id="fwd34" type="fwd34" depart="109">
+        <walk edges="SC WC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd35" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.4214989288" guiShape="pedestrian" color="blue"/>
+    <person id="fwd35" type="fwd35" depart="110">
+        <walk edges="SC NC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd36" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.762031313563" guiShape="pedestrian" color="blue"/>
+    <person id="fwd36" type="fwd36" depart="111">
+        <walk edges="SC CN" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd37" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.31784953333" guiShape="pedestrian" color="blue"/>
+    <person id="fwd37" type="fwd37" depart="120">
+        <walk edges="SC EC" departPos="0.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd38" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.817588471907" guiShape="pedestrian" color="blue"/>
+    <person id="fwd38" type="fwd38" depart="127">
+        <walk edges="SC CE" departPos="0.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd39" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.21110589604" guiShape="pedestrian" color="blue"/>
+    <person id="fwd39" type="fwd39" depart="130">
+        <walk edges="CS WC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd40" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.16295156092" guiShape="pedestrian" color="blue"/>
+    <person id="fwd40" type="fwd40" depart="131">
+        <walk edges="CS CW" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd41" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.14953648335" guiShape="pedestrian" color="blue"/>
+    <person id="fwd41" type="fwd41" depart="134">
+        <walk edges="CS NC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd42" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.40269014409" guiShape="pedestrian" color="blue"/>
+    <person id="fwd42" type="fwd42" depart="135">
+        <walk edges="CS CN" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd43" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.764525548334" guiShape="pedestrian" color="blue"/>
+    <person id="fwd43" type="fwd43" depart="142">
+        <walk edges="CS EC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd44" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.02188755022" guiShape="pedestrian" color="blue"/>
+    <person id="fwd44" type="fwd44" depart="148">
+        <walk edges="CS CE" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd45" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.06264879729" guiShape="pedestrian" color="blue"/>
+    <person id="fwd45" type="fwd45" depart="151">
+        <walk edges="CW NC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd46" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.16650230663" guiShape="pedestrian" color="blue"/>
+    <person id="fwd46" type="fwd46" depart="155">
+        <walk edges="CW CN" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd47" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.41219322827" guiShape="pedestrian" color="blue"/>
+    <person id="fwd47" type="fwd47" depart="157">
+        <walk edges="CW EC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd48" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.768014127735" guiShape="pedestrian" color="blue"/>
+    <person id="fwd48" type="fwd48" depart="158">
+        <walk edges="CW CE" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+    <vType id="fwd49" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.827745629177" guiShape="pedestrian" color="blue"/>
+    <person id="fwd49" type="fwd49" depart="160">
+        <walk edges="CW SC" departPos="-1.0" arrivalPos="0.0"/>
+    </person>
+    <vType id="fwd50" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="0.939351624675" guiShape="pedestrian" color="blue"/>
+    <person id="fwd50" type="fwd50" depart="161">
+        <walk edges="CW CS" departPos="-1.0" arrivalPos="-1.0"/>
+    </person>
+</routes>
