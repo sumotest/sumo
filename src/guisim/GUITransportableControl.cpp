@@ -1,11 +1,12 @@
 /****************************************************************************/
-/// @file    GUIContainerControl.cpp
-/// @author  Melanie Weber
-/// @author  Andreas Kendziorra
-/// @date    Wed, 01.08.2014
+/// @file    GUITransportableControl.cpp
+/// @author  Daniel Krajzewicz
+/// @author  Jakob Erdmann
+/// @author  Michael Behrisch
+/// @date    Wed, 13.06.2012
 /// @version $Id$
 ///
-// GUI-version of the container control for building gui containers
+// GUI-version of the person control for building gui persons
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
@@ -32,8 +33,9 @@
 #include <vector>
 #include <algorithm>
 #include "GUINet.h"
-#include "GUIContainerControl.h"
 #include "GUIContainer.h"
+#include "GUIPerson.h"
+#include "GUITransportableControl.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -43,16 +45,33 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GUIContainerControl::GUIContainerControl() {}
+GUITransportableControl::GUITransportableControl() {}
 
 
-GUIContainerControl::~GUIContainerControl() {
+GUITransportableControl::~GUITransportableControl() {
 }
 
 
-MSContainer*
-GUIContainerControl::buildContainer(const SUMOVehicleParameter* pars, const MSVehicleType* vtype, MSTransportable::MSTransportablePlan* plan) const {
+MSTransportable*
+GUITransportableControl::buildPerson(const SUMOVehicleParameter* pars, const MSVehicleType* vtype, MSTransportable::MSTransportablePlan* plan) const {
+    return new GUIPerson(pars, vtype, plan);
+}
+
+
+MSTransportable*
+GUITransportableControl::buildContainer(const SUMOVehicleParameter* pars, const MSVehicleType* vtype, MSTransportable::MSTransportablePlan* plan) const {
     return new GUIContainer(pars, vtype, plan);
+}
+
+
+void
+GUITransportableControl::insertPersonIDs(std::vector<GUIGlID>& into) {
+    into.reserve(myTransportables.size());
+    for (std::map<std::string, MSTransportable*>::const_iterator it = myTransportables.begin(); it != myTransportables.end(); ++it) {
+        if (it->second->getCurrentStageType() != MSTransportable::WAITING_FOR_DEPART) {
+            into.push_back(static_cast<const GUIPerson*>(it->second)->getGlID());
+        }
+    }
 }
 
 
