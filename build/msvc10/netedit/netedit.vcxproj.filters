@@ -267,6 +267,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEVariableSpeedSignalDialog.cpp">
       <Filter>Quellcodedateien\Dialogs\AdditionalDialogs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNERouteProbe.cpp">
+      <Filter>Quellcodedateien\Items\Additionals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -426,6 +429,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEVariableSpeedSignalDialog.h">
       <Filter>Header-Dateien\Dialogs\AdditionalDialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNERouteProbe.h">
+      <Filter>Header-Dateien\Items\Additionals</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
