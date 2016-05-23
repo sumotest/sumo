@@ -144,11 +144,6 @@ GNEChargingStation::updateGeometry() {
 }
 
 
-void 
-GNEChargingStation::openAdditionalDialog() {
-}
-
-
 void
 GNEChargingStation::writeAdditional(OutputDevice& device) {
     device.openTag(getTag());

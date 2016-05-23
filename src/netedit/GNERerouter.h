@@ -346,16 +346,16 @@ protected:
 
 private:
     /// @brief variable to save rerouter icon
-    static GUIGlID rerouterGlID;
+    static GUIGlID myRerouterGlID;
 
     /// @brief variable to save rerouter selected icon
-    static GUIGlID rerouterSelectedGlID;
+    static GUIGlID myRerouterSelectedGlID;
 
     /// @brief check if rerouter icon was inicilalizated
-    static bool rerouterInitialized;
+    static bool myRerouterInitialized;
 
     /// @brief check if rerouter selected icon was inicilalizated
-    static bool rerouterSelectedInitialized;
+    static bool myRerouterSelectedInitialized;
 
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);

@@ -69,10 +69,6 @@ public:
     /// @brief update pre-computed geometry information
     void updateGeometry();
 
-    /// @brief open Additional Dialog
-    /// @note this Additional don't own an AdditionalDialog
-    void openAdditionalDialog();
-
     /** @brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */

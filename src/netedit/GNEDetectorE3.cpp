@@ -134,11 +134,6 @@ GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoLis
 }
 
 
-void 
-GNEDetectorE3::openAdditionalDialog() {
-}
-
-
 void
 GNEDetectorE3::writeAdditional(OutputDevice& device) {
     // Only save E3 if have Entry/Exits

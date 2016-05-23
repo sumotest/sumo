@@ -270,6 +270,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbe.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbeSelected.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">

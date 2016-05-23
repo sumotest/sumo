@@ -63,10 +63,10 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEAdditional::additionalLockGlID = 0;
-GUIGlID GNEAdditional::additionalEmptyGlID = 0;
-bool GNEAdditional::additionalLockInitialized = false;
-bool GNEAdditional::additionalEmptyInitialized = false;
+GUIGlID GNEAdditional::myAdditionalLockGlID = 0;
+GUIGlID GNEAdditional::myAdditionalEmptyGlID = 0;
+bool GNEAdditional::myAdditionalLockInitialized = false;
+bool GNEAdditional::myAdditionalEmptyInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -96,17 +96,17 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     if(myLane)
         myLane->addAdditional(this);
     // load additional lock, if wasn't already initialized
-    if (!additionalLockInitialized) {
+    if (!myAdditionalLockInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalLockGlID = GUITexturesHelper::add(i);
-        additionalLockInitialized = true;
+        myAdditionalLockGlID = GUITexturesHelper::add(i);
+        myAdditionalLockInitialized = true;
         delete i;
     }
     // load additional empty, if wasn't already inicializated
-    if (!additionalEmptyInitialized) {
+    if (!myAdditionalEmptyInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Empty, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        additionalEmptyGlID = GUITexturesHelper::add(i);
-        additionalEmptyInitialized = true;
+        myAdditionalEmptyGlID = GUITexturesHelper::add(i);
+        myAdditionalEmptyInitialized = true;
         delete i;
     }
 }
@@ -120,6 +120,10 @@ GNEAdditional::~GNEAdditional() {
     if(myLane)
         myLane->removeAdditional(this);
 }
+
+
+void 
+GNEAdditional::openAdditionalDialog() {}
 
 
 const Position&
@@ -276,9 +280,9 @@ GNEAdditional::drawLockIcon(SUMOReal size) const {
     glTranslated(myBlockIconOffset.x(), myBlockIconOffset.y(), 0);
     // If myBlocked is enable, draw lock, in other case, draw empty square
     if(myBlocked)
-        GUITexturesHelper::drawTexturedBox(additionalLockGlID, size);
+        GUITexturesHelper::drawTexturedBox(myAdditionalLockGlID, size);
     else
-        GUITexturesHelper::drawTexturedBox(additionalEmptyGlID, size);
+        GUITexturesHelper::drawTexturedBox(myAdditionalEmptyGlID, size);
     // Pop matrix
     glPopMatrix();
 }

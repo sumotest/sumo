@@ -66,10 +66,10 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNERerouter::rerouterGlID = 0;
-GUIGlID GNERerouter::rerouterSelectedGlID = 0;
-bool GNERerouter::rerouterInitialized = false;
-bool GNERerouter::rerouterSelectedInitialized = false;
+GUIGlID GNERerouter::myRerouterGlID = 0;
+GUIGlID GNERerouter::myRerouterSelectedGlID = 0;
+bool GNERerouter::myRerouterInitialized = false;
+bool GNERerouter::myRerouterSelectedInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -372,18 +372,18 @@ GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position po
     myBaseColor = RGBColor(76, 170, 50, 255);
     myBaseColorSelected = RGBColor(161, 255, 135, 255);
     // load rerouter logo, if wasn't inicializated
-    if (!rerouterInitialized) {
+    if (!myRerouterInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Rerouter, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        rerouterGlID = GUITexturesHelper::add(i);
-        rerouterInitialized = true;
+        myRerouterGlID = GUITexturesHelper::add(i);
+        myRerouterInitialized = true;
         delete i;
     }
 
     // load rerouter selected logo, if wasn't inicializated
-    if (!rerouterSelectedInitialized) {
+    if (!myRerouterSelectedInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_RerouterSelected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        rerouterSelectedGlID = GUITexturesHelper::add(i);
-        rerouterSelectedInitialized = true;
+        myRerouterSelectedGlID = GUITexturesHelper::add(i);
+        myRerouterSelectedInitialized = true;
         delete i;
     }
 }
@@ -518,9 +518,9 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
 
     // Draw icon depending of rerouter is or isn't selected
     if(isAdditionalSelected()) 
-        GUITexturesHelper::drawTexturedBox(rerouterSelectedGlID, 1);
+        GUITexturesHelper::drawTexturedBox(myRerouterSelectedGlID, 1);
     else
-        GUITexturesHelper::drawTexturedBox(rerouterGlID, 1);
+        GUITexturesHelper::drawTexturedBox(myRerouterGlID, 1);
 
     // Pop draw matrix
     glPopMatrix();

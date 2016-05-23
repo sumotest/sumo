@@ -91,16 +91,17 @@ public:
 
     /// @brief open Additional Dialog
     /// @note: only certain Additionals own an AdditionalDialog. 
-    virtual void openAdditionalDialog()= 0;
+    virtual void openAdditionalDialog();
 
     /// @brief Returns position of additional in view
     const Position &getPositionInView() const;
 
-    /// @brief Returns GNEViewNet in which additional element is located
+    /// @brief Returns a pointer to GNEViewNet in which additional element is located
     GNEViewNet* getViewNet() const;
 
     /// @brief Returns pointer to Lane (or NULL if additional don't belong to a Lane)
-    GNELane* getLane() const;
+    /// @brief this should be erased
+    virtual GNELane* getLane() const;
 
     /// @brief Returns additional element's shape
     PositionVector getShape() const;
@@ -273,16 +274,16 @@ protected:
 
 private:
     /// @brief variable to keep GLId of the additional lock image
-    static GUIGlID additionalLockGlID;
+    static GUIGlID myAdditionalLockGlID;
 
     /// @brief variable to keep GLId of the additional empty image
-    static GUIGlID additionalEmptyGlID;
+    static GUIGlID myAdditionalEmptyGlID;
 
     /// @brief boolean to check if additional lock image was inicializated
-    static bool additionalLockInitialized;
+    static bool myAdditionalLockInitialized;
 
     /// @brief boolean to check if additional empty image was inicializated
-    static bool additionalEmptyInitialized;
+    static bool myAdditionalEmptyInitialized;
 
     /// @brief set attribute after validation
     virtual void setAttribute(SumoXMLAttr key, const std::string& value) = 0;
