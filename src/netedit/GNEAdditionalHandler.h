@@ -267,7 +267,7 @@ public:
      */
     static bool buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe, bool blocked);
 
-    /** @brief builds an rerouter
+    /** @brief builds a rerouter
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the rerouter
      * @param[in] pos position of the rerouter in the map
@@ -278,14 +278,16 @@ public:
      */
     static bool buildRerouter(GNEViewNet *viewNet, const std::string& id, Position pos, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked);
 
-    /** @brief builds an rerouterEdge
+    /** @brief builds a Route probe
      * @param[in] viewNet viewNet in which element will be inserted
-     * @param[in] lane edge in which the rerouterEdge is placed at
-     * @param[in] rerouterParent rerouter parent of rerouterEdge
-     * @param[in] closedEdge draw rerouterEdge as an Closed edge
-     * @note this function will place rerouterEdges in all lanes of lane->getParentEdge();
+     * @param[in] id The id of the routeprobe
+     * @param[in] edge The edges the routeprobe is placed at
+     * @param[in] freq the aggregation period the values the routeprobe collects shall be summed up.
+     * @param[in] file The file to read the routeprobe definitions from
+     * @param[in] begin The time at which to start generating output
+     * @param[in] blocked set initial blocking state of item
      */
-    static bool buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, const std::string & idRerouterParent, bool closedEdge);
+    static bool buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, int freq, const std::string& file, int begin, bool blocked);
 
     /** @brief Builds a VariableSpeedSignal (lane speed trigger)
      * @param[in] viewNet viewNet in which element will be inserted

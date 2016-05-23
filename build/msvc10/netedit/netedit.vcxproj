@@ -150,13 +150,13 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_Lock.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_Rerouter.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_RerouterSelected.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbe.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouter.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouterDialog.cpp" />
-    <ClCompile Include="..\..\..\src\netedit\GNERerouterEdge.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERouteProbe.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNESelector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEStoppingPlace.cpp" />
@@ -214,7 +214,6 @@
     <ClInclude Include="..\..\..\src\netedit\GNEReferenceCounter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouter.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERerouterDialog.h" />
-    <ClInclude Include="..\..\..\src\netedit\GNERerouterEdge.h" />
     <ClInclude Include="..\..\..\src\netedit\GNERouteProbe.h" />
     <ClInclude Include="..\..\..\src\netedit\GNESelector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEStoppingPlace.h" />

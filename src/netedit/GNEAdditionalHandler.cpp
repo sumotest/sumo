@@ -45,7 +45,6 @@
 #include "GNEDetectorEntry.h"
 #include "GNEDetectorExit.h"
 #include "GNERerouter.h"
-#include "GNERerouterEdge.h"
 #include "GNEVariableSpeedSignal.h"
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -165,7 +164,7 @@ GNEAdditionalHandler::parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& 
     // Obtain pointer to lanes
     std::vector<GNELane*> lanes;
     for(int i = 0; i < lanesID.size(); i++) {
-        GNELane *lane = myViewNet->getNet()->getLane(lanesID.at(i));
+        GNELane *lane = myViewNet->getNet()->retrieveLane(lanesID.at(i));
         if(lane)
             lanes.push_back(lane);
         else
@@ -441,7 +440,7 @@ bool
 GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::map<SumoXMLAttr, std::string> values) {
     // Extract common attributes
     std::string id = values[SUMO_ATTR_ID];
-    GNELane *lane = viewNet->getNet()->getLane(values[SUMO_ATTR_LANE]);
+    GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE]);
     bool blocked = GNEAttributeCarrier::parse<bool>(values[GNE_ATTR_BLOCK_MOVEMENT]);
     // create additional depending of the tag
     switch(tag) {
@@ -543,10 +542,6 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             else
                 return false;
         }
-
-
-
-
         case SUMO_TAG_CALIBRATOR: {
             // get own attributes of calibrator
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
@@ -575,13 +570,15 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             else
                 return false;
         }
-        case SUMO_TAG_REROUTEREDGE: {
-            // get own attributes of rerouter
-            std::string idRerouterParent = values[GNE_ATTR_PARENT];
-            bool closedEdge = false;
-            // Build rerouter
+        case SUMO_TAG_ROUTEPROBE: {
+            // get own attributes of RouteProbe
+            bool ok;
+            int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
+            std::string filename = values[SUMO_ATTR_FILE];
+            int begin = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_BEGIN]);
+            // Build RouteProbe
             if(lane)
-                return buildRerouterEdge(viewNet, lane, idRerouterParent, closedEdge);
+                return buildRouteProbe(viewNet, id, lane->getParentEdge(), freq, filename, begin, blocked);
             else
                 return false;
         }
@@ -715,29 +712,27 @@ GNEAdditionalHandler::buildRerouter(GNEViewNet *viewNet, const std::string& id, 
 }
 
 
-bool 
-GNEAdditionalHandler::buildRerouterEdge(GNEViewNet *viewNet, GNELane* lane, const std::string & idRerouterParent, bool closedEdge) {
-    // get rerouter parent
-    GNERerouter *rerouterParent = dynamic_cast<GNERerouter*>(viewNet->getNet()->getAdditional(SUMO_TAG_REROUTER, idRerouterParent));
-    // Check if rerouter parent is correct
-    if(rerouterParent == NULL)
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_REROUTEREDGE) + " in netEdit; " + toString(SUMO_TAG_REROUTER) + " '" + idRerouterParent + "' don't valid.");
-    // Get edge parent
-    GNEEdge &edgeParent = lane->getParentEdge();
-    viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_REROUTEREDGE));
-    // For every lane of edge create a reruterEdge
-    for(std::vector<GNELane*>::const_iterator i = edgeParent.getLanes().begin(); i !=  edgeParent.getLanes().end(); i++) {
-        std::string idOfRerouteredge = idRerouterParent + (*i)->getID();
-        // Create detector Exit if don't exist already in the net
-        if (viewNet->getNet()->getAdditional(SUMO_TAG_REROUTEREDGE, idOfRerouteredge) == NULL) {
-            GNERerouterEdge *rerouterEdge = new GNERerouterEdge(idOfRerouteredge, viewNet, *i, rerouterParent, closedEdge);
-            viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), rerouterEdge, true), true);
-        }
-        else
-            WRITE_WARNING("A " + toString(SUMO_TAG_REROUTEREDGE) + " was already inserted in lane '" +  (*i)->getID() +"'");
-    }   
-    viewNet->getUndoList()->p_end();
-    return true;
+bool
+GNEAdditionalHandler::buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, int freq, const std::string& file, int begin, bool blocked) {
+    
+    std::cout << "ID" << id << std::endl;
+    std::cout << "edge" << edge.getID() << std::endl;
+    std::cout << "freq" << freq << std::endl;
+    std::cout << "file" << file << std::endl;
+    std::cout << "begin" << begin << std::endl;
+    std::cout << "---------------------"<< std::endl;
+
+    return false;
+    /*
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_REROUTER, id) == NULL) {
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_REROUTER));
+        GNERerouter *rerouter = new GNERerouter(id, viewNet, pos, edges, file, prob, off, blocked);
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), rerouter, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_REROUTER) + "'" + id + "' in netEdit; probably declared twice.");
+    */
 }
 
 

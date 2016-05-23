@@ -633,7 +633,7 @@ GNENet::retrieveLanes(bool onlySelected) {
 
 
 GNELane*
-GNENet::getLane(const std::string &id) {
+GNENet::retrieveLane(const std::string &id) {
     for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); ++it) {
         const GNEEdge::LaneVector& lanes = it->second->getLanes();
         for (GNEEdge::LaneVector::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {

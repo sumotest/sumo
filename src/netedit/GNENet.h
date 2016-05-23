@@ -276,11 +276,11 @@ public:
      * */
     std::vector<GNELane*> retrieveLanes(bool onlySelected = false);
 
-    /** @brief return lane
+    /** @brief get edge by id
      * @param id id of the lane to find
-     * @return pointer to lane, or NULL if don0t exist
+     * @return pointer to lane, or NULL if don't exist
     */
-    GNELane *getLane(const std::string &id);
+    GNELane *retrieveLane(const std::string &id);
 
     /** @brief return all junctions
      * @param[in] onlySelected Whether to return only selected junctions

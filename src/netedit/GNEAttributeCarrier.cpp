@@ -301,7 +301,12 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PROB, "1"));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_OFF, "false"));
                 break;
-            case SUMO_TAG_REROUTEREDGE:
+            case SUMO_TAG_ROUTEPROBE:
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FREQUENCY, "100"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FILE, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_BEGIN, "0"));
                 break;
             default:
                 WRITE_WARNING("allowed attributes for tag '" + toString(tag) + "' not defined");
@@ -328,7 +333,7 @@ GNEAttributeCarrier::allowedTags() {
         myAllowedTags.push_back(SUMO_TAG_VSS);
         myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);
         myAllowedTags.push_back(SUMO_TAG_REROUTER);
-        //myAllowedTags.push_back(SUMO_TAG_REROUTEREDGE);
+        myAllowedTags.push_back(SUMO_TAG_ROUTEPROBE);
     }
     return myAllowedTags;
 }
@@ -348,7 +353,7 @@ GNEAttributeCarrier::allowedAdditionalTags() {
         myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);
         myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);
         myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);
-        //myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTEREDGE);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_ROUTEPROBE);
     }
     return myAllowedAdditionalTags;
 }
@@ -370,6 +375,7 @@ GNEAttributeCarrier::isInt(SumoXMLAttr attr) {
         myNumericalIntAttrs.insert(SUMO_ATTR_CHARGEDELAY);
         myNumericalIntAttrs.insert(SUMO_ATTR_FREQUENCY);
         myNumericalIntAttrs.insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
+        myNumericalIntAttrs.insert(SUMO_ATTR_BEGIN);
     }
     return myNumericalIntAttrs.count(attr) == 1;
 }
@@ -442,6 +448,7 @@ GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
         myUniqueAttrs.insert(SUMO_ATTR_STARTPOS);
         myUniqueAttrs.insert(SUMO_ATTR_ENDPOS);
         myUniqueAttrs.insert(SUMO_ATTR_LANE);
+        myUniqueAttrs.insert(SUMO_ATTR_EDGE);
     }
     return myUniqueAttrs.count(attr) == 1;
 }
@@ -453,7 +460,6 @@ GNEAttributeCarrier::hasParent(SumoXMLTag tag) {
     if (myAllowedAdditionalWithParentTags.empty()) {
         myAllowedAdditionalWithParentTags[SUMO_TAG_DET_ENTRY] = SUMO_TAG_E3DETECTOR;
         myAllowedAdditionalWithParentTags[SUMO_TAG_DET_EXIT] = SUMO_TAG_E3DETECTOR;
-        //myAllowedAdditionalWithParentTags[SUMO_TAG_REROUTEREDGE] = SUMO_TAG_REROUTER;
     }
     return myAllowedAdditionalWithParentTags.count(tag) == 1;
 }
@@ -612,7 +618,7 @@ GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
         // Exit
         myAttrDefinitions[SUMO_TAG_DET_EXIT][SUMO_ATTR_LANE] = "The id of the lane the detector shall be laid on. The lane must be a part of the network used";
         myAttrDefinitions[SUMO_TAG_DET_EXIT][SUMO_ATTR_POSITION] = "The position on the lane the detector shall be laid on in meters";
-        // VSS
+        // Variable Speed Signal
         myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_ID] = "ID (Must be unique)";
         myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_LANES] = "list of lanes of Variable Speed Signal";
         myAttrDefinitions[SUMO_TAG_VSS][SUMO_ATTR_FILE] = "The path to the output file";
@@ -629,6 +635,14 @@ GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
         myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_FILE] = "The path to the definition file (alternatively, the intervals may defined as children of the rerouter)";
         myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_PROB] = "The probability for vehicle rerouting (0-1), default 1";
         myAttrDefinitions[SUMO_TAG_REROUTER][SUMO_ATTR_OFF] = "Whether the router should be inactive initially (and switched on in the gui), default:false";
+        
+        
+        // SUMO_TAG_ROUTEPROBE
+        myAttrDefinitions[SUMO_TAG_ROUTEPROBE][SUMO_ATTR_ID] = "ID (Must be unique)";
+        myAttrDefinitions[SUMO_TAG_ROUTEPROBE][SUMO_ATTR_EDGE] = "The id of an edge in the simulation network";
+        myAttrDefinitions[SUMO_TAG_ROUTEPROBE][SUMO_ATTR_FREQUENCY] = "The frequency in which to report the distribution";
+        myAttrDefinitions[SUMO_TAG_ROUTEPROBE][SUMO_ATTR_FILE] = "The file for generated output";
+        myAttrDefinitions[SUMO_TAG_ROUTEPROBE][SUMO_ATTR_BEGIN] = "	The time at which to start generating output";
     }
     return myAttrDefinitions[tag][attr];
 }
