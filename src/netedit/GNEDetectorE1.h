@@ -46,7 +46,7 @@ class GNEDetector;
  */
 class GNEDetectorE1 : public GNEDetector {
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] lane Lane of this StoppingPlace belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
@@ -65,14 +65,14 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
-    /** @brief writte additional element into a xml file
+    /**@brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     void writeAdditional(OutputDevice& device);
 
     /// @name inherited from GUIGlObject
-    //@{
-    /** @brief Returns an own parameter window
+    /// @{
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -81,21 +81,21 @@ public:
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const;
 
-    /** @brief Draws additionally triggered visualisations
+    /**@brief Draws additionally triggered visualisations
      * @param[in] parent The view
      * @param[in] s The settings for the current view (may influence drawing)
      */
     void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const;
-    //@}
+    /// @}
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -115,7 +115,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     bool isValid(SumoXMLAttr key, const std::string& value);
-    //@}
+    /// @}
 
 protected:
     /// @brief attribute to enable or disable splitByType

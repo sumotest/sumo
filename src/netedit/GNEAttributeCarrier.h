@@ -59,7 +59,7 @@ class GNEAttributeCarrier : public GNEReferenceCounter {
     friend class GNEChange_Attribute;
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] tag SUMO Tag assigned to this type of object
      */
     GNEAttributeCarrier(SumoXMLTag tag);

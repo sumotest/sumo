@@ -55,7 +55,7 @@ class GNEConnector : public FXScrollWindow {
     FXDECLARE(GNEConnector)
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] parent The parent window
      * @param[in] updateTarget view to update
      * @param[in] undoList pointer to undoList modul
@@ -68,7 +68,7 @@ public:
     /// @brief get Header front
     FXFont* getHeaderFont();
 
-    /** @brief either sets the current lane or toggles the connection of the
+    /**@brief either sets the current lane or toggles the connection of the
      * current lane to this lane (if they share a junction)
      * @param[in] lane Either the lane to set as current lane, or the destination from current lane
      * @param[in] mayDefinitelyPass Whether new connections shall have the pass attribute set

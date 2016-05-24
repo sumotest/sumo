@@ -47,7 +47,7 @@ class GNEViewNet;
  */
 class GNEDetector : public GNEAdditional {
 public:
-    /** @brief Constructor.
+    /**@brief Constructor.
      * @param[in] id Gl-id of the detector (Must be unique)
      * @param[in] lane Lane of this detector belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
@@ -66,14 +66,14 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
-    /** @brief change the position of the additional geometry without registering undo/redo
+    /**@brief change the position of the additional geometry without registering undo/redo
      * @param[in] posx new x position of additional over lane
      * @param[in] posy unused
      * @param[in] undoList pointer to the undo list
      */
     void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
-    /** @brief writte additional element into a xml file
+    /**@brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
@@ -90,30 +90,30 @@ public:
     /// @brief returns the path to the output file
     std::string getFilename() const;
 
-    /** @brief Set a new position of detector over lane
+    /**@brief Set a new position of detector over lane
      * @param[in] pos new position of detector over lane
      * @throws InvalidArgument if value of pos isn't valid
      */
     void setPositionOverLane(SUMOReal pos);
 
-    /** @brief Set a new frequency in detector
+    /**@brief Set a new frequency in detector
      * @param[in] freq new frequency of detector
      * @throws InvalidArgument if value of frequency isn't valid
      */
     void setFrequency(int freq);
 
-    /** @brief Set a new filename in detector
+    /**@brief Set a new filename in detector
      * @param[in] filename new filename of detector
      */
     void setFilename(std::string filename);
 
     /// @name inherited from GNEAdditional
-    //@{
+    /// @{
     /// @brief Returns the name of the parent object
     /// @return This object's parent id
     const std::string& getParentName() const;
 
-    /** @brief Returns an own parameter window
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -122,15 +122,15 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
-    //@}
+    /// @}
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -150,7 +150,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
-    //@}
+    /// @}
 
 protected:
     /// @brief The lane this detector belongs
@@ -163,13 +163,13 @@ protected:
     std::string myFilename;
 
     /// @name members and functions relative to detector icon
-    //@{
+    /// @{
     /// @brief set Rotation of block Icon
     void drawDetectorIcon(const unsigned int GNELogoID, SUMOReal sizex = 0.5, SUMOReal sizey = 0.5) const;
 
     /// @brief The position of detector
     Position myDetectorLogoOffset;
-    //@}
+    /// @}
 
 private:
     /// @brief set attribute after validation

@@ -69,8 +69,8 @@ public:
         virtual ~GNEPolyHandler();
 
         /// @name inherited from GenericSAXHandler
-        //@{
-        /** @brief Called on the opening of a tag;
+        /// @{
+        /**@brief Called on the opening of a tag;
          *
          * @param[in] element ID of the currently opened element
          * @param[in] attrs Attributes within the currently opened element
@@ -79,14 +79,14 @@ public:
          */
         virtual void myStartElement(int element, const SUMOSAXAttributes& attrs);
 
-        /** @brief Called when a closing tag occurs
+        /**@brief Called when a closing tag occurs
          *
          * @param[in] element ID of the currently opened element
          * @exception ProcessError If something fails
          * @see GenericSAXHandler::myEndElement
          */
         virtual void myEndElement(int element);
-        //@}
+        /// @}
 
         int getNumLoaded() {
             return myNumLoaded;
@@ -106,7 +106,7 @@ public:
     };
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      */
     GNEPoly(GNENet* net, GNEJunction* junction, const std::string& id, const std::string& type, const PositionVector& shape, bool fill,
             const RGBColor& color, SUMOReal layer,
@@ -116,9 +116,9 @@ public:
     virtual ~GNEPoly();
 
     /// @name inherited from GUIGlObject
-    //@{
+    /// @{
 
-    /** @brief Returns an own popup-menu
+    /**@brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
      * @param[in] parent The parent window needed to build the popup-menu
@@ -129,17 +129,17 @@ public:
                                        GUISUMOAbstractView& parent);
 
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const;
-    //@}
+    /// @}
 
 
     /// @brief draw the polygon and also little movement handles
 
-    /** @brief change the polygon geometry without registering undo/redo
+    /**@brief change the polygon geometry without registering undo/redo
      * It is up to the Polygon to decide whether an new geometry node should be
      * generated or an existing node should be moved
      * @param[in] oldPos The origin of the mouse movement
@@ -165,8 +165,8 @@ public:
     //void registerMove(GNEUndoList *undoList);
 
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     std::string getAttribute(SumoXMLAttr key) const;
 
     /* @brief method for setting the attribute and letting the object perform additional changes
@@ -177,7 +177,7 @@ public:
     void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList);
 
     bool isValid(SumoXMLAttr key, const std::string& value);
-    //@}
+    /// @}
 
     /// @brief load POIs from file
     static void loadFromFile(const std::string& file, GNENet* net);

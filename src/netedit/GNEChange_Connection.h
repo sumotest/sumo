@@ -51,7 +51,7 @@ class GNEChange_Connection : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Connection)
 
 public:
-    /** @brief Constructor for creating/deleting an edge
+    /**@brief Constructor for creating/deleting an edge
      * @param[in] edge The edge on which to apply changes
      * @param[in] lane The lane to be deleted or 0 if a lane should be created
      * @param[in] laneAttrs The attributes of the lane to be created/deleted
@@ -64,8 +64,8 @@ public:
     /// @brief Destructor
     ~GNEChange_Connection();
 
-    //@name inherited from GNEChange
-    //@{
+    /// @name inherited from GNEChange
+    /// @{
     /// @brief get undo Name
     FXString undoName() const;
 
@@ -77,13 +77,13 @@ public:
 
     /// @brief redo action
     void redo();
-    //@}
+    /// @}
 
 
 private:
     // @name full information regarding the lane that is to be created/deleted
     // @briefwe assume shared responsibility for the pointers (via reference counting)
-    //@{
+    /// @{
     // @brief we need the edge because it is the target of our change commands
     GNEEdge* myEdge;
 
@@ -95,7 +95,7 @@ private:
 
     /// @brief the target lane of the connection
     unsigned int myToLane;
-    //@}
+    /// @}
 
     /// @brief whether this connection never yields
     bool myPass;

@@ -64,7 +64,7 @@ public:
     /// @brief starts the thread. The thread ends after the net has been loaded
     FXint run();
 
-    /** @brief begins the loading of a netconvert configuration or a a network
+    /**@brief begins the loading of a netconvert configuration or a a network
      * @param[in] file The network or configuration-file to be loaded
      * @param[in] isNet whether file is a network file
      * @param[in] optionsReady whether options are already initialized
@@ -84,7 +84,7 @@ protected:
     /// @brief init options
     bool initOptions();
 
-    /** @brief Closes the loading process
+    /**@brief Closes the loading process
      *
      * This method is called both on success and failure.
      * All message callbacks to this instance are removed and the parent

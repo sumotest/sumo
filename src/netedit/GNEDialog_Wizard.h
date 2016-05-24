@@ -42,7 +42,7 @@
  */
 class GNEDialog_Wizard : public FXDialogBox {
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      *
      * @param[in] parent The parent window
      * @param[in] name The title to show

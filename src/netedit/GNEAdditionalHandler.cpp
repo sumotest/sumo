@@ -46,6 +46,7 @@
 #include "GNEDetectorExit.h"
 #include "GNERerouter.h"
 #include "GNEVariableSpeedSignal.h"
+#include "GNERouteProbe.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -714,25 +715,14 @@ GNEAdditionalHandler::buildRerouter(GNEViewNet *viewNet, const std::string& id, 
 
 bool
 GNEAdditionalHandler::buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, int freq, const std::string& file, int begin, bool blocked) {
-    
-    std::cout << "ID" << id << std::endl;
-    std::cout << "edge" << edge.getID() << std::endl;
-    std::cout << "freq" << freq << std::endl;
-    std::cout << "file" << file << std::endl;
-    std::cout << "begin" << begin << std::endl;
-    std::cout << "---------------------"<< std::endl;
-
-    return false;
-    /*
     if (viewNet->getNet()->getAdditional(SUMO_TAG_REROUTER, id) == NULL) {
-        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_REROUTER));
-        GNERerouter *rerouter = new GNERerouter(id, viewNet, pos, edges, file, prob, off, blocked);
-        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), rerouter, true), true);
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_ROUTEPROBE));
+        GNERouteProbe *routeProbe = new GNERouteProbe(id, viewNet,edge, freq, file, begin, blocked);
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), routeProbe, true), true);
         viewNet->getUndoList()->p_end();
         return true;
     } else
-        throw InvalidArgument("Could not build " + toString(SUMO_TAG_REROUTER) + "'" + id + "' in netEdit; probably declared twice.");
-    */
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_ROUTEPROBE) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 

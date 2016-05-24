@@ -113,28 +113,45 @@ GNERouteProbe::~GNERouteProbe() {
 
 void
 GNERouteProbe::updateGeometry() {
-    // Clear shape
+    // Clear all containers
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+
+    // clear Shape
     myShape.clear();
 
-    // Set position
-    myShape.push_back(myPosition);
+    // get lanes of edge
+    std::vector<GNELane*> lanes = myEdge.getLanes();
 
-    // Set block icon offset
-    myBlockIconOffset = Position(-0.5, -0.5);
+    // Save number of lanes
+    numberOfLanes = lanes.size();
 
-    // Set block icon rotation, and using their rotation for draw logo
-    setBlockIconRotation();
+    // Get shape of lane parent
+    myShape.push_back(lanes[0]->getShape().positionAtOffset(5));
 
+    // Obtain first position
+    Position f = myShape[0] - Position(1, 0);
+
+    // Obtain next position
+    Position s = myShape[0] + Position(1, 0);
+
+    // Save rotation (angle) of the vector constructed by points f and s
+    myShapeRotations.push_back(lanes[0]->getShape().rotationDegreeAtOffset(5) * -1);
+
+    // Set offset of logo
+    myRouteProbeLogoOffset = Position(1,0);
+
+    // Set offset of the block icon
+    myBlockIconOffset = Position(-1, 0);
+
+    // Set block icon rotation, and using their rotation for logo
+    setBlockIconRotation(lanes[0]);
 }
 
 
 void
 GNERouteProbe::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
-    // if item isn't blocked
-    if(myBlocked == false) {
-        // change Position
-        undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(Position(posx, posy, 0))));
-    }
+    // This additional cannot be moved
 }
 
 
@@ -215,58 +232,59 @@ GNERouteProbe::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Ignore Warning
     UNUSED_PARAMETER(parent);
 
-    // Start drawing adding an gl identificator
+    // get values
     glPushName(getGlID());
+    SUMOReal width = (SUMOReal) 2.0 * s.scale;
+    glLineWidth(1.0);
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
 
-    // Add a draw matrix for drawing logo
+    // draw shape
+    glColor3d(1, 1, 0);
     glPushMatrix();
-    glTranslated(myShape[0].x(), myShape[0].y(), getType());
-    glColor3d(1, 1, 1);
-    glRotated(180, 0, 0, 1);
+    glTranslated(0, 0, getType());
+    glTranslated(myShape[0].x(), myShape[0].y(), 0);
+    glRotated(myShapeRotations[0], 0, 0, 1);
+    glScaled(exaggeration, exaggeration, 1);
+    glTranslated(-1.6, -1.6, 0);
+    glBegin(GL_QUADS);
+    glVertex2d(0,  0.25);
+    glVertex2d(0, -0.25);
+    glVertex2d((numberOfLanes * 3.3), -0.25);
+    glVertex2d((numberOfLanes * 3.3),  0.25);
+    glEnd();
+    glTranslated(0, 0, .01);
+    glBegin(GL_LINES);
+    glVertex2d(0, 0.25 - .1);
+    glVertex2d(0, -0.25 + .1);
+    glEnd();
 
-    // Draw icon depending of RouteProbe is or isn't selected
-    if(isAdditionalSelected()) 
-        GUITexturesHelper::drawTexturedBox(myRouteProbeSelectedGlID, 1);
-    else
-        GUITexturesHelper::drawTexturedBox(myRouteProbeGlID, 1);
+    // position indicator
+    if (width * exaggeration > 1) {
+        glRotated(90, 0, 0, -1);
+        glColor3d(1, 1, 1);
+        glBegin(GL_LINES);
 
-    // Pop draw matrix
-    glPopMatrix();
-/***
-    // Add a draw matrix for id
-    glPushMatrix();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glTranslated(myShape.getLineCenter().x(), myShape.getLineCenter().y(), getType() + 0.1);
-    glColor3d(1, 1, 1);
-    glRotated(180, 0, 0, 1);
-    glTranslated(myIdTextOffset.x(), myIdTextOffset.y(), 0);
+        glVertex2d(0, 0);
+        glVertex2d(0, (numberOfLanes * 3.3));
+        glEnd();
+    }
 
-    std::string drawText = getID();
-    for(int i = 0; i < drawText.size(); i++)
-        if(drawText[i] == '_')
-            drawText[i] = ' ';
-
-    // Draw id depending of RouteProbe is or isn't selected
-    if(isAdditionalSelected()) 
-        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColorSelected, 180);
-    else
-        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColor, 180);
-    
-    // Pop matrix id
+    // Pop shape matrix
     glPopMatrix();
 
+    // Check if the distance is enought to draw details
+    if (s.scale * exaggeration >= 10) {        
+        // Add a draw matrix
+        //drawDetectorIcon(detectorE1GlID);
 
-    // Show Lock icon depending of the Edit mode
-    if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-        drawLockIcon(0.4);
+        // Show Lock icon depending of the Edit mode
+        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+            drawLockIcon();
+    }
 
-
-    // Pop name
-    glPopName();
-
-    // Draw name
+    // Finish draw
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-    ***/
+    glPopName();
 }
 
 
@@ -275,10 +293,8 @@ GNERouteProbe::getAttribute(SumoXMLAttr key) const {
     switch (key) {
         case SUMO_ATTR_ID:
             return getMicrosimID();
-        case SUMO_ATTR_EDGES:
-            /** completar **/
-        case SUMO_ATTR_POSITION:
-            return toString(myPosition);
+        case SUMO_ATTR_EDGE:
+            return myEdge.getID();
         case SUMO_ATTR_FILE:
             return myFilename;
         case SUMO_ATTR_FREQUENCY:
@@ -298,8 +314,8 @@ GNERouteProbe::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_EDGE:
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FILE:
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_BEGIN:
@@ -316,12 +332,8 @@ bool
 GNERouteProbe::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
-        case SUMO_ATTR_POSITION:
-            bool ok;
-            return GeomConvHelper::parseShapeReporting(value, "user-supplied position", 0, ok, false).size() == 1;
         case SUMO_ATTR_EDGE:
-            /** completar **/
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FILE:
             return isValidFileValue(value);
         case SUMO_ATTR_FREQUENCY:
@@ -338,11 +350,8 @@ void
 GNERouteProbe::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
-        case SUMO_ATTR_LANE:
-            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_EDGE:
-            /** completar **/
-            break;
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FILE:
             myFilename = value;
             break;

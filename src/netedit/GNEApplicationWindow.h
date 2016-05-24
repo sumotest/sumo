@@ -74,7 +74,7 @@ class GNEApplicationWindow :
 
 public:
 
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] a The FOX application
      * @param[in] configPattern The pattern used for loading configurations
      */
@@ -175,7 +175,7 @@ public:
     /// @brief called when a key is released
     long onKeyRelease(FXObject* o, FXSelector sel, void* data);
 
-    /** @brief Called by FOX if the application shall be closed
+    /**@brief Called by FOX if the application shall be closed
         Called either by FileMenu->Quit, the normal close-menu or SIGINT  */
     long onCmdQuit(FXObject*, FXSelector, void*);
 
@@ -331,7 +331,7 @@ protected:
      */
     class GNEShapeHandler : public ShapeHandler {
     public:
-        /** @brief Constructor
+        /**@brief Constructor
          * @param[in] file file with the shapes
          * @param[in] net network in which add shapes
          * @param[in] ShapeContainer reference to ShapeContainer
@@ -341,7 +341,7 @@ protected:
         /// @brief Destructor
         virtual ~GNEShapeHandler();
 
-        /** @brief get lane position
+        /**@brief get lane position
          * @param[in] poi poi ID
          * @param[in] laneID lane ID
          * @param[in] SlanePos position in the lane

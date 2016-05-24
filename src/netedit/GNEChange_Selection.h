@@ -50,7 +50,7 @@ class GNEChange_Selection : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Selection)
 
 public:
-    /** @brief Constructor for modifying selection
+    /**@brief Constructor for modifying selection
      * @param[in] selected The ids to select
      * @param[in] deselected The ids to deselect
      * @param[in] forward Whether to select or deselect the selected ids
@@ -60,8 +60,8 @@ public:
     /// @brief Destructor
     ~GNEChange_Selection();
 
-    //@name inherited from GNEChange
-    //@{
+    /// @name inherited from GNEChange
+    /// @{
     /// @brief get undo Name
     FXString undoName() const;
 
@@ -73,7 +73,7 @@ public:
 
     /// @brief redo action
     void redo();
-    //@}
+    /// @}
 
 
 private:

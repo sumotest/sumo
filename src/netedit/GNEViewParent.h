@@ -67,7 +67,7 @@ class GNEViewParent : public GUIGlChildWindow {
     FXDECLARE(GNEViewParent)
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * also builds the view and calls create()
      *
      * @param[in] p The MDI-pane this window is shown within

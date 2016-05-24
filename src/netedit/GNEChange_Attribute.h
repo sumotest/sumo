@@ -51,7 +51,7 @@ class GNEChange_Attribute : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Attribute)
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] ac The attribute-carrier to be modified
      * @param[in] key The attribute key
      * @param[in] value The new value
@@ -67,8 +67,8 @@ public:
     /// @brief Destructor
     ~GNEChange_Attribute();
 
-    //@name inherited from GNEChange
-    //@{
+    /// @name inherited from GNEChange
+    /// @{
     /// @brief get undo Name
     FXString undoName() const;
 
@@ -80,13 +80,13 @@ public:
 
     /// @brief redo action
     void redo();
-    //@}
+    /// @}
 
     /// @brief wether original and new value differ
     bool trueChange();
 
 private:
-    /** @brief the net to which all operations shall be applied
+    /**@brief the net to which all operations shall be applied
      * (we are not responsible for the pointer)
      */
     GNEAttributeCarrier* myAC;

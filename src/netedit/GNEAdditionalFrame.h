@@ -388,7 +388,7 @@ public:
         GNEViewNet* myViewNet;
     };
 
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] parent The parent window
      * @param[in] updateTarget view Net of the netEdit
      * @param[in] undoList pointer to undoList
@@ -398,14 +398,14 @@ public:
     /// @brief Destructor
     ~GNEAdditionalFrame();
 
-    /** @brief add additional element
+    /**@brief add additional element
      * @param[in] lane clicked lane. if user dind't clicked over lane, will be NULL
      * @param[in] parent AbstractView to obtain the position of the mouse over the lane.
      * @return true if an additional (GNEAdditional or GNEAdditionalSet) was added, false in other case
      */
     bool addAdditional(GNELane *lane, GUISUMOAbstractView* parent);
 
-    /** @brief remove an additional element previously added
+    /**@brief remove an additional element previously added
      * @param[in] additional element to erase
      */
     void removeAdditional(GNEAdditional *additional);

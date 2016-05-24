@@ -56,7 +56,7 @@ class GNEInternalLane : public GUIGlObject, public FXDelegator {
 
 public:
 
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] editor The editor to notify about changes
      * @param[in] id The id of this internal lane
      * @param[in] shape The shape of the lane
@@ -68,8 +68,8 @@ public:
     virtual ~GNEInternalLane();
 
     /// @name inherited from GUIGlObject
-    //@{
-    /** @brief Returns an own popup-menu
+    /// @{
+    /**@brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
      * @param[in] parent The parent window needed to build the popup-menu
@@ -78,7 +78,7 @@ public:
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns an own parameter window
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -87,19 +87,19 @@ public:
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
+    /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const;
-    //@}
+    /// @}
 
     /// @brief set the linkState (controls drawing color)
     void setLinkState(LinkState state);
@@ -128,13 +128,13 @@ private:
     const PositionVector myShape;
 
     /// @name computed only once (for performance) in updateGeometry()
-    //@{
+    /// @{
     /// The rotations of the shape parts
     std::vector<SUMOReal> myShapeRotations;
 
     /// The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
-    //@}
+    /// @}
 
     /// @brief the state of the link (used for visualization)
     FXuint myState;

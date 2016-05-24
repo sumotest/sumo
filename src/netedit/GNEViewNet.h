@@ -157,7 +157,7 @@ public:
     /// @brief replace node by geometry
     long onCmdNodeReplace(FXObject*, FXSelector, void*);
 
-    /** @brief sets edit mode (from hotkey)
+    /**@brief sets edit mode (from hotkey)
      * @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
      */
     void setEditModeFromHotkey(FXushort selid);
@@ -295,8 +295,8 @@ private:
     Position mySelCorner2;
     // @}
 
-    //@name toolbar related stuff
-    //@{
+    /// @name toolbar related stuff
+    /// @{
     /// @brief a reference to the toolbar in myParent
     FXToolBar* myToolbar;
     /// @brief combo box for selecting the  edit mode
@@ -305,7 +305,7 @@ private:
     /// @brief since we cannot switch on strings we map the mode names to an enum
     StringBijection<EditMode> myEditModeNames;
     StringBijection<EditMode> myEditAdditionalModeNames;
-    //@}
+    /// @}
 
     /// @brief a reference to the undolist maintained in the application
     GNEUndoList* myUndoList;
@@ -345,7 +345,7 @@ private:
     /// @brief delete all currently selected edges
     void deleteSelectedEdges();
 
-    /** @brief try to merge moved junction with another junction in that spot
+    /**@brief try to merge moved junction with another junction in that spot
      * return true if merging did take place */
     bool mergeJunctions(GNEJunction* moved);
 

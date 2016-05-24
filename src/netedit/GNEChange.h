@@ -50,7 +50,7 @@ class GNEChange : public FXCommand {
     FXDECLARE_ABSTRACT(GNEChange)
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] net The net on which to apply changes
      * @param[in] forward The direction of this change
      */
@@ -75,13 +75,13 @@ public:
     virtual void redo();
 
 protected:
-    /** @brief the net to which operations shall be applied or which shall be
+    /**@brief the net to which operations shall be applied or which shall be
      * informed about gui updates
      * (we are not responsible for the pointer)
      */
     GNENet* myNet;
 
-    /** @brief we group antagonistic commands (create junction/delete
+    /**@brief we group antagonistic commands (create junction/delete
      * junction) and keep them apart by this flag
      */
     bool myForward;

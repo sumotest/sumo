@@ -52,7 +52,7 @@ class GNEChange_Lane : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Lane)
 
 public:
-    /** @brief Constructor for creating/deleting an edge
+    /**@brief Constructor for creating/deleting an edge
      * @param[in] edge The edge on which to apply changes
      * @param[in] lane The lane to be deleted or 0 if a lane should be created
      * @param[in] laneAttrs The attributes of the lane to be created/deleted
@@ -63,8 +63,8 @@ public:
     /// @brief Destructor
     ~GNEChange_Lane();
 
-    //@name inherited from GNEChange
-    //@{
+    /// @name inherited from GNEChange
+    /// @{
     /// @brief get undo Name
     FXString undoName() const;
 
@@ -76,11 +76,11 @@ public:
 
     /// @brief redo action
     void redo();
-    //@}
+    /// @}
 
 
 private:
-    /** @brief full information regarding the lane that is to be created/deleted
+    /**@brief full information regarding the lane that is to be created/deleted
      * we assume shared responsibility for the pointers (via reference counting)
      */
 

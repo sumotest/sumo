@@ -49,7 +49,7 @@ class GNENet;
  */
 class GNEStoppingPlace : public GNEAdditional {
 public:
-    /** @brief Constructor.
+    /**@brief Constructor.
      * @param[in] id Gl-id of the stopping place (Must be unique)
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] tag Type of xml tag that define the StoppingPlace (SUMO_TAG_BUS_STOP, SUMO_TAG_CHARGING_STATION, etc...)
@@ -66,14 +66,14 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
-    /** @brief change the position of the StoppingPlace geometry without registering undo/redo
+    /**@brief change the position of the StoppingPlace geometry without registering undo/redo
      * @param[in] posx new position of StoppingPlaceover lane
      * @param[in] posy unused
      * @param[in] undoList pointer to the undo list
      */
     void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
-    /** @brief writte additional element into a xml file
+    /**@brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
@@ -87,25 +87,25 @@ public:
     /// @brief Returns the End position of the stoppingPlace
     SUMOReal getEndPosition() const;
 
-    /** @brief Set a new Start position in StoppingPlace
+    /**@brief Set a new Start position in StoppingPlace
      * @param[in] startPos new Start position of StoppingPlace
      * @throws InvalidArgument if value of startPos isn't valid
      */
     void setStartPosition(SUMOReal startPos);
 
-    /** @brief Set a new End position in StoppingPlace
+    /**@brief Set a new End position in StoppingPlace
      * @param[in] endPos new End position of StoppingPlace
      * @throws InvalidArgument if value of endPos isn't valid
      */
     void setEndPosition(SUMOReal endPos);
 
     /// @name inherited from GNEAdditional
-    //@{
+    /// @{
     /// @brief Returns the name of the parent object
     /// @return This object's parent id
     const std::string& getParentName() const;
 
-    /** @brief Returns an own parameter window
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -114,21 +114,21 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
 
-    /** @brief Draws additionally triggered visualisations
+    /**@brief Draws additionally triggered visualisations
      * @param[in] parent The view
      * @param[in] s The settings for the current view (may influence drawing)
      */
     virtual void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const = 0;
-    //@}
+    /// @}
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -148,7 +148,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
-    //@}
+    /// @}
 
 protected:
     /// @brief The lane this stopping place belongs

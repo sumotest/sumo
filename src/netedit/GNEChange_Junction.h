@@ -51,7 +51,7 @@ class GNEChange_Junction : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Junction)
 
 public:
-    /** @brief Constructor for creating/deleting a junction
+    /**@brief Constructor for creating/deleting a junction
      * @param[in] net The net on which to apply changes
      * @param[in] junction The junction to be created/deleted
      * @param[in] forward Whether to create/delete (true/false)
@@ -61,8 +61,8 @@ public:
     /// @brief Destructor
     ~GNEChange_Junction();
 
-    //@name inherited from GNEChange
-    //@{
+    /// @name inherited from GNEChange
+    /// @{
     /// @brief get undo Name
     FXString undoName() const;
 
@@ -74,12 +74,12 @@ public:
 
     /// @brief redo action
     void redo();
-    //@}
+    /// @}
 
 
 private:
 
-    /** @brief full information regarding the junction that is to be created/deleted
+    /**@brief full information regarding the junction that is to be created/deleted
      * we assume shared responsibility for the pointer (via reference counting)
      */
     GNEJunction* myJunction;

@@ -60,7 +60,7 @@ class GNEAdditionalDialog;
 
 class GNEAdditional : public GUIGlObject, public GNEAttributeCarrier {
 public:
-    /** @brief Constructor.
+    /**@brief Constructor.
      * @param[in] id Gl-id of the additional element (Must be unique)
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of view in which additional is located
@@ -75,7 +75,7 @@ public:
     /// @brief Destructor
     ~GNEAdditional();
 
-    /** @brief change the position of the additional geometry without registering undo/redo
+    /**@brief change the position of the additional geometry without registering undo/redo
      * @param[in] posx new x position of idem in the map or over lane
      * @param[in] posy new y position of item in the map
      * @param[in] undoList pointer to the undo list
@@ -127,12 +127,12 @@ public:
     virtual GNELane* getLane() const;
 
     /// @name inherited from GUIGlObject
-    //@{
+    /// @{
     /// @brief Returns the name of the parent object
     /// @return This object's parent id
     virtual const std::string& getParentName() const;
 
-    /** @brief Returns an own popup-menu
+    /**@brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
      * @param[in] parent The parent window needed to build the popup-menu
@@ -141,7 +141,7 @@ public:
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns an own parameter window
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -150,27 +150,27 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
+    /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      */
     Boundary getCenteringBoundary() const;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
 
-    /** @brief Draws additionally triggered visualisations
+    /**@brief Draws additionally triggered visualisations
      * @param[in] parent The view
      * @param[in] s The settings for the current view (may influence drawing)
      */
     virtual void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const = 0;
-    //@}
+    /// @}
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -190,7 +190,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
-    //@}
+    /// @}
 
 protected:
     /// @brief The GNEViewNet this additional element belongs
@@ -219,19 +219,19 @@ protected:
     GNEAdditionalDialog *myAdditionalDialog;
 
     /// @name computed only once (for performance) in updateGeometry()
-    //@{
+    /// @{
     /// The rotations of the shape parts
     std::vector<SUMOReal> myShapeRotations;
 
     /// The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
-    //@}
+    /// @}
 
     /// @brief rotation depending of the option "Lefthand"
     bool myRotationLefthand;
 
     /// @name members and functions relative to block icon
-    //@{
+    /// @{
     /// @brief set Rotation of block Icon
     /// @note must be called in updateGeometry() after setting of Shape, and use parameter "lane" if additional is placed over a lane
     void setBlockIconRotation(GNELane *lane = NULL);
@@ -245,7 +245,7 @@ protected:
 
     /// @brief The rotation of the block icon
     SUMOReal myBlockIconRotation;
-    //@}
+    /// @}
     
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked;

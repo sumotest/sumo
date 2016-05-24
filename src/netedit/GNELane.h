@@ -61,7 +61,7 @@ class GNELane : public GUIGlObject, public GNEAttributeCarrier, public FXDelegat
     FXDECLARE(GNELane)
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
      * @param[in] the edge this lane belongs to
      * @param[in] the index of this lane
@@ -72,12 +72,12 @@ public:
     ~GNELane();
 
     /// @name inherited from GUIGlObject
-    //@{
+    /// @{
     // @brief Returns the name of the parent object (if any)
     // @return This object's parent id
     const std::string& getParentName() const;
 
-    /** @brief Returns an own popup-menu
+    /**@brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
      * @param[in] parent The parent window needed to build the popup-menu
@@ -86,7 +86,7 @@ public:
      */
     GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns an own parameter window
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -98,24 +98,24 @@ public:
     /// @brief multiplexes message to two targets
     long onDefault(FXObject*, FXSelector, void*);
 
-    /** @brief Returns underlying parent edge
+    /**@brief Returns underlying parent edge
      * @return The underlying GNEEdge
      */
     GNEEdge& getParentEdge();
 
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
+    /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const;
-    //@}
+    /// @}
 
     /// @brief returns the shape of the lane
     const PositionVector& getShape() const;
@@ -179,8 +179,8 @@ public:
      */
     std::vector<GNEAdditional*> getAdditionals();
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -200,7 +200,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     bool isValid(SumoXMLAttr key, const std::string& value);
-    //@}
+    /// @}
 
     /* @brief method for setting the special color of the lane
      * @param[in] color Pointer to new special color
@@ -219,13 +219,13 @@ private:
     int myIndex;
 
     /// @name computed only once (for performance) in updateGeometry()
-    //@{
+    /// @{
     /// @brief The rotations of the shape parts
     std::vector<SUMOReal> myShapeRotations;
 
     /// @brief The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
-    //@}
+    /// @}
 
     /// @brief vector with pointers to additional elements placed in this lane
     std::list<GNEAdditional*> myAdditionals;

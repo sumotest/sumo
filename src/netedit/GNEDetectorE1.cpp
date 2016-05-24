@@ -181,10 +181,10 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     glRotated(myShapeRotations[0], 0, 0, 1);
     glScaled(exaggeration, exaggeration, 1);
     glBegin(GL_QUADS);
-    glVertex2d(0 - 1.0, 2);
+    glVertex2d(-1.0,  2);
     glVertex2d(-1.0, -2);
-    glVertex2d(1.0, -2);
-    glVertex2d(1.0, 2);
+    glVertex2d( 1.0, -2);
+    glVertex2d( 1.0,  2);
     glEnd();
     glTranslated(0, 0, .01);
     glBegin(GL_LINES);
@@ -197,10 +197,10 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         glColor3d(1, 1, 1);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glBegin(GL_QUADS);
-        glVertex2f(0 - 1.0, 2);
+        glVertex2f(-1.0,  2);
         glVertex2f(-1.0, -2);
-        glVertex2f(1.0, -2);
-        glVertex2f(1.0, 2);
+        glVertex2f( 1.0, -2);
+        glVertex2f( 1.0,  2);
         glEnd();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }

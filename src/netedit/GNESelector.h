@@ -65,7 +65,7 @@ public:
         SET_DEFAULT  = 5  // use mySetOperation instead of override
     };
 
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] parent The parent window
      */
     GNESelector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
@@ -81,7 +81,7 @@ public:
 
     /// @name FOX-callbacks
     /// @{
-    /** @brief Called when the user presses the Load-button
+    /**@brief Called when the user presses the Load-button
      *
      * Opens a file dialog and forces the parent to load the list of selected
      *  objects when a file was chosen. Rebuilds the list, then, and redraws
@@ -89,7 +89,7 @@ public:
      */
     long onCmdLoad(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Save-button
+    /**@brief Called when the user presses the Save-button
      *
      * Opens a file dialog and forces the selection container to save the list
      *  of selected objects when a file was chosen.
@@ -98,36 +98,36 @@ public:
      */
     long onCmdSave(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Clear-button
+    /**@brief Called when the user presses the Clear-button
      *
      * Clear the internal list and calls GUISelectedStorage::clear.
      * Repaints itself
      */
     long onCmdClear(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Invert-button
+    /**@brief Called when the user presses the Invert-button
      * invert the selection
      * Repaints itself
      */
     long onCmdInvert(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user selectes a tag in the match box
+    /**@brief Called when the user selectes a tag in the match box
      * updates the attr listbox
      * Repaints itself
      */
     long onCmdSelMBTag(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user enters a new selection expression
+    /**@brief Called when the user enters a new selection expression
      * validates expression and modifies current selection
      */
     long onCmdSelMBString(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user clicks the help button
+    /**@brief Called when the user clicks the help button
      * pop up help window
      */
     long onCmdHelp(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user changes visual scaling
+    /**@brief Called when the user changes visual scaling
      */
     long onCmdScaleSelection(FXObject*, FXSelector, void*);
 
@@ -181,7 +181,7 @@ private:
 
     std::string getStats() const;
 
-    /** @brief return  objects of the given type with matching attrs
+    /**@brief return  objects of the given type with matching attrs
      * @param[in] compOp One of {<,>,=} for matching against val or '@' for
      *                   matching against expr
      */

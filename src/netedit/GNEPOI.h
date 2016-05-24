@@ -68,7 +68,7 @@ public:
     /// @brief Destructor
     virtual ~GNEPOI();
 
-    /** @brief reposition the node at pos and informs the edges
+    /**@brief reposition the node at pos and informs the edges
      * @param[in] pos The new position
      * @note: those operations are not added to the undoList. This is handled in
      * registerMove to avoids merging lots of tiny movements
@@ -78,8 +78,8 @@ public:
     /// @brief registers completed movement with the undoList
     //void registerMove(GNEUndoList *undoList);
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -99,7 +99,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     bool isValid(SumoXMLAttr key, const std::string& value);
-    //@}
+    /// @}
 
     /// @brief save POIs to file
     static void saveToFile(const std::string& file);

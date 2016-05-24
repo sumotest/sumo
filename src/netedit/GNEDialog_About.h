@@ -42,7 +42,7 @@
  */
 class GNEDialog_About : public FXDialogBox {
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] parent The parent window
      */
     GNEDialog_About(FXWindow* parent);

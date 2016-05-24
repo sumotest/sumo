@@ -59,7 +59,7 @@ class GNETLSEditor : public FXScrollWindow {
     FXDECLARE(GNETLSEditor)
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] parent The parent window
      */
     GNETLSEditor(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
@@ -73,24 +73,24 @@ public:
         return myHeaderFont;
     }
 
-    /** @brief edits the traffic light for the given junction
+    /**@brief edits the traffic light for the given junction
      * @param[in] junction The junction of which the traffic light shall be edited
      */
     void editJunction(GNEJunction* junction);
 
     /// @name FOX-callbacks
     /// @{
-    /** @brief Called when the user presses the OK-Button
+    /**@brief Called when the user presses the OK-Button
      * saves any modifications
      */
     long onCmdOK(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Cancel-button
+    /**@brief Called when the user presses the Cancel-button
      * discards any modifications
      */
     long onCmdCancel(FXObject*, FXSelector, void*);
 
-    /** @brief Called when the user presses the Corresponding-button */
+    /**@brief Called when the user presses the Corresponding-button */
     long onCmdToggle(FXObject*, FXSelector, void*);
     long onCmdGuess(FXObject*, FXSelector, void*);
 

@@ -52,7 +52,7 @@ class GNEChange_Additional : public GNEChange {
     FXDECLARE_ABSTRACT(GNEChange_Additional)
 
 public:
-    /** @brief Constructor for creating/deleting an additional element
+    /**@brief Constructor for creating/deleting an additional element
      * @param[in] net The net on which to apply changes
      * @param[in] additional The additional element to be created/deleted
      * @param[in] forward Whether to create/delete (true/false)
@@ -62,8 +62,8 @@ public:
     /// @brief Destructor
     ~GNEChange_Additional();
 
-    //@name inherited from GNEChange
-    //@{
+    /// @name inherited from GNEChange
+    /// @{
     /// @brief get undo Name
     FXString undoName() const;
 
@@ -75,7 +75,7 @@ public:
 
     /// @brief redo action
     void redo();
-    //@}
+    /// @}
 
 private:
     /// @brief full information regarding the additional element that is to be created/deleted

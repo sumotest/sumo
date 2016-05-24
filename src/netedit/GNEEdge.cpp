@@ -367,7 +367,7 @@ GNEEdge::resetEndpoint(const Position& pos, GNEUndoList* undoList) {
 void
 GNEEdge::setGeometry(PositionVector geom, bool inner) {
     myNBEdge.setGeometry(geom, inner);
-    updateLaneGeometries();
+    updateLaneGeometriesAndAdditionals();
     getSource()->invalidateShape();
     getDest()->invalidateShape();
     myNet->refreshElement(this);
@@ -375,10 +375,12 @@ GNEEdge::setGeometry(PositionVector geom, bool inner) {
 
 
 void
-GNEEdge::updateLaneGeometries() {
-    for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
+GNEEdge::updateLaneGeometriesAndAdditionals() {
+    for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i)
         (*i)->updateGeometry();
-    }
+    for (AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) // PABLO #1916
+        (*i)->updateGeometry();                                                             // PABLO #1916
+
 }
 
 

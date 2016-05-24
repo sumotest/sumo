@@ -70,7 +70,10 @@ public:
     /// @brief Definition of the lane's positions vector
     typedef std::vector<GNELane*> LaneVector;
 
-    /** @brief Constructor.
+    /// @brief Definition of the additionals list       // PABLO #1916
+    typedef std::list<GNEAdditional*> AdditionalList;   // PABLO #1916
+
+    /**@brief Constructor.
      * @param[in] nbe The represented edge
      * @param[in] net The net to inform about gui updates
      * @param[in] loaded Whether the edge was loaded from a file
@@ -84,8 +87,8 @@ public:
     Boundary getBoundary() const;
 
     /// @name inherited from GUIGlObject
-    //@{
-    /** @brief Returns an own popup-menu
+    /// @{
+    /**@brief Returns an own popup-menu
      *
      * @param[in] app The application needed to build the popup-menu
      * @param[in] parent The parent window needed to build the popup-menu
@@ -94,7 +97,7 @@ public:
      */
     virtual GUIGLObjectPopupMenu* getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns an own parameter window
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -103,21 +106,21 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
-    /** @brief Returns the boundary to which the view shall be centered in order to show the object
+    /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *
      * @return The boundary the object is within
      * @see GUIGlObject::getCenteringBoundary
      */
     Boundary getCenteringBoundary() const;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     void drawGL(const GUIVisualizationSettings& s) const;
-    //@}
+    /// @}
 
-    /** @brief update edge geometry after junction move */
+    /**@brief update edge geometry after junction move */
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
 
     /// @brief returns pointer to net
@@ -132,7 +135,7 @@ public:
     /// @brief returns the destination-junction
     GNEJunction* getDest() const;
 
-    /** @brief change the edge geometry without registering undo/redo
+    /**@brief change the edge geometry without registering undo/redo
      * It is up to the Edge to decide whether an new geometry node should be
      * generated or an existing node should be moved
      * @param[in] oldPos The origin of the mouse movement
@@ -145,12 +148,12 @@ public:
     //// @brief manipulate the given geometry and return whether it was changed
     static bool changeGeometry(PositionVector& geom, const std::string& id, const Position& oldPos, const Position& newPos, bool relative = false, bool moveEndPoints = false);
 
-    /** @brief change the edge geometry without registering undo/redo
+    /**@brief change the edge geometry without registering undo/redo
      * @param[in] delta All inner points are moved by adding delta
      */
     void moveGeometry(const Position& delta);
 
-    /** @brief deletes the closest geometry node within SNAP_RADIUS.
+    /**@brief deletes the closest geometry node within SNAP_RADIUS.
      * @return true if a node was deleted
      */
     bool deleteGeometry(const Position& pos, GNEUndoList* undoList);
@@ -161,8 +164,8 @@ public:
     /// @brief restores the endpoint to the junction position at the appropriate end
     void resetEndpoint(const Position& pos, GNEUndoList* undoList);
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -182,22 +185,22 @@ public:
      * @param[in] undoList The undoList on which to register changes
      */
     bool isValid(SumoXMLAttr key, const std::string& value);
-    //@}
+    /// @}
 
     /// @brief set responsibility for deleting internal strctures
     void setResponsible(bool newVal);
 
-    /** @brief update edge geometry and inform the lanes
+    /**@brief update edge geometry and inform the lanes
      * @param[in] geom The new geometry
      * @param[in] inner Whether geom is only the inner points
      */
     void setGeometry(PositionVector geom, bool inner);
 
-    /** @brief update edge geometry and inform the lanes
+    /**@brief update edge geometry and inform the lanes
      * let the lanes recompute their precomputed geometry information
      * (needed after computing junction shapes)
      */
-    void updateLaneGeometries();
+    void updateLaneGeometriesAndAdditionals();
 
     /// @brief copy edge attributes from tpl
     void copyTemplate(GNEEdge* tpl, GNEUndoList* undolist);
@@ -250,7 +253,7 @@ private:
     std::string myConnectionStatus;
 
     /// @brief list with the additonals vinculated with this edge   // PABLO #1916
-    std::list<GNEAdditional*> myAdditionals;                        // PABLO #1916
+    AdditionalList myAdditionals;                                   // PABLO #1916
 
 private:
     /// @brief set attribute after validation
@@ -262,7 +265,7 @@ private:
     /// @brief invalidated assignment operator
     GNEEdge& operator=(const GNEEdge& s);
 
-    /** @brief changes the number of lanes.
+    /**@brief changes the number of lanes.
      * When reducing the number of lanes, higher-numbered lanes are removed first.
      * When increasing the number of lanes, the last known attributes for a lane
      * with this number are restored. If none are found the attributes for the

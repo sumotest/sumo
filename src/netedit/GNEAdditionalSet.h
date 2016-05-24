@@ -60,7 +60,7 @@ class GNEAdditionalSet : public GNEAdditional
 {
 public:
 
-    /** @brief Constructor.
+    /**@brief Constructor.
      * @param[in] id Gl-id of the additionalSet element (Must be unique)
      * @param[in] viewNet pointer to GNEViewNet of this additionalSet element belongs
      * @param[in] tag Type of xml tag that define the additionalSet element (SUMO_TAG_DETECTORE3, SUMO_TAG_REROUTER, etc...)
@@ -75,19 +75,19 @@ public:
     //  @note: must be called when geometry changes (i.e. lane moved)
     virtual void updateGeometry() = 0;
 
-    /** @brief add additional element to this set
+    /**@brief add additional element to this set
      * @param[in] additionalSet pointer to GNEadditionalSet element to add
      * @throw ProcessError if this additionalSet element was already vinculated with another additionalSet
      */
     void addAdditionalChild(GNEAdditional *additional);
 
-    /** @brief remove additional element to this set
+    /**@brief remove additional element to this set
      * @param[in] additionalSet pointer to GNEadditionalSet element to remove
      * @throw ProcessError if this additionalSet element isn't  vinculated with this additionalSet
      */
     void removeAdditionalChild(GNEAdditional *additional);
 
-    /** @brief writte additionalSet element into a xml file
+    /**@brief writte additionalSet element into a xml file
      * @param[in] device device in which write parameters of additionalSet element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
@@ -96,8 +96,8 @@ public:
     int getNumberOfChilds() const;
 
     /// @name inherited from GUIGlObject
-    //@{
-    /** @brief Returns an own parameter window
+    /// @{
+    /**@brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
      * @param[in] parent The parent window needed to build the parameter window
@@ -106,21 +106,21 @@ public:
      */
     virtual GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) = 0;
 
-    /** @brief Draws the object
+    /**@brief Draws the object
      * @param[in] s The settings for the current view (may influence drawing)
      * @see GUIGlObject::drawGL
      */
     virtual void drawGL(const GUIVisualizationSettings& s) const = 0;
 
-    /** @brief Draws additionally triggered visualisations
+    /**@brief Draws additionally triggered visualisations
      * @param[in] parent The view
      * @param[in] s The settings for the current view (may influence drawing)
      */
     virtual void drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const = 0;
-    //@}
+    /// @}
 
-    //@name inherited from GNEAttributeCarrier
-    //@{
+    /// @name inherited from GNEAttributeCarrier
+    /// @{
     /* @brief method for getting the Attribute of an XML key
      * @param[in] key The attribute key
      * @return string with the value associated to key
@@ -140,7 +140,7 @@ public:
      * @return true if the value is valid, false in other case
      */
     virtual bool isValid(SumoXMLAttr key, const std::string& value) = 0;
-    //@}
+    /// @}
 
 protected:
     /// @brief Map with the GNEAdditionals elementen vinculated to this AdditionalSet and their middle point

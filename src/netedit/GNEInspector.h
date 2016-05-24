@@ -123,7 +123,7 @@ public:
     };
 
 public:
-    /** @brief Constructor
+    /**@brief Constructor
      * @param[in] parent The parent window
      * @param[in] undoList The undoList to record changes facilitated by this
      * @param[in] tpl The initial edge template (we assume shared responsibility via reference counting)

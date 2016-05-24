@@ -63,94 +63,94 @@ public:
     ~GNEAdditionalHandler();
 
     /// @name inherited from GenericSAXHandler
-    //@{
-    /** @brief Called on the opening of a tag;
+    /// @{
+    /**@brief Called on the opening of a tag;
      * @param[in] element ID of the currently opened element
      * @param[in] attrs Attributes within the currently opened element
      * @exception ProcessError If something fails
      * @see GenericSAXHandler::myStartElement
      */
     void myStartElement(int element, const SUMOSAXAttributes& attrs);
-    //@}
+    /// @}
 
     /// @name parsing methods
     ///
     /// These methods parse the attributes for each of the described trigger
-    ///  and call the according methods to build the trigger
-    //@{
-    /** @brief Builds a vaporization
+    /// and call the according methods to build the trigger
+    /// @{
+    /**@brief Builds a vaporization
      * @param[in] attrs SAX-attributes which define the vaporizer
      * @note recheck throwing the exception
      */
     void parseAndBuildVaporizer(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a Variable Speed Signal (lane speed trigger)
+    /**@brief Parses his values and builds a Variable Speed Signal (lane speed trigger)
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid or the read definition is errornous
      * @see buildLaneSpeedTrigger
      */
     void parseAndBuildVariableSpeedSignal(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a rerouter
+    /**@brief Parses his values and builds a rerouter
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (edge) is not valid
      */
     void parseAndBuildRerouter(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a bus stop
+    /**@brief Parses his values and builds a bus stop
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildBusStop(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a charging station
+    /**@brief Parses his values and builds a charging station
      * @param[in] attrs SAXattributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildChargingStation(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a mesoscopic or microscopic calibrator
+    /**@brief Parses his values and builds a mesoscopic or microscopic calibrator
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (edge/position) is not valid
      */
     void parseAndBuildCalibrator(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a induction loop detector (E1)
+    /**@brief Parses his values and builds a induction loop detector (E1)
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildDetectorE1(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a lane area detector (E2)
+    /**@brief Parses his values and builds a lane area detector (E2)
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildDetectorE2(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a multi entry exit detector (E3)
+    /**@brief Parses his values and builds a multi entry exit detector (E3)
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter position is not valid
      */
     void parseAndBuildDetectorE3(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a Entry detector
+    /**@brief Parses his values and builds a Entry detector
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildDetectorEntry(const SUMOSAXAttributes& attrs);
 
-    /** @brief Parses his values and builds a Exit detector
+    /**@brief Parses his values and builds a Exit detector
      * @param[in] attrs SAX-attributes which define the trigger
      * @exception InvalidArgument If a parameter (lane/position) is not valid
      */
     void parseAndBuildDetectorExit(const SUMOSAXAttributes& attrs);
-    //@}
+    /// @}
 
     /// @name building methods
     ///
     /// Called with parsed values, these methods build the trigger.
-    //@{
-    /** @brief Builds additional / additionalSet
+    /// @{
+    /**@brief Builds additional / additionalSet
      * @param[in] viewNet pointer to viewNet in wich additional will be created
      * @param[in] tag tag of the additiona lto create
      * @param[in] values map with the attributes and values of the additional to create
@@ -158,7 +158,7 @@ public:
      */
     static bool buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::map<SumoXMLAttr, std::string> values);
 
-    /** @brief Builds a bus stop
+    /**@brief Builds a bus stop
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the bus stop
      * @param[in] lane The lane the bus stop is placed on
@@ -171,7 +171,7 @@ public:
      */
     static bool buildBusStop(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal startPos, SUMOReal endPos, const std::vector<std::string>& lines, bool blocked);
 
-    /** @brief Builds a charging Station
+    /**@brief Builds a charging Station
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the charging Station
      * @param[in] lane The lane the charging Station is placed on
@@ -187,7 +187,7 @@ public:
      */
     static bool buildChargingStation(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal startPos, SUMOReal endPos, SUMOReal chargingPower, SUMOReal efficiency, bool chargeInTransit, SUMOReal chargeDelay, bool blocked);
 
-    /** @brief Builds a induction loop detector (E1)
+    /**@brief Builds a induction loop detector (E1)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the detector
      * @param[in] lane The lane the detector is placed on
@@ -201,7 +201,7 @@ public:
      */
     static bool buildDetectorE1(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, int freq, const std::string &filename, bool splitByType, bool blocked);
 
-    /** @brief Builds a lane Area Detector (E2)
+    /**@brief Builds a lane Area Detector (E2)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the detector
      * @param[in] lane The lane the detector is placed on
@@ -220,7 +220,7 @@ public:
     static bool buildDetectorE2(GNEViewNet* viewNet, const std::string& id, GNELane *lane, SUMOReal pos, SUMOReal length, SUMOReal freq, const std::string& filename,
                                 bool cont, int timeThreshold, SUMOReal speedThreshold, SUMOReal jamThreshold, bool blocked);
 
-    /** @brief Builds a multi entry exit detector (E3)
+    /**@brief Builds a multi entry exit detector (E3)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the detector
      * @param[in] pos position of the detector in the map
@@ -232,7 +232,7 @@ public:
      */
     static bool buildDetectorE3(GNEViewNet *viewNet, const std::string& id, Position pos, int freq, const std::string &filename, bool blocked);
 
-    /** @brief Builds a entry detector (E3)
+    /**@brief Builds a entry detector (E3)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the entry detector
      * @param[in] lane The lane in which the entry detector is placed on
@@ -244,7 +244,7 @@ public:
      */
     static bool buildDetectorEntry(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, std::string idDetectorE3Parent, bool blocked);
 
-    /** @brief Builds a exit detector (E3)
+    /**@brief Builds a exit detector (E3)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the exit detector
      * @param[in] lane The lane in which the exit detector is placed on
@@ -256,7 +256,7 @@ public:
      */
     static bool buildDetectorExit(GNEViewNet *viewNet, const std::string& id, GNELane *lane, SUMOReal pos, std::string idDetectorE3Parent, bool blocked);
 
-    /** @brief builds a microscopic calibrator
+    /**@brief builds a microscopic calibrator
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the calibrator
      * @param[in] edge The edge the calibrator is placed at
@@ -267,7 +267,7 @@ public:
      */
     static bool buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe, bool blocked);
 
-    /** @brief builds a rerouter
+    /**@brief builds a rerouter
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the rerouter
      * @param[in] pos position of the rerouter in the map
@@ -278,7 +278,7 @@ public:
      */
     static bool buildRerouter(GNEViewNet *viewNet, const std::string& id, Position pos, const std::vector<GNEEdge*>& edges, SUMOReal prob, const std::string& file, bool off, bool blocked);
 
-    /** @brief builds a Route probe
+    /**@brief builds a Route probe
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the routeprobe
      * @param[in] edge The edges the routeprobe is placed at
@@ -289,7 +289,7 @@ public:
      */
     static bool buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, int freq, const std::string& file, int begin, bool blocked);
 
-    /** @brief Builds a VariableSpeedSignal (lane speed trigger)
+    /**@brief Builds a VariableSpeedSignal (lane speed trigger)
      * @param[in] viewNet viewNet in which element will be inserted
      * @param[in] id The id of the lane speed trigger
      * @param[in] destLanes List of lanes affected by this speed trigger
@@ -301,7 +301,7 @@ public:
      */
     static bool buildVariableSpeedSignal(GNEViewNet *viewNet, const std::string& id, Position pos, const std::vector<GNELane*>& destLanes, const std::string& file, bool blocked);
 
-    /** @brief Helper method to obtain the filename
+    /**@brief Helper method to obtain the filename
      * @param[in] attrs The attributes to obtain the file name from
      * @param[in] base The base path (the path the loaded additional file lies in)
      * @return The (expanded) path to the named file
@@ -309,7 +309,7 @@ public:
      */
     std::string getFileName(const SUMOSAXAttributes& attrs, const std::string& base, const bool allowEmpty = false);
 
-    /** @brief Returns the lane defined by attribute "lane"
+    /**@brief Returns the lane defined by attribute "lane"
      * @param[in] attrs The attributes to obtain the lane id from
      * @param[in] tt The trigger type (for user output)
      * @param[in] tid The trigger id (for user output)
@@ -318,7 +318,7 @@ public:
      */
     GNELane* getLane(const SUMOSAXAttributes& attrs, SumoXMLTag triggerType, const std::string& triggerId);
 
-    /** @brief extracts the position, checks whether it shall be mirrored and checks whether it is within the lane.
+    /**@brief extracts the position, checks whether it shall be mirrored and checks whether it is within the lane.
      * @param[in] attrs The attributes to obtain the position from
      * @param[in] lane The lane the position shall be valid for
      * @param[in] tt The trigger type (for user output)
@@ -328,7 +328,7 @@ public:
      */
     SUMOReal getPosition(const SUMOSAXAttributes& attrs, GNELane& lane, const std::string& tt, const std::string& tid);
 
-    /** @brief check if the position of an stoppingPlace over a lane is valid
+    /**@brief check if the position of an stoppingPlace over a lane is valid
     * @param[in] startPos Start position of stoppingPlace
     * @param[in] endPos End position of stoppingPlace
     * @param[in] laneLength Lenght of the lane
