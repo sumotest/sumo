@@ -94,11 +94,10 @@ GNELane::GNELane() :
 
 
 GNELane::~GNELane() {
-    // Get additionals of lane and remove it
-    additionalVector additionalsToRemove = myAdditionalElements;
-    for(std::vector<GNEAdditional*>::iterator i = additionalsToRemove.begin(); i != additionalsToRemove.end(); i++)
-        /// @note This must be changed buy delete (*i), see documentation of disableLane()
-        (*i)->disableLane();                                                                                              
+    // Remove all additionals vinculated to this lane using a copy of vector to avoid reference errors
+    std::list<GNEAdditional*> additionalsToRemove = myAdditionals;
+    for(std::list<GNEAdditional*>::iterator i = additionalsToRemove.begin(); i != additionalsToRemove.end(); i++)
+        delete (*i);                                                                                          
 }
 
 
@@ -475,7 +474,7 @@ GNELane::updateGeometry() {
         }
     }
     // Update geometry of additionalElements
-    for(additionalVector::iterator i = myAdditionalElements.begin(); i != myAdditionalElements.end(); i++)
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
         (*i)->updateGeometry();
 }
 
@@ -517,16 +516,16 @@ GNELane::getPositionRelativeToShapeLenght(SUMOReal position) const {
 
 void
 GNELane::addAdditional(GNEAdditional *additional) {
-    myAdditionalElements.push_back(additional);
+    myAdditionals.push_back(additional);
 }
 
 
 bool
 GNELane::removeAdditional(GNEAdditional *additional) {
     // Find and remove stoppingPlace
-    for(additionalVector::iterator i = myAdditionalElements.begin(); i != myAdditionalElements.end(); i++) {
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         if(*i == additional) {
-            myAdditionalElements.erase(i);
+            myAdditionals.erase(i);
             return true;
         }
     }
@@ -537,9 +536,8 @@ GNELane::removeAdditional(GNEAdditional *additional) {
 std::vector<GNEAdditional*>
 GNELane::getAdditionals() {
     std::vector<GNEAdditional*> result;
-    for(additionalVector::iterator i = myAdditionalElements.begin(); i != myAdditionalElements.end(); i++) {
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
         result.push_back(*i);
-    }
     return result;
 }
 

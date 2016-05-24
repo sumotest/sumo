@@ -33,6 +33,7 @@
 
 #include <vector>
 #include <string>
+#include <list>
 #include <utils/gui/globjects/GLIncludes.h>
 #include <utils/geom/Position.h>
 #include <utils/geom/Boundary.h>
@@ -48,6 +49,7 @@
 class GNENet;
 class GNEJunction;
 class GNELane;
+class GNEAdditional;    // PABLO #1916
 
 // ===========================================================================
 // class definitions
@@ -216,6 +218,12 @@ public:
     /// @brief override to also set lane ids
     void setMicrosimID(const std::string& newID);
 
+    /// @brief add additional to edge               // PABLO #1916
+    bool addAdditional(GNEAdditional *additional);  // PABLO #1916
+
+    /// @brief remove additional from edge              // PABLO #1916
+    bool removeAdditional(GNEAdditional *additional);   // PABLO #1916
+
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
 
@@ -240,6 +248,9 @@ private:
 
     /// @brief modification status of the connections
     std::string myConnectionStatus;
+
+    /// @brief list with the additonals vinculated with this edge   // PABLO #1916
+    std::list<GNEAdditional*> myAdditionals;                        // PABLO #1916
 
 private:
     /// @brief set attribute after validation

@@ -137,7 +137,7 @@ GNEBusStop::updateGeometry() {
     mySignPos = tmpShape.getLineCenter();
 
     // Set block icon rotation, and using their rotation for sign
-    setBlockIconRotation();
+    setBlockIconRotation(myLane);
 }
 
 

@@ -65,9 +65,8 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additionalSet element belongs
      * @param[in] tag Type of xml tag that define the additionalSet element (SUMO_TAG_DETECTORE3, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additionalSet element isn't blocked (i.e. value is false)
-     * @param[in] lane Pointer to lane, NULL if additional don't belong to a Lane
      */
-    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, GNELane *lane = NULL);
+    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false);
 
     /// @brief Destructor
     ~GNEAdditionalSet();

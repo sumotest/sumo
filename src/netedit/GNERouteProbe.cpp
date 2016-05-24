@@ -82,11 +82,11 @@ GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge
     myFrequency(frequency),
     myFilename(filename),
     myBegin(begin) {
+    // Add additional to edge parent
+    myEdge.addAdditional(this);
     // Update geometry;
     updateGeometry();
     // Set colors
-    myBaseColor = RGBColor(76, 170, 50, 255);
-    myBaseColorSelected = RGBColor(161, 255, 135, 255);
     // load RouteProbe logo, if wasn't inicializated
     if (!myRouteProbeInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_RouteProbe, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -106,6 +106,8 @@ GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge
 
 
 GNERouteProbe::~GNERouteProbe() {
+    // remove additional from edge parent
+    myEdge.removeAdditional(this);
 }
 
 

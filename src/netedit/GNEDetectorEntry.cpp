@@ -71,7 +71,7 @@ bool GNEDetectorEntry::detectorE3EntryInitialized = false;
 // ===========================================================================
 
 GNEDetectorEntry::GNEDetectorEntry(const std::string &id, GNEViewNet* viewNet, GNELane *lane, SUMOReal pos, GNEDetectorE3 *parent, bool blocked) :
-    GNEDetector(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, 0, "", blocked, SUMO_TAG_E3DETECTOR, parent) {
+    GNEDetector(id, viewNet, SUMO_TAG_DET_ENTRY, lane, pos, 0, "", blocked, parent) {
     // Update geometry;
     updateGeometry();
     // load logo, if wasn't inicializated
@@ -109,10 +109,10 @@ GNEDetectorEntry::updateGeometry() {
     myDetectorLogoOffset = Position(-2, 0);
 
     // Set block icon rotation, and using their rotation for logo
-    setBlockIconRotation();
+    setBlockIconRotation(myLane);
 
     // Update parent geometry
-    myParent->updateGeometry();
+    myAdditionalSetParent->updateGeometry();
 }
 
 

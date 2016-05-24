@@ -78,6 +78,9 @@ public:
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
 
+    /// @brief Returns pointer to Lane of stopping place
+    GNELane* getLane() const;
+
     /// @brief Returns the Start position of the stoppingPlace
     SUMOReal getStartPosition() const;
 
@@ -98,6 +101,10 @@ public:
 
     /// @name inherited from GNEAdditional
     //@{
+    /// @brief Returns the name of the parent object
+    /// @return This object's parent id
+    const std::string& getParentName() const;
+
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -144,6 +151,9 @@ public:
     //@}
 
 protected:
+    /// @brief The lane this stopping place belongs
+    GNELane* myLane;
+
     /// @brief The start position this stopping place is located at
     SUMOReal myStartPos;
 

@@ -48,18 +48,13 @@ class GNEEdge;
 class GNERouteProbe : public GNEAdditional {
 public:
     /** @brief Constructor
-
-
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
-     * @param[in] pos position (center) of the RouteProbe in the map
-     * @param[in] edges vector with the edges of rerotuer
-     * @param[in] filename The path to the definition file
-     * @param[in] probability The probability for vehicle rerouting
-     * @param[in] off Whether the router should be inactive initially
+     * @param[in] edge edge in which this routeProbe is placed
+     * @param[in] frequency The frequency in which to report the distribution
+     * @param[in] filename The file for generated output
+     * @param[in] begin The time at which to start generating output
      * @param[in] blocked set initial blocking state of item
-
-
      */
     GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge &edge, int frequency, const std::string& filename, int begin, bool blocked);
 

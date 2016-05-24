@@ -72,14 +72,12 @@ bool GNEAdditional::myAdditionalEmptyInitialized = false;
 // member method definitions
 // ===========================================================================
 
-GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNELane *lane, SumoXMLTag parentTag, GNEAdditionalSet *parent, bool blocked, bool inspectionable, bool selectable) :
+GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNEAdditionalSet *additionalSetParent, bool blocked, bool inspectionable, bool selectable) :
     GUIGlObject(GLO_ADDITIONAL, id),
     GNEAttributeCarrier(tag),
     myViewNet(viewNet),
     myPosition(pos),
-    myParentTag(parentTag),
-    myLane(lane),
-    myParent(parent),
+    myAdditionalSetParent(additionalSetParent),
     myBlocked(blocked),
     myInspectionable(inspectionable),
     mySelectable(selectable),
@@ -90,11 +88,8 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     // Set rotation left hand
     myRotationLefthand = OptionsCont::getOptions().getBool("lefthand");
     // If this additional belongs to a set, add it.
-    if(myParent)
-        myParent->addAdditionalChild(this);
-    // If this additional belongs to a Lane, add it
-    if(myLane)
-        myLane->addAdditional(this);
+    if(myAdditionalSetParent)
+        myAdditionalSetParent->addAdditionalChild(this);
     // load additional lock, if wasn't already initialized
     if (!myAdditionalLockInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_Lock, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
@@ -114,11 +109,8 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
 
 GNEAdditional::~GNEAdditional() {
     // If this additional belongs to a set, remove it.
-    if(myParent)
-        myParent->removeAdditionalChild(this);
-    // If this additional belongs to a lane, remove it.
-    if(myLane)
-        myLane->removeAdditional(this);
+    if(myAdditionalSetParent)
+        myAdditionalSetParent->removeAdditionalChild(this); 
 }
 
 
@@ -138,21 +130,9 @@ GNEAdditional::getViewNet() const {
 }
 
 
-GNELane*
-GNEAdditional::getLane() const {
-    return myLane;
-}
-
-
 PositionVector
 GNEAdditional::getShape() const {
     return myShape;
-}
-
-
-std::string
-GNEAdditional::getShapeInformation() const {
-    return toString(myShape);
 }
 
 
@@ -168,15 +148,9 @@ GNEAdditional::isAdditionalSelected() const {
 }
 
 
-bool
-GNEAdditional::belongToAdditionalSet() const {
-    return (myParentTag != SUMO_TAG_NOTHING);
-}
-
-
 GNEAdditionalSet*
 GNEAdditional::getAdditionalSetParent() const {
-    return myParent;
+    return myAdditionalSetParent;
 }
 
 
@@ -192,18 +166,15 @@ GNEAdditional::setPositionInView(const Position &pos) {
 }
 
 
-void
-GNEAdditional::disableLane() {
-    myLane = NULL;
+GNELane* 
+GNEAdditional::getLane() const {
+    return NULL;
 }
 
 
 const std::string&
 GNEAdditional::getParentName() const {
-    if(myLane)
-        return myLane->getMicrosimID();
-    else
-        return myViewNet->getNet()->getMicrosimID();
+    return myViewNet->getNet()->getMicrosimID();
 }
 
 
@@ -218,6 +189,7 @@ GNEAdditional::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     buildPositionCopyEntry(ret, false);
     // buildShowParamsPopupEntry(ret, false);
     // Show positions
+/*** REIMPLEMENT IN CHILDS **
     if(getLane() != 0) {
         const SUMOReal innerPos = myShape.nearest_offset_to_point2D(parent.getPositionInformation());
         new FXMenuCommand(ret, ("inner position: " + toString(innerPos)).c_str(), 0, 0, 0);
@@ -237,6 +209,7 @@ GNEAdditional::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     // buildPositionCopyEntry(ret, false);
     // let the GNEViewNet store the popup position
     dynamic_cast<GNEViewNet&>(parent).markPopupPosition();
+**/
     return ret;
 }
 
@@ -251,13 +224,13 @@ GNEAdditional::getCenteringBoundary() const {
 
 
 void
-GNEAdditional::setBlockIconRotation() {
+GNEAdditional::setBlockIconRotation(GNELane *lane) {
     if (myShape.length() != 0)
         // If lenght of the shape is distint to 0, Obtain rotation of center of shape
         myBlockIconRotation = myShape.rotationDegreeAtOffset((myShape.length() / 2.)) - 90;
-    else if(myLane != NULL)
+    else if(lane != NULL)
         // If additional is over a lane, set rotation in the position over lane
-        myBlockIconRotation = myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())) - 90;
+        myBlockIconRotation = lane->getShape().rotationDegreeAtOffset(lane->getPositionRelativeToParametricLenght(myPosition.x())) - 90;
     else
         // In other case, rotation is 0
         myBlockIconRotation = 0;

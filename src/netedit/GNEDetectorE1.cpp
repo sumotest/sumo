@@ -120,7 +120,7 @@ GNEDetectorE1::updateGeometry() {
     myBlockIconOffset = Position(-1, 0);
 
     // Set block icon rotation, and using their rotation for logo
-    setBlockIconRotation();
+    setBlockIconRotation(myLane);
 }
 
 

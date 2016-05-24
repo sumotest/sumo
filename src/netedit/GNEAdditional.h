@@ -65,14 +65,12 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of view in which additional is located
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
-     * @param[in] lane Pointer to lane, NULL if additional don't belong to a Lane
-     * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet
-     * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
+     * @param[in] additionalSetParent pointer to parent, if this additional belongs to an additionalSet
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
      * @param[in] inspectionable enable or disable inspection by GNEInspector
      * @param[in] selectable enable or disable selection
      */
-    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNELane *lane = NULL, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL, bool blocked = false, bool inspectionable = true, bool selectable = true);
+    GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNEAdditionalSet *additionalSetParent = NULL, bool blocked = false, bool inspectionable = true, bool selectable = true);
 
     /// @brief Destructor
     ~GNEAdditional();
@@ -81,16 +79,17 @@ public:
      * @param[in] posx new x position of idem in the map or over lane
      * @param[in] posy new y position of item in the map
      * @param[in] undoList pointer to the undo list
-     * @note if additional belongs to a Lane, posx correspond to position over lane
+     * @note if additional belongs to a Lane, posx correspond to position over lane and posy is ignored
+     * @note must be implemented in ALL childrens
      */
     virtual void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) = 0;
 
     /// @brief update pre-computed geometry information
-    /// @note: must be called when geometry changes (i.e. lane moved)
+    /// @note: must be called when geometry changes (i.e. lane moved) and implemented in ALL childrens
     virtual void updateGeometry() = 0;
 
     /// @brief open Additional Dialog
-    /// @note: only certain Additionals own an AdditionalDialog. 
+    /// @note: if additional needs an additional dialog, this function has to be implemented in childrens (see GNERerouter and GNEVariableSpeedSignal)
     virtual void openAdditionalDialog();
 
     /// @brief Returns position of additional in view
@@ -99,24 +98,14 @@ public:
     /// @brief Returns a pointer to GNEViewNet in which additional element is located
     GNEViewNet* getViewNet() const;
 
-    /// @brief Returns pointer to Lane (or NULL if additional don't belong to a Lane)
-    /// @brief this should be erased
-    virtual GNELane* getLane() const;
-
     /// @brief Returns additional element's shape
     PositionVector getShape() const;
-
-    /// @brief Returns string with the information of additional element's shape
-    std::string getShapeInformation() const;
 
     /// @brief Check if additional item is blocked (i.e. cannot be moved with mouse)
     bool isBlocked() const;
 
     // @brief Check if additional item is selected
     bool isAdditionalSelected() const;
-
-    /// @brief Check if this item belongs to an additionalSet
-    bool belongToAdditionalSet() const;
 
     /// @brief get additionalSet parent, or NULL if don't belongs to an additionalSet
     GNEAdditionalSet* getAdditionalSetParent() const;
@@ -125,22 +114,23 @@ public:
     void setBlocked(bool value);
 
     /// @brief set new position in the view
+    /// @note movement cannot be undo with GNEUndoRedo
     void setPositionInView(const Position &pos);
 
-    /// @brief Set lane of Additional to NULL
-    /// @note this function must be removed when the undoRedo list works as ein STACK
-    void disableLane();
-
-    /** @brief writte additional element into a xml file
-     * @param[in] device device in which write parameters of additional element
-     */
+    /// @brief writte additional element into a xml file
+    /// @param[in] device device in which write parameters of additional element
+    /// @note must be implemented in all childrens
     virtual void writeAdditional(OutputDevice& device) = 0;
+
+    /// @brief get lane of additional, or NULL if additional isn't placed over a Lane
+    /// @note if additional is placed over a lane, this function has to be implemented in the children (See StoppingPlaces and Detectors)
+    virtual GNELane* getLane() const;
 
     /// @name inherited from GUIGlObject
     //@{
-    /// @brief Returns the name of the parent object (if any)
+    /// @brief Returns the name of the parent object
     /// @return This object's parent id
-    const std::string& getParentName() const;
+    virtual const std::string& getParentName() const;
 
     /** @brief Returns an own popup-menu
      *
@@ -206,9 +196,6 @@ protected:
     /// @brief The GNEViewNet this additional element belongs
     GNEViewNet* myViewNet;
 
-    /// @brief The GNEViewNet this additional element belongs
-    GNELane* myLane;
-
     /// @brief The position in which this additional element is located
     /// @note if this element belongs to a Lane, x() value will be the position over Lane
     Position myPosition;
@@ -217,11 +204,8 @@ protected:
     /// @note must be configured in updateGeometry()
     PositionVector myShape;
 
-    /// @brief type of tag of the parent
-    SumoXMLTag myParentTag;
-
-    /// @brief pointer to item parent, if belong to set
-    GNEAdditionalSet *myParent;
+    /// @brief pointer to additional set parent, if belong to set
+    GNEAdditionalSet *myAdditionalSetParent;
 
     /// @brief base color (Default green)
     /// @note default color can be defined in the constructor of every additional
@@ -249,8 +233,8 @@ protected:
     /// @name members and functions relative to block icon
     //@{
     /// @brief set Rotation of block Icon
-    /// @note must be called in updateGeometry() after setting of Shape
-    void setBlockIconRotation();
+    /// @note must be called in updateGeometry() after setting of Shape, and use parameter "lane" if additional is placed over a lane
+    void setBlockIconRotation(GNELane *lane = NULL);
 
     /// @brief draw lock icon
     void drawLockIcon(SUMOReal size = 0.5) const;

@@ -91,6 +91,11 @@ GNEEdge::~GNEEdge() {
     if (myAmResponsible) {
         delete &myNBEdge;
     }
+
+    // Remove all additionals vinculated to this edge using a copy of vector to avoid reference errors
+    std::list<GNEAdditional*> additionalsToRemove = myAdditionals;
+    for(std::list<GNEAdditional*>::iterator i = additionalsToRemove.begin(); i != additionalsToRemove.end(); i++)
+        delete (*i);       
 }
 
 
@@ -803,5 +808,29 @@ GNEEdge::setMicrosimID(const std::string& newID) {
     }
 }
 
+
+bool                                                                                                    // PABLO #1916
+GNEEdge::addAdditional(GNEAdditional *additional) {                                                     // PABLO #1916
+    // Check if additional already exists before insertion                                              // PABLO #1916
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)   // PABLO #1916
+        if((*i) == additional)                                                                          // PABLO #1916
+            return false;                                                                               // PABLO #1916
+    // Insert it and retur true                                                                         // PABLO #1916
+    myAdditionals.push_back(additional);                                                                // PABLO #1916
+    return true;                                                                                        // PABLO #1916
+}                                                                                                       // PABLO #1916
+    
+
+bool                                                                                                    // PABLO #1916
+GNEEdge::removeAdditional(GNEAdditional *additional) {                                                  // PABLO #1916
+    // search additional and remove it                                                                  // PABLO #1916
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)   // PABLO #1916
+        if((*i) == additional) {                                                                        // PABLO #1916
+            myAdditionals.erase(i);                                                                     // PABLO #1916
+            return true;                                                                                // PABLO #1916
+        }                                                                                               // PABLO #1916
+    // If additional wasn't found, return false                                                         // PABLO #1916
+    return false;                                                                                       // PABLO #1916
+}                                                                                                       // PABLO #1916
 
 /****************************************************************************/

@@ -63,14 +63,17 @@
 // member method definitions
 // ===========================================================================
 
-GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked, SumoXMLTag parentTag, GNEAdditionalSet *parent) :
-    GNEAdditional(id, viewNet, Position(posOverLane, 0), tag, lane, parentTag, parent, blocked),
+GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked, GNEAdditionalSet *parent) :
+    GNEAdditional(id, viewNet, Position(posOverLane, 0), tag, parent, blocked),
+    myLane(lane),
     myFreq(freq),
     myFilename(filename) {
+    myLane->addAdditional(this);
 }
 
 
 GNEDetector::~GNEDetector() {
+    myLane->removeAdditional(this);
 }
 
 
@@ -86,6 +89,12 @@ GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
             undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x() + posx)));
         }
     }
+}
+
+
+GNELane*
+GNEDetector::getLane() const {
+    return myLane;
 }
 
 
@@ -130,6 +139,12 @@ GNEDetector::setFrequency(int freq) {
 void
 GNEDetector::setFilename(std::string filename) {
     myFilename = filename;
+}
+
+
+const std::string&
+GNEDetector::getParentName() const {
+        return myLane->getMicrosimID();
 }
 
 

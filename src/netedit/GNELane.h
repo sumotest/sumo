@@ -32,6 +32,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <utils/gui/globjects/GUIGlObject.h>
 #include <utils/gui/settings/GUIPropertySchemeStorage.h>
 #include "GNEAttributeCarrier.h"
@@ -60,9 +61,6 @@ class GNELane : public GUIGlObject, public GNEAttributeCarrier, public FXDelegat
     FXDECLARE(GNELane)
 
 public:
-    /// Definition of the lane's stoppingPlaces vector
-    typedef std::vector<GNEAdditional*> additionalVector;
-
     /** @brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
      * @param[in] the edge this lane belongs to
@@ -230,7 +228,7 @@ private:
     //@}
 
     /// @brief vector with pointers to additional elements placed in this lane
-    additionalVector myAdditionalElements;
+    std::list<GNEAdditional*> myAdditionals;
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;

@@ -66,17 +66,20 @@
 // ===========================================================================
 
 GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal startPos, SUMOReal endPos, bool blocked) :
-    GNEAdditional(id, viewNet, Position(), tag, lane, SUMO_TAG_NOTHING, NULL, blocked),
+    GNEAdditional(id, viewNet, Position(), tag, NULL, blocked),
+    myLane(lane),
     myStartPos(startPos),
     myEndPos(endPos),
     mySignColor(RGBColor::YELLOW),
     mySignColorSelected(RGBColor::BLUE),
     myTextColor(RGBColor::CYAN),
     myTextColorSelected(RGBColor::BLUE) {
+    myLane->addAdditional(this);
 }
 
 
 GNEStoppingPlace::~GNEStoppingPlace() {
+    myLane->removeAdditional(this);
 }
 
 
@@ -94,6 +97,13 @@ GNEStoppingPlace::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undo
         }
     }
 }
+
+
+GNELane*
+GNEStoppingPlace::getLane() const {
+    return myLane;
+}
+
 
 SUMOReal
 GNEStoppingPlace::getStartPosition() const {
@@ -130,6 +140,12 @@ GNEStoppingPlace::setEndPosition(SUMOReal endPos) {
         throw InvalidArgument("End position '" + toString(endPos) + "' not allowed. Lenght of StoppingPlace must be equal or greather than 1");
     else
         myEndPos = endPos;
+}
+
+
+const std::string&
+GNEStoppingPlace::getParentName() const {
+        return myLane->getMicrosimID();
 }
 
 /****************************************************************************/

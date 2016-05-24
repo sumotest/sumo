@@ -56,10 +56,9 @@ public:
      * @param[in] freq the aggregation period the values the detector collects shall be summed up.
      * @param[in] filename The path to the output file.
      * @param[in] blocked set initial blocking state of item
-     * @param[in[ parentTag type of parent, if this additional belongs to an additionalSet
      * @param[in] parent pointer to parent, if this additional belongs to an additionalSet
      */
-    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked = false, SumoXMLTag parentTag = SUMO_TAG_NOTHING, GNEAdditionalSet *parent = NULL);
+    GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string &filename, bool blocked = false, GNEAdditionalSet *parent = NULL);
 
     /// @brief Destructor
     ~GNEDetector();
@@ -78,6 +77,9 @@ public:
      * @param[in] device device in which write parameters of additional element
      */
     virtual void writeAdditional(OutputDevice& device) = 0;
+
+    /// @brief Returns pointer to Lane of detector
+    GNELane* getLane() const;
 
     /// @brief Returns the position of the detector over lane
     SUMOReal getPositionOverLane() const;
@@ -107,6 +109,10 @@ public:
 
     /// @name inherited from GNEAdditional
     //@{
+    /// @brief Returns the name of the parent object
+    /// @return This object's parent id
+    const std::string& getParentName() const;
+
     /** @brief Returns an own parameter window
      *
      * @param[in] app The application needed to build the parameter window
@@ -147,6 +153,9 @@ public:
     //@}
 
 protected:
+    /// @brief The lane this detector belongs
+    GNELane* myLane;
+
     /// @brief The aggregation period the values the detector collects shall be summed up.
     int myFreq;
 
