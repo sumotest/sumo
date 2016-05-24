@@ -94,10 +94,9 @@ GNELane::GNELane() :
 
 
 GNELane::~GNELane() {
-    // Remove all additionals vinculated to this lane using a copy of vector to avoid reference errors
-    std::list<GNEAdditional*> additionalsToRemove = myAdditionals;
-    for(std::list<GNEAdditional*>::iterator i = additionalsToRemove.begin(); i != additionalsToRemove.end(); i++)
-        delete (*i);                                                                                          
+    // Remove all references to this lane in their additionals
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        (*i)->removeLaneReference();                                                                                       
 }
 
 

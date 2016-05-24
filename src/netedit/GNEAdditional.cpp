@@ -166,9 +166,27 @@ GNEAdditional::setPositionInView(const Position &pos) {
 }
 
 
+GNEEdge* 
+GNEAdditional::getEdge() const {
+    return NULL;
+}
+
+
 GNELane* 
 GNEAdditional::getLane() const {
     return NULL;
+}
+
+
+void 
+GNEAdditional::removeEdgeReference() {
+    std::cout << "WARNING: Calling removeEdgeReference of class GNEAdditional, possible segmentation faul after remove additional" << std::endl;
+}
+
+
+void 
+GNEAdditional::removeLaneReference() {
+    std::cout << "WARNING: Calling removeEdgeReference of class GNEAdditional, possible segmentation faul after remove additional" << std::endl;
 }
 
 

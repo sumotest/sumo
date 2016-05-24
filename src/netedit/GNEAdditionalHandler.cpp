@@ -579,7 +579,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             int begin = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_BEGIN]);
             // Build RouteProbe
             if(lane)
-                return buildRouteProbe(viewNet, id, lane->getParentEdge(), freq, filename, begin, blocked);
+                return buildRouteProbe(viewNet, id, &(lane->getParentEdge()), freq, filename, begin, blocked);
             else
                 return false;
         }
@@ -714,10 +714,10 @@ GNEAdditionalHandler::buildRerouter(GNEViewNet *viewNet, const std::string& id, 
 
 
 bool
-GNEAdditionalHandler::buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, int freq, const std::string& file, int begin, bool blocked) {
+GNEAdditionalHandler::buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge *edge, int freq, const std::string& file, int begin, bool blocked) {
     if (viewNet->getNet()->getAdditional(SUMO_TAG_REROUTER, id) == NULL) {
         viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_ROUTEPROBE));
-        GNERouteProbe *routeProbe = new GNERouteProbe(id, viewNet,edge, freq, file, begin, blocked);
+        GNERouteProbe *routeProbe = new GNERouteProbe(id, viewNet, edge, freq, file, begin, blocked);
         viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), routeProbe, true), true);
         viewNet->getUndoList()->p_end();
         return true;

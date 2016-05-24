@@ -73,7 +73,8 @@ GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag 
 
 
 GNEDetector::~GNEDetector() {
-    myLane->removeAdditional(this);
+    if(myLane)
+        myLane->removeAdditional(this);
 }
 
 
@@ -95,6 +96,12 @@ GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList)
 GNELane*
 GNEDetector::getLane() const {
     return myLane;
+}
+
+
+void
+GNEDetector::removeLaneReference() {
+    myLane = NULL;
 }
 
 

@@ -79,7 +79,8 @@ GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, S
 
 
 GNEStoppingPlace::~GNEStoppingPlace() {
-    myLane->removeAdditional(this);
+    if(myLane)
+        myLane->removeAdditional(this);
 }
 
 
@@ -102,6 +103,12 @@ GNEStoppingPlace::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undo
 GNELane*
 GNEStoppingPlace::getLane() const {
     return myLane;
+}
+
+
+void
+GNEStoppingPlace::removeLaneReference() {
+    myLane = NULL;
 }
 
 

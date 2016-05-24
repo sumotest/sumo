@@ -76,14 +76,14 @@ bool GNERouteProbe::myRouteProbeSelectedInitialized = false;
 // ===========================================================================
 
 
-GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge &edge, int frequency, const std::string& filename, int begin, bool blocked) :
+GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge *edge, int frequency, const std::string& filename, int begin, bool blocked) :
     GNEAdditional(id, viewNet, Position(), SUMO_TAG_ROUTEPROBE, NULL, SUMO_TAG_NOTHING, NULL, blocked),
     myEdge(edge),
     myFrequency(frequency),
     myFilename(filename),
     myBegin(begin) {
     // Add additional to edge parent
-    myEdge.addAdditional(this);
+    myEdge->addAdditional(this);
     // Update geometry;
     updateGeometry();
     // Set colors
@@ -106,8 +106,8 @@ GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge
 
 
 GNERouteProbe::~GNERouteProbe() {
-    // remove additional from edge parent
-    myEdge.removeAdditional(this);
+    if(myEdge)
+        myEdge->removeAdditional(this);
 }
 
 
@@ -121,7 +121,7 @@ GNERouteProbe::updateGeometry() {
     myShape.clear();
 
     // get lanes of edge
-    std::vector<GNELane*> lanes = myEdge.getLanes();
+    std::vector<GNELane*> lanes = myEdge->getLanes();
 
     // Save number of lanes
     numberOfLanes = lanes.size();
@@ -166,6 +166,17 @@ GNERouteProbe::writeAdditional(OutputDevice& device) {
     device.writeAttr(SUMO_ATTR_BEGIN, myBegin);
     // Close tag
     device.closeTag();
+}
+
+
+GNEEdge* 
+GNERouteProbe::getEdge() const {
+    return myEdge;
+}
+
+void 
+GNERouteProbe::removeEdgeReference() {
+
 }
 
 
@@ -294,7 +305,7 @@ GNERouteProbe::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_EDGE:
-            return myEdge.getID();
+            return myEdge->getID();
         case SUMO_ATTR_FILE:
             return myFilename;
         case SUMO_ATTR_FREQUENCY:

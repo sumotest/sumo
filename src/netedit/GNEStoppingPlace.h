@@ -81,6 +81,10 @@ public:
     /// @brief Returns pointer to Lane of stopping place
     GNELane* getLane() const;
 
+    /// @brief Remove reference to Lane of stopping place
+    /// @note will be automatic called in lane destructor
+    void removeLaneReference();
+
     /// @brief Returns the Start position of the stoppingPlace
     SUMOReal getStartPosition() const;
 

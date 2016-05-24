@@ -43,6 +43,7 @@
 
 class GUIGLObjectPopupMenu;
 class PositionVector;
+class GNEEdge;
 class GNELane;
 class GNENet;
 class GNEViewNet;
@@ -122,9 +123,21 @@ public:
     /// @note must be implemented in all childrens
     virtual void writeAdditional(OutputDevice& device) = 0;
 
+    /// @brief get edge of additional, or NULL if additional isn't placed over an edge
+    /// @note if additional is placed over a edge, this function has to be implemented in the children (See RouteProbes)
+    virtual GNEEdge* getEdge() const;
+
     /// @brief get lane of additional, or NULL if additional isn't placed over a Lane
     /// @note if additional is placed over a lane, this function has to be implemented in the children (See StoppingPlaces and Detectors)
     virtual GNELane* getLane() const;
+
+    /// @brief if additional is placed over an edge, remove it reference
+    /// @note if additional is placed over a edge, this function has to be implemented in the children (See RouteProbes) AND called in edge destructor
+    virtual void removeEdgeReference();
+
+    /// @brief if additional is placed over a lane, remove it reference
+    /// @note if additional is placed over a lane, this function has to be implemented in the children (See StoppingPlaces and Detectors) AND called in lane destructor
+    virtual void removeLaneReference();
 
     /// @name inherited from GUIGlObject
     /// @{

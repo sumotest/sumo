@@ -101,10 +101,6 @@ FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
 FXIMPLEMENT(GNEViewNet, GUISUMOAbstractView, GNEViewNetMap, ARRAYNUMBER(GNEViewNetMap))
 
 // ===========================================================================
-// static member definitions
-// ===========================================================================
-
-// ===========================================================================
 // member method definitions
 // ===========================================================================
 GNEViewNet::GNEViewNet(

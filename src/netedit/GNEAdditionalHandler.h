@@ -287,7 +287,7 @@ public:
      * @param[in] begin The time at which to start generating output
      * @param[in] blocked set initial blocking state of item
      */
-    static bool buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, int freq, const std::string& file, int begin, bool blocked);
+    static bool buildRouteProbe(GNEViewNet *viewNet, const std::string& id, GNEEdge *edge, int freq, const std::string& file, int begin, bool blocked);
 
     /**@brief Builds a VariableSpeedSignal (lane speed trigger)
      * @param[in] viewNet viewNet in which element will be inserted
