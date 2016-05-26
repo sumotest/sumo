@@ -63,7 +63,7 @@ GNEDetectorEntry.h GNEDetectorEntry.cpp \
 GNEDetectorExit.h GNEDetectorExit.cpp \
 GNERerouter.h GNERerouter.cpp \
 GNERerouterDialog.h GNERerouterDialog.cpp \
-GNERerouterEdge.h GNERerouterEdge.cpp \
+GNERouteProbe.h GNERouteProbe.cpp \
 GNEVariableSpeedSignal.h GNEVariableSpeedSignal.cpp \
 GNEVariableSpeedSignalDialog.h GNEVariableSpeedSignalDialog.cpp \
 GNEReferenceCounter.h \
