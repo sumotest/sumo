@@ -36,7 +36,7 @@ const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-		hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+				hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -432,6 +432,7 @@ MSGRPCClient::~MSGRPCClient() {
 }
 
 
+
 void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const PositionVector shape,std::vector<hybridsim::Transition>& vec){
 	//TODO: this needs to be handled upstream!
 	if (shape.area() <= 0.) {//dbl precision issue?! [gl apr '16]
@@ -593,6 +594,14 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 
 }
 
+std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
+	auto ret = laneMapping.find(lane);
+	if (ret != laneMapping.end()) {
+		return ret->second;
+	}
+	return emptySet;
+}
+
 void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates,SUMOTime time) {
 #ifdef DEBUG
 	std::cout << "receiveTrajectories" << std::endl;
@@ -614,8 +623,6 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 			st->setSpeed(t.spd());
 			st->setAngle(t.phi());
 
-			MSPRCPState tmp = *st;
-
 			const MSEdge * oldEdge = st->getEdge();
 
 #ifdef DEBUG
@@ -625,8 +632,23 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 			std::cout << "=============================" << std::endl;
 #endif
 			if (t.linkid() != "" && t.linkid() != oldEdge->getID()) {
+				for (const MSLane * ln : oldEdge->getLanes()) {
+					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+						//unmap ped from lane
+						std::set<MSPRCPState*> set = laneMapping[ln];
+						set.erase(st);
+					}
+				}
 				const MSEdge * newEdge = st->updateEdge(t.linkid());
 				st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
+				if (newEdge != 0) {
+					for (const MSLane * ln : newEdge->getLanes()) {
+						if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+							std::set<MSPRCPState*> set = laneMapping[ln];
+							set.insert(st);
+						}
+					}
+				}
 			}
 		}
 	} else {

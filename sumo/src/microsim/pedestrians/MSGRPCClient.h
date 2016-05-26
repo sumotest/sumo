@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <iostream>
+#include <map>
 #include <grpc++/grpc++.h>
 #include <utils/common/SUMOTime.h>
 #include <utils/geom/Position.h>
@@ -53,7 +54,15 @@ public:
 	void receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates, SUMOTime time);
 	void retrieveAgents(std::map<const std::string,MSPRCPState*>& pstates,MSNet* net, SUMOTime time);
 
+	std::set<MSPRCPState*> getPedestrians(const MSLane * lane);
+
 private:
+
+	std::map<const MSLane*,std::set<MSPRCPState*>> laneMapping;
+
+	std::set<MSPRCPState*> emptySet;
+
+
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
 	MSNet* net;
 

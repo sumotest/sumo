@@ -40,11 +40,9 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 
 	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
-//	 std::cout << "MSPModelRemoteControlled::add was called. Person id: " << person->getID() << std::endl;
 
 	 MSPRCPState * state = new MSPRCPState(person,stage);
 	 const MSEdge* edge = *(stage->getRoute().begin());;
-//	 MSPRCPState * state = new MSPRCPState(person,rp);
 	 if (buffers.find(edge->getID()) == buffers.end()) {
 		 std::queue<MSPRCPState*> buffer;
 		 buffer.push(state);
@@ -57,7 +55,6 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 		 buffer->push(state);
 	 }
 
-//	 MSPRCPState * state = new MSPRCPState(person);
 	 pstates[person->getID()] = state;
 
 	 return state;
@@ -65,8 +62,33 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 
 bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 		double distToCrossing, std::vector<const MSPerson*>* collectBlockers) {
-	//for now no interaction btwn cars and peds
+//	//for now no interaction btwn cars and peds
+//	return false;
+//
+//	const std::set<MSPRCPState*> pedestrians = grpcClient->getPedestrians(lane);
 	return false;
+//	for (Pedestrians::const_iterator it_ped = pedestrians.begin(); it_ped != pedestrians.end(); ++it_ped) {
+//		const PState& ped = **it_ped;
+//		const SUMOReal halfVehicleWidth = 1.0; // @note could get the actual value from the vehicle
+//		const SUMOReal leaderBackDist = (ped.myDir == FORWARD
+//				? distToCrossing - (ped.myRelX - ped.getLength() - MSPModel::SAFETY_GAP - halfVehicleWidth)
+//						: (ped.myRelX + ped.getLength() + MSPModel::SAFETY_GAP + halfVehicleWidth) - distToCrossing);
+//		//std::cout << SIMTIME << " foe=" << foeLane->getID() << " dir=" << p.myDir << " pX=" << ped.myRelX << " pL=" << ped.getLength() << " fDTC=" << distToCrossing << " lBD=" << leaderBackDist << "\n";
+//		if (leaderBackDist >= 0 && leaderBackDist <= BLOCKER_LOOKAHEAD) {
+//			// found one pedestrian that is not completely past the crossing point
+//			//std::cout << SIMTIME << " blocking pedestrian foeLane=" << lane->getID() << " ped=" << ped.myPerson->getID() << " dir=" << ped.myDir << " pX=" << ped.myRelX << " pL=" << ped.getLength() << " fDTC=" << distToCrossing << " lBD=" << leaderBackDist << "\n";
+//			if (collectBlockers == 0) {
+//				return true;
+//			} else {
+//				collectBlockers->push_back(ped.myPerson);
+//			}
+//		}
+//	}
+//	if (collectBlockers == 0) {
+//		return false;
+//	} else {
+//		return collectBlockers->size() > 0;
+//	}
 }
 
 SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
