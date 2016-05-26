@@ -1,5 +1,5 @@
 <routes>
-    <vType id="fwd0" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.18146025765" guiShape="pedestrian" color="blue"/>
+<vType id="fwd0" vClass="pedestrian" width="0.7" length="0.35" minGap="0.2" maxSpeed="1.18146025765" guiShape="pedestrian" color="blue"/>
     <person id="fwd0" type="fwd0" depart="1">
         <walk edges="EC CN" departPos="0.0" arrivalPos="-1.0"/>
     </person>
