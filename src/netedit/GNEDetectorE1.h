@@ -123,10 +123,10 @@ protected:
 
 private:
     /// @brief variable to save detectorE1 icon
-    static GUIGlID detectorE1GlID;
+    static GUIGlID myDetectorE1GlID;
 
     /// @brief check if detectorE1 icon was inicilalizated
-    static bool detectorE1Initialized;
+    static bool myDetectorE1Initialized;
 
     /// @brief set attribute after validation
     void setAttribute(SumoXMLAttr key, const std::string& value);

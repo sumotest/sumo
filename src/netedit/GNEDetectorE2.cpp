@@ -62,8 +62,8 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEDetectorE2::detectorE2GlID = 0;
-bool GNEDetectorE2::detectorE2Initialized = false;
+GUIGlID GNEDetectorE2::myDetectorE2GlID = 0;
+bool GNEDetectorE2::myDetectorE2Initialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -80,10 +80,10 @@ GNEDetectorE2::GNEDetectorE2(const std::string& id, GNELane* lane, GNEViewNet* v
     // Update geometry;
     updateGeometry();
     // load detector logo, if wasn't inicializated
-    if (!detectorE2Initialized) {
+    if (!myDetectorE2Initialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E2, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE2GlID = GUITexturesHelper::add(i);
-        detectorE2Initialized = true;
+        myDetectorE2GlID = GUITexturesHelper::add(i);
+        myDetectorE2Initialized = true;
         delete i;
     }
     // Set Colors
@@ -220,7 +220,7 @@ GNEDetectorE2::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {
         // Draw icon
-        this->drawDetectorIcon(detectorE2GlID);
+        this->drawDetectorIcon(myDetectorE2GlID);
 
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())

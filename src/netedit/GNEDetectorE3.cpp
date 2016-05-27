@@ -65,10 +65,10 @@
 // ===========================================================================
 // static member definitions
 // ===========================================================================
-GUIGlID GNEDetectorE3::detectorE3GlID = 0;
-GUIGlID GNEDetectorE3::detectorE3SelectedGlID = 0;
-bool GNEDetectorE3::detectorE3Initialized = false;
-bool GNEDetectorE3::detectorE3SelectedInitialized = false;
+GUIGlID GNEDetectorE3::myDetectorE3GlID = 0;
+GUIGlID GNEDetectorE3::myDetectorE3SelectedGlID = 0;
+bool GNEDetectorE3::myDetectorE3Initialized = false;
+bool GNEDetectorE3::myDetectorE3SelectedInitialized = false;
 
 // ===========================================================================
 // member method definitions
@@ -85,17 +85,17 @@ GNEDetectorE3::GNEDetectorE3(const std::string& id, GNEViewNet* viewNet, Positio
     myBaseColor = RGBColor(76, 170, 50, 255);
     myBaseColorSelected = RGBColor(161, 255, 135, 255);
     // load detector E3 logo, if wasn't inicializated
-    if (!detectorE3Initialized) {
+    if (!myDetectorE3Initialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE3GlID = GUITexturesHelper::add(i);
-        detectorE3Initialized = true;
+        myDetectorE3GlID = GUITexturesHelper::add(i);
+        myDetectorE3Initialized = true;
         delete i;
     }
     // load detector E3 selected logo, if wasn't inicializated
-    if (!detectorE3SelectedInitialized) {
+    if (!myDetectorE3SelectedInitialized) {
         FXImage* i = new FXGIFImage(getViewNet()->getNet()->getApp(), GNELogo_E3Selected, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-        detectorE3SelectedGlID = GUITexturesHelper::add(i);
-        detectorE3SelectedInitialized = true;
+        myDetectorE3SelectedGlID = GUITexturesHelper::add(i);
+        myDetectorE3SelectedInitialized = true;
         delete i;
     }
 }
@@ -193,9 +193,9 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
 
     // Draw icon depending of detector is or isn't selected
     if(isAdditionalSelected()) 
-        GUITexturesHelper::drawTexturedBox(detectorE3SelectedGlID, 1);
+        GUITexturesHelper::drawTexturedBox(myDetectorE3SelectedGlID, 1);
     else
-        GUITexturesHelper::drawTexturedBox(detectorE3GlID, 1);
+        GUITexturesHelper::drawTexturedBox(myDetectorE3GlID, 1);
 
     // Pop logo matrix
     glPopMatrix();

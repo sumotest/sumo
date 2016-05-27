@@ -138,11 +138,8 @@ GNERouteProbe::updateGeometry() {
     // Save rotation (angle) of the vector constructed by points f and s
     myShapeRotations.push_back(lanes[0]->getShape().rotationDegreeAtOffset(5) * -1);
 
-    // Set offset of logo
-    myRouteProbeLogoOffset = Position(1,0);
-
     // Set offset of the block icon
-    myBlockIconOffset = Position(-1, 0);
+    myBlockIconOffset = Position(1.1, -3.06);
 
     // Set block icon rotation, and using their rotation for logo
     setBlockIconRotation(lanes[0]);
@@ -250,7 +247,7 @@ GNERouteProbe::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
 
     // draw shape
-    glColor3d(1, 1, 0);
+    glColor3ub(255, 216, 0);
     glPushMatrix();
     glTranslated(0, 0, getType());
     glTranslated(myShape[0].x(), myShape[0].y(), 0);
@@ -269,12 +266,11 @@ GNERouteProbe::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     glVertex2d(0, -0.25 + .1);
     glEnd();
 
-    // position indicator
+    // position indicator (White)
     if (width * exaggeration > 1) {
         glRotated(90, 0, 0, -1);
         glColor3d(1, 1, 1);
         glBegin(GL_LINES);
-
         glVertex2d(0, 0);
         glVertex2d(0, (numberOfLanes * 3.3));
         glEnd();
@@ -283,14 +279,28 @@ GNERouteProbe::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Pop shape matrix
     glPopMatrix();
 
+    // Add a draw matrix for drawing logo
+    glPushMatrix();
+    glTranslated(myShape[0].x(), myShape[0].y(), getType());
+    glRotated(myShapeRotations[0], 0, 0, 1);
+    glTranslated(-2.56, - 1.6, 0);
+    glColor3d(1, 1, 1);
+    glRotated(-90, 0, 0, 1);
+
+    // Draw icon depending of detector is or isn't selected
+    if(isAdditionalSelected()) 
+        GUITexturesHelper::drawTexturedBox(myRouteProbeSelectedGlID, 1);
+    else
+        GUITexturesHelper::drawTexturedBox(myRouteProbeGlID, 1);
+
+    // Pop logo matrix
+    glPopMatrix();
+
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {        
-        // Add a draw matrix
-        //drawDetectorIcon(detectorE1GlID);
-
         // Show Lock icon depending of the Edit mode
         if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            drawLockIcon();
+            drawLockIcon(0.4);
     }
 
     // Finish draw
