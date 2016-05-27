@@ -176,7 +176,7 @@ GNERouteProbe::getEdge() const {
 
 void 
 GNERouteProbe::removeEdgeReference() {
-
+    myEdge = NULL;
 }
 
 

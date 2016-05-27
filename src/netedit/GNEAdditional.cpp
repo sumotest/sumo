@@ -180,13 +180,13 @@ GNEAdditional::getLane() const {
 
 void 
 GNEAdditional::removeEdgeReference() {
-    std::cout << "WARNING: Calling removeEdgeReference of class GNEAdditional, possible segmentation faul after remove additional" << std::endl;
+    std::cout << "WARNING: Calling virtual function removeEdgeReference() of class GNEAdditional, possible segmentation faul after remove additional. Implement removeEdgeReference() in additional to avoid it" << std::endl;
 }
 
 
 void 
 GNEAdditional::removeLaneReference() {
-    std::cout << "WARNING: Calling removeEdgeReference of class GNEAdditional, possible segmentation faul after remove additional" << std::endl;
+    std::cout << "WARNING: Calling virtual function removeLaneReference() of class GNEAdditional, possible segmentation faul after remove additional. Implement removeLaneReference() in additional to avoid it" << std::endl;
 }
 
 

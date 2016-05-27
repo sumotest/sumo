@@ -325,10 +325,15 @@ GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("delete edge");
     // Iterate over lanes to remove additionals
     for (std::vector<GNELane*>::const_iterator i = edge->getLanes().begin(); i != edge->getLanes().end(); i++) {
-        std::vector<GNEAdditional*> additionalsOfLane = (*i)->getAdditionals();
-        for(std::vector<GNEAdditional*>::iterator j = additionalsOfLane.begin(); j != additionalsOfLane.end(); j++)
+        std::list<GNEAdditional*> additionalsOfLane = (*i)->getAdditionals();
+        for(std::list<GNEAdditional*>::iterator j = additionalsOfLane.begin(); j != additionalsOfLane.end(); j++)
             undoList->add(new GNEChange_Additional(this, *j, false), true);
     }
+
+    // Remove additionals of edge
+    std::list<GNEAdditional*> additionalsOfEdge = edge->getAdditionals();
+    for(std::list<GNEAdditional*>::iterator i = additionalsOfEdge.begin(); i != additionalsOfEdge.end(); i++)
+        undoList->add(new GNEChange_Additional(this, *i, false), true);
 
     undoList->add(new GNEChange_Edge(this, edge, false), true);
     if (gSelected.isSelected(GLO_EDGE, edge->getGlID())) {
@@ -354,8 +359,8 @@ GNENet::deleteLane(GNELane* lane, GNEUndoList* undoList) {
     undoList->add(new GNEChange_Lane(edge, lane, laneAttrs, false), true);
     
     // Remove additionals of lane
-    std::vector<GNEAdditional*> additionalsOfLane = lane->getAdditionals();
-    for(std::vector<GNEAdditional*>::iterator i = additionalsOfLane.begin(); i != additionalsOfLane.end(); i++)
+    std::list<GNEAdditional*> additionalsOfLane = lane->getAdditionals();
+    for(std::list<GNEAdditional*>::iterator i = additionalsOfLane.begin(); i != additionalsOfLane.end(); i++)
         undoList->add(new GNEChange_Additional(this, *i, false), true);
         
     if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {

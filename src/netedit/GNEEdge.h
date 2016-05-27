@@ -227,6 +227,9 @@ public:
     /// @brief remove additional from edge              // PABLO #1916
     bool removeAdditional(GNEAdditional *additional);   // PABLO #1916
 
+    /// @brief return list of additionals associated with this edge // PABLO #1916
+    std::list<GNEAdditional*> getAdditionals();                     // PABLO #1916
+
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
 

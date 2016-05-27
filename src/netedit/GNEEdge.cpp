@@ -47,6 +47,7 @@
 #include "GNEChange_Lane.h"
 #include "GNEJunction.h"
 #include "GNELane.h"
+#include "GNEAdditional.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -91,11 +92,9 @@ GNEEdge::~GNEEdge() {
     if (myAmResponsible) {
         delete &myNBEdge;
     }
-
-    // Remove all additionals vinculated to this edge using a copy of vector to avoid reference errors
-    std::list<GNEAdditional*> additionalsToRemove = myAdditionals;
-    for(std::list<GNEAdditional*>::iterator i = additionalsToRemove.begin(); i != additionalsToRemove.end(); i++)
-        delete (*i);       
+    // Remove all references to this edge in their additionals
+    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        (*i)->removeEdgeReference();      
 }
 
 
@@ -376,8 +375,10 @@ GNEEdge::setGeometry(PositionVector geom, bool inner) {
 
 void
 GNEEdge::updateLaneGeometriesAndAdditionals() {
+    // Update geometry of lanes
     for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i)
         (*i)->updateGeometry();
+    // Update geometry of additionals vinculated to this edge
     for (AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) // PABLO #1916
         (*i)->updateGeometry();                                                             // PABLO #1916
 
@@ -834,5 +835,11 @@ GNEEdge::removeAdditional(GNEAdditional *additional) {                          
     // If additional wasn't found, return false                                                         // PABLO #1916
     return false;                                                                                       // PABLO #1916
 }                                                                                                       // PABLO #1916
+
+
+std::list<GNEAdditional*>       // PABLO #1916
+GNEEdge::getAdditionals() {     // PABLO #1916
+    return myAdditionals;       // PABLO #1916
+}                               // PABLO #1916
 
 /****************************************************************************/

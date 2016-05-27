@@ -57,7 +57,6 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
-#include "GNEStoppingPlace.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -532,12 +531,9 @@ GNELane::removeAdditional(GNEAdditional *additional) {
 }
 
 
-std::vector<GNEAdditional*>
+std::list<GNEAdditional*>
 GNELane::getAdditionals() {
-    std::vector<GNEAdditional*> result;
-    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
-        result.push_back(*i);
-    return result;
+    return myAdditionals;
 }
 
 

@@ -173,11 +173,9 @@ public:
      */
     bool removeAdditional(GNEAdditional *additional);
 
-    /* @brief method to obtain a vector of additional elements associated to this lane
-       @return set with all additional elements
-@todo modify to get only a specific type of additional element
-     */
-    std::vector<GNEAdditional*> getAdditionals();
+    /// @brief method to obtain a list of additional elements associated to this lane
+    /// @return set with all additional elements
+    std::list<GNEAdditional*> getAdditionals();
 
     /// @name inherited from GNEAttributeCarrier
     /// @{
