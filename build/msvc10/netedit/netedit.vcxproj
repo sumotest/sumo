@@ -153,6 +153,8 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbe.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbeSelected.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_VariableSpeedSignal.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_VariableSpeedSignalSelected.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />

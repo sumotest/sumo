@@ -186,39 +186,6 @@
     <ClCompile Include="..\..\..\src\netedit\netedit_main.cpp">
       <Filter>Quellcodedateien\Main</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_Lock.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_Rerouter.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_RerouterSelected.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_E1.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_E2.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_E3.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_E3Selected.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_Empty.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_Entry.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_Exit.cpp">
-      <Filter>Quellcodedateien\Logos</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE1.cpp">
       <Filter>Quellcodedateien\Items\Additionals\Detectors</Filter>
     </ClCompile>
@@ -267,10 +234,49 @@
     <ClCompile Include="..\..\..\src\netedit\GNERouteProbe.cpp">
       <Filter>Quellcodedateien\Items\Additionals</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbe.cpp">
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbeSelected.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbeSelected.cpp">
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_TLS.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_VariableSpeedSignal.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_VariableSpeedSignalSelected.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_E1.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_E2.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_E3.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_E3Selected.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_Empty.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_Entry.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_Exit.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_Lock.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_Rerouter.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_RerouterSelected.cpp">
+      <Filter>Quellcodedateien\Logos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbe.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
   </ItemGroup>

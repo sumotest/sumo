@@ -77,7 +77,7 @@ bool GNERouteProbe::myRouteProbeSelectedInitialized = false;
 
 
 GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge *edge, int frequency, const std::string& filename, int begin, bool blocked) :
-    GNEAdditional(id, viewNet, Position(), SUMO_TAG_ROUTEPROBE, NULL, SUMO_TAG_NOTHING, NULL, blocked),
+    GNEAdditional(id, viewNet, Position(), SUMO_TAG_ROUTEPROBE, NULL, blocked),
     myEdge(edge),
     myFrequency(frequency),
     myFilename(filename),
