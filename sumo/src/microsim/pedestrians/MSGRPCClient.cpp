@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-//#define DEBUG 0
+#define DEBUG 0
 
 const int FWD(1);
 const int BWD(-1);
@@ -637,6 +637,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 						//unmap ped from lane
 						std::set<MSPRCPState*> set = laneMapping[ln];
 						set.erase(st);
+						break;
 					}
 				}
 				const MSEdge * newEdge = st->updateEdge(t.linkid());
@@ -646,6 +647,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 						if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 							std::set<MSPRCPState*> set = laneMapping[ln];
 							set.insert(st);
+							break;
 						}
 					}
 				}

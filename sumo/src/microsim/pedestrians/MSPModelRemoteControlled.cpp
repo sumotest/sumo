@@ -65,7 +65,10 @@ bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 //	//for now no interaction btwn cars and peds
 //	return false;
 //
-//	const std::set<MSPRCPState*> pedestrians = grpcClient->getPedestrians(lane);
+	const std::set<MSPRCPState*> pedestrians = grpcClient->getPedestrians(lane);
+	if (pedestrians.size() > 0) {
+		return true;
+	}
 	return false;
 //	for (Pedestrians::const_iterator it_ped = pedestrians.begin(); it_ped != pedestrians.end(); ++it_ped) {
 //		const PState& ped = **it_ped;
