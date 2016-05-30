@@ -833,6 +833,30 @@ MSVehicle::getBackPosition() const {
             return myFurtherLanes.size() > 0 && !getLaneChangeModel().isChangingLanes()
                    ? myFurtherLanes.back()->geometryPositionAtOffset(getBackPositionOnLane(myFurtherLanes.back()), -myFurtherLanesPosLat.back())
                    : myLane->geometryPositionAtOffset(0, posLat);
+
+//            // This fixes the situation described in the report of #2360 but the 45-degree thing appears again in the middle of the nw
+//            // also, just substracting the length of the further lanes successively doesn't assure that the back doesn't reaches out the network in reality
+//            // I think the better fix is to calculate the angele from the previous position and angle directly insteadt of trying to construct something out of
+//            // the lanes (if this is not necessary for other reasons) (Leo)
+//            if(myFurtherLanes.size() > 0 && !getLaneChangeModel().isChangingLanes()){
+//                // amount of vehicle reaching out of considered lane (starting at current)
+//                SUMOReal offLength = myType->getLength() - myState.myPos;
+//                std::vector<MSLane*>::const_reverse_iterator i = myFurtherLanes.rbegin();
+//                std::vector<SUMOReal>::const_reverse_iterator iPosLat = myFurtherLanesPosLat.rbegin();
+//                while(i != myFurtherLanes.rend()){
+//                    if((*i)->getLength() >= offLength){
+//                        return (*i)->geometryPositionAtOffset(getBackPositionOnLane(*i), -*iPosLat);
+//                    } else {
+//                        offLength -= (*i)->getLength();
+//                        i++; iPosLat++;
+//                    }
+//                }
+//                // back reaches out of network
+//                return (*(--i))->geometryPositionAtOffset(0, -*(--iPosLat));
+//            } else {
+//                // back reaches out of network
+//                return myLane->geometryPositionAtOffset(0, posLat);
+//            }
         }
     }
 }
@@ -1825,7 +1849,7 @@ MSVehicle::executeMove() {
     //      leading vehicle, we don't show brake lights when the deceleration could be caused
     //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
     SUMOReal pseudoFriction = (0.05 +  0.005 * getSpeed()) * getSpeed();
-    bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
+    bool brakelightsOn = vSafe < getSpeed(); - ACCEL2SPEED(pseudoFriction);
 
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext;

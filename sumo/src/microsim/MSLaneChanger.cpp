@@ -58,8 +58,8 @@
 //#define DEBUG_CONTINUE_CHANGE
 #define DEBUG_CHECK_CHANGE
 //#define DEBUG_CHANGE_OPPOSITE
-#define DEBUG_COND (vehicle->getLaneChangeModel().debugVehicle())
 //#define DEBUG_COND false
+#define DEBUG_COND (vehicle->getLaneChangeModel().debugVehicle())
 
 
 
@@ -575,12 +575,13 @@ MSLaneChanger::checkChange(
     MSVehicle* vehicle = veh(myCandi);
 
     // Debug (Leo)
-    gDebugFlag2 = vehicle->getID() == "type1.54";
-    if(gDebugFlag2){
+#ifdef DEBUG_CHECK_CHANGE
+    if(DEBUG_COND){
     	std::cout
-    	<< "checkChange() for vehicle '"<<vehicle->getID()<<"'"
+    	<< "\n" << SIMTIME << " checkChange() for vehicle '"<<vehicle->getID()<<"'"
     	<< std::endl;
     }
+#endif
 
 
     int blocked = 0;
@@ -591,22 +592,26 @@ MSLaneChanger::checkChange(
         blocked |= (blockedByFollower | LCA_OVERLAPPING);
 
         // Debug (Leo)
-        if(gDebugFlag2){
-        	std::cout
-        	<< "overlapping with follower..."
+#ifdef DEBUG_CHECK_CHANGE
+    if(DEBUG_COND){
+        	std::cout << SIMTIME
+        	<< " overlapping with follower..."
         	<< std::endl;
         }
+#endif
 
     }
     if (neighLead.first != 0 && neighLead.second < 0) {
         blocked |= (blockedByLeader | LCA_OVERLAPPING);
 
         // Debug (Leo)
-        if(gDebugFlag2){
-        	std::cout
-        	<< "overlapping with leader..."
+#ifdef DEBUG_CHECK_CHANGE
+    if(DEBUG_COND){
+        	std::cout << SIMTIME
+        	<<  " overlapping with leader..."
         	<< std::endl;
         }
+#endif
 
     }
 
@@ -617,15 +622,17 @@ MSLaneChanger::checkChange(
             blocked |= blockedByFollower;
 
             // Debug (Leo)
-            if(gDebugFlag2){
-            	std::cout
-            	<< "back gap unsafe: "
+#ifdef DEBUG_CHECK_CHANGE
+    if(DEBUG_COND){
+            	std::cout<< SIMTIME
+            	<< " back gap unsafe: "
             	<< "gap = " << neighFollow.second
             	<< ", secureGap = "
             	<< neighFollow.first->getCarFollowModel().getSecureGap(neighFollow.first->getSpeed(),
             			vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxDecel())
             	<< std::endl;
             }
+#endif
 
         }
     }
@@ -637,20 +644,21 @@ MSLaneChanger::checkChange(
             blocked |= blockedByLeader;
 
             // Debug (Leo)
-            if(gDebugFlag2){
-            	std::cout
-            	<< "front gap unsafe: "
+#ifdef DEBUG_CHECK_CHANGE
+    if(DEBUG_COND){
+            	std::cout << SIMTIME
+            	<< " front gap unsafe: "
             	<< "gap = " << neighLead.second
             	<< ", secureGap = "
             	<< vehicle->getCarFollowModel().getSecureGap(vehicle->getSpeed(),
             			neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel())
             	<< std::endl;
             }
+#endif
 
         }
     }
 
-    gDebugFlag2=false;
 
     MSAbstractLaneChangeModel::MSLCMessager msg(leader.first, neighLead.first, neighFollow.first);
     int state = blocked | vehicle->getLaneChangeModel().wantsChange(

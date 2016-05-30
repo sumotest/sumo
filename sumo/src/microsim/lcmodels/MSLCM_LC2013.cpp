@@ -83,14 +83,18 @@
 // ===========================================================================
 //#define DEBUG_VEHICLE_GUI_SELECTION 1
 
-//#define DEBUG_PATCH_SPEED
-//#define DEBUG_INFORMED
+#define DEBUG_PATCH_SPEED
+#define DEBUG_INFORMED
 #define DEBUG_INFORMER
 //#define DEBUG_CONSTRUCTOR
 #define DEBUG_WANTS_CHANGE
 #define DEBUG_SLOW_DOWN
 #define DEBUG_SAVE_BLOCKER_LENGTH
-#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 3_28410857")
+//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 1_20593333") // stuck in VMM_muc at t=20700
+//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 3_20900000") // stuck in VMM_muc at t=21000
+//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 3_21746666") // stuck in VMM_muc at t=21800
+#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 1_22085454") // stuck in VMM_muc at t=22200
+
 //#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 2_28392413")
 //#define DEBUG_COND false
 
@@ -125,6 +129,12 @@ MSLCM_LC2013::MSLCM_LC2013(MSVehicle& v) :
 
 MSLCM_LC2013::~MSLCM_LC2013() {
     changed();
+}
+
+
+bool
+MSLCM_LC2013::debugVehicle() const {
+    return DEBUG_COND;
 }
 
 
@@ -194,7 +204,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
 #ifdef DEBUG_PATCH_SPEED
     if (DEBUG_COND){
         std::cout 
-	<< SIMTIME << " patchSpeed state=" << state << " myVSafes=" << toString(myVSafes) 
+	<< "\n" << SIMTIME << " patchSpeed state=" << state << " myVSafes=" << toString(myVSafes)
 	<< " \nv=" << myVehicle.getSpeed()
         << " min=" << min
         << " wanted=" << wanted<< std::endl;
@@ -346,15 +356,31 @@ MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
 
 
 SUMOReal
-MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v1, const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) {
+MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) {
 	SUMOReal overtakeTime;
+	const MSVehicle* v1 = &myVehicle;
 	// estimate overtakeTime (calculating with constant acceleration accelX)
 	// TODO: for congested traffic the estimated mean velocity should also be taken into account (instead of max speed)
 	const SUMOReal accelEgo = 0.5*SPEED2ACCEL(v1->getSpeed() - v1->getPreviousSpeed()) + 0.3; // the + 0.3 let's vehicles proceed alongside a waiting line
 	const SUMOReal accelLead = 0.9*MAX2(0., SPEED2ACCEL(v2->getSpeed() - v2->getPreviousSpeed()));
+	// maximal velocity of the overtaking vehicle
+	SUMOReal maxV1 = v1->getMaxSpeed();
+	const std::vector<MSLane*>& bestLanesCont = v1->getBestLanesContinuation();
+	std::vector<MSLane*>::const_iterator i = bestLanesCont.begin();
+	SUMOReal dist = (*i)->getLength() - v1->getPositionOnLane();
+	while(true){
+		maxV1 = MIN2(maxV1, (*i)->getVehicleMaxSpeed(v1));
+		// look ahead for a minute
+		if(dist > myLookAheadSpeed*60 || ++i == bestLanesCont.end()){
+		    break;
+		} else {
+		    dist += (*i)->getLength();
+		}
+	}
+
 	// times until reaching maximal or minimal velocities
 	const SUMOReal tmEgo = accelEgo != 0 ?
-			(accelEgo > 0 ? (v1->getMaxSpeed() - v1->getSpeed())/accelEgo : -v1->getSpeed()/accelEgo)
+			(accelEgo > 0 ? (maxV1 - v1->getSpeed())/accelEgo : -v1->getSpeed()/accelEgo)
 			: remainingSeconds + 10000;
 	const SUMOReal tmLead = accelLead != 0 ?
 			(accelLead > 0 ? (v2->getMaxSpeed() - v2->getSpeed())/accelLead : -v2->getSpeed()/accelLead)
@@ -495,7 +521,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         		overtakeTime = remainingSeconds + 1;
         	}
         } else {
-        	overtakeTime = estimateOvertakeTime(&myVehicle, nv, overtakeDist, remainingSeconds);
+        	overtakeTime = estimateOvertakeTime(nv, overtakeDist, remainingSeconds);
         }
 
 /*        
@@ -785,6 +811,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         } else if (!MSGlobals::gSemiImplicitEulerUpdate && dv > 0 && dv * remainingSeconds > secureGap + POSITION_EPS) {
         	// ballistic
         	// NOTE: This case corresponds to the situation, where some time is left to perform the lc
+            // prevent follower from accelerating
         	msgPass.informNeighFollower(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
         } else {
             SUMOReal vhelp = MAX2(nv->getSpeed(), myVehicle.getSpeed() + HELP_OVERTAKE);
@@ -802,6 +829,48 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             		std::cout << " wants right follower to slow down a bit\n";
             	}
 #endif
+//
+//            	// estimate deceleration needed from follower to reach a secure gap after remainingSeconds:
+//            	// (1) check the continuation speed contV for the leader
+//            	// (2) estimate leader accel as min(0, (contV - currentV)/remainingSeconds)
+//            	// (3) obtain needed accel for follower to establish a secureGap g0 after remaining Seconds,
+//            	//     where the gap should be secure for contV of leader
+//            	// (4) decide whether follower is asked to slow down for this maneuver
+//
+//            	// (1)
+////                SUMOReal currentV = myVehicle.getSpeed();
+//                SUMOReal currentV = plannedSpeed;
+//                SUMOReal contV = currentV;
+//                const std::vector<MSLane*>& bestLanesCont = myVehicle.getBestLanesContinuation();
+//                std::vector<MSLane*>::const_iterator i = bestLanesCont.begin();
+//                SUMOReal dist = (*i)->getLength() - myVehicle.getPositionOnLane();
+//                while(true){
+//                    contV = MIN2(contV, (*i)->getVehicleMaxSpeed(&myVehicle));
+//                    // look ahead for a minute
+//                    if(dist > myLookAheadSpeed*60 || ++i == bestLanesCont.end()){
+//                        break;
+//                    } else {
+//                        dist += (*i)->getLength();
+//                    }
+//                }
+//                // (2)
+//                SUMOReal a = (contV-currentV)/remainingSeconds;
+//                // (3)
+//                SUMOReal g = nv->getCarFollowModel().getSecureGap(nv->getSpeed(), currentV, myVehicle.getCarFollowModel().getMaxDecel());
+//                SUMOReal neededDecel = (2*g/remainingSeconds - currentV + nv->getSpeed())/remainingSeconds + a;
+//
+//#ifdef DEBUG_INFORMER
+//                    if(DEBUG_COND){
+//                        std::cout << SIMTIME
+//                                << " extrapolated decel (leader): " << -a
+//                                << " needed gap: " << g
+//                                << " requested decel (follower): " << neededDecel
+//                                << std::endl;
+//                    }
+//#endif
+//
+//                if (neededDecel < helpDecel/remainingSeconds) {
+//                    vhelp = nv->getSpeed()-ACCEL2SPEED(neededDecel);
                 if ((nv->getSpeed() - myVehicle.getSpeed()) / helpDecel < remainingSeconds) {
 #ifdef DEBUG_INFORMER
             		if(DEBUG_COND){
@@ -1444,7 +1513,24 @@ MSLCM_LC2013::slowDownForBlocked(MSVehicle** blocked, int state) {
                                        &myVehicle, myVehicle.getSpeed(),
                                        (SUMOReal)(gap - POSITION_EPS), (*blocked)->getSpeed(),
                                        (*blocked)->getCarFollowModel().getMaxDecel()));
-            }
+#ifdef DEBUG_SLOW_DOWN
+                if(DEBUG_COND){
+                    std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+                                                                     << " veh=" << myVehicle.getID()
+                                                                     << " slowing down for"
+                                                                     << " blocked=" << Named::getIDSecure(*blocked)
+                    << " helpSpeed=" << myVSafes.back()
+                    << "\n";
+                }
+#endif
+            } /* else {
+            	// experimental else-branch...
+                state |= LCA_AMBACKBLOCKER;
+                myVSafes.push_back(myCarFollowModel.followSpeed(
+                                       &myVehicle, myVehicle.getSpeed(),
+                                       (SUMOReal)(gap - POSITION_EPS), (*blocked)->getSpeed(),
+                                       (*blocked)->getCarFollowModel().getMaxDecel()));
+            } */
         }
     }
     return state;

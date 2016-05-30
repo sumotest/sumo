@@ -69,6 +69,8 @@ public:
 
     virtual ~MSLCM_LC2013();
 
+    bool debugVehicle() const;
+
     /** @brief Called to examine whether the vehicle wants to change
      * using the given laneOffset.
      * This method gets the information about the surrounding vehicles
@@ -153,7 +155,7 @@ protected:
          * @param[in] remainingSeconds time left to complete overtaking maneuver
          * @return either the estimated time for the maneuver or something larger, indicating impossibility
          */
-    SUMOReal estimateOvertakeTime(const MSVehicle* v1, const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds);
+    SUMOReal estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds);
 
     /// @brief compute useful slowdowns for blocked vehicles
     int slowDownForBlocked(MSVehicle** blocked, int state);
