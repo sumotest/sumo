@@ -31,6 +31,7 @@
 #endif
 
 #include <GL/gl.h>
+#include <list>
 #include <utils/foxtools/FXRealSpinDial.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/gui/div/GUISelectedStorage.h>
@@ -360,8 +361,8 @@ public:
 
         /// @name FOX-callbacks
         /// @{
-        /// @brief add a new row int the list
-        long onCmdSelectSet(FXObject*, FXSelector, void*);
+        /// @brief called when user select an additionalSet of the list
+        long onCmdSelectAdditionalSet(FXObject*, FXSelector, void*);
 
         /// @brief Called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
@@ -375,7 +376,7 @@ public:
         /// @brief current type
         SumoXMLTag myType;
 
-        /// @brief List of Set
+        /// @brief List of additional sets
         FXList *myList;
 
         /// @brief Label with the name of Set
@@ -383,6 +384,114 @@ public:
 
         /// @brief button for help
         FXButton *helpAdditionalSet;
+
+        /// @brief viewNet associated to GNEAdditionalFrame
+        GNEViewNet* myViewNet;
+    };
+
+    // ===========================================================================
+    // class edges
+    // ===========================================================================
+
+    class edges : public FXGroupBox {
+        // FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::edges)
+
+    public:
+        /// @brief constructor
+        edges(FXComposite *parent, GNEViewNet* updateTarget);
+
+        /// @brief destructor
+        ~edges();
+
+        /// @brief get if currently additional Set
+        std::list<std::string> getIdsSelected() const;
+
+        /// @brief Show list of edges
+        void showList(std::string search = "");
+
+        /// @brief hide edges
+        void hideList();
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief called when user type in search box
+        long onCmdTypeInSearchBox(FXObject*, FXSelector, void*);
+
+        /// @brief called when user select a edge of the list
+        long onCmdSelectEdge(FXObject*, FXSelector, void*);
+
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        edges() {}
+
+    private:
+        /// @brief List of edges
+        FXList *myList;
+
+        /// @brief text field for search edge IDs
+        FXTextField *myEdgesSearch;
+
+        /// @brief button for help
+        FXButton *helpEdges;
+
+        /// @brief viewNet associated to GNEAdditionalFrame
+        GNEViewNet* myViewNet;
+    };
+
+    // ===========================================================================
+    // class lanes
+    // ===========================================================================
+
+    class lanes : public FXGroupBox {
+        // FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::lanes)
+
+    public:
+        /// @brief constructor
+        lanes(FXComposite *parent, GNEViewNet* updateTarget);
+
+        /// @brief destructor
+        ~lanes();
+
+        /// @brief get if currently additional Set
+        std::list<std::string> getIdsSelected() const;
+
+        /// @brief Show list of lanes
+        void showList(std::string search = "");
+
+        /// @brief hide lanes
+        void hideList();
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief called when user type in search box
+        long onCmdTypeInSearchBox(FXObject*, FXSelector, void*);
+
+        /// @brief called when user select a lane of the list
+        long onCmdSelectLane(FXObject*, FXSelector, void*);
+
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        lanes() {}
+
+    private:
+        /// @brief List of lanes
+        FXList *myList;
+
+        /// @brief text field for search lane IDs
+        FXTextField *myLanesSearch;
+
+        /// @brief button for help
+        FXButton *helplanes;
 
         /// @brief viewNet associated to GNEAdditionalFrame
         GNEViewNet* myViewNet;
@@ -410,7 +519,7 @@ public:
      */
     void removeAdditional(GNEAdditional *additional);
 
-    ///@brief return font of the header
+    /// @brief return font of the header
     FXFont* getHeaderFont();
 
     /// @name FOX-callbacks
@@ -463,8 +572,14 @@ private:
     /// @brief editor parameter
     GNEAdditionalFrame::editorParameters *myEditorParameters;
 
-    /// @brief additional Set
+    /// @brief list of additional Set
     GNEAdditionalFrame::additionalSet *myAdditionalSet;
+
+    /// @brief list of edges
+    GNEAdditionalFrame::edges *myEdges;
+
+    /// @brief list of lanes
+    GNEAdditionalFrame::lanes *myLanes;
 
     /// @brief the window to inform
     GNEViewNet* myViewNet;

@@ -482,8 +482,18 @@ enum {
     MID_GNE_ADDSET,
     /** netEdit remove set */
     MID_GNE_REMOVESET,
-    /** netEdit select set */
-    MID_GNE_SELECTSET,
+    /** netEdit search additionalSet */
+    MID_GNE_SEARCHADDITIONALSET,
+    /** netEdit select additionalSet */
+    MID_GNE_SELECTADDITIONALSET,
+    /** netEdit search edge */
+    MID_GNE_SEARCHEDGE,
+    /** netEdit select edge */
+    MID_GNE_SELECTEDGE,
+    /** netEdit search lane */
+    MID_GNE_SEARCHLANE,
+    /** netEdit select lane */
+    MID_GNE_SELECTLANE,
     /** open edit dialog */
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
     /** split an edge */
