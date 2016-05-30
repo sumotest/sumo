@@ -87,15 +87,19 @@ FXDEFMAP(GNEAdditionalFrame::additionalSet) GNEAdditionalSetMap[] = {
 };
 
 FXDEFMAP(GNEAdditionalFrame::edges) GNEEdgesMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SEARCHEDGE, GNEAdditionalFrame::edges::onCmdTypeInSearchBox),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTEDGE, GNEAdditionalFrame::edges::onCmdSelectEdge),
-    FXMAPFUNC(SEL_COMMAND, MID_HELP,           GNEAdditionalFrame::edges::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_CLEAREDGESELECTION,  GNEAdditionalFrame::edges::onCmdClearSelection),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_INVERTEDGESELECTION, GNEAdditionalFrame::edges::onCmdInvertSelection),
+    FXMAPFUNC(SEL_CHANGED, MID_GNE_SEARCHEDGE,          GNEAdditionalFrame::edges::onCmdTypeInSearchBox),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTEDGE,          GNEAdditionalFrame::edges::onCmdSelectEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,                    GNEAdditionalFrame::edges::onCmdHelp),
 };
 
 FXDEFMAP(GNEAdditionalFrame::lanes) GNELanesMap[] = {
-    FXMAPFUNC(SEL_CHANGED, MID_GNE_SEARCHLANE, GNEAdditionalFrame::lanes::onCmdTypeInSearchBox),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTLANE, GNEAdditionalFrame::lanes::onCmdSelectLane),
-    FXMAPFUNC(SEL_COMMAND, MID_HELP,           GNEAdditionalFrame::lanes::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_CLEARLANESELECTION,  GNEAdditionalFrame::lanes::onCmdClearSelection),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_INVERTLANESELECTION, GNEAdditionalFrame::lanes::onCmdInvertSelection),
+    FXMAPFUNC(SEL_CHANGED, MID_GNE_SEARCHLANE,          GNEAdditionalFrame::lanes::onCmdTypeInSearchBox),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTLANE,          GNEAdditionalFrame::lanes::onCmdSelectLane),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,                    GNEAdditionalFrame::lanes::onCmdHelp),
 };
 
 // Object implementation
@@ -211,6 +215,22 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
             valuesOfElement[GNE_ATTR_PARENT] = myAdditionalSet->getIdSelected();
         else {
             WRITE_ERROR("A " + toString(myAdditionalSet->getCurrentlyTag()) + " must be selected before insertion of " + toString(myActualAdditionalType) + ".");
+            return false;
+        }
+    }
+    // If element own a list of edges as attribute 
+    if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_EDGES)) {
+        valuesOfElement[SUMO_ATTR_EDGES] = myEdges->getIdsSelected();
+        if(valuesOfElement[SUMO_ATTR_EDGES] == "") {
+            WRITE_ERROR("A " + toString(myActualAdditionalType) + " must have at least one edge associated.");
+            return false;
+        }
+    }
+    // If element own a list of lanes as attribute 
+    if(GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_LANES)) {
+        valuesOfElement[SUMO_ATTR_LANES] = myLanes->getIdsSelected();
+        if(valuesOfElement[SUMO_ATTR_LANES] == "") {
+            WRITE_ERROR("A " + toString(myActualAdditionalType) + " must have at least one lane associated.");
             return false;
         }
     }
@@ -985,6 +1005,15 @@ GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* updateTarget) 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
 
+    // Create horizontal frame
+    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    // Create button for clear selection
+    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION);
+
+    // Create button for invert selection
+    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION);
+
     // Create help button
     helpEdges = new FXButton(this, "Help", 0, this, MID_HELP);
 
@@ -996,12 +1025,12 @@ GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* updateTarget) 
 GNEAdditionalFrame::edges::~edges() {}
 
 
-std::list<std::string>
+std::string
 GNEAdditionalFrame::edges::getIdsSelected() const {
-    std::list<std::string> listOfIds;
+    std::string listOfIds;
     for(int i = 0; i < myList->getNumItems(); i++)
         if(myList->isItemSelected(i))
-            listOfIds.push_back(myList->getItem(i)->getText().text());
+            listOfIds += (myList->getItem(i)->getText() + " ").text();
     return listOfIds;
 }
 
@@ -1038,6 +1067,26 @@ GNEAdditionalFrame::edges::onCmdSelectEdge(FXObject*, FXSelector, void*) {
 
 
 long
+GNEAdditionalFrame::edges::onCmdClearSelection(FXObject*, FXSelector, void*) {
+    for(int i = 0; i < myList->getNumItems(); i++)
+        if(myList->getItem(i)->isSelected())
+            myList->deselectItem(i);
+    return 1;
+}
+
+
+long
+GNEAdditionalFrame::edges::onCmdInvertSelection(FXObject*, FXSelector, void*) {
+    for(int i = 0; i < myList->getNumItems(); i++)
+        if(myList->getItem(i)->isSelected())
+            myList->deselectItem(i);
+        else
+            myList->selectItem(i);
+    return 1;
+}
+
+
+long
 GNEAdditionalFrame::edges::onCmdHelp(FXObject*, FXSelector, void*) {
     return 1;
 }
@@ -1056,6 +1105,15 @@ GNEAdditionalFrame::lanes::lanes(FXComposite *parent, GNEViewNet* updateTarget) 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTLANE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
 
+    // Create horizontal frame
+    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    // Create button for clear selection
+    clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION);
+
+    // Create button for invert selection
+    invertLanesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTLANESELECTION);
+
     // Create help button
     helplanes = new FXButton(this, "Help", 0, this, MID_HELP);
 
@@ -1067,12 +1125,12 @@ GNEAdditionalFrame::lanes::lanes(FXComposite *parent, GNEViewNet* updateTarget) 
 GNEAdditionalFrame::lanes::~lanes() {}
 
 
-std::list<std::string>
+std::string
 GNEAdditionalFrame::lanes::getIdsSelected() const {
-    std::list<std::string> listOfIds;
+    std::string listOfIds;
     for(int i = 0; i < myList->getNumItems(); i++)
         if(myList->isItemSelected(i))
-            listOfIds.push_back(myList->getItem(i)->getText().text());
+            listOfIds += (myList->getItem(i)->getText() + " ").text();
     return listOfIds;
 }
 
@@ -1109,9 +1167,28 @@ GNEAdditionalFrame::lanes::onCmdSelectLane(FXObject*, FXSelector, void*) {
 
 
 long
-GNEAdditionalFrame::lanes::onCmdHelp(FXObject*, FXSelector, void*) {
+GNEAdditionalFrame::lanes::onCmdClearSelection(FXObject*, FXSelector, void*) {
+    for(int i = 0; i < myList->getNumItems(); i++)
+        if(myList->getItem(i)->isSelected())
+            myList->deselectItem(i);
     return 1;
 }
 
+
+long
+GNEAdditionalFrame::lanes::onCmdInvertSelection(FXObject*, FXSelector, void*) {
+    for(int i = 0; i < myList->getNumItems(); i++)
+        if(myList->getItem(i)->isSelected())
+            myList->deselectItem(i);
+        else
+            myList->selectItem(i);
+    return 1;
+}
+
+
+long
+GNEAdditionalFrame::lanes::onCmdHelp(FXObject*, FXSelector, void*) {
+    return 1;
+}
 
 /****************************************************************************/

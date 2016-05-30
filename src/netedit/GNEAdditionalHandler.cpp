@@ -535,8 +535,13 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             // get own attributes of variable speed signal
             bool ok;
             PositionVector pos = GeomConvHelper::parseShapeReporting(values[SUMO_ATTR_POSITION], "user-supplied position", 0, ok, false);
+            // Parse lane Ids
+            std::vector<std::string> laneIds;
+            SUMOSAXAttributes::parseStringVector(values[SUMO_ATTR_LANES], laneIds);
+            // Obtain pointers to lanes
             std::vector<GNELane*> lanes;
-            /** TERMINAR **/
+            for(int i = 0; i < laneIds.size(); i++)
+                lanes.push_back(viewNet->getNet()->retrieveLane(laneIds.at(i)));
             std::string file = values[SUMO_ATTR_FILE];
             if(!lane && (pos.size() == 1))
                 return buildVariableSpeedSignal(viewNet, id, pos[0], lanes, file, blocked);

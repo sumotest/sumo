@@ -490,10 +490,18 @@ enum {
     MID_GNE_SEARCHEDGE,
     /** netEdit select edge */
     MID_GNE_SELECTEDGE,
+    /** netEdit clear selection of edges */
+    MID_GNE_CLEAREDGESELECTION,
+    /** netEdit invert selection of edges */
+    MID_GNE_INVERTEDGESELECTION,
     /** netEdit search lane */
     MID_GNE_SEARCHLANE,
     /** netEdit select lane */
     MID_GNE_SELECTLANE,
+    /** netEdit clear selection of lanes */
+    MID_GNE_CLEARLANESELECTION,
+    /** netEdit invert selection of lanes */
+    MID_GNE_INVERTLANESELECTION,
     /** open edit dialog */
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
     /** split an edge */

@@ -404,8 +404,8 @@ public:
         /// @brief destructor
         ~edges();
 
-        /// @brief get if currently additional Set
-        std::list<std::string> getIdsSelected() const;
+        /// @brief get list of selecte id's in string format
+        std::string getIdsSelected() const;
 
         /// @brief Show list of edges
         void showList(std::string search = "");
@@ -420,6 +420,12 @@ public:
 
         /// @brief called when user select a edge of the list
         long onCmdSelectEdge(FXObject*, FXSelector, void*);
+
+        /// @brief called when clear selection button is pressed
+        long onCmdClearSelection(FXObject*, FXSelector, void*);
+
+        /// @brief called when invert selection button is pressed
+        long onCmdInvertSelection(FXObject*, FXSelector, void*);
 
         /// @brief Called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
@@ -438,6 +444,12 @@ public:
 
         /// @brief button for help
         FXButton *helpEdges;
+
+        /// @brief button for clear selection
+        FXButton *clearEdgesSelection;
+
+        /// @brief button for invert selection
+        FXButton *invertEdgesSelection;
 
         /// @brief viewNet associated to GNEAdditionalFrame
         GNEViewNet* myViewNet;
@@ -458,8 +470,8 @@ public:
         /// @brief destructor
         ~lanes();
 
-        /// @brief get if currently additional Set
-        std::list<std::string> getIdsSelected() const;
+        /// @brief get list of selecte id's in string format
+        std::string getIdsSelected() const;
 
         /// @brief Show list of lanes
         void showList(std::string search = "");
@@ -474,6 +486,12 @@ public:
 
         /// @brief called when user select a lane of the list
         long onCmdSelectLane(FXObject*, FXSelector, void*);
+
+        /// @brief called when clear selection button is pressed
+        long onCmdClearSelection(FXObject*, FXSelector, void*);
+
+        /// @brief called when invert selection button is pressed
+        long onCmdInvertSelection(FXObject*, FXSelector, void*);
 
         /// @brief Called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
@@ -492,6 +510,12 @@ public:
 
         /// @brief button for help
         FXButton *helplanes;
+
+        /// @brief button for clear selection
+        FXButton *clearLanesSelection;
+
+        /// @brief button for invert selection
+        FXButton *invertLanesSelection;
 
         /// @brief viewNet associated to GNEAdditionalFrame
         GNEViewNet* myViewNet;
