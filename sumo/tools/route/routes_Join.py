@@ -20,7 +20,7 @@ All other vehicles are kept, but if they pass one of the mapped edges, the
 Attention! The routes are not sorted in time!
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -132,7 +132,8 @@ def writeVehicle(fdo, route, conts1, conts2, replacements):
 
 
 if len(sys.argv) < 6:
-    print("Usage: " + sys.argv[0] + " <prefix#1> <routes#1> <prefix#2> <routes#2> <mapfile>")
+    print("Usage: " +
+          sys.argv[0] + " <prefix#1> <routes#1> <prefix#2> <routes#2> <mapfile>")
     sys.exit()
 # read mapping
 mmap = {}

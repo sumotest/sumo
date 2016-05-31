@@ -11,7 +11,7 @@ Converts VISUM turning percentages into
  turning percentages JTRROUTER can read.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -86,7 +86,8 @@ for line in fd:
             continue
         if tonode not in nmap[fromnode]:
             if number != 0:
-                print("No connection between from-node '" + fromnode + "' and to-node '" + tonode + "'; skipping")
+                print("No connection between from-node '" + fromnode +
+                      "' and to-node '" + tonode + "'; skipping")
             missing = missing + 1
             missingN = missingN + number
             continue

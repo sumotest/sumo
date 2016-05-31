@@ -8,7 +8,7 @@
 Generate Wiki table from configuration template.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -71,12 +71,14 @@ class ConfigReader(handler.ContentHandler):
                 if len(s) == 1:
                     a = s
             if a != "":
-                print('{{Option|-%s {{DT_%s}}}}<br/>' % (a, attrs['type']), end=' ')
+                print('{{Option|-%s {{DT_%s}}}}<br/>' %
+                      (a, attrs['type']), end=' ')
             print('{{Option|--%s {{DT_%s}}}}' % (name, attrs['type']))
             suffix = ""
             if attrs['value']:
                 suffix = "; ''default: '''%s'''''" % attrs['value']
-            print('| style="vertical-align:top" | %s%s' % (attrs['help'], suffix))
+            print('| style="vertical-align:top" | %s%s' %
+                  (attrs['help'], suffix))
         self._level += 1
 
     def endElement(self, name):

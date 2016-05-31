@@ -12,7 +12,7 @@ this script writes a taz file with all the edges which are inside
 the relevant taz.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -71,8 +71,8 @@ class DistrictEdgeComputer:
             if options.verbose and idx % 100 == 0:
                 sys.stdout.write("%s/%s\r" % (idx, len(self._net.getEdges())))
         if options.complete:
-            for edge, districts in self._edgeDistricts.iteritems():
-                if len(districts) > 1:
+            for edge in self._edgeDistricts:
+                if len(self._edgeDistricts[edge]) > 1:
                     self._invalidatedEdges.add(edge)
 
     def getEdgeDistrictMap(self):
@@ -85,7 +85,7 @@ class DistrictEdgeComputer:
     def writeResults(self, options):
         fd = open(options.output, "w")
         fd.write("<tazs>\n")
-        for district, edges in sorted(self._districtEdges.iteritems()):
+        for district, edges in sorted(self._districtEdges.items()):
             filtered = [
                 edge for edge in edges if edge not in self._invalidatedEdges]
             if len(filtered) == 0:

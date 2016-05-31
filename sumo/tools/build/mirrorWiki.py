@@ -23,7 +23,7 @@ After mirroring all pages, the images are downloaded and stored into
 MIRROR_FOLDER/images.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -92,8 +92,7 @@ if __name__ == "__main__":
     images = set()
     if len(args) == 0:
         p = readParsePage("Special:AllPages")
-        p = p[p.find("<input type=\"submit\" value=\"Go\" />"):]
-        p = p[p.find("<table "):]
+        p = p[p.find('<ul class="mw-allpages-chunk">'):]
         pages = p.split("<a ")
     else:
         pages = ['href="/wiki/%s"' % a for a in args]

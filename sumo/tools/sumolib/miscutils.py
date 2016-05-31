@@ -8,7 +8,7 @@
 Common utility functions
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2012-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@ import colorsys
 import socket
 import random
 from collections import defaultdict
-from functools import total_ordering
 
 # append import path stanca:
 #THIS_DIR == os.path.basename(__file__)
@@ -34,7 +33,7 @@ from functools import total_ordering
 
 # http://www.python.org/dev/peps/pep-0326/
 
-@total_ordering
+
 class _ExtremeType(object):
 
     def __init__(self, isMax, rep):
@@ -43,14 +42,22 @@ class _ExtremeType(object):
         self._rep = rep
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and\
-           other._isMax == self._isMax
+        return isinstance(other, self.__class__) and other._isMax == self._isMax
 
     def __ne__(self, other):
         return not self == other
 
     def __gt__(self, other):
         return self._isMax and not self == other
+
+    def __ge__(self, other):
+        return self._isMax
+
+    def __lt__(self, other):
+        return not self._isMax and not self == other
+
+    def __le__(self, other):
+        return not self._isMax
 
     def __repr__(self):
         return self._rep
@@ -186,7 +193,7 @@ class Statistics:
 
     def quartiles(self):
         s = sorted(self.values)
-        return s[len(self.values) / 4], s[len(self.values) / 2], s[3 * len(self.values) / 4]
+        return s[len(self.values) // 4], s[len(self.values) // 2], s[3 * len(self.values) // 4]
 
     def rank(self, fraction):
         if len(self.values) > 0:

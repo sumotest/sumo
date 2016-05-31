@@ -10,7 +10,7 @@
 Run duarouter repeatedly and simulate weight changes via a cost function.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -69,7 +69,8 @@ def writeRouteConf(step, options, file, output):
         <gBeta value="%s"/>
         <gA value="%s"/>
     </processing>""" % (options.continueOnUnbuild, options.gBeta, options.gA), file=fd)
-    print('    <random_number><abs-rand value="%s"/></random_number>' % options.absrand, file=fd)
+    print('    <random_number><abs-rand value="%s"/></random_number>' %
+          options.absrand, file=fd)
     print('    <time><begin value="%s"/>' % options.begin, end=' ', file=fd)
     if options.end:
         print('<end value="%s"/>' % options.end, end=' ', file=fd)

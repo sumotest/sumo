@@ -19,7 +19,7 @@ matplotlib has to be installed for this purpose
 --values no,no --show --color-map 0:#888888,.4:#ff0000,1:#00ff00
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -385,8 +385,10 @@ class WeightsReader(handler.ContentHandler):
                     self._unaggEdge2value1[i], self._unaggEdge2value2[i])
         # norm
         if options.verbose:
-            print("w range: " + str(self._minValue1) + " - " + str(self._maxValue1))
-            print("c range: " + str(self._minValue2) + " - " + str(self._maxValue2))
+            print("w range: " + str(self._minValue1) +
+                  " - " + str(self._maxValue1))
+            print("c range: " + str(self._minValue2) +
+                  " - " + str(self._maxValue2))
         if options.join:
             self.valueDependantNorm(
                 self._edge2value1, self._minValue1, self._maxValue1, False, percSpeed and self._value1 == "speed")
