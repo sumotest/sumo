@@ -441,12 +441,12 @@ bool
 GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::map<SumoXMLAttr, std::string> values) {
     // Extract common attributes
     std::string id = values[SUMO_ATTR_ID];
-    GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE]);
     bool blocked = GNEAttributeCarrier::parse<bool>(values[GNE_ATTR_BLOCK_MOVEMENT]);
     // create additional depending of the tag
     switch(tag) {
         case SUMO_TAG_BUS_STOP: {
             // get own attributes of busStop
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal startPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_STARTPOS]);
             SUMOReal endPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_ENDPOS]);
             std::vector<std::string> lines;
@@ -459,6 +459,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_CHARGING_STATION: {
             // get own attributes of chargingStation
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal startPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_STARTPOS]);
             SUMOReal endPos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_ENDPOS]);
             SUMOReal chargingPower = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_CHARGINGPOWER]);
@@ -473,6 +474,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_E1DETECTOR: {
             // get own attributes of detector E1
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
             int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             std::string filename = values[SUMO_ATTR_FILE];
@@ -485,6 +487,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_E2DETECTOR: {
             // get own attributes of detector E2
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
             int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             SUMOReal lenght = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_LENGTH]);
@@ -506,13 +509,14 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             std::string filename = values[SUMO_ATTR_FILE];
             // Build detector E3
-            if(!lane && (pos.size() == 1))
+            if(pos.size() == 1)
                 return buildDetectorE3(viewNet, id, pos[0], freq, filename, blocked);
             else
                 return false;
         }
         case SUMO_TAG_DET_ENTRY: {
             // get own attributes of detector Entry
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
             std::string detectorE3ParentID = values[GNE_ATTR_PARENT];
             // Build detector Entry
@@ -523,6 +527,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_DET_EXIT: {
             // get own attributes of Detector Exit
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
             std::string detectorE3ParentID = values[GNE_ATTR_PARENT];
             // Build detector Exit
@@ -543,13 +548,14 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             for(int i = 0; i < laneIds.size(); i++)
                 lanes.push_back(viewNet->getNet()->retrieveLane(laneIds.at(i)));
             std::string file = values[SUMO_ATTR_FILE];
-            if(!lane && (pos.size() == 1))
+            if(pos.size() == 1)
                 return buildVariableSpeedSignal(viewNet, id, pos[0], lanes, file, blocked);
             else
                 return false;
         }
         case SUMO_TAG_CALIBRATOR: {
             // get own attributes of calibrator
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
             std::string file = values[SUMO_ATTR_FILE];
             MSRouteProbe* probe;
@@ -565,13 +571,18 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             // get own attributes of rerouter
             bool ok;
             PositionVector pos = GeomConvHelper::parseShapeReporting(values[SUMO_ATTR_POSITION], "user-supplied position", 0, ok, false);
+            // Parse edges Ids
+            std::vector<std::string> edgeIds;
+            SUMOSAXAttributes::parseStringVector(values[SUMO_ATTR_EDGES], edgeIds);
+            // Obtain pointers to edges
             std::vector<GNEEdge*> edges;
-            /** TERMINAR **/
+            for(int i = 0; i < edgeIds.size(); i++)
+                edges.push_back(viewNet->getNet()->retrieveEdge(edgeIds.at(i)));
             SUMOReal prob = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_PROB]);
             std::string file = values[SUMO_ATTR_FILE];
             bool off = GNEAttributeCarrier::parse<bool>(values[SUMO_ATTR_OFF]);
             // Build rerouter
-            if(!lane && (pos.size() == 1))
+            if(pos.size() == 1)
                 return buildRerouter(viewNet, id, pos[0], edges, prob, file, off, blocked);
             else
                 return false;
@@ -579,6 +590,7 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         case SUMO_TAG_ROUTEPROBE: {
             // get own attributes of RouteProbe
             bool ok;
+            GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             std::string filename = values[SUMO_ATTR_FILE];
             int begin = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_BEGIN]);

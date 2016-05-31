@@ -52,6 +52,7 @@
 #include "GNERerouter.h"
 #include "GNERerouterDialog.h"
 #include "GNELane.h"
+#include "GNEEdge.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
 #include "GNENet.h"
@@ -362,10 +363,16 @@ GNERerouter::rerouterInterval::setEnd(SUMOTime end) {
 
 GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
     GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, blocked),
-    myEdges(edges),
     myFilename(filename),
     myProbability(probability),
     myOff(off) {
+    // set child edges
+    for(std::vector<GNEEdge*>::iterator i = edges.begin(); i != edges.end(); i++) {
+        const std::vector<GNELane*>& lanes = (*i)->getLanes();
+        for(std::vector<GNELane*>::const_iterator j = lanes.begin(); j != lanes.end(); j++)
+            myChildLanes[*j];
+    }
+
     // Update geometry;
     updateGeometry();
     // Set colors
@@ -406,8 +413,8 @@ GNERerouter::updateGeometry() {
 
     // Set block icon rotation, and using their rotation for draw logo
     setBlockIconRotation();
-
-    // Update connections
+    
+    // Update geometry of additionalSet parent
     updateConnections();
 }
 
@@ -438,7 +445,6 @@ GNERerouter::writeAdditional(OutputDevice& device) {
         device.writeAttr(SUMO_ATTR_FILE, myFilename);
     device.writeAttr(SUMO_ATTR_X, myPosition.x());
     device.writeAttr(SUMO_ATTR_Y, myPosition.y());
-    writeAdditionalChildrens(device);
     // Close tag
     device.closeTag();
 }
@@ -524,36 +530,59 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
 
     // Pop draw matrix
     glPopMatrix();
-/***
-    // Add a draw matrix for id
-    glPushMatrix();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glTranslated(myShape.getLineCenter().x(), myShape.getLineCenter().y(), getType() + 0.1);
-    glColor3d(1, 1, 1);
-    glRotated(180, 0, 0, 1);
-    glTranslated(myIdTextOffset.x(), myIdTextOffset.y(), 0);
 
-    std::string drawText = getID();
-    for(int i = 0; i < drawText.size(); i++)
-        if(drawText[i] == '_')
-            drawText[i] = ' ';
+    // Draw symbols in every lane
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+    if (s.scale * exaggeration >= 3) {
+        // draw rerouter symbol over all lanes
+        for(std::map<GNELane*, std::pair<Position, SUMOReal> >::const_iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
+            const Position& pos = i->second.first;
+            SUMOReal rot = i->second.second;
+            glPushMatrix();
+            glTranslated(pos.x(), pos.y(), 0);
+            glRotated(rot, 0, 0, 1);
+            glTranslated(0, 0, getType());
+            glScaled(exaggeration, exaggeration, 1);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    // Draw id depending of rerouter is or isn't selected
-    if(isAdditionalSelected()) 
-        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColorSelected, 180);
-    else
-        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColor, 180);
-    
-    // Pop matrix id
-    glPopMatrix();
-***/
+            glBegin(GL_TRIANGLES);
+            glColor3d(1, .8f, 0);
+            // base
+            glVertex2d(0 - 1.4, 0);
+            glVertex2d(0 - 1.4, 6);
+            glVertex2d(0 + 1.4, 6);
+            glVertex2d(0 + 1.4, 0);
+            glVertex2d(0 - 1.4, 0);
+            glVertex2d(0 + 1.4, 6);
+            glEnd();
+
+            glTranslated(0, 0, .1);
+            glColor3d(0, 0, 0);
+            pfSetPosition(0, 0);
+            pfSetScale(3.f);
+            SUMOReal w = pfdkGetStringWidth("U");
+            glRotated(180, 0, 1, 0);
+            glTranslated(-w / 2., 2, 0);
+            pfDrawString("U");
+
+            glTranslated(w / 2., -2, 0);
+            std::string str = toString((int)(myProbability * 100)) + "%";
+            pfSetPosition(0, 0);
+            pfSetScale(.7f);
+            w = pfdkGetStringWidth(str.c_str());
+            glTranslated(-w / 2., 4, 0);
+            pfDrawString(str.c_str());
+            glPopMatrix();
+        }
+        glPopName();
+    }
+
+    // Draw connections
+    drawConnections();
 
     // Show Lock icon depending of the Edit mode
     if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
         drawLockIcon(0.4);
-
-    // Draw connections
-    drawConnections();
 
     // Pop name
     glPopName();

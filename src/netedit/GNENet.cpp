@@ -600,13 +600,16 @@ GNENet::retrieveJunction(const std::string& id, bool failHard) {
 
 GNEEdge*
 GNENet::retrieveEdge(const std::string& id, bool failHard) {
-    if (myEdges.count(id)) {
-        return myEdges[id];
-    } else if (failHard) {
-        throw UnknownElement("Edge " + id);
-    } else {
-        return 0;
+    for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); ++it) {
+        if (it->second->getID() == id) {
+            return it->second;
+        }
     }
+    // If edge wasn't found
+    if (failHard)
+        throw UnknownElement("Edge " + id);
+    else
+        return 0;
 }
 
 
@@ -638,15 +641,20 @@ GNENet::retrieveLanes(bool onlySelected) {
 
 
 GNELane*
-GNENet::retrieveLane(const std::string &id) {
+GNENet::retrieveLane(const std::string &id, bool failHard) {
     for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); ++it) {
         const GNEEdge::LaneVector& lanes = it->second->getLanes();
         for (GNEEdge::LaneVector::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
-            if ((*it_lane)->getID() == id)
+            if ((*it_lane)->getID() == id) {
                 return (*it_lane);
+            }
         }
     }
-    return NULL;
+    // If lane wasn't found
+    if (failHard)
+        throw UnknownElement("lane " + id);
+    else
+        return NULL;
 }
 
 

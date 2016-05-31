@@ -244,16 +244,14 @@ public:
 
     /**@brief get junction by id
      * @param[in] id The id of the desired junction
-     * @param[in] failHard Whether attempts to retrieve a nonexisting junction
-     * should result in an exception
+     * @param[in] failHard Whether attempts to retrieve a nonexisting junction should result in an exception
      * @throws UnknownElement
      */
     GNEJunction* retrieveJunction(const std::string& id, bool failHard = true);
 
     /**@brief get edge by id
      * @param[in] id The id of the desired edge
-     * @param[in] failHard Whether attempts to retrieve a nonexisting junction
-     * should result in an exception
+     * @param[in] failHard Whether attempts to retrieve a nonexisting edge should result in an exception
      * @throws UnknownElement
      */
     GNEEdge* retrieveEdge(const std::string& id, bool failHard = true);
@@ -276,11 +274,12 @@ public:
      * */
     std::vector<GNELane*> retrieveLanes(bool onlySelected = false);
 
-    /**@brief get edge by id
-     * @param id id of the lane to find
-     * @return pointer to lane, or NULL if don't exist
+    /**@brief get lane by id
+     * @param[in] id The id of the desired lane
+     * @param[in] failHard Whether attempts to retrieve a nonexisting lane should result in an exception
+     * @throws UnknownElement
     */
-    GNELane *retrieveLane(const std::string &id);
+    GNELane *retrieveLane(const std::string &id, bool failHard = true);
 
     /**@brief return all junctions
      * @param[in] onlySelected Whether to return only selected junctions

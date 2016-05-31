@@ -137,7 +137,7 @@ GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoLis
 void
 GNEDetectorE3::writeAdditional(OutputDevice& device) {
     // Only save E3 if have Entry/Exits
-    if(getNumberOfChilds() > 0) {
+    if(getNumberOfAdditionalChilds() > 0) {
         // Write parameters
         device.openTag(getTag());
         device.writeAttr(SUMO_ATTR_ID, getID());

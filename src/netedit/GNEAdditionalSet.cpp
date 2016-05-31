@@ -50,6 +50,8 @@
 #include "GNEAdditionalSet.h"
 #include "GNEAdditional.h"
 #include "GNEUndoList.h"
+#include "GNELane.h"
+#include "GNEEdge.h"
 #include "GNENet.h"
 #include "GNEViewNet.h"
 #include "GNELogo_Lock.cpp"
@@ -73,63 +75,132 @@ GNEAdditionalSet::~GNEAdditionalSet() {
 }
 
 
-void
+bool
 GNEAdditionalSet::addAdditionalChild(GNEAdditional *additional) {
-    myAdditionals[additional] = myPosition;
+    for(std::list<GNEAdditional*>::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++)
+        if((*i) == additional)
+            return false;
+    // If wasn't found, insert it
+    myChildAdditionals.push_back(additional);
 }
 
 
-void
+bool
 GNEAdditionalSet::removeAdditionalChild(GNEAdditional *additional) {
-    myAdditionals.erase(myAdditionals.find(additional));
+    return false;
+}
+
+
+bool
+GNEAdditionalSet::addEdgeChild(GNEEdge *edge, SUMOReal position) {
+    if(myChildEdges.count(edge) == 0) {
+        myChildEdges[edge] = std::pair<Position, SUMOReal>(Position(), 0);
+        updateConnections();
+        return true;
+    }
+    else
+        return false;
+}
+
+
+bool
+GNEAdditionalSet::removeEdgeChild(GNEEdge *edge) {
+    return false;
+}
+
+
+bool
+GNEAdditionalSet::addLaneChild(GNELane *lane, SUMOReal position) {
+    if(myChildLanes.count(lane) == 0) {
+        myChildLanes[lane] = std::pair<Position, SUMOReal>(Position(), 0);
+        updateConnections();
+        return true;
+    }
+    else
+        return false;
+}
+
+
+bool
+GNEAdditionalSet::removeLaneChild(GNELane *lane) {
+    return false;
 }
 
 
 void
 GNEAdditionalSet::updateConnections() {
-    // Iterate over map
-    for(std::map<GNEAdditional*, Position>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+    // Clear map with the middle positions
+    myConnectionMiddlePosition.clear();
+
+    // Iterate over additonals
+    for(std::list<GNEAdditional*>::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++) {
         // If shape isn't empty, calculate middle point.
-        if(i->first->getShape().size() > 0) {
-            Position PositionOfChild = i->first->getShape()[0];
+        if((*i)->getShape().size() > 0) {
+            Position PositionOfChild = (*i)->getShape()[0];
             SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(PositionOfChild);
             SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(PositionOfChild);
-            i->second = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
+            myConnectionMiddlePosition[*i] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
         }
+    }
+
+    // Iterate over lanes
+    for(std::map<GNELane*, std::pair<Position, SUMOReal> >::iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
+        // Set position of figure over Lane
+        i->second.first = i->first->getShape().positionAtOffset(i->first->getShape().length() - 10);
+        // Set rotation of figure in Lane
+        i->second.second = i->first->getShape().rotationDegreeAtOffset(i->first->getShape().length() - 10) * -1;
+        // Set position of connection
+        SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(i->second.first);
+        SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(i->second.first);
+        myConnectionMiddlePosition[i->first] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
     }
 }
 
 
 void
 GNEAdditionalSet::drawConnections() const {
-    // Iterate over map
-    for(std::map<GNEAdditional*, Position>::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+    // Iterate over list of additionals
+    for(std::list<GNEAdditional*>::const_iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++) {
         // Draw only if additional GL Visualitation is enabled
-        if(myViewNet->isAdditionalGLVisualisationEnabled(i->first) && (i->first->getShape().size() > 0)) {
+        if(myViewNet->isAdditionalGLVisualisationEnabled(*i) && ((*i)->getShape().size() > 0)) {
             // Add a draw matrix
             glPushMatrix();
             // Set color of the base
             GLHelper::setColor(RGBColor(255, 235, 0, 255));
             // Draw Line
-            GLHelper::drawLine(myPosition, i->second);
-            GLHelper::drawLine(i->second, i->first->getShape()[0]);
+            GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(*i));
+            GLHelper::drawLine(myConnectionMiddlePosition.at(*i), (*i)->getPositionInView());
             // Pop draw matrix
             glPopMatrix();
         }
+    }
+    // Iterate over lanes
+    for(std::map<GNELane*, std::pair<Position, SUMOReal> >::const_iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
+        // Add a draw matrix
+        glPushMatrix();
+        // Set color of the base
+        GLHelper::setColor(RGBColor(255, 235, 0, 255));
+        // Draw Line
+        GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(i->first));
+        GLHelper::drawLine(myConnectionMiddlePosition.at(i->first), i->second.first);
+        // Pop draw matrix
+        glPopMatrix();
     }
 }
 
 
 void
 GNEAdditionalSet::writeAdditionalChildrens(OutputDevice& device) {
-    for(std::map<GNEAdditional*, Position>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
-        i->first->writeAdditional(device);
+    /*
+    for(int i = myChild; i != myAdditionals.end(); i++)
+        i->writeAdditional(device);
+        */
 }
 
 
 int 
-GNEAdditionalSet::getNumberOfChilds() const {
-    return myAdditionals.size();
+GNEAdditionalSet::getNumberOfAdditionalChilds() const {
+    return myChildAdditionals.size();
 }
 
 /****************************************************************************/

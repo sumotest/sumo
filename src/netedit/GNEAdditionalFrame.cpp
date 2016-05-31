@@ -975,7 +975,7 @@ GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
 void
 GNEAdditionalFrame::additionalSet::hideList() {
     myType = SUMO_TAG_NOTHING;
-    FXGroupBox::hide();
+    hide();
 }
 
 
@@ -1000,7 +1000,7 @@ GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* updateTarget) 
     myViewNet(updateTarget) {
 
     // Create search box
-    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, LAYOUT_FILL_X);
 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
@@ -1027,10 +1027,14 @@ GNEAdditionalFrame::edges::~edges() {}
 
 std::string
 GNEAdditionalFrame::edges::getIdsSelected() const {
+    // Obtain Id's of list
     std::string listOfIds;
     for(int i = 0; i < myList->getNumItems(); i++)
         if(myList->isItemSelected(i))
             listOfIds += (myList->getItem(i)->getText() + " ").text();
+    // Remove last ' '
+    if(listOfIds.size() > 0 && listOfIds.back() == ' ')
+        listOfIds.pop_back();
     return listOfIds;
 }
 
@@ -1127,10 +1131,14 @@ GNEAdditionalFrame::lanes::~lanes() {}
 
 std::string
 GNEAdditionalFrame::lanes::getIdsSelected() const {
+    // Obtain list of id's
     std::string listOfIds;
     for(int i = 0; i < myList->getNumItems(); i++)
         if(myList->isItemSelected(i))
             listOfIds += (myList->getItem(i)->getText() + " ").text();
+    // Remove last ' '
+    if(listOfIds.size() > 0 && listOfIds.back() == ' ')
+        listOfIds.pop_back();
     return listOfIds;
 }
 

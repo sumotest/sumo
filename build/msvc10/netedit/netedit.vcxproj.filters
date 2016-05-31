@@ -279,6 +279,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_RouteProbe.cpp">
       <Filter>Quellcodedateien\Logos</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNECalibratorDialog.cpp">
+      <Filter>Quellcodedateien\Dialogs\AdditionalDialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -438,6 +441,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNERouteProbe.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNECalibratorDialog.h">
+      <Filter>Header-Dateien\Dialogs\AdditionalDialogs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

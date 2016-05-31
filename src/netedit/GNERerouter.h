@@ -266,6 +266,14 @@ public:
      */
     void writeAdditional(OutputDevice& device);
 
+    /// @brief add edge to rerouter
+    /// @return true if was sucesfully inserted, false if is duplicated
+    bool addEdge(GNEEdge *edge);
+
+    /// @brief remove edge of rerouter
+    /// @return true if was scuesfully removed, false if wasn't found
+    bool removeEdge(GNEEdge *edge);
+
     /// @brief get filename of rerouter
     std::string getFilename() const;
 
@@ -332,9 +340,6 @@ public:
     /// @}
 
 protected:
-    /// @brief list of edges
-    std::vector<GNEEdge*> myEdges;
-
     /// @brief filename of rerouter
     std::string myFilename;
 

@@ -77,15 +77,41 @@ public:
 
     /**@brief add additional element to this set
      * @param[in] additionalSet pointer to GNEadditionalSet element to add
-     * @throw ProcessError if this additionalSet element was already vinculated with another additionalSet
+     * @return true if was sucesfully added, false in other case
      */
-    void addAdditionalChild(GNEAdditional *additional);
+    bool addAdditionalChild(GNEAdditional *additional);
 
     /**@brief remove additional element to this set
      * @param[in] additionalSet pointer to GNEadditionalSet element to remove
-     * @throw ProcessError if this additionalSet element isn't  vinculated with this additionalSet
+     * @return true if was sucesfully removed, false in other case
      */
-    void removeAdditionalChild(GNEAdditional *additional);
+    bool removeAdditionalChild(GNEAdditional *additional);
+
+    /**@brief add edge element to this set
+     * @param[in] edgeSet pointer to GNEEdge element to add
+     * @param[in] position position of edge in which connection will be placed
+     * @return true if was sucesfully added, false in other case
+     */
+    bool addEdgeChild(GNEEdge *edge, SUMOReal position);
+
+    /**@brief remove edge element to this set
+     * @param[in] edgeSet pointer to GNEEdge element to remove
+     * @return true if was sucesfully removed, false in other case
+     */
+    bool removeEdgeChild(GNEEdge *edge);
+
+    /**@brief add lane element to this set
+     * @param[in] laneSet pointer to GNELane element to add
+     * @param[in] position position of edge in which connection will be placed
+     * @return true if was sucesfully added, false in other case
+     */
+    bool addLaneChild(GNELane *lane, SUMOReal position);
+
+    /**@brief remove lane element to this set
+     * @param[in] laneSet pointer to GNELane element to remove
+     * @return true if was sucesfully removed, false in other case
+     */
+    bool removeLaneChild(GNELane *lane);
 
     /**@brief writte additionalSet element into a xml file
      * @param[in] device device in which write parameters of additionalSet element
@@ -93,7 +119,7 @@ public:
     virtual void writeAdditional(OutputDevice& device) = 0;
     
     /// @brief get number of childs of this additionalSet
-    int getNumberOfChilds() const;
+    int getNumberOfAdditionalChilds() const;
 
     /// @name inherited from GUIGlObject
     /// @{
@@ -143,14 +169,24 @@ public:
     /// @}
 
 protected:
-    /// @brief Map with the GNEAdditionals elementen vinculated to this AdditionalSet and their middle point
-    std::map<GNEAdditional*, Position> myAdditionals;
+    /// @brief list of additional childs (Position and rotations is derived from additional)
+    std::list<GNEAdditional*> myChildAdditionals;
+
+    /// @brief map of child edges and their positions and rotation
+    std::map<GNEEdge*, std::pair<Position, SUMOReal> > myChildEdges;
+
+    /// @brief list of child lanes and their positions and rotation
+    std::map<GNELane*, std::pair<Position, SUMOReal> > myChildLanes;
+
+    /// @brief map to keep the middle position of connection
+    std::map<GUIGlObject*, Position> myConnectionMiddlePosition;
 
     /// @brief update connections.
-    /// @note must be called at end of function updateGeometry of AdditionalSet parent
+    /// @note must be called at end of function updateGeometry() of additionalSet
     void updateConnections();
 
     /// @brief draw connections.
+    /// @note must be called at end of function drawGl(...) of additionalSet
     void drawConnections() const;
 
     /// @brief write children of this additionalSet
