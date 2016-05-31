@@ -10,7 +10,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -90,9 +90,11 @@ def check(vehID):
     print("shape", traci.vehicle.getShapeClass(vehID))
     print("MinGap", traci.vehicle.getMinGap(vehID))
     print("width", traci.vehicle.getWidth(vehID))
+    print("person number", traci.vehicle.getPersonNumber(vehID))
     print("waiting time", traci.vehicle.getWaitingTime(vehID))
     print("driving dist", traci.vehicle.getDrivingDistance(vehID, "4fi", 2.))
-    print("driving dist 2D", traci.vehicle.getDrivingDistance2D(vehID, 100., 100.))
+    print(
+        "driving dist 2D", traci.vehicle.getDrivingDistance2D(vehID, 100., 100.))
 
 
 def checkOffRoad(vehID):
@@ -135,7 +137,7 @@ except traci.TraCIException:
     print("recovering from exception after asking for unknown vehicle")
 traci.vehicle.add("1", "horizontal")
 traci.vehicle.setStop(
-    "1", "2fi", pos=50.0, laneIndex=0, duration=2000, flags=1)
+    "1", "2fi", pos=50.0, laneIndex=0, duration=1000, flags=1)
 check("1")
 traci.vehicle.changeTarget("1", "4fi")
 print("routeID", traci.vehicle.getRouteID(vehID))
@@ -149,6 +151,7 @@ for i in range(6):
         traci.vehicle.resume("1")
     print(traci.vehicle.getSubscriptionResults(vehID))
 check("2")
+print("nextTLS", traci.vehicle.getNextTLS("2"))
 traci.vehicle.setSpeedMode(vehID, 0)  # disable all checks
 traci.vehicle.setSpeed(vehID, 20)
 print("leader", traci.vehicle.getLeader("2"))
@@ -171,8 +174,9 @@ print("step", step())
 print(traci.vehicle.getSubscriptionResults(vehID))
 print("step", step())
 print(traci.vehicle.getSubscriptionResults(vehID))
-print("speed before moveToVTD", traci.vehicle.getSpeed(vehID))
-traci.vehicle.moveToVTD(vehID, "1o", 0, 482.49, 501.31, 0)
+print("speed before moveToXY", traci.vehicle.getSpeed(vehID))
+traci.vehicle.moveToVTD(vehID, "1o", 0, 482.49, 501.31,
+                        0)  # test deprecated method name
 print("step", step())
 print("speed after moveToVTD", traci.vehicle.getSpeed(vehID))
 print(traci.vehicle.getSubscriptionResults(vehID))
@@ -195,10 +199,12 @@ print("vehicles", traci.vehicle.getIDList())
 routeTestVeh = "routeTest"
 traci.vehicle.add(routeTestVeh, "horizontal")
 print("step", step())
-print("vehicle '%s' routeID=%s" % (routeTestVeh, traci.vehicle.getRouteID(routeTestVeh)))
+print("vehicle '%s' routeID=%s" %
+      (routeTestVeh, traci.vehicle.getRouteID(routeTestVeh)))
 traci.vehicle.setRouteID(routeTestVeh, "withStop")
 print("step", step())
-print("vehicle '%s' routeID=%s" % (routeTestVeh, traci.vehicle.getRouteID(routeTestVeh)))
+print("vehicle '%s' routeID=%s" %
+      (routeTestVeh, traci.vehicle.getRouteID(routeTestVeh)))
 for i in range(14):
     print("step", step())
     print("vehicle '%s' lane=%s lanePos=%s stopped=%s" % (routeTestVeh,
@@ -282,6 +288,13 @@ traci.vehicle.moveTo(tele, "1o_0", 40)
 for i in range(3):
     checkOffRoad(tele)
     print("step", step())
+# moveToXY to off-route edge
+moved = "movedVeh"
+traci.vehicle.add(moved, "vertical")
+print("step", step())
+traci.vehicle.moveToXY(moved, "dummy", 0, 448.99, 491.19, 90, False)
+print("step", step())
+check(moved)
 
 # done
 traci.close()
