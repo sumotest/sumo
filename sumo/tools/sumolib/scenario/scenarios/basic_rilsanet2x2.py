@@ -1,19 +1,11 @@
 """
-@file    basic_rilsanet2x2.py
-@author  Daniel Krajzewicz
+@author  Daniel.Krajzewicz@dlr.de
 @date    2014-09-01
 @version $Id$
 
-SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
-
-This file is part of SUMO.
-SUMO is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
+Copyright (C) 2014 DLR/TS, Germany
+All rights reserved
 """
-
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -67,8 +59,7 @@ class Scenario_BasicRiLSANet2x2(Scenario):
         self.netName = self.fullPath(self.NET_FILE)
         # network
         if fileNeedsRebuild(self.fullPath(self.NET_FILE), "netconvert"):
-            print("Network in '%s' needs to be rebuild" %
-                  self.fullPath(self.NET_FILE))
+            print("Network in '%s' needs to be rebuild" % self.fullPath(self.NET_FILE))
             # , Lane(dirs="l", disallowed="pedestrian")]
             lanes = [Lane(dirs="s", allowed="pedestrian"), Lane(
                 dirs="rs", disallowed="pedestrian")]

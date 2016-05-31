@@ -8,7 +8,7 @@
 Provides utility functions for dealing with program options
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2012-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ def get_long_option_names(application):
     for line in output.splitlines():
         m = reprog.search(line)
         if m:
-            result.append(m.group(1).decode('utf-8'))
+            result.append(m.group(1))
     return result
 
 

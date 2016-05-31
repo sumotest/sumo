@@ -6,5 +6,3 @@ default:{CLEAR perf}
 meso:{CLEAR perf}
 msvc10mesox64:{CLEAR perf}
 msvc10mesoWin32:{CLEAR perf}
-msvc12mesox64:{CLEAR perf}
-msvc12mesoWin32:{CLEAR perf}

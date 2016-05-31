@@ -13,19 +13,19 @@ accel 2.6
 decel 4.5
 imperfection 0.5
 tau 1.0
-vClass passenger
+vClass ignoring
 emissionclass HBEFA2/P_7_7
-shape passenger
+shape 
 MinGap 2.5
 width 1.8
 color (255, 255, 0, 255)
-{0: ['DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE']}
+{65: 55.55555555555556}
 step 3
-{0: ['DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE']}
+{65: 55.55555555555556}
 step 4
-{0: ['DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE']}
+{65: 55.55555555555556}
 step 5
-{0: ['DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE']}
+{65: 55.55555555555556}
 length 1.0
 maxSpeed 1.0
 speedFactor 1.1

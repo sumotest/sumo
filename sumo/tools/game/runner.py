@@ -13,7 +13,7 @@ and lets the user start them as a game. Furthermore it
 saves highscores to local disc and to the central highscore server.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2010-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2010-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -150,7 +150,7 @@ class StartDialog(Tkinter.Frame):
 
         # 2 button for each config (start, highscore)
         for row, cfg in enumerate(configs):
-            if "bs3" in cfg and not haveOSG:
+            if "bs3" in cfg and "meso-gui" not in guisimPath:
                 continue
             category = self.category_name(cfg)
             # lambda must make a copy of cfg argument
@@ -382,9 +382,13 @@ def findSumoBinary(guisimBinary):
         guisimPath = guisimBinary
     return guisimPath
 
+guisimPath = findSumoBinary("meso-gui")
+try:
+    subprocess.call([guisimPath, "-Q", "-c", "blub"], stderr=open(os.devnull))
+except OSError:
+    print("meso-gui not found. 3D scenario will not work.")
+    guisimPath = findSumoBinary("sumo-gui")
 
-guisimPath = findSumoBinary("sumo-gui")
-haveOSG = "OSG" in subprocess.check_output(findSumoBinary("sumo"))
 
 if options.stereo:
     for m in stereoModes:

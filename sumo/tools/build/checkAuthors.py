@@ -9,7 +9,7 @@
 Checks authors for all files.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2011-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2011-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -124,8 +124,7 @@ def setAuthors(fullName, removal, add, pattern):
                     print("%s  %s" % (pattern, a), file=out)
                 out.write(line)
             elif add:
-                print("need to add author %s to %s" %
-                      (add, fullName), file=log)
+                print("need to add author %s to %s" % (add, fullName), file=log)
             authors = []
         elif options.fix:
             out.write(line)

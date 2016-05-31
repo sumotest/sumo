@@ -7,7 +7,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ def superpose(nodes1, nodes2, select1, select2):
 
     is_reflection = (det(V) * det(W_trans)) < 0.0
     if is_reflection:
-        V[-1, :] = V[-1, :] * (-1.0)
+        V[-1, :] = V[-1,:] * (-1.0)
 
     optimal_rotation = dot(V, W_trans)
     return dot(array(nodes2) - center2, optimal_rotation) + center1

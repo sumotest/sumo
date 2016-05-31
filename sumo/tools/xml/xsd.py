@@ -9,7 +9,7 @@
 Helper classes for parsing xsd schemata.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -122,19 +122,19 @@ class XsdStructure():
         return eleObj
 
     def resolveRefs(self):
-        for ele in self._namedTypes.values():
+        for ele in self._namedTypes.itervalues():
             if ele.type and ele.type in self._namedTypes and not ele.resolved:
                 t = self._namedTypes[ele.type]
                 ele.attributes += t.attributes
                 ele.children += t.children
                 ele.resolved = True
-        for ele in self._namedElements.values():
+        for ele in self._namedElements.itervalues():
             if ele.type and ele.type in self._namedTypes and not ele.resolved:
                 t = self._namedTypes[ele.type]
                 ele.attributes += t.attributes
                 ele.children += t.children
                 ele.resolved = True
-        for ele in self._namedElements.values():
+        for ele in self._namedElements.itervalues():
             newChildren = []
             for child in ele.children:
                 if child.ref:

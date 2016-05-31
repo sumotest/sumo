@@ -1,24 +1,7 @@
 #!/usr/bin/env python
-"""
-@file    runner.py
-@author  Daniel Krajzewicz
-@date    2007-07-26
-@version $Id$
+# -*- coding: utf-8 -*-
 
-test different traffic_light types
-
-SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
-
-This file is part of SUMO.
-SUMO is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-"""
-
-from __future__ import absolute_import
-from __future__ import print_function
+# test different traffic_light types
 import sys
 import os
 import subprocess
@@ -47,7 +30,7 @@ except:
 def buildDemand(simSteps, pWE, pEW, pNS, pSN):
     fd = open("input_routes.rou.xml", "w")
     #---routes---
-    print("""<routes>
+    print >> fd, """<routes>
 		
 			<vType id="type1" accel="2.0" decel="5.0" sigma="0.0" length="6.5" maxSpeed="70"/>
 		
@@ -56,31 +39,31 @@ def buildDemand(simSteps, pWE, pEW, pNS, pSN):
 			<route id="EW" edges="3i 1o 7o"/>
 			<route id="SN" edges="4i 2o 8o"/>
 			
-		""", file=fd)
+		"""
     lastVeh = 0
     vehNr = 0
     for i in range(simSteps):
         if random.uniform(0, 1) < pWE:  # Poisson distribution
-            print('    <vehicle id="%i" type="type1" route="WE" depart="%i" departSpeed="13.89" />' % (
-                vehNr, i), file=fd)
+            print >> fd, '    <vehicle id="%i" type="type1" route="WE" depart="%i" departSpeed="13.89" />' % (
+                vehNr, i)
             vehNr += 1
             lastVeh = i
         if random.uniform(0, 1) < pNS:
-            print('    <vehicle id="%i" type="type1" route="NS" depart="%i" departSpeed="13.89" />' % (
-                vehNr, i), file=fd)
+            print >> fd, '    <vehicle id="%i" type="type1" route="NS" depart="%i" departSpeed="13.89" />' % (
+                vehNr, i)
             vehNr += 1
             lastVeh = i
         if random.uniform(0, 1) < pEW:
-            print('    <vehicle id="%i" type="type1" route="EW" depart="%i" departSpeed="13.89" />' % (
-                vehNr, i), file=fd)
+            print >> fd, '    <vehicle id="%i" type="type1" route="EW" depart="%i" departSpeed="13.89" />' % (
+                vehNr, i)
             vehNr += 1
             lastVeh = i
         if random.uniform(0, 1) < pSN:
-            print('    <vehicle id="%i" type="type1" route="SN" depart="%i" departSpeed="13.89" />' % (
-                vehNr, i), file=fd)
+            print >> fd, '    <vehicle id="%i" type="type1" route="SN" depart="%i" departSpeed="13.89" />' % (
+                vehNr, i)
             vehNr += 1
             lastVeh = i
-    print("</routes>", file=fd)
+    print >> fd, "</routes>"
     fd.close()
 
 
@@ -109,10 +92,10 @@ for f1 in range(int(flow1def[0]), int(flow1def[1]), int(flow1def[2])):
     for f2 in range(int(flow2def[0]), int(flow2def[1]), int(flow2def[2])):
         pNS = float(f2) / 3600  # [veh/s]
         pSN = pNS
-        print("Computing for %s<->%s" % (f1, f2))
+        print "Computing for %s<->%s" % (f1, f2)
         buildDemand(simSteps, pWE, pEW, pNS, pSN)
         for t in ["static", "actuated", "sotl_phase", "sotl_platoon", "sotl_request", "sotl_wave", "sotl_marching", "swarm"]:
-            print(" for tls-type %s" % t)
+            print " for tls-type %s" % t
             patchTLSType('input_additional_template.add.xml',
                          '%tls_type%', 'input_additional.add.xml', t)
             args = [sumo,

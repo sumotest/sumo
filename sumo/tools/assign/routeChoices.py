@@ -12,7 +12,7 @@ This script is to calculate the route choice probabilities based on different me
 - ......
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -271,8 +271,7 @@ class vehrouteReader(handler.ContentHandler):
                 # calcuate the probabilites for the new routes
                 if not r.probability:
                     r.probability = 1. / float(len(self._vehObj.routesList))
-                    print('new probability for route', r.label,
-                          'for veh', self._vehObj.label)
+                    print('new probability for route', r.label, 'for veh', self._vehObj.label)
                     self._newroutesList.append(r)
 
             # adjust the probabilites of the existing routes due to the new

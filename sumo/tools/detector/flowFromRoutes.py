@@ -10,7 +10,7 @@
 This script recreates a flow file from routes and emitters.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -83,8 +83,7 @@ class DetectorRouteEmitterReader(handler.ContentHandler):
                             sumSquaredPercent += dev * dev / dFlow / dFlow
                         n += 1
         print('# avgRouteFlow avgDetFlow avgDev RMSE RMSPE')
-        print('#', rSum / n, dSum / n, sumAbsDev / n,
-              math.sqrt(sumSquaredDev / n), math.sqrt(sumSquaredPercent / n))
+        print('#', rSum / n, dSum / n, sumAbsDev / n, math.sqrt(sumSquaredDev / n), math.sqrt(sumSquaredPercent / n))
 
     def printFlows(self, includeDets):
         if includeDets:

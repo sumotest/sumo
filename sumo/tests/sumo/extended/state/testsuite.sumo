@@ -1,13 +1,13 @@
 # save 2 states
 save2
 
-# the input is taken from test save2/state2.sumo
+# loads state2 from test save2
 load
 
-# the input is taken from test save2/state.sumo
+# loads state from test save2
 load_late_insertion
 
-# the input is taken from test save2/state.sumo
+# loads state from test save2
 load_and_save
 
 # save state for a network with internal links

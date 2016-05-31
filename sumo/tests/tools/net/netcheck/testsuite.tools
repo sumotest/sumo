@@ -15,6 +15,3 @@ destination
 
 # write weakly connectec components to an edge selection
 components
-
-# get very weakly connected components (node graph)
-ignore_connections

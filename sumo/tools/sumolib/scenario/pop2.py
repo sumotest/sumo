@@ -1,19 +1,3 @@
-"""
-@file    pop2.py
-@author  Daniel Krajzewicz
-@author  Michael Behrisch
-@date    2014-08-22
-@version $Id$
-SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
-
-This file is part of SUMO.
-SUMO is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-"""
-
 from __future__ import absolute_import
 from __future__ import print_function
 import sumolib.net.generator.cross as netGenerator
@@ -1538,8 +1522,7 @@ class ScenarioSet_DemandStep(ScenarioSet):
                     for f2duration in range(self.getInt("f2durationFrom"), self.getInt("f2durationTo"), self.getInt("f2durationStep")):
                         if f1 == 0 and f2begin == 0 and f2end == 0:
                             continue
-                        print("Computing for %s<->%s->%s@%s" %
-                              (f1, f2begin, f2end, f2duration))
+                        print("Computing for %s<->%s->%s@%s" % (f1, f2begin, f2end, f2duration))
                         sID = "DemandStep(%s-%s-%s-%s)" % (f1,
                                                            f2begin, f2end, f2duration)
                         s = getScenario("BasicCross", {}, False)

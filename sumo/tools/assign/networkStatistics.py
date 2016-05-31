@@ -18,7 +18,7 @@ The analyzed parameters include:
 - stop time
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -137,8 +137,7 @@ def doTTestForAvg(verbose, tValueAvg, assignments):
                         A.avgWaitTime - B.avgWaitTime) / sdABWaitTime * tempvalue
                 else:
                     avgwaittime = 0.
-                    print(
-                        'check if the information about veh.waittime exists!')
+                    print('check if the information about veh.waittime exists!')
                 freedomdegree = A.totalVeh + B.totalVeh - 2
                 if freedomdegree > 30 and freedomdegree <= 40:
                     freedomdegree = 31
@@ -326,7 +325,7 @@ combilabel = ''
 
 assignments = {}
 # calculate/read the basic statistics
-for method, vehicles in allvehicles.items():
+for method, vehicles in allvehicles.iteritems():
     getBasicStats(options.verbose, method, vehicles, assignments)
 
 getStatisticsOutput(assignments, options.outputfile)

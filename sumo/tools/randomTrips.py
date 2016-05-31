@@ -10,7 +10,7 @@
 Generates random trips for the given network.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2010-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2010-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -272,7 +272,7 @@ def main(options):
     if options.min_distance > net.getBBoxDiameter() * (options.intermediate + 1):
         options.intermediate = int(
             math.ceil(options.min_distance / net.getBBoxDiameter())) - 1
-        print("Warning: setting number of intermediate waypoints to %s to achieve a minimum trip length of %s in a network with diameter %.2f." % (
+        print("Warning: setting number of intermediate waypoints to %s to achieve a minimum trip length of %s in a network with diameter %s." % (
             options.intermediate, options.min_distance, net.getBBoxDiameter()))
 
     trip_generator = buildTripGenerator(net, options)
@@ -309,9 +309,13 @@ def main(options):
         return idx + 1
 
     with open(options.tripfile, 'w') as fouttrips:
-        sumolib.writeXMLHeader(
-            fouttrips, "$Id$")
-        fouttrips.write("<trips>\n")
+        fouttrips.write("""<?xml version="1.0"?>
+<!-- generated on %s by $Id$
+  options: %s
+-->
+<trips>
+""" % (datetime.datetime.now(),
+            (' '.join(sys.argv[1:]).replace('--', '<doubleminus>'))))
         if options.vehicle_class:
             fouttrips.write('    <vType id="%s" vClass="%s" />\n' %
                             (options.vehicle_class, options.vehicle_class))

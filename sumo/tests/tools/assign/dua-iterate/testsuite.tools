@@ -1,9 +1,6 @@
 # straight call of the script
 simple
 
-# call with unordered trips
-unordered_input
-
 # filtering tripinfo
 filtered_tripinfo
 

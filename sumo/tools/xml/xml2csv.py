@@ -11,7 +11,7 @@
 Convert hierarchical xml files to csv. This only makes sense if the hierarchy has low depth.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2013-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -36,8 +36,6 @@ except ImportError:
     haveLxml = False
 
 import xsd
-
-PY3 = sys.version_info > (3,)
 
 
 class NestingHandler(xml.sax.handler.ContentHandler):
@@ -122,7 +120,7 @@ class AttrFinder(NestingHandler):
             if not self.addElement(root, name, self.depth()):
                 return
             # collect attributes
-            for a in sorted(list(attrs.keys())):
+            for a in attrs.keys():
                 if a not in self.tagAttrs[name] and ":" not in a:
                     self.tagAttrs[name][a] = xsd.XmlAttribute(a)
                     if not (name, a) in self.renamedAttrs:
@@ -141,7 +139,7 @@ class CSVWriter(NestingHandler):
         self.haveUnsavedValues = False
         self.outfiles = {}
         self.rootDepth = 1 if options.split else 0
-        for root in sorted(attrFinder.depthTags):
+        for root in attrFinder.depthTags:
             if len(attrFinder.depthTags) == 1:
                 if not options.output:
                     options.output = os.path.splitext(options.source)[0]
@@ -155,12 +153,8 @@ class CSVWriter(NestingHandler):
                     outfilename = os.path.splitext(
                         options.source)[0] + "%s.csv" % root
                 self.outfiles[root] = open(outfilename, 'w')
-            if (PY3):
-                self.outfiles[root].write(str.encode(
-                    options.separator.join(map(self.quote, attrFinder.attrs[root])) + "\n"))
-            else:
-                self.outfiles[root].write(
-                    options.separator.join(map(self.quote, attrFinder.attrs[root])) + "\n")
+            self.outfiles[root].write(
+                options.separator.join(map(self.quote, attrFinder.attrs[root])) + "\n")
 
     def quote(self, s):
         return "%s%s%s" % (self.options.quotechar, s, self.options.quotechar)
@@ -198,12 +192,8 @@ class CSVWriter(NestingHandler):
 #            print("end", name, root, self.depth(), self.attrFinder.depthTags[root][self.depth()], self.haveUnsavedValues)
             if name in self.attrFinder.depthTags[root][self.depth()]:
                 if self.haveUnsavedValues:
-                    if(PY3):
-                        self.outfiles[root].write(str.encode(self.options.separator.join(
-                            [self.quote(self.currentValues[a]) for a in self.attrFinder.attrs[root]]) + "\n"))
-                    else:
-                        self.outfiles[root].write(self.options.separator.join(
-                            [self.quote(self.currentValues[a]) for a in self.attrFinder.attrs[root]]) + "\n")
+                    self.outfiles[root].write(self.options.separator.join(
+                        [self.quote(self.currentValues[a]) for a in self.attrFinder.attrs[root]]) + "\n")
                     self.haveUnsavedValues = False
                 for a in self.attrFinder.tagAttrs[name]:
                     a2 = self.attrFinder.renamedAttrs.get((name, a), a)

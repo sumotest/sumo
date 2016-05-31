@@ -10,7 +10,7 @@
 Browser GUI for OSMget, OSMbuild, optionally randomTrips and SUMO GUI
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -91,9 +91,7 @@ BATCH_MODE |= stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
 
 
 def quoted_str(s):
-    if type(s) == float:
-        return "%.6f" % s
-    elif type(s) != str:
+    if type(s) != str:
         return str(s)
     elif '"' in s:
         if os.name == "nt":
@@ -209,7 +207,7 @@ class Builder(object):
                 SUMO_HOME, "tools", "randomTrips.py")
             batchFile = "build.bat"
             with open(batchFile, 'w') as f:
-                for opts in sorted(randomTripsCalls):
+                for opts in randomTripsCalls:
                     f.write("python %s %s\n" %
                             (randomTripsPath, " ".join(map(quoted_str, opts))))
 
@@ -246,7 +244,6 @@ class Builder(object):
 
         self.filename("config", ".sumocfg")
         opts = [sumo, "-n", self.files["net"], "--gui-settings-file", self.files["guisettings"],
-                "--duration-log.statistics",
                 "-v", "--no-step-log", "--save-configuration", self.files["config"], "--ignore-route-errors"]
 
         if self.data["vehicles"]:
@@ -347,7 +344,6 @@ class OSMImporterWebSocket(WebSocket):
 
                 self.sendMessage(unicode("zip " + data))
         except:
-            print(traceback.format_exc())
             # reset 'Generate Scenario' button
             while self.steps > 0:
                 self.report("Recovering")
@@ -383,8 +379,8 @@ if __name__ == "__main__":
             [sumolib.checkBinary("sumo"), "-c", builder.files["config"]])
     else:
         if not args.remote:
-            webbrowser.open("file://" +
-                            os.path.join(os.path.dirname(os.path.abspath(__file__)), "webWizard", "index.html"))
+		webbrowser.open("file://"+
+				os.path.join(os.path.dirname(os.path.abspath(__file__)), "webWizard", "index.html"))
 
         server = SimpleWebSocketServer(
             args.address, args.port, OSMImporterWebSocket)

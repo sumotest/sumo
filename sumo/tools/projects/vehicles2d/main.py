@@ -9,7 +9,7 @@
 Main module.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -21,9 +21,9 @@ the Free Software Foundation; either version 3 of the License, or
 import sys
 import inspect
 try:
-    from PIL import Image
-    from PIL import ImageDraw
-    from PIL import ImageColor
+    import Image
+    import ImageDraw
+    import ImageColor
     haveImaging = True
 except ImportError:
     print >> sys.stderr, "No imaging"
@@ -1089,7 +1089,7 @@ class Vessel():
                                                              xx_stroke, yy_stroke),
                                                          omega=omega,
                                                          scale_fraction=10)
-                    print("here")
+                    print ("here")
                     print 'xx, yy', xx, yy
                     print 'xx_stroke, yy_stroke', xx_stroke, yy_stroke
                     print trajectory
@@ -1621,13 +1621,13 @@ class AdAStar():
         #        print
         #        print self.iteration_step, 'open closed'
 
-        print(self.vessel,
-              self.current_node_copy.x_coord,
-              self.current_node_copy.y_coord,
-              self.current_node_copy.sector_id,
-              self.vessel.r,
-              self.vessel.r * math.pi
-              )
+        print (self.vessel,
+               self.current_node_copy.x_coord,
+               self.current_node_copy.y_coord,
+               self.current_node_copy.sector_id,
+               self.vessel.r,
+               self.vessel.r * math.pi
+               )
 
         # draw nodes in open and closed list
         self.draw_open_closed(step)

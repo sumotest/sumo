@@ -10,7 +10,7 @@
 This file contains a Python-representation of a single roundabout.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -22,12 +22,8 @@ the Free Software Foundation; either version 3 of the License, or
 
 class Roundabout:
 
-    def __init__(self, nodes, edges=None):
+    def __init__(self, nodes):
         self._nodes = nodes
-        self._edges = edges
 
     def getNodes(self):
         return self._nodes
-
-    def getEdges(self):
-        return self._edges

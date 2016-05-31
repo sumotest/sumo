@@ -11,7 +11,7 @@ Reads two networks (source, dest) and tries to produce the minimal plain-xml inp
 which can be loaded with netconvert alongside source to create dest
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2011-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2011-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -24,11 +24,7 @@ from __future__ import print_function
 
 import sys
 import os
-import codecs
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+import StringIO
 from xml.dom import pulldom
 from xml.dom import Node
 from optparse import OptionParser
@@ -66,15 +62,11 @@ PLAIN_TYPES = [
 
 TAG_TLL = 'tlLogic'
 TAG_CONNECTION = 'connection'
-TAG_CROSSING = 'crossing'
-TAG_ROUNDABOUT = 'roundabout'
 
 # see CAVEAT1
 IDATTRS = defaultdict(lambda: ('id',))
 IDATTRS[TAG_TLL] = ('id', 'programID')
 IDATTRS[TAG_CONNECTION] = ('from', 'to', 'fromLane', 'toLane')
-IDATTRS[TAG_CROSSING] = ('node', 'edges')
-IDATTRS[TAG_ROUNDABOUT] = ('edges',)
 IDATTRS['interval'] = ('begin', 'end')
 
 DELETE_ELEMENT = 'delete'  # the xml element for signifying deletes
@@ -115,9 +107,9 @@ class AttributeStore:
         self.id_attrs = {}
         # dict from tag to (names, values)-sets, need to preserve order
         # (CAVEAT5)
-        self.idless_deleted = defaultdict(OrderedMultiSet)
-        self.idless_created = defaultdict(OrderedMultiSet)
-        self.idless_copied = defaultdict(OrderedMultiSet)
+        self.idless_deleted = defaultdict(lambda: OrderedMultiSet())
+        self.idless_created = defaultdict(lambda: OrderedMultiSet())
+        self.idless_copied = defaultdict(lambda: OrderedMultiSet())
 
     # getAttribute returns "" if not present
     def getValue(self, node, name):
@@ -153,7 +145,6 @@ class AttributeStore:
         tagid = (tag, id)
         if id != ():
             self.ids_deleted.add(tagid)
-            self.ids_copied.add(tagid)
             self.id_attrs[tagid] = attrs
             if children:
                 for child in xmlnode.childNodes:
@@ -181,12 +172,11 @@ class AttributeStore:
                     if child.nodeType == Node.ELEMENT_NODE:
                         children.compare(child)
                 if tag == TAG_TLL or tag in self.copy_tags:  # see CAVEAT2
-                    child_strings = StringIO()
+                    child_strings = StringIO.StringIO()
                     children.writeDeleted(child_strings)
                     children.writeCreated(child_strings)
                     children.writeChanged(child_strings)
-
-                    if len(child_strings.getvalue()) > 0 or tag in self.copy_tags:
+                    if child_strings.len > 0 or tag in self.copy_tags:
                         # there are some changes. Go back and store everything
                         children = AttributeStore(
                             self.type, self.copy_tags, self.level + 1)
@@ -239,53 +229,40 @@ class AttributeStore:
         # data loss if two elements with different tags
         # have the same id
         for tag, id in self.ids_deleted:
-            comment_start, comment_end = ("", "")
             additional = ""
-            delete_element = DELETE_ELEMENT
-
             if self.type == TYPE_TLLOGICS and tag == TAG_CONNECTION:
                 # see CAVEAT4
                 names, values, children = self.id_attrs[(tag, id)]
                 additional = " " + self.attr_string(names, values)
 
+            comment_start, comment_end = ("", "")
             if tag == TAG_TLL:  # see CAVEAT3
                 comment_start, comment_end = (
                     "<!-- implicit via changed node type: ", " -->")
-
-            if tag == TAG_CROSSING:
-                delete_element = tag
-                additional = ' discard="true"'
-
-            if tag == TAG_ROUNDABOUT:
-                delete_element = tag
-                additional = ' discard="true"'
-                comment_start, comment_end = (
-                    "<!-- deletion of roundabouts not yet supported. see #2225 ", " -->")
-
             self.write(file, '%s<%s %s%s/>%s\n' % (
                 comment_start,
-                delete_element, self.id_string(tag, id), additional,
+                DELETE_ELEMENT, self.id_string(tag, id), additional,
                 comment_end))
         # data loss if two elements with different tags
         # have the same list of attributes and values
-        for value_set in self.idless_deleted.values():
+        for value_set in self.idless_deleted.itervalues():
             self.write_idless(file, value_set, DELETE_ELEMENT)
 
     def writeCreated(self, file):
         self.write_tagids(file, self.ids_created, True)
-        for tag, value_set in self.idless_created.items():
+        for tag, value_set in self.idless_created.iteritems():
             self.write_idless(file, value_set, tag)
 
     def writeChanged(self, file):
-        tagids_changed = self.ids_copied - \
-            (self.ids_deleted | self.ids_created)
+        tagids_changed = OrderedMultiSet(
+            self.id_attrs.keys()) - (self.ids_deleted | self.ids_created)
         self.write_tagids(file, tagids_changed, False)
 
     def writeCopies(self, file, copy_tags):
-        tagids_unchanged = self.ids_copied - \
-            (self.ids_deleted | self.ids_created)
+        tagids_unchanged = OrderedMultiSet(
+            self.id_attrs.keys()) - (self.ids_deleted | self.ids_created)
         self.write_tagids(file, tagids_unchanged, False)
-        for tag, value_set in self.idless_copied.items():
+        for tag, value_set in self.idless_copied.iteritems():
             self.write_idless(file, value_set, tag)
 
     def write_idless(self, file, attr_set, tag):
@@ -298,22 +275,22 @@ class AttributeStore:
             tag, id = tagid
             names, values, children = self.id_attrs[tagid]
             attrs = self.attr_string(names, values)
-            child_strings = StringIO()
+            child_strings = StringIO.StringIO()
             if children:
                 # writeDeleted is not supported
                 children.writeCreated(child_strings)
                 children.writeChanged(child_strings)
 
-            if len(attrs) > 0 or len(child_strings.getvalue()) > 0 or create or tag in self.copy_tags:
+            if len(attrs) > 0 or child_strings.len > 0 or create or tag in self.copy_tags:
                 close_tag = "/>\n"
-                if len(child_strings.getvalue()) > 0:
+                if child_strings.len > 0:
                     close_tag = ">\n%s" % child_strings.getvalue()
                 self.write(file, '<%s %s %s%s' % (
                     tag,
                     self.id_string(tag, id),
                     attrs,
                     close_tag))
-                if len(child_strings.getvalue()) > 0:
+                if child_strings.len > 0:
                     self.write(file, "</%s>\n" % tag)
 
     def write(self, file, item):
@@ -321,11 +298,11 @@ class AttributeStore:
         file.write(item)
 
     def attr_string(self, names, values):
-        return ' '.join(['%s="%s"' % (n, v) for n, v in sorted(zip(names, values)) if v != None])
+        return ' '.join(['%s="%s"' % (n, v) for n, v in zip(names, values) if v != None])
 
     def id_string(self, tag, id):
         idattrs = IDATTRS[tag]
-        return ' '.join(['%s="%s"' % (n, v) for n, v in sorted(zip(idattrs, id))])
+        return ' '.join(['%s="%s"' % (n, v) for n, v in zip(idattrs, id)])
 
 
 def parse_args():
@@ -374,14 +351,11 @@ def xmldiff(source, dest, diff, type, copy_tags):
         print("Skipping %s due to lack of input files" % diff)
     else:
         if not have_source:
-            print(
-                "Source file %s is missing. Assuming all elements are created" % source)
+            print("Source file %s is missing. Assuming all elements are created" % source)
         elif not have_dest:
-            print(
-                "Dest file %s is missing. Assuming all elements are deleted" % dest)
+            print("Dest file %s is missing. Assuming all elements are deleted" % dest)
 
-        with codecs.open(diff, 'w', 'utf-8') as diff_file:
-            diff_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        with open(diff, 'w') as diff_file:
             diff_file.write(root_open)
             if copy_tags:
                 attributeStore.write(diff_file, "<!-- Copied Elements -->\n")

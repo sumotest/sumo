@@ -9,7 +9,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -24,7 +24,6 @@ import os
 import subprocess
 import sys
 import random
-sys.path.append(os.path.join(os.environ['SUMO_HOME'], "tools"))
 sys.path.append(os.path.join(
     os.path.dirname(sys.argv[0]), "..", "..", "..", "..", "..", "tools"))
 import traci
@@ -57,13 +56,4 @@ for step in range(3, 6):
     print("step", step)
     traci.simulationStep()
     print(traci.inductionloop.getSubscriptionResults(loopID))
-
-for i in range(24):
-    print("step=%s detVehs=%s vehData=%s" % (
-        traci.simulation.getCurrentTime() / 1000.0,
-        traci.inductionloop.getLastStepVehicleIDs(loopID),
-        traci.inductionloop.getVehicleData(loopID),
-    ))
-    traci.simulationStep()
-
 traci.close()

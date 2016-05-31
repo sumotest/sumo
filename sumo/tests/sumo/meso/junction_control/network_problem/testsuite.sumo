@@ -6,6 +6,3 @@ control
 
 # smooth flow
 control.limited
-
-# smooth flow with penalty
-control.limited_tlsPenalty

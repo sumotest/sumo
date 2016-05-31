@@ -15,7 +15,7 @@ The output data can be visualized with the script My_mpl_dump_onNet based on mpl
 Secondly the average of added Edges per route will be calculate (avg=True). 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -130,24 +130,20 @@ def clacAvg():
             orgList200.append(noList[1])
         # In Prozent
         # Kanten die nur in Sumo sind mit "/" bei berechnung entfernen
-    # Zeige Routen bei denen etwas hinzugfuegt wurde
+    # Zeige Routen bei denen etwas hinzugfügt wurde
 
     print("len Routen gesamt", len(diffList))
-    print("avg (Absolut) Kanten hinzugefuegt",
-          sum(diffList) / (len(diffList) + 0.0))
-    print("Relavg", sum(diffList) / (len(diffList) + 0.0) /
-          (sum(orgList) / (len(orgList) + 0.0)) * 100, "%")
+    print("avg (Absolut) Kanten hinzugefügt", sum(diffList) / (len(diffList) + 0.0))
+    print("Relavg", sum(diffList) / (len(diffList) + 0.0) / (sum(orgList) / (len(orgList) + 0.0)) * 100, "%")
     print("avgOrg", sum(orgList) / (len(orgList) + 0.0), " edges")
     print("avgCompleted", sum(compList) / (len(compList) + 0.0), " edges")
 
     print()
-    print(
-        "Betrachtung der hinzugefuegten Kanten nur fuer die Taxis bei denen tatsaechlich auch Kanten hinzugefuegt wurden")
+    print("Betrachtung der hinzugefügten Kanten nur für die Taxis bei denen Tatsächlich auch Kanten hinzugefügt wurden")
     print("ids (Taxis/Routen)", len(ids))
     print("% der Gesamtrouten", 100.0 * len(ids) / len(diffList))
     print("avg 200 (ids)", sum(diffList200) / (len(diffList200) + 0.0))
-    print("Relavg 200", sum(diffList200) / (len(diffList200) + 0.0) /
-          (sum(orgList200) / (len(orgList200) + 0.0)) * 100, "%")
+    print("Relavg 200", sum(diffList200) / (len(diffList200) + 0.0) / (sum(orgList200) / (len(orgList200) + 0.0)) * 100, "%")
 
 
 def writeOutput():

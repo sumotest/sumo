@@ -9,7 +9,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -62,13 +62,11 @@ print("vehIds", traci.edge.getLastStepVehicleIDs(edgeID))
 print("personIds", traci.edge.getLastStepPersonIDs(edgeID))
 print("waiting time", traci.edge.getWaitingTime(edgeID))
 # testing unicode
-print("checking occupancy with unicode id",
-      traci.edge.getLastStepOccupancy(str(edgeID)))
+print("checking occupancy with unicode id", traci.edge.getLastStepOccupancy(str(edgeID)))
 
 traci.edge.adaptTraveltime(edgeID, 42.)
 print("traveltime after adaption", traci.edge.getTraveltime(edgeID))
-print("adaptedTraveltime after adaption",
-      traci.edge.getAdaptedTraveltime(edgeID, 0))
+print("adaptedTraveltime after adaption", traci.edge.getAdaptedTraveltime(edgeID, 0))
 traci.edge.setEffort(edgeID, 1234.)
 print("effort after adaption", traci.edge.getEffort(edgeID, 0))
 traci.edge.setMaxSpeed(edgeID, 23.)
@@ -80,11 +78,4 @@ for step in range(3, 6):
     print("step", step)
     traci.simulationStep()
     print(traci.edge.getSubscriptionResults(edgeID))
-for step in range(10):
-    traci.simulationStep()
-    print("3si count=%s meanSpeed=%s travelTime=%s" % (
-        traci.edge.getLastStepVehicleNumber("3si"),
-        traci.edge.getLastStepMeanSpeed("3si"),
-        traci.edge.getTraveltime("3si")))
-
 traci.close()

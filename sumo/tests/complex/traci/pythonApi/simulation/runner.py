@@ -10,7 +10,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -75,17 +75,12 @@ print("convert2DGeo", traci.simulation.convertGeo(488.65, 501.65))
 print("convertGeo2D", traci.simulation.convertGeo(12, 48, True))
 print("convert2DRoad", traci.simulation.convertRoad(488.65, 501.65))
 print("convertGeoRoad", traci.simulation.convertRoad(12, 48.1, True))
-print("distance2D", traci.simulation.getDistance2D(
-    488.65, 501.65, 498.65, 501.65))
-print("drivingDistance2D", traci.simulation.getDistance2D(
-    488.65, 501.65, 498.65, 501.65, isDriving=True))
+print("distance2D", traci.simulation.getDistance2D(488.65, 501.65, 498.65, 501.65))
+print("drivingDistance2D", traci.simulation.getDistance2D(488.65, 501.65, 498.65, 501.65, isDriving=True))
 print("distanceRoad", traci.simulation.getDistanceRoad("o", 0., "2o", 0.))
-print("drivingDistanceRoad", traci.simulation.getDistanceRoad(
-    "o", 0., "2o", 0., isDriving=True))
+print("drivingDistanceRoad", traci.simulation.getDistanceRoad("o", 0., "2o", 0., isDriving=True))
 print("clearing pending")
 traci.simulation.clearPending()
-print("save simstate")
-traci.simulation.saveState("state.xml")
 for step in range(6):
     print("step", step)
     traci.simulationStep()

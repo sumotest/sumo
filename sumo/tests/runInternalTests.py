@@ -7,7 +7,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -36,42 +36,39 @@ def runInternal(suffix, args, out=sys.stdout, guiTests=False, console=False):
     root = os.path.abspath(os.path.dirname(__file__))
     env["TEXTTEST_HOME"] = root
     env["ACTIVITYGEN_BINARY"] = os.path.join(
-        root, "..", "bin", "activitygen" + suffix)
+        root, "..", "bin", "activitygenInt" + suffix)
     env["DFROUTER_BINARY"] = os.path.join(
-        root, "..", "bin", "dfrouter" + suffix)
+        root, "..", "bin", "dfrouterInt" + suffix)
     env["DUAROUTER_BINARY"] = os.path.join(
-        root, "..", "bin", "duarouter" + suffix)
+        root, "..", "bin", "duarouterInt" + suffix)
     env["JTRROUTER_BINARY"] = os.path.join(
-        root, "..", "bin", "jtrrouter" + suffix)
+        root, "..", "bin", "jtrrouterInt" + suffix)
     env["NETCONVERT_BINARY"] = os.path.join(
-        root, "..", "bin", "netconvert" + suffix)
+        root, "..", "bin", "netconvertInt" + suffix)
     env["NETGENERATE_BINARY"] = os.path.join(
-        root, "..", "bin", "netgenerate" + suffix)
+        root, "..", "bin", "netgenerateInt" + suffix)
     env["OD2TRIPS_BINARY"] = os.path.join(
-        root, "..", "bin", "od2trips" + suffix)
-    env["SUMO_BINARY"] = os.path.join(root, "..", "bin", "sumo" + suffix)
+        root, "..", "bin", "od2tripsInt" + suffix)
+    env["SUMO_BINARY"] = os.path.join(root, "..", "bin", "meso" + suffix)
     env["POLYCONVERT_BINARY"] = os.path.join(
-        root, "..", "bin", "polyconvert" + suffix)
-    env["GUISIM_BINARY"] = os.path.join(root, "..", "bin", "sumo-gui" + suffix)
+        root, "..", "bin", "polyconvertInt" + suffix)
+    env["GUISIM_BINARY"] = os.path.join(root, "..", "bin", "meso-gui" + suffix)
     env["MAROUTER_BINARY"] = os.path.join(
         root, "..", "bin", "marouter" + suffix)
-    apps = "sumo.meso,complex.meso,duarouter.astar,duarouter.chrouter"
+    apps = "sumo.internal,sumo.meso,complex.meso,duarouter.astar,duarouter.chrouter"
     ttBin = 'texttest.py'
     if os.name == "posix":
         if subprocess.call(['which', 'texttest']) == 0:
             ttBin = 'texttest'
+        if subprocess.call(['which', 'python3']) == 0:
+            apps += ',complex.python3,tools.python3'
     elif haveTextTestLib:
         if console:
             ttBin = 'texttestc.py'
         else:
             ttBin += "w"
-    try:
-        subprocess.call(['python3', '-V'])
-        apps += ',complex.python3,tools.python3'
-    except:
-        pass
     if guiTests:
-        apps += ",sumo.meso.gui"
+        apps = "sumo.gui"
     subprocess.call("%s %s -a %s" % (ttBin, args, apps), env=os.environ,
                     stdout=out, stderr=out, shell=True)
 

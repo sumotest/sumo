@@ -14,6 +14,7 @@ copy_test_path:input_districts.taz.xml
 copy_test_path:busnet.net.xml
 copy_test_path:sumo.sumocfg
 copy_test_path:settings.xml
+copy_test_path:dlr.*
 copy_test_path:input_state.xml
 copy_test_path:input_meso_state.xml
 
@@ -150,8 +151,6 @@ gcc4:perf
 gcc4_64:perf
 msvc10Win32:perf
 msvc10x64:perf
-msvc12Win32:perf
-msvc12x64:perf
 
 [unordered_text]
 vehroutes_ignore_arrival:arrival

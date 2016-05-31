@@ -22,7 +22,7 @@ time;<PHASE_LENGTH>[;<PHASE_LENGTH>]+
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -208,8 +208,7 @@ for keyIndex, key in enumerate(allKeys):
                 l, linkMap[l]), file=sys.stderr)
             sys.exit()
 
-    print('    <tlLogic id="' + key + '" type="static" programID="' +
-          subkey + '" offset="' + offset + '">')
+    print('    <tlLogic id="' + key + '" type="static" programID="' + subkey + '" offset="' + offset + '">')
     for p in params:
         print('        <param key="' + p[0] + '" value="' + p[1] + '"/>')
 

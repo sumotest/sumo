@@ -10,7 +10,7 @@
 Python interface to SUMO especially for parsing xml input and output files.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2011-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2011-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -22,7 +22,6 @@ from __future__ import absolute_import
 import os
 import sys
 import subprocess
-import datetime
 from xml.sax import parseString, handler
 from optparse import OptionParser, OptionGroup, Option
 
@@ -220,12 +219,3 @@ def _intTime(tStr):
 
 def _laneID2edgeID(laneID):
     return laneID[:laneID.rfind("_")]
-
-
-def writeXMLHeader(outf, script):
-    outf.write("""<?xml version="1.0"?>
-<!-- generated on %s by %s
-  options: %s
--->
-""" % (datetime.datetime.now(), script,
-       (' '.join(sys.argv[1:]).replace('--', '<doubleminus>'))))

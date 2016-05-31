@@ -11,7 +11,7 @@ Currently verified:
 - phase length matches controlled link number
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -43,5 +43,4 @@ for tlsID in net1._id2tls:
         prog = tls._programs[prog]
         for i, phase in enumerate(prog._phases):
             if len(phase[0]) != noConnections:
-                print("      Error: phase %s describes %s signals instead of %s." % (
-                    i, len(phase[0]), noConnections))
+                print("      Error: phase %s describes %s signals instead of %s." % (i, len(phase[0]), noConnections))

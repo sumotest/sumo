@@ -8,7 +8,7 @@
 This script tries to match a list of positions to a route in a sumo network.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -44,11 +44,11 @@ if __name__ == "__main__":
         optParser.exit("missing input or output")
 
     if options.verbose:
-        print("Reading net ...")
+        print ("Reading net ...")
     net = sumolib.net.readNet(options.net)
 
     if options.verbose:
-        print("Reading traces ...")
+        print ("Reading traces ...")
 
     f = open(options.output, "w")
     with open(options.trace) as traces:

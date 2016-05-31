@@ -10,7 +10,6 @@
    <vType id="8" emissionClass="P_7_1"/>
    <vType id="9" guiShape="passenger/hatchback"/>
    <vType id="10" width="100"/>
-   <vType id="lateralStuff" latAlignment="compact" minGapLat="0.5" maxSpeedLat="2.0"/>
 
 	<trip type="0" depart="0" from="beg" to="rend"/>
 	<trip type="1" depart="0" from="beg" to="rend"/>
@@ -23,7 +22,6 @@
 	<trip type="8" depart="0" from="beg" to="rend"/>
 	<trip type="9" depart="0" from="beg" to="rend"/>
 	<trip type="10" depart="0" from="beg" to="rend"/>
-	<trip type="lateralStuff" depart="0" from="beg" to="rend"/>
 
 
 </trips>

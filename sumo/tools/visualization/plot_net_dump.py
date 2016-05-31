@@ -7,7 +7,7 @@
 @version $Id$
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -117,8 +117,6 @@ def main(args=None):
         times = hw._edge2value
 
     for t in times:
-        if options.verbose:
-            print("Processing timestep %s" % t)
         colors = {}
         maxColorValue = None
         minColorValue = None
@@ -144,8 +142,7 @@ def main(args=None):
         for e in colors:
             colors[e] = helpers.getColor(options, colors[e], 1.)
         if options.verbose:
-            print("Color values are between %s and %s" %
-                  (minColorValue, maxColorValue))
+            print("Color values are between %s and %s" % (minColorValue, maxColorValue))
 
         widths = {}
         maxWidthValue = None
@@ -174,8 +171,7 @@ def main(args=None):
             widths[e] = options.minWidth + widths[e] * \
                 (options.maxWidth - options.minWidth)
         if options.verbose:
-            print("Width values are between %s and %s" %
-                  (minWidthValue, maxWidthValue))
+            print("Width values are between %s and %s" % (minWidthValue, maxWidthValue))
 
         fig, ax = helpers.openFigure(options)
         ax.set_aspect("equal", None, 'C')

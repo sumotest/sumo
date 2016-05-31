@@ -12,7 +12,7 @@ This file contains a content handler for parsing sumo network xml files.
 It uses other classes from this module to represent the road network.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@ from __future__ import absolute_import
 import os
 import sys
 import math
-import re
 from xml.sax import saxutils, parse, handler
 from copy import copy
 from itertools import *
@@ -131,7 +130,6 @@ class Net:
         self._rtree = None
         self._allLanes = []
         self._origIdx = None
-        self.hasWarnedAboutMissingRTree = False
 
     def setLocation(self, netOffset, convBoundary, origBoundary, projParameter):
         self._location["netOffset"] = netOffset
@@ -139,18 +137,17 @@ class Net:
         self._location["origBoundary"] = origBoundary
         self._location["projParameter"] = projParameter
 
-    def addNode(self, id, type=None, coord=None, incLanes=None, intLanes=None):
+    def addNode(self, id, type=None, coord=None, incLanes=None):
         if id is None:
             return None
         if id not in self._id2node:
-            n = node.Node(id, type, coord, incLanes, intLanes)
+            n = node.Node(id, type, coord, incLanes)
             self._nodes.append(n)
             self._id2node[id] = n
-        self.setAdditionalNodeInfo(
-            self._id2node[id], type, coord, incLanes, intLanes)
+        self.setAdditionalNodeInfo(self._id2node[id], type, coord, incLanes)
         return self._id2node[id]
 
-    def setAdditionalNodeInfo(self, node, type, coord, incLanes, intLanes=None):
+    def setAdditionalNodeInfo(self, node, type, coord, incLanes):
         if coord != None and node._coord == None:
             node._coord = coord
             self._ranges[0][0] = min(self._ranges[0][0], coord[0])
@@ -159,8 +156,6 @@ class Net:
             self._ranges[1][1] = max(self._ranges[1][1], coord[1])
         if incLanes != None and node._incLanes == None:
             node._incLanes = incLanes
-        if intLanes != None and node._intLanes == None:
-            node._intLanes = intLanes
         if type != None and node._type == None:
             node._type = type
 
@@ -176,14 +171,14 @@ class Net:
     def addLane(self, edge, speed, length, allow=None, disallow=None):
         return lane.Lane(edge, speed, length, allow, disallow)
 
-    def addRoundabout(self, nodes, edges=None):
-        r = roundabout.Roundabout(nodes, edges)
+    def addRoundabout(self, nodes):
+        r = roundabout.Roundabout(nodes)
         self._roundabouts.append(r)
         return r
 
-    def addConnection(self, fromEdge, toEdge, fromlane, tolane, direction, tls, tllink, state, viaLaneID=None):
+    def addConnection(self, fromEdge, toEdge, fromlane, tolane, direction, tls, tllink, state):
         conn = connection.Connection(
-            fromEdge, toEdge, fromlane, tolane, direction, tls, tllink, state, viaLaneID)
+            fromEdge, toEdge, fromlane, tolane, direction, tls, tllink, state)
         fromEdge.addOutgoing(conn)
         fromlane.addOutgoing(conn)
         toEdge._addIncoming(conn)
@@ -199,18 +194,6 @@ class Net:
 
     def getEdge(self, id):
         return self._id2edge[id]
-
-    def getLane(self, laneID):
-        p = re.compile("^(:)?(-)?([^\W_]+)((#\d+)?(_\d+)?)(_\d+)?$")
-        g = p.match(laneID).groups("")
-        edge_id = g[0] + g[1] + g[2] + g[3]
-        lane_index = g[6][1:]
-
-        for e in self._edges:
-            if e.getID() == edge_id:
-                return e.getLane(int(lane_index))
-
-        return None
 
     def _initRTree(self, shapeList, includeJunctions=True):
         import rtree
@@ -231,11 +214,6 @@ class Net:
                 if d < r:
                     edges.append((e, d))
         except ImportError:
-            if not self.hasWarnedAboutMissingRTree:
-                print(
-                    "Warning: Module 'rtree' not available. Using brute-force fallback")
-                self.hasWarnedAboutMissingRTree = True
-
             for edge in self._edges:
                 d = sumolib.geomhelper.distancePointToPolygon(
                     (x, y), edge.getShape(includeJunctions))
@@ -438,11 +416,8 @@ class NetReader(handler.ContentHandler):
                 self._currentShape = ""
         if name == 'junction':
             if attrs['id'][0] != ':':
-                intLanes = None
-                if self._withInternal:
-                    intLanes = attrs["intLanes"].split(" ")
                 self._currentNode = self._net.addNode(attrs['id'], attrs['type'], (float(
-                    attrs['x']), float(attrs['y'])), attrs['incLanes'].split(" "), intLanes)
+                    attrs['x']), float(attrs['y'])), attrs['incLanes'].split(" "))
         if name == 'succ' and self._withConnections:  # deprecated
             if attrs['edge'][0] != ':':
                 self._currentEdge = self._net.getEdge(attrs['edge'])
@@ -470,11 +445,10 @@ class NetReader(handler.ContentHandler):
                     tllink = -1
                 toEdge = self._net.getEdge(lid[:lid.rfind('_')])
                 tolane = toEdge._lanes[tolane]
-                viaLaneID = attrs['via']
                 self._net.addConnection(self._currentEdge, connected, self._currentEdge._lanes[
                                         self._currentLane], tolane,
-                                        attrs['dir'], tl, tllink, attrs['state'], viaLaneID)
-        if name == 'connection' and self._withConnections and (attrs['from'][0] != ":" or self._withInternal):
+                                        attrs['dir'], tl, tllink, attrs['state'])
+        if name == 'connection' and self._withConnections and attrs['from'][0] != ":":
             fromEdgeID = attrs['from']
             toEdgeID = attrs['to']
             if not (fromEdgeID in self._net._crossings_and_walkingAreas or toEdgeID in
@@ -491,15 +465,9 @@ class NetReader(handler.ContentHandler):
                 else:
                     tl = ""
                     tllink = -1
-                try:
-                    viaLaneID = attrs['via']
-                except KeyError:
-                    viaLaneID = ''
-
                 self._net.addConnection(
                     fromEdge, toEdge, fromLane, toLane, attrs['dir'], tl,
-                    tllink, attrs['state'], viaLaneID)
-
+                    tllink, attrs['state'])
         # 'row-logic' is deprecated!!!
         if self._withFoes and name == 'ROWLogic':
             self._currentNode = attrs['id']
@@ -509,17 +477,14 @@ class NetReader(handler.ContentHandler):
         if name == 'request' and self._withFoes:
             self._currentNode.setFoes(
                 int(attrs['index']), attrs["foes"], attrs["response"])
-        # tl-logic is deprecated!!! NOTE: nevertheless, this is still used by
-        # netconvert... (Leo)
-        if self._withPhases and name == 'tlLogic':
+        if self._withPhases and name == 'tlLogic':  # tl-logic is deprecated!!!
             self._currentProgram = self._net.addTLSProgram(
                 attrs['id'], attrs['programID'], int(attrs['offset']), attrs['type'])
         if self._withPhases and name == 'phase':
             self._currentProgram.addPhase(
                 attrs['state'], int(attrs['duration']))
         if name == 'roundabout':
-            self._net.addRoundabout(
-                attrs['nodes'].split(), attrs['edges'].split())
+            self._net.addRoundabout(attrs['nodes'].split())
         if name == 'param':
             if self._currentLane != None:
                 self._currentLane.setParam(attrs['key'], attrs['value'])

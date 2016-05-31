@@ -1,19 +1,3 @@
-"""
-@file    __init__.py
-@author  Daniel Krajzewicz
-@date    2014-07-01
-@version $Id$
-
-SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2012-2016 DLR (http://www.dlr.de/) and contributors
-
-This file is part of SUMO.
-SUMO is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-"""
-
 from __future__ import absolute_import
 from __future__ import print_function
 import sumolib.net.generator.cross as netGenerator
@@ -271,21 +255,17 @@ class Scenario:
         else:
             i = minIdx
             print("!")
-            print("  %s %s %s %s" %
-                  (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
+            print("  %s %s %s %s" % (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
             while i > 0 and rel[i] < REL_THRESHOLD and program[i] == 0 and streamsNS[i] + streamsWE[i] > MORNING_MIN:
                 program[i] = MORNING
                 i = i - 1
-                print("  %s %s %s %s" %
-                      (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
+                print("  %s %s %s %s" % (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
             i = minIdx + 1
-            print("  %s %s %s %s" %
-                  (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
+            print("  %s %s %s %s" % (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
             while i < len(rel) and rel[i] < REL_THRESHOLD and program[i] == 0 and streamsNS[i] + streamsWE[i] > MORNING_MIN:
                 program[i] = MORNING
                 i = i + 1
-                print("  %s %s %s %s" %
-                      (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
+                print("  %s %s %s %s" % (i, rel[i], program[i], streamsNS[i] + streamsWE[i]))
 
         print(rel)
         print(program)
