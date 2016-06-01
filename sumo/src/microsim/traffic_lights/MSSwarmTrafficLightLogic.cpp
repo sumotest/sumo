@@ -11,9 +11,10 @@
 // Copyright 2001-2009 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
-//   This program is free software; you can redistribute it and/or modify
+//   This file is part of SUMO.
+//   SUMO is free software: you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
+//   the Free Software Foundation, either version 3 of the License, or
 //   (at your option) any later version.
 //
 /****************************************************************************/
@@ -228,7 +229,7 @@ int MSSwarmTrafficLightLogic::decideNextPhase() {
     if (getCurrentPolicy()->getName().compare("Congestion") == 0 && getCurrentPhaseDef().isCommit()) {
         congestion_steps += 1;	//STEPS2TIME(getCurrentPhaseDef().duration);
         DBG(
-    WRITE_MESSAGE("\n" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " MSSwarmTrafficLightLogic decideNextPhase()"); std: ostringstream dnp; dnp << (MSNet::getInstance()->getCurrentTimeStep()) << " MSSwarmTrafficLightLogic::decideNextPhase:: " << "tlsid=" << getID() << " congestion_steps=" << congestion_steps; WRITE_MESSAGE(dnp.str());)
+            WRITE_MESSAGE("\n" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + " MSSwarmTrafficLightLogic decideNextPhase()"); std: ostringstream dnp; dnp << (MSNet::getInstance()->getCurrentTimeStep()) << " MSSwarmTrafficLightLogic::decideNextPhase:: " << "tlsid=" << getID() << " congestion_steps=" << congestion_steps; WRITE_MESSAGE(dnp.str());)
         if (congestion_steps >= getMaxCongestionDuration()) {
             resetPheromone();
             congestion_steps = 0;
@@ -292,7 +293,7 @@ void MSSwarmTrafficLightLogic::updatePheromoneLevels() {
     //BETA_SP, GAMMA_SP
     //Updating output lanes pheromone: only input lanes currently having green light. Pheromone for non green lanes is "freezed"
 //    if (getCurrentPhaseDef().isDecisional()) {
-        updatePheromoneLevels(pheromoneOutputLanes, "PheroOut", getBetaSp(), getGammaSp());
+    updatePheromoneLevels(pheromoneOutputLanes, "PheroOut", getBetaSp(), getGammaSp());
 //    }
 }
 
@@ -323,9 +324,9 @@ void MSSwarmTrafficLightLogic::updatePheromoneLevels(MSLaneId_PheromoneMap& pher
                     //Calculate the current derivative mean with the old speed points
                     for (int i = 0; i < m_meanSpeedHistory[laneId]->size(); ++i)
                         if (i == 0) {
-                            currentDerivative += abs(meanVehiclesSpeed - m_meanSpeedHistory[laneId]->at(i));
+                            currentDerivative += fabs(meanVehiclesSpeed - m_meanSpeedHistory[laneId]->at(i));
                         } else {
-                            currentDerivative += abs(m_meanSpeedHistory[laneId]->at(i - 1) - m_meanSpeedHistory[laneId]->at(i));
+                            currentDerivative += fabs(m_meanSpeedHistory[laneId]->at(i - 1) - m_meanSpeedHistory[laneId]->at(i));
                         }
                     currentDerivative /= m_meanSpeedHistory[laneId]->size(); //Non weighted mean
                 }

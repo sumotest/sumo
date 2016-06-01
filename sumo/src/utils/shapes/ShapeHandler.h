@@ -8,7 +8,7 @@
 // The XML-Handler for network loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -31,8 +31,9 @@
 #include <config.h>
 #endif
 
-#include <utils/xml/SUMOSAXHandler.h>
+#include <utils/common/RGBColor.h>
 #include <utils/geom/Position.h>
+#include <utils/xml/SUMOSAXHandler.h>
 
 
 // ===========================================================================
@@ -96,17 +97,27 @@ protected:
     /// @brief get position for a given laneID
     virtual Position getLanePos(const std::string& poiID, const std::string& laneID, SUMOReal lanePos) = 0;
 
+protected:
+    void setDefaults(const std::string& prefix, const RGBColor& color, const SUMOReal layer, const bool fill = false);
 
-private:
+    /// adds a POI
+    void addPOI(const SUMOSAXAttributes& attrs, const bool ignorePruning, const bool useProcessing);
 
     /// adds a polygon
-    void addPOI(const SUMOSAXAttributes& attrs);
+    void addPoly(const SUMOSAXAttributes& attrs, const bool ignorePruning, const bool useProcessing);
 
-    /// adds a polygon
-    void addPoly(const SUMOSAXAttributes& attrs);
-
+protected:
     ShapeContainer& myShapeContainer;
 
+private:
+    /// @brief The prefix to use
+    std::string myPrefix;
+    /// @brief The default color to use
+    RGBColor myDefaultColor;
+    /// @brief The default layer to use
+    SUMOReal myDefaultLayer;
+    /// @brief Information whether polygons should be filled
+    bool myDefaultFill;
 
 private:
     /** invalid copy constructor */

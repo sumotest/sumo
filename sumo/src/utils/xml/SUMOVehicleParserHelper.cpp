@@ -11,7 +11,7 @@
 // Helper methods for parsing vehicle attributes
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -50,6 +50,7 @@
 // static members
 // ===========================================================================
 SUMOVehicleParserHelper::CFAttrMap SUMOVehicleParserHelper::allowedCFModelAttrs;
+SUMOVehicleParserHelper::LCAttrMap SUMOVehicleParserHelper::allowedLCModelAttrs;
 
 
 // ===========================================================================
@@ -133,14 +134,14 @@ SUMOVehicleParserHelper::parseFlowAttributes(const SUMOSAXAttributes& attrs, con
         delete ret;
         throw ProcessError("Negative begin time in the definition of flow '" + id + "'.");
     }
-    SUMOTime end = endDefault;
-    if (end < 0) {
-        end = SUMOTime_MAX;
+    ret->repetitionEnd = endDefault;
+    if (ret->repetitionEnd < 0) {
+        ret->repetitionEnd = SUMOTime_MAX;
     }
     if (attrs.hasAttribute(SUMO_ATTR_END)) {
-        end = attrs.getSUMOTimeReporting(SUMO_ATTR_END, id.c_str(), ok);
+        ret->repetitionEnd = attrs.getSUMOTimeReporting(SUMO_ATTR_END, id.c_str(), ok);
     }
-    if (ok && end <= ret->depart) {
+    if (ok && ret->repetitionEnd <= ret->depart) {
         delete ret;
         throw ProcessError("Flow '" + id + "' ends before or at its begin time.");
     }
@@ -155,23 +156,23 @@ SUMOVehicleParserHelper::parseFlowAttributes(const SUMOSAXAttributes& attrs, con
                 throw ProcessError("Negative repetition number in the definition of flow '" + id + "'.");
             }
             if (ok && ret->repetitionOffset < 0) {
-                ret->repetitionOffset = (end - ret->depart) / ret->repetitionNumber;
+                ret->repetitionOffset = (ret->repetitionEnd - ret->depart) / ret->repetitionNumber;
             }
         }
+        ret->repetitionEnd = ret->depart + ret->repetitionNumber * ret->repetitionOffset;
     } else {
         // interpret repetitionNumber
         if (ok && ret->repetitionProbability > 0) {
             ret->repetitionNumber = std::numeric_limits<int>::max();
-            ret->repetitionEnd = end;
         } else {
             if (ok && ret->repetitionOffset <= 0) {
                 delete ret;
                 throw ProcessError("Invalid repetition rate in the definition of flow '" + id + "'.");
             }
-            if (end == SUMOTime_MAX) {
+            if (ret->repetitionEnd == SUMOTime_MAX) {
                 ret->repetitionNumber = std::numeric_limits<int>::max();
             } else {
-                ret->repetitionNumber = MAX2(1, (int)(((SUMOReal)(end - ret->depart)) / ret->repetitionOffset + 0.5));
+                ret->repetitionNumber = MAX2(1, (int)(((SUMOReal)(ret->repetitionEnd - ret->depart)) / ret->repetitionOffset + 0.5));
             }
         }
     }
@@ -262,6 +263,14 @@ SUMOVehicleParserHelper::parseCommonAttributes(const SUMOSAXAttributes& attrs,
         ret->setParameter |= VEHPARS_DEPARTPOS_SET;
         const std::string helper = attrs.get<std::string>(SUMO_ATTR_DEPARTPOS, ret->id.c_str(), ok);
         if (!SUMOVehicleParameter::parseDepartPos(helper, element, ret->id, ret->departPos, ret->departPosProcedure, error)) {
+            throw ProcessError(error);
+        }
+    }
+    // parse lateral depart position information
+    if (attrs.hasAttribute(SUMO_ATTR_DEPARTPOS_LAT)) {
+        ret->setParameter |= VEHPARS_DEPARTPOSLAT_SET;
+        const std::string helper = attrs.get<std::string>(SUMO_ATTR_DEPARTPOS_LAT, ret->id.c_str(), ok);
+        if (!SUMOVehicleParameter::parseDepartPosLat(helper, element, ret->id, ret->departPosLat, ret->departPosLatProcedure, error)) {
             throw ProcessError(error);
         }
     }
@@ -432,7 +441,26 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
         vtype->loadingDuration = attrs.getSUMOTimeReporting(SUMO_ATTR_LOADING_DURATION, vtype->id.c_str(), ok);
         vtype->setParameter |= VTYPEPARS_LOADING_DURATION;
     }
+    if (attrs.hasAttribute(SUMO_ATTR_MAXSPEED_LAT)) {
+        vtype->maxSpeedLat = attrs.get<SUMOReal>(SUMO_ATTR_MAXSPEED_LAT, vtype->id.c_str(), ok);
+        vtype->setParameter |= VTYPEPARS_MAXSPEED_LAT_SET;
+    }
+    if (attrs.hasAttribute(SUMO_ATTR_MINGAP_LAT)) {
+        vtype->minGapLat = attrs.get<SUMOReal>(SUMO_ATTR_MINGAP_LAT, vtype->id.c_str(), ok);
+        vtype->setParameter |= VTYPEPARS_MINGAP_LAT_SET;
+    }
+    if (attrs.hasAttribute(SUMO_ATTR_LATALIGNMENT)) {
+        const std::string alignS = attrs.get<std::string>(SUMO_ATTR_LATALIGNMENT, vtype->id.c_str(), ok);
+        if (SUMOXMLDefinitions::LateralAlignments.hasString(alignS)) {
+            vtype->latAlignment = SUMOXMLDefinitions::LateralAlignments.get(alignS);
+            vtype->setParameter |= VTYPEPARS_LATALIGNMENT_SET;
+        } else {
+            WRITE_ERROR("Unknown lateral alignment '" + alignS + "' when parsing vtype '" + vtype->id + "'");
+            throw ProcessError();
+        }
+    }
     parseVTypeEmbedded(*vtype, vtype->cfModel, attrs, true);
+    parseLCParams(*vtype, vtype->lcModel, attrs);
     if (!ok) {
         delete vtype;
         throw ProcessError();
@@ -493,7 +521,6 @@ SUMOVehicleParserHelper::getAllowedCFModelAttrs() {
         allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS] = krausParams;
         allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS_ORIG1] = krausParams;
         allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS_PLUS_SLOPE] = krausParams;
-        allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS_ACCEL_BOUND] = krausParams;
 
         std::set<SumoXMLAttr> smartSKParams;
         smartSKParams.insert(SUMO_ATTR_ACCEL);
@@ -561,6 +588,43 @@ SUMOVehicleParserHelper::getAllowedCFModelAttrs() {
         allowedCFModelAttrs[SUMO_TAG_CF_WIEDEMANN] = wiedemannParams;
     }
     return allowedCFModelAttrs;
+}
+
+
+void
+SUMOVehicleParserHelper::parseLCParams(SUMOVTypeParameter& into, LaneChangeModel model, const SUMOSAXAttributes& attrs) {
+    if (allowedLCModelAttrs.size() == 0) {
+        // init static map
+        std::set<SumoXMLAttr> lc2013Params;
+        lc2013Params.insert(SUMO_ATTR_LCA_STRATEGIC_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_COOPERATIVE_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_SPEEDGAIN_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_KEEPRIGHT_PARAM);
+        allowedLCModelAttrs[LCM_LC2013] = lc2013Params;
+        allowedLCModelAttrs[LCM_JE2013] = lc2013Params;
+
+        std::set<SumoXMLAttr> sl2015Params = lc2013Params;
+        sl2015Params.insert(SUMO_ATTR_LCA_PUSHY);
+        sl2015Params.insert(SUMO_ATTR_LCA_SUBLANE_PARAM);
+        allowedLCModelAttrs[LCM_SL2015] = sl2015Params;
+
+        std::set<SumoXMLAttr> noParams;
+        allowedLCModelAttrs[LCM_DK2008] = noParams;
+
+        // default model may be either LC2013 or SL2013
+        // we allow both sets (sl2015 is a superset of lc2013Params)
+        allowedLCModelAttrs[LCM_DEFAULT] = sl2015Params;
+    }
+    bool ok = true;
+    std::set<SumoXMLAttr> allowed = allowedLCModelAttrs[model];
+    for (std::set<SumoXMLAttr>::const_iterator it = allowed.begin(); it != allowed.end(); it++) {
+        if (attrs.hasAttribute(*it)) {
+            into.lcParameter[*it] = attrs.get<SUMOReal>(*it, into.id.c_str(), ok);
+        }
+    }
+    if (!ok) {
+        throw ProcessError();
+    }
 }
 
 

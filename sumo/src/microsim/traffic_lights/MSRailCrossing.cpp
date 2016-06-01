@@ -7,7 +7,7 @@
 // A rail signal logic
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -112,7 +112,7 @@ MSRailCrossing::updateCurrentPhase() {
             }
         }
 #ifdef HAVE_INTERNAL_LANES
-        if ((*it_link)->getViaLane() != 0 && (*it_link)->getViaLane()->getLastVehicleInformation().first != 0) {
+        if ((*it_link)->getViaLane() != 0 && (*it_link)->getViaLane()->getVehicleNumberWithPartials() > 0) {
             // do not open if there is still a train on the crossing
             stayRedUntil = MAX2(stayRedUntil, now + DELTA_T);
         }

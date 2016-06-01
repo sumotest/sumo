@@ -12,7 +12,7 @@
 // Stores edges and lanes, performs moving of vehicle
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -95,6 +95,13 @@ public:
      *  and marked as being active.
      */
     void patchActiveLanes();
+
+
+    /** @brief Returns the number of active lanes as indicator for the GUI.
+     */
+    int getNumActiveLanes() {
+        return (int)myActiveLanes.size();
+    }
 
 
     /// @name Interfaces for longitudinal vehicle movement

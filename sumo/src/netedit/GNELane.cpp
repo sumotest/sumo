@@ -7,7 +7,7 @@
 // A class for visualizing Lane geometry (adapted from GNELaneWrapper)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -88,8 +88,8 @@ GNELane::GNELane() :
     myParentEdge(*static_cast<GNEEdge*>(0)),
     myIndex(-1),
     mySpecialColor(0),
-    myTLSEditor(0)
-{ }
+    myTLSEditor(0) {
+}
 
 GNELane::~GNELane() {}
 
@@ -530,7 +530,7 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_DISALLOW:
             return canParseVehicleClasses(value);
         case SUMO_ATTR_WIDTH:
-            return isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH;
+            return canParse<SUMOReal>(value) && (isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH);
         case SUMO_ATTR_ENDOFFSET:
             return canParse<SUMOReal>(value);
         case SUMO_ATTR_INDEX:

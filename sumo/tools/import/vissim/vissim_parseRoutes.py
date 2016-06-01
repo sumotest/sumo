@@ -17,7 +17,7 @@ The read routes are saved as <OUTPUT_PREFIX>.rou.xml
  option (see below).
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -227,7 +227,7 @@ for inflow in inflows:
             emissions.append((int(t), id, edges))
 # sort emissions
 print("Sorting routes...")
-emissions.sort(sorter(0))
+emissions.sort(key=sorter(0))
 
 # save emissions
 print("Writing routes...")

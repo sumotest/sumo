@@ -12,7 +12,7 @@
 // The XML-Handler for network loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -79,10 +79,11 @@ NLHandler::NLHandler(const std::string& file, MSNet& net,
     myHaveWarnedAboutDeprecatedLanes(false),
     myLastParameterised(0),
     myHaveSeenInternalEdge(false),
+    myHaveSeenNeighs(false),
     myLefthand(false),
     myNetworkVersion(0),
-    myNetIsLoaded(false)
-{}
+    myNetIsLoaded(false) {
+}
 
 
 NLHandler::~NLHandler() {}
@@ -104,6 +105,10 @@ NLHandler::myStartElement(int element,
                 break;
             case SUMO_TAG_LANE:
                 addLane(attrs);
+                break;
+            case SUMO_TAG_NEIGH:
+                myEdgeControlBuilder.addNeigh(attrs.getString(SUMO_ATTR_LANE));
+                myHaveSeenNeighs = true;
                 break;
             case SUMO_TAG_JUNCTION:
                 openJunction(attrs);
@@ -161,10 +166,12 @@ NLHandler::myStartElement(int element,
                 myTriggerBuilder.parseAndBuildRerouter(myNet, attrs, getFileName());
                 break;
             case SUMO_TAG_BUS_STOP:
-                myTriggerBuilder.parseAndBuildBusStop(myNet, attrs);
-                break;
+            case SUMO_TAG_TRAIN_STOP:
             case SUMO_TAG_CONTAINER_STOP:
-                myTriggerBuilder.parseAndBuildContainerStop(myNet, attrs);
+                myTriggerBuilder.parseAndBuildStoppingPlace(myNet, attrs, (SumoXMLTag)element);
+                break;
+            case SUMO_TAG_ACCESS:
+                myTriggerBuilder.addAccess(myNet, attrs);
                 break;
             case SUMO_TAG_CHARGING_STATION:
                 myTriggerBuilder.parseAndBuildChargingStation(myNet, attrs);
@@ -272,8 +279,6 @@ NLHandler::myEndElement(int element) {
                     to->addIncoming(edge);
                 }
             }
-            //initialise traffic lights
-            myJunctionControlBuilder.postLoadInitialization();
             myNetIsLoaded = true;
             break;
         default:
@@ -514,8 +519,9 @@ NLHandler::parseLanes(const std::string& junctionID,
 void
 NLHandler::addParam(const SUMOSAXAttributes& attrs) {
     bool ok = true;
-    std::string key = attrs.get<std::string>(SUMO_ATTR_KEY, 0, ok);
-    std::string val = attrs.get<std::string>(SUMO_ATTR_VALUE, 0, ok);
+    const std::string key = attrs.get<std::string>(SUMO_ATTR_KEY, 0, ok);
+    // circumventing empty string test
+    const std::string val = attrs.hasAttribute(SUMO_ATTR_VALUE) ? attrs.getString(SUMO_ATTR_VALUE) : "";
     if (myLastParameterised != 0) {
         myLastParameterised->addParameter(key, val);
     }
@@ -996,6 +1002,7 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
         return;
     }
 
+    MSLink* link = 0;
     try {
         bool ok = true;
         const std::string toID = attrs.get<std::string>(SUMO_ATTR_TO, 0, ok);
@@ -1029,11 +1036,12 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
         assert(fromLane);
         assert(toLane);
 
+        MSTrafficLightLogic* logic = 0;
         int tlLinkIdx = -1;
         if (tlID != "") {
             tlLinkIdx = attrs.get<int>(SUMO_ATTR_TLLINKINDEX, 0, ok);
             // make sure that the index is in range
-            MSTrafficLightLogic* logic = myJunctionControlBuilder.getTLLogic(tlID).getActive();
+            logic = myJunctionControlBuilder.getTLLogic(tlID).getActive();
             if ((tlLinkIdx < 0 || tlLinkIdx >= (int)logic->getCurrentPhaseDef().getState().size())
                     && logic->getLogicType() != "railSignal"
                     && logic->getLogicType() != "railCrossing") {
@@ -1046,7 +1054,6 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
             }
         }
         SUMOReal length = fromLane->getShape()[-1].distanceTo(toLane->getShape()[0]);
-        MSLink* link = 0;
 
         // build the link
 #ifdef HAVE_INTERNAL_LANES
@@ -1060,22 +1067,22 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
             }
             length = via->getLength();
         }
-        link = new MSLink(toLane, via, dir, state, length, keepClear);
+        link = new MSLink(fromLane, toLane, via, dir, state, length, keepClear, logic, tlLinkIdx);
         if (via != 0) {
             via->addIncomingLane(fromLane, link);
         } else {
             toLane->addIncomingLane(fromLane, link);
         }
 #else
-        link = new MSLink(toLane, dir, state, length, keepClear);
+        link = new MSLink(fromLane, toLane, dir, state, length, keepClear, logic, tlLinkIdx);
         toLane->addIncomingLane(fromLane, link);
 #endif
         toLane->addApproachingLane(fromLane, myNetworkVersion < 0.25);
 
         // if a traffic light is responsible for it, inform the traffic light
         // check whether this link is controlled by a traffic light
-        if (tlID != "") {
-            myJunctionControlBuilder.getTLLogic(tlID).addLink(link, fromLane, tlLinkIdx);
+        if (logic != 0) {
+            logic->addLink(link, fromLane, tlLinkIdx);
         }
         // add the link
         fromLane->addLink(link);

@@ -9,7 +9,7 @@
 // Storage for geometrical objects, sorted by the layers they are in
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2005-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2005-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -36,14 +36,6 @@
 #include <utils/common/NamedObjectCont.h>
 #include "PointOfInterest.h"
 #include "Polygon.h"
-using namespace SUMO;
-
-// ===========================================================================
-// class declarations
-// ===========================================================================
-class Position;
-class PositionVector;
-class RGBColor;
 
 
 // ===========================================================================
@@ -79,7 +71,8 @@ public:
     virtual bool addPolygon(const std::string& id, const std::string& type,
                             const RGBColor& color, SUMOReal layer,
                             SUMOReal angle, const std::string& imgFile,
-                            const PositionVector& shape, bool fill);
+                            const PositionVector& shape, bool fill,
+                            bool ignorePruning = false);
 
 
     /** @brief Builds a POI using the given values and adds it to the container
@@ -96,7 +89,7 @@ public:
      */
     virtual bool addPOI(const std::string& id, const std::string& type,
                         const RGBColor& color, SUMOReal layer, SUMOReal angle, const std::string& imgFile,
-                        const Position& pos, SUMOReal width, SUMOReal height);
+                        const Position& pos, SUMOReal width, SUMOReal height, bool ignorePruning = false);
 
 
 
@@ -140,6 +133,11 @@ public:
     inline const POIs& getPOIs() const {
         return myPOIs;
     }
+
+
+protected:
+    virtual bool add(SUMO::Polygon* poly, bool ignorePruning = false);
+    virtual bool add(PointOfInterest* poi, bool ignorePruning = false);
 
 
 protected:

@@ -48,10 +48,8 @@
 #include <microsim/MSRoute.h>
 #include "MSStateHandler.h"
 
-#ifdef HAVE_INTERNAL
 #include <mesosim/MESegment.h>
 #include <mesosim/MELoop.h>
-#endif
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -63,15 +61,14 @@
 // ===========================================================================
 MSStateHandler::MSStateHandler(const std::string& file, const SUMOTime offset) :
     SUMOSAXHandler(file), myOffset(offset),
-#ifdef HAVE_INTERNAL
     mySegment(0),
-#endif
     myEdgeAndLane(0, -1),
     myCurrentVType(0) {
 }
 
 
 MSStateHandler::~MSStateHandler() {
+    delete myCurrentVType;
 }
 
 
@@ -83,21 +80,20 @@ MSStateHandler::saveState(const std::string& file, SUMOTime step) {
     MSRoute::dict_saveState(out);
     MSNet::getInstance()->getVehicleControl().saveState(out);
     if (MSGlobals::gUseMesoSim) {
-#ifdef HAVE_INTERNAL
         for (size_t i = 0; i < MSEdge::dictSize(); i++) {
-            for (MESegment* s = MSGlobals::gMesoNet->getSegmentForEdge(*MSEdge::dictionary(i)); s != 0; s = s->getNextSegment()) {
+            for (MESegment* s = MSGlobals::gMesoNet->getSegmentForEdge(*MSEdge::getAllEdges()[i]); s != 0; s = s->getNextSegment()) {
                 s->saveState(out);
             }
         }
-#endif
     } else {
         for (size_t i = 0; i < MSEdge::dictSize(); i++) {
-            const std::vector<MSLane*>& lanes = MSEdge::dictionary(i)->getLanes();
+            const std::vector<MSLane*>& lanes = MSEdge::getAllEdges()[i]->getLanes();
             for (std::vector<MSLane*>::const_iterator it = lanes.begin(); it != lanes.end(); ++it) {
                 (*it)->saveState(out);
             }
         }
     }
+    out.close();
 }
 
 
@@ -114,11 +110,11 @@ MSStateHandler::myStartElement(int element, const SUMOSAXAttributes& attrs) {
             break;
         }
         case SUMO_TAG_DELAY: {
-            vc.setState(attrs.getInt(SUMO_ATTR_NUMBER), 
-                    attrs.getInt(SUMO_ATTR_BEGIN),
-                    attrs.getInt(SUMO_ATTR_END),
-                    attrs.getFloat(SUMO_ATTR_DEPART), 
-                    attrs.getFloat(SUMO_ATTR_TIME));
+            vc.setState(attrs.getInt(SUMO_ATTR_NUMBER),
+                        attrs.getInt(SUMO_ATTR_BEGIN),
+                        attrs.getInt(SUMO_ATTR_END),
+                        attrs.getFloat(SUMO_ATTR_DEPART),
+                        attrs.getFloat(SUMO_ATTR_TIME));
             break;
         }
         case SUMO_TAG_ROUTE: {
@@ -187,11 +183,6 @@ MSStateHandler::myStartElement(int element, const SUMOSAXAttributes& attrs) {
 
             SUMOVehicle* v = vc.buildVehicle(p, route, type, true);
             vc.discountStateLoaded(); // already included (see SUMO_TAG_DELAY)
-            // disable pre-insertion rerouting and enable regular routing behavior
-            MSDevice_Routing* routingDevice = static_cast<MSDevice_Routing*>(v->getDevice(typeid(MSDevice_Routing)));
-            if (routingDevice != 0) {
-                routingDevice->notifyEnter(*v, MSMoveReminder::NOTIFICATION_DEPARTED);
-            }
             v->loadState(attrs, myOffset);
             if (!vc.addVehicle(p->id, v)) {
                 throw ProcessError("Error: Could not build vehicle " + p->id + "!");
@@ -199,25 +190,29 @@ MSStateHandler::myStartElement(int element, const SUMOSAXAttributes& attrs) {
             if (!v->hasDeparted()) {
                 // !!! the save did not keep the order in which the vehicles are checked for insertion
                 MSNet::getInstance()->getInsertionControl().add(v);
+            } else {
+                // vehicle already departed: disable pre-insertion rerouting and enable regular routing behavior
+                MSDevice_Routing* routingDevice = static_cast<MSDevice_Routing*>(v->getDevice(typeid(MSDevice_Routing)));
+                if (routingDevice != 0) {
+                    routingDevice->notifyEnter(*v, MSMoveReminder::NOTIFICATION_DEPARTED);
+                }
             }
             break;
         }
-#ifdef HAVE_INTERNAL
         case SUMO_TAG_SEGMENT: {
             if (mySegment == 0) {
-                mySegment = MSGlobals::gMesoNet->getSegmentForEdge(*MSEdge::dictionary(0));
+                mySegment = MSGlobals::gMesoNet->getSegmentForEdge(*MSEdge::getAllEdges()[0]);
             } else if (mySegment->getNextSegment() == 0) {
-                mySegment = MSGlobals::gMesoNet->getSegmentForEdge(*MSEdge::dictionary(mySegment->getEdge().getNumericalID() + 1));
+                mySegment = MSGlobals::gMesoNet->getSegmentForEdge(*MSEdge::getAllEdges()[mySegment->getEdge().getNumericalID() + 1]);
             } else {
                 mySegment = mySegment->getNextSegment();
             }
             myQueIndex = 0;
             break;
         }
-#endif
         case SUMO_TAG_LANE: {
             myEdgeAndLane.second++;
-            if (myEdgeAndLane.second == (int)MSEdge::dictionary(myEdgeAndLane.first)->getLanes().size()) {
+            if (myEdgeAndLane.second == (int)MSEdge::getAllEdges()[myEdgeAndLane.first]->getLanes().size()) {
                 myEdgeAndLane.first++;
                 myEdgeAndLane.second = 0;
             }
@@ -227,11 +222,9 @@ MSStateHandler::myStartElement(int element, const SUMOSAXAttributes& attrs) {
             std::vector<std::string> vehIDs;
             SUMOSAXAttributes::parseStringVector(attrs.getString(SUMO_ATTR_VALUE), vehIDs);
             if (MSGlobals::gUseMesoSim) {
-#ifdef HAVE_INTERNAL
                 mySegment->loadState(vehIDs, MSNet::getInstance()->getVehicleControl(), TplConvert::_2long(attrs.getString(SUMO_ATTR_TIME).c_str()) - myOffset, myQueIndex++);
-#endif
             } else {
-                MSEdge::dictionary(myEdgeAndLane.first)->getLanes()[myEdgeAndLane.second]->loadState(
+                MSEdge::getAllEdges()[myEdgeAndLane.first]->getLanes()[myEdgeAndLane.second]->loadState(
                     vehIDs, MSNet::getInstance()->getVehicleControl());
             }
             break;

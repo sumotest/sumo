@@ -9,7 +9,7 @@ This script validates detector data resulting from dfrouter
 validation detectors against the original data fed into dfrouter
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2013-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -123,7 +123,7 @@ if options.validation:
     print("simIn: %s simOut: %s" % (countIn, countOut))
 
 for det, vals in dets.iteritems():
-    print ("Plotting", det, 'totaldet', totals[det], 'totalSim', totalSim[det])
+    print("Plotting", det, 'totaldet', totals[det], 'totalSim', totalSim[det])
     plt.bar(*(zip(*vals)[:2]))  # select first and second entry (time and flow)
     if det in sims:
         plt.plot(*(zip(*sims[det])[:2]))

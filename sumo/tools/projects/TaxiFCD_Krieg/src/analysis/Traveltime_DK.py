@@ -10,7 +10,7 @@
 
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -168,7 +168,8 @@ def processData():
                 data2[veh][
                     "simFCD"][-1][-2] = data2[veh]["simFCD"][-1][-2] + elm[2]
     data = data2
-    print("after remove double edges (simFCD)351_11 ", data["351_11"]["simFCD"])
+    print("after remove double edges (simFCD)351_11 ",
+          data["351_11"]["simFCD"])
 
     # make comparison table
     # cut data if edge in between belongs to the "bad driven" edges

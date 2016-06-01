@@ -10,7 +10,7 @@
 // A road/street connecting two junctions (gui-version)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -37,18 +37,16 @@
 #include <string>
 #include <microsim/MSEdge.h>
 #include <utils/gui/globjects/GUIGlObject.h>
+#include <utils/gui/settings/GUIPropertySchemeStorage.h>
 #include <utils/foxtools/MFXMutex.h>
 
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-#ifdef HAVE_INTERNAL
 class MESegment;
-#endif
 class MSBaseVehicle;
 class GUILane;
-
 
 // ===========================================================================
 // class definitions
@@ -166,11 +164,9 @@ public:
         MSEdge::removeContainer(c);
     }
 
-#ifdef HAVE_INTERNAL
     unsigned int getVehicleNo() const;
     std::string getVehicleIDs() const;
     SUMOReal getBruttoOccupancy() const;
-    SUMOReal getMeanSpeed() const;
     SUMOReal getAllowedSpeed() const;
     /// @brief return flow based on meanSpead @note: may produced incorrect results when jammed
     SUMOReal getFlow() const;
@@ -179,6 +175,12 @@ public:
 
     /// @brief sets the color according to the currente settings
     void setColor(const GUIVisualizationSettings& s) const;
+
+    /// @brief sets the color according to the current scheme index and some edge function
+    bool setFunctionalColor(size_t activeScheme) const;
+
+    /// @brief sets multiple colors according to the current scheme index and edge function
+    bool setMultiColor(const GUIColorer& c) const;
 
     /// @brief gets the color value according to the current scheme index
     SUMOReal getColorValue(size_t activeScheme) const;
@@ -191,13 +193,29 @@ public:
 
     void drawMesoVehicles(const GUIVisualizationSettings& s) const;
 
-#endif
+    /// @brief grant exclusive access to the mesoscopic state
+    void lock() const {
+        myLock.lock();
+    }
+
+    /// @brief release exclusive access to the mesoscopic state
+    void unlock() const {
+        myLock.unlock();
+    }
 
     /// @brief close this edge for traffic
     void closeTraffic(const GUILane* lane);
 
     /// @brief add a rerouter
     void addRerouter();
+
+    /// @brief return segment colors (meso)
+    const std::vector<RGBColor>& getSegmentColors() const {
+        return mySegmentColors;
+    }
+
+    /// The color of the segments (cached)
+    mutable std::vector<RGBColor> mySegmentColors;
 
 private:
     /// @brief invalidated copy constructor

@@ -10,7 +10,7 @@
 // The main window of the SUMO-gui.
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -232,6 +232,9 @@ public:
     /// @brief Called on menu commands from the Locator menu
     long onCmdLocate(FXObject*, FXSelector, void*);
 
+    /// @brief Called on commands from the statistic buttons
+    long onCmdShowStats(FXObject*, FXSelector, void*);
+
     /// @brief Called on an event from the loading thread
     long onLoadThreadEvent(FXObject*, FXSelector, void*);
 
@@ -319,6 +322,9 @@ protected:
                 *myLocatorMenu, *myControlMenu,
                 *myWindowsMenu, *myHelpMenu;
 
+    /// Buttons showing and running values and triggering statistic windows
+    FXButton* myNetStatButton, *myVehStatButton, *myPedStatButton;
+
     /// A window to display messages, warnings and error in
     GUIMessageWindow* myMessageWindow;
 
@@ -385,10 +391,12 @@ protected:
     /// @name game related things
     /// {
     RandomDistributor<std::string> myJamSounds;
+    RandomDistributor<std::string> myCollisionSounds;
     /// @brief waiting time after which vehicles trigger jam sounds
     SUMOReal myJamSoundTime;
     /// @brief A random number generator used to choose a gaming sound
     static MTRand myGamingRNG;
+    unsigned int myPreviousCollisionNumber;
 
     /// performance indicators
     FXEX::FXLCDLabel* myWaitingTimeLabel;

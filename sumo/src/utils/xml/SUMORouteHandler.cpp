@@ -10,7 +10,7 @@
 // Parser for routes during their loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -64,6 +64,7 @@ SUMORouteHandler::SUMORouteHandler(const std::string& file) :
 
 
 SUMORouteHandler::~SUMORouteHandler() {
+    delete myCurrentVType;
 }
 
 
@@ -87,7 +88,8 @@ SUMORouteHandler::checkLastDepart() {
 
 void
 SUMORouteHandler::registerLastDepart() {
-    if (myVehicleParameter->departProcedure == DEPART_GIVEN) {
+    // register only non public transport to parse all public transport lines in advance
+    if (myVehicleParameter->line == "" && myVehicleParameter->departProcedure == DEPART_GIVEN) {
         myLastDepart = myVehicleParameter->depart;
         if (myFirstDepart == -1) {
             myFirstDepart = myLastDepart;
@@ -246,8 +248,9 @@ SUMORouteHandler::checkStopPos(SUMOReal& startPos, SUMOReal& endPos, const SUMOR
 void
 SUMORouteHandler::addParam(const SUMOSAXAttributes& attrs) {
     bool ok = true;
-    std::string key = attrs.get<std::string>(SUMO_ATTR_KEY, 0, ok);
-    std::string val = attrs.get<std::string>(SUMO_ATTR_VALUE, 0, ok);
+    const std::string key = attrs.get<std::string>(SUMO_ATTR_KEY, 0, ok);
+    // circumventing empty string test
+    const std::string val = attrs.hasAttribute(SUMO_ATTR_VALUE) ? attrs.getString(SUMO_ATTR_VALUE) : "";
     if (myVehicleParameter != 0) {
         myVehicleParameter->addParameter(key, val);
     } else if (myCurrentVType != 0) {
@@ -282,9 +285,12 @@ SUMORouteHandler::parseStop(SUMOVehicleParameter::Stop& stop, const SUMOSAXAttri
     }
     bool ok = true;
     stop.busstop = attrs.getOpt<std::string>(SUMO_ATTR_BUS_STOP, 0, ok, "");
+    stop.chargingStation = attrs.getOpt<std::string>(SUMO_ATTR_CHARGING_STATION, 0, ok, "");
     stop.containerstop = attrs.getOpt<std::string>(SUMO_ATTR_CONTAINER_STOP, 0, ok, "");
     if (stop.busstop != "") {
         errorSuffix = " at '" + stop.busstop + "'" + errorSuffix;
+    } else if (stop.chargingStation != "") {
+        errorSuffix = " at '" + stop.chargingStation + "'" + errorSuffix;
     } else if (stop.containerstop != "") {
         errorSuffix = " at '" + stop.containerstop + "'" + errorSuffix;
     } else {

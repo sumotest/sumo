@@ -10,7 +10,7 @@
 // A MSNet extended by some values for usage within the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -53,8 +53,7 @@
 #include <microsim/MSJunctionControl.h>
 #include <guisim/GUIEdge.h>
 #include <guisim/GUILane.h>
-#include <guisim/GUIPersonControl.h>
-#include <guisim/GUIContainerControl.h>
+#include <guisim/GUITransportableControl.h>
 #include <guisim/GUILaneSpeedTrigger.h>
 #include <guisim/GUIDetectorWrapper.h>
 #include <guisim/GUITrafficLightLogicWrapper.h>
@@ -63,9 +62,7 @@
 #include <gui/GUIGlobals.h>
 #include "GUINet.h"
 
-#ifdef HAVE_INTERNAL
 #include <mesogui/GUIMEVehicleControl.h>
-#endif
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -123,19 +120,19 @@ GUINet::getBoundary() const {
 }
 
 
-MSPersonControl&
+MSTransportableControl&
 GUINet::getPersonControl() {
     if (myPersonControl == 0) {
-        myPersonControl = new GUIPersonControl();
+        myPersonControl = new GUITransportableControl();
     }
     return *myPersonControl;
 }
 
 
-MSContainerControl&
+MSTransportableControl&
 GUINet::getContainerControl() {
     if (myContainerControl == 0) {
-        myContainerControl = new GUIContainerControl();
+        myContainerControl = new GUITransportableControl();
     }
     return *myContainerControl;
 }
@@ -226,7 +223,6 @@ void
 GUINet::guiSimulationStep() {
     GLObjectValuePassConnector<SUMOReal>::updateAll();
     GLObjectValuePassConnector<std::pair<SUMOTime, MSPhaseDefinition> >::updateAll();
-    GUIParameterTableWindow::updateAll();
 }
 
 
@@ -446,11 +442,11 @@ GUINet::getParameterWindow(GUIMainWindow& app,
                 new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getTeleportCount));
     if (myPersonControl != 0) {
         ret->mkItem("loaded persons [#]", true,
-                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getLoadedPersonNumber));
+            new FunctionBinding<MSTransportableControl, unsigned int>(&getPersonControl(), &MSTransportableControl::getLoadedNumber));
         ret->mkItem("running persons [#]", true,
-                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getRunningPersonNumber));
+            new FunctionBinding<MSTransportableControl, unsigned int>(&getPersonControl(), &MSTransportableControl::getRunningNumber));
         ret->mkItem("jammed persons [#]", true,
-                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getJammedPersonNumber));
+            new FunctionBinding<MSTransportableControl, unsigned int>(&getPersonControl(), &MSTransportableControl::getJammedNumber));
     }
     ret->mkItem("end time [s]", false, OptionsCont::getOptions().getString("end"));
     ret->mkItem("begin time [s]", false, OptionsCont::getOptions().getString("begin"));
@@ -529,12 +525,10 @@ GUINet::unlock() {
     myLock.unlock();
 }
 
-#ifdef HAVE_INTERNAL
 GUIMEVehicleControl*
 GUINet::getGUIMEVehicleControl() {
     return dynamic_cast<GUIMEVehicleControl*>(myVehicleControl);
 }
-#endif
 
 
 #ifdef HAVE_OSG

@@ -8,7 +8,7 @@
 ///
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -88,19 +88,10 @@ const RGBColor& getLinkColor(const LinkState& ls) {
 }
 
 
-const std::string getBuildName(const std::string& version) {
-    std::string result = version;
-#ifdef HAVE_INTERNAL
-    result += "I";
-#endif
-#ifdef _DEBUG
-    result += "D";
-#endif
-    return result;
-}
-
 bool gDebugFlag1 = false;
 bool gDebugFlag2 = false;
+bool gDebugFlag3 = false;
+bool gDebugFlag4 = false;
 std::string gDebugSelectedVehicle = "";
 
 /****************************************************************************/

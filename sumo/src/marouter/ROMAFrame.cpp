@@ -10,7 +10,7 @@
 // Sets and checks options for ma-routing
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -83,6 +83,9 @@ ROMAFrame::addImportOptions() {
     oc.addSynonyme("output-file", "output");
     oc.addDescription("output-file", "Output", "Write flow definitions with route distributions to FILE");
 
+    oc.doRegister("vtype-output", new Option_FileName());
+    oc.addDescription("vtype-output", "Output", "Write used vehicle types into separate FILE");
+
     oc.doRegister("ignore-vehicle-type", new Option_Bool(false));
     oc.addSynonyme("ignore-vehicle-type", "no-vtype", true);
     oc.addDescription("ignore-vehicle-type", "Output", "Does not save vtype information");
@@ -132,6 +135,9 @@ ROMAFrame::addImportOptions() {
     oc.doRegister("weight-adaption", new Option_Float(0.));
     oc.addDescription("weight-adaption", "Input", "The travel time influence of prior intervals");
 
+    oc.doRegister("taz-param", new Option_String());
+    oc.addDescription("taz-param", "Input", "Parameter key(s) defining source (and sink) taz");
+
     // register the time settings
     oc.doRegister("begin", 'b', new Option_String("0", "TIME"));
     oc.addDescription("begin", "Time", "Defines the begin time; Previous trips will be discarded");
@@ -161,6 +167,12 @@ ROMAFrame::addImportOptions() {
 
     oc.doRegister("routing-algorithm", new Option_String("dijkstra"));
     oc.addDescription("routing-algorithm", "Processing", "Select among routing algorithms ['dijkstra', 'astar', 'CH', 'CHWrapper']");
+
+    oc.doRegister("bulk-routing.vtypes", new Option_Bool(false));
+    oc.addDescription("bulk-routing.vtypes", "Processing", "Aggregate routing queries with the same origin for different vehicle types");
+
+    oc.doRegister("routing-threads", new Option_Integer(0));
+    oc.addDescription("routing-threads", "Processing", "The number of parallel execution threads used for routing");
 
     oc.doRegister("weight-period", new Option_String("3600", "TIME"));
     oc.addDescription("weight-period", "Processing", "Aggregation period for the given weight files; triggers rebuilding of Contraction Hierarchy");

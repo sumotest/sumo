@@ -2,14 +2,14 @@
 /// @file    MSBatteryExport.cpp
 /// @author  Mario Krumnow
 /// @author  Tamas Kurczveil
-/// @author  Pablo Alvarez López
+/// @author  Pablo Alvarez Lopez
 /// @date    20-12-13
 /// @version $Id$
 ///
 // Realises dumping Battery Data
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -97,18 +97,18 @@ MSBatteryExport::write(OutputDevice& of, SUMOTime timestep, int precision) {
                 of.writeAttr("chargingStationId", batteryToExport->getChargingStationID());
 
                 // Write Charge charged in the Battery
-                of.writeAttr("energyCharged", batteryToExport->getChrgEnergy());
+                of.writeAttr("energyCharged", batteryToExport->getEnergyCharged());
 
                 // Write ChargeInTransit
                 if (batteryToExport->isChargingInTransit()) {
-                    of.writeAttr("energyChargedInTransit", batteryToExport->getChrgEnergy());
+                    of.writeAttr("energyChargedInTransit", batteryToExport->getEnergyCharged());
                 } else {
                     of.writeAttr("energyChargedInTransit", 0.00);
                 }
 
                 // Write ChargingStopped
                 if (batteryToExport->isChargingStopped()) {
-                    of.writeAttr("energyChargedStopped", batteryToExport->getChrgEnergy());
+                    of.writeAttr("energyChargedStopped", batteryToExport->getEnergyCharged());
                 } else {
                     of.writeAttr("energyChargedStopped", 0.00);
                 }

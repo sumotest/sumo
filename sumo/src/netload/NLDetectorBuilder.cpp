@@ -12,7 +12,7 @@
 // Builds detectors for microsim
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -59,11 +59,9 @@
 #include "NLDetectorBuilder.h"
 #include <microsim/output/MSDetectorControl.h>
 
-#ifdef HAVE_INTERNAL
 #include <mesosim/MEInductLoop.h>
 #include <mesosim/MELoop.h>
 #include <mesosim/MESegment.h>
-#endif
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -95,7 +93,9 @@ NLDetectorBuilder::NLDetectorBuilder(MSNet& net)
     : myNet(net), myE3Definition(0) {}
 
 
-NLDetectorBuilder::~NLDetectorBuilder() {}
+NLDetectorBuilder::~NLDetectorBuilder() {
+    delete myE3Definition;
+}
 
 
 void
@@ -311,13 +311,19 @@ NLDetectorBuilder::endE3Detector() {
     if (myE3Definition == 0) {
         return;
     }
-    MSDetectorFileOutput* det = createE3Detector(myE3Definition->myID,
-                                myE3Definition->myEntries, myE3Definition->myExits,
-                                myE3Definition->myHaltingSpeedThreshold, myE3Definition->myHaltingTimeThreshold);
-    // add to net
-    myNet.getDetectorControl().add(SUMO_TAG_ENTRY_EXIT_DETECTOR, det, myE3Definition->myDevice, myE3Definition->mySampleInterval);
-    // clean up
-    delete myE3Definition;
+    // If E3 own entry or exit detectors
+    if (myE3Definition->myEntries.size() > 0 || myE3Definition->myExits.size() > 0) {
+        // create E3 detector
+        MSDetectorFileOutput* det = createE3Detector(myE3Definition->myID,
+                                    myE3Definition->myEntries, myE3Definition->myExits,
+                                    myE3Definition->myHaltingSpeedThreshold, myE3Definition->myHaltingTimeThreshold);
+        // add to net
+        myNet.getDetectorControl().add(SUMO_TAG_ENTRY_EXIT_DETECTOR, det, myE3Definition->myDevice, myE3Definition->mySampleInterval);
+    } else
+        WRITE_WARNING(toString(SUMO_TAG_E3DETECTOR) + " with id = '" + myE3Definition->myID + "' will not be created because is empty (no " + toString(SUMO_TAG_DET_ENTRY) + " or " + toString(SUMO_TAG_DET_EXIT) + " was defined)")
+
+        // clean up
+        delete myE3Definition;
     myE3Definition = 0;
 }
 
@@ -374,11 +380,9 @@ NLDetectorBuilder::buildMultiLaneE2Det(const std::string& id, DetectorUsage usag
 MSDetectorFileOutput*
 NLDetectorBuilder::createInductLoop(const std::string& id,
                                     MSLane* lane, SUMOReal pos, bool splitByType, bool) {
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         return new MEInductLoop(id, MSGlobals::gMesoNet->getSegmentForEdge(lane->getEdge(), pos), pos);
     }
-#endif
     return new MSInductLoop(id, lane, pos, splitByType);
 }
 

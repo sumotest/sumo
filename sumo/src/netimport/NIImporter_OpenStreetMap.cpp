@@ -10,7 +10,7 @@
 // Importer for networks stored in OpenStreetMap format
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -304,8 +304,12 @@ NIImporter_OpenStreetMap::insertEdge(Edge* e, int index, NBNode* from, NBNode* t
         index = 0;
     }
     if (from == to) {
-        // in the special case of a looped way split again using passed
         assert(passed.size() >= 2);
+        if (passed.size() == 2) {
+            WRITE_WARNING("Discarding edge '" + id + "' which connects two identical nodes without geometry.");
+            return index;
+        }
+        // in the special case of a looped way split again using passed
         size_t intermediateIndex = passed.size() / 2;
         NBNode* intermediate = insertNodeChecking(passed[intermediateIndex], nc, tlsc);
         std::vector<long long int> part1(passed.begin(), passed.begin() + intermediateIndex);
@@ -556,8 +560,8 @@ NIImporter_OpenStreetMap::NodesHandler::NodesHandler(
     myIsInValidNodeTag(false),
     myHierarchyLevel(0),
     myUniqueNodes(uniqueNodes),
-    myImportElevation(importElevation)
-{ }
+    myImportElevation(importElevation) {
+}
 
 
 NIImporter_OpenStreetMap::NodesHandler::~NodesHandler() {}
@@ -739,7 +743,7 @@ NIImporter_OpenStreetMap::EdgesHandler::myStartElement(int element,
             }
             if ((myCurrentEdge->myCyclewayType & WAY_BOTH) != 0) {
                 // now we have some info on directionality
-                myCurrentEdge->myCyclewayType = (WayType)(myCurrentEdge->myCyclewayType & !WAY_UNKNOWN);
+                myCurrentEdge->myCyclewayType = (WayType)(myCurrentEdge->myCyclewayType & ~WAY_UNKNOWN);
             }
         } else if (key.size() > 6 && StringUtils::startsWith(key, "busway:")) {
             // handle special busway keys

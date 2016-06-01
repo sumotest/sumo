@@ -11,7 +11,7 @@
 // Container for nodes during the netbuilding process
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -326,6 +326,9 @@ public:
     void markAsSplit(const NBNode* node) {
         mySplit.insert(node);
     }
+
+    /// @brief ensure that all node ids are integers
+    int mapToNumericalIDs();
 
 private:
     /// @name Helper methods for for joining nodes

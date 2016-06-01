@@ -10,7 +10,7 @@
 // The XML-Handler for network loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -107,6 +107,10 @@ public:
 
     bool haveSeenInternalEdge() const {
         return myHaveSeenInternalEdge;
+    }
+
+    bool haveSeenNeighs() const {
+        return myHaveSeenNeighs;
     }
 
     bool lefthand() const {
@@ -331,6 +335,9 @@ protected:
 
     /// @brief whether the loaded network contains internal lanes
     bool myHaveSeenInternalEdge;
+
+    /// @brief whether the loaded network contains explicit neighbor lanes
+    bool myHaveSeenNeighs;
 
     /// @brief whether the loaded network was built for left hand traffic
     bool myLefthand;

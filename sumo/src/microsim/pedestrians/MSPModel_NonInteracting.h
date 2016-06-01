@@ -7,7 +7,7 @@
 // The pedestrian following model (prototype)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -29,7 +29,6 @@
 #include <config.h>
 #endif
 
-#include <vector>
 #include <string>
 #include <limits>
 #include <utils/common/SUMOTime.h>
@@ -82,11 +81,11 @@ private:
         /// @brief Invalidated assignment operator.
         MoveToNextEdge& operator=(const MoveToNextEdge&);
     };
+
     /// @brief abstract base class for managing callbacks to retrieve various state information from the model
     class PState : public PedestrianState {
     public:
-        PState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage);
-
+    	PState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage);
 
         /// @brief abstract methods inherited from PedestrianState
         /// @{
@@ -99,21 +98,19 @@ private:
         const MSEdge* getNextEdge() const;
         /// @}
 
-
         /// @brief compute walking time on edge and update state members
         SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime);
 
+        MSPerson * getPerson();
 
-       MSPerson * getPerson();
+         const MSEdge* incrEdge();
 
-        const MSEdge* incrEdge();
+         std::vector<const MSEdge*>::const_iterator getMyRouteStep(){
+         	return myRouteStep;
+         }
 
-        std::vector<const MSEdge*>::const_iterator getMyRouteStep(){
-        	return myRouteStep;
-        }
 
     private:
-//        std::vector<const MSEdge*>::iterator myRouteStep;
         SUMOTime myLastEntryTime;
         SUMOTime myCurrentDuration;
         SUMOReal myCurrentBeginPos;
@@ -121,7 +118,8 @@ private:
         MSPerson * myPerson;
         MSPerson::MSPersonStage_Walking* myStage;
 		std::vector<const MSEdge*>::const_iterator myRouteStep;
-	};
+
+    };
 
 private:
     /// @brief the net to which to issue moveToNextEdge commands

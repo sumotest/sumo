@@ -9,7 +9,7 @@
 // Set z-values for all network positions based on data from a height map
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2011-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2011-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -39,7 +39,6 @@
 #include "NBHeightMapper.h"
 #include <utils/geom/GeoConvHelper.h>
 #include <utils/common/RGBColor.h>
-#include <polyconvert/PCPolyContainer.h>
 
 #ifdef HAVE_GDAL
 #include <ogrsf_frmts.h>
@@ -62,8 +61,8 @@ NBHeightMapper NBHeightMapper::Singleton;
 
 
 NBHeightMapper::NBHeightMapper():
-    myRTree(&Triangle::addSelf), myRaster(0)
-{ }
+    myRTree(&Triangle::addSelf), myRaster(0) {
+}
 
 
 NBHeightMapper::~NBHeightMapper() {

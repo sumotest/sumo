@@ -11,7 +11,7 @@
 // A road/street connecting two junctions
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -147,6 +147,13 @@ public:
     /// @todo Has to be called after all edges were built and all connections were set...; Still, is not very nice
     void closeBuilding();
 
+    /// Has to be called after all sucessors and predecessors have been set (after closeBuilding())
+    void buildLaneChanger();
+
+    /* @brief returns whether initizliaing a lane change is permitted on this edge
+     * @note Has to be called after all sucessors and predecessors have been set (after closeBuilding())
+     */
+    bool allowsLaneChanging();
 
     /// @name Access to the edge's lanes
     /// @{
@@ -188,9 +195,9 @@ public:
 
     /** @brief Returns this edge's persons set.
      *  @brief Avoids the creation of new vector as in getSortedPersons
-    	 *
-    	 * @return This edge's persons.
-    	 */
+     *
+     * @return This edge's persons.
+     */
     inline const std::set<MSTransportable*>& getPersons() const {
         return myPersons;
     }
@@ -298,13 +305,6 @@ public:
      */
     const std::vector<std::string>& getCrossingEdges() const {
         return myCrossingEdges;
-    }
-
-    /**@brief Gets the crossed edge ids
-     *@return The list of crossed edge ids in a crossing edge or an empty vector
-     */
-    static const MSEdgeVector& getAllEdges() {
-        return myEdges;
     }
 
 
@@ -537,7 +537,7 @@ public:
 
 #ifdef HAVE_INTERNAL_LANES
     /// @todo extension: inner junctions are not filled
-    const MSEdge* getInternalFollowingEdge(MSEdge* followerAfterInternal) const;
+    const MSEdge* getInternalFollowingEdge(const MSEdge* followerAfterInternal) const;
 #endif
 
     /// @brief Returns whether the vehicle (class) is not allowed on the edge
@@ -551,6 +551,18 @@ public:
 
     inline SVCPermissions getPermissions() const {
         return myCombinedPermissions;
+    }
+
+    /** @brief Returns the edges's width (sum over all lanes)
+     * @return This edges's width
+     */
+    SUMOReal getWidth() const {
+        return myWidth;
+    }
+
+    /// @brief Returns the right side offsets of this edge's sublanes
+    const std::vector<SUMOReal> getSubLaneSides() const {
+        return mySublaneSides;
     }
 
     void rebuildAllowedLanes();
@@ -577,6 +589,10 @@ public:
      */
     SUMOReal getSpeedLimit() const;
 
+    /** @brief Sets a new maximum speed for all lanes (used by TraCI and MSCalibrator)
+     * @param[in] val the new speed in m/s
+     */
+    void setMaxSpeed(SUMOReal val) const;
 
     /** @brief Returns the maximum speed the vehicle may use on this edge
      *
@@ -621,6 +637,25 @@ public:
         myAmDelayed = true;
     }
 
+    bool hasLaneChanger() const {
+        return myLaneChanger != 0;
+    }
+
+    /// @brief whether this edge allows changing to the opposite direction edge
+    bool canChangeToOpposite();
+
+    /// @brief get the mean speed for mesoscopic simulation
+    SUMOReal getMesoMeanSpeed() const;
+
+    /// @brief get the mean speed 
+    SUMOReal getMeanSpeed() const;
+
+    /// @brief grant exclusive access to the mesoscopic state
+    virtual void lock() const {}
+
+    /// @brief release exclusive access to the mesoscopic state
+    virtual void unlock() const {};
+
     /** @brief Inserts edge into the static dictionary
         Returns true if the key id isn't already in the dictionary. Otherwise
         returns false. */
@@ -629,14 +664,11 @@ public:
     /** @brief Returns the MSEdge associated to the key id if exists, otherwise returns 0. */
     static MSEdge* dictionary(const std::string& id);
 
-    /** @brief Returns the MSEdge at the index */
-    static MSEdge* dictionary(size_t index);
-
     /// @brief Returns the number of edges
     static size_t dictSize();
 
-    /// @brief Returns the number of edges with a numerical id
-    static size_t numericalDictSize();
+    /// @brief Returns all edges with a numerical id
+    static const MSEdgeVector& getAllEdges();
 
     /** @brief Clears the dictionary */
     static void clear();
@@ -718,6 +750,7 @@ protected:
     /// @brief lookup in map and return 0 if not found
     const std::vector<MSLane*>* getAllowedLanesWithDefault(const AllowedLanesCont& c, const MSEdge* dest) const;
 
+
 protected:
     /// @brief This edge's numerical id
     const int myNumericalID;
@@ -781,6 +814,9 @@ protected:
     /// @brief the priority of the edge (used during network creation)
     const int myPriority;
 
+    /// Edge width [m]
+    SUMOReal myWidth;
+
     /// @brief the length of the edge (cached value for speedup)
     SUMOReal myLength;
 
@@ -792,6 +828,9 @@ protected:
 
     /// @brief whether this edge belongs to a roundabout
     bool myAmRoundabout;
+
+    /// @brief the right side for each sublane on this edge
+    std::vector<SUMOReal> mySublaneSides;
 
     /// @name Static edge container
     /// @{

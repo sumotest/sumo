@@ -7,7 +7,7 @@
 // APIs for getting/setting person values via TraCI
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -30,7 +30,7 @@
 
 #ifndef NO_TRACI
 
-#include <microsim/MSPersonControl.h>
+#include <microsim/MSTransportableControl.h>
 #include <microsim/pedestrians/MSPerson.h>
 #include <microsim/MSNet.h>
 #include <microsim/MSEdge.h>
@@ -62,7 +62,7 @@ TraCIServerAPI_Person::processGet(TraCIServer& server, tcpip::Storage& inputStor
             && variable != VAR_WAITING_TIME && variable != VAR_PARAMETER
             && variable != VAR_NEXT_EDGE
        ) {
-        return server.writeErrorStatusCmd(CMD_GET_PERSON_VARIABLE, "Get Person Variable: unsupported variable specified", outputStorage);
+        return server.writeErrorStatusCmd(CMD_GET_PERSON_VARIABLE, "Get Person Variable: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // begin response building
     tcpip::Storage tempMsg;
@@ -70,12 +70,14 @@ TraCIServerAPI_Person::processGet(TraCIServer& server, tcpip::Storage& inputStor
     tempMsg.writeUnsignedByte(RESPONSE_GET_PERSON_VARIABLE);
     tempMsg.writeUnsignedByte(variable);
     tempMsg.writeString(id);
-    MSPersonControl& c = MSNet::getInstance()->getPersonControl();
+    MSTransportableControl& c = MSNet::getInstance()->getPersonControl();
     if (variable == ID_LIST || variable == ID_COUNT) {
         if (variable == ID_LIST) {
             std::vector<std::string> ids;
-            for (MSPersonControl::constVehIt i = c.loadedPersonsBegin(); i != c.loadedPersonsEnd(); ++i) {
-                ids.push_back((*i).first);
+            for (MSTransportableControl::constVehIt i = c.loadedBegin(); i != c.loadedEnd(); ++i) {
+                if (i->second->getCurrentStageType() != MSTransportable::WAITING_FOR_DEPART) {
+                    ids.push_back(i->first);
+                }
             }
             tempMsg.writeUnsignedByte(TYPE_STRINGLIST);
             tempMsg.writeStringList(ids);
@@ -163,10 +165,10 @@ TraCIServerAPI_Person::processSet(TraCIServer& server, tcpip::Storage& inputStor
     int variable = inputStorage.readUnsignedByte();
     if (variable != VAR_PARAMETER
        ) {
-        return server.writeErrorStatusCmd(CMD_SET_PERSON_VARIABLE, "Change Person State: unsupported variable specified", outputStorage);
+        return server.writeErrorStatusCmd(CMD_SET_PERSON_VARIABLE, "Change Person State: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // id
-    MSPersonControl& c = MSNet::getInstance()->getPersonControl();
+    MSTransportableControl& c = MSNet::getInstance()->getPersonControl();
     std::string id = inputStorage.readString();
     MSTransportable* p = c.get(id);
     if (p == 0) {

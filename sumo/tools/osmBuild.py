@@ -10,7 +10,7 @@
 Builds a sumo network and polygons from a downloaded area from OpenStreetMap.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -110,14 +110,14 @@ def build(args=None, bindir=None):
 
     subprocess.call(netconvertOpts)
     # write config
-    subprocess.call(
-        netconvertOpts + ["--save-configuration", basename + ".netccfg"])
+    subprocess.call(netconvertOpts +
+                    ["--save-configuration", basename + ".netccfg"])
     if options.typemap:
         polyconvertOpts += ["-n", netfile, "-o", basename + '.poly.xml']
         subprocess.call(polyconvertOpts)
         # write config
-        subprocess.call(
-            polyconvertOpts + ["--save-configuration", basename + ".polycfg"])
+        subprocess.call(polyconvertOpts +
+                        ["--save-configuration", basename + ".polycfg"])
 
 
 if __name__ == "__main__":

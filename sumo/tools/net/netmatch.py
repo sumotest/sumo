@@ -9,7 +9,7 @@
 This script tries to match the edges of two sumo networks.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -60,12 +60,12 @@ if not options.output or not options.net1 or not options.net2:
 
 # read networks
 if options.verbose:
-    print ("Reading net#1...")
+    print("Reading net#1...")
 net1 = sumolib.net.readNet(options.net1)
 net1.move(-net1.getLocationOffset()[0], -net1.getLocationOffset()[1])
 
 if options.verbose:
-    print ("Reading net#2...")
+    print("Reading net#2...")
 net2 = sumolib.net.readNet(options.net2)
 net2.move(-net2.getLocationOffset()[0], -net2.getLocationOffset()[1])
 

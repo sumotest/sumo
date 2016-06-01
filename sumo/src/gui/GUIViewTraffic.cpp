@@ -11,7 +11,7 @@
 // A view on the simulation; this view is a microscopic one
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -101,7 +101,7 @@ GUIViewTraffic::GUIViewTraffic(
 #ifdef HAVE_FFMPEG
     , myCurrentVideo(0)
 #endif
-    {}
+{}
 
 
 GUIViewTraffic::~GUIViewTraffic() {
@@ -389,7 +389,7 @@ GUIViewTraffic::checkSnapshots() {
 #ifdef HAVE_FFMPEG
     if (myCurrentVideo != 0) {
         std::string error = makeSnapshot("");
-        if (error != "") {
+        if (error != "" && error != "video") {
             WRITE_WARNING(error);
         }
     }

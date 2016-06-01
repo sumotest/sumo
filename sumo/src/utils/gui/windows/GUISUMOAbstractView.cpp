@@ -11,7 +11,7 @@
 // The base class for a view
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -114,19 +114,19 @@ GUISUMOAbstractView::GUISUMOAbstractView(FXComposite* p,
         FXGLVisual* glVis, FXGLCanvas* share)
     : FXGLCanvas(p, glVis, share, p, MID_GLCANVAS,
                  LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0),
-    myApp(&app),
-    myParent(parent),
-    myGrid(&((SUMORTree&)grid)),
-    myChanger(0),
-    myMouseHotspotX(app.getDefaultCursor()->getHotX()),
-    myMouseHotspotY(app.getDefaultCursor()->getHotY()),
-    myPopup(0),
-    myUseToolTips(false),
-    myAmInitialised(false),
-    myViewportChooser(0),
-    myWindowCursorPositionX(getWidth() / 2),
-    myWindowCursorPositionY(getHeight() / 2),
-    myVisualizationChanger(0) {
+      myApp(&app),
+      myParent(parent),
+      myGrid(&((SUMORTree&)grid)),
+      myChanger(0),
+      myMouseHotspotX(app.getDefaultCursor()->getHotX()),
+      myMouseHotspotY(app.getDefaultCursor()->getHotY()),
+      myPopup(0),
+      myUseToolTips(false),
+      myAmInitialised(false),
+      myViewportChooser(0),
+      myWindowCursorPositionX(getWidth() / 2),
+      myWindowCursorPositionY(getHeight() / 2),
+      myVisualizationChanger(0) {
     setTarget(this);
     enable();
     flags |= FLAG_ENABLED;
@@ -286,12 +286,10 @@ GUISUMOAbstractView::getObjectAtPosition(Position pos) {
             if (type == GLO_POI || type == GLO_POLYGON) {
                 layer = dynamic_cast<Shape*>(o)->getLayer();
             }
-#ifdef HAVE_INTERNAL
             if (type == GLO_LANE && GUIVisualizationSettings::UseMesoSim) {
                 // do not select lanes in meso mode
                 continue;
             }
-#endif
             // check whether the current object is above a previous one
             if (layer > maxLayer) {
                 idMax = id;
@@ -735,7 +733,7 @@ GUISUMOAbstractView::makeSnapshot(const std::string& destFile) {
     FXString ext = FXPath::extension(destFile.c_str());
     const bool useGL2PS = ext == "ps" || ext == "eps" || ext == "pdf" || ext == "svg" || ext == "tex" || ext == "pgf";
 #ifdef HAVE_FFMPEG
-    const bool useVideo = destFile == "" || ext == "h264";
+    const bool useVideo = destFile == "" || ext == "h264" || ext == "hevc";
 #endif
     for (int i = 0; i < 10 && !makeCurrent(); ++i) {
         FXSingleEventThread::sleep(100);
@@ -872,9 +870,9 @@ GUISUMOAbstractView::makeSnapshot(const std::string& destFile) {
                 }
             } else
 #endif
-            if (!MFXImageHelper::saveImage(destFile, getWidth(), getHeight(), buf)) {
-                errorMessage = "Could not save '" + destFile + "'.";
-            }
+                if (!MFXImageHelper::saveImage(destFile, getWidth(), getHeight(), buf)) {
+                    errorMessage = "Could not save '" + destFile + "'.";
+                }
         } catch (InvalidArgument& e) {
             errorMessage = "Could not save '" + destFile + "'.\n" + e.what();
         }

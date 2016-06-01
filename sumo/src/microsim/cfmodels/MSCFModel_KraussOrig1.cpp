@@ -11,7 +11,7 @@
 // The original Krauss (1998) car-following model and parameter
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -44,7 +44,7 @@
 // ===========================================================================
 MSCFModel_KraussOrig1::MSCFModel_KraussOrig1(const MSVehicleType* vtype,  SUMOReal accel, SUMOReal decel,
         SUMOReal dawdle, SUMOReal headwayTime)
-    : MSCFModel(vtype, accel, decel, headwayTime), myDawdle(dawdle), myTauDecel(decel* headwayTime) {
+    : MSCFModel(vtype, accel, decel, headwayTime), myDawdle(dawdle), myTauDecel(decel * headwayTime) {
 }
 
 
@@ -104,6 +104,9 @@ MSCFModel_KraussOrig1::dawdle(SUMOReal speed) const {
 SUMOReal MSCFModel_KraussOrig1::vsafe(SUMOReal gap, SUMOReal predSpeed, SUMOReal /* predMaxDecel */) const {
     if (predSpeed == 0 && gap < 0.01) {
         return 0;
+    } else if (predSpeed == 0 &&  gap <= ACCEL2SPEED(myDecel)) {
+        // workaround for #2310
+        return MIN2(ACCEL2SPEED(myDecel), DIST2SPEED(gap));
     }
     SUMOReal vsafe = (SUMOReal)(-1. * myTauDecel
                                 + sqrt(

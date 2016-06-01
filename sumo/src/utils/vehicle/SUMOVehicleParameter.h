@@ -10,7 +10,7 @@
 // Structure representing possible vehicle parameter
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -67,7 +67,8 @@ const int VEHPARS_TO_TAZ_SET = 2 << 12;
 const int VEHPARS_FORCE_REROUTE = 2 << 13;
 const int VEHPARS_PERSON_CAPACITY_SET = 2 << 14;
 const int VEHPARS_PERSON_NUMBER_SET = 2 << 15;
-const int VEHPARS_CONTAINER_NUMBER_SET = 2 << 15;
+const int VEHPARS_CONTAINER_NUMBER_SET = 2 << 16;
+const int VEHPARS_DEPARTPOSLAT_SET = 2 << 16;
 
 const int STOP_INDEX_END = -1;
 const int STOP_INDEX_FIT = -2;
@@ -141,16 +142,38 @@ enum DepartPosDefinition {
     DEPART_POS_FREE,
     /// @brief Back-at-zero position
     DEPART_POS_BASE,
-    /// @brief Simple max-flow insertion by P.Wagner
-    DEPART_POS_PWAG_SIMPLE,
-    /// @brief Generic max-flow insertion by P.Wagner
-    DEPART_POS_PWAG_GENERIC,
-    /// @brief A gap is chosen where the maximum speed may be achieved
-    DEPART_POS_MAX_SPEED_GAP,
+    /// @brief Insert behind the last vehicle as close as possible to still allow the specified departSpeed. Fallback to DEPART_POS_BASE if there is no vehicle on the departLane yet.
+    DEPART_POS_LAST,
     /// @brief If a fixed number of random choices fails, a free position is chosen
     DEPART_POS_RANDOM_FREE,
     /// @brief Tag for the last element in the enum for safe int casting
     DEPART_POS_DEF_MAX
+};
+
+
+/**
+ * @enum DepartPosDefinition
+ * @brief Possible ways to choose the departure position
+ */
+enum DepartPosLatDefinition {
+    /// @brief No information given; use default
+    DEPART_POSLAT_DEFAULT,
+    /// @brief The position is given
+    DEPART_POSLAT_GIVEN,
+    /// @brief At the rightmost side of the lane
+    DEPART_POSLAT_RIGHT,
+    /// @brief At the center of the lane
+    DEPART_POSLAT_CENTER,
+    /// @brief At the leftmost side of the lane
+    DEPART_POSLAT_LEFT,
+    /// @brief The lateral position is chosen randomly
+    DEPART_POSLAT_RANDOM,
+    /// @brief A free lateral position is chosen
+    DEPART_POSLAT_FREE,
+    /// @brief If a fixed number of random choices fails, a free lateral position is chosen
+    DEPART_POSLAT_RANDOM_FREE,
+    /// @brief Tag for the last element in the enum for safe int casting
+    DEPART_POSLAT_DEF_MAX
 };
 
 
@@ -257,17 +280,11 @@ public:
      *
      * @param[in, out] dev The device to write into
      * @param[in] oc The options to get defaults from
+     * @param[in] tag The "root" tag to write (defaults to vehicle)
      * @exception IOError not yet implemented
      */
-    void write(OutputDevice& dev, const OptionsCont& oc) const;
+    void write(OutputDevice& dev, const OptionsCont& oc, const SumoXMLTag tag = SUMO_TAG_VEHICLE) const;
 
-
-    /** @brief Writes the enclosed stops
-     *
-     * @param[in, out] dev The device to write into
-     * @exception IOError not yet implemented
-     */
-    void writeStops(OutputDevice& dev) const;
 
     /** @brief Returns whether the defaults shall be used
      * @param[in] oc The options to get the options from
@@ -318,6 +335,19 @@ public:
      */
     static bool parseDepartPos(const std::string& val, const std::string& element, const std::string& id,
                                SUMOReal& pos, DepartPosDefinition& dpd, std::string& error);
+
+
+    /** @brief Validates a given departPosLat value
+     * @param[in] val The departPosLat value to parse
+     * @param[in] element The name of the type of the parsed element, for building the error message
+     * @param[in] id The id of the parsed element, for building the error message
+     * @param[out] pos The parsed position, if given
+     * @param[out] dpd The parsed departPos definition
+     * @param[out] error Error message, if an error occures
+     * @return Whether the given value is a valid departPos definition
+     */
+    static bool parseDepartPosLat(const std::string& val, const std::string& element, const std::string& id,
+                                  SUMOReal& pos, DepartPosLatDefinition& dpd, std::string& error);
 
 
     /** @brief Validates a given departSpeed value
@@ -408,6 +438,10 @@ public:
     SUMOReal departPos;
     /// @brief Information how the vehicle shall choose the departure position
     DepartPosDefinition departPosProcedure;
+    /// @brief (optional) The lateral position the vehicle shall depart from
+    SUMOReal departPosLat;
+    /// @brief Information how the vehicle shall choose the lateral departure position
+    DepartPosLatDefinition departPosLatProcedure;
     /// @brief (optional) The initial speed of the vehicle
     SUMOReal departSpeed;
     /// @brief Information how the vehicle's initial speed shall be chosen
@@ -488,14 +522,26 @@ public:
         std::set<std::string> awaitedPersons;
         /// @brief IDs of containers the vehicle has to wait for until departing
         std::set<std::string> awaitedContainers;
+        /// @brief lanes and positions connected to this stop
+        std::multimap<std::string, SUMOReal> accessPos;
         /// @brief at which position in the stops list
         int index;
         /// @brief Information for the output which parameter were set
         int setParameter;
+
+        /** @brief Writes the stop as XML
+         *
+         * @param[in, out] dev The device to write into
+         * @exception IOError not yet implemented
+         */
+        void write(OutputDevice& dev) const;
     };
 
     /// @brief List of the stops the vehicle will make
     std::vector<Stop> stops;
+
+    /// @brief List of the via-edges the vehicle must visit
+    std::vector<std::string> via;
 
     /// @brief The static number of persons in the vehicle when it departs (not including boarding persons)
     unsigned int personNumber;

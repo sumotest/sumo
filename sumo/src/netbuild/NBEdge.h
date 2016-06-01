@@ -9,7 +9,7 @@
 // The representation of a single edge during network building
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -136,8 +136,10 @@ public:
         SUMOReal endOffset;
         /// @brief This lane's width
         SUMOReal width;
-        /// @brief An original ID, if given (@todo: is only seldom used, should be stored somewhere else, probably)
+        /// @brief An original ID, if given
         std::string origID;
+        /// @brief An opposite lane ID, if given
+        std::string oppositeID;
 
     };
 
@@ -414,6 +416,8 @@ public:
         return myLoadedLength > 0 ? myLoadedLength : myLength;
     }
 
+    /// @brief length that will be assigned to the lanes in the final network
+    SUMOReal getFinalLength() const;
 
     /** @brief Returns whether a length was set explicitly
      * @return Wether the edge's length was specified
@@ -708,7 +712,7 @@ public:
      * @param[in] mayDefinitelyPass Whether this connection is definitely undistrubed (special case for on-ramps)
      * @todo Check difference between "setConnection" and "addLane2LaneConnection"
      */
-    void setConnection(unsigned int lane, NBEdge* destEdge,
+    bool setConnection(unsigned int lane, NBEdge* destEdge,
                        unsigned int destLane,
                        Lane2LaneInfoType type,
                        bool mayUseSameDestination = false,
@@ -918,11 +922,11 @@ public:
     /// @brief whether lanes differ in speed
     bool hasLaneSpecificSpeed() const;
 
-    /// @brief whether lanes differ in offset
-    bool hasLaneSpecificEndOffset() const;
-
     /// @brief whether lanes differ in width
     bool hasLaneSpecificWidth() const;
+
+    /// @brief whether lanes differ in offset
+    bool hasLaneSpecificEndOffset() const;
 
     /// computes the edge (step1: computation of approached edges)
     bool computeEdge2Edges(bool noLeftMovers);
@@ -942,7 +946,7 @@ public:
      *  of this edge to the leftmost lane of myTurnDestination).
      * @param[in] noTLSControlled Whether the turnaround shall not be connected if this edge is controlled by a tls
      */
-    void appendTurnaround(bool noTLSControlled);
+    void appendTurnaround(bool noTLSControlled, bool checkPermissions);
 
 
 

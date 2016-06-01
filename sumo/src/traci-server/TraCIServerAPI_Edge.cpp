@@ -12,7 +12,7 @@
 // APIs for getting/setting edge values via TraCI
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -69,7 +69,7 @@ TraCIServerAPI_Edge::processGet(TraCIServer& server, tcpip::Storage& inputStorag
             && variable != LAST_STEP_VEHICLE_HALTING_NUMBER && variable != LAST_STEP_LENGTH
             && variable != LAST_STEP_PERSON_ID_LIST
             && variable != LAST_STEP_VEHICLE_ID_LIST && variable != ID_COUNT && variable != VAR_PARAMETER) {
-        return server.writeErrorStatusCmd(CMD_GET_EDGE_VARIABLE, "Get Edge Variable: unsupported variable specified", outputStorage);
+        return server.writeErrorStatusCmd(CMD_GET_EDGE_VARIABLE, "Get Edge Variable: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // begin response building
     tcpip::Storage tempMsg;
@@ -247,13 +247,8 @@ TraCIServerAPI_Edge::processGet(TraCIServer& server, tcpip::Storage& inputStorag
             }
             break;
             case LAST_STEP_MEAN_SPEED: {
-                SUMOReal sum = 0;
-                const std::vector<MSLane*>& lanes = e->getLanes();
-                for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
-                    sum += (*i)->getMeanSpeed();
-                }
                 tempMsg.writeUnsignedByte(TYPE_DOUBLE);
-                tempMsg.writeDouble(sum / (SUMOReal) lanes.size());
+                tempMsg.writeDouble(e->getMeanSpeed());
             }
             break;
             case LAST_STEP_OCCUPANCY: {
@@ -328,7 +323,7 @@ TraCIServerAPI_Edge::processSet(TraCIServer& server, tcpip::Storage& inputStorag
     // variable
     int variable = inputStorage.readUnsignedByte();
     if (variable != VAR_EDGE_TRAVELTIME && variable != VAR_EDGE_EFFORT && variable != VAR_MAXSPEED && variable != VAR_PARAMETER) {
-        return server.writeErrorStatusCmd(CMD_SET_EDGE_VARIABLE, "Change Edge State: unsupported variable specified", outputStorage);
+        return server.writeErrorStatusCmd(CMD_SET_EDGE_VARIABLE, "Change Edge State: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // id
     std::string id = inputStorage.readString();

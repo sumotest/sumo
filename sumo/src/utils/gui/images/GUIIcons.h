@@ -9,7 +9,7 @@
 // An enumeration of icons used by the gui applications
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -69,6 +69,13 @@ enum GUIIcon {
     ICON_LOCATEADD,
     ICON_LOCATEPOI,
     ICON_LOCATEPOLY,
+
+    ICON_GREENEDGE,
+    ICON_GREENVEHICLE,
+    ICON_GREENPERSON,
+    ICON_YELLOWEDGE,
+    ICON_YELLOWVEHICLE,
+    ICON_YELLOWPERSON,
 
     ICON_COLORWHEEL,
     ICON_SAVEDB,

@@ -28,6 +28,7 @@
             <xsd:element name="lane-weight-files" type="fileOptionType" minOccurs="0"/>
             <xsd:element name="weight-attribute" type="strOptionType" minOccurs="0"/>
             <xsd:element name="weight-adaption" type="floatOptionType" minOccurs="0"/>
+            <xsd:element name="taz-param" type="strOptionType" minOccurs="0"/>
         </xsd:all>
     </xsd:complexType>
 
@@ -50,6 +51,8 @@
             <xsd:element name="weights.interpolate" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="weights.expand" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="routing-algorithm" type="strOptionType" minOccurs="0"/>
+            <xsd:element name="bulk-routing.vtypes" type="boolOptionType" minOccurs="0"/>
+            <xsd:element name="routing-threads" type="intOptionType" minOccurs="0"/>
             <xsd:element name="weight-period" type="timeOptionType" minOccurs="0"/>
             <xsd:element name="scale" type="floatOptionType" minOccurs="0"/>
             <xsd:element name="vtype" type="strOptionType" minOccurs="0"/>

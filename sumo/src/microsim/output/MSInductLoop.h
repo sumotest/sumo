@@ -11,7 +11,7 @@
 // An unextended detector measuring at a fixed position on a fixed lane.
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2004-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2004-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -69,7 +69,7 @@ class OutputDevice;
  * @see MSDetectorFileOutput
  */
 class MSInductLoop
-        : public MSMoveReminder, public MSDetectorFileOutput {
+    : public MSMoveReminder, public MSDetectorFileOutput {
 public:
     /**
      * @brief Constructor.
@@ -104,6 +104,17 @@ public:
 
     /// @name Methods inherited from MSMoveReminder
     /// @{
+    /** @brief Checks whether the reminder is activated by a vehicle entering the lane
+     *
+     * Lane change means in this case that the vehicle changes to the lane
+     *  the reminder is placed at.
+     *
+     * @param[in] veh The entering vehicle.
+     * @param[in] reason how the vehicle enters the lane
+     * @return True if vehicle enters the induction loop
+     * @see Notification
+     */
+    bool notifyEnter(SUMOVehicle& veh, Notification reason);
 
     /** @brief Checks whether the vehicle shall be counted and/or shall still touch this MSMoveReminder
      *
@@ -272,9 +283,11 @@ public:
     /** @brief Returns vehicle data for vehicles that have been on the detector starting at the given time
      *
      * @param[in] t The time from which vehicles shall be counted
+     * @param[in] full Whether entryTime or leaveTime shall be compaired against t 
+     *            (the latter gives a more complete picture but may include vehicles in multiple steps  even if they did not stay on the detectort)
      * @return The list of vehicles
      */
-    virtual std::vector<VehicleData> collectVehiclesOnDet(SUMOTime t) const;
+    virtual std::vector<VehicleData> collectVehiclesOnDet(SUMOTime t, bool leaveTime=false) const;
 
 
 protected:

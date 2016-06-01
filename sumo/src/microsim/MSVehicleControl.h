@@ -9,7 +9,7 @@
 // The class responsible for building and deletion of vehicles
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -266,9 +266,7 @@ public:
     }
 
     /// @brief return the number of teleports (including collisions)
-    unsigned int getTeleportCount() const {
-        return myCollisions + myTeleportsJam + myTeleportsYield + myTeleportsWrongLane;
-    }
+    unsigned int getTeleportCount() const;
 
     /// @brief return the number of emergency stops
     unsigned int getEmergencyStops() const {
@@ -414,7 +412,7 @@ public:
         myEmergencyStops++;
     }
 
-    /// @name State I/O 
+    /// @name State I/O
     /// @{
 
     /** @brief Sets the current state variables as loaded from the stream

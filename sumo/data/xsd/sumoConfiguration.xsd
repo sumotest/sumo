@@ -43,6 +43,7 @@
             <xsd:element name="netstate-dump.empty-edges" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="netstate-dump.precision" type="intOptionType" minOccurs="0"/>
             <xsd:element name="emission-output" type="fileOptionType" minOccurs="0"/>
+            <xsd:element name="emission-output.precision" type="intOptionType" minOccurs="0"/>
             <xsd:element name="battery-output" type="fileOptionType" minOccurs="0"/>
             <xsd:element name="battery-output.precision" type="intOptionType" minOccurs="0"/>
             <xsd:element name="fcd-output" type="fileOptionType" minOccurs="0"/>
@@ -81,15 +82,19 @@
 
     <xsd:complexType name="processingType">
         <xsd:all>
+            <xsd:element name="lateral-resolution" type="floatOptionType" minOccurs="0"/>
             <xsd:element name="route-steps" type="timeOptionType" minOccurs="0"/>
             <xsd:element name="no-internal-links" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="ignore-junction-blocker" type="timeOptionType" minOccurs="0"/>
-            <xsd:element name="ignore-accidents" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="ignore-route-errors" type="boolOptionType" minOccurs="0"/>
+            <xsd:element name="ignore-accidents" type="boolOptionType" minOccurs="0"/>
+            <xsd:element name="collision.action" type="strOptionType" minOccurs="0"/>
+            <xsd:element name="collision.check-junctions" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="max-num-vehicles" type="intOptionType" minOccurs="0"/>
             <xsd:element name="scale" type="floatOptionType" minOccurs="0"/>
             <xsd:element name="time-to-teleport" type="timeOptionType" minOccurs="0"/>
             <xsd:element name="time-to-teleport.highways" type="timeOptionType" minOccurs="0"/>
+            <xsd:element name="waiting-time-memory" type="timeOptionType" minOccurs="0"/>
             <xsd:element name="max-depart-delay" type="timeOptionType" minOccurs="0"/>
             <xsd:element name="sloppy-insert" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="eager-insert" type="boolOptionType" minOccurs="0"/>
@@ -201,6 +206,7 @@
             <xsd:element name="meso-multi-queue" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="meso-junction-control" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="meso-junction-control.limited" type="boolOptionType" minOccurs="0"/>
+            <xsd:element name="meso-tls-penalty" type="floatOptionType" minOccurs="0"/>
             <xsd:element name="meso-overtaking" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="meso-recheck" type="timeOptionType" minOccurs="0"/>
         </xsd:all>
@@ -220,7 +226,6 @@
             <xsd:element name="game" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="start" type="boolOptionType" minOccurs="0"/>
             <xsd:element name="disable-textures" type="boolOptionType" minOccurs="0"/>
-            <xsd:element name="osg-view" type="boolOptionType" minOccurs="0"/>
         </xsd:all>
     </xsd:complexType>
 

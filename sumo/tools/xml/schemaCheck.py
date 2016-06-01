@@ -11,7 +11,7 @@ Checks schema for files matching certain file names using either
 lxml or SAX2Count.exe depending on availability.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -109,7 +109,7 @@ def main(srcRoot, toCheck, err):
     print("%s files checked" % fileNo)
 
     if haveLxml:
-        for scheme in schemes.itervalues():
+        for scheme in schemes.values():
             if scheme.error_log:
                 print(scheme.error_log, file=err)
                 return 1

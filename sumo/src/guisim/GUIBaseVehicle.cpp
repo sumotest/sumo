@@ -9,7 +9,7 @@
 // A MSVehicle extended by some values for usage within the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -53,8 +53,6 @@
 #include <microsim/MSVehicleControl.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <microsim/devices/MSDevice_Vehroutes.h>
-#include <microsim/devices/MSDevice_Person.h>
-#include <microsim/devices/MSDevice_Container.h>
 #include <microsim/devices/MSDevice_BTreceiver.h>
 #include <gui/GUIApplicationWindow.h>
 #include <gui/GUIGlobals.h>
@@ -318,7 +316,8 @@ GUIBaseVehicle::getPopUpMenu(GUIMainWindow& app,
 
     new FXMenuSeparator(ret);
     //
-    buildShowParamsPopupEntry(ret);
+    buildShowParamsPopupEntry(ret, false);
+    buildShowTypeParamsPopupEntry(ret);
     buildPositionCopyEntry(ret, false);
     return ret;
 }
@@ -328,7 +327,7 @@ Boundary
 GUIBaseVehicle::getCenteringBoundary() const {
     Boundary b;
     b.add(getPosition());
-    b.grow(20);
+    b.grow(myVehicle.getVehicleType().getLength());
     return b;
 }
 
@@ -823,11 +822,11 @@ GUIBaseVehicle::drawAction_drawVehicleAsImage(const GUIVisualizationSettings& s,
 
 
 void
-GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
+GUIBaseVehicle::drawOnPos(const GUIVisualizationSettings& s, const Position& pos, const SUMOReal angle) const {
     glPushName(getGlID());
     glPushMatrix();
-    Position p1 = getPosition();
-    const SUMOReal angle = RAD2DEG(getAngle() + PI / 2.);
+    Position p1 = pos;
+    const SUMOReal degAngle = RAD2DEG(angle + PI / 2.);
     // one seat in the center of the vehicle by default
     if (myVehicle.getLane() != 0) {
         mySeatPositions[0] = myVehicle.getLane()->geometryPositionAtOffset(myVehicle.getPositionOnLane() - myVType.getLength() / 2);
@@ -835,7 +834,7 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
         mySeatPositions[0] = p1;
     }
     glTranslated(p1.x(), p1.y(), getType());
-    glRotated(angle, 0, 0, 1);
+    glRotated(degAngle, 0, 0, 1);
     // set lane color
     setColor(s);
     // scale
@@ -906,6 +905,11 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
             case SVS_RAIL_CARGO:
                 // only SVS_RAIL_CAR has blinkers and brake lights
                 break;
+            case SVS_MOTORCYCLE:
+            case SVS_MOPED:
+                drawAction_drawVehicleBlinker(myCarriageLength);
+                drawAction_drawVehicleBrakeLight(myCarriageLength, true);
+                break;
             default:
                 drawAction_drawVehicleBlinker(myCarriageLength);
                 drawAction_drawVehicleBrakeLight(myCarriageLength);
@@ -960,7 +964,7 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
     }
     */
     glTranslated(0, MIN2(myVType.getLength() / 2, SUMOReal(5)), -getType()); // drawing name at GLO_MAX fails unless translating z
-    glRotated(-angle, 0, 0, 1);
+    glRotated(-degAngle, 0, 0, 1);
     glScaled(1 / upscale, 1 / upscale, 1);
     drawName(Position(0, 0), s.scale,
              myVType.getGuiShape() == SVS_PEDESTRIAN ? s.personName : s.vehicleName);
@@ -972,6 +976,12 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
     glPopMatrix();
     glPopName();
     drawAction_drawPersonsAndContainers(s);
+}
+
+
+void
+GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
+    drawOnPos(s, getPosition(), getAngle());
 }
 
 
@@ -1092,7 +1102,7 @@ GUIBaseVehicle::setFunctionalColor(size_t activeScheme, const MSBaseVehicle* veh
             GLHelper::setColor(RGBColor::fromHSV(hue, sat, 1.));
             return true;
         }
-        case 25: { // color randomly (by pointer)
+        case 27: { // color randomly (by pointer)
             const SUMOReal hue = (long)veh % 360; // [0-360]
             const SUMOReal sat = (((long)veh / 360) % 67) / 100.0 + 0.33; // [0.33-1]
             GLHelper::setColor(RGBColor::fromHSV(hue, sat, 1.));
@@ -1170,4 +1180,3 @@ GUIBaseVehicle::getSeatPosition(size_t personIndex) const {
 
 
 /****************************************************************************/
-

@@ -9,7 +9,7 @@
 // The class storing the generated network
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -117,9 +117,10 @@ public:
      * @param[in] spaceX The space between nodes in x-direction
      * @param[in] spaceY The space between nodes in y-direction
      * @param[in] attachLength The length of streets attached at the border
+     * @param[in] alphaIDs Whether to use alphanumerial node ids
      * @see NGNet::connect
      */
-    void createChequerBoard(int numX, int numY, SUMOReal spaceX, SUMOReal spaceY, SUMOReal attachLength);
+    void createChequerBoard(int numX, int numY, SUMOReal spaceX, SUMOReal spaceY, SUMOReal attachLength, bool alphaIDs);
 
 
     /** @brief Creates a spider network

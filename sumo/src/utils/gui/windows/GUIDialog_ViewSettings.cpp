@@ -10,7 +10,7 @@
 // The dialog to change the view (gui) settings.
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -220,21 +220,17 @@ GUIDialog_ViewSettings::GUIDialog_ViewSettings(GUISUMOAbstractView* parent,
         myLaneScaleInterpolation = new FXCheckButton(m23, "Interpolate", this, MID_SIMPLE_VIEW_COLORCHANGE, LAYOUT_CENTER_Y | CHECKBUTTON_NORMAL);
         myLaneScaleSettingFrame = new FXVerticalFrame(frame23, LAYOUT_FILL_X | LAYOUT_FILL_Y,  0, 0, 0, 0, 10, 10, 2, 8, 5, 2);
 
-#ifdef HAVE_INTERNAL
         if (GUIVisualizationSettings::UseMesoSim) {
             mySettings->edgeColorer.fill(*myLaneEdgeColorMode);
             mySettings->edgeScaler.fill(*myLaneEdgeScaleMode);
             myLaneEdgeColorMode->setNumVisible((int)mySettings->edgeColorer.size());
             myLaneEdgeScaleMode->setNumVisible((int)mySettings->edgeScaler.size());
         } else {
-#endif
             mySettings->laneColorer.fill(*myLaneEdgeColorMode);
             mySettings->laneScaler.fill(*myLaneEdgeScaleMode);
             myLaneEdgeColorMode->setNumVisible((int)mySettings->laneColorer.size());
             myLaneEdgeScaleMode->setNumVisible((int)mySettings->laneScaler.size());
-#ifdef HAVE_INTERNAL
         }
-#endif
 
         new FXHorizontalSeparator(frame2, SEPARATOR_GROOVE | LAYOUT_FILL_X);
         FXMatrix* m22 =
@@ -822,17 +818,13 @@ GUIDialog_ViewSettings::onCmdColorChange(FXObject* sender, FXSelector, void* /*v
     tmpSettings.gridXSize = (SUMOReal) myGridXSizeDialer->getValue();
     tmpSettings.gridYSize = (SUMOReal) myGridYSizeDialer->getValue();
 
-#ifdef HAVE_INTERNAL
     if (GUIVisualizationSettings::UseMesoSim) {
         tmpSettings.edgeColorer.setActive(myLaneEdgeColorMode->getCurrentItem());
         tmpSettings.edgeScaler.setActive(myLaneEdgeScaleMode->getCurrentItem());
     } else {
-#endif
         tmpSettings.laneColorer.setActive(myLaneEdgeColorMode->getCurrentItem());
         tmpSettings.laneScaler.setActive(myLaneEdgeScaleMode->getCurrentItem());
-#ifdef HAVE_INTERNAL
     }
-#endif
     tmpSettings.laneShowBorders = (myShowLaneBorders->getCheck() != FALSE);
     tmpSettings.showLinkDecals = (myShowLaneDecals->getCheck() != FALSE);
     tmpSettings.showRails = (myShowRails->getCheck() != FALSE);

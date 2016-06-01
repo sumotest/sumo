@@ -13,7 +13,7 @@
 // Container for nodes during the netbuilding process
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -46,6 +46,8 @@
 #include <utils/common/StringTokenizer.h>
 #include <utils/common/StdDefs.h>
 #include <utils/common/ToString.h>
+#include <utils/common/TplConvert.h>
+#include <utils/common/IDSupplier.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/geom/GeoConvHelper.h>
 #include <utils/iodevices/OutputDevice.h>
@@ -1218,6 +1220,27 @@ NBNodeCont::discardTrafficLights(NBTrafficLightLogicCont& tlc, bool geometryLike
             node->reinit(node->getPosition(), NODETYPE_UNKNOWN);
         }
     }
+}
+
+
+int
+NBNodeCont::mapToNumericalIDs() {
+    IDSupplier idSupplier("", getAllNames());
+    std::vector<NBNode*> toChange;
+    for (NodeCont::iterator it = myNodes.begin(); it != myNodes.end(); it++) {
+        try {
+            TplConvert::_str2int(it->first);
+        } catch (NumberFormatException&) {
+            toChange.push_back(it->second);
+        }
+    }
+    for (std::vector<NBNode*>::iterator it = toChange.begin(); it != toChange.end(); ++it) {
+        NBNode* node = *it;
+        myNodes.erase(node->getID());
+        node->setID(idSupplier.getNext());
+        myNodes[node->getID()] = node;
+    }
+    return (int)toChange.size();
 }
 
 /****************************************************************************/

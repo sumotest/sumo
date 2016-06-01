@@ -9,7 +9,7 @@
 // Sets and checks options for netbuild
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -65,6 +65,10 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addSynonyme("default.lanenumber", "lanenumber", true);
     oc.addDescription("default.lanenumber", "Building Defaults", "The default number of lanes in an edge");
 
+    oc.doRegister("default.lanewidth", new Option_Float(NBEdge::UNSPECIFIED_WIDTH));
+    oc.addSynonyme("default.lanewidth", "lanewidth", true);
+    oc.addDescription("default.lanewidth", "Building Defaults", "The default width of lanes");
+
     oc.doRegister("default.speed", 'S', new Option_Float((SUMOReal) 13.9));
     oc.addSynonyme("default.speed", "speed", true);
     oc.addDescription("default.speed", "Building Defaults", "The default speed on an edge (in m/s)");
@@ -85,6 +89,9 @@ NBFrame::fillOptions(bool forNetgen) {
     // register the data processing options
     oc.doRegister("no-internal-links", new Option_Bool(false)); // !!! not described
     oc.addDescription("no-internal-links", "Processing", "Omits internal links");
+
+    oc.doRegister("numerical-ids", new Option_Bool(false));
+    oc.addDescription("numerical-ids", "Processing", "Remaps alphanumerical IDs of nodes and edges to ensure that all IDs are integers");
 
     if (!forNetgen) {
         oc.doRegister("dismiss-vclasses", new Option_Bool(false));
@@ -156,12 +163,15 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addSynonyme("roundabouts.guess", "guess-roundabouts", true);
     oc.addDescription("roundabouts.guess", "Processing", "Enable roundabout-guessing");
 
+    oc.doRegister("opposites.guess", new Option_Bool(false));
+    oc.addDescription("opposites.guess", "Processing", "Enable guessing of opposite direction lanes usable for overtaking");
+
     oc.doRegister("lefthand", new Option_Bool(false));
     oc.addDescription("lefthand", "Processing", "Assumes left-hand traffic on the network");
 
     oc.doRegister("edges.join", new Option_Bool(false));
     oc.addDescription("edges.join", "Processing",
-                      "Merges edges whch connect the same nodes and are close to each other (recommended for VISSIM import)");
+                      "Merges edges which connect the same nodes and are close to each other (recommended for VISSIM import)");
 
     oc.doRegister("junctions.join", new Option_Bool(false));
     oc.addDescription("junctions.join", "Processing",
@@ -180,6 +190,9 @@ NBFrame::fillOptions(bool forNetgen) {
 
         oc.doRegister("speed.factor", new Option_Float(1));
         oc.addDescription("speed.factor", "Processing", "Modifies all edge speeds by multiplying by FLOAT");
+
+        oc.doRegister("speed.minimum", new Option_Float());
+        oc.addDescription("speed.minimum", "Processing", "Modifies all edge speeds to at least FLOAT");
     }
 
     oc.doRegister("junctions.corner-detail", new Option_Integer(0));

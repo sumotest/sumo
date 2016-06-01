@@ -2,7 +2,7 @@
 /// @file    MSSOTLPolicyStimulus.cpp
 /// @author  Riccardo Belletti
 /// @author  Simone Bacchilega
-/// @date    Aug 2014
+/// @date    2014-09-30
 /// @version $Id$
 ///
 // The class for Swarm-based low-level policy
@@ -11,9 +11,10 @@
 // Copyright 2001-2013 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
-//   This program is free software; you can redistribute it and/or modify
+//   This file is part of SUMO.
+//   SUMO is free software: you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
+//   the Free Software Foundation, either version 3 of the License, or
 //   (at your option) any later version.
 //
 /****************************************************************************/
@@ -58,21 +59,21 @@ SUMOReal MSSOTLPolicy5DStimulus::computeDesirability(SUMOReal vehInMeasure, SUMO
         return -1;
     } else {
         SUMOReal stimulus = getStimCox()
-                          * exp(
-                              -getStimCoxExpIn()
-                              * pow(vehInMeasure - getStimOffsetIn(), 2)
-                              / getStimDivisorIn()
-                              - getStimCoxExpOut()
-                              * pow(vehOutMeasure - getStimOffsetOut(), 2)
-                              / getStimDivisorOut()
-                              - getStimCoxExpDispersionIn()
-                              * pow(vehInDispersionMeasure - getStimOffsetDispersionIn(), 2)
-                              / getStimDivisorDispersionIn()
-                              - getStimCoxExpDispersionOut()
-                              * pow(vehOutDispersionMeasure - getStimOffsetDispersionOut(), 2)
-                              / getStimDivisorDispersionOut()
+                            * exp(
+                                -getStimCoxExpIn()
+                                * pow(vehInMeasure - getStimOffsetIn(), 2)
+                                / getStimDivisorIn()
+                                - getStimCoxExpOut()
+                                * pow(vehOutMeasure - getStimOffsetOut(), 2)
+                                / getStimDivisorOut()
+                                - getStimCoxExpDispersionIn()
+                                * pow(vehInDispersionMeasure - getStimOffsetDispersionIn(), 2)
+                                / getStimDivisorDispersionIn()
+                                - getStimCoxExpDispersionOut()
+                                * pow(vehOutDispersionMeasure - getStimOffsetDispersionOut(), 2)
+                                / getStimDivisorDispersionOut()
 
-                          );
+                            );
         return stimulus;
     }
 }

@@ -9,7 +9,7 @@
 // vehicles sorted by their departures
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -69,6 +69,9 @@ public:
 
     /// Adds a single vehicle
     void add(SUMOVehicle* veh);
+
+    /// Removes a single vehicle
+    void remove(SUMOVehicle* veh);
 
     /// Adds a container with vehicles departing at the given time
     void add(SUMOTime time, const VehicleVector& cont);

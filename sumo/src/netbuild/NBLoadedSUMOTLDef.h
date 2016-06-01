@@ -9,7 +9,7 @@
 // since NBLoadedTLDef is quite vissim specific)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2011-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2011-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -129,6 +129,9 @@ public:
      * @param[in] offset The algorithm type of this tls
      */
     void setType(TrafficLightType type);
+
+    /// @brief whether the given index must yield to the foeIndex while turing right on a red light
+    bool rightOnRedConflict(int index, int foeIndex) const;
 
 protected:
     /** @brief Collects the links participating in this traffic light

@@ -9,7 +9,7 @@
 // Intermediate class for storing visum traffic lights during their import
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2003-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2003-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -48,8 +48,8 @@
 NIVisumTL::NIVisumTL(const std::string& name, SUMOTime cycleTime, SUMOTime offset,
                      SUMOTime intermediateTime, bool phaseDefined)
     : myName(name), myCycleTime(cycleTime), myOffset(offset),
-      myIntermediateTime(intermediateTime), myPhaseDefined(phaseDefined)
-{}
+      myIntermediateTime(intermediateTime), myPhaseDefined(phaseDefined) {
+}
 
 
 NIVisumTL::~NIVisumTL() {

@@ -8,7 +8,7 @@
 // Basically a container for an NBEdge with drawing and editing capabilities
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -411,7 +411,7 @@ GNEEdge::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_PRIORITY:
             return toString(myNBEdge.getPriority());
         case SUMO_ATTR_LENGTH:
-            return toString(myNBEdge.getLoadedLength());
+            return toString(myNBEdge.getFinalLength());
         case SUMO_ATTR_TYPE:
             return myNBEdge.getTypeID();
         case SUMO_ATTR_SHAPE:
@@ -520,7 +520,7 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* un
             break;
         case SUMO_ATTR_NUMLANES:
             if (value != getAttribute(key)) {
-                setNumLanes(parse<unsigned int>(value), undoList);
+                setNumLanes((unsigned int)parse<int>(value), undoList);
             }
             break;
         case SUMO_ATTR_SHAPE:
@@ -559,7 +559,7 @@ GNEEdge::isValid(SumoXMLAttr key, const std::string& value) {
             return canParse<int>(value);
             break;
         case SUMO_ATTR_LENGTH:
-            return isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_LOADED_LENGTH;
+            return canParse<SUMOReal>(value) && (isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_LOADED_LENGTH);
             break;
         case SUMO_ATTR_ALLOW:
         case SUMO_ATTR_DISALLOW:
@@ -582,7 +582,7 @@ GNEEdge::isValid(SumoXMLAttr key, const std::string& value) {
             return true;
             break;
         case SUMO_ATTR_WIDTH:
-            return isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH;
+            return canParse<SUMOReal>(value) && (isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH);
             break;
         case SUMO_ATTR_ENDOFFSET:
             return canParse<SUMOReal>(value);
@@ -638,7 +638,7 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value) {
             myNBEdge.setLaneWidth(-1, parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_ENDOFFSET:
-            myNBEdge.setEndOffset(-1, parse<unsigned int>(value));
+            myNBEdge.setEndOffset(-1, parse<SUMOReal>(value));
             break;
         case SUMO_ATTR_ALLOW:
             break;  // no edge value

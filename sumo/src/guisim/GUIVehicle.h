@@ -10,7 +10,7 @@
 // A MSVehicle extended by some values for usage within the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -96,7 +96,7 @@ public:
     void drawRouteHelper(const MSRoute& r, SUMOReal exaggeration) const;
 
     void drawAction_drawVehicleBlinker(SUMOReal length) const;
-    void drawAction_drawVehicleBrakeLight(SUMOReal length) const;
+    void drawAction_drawVehicleBrakeLight(SUMOReal length, bool onlyOne = 1) const;
     void drawAction_drawPersonsAndContainers(const GUIVisualizationSettings& s) const;
     void drawAction_drawLinkItems(const GUIVisualizationSettings& s) const;
     void drawAction_drawVehicleBlueLight() const;
@@ -128,6 +128,14 @@ public:
      */
     GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
+    /** @brief Returns an own type parameter window
+     *
+     * @param[in] app The application needed to build the parameter window
+     * @param[in] parent The parent window needed to build the parameter window
+     * @return The built parameter window
+     */
+    GUIParameterTableWindow* getTypeParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
+
 private:
 
     /* @brief draw train with individual carriages. The number of carriages is
@@ -145,9 +153,6 @@ private:
      * @param[in,out] routeIndex The index of the current or previous non-internal edge in the route
      */
     MSLane* getPreviousLane(MSLane* current, int& furtherIndex) const;
-
-    /// @brief return the current angle in navigational degrees
-    SUMOReal getNaviDegree() const;
 
     /// @brief return the number of passengers
     int getNumPassengers() const;

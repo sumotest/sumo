@@ -11,7 +11,7 @@
 // A lane change model developed by D. Krajzewicz, J. Erdmann et al. between 2004 and 2013
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -69,6 +69,8 @@ public:
 
     virtual ~MSLCM_LC2013();
 
+    bool debugVehicle() const;
+
     /** @brief Called to examine whether the vehicle wants to change
      * using the given laneOffset.
      * This method gets the information about the surrounding vehicles
@@ -100,7 +102,7 @@ public:
     SUMOReal _patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max,
                          const MSCFModel& cfModel);
 
-    void changed(int dir);
+    void changed();
 
     void prepareStep();
 
@@ -190,6 +192,20 @@ protected:
     std::vector<SUMOReal> myVSafes;
     bool myDontBrake;
 
+    /// @name user configurable model parameters
+    //@{
+    const SUMOReal myStrategicParam;
+    const SUMOReal myCooperativeParam;
+    const SUMOReal mySpeedGainParam;
+    const SUMOReal myKeepRightParam;
+    //@}
+
+    /// @name derived parameters
+    //@{
+    // @brief willingness to encroach on other vehicles laterally (pushing them around)
+    const SUMOReal myChangeProbThresholdRight;
+    const SUMOReal myChangeProbThresholdLeft;
+    //@}
 };
 
 

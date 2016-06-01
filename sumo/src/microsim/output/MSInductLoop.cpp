@@ -12,7 +12,7 @@
 // An unextended detector measuring at a fixed position on a fixed lane.
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -79,6 +79,22 @@ MSInductLoop::reset() {
     myDismissedVehicleNumber = 0;
     myLastVehicleDataCont = myVehicleDataCont;
     myVehicleDataCont.clear();
+}
+
+
+bool
+MSInductLoop::notifyEnter(SUMOVehicle& veh, Notification reason) {
+    if (reason == NOTIFICATION_DEPARTED ||
+            reason == NOTIFICATION_TELEPORT ||
+            reason == NOTIFICATION_PARKING ||
+            reason == NOTIFICATION_LANE_CHANGE) {
+        const SUMOReal front = veh.getPositionOnLane();
+        const SUMOReal back = front - veh.getVehicleType().getLength();
+        if (front >= myPosition && back < myPosition) {
+            myVehiclesOnDet.insert(std::make_pair(&veh, STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())));
+        }
+    }
+    return true;
 }
 
 
@@ -303,16 +319,16 @@ MSInductLoop::leaveDetectorByLaneChange(SUMOVehicle& veh, SUMOReal lastPos) {
 
 
 std::vector<MSInductLoop::VehicleData>
-MSInductLoop::collectVehiclesOnDet(SUMOTime tMS) const {
+MSInductLoop::collectVehiclesOnDet(SUMOTime tMS, bool leaveTime) const {
     SUMOReal t = STEPS2TIME(tMS);
     std::vector<VehicleData> ret;
     for (VehicleDataCont::const_iterator i = myVehicleDataCont.begin(); i != myVehicleDataCont.end(); ++i) {
-        if ((*i).leaveTimeM >= t) {
+        if ((*i).entryTimeM >= t || (leaveTime && (*i).leaveTimeM >= t)) {
             ret.push_back(*i);
         }
     }
     for (VehicleDataCont::const_iterator i = myLastVehicleDataCont.begin(); i != myLastVehicleDataCont.end(); ++i) {
-        if ((*i).leaveTimeM >= t) {
+        if ((*i).entryTimeM >= t || (leaveTime && (*i).leaveTimeM >= t)) {
             ret.push_back(*i);
         }
     }

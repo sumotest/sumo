@@ -10,7 +10,7 @@
 // Storage for edges, including some functionality operating on multiple edges
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -41,6 +41,7 @@
 #include <utils/common/MsgHandler.h>
 #include <utils/common/ToString.h>
 #include <utils/common/TplConvert.h>
+#include <utils/common/IDSupplier.h>
 #include <utils/options/OptionsCont.h>
 #include "NBNetBuilder.h"
 #include "NBEdgeCont.h"
@@ -68,8 +69,8 @@ NBEdgeCont::NBEdgeCont(NBTypeCont& tc) :
     myEdgesSplit(0),
     myVehicleClasses2Keep(0),
     myVehicleClasses2Remove(0),
-    myNeedGeoTransformedPrunningBoundary(false)
-{}
+    myNeedGeoTransformedPrunningBoundary(false) {
+}
 
 
 NBEdgeCont::~NBEdgeCont() {
@@ -470,6 +471,15 @@ NBEdgeCont::splitAt(NBDistrictCont& dc,
     // replace information about this edge within the nodes
     edge->myFrom->replaceOutgoing(edge, one, 0);
     edge->myTo->replaceIncoming(edge, two, 0);
+    // patch tls
+    std::set<NBTrafficLightDefinition*> fromTLS = edge->myFrom->getControllingTLS();
+    for (std::set<NBTrafficLightDefinition*>::iterator i = fromTLS.begin(); i != fromTLS.end(); ++i) {
+        (*i)->replaceRemoved(edge, -1, one, -1);
+    }
+    std::set<NBTrafficLightDefinition*> toTLS = edge->myTo->getControllingTLS();
+    for (std::set<NBTrafficLightDefinition*>::iterator i = toTLS.begin(); i != toTLS.end(); ++i) {
+        (*i)->replaceRemoved(edge, -1, two, -1);
+    }
     // the edge is now occuring twice in both nodes...
     //  clean up
     edge->myFrom->removeDoubleEdges();
@@ -599,7 +609,23 @@ NBEdgeCont::computeLanes2Edges() {
 void
 NBEdgeCont::recheckLanes() {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); i++) {
-        (*i).second->recheckLanes();
+        i->second->recheckLanes();
+        // check opposites
+        if (i->second->getNumLanes() > 0) {
+            const std::string& oppositeID = i->second->getLanes().back().oppositeID;
+            if (oppositeID != "" && oppositeID != "-") {
+                const NBEdge* oppEdge = retrieve(oppositeID.substr(0, oppositeID.rfind("_")));
+                if (oppEdge == 0) {
+                    throw ProcessError("Unknown opposite lane '" + oppositeID + "' for edge '" + i->second->getID() + "'!");
+                }
+                if (fabs(oppEdge->getLoadedLength() - i->second->getLoadedLength()) > POSITION_EPS) {
+                    throw ProcessError("Opposite lane '" + oppositeID + "' differs in length from edge '" + i->second->getID() + "'!");
+                }
+                if (oppEdge->getFromNode() != i->second->getToNode() || oppEdge->getToNode() != i->second->getFromNode()) {
+                    throw ProcessError("Opposite lane '" + oppositeID + "' does not connect the same nodes as edge '" + i->second->getID() + "'!");
+                }
+            }
+        }
     }
 }
 
@@ -607,7 +633,7 @@ NBEdgeCont::recheckLanes() {
 void
 NBEdgeCont::appendTurnarounds(bool noTLSControlled) {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); i++) {
-        (*i).second->appendTurnaround(noTLSControlled);
+        (*i).second->appendTurnaround(noTLSControlled, true);
     }
 }
 
@@ -615,7 +641,7 @@ NBEdgeCont::appendTurnarounds(bool noTLSControlled) {
 void
 NBEdgeCont::appendTurnarounds(const std::set<std::string>& ids, bool noTLSControlled) {
     for (std::set<std::string>::const_iterator it = ids.begin(); it != ids.end(); it++) {
-        myEdges[*it]->appendTurnaround(noTLSControlled);
+        myEdges[*it]->appendTurnaround(noTLSControlled, false);
     }
 }
 
@@ -724,6 +750,36 @@ NBEdgeCont::joinSameNodeConnectingEdges(NBDistrictCont& dc,
 
 
 void
+NBEdgeCont::guessOpposites() {
+    //@todo magic values
+    const SUMOReal distanceThreshold = 7;
+    for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); ++i) {
+        NBEdge* edge = i->second;
+        const int numLanes = edge->getNumLanes();
+        if (numLanes > 0) {
+            NBEdge::Lane& lastLane = edge->getLaneStruct(numLanes - 1);
+            if (lastLane.oppositeID == "") {
+                NBEdge* opposite = 0;
+                //SUMOReal minOppositeDist = std::numeric_limits<SUMOReal>::max();
+                for (EdgeVector::const_iterator j = edge->getToNode()->getOutgoingEdges().begin(); j != edge->getToNode()->getOutgoingEdges().end(); ++j) {
+                    if ((*j)->getToNode() == edge->getFromNode() && !(*j)->getLanes().empty()) {
+                        const SUMOReal distance = VectorHelper<SUMOReal>::maxValue(lastLane.shape.distances((*j)->getLanes().back().shape));
+                        if (distance < distanceThreshold) {
+                            //minOppositeDist = distance;
+                            opposite = *j;
+                        }
+                    }
+                }
+                if (opposite != 0) {
+                    lastLane.oppositeID = opposite->getLaneID(opposite->getNumLanes() - 1);
+                }
+            }
+        }
+    }
+}
+
+
+void
 NBEdgeCont::recheckLaneSpread() {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); ++i) {
         std::string oppositeID;
@@ -755,10 +811,9 @@ NBEdgeCont::recheckPostProcessConnections() {
     for (std::vector<PostProcessConnection>::const_iterator i = myConnections.begin(); i != myConnections.end(); ++i) {
         NBEdge* from = retrievePossiblySplit((*i).from, true);
         NBEdge* to = retrievePossiblySplit((*i).to, false);
-        if (from != 0 && to != 0) {
-            if (!from->addLane2LaneConnection((*i).fromLane, to, (*i).toLane, NBEdge::L2L_USER, true, (*i).mayDefinitelyPass, (*i).keepClear, (*i).contPos)) {
-                WRITE_WARNING("Could not insert connection between '" + (*i).from + "' and '" + (*i).to + "' after build.");
-            }
+        if (from == 0 || to == 0 ||
+                !from->addLane2LaneConnection((*i).fromLane, to, (*i).toLane, NBEdge::L2L_USER, true, (*i).mayDefinitelyPass, (*i).keepClear, (*i).contPos)) {
+            WRITE_ERROR("Could not insert connection between '" + (*i).from + "' and '" + (*i).to + "' after build.");
         }
     }
     // during loading we also kept some ambiguous connections in hope they might be valid after processing
@@ -1035,5 +1090,25 @@ NBEdgeCont::guessSidewalks(SUMOReal width, SUMOReal minSpeed, SUMOReal maxSpeed,
     return sidewalksCreated;
 }
 
+
+int
+NBEdgeCont::mapToNumericalIDs() {
+    IDSupplier idSupplier("", getAllNames());
+    EdgeVector toChange;
+    for (EdgeCont::iterator it = myEdges.begin(); it != myEdges.end(); it++) {
+        try {
+            TplConvert::_str2int(it->first);
+        } catch (NumberFormatException&) {
+            toChange.push_back(it->second);
+        }
+    }
+    for (EdgeVector::iterator it = toChange.begin(); it != toChange.end(); ++it) {
+        NBEdge* edge = *it;
+        myEdges.erase(edge->getID());
+        edge->setID(idSupplier.getNext());
+        myEdges[edge->getID()] = edge;
+    }
+    return (int)toChange.size();
+}
 
 /****************************************************************************/

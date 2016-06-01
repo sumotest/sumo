@@ -9,7 +9,7 @@ Originally distributed under the MIT license at
 https://github.com/dpallot/simple-websocket-server/tree/master/SimpleWebSocketServer.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2015-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2015-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -18,7 +18,14 @@ the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 """
 from __future__ import absolute_import
-import SocketServer
+try:
+    import SocketServer
+    from BaseHTTPServer import BaseHTTPRequestHandler
+    from StringIO import StringIO
+except ImportError:
+    import socketserver
+    from http.server import BaseHTTPRequestHandler
+    from io import StringIO
 import hashlib
 import base64
 import socket
@@ -28,8 +35,6 @@ import sys
 import errno
 import codecs
 from collections import deque
-from BaseHTTPServer import BaseHTTPRequestHandler
-from StringIO import StringIO
 from select import select
 
 __all__ = ['WebSocket', 'SimpleWebSocketServer', 'SimpleSSLWebSocketServer']

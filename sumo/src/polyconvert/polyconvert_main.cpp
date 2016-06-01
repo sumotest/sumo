@@ -11,7 +11,7 @@
 // Main for POLYCONVERT
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2005-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2005-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -48,8 +48,11 @@
 #include <utils/common/ToString.h>
 #include <utils/iodevices/OutputDevice.h>
 #include <utils/importio/LineReader.h>
+#include <utils/geom/GeoConvHelper.h>
 #include <utils/geom/GeomConvHelper.h>
 #include <utils/geom/Boundary.h>
+#include <utils/xml/SUMOSAXReader.h>
+#include <utils/xml/XMLSubSys.h>
 #include <polyconvert/PCLoaderVisum.h>
 #include <polyconvert/PCLoaderDlrNavteq.h>
 #include <polyconvert/PCLoaderXML.h>
@@ -58,8 +61,7 @@
 #include <polyconvert/PCTypeMap.h>
 #include <polyconvert/PCTypeDefHandler.h>
 #include <polyconvert/PCNetProjectionLoader.h>
-#include <utils/xml/XMLSubSys.h>
-#include <utils/geom/GeoConvHelper.h>
+#include "pc_typemap.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -206,8 +208,8 @@ fillOptions() {
     oc.doRegister("fill", new Option_Bool("false"));
     oc.addDescription("fill", "Building Defaults", "Fills polygons by default");
 
-    oc.doRegister("layer", new Option_Integer(-1));
-    oc.addDescription("layer", "Building Defaults", "Sets INT as default layer");
+    oc.doRegister("layer", new Option_Float(-1));
+    oc.addDescription("layer", "Building Defaults", "Sets FLOAT as default layer");
 
     oc.doRegister("discard", new Option_Bool(false));
     oc.addDescription("discard", "Building Defaults", "Sets default action to discard");
@@ -222,7 +224,7 @@ int
 main(int argc, char** argv) {
     OptionsCont& oc = OptionsCont::getOptions();
     oc.setApplicationDescription("Importer of polygons and POIs for the road traffic simulation SUMO.");
-    oc.setApplicationName("polyconvert", "SUMO polyconvert Version " + getBuildName(VERSION_STRING));
+    oc.setApplicationName("polyconvert", "SUMO polyconvert Version " VERSION_STRING);
     int ret = 0;
     try {
         // initialise subsystems
@@ -288,15 +290,44 @@ main(int argc, char** argv) {
         PCPolyContainer toFill(prune, pruningBoundary, oc.getStringVector("remove"));
 
         // read in the type defaults
+        if (!oc.isSet("type-file")) {
+            const char* sumoPath = std::getenv("SUMO_HOME");
+            if (sumoPath == 0) {
+                WRITE_WARNING("Environment variable SUMO_HOME is not set, using built in type maps.");
+            } else {
+                const std::string path = sumoPath + std::string("/data/typemap/");
+                if (oc.isSet("dlr-navteq-poly-files")) {
+                    oc.setDefault("type-file", path + "navteqPolyconvert.typ.xml");
+                }
+                if (oc.isSet("osm-files")) {
+                    oc.setDefault("type-file", path + "osmPolyconvert.typ.xml");
+                }
+                if (oc.isSet("visum-files")) {
+                    oc.setDefault("type-file", path + "visumPolyconvert.typ.xml");
+                }
+            }
+        }
         PCTypeMap tm(oc);
+        PCTypeDefHandler handler(oc, tm);
         if (oc.isSet("type-file")) {
-            PCTypeDefHandler handler(oc, tm);
             if (!XMLSubSys::runParser(handler, oc.getString("type-file"))) {
                 // something failed
                 throw ProcessError();
             }
+        } else {
+            handler.setFileName("built in type map");
+            SUMOSAXReader* reader = XMLSubSys::getSAXReader(handler);
+            if (oc.isSet("dlr-navteq-poly-files")) {
+                reader->parseString(navteqTypemap);
+            }
+            if (oc.isSet("osm-files")) {
+                reader->parseString(osmTypemap);
+            }
+            if (oc.isSet("visum-files")) {
+                reader->parseString(visumTypemap);
+            }
+            delete reader;
         }
-
         // read in the data
         PCLoaderXML::loadIfSet(oc, toFill, tm); // SUMO-XML
         PCLoaderOSM::loadIfSet(oc, toFill, tm); // OSM-XML
@@ -305,15 +336,10 @@ main(int argc, char** argv) {
         PCLoaderArcView::loadIfSet(oc, toFill, tm); // shape-files
         GeoConvHelper::computeFinal();
         // error processing
-        if (MsgHandler::getErrorInstance()->wasInformed() && oc.getBool("ignore-errors")) {
-            MsgHandler::getErrorInstance()->clear();
-        }
-        if (!MsgHandler::getErrorInstance()->wasInformed()) {
-            // no? ok, save
-            toFill.save(oc.getString("output-file"), oc.getBool("proj.plain-geo"));
-        } else {
+        if (MsgHandler::getErrorInstance()->wasInformed() && !oc.getBool("ignore-errors")) {
             throw ProcessError();
         }
+        toFill.save(oc.getString("output-file"), oc.getBool("proj.plain-geo"));
     } catch (const ProcessError& e) {
         if (std::string(e.what()) != std::string("Process Error") && std::string(e.what()) != std::string("")) {
             WRITE_ERROR(e.what());

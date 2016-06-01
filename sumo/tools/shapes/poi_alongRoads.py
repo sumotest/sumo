@@ -20,7 +20,7 @@ So far POIs are situated in the middle on all edges without regard to the type o
  Output is written in file 'pois.add.xml'
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -37,8 +37,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import sumolib.net
 
 if len(sys.argv) < 4:
-    print("Usage: " + \
-        sys.argv[0] + " <NET> <EDGE_ID>[,<EDGE_ID>]* <DISTANCE>", file=sys.stderr)
+    print("Usage: " +
+          sys.argv[0] + " <NET> <EDGE_ID>[,<EDGE_ID>]* <DISTANCE>", file=sys.stderr)
     sys.exit()
 edgeList = sys.argv[2].split(',')
 POIdist = float(sys.argv[3])
@@ -67,9 +67,8 @@ def findSucc(connEdgesTmp, edgeList, success=0):
 
 
 def poiAppend(poi_edge, poi_nr, poi_x, poi_y, poi_buf):
-    poi_buf.append("\t<poi id=\"" + str(poi_edge) + "-" + str(poi_nr) +
-                   "\" type=\"default\" color=\"1,0,0\" layer=\"0\" x=\"" + str(poi_x) + "\" y=\"" + str(poi_y) + "\"/>")
-    return
+    poi_buf.append('    <poi id="%s-%s" type="default" color="1,0,0" layer="0" x="%.2f" y="%.2f"/>' %
+                   (poi_edge, poi_nr, poi_x, poi_y))
 
 print("Reading net ...")
 net = sumolib.net.readNet(sys.argv[1])

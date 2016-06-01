@@ -22,7 +22,7 @@ this is changed without adding comments. The same is true for camelCase
 changes of attributes.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -35,7 +35,10 @@ from __future__ import print_function
 import os
 import string
 import sys
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from xml.sax import saxutils, make_parser, handler
 from optparse import OptionParser
 from collections import defaultdict
@@ -114,7 +117,7 @@ class RouteReader(handler.ContentHandler):
     def condOutputRedirect(self):
         if self._out and not self._fileOut:
             self._fileOut = self._out
-            self._out = StringIO.StringIO()
+            self._out = StringIO()
 
     def endOutputRedirect(self):
         if self._fileOut:
@@ -149,7 +152,8 @@ class RouteReader(handler.ContentHandler):
                 self._changed = True
                 print("Warning: No edges attribute in route " + self._routeID)
         elif self._routeID:
-            print("Warning: This script does not handle nested '%s' elements properly." % name)
+            print(
+                "Warning: This script does not handle nested '%s' elements properly." % name)
         if self._out:
             if name in camelCase:
                 name = camelCase[name]
@@ -164,7 +168,7 @@ class RouteReader(handler.ContentHandler):
                 attrs["length"] = str(length - minGap)
                 attrs["minGap"] = str(minGap)
                 self._changed = True
-            for (key, value) in attrs.items():
+            for key, value in sorted(attrs.items()):
                 if key in camelCase:
                     key = camelCase[key]
                     self._changed = True
@@ -215,20 +219,22 @@ class RouteReader(handler.ContentHandler):
                 if self._net.hasEdge(v):
                     cleanedEdgeList.append(v)
                 else:
-                    print("Warning: Unknown edge " + v + " in route " + self._routeID)
+                    print(
+                        "Warning: Unknown edge " + v + " in route " + self._routeID)
                     returnValue = False
             while doConnectivityTest:
                 doConnectivityTest = False
                 for i, v in enumerate(cleanedEdgeList):
                     if i < len(cleanedEdgeList) - 1 and not self._net.isNeighbor(v, cleanedEdgeList[i + 1]):
-                        print("Warning: Route " + self._routeID + " disconnected between " + v + " and " + cleanedEdgeList[i + 1])
+                        print("Warning: Route " + self._routeID +
+                              " disconnected between " + v + " and " + cleanedEdgeList[i + 1])
                         interEdge = self._net.getIntermediateEdge(
                             v, cleanedEdgeList[i + 1])
                         if interEdge != '':
                             cleanedEdgeList.insert(i + 1, interEdge)
                             self._changed = True
                             self._addedString += interEdge + " "
-                            self._routeString = string.join(cleanedEdgeList)
+                            self._routeString = ' '.join(cleanedEdgeList)
                             doConnectivityTest = True
                             break
                         returnValue = False

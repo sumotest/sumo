@@ -14,7 +14,7 @@ Optionally a district file may be given, then only routes with
 the same origin and destination district are matched.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -85,13 +85,15 @@ class DistrictReader(handler.ContentHandler):
                 self._sources[self._edges[attrs['id']]] = self._districtID
             else:
                 if options.verbose:
-                    print("Warning! No routes touching source edge %s of %s." % (attrs['id'], self._districtID))
+                    print("Warning! No routes touching source edge %s of %s." % (
+                        attrs['id'], self._districtID))
         elif name == 'tazSink':
             if attrs['id'] in self._edges:
                 self._sinks[self._edges[attrs['id']]] = self._districtID
             else:
                 if options.verbose:
-                    print("Warning! No routes touching sink edge %s of %s." % (attrs['id'], self._districtID))
+                    print("Warning! No routes touching sink edge %s of %s." %
+                          (attrs['id'], self._districtID))
 
 
 def compare(first, second):
@@ -222,7 +224,7 @@ def hungarianDAG(U, V, similarityMatrix):
 def maxMatching(routeIDs1, routeIDs2, similarityMatrix, match):
     maxSimilarity = 0
     for id1 in routeIDs1:
-        for value in similarityMatrix[id1].itervalues():
+        for value in similarityMatrix[id1].values():
             if value > maxSimilarity:
                 maxSimilarity = value
     U = []
@@ -300,20 +302,23 @@ else:
 match = {}
 totalMatch = 0
 totalIdentical = 0
-for source in routeMatrix1:
+for source in sorted(routeMatrix1):
     if not source in routeMatrix2:
         if options.verbose:
-            print("Warning! No routes starting at %s in second route set" % source)
+            print(
+                "Warning! No routes starting at %s in second route set" % source)
         continue
-    for sink in routeMatrix1[source]:
+    for sink in sorted(routeMatrix1[source]):
         routeIDs1 = routeMatrix1[source][sink]
         if not sink in routeMatrix2[source]:
             if options.verbose:
-                print("Warning! No routes starting at %s and ending at %s in second route set" % (source, sink))
+                print("Warning! No routes starting at %s and ending at %s in second route set" % (
+                    source, sink))
             continue
         routeIDs2 = routeMatrix2[source][sink]
         if options.verbose and len(routeIDs1) != len(routeIDs2):
-            print("Warning! Different route set sizes for start '%s' and end '%s'." % (source, sink))
+            print("Warning! Different route set sizes for start '%s' and end '%s'." % (
+                source, sink))
         similarityMatrix = {}
         for idx, id1 in enumerate(routeIDs1):
             for oldID in routeIDs1[:idx]:
@@ -334,8 +339,10 @@ for source in routeMatrix1:
         identityVal = identityCount(routeIDs1, routeIDs2, similarityMatrix)
         totalIdentical += identityVal
         if options.verbose:
-            print(source, sink, float(matchVal) / len(routeIDs1) / SCALE, float(identityVal) / len(routeIDs1))
+            print(source, sink, float(matchVal) / len(routeIDs1) / SCALE,
+                  float(identityVal) / len(routeIDs1))
 if options.printmatch:
-    for r2, r1 in match.iteritems():
+    for r2, r1 in sorted(match.items()):
         print(r1, r2)
-print(float(totalMatch) / len(routes1) / SCALE, float(totalIdentical) / len(routes1))
+print(float(totalMatch) / len(routes1) / SCALE,
+      float(totalIdentical) / len(routes1))

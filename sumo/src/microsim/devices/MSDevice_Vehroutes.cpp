@@ -10,7 +10,7 @@
 // A device which collects info on the vehicle trip
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -130,7 +130,6 @@ MSDevice_Vehroutes::~MSDevice_Vehroutes() {
 bool
 MSDevice_Vehroutes::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {
     if (reason == MSMoveReminder::NOTIFICATION_DEPARTED) {
-        myDepartPos = veh.getPositionOnLane();
         if (mySorted && myStateListener.myDevices[&veh] == this) {
             const SUMOTime departure = myIntendedDepart ? myHolder.getParameter().depart : MSNet::getInstance()->getCurrentTimeStep();
             myDepartureCounts[departure]++;
@@ -156,10 +155,15 @@ MSDevice_Vehroutes::notifyLeave(SUMOVehicle& veh, SUMOReal /*lastPos*/, MSMoveRe
 
 void
 MSDevice_Vehroutes::writeXMLRoute(OutputDevice& os, int index) const {
+    if (index == 0 && myReplacedRoutes[index].route->size() == 2 &&
+            myReplacedRoutes[index].route->getEdges().front()->getPurpose() == MSEdge::EDGEFUNCTION_DISTRICT &&
+            myReplacedRoutes[index].route->getEdges().back()->getPurpose() == MSEdge::EDGEFUNCTION_DISTRICT) {
+        return;
+    }
     // check if a previous route shall be written
     os.openTag(SUMO_TAG_ROUTE);
     if (index >= 0) {
-        assert((int) myReplacedRoutes.size() > index);
+        assert((int)myReplacedRoutes.size() > index);
         // write edge on which the vehicle was when the route was valid
         os << " replacedOnEdge=\"";
         if (myReplacedRoutes[index].edge) {
@@ -231,7 +235,7 @@ MSDevice_Vehroutes::generateOutput() const {
         od.writeAttr("arrival", time2string(MSNet::getInstance()->getCurrentTimeStep()));
         if (myRouteLength) {
             const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
-            const SUMOReal routeLength = myHolder.getRoute().getDistanceBetween(myDepartPos, myHolder.getArrivalPos(),
+            const SUMOReal routeLength = myHolder.getRoute().getDistanceBetween(myHolder.getDepartPos(), myHolder.getArrivalPos(),
                                          myHolder.getRoute().begin(), myHolder.getCurrentRouteEdge(), includeInternalLengths);
             od.writeAttr("routeLength", routeLength);
         }
@@ -277,6 +281,12 @@ MSDevice_Vehroutes::generateOutput() const {
         if (myReplacedRoutes.size() > 0) {
             od.closeTag();
         }
+    }
+    for (std::map<std::string, std::string>::const_iterator j = myHolder.getParameter().getMap().begin(); j != myHolder.getParameter().getMap().end(); ++j) {
+        od.openTag(SUMO_TAG_PARAM);
+        od.writeAttr(SUMO_ATTR_KEY, (*j).first);
+        od.writeAttr(SUMO_ATTR_VALUE, (*j).second);
+        od.closeTag();
     }
     od.closeTag();
     od.lf();

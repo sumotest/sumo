@@ -9,7 +9,7 @@
 // Sets and checks options for netgen
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2011-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2011-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -89,6 +89,8 @@ NGFrame::fillOptions() {
     oc.addSynonyme("grid.attach-length", "attach-length", true);
     oc.addDescription("grid.attach-length", "Grid Network", "The length of streets attached at the boundary; 0 means no streets are attached");
 
+    oc.doRegister("grid.alphanumerical-ids", new Option_Bool(false));
+    oc.addDescription("grid.alphanumerical-ids", "Grid Network", "The Ids of generated nodes use letters for the X axis");
 
     //  register spider-net options
     oc.doRegister("spider", 's', new Option_Bool(false));

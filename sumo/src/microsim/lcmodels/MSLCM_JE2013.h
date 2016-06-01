@@ -10,7 +10,7 @@
 // based on the model of D. Krajzewicz developed between 2004 and 2011 (MSLCM_DK2004)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2013-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2013-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -98,10 +98,12 @@ public:
     SUMOReal _patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max,
                          const MSCFModel& cfModel);
 
-    void changed(int dir);
+    void changed();
 
     void prepareStep();
 
+    /// @brief whether the current vehicles shall be debugged
+    bool debugVehicle() const;
 
 protected:
 
@@ -188,6 +190,20 @@ protected:
     std::vector<SUMOReal> myVSafes;
     bool myDontBrake;
 
+    /// @name user configurable model parameters
+    //@{
+    const SUMOReal myStrategicParam;
+    const SUMOReal myCooperativeParam;
+    const SUMOReal mySpeedGainParam;
+    const SUMOReal myKeepRightParam;
+    //@}
+
+    /// @name derived parameters
+    //@{
+    // @brief willingness to encroach on other vehicles laterally (pushing them around)
+    const SUMOReal myChangeProbThresholdRight;
+    const SUMOReal myChangeProbThresholdLeft;
+    //@}
 };
 
 

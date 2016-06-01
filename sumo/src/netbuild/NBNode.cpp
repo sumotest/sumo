@@ -10,7 +10,7 @@
 // The representation of a single node
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -237,8 +237,8 @@ NBNode::NBNode(const std::string& id, const Position& position,
     myRadius(OptionsCont::getOptions().isDefault("default.junctions.radius") ? UNSPECIFIED_RADIUS : OptionsCont::getOptions().getFloat("default.junctions.radius")),
     myKeepClear(OptionsCont::getOptions().getBool("default.junctions.keep-clear")),
     myDiscardAllCrossings(false),
-    myCrossingsLoadedFromSumoNet(0)
-{ }
+    myCrossingsLoadedFromSumoNet(0) {
+}
 
 
 NBNode::NBNode(const std::string& id, const Position& position, NBDistrict* district) :
@@ -251,8 +251,8 @@ NBNode::NBNode(const std::string& id, const Position& position, NBDistrict* dist
     myRadius(OptionsCont::getOptions().isDefault("default.junctions.radius") ? UNSPECIFIED_RADIUS : OptionsCont::getOptions().getFloat("default.junctions.radius")),
     myKeepClear(OptionsCont::getOptions().getBool("default.junctions.keep-clear")),
     myDiscardAllCrossings(false),
-    myCrossingsLoadedFromSumoNet(0)
-{ }
+    myCrossingsLoadedFromSumoNet(0) {
+}
 
 
 NBNode::~NBNode() {
@@ -756,7 +756,7 @@ NBNode::computeLanes2Lanes() {
                 && in != out
                 && in->isConnectedTo(out)) {
             for (int i = inOffset; i < (int) in->getNumLanes(); ++i) {
-                in->setConnection(i, out, i + 1, NBEdge::L2L_COMPUTED);
+                in->setConnection(i, out, i - inOffset + outOffset + 1, NBEdge::L2L_COMPUTED);
             }
             in->setConnection(inOffset, out, outOffset, NBEdge::L2L_COMPUTED);
             return;
@@ -842,6 +842,29 @@ NBNode::computeLanes2Lanes() {
             return;
         }
     }
+    // special case f):
+    //  one in, one out, same number of lanes
+    if (myIncomingEdges.size() == 1 && myOutgoingEdges.size() == 1) {
+        NBEdge* in = myIncomingEdges[0];
+        NBEdge* out = myOutgoingEdges[0];
+        // check if it's not the turnaround
+        if (in->getTurnDestination() == out) {
+            // will be added later or not...
+            return;
+        }
+        const int inOffset = MAX2(0, in->getFirstNonPedestrianLaneIndex(FORWARD, true));
+        const int outOffset = MAX2(0, out->getFirstNonPedestrianLaneIndex(FORWARD, true));
+        if (in->getStep() <= NBEdge::LANES2EDGES
+                && in->getNumLanes() - inOffset == out->getNumLanes() - outOffset
+                && in != out
+                && in->isConnectedTo(out)) {
+            for (int i = inOffset; i < (int) in->getNumLanes(); ++i) {
+                in->setConnection(i, out, i - inOffset + outOffset, NBEdge::L2L_COMPUTED);
+            }
+            //std::cout << " special case f at node=" << getID() << " inOffset=" << inOffset << " outOffset=" << outOffset << "\n";
+            return;
+        }
+    }
 
     // go through this node's outgoing edges
     //  for every outgoing edge, compute the distribution of the node's
@@ -862,7 +885,7 @@ NBNode::computeLanes2Lanes() {
         // ensure that all modes have a connection if possible
         for (EdgeVector::const_iterator i = myIncomingEdges.begin(); i != myIncomingEdges.end(); i++) {
             NBEdge* incoming = *i;
-            if (incoming->getConnectionLanes(currentOutgoing).size() > 0) {
+            if (incoming->getConnectionLanes(currentOutgoing).size() > 0 && incoming->getStep() <= NBEdge::LANES2LANES_DONE) {
                 // no connections are needed for pedestrians during this step
                 // no satisfaction is possible if the outgoing edge disallows
                 SVCPermissions unsatisfied = incoming->getPermissions() & currentOutgoing->getPermissions() & ~SVC_PEDESTRIAN;

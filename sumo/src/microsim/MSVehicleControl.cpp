@@ -9,7 +9,7 @@
 // The class responsible for building and deletion of vehicles
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -71,7 +71,7 @@ MSVehicleControl::MSVehicleControl() :
     myScale(-1),
     myMaxSpeedFactor(1),
     myMinDeceleration(SUMOVTypeParameter::getDefaultDecel(SVC_IGNORING)) {
-    SUMOVTypeParameter defType(DEFAULT_VTYPE_ID, SVC_IGNORING);
+    SUMOVTypeParameter defType(DEFAULT_VTYPE_ID, SVC_PASSENGER);
     myVTypeDict[DEFAULT_VTYPE_ID] = MSVehicleType::build(defType);
     SUMOVTypeParameter defPedType(DEFAULT_PEDTYPE_ID, SVC_PEDESTRIAN);
     defPedType.setParameter |= VTYPEPARS_VEHICLECLASS_SET;
@@ -384,6 +384,11 @@ MSVehicleControl::getQuota(SUMOReal frac) const {
         return base + 1;
     }
     return base;
+}
+
+unsigned int
+MSVehicleControl::getTeleportCount() const {
+    return (MSLane::teleportOnCollision() ? myCollisions : 0) + myTeleportsJam + myTeleportsYield + myTeleportsWrongLane;
 }
 
 /****************************************************************************/

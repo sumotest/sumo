@@ -11,7 +11,7 @@
 // The parent class for traffic light logics
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -393,6 +393,7 @@ protected:
 
     };
 
+
 protected:
     /// @brief The id of the logic
     std::string myProgramID;
@@ -417,6 +418,10 @@ protected:
 
     /// @brief An empty lane vector
     static const LaneVector myEmptyLaneVector;
+
+private:
+    /// @brief initialize optional meso penalties
+    void initMesoTLSPenalties();
 
 
 private:

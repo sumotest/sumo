@@ -15,7 +15,7 @@
 // The simulated network and simulation perfomer
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -46,8 +46,7 @@
 #include <ctime>
 #include <utils/common/UtilExceptions.h>
 #include "MSNet.h"
-#include "MSPersonControl.h"
-#include "MSContainerControl.h"
+#include "MSTransportableControl.h"
 #include "MSEdgeControl.h"
 #include "MSJunctionControl.h"
 #include "MSInsertionControl.h"
@@ -70,6 +69,7 @@
 #include <microsim/devices/MSDevice_Routing.h>
 #include <microsim/devices/MSDevice_Vehroutes.h>
 #include <microsim/devices/MSDevice_Tripinfo.h>
+#include <microsim/devices/MSDevice_BTsender.h>
 #include "traffic_lights/MSTrafficLightLogic.h"
 #include <utils/shapes/Polygon.h>
 #include <utils/shapes/ShapeContainer.h>
@@ -99,10 +99,7 @@
 #include "MSEdgeWeightsStorage.h"
 #include "MSStateHandler.h"
 
-#ifdef HAVE_INTERNAL
 #include <mesosim/MELoop.h>
-#include <utils/iodevices/BinaryInputDevice.h>
-#endif
 
 #ifndef NO_TRACI
 #include <traci-server/TraCIServer.h>
@@ -203,11 +200,9 @@ MSNet::MSNet(MSVehicleControl* vc, MSEventControl* beginOfTimestepEvents,
     myInsertionEvents = insertionEvents;
     myLanesRTree.first = false;
 
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         MSGlobals::gMesoNet = new MELoop(string2time(oc.getString("meso-recheck")));
     }
-#endif
     myInstance = this;
 }
 
@@ -221,6 +216,7 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
                      std::vector<SUMOTime> stateDumpTimes,
                      std::vector<std::string> stateDumpFiles,
                      bool hasInternalLinks,
+                     bool hasNeighs,
                      bool lefthand,
                      SUMOReal version) {
     myEdges = edges;
@@ -239,6 +235,7 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
         mySimBeginMillis = SysUtils::getCurrentMillis();
     }
     myHasInternalLinks = hasInternalLinks;
+    myHasNeighs = hasNeighs;
     myHasElevation = checkElevation();
     myLefthand = lefthand;
     myVersion = version;
@@ -273,13 +270,15 @@ MSNet::~MSNet() {
     delete myRouterTTDijkstra;
     delete myRouterTTAStar;
     delete myRouterEffort;
+    if (myPedestrianRouter != 0) {
+        delete myPedestrianRouter;
+    }
     myLanesRTree.second.RemoveAll();
     clearAll();
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         delete MSGlobals::gMesoNet;
     }
-#endif
+//    delete myPedestrianRouter;
     myInstance = 0;
 }
 
@@ -372,7 +371,7 @@ MSNet::closeSimulation(SUMOTime start) {
             << " Running: " << myVehicleControl->getRunningVehicleNo() << "\n"
             << " Waiting: " << myInserter->getWaitingVehicleNo() << "\n";
 
-        if (myVehicleControl->getTeleportCount() > 0) {
+        if (myVehicleControl->getTeleportCount() > 0 || myVehicleControl->getCollisionCount() > 0) {
             // print optional teleport statistics
             std::vector<std::string> reasons;
             if (myVehicleControl->getCollisionCount() > 0) {
@@ -392,12 +391,12 @@ MSNet::closeSimulation(SUMOTime start) {
         if (myVehicleControl->getEmergencyStops() > 0) {
             msg << "Emergency Stops: " << myVehicleControl->getEmergencyStops() << "\n";
         }
-        if (myPersonControl != 0 && myPersonControl->getLoadedPersonNumber() > 0) {
+        if (myPersonControl != 0 && myPersonControl->getLoadedNumber() > 0) {
             msg << "Persons: " << "\n"
-                << " Inserted: " << myPersonControl->getLoadedPersonNumber() << "\n"
-                << " Running: " << myPersonControl->getRunningPersonNumber() << "\n";
-            if (myPersonControl->getJammedPersonNumber() > 0) {
-                msg << " Jammed: " << myPersonControl->getJammedPersonNumber() << "\n";
+                << " Inserted: " << myPersonControl->getLoadedNumber() << "\n"
+                << " Running: " << myPersonControl->getRunningNumber() << "\n";
+            if (myPersonControl->getJammedNumber() > 0) {
+                msg << " Jammed: " << myPersonControl->getJammedNumber() << "\n";
             }
         }
         if (OptionsCont::getOptions().getBool("duration-log.statistics")) {
@@ -447,12 +446,9 @@ MSNet::simulationStep() {
     // check whether the tls programs need to be switched
     myLogics->check2Switch(myStep);
 
-#ifdef HAVE_INTERNAL
     if (MSGlobals::gUseMesoSim) {
         MSGlobals::gMesoNet->simulate(myStep);
     } else {
-#endif
-
         // assure all lanes with vehicles are 'active'
         myEdges->patchActiveLanes();
 
@@ -472,26 +468,26 @@ MSNet::simulationStep() {
         if (MSGlobals::gCheck4Accidents) {
             myEdges->detectCollisions(myStep, STAGE_LANECHANGE);
         }
-#ifdef HAVE_INTERNAL
     }
-#endif
     loadRoutes();
 
     // persons
-    if (myPersonControl != 0 && myPersonControl->hasPersons()) {
-        myPersonControl->checkWaitingPersons(this, myStep);
+    if (myPersonControl != 0 && myPersonControl->hasTransportables()) {
+        myPersonControl->checkWaiting(this, myStep);
+    }
+    // containers
+    if (myContainerControl != 0 && myContainerControl->hasTransportables()) {
+        myContainerControl->checkWaiting(this, myStep);
     }
     // insert vehicles
-    myInserter->determineCandidates(myStep);    // containers
-    if (myContainerControl != 0) {
-        myContainerControl->checkWaitingContainers(this, myStep);
-    }
+    myInserter->determineCandidates(myStep);
     myInsertionEvents->execute(myStep);
 #ifdef HAVE_FOX
     MSDevice_Routing::waitForAll();
 #endif
     myInserter->emitVehicles(myStep);
     if (MSGlobals::gCheck4Accidents) {
+        //myEdges->patchActiveLanes(); // @note required to detect collisions on lanes that were empty before insertion. wasteful?
         myEdges->detectCollisions(myStep, STAGE_INSERTIONS);
     }
     MSVehicleTransfer::getInstance()->checkInsertions(myStep);
@@ -581,7 +577,7 @@ MSNet::clearAll() {
     MSCalibrator::cleanup();
     MSPModel::cleanup();
     MSCModel_NonInteracting::cleanup();
-    PedestrianEdge<MSEdge, MSLane, MSJunction>::cleanup();
+    MSDevice_BTsender::cleanup();
 }
 
 
@@ -604,7 +600,8 @@ MSNet::writeOutput() {
 
     // check emission dumps
     if (OptionsCont::getOptions().isSet("emission-output")) {
-        MSEmissionExport::write(OutputDevice::getDeviceByOption("emission-output"), myStep);
+        MSEmissionExport::write(OutputDevice::getDeviceByOption("emission-output"), myStep,
+                                oc.getInt("emission-output.precision"));
     }
 
     // battery dumps
@@ -692,18 +689,18 @@ MSNet::logSimulationDuration() const {
 }
 
 
-MSPersonControl&
+MSTransportableControl&
 MSNet::getPersonControl() {
     if (myPersonControl == 0) {
-        myPersonControl = new MSPersonControl();
+        myPersonControl = new MSTransportableControl();
     }
     return *myPersonControl;
 }
 
-MSContainerControl&
+MSTransportableControl&
 MSNet::getContainerControl() {
     if (myContainerControl == 0) {
-        myContainerControl = new MSContainerControl();
+        myContainerControl = new MSTransportableControl();
     }
     return *myContainerControl;
 }
@@ -856,13 +853,13 @@ MSNet::getRouterTT(const MSEdgeVector& prohibited) const {
         const std::string routingAlgorithm = OptionsCont::getOptions().getString("routing-algorithm");
         if (routingAlgorithm == "dijkstra") {
             myRouterTTDijkstra = new DijkstraRouterTT<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
-                MSEdge::numericalDictSize(), true, &MSNet::getTravelTime);
+                MSEdge::getAllEdges(), true, &MSNet::getTravelTime);
         } else {
             if (routingAlgorithm != "astar") {
                 WRITE_WARNING("TraCI and Triggers cannot use routing algorithm '" + routingAlgorithm + "'. using 'astar' instead.");
             }
             myRouterTTAStar = new AStarRouter<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
-                MSEdge::numericalDictSize(), true, &MSNet::getTravelTime);
+                MSEdge::getAllEdges(), true, &MSNet::getTravelTime);
         }
     }
     if (myRouterTTDijkstra != 0) {
@@ -880,7 +877,7 @@ SUMOAbstractRouter<MSEdge, SUMOVehicle>&
 MSNet::getRouterEffort(const MSEdgeVector& prohibited) const {
     if (myRouterEffort == 0) {
         myRouterEffort = new DijkstraRouterEffort<MSEdge, SUMOVehicle, prohibited_withPermissions<MSEdge, SUMOVehicle> >(
-            MSEdge::numericalDictSize(), true, &MSNet::getEffort, &MSNet::getTravelTime);
+            MSEdge::getAllEdges(), true, &MSNet::getEffort, &MSNet::getTravelTime);
     }
     myRouterEffort->prohibit(prohibited);
     return *myRouterEffort;

@@ -10,7 +10,7 @@
 // A 2D- or 3D-polygon
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2004-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2004-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -37,7 +37,12 @@
 #include <utils/common/Parameterised.h>
 #include "Shape.h"
 
+
+// ===========================================================================
+// class declarations
+// ===========================================================================
 class OutputDevice;
+
 
 // we need to put this into a namespace to avoid clashing with wingdi.h::Polygon function
 namespace SUMO {

@@ -10,7 +10,7 @@ Converts a given CSV-file that contains a list of pois to
  an XML-file that may be read by POLYCONVERT.
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -25,9 +25,11 @@ import sys
 
 if len(sys.argv) < 4:
     print("Error: Missing argument(s)")
-    print("Call: CSV2polyconvertXML.py <CSV_FILE> <OUTPUT_FILE> <VALUENAME>[,<VALUENAME>]*")
+    print(
+        "Call: CSV2polyconvertXML.py <CSV_FILE> <OUTPUT_FILE> <VALUENAME>[,<VALUENAME>]*")
     print(" The values within the csv-file are supposed to be divided by ';'.")
-    print(" <VALUENAME>s give the attribute names in order of their appearence within the csv-file .")
+    print(
+        " <VALUENAME>s give the attribute names in order of their appearence within the csv-file .")
     exit()
 
 

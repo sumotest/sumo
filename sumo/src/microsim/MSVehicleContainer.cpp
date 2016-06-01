@@ -9,7 +9,7 @@
 // vehicles sorted by their departures
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -96,6 +96,19 @@ MSVehicleContainer::add(SUMOVehicle* veh) {
     } else {
         // add vehicle to an existing heap-item
         (*i).second.push_back(veh);
+    }
+}
+
+
+void
+MSVehicleContainer::remove(SUMOVehicle* veh) {
+    // check whether a new item shall be added or the vehicle may be
+    //  added to an existing list
+    VehicleHeap::iterator i =
+        find_if(array.begin() + 1, array.begin() + currentSize + 1, DepartFinder(veh->getParameter().depart));
+    if (!(currentSize == 0 || i == array.begin() + currentSize + 1)) {
+        // remove vehicle from an existing heap-item
+        (*i).second.erase(std::remove((*i).second.begin(), (*i).second.end(), veh), (*i).second.end());
     }
 }
 

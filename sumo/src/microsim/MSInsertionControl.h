@@ -10,7 +10,7 @@
 // Inserts vehicles into the network when their departure time is reached
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -132,8 +132,10 @@ public:
      */
     int getPendingFlowCount() const;
 
+    /// @brief stops trying to emit the given vehicle (because it already departed)
+    void alreadyDeparted(SUMOVehicle* veh);
 
-    /// @brief stops trying to emit the given vehicle
+    /// @brief stops trying to emit the given vehicle (and delete it)
     void descheduleDeparture(SUMOVehicle* veh);
 
 

@@ -9,7 +9,7 @@
 // Storage for edges, including some functionality operating on multiple edges
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -442,6 +442,11 @@ public:
                                      NBTrafficLightLogicCont& tlc, EdgeVector edges);
 
 
+    /** @brief Sets opposite lane information for geometrically close edges
+     */
+    void guessOpposites();
+
+
     /** @brief Rechecks whether the lane spread is proper
      *
      * @todo Recheck usage; check whether this is really needed and whether it works at all
@@ -465,6 +470,10 @@ public:
         return myIgnoredEdges.count(id) != 0;
     }
 
+    /// @brief mark the given edge id as ignored
+    void ignore(std::string id) {
+        myIgnoredEdges.insert(id);
+    }
 
     /** @brief Returns whether the edge with the id was deleted explicitly
      */
@@ -516,6 +525,12 @@ public:
     /// @brief mark edge priorities and prohibit turn-arounds for all roundabout edges
     void markRoundabouts();
 
+    /// @brief Returns true if this edge matches one of the removal criteria
+    bool ignoreFilterMatch(NBEdge* edge);
+
+    /// @brief ensure that all edge ids are integers
+    int mapToNumericalIDs();
+
 private:
     /** @brief Returns the edges which have been built by splitting the edge of the given id
      *
@@ -525,9 +540,6 @@ private:
      */
     EdgeVector getGeneratedFrom(const std::string& id) const;
 
-
-    /// @brief Returns true if this edge matches one of the removal criteria
-    bool ignoreFilterMatch(NBEdge* edge);
 
     /// @brief compute the form factor for a loop of edges
     static SUMOReal formFactor(const EdgeVector& loopEdges);
@@ -549,8 +561,8 @@ private:
          * @param[in] mayDefinitelyPass Whether the connection may be passed without braking
          */
         PostProcessConnection(const std::string& from_, int fromLane_, const std::string& to_, int toLane_, bool mayDefinitelyPass_, bool keepClear_, SUMOReal contPos_) :
-            from(from_), fromLane(fromLane_), to(to_), toLane(toLane_), mayDefinitelyPass(mayDefinitelyPass_), keepClear(keepClear_), contPos(contPos_)
-        { }
+            from(from_), fromLane(fromLane_), to(to_), toLane(toLane_), mayDefinitelyPass(mayDefinitelyPass_), keepClear(keepClear_), contPos(contPos_) {
+        }
         /// @brief The id of the edge the connection starts at
         std::string from;
         /// @brief The number of the lane the connection starts at

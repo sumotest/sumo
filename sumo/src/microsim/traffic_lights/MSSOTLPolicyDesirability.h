@@ -1,7 +1,7 @@
 /****************************************************************************/
 /// @file    MSSOTLPolicyDesirability.h
 /// @author  Riccardo Belletti
-/// @date    Mar 2014
+/// @date    2014-03-20
 /// @version $Id$
 ///
 // The class a low-level policy desirability
@@ -10,9 +10,10 @@
 // Copyright 2001-2013 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
-//   This program is free software; you can redistribute it and/or modify
+//   This file is part of SUMO.
+//   SUMO is free software: you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
+//   the Free Software Foundation, either version 3 of the License, or
 //   (at your option) any later version.
 //
 /****************************************************************************/
@@ -59,13 +60,13 @@ public:
      * \brief Calculates the desirability of the policy
      */
     virtual SUMOReal computeDesirability(SUMOReal vehInMeasure,
-                                       SUMOReal vehOutMeasure) = 0;
+                                         SUMOReal vehOutMeasure) = 0;
     /**
      * \brief Calculates the desirability of the policy
      */
     virtual SUMOReal computeDesirability(SUMOReal vehInMeasure, SUMOReal vehOutMeasure,
-                                       SUMOReal vehInDispersionMeasure,
-                                       SUMOReal vehOutDispersionMeasure) = 0;
+                                         SUMOReal vehInDispersionMeasure,
+                                         SUMOReal vehOutDispersionMeasure) = 0;
     virtual std::string getMessage() = 0;
     void setKeyPrefix(std::string val) {
         myKeyPrefix = val;

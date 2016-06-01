@@ -7,7 +7,7 @@
 // The Widget for modifying traffic lights
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -220,8 +220,12 @@ GNETLSEditor::onCmdOK(FXObject*, FXSelector, void*) {
     if (myCurrentJunction != 0) {
         if (myHaveModifications) {
             NBTrafficLightDefinition* old = myDefinitions[myDefBox->getCurrentItem()];
-            myUndoList->add(new GNEChange_TLS(myCurrentJunction, old, false), true);
-            myUndoList->add(new GNEChange_TLS(myCurrentJunction, myEditedDef, true), true);
+            std::vector<NBNode*> nodes = old->getNodes();
+            for (std::vector<NBNode*>::iterator it = nodes.begin(); it != nodes.end(); it++) {
+                GNEJunction* junction = myUpdateTarget->getNet()->retrieveJunction((*it)->getID());
+                myUndoList->add(new GNEChange_TLS(junction, old, false), true);
+                myUndoList->add(new GNEChange_TLS(junction, myEditedDef, true), true);
+            }
             myEditedDef = 0;
             myUndoList->p_end();
             cleanup();

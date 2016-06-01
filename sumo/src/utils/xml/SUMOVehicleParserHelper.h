@@ -10,7 +10,7 @@
 // Helper methods for parsing vehicle attributes
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -108,6 +108,8 @@ public:
                                    int element, const SUMOSAXAttributes& attrs,
                                    bool fromVType = false);
 
+    /// @brief Parses lane change model attributes
+    static void parseLCParams(SUMOVTypeParameter& into, LaneChangeModel model, const SUMOSAXAttributes& attrs);
 
     /** @brief Closes parsing of the vehicle type
      * @return The resulting vehicle type parameter
@@ -184,12 +186,15 @@ private:
 
 
     typedef std::map<SumoXMLTag, std::set<SumoXMLAttr> > CFAttrMap;
+    typedef std::map<LaneChangeModel, std::set<SumoXMLAttr> > LCAttrMap;
 
     // returns allowed attrs for each known CF-model (init on first use)
     static const CFAttrMap& getAllowedCFModelAttrs();
 
     // brief allowed attrs for each known CF-model
     static CFAttrMap allowedCFModelAttrs;
+    // brief allowed attrs for each known LC-model
+    static LCAttrMap allowedLCModelAttrs;
 
 
 };

@@ -9,7 +9,7 @@
 // The base class for traffic light logic definitions
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2002-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2002-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -329,7 +329,7 @@ public:
     bool needsCont(const NBEdge* fromE, const NBEdge* toE, const NBEdge* otherFromE, const NBEdge* otherToE) const;
 
     /// @brief whether the given index must yield to the foeIndex while turing right on a red light
-    bool rightOnRedConflict(int index, int foeIndex) const;
+    virtual bool rightOnRedConflict(int index, int foeIndex) const;
 
     /* initialize myNeedsContRelation and set myNeedsContRelationReady to true
      * This information is a byproduct of NBOwnTLDef::myCompute. All other
@@ -337,6 +337,9 @@ public:
     virtual void initNeedsContRelation() const;
 
 protected:
+    /// @brief id for temporary definitions
+    static const std::string DummyID;
+
     /** @brief Computes the traffic light logic finally in dependence to the type
      * @param[in] brakingTime Duration a vehicle needs for braking in front of the tls
      * @return The computed logic
@@ -432,6 +435,10 @@ protected:
     typedef std::set<std::pair<int, int> > RightOnRedConflicts;
     mutable RightOnRedConflicts myRightOnRedConflicts;
     mutable bool myRightOnRedConflictsReady;
+
+private:
+    static std::set<NBEdge*> collectReachable(EdgeVector outer, const EdgeVector& within, bool checkControlled);
+
 
 };
 

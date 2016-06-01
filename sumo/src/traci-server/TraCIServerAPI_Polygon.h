@@ -8,7 +8,7 @@
 // APIs for getting/setting polygon values via TraCI
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -87,7 +87,7 @@ private:
      * @param[in] id The id of the searched polygon
      * @return The named polygon, or 0 if it is not known
      */
-    static Polygon* getPolygon(const std::string& id);
+    static SUMO::Polygon* getPolygon(const std::string& id);
 
 
 private:

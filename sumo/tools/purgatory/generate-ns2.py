@@ -10,7 +10,7 @@
 automating generation of ns2-tracefiles
 
 SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-Copyright (C) 2008-2015 DLR (http://www.dlr.de/) and contributors
+Copyright (C) 2008-2016 DLR (http://www.dlr.de/) and contributors
 
 This file is part of SUMO.
 SUMO is free software; you can redistribute it and/or modify
@@ -172,14 +172,16 @@ if (os.path.isfile("netstate.xml") == False):
 # create mobility, activity
 #
 for penetration in options.penetration:
-    print("start: generation tracefile with penetration level of " + str(penetration))
+    print(
+        "start: generation tracefile with penetration level of " + str(penetration))
     os.system("java -jar " + exporter + " ns2 -n " + netfile + " -t netstate.xml -m mobility_" + str(penetration) + ".tcl -a activity_" + str(penetration) +
               ".tcl -c config_" + str(penetration) + ".tcl -p " + str(penetration) + " -s " + str(options.seed) + " -b " + str(options.begintime) + " -e " + str(options.endtime))
     if (os.path.isfile("mobility_" + str(penetration) + ".tcl") == False or os.path.isfile("activity_" + str(penetration) + ".tcl") == False or os.path.isfile("config_" + str(penetration) + ".tcl") == False):
         print("error creating mobility, activity, config")
         sys.exit(1)
     else:
-        print("finished: generation tracefile with penetration level of " + str(penetration))
+        print(
+            "finished: generation tracefile with penetration level of " + str(penetration))
 
 
 #

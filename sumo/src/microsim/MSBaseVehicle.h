@@ -9,7 +9,7 @@
 // A base class for vehicle implementations
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2010-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2010-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -41,6 +41,10 @@
 #include "MSMoveReminder.h"
 #include "MSVehicleType.h"
 
+// ===========================================================================
+// class declarations
+// ===========================================================================
+class MSLane;
 
 // ===========================================================================
 // class definitions
@@ -115,7 +119,7 @@ public:
      * @param[in] nSuccs The number of edge to look forward
      * @return The nSuccs'th following edge in the vehicle's route
      */
-    const MSEdge* succEdge(unsigned int nSuccs) const;
+    const MSEdge* succEdge(int nSuccs) const;
 
     /** @brief Returns the edge the vehicle is currently at
      *
@@ -131,6 +135,20 @@ public:
         return true;
     }
 
+    /** @brief Returns the information whether the front of the vehhicle is on the given lane
+     * @return Whether the vehicle's front is on that lane
+     */
+    virtual bool isFrontOnLane(const MSLane*) const {
+        return true;
+    }
+
+    /** @brief Get the vehicle's lateral position on the lane
+     * @return The lateral position of the vehicle (in m relative to the
+     * centerline of the lane)
+     */
+    virtual SUMOReal getLateralPositionOnLane() const {
+        return 0;
+    }
 
     /** @brief Returns the starting point for reroutes (usually the current edge)
      *
@@ -169,10 +187,11 @@ public:
      *  into the routes container (see in-line comments).
      *
      * @param[in] edges The new list of edges to pass
-     * @param[in] simTime The time at which the route was replaced
+     * @param[in] onInit Whether the vehicle starts with this route
+     * @param[in] check Whether the route should be checked for validity
      * @return Whether the new route was accepted
      */
-    bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false);
+    bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false, bool check = false);
 
 
     /** @brief Returns the vehicle's acceleration
@@ -209,6 +228,12 @@ public:
     }
 
 
+    /** @brief Returns this vehicle's real departure position
+     * @return This vehicle's real departure position
+     */
+    inline SUMOReal getDepartPos() const {
+        return myDepartPos;
+    }
 
     /** @brief Returns this vehicle's desired arrivalPos for its current route
      * (may change on reroute)
@@ -268,11 +293,12 @@ public:
      */
     virtual void addContainer(MSTransportable* container);
 
-    /** @brief Validates the current route
+    /** @brief Validates the current or given route
      * @param[out] msg Description why the route is not valid (if it is the case)
+     * @param[in] route The route to check (or 0 if the current route shall be checked)
      * @return Whether the vehicle's current route is valid
      */
-    bool hasValidRoute(std::string& msg) const;
+    bool hasValidRoute(std::string& msg, const MSRoute* route = 0) const;
 
     /** @brief Adds a MoveReminder dynamically
      *
@@ -378,21 +404,24 @@ protected:
     /// @brief The real departure time
     SUMOTime myDeparture;
 
-    /// the position on the destination lane where the vehicle stops
+    /// @brief The real depart position
+    SUMOReal myDepartPos;
+
+    /// @brief The position on the destination lane where the vehicle stops
     SUMOReal myArrivalPos;
 
-    /// the position on the destination lane where the vehicle stops
+    /// @brief The destination lane where the vehicle stops
     int myArrivalLane;
 
     /// @brief The number of reroutings
     unsigned int myNumberReroutes;
 
-private:
     /* @brief magic value for undeparted vehicles
      * @note: in previous versions this was -1
      */
     static const SUMOTime NOT_YET_DEPARTED;
 
+private:
     /// invalidated assignment operator
     MSBaseVehicle& operator=(const MSBaseVehicle& s);
 

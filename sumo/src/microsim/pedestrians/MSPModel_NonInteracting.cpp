@@ -7,7 +7,7 @@
 // The pedestrian following model (prototype)
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2014-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2014-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -75,8 +75,6 @@ MSPModel_NonInteracting::~MSPModel_NonInteracting() {
 PedestrianState*
 MSPModel_NonInteracting::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
     PState* state = new PState(person,stage);
-
-
     const SUMOTime firstEdgeDuration = state->computeWalkingTime(0, *stage, now);
     myNet->getBeginOfTimestepEvents()->addEvent(new MoveToNextEdge(person, *stage),
             now + firstEdgeDuration, MSEventControl::ADAPT_AFTER_EXECUTION);
@@ -112,7 +110,6 @@ MSPModel_NonInteracting::MoveToNextEdge::execute(SUMOTime currentTime) {
 }
 
 
-
 MSPModel_NonInteracting::PState::PState(MSPerson* person,
 		MSPerson::MSPersonStage_Walking* stage): myPerson(person), myStage(stage) {
 	myRouteStep = myStage->getRoute().begin();
@@ -138,8 +135,8 @@ const MSEdge* MSPModel_NonInteracting::PState::incrEdge() {
 SUMOTime
 MSPModel_NonInteracting::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
     myLastEntryTime = currentTime;
-    const MSEdge* edge = getEdge();
-    const MSEdge* next = getNextEdge();
+    const MSEdge* edge = stage.getEdge();
+    const MSEdge* next = stage.getNextRouteEdge();
     int dir = UNDEFINED_DIRECTION;
     if (prev == 0) {
         myCurrentBeginPos = stage.getDepartPos();
@@ -173,7 +170,7 @@ MSPModel_NonInteracting::PState::getEdgePos(const MSPerson::MSPersonStage_Walkin
 
 Position
 MSPModel_NonInteracting::PState::getPosition(const MSPerson::MSPersonStage_Walking& stage, SUMOTime now) const {
-    const MSLane* lane = getSidewalk(stage.getEdge());
+    const MSLane* lane = getSidewalk<MSEdge, MSLane>(stage.getEdge());
     const SUMOReal lateral_offset = lane->allowsVehicleClass(SVC_PEDESTRIAN) ? 0 : SIDEWALK_OFFSET;
     return stage.getLanePosition(lane, getEdgePos(stage, now), lateral_offset);
 }
@@ -201,21 +198,10 @@ MSPModel_NonInteracting::PState::getSpeed(const MSPerson::MSPersonStage_Walking&
     return stage.getMaxSpeed();
 }
 
-
 const MSEdge*
 MSPModel_NonInteracting::PState::getNextEdge() const {
 
 	return myRouteStep == myStage->getRoute().end() - 1 ? 0 : *(myRouteStep + 1);
 }
-
-
-//const MSEdge* getRouteEdge() const {
-//    return *myRouteStep;
-//}
-//
-//const MSEdge* getNextRouteEdge() const {
-//    return myRouteStep == myRoute.end() - 1 ? 0 : *(myRouteStep + 1);
-//}
-
 
 /****************************************************************************/

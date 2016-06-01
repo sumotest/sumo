@@ -10,7 +10,7 @@
 // Message and object IDs used by the FOX-version of the gui
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -148,8 +148,14 @@ enum {
     //@}
 
 
-    // Clear simulation settings
+    /// Clear simulation output
     MID_CLEARMESSAGEWINDOW,
+    /// Show network statistics
+    MID_SHOWNETSTATS,
+    /// Show vehicle statistics
+    MID_SHOWVEHSTATS,
+    /// Show person statistics
+    MID_SHOWPERSONSTATS,
 
 
     /// @name Common View Settings - IDs
@@ -227,6 +233,8 @@ enum {
     MID_COPY_CURSOR_GEOPOSITION,
     /// Show object parameter - popup entry
     MID_SHOWPARS,
+    /// Show object type parameter - popup entry
+    MID_SHOWTYPEPARS,
     /// Show TLS phases - popup entry
     MID_SWITCH_OFF,
     MID_SWITCH,

@@ -9,7 +9,7 @@
 // A device which collects info on the vehicle trip
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2009-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2009-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -191,7 +191,7 @@ private:
         void vehicleStateChanged(const SUMOVehicle* const vehicle, MSNet::VehicleState to);
 
         /// @brief A map for internal notification
-        std::map<const SUMOVehicle*, MSDevice_Vehroutes*, Named::NamedLikeComparatorIdLess<SUMOVehicle> > myDevices;
+        std::map<const SUMOVehicle*, MSDevice_Vehroutes*, SUMOVehicle::ComparatorIdLess> myDevices;
 
     };
 
@@ -238,9 +238,6 @@ private:
         const MSRoute* route;
 
     };
-
-    /// @brief The position on the lane the vehicle departed at
-    SUMOReal myDepartPos;
 
     /// @brief The currently used route
     const MSRoute* myCurrentRoute;

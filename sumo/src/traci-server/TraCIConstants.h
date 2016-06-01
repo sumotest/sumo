@@ -17,7 +17,7 @@
 /// holds codes used for TraCI
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2007-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2007-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -34,7 +34,7 @@
 // ****************************************
 // VERSION
 // ****************************************
-#define TRACI_VERSION 10
+#define TRACI_VERSION 11
 
 
 // ****************************************
@@ -57,6 +57,9 @@
 
 // command: slow down
 #define CMD_SLOWDOWN 0x14
+
+// command: set sublane (vehicle)
+#define CMD_CHANGESUBLANE 0x15
 
 // command: change target
 #define CMD_CHANGETARGET 0x31
@@ -623,6 +626,17 @@
 // maximum speed regarding max speed on the current lane and speed factor (get: vehicle)
 #define VAR_ALLOWED_SPEED 0xb7
 
+// position (1D lateral position relative to center of the current lane) (get: vehicle)
+#define VAR_LANEPOSITION_LAT 0xb8
+
+// get/set prefered lateral alignment within the lane (vehicle)
+#define VAR_LATALIGNMENT 0xb9
+
+// get/set maximum lateral speed (vehicle, vtypes)
+#define VAR_MAXSPEED_LAT 0xba
+
+// get/set minimum lateral gap (vehicle, vtypes)
+#define VAR_MINGAP_LAT 0xbb
 
 // current CO2 emission of a node (get: vehicle, lane, edge)
 #define VAR_CO2EMISSION 0x60
@@ -659,6 +673,9 @@
 
 //current waiting time (get: vehicle, lane)
 #define VAR_WAITING_TIME 0x7a
+
+// upcoming traffic lights (get: vehicle)
+#define VAR_NEXT_TLS 0x70
 
 // current time step (get: simulation)
 #define VAR_TIME_STEP 0x70
@@ -728,6 +745,9 @@
 
 // clears the simulation of all not inserted vehicles (set: simulation)
 #define CMD_CLEAR_PENDING_VEHICLES 0x94
+
+// triggers saving simulation state (set: simulation)
+#define CMD_SAVE_SIMSTATE 0x95
 
 // sets/retrieves abstract parameter
 #define VAR_PARAMETER 0x7e

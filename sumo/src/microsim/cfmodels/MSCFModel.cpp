@@ -11,7 +11,7 @@
 // The car-following model abstraction
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -50,6 +50,9 @@ MSCFModel::MSCFModel(const MSVehicleType* vtype, const SUMOReal accel,
 
 
 MSCFModel::~MSCFModel() {}
+
+
+MSCFModel::VehicleVariables::~VehicleVariables() {}
 
 
 SUMOReal
@@ -107,7 +110,8 @@ MSCFModel::maximumSafeStopSpeed(SUMOReal gap) const {
     if (gap <= 0) {
         return 0;
     } else if (gap <= ACCEL2SPEED(myDecel)) {
-        return gap;
+        // workaround for #2310
+        return MIN2(ACCEL2SPEED(myDecel), DIST2SPEED(gap));
     }
     const SUMOReal g = gap;
     const SUMOReal b = ACCEL2SPEED(myDecel);

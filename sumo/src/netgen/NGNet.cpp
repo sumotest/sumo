@@ -10,7 +10,7 @@
 // The class storing the generated network
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2003-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2003-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -88,11 +88,14 @@ NGNet::findNode(int xID, int yID) {
 
 
 void
-NGNet::createChequerBoard(int numX, int numY, SUMOReal spaceX, SUMOReal spaceY, SUMOReal attachLength) {
+NGNet::createChequerBoard(int numX, int numY, SUMOReal spaceX, SUMOReal spaceY, SUMOReal attachLength, bool alphaIDs) {
     for (int ix = 0; ix < numX; ix++) {
         for (int iy = 0; iy < numY; iy++) {
             // create Node
             std::string nodeID = toString<int>(ix) + "/" + toString<int>(iy);
+            if (alphaIDs) {
+                nodeID = toString(char('A' + ix)) + toString(iy);
+            }
             NGNode* node = new NGNode(nodeID, ix, iy);
             node->setX(ix * spaceX + attachLength);
             node->setY(iy * spaceY + attachLength);

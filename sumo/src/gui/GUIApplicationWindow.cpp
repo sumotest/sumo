@@ -10,7 +10,7 @@
 // The main window of the SUMO-gui.
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -45,6 +45,9 @@
 #include <microsim/MSGlobals.h>
 #include <microsim/MSEdge.h>
 #include <microsim/MSVehicle.h>
+#include <microsim/MSEdgeControl.h>
+#include <microsim/MSInsertionControl.h>
+#include <microsim/MSTransportableControl.h>
 
 #include "GUISUMOViewParent.h"
 #include "GUILoadThread.h"
@@ -90,6 +93,7 @@
 #include <foreign/nvwa/debug_new.h>
 #endif
 
+//#define HAVE_DANGEROUS_SOUNDS
 
 // ===========================================================================
 // FOX-declarations
@@ -124,6 +128,10 @@ FXDEFMAP(GUIApplicationWindow) GUIApplicationWindowMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_TIME_TOOGLE,        GUIApplicationWindow::onCmdTimeToggle),
     FXMAPFUNC(SEL_COMMAND,  MID_DELAY_TOOGLE,       GUIApplicationWindow::onCmdDelayToggle),
     FXMAPFUNC(SEL_COMMAND,  MID_CLEARMESSAGEWINDOW, GUIApplicationWindow::onCmdClearMsgWindow),
+
+    FXMAPFUNC(SEL_COMMAND,  MID_SHOWNETSTATS,       GUIApplicationWindow::onCmdShowStats),
+    FXMAPFUNC(SEL_COMMAND,  MID_SHOWVEHSTATS,       GUIApplicationWindow::onCmdShowStats),
+    FXMAPFUNC(SEL_COMMAND,  MID_SHOWPERSONSTATS,    GUIApplicationWindow::onCmdShowStats),
 
     FXMAPFUNC(SEL_UPDATE,   MID_OPEN_CONFIG,       GUIApplicationWindow::onUpdOpen),
     FXMAPFUNC(SEL_UPDATE,   MID_OPEN_NETWORK,      GUIApplicationWindow::onUpdOpen),
@@ -195,6 +203,7 @@ GUIApplicationWindow::GUIApplicationWindow(FXApp* a,
       myHaveNotifiedAboutSimEnd(false),
       // game specific
       myJamSoundTime(60),
+      myPreviousCollisionNumber(0),
       myWaitingTime(0),
       myTimeLoss(0) {
     GUIIconSubSys::init(a);
@@ -236,6 +245,15 @@ GUIApplicationWindow::dependentBuild() {
             new FXHorizontalFrame(myStatusbar, LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y | LAYOUT_RIGHT | FRAME_SUNKEN,
                                   0, 0, 20, 0, 0, 0, 0, 0, 0, 0);
         myCartesianCoordinate = new FXLabel(myCartesianFrame, "N/A\t\tNetwork coordinate", 0, LAYOUT_CENTER_Y);
+        myNetStatButton = new FXButton(myStatusbar, "Open network statistics.",
+            GUIIconSubSys::getIcon(ICON_GREENEDGE), this, MID_SHOWNETSTATS);
+        myNetStatButton->setText("-");
+        myVehStatButton = new FXButton(myStatusbar, "Open vehicle statistics.",
+            GUIIconSubSys::getIcon(ICON_GREENVEHICLE), this, MID_SHOWVEHSTATS);
+        myVehStatButton->setText("-");
+        myPedStatButton = new FXButton(myStatusbar, "Open personn statistics.",
+            GUIIconSubSys::getIcon(ICON_GREENPERSON), this, MID_SHOWPERSONSTATS);
+        myPedStatButton->setText("-");
     }
 
     // make the window a mdi-window
@@ -266,7 +284,7 @@ GUIApplicationWindow::dependentBuild() {
     // set the status bar
     myStatusbar->getStatusLine()->setText("Ready.");
     // set the caption
-    setTitle(MFXUtils::getTitleText(("SUMO " + getBuildName(VERSION_STRING)).c_str()));
+    setTitle(MFXUtils::getTitleText("SUMO " VERSION_STRING));
 
     // start the simulation-thread (it will loop until the application ends deciding by itself whether to perform a step or not)
     myRunThread->start();
@@ -690,8 +708,8 @@ GUIApplicationWindow::onCmdEditChosen(FXObject* menu, FXSelector, void*) {
     } else {
         if (!myAmLoading && myRunThread->simulationAvailable()) {
             const SUMOVehicleClass svc = SumoVehicleClassStrings.get(mc->getText().text());
-            for (size_t i = 0; i < MSEdge::dictSize(); ++i) {
-                const std::vector<MSLane*>& lanes = MSEdge::dictionary(i)->getLanes();
+            for (MSEdgeVector::const_iterator i = MSEdge::getAllEdges().begin(); i != MSEdge::getAllEdges().end(); ++i) {
+                const std::vector<MSLane*>& lanes = (*i)->getLanes();
                 for (std::vector<MSLane*>::const_iterator it = lanes.begin(); it != lanes.end(); ++it) {
                     GUILane* lane = dynamic_cast<GUILane*>(*it);
                     assert(lane != 0);
@@ -1018,6 +1036,17 @@ GUIApplicationWindow::onCmdLocate(FXObject*, FXSelector sel, void*) {
     return 1;
 }
 
+
+long
+GUIApplicationWindow::onCmdShowStats(FXObject*, FXSelector sel, void*) {
+    if (myMDIClient->numChildren() > 0) {
+        GUISUMOViewParent* w = dynamic_cast<GUISUMOViewParent*>(myMDIClient->getActiveChild());
+        GUINet::getGUIInstance()->getParameterWindow(*this, *w->getView());
+    }
+    return 1;
+}
+
+
 long
 GUIApplicationWindow::onCmdAppSettings(FXObject*, FXSelector, void*) {
     GUIDialog_AppSettings* d = new GUIDialog_AppSettings(this);
@@ -1259,6 +1288,7 @@ GUIApplicationWindow::handleEvent_SimulationLoaded(GUIEvent* e) {
                         myRunThread->getBreakpointLock().unlock();
                     }
                     myJamSounds = settings.getEventDistribution("jam");
+                    myCollisionSounds = settings.getEventDistribution("collision");
                     if (settings.getJamSoundTime() > 0) {
                         myJamSoundTime = settings.getJamSoundTime();
                     }
@@ -1271,11 +1301,13 @@ GUIApplicationWindow::handleEvent_SimulationLoaded(GUIEvent* e) {
                 setTitle("SUMO Interactive Traffic Light");
             } else {
                 // set simulation name on the caption
-                std::string caption = "SUMO " + getBuildName(VERSION_STRING);
-                setTitle(MFXUtils::getTitleText(caption.c_str(), ec->myFile.c_str()));
+                setTitle(MFXUtils::getTitleText("SUMO " VERSION_STRING, ec->myFile.c_str()));
             }
             // set simulation step begin information
             myLCDLabel->setText("-------------");
+            myNetStatButton->setText("-");
+            myVehStatButton->setText("-");
+            myPedStatButton->setText("-");
         }
     }
     getApp()->endWaitCursor();
@@ -1291,6 +1323,20 @@ void
 GUIApplicationWindow::handleEvent_SimulationStep(GUIEvent*) {
     updateChildren();
     updateTimeLCD(myRunThread->getNet().getCurrentTimeStep());
+    myNetStatButton->setText(toString(myRunThread->getNet().getEdgeControl().getNumActiveLanes()).c_str());
+    const unsigned int running = myRunThread->getNet().getVehicleControl().getRunningVehicleNo();
+    const unsigned int backlog = myRunThread->getNet().getInsertionControl().getWaitingVehicleNo();
+    if (backlog > running) {
+        if (myVehStatButton->getIcon() == GUIIconSubSys::getIcon(ICON_GREENVEHICLE)) {
+            myVehStatButton->setIcon(GUIIconSubSys::getIcon(ICON_YELLOWVEHICLE));
+        }
+    } else {
+        if (myVehStatButton->getIcon() == GUIIconSubSys::getIcon(ICON_YELLOWVEHICLE)) {
+            myVehStatButton->setIcon(GUIIconSubSys::getIcon(ICON_GREENVEHICLE));
+        }
+    }
+    myVehStatButton->setText(toString(running).c_str());
+    myPedStatButton->setText(toString(myRunThread->getNet().getPersonControl().getRunningNumber()).c_str());
     if (myAmGaming) {
         checkGamingEvents();
     }
@@ -1347,7 +1393,7 @@ GUIApplicationWindow::checkGamingEvents() {
     MSVehicleControl& vc = MSNet::getInstance()->getVehicleControl();
     MSVehicleControl::constVehIt it = vc.loadedVehBegin();
     MSVehicleControl::constVehIt end = vc.loadedVehEnd();
-#ifdef HAVE_INTERNAL
+#ifdef HAVE_DANGEROUS_SOUNDS // disable user-configurable command execution for public build
     if (myJamSounds.getOverallProb() > 0) {
         // play honking sound if some vehicle is waiting too long
         for (; it != end; ++it) {
@@ -1361,6 +1407,17 @@ GUIApplicationWindow::checkGamingEvents() {
                     break;
                 }
             }
+        }
+    }
+    if (myCollisionSounds.getOverallProb() > 0) {
+        unsigned int collisions = MSNet::getInstance()->getVehicleControl().getCollisionCount();
+        if (myPreviousCollisionNumber != collisions) {
+            const std::string cmd = myCollisionSounds.get(&myGamingRNG);
+            if (cmd != "") {
+                // yay! fun with dangerous commands... Never use this over the internet
+                SysUtils::runHiddenCommand(cmd);
+            }
+            myPreviousCollisionNumber = collisions;
         }
     }
 #endif
@@ -1431,6 +1488,9 @@ void
 GUIApplicationWindow::closeAllWindows() {
     myTrackerLock.lock();
     myLCDLabel->setText("-------------");
+    myNetStatButton->setText("-");
+    myVehStatButton->setText("-");
+    myPedStatButton->setText("-");
     // remove trackers and other external windows
     size_t i;
     for (i = 0; i < mySubWindows.size(); ++i) {
@@ -1442,7 +1502,7 @@ GUIApplicationWindow::closeAllWindows() {
     // delete the simulation
     myRunThread->deleteSim();
     // reset the caption
-    setTitle(MFXUtils::getTitleText(("SUMO " + getBuildName(VERSION_STRING)).c_str()));
+    setTitle(MFXUtils::getTitleText("SUMO " VERSION_STRING));
     // delete other children
     while (myTrackerWindows.size() != 0) {
         delete myTrackerWindows[0];

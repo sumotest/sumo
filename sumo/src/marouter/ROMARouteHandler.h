@@ -9,7 +9,7 @@
 // Parser and container for routes during their loading
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2001-2015 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -71,12 +71,18 @@ protected:
      * @see GenericSAXHandler::myStartElement
      */
     void myStartElement(int element, const SUMOSAXAttributes& attrs);
+
+    void myEndElement(int element);
     //@}
 
 
-protected:
-    /// @brief The current route
+private:
+    /// @brief The matrix to fill
     ODMatrix& myMatrix;
+    /// @brief The keys for reading taz
+    std::vector<std::string> myTazParamKeys;
+    /// @brief The current vehicle parameters
+    SUMOVehicleParameter* myVehicleParameter;
 
 private:
     /// @brief Invalidated copy constructor
