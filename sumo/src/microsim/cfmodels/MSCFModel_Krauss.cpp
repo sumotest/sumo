@@ -61,7 +61,7 @@ MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SU
 //				<< ", speed = " << speed
 //				<< ", maxSafeStopSpeed() = "<< maximumSafeStopSpeed(gap, speed) << std::endl;
 //	}
-    return MIN2(maximumSafeStopSpeed(gap, speed), maxNextSpeed(speed, veh));
+    return MIN2(maximumSafeStopSpeed(gap, speed, false, 0.), maxNextSpeed(speed, veh));
 }
 
 

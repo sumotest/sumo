@@ -345,6 +345,7 @@ protected:
      * @param[in] egoSpeed The FOLLOWERS's speed
      * @param[in] predSpeed The LEADER's speed
      * @param[in] predMaxDecel The LEADER's maximum deceleration
+     * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
      * @return the safe velocity
      */
     SUMOReal maximumSafeFollowSpeed(SUMOReal gap,  SUMOReal egoSpeed, SUMOReal predSpeed, SUMOReal predMaxDecel, bool onInsertion = false) const;
@@ -353,8 +354,10 @@ protected:
     /** @brief Returns the maximum next velocity for stopping within gap
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] currentSpeed The current speed of the ego vehicle
+     * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
+     * @param[in] headway The desired time headway to be included in the calculations (default argument -1 induces the use of myHeadway)
      */
-    SUMOReal maximumSafeStopSpeed(SUMOReal gap, SUMOReal currentSpeed, bool onInsertion = false) const;
+    SUMOReal maximumSafeStopSpeed(SUMOReal gap, SUMOReal currentSpeed, bool onInsertion = false, SUMOReal headway = -1) const;
 
 
     /** @brief Returns the maximum next velocity for stopping within gap
@@ -371,10 +374,11 @@ protected:
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] currentSpeed The current speed of the ego vehicle
      * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
+     * @param[in] headway The desired time headway to be included in the calculations (default argument -1 induces the use of myHeadway)
      * @return the safe velocity (to be attained at the end of the following time step) that assures the possibility of stopping within gap.
      * If a negative value is returned, the required stop has to take place before the end of the time step.
      */
-    SUMOReal maximumSafeStopSpeedBallistic(SUMOReal gap, SUMOReal currentSpeed, bool onInsertion = false) const;
+    SUMOReal maximumSafeStopSpeedBallistic(SUMOReal gap, SUMOReal currentSpeed, bool onInsertion = false, SUMOReal headway = -1) const;
 
 
 protected:

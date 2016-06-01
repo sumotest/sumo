@@ -275,11 +275,11 @@ MSCFModel::estimateSpeedAfterDistance(const SUMOReal dist, const SUMOReal v, con
 
 
 SUMOReal
-MSCFModel::maximumSafeStopSpeed(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion) const {
+MSCFModel::maximumSafeStopSpeed(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion, SUMOReal headway) const {
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		return maximumSafeStopSpeedEuler(g);
 	} else {
-		return maximumSafeStopSpeedBallistic(g, v, onInsertion);
+		return maximumSafeStopSpeedBallistic(g, v, onInsertion, headway);
 	}
 }
 
@@ -316,7 +316,7 @@ MSCFModel::maximumSafeStopSpeedEuler(SUMOReal gap) const {
 
 
 SUMOReal
-MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion) const {
+MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion, SUMOReal headway) const {
 
 	// (Leo) Note that in contrast to the Euler update, for the ballistic update
 	// the distance covered in the coming step depends on the current velocity, in general.
@@ -344,6 +344,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 	// a negative return value for the speed at the next time step (linearly extrapolating the required deceleration).
 	// This gives responsibility to the caller to interpret it correctly,
 	// e.g. process a stop in the middle of a time step (currently done in MSVehicle::executeMove()).
+    headway = headway<0 ? myHeadwayTime : headway;
 	SUMOReal b = myDecel;
 	SUMOReal dt;
 	if(onInsertion) {
@@ -376,7 +377,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 		//    (ii) adapt it to fit the distance that would be covered in the next time step, when accelerating
 		//    for time myHeadwayTime and then going on with vN for (dt-myHeadwayTime)
 		//    ((ii) exceeds the appropriate next speed, when braking).
-		SUMOReal constantSpeedTime = MAX2(myHeadwayTime - dt, 0.);
+		SUMOReal constantSpeedTime = MAX2(headway - dt, 0.);
 		SUMOReal p = (dt/2 + constantSpeedTime)*b;
 		return -p + sqrt(p*p + D*b);
 	}
