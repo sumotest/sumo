@@ -66,8 +66,17 @@
 // member method definitions
 // ===========================================================================
 
-GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked) :
+GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked, std::vector<GNEAdditional*> additionalChilds, std::vector<GNEEdge*> edgeChilds, std::vector<GNELane*> laneChilds) :
     GNEAdditional(id, viewNet, pos, tag, NULL, blocked) {
+    // Insert additionals
+    for(int i = 0; i < additionalChilds.size(); i++)
+        addAdditionalChild(additionalChilds.at(i));
+    // Insert edges
+    for(int i = 0; i < edgeChilds.size(); i++)
+        addEdgeChild(edgeChilds.at(i));
+    // Insert lanes
+    for(int i = 0; i < laneChilds.size(); i++)
+        addLaneChild(laneChilds.at(i));
 }
 
 
@@ -77,24 +86,36 @@ GNEAdditionalSet::~GNEAdditionalSet() {
 
 bool
 GNEAdditionalSet::addAdditionalChild(GNEAdditional *additional) {
-    for(std::list<GNEAdditional*>::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++)
+    for(childAdditionals::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++)
         if((*i) == additional)
             return false;
     // If wasn't found, insert it
     myChildAdditionals.push_back(additional);
+    updateConnections();
+    return true;
 }
 
 
 bool
 GNEAdditionalSet::removeAdditionalChild(GNEAdditional *additional) {
+    for(childAdditionals::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++)
+        if((*i) == additional) {
+            myChildAdditionals.erase(i);
+            updateConnections();
+            return true;
+        }
+    // If wasn't found, return false
     return false;
 }
 
 
 bool
-GNEAdditionalSet::addEdgeChild(GNEEdge *edge, SUMOReal position) {
+GNEAdditionalSet::addEdgeChild(GNEEdge *edge) {
+    // Only add edge child if don't exist in the container
     if(myChildEdges.count(edge) == 0) {
-        myChildEdges[edge] = std::pair<Position, SUMOReal>(Position(), 0);
+        myChildEdges[edge] = std::pair<std::list<Position>, SUMOReal>(std::list<Position>(), 0);
+        edge->addAdditionalSet(this);
+        std::cout << "added :" << edge->getID() << " " << myChildEdges.count(edge) << std::endl;
         updateConnections();
         return true;
     }
@@ -105,14 +126,26 @@ GNEAdditionalSet::addEdgeChild(GNEEdge *edge, SUMOReal position) {
 
 bool
 GNEAdditionalSet::removeEdgeChild(GNEEdge *edge) {
-    return false;
+    // Only remove edge child if exists in the container
+    std::cout << "removed :" << edge->getID() << " " << myChildEdges.count(edge) << std::endl;
+    if(myChildEdges.count(edge) == 0)
+        return false;
+    else {
+        std::cout << "PASA" << std::endl;
+        myChildEdges.erase(myChildEdges.find(edge));
+        edge->removeAdditionalSet(this);
+        updateConnections();
+        return false;
+    }
 }
 
 
 bool
-GNEAdditionalSet::addLaneChild(GNELane *lane, SUMOReal position) {
+GNEAdditionalSet::addLaneChild(GNELane *lane) {
+    // Only add lane child if don't exist in the container
     if(myChildLanes.count(lane) == 0) {
         myChildLanes[lane] = std::pair<Position, SUMOReal>(Position(), 0);
+        //lane->addAdditionalSet(this);
         updateConnections();
         return true;
     }
@@ -123,7 +156,15 @@ GNEAdditionalSet::addLaneChild(GNELane *lane, SUMOReal position) {
 
 bool
 GNEAdditionalSet::removeLaneChild(GNELane *lane) {
-    return false;
+    // Only remove lane child if exists in the container
+    if(myChildLanes.count(lane) == 0)
+        return false;
+    else {
+        myChildLanes.erase(myChildLanes.find(lane));
+        //lane->removeAdditionalSet(this);
+        updateConnections();
+        return false;
+    }
 }
 
 
@@ -133,7 +174,7 @@ GNEAdditionalSet::updateConnections() {
     myConnectionMiddlePosition.clear();
 
     // Iterate over additonals
-    for(std::list<GNEAdditional*>::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++) {
+    for(childAdditionals::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++) {
         // If shape isn't empty, calculate middle point.
         if((*i)->getShape().size() > 0) {
             Position PositionOfChild = (*i)->getShape()[0];
@@ -143,11 +184,30 @@ GNEAdditionalSet::updateConnections() {
         }
     }
 
+    // Iterate over eges
+    for(childEdges::iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++) {
+        // Calculate middle position in the edge
+        int numLanes = i->first->getLanes().size();
+        // clear position of lanes
+        i->second.first.clear();
+        // Calculate position of every lane
+        for(int j = 0; j < i->first->getLanes().size(); j++)
+            i->second.first.push_back(i->first->getLanes().at(j)->getShape().positionAtOffset(i->first->getLanes().at(j)->getShape().length() - 10));
+        // Set rotation of figure in every lane (the same for all)
+        i->second.second = i->first->getLanes().at(0)->getShape().rotationDegreeAtOffset(i->first->getLanes().at(0)->getShape().length() - 10) * -1;
+         // Calculate middle position of lanes
+        Position middlePoint((i->second.first.front().x() + i->second.first.back().x()) / 2, (i->second.first.front().y() + i->second.first.back().y()) / 2); 
+        // Set position of connection
+        SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(middlePoint);
+        SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(middlePoint);
+        myConnectionMiddlePosition[i->first] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
+    }
+
     // Iterate over lanes
-    for(std::map<GNELane*, std::pair<Position, SUMOReal> >::iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
-        // Set position of figure over Lane
+    for(childLanes::iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
+        // Set position of figure over every Lane
         i->second.first = i->first->getShape().positionAtOffset(i->first->getShape().length() - 10);
-        // Set rotation of figure in Lane
+        // Set rotation of figure in every Lane
         i->second.second = i->first->getShape().rotationDegreeAtOffset(i->first->getShape().length() - 10) * -1;
         // Set position of connection
         SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(i->second.first);
@@ -160,8 +220,8 @@ GNEAdditionalSet::updateConnections() {
 void
 GNEAdditionalSet::drawConnections() const {
     // Iterate over list of additionals
-    for(std::list<GNEAdditional*>::const_iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++) {
-        // Draw only if additional GL Visualitation is enabled
+    for(childAdditionals::const_iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++) {
+        // Draw only if additional GL Visualitation of child is enabled
         if(myViewNet->isAdditionalGLVisualisationEnabled(*i) && ((*i)->getShape().size() > 0)) {
             // Add a draw matrix
             glPushMatrix();
@@ -174,8 +234,22 @@ GNEAdditionalSet::drawConnections() const {
             glPopMatrix();
         }
     }
+    // Iterate over edges
+    for(childEdges::const_iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++) {
+        // Add a draw matrix
+        glPushMatrix();
+        // Set color of the base
+        GLHelper::setColor(RGBColor(255, 235, 0, 255));
+        // Calculate middle point between lanes
+        Position middlePoint((i->second.first.front().x() + i->second.first.back().x()) / 2, (i->second.first.front().y() + i->second.first.back().y()) / 2); 
+        // Draw Line
+        GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(i->first));
+        GLHelper::drawLine(myConnectionMiddlePosition.at(i->first), middlePoint);
+        // Pop draw matrix
+        glPopMatrix();
+    }
     // Iterate over lanes
-    for(std::map<GNELane*, std::pair<Position, SUMOReal> >::const_iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
+    for(childLanes::const_iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
         // Add a draw matrix
         glPushMatrix();
         // Set color of the base
@@ -191,10 +265,8 @@ GNEAdditionalSet::drawConnections() const {
 
 void
 GNEAdditionalSet::writeAdditionalChildrens(OutputDevice& device) {
-    /*
-    for(int i = myChild; i != myAdditionals.end(); i++)
-        i->writeAdditional(device);
-        */
+    for(childAdditionals::iterator i = myChildAdditionals.begin(); i != myChildAdditionals.end(); i++)
+        (*i)->writeAdditional(device);
 }
 
 

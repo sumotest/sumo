@@ -50,6 +50,7 @@ class GNENet;
 class GNEJunction;
 class GNELane;
 class GNEAdditional;    // PABLO #1916
+class GNEAdditionalSet; // PABLO #1916
 
 // ===========================================================================
 // class definitions
@@ -72,6 +73,9 @@ public:
 
     /// @brief Definition of the additionals list       // PABLO #1916
     typedef std::list<GNEAdditional*> AdditionalList;   // PABLO #1916
+
+    /// @brief Definition of the additionalSets list        // PABLO #1916
+    typedef std::list<GNEAdditionalSet*> AdditionalSetList; // PABLO #1916
 
     /**@brief Constructor.
      * @param[in] nbe The represented edge
@@ -221,14 +225,23 @@ public:
     /// @brief override to also set lane ids
     void setMicrosimID(const std::string& newID);
 
-    /// @brief add additional to edge               // PABLO #1916
+    /// @brief add additional to this edge          // PABLO #1916
     bool addAdditional(GNEAdditional *additional);  // PABLO #1916
 
-    /// @brief remove additional from edge              // PABLO #1916
+    /// @brief remove additional from this edge         // PABLO #1916
     bool removeAdditional(GNEAdditional *additional);   // PABLO #1916
 
     /// @brief return list of additionals associated with this edge // PABLO #1916
     std::list<GNEAdditional*> getAdditionals();                     // PABLO #1916
+
+    /// @brief add GNEAdditionalSet to this edge                // PABLO #1916
+    bool addAdditionalSet(GNEAdditionalSet *additionalSet);     // PABLO #1916
+
+    /// @brief remove GNEAdditionalSet from this edge           // PABLO #1916
+    bool removeAdditionalSet(GNEAdditionalSet *additionalSet);  // PABLO #1916
+
+    /// @brief return list of additionalSets associated with this edge  // PABLO #1916
+    std::list<GNEAdditionalSet*> getAdditionalSets();                   // PABLO #1916
 
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
@@ -257,6 +270,9 @@ private:
 
     /// @brief list with the additonals vinculated with this edge   // PABLO #1916
     AdditionalList myAdditionals;                                   // PABLO #1916
+
+    /// @brief list with the additonalSets vinculated with this edge    // PABLO #1916
+    AdditionalSetList myAdditionalSets;                                 // PABLO #1916
 
 private:
     /// @brief set attribute after validation

@@ -65,8 +65,14 @@ public:
      * @param[in] viewNet pointer to GNEViewNet of this additionalSet element belongs
      * @param[in] tag Type of xml tag that define the additionalSet element (SUMO_TAG_DETECTORE3, SUMO_TAG_REROUTER, etc...)
      * @param[in] blocked enable or disable blocking. By default additionalSet element isn't blocked (i.e. value is false)
+     * @param[in] additionalChilds
+     * @param[in] edgeChilds
+     * @param[in] laneChilds
      */
-    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false);
+    GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, 
+                     std::vector<GNEAdditional*> additionalChilds = std::vector<GNEAdditional*>(), 
+                     std::vector<GNEEdge*> edgeChilds = std::vector<GNEEdge*>(), std::vector<GNELane*> 
+                     laneChilds = std::vector<GNELane*>());
 
     /// @brief Destructor
     ~GNEAdditionalSet();
@@ -92,7 +98,7 @@ public:
      * @param[in] position position of edge in which connection will be placed
      * @return true if was sucesfully added, false in other case
      */
-    bool addEdgeChild(GNEEdge *edge, SUMOReal position);
+    bool addEdgeChild(GNEEdge *edge);
 
     /**@brief remove edge element to this set
      * @param[in] edgeSet pointer to GNEEdge element to remove
@@ -105,7 +111,7 @@ public:
      * @param[in] position position of edge in which connection will be placed
      * @return true if was sucesfully added, false in other case
      */
-    bool addLaneChild(GNELane *lane, SUMOReal position);
+    bool addLaneChild(GNELane *lane);
 
     /**@brief remove lane element to this set
      * @param[in] laneSet pointer to GNELane element to remove
@@ -169,14 +175,20 @@ public:
     /// @}
 
 protected:
+    /// @brief typedef for containers
+    typedef std::list<GNEAdditional*> childAdditionals;
+    typedef std::map<GNEEdge*, std::pair<std::list<Position>, SUMOReal> > childEdges;
+    typedef std::map<GNELane*, std::pair<Position, SUMOReal> > childLanes;
+
     /// @brief list of additional childs (Position and rotations is derived from additional)
     std::list<GNEAdditional*> myChildAdditionals;
 
     /// @brief map of child edges and their positions and rotation
-    std::map<GNEEdge*, std::pair<Position, SUMOReal> > myChildEdges;
+    /// @note <Pointer to edge, <positions of lanes>, rotation >>
+    childEdges myChildEdges;
 
     /// @brief list of child lanes and their positions and rotation
-    std::map<GNELane*, std::pair<Position, SUMOReal> > myChildLanes;
+     childLanes myChildLanes;
 
     /// @brief map to keep the middle position of connection
     std::map<GUIGlObject*, Position> myConnectionMiddlePosition;

@@ -362,17 +362,10 @@ GNERerouter::rerouterInterval::setEnd(SUMOTime end) {
 // ---------------------------------------------------------------------------
 
 GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, bool blocked) :
-    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, blocked),
+    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, blocked, std::vector<GNEAdditional*>(), edges),
     myFilename(filename),
     myProbability(probability),
     myOff(off) {
-    // set child edges
-    for(std::vector<GNEEdge*>::iterator i = edges.begin(); i != edges.end(); i++) {
-        const std::vector<GNELane*>& lanes = (*i)->getLanes();
-        for(std::vector<GNELane*>::const_iterator j = lanes.begin(); j != lanes.end(); j++)
-            myChildLanes[*j];
-    }
-
     // Update geometry;
     updateGeometry();
     // Set colors
@@ -535,44 +528,45 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     if (s.scale * exaggeration >= 3) {
         // draw rerouter symbol over all lanes
-        for(std::map<GNELane*, std::pair<Position, SUMOReal> >::const_iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
-            const Position& pos = i->second.first;
-            SUMOReal rot = i->second.second;
-            glPushMatrix();
-            glTranslated(pos.x(), pos.y(), 0);
-            glRotated(rot, 0, 0, 1);
-            glTranslated(0, 0, getType());
-            glScaled(exaggeration, exaggeration, 1);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        for(childEdges::const_iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++) {
+            for(std::list<Position>::const_iterator lanePosIt = i->second.first.begin(); lanePosIt != i->second.first.end(); lanePosIt++) {
+                SUMOReal rot = i->second.second;
+                glPushMatrix();
+                glTranslated(lanePosIt->x(), lanePosIt->y(), 0);
+                glRotated(rot, 0, 0, 1);
+                glTranslated(0, 0, getType());
+                glScaled(exaggeration, exaggeration, 1);
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-            glBegin(GL_TRIANGLES);
-            glColor3d(1, .8f, 0);
-            // base
-            glVertex2d(0 - 1.4, 0);
-            glVertex2d(0 - 1.4, 6);
-            glVertex2d(0 + 1.4, 6);
-            glVertex2d(0 + 1.4, 0);
-            glVertex2d(0 - 1.4, 0);
-            glVertex2d(0 + 1.4, 6);
-            glEnd();
+                glBegin(GL_TRIANGLES);
+                glColor3d(1, .8f, 0);
+                // base
+                glVertex2d(0 - 1.4, 0);
+                glVertex2d(0 - 1.4, 6);
+                glVertex2d(0 + 1.4, 6);
+                glVertex2d(0 + 1.4, 0);
+                glVertex2d(0 - 1.4, 0);
+                glVertex2d(0 + 1.4, 6);
+                glEnd();
 
-            glTranslated(0, 0, .1);
-            glColor3d(0, 0, 0);
-            pfSetPosition(0, 0);
-            pfSetScale(3.f);
-            SUMOReal w = pfdkGetStringWidth("U");
-            glRotated(180, 0, 1, 0);
-            glTranslated(-w / 2., 2, 0);
-            pfDrawString("U");
+                glTranslated(0, 0, .1);
+                glColor3d(0, 0, 0);
+                pfSetPosition(0, 0);
+                pfSetScale(3.f);
+                SUMOReal w = pfdkGetStringWidth("U");
+                glRotated(180, 0, 1, 0);
+                glTranslated(-w / 2., 2, 0);
+                pfDrawString("U");
 
-            glTranslated(w / 2., -2, 0);
-            std::string str = toString((int)(myProbability * 100)) + "%";
-            pfSetPosition(0, 0);
-            pfSetScale(.7f);
-            w = pfdkGetStringWidth(str.c_str());
-            glTranslated(-w / 2., 4, 0);
-            pfDrawString(str.c_str());
-            glPopMatrix();
+                glTranslated(w / 2., -2, 0);
+                std::string str = toString((int)(myProbability * 100)) + "%";
+                pfSetPosition(0, 0);
+                pfSetScale(.7f);
+                w = pfdkGetStringWidth(str.c_str());
+                glTranslated(-w / 2., 4, 0);
+                pfDrawString(str.c_str());
+                glPopMatrix();
+            }
         }
         glPopName();
     }
