@@ -127,6 +127,11 @@ public:
             return myBackPos;
         }
 
+        /// previous Speed of this state
+        SUMOReal lastCoveredDist() const {
+            return myLastCoveredDist;
+        }
+
 
     private:
         /// the stored position
@@ -135,9 +140,14 @@ public:
         /// the stored speed
         SUMOReal mySpeed;
 	
-        /// the stored speed for the previous time step
-	//  CHECK #860: include in constructors, etc. (Leo)
+        /// the speed at the begin of the previous time step
         SUMOReal myPreviousSpeed;
+
+        /// the distance covered in the last timestep
+        /// NOTE: In case of ballistic positional update, this is not necessarily given by
+        ///       myPos - SPEED2DIST(mySpeed + myPreviousSpeed)/2,
+        /// because a stop may have occured within the last step.
+        SUMOReal myLastCoveredDist;
 	
         /// the stored lateral position
         SUMOReal myPosLat;
@@ -356,6 +366,13 @@ public:
         return myState.myPos;
     }
 
+    /** @brief Get the distance the vehicle covered in the previous timestep
+     * @return The distance covered in the last timestep (in m)
+     */
+    SUMOReal getLastStepDist() const {
+        return myState.lastCoveredDist();
+    }
+
     /** @brief Get the vehicle's front position relative to the given lane
      * @return The front position of the vehicle (in m from the given lane's begin)
      */
@@ -426,6 +443,7 @@ public:
 
 
     /** @brief Returns the vehicle's acceleration in m/s
+     *         (this is computed as the last step's mean acceleration in case that a stop occurs within the middle of the time-step)
      * @return The acceleration
      */
     SUMOReal getAcceleration() const {

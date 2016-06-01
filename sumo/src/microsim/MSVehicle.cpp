@@ -90,7 +90,8 @@
 //#define DEBUG_PLAN_MOVE
 //#define DEBUG_EXEC_MOVE
 //#define DEBUG_FURTHER
-#define DEBUG_COND (getID() == "disabled")
+//#define DEBUG_COND (getID() == "1")
+#define DEBUG_COND false
 
 #define STOPPING_PLACE_OFFSET 0.5
 
@@ -117,6 +118,8 @@ MSVehicle::State::State(const State& state) {
     mySpeed = state.mySpeed;
     myPosLat = state.myPosLat;
     myBackPos = state.myBackPos;
+    myPreviousSpeed = state.myPreviousSpeed;
+    myLastCoveredDist = state.myLastCoveredDist;
 }
 
 
@@ -126,6 +129,8 @@ MSVehicle::State::operator=(const State& state) {
     mySpeed = state.mySpeed;
     myPosLat   = state.myPosLat;
     myBackPos = state.myBackPos;
+    myPreviousSpeed = state.myPreviousSpeed;
+    myLastCoveredDist = state.myLastCoveredDist;
     return *this;
 }
 
@@ -135,12 +140,14 @@ MSVehicle::State::operator!=(const State& state) {
     return (myPos    != state.myPos ||
             mySpeed  != state.mySpeed ||
             myPosLat != state.myPosLat ||
+            myLastCoveredDist != state.myLastCoveredDist ||
+            myPreviousSpeed != state.myPreviousSpeed ||
             myBackPos != state.myBackPos);
 }
 
 
 MSVehicle::State::State(SUMOReal pos, SUMOReal speed, SUMOReal posLat, SUMOReal backPos) :
-    myPos(pos), mySpeed(speed), myPosLat(posLat), myBackPos(backPos) {}
+    myPos(pos), mySpeed(speed), myPosLat(posLat), myBackPos(backPos), myPreviousSpeed(speed), myLastCoveredDist(SPEED2DIST(speed)) {}
 
 
 
@@ -564,12 +571,7 @@ MSVehicle::~MSVehicle() {
 void
 MSVehicle::onRemovalFromNet(const MSMoveReminder::Notification reason) {
     MSVehicleTransfer::getInstance()->remove(this);
-    SUMOReal oldPos;
-    if(MSGlobals::gSemiImplicitEulerUpdate){
-    	oldPos = myState.myPos - SPEED2DIST(myState.mySpeed);
-    } else {
-    	oldPos = myState.myPos - SPEED2DIST(myState.mySpeed + myState.myPreviousSpeed)/2.;
-    }
+    const SUMOReal oldPos = getPositionOnLane() - getLastStepDist();
     workOnMoveReminders(oldPos, myState.myPos, myState.mySpeed);
     removeApproachingInformation(myLFLinkLanes);
     leaveLane(reason);
@@ -693,7 +695,7 @@ MSVehicle::workOnMoveReminders(SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpe
     // This erasure-idiom works for all stl-sequence-containers
     // See Meyers: Effective STL, Item 9
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end();) {
-        if (!rem->first->notifyMove(*this, oldPos + rem->second, newPos + rem->second, newSpeed)) {
+        if (!rem->first->notifyMove(*this, oldPos + rem->second, newPos + rem->second, MAX2(0., newSpeed))) {
 #ifdef _DEBUG
             if (myTraceMoveReminders) {
                 traceMoveReminder("notifyMove", rem->first, rem->second, false);
@@ -1636,6 +1638,7 @@ MSVehicle::executeMove() {
                     << SIMTIME
                     << " executeMove()"
                     << " veh=" << getID()
+                    << " speed=" << toString(getSpeed(), 24)
                     << std::endl;
 #endif
 
@@ -1849,7 +1852,7 @@ MSVehicle::executeMove() {
     //      leading vehicle, we don't show brake lights when the deceleration could be caused
     //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)
     SUMOReal pseudoFriction = (0.05 +  0.005 * getSpeed()) * getSpeed();
-    bool brakelightsOn = vSafe < getSpeed(); - ACCEL2SPEED(pseudoFriction);
+    bool brakelightsOn = vSafe < getSpeed() - ACCEL2SPEED(pseudoFriction);
 
     // apply speed reduction due to dawdling / lane changing but ensure minimum safe speed
     SUMOReal vNext;
@@ -1869,15 +1872,10 @@ MSVehicle::executeMove() {
     }
 #ifdef DEBUG_EXEC_MOVE
     if (DEBUG_COND) {
-        std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << vNext << "\n";
+//        std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << vNext << "\n";
+        std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << toString(vNext,24) << "\n";
     }
 #endif
-
-    // Debug (Leo)
-    if(gDebugFlag1){
-    	std::cout << "\nvNext = " << toString(vNext,24) << "\n" << std::endl;
-    }
-
 
     // vNext may be higher than vSafe without implying a bug:
     //  - when approaching a green light that suddenly switches to yellow
@@ -1984,6 +1982,7 @@ MSVehicle::executeMove() {
         myLane = myLane->getOpposite();
     }
     myState.myPos += deltaPos;
+    myState.myLastCoveredDist = deltaPos;
     
     myCachedPosition = Position::INVALID;
     std::vector<MSLane*> passedLanes;
