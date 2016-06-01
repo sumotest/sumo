@@ -90,7 +90,8 @@
 //#define DEBUG_PLAN_MOVE
 //#define DEBUG_EXEC_MOVE
 //#define DEBUG_FURTHER
-//#define DEBUG_COND (getID() == "1")
+//#define DEBUG_STOPS
+//#define DEBUG_COND (getID() == "veh0")
 #define DEBUG_COND false
 
 #define STOPPING_PLACE_OFFSET 0.5
@@ -1022,17 +1023,22 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
         // no stops; pass
         return currentVelocity;
     }
+
+#ifdef DEBUG_STOPS
+    if(DEBUG_COND){
+        std::cout << SIMTIME << " vehicle '" << getID() << "' processNextStop()" << std::endl;
+    }
+#endif
+
     Stop& stop = myStops.front();
     if (stop.reached) {
 
-//////         Debug (Leo)
-//    	std::string debug_id = "f.524";
-//    	gDebugFlag1 = getID() == debug_id;
-//    	gDebugFlag1 = true;
-//        if(gDebugFlag1){
-//        	std::cout << "vehicle '" << getID() << "' waiting at stop." << std::endl;
-//        }
-
+        //         Debug (Leo)
+#ifdef DEBUG_STOPS
+        if(DEBUG_COND){
+        	std::cout << SIMTIME << " vehicle '" << getID() << "' reached stop." << std::endl;
+        }
+#endif
         // ok, we have already reached the next stop
         // any waiting persons may board now
         bool boarded = MSNet::getInstance()->getPersonControl().boardAnyWaiting(&myLane->getEdge(), this, &stop);
@@ -1052,6 +1058,11 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
             if (myAmRegisteredAsWaitingForPerson) {
                 MSNet::getInstance()->getVehicleControl().unregisterOneWaitingForPerson();
                 myAmRegisteredAsWaitingForPerson = false;
+#ifdef DEBUG_STOPS
+                if(DEBUG_COND){
+                    std::cout << SIMTIME << " vehicle '" << getID() << "' unregisters as waiting for person." << std::endl;
+                }
+#endif
             }
         }
         if (loaded) {
@@ -1066,27 +1077,41 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
             if (myAmRegisteredAsWaitingForContainer) {
                 MSNet::getInstance()->getVehicleControl().unregisterOneWaitingForContainer();
                 myAmRegisteredAsWaitingForContainer = false;
+#ifdef DEBUG_STOPS
+                if(DEBUG_COND){
+                    std::cout << SIMTIME << " vehicle '" << getID() << "' unregisters as waiting for container." << std::endl;
+                }
+#endif
             }
         }
         if (stop.duration <= 0 && !stop.triggered && !stop.containerTriggered) {
+#ifdef DEBUG_STOPS
+                if(DEBUG_COND){
+                    std::cout << SIMTIME << " vehicle '" << getID() << "' resumes from stopping." << std::endl;
+                }
+#endif
             resumeFromStopping();
         } else {
-
-//            // Debug (Leo)
-//            if(gDebugFlag1){
-//            	std::cout << "stop reached, waiting..." << std::endl;
-//            }
-
             // we have to wait some more time
             if (stop.triggered && !myAmRegisteredAsWaitingForPerson) {
                 // we can only register after waiting for one step. otherwise we might falsely signal a deadlock
                 MSNet::getInstance()->getVehicleControl().registerOneWaitingForPerson();
                 myAmRegisteredAsWaitingForPerson = true;
+#ifdef DEBUG_STOPS
+                if(DEBUG_COND){
+                    std::cout << SIMTIME << " vehicle '" << getID() << "' registers as waiting for person." << std::endl;
+                }
+#endif
             }
             if (stop.containerTriggered && !myAmRegisteredAsWaitingForContainer) {
                 // we can only register after waiting for one step. otherwise we might falsely signal a deadlock
                 MSNet::getInstance()->getVehicleControl().registerOneWaitingForContainer();
                 myAmRegisteredAsWaitingForContainer = true;
+#ifdef DEBUG_STOPS
+                if(DEBUG_COND){
+                    std::cout << SIMTIME << " vehicle '" << getID() << "' registers as waiting for container." << std::endl;
+                }
+#endif
             }
             stop.duration -= DELTA_T;
 
@@ -1101,6 +1126,14 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
             }
         }
     } else {
+
+        //         Debug (Leo)
+#ifdef DEBUG_STOPS
+        if(DEBUG_COND){
+            std::cout << SIMTIME << " vehicle '" << getID() << "' hasn't reached next stop." << std::endl;
+        }
+#endif
+
         // is the next stop on the current lane?
         if (stop.edge == myCurrEdge) {
             // get the stopping position

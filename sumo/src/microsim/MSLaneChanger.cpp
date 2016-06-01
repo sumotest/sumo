@@ -56,7 +56,7 @@
 //#define DEBUG_VEHICLE_GUI_SELECTION
 
 //#define DEBUG_CONTINUE_CHANGE
-#define DEBUG_CHECK_CHANGE
+//#define DEBUG_CHECK_CHANGE
 //#define DEBUG_CHANGE_OPPOSITE
 //#define DEBUG_COND false
 #define DEBUG_COND (vehicle->getLaneChangeModel().debugVehicle())

@@ -83,20 +83,15 @@
 // ===========================================================================
 //#define DEBUG_VEHICLE_GUI_SELECTION 1
 
-#define DEBUG_PATCH_SPEED
-#define DEBUG_INFORMED
-#define DEBUG_INFORMER
+//#define DEBUG_PATCH_SPEED
+//#define DEBUG_INFORMED
+//#define DEBUG_INFORMER
 //#define DEBUG_CONSTRUCTOR
-#define DEBUG_WANTS_CHANGE
-#define DEBUG_SLOW_DOWN
-#define DEBUG_SAVE_BLOCKER_LENGTH
-//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 1_20593333") // stuck in VMM_muc at t=20700
-//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 3_20900000") // stuck in VMM_muc at t=21000
-//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 3_21746666") // stuck in VMM_muc at t=21800
-#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 1_22085454") // stuck in VMM_muc at t=22200
-
-//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 2_28392413")
-//#define DEBUG_COND false
+//#define DEBUG_WANTS_CHANGE
+//#define DEBUG_SLOW_DOWN
+//#define DEBUG_SAVE_BLOCKER_LENGTH
+//#define DEBUG_COND (myVehicle.getID() == "emitter_SST92-150 FG 1 DE 1_22085454") // stuck in VMM_muc at t=22200
+#define DEBUG_COND false
 
 // ===========================================================================
 // member method definitions

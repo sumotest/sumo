@@ -507,7 +507,7 @@ MSLane::checkFailure(MSVehicle* aVehicle, SUMOReal& speed, SUMOReal& dist, const
         if (patchSpeed) {
             speed = MIN2(nspeed, speed);
             dist = aVehicle->getCarFollowModel().brakeGap(speed) + aVehicle->getVehicleType().getMinGap();
-        } else {
+        } else if(speed>0) {
             if (errorMsg != "") {
                 WRITE_ERROR("Vehicle '" + aVehicle->getID() + "' will not be able to depart using the given velocity (" + errorMsg + ")!");
                 MSNet::getInstance()->getInsertionControl().descheduleDeparture(aVehicle);
@@ -906,6 +906,18 @@ MSLane::getFirstVehicleInformation(const MSVehicle* ego, SUMOReal latOffset, boo
 // ------  ------
 void
 MSLane::planMovements(SUMOTime t) {
+
+//    // Debug (Leo)
+//    std::cout
+//            << "\n"<< SIMTIME<< " planMovements of Lane '" << getID() << "'"
+//            << "\nmyVehicles = \n";
+//    for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend(); ++i){
+//        std::cout << (*i)->getID()<< "\n";
+//    }
+//    std::cout << std::endl;
+
+
+
     assert(myVehicles.size() != 0);
     SUMOReal cumulatedVehLength = 0.;
     MSLeaderInfo ahead(this);
@@ -943,6 +955,18 @@ MSLane::planMovements(SUMOTime t) {
         cumulatedVehLength += (*veh)->getVehicleType().getLengthWithGap();
         ahead.addLeader(*veh, false, 0);
     }
+
+
+
+//    // Debug (Leo)
+//    std::cout
+//            << "\n"<< SIMTIME<< " planMovements of Lane '" << getID() << "'"
+//            << "finished\nmyVehicles = \n";
+//    for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend(); ++i){
+//        std::cout << (*i)->getID()<< "\n";
+//    }
+//    std::cout << std::endl;
+
 }
 
 
@@ -1154,19 +1178,23 @@ MSLane::handleCollisionBetween(SUMOTime timestep, const std::string& stage, cons
 
 bool
 MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIntegrate) {
-    // iteratate over vehicles in reverse so that move reminders will be called in the correct order
+
+//    // Debug (Leo)
+//    std::cout
+//            << "\n"<< SIMTIME<< " executeMovements of Lane '" << getID() << "'"
+//            << "\nmyVehicles = \n";
+//    for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend(); ++i){
+//        std::cout << (*i)->getID()<< "\n";
+//    }
+//    std::cout << std::endl;
+
+    // iterate over vehicles in reverse so that move reminders will be called in the correct order
     for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend();) {
         MSVehicle* veh = *i;
         // length is needed later when the vehicle may not exist anymore
         const SUMOReal length = veh->getVehicleType().getLengthWithGap();
         const SUMOReal nettoLength = veh->getVehicleType().getLength();
         bool moved = veh->executeMove();
-
-//        // Debug (Leo)
-//        if(gDebugFlag1){
-//        	std::cout << "vehicle " << veh->getID() << " moved? " << moved << std::endl;
-//        }
-
         MSLane* target = veh->getLane();
 #ifndef NO_TRACI
         bool vtdControlled = veh->hasInfluencer() && veh->getInfluencer().isVTDControlled();
@@ -1175,21 +1203,9 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
         if (veh->hasArrived()) {
 #endif
             // vehicle has reached its arrival position
-
-//            // Debug (Leo)
-//            if(gDebugFlag1){
-//            	std::cout << "vehicle " << veh->getID() << " will be removed because it has arrived." << std::endl;
-//            }
-
             veh->onRemovalFromNet(MSMoveReminder::NOTIFICATION_ARRIVED);
             MSNet::getInstance()->getVehicleControl().scheduleVehicleRemoval(veh);
         } else if (target != 0 && moved) {
-
-//            // Debug (Leo)
-//            if(gDebugFlag1){
-//            	std::cout << "vehicle " << veh->getID() << " has reached the next lane." << std::endl;
-//            }
-
             if (target->getEdge().isVaporizing()) {
                 // vehicle has reached a vaporizing edge
                 veh->onRemovalFromNet(MSMoveReminder::NOTIFICATION_VAPORIZED);
@@ -1202,10 +1218,6 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
                 lanesWithVehiclesToIntegrate.push_back(target);
             }
         } else if (veh->isParking()) {
-//            // Debug (Leo)
-//            if(gDebugFlag1){
-//            	std::cout << "vehicle " << veh->getID() << " is parking." << std::endl;
-//            }
             // vehicle started to park
             MSVehicleTransfer::getInstance()->add(t, veh);
         } else if (veh->getPositionOnLane() > getLength()) {
@@ -1217,21 +1229,9 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
             MSNet::getInstance()->getVehicleControl().registerCollision();
             MSVehicleTransfer::getInstance()->add(t, veh);
         } else {
-
-//            // Debug (Leo)
-//            if(gDebugFlag1){
-//            	std::cout << "nothing special happend for vehicle " << veh->getID() << std::endl;
-//            }
-
             ++i;
             continue;
         }
-
-//        // Debug (Leo)
-//        if(gDebugFlag1){
-//        	std::cout << "I'm still here with vehicle " << veh->getID() << std::endl;
-//        }
-
         myBruttoVehicleLengthSum -= length;
         myNettoVehicleLengthSum -= nettoLength;
         ++i;
@@ -1272,6 +1272,18 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
         // trigger sorting of vehicles as their order may have changed
         lanesWithVehiclesToIntegrate.push_back(this);
     }
+
+
+//    // Debug (Leo)
+//    std::cout
+//            << "\n"<< SIMTIME<< " executeMovements of Lane '" << getID() << "'"
+//            << "finished.\nmyVehicles = \n";
+//    for (VehCont::reverse_iterator i = myVehicles.rbegin(); i != myVehicles.rend(); ++i){
+//        std::cout << (*i)->getID()<< "\n";
+//    }
+//    std::cout << std::endl;
+
+
     return myVehicles.size() == 0;
 }
 
