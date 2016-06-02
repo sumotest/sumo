@@ -96,9 +96,6 @@ GNEEdge::~GNEEdge() {
     // Remove all references to this edge in their additionals                                          // PABLO #1916
     for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)              // PABLO #1916
         (*i)->removeEdgeReference();                                                                    // PABLO #1916
-    // Remove all references to this edge in their additionalSets                                       // PABLO #1916
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)     // PABLO #1916
-        (*i)->removeEdgeChild(this);                                                                    // PABLO #1916
 }
 
 
@@ -876,9 +873,9 @@ GNEEdge::removeAdditionalSet(GNEAdditionalSet *additionalSet) {                 
 }                                                                                                   // PABLO #1916
 
 
-std::list<GNEAdditionalSet*>    // PABLO #1916
-GNEEdge::getAdditionalSets() {  // PABLO #1916
-    return myAdditionalSets;    // PABLO #1916
-}                               // PABLO #1916
+const std::list<GNEAdditionalSet*> &    // PABLO #1916
+GNEEdge::getAdditionalSets() {          // PABLO #1916
+    return myAdditionalSets;            // PABLO #1916
+}                                       // PABLO #1916
 
 /****************************************************************************/

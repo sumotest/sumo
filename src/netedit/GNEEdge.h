@@ -241,7 +241,7 @@ public:
     bool removeAdditionalSet(GNEAdditionalSet *additionalSet);  // PABLO #1916
 
     /// @brief return list of additionalSets associated with this edge  // PABLO #1916
-    std::list<GNEAdditionalSet*> getAdditionalSets();                   // PABLO #1916
+    const std::list<GNEAdditionalSet*> &getAdditionalSets();            // PABLO #1916
 
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;

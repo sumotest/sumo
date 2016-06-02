@@ -16,9 +16,6 @@
     <Filter Include="Header-Dateien\Items">
       <UniqueIdentifier>{e1ec5b4f-548e-4ec2-8a0a-240be07ee43e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header-Dateien\Items\Net">
-      <UniqueIdentifier>{177f4314-7071-4f93-aef8-bbb20932c513}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header-Dateien\Items\Additionals">
       <UniqueIdentifier>{fae2b4c6-f001-4538-a874-f0b12e39875f}</UniqueIdentifier>
     </Filter>
@@ -55,9 +52,6 @@
     <Filter Include="Quellcodedateien\Items\Changes">
       <UniqueIdentifier>{b9838d6c-66a3-45d5-b5ce-05e04fe0fdb3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Quellcodedateien\Items\Net">
-      <UniqueIdentifier>{372ff15b-0c52-4502-918b-ba8ca7a6bf50}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Quellcodedateien\Items\Routes">
       <UniqueIdentifier>{a83f242b-86a5-4c4d-b2d7-05e7f3dea69b}</UniqueIdentifier>
     </Filter>
@@ -81,6 +75,12 @@
     </Filter>
     <Filter Include="Quellcodedateien\Dialogs\AdditionalDialogs">
       <UniqueIdentifier>{1ec55ee2-0192-42e8-8ad4-436515a63786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header-Dateien\Items\NetElement">
+      <UniqueIdentifier>{177f4314-7071-4f93-aef8-bbb20932c513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quellcodedateien\Items\NetElement">
+      <UniqueIdentifier>{372ff15b-0c52-4502-918b-ba8ca7a6bf50}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -124,25 +124,22 @@
       <Filter>Quellcodedateien\Items\Changes</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEJunction.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNELane.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNENet.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEEdge.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEInternalLane.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalFrame.cpp">
       <Filter>Quellcodedateien\Scrollwindows</Filter>
@@ -166,7 +163,7 @@
       <Filter>Quellcodedateien\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNECrossing.cpp">
-      <Filter>Quellcodedateien\Items\Net</Filter>
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEApplicationWindow.cpp">
       <Filter>Quellcodedateien\Main</Filter>
@@ -282,6 +279,15 @@
     <ClCompile Include="..\..\..\src\netedit\GNECalibratorDialog.cpp">
       <Filter>Quellcodedateien\Dialogs\AdditionalDialogs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEConnection.cpp">
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNENetElement.cpp">
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNENet.cpp">
+      <Filter>Quellcodedateien\Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -320,22 +326,19 @@
       <Filter>Header-Dateien\Items\Additionals</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEJunction.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEInternalLane.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNELane.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNENet.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNERerouter.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEEdge.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNECalibrator.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
@@ -356,16 +359,16 @@
       <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEPOI.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h">
       <Filter>Header-Dateien\Scrollwindows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNECrossing.h">
-      <Filter>Header-Dateien\Items\Net</Filter>
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEDialog_About.h">
       <Filter>Header-Dateien\Dialogs</Filter>
@@ -444,6 +447,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNECalibratorDialog.h">
       <Filter>Header-Dateien\Dialogs\AdditionalDialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNENet.h">
+      <Filter>Header-Dateien\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNENetElement.h">
+      <Filter>Header-Dateien\Items\NetElement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEConnection.h">
+      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -125,6 +125,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEChange_Selection.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChange_TLS.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEChargingStation.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNEConnection.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEConnector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNECrossing.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetector.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNELogo_VariableSpeedSignal.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNELogo_VariableSpeedSignalSelected.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNENetElement.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNERerouter.cpp" />
@@ -196,6 +198,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNEChange_Selection.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChange_TLS.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEChargingStation.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNEConnection.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEConnector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNECrossing.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetector.h" />
@@ -214,6 +217,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNELane.h" />
     <ClInclude Include="..\..\..\src\netedit\GNELoadThread.h" />
     <ClInclude Include="..\..\..\src\netedit\GNENet.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNENetElement.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEPOI.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEPoly.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEReferenceCounter.h" />

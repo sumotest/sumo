@@ -529,11 +529,10 @@ GNERerouter::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisual
     if (s.scale * exaggeration >= 3) {
         // draw rerouter symbol over all lanes
         for(childEdges::const_iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++) {
-            for(std::list<Position>::const_iterator lanePosIt = i->second.first.begin(); lanePosIt != i->second.first.end(); lanePosIt++) {
-                SUMOReal rot = i->second.second;
+            for(int lanePosIt = 0; lanePosIt < i->positionsOverLanes.size(); lanePosIt++) {
                 glPushMatrix();
-                glTranslated(lanePosIt->x(), lanePosIt->y(), 0);
-                glRotated(rot, 0, 0, 1);
+                glTranslated(i->positionsOverLanes.at(lanePosIt).x(), i->positionsOverLanes.at(lanePosIt).y(), 0);
+                glRotated(i->rotationsOverLanes.at(lanePosIt), 0, 0, 1);
                 glTranslated(0, 0, getType());
                 glScaled(exaggeration, exaggeration, 1);
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

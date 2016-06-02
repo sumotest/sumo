@@ -1111,6 +1111,9 @@ GNENet::insertEdge(GNEEdge* edge) {
     // rewire the nodes
     nbe->getFromNode()->addOutgoingEdge(nbe);
     nbe->getToNode()->addIncomingEdge(nbe);
+    // Add references to this edge in additionalSets
+    for(std::list<GNEAdditionalSet*>::const_iterator i = edge->getAdditionalSets().begin(); i != edge->getAdditionalSets().end(); i++)
+        (*i)->addEdgeChild(edge);
     registerEdge(edge);
 }
 
@@ -1157,6 +1160,8 @@ GNENet::deleteSingleJunction(GNEJunction* junction) {
 
 void
 GNENet::deleteSingleEdge(GNEEdge* edge) {
+    for(std::list<GNEAdditionalSet*>::const_iterator i = edge->getAdditionalSets().begin(); i != edge->getAdditionalSets().end(); i++)
+        (*i)->removeEdgeChild(edge);
     myGrid.removeAdditionalGLObject(edge);
     myEdges.erase(edge->getMicrosimID());
     myNetBuilder->getEdgeCont().extract(

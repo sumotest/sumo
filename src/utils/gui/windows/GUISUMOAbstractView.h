@@ -252,7 +252,6 @@ public:
 
     /** @brief Check if an object is added in the additional GL visualitation
      * @param[in] which The object to check
-     * @return Always true
      * @see GUIGlObject::drawGLAdditional
      */
     bool isAdditionalGLVisualisationEnabled(GUIGlObject* const which) const;

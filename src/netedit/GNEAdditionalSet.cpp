@@ -72,15 +72,33 @@ GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, P
     for(int i = 0; i < additionalChilds.size(); i++)
         addAdditionalChild(additionalChilds.at(i));
     // Insert edges
-    for(int i = 0; i < edgeChilds.size(); i++)
-        addEdgeChild(edgeChilds.at(i));
+    for(int i = 0; i < edgeChilds.size(); i++) {
+        edgeChilds.at(i)->addAdditionalSet(this);
+        edgeChild myEdgeChild;
+        myEdgeChild.edge = edgeChilds.at(i);
+        myChildEdges.push_back(myEdgeChild);
+    }
     // Insert lanes
     for(int i = 0; i < laneChilds.size(); i++)
         addLaneChild(laneChilds.at(i));
+    // Update connections
+    updateConnections();
 }
 
 
 GNEAdditionalSet::~GNEAdditionalSet() {
+    /**
+        // Remove references to this additional Set in lanes
+    childLanes childLanesToRemove = myChildLanes;
+    for(childLanes::iterator i = childLanesToRemove.begin(); i != childLanesToRemove.end(); i++)
+        if(i->lane->removeAdditionalSet(this));
+        **/
+
+    // Remove references to this additional Set in edges
+    childEdges childEdgesToRemove = myChildEdges;
+    for(childEdges::iterator i = childEdgesToRemove.begin(); i != childEdgesToRemove.end(); i++)
+        if(i->edge->removeAdditionalSet(this));
+
 }
 
 
@@ -111,60 +129,55 @@ GNEAdditionalSet::removeAdditionalChild(GNEAdditional *additional) {
 
 bool
 GNEAdditionalSet::addEdgeChild(GNEEdge *edge) {
-    // Only add edge child if don't exist in the container
-    if(myChildEdges.count(edge) == 0) {
-        myChildEdges[edge] = std::pair<std::list<Position>, SUMOReal>(std::list<Position>(), 0);
-        edge->addAdditionalSet(this);
-        std::cout << "added :" << edge->getID() << " " << myChildEdges.count(edge) << std::endl;
-        updateConnections();
-        return true;
-    }
-    else
-        return false;
+    for(childEdges::iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++)
+        if(i->edge == edge)
+            return false;
+    // If wasn't found, insert it
+    edgeChild myEdgeChild;
+    myEdgeChild.edge = edge;
+    myChildEdges.push_back(myEdgeChild);
+    updateConnections();
+    return true;
 }
 
 
 bool
 GNEAdditionalSet::removeEdgeChild(GNEEdge *edge) {
-    // Only remove edge child if exists in the container
-    std::cout << "removed :" << edge->getID() << " " << myChildEdges.count(edge) << std::endl;
-    if(myChildEdges.count(edge) == 0)
-        return false;
-    else {
-        std::cout << "PASA" << std::endl;
-        myChildEdges.erase(myChildEdges.find(edge));
-        edge->removeAdditionalSet(this);
-        updateConnections();
-        return false;
-    }
+    for(childEdges::iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++)
+        if(i->edge == edge) {
+            myChildEdges.erase(i);
+            updateConnections();
+            return true;
+        }
+    // If wasn't found, return false
+    return false;
 }
 
 
 bool
 GNEAdditionalSet::addLaneChild(GNELane *lane) {
-    // Only add lane child if don't exist in the container
-    if(myChildLanes.count(lane) == 0) {
-        myChildLanes[lane] = std::pair<Position, SUMOReal>(Position(), 0);
-        //lane->addAdditionalSet(this);
-        updateConnections();
-        return true;
-    }
-    else
-        return false;
+    for(childLanes::iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++)
+        if(i->lane == lane)
+            return false;
+    // If wasn't found, insert it
+    laneChild myLaneChild;
+    myLaneChild.lane = lane;
+    myChildLanes.push_back(myLaneChild);
+    updateConnections();
+    return true;
 }
 
 
 bool
 GNEAdditionalSet::removeLaneChild(GNELane *lane) {
-    // Only remove lane child if exists in the container
-    if(myChildLanes.count(lane) == 0)
-        return false;
-    else {
-        myChildLanes.erase(myChildLanes.find(lane));
-        //lane->removeAdditionalSet(this);
-        updateConnections();
-        return false;
-    }
+    for(childLanes::iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++)
+        if(i->lane == lane) {
+            myChildLanes.erase(i);
+            updateConnections();
+            return true;
+        }
+    // If wasn't found, return false
+    return false;
 }
 
 
@@ -187,32 +200,32 @@ GNEAdditionalSet::updateConnections() {
     // Iterate over eges
     for(childEdges::iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++) {
         // Calculate middle position in the edge
-        int numLanes = i->first->getLanes().size();
-        // clear position of lanes
-        i->second.first.clear();
-        // Calculate position of every lane
-        for(int j = 0; j < i->first->getLanes().size(); j++)
-            i->second.first.push_back(i->first->getLanes().at(j)->getShape().positionAtOffset(i->first->getLanes().at(j)->getShape().length() - 10));
-        // Set rotation of figure in every lane (the same for all)
-        i->second.second = i->first->getLanes().at(0)->getShape().rotationDegreeAtOffset(i->first->getLanes().at(0)->getShape().length() - 10) * -1;
+        int numLanes = i->edge->getLanes().size();
+        // clear position of lanes and rotations
+        i->positionsOverLanes.clear();
+        i->rotationsOverLanes.clear();
+        // Calculate position and rotation of every lane
+        for(int j = 0; j < i->edge->getLanes().size(); j++) {
+            i->positionsOverLanes.push_back(i->edge->getLanes().at(j)->getShape().positionAtOffset(i->edge->getLanes().at(j)->getShape().length() - 10));
+            i->rotationsOverLanes.push_back(i->edge->getLanes().at(j)->getShape().rotationDegreeAtOffset(i->edge->getLanes().at(j)->getShape().length() - 10) * -1);
+        }
          // Calculate middle position of lanes
-        Position middlePoint((i->second.first.front().x() + i->second.first.back().x()) / 2, (i->second.first.front().y() + i->second.first.back().y()) / 2); 
+        Position middlePoint((i->positionsOverLanes.front().x() + i->positionsOverLanes.back().x()) / 2, (i->positionsOverLanes.front().y() + i->positionsOverLanes.back().y()) / 2); 
         // Set position of connection
         SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(middlePoint);
         SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(middlePoint);
-        myConnectionMiddlePosition[i->first] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
+        myConnectionMiddlePosition[i->edge] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
     }
 
     // Iterate over lanes
     for(childLanes::iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
-        // Set position of figure over every Lane
-        i->second.first = i->first->getShape().positionAtOffset(i->first->getShape().length() - 10);
-        // Set rotation of figure in every Lane
-        i->second.second = i->first->getShape().rotationDegreeAtOffset(i->first->getShape().length() - 10) * -1;
+        // Calculate position and rotation of every lane
+        i->positionOverLane = i->lane->getShape().positionAtOffset(i->lane->getShape().length() - 10);
+        i->rotationOverLane = i->lane->getShape().rotationDegreeAtOffset(i->lane->getShape().length() - 10) * -1;
         // Set position of connection
-        SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(i->second.first);
-        SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(i->second.first);
-        myConnectionMiddlePosition[i->first] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
+        SUMOReal angleBetweenParentAndChild = myPosition.angleTo2D(i->positionOverLane);
+        SUMOReal distancieBetweenParentAndChild = myPosition.distanceTo2D(i->positionOverLane);
+        myConnectionMiddlePosition[i->lane] = Position(myPosition.x() + cos(angleBetweenParentAndChild) * distancieBetweenParentAndChild, myPosition.y());
     }
 }
 
@@ -236,15 +249,17 @@ GNEAdditionalSet::drawConnections() const {
     }
     // Iterate over edges
     for(childEdges::const_iterator i = myChildEdges.begin(); i != myChildEdges.end(); i++) {
+        //if(this->myViewNet->getNet()->getV
         // Add a draw matrix
         glPushMatrix();
         // Set color of the base
         GLHelper::setColor(RGBColor(255, 235, 0, 255));
         // Calculate middle point between lanes
-        Position middlePoint((i->second.first.front().x() + i->second.first.back().x()) / 2, (i->second.first.front().y() + i->second.first.back().y()) / 2); 
+/*** INTRODUCIR COMO PARAMETRO EN VEZ DE CALCULARLO **/
+        Position middlePoint((i->positionsOverLanes.front().x() + i->positionsOverLanes.back().x()) / 2, (i->positionsOverLanes.front().y() + i->positionsOverLanes.back().y()) / 2); 
         // Draw Line
-        GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(i->first));
-        GLHelper::drawLine(myConnectionMiddlePosition.at(i->first), middlePoint);
+        GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(i->edge));
+        GLHelper::drawLine(myConnectionMiddlePosition.at(i->edge), middlePoint);
         // Pop draw matrix
         glPopMatrix();
     }
@@ -255,8 +270,8 @@ GNEAdditionalSet::drawConnections() const {
         // Set color of the base
         GLHelper::setColor(RGBColor(255, 235, 0, 255));
         // Draw Line
-        GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(i->first));
-        GLHelper::drawLine(myConnectionMiddlePosition.at(i->first), i->second.first);
+        GLHelper::drawLine(myPosition, myConnectionMiddlePosition.at(i->lane));
+        GLHelper::drawLine(myConnectionMiddlePosition.at(i->lane), i->positionOverLane);
         // Pop draw matrix
         glPopMatrix();
     }

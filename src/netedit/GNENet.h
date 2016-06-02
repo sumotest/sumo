@@ -132,9 +132,7 @@ public:
      */
     Boundary getCenteringBoundary() const;
 
-    /**@brief Returns the Z boundary (stored in the x() coordinate)
-     * values of 0 do not affect the boundary
-     */
+    /// @brief Returns the Z boundary (stored in the x() coordinate) values of 0 do not affect the boundary
     const Boundary& getZBoundary() const;
 
     /**@brief Draws the object
@@ -147,14 +145,12 @@ public:
     /// @brief returns the bounder of the network
     const Boundary& getBoundary() const;
 
-    /**@brief Returns the RTree used for visualisation speed-up
-     * @return The visualisation speed-up
-     */
+    /// @brief Returns the RTree used for visualisation speed-up
+    /// @return The visualisation speed-up
     SUMORTree& getVisualisationSpeedUp();
 
-    /**@brief Returns the RTree used for visualisation speed-up
-     * @return The visualisation speed-up
-     */
+    /// @brief Returns the RTree used for visualisation speed-up
+    /// @return The visualisation speed-up
     const SUMORTree& getVisualisationSpeedUp() const;
 
     /**@brief creates a new junction

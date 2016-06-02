@@ -175,20 +175,32 @@ public:
     /// @}
 
 protected:
+    struct edgeChild {
+        GNEEdge *edge;
+        std::vector<Position> positionsOverLanes;
+        std::vector<SUMOReal> rotationsOverLanes;
+    };
+
+    struct laneChild {
+        GNELane *lane;
+        Position positionOverLane;
+        SUMOReal rotationOverLane;
+    };
+
+
     /// @brief typedef for containers
     typedef std::list<GNEAdditional*> childAdditionals;
-    typedef std::map<GNEEdge*, std::pair<std::list<Position>, SUMOReal> > childEdges;
-    typedef std::map<GNELane*, std::pair<Position, SUMOReal> > childLanes;
+    typedef std::list<edgeChild> childEdges;
+    typedef std::list<laneChild> childLanes;
 
     /// @brief list of additional childs (Position and rotations is derived from additional)
     std::list<GNEAdditional*> myChildAdditionals;
 
     /// @brief map of child edges and their positions and rotation
-    /// @note <Pointer to edge, <positions of lanes>, rotation >>
     childEdges myChildEdges;
 
     /// @brief list of child lanes and their positions and rotation
-     childLanes myChildLanes;
+    childLanes myChildLanes;
 
     /// @brief map to keep the middle position of connection
     std::map<GUIGlObject*, Position> myConnectionMiddlePosition;
