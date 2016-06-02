@@ -30,12 +30,13 @@
 #include <config.h>
 #endif
 
+#include <list>
 #include <string>
 #include <vector>
-#include <list>
+#include <utils/geom/PositionVector.h>
 #include <utils/gui/globjects/GUIGlObject.h>
 #include <utils/gui/settings/GUIPropertySchemeStorage.h>
-#include <utils/geom/PositionVector.h>
+
 #include "GNEAttributeCarrier.h"
 
 // ===========================================================================

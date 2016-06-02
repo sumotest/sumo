@@ -31,13 +31,7 @@
 #include <config.h>
 #endif
 
-#include <string>
-#include <utility>
-#include <utils/gui/globjects/GUIPolygon.h>
-#include <utils/xml/SUMOSAXHandler.h>
-
-#include "GNEAttributeCarrier.h"
-
+#include "GNENetElement.h"
 
 // ===========================================================================
 // class declarations

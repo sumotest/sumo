@@ -30,13 +30,7 @@
 #include <config.h>
 #endif
 
-#include <string>
-#include <vector>
-#include <list>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <utils/gui/settings/GUIPropertySchemeStorage.h>
-#include "GNEAttributeCarrier.h"
-
+#include "GNENetElement.h"
 
 // ===========================================================================
 // class declarations

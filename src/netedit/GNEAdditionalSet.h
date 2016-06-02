@@ -29,13 +29,7 @@
 #else
 #include <config.h>
 #endif
-/*
-#include <string>
-#include <vector>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <utils/gui/settings/GUIPropertySchemeStorage.h>
-#include <utils/geom/PositionVector.h>
-*/
+
 #include "GNEAdditional.h"
 
 // ===========================================================================

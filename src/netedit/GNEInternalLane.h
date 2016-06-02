@@ -30,9 +30,7 @@
 #include <config.h>
 #endif
 
-#include <string>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <utils/xml/SUMOXMLDefinitions.h>
+#include "GNENetElement.h"
 
 // ===========================================================================
 // class declarations

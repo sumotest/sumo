@@ -31,14 +31,7 @@
 #include <config.h>
 #endif
 
-#include <string>
-#include <utility>
-#include <utils/gui/globjects/GUIGlObject.h>
-#include <netbuild/NBConnection.h>
-#include <netbuild/NBNode.h>
-
-#include "GNEAttributeCarrier.h"
-
+#include "GNENetElement.h"
 
 // ===========================================================================
 // class declarations
