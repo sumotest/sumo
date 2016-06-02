@@ -2,7 +2,7 @@
 OUT_DIR=/root/mnt/`date +%Y-%m-%d-%H-%M-%S`
 SUMO_ROOT=/root/gRPC/sumo/
 SCRIPTS_ROOT=$SUMO_ROOT/build/docker/
-CONF_ROOT=/root/mnt/
+CONF_ROOT=$SUMO_ROOT/tests/complex/hybrid_sumo_jps
 cd
 mkdir $OUT_DIR
 echo "running hybrid simulation"
