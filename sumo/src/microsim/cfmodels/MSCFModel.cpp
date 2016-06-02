@@ -393,7 +393,13 @@ MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal pred
     // (the trajectories might intersect before both vehicles are stopped even if the follower has a shorter stopping distance than the leader)
     // To make things safe, we ensure that the leaders brake distance is computed with an deceleration that is at least as high as the follower's.
     // @todo: this is a conservative estimate for safe speed which could be increased
-	const SUMOReal x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), egoSpeed, onInsertion);
+
+
+    // if leader is stopped, calculate stopSpeed without time-headway to prevent creeping stop
+    // NOTE: this can lead to the strange phenomenon (for the Krauss-model at least) that if the leader comes to a stop,
+    //       the follower accelerates for a short period of time. (Leo)
+    const SUMOReal headway = predSpeed > 0. ? myHeadwayTime : 0.;
+	const SUMOReal x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), egoSpeed, onInsertion, headway);
 	assert(x >= 0);
 	assert(!ISNAN(x));
 	return x;

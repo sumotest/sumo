@@ -276,7 +276,8 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
             // none it means we should speed up
         	// XXX: It seems that this could lead to returning a value > wanted (==vSafe, if we use Krauss)
         	//      (at least if myDontBrake==true and max>wanted. However, the latter is never true when using Krauss,
-        	//       so this didn't expose itself, yet) (Leo)        	// XXX: It seems that this could lead to returning a value > wanted (==vSafe, if we use Krauss)
+        	//       so this didn't expose itself, yet) (Leo)
+            // XXX: It seems that this could lead to returning a value > wanted (==vSafe, if we use Krauss)
 #ifdef DEBUG_PATCH_SPEED
         	if (DEBUG_COND) {
         		std::cout << time << " veh=" << myVehicle.getID() << " LCA_WANTS_LANECHANGE (strat, no vSafe)\n";
