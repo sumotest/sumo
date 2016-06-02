@@ -230,16 +230,6 @@ GNERouteProbe::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 
 void
 GNERouteProbe::drawGL(const GUIVisualizationSettings& s) const {
-    // Additonals element are drawed using a drawGLAdditional
-    drawGLAdditional(0, s);
-}
-
-
-void
-GNERouteProbe::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    // Ignore Warning
-    UNUSED_PARAMETER(parent);
-
     // get values
     glPushName(getGlID());
     SUMOReal width = (SUMOReal) 2.0 * s.scale;
@@ -299,7 +289,7 @@ GNERouteProbe::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     // Check if the distance is enought to draw details
     if (s.scale * exaggeration >= 10) {        
         // Show Lock icon depending of the Edit mode
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon(0.4);
     }
 

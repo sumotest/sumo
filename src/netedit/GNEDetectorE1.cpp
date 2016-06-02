@@ -157,16 +157,6 @@ GNEDetectorE1::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 
 void
 GNEDetectorE1::drawGL(const GUIVisualizationSettings& s) const {
-    // Additonals element are drawed using a drawGLAdditional
-    drawGLAdditional(0, s);
-}
-
-
-void
-GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    // Ignore Warning
-    UNUSED_PARAMETER(parent);
-
     // get values
     glPushName(getGlID());
     SUMOReal width = (SUMOReal) 2.0 * s.scale;
@@ -224,7 +214,7 @@ GNEDetectorE1::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
         drawDetectorIcon(myDetectorE1GlID);
 
         // Show Lock icon depending of the Edit mode
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
     }
 

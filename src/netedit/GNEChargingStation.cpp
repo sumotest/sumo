@@ -225,16 +225,6 @@ GNEChargingStation::setChargeDelay(SUMOReal chargeDelay) {
 
 void
 GNEChargingStation::drawGL(const GUIVisualizationSettings& s) const {
-    // Additonals element are drawed using a drawGLAdditional
-    drawGLAdditional(0, s);
-}
-
-
-void
-GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    // Ignore Warning
-    UNUSED_PARAMETER(parent);
-
     // Push name
     glPushName(getGlID());
 
@@ -340,7 +330,7 @@ GNEChargingStation::drawGLAdditional(GUISUMOAbstractView* const parent, const GU
         glPopMatrix();
 
         // Draw icon
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             GNEAdditional::drawLockIcon();
     }
 

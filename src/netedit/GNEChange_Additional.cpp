@@ -65,12 +65,8 @@ GNEChange_Additional::~GNEChange_Additional() {
 void GNEChange_Additional::undo() {
     if (myForward) {
         myNet->deleteAdditional(myAdditional);
-        myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
     } else {
         myNet->insertAdditional(myAdditional);
-        myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
     }
 }
 
@@ -78,12 +74,8 @@ void GNEChange_Additional::undo() {
 void GNEChange_Additional::redo() {
     if (myForward) {
         myNet->insertAdditional(myAdditional);
-        myAdditional->getViewNet()->addAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
     } else {
         myNet->deleteAdditional(myAdditional);
-        myAdditional->getViewNet()->removeAdditionalGLVisualisation(myAdditional);
-        myAdditional->getViewNet()->update();
     }
 }
 

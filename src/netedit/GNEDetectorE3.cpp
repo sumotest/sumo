@@ -172,16 +172,6 @@ GNEDetectorE3::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& paren
 
 void
 GNEDetectorE3::drawGL(const GUIVisualizationSettings& s) const {
-    // Additonals element are drawed using a drawGLAdditional
-    drawGLAdditional(0, s);
-}
-
-
-void
-GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    // Ignore Warning
-    UNUSED_PARAMETER(parent);
-
     // Start drawing adding an gl identificator
     glPushName(getGlID());
 
@@ -201,7 +191,7 @@ GNEDetectorE3::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisu
     glPopMatrix();
 
     // Show Lock icon depending of the Edit mode
-    if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+    //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
         drawLockIcon(0.4);
 
     // Draw connections

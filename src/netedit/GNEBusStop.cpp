@@ -163,16 +163,6 @@ GNEBusStop::getLines() const {
 
 void
 GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
-    // Additonals element are drawed using a drawGLAdditional
-    drawGLAdditional(0, s);
-}
-
-
-void
-GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisualizationSettings& s) const {
-    // Ignore Warning
-    UNUSED_PARAMETER(parent);
-
     // Start drawing adding an gl identificator
     glPushName(getGlID());
 
@@ -281,7 +271,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
         glPopMatrix();
 
         // Show Lock icon depending of the Edit mode
-        if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
+        //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
             drawLockIcon();
     }
 
@@ -293,7 +283,7 @@ GNEBusStop::drawGLAdditional(GUISUMOAbstractView* const parent, const GUIVisuali
 
     // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
-};
+}
 
 
 GUIParameterTableWindow*

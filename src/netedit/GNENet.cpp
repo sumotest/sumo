@@ -1040,6 +1040,7 @@ GNENet::insertAdditional(GNEAdditional* additional) {
         throw ProcessError("additional element with ID='" + additional->getID() + "' already exist");
     else {
         myAdditionals[additional->getID()] = additional;
+        myGrid.addAdditionalGLObject(additional);
     }
 }
 
@@ -1050,8 +1051,10 @@ GNENet::deleteAdditional(GNEAdditional* additional) {
     // Check if additional element exists before deletion
     if(positionToRemove == myAdditionals.end())
         throw ProcessError("additional element with ID='" + additional->getID() + "' don't exist");
-    else
+    else {
         myAdditionals.erase(positionToRemove);
+        myGrid.removeAdditionalGLObject(additional);
+    }
 }
 
 
