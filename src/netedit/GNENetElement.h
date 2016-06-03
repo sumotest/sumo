@@ -51,11 +51,6 @@
 #include "GNEAttributeCarrier.h"
 
 // ===========================================================================
-// class declarations
-// ===========================================================================
-
-
-// ===========================================================================
 // class definitions
 // ===========================================================================
 
@@ -63,6 +58,9 @@ class GNENetElement : public GUIGlObject, public GNEAttributeCarrier {
 public:
     /**@brief Constructor.
      * @param[in] net The net to inform about gui updates
+     * @param[in] id of the element
+     * @param[in] type type of GL object
+     * @param[in] tag sumo xml tag of the element
      */
     GNENetElement(GNENet* net, const std::string& id, GUIGlObjectType type, SumoXMLTag tag);
 
@@ -150,7 +148,6 @@ private:
     /// @brief Invalidated assignment operator.
     GNENetElement& operator=(const GNENetElement&);
 };
-
 
 
 #endif

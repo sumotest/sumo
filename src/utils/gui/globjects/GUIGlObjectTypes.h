@@ -55,6 +55,10 @@ enum GUIGlObjectType {
     GLO_JUNCTION = 4,
     /// @brief a tl-logic
     GLO_CROSSING = 5,
+    /// @brief a connection     // PABLO #2067
+    GLO_CONNECTION = 6,         // PABLO #2067
+    /// @brief a prohibition    // PABLO #2067
+    GLO_PROHIBITION = 7,        // PABLO #2067
     /// @brief a tl-logic
     GLO_TLLOGIC = 8,
     /// @brief a detector

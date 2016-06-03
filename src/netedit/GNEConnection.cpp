@@ -45,6 +45,8 @@
 #include <utils/gui/globjects/GLIncludes.h>
 
 #include "GNEConnection.h"
+#include "GNEEdge.h"
+#include "GNELane.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -60,6 +62,156 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
+
+GNEConnection::GNEConnection(GNEEdge *edgeFrom, GNEEdge *edgeTo, GNELane *fromLane, GNELane *toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled) :
+    GNENetElement(NULL, "CHANGE", GLO_CONNECTION, SUMO_TAG_CONNECTION), 
+    myEdgeFrom(edgeFrom),	
+    myEdgeTo(edgeTo),
+    myFromLane(fromLane),
+    myToLane(toLane),
+    myPass(pass),
+    myKeepClear(keepClear),
+    myContPos(contPos),
+    myUncontrolled(uncontrolled) {
+    // Update geometry
+    updateGeometry();
+}
+
+GNEConnection::~GNEConnection() {}
+
+
+void 
+GNEConnection::updateGeometry() {
+}
+
+
+GNEEdge *
+GNEConnection::getEdgeFrom() {
+    return myEdgeFrom;
+}
+
+
+GNEEdge *
+GNEConnection::getEdgeTo() {
+    return myEdgeTo;
+}
+
+
+GNELane *
+GNEConnection::getFromLane() {
+    return myFromLane;
+}
+
+
+GNELane *
+GNEConnection::getToLane() {
+    return myToLane;
+}
+
+
+int 
+GNEConnection::getFromLaneIndex() {
+    return myFromLane->getIndex();
+}
+
+
+int 
+GNEConnection::getToLaneIndex() {
+    return myToLane->getIndex();
+}
+
+
+bool 
+GNEConnection::getPass() {
+    return myPass;
+}
+
+
+bool 
+GNEConnection::getKeepClear() {
+    return myKeepClear;
+}
+
+
+SUMOReal 
+GNEConnection::getContPos() {
+    return myContPos;
+}
+
+
+bool 
+GNEConnection::getUncontrolled() {
+    return myUncontrolled;
+}
+
+
+void 
+GNEConnection::setPass(bool pass) {
+    myPass = pass;
+}
+
+
+void 
+GNEConnection::setKeepClear(bool keepClear) {
+    myKeepClear = keepClear;
+}
+
+
+void 
+GNEConnection::setContPos(SUMOReal contPos) {
+    myContPos = contPos;
+}
+
+
+void 
+GNEConnection::setUncontrolled(bool uncontrolled) {
+    myUncontrolled = uncontrolled ;
+}
+
+
+GUIGLObjectPopupMenu* 
+GNEConnection::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+    return NULL;
+}
+
+
+GUIParameterTableWindow* 
+GNEConnection::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent) {
+    return NULL;
+}
+
+
+Boundary 
+GNEConnection::getCenteringBoundary() const{
+    return Boundary();
+}
+
+
+void 
+GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
+}
+
+
+std::string 
+GNEConnection::getAttribute(SumoXMLAttr key) const {
+    return "";
+}
+
+
+void 
+GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
+}
+
+
+bool 
+GNEConnection::isValid(SumoXMLAttr key, const std::string& value) {
+    return false;
+}
+
+
+void 
+GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value) {
+}
 
 
 /****************************************************************************/

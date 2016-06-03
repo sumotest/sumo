@@ -61,6 +61,16 @@ GNECrossing::GNECrossing(GNEJunction& parentJunction, const std::string& id) :
     myParentJunction(parentJunction),
     myCrossing(parentJunction.getNBNode()->getCrossing(id)),
     myShape(myCrossing.shape) {
+    // Update geometry
+    updateGeometry();
+}
+
+
+GNECrossing::~GNECrossing() {}
+
+
+void 
+GNECrossing::updateGeometry() {
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -73,13 +83,6 @@ GNECrossing::GNECrossing(GNEJunction& parentJunction, const std::string& id) :
         }
     }
 }
-
-
-GNECrossing::~GNECrossing() {}
-
-
-void 
-GNECrossing::updateGeometry() {}
 
 
 void

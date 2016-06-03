@@ -236,7 +236,7 @@ public:
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
 
-private:
+protected:
     /// @brief the underlying NBEdge
     NBEdge& myNBEdge;
 
