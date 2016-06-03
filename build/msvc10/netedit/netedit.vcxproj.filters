@@ -82,6 +82,12 @@
     <Filter Include="Quellcodedateien\Items\NetElement">
       <UniqueIdentifier>{372ff15b-0c52-4502-918b-ba8ca7a6bf50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quellcodedateien\Items\Other">
+      <UniqueIdentifier>{c2c9bb0f-4687-4956-868c-1361586449ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header-Dateien\Items\Other">
+      <UniqueIdentifier>{d3158589-bd24-4408-a18b-537c41d2f013}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditional.cpp">
@@ -129,16 +135,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNELane.cpp">
       <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp">
-      <Filter>Quellcodedateien\Items\NetElement</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp">
-      <Filter>Quellcodedateien\Items\NetElement</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEEdge.cpp">
-      <Filter>Quellcodedateien\Items\NetElement</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEInternalLane.cpp">
       <Filter>Quellcodedateien\Items\NetElement</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\netedit\GNEAdditionalFrame.cpp">
@@ -288,6 +285,18 @@
     <ClCompile Include="..\..\..\src\netedit\GNENet.cpp">
       <Filter>Quellcodedateien\Main</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEPoly.cpp">
+      <Filter>Quellcodedateien\Items\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEInternalLane.cpp">
+      <Filter>Quellcodedateien\Items\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEPOI.cpp">
+      <Filter>Quellcodedateien\Items\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEProhibition.cpp">
+      <Filter>Quellcodedateien\Items\NetElement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -328,9 +337,6 @@
     <ClInclude Include="..\..\..\src\netedit\GNEJunction.h">
       <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEInternalLane.h">
-      <Filter>Header-Dateien\Items\NetElement</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNELane.h">
       <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
@@ -357,12 +363,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEConnector.h">
       <Filter>Header-Dateien\Scrollwindows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEPoly.h">
-      <Filter>Header-Dateien\Items\NetElement</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEPOI.h">
-      <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNETLSEditor.h">
       <Filter>Header-Dateien\Scrollwindows</Filter>
@@ -455,6 +455,18 @@
       <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEConnection.h">
+      <Filter>Header-Dateien\Items\NetElement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEPOI.h">
+      <Filter>Header-Dateien\Items\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEPoly.h">
+      <Filter>Header-Dateien\Items\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEInternalLane.h">
+      <Filter>Header-Dateien\Items\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEProhibition.h">
       <Filter>Header-Dateien\Items\NetElement</Filter>
     </ClInclude>
   </ItemGroup>

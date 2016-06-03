@@ -45,21 +45,36 @@
 #include <utils/gui/globjects/GLIncludes.h>
 */
 #include "GNENetElement.h"
+#include "GNENet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
-
-
-// ===========================================================================
-// static member definitions
-// ===========================================================================
-
-
 // ===========================================================================
 // method definitions
 // ===========================================================================
 
+
+GNENetElement::GNENetElement(GNENet* net, const std::string& id, GUIGlObjectType type, SumoXMLTag tag) :
+    GUIGlObject(type, id),
+    GNEAttributeCarrier(tag),
+    myNet(net) {
+}
+
+
+GNENetElement::~GNENetElement() {}
+
+
+GNENet *
+GNENetElement::getNet() const {
+    return myNet;
+}
+
+
+const std::string& 
+GNENetElement::getParentName() const {
+    return myNet->getMicrosimID();
+};
 
 /****************************************************************************/

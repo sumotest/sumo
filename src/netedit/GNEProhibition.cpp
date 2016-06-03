@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    GNEConnection.cpp
+/// @file    GNEProhibition.cpp
 /// @author  Pablo Álvarez López
 /// @date    Jun 2016
-/// @version $Id: GNEConnection.cpp 20472 2016-04-15 15:36:45Z palcraft $
+/// @version $Id: GNEProhibition.cpp 20472 2016-04-15 15:36:45Z palcraft $
 ///
-// A class for visualizing connections between lanes
+// A class for visualizing prohibitions between edges
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
@@ -44,7 +44,7 @@
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/globjects/GLIncludes.h>
 
-#include "GNEConnection.h"
+#include "GNEProhibition.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>

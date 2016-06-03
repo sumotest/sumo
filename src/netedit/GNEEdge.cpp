@@ -65,15 +65,14 @@ const SUMOReal GNEEdge::SNAP_RADIUS = SUMO_const_halfLaneWidth;
 // members methods
 // ===========================================================================
 GNEEdge::GNEEdge(NBEdge& nbe, GNENet* net, bool wasSplit, bool loaded):
-    GUIGlObject(GLO_EDGE, nbe.getID()),
-    GNEAttributeCarrier(SUMO_TAG_EDGE),
+    GNENetElement(net, nbe.getID(), GLO_EDGE, SUMO_TAG_EDGE),
     myNBEdge(nbe) ,
     myOrigShape(nbe.getInnerGeometry()),
     myLanes(0),
-    myNet(net),
     myAmResponsible(false),
     myWasSplit(wasSplit),
     myConnectionStatus(loaded ? LOADED : GUESSED) {
+    // Create lanes
     int numLanes = myNBEdge.getNumLanes();
     myLanes.reserve(numLanes);
     for (int i = 0; i < numLanes; i++) {
@@ -97,6 +96,10 @@ GNEEdge::~GNEEdge() {
     for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)              // PABLO #1916
         (*i)->removeEdgeReference();                                                                    // PABLO #1916
 }
+
+
+void
+GNEEdge::updateGeometry() {}
 
 
 Boundary
@@ -216,13 +219,6 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
     }
     setGeometry(geom, false);
 }
-
-
-GNENet*
-GNEEdge::getNet() const {
-    return myNet;
-}
-
 
 NBEdge*
 GNEEdge::getNBEdge() {

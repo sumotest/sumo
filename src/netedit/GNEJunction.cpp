@@ -74,17 +74,15 @@ bool GNEJunction::TLSDecalInitialized = false;
 // method definitions
 // ===========================================================================
 GNEJunction::GNEJunction(NBNode& nbn, GNENet* net, bool loaded) :
-    GUIGlObject(GLO_JUNCTION, nbn.getID()),
-    GNEAttributeCarrier(SUMO_TAG_JUNCTION),
+    GNENetElement(net, nbn.getID(), GLO_JUNCTION, SUMO_TAG_JUNCTION),
     myNBNode(nbn),
     myOrigPos(nbn.getPosition()),
     myAmCreateEdgeSource(false),
-    myNet(net),
     myLogicStatus(loaded ? LOADED : GUESSED),
     myAmResponsible(false),
     myHasValidLogic(loaded),
     myAmTLSSelected(false) {
-    updateBoundary();
+    updateGeometry();
     rebuildCrossings(false);
 }
 
@@ -98,7 +96,7 @@ GNEJunction::~GNEJunction() {
 
 
 void
-GNEJunction::updateBoundary() {
+GNEJunction::updateGeometry() {
     const double EXTENT = 2;
     myBoundary = Boundary(
                      myOrigPos.x() - EXTENT, myOrigPos.y() - EXTENT,

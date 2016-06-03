@@ -73,8 +73,7 @@ FXIMPLEMENT(GNELane, FXDelegator, 0, 0)
 // method definitions
 // ===========================================================================
 GNELane::GNELane(GNEEdge& edge, const int index) :
-    GUIGlObject(GLO_LANE, edge.getNBEdge()->getLaneID(index)),
-    GNEAttributeCarrier(SUMO_TAG_LANE),
+    GNENetElement(edge.getNet(), edge.getNBEdge()->getLaneID(index), GLO_LANE, SUMO_TAG_LANE),
     myParentEdge(edge),
     myIndex(index),
     mySpecialColor(0),
@@ -83,8 +82,7 @@ GNELane::GNELane(GNEEdge& edge, const int index) :
 }
 
 GNELane::GNELane() :
-    GUIGlObject(GLO_LANE, "dummyConstructorGNELane"),
-    GNEAttributeCarrier(SUMO_TAG_LANE),
+    GNENetElement(NULL, "dummyConstructorGNELane", GLO_LANE, SUMO_TAG_LANE),
     myParentEdge(*static_cast<GNEEdge*>(0)),
     myIndex(-1),
     mySpecialColor(0),

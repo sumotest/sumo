@@ -1,10 +1,10 @@
 /****************************************************************************/
-/// @file    GNEConnection.cpp
+/// @file    GNEProhibition.h
 /// @author  Pablo Álvarez López
 /// @date    Jun 2016
-/// @version $Id: GNEConnection.cpp 20472 2016-04-15 15:36:45Z palcraft $
+/// @version $Id: GNEProhibition.h 20785 2016-05-24 10:51:45Z palcraft $
 ///
-// A class for visualizing connections between lanes
+// A class for represent prohibitions between edges
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
@@ -17,6 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
+#ifndef GNEProhibition_h
+#define GNEProhibition_h
 
 
 // ===========================================================================
@@ -28,38 +30,18 @@
 #include <config.h>
 #endif
 
-#include <string>
-#include <iostream>
-#include <utility>
-#include <time.h>
-#include <foreign/polyfonts/polyfonts.h>
-#include <utils/foxtools/MFXUtils.h>
-#include <utils/geom/PositionVector.h>
-#include <utils/gui/windows/GUISUMOAbstractView.h>
-#include <utils/common/ToString.h>
-#include <utils/gui/windows/GUIAppEnum.h>
-#include <utils/gui/div/GUIParameterTableWindow.h>
-#include <utils/gui/globjects/GUIGLObjectPopupMenu.h>
-#include <utils/gui/div/GUIGlobalSelection.h>
-#include <utils/gui/div/GLHelper.h>
-#include <utils/gui/globjects/GLIncludes.h>
-
-#include "GNEConnection.h"
-
-#ifdef CHECK_MEMORY_LEAKS
-#include <foreign/nvwa/debug_new.h>
-#endif // CHECK_MEMORY_LEAKS
-
-
+#include "GNENetElement.h"
 
 // ===========================================================================
-// static member definitions
+// class declarations
 // ===========================================================================
 
 
 // ===========================================================================
-// method definitions
+// class definitions
 // ===========================================================================
 
+#endif
 
 /****************************************************************************/
+

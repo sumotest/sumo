@@ -51,7 +51,7 @@ class NBTrafficLightDefinition;
  *  is computed using the junction's position to which an offset of 1m to each
  *  side is added.
  */
-class GNEJunction : public GUIGlObject, public GNEAttributeCarrier {
+class GNEJunction : public GNENetElement {
 
     /// @brief Declare friend class
     friend class GNEChange_TLS;
@@ -117,7 +117,7 @@ public:
     void selectTLS(bool selected);
 
     /**@brief Update the boundary of the junction */
-    void updateBoundary();
+    void updateGeometry();
 
     /**@brief reposition the node at pos and informs the edges
      * @param[in] pos The new position
@@ -202,9 +202,6 @@ private:
     /// @brief whether this junction is the first junction for a newly creatededge
     /// @see GNEApplicationWindow::createEdgeSource)
     bool myAmCreateEdgeSource;
-
-    // the net to inform about updates
-    GNENet* myNet;
 
     /// @brief modification status of the junction logic (all connections across this junction)
     std::string myLogicStatus;

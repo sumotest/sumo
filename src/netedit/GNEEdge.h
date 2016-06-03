@@ -51,7 +51,7 @@ class GNEAdditionalSet; // PABLO #1916
  *
  * @see MSEdge
  */
-class GNEEdge : public GUIGlObject, public GNEAttributeCarrier {
+class GNEEdge : public GNENetElement {
 
     /// @brief Friend class
     friend class GNEChange_Lane;
@@ -76,6 +76,9 @@ public:
 
     /// @brief Destructor.
     ~GNEEdge();
+
+    /// @brief update pre-computed geometry information
+    void updateGeometry();
 
     /// Returns the street's geometry
     Boundary getBoundary() const;
@@ -116,9 +119,6 @@ public:
 
     /**@brief update edge geometry after junction move */
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
-
-    /// @brief returns pointer to net
-    GNENet *getNet() const;
 
     /// @brief returns the internal NBEdge
     NBEdge* getNBEdge();
@@ -245,9 +245,6 @@ private:
 
     /// @brief List of this edges lanes
     LaneVector myLanes;
-
-    /// @brief the net to inform about updates
-    GNENet* myNet;
 
     /// @brief whether we are responsible for deleting myNBNode
     bool myAmResponsible;

@@ -50,7 +50,7 @@ class GNEAdditional;
  * @brief This lane is powered by an underlying GNEEdge and basically knows how
  * to draw itself
  */
-class GNELane : public GUIGlObject, public GNEAttributeCarrier, public FXDelegator {
+class GNELane : public GNENetElement, public FXDelegator {
     // FOX-declarations
     FXDECLARE(GNELane)
 
