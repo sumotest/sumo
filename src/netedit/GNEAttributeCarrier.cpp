@@ -231,6 +231,16 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, ""));
                 break;
+            case SUMO_TAG_CONNECTION:                                                                   // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FROM, ""));               // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TO, ""));                 // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FROM_LANE, ""));          // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TO_LANE, ""));            // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PASS, "false"));          // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_KEEP_CLEAR, "false"));    // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_CONTPOS, "0"));           // PABLO #2067
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_UNCONTROLLED, "false"));  // PABLO #2067
+                break;                                                                                  // PABLO #2067
             case SUMO_TAG_BUS_STOP:
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_LANE, ""));
@@ -323,6 +333,7 @@ GNEAttributeCarrier::allowedTags() {
         myAllowedTags.push_back(SUMO_TAG_JUNCTION);
         myAllowedTags.push_back(SUMO_TAG_EDGE);
         myAllowedTags.push_back(SUMO_TAG_LANE);
+        myAllowedTags.push_back(SUMO_TAG_CONNECTION);   // PABLO #2067
         myAllowedTags.push_back(SUMO_TAG_BUS_STOP);
         myAllowedTags.push_back(SUMO_TAG_CHARGING_STATION);
         myAllowedTags.push_back(SUMO_TAG_E1DETECTOR);
@@ -376,6 +387,8 @@ GNEAttributeCarrier::isInt(SumoXMLAttr attr) {
         myNumericalIntAttrs.insert(SUMO_ATTR_FREQUENCY);
         myNumericalIntAttrs.insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
         myNumericalIntAttrs.insert(SUMO_ATTR_BEGIN);
+        myNumericalIntAttrs.insert(SUMO_ATTR_FROM_LANE);    // PABLO #2067
+        myNumericalIntAttrs.insert(SUMO_ATTR_TO_LANE);      // PABLO #2067
     }
     return myNumericalIntAttrs.count(attr) == 1;
 }
@@ -399,6 +412,7 @@ GNEAttributeCarrier::isFloat(SumoXMLAttr attr) {
     myNumericalFloatAttrs.insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
     myNumericalFloatAttrs.insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
     myNumericalFloatAttrs.insert(SUMO_ATTR_PROB);
+    myNumericalFloatAttrs.insert(SUMO_ATTR_CONTPOS);    // PABLO #2067
     }
     return myNumericalFloatAttrs.count(attr) == 1;
 }
@@ -450,6 +464,8 @@ GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
         myUniqueAttrs.insert(SUMO_ATTR_LANE);
         myUniqueAttrs.insert(SUMO_ATTR_EDGE);
         myUniqueAttrs.insert(SUMO_ATTR_ROUTEPROBE);
+        myUniqueAttrs.insert(SUMO_ATTR_FROM_LANE);  // PABLO #2067
+        myUniqueAttrs.insert(SUMO_ATTR_TO_LANE);    // PABLO #2067
     }
     return myUniqueAttrs.count(attr) == 1;
 }
@@ -518,6 +534,12 @@ GNEAttributeCarrier::discreteChoices(SumoXMLTag tag, SumoXMLAttr attr) {
 
         myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("true");
         myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("false");
+
+        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_KEEP_CLEAR].push_back("true");     // PABLO #2067
+        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_KEEP_CLEAR].push_back("false");    // PABLO #2067
+
+        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_UNCONTROLLED].push_back("true");   // PABLO #2067
+        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_UNCONTROLLED].push_back("false");  // PABLO #2067
     }
 
     return myDiscreteChoices[tag][attr];
@@ -576,6 +598,15 @@ GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
         myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "";
         myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "";
         myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "";
+        // Connection
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_FROM] = "The name of the edge the vehicles leave ";                                                                                                                // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_TO] = "The name of the edge the vehicles may reach when leaving 'from'";                                                                                           // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_FROM_LANE] = "the lane index of the incoming lane (numbers starting with 0)";                                                                                      // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_TO_LANE] = "the lane index of the outgoing lane (numbers starting with 0)";                                                                                        // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_PASS] = "if set, vehicles which pass this (lane-2-lane) connection) will not wait";                                                                                // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_KEEP_CLEAR] = "if set to false, vehicles which pass this (lane-2-lane) connection) will not worry about blocking the intersection.";                               // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_CONTPOS] = "If set to a more than 0 value, an internal junction will be built at this position (in m) from the start of the internal lane for this connection.";   // PABLO #2067
+        myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_UNCONTROLLED] = "if set to true, This connection will not be TLS-controlled despite its node being controlled.";                                                   // PABLO #2067
         // Bus Stop
         myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_ID] = "ID (Must be unique)";
         myAttrDefinitions[SUMO_TAG_BUS_STOP][SUMO_ATTR_LANE] = "The name of the lane the bus stop shall be located at";
@@ -652,6 +683,9 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
         if((*i).first == attr)
             return TplConvert::_str2int((*i).second);
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
+    return 0;
 }
 
 
@@ -660,6 +694,9 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
         if((*i).first == attr)
             return TplConvert::_str2SUMOReal((*i).second);
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
+    return 0;
 }
 
 
@@ -668,6 +705,9 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
         if((*i).first == attr)
             return TplConvert::_str2Bool((*i).second);
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
+    return false;
 }
 
 
@@ -676,12 +716,19 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)
         if((*i).first == attr)
             return (*i).second;
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
+    return "";
 }
 
 
 template<> std::vector<int>
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     std::cout << "FINISH" << std::endl;
+    
+
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
     return std::vector<int>();
 }
 
@@ -689,6 +736,10 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
 template<> std::vector<SUMOReal>
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     std::cout << "FINISH" << std::endl;
+    
+
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
     return std::vector<SUMOReal>();
 }
 
@@ -696,6 +747,9 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
 template<> std::vector<bool>
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     std::cout << "FINISH" << std::endl;
+
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
     return std::vector<bool>();
 }
 
@@ -708,6 +762,9 @@ GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
             SUMOSAXAttributes::parseStringVector((*i).second, myVectorString);
             return myVectorString;
         }
+    // Write warning if attribute don't have a default value and return a empty value to avoid warnings
+    WRITE_WARNING("attribute '" + toString(attr) + "' for tag '" + toString(tag) + "' don't have a default value");
+    return std::vector<std::string>();
 }
 
 /****************************************************************************/
