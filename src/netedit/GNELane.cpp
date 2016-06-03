@@ -51,7 +51,7 @@
 #include "GNELane.h"
 #include "GNEEdge.h"
 #include "GNEJunction.h"
-#include "GNETLSEditor.h"
+#include "GNETLSEditorFrame.h"
 #include "GNEInternalLane.h"
 #include "GNEUndoList.h"
 #include "GNENet.h"

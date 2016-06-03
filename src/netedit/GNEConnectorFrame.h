@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNEConnector.h
+/// @file    GNEConnectorFrame.h
 /// @author  Jakob Erdmann
 /// @date    May 2011
-/// @version $Id$
+/// @version $Id: GNEConnectorFrame.h 20785 2016-05-24 10:51:45Z palcraft $
 ///
 // The Widget for modifying lane-to-lane connections
 /****************************************************************************/
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEConnector_h
-#define GNEConnector_h
+#ifndef GNEConnectorFrame_h
+#define GNEConnectorFrame_h
 
 
 // ===========================================================================
@@ -47,12 +47,12 @@ class GNEUndoList;
 // class definitions
 // ===========================================================================
 /**
- * @class GNEConnector
+ * @class GNEConnectorFrame
  * The Widget for modifying selections of network-elements
  */
-class GNEConnector : public FXScrollWindow {
+class GNEConnectorFrame : public FXScrollWindow {
     // FOX-declarations
-    FXDECLARE(GNEConnector)
+    FXDECLARE(GNEConnectorFrame)
 
 public:
     /**@brief Constructor
@@ -60,10 +60,10 @@ public:
      * @param[in] updateTarget view to update
      * @param[in] undoList pointer to undoList modul
      */
-    GNEConnector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
+    GNEConnectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
 
     /// @brief Destructor
-    ~GNEConnector();
+    ~GNEConnectorFrame();
 
     /// @brief get Header front
     FXFont* getHeaderFont();
@@ -95,7 +95,7 @@ public:
 
 protected:
     /// @brief FOX needs this
-    GNEConnector() {}
+    GNEConnectorFrame() {}
 
 private:
 

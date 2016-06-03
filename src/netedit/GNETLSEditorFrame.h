@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNETLSEditor.h
+/// @file    GNETLSEditorFrame.h
 /// @author  Jakob Erdmann
 /// @date    May 2011
-/// @version $Id$
+/// @version $Id: GNETLSEditorFrame.h 20785 2016-05-24 10:51:45Z palcraft $
 ///
 // The Widget for modifying traffic lights
 /****************************************************************************/
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNETLSEditor_h
-#define GNETLSEditor_h
+#ifndef GNETLSEditorFrame_h
+#define GNETLSEditorFrame_h
 
 
 // ===========================================================================
@@ -51,22 +51,22 @@ class GNEJunction;
 // class definitions
 // ===========================================================================
 /**
- * @class GNETLSEditor
+ * @class GNETLSEditorFrame
  * The Widget for modifying selections of network-elements
  */
-class GNETLSEditor : public FXScrollWindow {
+class GNETLSEditorFrame : public FXScrollWindow {
     // FOX-declarations
-    FXDECLARE(GNETLSEditor)
+    FXDECLARE(GNETLSEditorFrame)
 
 public:
     /**@brief Constructor
      * @param[in] parent The parent window
      */
-    GNETLSEditor(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
+    GNETLSEditorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
 
 
     /// @brief Destructor
-    ~GNETLSEditor();
+    ~GNETLSEditorFrame();
 
 
     FXFont* getHeaderFont() {
@@ -127,7 +127,7 @@ public:
 
 protected:
     /// @brief FOX needs this
-    GNETLSEditor() {}
+    GNETLSEditorFrame() {}
 
 private:
     /// @brief the panel to hold all member widgets

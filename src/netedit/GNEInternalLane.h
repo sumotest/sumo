@@ -36,7 +36,7 @@
 // class declarations
 // ===========================================================================
 class GUIGLObjectPopupMenu;
-class GNETLSEditor;
+class GNETLSEditorFrame;
 class PositionVector;
 
 // ===========================================================================
@@ -60,7 +60,7 @@ public:
      * @param[in] shape The shape of the lane
      * @param[in] tlIndex The tl-index of the lane
      */
-    GNEInternalLane(GNETLSEditor* editor, const std::string& id, const PositionVector& shape, int tlIndex, LinkState state = LINKSTATE_DEADEND);
+    GNEInternalLane(GNETLSEditorFrame* editor, const std::string& id, const PositionVector& shape, int tlIndex, LinkState state = LINKSTATE_DEADEND);
 
     /// @brief Destructor
     virtual ~GNEInternalLane();
@@ -145,7 +145,7 @@ private:
     FXDataTarget stateTarget;
 
     /// @brief the editor to inform about changes
-    GNETLSEditor* myEditor;
+    GNETLSEditorFrame* myEditor;
 
     /// @brief the tl-index of this lane
     int myTlIndex;

@@ -58,10 +58,10 @@
 #include "GNEViewParent.h"
 #include "GNENet.h"
 #include "GNEUndoList.h"
-#include "GNEInspector.h"
-#include "GNESelector.h"
-#include "GNEConnector.h"
-#include "GNETLSEditor.h"
+#include "GNEInspectorFrame.h"
+#include "GNESelectorFrame.h"
+#include "GNEConnectorFrame.h"
+#include "GNETLSEditorFrame.h"
 #include "GNEAdditionalFrame.h"
 #include "GNEAdditionalHandler.h"
 #include "GNEPoly.h"
@@ -130,13 +130,13 @@ GNEViewNet::GNEViewNet(
     mySelector(0),
     myCurrentPoly(0) {
     // adding order is important
-    myInspector = new GNEInspector(actualParent, myUndoList);
+    myInspector = new GNEInspectorFrame(actualParent, myUndoList);
     myInspector->hide();
-    mySelector = new GNESelector(actualParent, this, myUndoList);
+    mySelector = new GNESelectorFrame(actualParent, this, myUndoList);
     mySelector->hide();
-    myConnector = new GNEConnector(actualParent, this, myUndoList);
+    myConnector = new GNEConnectorFrame(actualParent, this, myUndoList);
     myConnector->hide();
-    myTLSEditor = new GNETLSEditor(actualParent, this, myUndoList);
+    myTLSEditor = new GNETLSEditorFrame(actualParent, this, myUndoList);
     myTLSEditor->hide();
     myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);
     myAdditional->hide();

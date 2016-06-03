@@ -70,7 +70,7 @@ public:
      * @param[in] tag Type of xml tag that define the additional element (SUMO_TAG_BUS_STOP, SUMO_TAG_REROUTER, etc...)
      * @param[in] additionalSetParent pointer to parent, if this additional belongs to an additionalSet
      * @param[in] blocked enable or disable blocking. By default additional element isn't blocked (i.e. value is false)
-     * @param[in] inspectionable enable or disable inspection by GNEInspector
+     * @param[in] inspectionable enable or disable inspection by GNEInspectorFrame
      * @param[in] selectable enable or disable selection
      */
     GNEAdditional(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, GNEAdditionalSet *additionalSetParent = NULL, bool blocked = false, bool inspectionable = true, bool selectable = true);
@@ -259,10 +259,10 @@ protected:
     /// @brief boolean to check if additional element is blocked (i.e. cannot be moved with mouse)
     bool myBlocked;
 
-    /// @brief boolean to check if additional element is inspectionable (With GNEInspector)
+    /// @brief boolean to check if additional element is inspectionable (With GNEInspectorFrame)
     bool myInspectionable;
 
-    /// @brief boolean to check if additional element is selectable (With GNESelector)
+    /// @brief boolean to check if additional element is selectable (With GNESelectorFrame)
     bool mySelectable;
 
 private:

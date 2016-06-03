@@ -37,7 +37,7 @@
 // ===========================================================================
 class GUIGLObjectPopupMenu;
 class PositionVector;
-class GNETLSEditor;
+class GNETLSEditorFrame;
 class GNEEdge;
 class GNENet;
 class GNEAdditional;
@@ -229,7 +229,7 @@ private:
     mutable std::vector<RGBColor> myShapeColors;
 
     /// @brief the tls-editor for setting multiple links in TLS-mode
-    GNETLSEditor* myTLSEditor;
+    GNETLSEditorFrame* myTLSEditor;
 
 private:
     /// @brief set attribute after validation

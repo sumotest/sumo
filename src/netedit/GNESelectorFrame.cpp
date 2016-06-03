@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNESelector.cpp
+/// @file    GNESelectorFrame.cpp
 /// @author  Jakob Erdmann
 /// @date    Mar 2011
-/// @version $Id$
+/// @version $Id: GNESelectorFrame.cpp 20474 2016-04-16 09:10:57Z palcraft $
 ///
 // The Widget for modifying selections of network-elements
 // (some elements adapted from GUIDialog_GLChosenEditor)
@@ -42,7 +42,7 @@
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/images/GUIIconSubSys.h>
-#include "GNESelector.h"
+#include "GNESelectorFrame.h"
 #include "GNEViewNet.h"
 #include "GNENet.h"
 #include "GNEJunction.h"
@@ -60,29 +60,29 @@
 // ===========================================================================
 // FOX callback mapping
 // ===========================================================================
-FXDEFMAP(GNESelector) GNESelectorMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_LOAD,       GNESelector::onCmdLoad),
-    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_SAVE,       GNESelector::onCmdSave),
-    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_INVERT,     GNESelector::onCmdInvert),
-    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_CLEAR,      GNESelector::onCmdClear),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELMB_TAG,      GNESelector::onCmdSelMBTag),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELMB_STRING,   GNESelector::onCmdSelMBString),
-    FXMAPFUNC(SEL_COMMAND,  MID_HELP,               GNESelector::onCmdHelp),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_SCALE,   GNESelector::onCmdScaleSelection)
+FXDEFMAP(GNESelectorFrame) GNESelectorFrameMap[] = {
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_LOAD,       GNESelectorFrame::onCmdLoad),
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_SAVE,       GNESelectorFrame::onCmdSave),
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_INVERT,     GNESelectorFrame::onCmdInvert),
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_CLEAR,      GNESelectorFrame::onCmdClear),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELMB_TAG,      GNESelectorFrame::onCmdSelMBTag),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELMB_STRING,   GNESelectorFrame::onCmdSelMBString),
+    FXMAPFUNC(SEL_COMMAND,  MID_HELP,               GNESelectorFrame::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_SCALE,   GNESelectorFrame::onCmdScaleSelection)
 };
 
 // Object implementation
-FXIMPLEMENT(GNESelector, FXScrollWindow, GNESelectorMap, ARRAYNUMBER(GNESelectorMap))
+FXIMPLEMENT(GNESelectorFrame, FXScrollWindow, GNESelectorFrameMap, ARRAYNUMBER(GNESelectorFrameMap))
 
 // ===========================================================================
 // static members
 // ===========================================================================
-const int GNESelector::WIDTH = 140;
+const int GNESelectorFrame::WIDTH = 140;
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNESelector::GNESelector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
+GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
     myUpdateTarget(updateTarget),
@@ -161,14 +161,14 @@ GNESelector::GNESelector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoL
 }
 
 
-GNESelector::~GNESelector() {
+GNESelectorFrame::~GNESelectorFrame() {
     delete myHeaderFont;
     gSelected.remove2Update();
 }
 
 
 long
-GNESelector::onCmdLoad(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdLoad(FXObject*, FXSelector, void*) {
     // get the new file name
     FXFileDialog opendialog(this, "Open List of Selected Items");
     opendialog.setIcon(GUIIconSubSys::getIcon(ICON_EMPTY));
@@ -194,7 +194,7 @@ GNESelector::onCmdLoad(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdSave(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdSave(FXObject*, FXSelector, void*) {
     FXString file = MFXUtils::getFilename2Write(
                         this, "Save List of selected Items", ".txt", GUIIconSubSys::getIcon(ICON_EMPTY), gCurrentFolder);
     if (file == "") {
@@ -210,7 +210,7 @@ GNESelector::onCmdSave(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdClear(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdClear(FXObject*, FXSelector, void*) {
     myUndoList->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
     myUpdateTarget->update();
     return 1;
@@ -218,7 +218,7 @@ GNESelector::onCmdClear(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdInvert(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdInvert(FXObject*, FXSelector, void*) {
     std::set<GUIGlID> ids = myUpdateTarget->getNet()->getGlIDs(GLO_JUNCTION);
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
@@ -237,7 +237,7 @@ GNESelector::onCmdInvert(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdSelMBTag(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdSelMBTag(FXObject*, FXSelector, void*) {
     const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
     SumoXMLTag tag = tags[myMatchTagBox->getCurrentItem()];
     myMatchAttrBox->clearItems();
@@ -254,7 +254,7 @@ GNESelector::onCmdSelMBTag(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdSelMBString(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdSelMBString(FXObject*, FXSelector, void*) {
     const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
     SumoXMLTag tag = tags[myMatchTagBox->getCurrentItem()];
     const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = GNEAttributeCarrier::allowedAttributes(tag);
@@ -312,7 +312,7 @@ GNESelector::onCmdSelMBString(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdHelp(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdHelp(FXObject*, FXSelector, void*) {
     FXDialogBox* helpDialog = new FXDialogBox(this, "Match Attribute Help", DECOR_CLOSE | DECOR_TITLE);
     std::ostringstream help;
     help
@@ -348,7 +348,7 @@ GNESelector::onCmdHelp(FXObject*, FXSelector, void*) {
 
 
 long
-GNESelector::onCmdScaleSelection(FXObject*, FXSelector, void*) {
+GNESelectorFrame::onCmdScaleSelection(FXObject*, FXSelector, void*) {
     myUpdateTarget->setSelectionScaling(mySelectionScaling->getValue());
     myUpdateTarget->update();
     return 1;
@@ -356,7 +356,7 @@ GNESelector::onCmdScaleSelection(FXObject*, FXSelector, void*) {
 
 
 void
-GNESelector::show() {
+GNESelectorFrame::show() {
     gSelected.add2Update(this);
     selectionUpdated(); // selection may have changed due to deletions
     FXScrollWindow::show();
@@ -364,14 +364,14 @@ GNESelector::show() {
 
 
 void
-GNESelector::hide() {
+GNESelectorFrame::hide() {
     gSelected.remove2Update();
     FXScrollWindow::hide();
 }
 
 
 std::string
-GNESelector::getStats() const {
+GNESelectorFrame::getStats() const {
     return "Selection:\n" +
            toString(gSelected.getSelected(GLO_JUNCTION).size()) + " Junctions\n" +
            toString(gSelected.getSelected(GLO_EDGE).size()) + " Edges\n" +
@@ -381,14 +381,14 @@ GNESelector::getStats() const {
 
 
 void
-GNESelector::selectionUpdated() {
+GNESelectorFrame::selectionUpdated() {
     myStats->setText(getStats().c_str());
     update();
 }
 
 
 void
-GNESelector::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOperation setop) {
+GNESelectorFrame::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOperation setop) {
     const SetOperation setOperation = (setop == SET_DEFAULT ? (SetOperation)mySetOperation : setop);
     std::set<GUIGlID> previousSelection;
     myUndoList->p_begin("change selection");
@@ -438,14 +438,14 @@ GNESelector::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOperation 
             }
             // doing the switch outside the loop requires functional techniques. this was deemed to ugly
             switch (setOperation) {
-                case GNESelector::SET_ADD:
-                case GNESelector::SET_REPLACE:
+                case GNESelectorFrame::SET_ADD:
+                case GNESelectorFrame::SET_REPLACE:
                     selected.insert(id);
                     break;
-                case GNESelector::SET_SUB:
+                case GNESelectorFrame::SET_SUB:
                     deselected.insert(id);
                     break;
-                case GNESelector::SET_RESTRICT:
+                case GNESelectorFrame::SET_RESTRICT:
                     if (previousSelection.count(id)) {
                         selected.insert(id);
                     }
@@ -462,7 +462,7 @@ GNESelector::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOperation 
 
 
 std::vector<GUIGlID>
-GNESelector::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal val, const std::string& expr) {
+GNESelectorFrame::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal val, const std::string& expr) {
     GUIGlObject* object;
     GNEAttributeCarrier* ac;
     std::vector<GUIGlID> result;
@@ -472,7 +472,7 @@ GNESelector::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMOReal 
         GUIGlID id = *it;
         object = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
         if (!object) {
-            throw ProcessError("Unkown object passed to GNESelector::getMatches (id=" + toString(id) + ").");
+            throw ProcessError("Unkown object passed to GNESelectorFrame::getMatches (id=" + toString(id) + ").");
         }
         ac = dynamic_cast<GNEAttributeCarrier*>(object);
         if (ac && ac->getTag() == tag) { // not all objects need to be attribute carriers

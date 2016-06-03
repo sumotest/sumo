@@ -73,10 +73,10 @@ class GNEEdge;
 class GNELane;
 class GNEViewParent;
 class GNEUndoList;
-class GNEInspector;
-class GNESelector;
-class GNEConnector;
-class GNETLSEditor;
+class GNEInspectorFrame;
+class GNESelectorFrame;
+class GNEConnectorFrame;
+class GNETLSEditorFrame;
 class GNEAdditionalFrame;
 class GNEAdditional;
 class GNEPoly;
@@ -200,7 +200,7 @@ public:
         return myExtendToEdgeNodes->getCheck() != 0;
     }
 
-    GNESelector* getSelector() {
+    GNESelectorFrame* getSelector() {
         return mySelector;
     }
 
@@ -212,7 +212,7 @@ public:
     /// @brief update control contents after undo/redo or recompute
     void updateControls();
 
-    GNETLSEditor* getTLSEditor() {
+    GNETLSEditorFrame* getTLSEditor() {
         return myTLSEditor;
     }
 
@@ -311,16 +311,16 @@ private:
     GNEUndoList* myUndoList;
 
     /// @brief the panel for GNE_MODE_INSPECT
-    GNEInspector* myInspector;
+    GNEInspectorFrame* myInspector;
 
     /// @brief the panel for GNE_MODE_SELECT
-    GNESelector* mySelector;
+    GNESelectorFrame* mySelector;
 
     /// @brief the panel for GNE_MODE_CONNECT
-    GNEConnector* myConnector;
+    GNEConnectorFrame* myConnector;
 
     /// @brief the panel for GNE_MODE_TLS
-    GNETLSEditor* myTLSEditor;
+    GNETLSEditorFrame* myTLSEditor;
 
     /// @brief the panel for GNE_MODE_ADDITIONAL
     GNEAdditionalFrame* myAdditional;

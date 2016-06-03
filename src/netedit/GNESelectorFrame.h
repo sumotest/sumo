@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNESelector.h
+/// @file    GNESelectorFrame.h
 /// @author  Jakob Erdmann
 /// @date    Mar 2011
-/// @version $Id$
+/// @version $Id: GNESelectorFrame.h 20785 2016-05-24 10:51:45Z palcraft $
 ///
 // The Widget for modifying selections of network-elements
 // (some elements adapted from GUIDialog_GLChosenEditor)
@@ -18,8 +18,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNESelector_h
-#define GNESelector_h
+#ifndef GNESelectorFrame_h
+#define GNESelectorFrame_h
 
 
 // ===========================================================================
@@ -48,12 +48,12 @@ class GNEUndoList;
 // class definitions
 // ===========================================================================
 /**
- * @class GNESelector
+ * @class GNESelectorFrame
  * The Widget for modifying selections of network-elements
  */
-class GNESelector : public FXScrollWindow, public GUISelectedStorage::UpdateTarget {
+class GNESelectorFrame : public FXScrollWindow, public GUISelectedStorage::UpdateTarget {
     // FOX-declarations
-    FXDECLARE(GNESelector)
+    FXDECLARE(GNESelectorFrame)
 
 public:
 
@@ -68,11 +68,11 @@ public:
     /**@brief Constructor
      * @param[in] parent The parent window
      */
-    GNESelector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
+    GNESelectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
 
 
     /// @brief Destructor
-    ~GNESelector();
+    ~GNESelectorFrame();
 
 
     FXFont* getHeaderFont() {
@@ -146,7 +146,7 @@ public:
 
 protected:
     /// @brief FOX needs this
-    GNESelector() {}
+    GNESelectorFrame() {}
 
 private:
     /// @brief the panel to hold all member widgets

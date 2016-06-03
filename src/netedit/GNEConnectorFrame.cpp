@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNEConnector.cpp
+/// @file    GNEConnectorFrame.cpp
 /// @author  Jakob Erdmann
 /// @date    May 2011
-/// @version $Id$
+/// @version $Id: GNEConnectorFrame.cpp 20472 2016-04-15 15:36:45Z palcraft $
 ///
 // The Widget for modifying lane-to-lane connections
 /****************************************************************************/
@@ -39,8 +39,8 @@
 #include <utils/gui/div/GUIIOGlobals.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
-#include "GNEConnector.h"
-#include "GNESelector.h"
+#include "GNEConnectorFrame.h"
+#include "GNESelectorFrame.h"
 #include "GNEViewNet.h"
 #include "GNEChange_Connection.h"
 #include "GNEUndoList.h"
@@ -58,34 +58,34 @@
 // ===========================================================================
 // FOX callback mapping
 // ===========================================================================
-FXDEFMAP(GNEConnector) GNEConnectorMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_CANCEL,                 GNEConnector::onCmdCancel),
-    FXMAPFUNC(SEL_COMMAND,  MID_OK,                     GNEConnector::onCmdOK),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_DEAD_ENDS,   GNEConnector::onCmdSelectDeadEnds),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_DEAD_STARTS, GNEConnector::onCmdSelectDeadStarts),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_CONFLICTS,   GNEConnector::onCmdSelectConflicts),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_PASS,        GNEConnector::onCmdSelectPass),
-    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_CLEAR,          GNEConnector::onCmdClearSelectedConnections),
-    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_RESET,          GNEConnector::onCmdResetSelectedConnections),
+FXDEFMAP(GNEConnectorFrame) GNEConnectorFrameMap[] = {
+    FXMAPFUNC(SEL_COMMAND,  MID_CANCEL,                 GNEConnectorFrame::onCmdCancel),
+    FXMAPFUNC(SEL_COMMAND,  MID_OK,                     GNEConnectorFrame::onCmdOK),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_DEAD_ENDS,   GNEConnectorFrame::onCmdSelectDeadEnds),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_DEAD_STARTS, GNEConnectorFrame::onCmdSelectDeadStarts),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_CONFLICTS,   GNEConnectorFrame::onCmdSelectConflicts),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SELECT_PASS,        GNEConnectorFrame::onCmdSelectPass),
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_CLEAR,          GNEConnectorFrame::onCmdClearSelectedConnections),
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_RESET,          GNEConnectorFrame::onCmdResetSelectedConnections),
 };
 
 // Object implementation
-FXIMPLEMENT(GNEConnector, FXScrollWindow, GNEConnectorMap, ARRAYNUMBER(GNEConnectorMap))
+FXIMPLEMENT(GNEConnectorFrame, FXScrollWindow, GNEConnectorFrameMap, ARRAYNUMBER(GNEConnectorFrameMap))
 
 // ===========================================================================
 // static members
 // ===========================================================================
-const int GNEConnector::WIDTH = 140;
-RGBColor GNEConnector::sourceColor;
-RGBColor GNEConnector::potentialTargetColor;
-RGBColor GNEConnector::targetColor;
-RGBColor GNEConnector::targetPassColor;
-RGBColor GNEConnector::conflictColor;
+const int GNEConnectorFrame::WIDTH = 140;
+RGBColor GNEConnectorFrame::sourceColor;
+RGBColor GNEConnectorFrame::potentialTargetColor;
+RGBColor GNEConnectorFrame::targetColor;
+RGBColor GNEConnectorFrame::targetPassColor;
+RGBColor GNEConnectorFrame::conflictColor;
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEConnector::GNEConnector(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
+GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
     myCurrentLane(0),
@@ -174,19 +174,19 @@ GNEConnector::GNEConnector(FXComposite* parent, GNEViewNet* updateTarget, GNEUnd
 }
 
 
-GNEConnector::~GNEConnector() {
+GNEConnectorFrame::~GNEConnectorFrame() {
     delete myHeaderFont;
 }
 
 
 FXFont*
-GNEConnector::getHeaderFont() {
+GNEConnectorFrame::getHeaderFont() {
     return myHeaderFont;
 }
 
 
 void
-GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool allowConflict, bool toggle) {
+GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool allowConflict, bool toggle) {
     if (myCurrentLane == 0) {
         myCurrentLane = lane;
         myCurrentLane->setSpecialColor(&sourceColor);
@@ -243,7 +243,7 @@ GNEConnector::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool allowC
 
 
 long
-GNEConnector::onCmdCancel(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdCancel(FXObject*, FXSelector, void*) {
     if (myCurrentLane != 0) {
         myUndoList->p_abort();
         if (myNumChanges) {
@@ -257,7 +257,7 @@ GNEConnector::onCmdCancel(FXObject*, FXSelector, void*) {
 
 
 long
-GNEConnector::onCmdOK(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdOK(FXObject*, FXSelector, void*) {
     if (myCurrentLane != 0) {
         myUndoList->p_end();
         if (myNumChanges) {
@@ -271,7 +271,7 @@ GNEConnector::onCmdOK(FXObject*, FXSelector, void*) {
 
 
 long
-GNEConnector::onCmdSelectDeadEnds(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdSelectDeadEnds(FXObject*, FXSelector, void*) {
     std::vector<GUIGlID> selectIDs;
     // every edge knows its outgoing connections so we can look at each edge in isolation
     const std::vector<GNEEdge*> edges = myUpdateTarget->getNet()->retrieveEdges();
@@ -283,13 +283,13 @@ GNEConnector::onCmdSelectDeadEnds(FXObject*, FXSelector, void*) {
             }
         }
     }
-    myUpdateTarget->getSelector()->handleIDs(selectIDs, false, GNESelector::SET_REPLACE);
+    myUpdateTarget->getSelector()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
 
 long
-GNEConnector::onCmdSelectDeadStarts(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdSelectDeadStarts(FXObject*, FXSelector, void*) {
     GNENet* net = myUpdateTarget->getNet();
     std::set<GUIGlID> selectIDs;
     // every edge knows only its outgoing connections so we look at whole junctions
@@ -319,13 +319,13 @@ GNEConnector::onCmdSelectDeadStarts(FXObject*, FXSelector, void*) {
     }
     myUpdateTarget->getSelector()->handleIDs(
         std::vector<GUIGlID>(selectIDs.begin(), selectIDs.end()),
-        false, GNESelector::SET_REPLACE);
+        false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
 
 long
-GNEConnector::onCmdSelectConflicts(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdSelectConflicts(FXObject*, FXSelector, void*) {
     std::vector<GUIGlID> selectIDs;
     // conflicts happen per edge so we can look at each edge in isolation
     const std::vector<GNEEdge*> edges = myUpdateTarget->getNet()->retrieveEdges();
@@ -347,13 +347,13 @@ GNEConnector::onCmdSelectConflicts(FXObject*, FXSelector, void*) {
         }
 
     }
-    myUpdateTarget->getSelector()->handleIDs(selectIDs, false, GNESelector::SET_REPLACE);
+    myUpdateTarget->getSelector()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
 
 long
-GNEConnector::onCmdSelectPass(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdSelectPass(FXObject*, FXSelector, void*) {
     std::vector<GUIGlID> selectIDs;
     const std::vector<GNEEdge*> edges = myUpdateTarget->getNet()->retrieveEdges();
     for (std::vector<GNEEdge*>::const_iterator edge_it = edges.begin(); edge_it != edges.end(); edge_it++) {
@@ -367,13 +367,13 @@ GNEConnector::onCmdSelectPass(FXObject*, FXSelector, void*) {
             }
         }
     }
-    myUpdateTarget->getSelector()->handleIDs(selectIDs, false, GNESelector::SET_REPLACE);
+    myUpdateTarget->getSelector()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
 
 long
-GNEConnector::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
     onCmdCancel(0, 0, 0);
     myUndoList->p_begin("clear connections from selected lanes, edges and junctions");
     const std::set<GUIGlID> ids = gSelected.getSelected();
@@ -409,7 +409,7 @@ GNEConnector::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
 
 
 void
-GNEConnector::removeConnections(GNELane* lane) {
+GNEConnectorFrame::removeConnections(GNELane* lane) {
     handleLaneClick(lane, false, false, true); // select as current lane
     for (std::set<GNELane*>::iterator it = myPotentialTargets.begin(); it != myPotentialTargets.end(); it++) {
         handleLaneClick(*it, false, false, false);  // deselect
@@ -419,7 +419,7 @@ GNEConnector::removeConnections(GNELane* lane) {
 
 
 long
-GNEConnector::onCmdResetSelectedConnections(FXObject*, FXSelector, void*) {
+GNEConnectorFrame::onCmdResetSelectedConnections(FXObject*, FXSelector, void*) {
     onCmdCancel(0, 0, 0);
     myUndoList->p_begin("reset connections from selected lanes");
     const std::set<GUIGlID> nodeIDs = gSelected.getSelected(GLO_JUNCTION);
@@ -440,7 +440,7 @@ GNEConnector::onCmdResetSelectedConnections(FXObject*, FXSelector, void*) {
 
 
 void
-GNEConnector::updateDescription() const {
+GNEConnectorFrame::updateDescription() const {
     if (myCurrentLane == 0) {
         myDescription->setText("No Lane Selected\n");
     } else {
@@ -452,7 +452,7 @@ GNEConnector::updateDescription() const {
 
 
 void
-GNEConnector::initTargets() {
+GNEConnectorFrame::initTargets() {
     // gather potential targets
     NBNode* nbn = myCurrentLane->getParentEdge().getDest()->getNBNode();
 
@@ -488,7 +488,7 @@ GNEConnector::initTargets() {
 
 
 void
-GNEConnector::cleanup() {
+GNEConnectorFrame::cleanup() {
     // clean up
     for (std::set<GNELane*>::iterator it = myPotentialTargets.begin(); it != myPotentialTargets.end(); it++) {
         (*it)->setSpecialColor(0);
@@ -502,8 +502,8 @@ GNEConnector::cleanup() {
 }
 
 
-GNEConnector::LaneStatus
-GNEConnector::getLaneStatus(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane) {
+GNEConnectorFrame::LaneStatus
+GNEConnectorFrame::getLaneStatus(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane) {
     NBEdge* srcEdge = myCurrentLane->getParentEdge().getNBEdge();
     const unsigned int fromIndex = myCurrentLane->getIndex();
     NBEdge* destEdge = targetLane->getParentEdge().getNBEdge();
@@ -527,7 +527,7 @@ GNEConnector::getLaneStatus(const std::vector<NBEdge::Connection>& connections, 
 
 
 unsigned int
-GNEConnector::getTLLLinkNumber(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane) {
+GNEConnectorFrame::getTLLLinkNumber(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane) {
     const unsigned int fromIndex = myCurrentLane->getIndex();
     NBEdge* destEdge = targetLane->getParentEdge().getNBEdge();
     const unsigned int toIndex = targetLane->getIndex();
@@ -540,7 +540,7 @@ GNEConnector::getTLLLinkNumber(const std::vector<NBEdge::Connection>& connection
 
 
 void
-GNEConnector::buildIinternalLanes(NBNode* node) {
+GNEConnectorFrame::buildIinternalLanes(NBNode* node) {
     // clean up previous objects
     SUMORTree& rtree = myUpdateTarget->getNet()->getVisualisationSpeedUp();
     for (std::map<int, GNEInternalLane*>::iterator it = myInternalLanes.begin(); it != myInternalLanes.end(); it++) {

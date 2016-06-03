@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNEInspector.cpp
+/// @file    GNEInspectorFrame.cpp
 /// @author  Jakob Erdmann
 /// @date    Mar 2011
-/// @version $Id$
+/// @version $Id: GNEInspectorFrame.cpp 20474 2016-04-16 09:10:57Z palcraft $
 ///
 // The Widget for modifying network-element attributes (i.e. lane speed)
 /****************************************************************************/
@@ -38,7 +38,7 @@
 #include <utils/foxtools/MFXUtils.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/images/GUIIconSubSys.h>
-#include "GNEInspector.h"
+#include "GNEInspectorFrame.h"
 #include "GNEUndoList.h"
 #include "GNEEdge.h"
 #include "GNEAttributeCarrier.h"
@@ -53,38 +53,38 @@
 // ===========================================================================
 // FOX callback mapping
 // ===========================================================================
-FXDEFMAP(GNEInspector) GNEInspectorMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE, GNEInspector::onCmdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,  GNEInspector::onCmdSetTemplate),
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE, GNEInspector::onUpdCopyTemplate),
+FXDEFMAP(GNEInspectorFrame) GNEInspectorFrameMap[] = {
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onCmdCopyTemplate),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,  GNEInspectorFrame::onCmdSetTemplate),
+    FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onUpdCopyTemplate),
 };
 
 
-FXDEFMAP(GNEInspector::AttrPanel) AttrPanelMap[]= {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspector::AttrPanel::onCmdSetBlocking),
+FXDEFMAP(GNEInspectorFrame::AttrPanel) AttrPanelMap[]= {
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspectorFrame::AttrPanel::onCmdSetBlocking),
 };
 
 
-FXDEFMAP(GNEInspector::AttrInput) AttrInputMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_ATTRIBUTE,         GNEInspector::AttrInput::onCmdSetAttribute),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspector::AttrInput::onCmdOpenAttributeEditor)
+FXDEFMAP(GNEInspectorFrame::AttrInput) AttrInputMap[] = {
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_ATTRIBUTE,         GNEInspectorFrame::AttrInput::onCmdSetAttribute),
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor)
 };
 
 // Object implementation
-FXIMPLEMENT(GNEInspector, FXScrollWindow, GNEInspectorMap, ARRAYNUMBER(GNEInspectorMap))
-FXIMPLEMENT(GNEInspector::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))
-FXIMPLEMENT(GNEInspector::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
+FXIMPLEMENT(GNEInspectorFrame, FXScrollWindow, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
+FXIMPLEMENT(GNEInspectorFrame::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))
+FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 
 
 // ===========================================================================
 // static members
 // ===========================================================================
-const int GNEInspector::WIDTH = 140;
+const int GNEInspectorFrame::WIDTH = 140;
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEInspector::GNEInspector(FXComposite* parent, GNEUndoList* undoList):
+GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myUndoList(undoList),
     myHeaderFont(new FXFont(getApp(), "Arial", 18, FXFont::Bold)),
@@ -95,18 +95,18 @@ GNEInspector::GNEInspector(FXComposite* parent, GNEUndoList* undoList):
 
 
 void
-GNEInspector::create() {
+GNEInspectorFrame::create() {
     FXScrollWindow::create();
     myHeaderFont->create();
     myPanel->create();
 }
 
 
-GNEInspector::~GNEInspector() {
+GNEInspectorFrame::~GNEInspectorFrame() {
     delete myPanel;
     delete myHeaderFont;
     if (myEdgeTemplate) {
-        myEdgeTemplate->decRef("GNEInspector::~GNEInspector");
+        myEdgeTemplate->decRef("GNEInspectorFrame::~GNEInspectorFrame");
         if (myEdgeTemplate->unreferenced()) {
             delete myEdgeTemplate;
         }
@@ -115,7 +115,7 @@ GNEInspector::~GNEInspector() {
 
 
 void
-GNEInspector::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
+GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
     delete myPanel;
     myACs = ACs;
     myPanel = new AttrPanel(this, myACs, myUndoList);
@@ -125,38 +125,38 @@ GNEInspector::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
 
 
 void
-GNEInspector::update() {
+GNEInspectorFrame::update() {
     inspect(myACs);
 }
 
 
 FXFont*
-GNEInspector::getHeaderFont() const {
+GNEInspectorFrame::getHeaderFont() const {
     return myHeaderFont;
 }
 
 
 GNEEdge*
-GNEInspector::getEdgeTemplate() const {
+GNEInspectorFrame::getEdgeTemplate() const {
     return myEdgeTemplate;
 }
 
 
 void
-GNEInspector::setEdgeTemplate(GNEEdge* tpl) {
+GNEInspectorFrame::setEdgeTemplate(GNEEdge* tpl) {
     if (myEdgeTemplate) {
-        myEdgeTemplate->decRef("GNEInspector::setEdgeTemplate");
+        myEdgeTemplate->decRef("GNEInspectorFrame::setEdgeTemplate");
         if (myEdgeTemplate->unreferenced()) {
             delete myEdgeTemplate;
         }
     }
     myEdgeTemplate = tpl;
-    myEdgeTemplate->incRef("GNEInspector::setEdgeTemplate");
+    myEdgeTemplate->incRef("GNEInspectorFrame::setEdgeTemplate");
 }
 
 
 long
-GNEInspector::onCmdCopyTemplate(FXObject*, FXSelector, void*) {
+GNEInspectorFrame::onCmdCopyTemplate(FXObject*, FXSelector, void*) {
     for (std::vector<GNEAttributeCarrier*>::iterator it = myACs.begin(); it != myACs.end(); it++) {
         GNEEdge* edge = dynamic_cast<GNEEdge*>(*it);
         assert(edge);
@@ -167,7 +167,7 @@ GNEInspector::onCmdCopyTemplate(FXObject*, FXSelector, void*) {
 
 
 long
-GNEInspector::onCmdSetTemplate(FXObject*, FXSelector, void*) {
+GNEInspectorFrame::onCmdSetTemplate(FXObject*, FXSelector, void*) {
     assert(myACs.size() == 1);
     GNEEdge* edge = dynamic_cast<GNEEdge*>(myACs[0]);
     assert(edge);
@@ -178,7 +178,7 @@ GNEInspector::onCmdSetTemplate(FXObject*, FXSelector, void*) {
 
 
 long
-GNEInspector::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
+GNEInspectorFrame::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
     FXString caption;
     if (myEdgeTemplate) {
         caption = ("Copy '" + myEdgeTemplate->getMicrosimID() + "'").c_str();
@@ -192,7 +192,7 @@ GNEInspector::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
 }
 
 long
-GNEInspector::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {
+GNEInspectorFrame::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {
     myAdditional->setBlocked(myCheckBlocked->getCheck() == 1? true : false);
     myAdditional->getViewNet()->update();
     return 1;
@@ -203,7 +203,7 @@ GNEInspector::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {
 // AttrPanel method definitions
 // ===========================================================================
 
-GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList) :
+GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList) :
     FXVerticalFrame(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0, 2, 0, 0, 0, 0, 0) {
     FXLabel* header;
 
@@ -276,7 +276,7 @@ GNEInspector::AttrPanel::AttrPanel(GNEInspector* parent, const std::vector<GNEAt
 // AttrInput method definitions
 //
 // ===========================================================================
-GNEInspector::AttrInput::AttrInput(
+GNEInspectorFrame::AttrInput::AttrInput(
     FXComposite* parent,
     const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue,
     GNEUndoList* undoList) :
@@ -320,7 +320,7 @@ GNEInspector::AttrInput::AttrInput(
 
 
 long
-GNEInspector::AttrInput::onCmdOpenAttributeEditor(FXObject*, FXSelector, void*) {
+GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor(FXObject*, FXSelector, void*) {
     FXDialogBox* editor = new FXDialogBox(getApp(),
                                           ("Select " + toString(myAttr) + "ed").c_str(),
                                           DECOR_CLOSE | DECOR_TITLE);
@@ -361,7 +361,7 @@ GNEInspector::AttrInput::onCmdOpenAttributeEditor(FXObject*, FXSelector, void*) 
 
 
 long
-GNEInspector::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* data) {
+GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* data) {
     std::string newVal(myTextField != 0 ? myTextField->getText().text() : (char*) data);
     const std::vector<GNEAttributeCarrier*>& ACs = *myACs;
     if (ACs[0]->isValid(myAttr, newVal)) {

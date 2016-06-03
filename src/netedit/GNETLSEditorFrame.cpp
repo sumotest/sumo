@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNETLSEditor.cpp
+/// @file    GNETLSEditorFrame.cpp
 /// @author  Jakob Erdmann
 /// @date    May 2011
-/// @version $Id$
+/// @version $Id: GNETLSEditorFrame.cpp 20472 2016-04-15 15:36:45Z palcraft $
 ///
 // The Widget for modifying traffic lights
 /****************************************************************************/
@@ -42,7 +42,7 @@
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <netbuild/NBTrafficLightDefinition.h>
 #include <netbuild/NBLoadedSUMOTLDef.h>
-#include "GNETLSEditor.h"
+#include "GNETLSEditorFrame.h"
 #include "GNEViewNet.h"
 #include "GNENet.h"
 #include "GNEJunction.h"
@@ -59,47 +59,47 @@
 // ===========================================================================
 // FOX callback mapping
 // ===========================================================================
-FXDEFMAP(GNETLSEditor) GNETLSEditorMap[] = {
-    FXMAPFUNC(SEL_COMMAND,    MID_CANCEL,                 GNETLSEditor::onCmdCancel),
-    FXMAPFUNC(SEL_COMMAND,    MID_OK,                     GNETLSEditor::onCmdOK),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_CREATE,         GNETLSEditor::onCmdDefCreate),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_DELETE,         GNETLSEditor::onCmdDefDelete),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_SWITCH,         GNETLSEditor::onCmdDefSwitch),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_OFFSET,         GNETLSEditor::onCmdDefOffset),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_RENAME,         GNETLSEditor::onCmdDefRename),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_SUBRENAME,      GNETLSEditor::onCmdDefSubRename),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_ADDOFF,         GNETLSEditor::onCmdDefAddOff),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_GUESS_PROGRAM,      GNETLSEditor::onCmdGuess),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_PHASE_CREATE,       GNETLSEditor::onCmdPhaseCreate),
-    FXMAPFUNC(SEL_COMMAND,    MID_GNE_PHASE_DELETE,       GNETLSEditor::onCmdPhaseDelete),
-    FXMAPFUNC(SEL_SELECTED,   MID_GNE_PHASE_TABLE,        GNETLSEditor::onCmdPhaseSwitch),
-    FXMAPFUNC(SEL_DESELECTED, MID_GNE_PHASE_TABLE,        GNETLSEditor::onCmdPhaseSwitch),
-    FXMAPFUNC(SEL_CHANGED,    MID_GNE_PHASE_TABLE,        GNETLSEditor::onCmdPhaseSwitch),
-    FXMAPFUNC(SEL_REPLACED,   MID_GNE_PHASE_TABLE,        GNETLSEditor::onCmdPhaseEdit),
+FXDEFMAP(GNETLSEditorFrame) GNETLSEditorFrameMap[] = {
+    FXMAPFUNC(SEL_COMMAND,    MID_CANCEL,                 GNETLSEditorFrame::onCmdCancel),
+    FXMAPFUNC(SEL_COMMAND,    MID_OK,                     GNETLSEditorFrame::onCmdOK),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_CREATE,         GNETLSEditorFrame::onCmdDefCreate),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_DELETE,         GNETLSEditorFrame::onCmdDefDelete),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_SWITCH,         GNETLSEditorFrame::onCmdDefSwitch),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_OFFSET,         GNETLSEditorFrame::onCmdDefOffset),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_RENAME,         GNETLSEditorFrame::onCmdDefRename),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_SUBRENAME,      GNETLSEditorFrame::onCmdDefSubRename),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_DEF_ADDOFF,         GNETLSEditorFrame::onCmdDefAddOff),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_GUESS_PROGRAM,      GNETLSEditorFrame::onCmdGuess),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_PHASE_CREATE,       GNETLSEditorFrame::onCmdPhaseCreate),
+    FXMAPFUNC(SEL_COMMAND,    MID_GNE_PHASE_DELETE,       GNETLSEditorFrame::onCmdPhaseDelete),
+    FXMAPFUNC(SEL_SELECTED,   MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseSwitch),
+    FXMAPFUNC(SEL_DESELECTED, MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseSwitch),
+    FXMAPFUNC(SEL_CHANGED,    MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseSwitch),
+    FXMAPFUNC(SEL_REPLACED,   MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseEdit),
 
-    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_CREATE,         GNETLSEditor::onUpdDefCreate),
-    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_DELETE,         GNETLSEditor::onUpdDefSwitch),
-    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_SWITCH,         GNETLSEditor::onUpdDefSwitch),
-    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_OFFSET,         GNETLSEditor::onUpdNeedsDef),
-    FXMAPFUNC(SEL_UPDATE,     MID_GNE_PHASE_CREATE,       GNETLSEditor::onUpdNeedsDef),
-    FXMAPFUNC(SEL_UPDATE,     MID_GNE_PHASE_DELETE,       GNETLSEditor::onUpdNeedsDefAndPhase),
-    FXMAPFUNC(SEL_UPDATE,     MID_CANCEL,                 GNETLSEditor::onUpdModified),
-    FXMAPFUNC(SEL_UPDATE,     MID_OK,                     GNETLSEditor::onUpdModified),
+    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_CREATE,         GNETLSEditorFrame::onUpdDefCreate),
+    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_DELETE,         GNETLSEditorFrame::onUpdDefSwitch),
+    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_SWITCH,         GNETLSEditorFrame::onUpdDefSwitch),
+    FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_OFFSET,         GNETLSEditorFrame::onUpdNeedsDef),
+    FXMAPFUNC(SEL_UPDATE,     MID_GNE_PHASE_CREATE,       GNETLSEditorFrame::onUpdNeedsDef),
+    FXMAPFUNC(SEL_UPDATE,     MID_GNE_PHASE_DELETE,       GNETLSEditorFrame::onUpdNeedsDefAndPhase),
+    FXMAPFUNC(SEL_UPDATE,     MID_CANCEL,                 GNETLSEditorFrame::onUpdModified),
+    FXMAPFUNC(SEL_UPDATE,     MID_OK,                     GNETLSEditorFrame::onUpdModified),
 };
 
 
 // Object implementation
-FXIMPLEMENT(GNETLSEditor, FXScrollWindow, GNETLSEditorMap, ARRAYNUMBER(GNETLSEditorMap))
+FXIMPLEMENT(GNETLSEditorFrame, FXScrollWindow, GNETLSEditorFrameMap, ARRAYNUMBER(GNETLSEditorFrameMap))
 
 // ===========================================================================
 // static members
 // ===========================================================================
-const int GNETLSEditor::WIDTH = 140;
+const int GNETLSEditorFrame::WIDTH = 140;
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNETLSEditor::GNETLSEditor(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
+GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
     myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
     myTableFont(new FXFont(getApp(), "Courier New", 9)),
@@ -183,7 +183,7 @@ GNETLSEditor::GNETLSEditor(FXComposite* parent, GNEViewNet* updateTarget, GNEUnd
 }
 
 
-GNETLSEditor::~GNETLSEditor() {
+GNETLSEditorFrame::~GNETLSEditorFrame() {
     delete myHeaderFont;
     delete myTableFont;
     cleanup();
@@ -191,7 +191,7 @@ GNETLSEditor::~GNETLSEditor() {
 
 
 void
-GNETLSEditor::editJunction(GNEJunction* junction) {
+GNETLSEditorFrame::editJunction(GNEJunction* junction) {
     if (myCurrentJunction == 0 || (!myHaveModifications && (junction != myCurrentJunction))) {
         onCmdCancel(0, 0, 0);
         myUndoList->p_begin("modifying traffic light definition");
@@ -205,7 +205,7 @@ GNETLSEditor::editJunction(GNEJunction* junction) {
 
 
 long
-GNETLSEditor::onCmdCancel(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdCancel(FXObject*, FXSelector, void*) {
     if (myCurrentJunction != 0) {
         myUndoList->p_abort();
         cleanup();
@@ -216,7 +216,7 @@ GNETLSEditor::onCmdCancel(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdOK(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdOK(FXObject*, FXSelector, void*) {
     if (myCurrentJunction != 0) {
         if (myHaveModifications) {
             NBTrafficLightDefinition* old = myDefinitions[myDefBox->getCurrentItem()];
@@ -239,7 +239,7 @@ GNETLSEditor::onCmdOK(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdDefCreate(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefCreate(FXObject*, FXSelector, void*) {
     GNEJunction* junction = myCurrentJunction;
     onCmdCancel(0, 0, 0); // abort because we onCmdOk assumes we wish to save an edited definition
     if (junction->getAttribute(SUMO_ATTR_TYPE) != toString(NODETYPE_TRAFFIC_LIGHT)) {
@@ -253,7 +253,7 @@ GNETLSEditor::onCmdDefCreate(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdDefDelete(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefDelete(FXObject*, FXSelector, void*) {
     GNEJunction* junction = myCurrentJunction;
     const bool changeType = myDefinitions.size() == 1;
     onCmdCancel(0, 0, 0); // abort because onCmdOk assumes we wish to save an edited definition
@@ -268,7 +268,7 @@ GNETLSEditor::onCmdDefDelete(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdDefSwitch(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefSwitch(FXObject*, FXSelector, void*) {
     assert(myCurrentJunction != 0);
     assert((int)myDefinitions.size() == myDefBox->getNumItems());
     NBTrafficLightDefinition* tlDef = myDefinitions[myDefBox->getCurrentItem()];
@@ -295,7 +295,7 @@ GNETLSEditor::onCmdDefSwitch(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onUpdDefSwitch(FXObject* o, FXSelector, void*) {
+GNETLSEditorFrame::onUpdDefSwitch(FXObject* o, FXSelector, void*) {
     const bool enable = myDefinitions.size() > 0 && !myHaveModifications;
     o->handle(this, FXSEL(SEL_COMMAND, enable ? FXWindow::ID_ENABLE : FXWindow::ID_DISABLE), 0);
     return 1;
@@ -303,7 +303,7 @@ GNETLSEditor::onUpdDefSwitch(FXObject* o, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onUpdNeedsDef(FXObject* o, FXSelector, void*) {
+GNETLSEditorFrame::onUpdNeedsDef(FXObject* o, FXSelector, void*) {
     const bool enable = myDefinitions.size() > 0;
     o->handle(this, FXSEL(SEL_COMMAND, enable ? FXWindow::ID_ENABLE : FXWindow::ID_DISABLE), 0);
     return 1;
@@ -311,7 +311,7 @@ GNETLSEditor::onUpdNeedsDef(FXObject* o, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onUpdNeedsDefAndPhase(FXObject* o, FXSelector, void*) {
+GNETLSEditorFrame::onUpdNeedsDefAndPhase(FXObject* o, FXSelector, void*) {
     // do not delete the last phase
     const bool enable = myDefinitions.size() > 0 && myPhaseTable->getNumRows() > 1;
     o->handle(this, FXSEL(SEL_COMMAND, enable ? FXWindow::ID_ENABLE : FXWindow::ID_DISABLE), 0);
@@ -320,7 +320,7 @@ GNETLSEditor::onUpdNeedsDefAndPhase(FXObject* o, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onUpdDefCreate(FXObject* o, FXSelector, void*) {
+GNETLSEditorFrame::onUpdDefCreate(FXObject* o, FXSelector, void*) {
     const bool enable = myCurrentJunction != 0 && !myHaveModifications;
     o->handle(this, FXSEL(SEL_COMMAND, enable ? FXWindow::ID_ENABLE : FXWindow::ID_DISABLE), 0);
     return 1;
@@ -328,7 +328,7 @@ GNETLSEditor::onUpdDefCreate(FXObject* o, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onUpdModified(FXObject* o, FXSelector, void*) {
+GNETLSEditorFrame::onUpdModified(FXObject* o, FXSelector, void*) {
     bool enable = myHaveModifications;
     o->handle(this, FXSEL(SEL_COMMAND, enable ? FXWindow::ID_ENABLE : FXWindow::ID_DISABLE), 0);
     return 1;
@@ -337,7 +337,7 @@ GNETLSEditor::onUpdModified(FXObject* o, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdDefOffset(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefOffset(FXObject*, FXSelector, void*) {
     myHaveModifications = true;
     myEditedDef->setOffset(getSUMOTime(myOffset->getText()));
     return 1;
@@ -345,31 +345,31 @@ GNETLSEditor::onCmdDefOffset(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdDefRename(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefRename(FXObject*, FXSelector, void*) {
     return 1;
 }
 
 
 long
-GNETLSEditor::onCmdDefSubRename(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefSubRename(FXObject*, FXSelector, void*) {
     return 1;
 }
 
 
 long
-GNETLSEditor::onCmdDefAddOff(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdDefAddOff(FXObject*, FXSelector, void*) {
     return 1;
 }
 
 
 long
-GNETLSEditor::onCmdGuess(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdGuess(FXObject*, FXSelector, void*) {
     return 1;
 }
 
 
 long
-GNETLSEditor::onCmdPhaseSwitch(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdPhaseSwitch(FXObject*, FXSelector, void*) {
     const unsigned int index = myPhaseTable->getCurrentRow();
     const NBTrafficLightLogic::PhaseDefinition& phase = getPhases()[index];
     myPhaseTable->selectRow(index);
@@ -390,7 +390,7 @@ GNETLSEditor::onCmdPhaseSwitch(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdPhaseCreate(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdPhaseCreate(FXObject*, FXSelector, void*) {
     myHaveModifications = true;
     // allows insertion at first position by deselecting via arrow keys
     unsigned int newIndex = myPhaseTable->getSelStartRow() + 1;
@@ -407,7 +407,7 @@ GNETLSEditor::onCmdPhaseCreate(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdPhaseDelete(FXObject*, FXSelector, void*) {
+GNETLSEditorFrame::onCmdPhaseDelete(FXObject*, FXSelector, void*) {
     myHaveModifications = true;
     const int newRow = MAX2((int)0, (int)myPhaseTable->getCurrentRow() - 1);
     myEditedDef->getLogic()->deletePhase(myPhaseTable->getCurrentRow());
@@ -418,7 +418,7 @@ GNETLSEditor::onCmdPhaseDelete(FXObject*, FXSelector, void*) {
 
 
 long
-GNETLSEditor::onCmdPhaseEdit(FXObject*, FXSelector, void* ptr) {
+GNETLSEditorFrame::onCmdPhaseEdit(FXObject*, FXSelector, void* ptr) {
     /* @note: there is a bug when copying/pasting rows: when this handler is
      * called the value of the cell is not yet updated. This means you have to
      * click inside the cell and hit enter to actually update the value */
@@ -455,7 +455,7 @@ GNETLSEditor::onCmdPhaseEdit(FXObject*, FXSelector, void* ptr) {
 
 
 void
-GNETLSEditor::updateDescription() const {
+GNETLSEditorFrame::updateDescription() const {
     std::string description;
     if (myCurrentJunction == 0) {
         description = "No Junction Selected\n";
@@ -472,7 +472,7 @@ GNETLSEditor::updateDescription() const {
 
 
 void
-GNETLSEditor::cleanup() {
+GNETLSEditorFrame::cleanup() {
     if (myCurrentJunction) {
         myCurrentJunction->selectTLS(false);
     }
@@ -493,7 +493,7 @@ GNETLSEditor::cleanup() {
 
 
 void
-GNETLSEditor::buildIinternalLanes(NBTrafficLightDefinition* tlDef) {
+GNETLSEditorFrame::buildIinternalLanes(NBTrafficLightDefinition* tlDef) {
     // clean up previous objects
     SUMORTree& rtree = myUpdateTarget->getNet()->getVisualisationSpeedUp();
     for (TLIndexMap::iterator it = myInternalLanes.begin(); it != myInternalLanes.end(); it++) {
@@ -531,7 +531,7 @@ GNETLSEditor::buildIinternalLanes(NBTrafficLightDefinition* tlDef) {
 
 
 void
-GNETLSEditor::initDefinitions() {
+GNETLSEditorFrame::initDefinitions() {
     myDefinitions.clear();
     myDefBox->clearItems();
     assert(myCurrentJunction);
@@ -553,7 +553,7 @@ GNETLSEditor::initDefinitions() {
 
 
 void
-GNETLSEditor::initPhaseTable(unsigned int index) {
+GNETLSEditorFrame::initPhaseTable(unsigned int index) {
     myPhaseTable->setVisibleRows(1);
     myPhaseTable->setVisibleColumns(2);
     myPhaseTable->hide();
@@ -584,13 +584,13 @@ GNETLSEditor::initPhaseTable(unsigned int index) {
 
 
 const std::vector<NBTrafficLightLogic::PhaseDefinition>&
-GNETLSEditor::getPhases() {
+GNETLSEditorFrame::getPhases() {
     return myEditedDef->getLogic()->getPhases();
 }
 
 
 void
-GNETLSEditor::handleChange(GNEInternalLane* lane) {
+GNETLSEditorFrame::handleChange(GNEInternalLane* lane) {
     myHaveModifications = true;
     if (myUpdateTarget->changeAllPhases()) {
         const std::vector<NBTrafficLightLogic::PhaseDefinition>& phases = getPhases();
@@ -606,7 +606,7 @@ GNETLSEditor::handleChange(GNEInternalLane* lane) {
 
 
 void
-GNETLSEditor::handleMultiChange(GNELane* lane, FXObject* obj, FXSelector sel, void* data) {
+GNETLSEditorFrame::handleMultiChange(GNELane* lane, FXObject* obj, FXSelector sel, void* data) {
     if (myEditedDef != 0) {
         myHaveModifications = true;
         const NBConnectionVector& links = myEditedDef->getControlledLinks();
@@ -652,7 +652,7 @@ GNETLSEditor::handleMultiChange(GNELane* lane, FXObject* obj, FXSelector sel, vo
 
 
 bool
-GNETLSEditor::controlsEdge(GNEEdge& edge) const {
+GNETLSEditorFrame::controlsEdge(GNEEdge& edge) const {
     if (myEditedDef != 0) {
         const NBConnectionVector& links = myEditedDef->getControlledLinks();
         for (NBConnectionVector::const_iterator it = links.begin(); it != links.end(); it++) {
@@ -666,14 +666,14 @@ GNETLSEditor::controlsEdge(GNEEdge& edge) const {
 
 
 SUMOTime
-GNETLSEditor::getSUMOTime(const FXString& string) {
+GNETLSEditorFrame::getSUMOTime(const FXString& string) {
     assert(GNEAttributeCarrier::canParse<SUMOReal>(string.text()));
     return TIME2STEPS(GNEAttributeCarrier::parse<SUMOReal>(string.text()));
 }
 
 
 void
-GNETLSEditor::updateCycleDuration() {
+GNETLSEditorFrame::updateCycleDuration() {
     SUMOTime cycleDuration = 0;
     for (std::vector<NBTrafficLightLogic::PhaseDefinition>::const_iterator it = getPhases().begin(); it != getPhases().end(); it++) {
         cycleDuration += it->duration;

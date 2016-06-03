@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    GNEInspector.h
+/// @file    GNEInspectorFrame.h
 /// @author  Jakob Erdmann
 /// @date    Mar 2011
-/// @version $Id$
+/// @version $Id: GNEInspectorFrame.h 20785 2016-05-24 10:51:45Z palcraft $
 ///
 // The Widget for modifying network-element attributes (i.e. lane speed)
 /****************************************************************************/
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef GNEInspector_h
-#define GNEInspector_h
+#ifndef GNEInspectorFrame_h
+#define GNEInspectorFrame_h
 
 
 // ===========================================================================
@@ -46,12 +46,12 @@ class GNEAdditional;
 // class definitions
 // ===========================================================================
 /**
- * @class GNEInspector
+ * @class GNEInspectorFrame
  * The Widget for modifying network-element attributes (i.e. lane speed)
  */
-class GNEInspector : public FXScrollWindow {
+class GNEInspectorFrame : public FXScrollWindow {
     // FOX-declarations
-    FXDECLARE(GNEInspector)
+    FXDECLARE(GNEInspectorFrame)
 
 public:
     // ===========================================================================
@@ -59,11 +59,11 @@ public:
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
         // FOX-declarations
-        FXDECLARE(GNEInspector::AttrPanel)
+        FXDECLARE(GNEInspectorFrame::AttrPanel)
 
     public:
         /// @brief constructor
-        AttrPanel(GNEInspector* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
+        AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
 
         /// @brief try to set new attribute value
         long onCmdSetBlocking(FXObject*, FXSelector, void*);
@@ -85,7 +85,7 @@ public:
     // ===========================================================================
     class AttrInput : public FXHorizontalFrame {
         // FOX-declarations
-        FXDECLARE(GNEInspector::AttrInput)
+        FXDECLARE(GNEInspectorFrame::AttrInput)
 
     public:
         /// @brief constructor
@@ -128,10 +128,10 @@ public:
      * @param[in] undoList The undoList to record changes facilitated by this
      * @param[in] tpl The initial edge template (we assume shared responsibility via reference counting)
      */
-    GNEInspector(FXComposite* parent, GNEUndoList* undoList);
+    GNEInspectorFrame(FXComposite* parent, GNEUndoList* undoList);
 
     /// @brief Destructor
-    ~GNEInspector();
+    ~GNEInspectorFrame();
 
     /// @brief Inspect the given multi-selection
     void inspect(const std::vector<GNEAttributeCarrier*>& ACs);
@@ -162,7 +162,7 @@ public:
 
 protected:
     /// @brief FOX needs this
-    GNEInspector() {}
+    GNEInspectorFrame() {}
 
 private:
     /// @brief pointer to undo list
