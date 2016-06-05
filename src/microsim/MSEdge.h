@@ -461,6 +461,10 @@ public:
         return MSNet::getInstance()->getTravelTime(edge, veh, time);
     }
 
+    /** @brief Returns the averaged speed used by the routing device
+     */
+    SUMOReal getRoutingSpeed() const;
+
 
     /// @name Methods releated to vehicle insertion
     /// @{
@@ -646,6 +650,9 @@ public:
 
     /// @brief get the mean speed for mesoscopic simulation
     SUMOReal getMesoMeanSpeed() const;
+
+    /// @brief get the mean speed 
+    SUMOReal getMeanSpeed() const;
 
     /// @brief grant exclusive access to the mesoscopic state
     virtual void lock() const {}

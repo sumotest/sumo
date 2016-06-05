@@ -228,7 +228,6 @@ public:
     virtual ~MSVehicle();
 
 
-
     /// @name insertion/removal
     //@{
 

@@ -1018,17 +1018,25 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
         if (stop.duration <= 0 && !stop.triggered && !stop.containerTriggered) {
             resumeFromStopping();
         } else {
-            // we have to wait some more time
             if (stop.triggered && !myAmRegisteredAsWaitingForPerson) {
+                if (getVehicleType().getPersonCapacity() == getPersonNumber()) {
+                    WRITE_WARNING("Vehicle '" + getID() + "' ignores triggered stop on lane '" + stop.lane->getID() + "' due to capacity constraints.");
+                    stop.triggered = false;
+                }
                 // we can only register after waiting for one step. otherwise we might falsely signal a deadlock
                 MSNet::getInstance()->getVehicleControl().registerOneWaitingForPerson();
                 myAmRegisteredAsWaitingForPerson = true;
             }
             if (stop.containerTriggered && !myAmRegisteredAsWaitingForContainer) {
+                if (getVehicleType().getContainerCapacity() == getContainerNumber()) {
+                    WRITE_WARNING("Vehicle '" + getID() + "' ignores container triggered stop on lane '" + stop.lane->getID() + "' due to capacity constraints.");
+                    stop.containerTriggered = false;
+                }
                 // we can only register after waiting for one step. otherwise we might falsely signal a deadlock
                 MSNet::getInstance()->getVehicleControl().registerOneWaitingForContainer();
                 myAmRegisteredAsWaitingForContainer = true;
             }
+            // we have to wait some more time
             stop.duration -= DELTA_T;
             return 0;
         }
@@ -2850,9 +2858,9 @@ MSVehicle::getLeader(SUMOReal dist) const {
         myLane->releaseVehicles();
         return result;
     }
-    myLane->releaseVehicles();
     const SUMOReal seen = myLane->getLength() - getPositionOnLane();
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(myLane);
+    myLane->releaseVehicles();
     return myLane->getLeaderOnConsecutive(dist, seen, getSpeed(), *this, bestLaneConts);
 }
 

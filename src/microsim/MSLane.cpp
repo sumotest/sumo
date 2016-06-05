@@ -207,7 +207,6 @@ MSLane::addMoveReminder(MSMoveReminder* rem) {
 }
 
 
-
 SUMOReal
 MSLane::setPartialOccupation(MSVehicle* v) {
 #ifdef DEBUG_CONTEXT
@@ -928,7 +927,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
     if (myVehicles.size() == 0 || myCollisionAction == COLLISION_ACTION_NONE) {
         return;
     }
-    std::set<const MSVehicle*> toRemove;
+    std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess> toRemove;
     std::set<const MSVehicle*> toTeleport;
     if (MSGlobals::gLateralResolution <= 0 && MSGlobals::gLaneChangeDuration <= 0) {
         // no sublanes
@@ -1006,7 +1005,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
         }
     }
 
-    for (std::set<const MSVehicle*>::iterator it = toRemove.begin(); it != toRemove.end(); ++it) {
+    for (std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>::iterator it = toRemove.begin(); it != toRemove.end(); ++it) {
         MSVehicle* veh = const_cast<MSVehicle*>(*it);
         MSLane* vehLane = veh->getLane();
         vehLane->removeVehicle(veh, MSMoveReminder::NOTIFICATION_TELEPORT, false);
@@ -1022,7 +1021,8 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
 
 bool
 MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim,
-                               std::set<const MSVehicle*>& toRemove, std::set<const MSVehicle*>& toTeleport) const {
+                               std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>& toRemove, 
+                               std::set<const MSVehicle*>& toTeleport) const {
     assert(collider->isFrontOnLane(this));
 #ifndef NO_TRACI
     if (myCollisionAction == COLLISION_ACTION_TELEPORT && ((victim->hasInfluencer() && victim->getInfluencer()->isVTDAffected(timestep)) ||
@@ -1067,7 +1067,8 @@ MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, cons
 
 void
 MSLane::handleCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim,
-                               SUMOReal gap, SUMOReal latGap, std::set<const MSVehicle*>& toRemove, std::set<const MSVehicle*>& toTeleport) const {
+                               SUMOReal gap, SUMOReal latGap, std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>& toRemove, 
+                               std::set<const MSVehicle*>& toTeleport) const {
     std::string prefix;
     switch (myCollisionAction) {
         case COLLISION_ACTION_WARN:
@@ -1743,6 +1744,7 @@ MSLane::getLeaderOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, con
     const MSLane* nextLane = this;
     SUMOTime arrivalTime = MSNet::getInstance()->getCurrentTimeStep() + TIME2STEPS(seen / MAX2(speed, NUMERICAL_EPS));
     do {
+        nextLane->getVehiclesSecure(); // lock against running sim when called from GUI for time gap coloring
         // get the next link used
         MSLinkCont::const_iterator link = succLinkSec(veh, view, *nextLane, bestLaneConts);
         if (nextLane->isLinkEnd(link) || !(*link)->opened(arrivalTime, speed, speed, veh.getVehicleType().getLength(),
@@ -1752,11 +1754,13 @@ MSLane::getLeaderOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, con
                 std::cout << "    cannot continue after nextLane=" << nextLane->getID() << "\n";
             }
 #endif
+            nextLane->releaseVehicles();
             break;
         }
 #ifdef HAVE_INTERNAL_LANES
         // check for link leaders
         const MSLink::LinkLeaders linkLeaders = (*link)->getLeaderInfo(seen, veh.getVehicleType().getMinGap());
+        nextLane->releaseVehicles();
         if (linkLeaders.size() > 0) {
             // XXX if there is more than one link leader we should return the most important
             // one (gap, decel) but this is hard to know at this point
@@ -1773,6 +1777,7 @@ MSLane::getLeaderOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, con
         if (nextLane == 0) {
             break;
         }
+        nextLane->getVehiclesSecure(); // lock against running sim when called from GUI for time gap coloring
         MSVehicle* leader = nextLane->getLastAnyVehicle();
         if (leader != 0) {
 #ifdef DEBUG_CONTEXT
@@ -1780,8 +1785,11 @@ MSLane::getLeaderOnConsecutive(SUMOReal dist, SUMOReal seen, SUMOReal speed, con
                 std::cout << "    found leader " << leader->getID() << " on nextLane=" << nextLane->getID() << "\n";
             }
 #endif
-            return std::make_pair(leader, seen + leader->getBackPositionOnLane(nextLane) - veh.getVehicleType().getMinGap());
+            const SUMOReal dist = seen + leader->getBackPositionOnLane(nextLane) - veh.getVehicleType().getMinGap();
+            nextLane->releaseVehicles();
+            return std::make_pair(leader, dist);
         }
+        nextLane->releaseVehicles();
         if (nextLane->getVehicleMaxSpeed(&veh) < speed) {
             dist = veh.getCarFollowModel().brakeGap(nextLane->getVehicleMaxSpeed(&veh));
         }
