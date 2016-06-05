@@ -75,23 +75,16 @@ FXDEFMAP(GNESelectorFrame) GNESelectorFrameMap[] = {
 FXIMPLEMENT(GNESelectorFrame, FXScrollWindow, GNESelectorFrameMap, ARRAYNUMBER(GNESelectorFrameMap))
 
 // ===========================================================================
-// static members
-// ===========================================================================
-const int GNESelectorFrame::WIDTH = 140;
-
-// ===========================================================================
 // method definitions
 // ===========================================================================
-GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
-    FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
+GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
+    GNEFrame(parent, viewNet, undoList),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
-    myUpdateTarget(updateTarget),
     mySetOperation(SET_ADD),
     mySetOperationTarget(mySetOperation),
-    myUndoList(undoList),
     ALL_VCLASS_NAMES_MATCH_STRING("all " + joinToString(SumoVehicleClassStrings.getStrings(), " ")) {
     // stats
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0);
+    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth, 0);
     myStats = new FXLabel(myContentFrame, getStats().c_str(), 0, JUSTIFY_LEFT);
     myStats->setFont(myHeaderFont);
 
@@ -167,6 +160,12 @@ GNESelectorFrame::~GNESelectorFrame() {
 }
 
 
+FXFont* 
+GNESelectorFrame::getHeaderFont() const {
+    return myHeaderFont;
+}
+
+
 long
 GNESelectorFrame::onCmdLoad(FXObject*, FXSelector, void*) {
     // get the new file name
@@ -188,7 +187,7 @@ GNESelectorFrame::onCmdLoad(FXObject*, FXSelector, void*) {
             FXMessageBox::error(this, MBOX_OK, "Errors while loading Selection", "%s", errors.c_str());
         }
     }
-    myUpdateTarget->update();
+    myViewNet->update();
     return 1;
 }
 
@@ -212,26 +211,26 @@ GNESelectorFrame::onCmdSave(FXObject*, FXSelector, void*) {
 long
 GNESelectorFrame::onCmdClear(FXObject*, FXSelector, void*) {
     myUndoList->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
-    myUpdateTarget->update();
+    myViewNet->update();
     return 1;
 }
 
 
 long
 GNESelectorFrame::onCmdInvert(FXObject*, FXSelector, void*) {
-    std::set<GUIGlID> ids = myUpdateTarget->getNet()->getGlIDs(GLO_JUNCTION);
+    std::set<GUIGlID> ids = myViewNet->getNet()->getGlIDs(GLO_JUNCTION);
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
-    ids = myUpdateTarget->getNet()->getGlIDs(myUpdateTarget->selectEdges() ? GLO_EDGE : GLO_LANE);
+    ids = myViewNet->getNet()->getGlIDs(myViewNet->selectEdges() ? GLO_EDGE : GLO_LANE);
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
-    ids = myUpdateTarget->getNet()->getGlIDs(GLO_ADDITIONAL);
+    ids = myViewNet->getNet()->getGlIDs(GLO_ADDITIONAL);
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
-    myUpdateTarget->update();
+    myViewNet->update();
     return 1;
 }
 
@@ -349,8 +348,8 @@ GNESelectorFrame::onCmdHelp(FXObject*, FXSelector, void*) {
 
 long
 GNESelectorFrame::onCmdScaleSelection(FXObject*, FXSelector, void*) {
-    myUpdateTarget->setSelectionScaling(mySelectionScaling->getValue());
-    myUpdateTarget->update();
+    myViewNet->setSelectionScaling(mySelectionScaling->getValue());
+    myViewNet->update();
     return 1;
 }
 
@@ -404,7 +403,7 @@ GNESelectorFrame::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOpera
     std::set<GUIGlID> idsSet(ids.begin(), ids.end());
     std::set<GUIGlID> selected;
     std::set<GUIGlID> deselected;
-    if (myUpdateTarget->autoSelectNodes()) {
+    if (myViewNet->autoSelectNodes()) {
         for (std::vector<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
             GUIGlID id = *it;
             if (id > 0) { // net object?
@@ -457,7 +456,7 @@ GNESelectorFrame::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOpera
     }
     myUndoList->add(new GNEChange_Selection(selected, deselected, true), true);
     myUndoList->p_end();
-    myUpdateTarget->update();
+    myViewNet->update();
 }
 
 
@@ -466,7 +465,7 @@ GNESelectorFrame::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMO
     GUIGlObject* object;
     GNEAttributeCarrier* ac;
     std::vector<GUIGlID> result;
-    const std::set<GUIGlID> allIDs = myUpdateTarget->getNet()->getGlIDs();
+    const std::set<GUIGlID> allIDs = myViewNet->getNet()->getGlIDs();
     const bool numerical = GNEAttributeCarrier::isNumerical(attr);
     for (std::set<GUIGlID>::const_iterator it = allIDs.begin(); it != allIDs.end(); it++) {
         GUIGlID id = *it;

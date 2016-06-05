@@ -112,21 +112,13 @@ FXIMPLEMENT(GNEAdditionalFrame::edges,                   FXGroupBox,     GNEEdge
 FXIMPLEMENT(GNEAdditionalFrame::lanes,                   FXGroupBox,     GNELanesMap,                   ARRAYNUMBER(GNELanesMap))
 
 // ===========================================================================
-// static members
-// ===========================================================================
-
-const int GNEAdditionalFrame::WIDTH = 140;
-
-// ===========================================================================
 // method definitions
 // ===========================================================================
 
-GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
-    FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
+GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
+    GNEFrame(parent, viewNet, undoList),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
-    myViewNet(updateTarget),
-    myActualAdditionalType(SUMO_TAG_NOTHING),
-    myUndoList(undoList) {
+    myActualAdditionalType(SUMO_TAG_NOTHING) {
     // Create frame
     myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
 
@@ -923,9 +915,9 @@ GNEAdditionalFrame::editorParameters::onCmdHelp(FXObject*, FXSelector, void*) {
 // GNEAdditionalFrame::additionalSet - methods
 // ---------------------------------------------------------------------------
 
-GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* updateTarget) :
+GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* viewNet) :
     FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
-    myViewNet(updateTarget),
+    myViewNet(viewNet),
     myType(SUMO_TAG_NOTHING) {
 
     // Create label with the type of additionalSet
@@ -995,9 +987,9 @@ GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
 // GNEAdditionalFrame::edges - methods
 // ---------------------------------------------------------------------------
 
-GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* updateTarget) :
+GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* viewNet) :
     FXGroupBox(parent, "Edges", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
-    myViewNet(updateTarget) {
+    myViewNet(viewNet) {
 
     // Create search box
     myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, LAYOUT_FILL_X);
@@ -1099,9 +1091,9 @@ GNEAdditionalFrame::edges::onCmdHelp(FXObject*, FXSelector, void*) {
 // GNEAdditionalFrame::lanes - methods
 // ---------------------------------------------------------------------------
 
-GNEAdditionalFrame::lanes::lanes(FXComposite *parent, GNEViewNet* updateTarget) :
+GNEAdditionalFrame::lanes::lanes(FXComposite *parent, GNEViewNet* viewNet) :
     FXGroupBox(parent, "lanes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
-    myViewNet(updateTarget) {
+    myViewNet(viewNet) {
 
     // Create search box
     myLanesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHLANE, LAYOUT_FILL_X);

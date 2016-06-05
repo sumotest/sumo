@@ -30,20 +30,12 @@
 #include <config.h>
 #endif
 
-#include <GL/gl.h>
-#include <list>
-#include <utils/foxtools/FXRealSpinDial.h>
-#include <utils/xml/SUMOXMLDefinitions.h>
-#include <utils/gui/div/GUISelectedStorage.h>
-#include <utils/xml/SUMOSAXHandler.h>
-#include "GNEDynamicFrame.h"
+#include "GNEFrame.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNEViewNet;
 class GNEAttributeCarrier;
-class GNEUndoList;
 class GNELane;
 class GNEAdditional;
 class GNEAdditionalSet;
@@ -55,7 +47,7 @@ class GNEAdditionalSet;
  * @class GNEAdditionalFrame
  * The Widget for setting default parameters of additional elements
  */
-class GNEAdditionalFrame : public FXScrollWindow {
+class GNEAdditionalFrame : public GNEFrame {
     // FOX-declaration
     FXDECLARE(GNEAdditionalFrame)
 
@@ -342,7 +334,7 @@ public:
 
     public:
         /// @brief constructor
-        additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* updateTarget);
+        additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* viewNet);
 
         /// @brief destructor
         ~additionalSet();
@@ -399,7 +391,7 @@ public:
 
     public:
         /// @brief constructor
-        edges(FXComposite *parent, GNEViewNet* updateTarget);
+        edges(FXComposite *parent, GNEViewNet* viewNet);
 
         /// @brief destructor
         ~edges();
@@ -465,7 +457,7 @@ public:
 
     public:
         /// @brief constructor
-        lanes(FXComposite *parent, GNEViewNet* updateTarget);
+        lanes(FXComposite *parent, GNEViewNet* viewNet);
 
         /// @brief destructor
         ~lanes();
@@ -523,10 +515,10 @@ public:
 
     /**@brief Constructor
      * @param[in] parent The parent window
-     * @param[in] updateTarget view Net of the netEdit
+     * @param[in] viewNet view Net of the netEdit
      * @param[in] undoList pointer to undoList
      */
-    GNEAdditionalFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
+    GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
 
     /// @brief Destructor
     ~GNEAdditionalFrame();
@@ -605,17 +597,8 @@ private:
     /// @brief list of lanes
     GNEAdditionalFrame::lanes *myLanes;
 
-    /// @brief the window to inform
-    GNEViewNet* myViewNet;
-
     /// @brief actual additional type selected in the match Box
     SumoXMLTag myActualAdditionalType;
-
-    /// @brief Width of frame
-    static const int WIDTH;
-
-    /// @brief undo
-    GNEUndoList* myUndoList;
 };
 
 

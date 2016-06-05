@@ -20,7 +20,6 @@
 #ifndef GNEConnectorFrame_h
 #define GNEConnectorFrame_h
 
-
 // ===========================================================================
 // included modules
 // ===========================================================================
@@ -30,18 +29,13 @@
 #include <config.h>
 #endif
 
-#include <utils/xml/SUMOXMLDefinitions.h>
-#include <netbuild/NBEdge.h>
-#include "GNEDynamicFrame.h"
+#include "GNEFrame.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNEViewNet;
 class GNELane;
 class GNEInternalLane;
-class GNEUndoList;
-
 
 // ===========================================================================
 // class definitions
@@ -50,17 +44,17 @@ class GNEUndoList;
  * @class GNEConnectorFrame
  * The Widget for modifying selections of network-elements
  */
-class GNEConnectorFrame : public FXScrollWindow {
+class GNEConnectorFrame : public GNEFrame {
     // FOX-declarations
     FXDECLARE(GNEConnectorFrame)
 
 public:
     /**@brief Constructor
      * @param[in] parent The parent window
-     * @param[in] updateTarget view to update
+     * @param[in] viewNet view to update
      * @param[in] undoList pointer to undoList modul
      */
-    GNEConnectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
+    GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
 
     /// @brief Destructor
     ~GNEConnectorFrame();
@@ -122,20 +116,11 @@ private:
     /// @brief the set of lanes to which the current lane may be connected
     std::set<GNELane*> myPotentialTargets;
 
-    /// @brief pointer to undo list
-    GNEUndoList* myUndoList;
-
     /// @brief number of changes
     unsigned int myNumChanges;
 
-    /// @brief the window to inform when connections are modified
-    GNEViewNet* myUpdateTarget;
-
     /// @brief the internal lanes belonging the the current junction indexed by their tl-index
     std::map<int, GNEInternalLane*> myInternalLanes;
-
-    /// @brief Width of the connector frame
-    static const int WIDTH;
 
     /// @brief color for the from-lane of a connection
     static RGBColor sourceColor;

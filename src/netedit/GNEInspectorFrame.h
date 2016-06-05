@@ -30,8 +30,7 @@
 #include <config.h>
 #endif
 
-#include <utils/xml/SUMOXMLDefinitions.h>
-#include "GNEDynamicFrame.h"
+#include "GNEFrame.h"
 
 // ===========================================================================
 // class declarations
@@ -39,7 +38,6 @@
 class GNENet;
 class GNEEdge;
 class GNEAttributeCarrier;
-class GNEUndoList;
 class GNEAdditional;
 
 // ===========================================================================
@@ -49,7 +47,7 @@ class GNEAdditional;
  * @class GNEInspectorFrame
  * The Widget for modifying network-element attributes (i.e. lane speed)
  */
-class GNEInspectorFrame : public FXScrollWindow {
+class GNEInspectorFrame : public GNEFrame {
     // FOX-declarations
     FXDECLARE(GNEInspectorFrame)
 
@@ -63,7 +61,7 @@ public:
 
     public:
         /// @brief constructor
-        AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList);
+        AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs);
 
         /// @brief try to set new attribute value
         long onCmdSetBlocking(FXObject*, FXSelector, void*);
@@ -89,8 +87,7 @@ public:
 
     public:
         /// @brief constructor
-        AttrInput(FXComposite* parent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr,
-                  std::string initialValue, GNEUndoList* undoList);
+        AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue);
 
         /// @brief try to set new attribute value
         long onCmdSetAttribute(FXObject*, FXSelector, void*);
@@ -103,6 +100,9 @@ public:
         AttrInput() {}
 
     private:
+        /// @brief pointer to GNEInspectorFrame parent
+        GNEInspectorFrame *myInspectorFrameParent;
+
         /// @brief actual tag
         SumoXMLTag myTag;
 
@@ -111,9 +111,6 @@ public:
 
         /// @brief attribute carriers
         const std::vector<GNEAttributeCarrier*>* myACs;
-
-        /// @brief pointer to undolist
-        GNEUndoList* myUndoList;
 
         /// @brief pointer to text field
         FXTextField* myTextField;
@@ -128,7 +125,7 @@ public:
      * @param[in] undoList The undoList to record changes facilitated by this
      * @param[in] tpl The initial edge template (we assume shared responsibility via reference counting)
      */
-    GNEInspectorFrame(FXComposite* parent, GNEUndoList* undoList);
+    GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
 
     /// @brief Destructor
     ~GNEInspectorFrame();
@@ -165,9 +162,6 @@ protected:
     GNEInspectorFrame() {}
 
 private:
-    /// @brief pointer to undo list
-    GNEUndoList* myUndoList;
-
     /// @brief Font for the widget
     FXFont* myHeaderFont;
 
@@ -179,9 +173,6 @@ private:
 
     /// @brief the multi-selection currently being inspected
     std::vector<GNEAttributeCarrier*> myACs;
-
-    /// @brief Width of the frame
-    static const int WIDTH;
 };
 
 

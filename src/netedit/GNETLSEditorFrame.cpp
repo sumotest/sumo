@@ -92,24 +92,17 @@ FXDEFMAP(GNETLSEditorFrame) GNETLSEditorFrameMap[] = {
 FXIMPLEMENT(GNETLSEditorFrame, FXScrollWindow, GNETLSEditorFrameMap, ARRAYNUMBER(GNETLSEditorFrameMap))
 
 // ===========================================================================
-// static members
-// ===========================================================================
-const int GNETLSEditorFrame::WIDTH = 140;
-
-// ===========================================================================
 // method definitions
 // ===========================================================================
-GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList):
-    FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
+GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
+    GNEFrame(parent, viewNet, undoList),
     myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
     myTableFont(new FXFont(getApp(), "Courier New", 9)),
     myCurrentJunction(0),
-    myUndoList(undoList),
-    myUpdateTarget(updateTarget),
     myHaveModifications(false),
     myEditedDef(0) {
     // heading
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0);
+    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth, 0);
     FXLabel* heading = new FXLabel(myContentFrame, "Edit Traffic Light", 0, JUSTIFY_LEFT);
     heading->setFont(myHeaderFont);
     myDescription = new FXLabel(myContentFrame, "", 0, JUSTIFY_LEFT);
@@ -129,7 +122,7 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* updateTarg
     // definitions list
     new FXLabel(myContentFrame, "Name, Program");
     myDefBox = new FXListBox(myContentFrame, this, MID_GNE_DEF_SWITCH,
-                             FRAME_SUNKEN | FRAME_THICK | LISTBOX_NORMAL | LAYOUT_FIX_WIDTH, 0, 0, WIDTH - 4);
+                             FRAME_SUNKEN | FRAME_THICK | LISTBOX_NORMAL | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth - 4);
 
     // offset control
     new FXLabel(myContentFrame, "Offset");
@@ -199,7 +192,7 @@ GNETLSEditorFrame::editJunction(GNEJunction* junction) {
         myCurrentJunction->selectTLS(true);
         initDefinitions();
     } else {
-        myUpdateTarget->setStatusBarText("Unsaved modifications. Abort or Save");
+        myViewNet->setStatusBarText("Unsaved modifications. Abort or Save");
     }
 }
 
@@ -209,7 +202,7 @@ GNETLSEditorFrame::onCmdCancel(FXObject*, FXSelector, void*) {
     if (myCurrentJunction != 0) {
         myUndoList->p_abort();
         cleanup();
-        myUpdateTarget->update();
+        myViewNet->update();
     }
     return 1;
 }
@@ -222,14 +215,14 @@ GNETLSEditorFrame::onCmdOK(FXObject*, FXSelector, void*) {
             NBTrafficLightDefinition* old = myDefinitions[myDefBox->getCurrentItem()];
             std::vector<NBNode*> nodes = old->getNodes();
             for (std::vector<NBNode*>::iterator it = nodes.begin(); it != nodes.end(); it++) {
-                GNEJunction* junction = myUpdateTarget->getNet()->retrieveJunction((*it)->getID());
+                GNEJunction* junction = myViewNet->getNet()->retrieveJunction((*it)->getID());
                 myUndoList->add(new GNEChange_TLS(junction, old, false), true);
                 myUndoList->add(new GNEChange_TLS(junction, myEditedDef, true), true);
             }
             myEditedDef = 0;
             myUndoList->p_end();
             cleanup();
-            myUpdateTarget->update();
+            myViewNet->update();
         } else {
             onCmdCancel(0, 0, 0);
         }
@@ -273,8 +266,8 @@ GNETLSEditorFrame::onCmdDefSwitch(FXObject*, FXSelector, void*) {
     assert((int)myDefinitions.size() == myDefBox->getNumItems());
     NBTrafficLightDefinition* tlDef = myDefinitions[myDefBox->getCurrentItem()];
     // logic may not have been recomputed yet. recompute to be sure
-    NBTrafficLightLogicCont& tllCont = myUpdateTarget->getNet()->getTLLogicCont();
-    myUpdateTarget->getNet()->computeJunction(myCurrentJunction);
+    NBTrafficLightLogicCont& tllCont = myViewNet->getNet()->getTLLogicCont();
+    myViewNet->getNet()->computeJunction(myCurrentJunction);
     NBTrafficLightLogic* tllogic = tllCont.getLogic(tlDef->getID(), tlDef->getProgramID());
     if (tllogic != 0) {
         // now we can be sure that the tlDef is up to date (i.e. re-guessed)
@@ -288,7 +281,7 @@ GNETLSEditorFrame::onCmdDefSwitch(FXObject*, FXSelector, void*) {
     } else {
         // tlDef has no valid logic (probably because id does not control any links
         onCmdCancel(0, 0, 0);
-        myUpdateTarget->setStatusBarText("Traffic light does not control any links");
+        myViewNet->setStatusBarText("Traffic light does not control any links");
     }
     return 1;
 }
@@ -384,7 +377,7 @@ GNETLSEditorFrame::onCmdPhaseSwitch(FXObject*, FXSelector, void*) {
             (*it_lane)->setLinkState((LinkState)phase.state[tlIndex]);
         }
     }
-    myUpdateTarget->update();
+    myViewNet->update();
     return 1;
 }
 
@@ -495,7 +488,7 @@ GNETLSEditorFrame::cleanup() {
 void
 GNETLSEditorFrame::buildIinternalLanes(NBTrafficLightDefinition* tlDef) {
     // clean up previous objects
-    SUMORTree& rtree = myUpdateTarget->getNet()->getVisualisationSpeedUp();
+    SUMORTree& rtree = myViewNet->getNet()->getVisualisationSpeedUp();
     for (TLIndexMap::iterator it = myInternalLanes.begin(); it != myInternalLanes.end(); it++) {
         std::vector<GNEInternalLane*> lanes = it->second;
         for (std::vector<GNEInternalLane*>::iterator it_lane = lanes.begin(); it_lane != lanes.end(); it_lane++) {
@@ -507,7 +500,7 @@ GNETLSEditorFrame::buildIinternalLanes(NBTrafficLightDefinition* tlDef) {
     if (tlDef != 0) {
         const int NUM_POINTS = 10;
         assert(myCurrentJunction);
-        SUMORTree& rtree = myUpdateTarget->getNet()->getVisualisationSpeedUp();
+        SUMORTree& rtree = myViewNet->getNet()->getVisualisationSpeedUp();
         NBNode* nbn = myCurrentJunction->getNBNode();
         std::string innerID = ":" + nbn->getID(); // see NWWriter_SUMO::writeInternalEdges
         const NBConnectionVector& links = tlDef->getControlledLinks();
@@ -568,7 +561,7 @@ GNETLSEditorFrame::initPhaseTable(unsigned int index) {
             myPhaseTable->getItem(row, 1)->setJustify(FXTableItem::LEFT);
         }
         myPhaseTable->fitColumnsToContents(0, 2);
-        const int maxWidth = WIDTH - 4;
+        const int maxWidth = myFrameWidth - 4;
         int desiredWidth = myPhaseTable->getColumnWidth(0) +
                            myPhaseTable->getColumnWidth(1) + 3;
         int spaceForScrollBar = desiredWidth > maxWidth ? 15 : 0;
@@ -592,7 +585,7 @@ GNETLSEditorFrame::getPhases() {
 void
 GNETLSEditorFrame::handleChange(GNEInternalLane* lane) {
     myHaveModifications = true;
-    if (myUpdateTarget->changeAllPhases()) {
+    if (myViewNet->changeAllPhases()) {
         const std::vector<NBTrafficLightLogic::PhaseDefinition>& phases = getPhases();
         for (unsigned int row = 0; row < phases.size(); row++) {
             myEditedDef->getLogic()->setPhaseState(row, lane->getTLIndex(), lane->getLinkState());
@@ -621,7 +614,7 @@ GNETLSEditorFrame::handleMultiChange(GNELane* lane, FXObject* obj, FXSelector se
         } else {
             // if the edge is selected, apply changes to all lanes of all selected edges
             if (gSelected.isSelected(GLO_EDGE, edge.getGlID())) {
-                std::vector<GNEEdge*> edges = myUpdateTarget->getNet()->retrieveEdges(true);
+                std::vector<GNEEdge*> edges = myViewNet->getNet()->retrieveEdges(true);
                 for (std::vector<GNEEdge*>::iterator it = edges.begin(); it != edges.end(); it++) {
                     for (GNEEdge::LaneVector::const_iterator it_lane = (*it)->getLanes().begin(); it_lane != (*it)->getLanes().end(); it_lane++) {
                         fromIDs.insert((*it_lane)->getMicrosimID());
@@ -630,7 +623,7 @@ GNETLSEditorFrame::handleMultiChange(GNELane* lane, FXObject* obj, FXSelector se
             }
             // if the lane is selected, apply changes to all selected lanes
             if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {
-                std::vector<GNELane*> lanes = myUpdateTarget->getNet()->retrieveLanes(true);
+                std::vector<GNELane*> lanes = myViewNet->getNet()->retrieveLanes(true);
                 for (std::vector<GNELane*>::iterator it_lane = lanes.begin(); it_lane != lanes.end(); it_lane++) {
                     fromIDs.insert((*it_lane)->getMicrosimID());
                 }

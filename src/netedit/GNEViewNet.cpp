@@ -130,7 +130,7 @@ GNEViewNet::GNEViewNet(
     mySelector(0),
     myCurrentPoly(0) {
     // adding order is important
-    myInspector = new GNEInspectorFrame(actualParent, myUndoList);
+    myInspector = new GNEInspectorFrame(actualParent, this, myUndoList);
     myInspector->hide();
     mySelector = new GNESelectorFrame(actualParent, this, myUndoList);
     mySelector->hide();

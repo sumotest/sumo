@@ -21,7 +21,6 @@
 #ifndef GNESelectorFrame_h
 #define GNESelectorFrame_h
 
-
 // ===========================================================================
 // included modules
 // ===========================================================================
@@ -31,18 +30,12 @@
 #include <config.h>
 #endif
 
-#include <GL/gl.h>
-#include <utils/foxtools/FXRealSpinDial.h>
-#include <utils/xml/SUMOXMLDefinitions.h>
-#include <utils/gui/div/GUISelectedStorage.h>
-#include "GNEDynamicFrame.h"
+#include "GNEFrame.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNEViewNet;
 class GNEAttributeCarrier;
-class GNEUndoList;
 
 // ===========================================================================
 // class definitions
@@ -51,7 +44,7 @@ class GNEUndoList;
  * @class GNESelectorFrame
  * The Widget for modifying selections of network-elements
  */
-class GNESelectorFrame : public FXScrollWindow, public GUISelectedStorage::UpdateTarget {
+class GNESelectorFrame : public GNEFrame, public GUISelectedStorage::UpdateTarget {
     // FOX-declarations
     FXDECLARE(GNESelectorFrame)
 
@@ -68,16 +61,13 @@ public:
     /**@brief Constructor
      * @param[in] parent The parent window
      */
-    GNESelectorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
-
+    GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
 
     /// @brief Destructor
     ~GNESelectorFrame();
 
-
-    FXFont* getHeaderFont() {
-        return myHeaderFont;
-    }
+    /// @brief get header font
+    FXFont* getHeaderFont() const;
 
     /// @name FOX-callbacks
     /// @{
@@ -158,11 +148,6 @@ private:
     /// @brief the label for selection statistics
     FXLabel* myStats;
 
-    /* @brief the window to inform when selection changes
-     * we also need this to query for existing elements when inverting selection
-     */
-    GNEViewNet* myUpdateTarget;
-
     /// @brief how to modify selection
     FXuint mySetOperation;
     FXDataTarget mySetOperationTarget;
@@ -174,9 +159,6 @@ private:
 
     FXRealSpinDial* mySelectionScaling;
 
-    static const int WIDTH;
-
-    GNEUndoList* myUndoList;
 private:
 
     std::string getStats() const;

@@ -20,7 +20,6 @@
 #ifndef GNETLSEditorFrame_h
 #define GNETLSEditorFrame_h
 
-
 // ===========================================================================
 // included modules
 // ===========================================================================
@@ -30,20 +29,15 @@
 #include <config.h>
 #endif
 
-#include <utils/xml/SUMOXMLDefinitions.h>
-#include <utils/gui/div/GUISelectedStorage.h>
-#include <netbuild/NBTrafficLightLogic.h>
-#include "GNEDynamicFrame.h"
+#include "GNEFrame.h"
 
 // ===========================================================================
 // class declarations
 // ===========================================================================
 class NBTrafficLightDefinition;
 class NBLoadedSUMOTLDef;
-class GNEViewNet;
 class GNEEdge;
 class GNELane;
-class GNEUndoList;
 class GNEInternalLane;
 class GNEJunction;
 
@@ -54,7 +48,7 @@ class GNEJunction;
  * @class GNETLSEditorFrame
  * The Widget for modifying selections of network-elements
  */
-class GNETLSEditorFrame : public FXScrollWindow {
+class GNETLSEditorFrame : public GNEFrame {
     // FOX-declarations
     FXDECLARE(GNETLSEditorFrame)
 
@@ -62,12 +56,10 @@ public:
     /**@brief Constructor
      * @param[in] parent The parent window
      */
-    GNETLSEditorFrame(FXComposite* parent, GNEViewNet* updateTarget, GNEUndoList* undoList);
-
+    GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
 
     /// @brief Destructor
     ~GNETLSEditorFrame();
-
 
     FXFont* getHeaderFont() {
         return myHeaderFont;
@@ -145,12 +137,6 @@ private:
     /// @brief the junction of the tls is being modified
     GNEJunction* myCurrentJunction;
 
-    /// @brief the undolist with wich to register changes
-    GNEUndoList* myUndoList;
-
-    /* @brief the window to inform when the tls is modfied */
-    GNEViewNet* myUpdateTarget;
-
     /// @brief whether the current tls was modified
     bool myHaveModifications;
 
@@ -177,9 +163,6 @@ private:
 
     /// @brief index of the phase being shown
     unsigned int myPhaseIndex;
-
-    /// @brief the width of the widget
-    static const int WIDTH;
 
 private:
     void updateDescription() const;

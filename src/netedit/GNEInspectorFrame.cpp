@@ -77,20 +77,14 @@ FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAY
 
 
 // ===========================================================================
-// static members
-// ===========================================================================
-const int GNEInspectorFrame::WIDTH = 140;
-
-// ===========================================================================
 // method definitions
 // ===========================================================================
-GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEUndoList* undoList):
-    FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0),
-    myUndoList(undoList),
+GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
+    GNEFrame(parent, viewNet, undoList),
     myHeaderFont(new FXFont(getApp(), "Arial", 18, FXFont::Bold)),
     myPanel(0),
     myEdgeTemplate(0) {
-    myPanel = new AttrPanel(this, myACs, undoList);
+    myPanel = new AttrPanel(this, myACs);
 }
 
 
@@ -118,7 +112,7 @@ void
 GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
     delete myPanel;
     myACs = ACs;
-    myPanel = new AttrPanel(this, myACs, myUndoList);
+    myPanel = new AttrPanel(this, myACs);
     myPanel->create();
     recalc();
 }
@@ -203,8 +197,8 @@ GNEInspectorFrame::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {
 // AttrPanel method definitions
 // ===========================================================================
 
-GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs, GNEUndoList* undoList) :
-    FXVerticalFrame(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, WIDTH, 0, 2, 0, 0, 0, 0, 0) {
+GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs) :
+    FXVerticalFrame(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, parent->getFrameWidth(), 0, 2, 0, 0, 0, 0, 0) {
     FXLabel* header;
 
     if (ACs.size() > 0) {
@@ -236,7 +230,7 @@ GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::ve
                 }
                 oss << *it_val;
             }
-            new AttrInput(groupBoxForAttributes, ACs, *it, oss.str(), undoList);
+            new AttrInput(groupBoxForAttributes, parent, ACs, *it, oss.str());
         }
 
         if (dynamic_cast<GNEEdge*>(ACs[0])) {
@@ -276,15 +270,12 @@ GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::ve
 // AttrInput method definitions
 //
 // ===========================================================================
-GNEInspectorFrame::AttrInput::AttrInput(
-    FXComposite* parent,
-    const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue,
-    GNEUndoList* undoList) :
-    FXHorizontalFrame(parent, LAYOUT_FILL_X, 0, 0, WIDTH, 0, 0, 0, 0, 2),
+GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue) :
+    FXHorizontalFrame(parent, LAYOUT_FILL_X, 0, 0, inspectorFrameParent->getFrameWidth(), 0, 0, 0, 0, 2),
     myTag(ACs[0]->getTag()),
     myAttr(attr),
     myACs(&ACs),
-    myUndoList(undoList),
+    myInspectorFrameParent(inspectorFrameParent),
     myTextField(0),
     myChoicesCombo(0) {
     const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
@@ -300,7 +291,7 @@ GNEInspectorFrame::AttrInput::AttrInput(
     }
     FXButton* but = new FXButton(this, label.c_str(), 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR,
                                  opts, 0, 0, 0, 0, DEFAULT_PAD, DEFAULT_PAD, 1, 1);
-    int cols = (WIDTH - but->getDefaultWidth() - 6) / 9;
+    int cols = (inspectorFrameParent->getFrameWidth() - but->getDefaultWidth() - 6) / 9;
     if (choices.size() == 0 || combinableChoices) {
         // rudimentary input restriction
         unsigned int numerical = GNEAttributeCarrier::isNumerical(attr) ? TEXTFIELD_REAL : 0;
@@ -367,13 +358,13 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* dat
     if (ACs[0]->isValid(myAttr, newVal)) {
         // if its valid for the first AC than its valid for all (of the same type)
         if (ACs.size() > 1) {
-            myUndoList->p_begin("Change multiple attributes");
+            myInspectorFrameParent->getUndoList()->p_begin("Change multiple attributes");
         }
         for (std::vector<GNEAttributeCarrier*>::const_iterator it_ac = ACs.begin(); it_ac != ACs.end(); it_ac++) {
-            (*it_ac)->setAttribute(myAttr, newVal, myUndoList);
+            (*it_ac)->setAttribute(myAttr, newVal, myInspectorFrameParent->getUndoList());
         }
         if (ACs.size() > 1) {
-            myUndoList->p_end();
+            myInspectorFrameParent->getUndoList()->p_end();
         }
         if (myTextField != 0) {
             myTextField->setTextColor(FXRGB(0, 0, 0));
