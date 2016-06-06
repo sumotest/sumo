@@ -52,7 +52,7 @@ const MSEdge * MSPRCPState::updateEdge(const int edgeId) {
 
 	std::vector<const MSEdge*>::const_iterator tmp = myRoutePt;
 	for (;tmp < myStage->getRoute().end(); tmp++) {
-		if ((*tmp)->getID() == edgeId){
+		if ((*tmp)->getNumericalID() == edgeId){
 			myRoutePt = tmp;
 			return *myRoutePt;
 		}
