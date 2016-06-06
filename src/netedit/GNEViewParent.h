@@ -41,7 +41,6 @@
 #include <utils/gui/globjects/GUIGlObjectTypes.h>
 #include <utils/gui/windows/GUIGlChildWindow.h>
 
-
 // ===========================================================================
 // class declarations
 // ===========================================================================
@@ -88,11 +87,14 @@ public:
                   FXGLCanvas* share, GNENet* net,
                   FXIcon* ic = NULL, FXuint opts = 0, FXint x = 0, FXint y = 0, FXint w = 0, FXint h = 0);
 
-
     /// @brief Destructor
     ~GNEViewParent();
 
+    /// @brief get frame to hold GNEFrames          // PABLO #2036
+    FXHorizontalFrame* getFramesArea() const;       // PABLO #2036
 
+    /// @name FOX-callbacks
+    /// @{
     /// @brief Called if the user wants to make a snapshot (screenshot)
     long onCmdMakeSnapshot(FXObject* sender, FXSelector, void*);
 
@@ -102,22 +104,29 @@ public:
     /// @brief locator-callback
     long onCmdLocate(FXObject*, FXSelector, void*);
 
-    /// @brief handle keys
+    /// @brief Called when user press a key
     long onKeyPress(FXObject* o, FXSelector sel, void* data);
+
+    /// @brief Called when user releases a key
     long onKeyRelease(FXObject* o, FXSelector sel, void* data);
+    /// @}
 
     /// @brief true if the object is selected (may include extra logic besides calling gSelected)
     bool isSelected(GUIGlObject* o) const;
 
 protected:
     /// @brief FOX needs this
-    GNEViewParent() { }
-
+    GNEViewParent() {}
 
 private:
-
-    // frame to hold myView and myAttributePanel
+    /// @brief frame to hold myView and myAttributePanel
     FXHorizontalFrame* myViewArea;
+
+    /// @brief frame to hold GNEFrames      // PABLO #2036
+    FXHorizontalFrame* myFramesArea;        // PABLO #2036
+
+    /// @brief Splitter to divide ViewNet und GNEFrames     // PABLO #2036
+    FXSplitter *myFramesSplitter;                           // PABLO #2036
 };
 
 

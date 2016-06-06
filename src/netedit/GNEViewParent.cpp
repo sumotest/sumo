@@ -87,6 +87,7 @@ GNEViewParent::GNEViewParent(
     FXIcon* ic, FXuint opts,
     FXint x, FXint y, FXint w, FXint h):
     GUIGlChildWindow(p, parentWindow, mdimenu, name, ic, opts, x, y, w, h) {
+    // Add child to parent
     myParent->addChild(this, false);
 
     // disable coloring and screenshot
@@ -103,29 +104,46 @@ GNEViewParent::GNEViewParent(
                  "\tRedo\tRedo the last Change.",
                  GUIIconSubSys::getIcon(ICON_REDO), parentWindow->getUndoList(), FXUndoList::ID_REDO,
                  ICON_BEFORE_TEXT | BUTTON_TOOLBAR | FRAME_RAISED | LAYOUT_TOP | LAYOUT_LEFT);
+    
+    // Create FXToolBarGrip
     new FXToolBarGrip(myNavigationToolBar, NULL, 0, TOOLBARGRIP_SINGLE | FRAME_SUNKEN);
 
-    myViewArea = new FXHorizontalFrame(myContentFrame,
-                                       FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y,
-                                       0, 0, 0, 0, 0, 0, 0, 0);
-    // we add the view to a temporary parent so that we can add items to
-    // myViewArea in the desired order
-    FXComposite* tmp = new FXComposite(this);
-    myView = new GNEViewNet(tmp, myViewArea,
-                            *myParent, this, net,
-                            myParent->getGLVisual(), share,
-                            myNavigationToolBar);
+    // Create Frame Splitter
+    myFramesSplitter = new FXSplitter(myContentFrame, SPLITTER_HORIZONTAL | LAYOUT_FILL_X | LAYOUT_FILL_Y | SPLITTER_TRACKING | FRAME_RAISED | FRAME_THICK);
+    
+    // Create frames Area
+    myFramesArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
 
+    // Create view area
+    myViewArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    // Set default split between areas
+    myFramesSplitter->setSplit(1, 65);
+
+    // Add the view to a temporary parent so that we can add items to myViewArea in the desired order
+    FXComposite* tmp = new FXComposite(this);
+
+    // Create view net
+    myView = new GNEViewNet(tmp, myViewArea, *myParent, this, net, myParent->getGLVisual(), share, myNavigationToolBar);
+
+    //  Buld view toolBars
     myView->buildViewToolBars(*this);
 
-    // create
+    // create windows
     GUIGlChildWindow::create();
 }
 
 
 GNEViewParent::~GNEViewParent() {
+    // Remove child before remove
     myParent->removeChild(this);
 }
+
+
+FXHorizontalFrame*                          // PABLO #2036
+GNEViewParent::getFramesArea() const {      // PABLO #2036
+    return myFramesArea;                    // PABLO #2036
+}                                           // PABLO #2036
 
 
 long

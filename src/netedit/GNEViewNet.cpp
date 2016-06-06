@@ -125,20 +125,20 @@ GNEViewNet::GNEViewNet(
     myToolbar(toolBar),
     myEditModesCombo(0),
     myEditModeNames(),
-    myUndoList(((GNEApplicationWindow*)myApp)->getUndoList()),
+    myUndoList(dynamic_cast<GNEApplicationWindow*>(myApp)->getUndoList()),
     myInspector(0),
     mySelector(0),
     myCurrentPoly(0) {
     // adding order is important
-    myInspector = new GNEInspectorFrame(actualParent, this, myUndoList);
+    myInspector = new GNEInspectorFrame(viewParent->getFramesArea(), this, myUndoList);
     myInspector->hide();
-    mySelector = new GNESelectorFrame(actualParent, this, myUndoList);
+    mySelector = new GNESelectorFrame(viewParent->getFramesArea(), this, myUndoList);
     mySelector->hide();
-    myConnector = new GNEConnectorFrame(actualParent, this, myUndoList);
+    myConnector = new GNEConnectorFrame(viewParent->getFramesArea(), this, myUndoList);
     myConnector->hide();
-    myTLSEditor = new GNETLSEditorFrame(actualParent, this, myUndoList);
+    myTLSEditor = new GNETLSEditorFrame(viewParent->getFramesArea(), this, myUndoList);
     myTLSEditor->hide();
-    myAdditional = new GNEAdditionalFrame(actualParent,this, myUndoList);
+    myAdditional = new GNEAdditionalFrame(viewParent->getFramesArea(),this, myUndoList);
     myAdditional->hide();
     // view must be the final member of actualParent
     reparent(actualParent);
