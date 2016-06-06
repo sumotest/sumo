@@ -153,5 +153,7 @@ Warning: Vehicle 'always_right.12'; collision with vehicle 'horizontal.12', lane
 Warning: Vehicle 'always_right.12'; collision with vehicle 'horizontal.12', lane='2o_0', gap=-0.48, time=100.00 stage=events.
 Warning: Teleporting vehicle 'horizontal.13'; waited too long (yield), lane='1si_1', time=403.00.
 Warning: Vehicle 'horizontal.13' ends teleporting on edge '2o', time 403.00.
+Warning: Teleporting vehicle 'horizontal.14'; waited too long (yield), lane='1si_1', time=404.00.
+Warning: Vehicle 'horizontal.14' ends teleporting on edge '2o', time 404.00.
 Warning: Teleporting vehicle 'always_right.13'; waited too long (yield), lane='3si_0', time=405.00.
 Warning: Vehicle 'always_right.13' ends teleporting on edge '2o', time 405.00.

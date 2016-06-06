@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue May 10 08:25:31 2016 by SUMO Version dev-SVN-r20678
+<!-- generated on Wed Jun  1 15:57:15 2016 by SUMO Version dev-SVN-r20832
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -26,37 +26,37 @@
     <timestep id="0.00"/>
     <timestep id="1.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="4.00" arrivalTimeBraking="4.00" leaveTime="7.10" arrivalSpeed="5.00" arrivalSpeedBraking="-nan" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="4.00" arrivalTimeBraking="4.00" leaveTime="7.10" arrivalSpeed="5.00" arrivalSpeedBraking="-nan" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="2.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="3.76" arrivalTimeBraking="4.35" leaveTime="6.86" arrivalSpeed="5.00" arrivalSpeedBraking="3.27" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="3.76" arrivalTimeBraking="4.35" leaveTime="6.86" arrivalSpeed="5.00" arrivalSpeedBraking="3.27" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="3.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="4.01" arrivalTimeBraking="4.75" leaveTime="7.10" arrivalSpeed="5.00" arrivalSpeedBraking="2.95" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="4.01" arrivalTimeBraking="4.75" leaveTime="7.10" arrivalSpeed="5.00" arrivalSpeedBraking="2.95" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="4.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="4.27" arrivalTimeBraking="5.21" leaveTime="7.37" arrivalSpeed="5.00" arrivalSpeedBraking="2.59" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="4.27" arrivalTimeBraking="5.21" leaveTime="7.37" arrivalSpeed="5.00" arrivalSpeedBraking="2.59" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="5.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="4.78" arrivalTimeBraking="5.72" leaveTime="7.88" arrivalSpeed="5.00" arrivalSpeedBraking="2.17" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="4.78" arrivalTimeBraking="5.72" leaveTime="7.88" arrivalSpeed="5.00" arrivalSpeedBraking="2.17" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="6.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="5.89" arrivalTimeBraking="6.33" leaveTime="8.98" arrivalSpeed="5.00" arrivalSpeedBraking="1.64" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="5.89" arrivalTimeBraking="6.33" leaveTime="8.98" arrivalSpeed="5.00" arrivalSpeedBraking="1.64" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="7.00">
         <link from="right2end_0" via="" to="end_0">
-            <approaching id="0" impatience="0.00" arrivalTime="7.04" arrivalTimeBraking="7.08" leaveTime="10.34" arrivalSpeed="4.63" arrivalSpeedBraking="0.84" leaveSpeed="1.06" willPass="1"/>
+            <approaching id="0" impatience="0.00" arrivalTime="7.04" arrivalTimeBraking="7.08" leaveTime="10.34" arrivalSpeed="4.63" arrivalSpeedBraking="0.84" leaveSpeed="1.07" willPass="1"/>
         </link>
     </timestep>
     <timestep id="8.00"/>
@@ -152,4 +152,6 @@
     <timestep id="70.00"/>
     <timestep id="71.00"/>
     <timestep id="72.00"/>
+    <timestep id="73.00"/>
+    <timestep id="74.00"/>
 </link-output>

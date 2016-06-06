@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue May 10 08:25:11 2016 by SUMO Version dev-SVN-r20678
+<!-- generated on Mon Jun  6 08:37:15 2016 by SUMO Version dev-SVN-r20877
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -15,6 +15,10 @@
         <battery-output value="battery.xml"/>
         <battery-output.precision value="4"/>
     </output>
+
+    <processing>
+        <euler value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
