@@ -59,7 +59,7 @@ class MSPRCPState : public PedestrianState {
 		void setSpeed(const double spd) {mySpeed = spd;};
 		void setAngle(const double angle) {myAngle = angle;};
 		const MSEdge* incrEdge();
-		const MSEdge* updateEdge(const std::string edgeId);
+		const MSEdge* updateEdge(const int edgeId);
 
 	private:
 		SUMOReal myEdgePos;

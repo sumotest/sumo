@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-#define DEBUG 0
+//#define DEBUG 0
 
 const int FWD(1);
 const int BWD(-1);
@@ -567,7 +567,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 				hybridsim::Coordinate * cr = l->mutable_centroid();
 				cr->set_x(p.x());
 				cr->set_y(p.y());
-				l->set_id(e->getID());
+				l->set_id(e->getNumericalID());
 				fnd = true;
 				break;
 			}
@@ -628,10 +628,10 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 #ifdef DEBUG
 			std::cout << "=============================" << std::endl;
 			std::cout << "agent: " << t.id() << " link_id: " << t.linkid() <<  std::endl;
-			std::cout << "old link id:" << oldEdge->getID() << std::endl;
+			std::cout << "old link id:" << oldEdge->getNumericalID() << std::endl;
 			std::cout << "=============================" << std::endl;
 #endif
-			if (t.linkid() != "" && t.linkid() != oldEdge->getID()) {
+			if (t.linkid() != oldEdge->getNumericalID()) {
 				for (const MSLane * ln : oldEdge->getLanes()) {
 					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 						//unmap ped from lane

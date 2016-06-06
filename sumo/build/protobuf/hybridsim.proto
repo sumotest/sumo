@@ -190,7 +190,7 @@ message Leg {
 
 message Link {
     Coordinate centroid = 1; //TODO: rename! In SUMO those links correspond to edges that are not necessarily convex
-    string id = 2;
+    int32 id = 2;
 }
 
 message Coordinate {
@@ -208,7 +208,7 @@ message Trajectory {
     double y = 3;
     double spd = 4;
     double phi = 5; //TODO: report vx / vy instead of spd and phi
-    string linkId = 6;
+    int32 linkId = 6;
 }
 
 message Trajectories {

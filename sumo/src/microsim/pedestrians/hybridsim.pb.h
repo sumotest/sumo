@@ -2505,16 +2505,11 @@ class Link : public ::google::protobuf::Message {
   ::hybridsim::Coordinate* release_centroid();
   void set_allocated_centroid(::hybridsim::Coordinate* centroid);
 
-  // optional string id = 2;
+  // optional int32 id = 2;
   void clear_id();
   static const int kIdFieldNumber = 2;
-  const ::std::string& id() const;
-  void set_id(const ::std::string& value);
-  void set_id(const char* value);
-  void set_id(const char* value, size_t size);
-  ::std::string* mutable_id();
-  ::std::string* release_id();
-  void set_allocated_id(::std::string* id);
+  ::google::protobuf::int32 id() const;
+  void set_id(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:hybridsim.Link)
  private:
@@ -2522,7 +2517,7 @@ class Link : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::hybridsim::Coordinate* centroid_;
-  ::google::protobuf::internal::ArenaStringPtr id_;
+  ::google::protobuf::int32 id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_hybridsim_2eproto();
   friend void protobuf_AssignDesc_hybridsim_2eproto();
@@ -2793,16 +2788,11 @@ class Trajectory : public ::google::protobuf::Message {
   double phi() const;
   void set_phi(double value);
 
-  // optional string linkId = 6;
+  // optional int32 linkId = 6;
   void clear_linkid();
   static const int kLinkIdFieldNumber = 6;
-  const ::std::string& linkid() const;
-  void set_linkid(const ::std::string& value);
-  void set_linkid(const char* value);
-  void set_linkid(const char* value, size_t size);
-  ::std::string* mutable_linkid();
-  ::std::string* release_linkid();
-  void set_allocated_linkid(::std::string* linkid);
+  ::google::protobuf::int32 linkid() const;
+  void set_linkid(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:hybridsim.Trajectory)
  private:
@@ -2814,7 +2804,7 @@ class Trajectory : public ::google::protobuf::Message {
   double y_;
   double spd_;
   double phi_;
-  ::google::protobuf::internal::ArenaStringPtr linkid_;
+  ::google::protobuf::int32 linkid_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_hybridsim_2eproto();
   friend void protobuf_AssignDesc_hybridsim_2eproto();
@@ -5443,47 +5433,18 @@ inline void Link::set_allocated_centroid(::hybridsim::Coordinate* centroid) {
   // @@protoc_insertion_point(field_set_allocated:hybridsim.Link.centroid)
 }
 
-// optional string id = 2;
+// optional int32 id = 2;
 inline void Link::clear_id() {
-  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  id_ = 0;
 }
-inline const ::std::string& Link::id() const {
+inline ::google::protobuf::int32 Link::id() const {
   // @@protoc_insertion_point(field_get:hybridsim.Link.id)
-  return id_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return id_;
 }
-inline void Link::set_id(const ::std::string& value) {
+inline void Link::set_id(::google::protobuf::int32 value) {
   
-  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  id_ = value;
   // @@protoc_insertion_point(field_set:hybridsim.Link.id)
-}
-inline void Link::set_id(const char* value) {
-  
-  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:hybridsim.Link.id)
-}
-inline void Link::set_id(const char* value, size_t size) {
-  
-  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:hybridsim.Link.id)
-}
-inline ::std::string* Link::mutable_id() {
-  
-  // @@protoc_insertion_point(field_mutable:hybridsim.Link.id)
-  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Link::release_id() {
-  
-  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Link::set_allocated_id(::std::string* id) {
-  if (id != NULL) {
-    
-  } else {
-    
-  }
-  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
-  // @@protoc_insertion_point(field_set_allocated:hybridsim.Link.id)
 }
 
 // -------------------------------------------------------------------
@@ -5655,47 +5616,18 @@ inline void Trajectory::set_phi(double value) {
   // @@protoc_insertion_point(field_set:hybridsim.Trajectory.phi)
 }
 
-// optional string linkId = 6;
+// optional int32 linkId = 6;
 inline void Trajectory::clear_linkid() {
-  linkid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  linkid_ = 0;
 }
-inline const ::std::string& Trajectory::linkid() const {
+inline ::google::protobuf::int32 Trajectory::linkid() const {
   // @@protoc_insertion_point(field_get:hybridsim.Trajectory.linkId)
-  return linkid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return linkid_;
 }
-inline void Trajectory::set_linkid(const ::std::string& value) {
+inline void Trajectory::set_linkid(::google::protobuf::int32 value) {
   
-  linkid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  linkid_ = value;
   // @@protoc_insertion_point(field_set:hybridsim.Trajectory.linkId)
-}
-inline void Trajectory::set_linkid(const char* value) {
-  
-  linkid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:hybridsim.Trajectory.linkId)
-}
-inline void Trajectory::set_linkid(const char* value, size_t size) {
-  
-  linkid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:hybridsim.Trajectory.linkId)
-}
-inline ::std::string* Trajectory::mutable_linkid() {
-  
-  // @@protoc_insertion_point(field_mutable:hybridsim.Trajectory.linkId)
-  return linkid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Trajectory::release_linkid() {
-  
-  return linkid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Trajectory::set_allocated_linkid(::std::string* linkid) {
-  if (linkid != NULL) {
-    
-  } else {
-    
-  }
-  linkid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), linkid);
-  // @@protoc_insertion_point(field_set_allocated:hybridsim.Trajectory.linkId)
 }
 
 // -------------------------------------------------------------------

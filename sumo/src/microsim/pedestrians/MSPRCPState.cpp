@@ -48,7 +48,7 @@ const MSEdge* MSPRCPState::incrEdge() {
 	return *myRoutePt;
 }
 
-const MSEdge * MSPRCPState::updateEdge(const std::string edgeId) {
+const MSEdge * MSPRCPState::updateEdge(const int edgeId) {
 
 	std::vector<const MSEdge*>::const_iterator tmp = myRoutePt;
 	for (;tmp < myStage->getRoute().end(); tmp++) {
@@ -59,7 +59,7 @@ const MSEdge * MSPRCPState::updateEdge(const std::string edgeId) {
 	}
 	myRoutePt--;
 	for (; myRoutePt >= myStage->getRoute().begin(); myRoutePt--) {
-		if ((*myRoutePt)->getID() == edgeId){
+		if ((*myRoutePt)->getNumericalID() == edgeId){
 			return *myRoutePt;
 		}
 	}
