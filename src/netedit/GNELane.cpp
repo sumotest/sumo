@@ -57,6 +57,7 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
+#include "GNEViewParent.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -376,7 +377,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
         }
     } else if (editMode == GNE_MODE_TLS) {
-        myTLSEditor = static_cast<GNEViewNet&>(parent).getTLSEditor();
+        myTLSEditor = static_cast<GNEViewNet&>(parent).getViewParent()->getTLSEditorFrame();
         if (myTLSEditor->controlsEdge(myParentEdge)) {
             new FXMenuCommand(ret, "Select state for all links from this edge:", 0, 0, 0);
             const std::vector<std::string> names = GNEInternalLane::LinkStateNames.getStrings();

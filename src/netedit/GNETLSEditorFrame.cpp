@@ -94,8 +94,8 @@ FXIMPLEMENT(GNETLSEditorFrame, FXScrollWindow, GNETLSEditorFrameMap, ARRAYNUMBER
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
-    GNEFrame(parent, viewNet, undoList),
+GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet):
+    GNEFrame(parent, viewNet),
     myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
     myTableFont(new FXFont(getApp(), "Courier New", 9)),
     myCurrentJunction(0),
@@ -187,7 +187,7 @@ void
 GNETLSEditorFrame::editJunction(GNEJunction* junction) {
     if (myCurrentJunction == 0 || (!myHaveModifications && (junction != myCurrentJunction))) {
         onCmdCancel(0, 0, 0);
-        myUndoList->p_begin("modifying traffic light definition");
+        myViewNet->getUndoList()->p_begin("modifying traffic light definition");
         myCurrentJunction = junction;
         myCurrentJunction->selectTLS(true);
         initDefinitions();
@@ -200,7 +200,7 @@ GNETLSEditorFrame::editJunction(GNEJunction* junction) {
 long
 GNETLSEditorFrame::onCmdCancel(FXObject*, FXSelector, void*) {
     if (myCurrentJunction != 0) {
-        myUndoList->p_abort();
+        myViewNet->getUndoList()->p_abort();
         cleanup();
         myViewNet->update();
     }
@@ -216,11 +216,11 @@ GNETLSEditorFrame::onCmdOK(FXObject*, FXSelector, void*) {
             std::vector<NBNode*> nodes = old->getNodes();
             for (std::vector<NBNode*>::iterator it = nodes.begin(); it != nodes.end(); it++) {
                 GNEJunction* junction = myViewNet->getNet()->retrieveJunction((*it)->getID());
-                myUndoList->add(new GNEChange_TLS(junction, old, false), true);
-                myUndoList->add(new GNEChange_TLS(junction, myEditedDef, true), true);
+                myViewNet->getUndoList()->add(new GNEChange_TLS(junction, old, false), true);
+                myViewNet->getUndoList()->add(new GNEChange_TLS(junction, myEditedDef, true), true);
             }
             myEditedDef = 0;
-            myUndoList->p_end();
+            myViewNet->getUndoList()->p_end();
             cleanup();
             myViewNet->update();
         } else {
@@ -236,9 +236,9 @@ GNETLSEditorFrame::onCmdDefCreate(FXObject*, FXSelector, void*) {
     GNEJunction* junction = myCurrentJunction;
     onCmdCancel(0, 0, 0); // abort because we onCmdOk assumes we wish to save an edited definition
     if (junction->getAttribute(SUMO_ATTR_TYPE) != toString(NODETYPE_TRAFFIC_LIGHT)) {
-        junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_TRAFFIC_LIGHT), myUndoList);
+        junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_TRAFFIC_LIGHT), myViewNet->getUndoList());
     } else {
-        myUndoList->add(new GNEChange_TLS(junction, 0, true, true), true);
+        myViewNet->getUndoList()->add(new GNEChange_TLS(junction, 0, true, true), true);
     }
     editJunction(junction);
     return 1;
@@ -251,10 +251,10 @@ GNETLSEditorFrame::onCmdDefDelete(FXObject*, FXSelector, void*) {
     const bool changeType = myDefinitions.size() == 1;
     onCmdCancel(0, 0, 0); // abort because onCmdOk assumes we wish to save an edited definition
     if (changeType) {
-        junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_PRIORITY), myUndoList);
+        junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_PRIORITY), myViewNet->getUndoList());
     } else {
         NBTrafficLightDefinition* tlDef = myDefinitions[myDefBox->getCurrentItem()];
-        myUndoList->add(new GNEChange_TLS(junction, tlDef, false), true);
+        myViewNet->getUndoList()->add(new GNEChange_TLS(junction, tlDef, false), true);
     }
     return 1;
 }

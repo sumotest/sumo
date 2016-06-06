@@ -125,7 +125,7 @@ public:
      * @param[in] undoList The undoList to record changes facilitated by this
      * @param[in] tpl The initial edge template (we assume shared responsibility via reference counting)
      */
-    GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
+    GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNEInspectorFrame();

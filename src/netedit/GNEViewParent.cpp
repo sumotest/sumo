@@ -55,6 +55,11 @@
 #include "GNEViewParent.h"
 #include "GNEUndoList.h"
 #include "GNEApplicationWindow.h"
+#include "GNEInspectorFrame.h"
+#include "GNESelectorFrame.h"
+#include "GNEConnectorFrame.h"
+#include "GNETLSEditorFrame.h"
+#include "GNEAdditionalFrame.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -108,23 +113,38 @@ GNEViewParent::GNEViewParent(
     // Create FXToolBarGrip
     new FXToolBarGrip(myNavigationToolBar, NULL, 0, TOOLBARGRIP_SINGLE | FRAME_SUNKEN);
 
-    // Create Frame Splitter
-    myFramesSplitter = new FXSplitter(myContentFrame, SPLITTER_HORIZONTAL | LAYOUT_FILL_X | LAYOUT_FILL_Y | SPLITTER_TRACKING | FRAME_RAISED | FRAME_THICK);
+    // Create Frame Splitter                                                                                                                                    // PABLO #2036
+    myFramesSplitter = new FXSplitter(myContentFrame, SPLITTER_HORIZONTAL | LAYOUT_FILL_X | LAYOUT_FILL_Y | SPLITTER_TRACKING | FRAME_RAISED | FRAME_THICK);    // PABLO #2036
     
-    // Create frames Area
-    myFramesArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
+    // Create frames Area                                                                                                                               // PABLO #2036
+    myFramesArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);     // PABLO #2036
 
     // Create view area
     myViewArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
 
-    // Set default split between areas
-    myFramesSplitter->setSplit(1, 65);
+    // Set default split between areas  // PABLO #2036
+    myFramesSplitter->setSplit(1, 65);  // PABLO #2036
 
     // Add the view to a temporary parent so that we can add items to myViewArea in the desired order
     FXComposite* tmp = new FXComposite(this);
 
     // Create view net
-    myView = new GNEViewNet(tmp, myViewArea, *myParent, this, net, myParent->getGLVisual(), share, myNavigationToolBar);
+    GNEViewNet *viewNet = new GNEViewNet(tmp, myViewArea, *myParent, this, net, myParent->getGLVisual(), share, myNavigationToolBar);
+    
+    // Set pointer myView with the created view net
+    myView = viewNet; 
+
+    // adding order is important                                        // PABLO #2036
+    myInspectorFrame = new GNEInspectorFrame(myFramesArea, viewNet);    // PABLO #2036
+    myInspectorFrame->hide();                                           // PABLO #2036
+    mySelectorFrame = new GNESelectorFrame(myFramesArea, viewNet);      // PABLO #2036
+    mySelectorFrame->hide();                                            // PABLO #2036
+    myConnectorFrame = new GNEConnectorFrame(myFramesArea, viewNet);    // PABLO #2036
+    myConnectorFrame->hide();                                           // PABLO #2036
+    myTLSEditorFrame = new GNETLSEditorFrame(myFramesArea, viewNet);    // PABLO #2036
+    myTLSEditorFrame->hide();                                           // PABLO #2036
+    myAdditionalFrame = new GNEAdditionalFrame(myFramesArea,viewNet);   // PABLO #2036
+    myAdditionalFrame->hide();                                          // PABLO #2036
 
     //  Buld view toolBars
     myView->buildViewToolBars(*this);
@@ -140,9 +160,34 @@ GNEViewParent::~GNEViewParent() {
 }
 
 
-FXHorizontalFrame*                          // PABLO #2036
-GNEViewParent::getFramesArea() const {      // PABLO #2036
-    return myFramesArea;                    // PABLO #2036
+
+GNEInspectorFrame*                          // PABLO #2036
+GNEViewParent::getInspectorFrame() const {  // PABLO #2036
+    return myInspectorFrame;                // PABLO #2036
+}                                           // PABLO #2036
+
+
+GNESelectorFrame*                           // PABLO #2036
+GNEViewParent::getSelectorFrame() const {   // PABLO #2036
+    return mySelectorFrame;                 // PABLO #2036
+}                                           // PABLO #2036
+
+
+GNEConnectorFrame*                          // PABLO #2036
+GNEViewParent::getConnectorFrame() const {  // PABLO #2036
+    return myConnectorFrame;                // PABLO #2036
+}                                           // PABLO #2036
+
+
+GNETLSEditorFrame*                          // PABLO #2036
+GNEViewParent::getTLSEditorFrame() const {  // PABLO #2036
+    return myTLSEditorFrame;                // PABLO #2036
+}                                           // PABLO #2036
+
+
+GNEAdditionalFrame*                         // PABLO #2036
+GNEViewParent::getAdditionalFrame() const { // PABLO #2036
+    return myAdditionalFrame;               // PABLO #2036
 }                                           // PABLO #2036
 
 

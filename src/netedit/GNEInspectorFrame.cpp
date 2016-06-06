@@ -79,8 +79,8 @@ FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAY
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
-    GNEFrame(parent, viewNet, undoList),
+GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
+    GNEFrame(parent, viewNet),
     myHeaderFont(new FXFont(getApp(), "Arial", 18, FXFont::Bold)),
     myPanel(0),
     myEdgeTemplate(0) {
@@ -154,7 +154,7 @@ GNEInspectorFrame::onCmdCopyTemplate(FXObject*, FXSelector, void*) {
     for (std::vector<GNEAttributeCarrier*>::iterator it = myACs.begin(); it != myACs.end(); it++) {
         GNEEdge* edge = dynamic_cast<GNEEdge*>(*it);
         assert(edge);
-        edge->copyTemplate(myEdgeTemplate, myUndoList);
+        edge->copyTemplate(myEdgeTemplate, myViewNet->getUndoList());
     }
     return 1;
 }
@@ -358,13 +358,13 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* dat
     if (ACs[0]->isValid(myAttr, newVal)) {
         // if its valid for the first AC than its valid for all (of the same type)
         if (ACs.size() > 1) {
-            myInspectorFrameParent->getUndoList()->p_begin("Change multiple attributes");
+            myInspectorFrameParent->getViewNet()->getUndoList()->p_begin("Change multiple attributes");
         }
         for (std::vector<GNEAttributeCarrier*>::const_iterator it_ac = ACs.begin(); it_ac != ACs.end(); it_ac++) {
-            (*it_ac)->setAttribute(myAttr, newVal, myInspectorFrameParent->getUndoList());
+            (*it_ac)->setAttribute(myAttr, newVal, myInspectorFrameParent->getViewNet()->getUndoList());
         }
         if (ACs.size() > 1) {
-            myInspectorFrameParent->getUndoList()->p_end();
+            myInspectorFrameParent->getViewNet()->getUndoList()->p_end();
         }
         if (myTextField != 0) {
             myTextField->setTextColor(FXRGB(0, 0, 0));

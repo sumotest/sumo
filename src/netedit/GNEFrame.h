@@ -57,16 +57,13 @@ class GNEFrame : public FXScrollWindow {
 
 public:
     /** Constructor **/
-    GNEFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
+    GNEFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief destructor
     ~GNEFrame();
 
     /// @brief get view net
     GNEViewNet *getViewNet() const;
-
-    /// @brief get the undolist with wich to register changes
-    GNEUndoList *getUndoList() const;
 
     /// @brief get width of frame
     int getFrameWidth() const;
@@ -77,9 +74,6 @@ protected:
 
     /// @brief @brief the window to inform when the tls is modfied
     GNEViewNet *myViewNet;
-
-    /// @brief the undolist with wich to register changes
-    GNEUndoList *myUndoList;
 
     /// @brief width of frame
     int myFrameWidth;

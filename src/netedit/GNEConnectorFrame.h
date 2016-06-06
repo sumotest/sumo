@@ -54,7 +54,7 @@ public:
      * @param[in] viewNet view to update
      * @param[in] undoList pointer to undoList modul
      */
-    GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
+    GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNEConnectorFrame();

@@ -44,23 +44,23 @@
 // enum
 // ===========================================================================
 enum EditMode {
-    /** placeholder mode */
+    ///@brief placeholder mode
     GNE_MODE_DUMMY,
-    /** mode for creating new edges */
+    ///@brief mode for creating new edges
     GNE_MODE_CREATE_EDGE,
-    /** mode for moving things */
+    ///@brief mode for moving things
     GNE_MODE_MOVE,
-    /** mode for deleting things */
+    ///@brief mode for deleting things
     GNE_MODE_DELETE,
-    /** mode for inspecting object attributes */
+    ///@brief mode for inspecting object attributes
     GNE_MODE_INSPECT,
-    /** mode for selecting objects */
+    ///@brief mode for selecting objects
     GNE_MODE_SELECT,
-    /** mode for connecting lanes */
+    ///@brief mode for connecting lanes
     GNE_MODE_CONNECT,
-    /** mode for editing tls */
+    ///@brief mode for editing tls
     GNE_MODE_TLS,
-    /** Mode for editing additionals */
+    ///@brief Mode for editing additionals
     GNE_MODE_ADDITIONAL
 };
 
@@ -73,11 +73,6 @@ class GNEEdge;
 class GNELane;
 class GNEViewParent;
 class GNEUndoList;
-class GNEInspectorFrame;
-class GNESelectorFrame;
-class GNEConnectorFrame;
-class GNETLSEditorFrame;
-class GNEAdditionalFrame;
 class GNEAdditional;
 class GNEPoly;
 
@@ -100,17 +95,16 @@ public:
                GUIMainWindow& app, GNEViewParent* viewParent, GNENet* net, FXGLVisual* glVis,
                FXGLCanvas* share, FXToolBar* toolBar);
 
-    /// destructor
+    /// @brief destructor
     virtual ~GNEViewNet();
 
-    /// builds the view toolbars
+    /// @brief builds the view toolbars
     virtual void buildViewToolBars(GUIGlChildWindow&);
 
-
+    /// @brief set color schieme 
     bool setColorScheme(const std::string& name);
 
-
-    /// overloaded handlers
+    /// @brief overloaded handlers
     /// @{
     long onLeftBtnPress(FXObject*, FXSelector, void*);
     long onLeftBtnRelease(FXObject*, FXSelector, void*);
@@ -157,28 +151,30 @@ public:
     /// @brief replace node by geometry
     long onCmdNodeReplace(FXObject*, FXSelector, void*);
 
-    /**@brief sets edit mode (from hotkey)
-     * @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
-     */
+    /// @brief sets edit mode (from hotkey)
+    /// @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
     void setEditModeFromHotkey(FXushort selid);
 
-    // abort current edition operation
+    /// @brief abort current edition operation
     void abortOperation(bool clearSelection = true);
 
-    // handle del keypress
+    /// @brief handle del keypress
     void hotkeyDel();
 
-    // handle enter keypress
+    /// @brief handle enter keypress
     void hotkeyEnter();
 
-    // store the position where a popup-menu was requested
+    /// @brief store the position where a popup-menu was requested
     void markPopupPosition();
 
+    /// @brief get the net object           // PABLO #2036
+    GNEViewParent* getViewParent() const;   // PABLO #2036
+
     /// @brief get the net object
-    GNENet* getNet();
+    GNENet* getNet() const;
 
     /// @brief get the undoList object
-    GNEUndoList* getUndoList();
+    GNEUndoList* getUndoList() const;
 
     /// @brief get the current edit mode
     EditMode getCurrentEditMode() const;
@@ -186,54 +182,38 @@ public:
     /// @brief check if lock icon should be visible
     bool showLockIcon() const;
 
+    /// @brief set staturBar text
     void setStatusBarText(const std::string& text);
 
-    /* @brief whether inspection, selection and inversion should apply to edges
-     * or to lanes */
-    bool selectEdges() {
-        return mySelectEdges->getCheck() != 0;
-    }
+    /// @brief whether inspection, selection and inversion should apply to edges or to lanes
+    bool selectEdges();
 
-    /* @brief whether to autoselect nodes
-     * or to lanes */
-    bool autoSelectNodes() {
-        return myExtendToEdgeNodes->getCheck() != 0;
-    }
+    /// @brief whether to autoselect nodes or to lanes
+    bool autoSelectNodes();
 
-    GNESelectorFrame* getSelector() {
-        return mySelector;
-    }
-
-
-    void setSelectionScaling(SUMOReal selectionScale) {
-        myVisualizationSettings->selectionScale = selectionScale;
-    }
+    /// @brief set selection scaling
+    void setSelectionScaling(SUMOReal selectionScale);
 
     /// @brief update control contents after undo/redo or recompute
     void updateControls();
 
-    GNETLSEditorFrame* getTLSEditor() {
-        return myTLSEditor;
-    }
-
-    GNEAdditionalFrame* getAdditional() {
-        return myAdditional;
-    }
-
-    bool changeAllPhases() const {
-        return myChangeAllPhases->getCheck() != FALSE;
-    }
+    /// @brief change all phases
+    bool changeAllPhases() const;
 
 protected:
-    int doPaintGL(int mode, const Boundary& bound);
-
-    /// called after some features are already initialized
-    void doInit();
-
     /// @brief FOX needs this
     GNEViewNet() {}
 
+    /// @brief do paintGL
+    int doPaintGL(int mode, const Boundary& bound);
+
+    /// @brief called after some features are already initialized
+    void doInit();
+
 private:
+    /// @brief view parent          // PABLO #2036
+    GNEViewParent* myViewParent;    // PABLO #2036
+
     /// @brief we are not responsible for deletion
     GNENet* myNet;
 
@@ -290,6 +270,7 @@ private:
     // @{
     /// @brief whether we have started rectangle-selection
     bool myAmInRectSelect;
+
     /// @brief corner of the rectangle-selection
     Position mySelCorner1;
     Position mySelCorner2;
@@ -299,6 +280,7 @@ private:
     /// @{
     /// @brief a reference to the toolbar in myParent
     FXToolBar* myToolbar;
+
     /// @brief combo box for selecting the  edit mode
     FXComboBox* myEditModesCombo;
 
@@ -310,27 +292,14 @@ private:
     /// @brief a reference to the undolist maintained in the application
     GNEUndoList* myUndoList;
 
-    /// @brief the panel for GNE_MODE_INSPECT
-    GNEInspectorFrame* myInspector;
-
-    /// @brief the panel for GNE_MODE_SELECT
-    GNESelectorFrame* mySelector;
-
-    /// @brief the panel for GNE_MODE_CONNECT
-    GNEConnectorFrame* myConnector;
-
-    /// @brief the panel for GNE_MODE_TLS
-    GNETLSEditorFrame* myTLSEditor;
-
-    /// @brief the panel for GNE_MODE_ADDITIONAL
-    GNEAdditionalFrame* myAdditional;
-
+    /// @brief Poput spot
     Position myPopupSpot;
 
+    /// @brief current polygon
     GNEPoly* myCurrentPoly;
 
 private:
-    // set edit mode
+    /// @brief set edit mode
     void setEditMode(EditMode mode);
 
     /// @brief adds controls for setting the edit mode
@@ -345,8 +314,7 @@ private:
     /// @brief delete all currently selected edges
     void deleteSelectedEdges();
 
-    /**@brief try to merge moved junction with another junction in that spot
-     * return true if merging did take place */
+    /// @brief try to merge moved junction with another junction in that spot return true if merging did take place
     bool mergeJunctions(GNEJunction* moved);
 
     /// @brief try to retrieve an edge at the given position

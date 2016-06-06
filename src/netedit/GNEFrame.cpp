@@ -68,10 +68,9 @@ const int GNEFrame::myDefaultWidth = 140;
 // method definitions
 // ===========================================================================
 
-GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList) : 
+GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet) : 
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myDefaultWidth, 0), 
     myViewNet(viewNet),
-    myUndoList(undoList),
     myFrameWidth(myDefaultWidth) {
 }
 
@@ -82,12 +81,6 @@ GNEFrame::~GNEFrame() {}
 GNEViewNet*
 GNEFrame::getViewNet() const {
     return myViewNet;
-}
-
-
-GNEUndoList*
-GNEFrame::getUndoList() const {
-    return myUndoList;
 }
 
 

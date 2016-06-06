@@ -61,7 +61,7 @@ public:
     /**@brief Constructor
      * @param[in] parent The parent window
      */
-    GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
+    GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNESelectorFrame();

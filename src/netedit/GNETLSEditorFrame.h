@@ -56,7 +56,7 @@ public:
     /**@brief Constructor
      * @param[in] parent The parent window
      */
-    GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
+    GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNETLSEditorFrame();

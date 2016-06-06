@@ -112,6 +112,7 @@ GNEViewNet::GNEViewNet(
     FXGLCanvas* share,
     FXToolBar* toolBar) :
     GUISUMOAbstractView(tmpParent, app, viewParent, net->getVisualisationSpeedUp(), glVis, share),
+    myViewParent(viewParent),
     myNet(net),
     myEditMode(GNE_MODE_MOVE),
     myPreviousEditMode(GNE_MODE_MOVE),
@@ -126,20 +127,7 @@ GNEViewNet::GNEViewNet(
     myEditModesCombo(0),
     myEditModeNames(),
     myUndoList(dynamic_cast<GNEApplicationWindow*>(myApp)->getUndoList()),
-    myInspector(0),
-    mySelector(0),
     myCurrentPoly(0) {
-    // adding order is important
-    myInspector = new GNEInspectorFrame(viewParent->getFramesArea(), this, myUndoList);
-    myInspector->hide();
-    mySelector = new GNESelectorFrame(viewParent->getFramesArea(), this, myUndoList);
-    mySelector->hide();
-    myConnector = new GNEConnectorFrame(viewParent->getFramesArea(), this, myUndoList);
-    myConnector->hide();
-    myTLSEditor = new GNETLSEditorFrame(viewParent->getFramesArea(), this, myUndoList);
-    myTLSEditor->hide();
-    myAdditional = new GNEAdditionalFrame(viewParent->getFramesArea(),this, myUndoList);
-    myAdditional->hide();
     // view must be the final member of actualParent
     reparent(actualParent);
 
@@ -320,6 +308,30 @@ GNEViewNet::setStatusBarText(const std::string& text) {
 }
 
 
+bool 
+GNEViewNet::selectEdges() {
+    return mySelectEdges->getCheck() != 0;
+}
+
+
+bool 
+GNEViewNet::autoSelectNodes() {
+    return myExtendToEdgeNodes->getCheck() != 0;
+}
+
+
+void 
+GNEViewNet::setSelectionScaling(SUMOReal selectionScale) {
+    myVisualizationSettings->selectionScale = selectionScale;
+}
+
+
+bool 
+GNEViewNet::changeAllPhases() const {
+    return myChangeAllPhases->getCheck() != FALSE;
+}
+
+
 int
 GNEViewNet::doPaintGL(int mode, const Boundary& bound) {
     // init view settings
@@ -444,11 +456,11 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                         if (myCreateEdgeSource != pointed_junction) {
                             // may fail to prevent double edges
                             GNEEdge* newEdge = myNet->createEdge(
-                                                   myCreateEdgeSource, pointed_junction, myInspector->getEdgeTemplate(), myUndoList);
+                                                   myCreateEdgeSource, pointed_junction, myViewParent->getInspectorFrame()->getEdgeTemplate(), myUndoList);
                             if (newEdge) {
                                 if (myAutoCreateOppositeEdge->getCheck()) {
                                     myNet->createEdge(
-                                        pointed_junction, myCreateEdgeSource, myInspector->getEdgeTemplate(), myUndoList);
+                                        pointed_junction, myCreateEdgeSource, myViewParent->getInspectorFrame()->getEdgeTemplate(), myUndoList);
                                 }
                                 myCreateEdgeSource->unMarkAsCreateEdgeSource();
                                 if (myUndoList->hasCommandGroup()) {
@@ -534,7 +546,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     myNet->getShapeContainer().removePOI(pointed_poi->getMicrosimID());
                     update();
                 } else if (pointed_additional) {
-                    myAdditional->removeAdditional(pointed_additional);
+                    myViewParent->getAdditionalFrame()->removeAdditional(pointed_additional);
                     update();
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -573,7 +585,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointedAC != 0) {
                     selected.push_back(pointedAC);
                 }
-                myInspector->inspect(selected);
+                myViewParent->getInspectorFrame()->inspect(selected);
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 update();
                 break;
@@ -600,7 +612,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 if (pointed_lane) {
                     const bool mayPass = (((FXEvent*)data)->state & SHIFTMASK) != 0;
                     const bool allowConflict = (((FXEvent*)data)->state & CONTROLMASK) != 0;
-                    myConnector->handleLaneClick(pointed_lane, mayPass, allowConflict, true);
+                    myViewParent->getConnectorFrame()->handleLaneClick(pointed_lane, mayPass, allowConflict, true);
                     update();
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -608,14 +620,14 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
 
             case GNE_MODE_TLS:
                 if (pointed_junction) {
-                    myTLSEditor->editJunction(pointed_junction);
+                    myViewParent->getTLSEditorFrame()->editJunction(pointed_junction);
                     update();
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
 
             case GNE_MODE_ADDITIONAL:
-                if(pointed_additional == NULL && myAdditional->addAdditional(pointed_lane, this)) {
+                if(pointed_additional == NULL && myViewParent->getAdditionalFrame()->addAdditional(pointed_lane, this)) {
                     update();
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -661,7 +673,7 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
                 Boundary b;
                 b.add(mySelCorner1);
                 b.add(mySelCorner2);
-                mySelector->handleIDs(getObjectsInBoundary(b), selectEdges());
+                myViewParent->getSelectorFrame()->handleIDs(getObjectsInBoundary(b), selectEdges());
                 makeNonCurrent();
             }
         }
@@ -739,9 +751,9 @@ GNEViewNet::abortOperation(bool clearSelection) {
             gSelected.clear();
         }
     } else if (myEditMode == GNE_MODE_CONNECT) {
-        myConnector->onCmdCancel(0, 0, 0);
+        myViewParent->getConnectorFrame()->onCmdCancel(0, 0, 0);
     } else if (myEditMode == GNE_MODE_TLS) {
-        myTLSEditor->onCmdCancel(0, 0, 0);
+        myViewParent->getTLSEditorFrame()->onCmdCancel(0, 0, 0);
     } else if (myEditMode == GNE_MODE_MOVE) {
         removeCurrentPoly();
     }
@@ -765,9 +777,9 @@ GNEViewNet::hotkeyDel() {
 void
 GNEViewNet::hotkeyEnter() {
     if (myEditMode == GNE_MODE_CONNECT) {
-        myConnector->onCmdOK(0, 0, 0);
+        myViewParent->getConnectorFrame()->onCmdOK(0, 0, 0);
     } else if (myEditMode == GNE_MODE_TLS) {
-        myTLSEditor->onCmdOK(0, 0, 0);
+        myViewParent->getTLSEditorFrame()->onCmdOK(0, 0, 0);
     } else if (myEditMode == GNE_MODE_MOVE && myCurrentPoly != 0) {
         if (myCurrentPoly->getEditedJunction() != 0) {
             myCurrentPoly->getEditedJunction()->setAttribute(SUMO_ATTR_SHAPE, toString(myCurrentPoly->getShape()), myUndoList);
@@ -826,14 +838,20 @@ GNEViewNet::markPopupPosition() {
 }
 
 
+GNEViewParent*                          // PABLO #2036
+GNEViewNet::getViewParent() const {     // PABLO #2036
+    return myViewParent;                // PABLO #2036
+}                                       // PABLO #2036
+
+
 GNENet*
-GNEViewNet::getNet() {
+GNEViewNet::getNet() const {
     return myNet;
 };
 
 
 GNEUndoList*
-GNEViewNet::getUndoList() {
+GNEViewNet::getUndoList() const {
     return myUndoList;
 }
 
@@ -1200,26 +1218,26 @@ GNEViewNet::updateModeSpecificControls() {
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
     int widthChange = 0;
-    if (myInspector->shown()) {
-        widthChange += myInspector->getWidth() + addChange;
-        myInspector->hide();
-        myInspector->inspect(std::vector<GNEAttributeCarrier*>());
+    if (myViewParent->getInspectorFrame()->shown()) {
+        widthChange += myViewParent->getInspectorFrame()->getWidth() + addChange;
+        myViewParent->getInspectorFrame()->hide();
+        myViewParent->getInspectorFrame()->inspect(std::vector<GNEAttributeCarrier*>());
     }
-    if (mySelector->shown()) {
-        widthChange += mySelector->getWidth() + addChange;
-        mySelector->hide();
+    if (myViewParent->getSelectorFrame()->shown()) {
+        widthChange += myViewParent->getSelectorFrame()->getWidth() + addChange;
+        myViewParent->getSelectorFrame()->hide();
     }
-    if (myConnector->shown()) {
-        widthChange += myConnector->getWidth() + addChange;
-        myConnector->hide();
+    if (myViewParent->getConnectorFrame()->shown()) {
+        widthChange += myViewParent->getConnectorFrame()->getWidth() + addChange;
+        myViewParent->getConnectorFrame()->hide();
     }
-    if (myTLSEditor->shown()) {
-        widthChange += myTLSEditor->getWidth() + addChange;
-        myTLSEditor->hide();
+    if (myViewParent->getTLSEditorFrame()->shown()) {
+        widthChange += myViewParent->getTLSEditorFrame()->getWidth() + addChange;
+        myViewParent->getTLSEditorFrame()->hide();
     }
-    if (myAdditional->shown()) {
-        widthChange += myAdditional->getWidth() + addChange;
-        myAdditional->hide();
+    if (myViewParent->getAdditionalFrame()->shown()) {
+        widthChange += myViewParent->getAdditionalFrame()->getWidth() + addChange;
+        myViewParent->getAdditionalFrame()->hide();
     }
     // enable selected controls
     switch (myEditMode) {
@@ -1230,13 +1248,13 @@ GNEViewNet::updateModeSpecificControls() {
         case GNE_MODE_DELETE:
             mySelectEdges->show();
         case GNE_MODE_INSPECT:
-            widthChange -= myInspector->getWidth() + addChange;
-            myInspector->show();
+            widthChange -= myViewParent->getInspectorFrame()->getWidth() + addChange;
+            myViewParent->getInspectorFrame()->show();
             mySelectEdges->show();
             break;
         case GNE_MODE_SELECT:
-            widthChange -= mySelector->getWidth() + addChange;
-            mySelector->show();
+            widthChange -= myViewParent->getSelectorFrame()->getWidth() + addChange;
+            myViewParent->getSelectorFrame()->show();
             mySelectEdges->show();
             myExtendToEdgeNodes->show();
             break;
@@ -1244,17 +1262,17 @@ GNEViewNet::updateModeSpecificControls() {
             myWarnAboutMerge->show();
             break;
         case GNE_MODE_CONNECT:
-            widthChange -= myConnector->getWidth() + addChange;
-            myConnector->show();
+            widthChange -= myViewParent->getConnectorFrame()->getWidth() + addChange;
+            myViewParent->getConnectorFrame()->show();
             break;
         case GNE_MODE_TLS:
-            widthChange -= myTLSEditor->getWidth() + addChange;
-            myTLSEditor->show();
+            widthChange -= myViewParent->getTLSEditorFrame()->getWidth() + addChange;
+            myViewParent->getTLSEditorFrame()->show();
             myChangeAllPhases->show();
             break;
         case GNE_MODE_ADDITIONAL:
-            widthChange -= myAdditional->getWidth() + addChange;
-            myAdditional->show();
+            widthChange -= myViewParent->getAdditionalFrame()->getWidth() + addChange;
+            myViewParent->getAdditionalFrame()->show();
             break;
         default:
             break;
@@ -1349,7 +1367,7 @@ void
 GNEViewNet::updateControls() {
     switch (myEditMode) {
         case GNE_MODE_INSPECT:
-            myInspector->update();
+            myViewParent->getInspectorFrame()->update();
             break;
         default:
             break;

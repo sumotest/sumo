@@ -518,7 +518,7 @@ public:
      * @param[in] viewNet view Net of the netEdit
      * @param[in] undoList pointer to undoList
      */
-    GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList);
+    GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNEAdditionalFrame();

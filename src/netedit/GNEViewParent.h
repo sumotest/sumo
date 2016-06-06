@@ -47,6 +47,11 @@
 class GUISUMOAbstractView;
 class GNENet;
 class GNEApplicationWindow;
+class GNEInspectorFrame;
+class GNESelectorFrame;
+class GNEConnectorFrame;
+class GNETLSEditorFrame;
+class GNEAdditionalFrame;
 
 // ===========================================================================
 // class declarations
@@ -90,8 +95,20 @@ public:
     /// @brief Destructor
     ~GNEViewParent();
 
-    /// @brief get frame to hold GNEFrames          // PABLO #2036
-    FXHorizontalFrame* getFramesArea() const;       // PABLO #2036
+    /// @brief get frame for GNE_MODE_INSPECT       // PABLO #2036
+    GNEInspectorFrame* getInspectorFrame() const;   // PABLO #2036
+
+    /// @brief get frame for GNE_MODE_SELECT        // PABLO #2036
+    GNESelectorFrame* getSelectorFrame() const;     // PABLO #2036
+
+    /// @brief get frame for GNE_MODE_CONNECT       // PABLO #2036
+    GNEConnectorFrame* getConnectorFrame() const;   // PABLO #2036
+
+    /// @brief get frame for GNE_MODE_TLS           // PABLO #2036
+    GNETLSEditorFrame* getTLSEditorFrame() const;   // PABLO #2036
+
+    /// @brief get frame for GNE_MODE_ADDITIONAL    // PABLO #2036
+    GNEAdditionalFrame* getAdditionalFrame() const; // PABLO #2036
 
     /// @name FOX-callbacks
     /// @{
@@ -127,6 +144,21 @@ private:
 
     /// @brief Splitter to divide ViewNet und GNEFrames     // PABLO #2036
     FXSplitter *myFramesSplitter;                           // PABLO #2036
+
+    /// @brief the panel for GNE_MODE_INSPECT           // PABLO #2036
+    GNEInspectorFrame* myInspectorFrame;                // PABLO #2036
+
+    /// @brief the panel for GNE_MODE_SELECT            // PABLO #2036
+    GNESelectorFrame* mySelectorFrame;                  // PABLO #2036
+
+    /// @brief the panel for GNE_MODE_CONNECT           // PABLO #2036
+    GNEConnectorFrame* myConnectorFrame;                // PABLO #2036
+
+    /// @brief the panel for GNE_MODE_TLS               // PABLO #2036
+    GNETLSEditorFrame* myTLSEditorFrame;                // PABLO #2036
+
+    /// @brief the panel for GNE_MODE_ADDITIONAL        // PABLO #2036
+    GNEAdditionalFrame* myAdditionalFrame;              // PABLO #2036
 };
 
 

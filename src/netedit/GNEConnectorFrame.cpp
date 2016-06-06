@@ -39,8 +39,10 @@
 #include <utils/gui/div/GUIIOGlobals.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
+#include "GNEInspectorFrame.h"
 #include "GNEConnectorFrame.h"
 #include "GNESelectorFrame.h"
+#include "GNEViewParent.h"
 #include "GNEViewNet.h"
 #include "GNEChange_Connection.h"
 #include "GNEUndoList.h"
@@ -84,8 +86,8 @@ RGBColor GNEConnectorFrame::conflictColor;
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
-    GNEFrame(parent, viewNet, undoList),
+GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
+    GNEFrame(parent, viewNet),
     myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
     myCurrentLane(0) {
     // heading
@@ -190,7 +192,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
         initTargets();
         buildIinternalLanes(lane->getParentEdge().getNBEdge()->getToNode());
         myNumChanges = 0;
-        myUndoList->p_begin("modify connections");
+        myViewNet->getUndoList()->p_begin("modify connections");
     } else if (myPotentialTargets.count(lane) || allowConflict) {
         const unsigned int fromIndex = myCurrentLane->getIndex();
         GNEEdge& srcEdge = myCurrentLane->getParentEdge();
@@ -206,7 +208,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
         switch (status) {
             case UNCONNECTED:
                 if (toggle) {
-                    myUndoList->add(new GNEChange_Connection(&srcEdge, fromIndex,
+                    myViewNet->getUndoList()->add(new GNEChange_Connection(&srcEdge, fromIndex,
                                     destEdgeID, lane->getIndex(), mayDefinitelyPass, true), true);
                     lane->setSpecialColor(mayDefinitelyPass ? &targetPassColor : &targetColor);
                     changed = true;
@@ -214,7 +216,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
                 break;
             case CONNECTED:
             case CONNECTED_PASS:
-                myUndoList->add(new GNEChange_Connection(&srcEdge, fromIndex, destEdgeID, lane->getIndex(),
+                myViewNet->getUndoList()->add(new GNEChange_Connection(&srcEdge, fromIndex, destEdgeID, lane->getIndex(),
                                 status == CONNECTED_PASS, false), true);
                 lane->setSpecialColor(&potentialTargetColor);
                 changed = true;
@@ -229,7 +231,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
         if (changed) {
             myNumChanges += 1;
             GNEJunction* affected = myViewNet->getNet()->retrieveJunction(srcEdge.getDest()->getMicrosimID());
-            affected->invalidateTLS(myUndoList, deletedConnection);
+            affected->invalidateTLS(myViewNet->getUndoList(), deletedConnection);
             buildIinternalLanes(myCurrentLane->getParentEdge().getNBEdge()->getToNode());
         }
     } else {
@@ -242,7 +244,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
 long
 GNEConnectorFrame::onCmdCancel(FXObject*, FXSelector, void*) {
     if (myCurrentLane != 0) {
-        myUndoList->p_abort();
+        myViewNet->getUndoList()->p_abort();
         if (myNumChanges) {
             myViewNet->setStatusBarText("Changes reverted");
         }
@@ -256,7 +258,7 @@ GNEConnectorFrame::onCmdCancel(FXObject*, FXSelector, void*) {
 long
 GNEConnectorFrame::onCmdOK(FXObject*, FXSelector, void*) {
     if (myCurrentLane != 0) {
-        myUndoList->p_end();
+        myViewNet->getUndoList()->p_end();
         if (myNumChanges) {
             myViewNet->setStatusBarText("Changes accepted");
         }
@@ -280,7 +282,7 @@ GNEConnectorFrame::onCmdSelectDeadEnds(FXObject*, FXSelector, void*) {
             }
         }
     }
-    myViewNet->getSelector()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
+    myViewNet->getViewParent()->getSelectorFrame()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
@@ -314,7 +316,7 @@ GNEConnectorFrame::onCmdSelectDeadStarts(FXObject*, FXSelector, void*) {
             }
         }
     }
-    myViewNet->getSelector()->handleIDs(
+    myViewNet->getViewParent()->getSelectorFrame()->handleIDs(
         std::vector<GUIGlID>(selectIDs.begin(), selectIDs.end()),
         false, GNESelectorFrame::SET_REPLACE);
     return 1;
@@ -344,7 +346,7 @@ GNEConnectorFrame::onCmdSelectConflicts(FXObject*, FXSelector, void*) {
         }
 
     }
-    myViewNet->getSelector()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
+    myViewNet->getViewParent()->getSelectorFrame()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
@@ -364,7 +366,7 @@ GNEConnectorFrame::onCmdSelectPass(FXObject*, FXSelector, void*) {
             }
         }
     }
-    myViewNet->getSelector()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
+    myViewNet->getViewParent()->getSelectorFrame()->handleIDs(selectIDs, false, GNESelectorFrame::SET_REPLACE);
     return 1;
 }
 
@@ -372,7 +374,7 @@ GNEConnectorFrame::onCmdSelectPass(FXObject*, FXSelector, void*) {
 long
 GNEConnectorFrame::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
     onCmdCancel(0, 0, 0);
-    myUndoList->p_begin("clear connections from selected lanes, edges and junctions");
+    myViewNet->getUndoList()->p_begin("clear connections from selected lanes, edges and junctions");
     const std::set<GUIGlID> ids = gSelected.getSelected();
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         GUIGlID id = *it;
@@ -381,8 +383,8 @@ GNEConnectorFrame::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
             switch (object->getType()) {
                 case GLO_JUNCTION: {
                     GNEJunction* junction = dynamic_cast<GNEJunction*>(object);
-                    junction->setLogicValid(false, myUndoList); // clear connections
-                    junction->setLogicValid(false, myUndoList, GNEAttributeCarrier::MODIFIED); // prevent re-guessing
+                    junction->setLogicValid(false, myViewNet->getUndoList()); // clear connections
+                    junction->setLogicValid(false, myViewNet->getUndoList(), GNEAttributeCarrier::MODIFIED); // prevent re-guessing
                     break;
                 }
                 case GLO_EDGE: {
@@ -400,7 +402,7 @@ GNEConnectorFrame::onCmdClearSelectedConnections(FXObject*, FXSelector, void*) {
             }
         }
     }
-    myUndoList->p_end();
+    myViewNet->getUndoList()->p_end();
     return 1;
 }
 
@@ -418,20 +420,20 @@ GNEConnectorFrame::removeConnections(GNELane* lane) {
 long
 GNEConnectorFrame::onCmdResetSelectedConnections(FXObject*, FXSelector, void*) {
     onCmdCancel(0, 0, 0);
-    myUndoList->p_begin("reset connections from selected lanes");
+    myViewNet->getUndoList()->p_begin("reset connections from selected lanes");
     const std::set<GUIGlID> nodeIDs = gSelected.getSelected(GLO_JUNCTION);
     for (std::set<GUIGlID>::const_iterator nid_it = nodeIDs.begin(); nid_it != nodeIDs.end(); nid_it++) {
         GUIGlObject* object = GUIGlObjectStorage::gIDStorage.getObjectBlocking(*nid_it);
         if (object) {
             GNEJunction* junction = dynamic_cast<GNEJunction*>(object);
             if (junction) {
-                junction->setLogicValid(false, myUndoList);
+                junction->setLogicValid(false, myViewNet->getUndoList());
             } else {
                 throw ProcessError("Wrong object type returned from gIDStorage");
             }
         }
     }
-    myUndoList->p_end();
+    myViewNet->getUndoList()->p_end();
     return 1;
 }
 

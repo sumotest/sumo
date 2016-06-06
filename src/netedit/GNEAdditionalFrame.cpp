@@ -115,8 +115,8 @@ FXIMPLEMENT(GNEAdditionalFrame::lanes,                   FXGroupBox,     GNELane
 // method definitions
 // ===========================================================================
 
-GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
-    GNEFrame(parent, viewNet, undoList),
+GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet):
+    GNEFrame(parent, viewNet),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
     myActualAdditionalType(SUMO_TAG_NOTHING) {
     // Create frame
@@ -232,9 +232,9 @@ GNEAdditionalFrame::addAdditional(GNELane *lane, GUISUMOAbstractView* parent) {
 
 void
 GNEAdditionalFrame::removeAdditional(GNEAdditional *additional) {
-    myUndoList->p_begin("delete " + additional->getDescription());
-    myUndoList->add(new GNEChange_Additional(myViewNet->getNet(), additional, false), true);
-    myUndoList->p_end();
+    myViewNet->getUndoList()->p_begin("delete " + additional->getDescription());
+    myViewNet->getUndoList()->add(new GNEChange_Additional(myViewNet->getNet(), additional, false), true);
+    myViewNet->getUndoList()->p_end();
 }
 
 FXFont*

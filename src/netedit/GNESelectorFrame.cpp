@@ -77,8 +77,8 @@ FXIMPLEMENT(GNESelectorFrame, FXScrollWindow, GNESelectorFrameMap, ARRAYNUMBER(G
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet, GNEUndoList* undoList):
-    GNEFrame(parent, viewNet, undoList),
+GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
+    GNEFrame(parent, viewNet),
     myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
     mySetOperation(SET_ADD),
     mySetOperationTarget(mySetOperation),
@@ -210,7 +210,7 @@ GNESelectorFrame::onCmdSave(FXObject*, FXSelector, void*) {
 
 long
 GNESelectorFrame::onCmdClear(FXObject*, FXSelector, void*) {
-    myUndoList->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
+    myViewNet->getUndoList()->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
     myViewNet->update();
     return 1;
 }
@@ -390,12 +390,12 @@ void
 GNESelectorFrame::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOperation setop) {
     const SetOperation setOperation = (setop == SET_DEFAULT ? (SetOperation)mySetOperation : setop);
     std::set<GUIGlID> previousSelection;
-    myUndoList->p_begin("change selection");
+    myViewNet->getUndoList()->p_begin("change selection");
     if (setOperation == SET_REPLACE) {
-        myUndoList->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
+        myViewNet->getUndoList()->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
     } else if (setOperation == SET_RESTRICT) {
         previousSelection = gSelected.getSelected(); // have to make a copy
-        myUndoList->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
+        myViewNet->getUndoList()->add(new GNEChange_Selection(std::set<GUIGlID>(), gSelected.getSelected(), true), true);
     }
     // handle ids
     GUIGlObject* object;
@@ -454,8 +454,8 @@ GNESelectorFrame::handleIDs(std::vector<GUIGlID> ids, bool selectEdges, SetOpera
             }
         }
     }
-    myUndoList->add(new GNEChange_Selection(selected, deselected, true), true);
-    myUndoList->p_end();
+    myViewNet->getUndoList()->add(new GNEChange_Selection(selected, deselected, true), true);
+    myViewNet->getUndoList()->p_end();
     myViewNet->update();
 }
 
