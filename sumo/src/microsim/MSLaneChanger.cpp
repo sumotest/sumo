@@ -58,7 +58,6 @@
 //#define DEBUG_CONTINUE_CHANGE
 //#define DEBUG_CHECK_CHANGE
 //#define DEBUG_CHANGE_OPPOSITE
-//#define DEBUG_COND false
 #define DEBUG_COND (vehicle->getLaneChangeModel().debugVehicle())
 
 
@@ -286,43 +285,43 @@ MSLaneChanger::change() {
     int state2 = 0;
     if (mayChange(1)) {
 
-        // Debug (Leo)
-    	gDebugFlag2 = vehicle->getID() == "type1.54";
-        if(gDebugFlag2){
-        	std::cout
-        	<< "MSLaneChanger::change(): change left request"
-        	<< "\nvehicle: '" << vehicle->getID() << "'"
-        	<< std::endl;
-        }
+//        // Debug (Leo)
+//    	gDebugFlag2 = vehicle->getID() == "type1.54";
+//        if(gDebugFlag2){
+//        	std::cout
+//        	<< "MSLaneChanger::change(): change left request"
+//        	<< "\nvehicle: '" << vehicle->getID() << "'"
+//        	<< std::endl;
+//        }
 
         state2 = checkChangeWithinEdge(1, leader, preb);
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
 
 
-        // Debug (Leo)
-        if(gDebugFlag2){
-        	std::cout
-        	<< "changingAllowed2 = " << changingAllowed2
-        	<< std::endl;
-        }
+//        // Debug (Leo)
+//        if(gDebugFlag2){
+//        	std::cout
+//        	<< "changingAllowed2 = " << changingAllowed2
+//        	<< std::endl;
+//        }
 
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_LEFT) != 0 && changingAllowed2) {
 
-            // Debug (Leo)
-        	if(gDebugFlag2){
-            	std::cout
-            	<< "startChange() left"
-            	<< std::endl;
-            }
-        	gDebugFlag2 = false;
+//            // Debug (Leo)
+//        	if(gDebugFlag2){
+//            	std::cout
+//            	<< "startChange() left"
+//            	<< std::endl;
+//            }
+//        	gDebugFlag2 = false;
 
             startChange(vehicle, myCandi, 1);
             return true;
         }
 
-        // Debug (Leo)
-        gDebugFlag2=false;
+//        // Debug (Leo)
+//        gDebugFlag2=false;
 
         if ((state2 & LCA_LEFT) != 0 && (state2 & LCA_URGENT) != 0) {
             (myCandi + 1)->lastBlocked = vehicle;
