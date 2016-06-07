@@ -51,7 +51,7 @@ class GNEAdditional;
  * to draw itself
  */
 class GNELane : public GNENetElement, public FXDelegator {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNELane)
 
 public:

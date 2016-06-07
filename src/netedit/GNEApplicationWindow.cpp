@@ -858,7 +858,7 @@ GNEApplicationWindow::openNewView() {
     FXuint opts = MDI_TRACKING;
     GNEViewParent* w = new GNEViewParent(myMDIClient,
                                          myMDIMenu, FXString(caption.c_str()), this,
-                                         getBuildGLCanvas(), myNet,
+                                         getBuildGLCanvas(), myNet, myUndoList,
                                          GUIIconSubSys::getIcon(ICON_EMPTY),
                                          opts, 10, 10, 300, 200);
     if (myMDIClient->numChildren() == 1) {

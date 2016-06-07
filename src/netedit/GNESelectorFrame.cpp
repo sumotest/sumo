@@ -44,6 +44,7 @@
 #include <utils/gui/images/GUIIconSubSys.h>
 #include "GNESelectorFrame.h"
 #include "GNEViewNet.h"
+#include "GNEViewParent.h"
 #include "GNENet.h"
 #include "GNEJunction.h"
 #include "GNEEdge.h"
@@ -359,6 +360,8 @@ GNESelectorFrame::show() {
     gSelected.add2Update(this);
     selectionUpdated(); // selection may have changed due to deletions
     FXScrollWindow::show();
+    // Show Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->showFramesArea();
 }
 
 
@@ -366,6 +369,8 @@ void
 GNESelectorFrame::hide() {
     gSelected.remove2Update();
     FXScrollWindow::hide();
+    // Hide Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->hideFramesArea();
 }
 
 

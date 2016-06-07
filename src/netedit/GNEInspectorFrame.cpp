@@ -44,6 +44,7 @@
 #include "GNEAttributeCarrier.h"
 #include "GNEAdditional.h"
 #include "GNEViewNet.h"
+#include "GNEViewParent.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -105,6 +106,24 @@ GNEInspectorFrame::~GNEInspectorFrame() {
             delete myEdgeTemplate;
         }
     }
+}
+
+
+void
+GNEInspectorFrame::show() {
+    // Show Scroll window
+    FXScrollWindow::show();
+    // Show Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->showFramesArea();
+}
+
+
+void
+GNEInspectorFrame::hide() {
+    // Hide ScrollWindow
+    FXScrollWindow::hide();
+    // Hide Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->hideFramesArea();
 }
 
 

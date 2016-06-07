@@ -103,14 +103,9 @@ FXIMPLEMENT(GNEViewNet, GUISUMOAbstractView, GNEViewNetMap, ARRAYNUMBER(GNEViewN
 // ===========================================================================
 // member method definitions
 // ===========================================================================
-GNEViewNet::GNEViewNet(
-    FXComposite* tmpParent,
-    FXComposite* actualParent,
-    GUIMainWindow& app,
-    GNEViewParent* viewParent,
-    GNENet* net, FXGLVisual* glVis,
-    FXGLCanvas* share,
-    FXToolBar* toolBar) :
+GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMainWindow& app, 
+    GNEViewParent* viewParent, GNENet* net, GNEUndoList* undoList, 
+    FXGLVisual* glVis, FXGLCanvas* share, FXToolBar* toolBar) :
     GUISUMOAbstractView(tmpParent, app, viewParent, net->getVisualisationSpeedUp(), glVis, share),
     myViewParent(viewParent),
     myNet(net),
@@ -126,7 +121,7 @@ GNEViewNet::GNEViewNet(
     myToolbar(toolBar),
     myEditModesCombo(0),
     myEditModeNames(),
-    myUndoList(dynamic_cast<GNEApplicationWindow*>(myApp)->getUndoList()),
+    myUndoList(undoList),
     myCurrentPoly(0) {
     // view must be the final member of actualParent
     reparent(actualParent);
@@ -1142,10 +1137,6 @@ GNEViewNet::setEditMode(EditMode mode) {
     setStatusBarText("");
     abortOperation(false);
     if (mode == myEditMode) {
-        // when trying to switch to the existing mode, toggle with previous instead
-        // not quite sure whether this is useful
-        //myEditMode = myPreviousEditMode;
-        //myPreviousEditMode = mode;
         setStatusBarText("Mode already selected");
     } else {
         myPreviousEditMode = myEditMode;
@@ -1218,6 +1209,7 @@ GNEViewNet::updateModeSpecificControls() {
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
     int widthChange = 0;
+    // Close all Frames
     if (myViewParent->getInspectorFrame()->shown()) {
         widthChange += myViewParent->getInspectorFrame()->getWidth() + addChange;
         myViewParent->getInspectorFrame()->hide();
@@ -1247,6 +1239,7 @@ GNEViewNet::updateModeSpecificControls() {
             break;
         case GNE_MODE_DELETE:
             mySelectEdges->show();
+            break;
         case GNE_MODE_INSPECT:
             widthChange -= myViewParent->getInspectorFrame()->getWidth() + addChange;
             myViewParent->getInspectorFrame()->show();
@@ -1281,7 +1274,7 @@ GNEViewNet::updateModeSpecificControls() {
     myToolbar->recalc();
     recalc();
     onPaint(0, 0, 0); // force repaint because different modes draw different things
-    //update();
+    update();
 }
 
 

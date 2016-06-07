@@ -178,6 +178,24 @@ GNEConnectorFrame::~GNEConnectorFrame() {
 }
 
 
+void
+GNEConnectorFrame::show() {
+    // Show Scroll window
+    FXScrollWindow::show();
+    // Show Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->showFramesArea();
+}
+
+
+void
+GNEConnectorFrame::hide() {
+    // Hide ScrollWindow
+    FXScrollWindow::hide();
+    // Hide Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->hideFramesArea();
+}
+
+
 FXFont*
 GNEConnectorFrame::getHeaderFont() {
     return myHeaderFont;

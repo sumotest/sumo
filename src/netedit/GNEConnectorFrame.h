@@ -45,19 +45,24 @@ class GNEInternalLane;
  * The Widget for modifying selections of network-elements
  */
 class GNEConnectorFrame : public GNEFrame {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNEConnectorFrame)
 
 public:
     /**@brief Constructor
-     * @param[in] parent The parent window
-     * @param[in] viewNet view to update
-     * @param[in] undoList pointer to undoList modul
+     * @brief parent FXFrame in which this GNEFrame is placed
+     * @brief viewNet viewNet that uses this GNEFrame
      */
     GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNEConnectorFrame();
+
+    /// @brief show Frame
+    void show();
+
+    /// @brief hide Frame
+    void hide();
 
     /// @brief get Header front
     FXFont* getHeaderFont();
@@ -124,12 +129,16 @@ private:
 
     /// @brief color for the from-lane of a connection
     static RGBColor sourceColor;
+
     /// @brief color for the to-lane of a connection
     static RGBColor targetColor;
+
     /// @brief color for a to-lane that cannot be used because another connection conflicts
     static RGBColor conflictColor;
+
     /// @brief color for the to-lane of a connection with pass attribute
     static RGBColor targetPassColor;
+
     /// @brief color for potential to-lane targets (currently unconnected)
     static RGBColor potentialTargetColor;
 
@@ -155,7 +164,7 @@ private:
      */
     unsigned int getTLLLinkNumber(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane);
 
-    /* @brief builds internal lanes for the given node */
+    /// @brief builds internal lanes for the given node
     void buildIinternalLanes(NBNode* node);
 };
 

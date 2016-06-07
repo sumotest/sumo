@@ -48,7 +48,7 @@ class GNEAdditional;
  * The Widget for modifying network-element attributes (i.e. lane speed)
  */
 class GNEInspectorFrame : public GNEFrame {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNEInspectorFrame)
 
 public:
@@ -56,7 +56,7 @@ public:
     // class AttrPanel
     // ===========================================================================
     class AttrPanel : public FXVerticalFrame {
-        // FOX-declarations
+        /// @brief FOX-declaration
         FXDECLARE(GNEInspectorFrame::AttrPanel)
 
     public:
@@ -82,7 +82,7 @@ public:
     // class AttrInput
     // ===========================================================================
     class AttrInput : public FXHorizontalFrame {
-        // FOX-declarations
+        /// @brief FOX-declaration
         FXDECLARE(GNEInspectorFrame::AttrInput)
 
     public:
@@ -121,14 +121,19 @@ public:
 
 public:
     /**@brief Constructor
-     * @param[in] parent The parent window
-     * @param[in] undoList The undoList to record changes facilitated by this
-     * @param[in] tpl The initial edge template (we assume shared responsibility via reference counting)
+     * @brief parent FXFrame in which this GNEFrame is placed
+     * @brief viewNet viewNet that uses this GNEFrame
      */
     GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNEInspectorFrame();
+
+    /// @brief show Frame
+    void show();
+
+    /// @brief hide Frame
+    void hide();
 
     /// @brief Inspect the given multi-selection
     void inspect(const std::vector<GNEAttributeCarrier*>& ACs);

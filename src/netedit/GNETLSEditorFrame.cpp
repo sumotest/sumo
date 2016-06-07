@@ -44,6 +44,7 @@
 #include <netbuild/NBLoadedSUMOTLDef.h>
 #include "GNETLSEditorFrame.h"
 #include "GNEViewNet.h"
+#include "GNEViewParent.h"
 #include "GNENet.h"
 #include "GNEJunction.h"
 #include "GNEEdge.h"
@@ -180,6 +181,30 @@ GNETLSEditorFrame::~GNETLSEditorFrame() {
     delete myHeaderFont;
     delete myTableFont;
     cleanup();
+}
+
+
+void
+GNETLSEditorFrame::show() {
+    // Show Scroll window
+    FXScrollWindow::show();
+    // Show Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->showFramesArea();
+}
+
+
+void
+GNETLSEditorFrame::hide() {
+    // Hide ScrollWindow
+    FXScrollWindow::hide();
+    // Hide Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->hideFramesArea();
+}
+
+
+FXFont* 
+GNETLSEditorFrame::getHeaderFont() {
+    return myHeaderFont;
 }
 
 

@@ -67,7 +67,7 @@ class GNEAdditionalFrame;
  * The rest of the window is a canvas that contains the display itself
  */
 class GNEViewParent : public GUIGlChildWindow {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNEViewParent)
 
 public:
@@ -89,7 +89,7 @@ public:
      */
     GNEViewParent(FXMDIClient* p, FXMDIMenu* mdimenu,
                   const FXString& name, GNEApplicationWindow* parentWindow,
-                  FXGLCanvas* share, GNENet* net,
+                  FXGLCanvas* share, GNENet* net, GNEUndoList *undoList,
                   FXIcon* ic = NULL, FXuint opts = 0, FXint x = 0, FXint y = 0, FXint w = 0, FXint h = 0);
 
     /// @brief Destructor
@@ -109,6 +109,14 @@ public:
 
     /// @brief get frame for GNE_MODE_ADDITIONAL    // PABLO #2036
     GNEAdditionalFrame* getAdditionalFrame() const; // PABLO #2036
+
+    /// @brief show frames area if at least a GNEFrame is showed    // PABLO #2036
+    /// @note this function is called in GNEFrame::Show();          // PABLO #2036
+    void showFramesArea();                                          // PABLO #2036
+
+    /// @brief hide frames area if all GNEFrames are hidden     // PABLO #2036
+    /// @note this function is called in GNEFrame::Show();      // PABLO #2036
+    void hideFramesArea();                                      // PABLO #2036
 
     /// @name FOX-callbacks
     /// @{

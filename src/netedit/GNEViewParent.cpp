@@ -88,7 +88,7 @@ GNEViewParent::GNEViewParent(
     FXMDIClient* p, FXMDIMenu* mdimenu,
     const FXString& name,
     GNEApplicationWindow* parentWindow,
-    FXGLCanvas* share, GNENet* net,
+    FXGLCanvas* share, GNENet* net, GNEUndoList *undoList,
     FXIcon* ic, FXuint opts,
     FXint x, FXint y, FXint w, FXint h):
     GUIGlChildWindow(p, parentWindow, mdimenu, name, ic, opts, x, y, w, h) {
@@ -129,21 +129,17 @@ GNEViewParent::GNEViewParent(
     FXComposite* tmp = new FXComposite(this);
 
     // Create view net
-    GNEViewNet *viewNet = new GNEViewNet(tmp, myViewArea, *myParent, this, net, myParent->getGLVisual(), share, myNavigationToolBar);
+    GNEViewNet *viewNet = new GNEViewNet(tmp, myViewArea, *myParent, this, net, undoList, myParent->getGLVisual(), share, myNavigationToolBar);
     
     // Set pointer myView with the created view net
     myView = viewNet; 
 
-    // adding order is important                                        // PABLO #2036
+    // creating order is important                                      // PABLO #2036
     myInspectorFrame = new GNEInspectorFrame(myFramesArea, viewNet);    // PABLO #2036
-    myInspectorFrame->hide();                                           // PABLO #2036
     mySelectorFrame = new GNESelectorFrame(myFramesArea, viewNet);      // PABLO #2036
-    mySelectorFrame->hide();                                            // PABLO #2036
     myConnectorFrame = new GNEConnectorFrame(myFramesArea, viewNet);    // PABLO #2036
-    myConnectorFrame->hide();                                           // PABLO #2036
     myTLSEditorFrame = new GNETLSEditorFrame(myFramesArea, viewNet);    // PABLO #2036
-    myTLSEditorFrame->hide();                                           // PABLO #2036
-    myAdditionalFrame = new GNEAdditionalFrame(myFramesArea,viewNet);   // PABLO #2036
+    myAdditionalFrame = new GNEAdditionalFrame(myFramesArea, viewNet);  // PABLO #2036
     myAdditionalFrame->hide();                                          // PABLO #2036
 
     //  Buld view toolBars
@@ -189,6 +185,28 @@ GNEAdditionalFrame*                         // PABLO #2036
 GNEViewParent::getAdditionalFrame() const { // PABLO #2036
     return myAdditionalFrame;               // PABLO #2036
 }                                           // PABLO #2036
+
+
+void                                            // PABLO #2036
+GNEViewParent::showFramesArea() {               // PABLO #2036
+    if(myInspectorFrame->shown()  == true ||    // PABLO #2036
+       mySelectorFrame->shown()   == true ||    // PABLO #2036
+       myConnectorFrame->shown()  == true ||    // PABLO #2036
+       myTLSEditorFrame->shown()  == true ||    // PABLO #2036
+       myAdditionalFrame->shown() == true)      // PABLO #2036
+        myFramesArea->show();                   // PABLO #2036
+}                                               // PABLO #2036
+
+
+void                                            // PABLO #2036
+GNEViewParent::hideFramesArea() {               // PABLO #2036
+    if(myInspectorFrame->shown()  == false &&   // PABLO #2036
+       mySelectorFrame->shown()   == false &&   // PABLO #2036
+       myConnectorFrame->shown()  == false &&   // PABLO #2036
+       myTLSEditorFrame->shown()  == false &&   // PABLO #2036
+       myAdditionalFrame->shown() == false)     // PABLO #2036
+        myFramesArea->hide();                   // PABLO #2036
+}                                               // PABLO #2036
 
 
 long

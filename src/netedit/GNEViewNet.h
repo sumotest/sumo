@@ -84,16 +84,24 @@ class GNEPoly;
  * Microsocopic view at the simulation
  */
 class GNEViewNet : public GUISUMOAbstractView {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNEViewNet)
 
 public:
     /* @brief constructor
+     * @param[in] tmpParent temporal FXFrame parent so that we can add items to view area in the desired order
+     * @param[in] actualParent FXFrame parent of GNEViewNet
+     * @param[in] app main windows
+     * @param[in] viewParent viewParent of this viewNet
+     * @param[in] net traffic net
+     * @param[in] undoList pointer to UndoList modul
+     * @param[in] glVis a reference to GLVisuals
+     * @param[in] share a reference to FXCanvas
      * @param[in] toolbar A reference to the parents toolbar
      */
-    GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent,
-               GUIMainWindow& app, GNEViewParent* viewParent, GNENet* net, FXGLVisual* glVis,
-               FXGLCanvas* share, FXToolBar* toolBar);
+    GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMainWindow& app, 
+               GNEViewParent* viewParent, GNENet* net, GNEUndoList* undoList, 
+               FXGLVisual* glVis, FXGLCanvas* share, FXToolBar* toolBar);
 
     /// @brief destructor
     virtual ~GNEViewNet();
@@ -106,9 +114,16 @@ public:
 
     /// @brief overloaded handlers
     /// @{
+    /// @brief called when user press mouse's left button
     long onLeftBtnPress(FXObject*, FXSelector, void*);
+
+    /// @brief called when user releases mouse's left button
     long onLeftBtnRelease(FXObject*, FXSelector, void*);
-    long onDoubleClicked(FXObject*, FXSelector, void* ptr);     // PABLO #1916
+
+    /// @brief called when user press mouse's left button two times // PABLO #1916
+    long onDoubleClicked(FXObject*, FXSelector, void* ptr);         // PABLO #1916
+
+    /// @brief called when user moves mouse
     long onMouseMove(FXObject*, FXSelector, void*);
     /// @}
 
@@ -223,8 +238,13 @@ private:
     /// @brief the previous edit mode used for toggling
     EditMode myPreviousEditMode;
 
+    /// @brief menu check to select only edges
     FXMenuCheck* mySelectEdges;
+
+    /// @brief menu check to extend to edge nodes
     FXMenuCheck* myExtendToEdgeNodes;
+
+    /// @brief menu check to set change all phases
     FXMenuCheck* myChangeAllPhases;
 
     /// @name the state-variables of the create-edge state-machine
@@ -264,15 +284,15 @@ private:
     FXMenuCheck* myWarnAboutMerge;
     // @}
 
-    /// @name state-variables of inspect-mode
-    //
-    /// @name state-variables of select-mode
+    /// @name state-variables of inspect-mode and select-mode
     // @{
     /// @brief whether we have started rectangle-selection
     bool myAmInRectSelect;
 
-    /// @brief corner of the rectangle-selection
+    /// @brief firstcorner of the rectangle-selection
     Position mySelCorner1;
+
+    /// @brief second corner of the rectangle-selection
     Position mySelCorner2;
     // @}
 
@@ -331,6 +351,12 @@ private:
 
     /// @brief remove the currently edited polygon
     void removeCurrentPoly();
+
+    /// @brief Invalidated copy constructor.
+    GNEViewNet(const GNEViewNet&);
+
+    /// @brief Invalidated assignment operator.
+    GNEViewNet& operator=(const GNEViewNet&);
 };
 
 

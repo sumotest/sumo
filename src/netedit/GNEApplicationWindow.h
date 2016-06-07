@@ -69,7 +69,7 @@ class GUIParameterTableWindow;
  */
 class GNEApplicationWindow :
     public GUIMainWindow, public MFXInterThreadEventClient {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNEApplicationWindow)
 
 public:

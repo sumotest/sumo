@@ -49,7 +49,7 @@ class GNERerouter;
  */
 
 class GNERerouterDialog : public GNEAdditionalDialog {
-    // FOX-declaration
+    /// @brief FOX-declaration
     FXDECLARE(GNERerouterDialog)
 
 public:

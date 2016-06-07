@@ -58,7 +58,7 @@ public:
     // Option input classes
     // ===========================================================================
     class InputString : public FXHorizontalFrame {
-        // FOX-declarations
+        /// @brief FOX-declaration
         FXDECLARE(GNEDialog_Wizard::InputString)
 
     public:
@@ -81,7 +81,7 @@ public:
     };
 
     class InputBool : public FXHorizontalFrame {
-        // FOX-declarations
+        /// @brief FOX-declaration
         FXDECLARE(GNEDialog_Wizard::InputBool)
 
     public:
@@ -104,7 +104,7 @@ public:
 
 
     class InputInt : public FXHorizontalFrame {
-        // FOX-declarations
+        /// @brief FOX-declaration
         FXDECLARE(GNEDialog_Wizard::InputInt)
 
     public:
@@ -127,7 +127,7 @@ public:
     };
 
     class InputFloat : public FXHorizontalFrame {
-        // FOX-declarations
+        /// @brief FOX-declaration
         FXDECLARE(GNEDialog_Wizard::InputFloat)
 
     public:

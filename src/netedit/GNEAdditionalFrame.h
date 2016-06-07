@@ -48,7 +48,7 @@ class GNEAdditionalSet;
  * The Widget for setting default parameters of additional elements
  */
 class GNEAdditionalFrame : public GNEFrame {
-    // FOX-declaration
+    /// @brief FOX-declaration
     FXDECLARE(GNEAdditionalFrame)
 
 public:
@@ -106,7 +106,7 @@ public:
     // ===========================================================================
 
     class additionalParameterList : public FXMatrix {
-        // FOX-declaration
+        /// @brief FOX-declaration
         FXDECLARE(GNEAdditionalFrame::additionalParameterList)
 
     public:
@@ -178,7 +178,7 @@ public:
     // ===========================================================================
 
     class additionalParameters : public FXGroupBox {
-        // FOX-declaration
+        /// @brief FOX-declaration
         FXDECLARE(GNEAdditionalFrame::additionalParameters)
 
     public:
@@ -244,7 +244,7 @@ public:
     // ===========================================================================
 
     class editorParameters : public FXGroupBox {
-        // FOX-declaration
+        /// @brief FOX-declaration
         FXDECLARE(GNEAdditionalFrame::editorParameters)
 
     public:
@@ -329,7 +329,7 @@ public:
     // ===========================================================================
 
     class additionalSet : public FXGroupBox {
-        // FOX-declaration
+        /// @brief FOX-declaration
         FXDECLARE(GNEAdditionalFrame::additionalSet)
 
     public:
@@ -386,7 +386,7 @@ public:
     // ===========================================================================
 
     class edges : public FXGroupBox {
-        // FOX-declaration
+        /// @brief FOX-declaration
         FXDECLARE(GNEAdditionalFrame::edges)
 
     public:
@@ -452,7 +452,7 @@ public:
     // ===========================================================================
 
     class lanes : public FXGroupBox {
-        // FOX-declaration
+        /// @brief FOX-declaration
         FXDECLARE(GNEAdditionalFrame::lanes)
 
     public:
@@ -514,9 +514,8 @@ public:
     };
 
     /**@brief Constructor
-     * @param[in] parent The parent window
-     * @param[in] viewNet view Net of the netEdit
-     * @param[in] undoList pointer to undoList
+     * @brief parent FXFrame in which this GNEFrame is placed
+     * @brief viewNet viewNet that uses this GNEFrame
      */
     GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet);
 

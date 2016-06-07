@@ -49,7 +49,7 @@ class PositionVector;
  * editor (hence inheritance from FXDelegator)
  */
 class GNEInternalLane : public GUIGlObject, public FXDelegator {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNEInternalLane)
 
 public:

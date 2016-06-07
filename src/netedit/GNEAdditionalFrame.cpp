@@ -42,6 +42,7 @@
 #include <utils/gui/images/GUIIconSubSys.h>
 #include "GNEAdditionalFrame.h"
 #include "GNEViewNet.h"
+#include "GNEViewParent.h"
 #include "GNENet.h"
 #include "GNEJunction.h"
 #include "GNEEdge.h"
@@ -258,6 +259,8 @@ void
 GNEAdditionalFrame::show() {
     // Show Scroll window
     FXScrollWindow::show();
+    // Show Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->showFramesArea();
 }
 
 
@@ -265,6 +268,8 @@ void
 GNEAdditionalFrame::hide() {
     // Hide ScrollWindow
     FXScrollWindow::hide();
+    // Hide Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->hideFramesArea();
 }
 
 

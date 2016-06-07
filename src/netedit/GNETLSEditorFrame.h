@@ -49,62 +49,97 @@ class GNEJunction;
  * The Widget for modifying selections of network-elements
  */
 class GNETLSEditorFrame : public GNEFrame {
-    // FOX-declarations
+    /// @brief FOX-declaration
     FXDECLARE(GNETLSEditorFrame)
 
 public:
     /**@brief Constructor
-     * @param[in] parent The parent window
+     * @brief parent FXFrame in which this GNEFrame is placed
+     * @brief viewNet viewNet that uses this GNEFrame
      */
     GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNETLSEditorFrame();
 
-    FXFont* getHeaderFont() {
-        return myHeaderFont;
-    }
+    /// @brief show Frame
+    void show();
 
-    /**@brief edits the traffic light for the given junction
-     * @param[in] junction The junction of which the traffic light shall be edited
-     */
+    /// @brief hide Frame
+    void hide();
+
+    /// @brief get header font
+    FXFont* getHeaderFont();
+
+    /// @brief edits the traffic light for the given junction
+    /// @param[in] junction The junction of which the traffic light shall be edited
     void editJunction(GNEJunction* junction);
 
     /// @name FOX-callbacks
     /// @{
-    /**@brief Called when the user presses the OK-Button
-     * saves any modifications
-     */
+    /// @brief Called when the user presses the OK-Button
+    /// @note saves any modifications
     long onCmdOK(FXObject*, FXSelector, void*);
 
-    /**@brief Called when the user presses the Cancel-button
-     * discards any modifications
-     */
+    /// @brief Called when the user presses the Cancel-button
+    /// @note discards any modifications
     long onCmdCancel(FXObject*, FXSelector, void*);
 
-    /**@brief Called when the user presses the Corresponding-button */
+    /// @brief Called when the user presses the button Toogle
     long onCmdToggle(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user presses the button Guess
     long onCmdGuess(FXObject*, FXSelector, void*);
 
+    /// @brief Called when the user creates a TLS
     long onCmdDefCreate(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user deletes a TLS
     long onCmdDefDelete(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user changes the offset of a TLS
     long onCmdDefOffset(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user switchs a TLS
     long onCmdDefSwitch(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user renames a TLS
     long onCmdDefRename(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user sub-renames a TLS
     long onCmdDefSubRename(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user adds a OFF
     long onCmdDefAddOff(FXObject*, FXSelector, void*);
 
+    /// @brief Called when the user switchs a Phase
     long onCmdPhaseSwitch(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user creates a Phase
     long onCmdPhaseCreate(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user deletes a Phase
     long onCmdPhaseDelete(FXObject*, FXSelector, void*);
+
+    /// @brief Called when the user edits a Phase
     long onCmdPhaseEdit(FXObject*, FXSelector, void*);
 
+    /// @brief Called when the user makes RILSA
     long onCmdMakeRILSAConforming(FXObject*, FXSelector, void*);
 
+    /// @brief Called when occurs an update of switch definition
     long onUpdDefSwitch(FXObject*, FXSelector, void*);
+
+    /// @brief Called when occurs an update of needs definition
     long onUpdNeedsDef(FXObject*, FXSelector, void*);
+
+    /// @brief Called when occurs an update of needs definition an dphase
     long onUpdNeedsDefAndPhase(FXObject*, FXSelector, void*);
+
+    /// @brief Called when occurs an update of create definition
     long onUpdDefCreate(FXObject*, FXSelector, void*);
+
+    /// @brief Called when occurs an update of modified
     long onUpdModified(FXObject*, FXSelector, void*);
     /// @}
 
@@ -156,6 +191,7 @@ private:
     /// @brief the control for modifying offset
     FXTextField* myOffset;
 
+    /// @brief label with the cycle duration
     FXLabel* myCycleDuration;
 
     /// @brief table for selecting and rearranging phases and for changing duration
@@ -165,20 +201,20 @@ private:
     unsigned int myPhaseIndex;
 
 private:
+    /// @brief update descrition
     void updateDescription() const;
 
     /// @brief cleans up previous lanes
     void cleanup();
 
-    /* @brief builds internal lanes for the given tlDef */
+    /// @brief builds internal lanes for the given tlDef
     void buildIinternalLanes(NBTrafficLightDefinition* tlDef);
 
-    /* @brief initializes the definitions and corresponding listbox */
+    /// @brief initializes the definitions and corresponding listbox
     void initDefinitions();
 
-    /* @brief initialies the phase table
-     * @param[in] index The index to select
-     */
+    /// @brief initialies the phase table
+    /// @param[in] index The index to select
     void initPhaseTable(unsigned int index = 0);
 
     /// @brief the phase of the current traffic light
@@ -189,7 +225,6 @@ private:
 
     /// @brief converts to SUMOTime
     static SUMOTime getSUMOTime(const FXString& string);
-
 };
 
 

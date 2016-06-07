@@ -72,6 +72,8 @@ GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet) :
     FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myDefaultWidth, 0), 
     myViewNet(viewNet),
     myFrameWidth(myDefaultWidth) {
+    // Hide Frame
+    FXScrollWindow::hide();
 }
 
 
@@ -88,5 +90,6 @@ int
 GNEFrame::getFrameWidth() const {
     return myFrameWidth;
 }
+
 
 /****************************************************************************/
