@@ -625,10 +625,13 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 
 			const MSEdge * oldEdge = st->getEdge();
 
+//			if (!oldEdge) {
+//				continue;
+//			}
 #ifdef DEBUG
 			std::cout << "=============================" << std::endl;
 			std::cout << "agent: " << t.id() << " link_id: " << t.linkid() <<  std::endl;
-			std::cout << "old link id:" << oldEdge->getNumericalID() << std::endl;
+			std::cout << "old link id:" << oldEdge->getID() << std::endl;
 			std::cout << "=============================" << std::endl;
 #endif
 			if (t.linkid() != oldEdge->getNumericalID()) {
@@ -641,8 +644,8 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 					}
 				}
 				const MSEdge * newEdge = st->updateEdge(t.linkid());
-				st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
 				if (newEdge != 0) {
+					st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
 					for (const MSLane * ln : newEdge->getLanes()) {
 						if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 							std::set<MSPRCPState*> set = laneMapping[ln];

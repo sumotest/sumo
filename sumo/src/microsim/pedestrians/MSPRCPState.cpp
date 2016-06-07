@@ -57,11 +57,14 @@ const MSEdge * MSPRCPState::updateEdge(const int edgeId) {
 			return *myRoutePt;
 		}
 	}
-	myRoutePt--;
-	for (; myRoutePt >= myStage->getRoute().begin(); myRoutePt--) {
-		if ((*myRoutePt)->getNumericalID() == edgeId){
+	tmp = myRoutePt-1;
+
+	for (; tmp >= myStage->getRoute().begin(); tmp--) {
+		if ((*tmp)->getNumericalID() == edgeId){
+			myRoutePt = tmp;
 			return *myRoutePt;
 		}
 	}
+
 	return 0;
 }

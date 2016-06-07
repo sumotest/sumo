@@ -69,6 +69,7 @@ class MSPRCPState : public PedestrianState {
 		MSPerson * myPerson;
 		MSPerson::MSPersonStage_Walking* myStage;
 		std::vector<const MSEdge*>::const_iterator myRoutePt;
+
 	public:
 	MSPerson * getPerson()  {
 		return myPerson;
