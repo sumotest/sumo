@@ -25,10 +25,10 @@ MSPRCPState::MSPRCPState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage
 myStage(stage),
 myPosition(0,0){
 	myRoutePt = stage->getRoute().begin();
+	myCurrentEdgeNumericalID = (*myRoutePt)->getNumericalID();
 }
 
 const MSEdge* MSPRCPState::getEdge() const {
-	//	const MSEdge * rt =
 	return *myRoutePt;
 }
 
@@ -67,4 +67,12 @@ const MSEdge * MSPRCPState::updateEdge(const int edgeId) {
 	}
 
 	return 0;
+}
+
+int MSPRCPState::getCurrentEdgeNumericalID() {
+	return myCurrentEdgeNumericalID;
+}
+
+void MSPRCPState::setCurrentEdgeNumericalID(int numericalID) {
+	myCurrentEdgeNumericalID = numericalID;
 }

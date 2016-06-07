@@ -61,6 +61,9 @@ class MSPRCPState : public PedestrianState {
 		const MSEdge* incrEdge();
 		const MSEdge* updateEdge(const int edgeId);
 
+		int getCurrentEdgeNumericalID();
+		void setCurrentEdgeNumericalID(int numericalID);
+
 	private:
 		SUMOReal myEdgePos;
 		Position myPosition;
@@ -69,6 +72,8 @@ class MSPRCPState : public PedestrianState {
 		MSPerson * myPerson;
 		MSPerson::MSPersonStage_Walking* myStage;
 		std::vector<const MSEdge*>::const_iterator myRoutePt;
+
+		int myCurrentEdgeNumericalID;
 
 	public:
 	MSPerson * getPerson()  {

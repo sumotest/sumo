@@ -36,7 +36,7 @@ const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-				hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+								hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -185,30 +185,22 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 
 	//1. for all edges
 	for (MSEdge * e : net->getEdgeControl().getEdges()){
-#ifdef DEBUG
-		std::cout << "edge: ";// << std::endl;
-#endif
+
 		if (e->isInternal()) {
 			continue;
 		}
 		if (e->isWalkingArea()) {
-#ifdef DEBUG
-			std::cout <<  e->getID() << " " << e->getNumericalID() << " " << (*(e->getLanes().begin()))->getShape().area() << std::endl;
-#endif
+
 			walkingAreas.push_back(e);
 		} else {
-#ifdef DEBUG
-			std::cout <<  e->getID() << " " << e->getNumericalID() << std::endl;
-#endif
+
 			for (MSLane * l : e->getLanes()) {
 				if (l->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 
 					hybridsim::Room * room = env->add_room();
 					room->set_caption(e->getID());
 					room->set_id(e->getNumericalID());
-#ifdef DEBUG
-					std::cout <<  "creating room: " << e->getNumericalID() << std::endl;
-#endif
+
 					hybridsim::Subroom * subroom = room->add_subroom();
 					subroom->set_id(l->getNumericalID());
 					subroom->set_closed(0);
@@ -248,9 +240,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 						t1->set_room2_id(nb1->getEdge().getNumericalID());
 						t1->set_subroom2_id(nb1->getNumericalID());
 					}
-#ifdef DEBUG
-					std::cout << "link transition:" << t1->room1_id() << " : " << t1->subroom1_id() << " --> " << t1->room2_id() << " : " << t1->subroom2_id() << std::endl;
-#endif
+
 
 					std::vector<const MSLane*>  outgoing = l->getOutgoingLanes();
 					if (outgoing.size() > 1) {
@@ -270,9 +260,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 						t2->set_room2_id(nb2->getEdge().getNumericalID());
 						t2->set_subroom2_id(nb2->getNumericalID());
 					}
-#ifdef DEBUG
-					std::cout << "link transition:" << t2->room1_id() << " : " << t2->subroom1_id() << " --> " << t2->room2_id() << " : " << t2->subroom2_id() << std::endl;
-#endif
+
 					PositionVector  s = PositionVector(l->getShape());
 					double width = l->getWidth();
 					s.move2side(-width/2);
@@ -292,9 +280,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 
 					hybridsim::Polygon * p1 = subroom->add_polygon();
 					p1->set_caption("SUMO generated wall");
-#ifdef DEBUG
-					std::cout <<"wall: " << s << std::endl;
-#endif
+
 
 					for (Position p : s) {
 						hybridsim::Coordinate * c = p1->add_coordinate();
@@ -320,9 +306,7 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 					}
 					hybridsim::Polygon * p2 = subroom->add_polygon();
 					p2->set_caption("SUMO generated wall");
-#ifdef DEBUG
-					std::cout <<"wall_sh: " << s << std::endl;
-#endif
+
 
 					for (int i = s.size()-1; i >= 0; i-- ) {
 						Position p = s[i];
@@ -376,17 +360,13 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 		subroom->set_id(l->getNumericalID());
 		subroom->set_closed(0);
 		subroom->set_class_("TODO: figure out what class means!");
-#ifdef DEBUG
-		std::cout << "walking area:" << room->id() << " : " <<  subroom->id() << std::endl;
-#endif
+
 		for (hybridsim::Transition t : vec) {
 			hybridsim::Transition * tr = env->add_transition();
 			tr->set_id(trId++);
 			tr->set_caption("SUMO generated transition");
 			tr->set_type("emergency");
-#ifdef DEBUG
-			std::cout << "walking area transition:" << t.room2_id() << " : " << t.subroom2_id() << " --> " << t.room1_id() << " : " << t.subroom1_id() << std::endl;
-#endif
+
 			tr->set_room1_id(t.room2_id());
 			tr->set_subroom1_id(t.subroom2_id());
 			tr->set_room2_id(t.room1_id());
@@ -402,14 +382,10 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 
 
 		if (l->getShape().isPolyCW()){
-#ifdef DEBUG
-			std::cout << "poly is cw" << std::endl;
-#endif
+
 			createWalkingAreaSubroom(subroom,l->getShape(),vec);
 		} else {
-#ifdef DEBUG
-			std::cout << "poly is ccw" << std::endl;
-#endif
+
 			createWalkingAreaSubroom(subroom,l->getShape().reverse(),vec);
 
 		}
@@ -426,7 +402,7 @@ MSGRPCClient::~MSGRPCClient() {
 	ClientContext context;
 	Status st = hybridsimStub->shutdown(&context,req,&rpl);
 	if(!st.ok()){
-		std::cerr << "something went wrong!" << std::endl;
+		std::cerr << "client shutdown went wrong!" << std::endl;
 		exit(-1);
 	}
 }
@@ -443,22 +419,12 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	std::sort(vec.begin(),vec.end(),comp);
 
 
-	//	std::vector<Position>::const_iterator itShp = shape.begin();
-#ifdef DEBUG
-	std::cout << "is closed: " << shape.isClosed() << std::endl;
-	//	shape.closePolygon();
-	for (hybridsim::Transition t : vec){
-		//		std::cout << shape.nearest_offset_to_point2D(vert2Pos(t.vert1())) << "  " << shape.nearest_offset_to_point2D(vert2Pos(t.vert2())) << " " << t.room1_id() << std::endl;
-		std::cout << "transition "<< vert2Pos(t.vert2()) << " " << vert2Pos(t.vert1()) << std::endl;
-	}
-#endif
+
 
 
 	std::vector< hybridsim::Transition>::iterator itTr = vec.begin();
 	do {
-#ifdef DEBUG
-		std::cout << "wall " << vert2Pos((*itTr).vert1());
-#endif
+
 
 		hybridsim::Polygon * p = subroom->add_polygon();
 		p->set_caption("SUMO generated wall");
@@ -466,17 +432,13 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 		c->set_x((*itTr).vert1().x());
 		c->set_y((*itTr).vert1().y());
 		*itTr++;
-#ifdef DEBUG
-		std::cout << " " << vert2Pos((*itTr).vert2()) << std::endl;
-#endif
+
 		c = p->add_coordinate();
 		c->set_x((*itTr).vert2().x());
 		c->set_y((*itTr).vert2().y());
 	} while (itTr != vec.end()-1);
 
-#ifdef DEBUG
-	std::cout << "wall " << vert2Pos((*itTr).vert1());
-#endif
+
 
 	hybridsim::Polygon * p = subroom->add_polygon();
 	p->set_caption("SUMO generated wall");
@@ -487,9 +449,7 @@ void MSGRPCClient::createWalkingAreaSubroom(hybridsim::Subroom * subroom, const 
 	c = p->add_coordinate();
 	c->set_x((vec.begin())->vert2().x());
 	c->set_y((vec.begin())->vert2().y());
-#ifdef DEBUG
-	std::cout << " " << vert2Pos((vec.begin())->vert2()) << std::endl;
-#endif
+
 	//		for (Position)
 
 
@@ -523,9 +483,7 @@ void MSGRPCClient::extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, 
 }
 
 bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
-#ifdef DEBUG
-	std::cout << "transmitPedestrian" << std::endl;
-#endif
+
 
 	std::string id = st->getPerson()->getID();
 	std::string fromId = st->getEdge()->getID();
@@ -595,17 +553,18 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 }
 
 std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
-	auto ret = laneMapping.find(lane);
-	if (ret != laneMapping.end()) {
-		return ret->second;
-	}
-	return emptySet;
+
+	auto ret = laneMapping[(lane)];
+#ifdef DEBUG
+	std::cout << "**************************************************" << std::endl;
+	std::cout << "queried edge:" << lane->getEdge().getID() << " queried lane:" << lane->getID() << " pedestrians:" << ret.size() << std::endl;
+	std::cout << "**************************************************" << std::endl;
+#endif
+	return ret;
 }
 
 void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates,SUMOTime time) {
-#ifdef DEBUG
-	std::cout << "receiveTrajectories" << std::endl;
-#endif
+
 	hybridsim::Empty req;
 	hybridsim::Trajectories rpl;
 	ClientContext context;
@@ -623,35 +582,56 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 			st->setSpeed(t.spd());
 			st->setAngle(t.phi());
 
-			const MSEdge * oldEdge = st->getEdge();
 
-//			if (!oldEdge) {
-//				continue;
-//			}
-#ifdef DEBUG
-			std::cout << "=============================" << std::endl;
-			std::cout << "agent: " << t.id() << " link_id: " << t.linkid() <<  std::endl;
-			std::cout << "old link id:" << oldEdge->getID() << std::endl;
-			std::cout << "=============================" << std::endl;
-#endif
-			if (t.linkid() != oldEdge->getNumericalID()) {
-				for (const MSLane * ln : oldEdge->getLanes()) {
+
+			//			net->getEdgeControl().getEdges()[]
+
+			//			if (!oldEdge) {
+			//				continue;
+			//			}
+
+			if (t.linkid() != st->getCurrentEdgeNumericalID()) {
+				const MSEdge * last = net->getEdgeControl().getEdges()[st->getCurrentEdgeNumericalID()];
+				const MSEdge * current = net->getEdgeControl().getEdges()[t.linkid()];
+				for (const MSLane * ln : last->getLanes()) {
 					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 						//unmap ped from lane
-						std::set<MSPRCPState*> set = laneMapping[ln];
-						set.erase(st);
+						std::set<MSPRCPState*> * set = &laneMapping[ln];
+#ifdef DEBUG
+						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+						std::cout << set->size() << std::endl;
+#endif
+						set->erase(st);
+#ifdef DEBUG
+						std::cout << set->size() << std::endl;
+						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+#endif
 						break;
 					}
 				}
-				const MSEdge * newEdge = st->updateEdge(t.linkid());
-				if (newEdge != 0) {
-					st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
-					for (const MSLane * ln : newEdge->getLanes()) {
-						if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
-							std::set<MSPRCPState*> set = laneMapping[ln];
-							set.insert(st);
-							break;
-						}
+
+
+				for (const MSLane * ln : current->getLanes()) {
+					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+#ifdef DEBUG
+						std::cout << "+++++++++++++++++++++++++++++++" << std::endl;
+						std::cout << "ped: " << t.id() <<" mapped to lane: " << ln->getID() << " on edge: " << current->getID() << std::endl;
+#endif
+						std::set<MSPRCPState*> * set = &laneMapping[ln];
+						set->insert(st);
+						break;
+					}
+				}
+				st->setCurrentEdgeNumericalID(current->getNumericalID());
+
+
+
+				const MSEdge * oldEdge = st->getEdge();
+				if (oldEdge->getNumericalID() != t.linkid()) {
+					const MSEdge * newEdge = st->updateEdge(t.linkid());
+					if (newEdge != 0) {
+						st->getMyStage()->moveToNextEdge(st->getPerson(),time,oldEdge,newEdge);
+
 					}
 				}
 			}
@@ -663,9 +643,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 }
 
 void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pstates,MSNet* net, SUMOTime time) {
-#ifdef DEBUG
-	std::cout << "retrieveAgents" << std::endl;
-#endif
+
 	hybridsim::Empty req;
 	hybridsim::Agents rpl;
 	ClientContext context;
