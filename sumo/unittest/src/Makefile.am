@@ -61,6 +61,7 @@ $(MESO_LIBS) \
 ../../src/foreign/tcpip/libtcpip.a \
 $(MEM_LIBS) \
 $(PYTHON_LIBS) \
+$(GRPC_LIBS) \
 $(XERCES_LIBS) \
 $(FOX_LDFLAGS)
 
