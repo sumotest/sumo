@@ -66,12 +66,15 @@ bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 //	return false;
 //
 	const std::set<MSPRCPState*> pedestrians = grpcClient->getPedestrians(lane);
-	if (pedestrians.size() > 0) {
-		return true;
-	}
-	return false;
-//	for (Pedestrians::const_iterator it_ped = pedestrians.begin(); it_ped != pedestrians.end(); ++it_ped) {
-//		const PState& ped = **it_ped;
+
+	return pedestrians.size() > 0;
+//	shape.
+
+
+//	for (MSPRCPState * ped : pedestrians) {
+
+//		const PositionVector shape = lane->getShape();
+
 //		const SUMOReal halfVehicleWidth = 1.0; // @note could get the actual value from the vehicle
 //		const SUMOReal leaderBackDist = (ped.myDir == FORWARD
 //				? distToCrossing - (ped.myRelX - ped.getLength() - MSPModel::SAFETY_GAP - halfVehicleWidth)
