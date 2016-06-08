@@ -46,6 +46,9 @@ public:
 	/// @brief whether a pedestrian is blocking the crossing of lane at offset distToCrossing
 	bool blockedAtDist(const MSLane* lane, SUMOReal distToCrossing, std::vector<const MSPerson*>* collectBlockers);
 
+    // @brief the maximum distance (in meters) at which oncoming pedestrians block right turning traffic
+    static const SUMOReal BLOCKER_LOOKAHEAD;
+
 	SUMOTime execute(SUMOTime currentTime);
 
 

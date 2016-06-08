@@ -19,6 +19,10 @@
 #include <utils/options/OptionsCont.h>
 #include "MSPModelRemoteControlled.h"
 
+//params
+const SUMOReal MSPModelRemoteControlled::BLOCKER_LOOKAHEAD(10.0); // meters
+const int FWD(1);
+const int BWD(-1);
 
 MSPModelRemoteControlled::MSPModelRemoteControlled(const OptionsCont& oc,
 		MSNet* net) :
@@ -39,62 +43,73 @@ PedestrianState* MSPModelRemoteControlled::add(MSPerson* person,
 		MSPerson::MSPersonStage_Walking* stage, SUMOTime now) {
 
 
-	 assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
+	assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
 
-	 MSPRCPState * state = new MSPRCPState(person,stage);
-	 const MSEdge* edge = *(stage->getRoute().begin());;
-	 if (buffers.find(edge->getID()) == buffers.end()) {
-		 std::queue<MSPRCPState*> buffer;
-		 buffer.push(state);
+	MSPRCPState * state = new MSPRCPState(person,stage);
+	const MSEdge* edge = *(stage->getRoute().begin());;
+	if (buffers.find(edge->getID()) == buffers.end()) {
+		std::queue<MSPRCPState*> buffer;
+		buffer.push(state);
 
 
-		 std::string str =  edge->getID();
-		 buffers[edge->getID()] = buffer;
-	 } else {
-		 std::queue<MSPRCPState*> * buffer = &buffers[edge->getID()];
-		 buffer->push(state);
-	 }
+		std::string str =  edge->getID();
+		buffers[edge->getID()] = buffer;
+	} else {
+		std::queue<MSPRCPState*> * buffer = &buffers[edge->getID()];
+		buffer->push(state);
+	}
 
-	 pstates[person->getID()] = state;
+	pstates[person->getID()] = state;
 
-	 return state;
+	return state;
 }
 
 bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 		double distToCrossing, std::vector<const MSPerson*>* collectBlockers) {
-//	//for now no interaction btwn cars and peds
-//	return false;
-//
+
+//	assert(lane->getEdge().isCrossing());
+
 	const std::set<MSPRCPState*> pedestrians = grpcClient->getPedestrians(lane);
 
-	return pedestrians.size() > 0;
-//	shape.
+	if (lane->getEdge().isCrossing() && pedestrians.size() > 0) {
 
+		const PositionVector shape = lane->getShape();
+		double dx = shape[1].x()-shape[0].x();
+		double dy = shape[1].y()-shape[0].y();
 
-//	for (MSPRCPState * ped : pedestrians) {
+		Position p0 = Position(dy,-dx);
 
-//		const PositionVector shape = lane->getShape();
+		for (MSPRCPState * ped : pedestrians) {
 
-//		const SUMOReal halfVehicleWidth = 1.0; // @note could get the actual value from the vehicle
-//		const SUMOReal leaderBackDist = (ped.myDir == FORWARD
-//				? distToCrossing - (ped.myRelX - ped.getLength() - MSPModel::SAFETY_GAP - halfVehicleWidth)
-//						: (ped.myRelX + ped.getLength() + MSPModel::SAFETY_GAP + halfVehicleWidth) - distToCrossing);
-//		//std::cout << SIMTIME << " foe=" << foeLane->getID() << " dir=" << p.myDir << " pX=" << ped.myRelX << " pL=" << ped.getLength() << " fDTC=" << distToCrossing << " lBD=" << leaderBackDist << "\n";
-//		if (leaderBackDist >= 0 && leaderBackDist <= BLOCKER_LOOKAHEAD) {
-//			// found one pedestrian that is not completely past the crossing point
-//			//std::cout << SIMTIME << " blocking pedestrian foeLane=" << lane->getID() << " ped=" << ped.myPerson->getID() << " dir=" << ped.myDir << " pX=" << ped.myRelX << " pL=" << ped.getLength() << " fDTC=" << distToCrossing << " lBD=" << leaderBackDist << "\n";
-//			if (collectBlockers == 0) {
-//				return true;
-//			} else {
-//				collectBlockers->push_back(ped.myPerson);
-//			}
-//		}
-//	}
-//	if (collectBlockers == 0) {
-//		return false;
-//	} else {
-//		return collectBlockers->size() > 0;
-//	}
+			//			Position p1 = Position(ped->ge)
+			Position cross = p0.crossProduct(ped->getVelocity());
+
+			int dir = cross.z() > 0 ? FWD : BWD;
+
+			double relX = shape.nearest_offset_to_point2D(ped->getPosition(),false);
+
+			const SUMOReal halfVehicleWidth = 1.0; // @note could get the actual value from the vehicle
+			const SUMOReal leaderBackDist = (dir == FWD
+					? distToCrossing - (relX- ped->getLength() - MSPModel::SAFETY_GAP - halfVehicleWidth)
+							: (relX + ped->getLength() + MSPModel::SAFETY_GAP + halfVehicleWidth) - distToCrossing);
+			//std::cout << SIMTIME << " foe=" << foeLane->getID() << " dir=" << p.myDir << " pX=" << ped.myRelX << " pL=" << ped.getLength() << " fDTC=" << distToCrossing << " lBD=" << leaderBackDist << "\n";
+			if (leaderBackDist >= 0 && leaderBackDist <= BLOCKER_LOOKAHEAD) {
+				// found one pedestrian that is not completely past the crossing point
+				//std::cout << SIMTIME << " blocking pedestrian foeLane=" << lane->getID() << " ped=" << ped.myPerson->getID() << " dir=" << ped.myDir << " pX=" << ped.myRelX << " pL=" << ped.getLength() << " fDTC=" << distToCrossing << " lBD=" << leaderBackDist << "\n";
+				if (collectBlockers == 0) {
+					return true;
+				} else {
+					collectBlockers->push_back(ped->getPerson());
+				}
+			}
+		}
+	}
+	if (collectBlockers == 0) {
+		return false;
+	} else {
+		return collectBlockers->size() > 0;
+	}
+	//	return pedestrians.size() > 0;
 }
 
 SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
@@ -126,9 +141,9 @@ SUMOTime MSPModelRemoteControlled::execute(SUMOTime currentTime) {
 }
 
 void MSPModelRemoteControlled::handleBuffer(std::queue<MSPRCPState*>* buffer) {
-//	if (buffer->size() > 1) {
-//		std::cout << "gt 1" << std::endl;
-//	}
+	//	if (buffer->size() > 1) {
+	//		std::cout << "gt 1" << std::endl;
+	//	}
 	while(!buffer->empty()){
 		MSPRCPState* st = buffer->front();
 		if (transmitPedestrian(st)) {
@@ -138,6 +153,7 @@ void MSPModelRemoteControlled::handleBuffer(std::queue<MSPRCPState*>* buffer) {
 		}
 	}
 }
+
 
 bool MSPModelRemoteControlled::transmitPedestrian(MSPRCPState* st) {
 

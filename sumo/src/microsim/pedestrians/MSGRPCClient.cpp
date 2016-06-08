@@ -581,7 +581,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 			st->setXY(t.x(),t.y());
 			st->setSpeed(t.spd());
 			st->setAngle(t.phi());
-
+			st->setV(t.vx(),t.vy());
 
 
 			//			net->getEdgeControl().getEdges()[]

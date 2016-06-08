@@ -73,6 +73,10 @@ int MSPRCPState::getCurrentEdgeNumericalID() {
 	return myCurrentEdgeNumericalID;
 }
 
+double MSPRCPState::getLength() const {
+	 return myPerson->getVehicleType().getLength();
+}
+
 void MSPRCPState::setCurrentEdgeNumericalID(int numericalID) {
 	myCurrentEdgeNumericalID = numericalID;
 }

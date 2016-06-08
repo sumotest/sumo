@@ -209,6 +209,8 @@ message Trajectory {
     double spd = 4;
     double phi = 5; //TODO: report vx / vy instead of spd and phi
     int32 linkId = 6;
+    double vx = 7;
+    double vy = 8; 
 }
 
 message Trajectories {

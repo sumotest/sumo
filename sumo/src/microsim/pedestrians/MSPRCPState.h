@@ -55,6 +55,9 @@ class MSPRCPState : public PedestrianState {
 		inline SUMOTime computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime){return 0.;};
 
 
+	    /// @brief return the length of the pedestrian
+	    SUMOReal getLength() const;
+
 		void setXY(const double x, const double y) {myPosition.set(x,y);};
 		void setSpeed(const double spd) {mySpeed = spd;};
 		void setAngle(const double angle) {myAngle = angle;};
@@ -64,11 +67,17 @@ class MSPRCPState : public PedestrianState {
 		int getCurrentEdgeNumericalID();
 		void setCurrentEdgeNumericalID(int numericalID);
 
+		void setV(double vx, double vy) {myVelocity.set(vx,vy);};
+		const Position getVelocity() {return myVelocity;};
+		const Position getPosition() {return myPosition;};
+
+
 	private:
 		SUMOReal myEdgePos;
 		Position myPosition;
 		SUMOReal myAngle;
 		SUMOReal mySpeed;
+		Position myVelocity;
 		MSPerson * myPerson;
 		MSPerson::MSPersonStage_Walking* myStage;
 		std::vector<const MSEdge*>::const_iterator myRoutePt;
