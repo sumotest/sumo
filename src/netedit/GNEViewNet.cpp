@@ -1213,7 +1213,6 @@ GNEViewNet::updateModeSpecificControls() {
     if (myViewParent->getInspectorFrame()->shown()) {
         widthChange += myViewParent->getInspectorFrame()->getWidth() + addChange;
         myViewParent->getInspectorFrame()->hide();
-        myViewParent->getInspectorFrame()->inspect(std::vector<GNEAttributeCarrier*>());
     }
     if (myViewParent->getSelectorFrame()->shown()) {
         widthChange += myViewParent->getSelectorFrame()->getWidth() + addChange;

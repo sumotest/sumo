@@ -54,15 +54,19 @@ class GNEInspectorFrame : public GNEFrame {
 public:
 
     // ===========================================================================
-    // class AttrInput
+    // class Attribute
     // ===========================================================================
-    class AttrInput : public FXHorizontalFrame {
+
+    class AttrInput : public FXMatrix  {
         /// @brief FOX-declaration
         FXDECLARE(GNEInspectorFrame::AttrInput)
 
     public:
         /// @brief constructor
-        AttrInput(FXGroupBox* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue);
+        AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent);
+
+        /// @brief show attribute
+        void showAttribute(SumoXMLAttr attr);
 
         /// @brief try to set new attribute value
         long onCmdSetAttribute(FXObject*, FXSelector, void*);
@@ -78,20 +82,17 @@ public:
         /// @brief pointer to GNEInspectorFrame parent
         GNEInspectorFrame *myInspectorFrameParent;
 
-        /// @brief actual tag
-        SumoXMLTag myTag;
-
-        /// @brief attributos
-        SumoXMLAttr myAttr;
-
-        /// @brief attribute carriers
-        const std::vector<GNEAttributeCarrier*>* myACs;
+        /// @brief pointer to label
+        FXLabel* myLabel;
 
         /// @brief pointer to text field
         FXTextField* myTextField;
 
         /// @brief pointer to combo box choices
         FXComboBox* myChoicesCombo;
+
+        /// @brief pointer to combo box choices
+        FXCheckButton *myCheck;
     };
 
 public:
@@ -137,32 +138,35 @@ protected:
 
 private:
 
-    FXGroupBox* myGroupBoxForTemplates;
-
-     FXButton *myCopyTemplateButton;
-
-    FXButton *mySetTemplateButton;
-
-
-
-
-    /// @brief gropuBox for attributes
+    /// @brief groupBox for attributes
     FXGroupBox* myGroupBoxForAttributes;
-
-    /// @brief pointer to check button block
-    FXCheckButton *myCheckBlocked;
 
     /// @brief list of Attribute inputs
     std::list<GNEInspectorFrame::AttrInput*> listOfAttrInput;
 
-    /// @brief the multi-selection currently being inspected
-    std::vector<GNEAttributeCarrier*> myACs;
+    /// @brief groupBox for templates
+    FXGroupBox* myGroupBoxForTemplates;
+
+    /// @brief copy template button
+    FXButton *myCopyTemplateButton;
+
+    /// @brief set template button
+    FXButton *mySetTemplateButton;
+
+    /// @brief the edge template
+    GNEEdge* myEdgeTemplate;
+
+    /// @brief GropuBox for editor attributes
+    FXGroupBox* myGroupBoxForEditor;
+
+    /// @brief pointer to check button block
+    FXCheckButton *myCheckBlocked;
 
     /// @brief pointer to additional element
     GNEAdditional *myAdditional;
 
-    /// @brief the edge template
-    GNEEdge* myEdgeTemplate;
+    /// @brief the multi-selection currently being inspected
+    std::vector<GNEAttributeCarrier*> myACs;
 };
 
 

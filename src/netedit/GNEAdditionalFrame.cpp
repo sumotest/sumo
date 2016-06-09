@@ -465,7 +465,7 @@ GNEAdditionalFrame::additionalParameter::getValue() const {
 GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite *parent, FXObject* tgt) :
     FXMatrix(parent, 2, MATRIX_BY_COLUMNS | LAYOUT_FILL_X),
     numberOfVisibleTextfields(1),
-    myMaxNumberOfValuesInParameterList(10),
+    myMaxNumberOfValuesInParameterList(20),
     myAttr(SUMO_ATTR_NOTHING) {
     // Create elements
     for(int i = 0; i < myMaxNumberOfValuesInParameterList; i++) {
@@ -593,13 +593,16 @@ GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite *pare
     FXGroupBox(parent, "Default parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
     myIndexParameter(0),
     myIndexParameterList(0),
-    maxNumberOfParameters(20) {
+    maxNumberOfParameters(GNEAttributeCarrier::getHigherNumberOfAttributes()), 
+    maxNumberOfListParameters(2) {
 
     // Create widgets for parameters
-    for (int i = 0; i < maxNumberOfParameters; i++) {
+    for (int i = 0; i < maxNumberOfParameters; i++)
         myVectorOfAdditionalParameter.push_back(new additionalParameter(this, tgt));
+
+    // Create widgets for parameters
+    for (int i = 0; i < maxNumberOfListParameters; i++)
         myVectorOfAdditionalParameterList.push_back(new additionalParameterList(this, tgt));
-    }
 
         // Create help button
     helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP);
@@ -613,10 +616,13 @@ GNEAdditionalFrame::additionalParameters::~additionalParameters() {
 void
 GNEAdditionalFrame::additionalParameters::clearAttributes() {
     // Hidde al fields
-    for(int i = 0; i < maxNumberOfParameters; i++) {
+    for(int i = 0; i < maxNumberOfParameters; i++)
         myVectorOfAdditionalParameter.at(i)->hideParameter();
+    
+    // Hidde al list fields
+    for(int i = 0; i < maxNumberOfListParameters; i++)
         myVectorOfAdditionalParameterList.at(i)->hideParameter();
-    }
+
     // Reset indexs
     myIndexParameterList = 0;
     myIndexParameter = 0;
@@ -627,9 +633,11 @@ void
 GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, SumoXMLAttr attribute) {
     // Set current additional
     myAdditional = additional;
-    if((myIndexParameterList + myIndexParameter) < maxNumberOfParameters) {
-        if(GNEAttributeCarrier::isList(attribute)) {
-            // Check type of list
+    // If  parameter is of type list
+    if(GNEAttributeCarrier::isList(attribute)) {
+        // If parameter can be show
+        if(myIndexParameterList < maxNumberOfListParameters) {
+            // Check type of attribute list
             if(GNEAttributeCarrier::isInt(attribute))
                 myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<int> >(additional, attribute));
             else if(GNEAttributeCarrier::isFloat(attribute))
@@ -640,21 +648,26 @@ GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, Su
                     myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
             // Update index
             myIndexParameterList++;
-        }
-        else if(GNEAttributeCarrier::isInt(attribute))
-            myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<int>(additional, attribute));
-        else if(GNEAttributeCarrier::isFloat(attribute))
-            myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<SUMOReal>(additional, attribute));
-        else if(GNEAttributeCarrier::isBool(attribute))
-            myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<bool>(additional, attribute));
-        else if(GNEAttributeCarrier::isString(attribute))
-            myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<std::string>(additional, attribute));
-        else
-            WRITE_WARNING("Attribute '" + toString(attribute) + "' don't have a defined type. Check definition in GNEAttributeCarrier");
-        // Update index parameter
-        myIndexParameter++;
-    } else
-        WRITE_ERROR("Max number of attributes reached (" + toString(maxNumberOfParameters) + "). Increase value in additionalParameters constructor.");
+        } else
+            WRITE_ERROR("Max number of list attributes reached (" + toString(maxNumberOfListParameters) + ").");
+    } else {
+        if(myIndexParameter < maxNumberOfParameters) {
+            // Check type of attribute list
+            if(GNEAttributeCarrier::isInt(attribute))
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<int>(additional, attribute));
+            else if(GNEAttributeCarrier::isFloat(attribute))
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<SUMOReal>(additional, attribute));
+            else if(GNEAttributeCarrier::isBool(attribute))
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<bool>(additional, attribute));
+            else if(GNEAttributeCarrier::isString(attribute))
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<std::string>(additional, attribute));
+            else
+                WRITE_WARNING("Attribute '" + toString(attribute) + "' don't have a defined type. Check definition in GNEAttributeCarrier");
+            // Update index parameter
+            myIndexParameter++;
+        } else
+            WRITE_ERROR("Max number of attributes reached (" + toString(maxNumberOfParameters) + ").");
+    }
 }
 
 

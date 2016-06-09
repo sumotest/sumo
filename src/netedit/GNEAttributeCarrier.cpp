@@ -678,6 +678,16 @@ GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
 }
 
 
+int                                                                                                         // PABLO #2067
+GNEAttributeCarrier::getHigherNumberOfAttributes() {                                                        // PABLO #2067
+    int higherNumber = 0;                                                                                   // PABLO #2067
+    for(std::vector<SumoXMLTag>::const_iterator i = allowedTags().begin(); i != allowedTags().end(); i++)   // PABLO #2067
+        if(allowedAttributes(*i).size() > higherNumber)                                                     // PABLO #2067
+            higherNumber = allowedAttributes(*i).size();                                                    // PABLO #2067
+    return higherNumber;                                                                                    // PABLO #2067
+}                                                                                                           // PABLO #2067
+
+
 template<> int
 GNEAttributeCarrier::getDefaultValue(SumoXMLTag tag, SumoXMLAttr attr) {
     for(std::vector<std::pair<SumoXMLAttr, std::string> >::iterator i = _allowedAttributes.at(tag).begin(); i != _allowedAttributes.at(tag).end(); i++)

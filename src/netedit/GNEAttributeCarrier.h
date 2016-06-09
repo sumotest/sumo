@@ -149,6 +149,9 @@ public:
     /// @brief return definition of a certain SumoXMLAttr
     static std::string getDefinition(SumoXMLTag tag, SumoXMLAttr attr);
 
+    /// @brief return the number of attributes of the tag with the most highter number of attributes    // PABLO #2067
+    static int getHigherNumberOfAttributes();                                                           // PABLO #2067
+
     /// @brief return the default value of the attribute of an element
     /// @note It's advisable to check before with function hasDefaultValue if  exits a default value
     template<typename T>
