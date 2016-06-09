@@ -209,6 +209,13 @@ GNEViewParent::hideFramesArea() {               // PABLO #2036
 }                                               // PABLO #2036
 
 
+ int                                    // PABLO #2036
+GNEViewParent::getFramesAreaWidth() {   // PABLO #2036
+    std::cout << myFramesArea->getWidth() << std::endl;
+    return myFramesArea->getWidth();    // PABLO #2036
+}                                       // PABLO #2036
+
+
 long
 GNEViewParent::onCmdMakeSnapshot(FXObject*, FXSelector, void*) {
     // get the new file name

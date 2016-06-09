@@ -96,16 +96,12 @@ FXIMPLEMENT(GNETLSEditorFrame, FXScrollWindow, GNETLSEditorFrameMap, ARRAYNUMBER
 // method definitions
 // ===========================================================================
 GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet),
-    myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
+    GNEFrame(parent, viewNet, "Edit Traffic Light"),
     myTableFont(new FXFont(getApp(), "Courier New", 9)),
     myCurrentJunction(0),
     myHaveModifications(false),
     myEditedDef(0) {
     // heading
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth, 0);
-    FXLabel* heading = new FXLabel(myContentFrame, "Edit Traffic Light", 0, JUSTIFY_LEFT);
-    heading->setFont(myHeaderFont);
     myDescription = new FXLabel(myContentFrame, "", 0, JUSTIFY_LEFT);
     new FXHorizontalSeparator(myContentFrame, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
 
@@ -123,7 +119,7 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // definitions list
     new FXLabel(myContentFrame, "Name, Program");
     myDefBox = new FXListBox(myContentFrame, this, MID_GNE_DEF_SWITCH,
-                             FRAME_SUNKEN | FRAME_THICK | LISTBOX_NORMAL | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth - 4);
+                             FRAME_SUNKEN | FRAME_THICK | LISTBOX_NORMAL | LAYOUT_FIX_WIDTH);
 
     // offset control
     new FXLabel(myContentFrame, "Offset");
@@ -178,7 +174,6 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet):
 
 
 GNETLSEditorFrame::~GNETLSEditorFrame() {
-    delete myHeaderFont;
     delete myTableFont;
     cleanup();
 }
@@ -200,13 +195,6 @@ GNETLSEditorFrame::hide() {
     // Hide Frame Area in which this GNEFrame is placed
     myViewNet->getViewParent()->hideFramesArea();
 }
-
-
-FXFont* 
-GNETLSEditorFrame::getHeaderFont() {
-    return myHeaderFont;
-}
-
 
 void
 GNETLSEditorFrame::editJunction(GNEJunction* junction) {
@@ -586,7 +574,7 @@ GNETLSEditorFrame::initPhaseTable(unsigned int index) {
             myPhaseTable->getItem(row, 1)->setJustify(FXTableItem::LEFT);
         }
         myPhaseTable->fitColumnsToContents(0, 2);
-        const int maxWidth = myFrameWidth - 4;
+        const int maxWidth = 140 - 4;
         int desiredWidth = myPhaseTable->getColumnWidth(0) +
                            myPhaseTable->getColumnWidth(1) + 3;
         int spaceForScrollBar = desiredWidth > maxWidth ? 15 : 0;

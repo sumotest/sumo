@@ -73,9 +73,6 @@ public:
     /// @brief hide Frame
     void hide();
 
-    /// @brief get header font
-    FXFont* getHeaderFont() const;
-
     /// @name FOX-callbacks
     /// @{
     /// @brief Called when the user presses the Load-button
@@ -124,15 +121,6 @@ protected:
     GNESelectorFrame() {}
 
 private:
-    /// @brief the panel to hold all member widgets
-    FXVerticalFrame* myContentFrame;
-
-    /// @brief Font for the widget
-    FXFont* myHeaderFont;
-
-    /// @brief the label for selection statistics
-    FXLabel* myStats;
-
     /// @brief how to modify selection
     FXuint mySetOperation;
 

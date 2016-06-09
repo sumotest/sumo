@@ -87,13 +87,9 @@ RGBColor GNEConnectorFrame::conflictColor;
 // method definitions
 // ===========================================================================
 GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet),
-    myHeaderFont(new FXFont(getApp(), "Arial", 11, FXFont::Bold)),
+    GNEFrame(parent, viewNet, "Edit Connections"),
     myCurrentLane(0) {
     // heading
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth, 0);
-    FXLabel* heading = new FXLabel(myContentFrame, "Edit Connections", 0, JUSTIFY_LEFT);
-    heading->setFont(myHeaderFont);
     myDescription = new FXLabel(myContentFrame, "", 0, JUSTIFY_LEFT);
     new FXHorizontalSeparator(myContentFrame, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
     updateDescription();
@@ -174,7 +170,6 @@ GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
 
 
 GNEConnectorFrame::~GNEConnectorFrame() {
-    delete myHeaderFont;
 }
 
 
@@ -193,12 +188,6 @@ GNEConnectorFrame::hide() {
     FXScrollWindow::hide();
     // Hide Frame Area in which this GNEFrame is placed
     myViewNet->getViewParent()->hideFramesArea();
-}
-
-
-FXFont*
-GNEConnectorFrame::getHeaderFont() {
-    return myHeaderFont;
 }
 
 

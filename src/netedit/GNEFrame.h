@@ -59,8 +59,9 @@ public:
     /**@brief Constructor
      * @brief parent FXFrame in which this GNEFrame is placed
      * @brief viewNet viewNet that uses this GNEFrame
+     * @brief frameLabel label of the frame
      */
-    GNEFrame(FXComposite* parent, GNEViewNet* viewNet);
+    GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string &frameLabel);
 
     /// @brief destructor
     ~GNEFrame();
@@ -74,8 +75,11 @@ public:
     /// @brief get view net
     GNEViewNet *getViewNet() const;
 
-    /// @brief get width of frame
-    int getFrameWidth() const;
+    /// @brief get the label for the frame's header
+    FXLabel* getFrameHeaderLabel() const;
+
+    /// @brief get font of the header's frame
+    FXFont *getFrameHeaderFont() const;
 
 protected:
     /// @brief FOX needs this
@@ -84,13 +88,16 @@ protected:
     /// @brief @brief the window to inform when the tls is modfied
     GNEViewNet *myViewNet;
 
-    /// @brief width of frame
-    int myFrameWidth;
+    /// @brief Font for the Header
+    FXFont* myFrameHeaderFont;
+
+    /// @brief the label for the frame's header
+    FXLabel* myFrameHeaderLabel;
+
+    /// @brief the panel to hold all member widgets
+    FXVerticalFrame* myContentFrame;
 
 private:
-    /// @brief default width
-    static const int myDefaultWidth;
-
     /// @brief Invalidated copy constructor.
     GNEFrame(const GNEFrame&);
 

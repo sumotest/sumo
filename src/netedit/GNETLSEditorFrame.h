@@ -68,9 +68,6 @@ public:
     /// @brief hide Frame
     void hide();
 
-    /// @brief get header font
-    FXFont* getHeaderFont();
-
     /// @brief edits the traffic light for the given junction
     /// @param[in] junction The junction of which the traffic light shall be edited
     void editJunction(GNEJunction* junction);
@@ -157,12 +154,6 @@ protected:
     GNETLSEditorFrame() {}
 
 private:
-    /// @brief the panel to hold all member widgets
-    FXVerticalFrame* myContentFrame;
-
-    /// @brief Font for the widget
-    FXFont* myHeaderFont;
-
     /// @brief font for the phase table
     FXFont* myTableFont;
 

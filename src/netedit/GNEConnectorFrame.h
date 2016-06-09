@@ -64,9 +64,6 @@ public:
     /// @brief hide Frame
     void hide();
 
-    /// @brief get Header front
-    FXFont* getHeaderFont();
-
     /**@brief either sets the current lane or toggles the connection of the
      * current lane to this lane (if they share a junction)
      * @param[in] lane Either the lane to set as current lane, or the destination from current lane
@@ -105,12 +102,6 @@ private:
         CONNECTED_PASS,
         CONFLICTED
     };
-
-    /// @brief the panel to hold all member widgets
-    FXVerticalFrame* myContentFrame;
-
-    /// @brief Font for the widget
-    FXFont* myHeaderFont;
 
     /// @brief the label that shows the current editing state
     FXLabel* myDescription;

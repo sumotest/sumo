@@ -118,6 +118,9 @@ public:
     /// @note this function is called in GNEFrame::Show();      // PABLO #2036
     void hideFramesArea();                                      // PABLO #2036
 
+    /// @brief get width of the Frames Area // PABLO #2036
+    int getFramesAreaWidth();               // PABLO #2036
+
     /// @name FOX-callbacks
     /// @{
     /// @brief Called if the user wants to make a snapshot (screenshot)

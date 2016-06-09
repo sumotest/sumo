@@ -60,11 +60,11 @@ FXDEFMAP(GNEInspectorFrame) GNEInspectorFrameMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onUpdCopyTemplate),
 };
 
-
+/*
 FXDEFMAP(GNEInspectorFrame::AttrPanel) AttrPanelMap[]= {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,  GNEInspectorFrame::AttrPanel::onCmdSetBlocking),
 };
-
+*/
 
 FXDEFMAP(GNEInspectorFrame::AttrInput) AttrInputMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_ATTRIBUTE,         GNEInspectorFrame::AttrInput::onCmdSetAttribute),
@@ -73,7 +73,7 @@ FXDEFMAP(GNEInspectorFrame::AttrInput) AttrInputMap[] = {
 
 // Object implementation
 FXIMPLEMENT(GNEInspectorFrame, FXScrollWindow, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
-FXIMPLEMENT(GNEInspectorFrame::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))
+//FXIMPLEMENT(GNEInspectorFrame::AttrPanel, FXVerticalFrame, AttrPanelMap, ARRAYNUMBER(AttrPanelMap))
 FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 
 
@@ -81,25 +81,30 @@ FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXHorizontalFrame, AttrInputMap, ARRAY
 // method definitions
 // ===========================================================================
 GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet),
-    myHeaderFont(new FXFont(getApp(), "Arial", 18, FXFont::Bold)),
-    myPanel(0),
+    GNEFrame(parent, viewNet, "Inspector"),
     myEdgeTemplate(0) {
-    myPanel = new AttrPanel(this, myACs);
+
+    // Create groupBox for attributes
+    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForAttributes->hide();
+
+    // Create groupBox for templates
+    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "templates", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForTemplates->hide();
+
+    // Create copy template button
+    myCopyTemplateButton = new FXButton(myGroupBoxForTemplates, "", 0, this, MID_GNE_COPY_TEMPLATE, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    myCopyTemplateButton->hide();
+
+    // Create set template button
+    mySetTemplateButton = new FXButton(myGroupBoxForTemplates, "Set as Template\t\t", 0, this, MID_GNE_SET_TEMPLATE, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    mySetTemplateButton->hide();
+
+    // Update attributes
+    updateAttributes(myACs);
 }
-
-
-void
-GNEInspectorFrame::create() {
-    FXScrollWindow::create();
-    myHeaderFont->create();
-    myPanel->create();
-}
-
 
 GNEInspectorFrame::~GNEInspectorFrame() {
-    delete myPanel;
-    delete myHeaderFont;
     if (myEdgeTemplate) {
         myEdgeTemplate->decRef("GNEInspectorFrame::~GNEInspectorFrame");
         if (myEdgeTemplate->unreferenced()) {
@@ -129,25 +134,10 @@ GNEInspectorFrame::hide() {
 
 void
 GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
-    delete myPanel;
     myACs = ACs;
-    myPanel = new AttrPanel(this, myACs);
-    myPanel->create();
+    updateAttributes(myACs);
     recalc();
 }
-
-
-void
-GNEInspectorFrame::update() {
-    inspect(myACs);
-}
-
-
-FXFont*
-GNEInspectorFrame::getHeaderFont() const {
-    return myHeaderFont;
-}
-
 
 GNEEdge*
 GNEInspectorFrame::getEdgeTemplate() const {
@@ -185,7 +175,7 @@ GNEInspectorFrame::onCmdSetTemplate(FXObject*, FXSelector, void*) {
     GNEEdge* edge = dynamic_cast<GNEEdge*>(myACs[0]);
     assert(edge);
     setEdgeTemplate(edge);
-    myPanel->update();
+    updateAttributes(myACs);
     return 1;
 }
 
@@ -204,36 +194,36 @@ GNEInspectorFrame::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
     return 1;
 }
 
+/*
 long
-GNEInspectorFrame::AttrPanel::onCmdSetBlocking(FXObject*, FXSelector, void*) {
+GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
     myAdditional->setBlocked(myCheckBlocked->getCheck() == 1? true : false);
     myAdditional->getViewNet()->update();
     return 1;
-}
+}*/
+ 
 
-
-// ===========================================================================
-// AttrPanel method definitions
-// ===========================================================================
-
-GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs) :
-    FXVerticalFrame(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, parent->getFrameWidth(), 0, 2, 0, 0, 0, 0, 0) {
-    FXLabel* header;
-
+void
+GNEInspectorFrame::updateAttributes(const std::vector<GNEAttributeCarrier*>& ACs) {
     if (ACs.size() > 0) {
+        // Set header
         std::string headerString = toString(ACs[0]->getTag());
         if (ACs.size() > 1) {
             headerString = toString(ACs.size()) + " " + headerString + "s";
         }
-        header = new FXLabel(this, headerString.c_str());
-
-        // Create groupBox for attributes
-        FXGroupBox* groupBoxForAttributes = new FXGroupBox(this, "attributes",
-        GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
-
+        getFrameHeaderLabel()->setText(headerString.c_str());
+        // Show myGroupBoxForAttributes
+        myGroupBoxForAttributes->show();
+        // Clear listOfAttrInput
+        for(std::list<GNEInspectorFrame::AttrInput*>::iterator i = listOfAttrInput.begin(); i != listOfAttrInput.end(); i++)
+            delete (*i);
+        listOfAttrInput.clear();
+        // Iterate over attributes
         const std::vector<SumoXMLAttr>& attrs = ACs[0]->getAttrs();
         for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
             if (ACs.size() > 1 && GNEAttributeCarrier::isUnique(*it)) {
+
+    // CAMBIAR ESTO 
                 // disable editing for some attributes in case of multi-selection
                 // even displaying is problematic because of string rendering restrictions
                 continue;
@@ -249,28 +239,28 @@ GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::ve
                 }
                 oss << *it_val;
             }
-            new AttrInput(groupBoxForAttributes, parent, ACs, *it, oss.str());
+            std::cout << oss.str() << std::endl;
+            //listOfAttrInput.push_back(new AttrInput(myGroupBoxForAttributes, this, ACs, *it, oss.str()));
+              
+            FXButton* but = new FXButton(myContentFrame, "FUNCIONACOJONES", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
         }
 
+        // If attributes correspond to an Edge
         if (dynamic_cast<GNEEdge*>(ACs[0])) {
-            // Create groupBox for templates
-            FXGroupBox* groupBoxForTemplates = new FXGroupBox(this, "templates",
-            GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+            // show groupBox for templates
+            myGroupBoxForTemplates->show();
 
-            // "Copy Template" (caption supplied via onUpdate)
-            new FXButton(this, "", 0, parent, MID_GNE_COPY_TEMPLATE,
-                         ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                         0, 0, 0, 0, 4, 4, 3, 3);
+            // show "Copy Template" (caption supplied via onUpdate)
+            myCopyTemplateButton->show();
 
-            if (ACs.size() == 1) {
-                // "Set As Template"
-                new FXButton(groupBoxForTemplates, "Set as Template\t\t", 0, parent, MID_GNE_SET_TEMPLATE,
-                             ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                             0, 0, 0, 0, 4, 4, 3, 3);
-            }
+            // show "Set As Template"
+            if (ACs.size() == 1)
+                mySetTemplateButton->show();
         }
 
+        // If attributes correspond to an Additional
         if(dynamic_cast<GNEAdditional*>(ACs[0])) {
+            /** arreglar esto **/
             myAdditional = dynamic_cast<GNEAdditional*>(ACs[0]);
             // Create groupBox for templates
             FXGroupBox* groupBoxForEditor = new FXGroupBox(this, "editor",
@@ -279,53 +269,66 @@ GNEInspectorFrame::AttrPanel::AttrPanel(GNEInspectorFrame* parent, const std::ve
             myCheckBlocked->setCheck(myAdditional->isBlocked());
         }
     } else {
-        header = new FXLabel(this, "No Object\nselected", 0, JUSTIFY_LEFT);
+        getFrameHeaderLabel()->setText("No Object selected");
+        myGroupBoxForAttributes->hide();
+        myGroupBoxForTemplates->hide();
+        myCopyTemplateButton->hide();
+        mySetTemplateButton->hide();
     }
-    header->setFont(parent->getHeaderFont());
 }
-
 
 // ===========================================================================
 // AttrInput method definitions
-//
 // ===========================================================================
-GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue) :
-    FXHorizontalFrame(parent, LAYOUT_FILL_X, 0, 0, inspectorFrameParent->getFrameWidth(), 0, 0, 0, 0, 2),
+
+GNEInspectorFrame::AttrInput::AttrInput(FXGroupBox* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue) :
+    FXHorizontalFrame(parent, LAYOUT_FILL_X),
     myTag(ACs[0]->getTag()),
     myAttr(attr),
     myACs(&ACs),
     myInspectorFrameParent(inspectorFrameParent),
     myTextField(0),
     myChoicesCombo(0) {
-    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
-    const bool combinableChoices = choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr);
+
     FXuint opts;
     std::string label;
-    if (combinableChoices) {
+    
+    // Obtain discrete and combinable choices
+    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
+    const bool combinableChoices = choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr);
+
+
+
+    if (combinableChoices != NULL) {
         opts = BUTTON_NORMAL;
         label = toString(attr) + "\t\tOpen edit dialog for attribute '" + toString(attr) + "'";
     } else {
         opts = 0;
         label = toString(attr);
     }
-    FXButton* but = new FXButton(this, label.c_str(), 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR,
-                                 opts, 0, 0, 0, 0, DEFAULT_PAD, DEFAULT_PAD, 1, 1);
-    int cols = (inspectorFrameParent->getFrameWidth() - but->getDefaultWidth() - 6) / 9;
+
+    
+    FXButton* but = new FXButton(this, label.c_str(), 0, inspectorFrameParent, MID_GNE_OPEN_ATTRIBUTE_EDITOR, opts);
+    /*
+    int cols =  1;//(parent->getWidth() - but->getDefaultWidth() - 6) / 9;
+    std::cout << cols << std::endl;
+    
+    
     if (choices.size() == 0 || combinableChoices) {
         // rudimentary input restriction
         unsigned int numerical = GNEAttributeCarrier::isNumerical(attr) ? TEXTFIELD_REAL : 0;
-        myTextField = new FXTextField(this, cols,
-                                      this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_RIGHT | numerical, 0, 0, 0, 0, 4, 2, 0, 2);
+        myTextField = new FXTextField(this, cols, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_RIGHT | LAYOUT_FILL_X | numerical, 0, 0, 0, 0, 4, 2, 0, 2);
         myTextField->setText(initialValue.c_str());
     } else {
-        myChoicesCombo = new FXComboBox(this, 12, this, MID_GNE_SET_ATTRIBUTE,
-                                        FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+        myChoicesCombo = new FXComboBox(this, 12, this, MID_GNE_SET_ATTRIBUTE, FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
         for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
             myChoicesCombo->appendItem(it->c_str());
         }
         myChoicesCombo->setNumVisible((int)choices.size());
         myChoicesCombo->setCurrentItem(myChoicesCombo->findItem(initialValue.c_str()));
     }
+    */
+
 }
 
 

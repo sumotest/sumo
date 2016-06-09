@@ -117,18 +117,11 @@ FXIMPLEMENT(GNEAdditionalFrame::lanes,                   FXGroupBox,     GNELane
 // ===========================================================================
 
 GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet),
-    myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
+    GNEFrame(parent, viewNet, "Additionals"),
     myActualAdditionalType(SUMO_TAG_NOTHING) {
-    // Create frame
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
-
-    // Create titel frame
-    myFrameLabel = new FXLabel(myContentFrame, "Additionals", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
-    myFrameLabel->setFont(myHeaderFont);
 
     // Create groupBox for myAdditionalMatchBox
-    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
 
     // Create FXListBox in myGroupBoxForMyAdditionalMatchBox
     myAdditionalMatchBox = new FXComboBox(myGroupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM,  FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_X);
@@ -166,7 +159,6 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet)
 
 
 GNEAdditionalFrame::~GNEAdditionalFrame() {
-    delete myHeaderFont;
     gSelected.remove2Update();
 }
 
@@ -236,11 +228,6 @@ GNEAdditionalFrame::removeAdditional(GNEAdditional *additional) {
     myViewNet->getUndoList()->p_begin("delete " + additional->getDescription());
     myViewNet->getUndoList()->add(new GNEChange_Additional(myViewNet->getNet(), additional, false), true);
     myViewNet->getUndoList()->p_end();
-}
-
-FXFont*
-GNEAdditionalFrame::getHeaderFont() {
-    return myHeaderFont;
 }
 
 
@@ -387,7 +374,7 @@ GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMo
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite *parent, FXObject* tgt) :
-    FXMatrix(parent, 3, MATRIX_BY_COLUMNS | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXMatrix(parent, 3, MATRIX_BY_COLUMNS | LAYOUT_FILL_X),
     myAttr(SUMO_ATTR_NOTHING) {
     // Create elements
     myLabel = new FXLabel(this, "name", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0);
@@ -476,7 +463,7 @@ GNEAdditionalFrame::additionalParameter::getValue() const {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite *parent, FXObject* tgt) :
-    FXMatrix(parent, 2, MATRIX_BY_COLUMNS | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXMatrix(parent, 2, MATRIX_BY_COLUMNS | LAYOUT_FILL_X),
     numberOfVisibleTextfields(1),
     myMaxNumberOfValuesInParameterList(10),
     myAttr(SUMO_ATTR_NOTHING) {
@@ -487,7 +474,7 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
     }
     // Create label Row
     myLabels.push_back(new FXLabel(this, "Rows", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0));
-    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     // Create add button
     add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW,
         ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
@@ -603,7 +590,7 @@ GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow(FXObject*, FXSelecto
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite *parent, FXObject* tgt) :
-    FXGroupBox(parent, "Default parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXGroupBox(parent, "Default parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
     myIndexParameter(0),
     myIndexParameterList(0),
     maxNumberOfParameters(20) {
@@ -786,14 +773,14 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::editorParameters::editorParameters(FXComposite *parent, FXObject* tgt) :
-    FXGroupBox(parent, "editor parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXGroupBox(parent, "editor parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
     myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT) {
     // Create FXListBox for the reference points
     myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
                                               FRAME_SUNKEN | LAYOUT_LEFT  | COMBOBOX_STATIC | LAYOUT_FILL_X);
 
     // Create Frame for Label and TextField
-    FXHorizontalFrame *lengthFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X | LAYOUT_LEFT , 0, 0, 0, 0, 0, 0, 0, 0);
+    FXHorizontalFrame *lengthFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X | LAYOUT_LEFT );
 
     // Create length label
     myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
@@ -921,7 +908,7 @@ GNEAdditionalFrame::editorParameters::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalSet::additionalSet(FXComposite *parent, FXObject* tgt, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
     myViewNet(viewNet),
     myType(SUMO_TAG_NOTHING) {
 
@@ -993,7 +980,7 @@ GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Edges", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXGroupBox(parent, "Edges", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
     myViewNet(viewNet) {
 
     // Create search box
@@ -1003,7 +990,7 @@ GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* viewNet) :
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X);
 
     // Create button for clear selection
     clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION);
@@ -1097,7 +1084,7 @@ GNEAdditionalFrame::edges::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::lanes::lanes(FXComposite *parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "lanes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0),
+    FXGroupBox(parent, "lanes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
     myViewNet(viewNet) {
 
     // Create search box
@@ -1107,7 +1094,7 @@ GNEAdditionalFrame::lanes::lanes(FXComposite *parent, GNEViewNet* viewNet) :
     myList = new FXList(this, this, MID_GNE_SELECTLANE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X, 0, 0, 0, 0, 0, 0, 0, 0);
+    FXHorizontalFrame *buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X);
 
     // Create button for clear selection
     clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION);

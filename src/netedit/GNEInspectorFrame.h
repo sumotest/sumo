@@ -52,31 +52,6 @@ class GNEInspectorFrame : public GNEFrame {
     FXDECLARE(GNEInspectorFrame)
 
 public:
-    // ===========================================================================
-    // class AttrPanel
-    // ===========================================================================
-    class AttrPanel : public FXVerticalFrame {
-        /// @brief FOX-declaration
-        FXDECLARE(GNEInspectorFrame::AttrPanel)
-
-    public:
-        /// @brief constructor
-        AttrPanel(GNEInspectorFrame* parent, const std::vector<GNEAttributeCarrier*>& ACs);
-
-        /// @brief try to set new attribute value
-        long onCmdSetBlocking(FXObject*, FXSelector, void*);
-
-    protected:
-        /// @brief FOX needs this
-        AttrPanel() {}
-
-    private:
-        /// @brief pointer to check button block
-        FXCheckButton *myCheckBlocked;
-
-        /// @brief pointer to additional element
-        GNEAdditional *myAdditional;
-    };
 
     // ===========================================================================
     // class AttrInput
@@ -87,7 +62,7 @@ public:
 
     public:
         /// @brief constructor
-        AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue);
+        AttrInput(FXGroupBox* parent, GNEInspectorFrame *inspectorFrameParent, const std::vector<GNEAttributeCarrier*>& ACs, SumoXMLAttr attr, std::string initialValue);
 
         /// @brief try to set new attribute value
         long onCmdSetAttribute(FXObject*, FXSelector, void*);
@@ -138,14 +113,8 @@ public:
     /// @brief Inspect the given multi-selection
     void inspect(const std::vector<GNEAttributeCarrier*>& ACs);
 
-    /// @brief Creates the widget
-    void create();
-
-    /// @brief update the widget
-    void update();
-
-    /// @brief get Header Font
-    FXFont* getHeaderFont() const;
+    /// @brief update attributes
+    void updateAttributes(const std::vector<GNEAttributeCarrier*>& ACs);
 
     /// @brief get the template edge (to copy attributes from)
     GNEEdge* getEdgeTemplate() const;
@@ -167,17 +136,33 @@ protected:
     GNEInspectorFrame() {}
 
 private:
-    /// @brief Font for the widget
-    FXFont* myHeaderFont;
 
-    /// @brief panel of attributes
-    AttrPanel* myPanel;
+    FXGroupBox* myGroupBoxForTemplates;
 
-    /// @brief the edge template
-    GNEEdge* myEdgeTemplate;
+     FXButton *myCopyTemplateButton;
+
+    FXButton *mySetTemplateButton;
+
+
+
+
+    /// @brief gropuBox for attributes
+    FXGroupBox* myGroupBoxForAttributes;
+
+    /// @brief pointer to check button block
+    FXCheckButton *myCheckBlocked;
+
+    /// @brief list of Attribute inputs
+    std::list<GNEInspectorFrame::AttrInput*> listOfAttrInput;
 
     /// @brief the multi-selection currently being inspected
     std::vector<GNEAttributeCarrier*> myACs;
+
+    /// @brief pointer to additional element
+    GNEAdditional *myAdditional;
+
+    /// @brief the edge template
+    GNEEdge* myEdgeTemplate;
 };
 
 

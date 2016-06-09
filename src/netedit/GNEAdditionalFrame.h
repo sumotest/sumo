@@ -534,9 +534,6 @@ public:
      */
     void removeAdditional(GNEAdditional *additional);
 
-    /// @brief return font of the header
-    FXFont* getHeaderFont();
-
     /// @name FOX-callbacks
     /// @{
     /// @brief Called when the user select another additional Type
@@ -565,15 +562,6 @@ private:
 
     /// @brief obtain the End position values of StoppingPlaces and E2 detector over the lane
     SUMOReal setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMouseOverLane, SUMOReal lenghtOfAdditional);
-
-    /// @brief the panel to hold all member widgets
-    FXVerticalFrame* myContentFrame;
-
-    /// @brief Font for the widget
-    FXFont* myHeaderFont;
-
-    /// @brief the label for the frame
-    FXLabel* myFrameLabel;
 
     /// @brief groupBox for Match Box of additionals
     FXGroupBox* myGroupBoxForMyAdditionalMatchBox;

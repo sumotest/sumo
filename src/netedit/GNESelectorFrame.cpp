@@ -79,16 +79,10 @@ FXIMPLEMENT(GNESelectorFrame, FXScrollWindow, GNESelectorFrameMap, ARRAYNUMBER(G
 // method definitions
 // ===========================================================================
 GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet),
-    myHeaderFont(new FXFont(getApp(), "Arial", 14, FXFont::Bold)),
+    GNEFrame(parent, viewNet, getStats().c_str()),
     mySetOperation(SET_ADD),
     mySetOperationTarget(mySetOperation),
     ALL_VCLASS_NAMES_MATCH_STRING("all " + joinToString(SumoVehicleClassStrings.getStrings(), " ")) {
-    // stats
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myFrameWidth, 0);
-    myStats = new FXLabel(myContentFrame, getStats().c_str(), 0, JUSTIFY_LEFT);
-    myStats->setFont(myHeaderFont);
-
     // selection modification mode
     FXGroupBox* selBox = new FXGroupBox(myContentFrame, "Modification Mode",
                                         GROUPBOX_NORMAL | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
@@ -156,16 +150,8 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
 
 
 GNESelectorFrame::~GNESelectorFrame() {
-    delete myHeaderFont;
     gSelected.remove2Update();
 }
-
-
-FXFont* 
-GNESelectorFrame::getHeaderFont() const {
-    return myHeaderFont;
-}
-
 
 long
 GNESelectorFrame::onCmdLoad(FXObject*, FXSelector, void*) {
@@ -386,7 +372,7 @@ GNESelectorFrame::getStats() const {
 
 void
 GNESelectorFrame::selectionUpdated() {
-    myStats->setText(getStats().c_str());
+    myFrameHeaderLabel->setText(getStats().c_str());
     update();
 }
 

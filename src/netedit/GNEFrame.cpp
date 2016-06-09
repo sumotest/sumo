@@ -40,44 +40,42 @@
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/images/GUIIconSubSys.h>
+
 #include "GNEFrame.h"
+#include "GNEViewParent.h"
+#include "GNEViewNet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
-
-// ===========================================================================
-// FOX callback mapping
-// ===========================================================================
-
-//FXDEFMAP(GNEFrame) AttrInputMap[] = {};
-
-
-//FXIMPLEMENT(GNEFrame, FXScrollWindow);
-//FXIMPLEMENT(GNEInspectorFrame, FXScrollWindow, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
-
-//FXDECLARE
-
-// ===========================================================================
-// static members
-// ===========================================================================
-const int GNEFrame::myDefaultWidth = 140;
-
 // ===========================================================================
 // method definitions
 // ===========================================================================
 
-GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet) : 
-    FXScrollWindow(parent, LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0, 0, myDefaultWidth, 0), 
-    myViewNet(viewNet),
-    myFrameWidth(myDefaultWidth) {
+GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string &frameLabel) : 
+    FXScrollWindow(parent, LAYOUT_FILL),
+    myViewNet(viewNet) {
+    // Create font
+    myFrameHeaderFont = new FXFont(getApp(), "Arial", 14, FXFont::Bold),
+
+    // Create frame
+    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
+
+    // Create titel frame
+    myFrameHeaderLabel = new FXLabel(myContentFrame, frameLabel.c_str(), 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
+
+    // Set font of header
+    myFrameHeaderLabel->setFont(myFrameHeaderFont);
+
     // Hide Frame
     FXScrollWindow::hide();
 }
 
 
-GNEFrame::~GNEFrame() {}
+GNEFrame::~GNEFrame() {
+    delete myFrameHeaderFont;
+}
 
 
 GNEViewNet*
@@ -86,10 +84,15 @@ GNEFrame::getViewNet() const {
 }
 
 
-int 
-GNEFrame::getFrameWidth() const {
-    return myFrameWidth;
+FXLabel* 
+GNEFrame::getFrameHeaderLabel() const {
+    return myFrameHeaderLabel;
 }
 
+
+FXFont *
+GNEFrame::getFrameHeaderFont() const {
+    return myFrameHeaderFont;
+}
 
 /****************************************************************************/
