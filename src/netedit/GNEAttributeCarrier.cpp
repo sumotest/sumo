@@ -471,6 +471,16 @@ GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
 }
 
 
+
+bool                                                                // PABLO #2067
+GNEAttributeCarrier::isDiscrete(SumoXMLTag tag, SumoXMLAttr attr) { // PABLO #2067
+    if(discreteChoices(tag, attr).size() > 0)                       // PABLO #2067
+        return true;                                                // PABLO #2067
+    else                                                            // PABLO #2067
+        return false;                                               // PABLO #2067
+}                                                                   // PABLO #2067
+
+
 bool
 GNEAttributeCarrier::hasParent(SumoXMLTag tag) {
     // define on first access

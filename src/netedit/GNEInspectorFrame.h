@@ -66,7 +66,10 @@ public:
         AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent);
 
         /// @brief show attribute
-        void showAttribute(SumoXMLAttr attr);
+        void showAttribute(SumoXMLTag tag, SumoXMLAttr attr, const std::string &value);
+
+        /// @brief show attribute
+        void hiddeAttribute();
 
         /// @brief try to set new attribute value
         long onCmdSetAttribute(FXObject*, FXSelector, void*);
@@ -82,17 +85,41 @@ public:
         /// @brief pointer to GNEInspectorFrame parent
         GNEInspectorFrame *myInspectorFrameParent;
 
+        /// @brief current tag
+        SumoXMLTag myTag; 
+
+        /// @brief current Attr    
+        SumoXMLAttr myAttr;
+
         /// @brief pointer to label
         FXLabel* myLabel;
 
-        /// @brief pointer to text field
-        FXTextField* myTextField;
+        /// @brief textField to show the values of non-editable values
+        FXTextField *myTextFieldUniques;
+
+        /// @brief textField to modify the value of int values
+        FXTextField *myTextFieldInt;
+
+        /// @brief textField to modify the value of real values
+        FXTextField *myTextFieldReal;
+
+        /// @brief textField to modify the value of strings values
+        FXTextField *myTextFieldStrings;
 
         /// @brief pointer to combo box choices
         FXComboBox* myChoicesCombo;
 
-        /// @brief pointer to combo box choices
-        FXCheckButton *myCheck;
+        /// @brief pointer to checkBox
+        FXCheckButton *myCheckBox;
+
+        /// @brief pointer to buttonCombinableChoices
+        FXButton *myButtonCombinableChoices;
+
+        /// @brief set show as private function
+        void show();
+
+        /// @brief set hide as private function
+        void hide();
     };
 
 public:
@@ -131,6 +158,9 @@ public:
 
     /// @brief update the copy button with the name of the template
     long onUpdCopyTemplate(FXObject*, FXSelector, void*);
+
+    /// @brief called when user toogle the blocking button
+    long onCmdSetBlocking(FXObject*, FXSelector, void*);
 
 protected:
     /// @brief FOX needs this

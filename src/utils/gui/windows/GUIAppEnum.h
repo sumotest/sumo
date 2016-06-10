@@ -472,6 +472,8 @@ enum {
     MID_GNE_INSERT_NETWORK,
     /** attribute edited */
     MID_GNE_SET_ATTRIBUTE,
+    /** attribute choiced */    // PABLO #2067
+    MID_GNE_SET_CHOICES,        // PABLO #2067
     /** netEdit attribute blocking */
     MID_GNE_SET_BLOCKING,
     /** netEdit add row */

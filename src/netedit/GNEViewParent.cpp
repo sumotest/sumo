@@ -115,15 +115,15 @@ GNEViewParent::GNEViewParent(
 
     // Create Frame Splitter                                                                                                                                    // PABLO #2036
     myFramesSplitter = new FXSplitter(myContentFrame, SPLITTER_HORIZONTAL | LAYOUT_FILL_X | LAYOUT_FILL_Y | SPLITTER_TRACKING | FRAME_RAISED | FRAME_THICK);    // PABLO #2036
-    
+  
     // Create frames Area                                                                                                                               // PABLO #2036
     myFramesArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);     // PABLO #2036
+      
+    // Set default width
+    myFramesArea->setWidth(200);
 
     // Create view area
     myViewArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
-
-    // Set default split between areas  // PABLO #2036
-    myFramesSplitter->setSplit(1, 65);  // PABLO #2036
 
     // Add the view to a temporary parent so that we can add items to myViewArea in the desired order
     FXComposite* tmp = new FXComposite(this);

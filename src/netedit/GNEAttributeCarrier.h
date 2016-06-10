@@ -134,6 +134,9 @@ public:
     /// @note unique attributes don't have a default value
     static bool isUnique(SumoXMLAttr attr);
 
+    /// @brief whether an attribute is Discrete                 // PABLO #2067
+    static bool isDiscrete(SumoXMLTag tag, SumoXMLAttr attr);   // PABLO #2067
+
     /// @brief check if a element with certain tag has another additional element as parent
     static bool hasParent(SumoXMLTag tag);
 

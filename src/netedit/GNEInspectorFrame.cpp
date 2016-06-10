@@ -156,7 +156,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
 
         // Hide all AttrInput
         for(std::list<GNEInspectorFrame::AttrInput*>::iterator i = listOfAttrInput.begin(); i != listOfAttrInput.end(); i++)
-           (*i)->hide();
+           (*i)->hiddeAttribute();
         
         // Gets attributes of element
         const std::vector<SumoXMLAttr>& attrs = ACs[0]->getAttrs();
@@ -164,23 +164,45 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
         // Declare iterator over AttrImput
         std::list<GNEInspectorFrame::AttrInput*>::iterator itAttrs = listOfAttrInput.begin();
 
-        // Show attributes
-        for (std::vector<SumoXMLAttr>::const_iterator i = attrs.begin(); i != attrs.end(); i++) {
-            (*itAttrs)->showAttribute(*i);
+        // Iterate over attributes
+        for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
+            if (ACs.size() > 1 && GNEAttributeCarrier::isUnique(*it)) {
+                // disable editing for some attributes in case of multi-selection
+                // even displaying is problematic because of string rendering restrictions
+                continue;
+            }
+            // Declare a set of occuring values and insert attribute's values of item
+            std::set<std::string> occuringValues;
+            for (std::vector<GNEAttributeCarrier*>::const_iterator it_ac = ACs.begin(); it_ac != ACs.end(); it_ac++) {
+                occuringValues.insert((*it_ac)->getAttribute(*it));
+            }
+            // get current value
+            std::ostringstream oss;
+            for (std::set<std::string>::iterator it_val = occuringValues.begin(); it_val != occuringValues.end(); it_val++) {
+                if (it_val != occuringValues.begin()) {
+                    oss << " ";
+                }
+                oss << *it_val;
+            }
+            // Show attribute
+            (*itAttrs)->showAttribute(ACs[0]->getTag(), *it, oss.str());
             itAttrs++;
-        }
+        } 
             
         // If attributes correspond to an Edge
         if (dynamic_cast<GNEEdge*>(ACs[0])) {
             // show groupBox for templates
             myGroupBoxForTemplates->show();
-
             // show "Copy Template" (caption supplied via onUpdate)
             myCopyTemplateButton->show();
-
             // show "Set As Template"
             if (ACs.size() == 1)
                 mySetTemplateButton->show();
+        } else {
+            // Hidde all template elements
+            myGroupBoxForTemplates->hide();
+            myCopyTemplateButton->hide();
+            mySetTemplateButton->hide();
         }
 
         // If attributes correspond to an Additional
@@ -192,14 +214,22 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
             // Show check blocked
             myCheckBlocked->setCheck(myAdditional->isBlocked());
             myCheckBlocked->show();
+        } else {
+            // Hide all additional elements
+            myGroupBoxForEditor->hide();
+            myGroupBoxForEditor->hide();
+            myCheckBlocked->hide();
         }
-
     } else {
         getFrameHeaderLabel()->setText("No Object selected");
+        // Hide all elements
         myGroupBoxForAttributes->hide();
         myGroupBoxForTemplates->hide();
         myCopyTemplateButton->hide();
         mySetTemplateButton->hide();
+        myGroupBoxForEditor->hide();
+        myGroupBoxForEditor->hide();
+        myCheckBlocked->hide();
     }
 }
 
@@ -258,13 +288,15 @@ GNEInspectorFrame::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
     return 1;
 }
 
-/*
+
 long
 GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
-    myAdditional->setBlocked(myCheckBlocked->getCheck() == 1? true : false);
-    myAdditional->getViewNet()->update();
+    if(myAdditional) {
+        myAdditional->setBlocked(myCheckBlocked->getCheck() == 1? true : false);
+        myViewNet->update();
+    }
     return 1;
-}*/
+}
  
 
 void
@@ -277,68 +309,104 @@ GNEInspectorFrame::updateAttributes(const std::vector<GNEAttributeCarrier*>& ACs
 // ===========================================================================
 
 GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame *inspectorFrameParent) :
-    FXMatrix(parent, 4, MATRIX_BY_COLUMNS | LAYOUT_FILL_X | PACK_UNIFORM_WIDTH),
-    myInspectorFrameParent(inspectorFrameParent) {
+    FXMatrix(parent, 8, MATRIX_BY_COLUMNS | LAYOUT_FILL_X | PACK_UNIFORM_WIDTH),
+    myInspectorFrameParent(inspectorFrameParent), 
+    myTag(SUMO_TAG_NOTHING), 
+    myAttr(SUMO_ATTR_NOTHING) {
     // Create and hide label
-    myLabel = new FXLabel(this, "attributeLabel", 0, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myLabel = new FXLabel(this, "attributeLabel", 0, FRAME_LINE | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myLabel->hide();
-    // Create and hide textField
-    myTextField = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
-    myTextField->hide();
+    // Create, disable and hide textField unique
+    myTextFieldUniques = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldUniques->disable();
+    myTextFieldUniques->hide();
+    // Create and hide textField int
+    myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_LINE | TEXTFIELD_INTEGER | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldInt->hide();
+    // Create and hide textField real
+    myTextFieldReal = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_LINE | TEXTFIELD_REAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldReal->hide();
+    // Create and hide textField string
+    myTextFieldStrings = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldStrings->hide();
     // Create and hide ComboBox
-    myChoicesCombo = new FXComboBox(this, 12, this, MID_GNE_SET_ATTRIBUTE, FRAME_SUNKEN | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_SUNKEN | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myChoicesCombo->hide();
     // Create and hide checkButton
-    myCheck = new FXCheckButton(this, "AttributeBool", this, MID_GNE_SET_ATTRIBUTE, JUSTIFY_LEFT | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
-    myCheck->hide();
+    myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, JUSTIFY_LEFT | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myCheckBox->hide();
+    // Create and hidde ButtonCombinableChoices
+    myButtonCombinableChoices = new FXButton(this, "Edit", 0, this, MID_GNE_SET_CHOICES, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myButtonCombinableChoices->hide();
 }
 
     
 void 
-GNEInspectorFrame::AttrInput::showAttribute(SumoXMLAttr attr) {
-    show();
+GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, const std::string &value) {
+    // Set actual Tag and attribute
+    myTag = tag;
+    myAttr = attr;
+    // ShowLabel
+    myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
-    myTextField->show();
-
-    /**
-    FXuint opts;
-    std::string label;
-    
-    // Obtain discrete and combinable choices
-    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
-    const bool combinableChoices = choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr);
-
-
-
-    if (combinableChoices != NULL) {
-        opts = BUTTON_NORMAL;
-        label = toString(attr) + "\t\tOpen edit dialog for attribute '" + toString(attr) + "'";
-    } else {
-        opts = 0;
-        label = toString(attr);
-    }
-
-    
-    FXButton* but = new FXButton(this, label.c_str(), 0, inspectorFrameParent, MID_GNE_OPEN_ATTRIBUTE_EDITOR, opts);
-    /*
-    int cols =  1;//(parent->getWidth() - but->getDefaultWidth() - 6) / 9;
-    std::cout << cols << std::endl;
-    
-    
-    if (choices.size() == 0 || combinableChoices) {
-        // rudimentary input restriction
-        unsigned int numerical = GNEAttributeCarrier::isNumerical(attr) ? TEXTFIELD_REAL : 0;
-        myTextField = new FXTextField(this, cols, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_RIGHT | LAYOUT_FILL_X | numerical, 0, 0, 0, 0, 4, 2, 0, 2);
-        myTextField->setText(initialValue.c_str());
-    } else {
-        myChoicesCombo = new FXComboBox(this, 12, this, MID_GNE_SET_ATTRIBUTE, FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
-        for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
-            myChoicesCombo->appendItem(it->c_str());
+    //Show a different element depending of the type of attribute
+    if(GNEAttributeCarrier::isUnique(myAttr)) {
+        // Show unique attribute in a non-editable text field
+        myTextFieldUniques->setText(value.c_str());
+        myTextFieldUniques->show();
+    } else if(GNEAttributeCarrier::isBool(myAttr)) {
+        // set value of checkbox
+        if(value == "true")
+            myCheckBox->setCheck(true);
+        else
+            myCheckBox->setCheck(false);
+        myCheckBox->show();
+    } else if(GNEAttributeCarrier::isDiscrete(myTag, myAttr)) {
+        // Obtain choices
+        const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
+        // Check if are combinable coices
+        if(choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr)) {
+            myButtonCombinableChoices->show();
+        } else {
+            // fill comboBox
+            myChoicesCombo->clearItems();
+            for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it)
+                myChoicesCombo->appendItem(it->c_str());
+            myChoicesCombo->setNumVisible((int)choices.size());
+            myChoicesCombo->setCurrentItem(myChoicesCombo->findItem(value.c_str()));
+            myChoicesCombo->show();
         }
-        myChoicesCombo->setNumVisible((int)choices.size());
-        myChoicesCombo->setCurrentItem(myChoicesCombo->findItem(initialValue.c_str()));
+    } else if(GNEAttributeCarrier::isFloat(myAttr)) {
+        // show TextField for real values
+        myTextFieldReal->setText(value.c_str());
+        myTextFieldReal->show();
+    } else if(GNEAttributeCarrier::isInt(myAttr)) {
+        // Show textField for int attributes
+        myTextFieldInt->setText(value.c_str());
+        myTextFieldInt->show();
+    } else {
+        // In any other case, show value as String
+        myTextFieldStrings->setText(value.c_str());
+        myTextFieldStrings->show();
     }
-    */
+    // Show AttrInput
+    show();
+}
+
+
+void 
+GNEInspectorFrame::AttrInput::hiddeAttribute() {
+    // Hide all elements
+    myLabel->hide();
+    myTextFieldUniques->hide();
+    myTextFieldInt->hide();
+    myTextFieldReal->hide();
+    myTextFieldStrings->hide();
+    myChoicesCombo->hide();
+    myCheckBox->hide();
+    myButtonCombinableChoices->hide();
+    // hide AttrInput
+    hide();
 }
 
 
@@ -412,6 +480,18 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void* dat
     }
     */
     return 1;
+}
+
+
+void 
+GNEInspectorFrame::AttrInput::show() {
+    FXMatrix::show();
+}
+
+
+void 
+GNEInspectorFrame::AttrInput::hide() {
+    FXMatrix::hide();
 }
 
 
