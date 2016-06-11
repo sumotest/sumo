@@ -54,7 +54,7 @@ class GNEInspectorFrame : public GNEFrame {
 public:
 
     // ===========================================================================
-    // class Attribute
+    // class AttrInput
     // ===========================================================================
 
     class AttrInput : public FXMatrix  {
@@ -122,6 +122,49 @@ public:
         void hide();
     };
 
+
+    // ===========================================================================
+    // class AttrEditor
+    // ===========================================================================
+
+    class AttrEditor : public FXDialogBox {
+        /// @brief FOX-declaration
+        FXDECLARE(GNEInspectorFrame::AttrEditor)
+
+    public:
+        /// @brief constructor
+        AttrEditor(FXApp* app, SumoXMLAttr attr, GNEAttributeCarrier* AC);
+
+        /// @brief call when user press button Accept
+        long onCmdAccept(FXObject*, FXSelector, void*);
+
+        /// @brief call when user press button cancel
+        long onCmdCancel(FXObject*, FXSelector, void*);
+
+        /// @brief call when user press button reset
+        long onCmdReset(FXObject*, FXSelector, void*);
+
+    protected:
+        /// @brief FOX needs this
+        AttrEditor() {}
+
+    private:
+        /// @brief pointer to GNEInspectorFrame parent
+        GNEInspectorFrame *myInspectorFrameParent;
+
+        /// @brief current tag
+        SumoXMLTag myTag; 
+
+        /// @brief current Attr    
+        SumoXMLAttr myAttr;
+
+        /// @brief pointer to label
+        FXLabel* myLabel;
+
+        /// @brief pointer to checkBox
+        FXCheckButton *myCheckBox;
+    };
+
 public:
     /**@brief Constructor
      * @brief parent FXFrame in which this GNEFrame is placed
@@ -167,7 +210,6 @@ protected:
     GNEInspectorFrame() {}
 
 private:
-
     /// @brief groupBox for attributes
     FXGroupBox* myGroupBoxForAttributes;
 

@@ -300,6 +300,9 @@
     <ClCompile Include="..\..\..\src\netedit\GNEFrame.cpp">
       <Filter>Quellcodedateien\Frames</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\netedit\GNEContainerStop.cpp">
+      <Filter>Quellcodedateien\Items\Additionals\StoppingPlaces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -474,6 +477,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEFrame.h">
       <Filter>Header-Dateien\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\netedit\GNEContainerStop.h">
+      <Filter>Header-Dateien\Items\Additionals\StoppingPlaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

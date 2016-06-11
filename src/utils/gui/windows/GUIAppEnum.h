@@ -423,12 +423,17 @@ enum {
     MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT,
     MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,
 
+    /// Inspector attribute dialog
+    MID_GNE_MODE_INSPECT_ACCEPT, // PABLO #1916
+    MID_GNE_MODE_INSPECT_CANCEL, // PABLO #1916
+    MID_GNE_MODE_INSPECT_RESET,  // PABLO #1916
+
     /// Variable Speed Signal dialog            // PABLO #1916
     MID_GNE_VARIABLESPEEDSIGNAL_ADDROW,         // PABLO #1916
     MID_GNE_VARIABLESPEEDSIGNAL_REMOVEROW,      // PABLO #1916
     MID_GNE_VARIABLESPEEDSIGNAL_CHANGEVALUE,    // PABLO #1916
 
-    // Additional dialogs
+    /// Additional dialogs
     MID_GNE_MODE_ADDITIONALDIALOG_ACCEPT, // PABLO #1916
     MID_GNE_MODE_ADDITIONALDIALOG_CANCEL, // PABLO #1916
     MID_GNE_MODE_ADDITIONALDIALOG_RESET,  // PABLO #1916
@@ -472,8 +477,6 @@ enum {
     MID_GNE_INSERT_NETWORK,
     /** attribute edited */
     MID_GNE_SET_ATTRIBUTE,
-    /** attribute choiced */    // PABLO #2067
-    MID_GNE_SET_CHOICES,        // PABLO #2067
     /** netEdit attribute blocking */
     MID_GNE_SET_BLOCKING,
     /** netEdit add row */
