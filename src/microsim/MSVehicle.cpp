@@ -446,6 +446,7 @@ MSVehicle::Influencer::isVTDAffected(SUMOTime t) const {
 
 void
 MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
+    const bool wasOnRoad = v->isOnRoad();
     if (v->isOnRoad()) {
         v->onRemovalFromNet(MSMoveReminder::NOTIFICATION_TELEPORT);
         v->getLane()->removeVehicle(v, MSMoveReminder::NOTIFICATION_TELEPORT);
@@ -457,8 +458,16 @@ MSVehicle::Influencer::postProcessVTD(MSVehicle* v) {
     if (myVTDPos > myVTDLane->getLength()) {
         myVTDPos = myVTDLane->getLength();
     }
-    myVTDLane->forceVehicleInsertion(v, myVTDPos, MSMoveReminder::NOTIFICATION_TELEPORT, myVTDPosLat);
-    v->updateBestLanes();
+    if (fabs(myVTDPosLat) < 0.5 * (myVTDLane->getWidth() + v->getVehicleType().getWidth())) {
+        myVTDLane->forceVehicleInsertion(v, myVTDPos, MSMoveReminder::NOTIFICATION_TELEPORT, myVTDPosLat);
+        v->updateBestLanes();
+        if (!wasOnRoad) {
+            v->drawOutsideNetwork(false);
+        }
+    } else {
+        v->setVTDState(myVTDLane, myVTDPos, myVTDPosLat);
+        v->drawOutsideNetwork(true);
+    }
     // inverse of GeomHelper::naviDegree
     v->setAngle(M_PI / 2. - DEG2RAD(myVTDAngle));
 }
@@ -569,8 +578,10 @@ MSVehicle::onRemovalFromNet(const MSMoveReminder::Notification reason) {
 // ------------ interaction with the route
 bool
 MSVehicle::hasArrived() const {
-    return myCurrEdge == myRoute->end() - 1 && (myStops.empty() || myStops.front().edge != myCurrEdge)
-           && myState.myPos > myArrivalPos - POSITION_EPS;
+    return (myCurrEdge == myRoute->end() - 1 
+            && (myStops.empty() || myStops.front().edge != myCurrEdge)
+            && myState.myPos > myArrivalPos - POSITION_EPS
+            && !isRemoteControlled());
 }
 
 
@@ -1534,7 +1545,7 @@ MSVehicle::executeMove() {
     SUMOReal vSafeMinDist = 0;
     myHaveToWaitOnNextLink = false;
 
-    assert(myLFLinkLanes.size() != 0 || (myInfluencer != 0 && myInfluencer->isVTDControlled()));
+    assert(myLFLinkLanes.size() != 0 || isRemoteControlled());
     DriveItemVector::iterator i;
     for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
         MSLink* link = (*i).myLink;
@@ -1720,7 +1731,7 @@ MSVehicle::executeMove() {
     myAcceleration = SPEED2ACCEL(vNext - myState.mySpeed);
     SUMOReal deltaPos = SPEED2DIST(vNext);
 #ifndef NO_TRACI
-    if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
+    if (isRemoteControlled()) {
         deltaPos = myInfluencer->implicitDeltaPosVTD(this);
     }
 #endif
@@ -3441,7 +3452,23 @@ MSVehicle::influenceChangeDecision(int state) {
     }
     return state;
 }
+
+
+void 
+MSVehicle::setVTDState(MSLane* lane, SUMOReal pos, SUMOReal posLat) {
+    myCachedPosition = Position::INVALID;
+    myLane = lane;
+    myState.myPos = pos;
+    myState.myPosLat = posLat;
+}
+
 #endif
+
+bool
+MSVehicle::isRemoteControlled() const {
+    return myInfluencer != 0 && myInfluencer->isVTDControlled();
+}
+
 
 
 void

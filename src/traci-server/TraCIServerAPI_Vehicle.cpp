@@ -1325,12 +1325,14 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
                 return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "The fifth parameter for setting a VTD vehicle must be the angle given as a double.", outputStorage);
             }
             bool keepRoute = v->getID() != "VTD_EGO";
+            bool mayLeaveNetwork = false;
             if (numArgs == 6) {
                 int keepRouteFlag;
                 if (!server.readTypeCheckingByte(inputStorage, keepRouteFlag)) {
                     return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "The sixth parameter for setting a VTD vehicle must be the keepRouteFlag given as a byte.", outputStorage);
                 }
-                keepRoute = (keepRouteFlag > 0);
+                keepRoute = (keepRouteFlag == 1);
+                mayLeaveNetwork = (keepRouteFlag == 2);
             }
             // process
             std::string origID = edgeID + " " + toString(laneNum);
@@ -1370,19 +1372,21 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             } else {
                 found = vtdMap(pos, origID, angle, *v, server, bestDistance, &lane, lanePos, routeOffset, edges);
             }
-            if (found && maxRouteDistance > bestDistance) {
+            if (found && (maxRouteDistance > bestDistance || mayLeaveNetwork)) {
                 // optionally compute lateral offset
-                if (MSGlobals::gLateralResolution > 0) {
+                if (MSGlobals::gLateralResolution > 0 || mayLeaveNetwork) {
                     const SUMOReal perpDist = lane->getShape().distance2D(pos, true);
                     if (perpDist != GeomHelper::INVALID_OFFSET) {
-                        // XXX ensure it stays on the road?
                         lanePosLat = perpDist;
+                        if (!mayLeaveNetwork) {
+                            lanePosLat = MIN2(lanePosLat, 0.5 * (lane->getWidth() + v->getVehicleType().getWidth() - MSGlobals::gLateralResolution));
+                        }
                         // figure out whether the offset is to the left or to the right
                         PositionVector tmp = lane->getShape();
                         tmp.move2side(-lanePosLat); // moved to left
                         //std::cout << " lane=" << lane->getID() << " posLat=" << lanePosLat << " shape=" << lane->getShape() << " tmp=" << tmp << " tmpDist=" << tmp.distance2D(pos) << "\n";
                         if (tmp.distance2D(pos) > perpDist) {
-                            lanePosLat = -perpDist;
+                            lanePosLat = -lanePosLat;
                         }
                     }
                 }
@@ -1393,9 +1397,7 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
 
                 }
             } else {
-                if (!keepRoute) {
-                    return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Could not map vehicle '" + id + "'.", outputStorage);
-                } // @note else, silently ignore failure to map
+                return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Could not map vehicle '" + id + "' distance to road is " + toString(bestDistance) + ".", outputStorage);
             }
         }
         break;

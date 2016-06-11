@@ -374,6 +374,7 @@ public:
 
 
     /** @brief Returns the angle at the start of the edge
+     * (relative to the node shape center)
      * The angle is computed in computeAngle()
      * @return This edge's start angle
      */
@@ -383,12 +384,29 @@ public:
 
 
     /** @brief Returns the angle at the end of the edge
+     * (relative to the node shape center)
      * The angle is computed in computeAngle()
      * @return This edge's end angle
      */
     inline SUMOReal getEndAngle() const {
         return myEndAngle;
     }
+
+    /** @brief Returns the angle at the start of the edge
+     * (only using edge shape)
+     * @return This edge's start angle
+     */
+    SUMOReal getShapeStartAngle() const;
+
+
+    /** @brief Returns the angle at the end of the edge
+     * (only using edge shape)
+     * The angle is computed in computeAngle()
+     * @return This edge's end angle
+     */
+    SUMOReal getShapeEndAngle() const; 
+
+
 
 
     /// @brief get the angle as measure from the start to the end of this edge
@@ -1158,7 +1176,7 @@ private:
     public:
         /// constructor
         MainDirections(const EdgeVector& outgoing,
-                       NBEdge* parent, NBNode* to);
+                       NBEdge* parent, NBNode* to, int indexOfStraightest);
 
         /// destructor
         ~MainDirections();
@@ -1211,6 +1229,9 @@ private:
     void divideOnEdges(const EdgeVector* outgoing);
     void divideSelectedLanesOnEdges(const EdgeVector* outgoing, const std::vector<int>& availableLanes,
                                     const std::vector<unsigned int>* priorities);
+
+    /// @brief add some straight connections
+    void addStraightConnections(const EdgeVector* outgoing, const std::vector<int>& availableLanes, const std::vector<unsigned int>* priorities); 
 
     /** recomputes the edge priorities and manipulates them for a distribution
         of lanes on edges which is more like in real-life */
@@ -1436,20 +1457,51 @@ public:
     class connections_finder {
     public:
         /// constructor
-        connections_finder(int fromLane, NBEdge* const edge2find, int lane2find) : myFromLane(fromLane), myEdge2Find(edge2find), myLane2Find(lane2find) { }
+        connections_finder(int fromLane, NBEdge* const edge2find, int lane2find, bool invertEdge2find=false) : 
+            myFromLane(fromLane), myEdge2Find(edge2find), myLane2Find(lane2find), myInvertEdge2find(invertEdge2find) { }
 
         bool operator()(const Connection& c) const {
-            return c.fromLane == myFromLane && c.toEdge == myEdge2Find && c.toLane == myLane2Find;
+            return ((c.fromLane == myFromLane || myFromLane == -1) 
+                    && ((!myInvertEdge2find && c.toEdge == myEdge2Find) || (myInvertEdge2find && c.toEdge != myEdge2Find))
+                    && (c.toLane == myLane2Find || myLane2Find == -1));
         }
 
     private:
         int myFromLane;
         NBEdge* const myEdge2Find;
         int myLane2Find;
+        bool myInvertEdge2find;
 
     private:
         /// @brief invalidated assignment operator
         connections_finder& operator=(const connections_finder& s);
+
+    };
+
+
+    /**
+     * @class connections_conflict_finder
+     */
+    class connections_conflict_finder {
+    public:
+        /// constructor
+        connections_conflict_finder(int fromLane, NBEdge* const edge2find, bool checkRight) : 
+            myFromLane(fromLane), myEdge2Find(edge2find), myCheckRight(checkRight) { }
+
+        bool operator()(const Connection& c) const {
+            return (((myCheckRight && c.fromLane < myFromLane) || (!myCheckRight && c.fromLane > myFromLane))
+                    && c.fromLane >= 0 // already assigned
+                    && c.toEdge == myEdge2Find);
+        }
+
+    private:
+        int myFromLane;
+        NBEdge* const myEdge2Find;
+        bool myCheckRight;
+
+    private:
+        /// @brief invalidated assignment operator
+        connections_conflict_finder& operator=(const connections_conflict_finder& s);
 
     };
 

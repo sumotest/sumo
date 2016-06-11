@@ -1187,7 +1187,7 @@ GUISUMOAbstractView::drawDecals() {
 
 // ------------ Additional visualisations
 bool
-GUISUMOAbstractView::addAdditionalGLVisualisation(GUIGlObject* const which) {
+GUISUMOAbstractView::addAdditionalGLVisualisation(const GUIGlObject* const which) {
     if (myAdditionallyDrawn.find(which) == myAdditionallyDrawn.end()) {
         myAdditionallyDrawn[which] = 1;
     } else {
@@ -1199,7 +1199,7 @@ GUISUMOAbstractView::addAdditionalGLVisualisation(GUIGlObject* const which) {
 
 
 bool
-GUISUMOAbstractView::removeAdditionalGLVisualisation(GUIGlObject* const which) {
+GUISUMOAbstractView::removeAdditionalGLVisualisation(const GUIGlObject* const which) {
     if (getTrackedID() == static_cast<int>(which->getGlID())) {
         stopTrack();
     }
