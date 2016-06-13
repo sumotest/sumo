@@ -549,6 +549,9 @@ public:
     /// @brief hidde additional frame
     void hide();
 
+    /// @brief get list of selecte id's in string format
+    static std::string getIdsSelected(const FXList* list);
+
 protected:
     /// @brief FOX needs this
     GNEAdditionalFrame() {}

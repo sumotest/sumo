@@ -916,6 +916,24 @@ GNEAdditionalFrame::editorParameters::onCmdHelp(FXObject*, FXSelector, void*) {
     return 1;
 }
 
+
+std::string
+GNEAdditionalFrame::getIdsSelected(const FXList* list) {
+    // Obtain Id's of list
+    std::string listOfIds;
+    for (int i = 0; i < list->getNumItems(); i++) {
+        if (list->isItemSelected(i)) {
+            if (listOfIds.size() > 0) {
+                listOfIds += " ";
+            }
+            listOfIds += (list->getItem(i)->getText()).text();
+        }
+    }
+    return listOfIds;
+}
+
+
+
 // ---------------------------------------------------------------------------
 // GNEAdditionalFrame::additionalSet - methods
 // ---------------------------------------------------------------------------
@@ -1021,20 +1039,10 @@ GNEAdditionalFrame::edges::edges(FXComposite *parent, GNEViewNet* viewNet) :
 
 GNEAdditionalFrame::edges::~edges() {}
 
-
 std::string
 GNEAdditionalFrame::edges::getIdsSelected() const {
-    // Obtain Id's of list
-    std::string listOfIds;
-    for(int i = 0; i < myList->getNumItems(); i++)
-        if(myList->isItemSelected(i))
-            listOfIds += (myList->getItem(i)->getText() + " ").text();
-    // Remove last ' '
-    if(listOfIds.size() > 0 && listOfIds.back() == ' ')
-        listOfIds.pop_back();
-    return listOfIds;
+    return GNEAdditionalFrame::getIdsSelected(myList);
 }
-
 
 void
 GNEAdditionalFrame::edges::showList(std::string search) {
@@ -1128,15 +1136,7 @@ GNEAdditionalFrame::lanes::~lanes() {}
 
 std::string
 GNEAdditionalFrame::lanes::getIdsSelected() const {
-    // Obtain list of id's
-    std::string listOfIds;
-    for(int i = 0; i < myList->getNumItems(); i++)
-        if(myList->isItemSelected(i))
-            listOfIds += (myList->getItem(i)->getText() + " ").text();
-    // Remove last ' '
-    if(listOfIds.size() > 0 && listOfIds.back() == ' ')
-        listOfIds.pop_back();
-    return listOfIds;
+    return GNEAdditionalFrame::getIdsSelected(myList);
 }
 
 
