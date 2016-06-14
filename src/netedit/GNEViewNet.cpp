@@ -1128,10 +1128,10 @@ GNEViewNet::onCmdNodeReplace(FXObject*, FXSelector, void*) {
     return 1;
 }
 
-
 // ===========================================================================
 // private
 // ===========================================================================
+
 void
 GNEViewNet::setEditMode(EditMode mode) {
     setStatusBarText("");

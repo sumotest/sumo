@@ -47,6 +47,7 @@
 #include "GNERerouter.h"
 #include "GNEVariableSpeedSignal.h"
 #include "GNERouteProbe.h"
+#include "GNECalibrator.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -100,8 +101,9 @@ GNEAdditionalHandler::myStartElement(int element, const SUMOSAXAttributes& attrs
             case SUMO_TAG_REROUTER:
                 parseAndBuildRerouter(attrs);
                 break;
-            // ¿Vaporizer?
-            // Rest of additional elements
+            case SUMO_TAG_VAPORIZER:
+                parseAndBuildVaporizer(attrs);
+                break;
             default:
                 break;
         }
@@ -558,12 +560,11 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
             GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             SUMOReal pos = GNEAttributeCarrier::parse<SUMOReal>(values[SUMO_ATTR_POSITION]);
             std::string file = values[SUMO_ATTR_FILE];
-            MSRouteProbe* probe;
-            std::string outfile;
-            SUMOTime freq;
+            std::string outfile = values[SUMO_ATTR_OUTPUT];
+            SUMOTime freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             // Build calibrator
             if(lane)
-                return buildCalibrator(viewNet, id, lane->getParentEdge(), pos, file, outfile, freq, probe, blocked);
+                return buildCalibrator(viewNet, id, &lane->getParentEdge(), pos, file, outfile, freq, blocked);
             else
                 return false;
         }
@@ -589,7 +590,6 @@ GNEAdditionalHandler::buildAdditional(GNEViewNet *viewNet, SumoXMLTag tag, std::
         }
         case SUMO_TAG_ROUTEPROBE: {
             // get own attributes of RouteProbe
-            bool ok;
             GNELane *lane = viewNet->getNet()->retrieveLane(values[SUMO_ATTR_LANE], false);
             int freq = GNEAttributeCarrier::parse<int>(values[SUMO_ATTR_FREQUENCY]);
             std::string filename = values[SUMO_ATTR_FILE];
@@ -709,11 +709,15 @@ GNEAdditionalHandler::buildDetectorExit(GNEViewNet *viewNet, const std::string& 
 
 
 bool
-GNEAdditionalHandler::buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe, bool blocked)
-{
-    std::cout << "Function buildCalibrator of class GNEAdditionalHandler not implemented yet";
-
-    return NULL;
+GNEAdditionalHandler::buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge *edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, bool blocked) {
+    if (viewNet->getNet()->getAdditional(SUMO_TAG_CALIBRATOR, id) == NULL) {
+        viewNet->getUndoList()->p_begin("add " + toString(SUMO_TAG_CALIBRATOR));
+        GNECalibrator *calibrator = new GNECalibrator(id, edge, viewNet, pos, freq, outfile, blocked);
+        viewNet->getUndoList()->add(new GNEChange_Additional(viewNet->getNet(), calibrator, true), true);
+        viewNet->getUndoList()->p_end();
+        return true;
+    } else
+        throw InvalidArgument("Could not build " + toString(SUMO_TAG_CALIBRATOR) + "'" + id + "' in netEdit; probably declared twice.");
 }
 
 

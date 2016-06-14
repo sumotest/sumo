@@ -346,7 +346,7 @@ GNESelectorFrame::show() {
     gSelected.add2Update(this);
     selectionUpdated(); // selection may have changed due to deletions
     FXScrollWindow::show();
-    // Show Frame Area in which this GNEFrame is placed
+    // Show and Frame Area in which this GNEFrame is placed
     myViewNet->getViewParent()->showFramesArea();
 }
 

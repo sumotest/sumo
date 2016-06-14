@@ -254,7 +254,7 @@ public:
     /// @brief open GNERerouterDialog
     void openAdditionalDialog();
 
-    /**@brief change the position of the rerouter geometry without registering undo/redo
+    /**@brief change the position of the rerouter geometry 
      * @param[in] posx new x position of rerouter in the map
      * @param[in] posy new y position of rerouter in the map
      * @param[in] undoList pointer to the undo list

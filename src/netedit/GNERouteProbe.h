@@ -61,16 +61,12 @@ public:
     /// @brief Destructor
     ~GNERouteProbe();
 
+    /// @brief change the position of the RouteProbe geometry 
+    void moveAdditional(SUMOReal, SUMOReal, GNEUndoList*);
+
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
-
-    /**@brief change the position of the RouteProbe geometry without registering undo/redo
-     * @param[in] posx new x position of RouteProbe in the map
-     * @param[in] posy new y position of RouteProbe in the map
-     * @param[in] undoList pointer to the undo list
-     */
-    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList);
 
     /**@brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element

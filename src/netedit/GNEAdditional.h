@@ -78,7 +78,7 @@ public:
     /// @brief Destructor
     ~GNEAdditional();
 
-    /**@brief change the position of the additional geometry without registering undo/redo
+    /**@brief change the position of the additional geometry 
      * @param[in] posx new x position of idem in the map or over lane
      * @param[in] posy new y position of item in the map
      * @param[in] undoList pointer to the undo list

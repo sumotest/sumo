@@ -147,7 +147,7 @@ GNERouteProbe::updateGeometry() {
 
 
 void
-GNERouteProbe::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList *undoList) {
+GNERouteProbe::moveAdditional(SUMOReal, SUMOReal, GNEUndoList*) {
     // This additional cannot be moved
 }
 

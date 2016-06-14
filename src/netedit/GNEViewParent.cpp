@@ -193,8 +193,10 @@ GNEViewParent::showFramesArea() {               // PABLO #2036
        mySelectorFrame->shown()   == true ||    // PABLO #2036
        myConnectorFrame->shown()  == true ||    // PABLO #2036
        myTLSEditorFrame->shown()  == true ||    // PABLO #2036
-       myAdditionalFrame->shown() == true)      // PABLO #2036
-        myFramesArea->show();                   // PABLO #2036
+       myAdditionalFrame->shown() == true) {    // PABLO #2036
+            myFramesArea->show();               // PABLO #2036
+            myFramesArea->recalc();             // PABLO #2036
+    }                                           // PABLO #2036
 }                                               // PABLO #2036
 
 
@@ -204,8 +206,10 @@ GNEViewParent::hideFramesArea() {               // PABLO #2036
        mySelectorFrame->shown()   == false &&   // PABLO #2036
        myConnectorFrame->shown()  == false &&   // PABLO #2036
        myTLSEditorFrame->shown()  == false &&   // PABLO #2036
-       myAdditionalFrame->shown() == false)     // PABLO #2036
-        myFramesArea->hide();                   // PABLO #2036
+       myAdditionalFrame->shown() == false) {   // PABLO #2036
+            myFramesArea->hide();               // PABLO #2036
+            myFramesArea->recalc();             // PABLO #2036
+    }                                           // PABLO #2036
 }                                               // PABLO #2036
 
 

@@ -183,7 +183,7 @@ void
 GNETLSEditorFrame::show() {
     // Show Scroll window
     FXScrollWindow::show();
-    // Show Frame Area in which this GNEFrame is placed
+    // Show and update Frame Area in which this GNEFrame is placed
     myViewNet->getViewParent()->showFramesArea();
 }
 

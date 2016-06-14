@@ -129,7 +129,7 @@ public:
     /// @brief returns the destination-junction
     GNEJunction* getDest() const;
 
-    /**@brief change the edge geometry without registering undo/redo
+    /**@brief change the edge geometry 
      * It is up to the Edge to decide whether an new geometry node should be
      * generated or an existing node should be moved
      * @param[in] oldPos The origin of the mouse movement
@@ -142,7 +142,7 @@ public:
     //// @brief manipulate the given geometry and return whether it was changed
     static bool changeGeometry(PositionVector& geom, const std::string& id, const Position& oldPos, const Position& newPos, bool relative = false, bool moveEndPoints = false);
 
-    /**@brief change the edge geometry without registering undo/redo
+    /**@brief change the edge geometry 
      * @param[in] delta All inner points are moved by adding delta
      */
     void moveGeometry(const Position& delta);

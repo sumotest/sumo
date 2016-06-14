@@ -64,7 +64,7 @@ public:
     /// @note: must be called when geometry changes (i.e. lane moved)
     void updateGeometry();
 
-    /**@brief change the position of the E3 geometry without registering undo/redo
+    /**@brief change the position of the E3 geometry 
      * @param[in] posx new x position of item in the map
      * @param[in] posy new y position of item in the map
      * @param[in] undoList pointer to the undo list

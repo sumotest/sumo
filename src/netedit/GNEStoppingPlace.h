@@ -66,7 +66,7 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
-    /**@brief change the position of the StoppingPlace geometry without registering undo/redo
+    /**@brief change the position of the StoppingPlace geometry 
      * @param[in] posx new position of StoppingPlaceover lane
      * @param[in] posy unused
      * @param[in] undoList pointer to the undo list

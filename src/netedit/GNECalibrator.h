@@ -33,11 +33,6 @@
 #include "GNEAdditional.h"
 
 // ===========================================================================
-// class declarations
-// ===========================================================================
-class GNERouteProbe;
-
-// ===========================================================================
 // class definitions
 // ===========================================================================
 /**
@@ -48,18 +43,22 @@ class GNECalibrator : public GNEAdditional {
 public:
     /**@brief Constructor
      * @param[in] id The storage of gl-ids to get the one for this lane representation from
-     * @param[in] lane Lane of this StoppingPlace belongs
+     * @param[in] edge Lane of this StoppingPlace belongs
      * @param[in] viewNet pointer to GNEViewNet of this additional element belongs
      * @param[in] pos position of the detector on the lane
+
+
      * @param[in] frequency the aggregation interval in which to calibrate the flows
-     * @param[in] routeProbe The id of the routeProbe element from which to determine the route distribution for generated vehicles
      * @param[in] output The output file for writing calibrator information
      * @param[in] blocked set initial blocking state of item
      */
-    GNECalibrator(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal frequency, GNERouteProbe *routeProbe, const std::string& output, bool blocked);
+    GNECalibrator(const std::string& id, GNEEdge* edge, GNEViewNet* viewNet, SUMOReal pos, SUMOTime frequency, const std::string& output, bool blocked);
 
     /// @brief Destructor
     ~GNECalibrator();
+
+    /// @brief change the position of the calibrator geometry 
+    void moveAdditional(SUMOReal, SUMOReal, GNEUndoList*);
 
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)
@@ -112,14 +111,11 @@ public:
     /// @}
 
 protected:
-    /// @brief lane in which this calibrator is placed
-    GNELane *myLane;
+    /// @brief edge in which this calibrator is placed
+    GNEEdge *myEdge;
 
     /// @brief Frequency of calibrator
-    int myFrequency;
-
-    /// @brief Routeprobe vinculated with this Calibrator
-    GNERouteProbe *myRouteProbe;
+    SUMOTime myFrequency;
 
     /// @brief output of calibrator
     std::string myOutput;

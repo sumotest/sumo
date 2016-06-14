@@ -66,7 +66,7 @@ public:
     /// @brief update pre-computed geometry information
     virtual void updateGeometry() = 0;
 
-    /**@brief change the position of the additional geometry without registering undo/redo
+    /**@brief change the position of the additional geometry 
      * @param[in] posx new x position of additional over lane
      * @param[in] posy unused
      * @param[in] undoList pointer to the undo list

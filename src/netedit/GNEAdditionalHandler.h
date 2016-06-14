@@ -265,7 +265,7 @@ public:
      * @param[in] blocked set initial blocking state of item
      * @todo Is the position correct/needed
      */
-    static bool buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge &edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, const MSRouteProbe* probe, bool blocked);
+    static bool buildCalibrator(GNEViewNet *viewNet, const std::string& id, GNEEdge *edge, SUMOReal pos, const std::string& file, const std::string& outfile, const SUMOTime freq, bool blocked);
 
     /**@brief builds a rerouter
      * @param[in] viewNet viewNet in which element will be inserted

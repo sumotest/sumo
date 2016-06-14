@@ -48,6 +48,7 @@
 #include <utils/xml/SUMOSAXHandler.h>
 
 #include "GNECalibrator.h"
+#include "GNEEdge.h"
 #include "GNELane.h"
 #include "GNEViewNet.h"
 #include "GNEUndoList.h"
@@ -64,11 +65,10 @@
 // member method definitions
 // ===========================================================================
 
-GNECalibrator::GNECalibrator(const std::string& id, GNELane* lane, GNEViewNet* viewNet, SUMOReal pos, SUMOReal frequency, GNERouteProbe *routeProbe, const std::string& output, bool blocked) :
-    GNEAdditional(id, viewNet, Position(), SUMO_TAG_CALIBRATOR, NULL, blocked),
-    myLane(lane),
+GNECalibrator::GNECalibrator(const std::string& id, GNEEdge* edge, GNEViewNet* viewNet, SUMOReal pos, SUMOTime frequency, const std::string& output, bool blocked) :
+    GNEAdditional(id, viewNet, Position(pos, 0), SUMO_TAG_CALIBRATOR, NULL, blocked),
+    myEdge(edge),
     myFrequency(frequency),
-    myRouteProbe(routeProbe),
     myOutput(output) {
     // Update geometry;
     updateGeometry();
@@ -83,6 +83,12 @@ GNECalibrator::~GNECalibrator() {
 
 
 void
+GNECalibrator::moveAdditional(SUMOReal, SUMOReal, GNEUndoList*) {
+    // This additional cannot be moved
+}
+
+
+void
 GNECalibrator::updateGeometry() {
     // Clear all containers
     myShapeRotations.clear();
@@ -91,23 +97,21 @@ GNECalibrator::updateGeometry() {
     // clear Shape
     myShape.clear();
 
-    // Get shape of lane parent
-    myShape.push_back(myLane->getShape().positionAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())));
+    // Iterate over lanes
+    for(int i = 0; i < myEdge->getLanes().size(); i++) {
 
-    // Obtain first position
-    Position f = myShape[0] - Position(1, 0);
+        // Get shape of lane parent
+        myShape.push_back(myEdge->getLanes().at(i)->getShape().positionAtOffset(myEdge->getLanes().at(i)->getPositionRelativeToParametricLenght(myPosition.x())));
 
-    // Obtain next position
-    Position s = myShape[0] + Position(1, 0);
+        // Obtain first position
+        Position f = myShape[i] - Position(1, 0);
 
-    // Save rotation (angle) of the vector constructed by points f and s
-    myShapeRotations.push_back(myLane->getShape().rotationDegreeAtOffset(myLane->getPositionRelativeToParametricLenght(myPosition.x())) * -1);
+        // Obtain next position
+        Position s = myShape[i] + Position(1, 0);
 
-    // Set offset of the block icon
-    myBlockIconOffset = Position(-1, 0);
-
-    // Set block icon rotation, and using their rotation for logo
-    setBlockIconRotation(myLane);
+        // Save rotation (angle) of the vector constructed by points f and s
+        myShapeRotations.push_back(myEdge->getLanes().at(i)->getShape().rotationDegreeAtOffset(myEdge->getLanes().at(i)->getPositionRelativeToParametricLenght(myPosition.x())) * -1);
+    }
 }
 
 
@@ -116,10 +120,9 @@ GNECalibrator::writeAdditional(OutputDevice& device) {
     // Write parameters
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_ID, getID());
-    device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
+    device.writeAttr(SUMO_ATTR_EDGE, myEdge->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosition.x());
     device.writeAttr(SUMO_ATTR_FREQUENCY, myFrequency);
-    device.writeAttr(SUMO_ATTR_ROUTEPROBE, myRouteProbe->getID());
     device.writeAttr(SUMO_ATTR_OUTPUT, myOutput);
     // Close tag
     device.closeTag();
@@ -149,62 +152,42 @@ GNECalibrator::drawGL(const GUIVisualizationSettings& s) const {
     glLineWidth(1.0);
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
 
-    // draw shape
-    glColor3d(1, 1, 0);
-    glPushMatrix();
-    glTranslated(0, 0, getType());
-    glTranslated(myShape[0].x(), myShape[0].y(), 0);
-    glRotated(myShapeRotations[0], 0, 0, 1);
-    glScaled(exaggeration, exaggeration, 1);
-    glBegin(GL_QUADS);
-    glVertex2d(-1.0,  2);
-    glVertex2d(-1.0, -2);
-    glVertex2d( 1.0, -2);
-    glVertex2d( 1.0,  2);
-    glEnd();
-    glTranslated(0, 0, .01);
-    glBegin(GL_LINES);
-    glVertex2d(0, 2 - .1);
-    glVertex2d(0, -2 + .1);
-    glEnd();
-
-    // outline
-    if (width * exaggeration > 1) {
-        glColor3d(1, 1, 1);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glBegin(GL_QUADS);
-        glVertex2f(-1.0,  2);
-        glVertex2f(-1.0, -2);
-        glVertex2f( 1.0, -2);
-        glVertex2f( 1.0,  2);
-        glEnd();
+    glPushName(getGlID());
+    for (size_t i = 0; i < myShape.size(); ++i) {
+        const Position& pos = myShape[i];
+        SUMOReal rot = myShapeRotations[i];
+        glPushMatrix();
+        glTranslated(pos.x(), pos.y(), getType());
+        glRotated(rot, 0, 0, 1);
+        glTranslated(0, 0, getType());
+        glScaled(exaggeration, exaggeration, 1);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
 
-    // position indicator
-    if (width * exaggeration > 1) {
-        glRotated(90, 0, 0, -1);
-        glColor3d(1, 1, 1);
-        glBegin(GL_LINES);
-        glVertex2d(0, 1.7);
-        glVertex2d(0, -1.7);
+        glBegin(GL_TRIANGLES);
+        glColor3d(1, .8f, 0);
+        // base
+        glVertex2d(0 - 1.4, 0);
+        glVertex2d(0 - 1.4, 6);
+        glVertex2d(0 + 1.4, 6);
+        glVertex2d(0 + 1.4, 0);
+        glVertex2d(0 - 1.4, 0);
+        glVertex2d(0 + 1.4, 6);
         glEnd();
+
+        // draw text
+        if (s.scale * exaggeration >= 1.) {
+            glTranslated(0, 0, .1);
+            glColor3d(0, 0, 0);
+            pfSetPosition(0, 0);
+            pfSetScale(3.f);
+            SUMOReal w = pfdkGetStringWidth("C");
+            glRotated(180, 0, 1, 0);
+            glTranslated(-w / 2., 2, 0);
+            pfDrawString("C");
+            glTranslated(w / 2., -2, 0);
+        }
+        glPopMatrix();
     }
-
-    // Pop shape matrix
-    glPopMatrix();
-
-    // Check if the distance is enought to draw details
-    if (s.scale * exaggeration >= 10) {        
-        // Add a draw matrix
-        //drawDetectorIcon(myCalibratorGlID);
-
-        // Show Lock icon depending of the Edit mode
-        //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
-            drawLockIcon();
-    }
-
-    // Finish draw
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
     glPopName();
 }
@@ -216,13 +199,11 @@ GNECalibrator::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_LANE:
-            return toString(myLane->getAttribute(SUMO_ATTR_ID));
+            return toString(myEdge->getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
             return toString(myPosition.x());
         case SUMO_ATTR_FREQUENCY:
             return toString(myFrequency);
-        case SUMO_ATTR_ROUTEPROBE:
-            return myRouteProbe->getID();
         case SUMO_ATTR_OUTPUT:
             return myOutput;
         default:
@@ -239,7 +220,6 @@ GNECalibrator::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-        case SUMO_ATTR_ROUTEPROBE:
             throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FREQUENCY:
@@ -259,10 +239,8 @@ GNECalibrator::isValid(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-        case SUMO_ATTR_ROUTEPROBE:
-            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
+            throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FREQUENCY:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_OUTPUT:
@@ -281,7 +259,6 @@ GNECalibrator::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_ID:
         case SUMO_ATTR_LANE:
-        case SUMO_ATTR_ROUTEPROBE:
             throw InvalidArgument("modifying " + toString(getType()) + " attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_POSITION:
             myPosition = Position(parse<SUMOReal>(value), 0);
