@@ -765,6 +765,9 @@ GNEEdge::addLane(GNELane* lane, const NBEdge::Lane& laneAttrs) {
 
 void
 GNEEdge::removeLane(GNELane* lane) {
+    if (myLanes.size() == 0) {
+        throw ProcessError("Should not remove the last lane from an edge\n");
+    }
     if (lane == 0) {
         lane = myLanes.back();
     }
@@ -774,7 +777,7 @@ GNEEdge::removeLane(GNELane* lane) {
     myNBEdge.deleteLane(lane->getIndex());
     lane->decRef("GNEEdge::removeLane");
     myLanes.erase(myLanes.begin() + lane->getIndex());
-    if (myLanes.back()->unreferenced()) {
+    if (lane->unreferenced()) {
         delete lane;
     }
     // udate indices
