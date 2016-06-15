@@ -79,26 +79,27 @@ GNEAdditionalSet::GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, P
         myChildEdges.push_back(myEdgeChild);
     }
     // Insert lanes
-    for(int i = 0; i < laneChilds.size(); i++)
-        addLaneChild(laneChilds.at(i));
+    for(int i = 0; i < laneChilds.size(); i++) {
+        laneChilds.at(i)->addAdditionalSet(this);
+        laneChild myLaneChild;
+        myLaneChild.lane = laneChilds.at(i);
+        myChildLanes.push_back(myLaneChild);
+    }
     // Update connections
     updateConnections();
 }
 
 
 GNEAdditionalSet::~GNEAdditionalSet() {
-    /**
-        // Remove references to this additional Set in lanes
-    childLanes childLanesToRemove = myChildLanes;
-    for(childLanes::iterator i = childLanesToRemove.begin(); i != childLanesToRemove.end(); i++)
-        if(i->lane->removeAdditionalSet(this));
-        **/
-
     // Remove references to this additional Set in edges
     childEdges childEdgesToRemove = myChildEdges;
     for(childEdges::iterator i = childEdgesToRemove.begin(); i != childEdgesToRemove.end(); i++)
-        if(i->edge->removeAdditionalSet(this));
+        (i->edge->removeAdditionalSet(this));
 
+    // Remove references to this additional Set in lanes
+    childLanes childLanesToRemove = myChildLanes;
+    for(childLanes::iterator i = childLanesToRemove.begin(); i != childLanesToRemove.end(); i++)
+        (i->lane->removeAdditionalSet(this));
 }
 
 

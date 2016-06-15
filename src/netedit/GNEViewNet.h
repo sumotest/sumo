@@ -120,8 +120,8 @@ public:
     /// @brief called when user releases mouse's left button
     long onLeftBtnRelease(FXObject*, FXSelector, void*);
 
-    /// @brief called when user press mouse's left button two times // PABLO #1916
-    long onDoubleClicked(FXObject*, FXSelector, void* ptr);         // PABLO #1916
+    /// @brief called when user press mouse's left button two times
+    long onDoubleClicked(FXObject*, FXSelector, void* ptr);
 
     /// @brief called when user moves mouse
     long onMouseMove(FXObject*, FXSelector, void*);
@@ -182,8 +182,8 @@ public:
     /// @brief store the position where a popup-menu was requested
     void markPopupPosition();
 
-    /// @brief get the net object           // PABLO #2036
-    GNEViewParent* getViewParent() const;   // PABLO #2036
+    /// @brief get the net object
+    GNEViewParent* getViewParent() const;
 
     /// @brief get the net object
     GNENet* getNet() const;
@@ -226,8 +226,8 @@ protected:
     void doInit();
 
 private:
-    /// @brief view parent          // PABLO #2036
-    GNEViewParent* myViewParent;    // PABLO #2036
+    /// @brief view parent
+    GNEViewParent* myViewParent;
 
     /// @brief we are not responsible for deletion
     GNENet* myNet;

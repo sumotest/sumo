@@ -92,9 +92,9 @@ GNEEdge::~GNEEdge() {
     if (myAmResponsible) {
         delete &myNBEdge;
     }
-    // Remove all references to this edge in their additionals                                          // PABLO #1916
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)              // PABLO #1916
-        (*i)->removeEdgeReference();                                                                    // PABLO #1916
+    // Remove all references to this edge in their additionals
+    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        (*i)->removeEdgeReference();
 }
 
 
@@ -376,11 +376,11 @@ GNEEdge::updateLaneGeometriesAndAdditionals() {
     for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i)
         (*i)->updateGeometry();
     // Update geometry of additionals vinculated to this edge
-    for (AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) // PABLO #1916
-        (*i)->updateGeometry();                                                             // PABLO #1916
+    for (AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)
+        (*i)->updateGeometry();
     // Update geometry of additionalSets vinculated to this edge
-    for (AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i)    // PABLO #1916
-        (*i)->updateGeometry();                                                                         // PABLO #1916
+    for (AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i)
+        (*i)->updateGeometry();
 
 }
 
@@ -752,6 +752,9 @@ GNEEdge::addLane(GNELane* lane, const NBEdge::Lane& laneAttrs) {
     for (int i = 0; i < (int)myLanes.size(); ++i) {
         myLanes[i]->setIndex(i);
     }
+    // Add references to this lane in additionalSets
+    for(std::list<GNEAdditionalSet*>::const_iterator i = lane->getAdditionalSets().begin(); i != lane->getAdditionalSets().end(); i++)
+        (*i)->addLaneChild(lane);
     /* while technically correct, this looks ugly
     getSource()->invalidateShape();
     getDest()->invalidateShape();
@@ -765,6 +768,9 @@ GNEEdge::removeLane(GNELane* lane) {
     if (lane == 0) {
         lane = myLanes.back();
     }
+    // Remove additionalSets vinculated with this Lane
+    for(std::list<GNEAdditionalSet*>::const_iterator i = lane->getAdditionalSets().begin(); i != lane->getAdditionalSets().end(); i++)
+        (*i)->removeLaneChild(lane);
     myNBEdge.deleteLane(lane->getIndex());
     lane->decRef("GNEEdge::removeLane");
     myLanes.erase(myLanes.begin() + lane->getIndex());
@@ -812,66 +818,65 @@ GNEEdge::setMicrosimID(const std::string& newID) {
 }
 
 
-bool                                                                                        // PABLO #1916
-GNEEdge::addAdditional(GNEAdditional *additional) {                                         // PABLO #1916
-    // Check if additional already exists before insertion                                  // PABLO #1916
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)  // PABLO #1916
-        if((*i) == additional)                                                              // PABLO #1916
-            return false;                                                                   // PABLO #1916
-    // Insert it and retur true                                                             // PABLO #1916
-    myAdditionals.push_back(additional);                                                    // PABLO #1916
-    return true;                                                                            // PABLO #1916
-}                                                                                           // PABLO #1916
+bool
+GNEEdge::addAdditional(GNEAdditional *additional) {
+    // Check if additional already exists before insertion
+    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        if((*i) == additional)
+            return false;
+    // Insert it and retur true
+    myAdditionals.push_back(additional);
+    return true;
+}
     
 
-bool                                                                                        // PABLO #1916
-GNEEdge::removeAdditional(GNEAdditional *additional) {                                      // PABLO #1916
-    // search additional and remove it                                                      // PABLO #1916
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)  // PABLO #1916
-        if((*i) == additional) {                                                            // PABLO #1916
-            myAdditionals.erase(i);                                                         // PABLO #1916
-            return true;                                                                    // PABLO #1916
-        }                                                                                   // PABLO #1916
-    // If additional wasn't found, return false                                             // PABLO #1916
-    return false;                                                                           // PABLO #1916
-}                                                                                           // PABLO #1916
+bool
+GNEEdge::removeAdditional(GNEAdditional *additional) {
+    // search additional and remove it
+    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        if((*i) == additional) {
+            myAdditionals.erase(i);
+            return true;
+        }
+    // If additional wasn't found, return false
+    return false;
+}
 
 
-std::list<GNEAdditional*>       // PABLO #1916
-GNEEdge::getAdditionals() {     // PABLO #1916
-    return myAdditionals;       // PABLO #1916
-}                               // PABLO #1916
+std::list<GNEAdditional*>
+GNEEdge::getAdditionals() {
+    return myAdditionals;
+}
 
 
-
-bool                                                                                                // PABLO #1916
-GNEEdge::addAdditionalSet(GNEAdditionalSet *additionalSet) {                                        // PABLO #1916
-    // Check if additionalSet already exists before insertion                                       // PABLO #1916
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
-        if((*i) == additionalSet)                                                                   // PABLO #1916
-            return false;                                                                           // PABLO #1916
-    // Insert it and retur true                                                                     // PABLO #1916
-    myAdditionalSets.push_back(additionalSet);                                                      // PABLO #1916
-    return true;                                                                                    // PABLO #1916
-}                                                                                                   // PABLO #1916
+bool
+GNEEdge::addAdditionalSet(GNEAdditionalSet *additionalSet) {
+    // Check if additionalSet already exists before insertion
+    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
+        if((*i) == additionalSet)
+            return false;
+    // Insert it and retur true
+    myAdditionalSets.push_back(additionalSet);
+    return true;
+}
     
 
-bool                                                                                                // PABLO #1916
-GNEEdge::removeAdditionalSet(GNEAdditionalSet *additionalSet) {                                     // PABLO #1916
-    // search additionalSet and remove it                                                           // PABLO #1916
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) // PABLO #1916
-        if((*i) == additionalSet) {                                                                 // PABLO #1916
-            myAdditionalSets.erase(i);                                                              // PABLO #1916
-            return true;                                                                            // PABLO #1916
-        }                                                                                           // PABLO #1916
-    // If additionalSet wasn't found, return false                                                  // PABLO #1916
-    return false;                                                                                   // PABLO #1916
-}                                                                                                   // PABLO #1916
+bool
+GNEEdge::removeAdditionalSet(GNEAdditionalSet *additionalSet) {
+    // search additionalSet and remove it
+    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
+        if((*i) == additionalSet) {
+            myAdditionalSets.erase(i);
+            return true;
+        }
+    // If additionalSet wasn't found, return false
+    return false;
+}
 
 
-const std::list<GNEAdditionalSet*> &    // PABLO #1916
-GNEEdge::getAdditionalSets() {          // PABLO #1916
-    return myAdditionalSets;            // PABLO #1916
-}                                       // PABLO #1916
+const std::list<GNEAdditionalSet*> &
+GNEEdge::getAdditionalSets() {
+    return myAdditionalSets;
+}
 
 /****************************************************************************/

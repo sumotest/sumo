@@ -1,11 +1,11 @@
 /****************************************************************************/
-///@brief @file    GUIPerspectiveChanger.h
-///@brief @author  Daniel Krajzewicz
-///@brief @author  Jakob Erdmann
-///@brief @author  Michael Behrisch
-///@brief @date    Sept 2002
-///@brief @version $Id$
-///@brief
+/// @brief @file    GUIPerspectiveChanger.h
+/// @brief @author  Daniel Krajzewicz
+/// @brief @author  Jakob Erdmann
+/// @brief @author  Michael Behrisch
+/// @brief @date    Sept 2002
+/// @brief @version $Id$
+/// @brief
 // A virtual class that allows to steer the visual output in dependence to
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
@@ -59,7 +59,7 @@ class GUISUMOAbstractView;
  */
 class GUIPerspectiveChanger {
 public:
-    ///@brief mouse states
+    /// @brief mouse states
     enum MouseState {
         MOUSEBTN_NONE = 0,
         MOUSEBTN_LEFT = 1,
@@ -67,47 +67,64 @@ public:
         MOUSEBTN_MIDDLE = 4
     };
 
-    ///@brief Constructor
+    /// @brief Constructor
     GUIPerspectiveChanger(GUISUMOAbstractView& callBack, const Boundary& viewPort);
 
-    ///@brief Destructor
+    /// @brief Destructor
     virtual ~GUIPerspectiveChanger();
 
-    ///@brief mouse functions
+    /// @brief mouse functions
     //@{
+    /// @brief called when user press left button
     virtual void onLeftBtnPress(void* data);
+    
+    /// @brief called when user releases left button
     virtual bool onLeftBtnRelease(void* data);
+
+    /// @brief called when user press right button
     virtual void onRightBtnPress(void* data);
+
+    /// @brief called when user releases right button
     virtual bool onRightBtnRelease(void* data);
-    virtual void onDoubleClicked(void* data);   // PABLO #1916
+
+    /// @brief called when user click two times
+    virtual void onDoubleClicked(void* data);
+
+    /// @brief called when user changes mouse wheel
     virtual void onMouseWheel(void* data);
+
+    /// @brief called when user moves mouse
     virtual void onMouseMove(void* data);
+
+    /// @brief called when user press a key
     virtual long onKeyPress(void* data);
+
+    /// @brief called when user releases a key
     virtual long onKeyRelease(void* data);
     //@}
 
-    ///@brief Returns the rotation of the canvas stored in this changer
+    /// @brief Returns the rotation of the canvas stored in this changer
     virtual SUMOReal getRotation() const = 0;
 
-    ///@brief Returns the x-offset of the field to show stored in this changer
+    /// @brief Returns the x-offset of the field to show stored in this changer
     virtual SUMOReal getXPos() const = 0;
 
-    ///@brief Returns the y-offset of the field to show stored in this changer
+    /// @brief Returns the y-offset of the field to show stored in this changer
     virtual SUMOReal getYPos() const = 0;
 
-    ///@brief Returns the zoom factor computed stored in this changer
+    /// @brief Returns the zoom factor computed stored in this changer
     virtual SUMOReal getZoom() const = 0;
 
-    ///@brief Centers the view to the given position, setting it to a size that covers the radius. Used for: Centering of vehicles and junctions */
+    /// @brief Centers the view to the given position, setting it to a size that covers the radius. Used for: Centering of vehicles and junctions */
     virtual void centerTo(const Position& pos, SUMOReal radius, bool applyZoom = true) = 0;
 
-    ///@brief Sets the viewport Used for: Adapting a new viewport
+    /// @brief Sets the viewport Used for: Adapting a new viewport
     virtual void setViewport(SUMOReal zoom, SUMOReal xPos, SUMOReal yPos) = 0;
 
-    ///@brief Returns the last mouse x-position an event occured at
+    /// @brief Returns the last mouse x-position an event occured at
     FXint getMouseXPosition() const;
 
-    ///@brief Returns the last mouse y-position an event occured at
+    /// @brief Returns the last mouse y-position an event occured at
     FXint getMouseYPosition() const;
 
     /* @brief Adapts the viewport so that a change in canvass size keeps most of the
@@ -118,33 +135,33 @@ public:
      */
     virtual void changeCanvassLeft(int change) = 0;
 
-    ///@brief get viewport
-    Boundary getViewport(bool fixRatio = true);     // PABLO #1916
+    /// @brief get viewport
+    Boundary getViewport(bool fixRatio = true);
 
-    ///@brief set viewport
-    void setViewport(const Boundary& viewPort);     // PABLO #1916
+    /// @brief set viewport
+    void setViewport(const Boundary& viewPort);
 
 protected:
-    ///@brief The parent window (canvas to scale)
+    /// @brief The parent window (canvas to scale)
     GUISUMOAbstractView& myCallback;
 
-    ///@brief the current mouse position
+    /// @brief the current mouse position
     FXint myMouseXPosition, myMouseYPosition;
 
-    ///@brief the intended viewport
+    /// @brief the intended viewport
     Boundary myViewPort;
 
 
 private:
-    ///@brief patched viewPort with the same aspect ratio as the canvas
+    /// @brief patched viewPort with the same aspect ratio as the canvas
     Boundary patchedViewPort();
 
 
 private:
-    ///@brief Invalidated copy constructor.
+    /// @brief Invalidated copy constructor.
     GUIPerspectiveChanger(const GUIPerspectiveChanger&);
 
-    ///@brief Invalidated assignment operator.
+    /// @brief Invalidated assignment operator.
     GUIPerspectiveChanger& operator=(const GUIPerspectiveChanger&);
 };
 

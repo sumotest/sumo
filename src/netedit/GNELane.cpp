@@ -93,7 +93,7 @@ GNELane::GNELane() :
 
 GNELane::~GNELane() {
     // Remove all references to this lane in their additionals
-    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
         (*i)->removeLaneReference();                                                                                       
 }
 
@@ -470,8 +470,11 @@ GNELane::updateGeometry() {
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
     }
-    // Update geometry of additionalElements
-    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+    // Update geometry of additionals vinculated with this lane
+    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+        (*i)->updateGeometry();
+    // Update geometry of additionalSets vinculated to this lane
+    for (AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i)
         (*i)->updateGeometry();
 }
 
@@ -484,6 +487,12 @@ void
 GNELane::setIndex(unsigned int index) {
     myIndex = index;
     setMicrosimID(myParentEdge.getNBEdge()->getLaneID(index));
+}
+
+
+SUMOReal
+GNELane::getSpeed() const {
+    return myParentEdge.getNBEdge()->getLaneSpeed(myIndex);
 }
 
 
@@ -520,7 +529,7 @@ GNELane::addAdditional(GNEAdditional *additional) {
 bool
 GNELane::removeAdditional(GNEAdditional *additional) {
     // Find and remove stoppingPlace
-    for(std::list<GNEAdditional*>::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         if(*i == additional) {
             myAdditionals.erase(i);
             return true;
@@ -533,6 +542,37 @@ GNELane::removeAdditional(GNEAdditional *additional) {
 std::list<GNEAdditional*>
 GNELane::getAdditionals() {
     return myAdditionals;
+}
+
+
+bool
+GNELane::addAdditionalSet(GNEAdditionalSet *additionalSet) {
+    // Check if additionalSet already exists before insertion
+    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
+        if((*i) == additionalSet)
+            return false;
+    // Insert it and retur true
+    myAdditionalSets.push_back(additionalSet);
+    return true;
+}
+    
+
+bool
+GNELane::removeAdditionalSet(GNEAdditionalSet *additionalSet) {
+    // search additionalSet and remove it
+    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
+        if((*i) == additionalSet) {
+            myAdditionalSets.erase(i);
+            return true;
+        }
+    // If additionalSet wasn't found, return false
+    return false;
+}
+
+
+const std::list<GNEAdditionalSet*> &
+GNELane::getAdditionalSets() {
+    return myAdditionalSets;
 }
 
 

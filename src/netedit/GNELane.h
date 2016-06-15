@@ -41,6 +41,7 @@ class GNETLSEditorFrame;
 class GNEEdge;
 class GNENet;
 class GNEAdditional;
+class GNEAdditionalSet;
 
 // ===========================================================================
 // class definitions
@@ -55,6 +56,13 @@ class GNELane : public GNENetElement, public FXDelegator {
     FXDECLARE(GNELane)
 
 public:
+    /// @brief Definition of the additionals list
+    typedef std::list<GNEAdditional*> AdditionalList;
+
+    /// @brief Definition of the additionalSets list
+    typedef std::list<GNEAdditionalSet*> AdditionalSetList;
+
+
     /**@brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
      * @param[in] the edge this lane belongs to
@@ -130,6 +138,9 @@ public:
     /// @brief returns the index of the lane
     unsigned int getIndex() const;
 
+    /// @nrief returns the current speed of lane
+    SUMOReal getSpeed() const;
+
     /* @brief method for setting the index of the lane
      * @param[in] index The new index of lane
      */
@@ -171,6 +182,15 @@ public:
     /// @return set with all additional elements
     std::list<GNEAdditional*> getAdditionals();
 
+    /// @brief add GNEAdditionalSet to this lane
+    bool addAdditionalSet(GNEAdditionalSet *additionalSet);
+
+    /// @brief remove GNEAdditionalSet from this lane
+    bool removeAdditionalSet(GNEAdditionalSet *additionalSet);
+
+    /// @brief return list of additionalSets associated with this lane
+    const std::list<GNEAdditionalSet*> &getAdditionalSets();
+
     /// @name inherited from GNEAttributeCarrier
     /// @{
     /* @brief method for getting the Attribute of an XML key
@@ -203,7 +223,6 @@ protected:
     /// @brief FOX needs this
     GNELane();
 
-private:
     /// @brief The Edge that to which this lane belongs
     GNEEdge& myParentEdge;
 
@@ -219,8 +238,11 @@ private:
     std::vector<SUMOReal> myShapeLengths;
     /// @}
 
-    /// @brief vector with pointers to additional elements placed in this lane
-    std::list<GNEAdditional*> myAdditionals;
+    /// @brief list with the additonals vinculated with this lane
+    AdditionalList myAdditionals;
+
+    /// @brief list with the additonalSets vinculated with this lane
+    AdditionalSetList myAdditionalSets;
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;

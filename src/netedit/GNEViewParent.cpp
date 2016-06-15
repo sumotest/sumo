@@ -113,11 +113,11 @@ GNEViewParent::GNEViewParent(
     // Create FXToolBarGrip
     new FXToolBarGrip(myNavigationToolBar, NULL, 0, TOOLBARGRIP_SINGLE | FRAME_SUNKEN);
 
-    // Create Frame Splitter                                                                                                                                    // PABLO #2036
-    myFramesSplitter = new FXSplitter(myContentFrame, SPLITTER_HORIZONTAL | LAYOUT_FILL_X | LAYOUT_FILL_Y | SPLITTER_TRACKING | FRAME_RAISED | FRAME_THICK);    // PABLO #2036
+    // Create Frame Splitter
+    myFramesSplitter = new FXSplitter(myContentFrame, SPLITTER_HORIZONTAL | LAYOUT_FILL_X | LAYOUT_FILL_Y | SPLITTER_TRACKING | FRAME_RAISED | FRAME_THICK);
   
-    // Create frames Area                                                                                                                               // PABLO #2036
-    myFramesArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);     // PABLO #2036
+    // Create frames Area
+    myFramesArea = new FXHorizontalFrame(myFramesSplitter, FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
       
     // Set default width
     myFramesArea->setWidth(200);
@@ -134,13 +134,13 @@ GNEViewParent::GNEViewParent(
     // Set pointer myView with the created view net
     myView = viewNet; 
 
-    // creating order is important                                      // PABLO #2036
-    myInspectorFrame = new GNEInspectorFrame(myFramesArea, viewNet);    // PABLO #2036
-    mySelectorFrame = new GNESelectorFrame(myFramesArea, viewNet);      // PABLO #2036
-    myConnectorFrame = new GNEConnectorFrame(myFramesArea, viewNet);    // PABLO #2036
-    myTLSEditorFrame = new GNETLSEditorFrame(myFramesArea, viewNet);    // PABLO #2036
-    myAdditionalFrame = new GNEAdditionalFrame(myFramesArea, viewNet);  // PABLO #2036
-    myAdditionalFrame->hide();                                          // PABLO #2036
+    // creating order is important
+    myInspectorFrame = new GNEInspectorFrame(myFramesArea, viewNet);
+    mySelectorFrame = new GNESelectorFrame(myFramesArea, viewNet);
+    myConnectorFrame = new GNEConnectorFrame(myFramesArea, viewNet);
+    myTLSEditorFrame = new GNETLSEditorFrame(myFramesArea, viewNet);
+    myAdditionalFrame = new GNEAdditionalFrame(myFramesArea, viewNet);
+    myAdditionalFrame->hide();
 
     //  Buld view toolBars
     myView->buildViewToolBars(*this);
@@ -157,67 +157,67 @@ GNEViewParent::~GNEViewParent() {
 
 
 
-GNEInspectorFrame*                          // PABLO #2036
-GNEViewParent::getInspectorFrame() const {  // PABLO #2036
-    return myInspectorFrame;                // PABLO #2036
-}                                           // PABLO #2036
+GNEInspectorFrame*
+GNEViewParent::getInspectorFrame() const {
+    return myInspectorFrame;
+}
 
 
-GNESelectorFrame*                           // PABLO #2036
-GNEViewParent::getSelectorFrame() const {   // PABLO #2036
-    return mySelectorFrame;                 // PABLO #2036
-}                                           // PABLO #2036
+GNESelectorFrame*
+GNEViewParent::getSelectorFrame() const {
+    return mySelectorFrame;
+}
 
 
-GNEConnectorFrame*                          // PABLO #2036
-GNEViewParent::getConnectorFrame() const {  // PABLO #2036
-    return myConnectorFrame;                // PABLO #2036
-}                                           // PABLO #2036
+GNEConnectorFrame*
+GNEViewParent::getConnectorFrame() const {
+    return myConnectorFrame;
+}
 
 
-GNETLSEditorFrame*                          // PABLO #2036
-GNEViewParent::getTLSEditorFrame() const {  // PABLO #2036
-    return myTLSEditorFrame;                // PABLO #2036
-}                                           // PABLO #2036
+GNETLSEditorFrame*
+GNEViewParent::getTLSEditorFrame() const {
+    return myTLSEditorFrame;
+}
 
 
-GNEAdditionalFrame*                         // PABLO #2036
-GNEViewParent::getAdditionalFrame() const { // PABLO #2036
-    return myAdditionalFrame;               // PABLO #2036
-}                                           // PABLO #2036
+GNEAdditionalFrame*
+GNEViewParent::getAdditionalFrame() const {
+    return myAdditionalFrame;
+}
 
 
-void                                            // PABLO #2036
-GNEViewParent::showFramesArea() {               // PABLO #2036
-    if(myInspectorFrame->shown()  == true ||    // PABLO #2036
-       mySelectorFrame->shown()   == true ||    // PABLO #2036
-       myConnectorFrame->shown()  == true ||    // PABLO #2036
-       myTLSEditorFrame->shown()  == true ||    // PABLO #2036
-       myAdditionalFrame->shown() == true) {    // PABLO #2036
-            myFramesArea->show();               // PABLO #2036
-            myFramesArea->recalc();             // PABLO #2036
-    }                                           // PABLO #2036
-}                                               // PABLO #2036
+void
+GNEViewParent::showFramesArea() {
+    if(myInspectorFrame->shown()  == true ||
+       mySelectorFrame->shown()   == true ||
+       myConnectorFrame->shown()  == true ||
+       myTLSEditorFrame->shown()  == true ||
+       myAdditionalFrame->shown() == true) {
+            myFramesArea->show();
+            myFramesArea->recalc();
+    }
+}
 
 
-void                                            // PABLO #2036
-GNEViewParent::hideFramesArea() {               // PABLO #2036
-    if(myInspectorFrame->shown()  == false &&   // PABLO #2036
-       mySelectorFrame->shown()   == false &&   // PABLO #2036
-       myConnectorFrame->shown()  == false &&   // PABLO #2036
-       myTLSEditorFrame->shown()  == false &&   // PABLO #2036
-       myAdditionalFrame->shown() == false) {   // PABLO #2036
-            myFramesArea->hide();               // PABLO #2036
-            myFramesArea->recalc();             // PABLO #2036
-    }                                           // PABLO #2036
-}                                               // PABLO #2036
+void
+GNEViewParent::hideFramesArea() {
+    if(myInspectorFrame->shown()  == false &&
+       mySelectorFrame->shown()   == false &&
+       myConnectorFrame->shown()  == false &&
+       myTLSEditorFrame->shown()  == false &&
+       myAdditionalFrame->shown() == false) {
+            myFramesArea->hide();
+            myFramesArea->recalc();
+    }
+}
 
 
- int                                    // PABLO #2036
-GNEViewParent::getFramesAreaWidth() {   // PABLO #2036
+ int
+GNEViewParent::getFramesAreaWidth() {
     std::cout << myFramesArea->getWidth() << std::endl;
-    return myFramesArea->getWidth();    // PABLO #2036
-}                                       // PABLO #2036
+    return myFramesArea->getWidth();
+}
 
 
 long

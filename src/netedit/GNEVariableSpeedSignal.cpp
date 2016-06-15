@@ -75,8 +75,7 @@ bool GNEVariableSpeedSignal::variableSpeedSignalSelectedInitialized = false;
 // ===========================================================================
 
 GNEVariableSpeedSignal::GNEVariableSpeedSignal(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNELane*> lanes, const std::string& filename, bool blocked) :
-    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_VSS, blocked),
-    myLanes(lanes),
+    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_VSS, blocked, std::vector<GNEAdditional*>(), std::vector<GNEEdge*>(), lanes),
     myFilename(filename) {
     // Update geometry;
     updateGeometry();
@@ -98,8 +97,6 @@ GNEVariableSpeedSignal::GNEVariableSpeedSignal(const std::string& id, GNEViewNet
         variableSpeedSignalSelectedInitialized = true;
         delete i;
     }
-    // Create dialog
-    //myAdditionalDialog = new GNEVariableSpeedSignalDialog(this);
 }
 
 
@@ -192,31 +189,62 @@ GNEVariableSpeedSignal::drawGL(const GUIVisualizationSettings& s) const {
     else
         GUITexturesHelper::drawTexturedBox(variableSpeedSignalGlID, 1);
 
-    // Pop draw matrix
+    // Pop draw icon matrix
     glPopMatrix();
-/***
-    // Add a draw matrix for id
+
+    // Push matrix to draw every symbol over lane
     glPushMatrix();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glTranslated(myShape.getLineCenter().x(), myShape.getLineCenter().y(), getType() + 0.1);
-    glColor3d(1, 1, 1);
-    glRotated(180, 0, 0, 1);
-    glTranslated(myIdTextOffset.x(), myIdTextOffset.y(), 0);
 
-    std::string drawText = getID();
-    for(int i = 0; i < drawText.size(); i++)
-        if(drawText[i] == '_')
-            drawText[i] = ' ';
+    // Traslate to 0,0
+    glTranslated(0, 0, getType());
 
-    // Draw id depending of rerouter is or isn't selected
-    if(isAdditionalSelected()) 
-        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColorSelected, 180);
-    else
-        GLHelper::drawText(drawText, Position(), 0, .45, myBaseColor, 180);
-    
-    // Pop matrix id
+    // Obtain exaggeration
+    const SUMOReal exaggeration = s.addSize.getExaggeration(s);
+
+    // Iterate over lanes
+    for (childLanes::const_iterator i = myChildLanes.begin(); i != myChildLanes.end(); i++) {
+        // Draw every signal over Lane
+        glPushMatrix();
+        glScaled(exaggeration, exaggeration, 1);
+        glTranslated(i->positionOverLane.x(), i->positionOverLane.y(), 0);
+        glRotated(i->rotationOverLane, 0, 0, 1);
+        glTranslated(0, -1.5, 0);
+
+        int noPoints = 9;
+        if (s.scale > 25) {
+            noPoints = (int)(9.0 + s.scale / 10.0);
+            if (noPoints > 36) {
+                noPoints = 36;
+            }
+        }
+        glColor3d(1, 0, 0);
+        GLHelper::drawFilledCircle((SUMOReal) 1.3, noPoints);
+        if (s.scale >= 5) {
+            glTranslated(0, 0, .1);
+            glColor3d(0, 0, 0);
+            GLHelper::drawFilledCircle((SUMOReal) 1.1, noPoints);
+            // Draw speed
+            SUMOReal speed = i->lane->getSpeed();
+            // Show as Km/h
+            speed *= 3.6f;
+            if (((int) speed + 1) % 10 == 0)
+                speed = (SUMOReal)(((int) speed + 1) / 10 * 10);
+            // draw the speed string
+            std::string speedToDraw = toString<SUMOReal>(speed);
+            glColor3d(1, 1, 0);
+            glTranslated(0, 0, .1);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            pfSetPosition(0, 0);
+            pfSetScale(1.2f);
+            SUMOReal w = pfdkGetStringWidth(speedToDraw.c_str());
+            glRotated(180, 0, 1, 0);
+            glTranslated(-w / 2., 0.3, 0);
+            pfDrawString(speedToDraw.c_str());
+        }
+        glPopMatrix();
+    }
+
     glPopMatrix();
-***/
 
     // Show Lock icon depending of the Edit mode
     //if(dynamic_cast<GNEViewNet*>(parent)->showLockIcon())
@@ -225,11 +253,11 @@ GNEVariableSpeedSignal::drawGL(const GUIVisualizationSettings& s) const {
     // Draw connections
     drawConnections();
 
-    // Pop name
-    glPopName();
-
     // Draw name
     drawName(getCenteringBoundary().getCenter(), s.scale, s.addName);
+
+    // Pop name
+    glPopName();
 }
 
 

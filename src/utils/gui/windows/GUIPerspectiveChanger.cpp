@@ -111,19 +111,19 @@ GUIPerspectiveChanger::getMouseYPosition() const {
 }
 
 
-Boundary                                                    // PABLO #1916
-GUIPerspectiveChanger::getViewport(bool fixRatio) {         // PABLO #1916
-    if (fixRatio)                                           // PABLO #1916
-        return patchedViewPort();                           // PABLO #1916
-    else                                                    // PABLO #1916
-        return myViewPort;                                  // PABLO #1916         
-}                                                           // PABLO #1916
+Boundary
+GUIPerspectiveChanger::getViewport(bool fixRatio) {
+    if (fixRatio)
+        return patchedViewPort();
+    else
+        return myViewPort;         
+}
 
 
-void                                                            // PABLO #1916
-GUIPerspectiveChanger::setViewport(const Boundary& viewPort) {  // PABLO #1916
-    myViewPort = viewPort;                                      // PABLO #1916
-}                                                               // PABLO #1916
+void
+GUIPerspectiveChanger::setViewport(const Boundary& viewPort) {
+    myViewPort = viewPort;
+}
 
 
 Boundary

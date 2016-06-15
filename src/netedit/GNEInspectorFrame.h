@@ -94,9 +94,6 @@ public:
         /// @brief pointer to label
         FXLabel* myLabel;
 
-        /// @brief textField to show the values of non-editable values
-        FXTextField *myTextFieldUniques;
-
         /// @brief textField to modify the value of int values
         FXTextField *myTextFieldInt;
 
@@ -121,7 +118,6 @@ public:
         /// @brief set hide as private function
         void hide();
     };
-
 
     // ===========================================================================
     // class AttrEditor

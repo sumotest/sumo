@@ -124,9 +124,6 @@ public:
     /// @}
 
 protected:
-    /// @brief list of edges
-    std::vector<GNELane*> myLanes;
-
     /// @brief filename of rerouter
     std::string myFilename;
 

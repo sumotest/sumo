@@ -68,7 +68,7 @@
 #include "GNECrossing.h"
 #include "GNEAdditional.h"
 #include "GNEAdditionalSet.h"
-#include "GNEAdditionalDialog.h"    // PABLO #1916
+#include "GNEAdditionalDialog.h"
 #include "GNERerouter.h"
 #include "GNEChange_Attribute.h"
 
@@ -678,8 +678,8 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
 }
 
 
-long                                                                        // PABLO #1916
-GNEViewNet::onDoubleClicked(FXObject* obj, FXSelector sel, void* data) {    // PABLO #1916
+long
+GNEViewNet::onDoubleClicked(FXObject* obj, FXSelector sel, void* data) {
     // If current edit mode is INSPECT or ADDITIONAL
     if(myEditMode == GNE_MODE_INSPECT || myEditMode == GNE_MODE_ADDITIONAL) {
         FXEvent* e = (FXEvent*) data;
@@ -833,10 +833,10 @@ GNEViewNet::markPopupPosition() {
 }
 
 
-GNEViewParent*                          // PABLO #2036
-GNEViewNet::getViewParent() const {     // PABLO #2036
-    return myViewParent;                // PABLO #2036
-}                                       // PABLO #2036
+GNEViewParent*
+GNEViewNet::getViewParent() const {
+    return myViewParent;
+}
 
 
 GNENet*

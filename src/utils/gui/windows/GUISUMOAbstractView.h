@@ -128,7 +128,7 @@ public:
     bool isInEditMode();
 
     ///@brief get changer
-    GUIPerspectiveChanger& getChanger() const;     // PABLO #1916
+    GUIPerspectiveChanger& getChanger() const;
 
     ///@brief get visible boundary
     Boundary getVisibleBoundary() const;
@@ -139,11 +139,11 @@ public:
     virtual long onPaint(FXObject*, FXSelector, void*);
     virtual long onLeftBtnPress(FXObject*, FXSelector, void*);
     virtual long onLeftBtnRelease(FXObject*, FXSelector, void*);
-    virtual long onMiddleBtnPress(FXObject*, FXSelector, void*);    // PABLO #1916
-    virtual long onMiddleBtnRelease(FXObject*, FXSelector, void*);  // PABLO #1916
+    virtual long onMiddleBtnPress(FXObject*, FXSelector, void*);
+    virtual long onMiddleBtnRelease(FXObject*, FXSelector, void*);
     virtual long onRightBtnPress(FXObject*, FXSelector, void*);
     virtual long onRightBtnRelease(FXObject*, FXSelector, void*);
-    virtual long onDoubleClicked(FXObject*, FXSelector, void*);     // PABLO #1916
+    virtual long onDoubleClicked(FXObject*, FXSelector, void*);
     virtual long onMouseWheel(FXObject*, FXSelector, void*);
     virtual long onMouseMove(FXObject*, FXSelector, void*);
     virtual long onMouseLeft(FXObject*, FXSelector, void*);
@@ -178,7 +178,7 @@ public:
     std::string makeSnapshot(const std::string& destFile);
 
     ///@brief Adds a frame to a video snapshot which will be initialized if neccessary
-    virtual void saveFrame(const std::string& destFile, FXColor* buf);  // PABLO #1916
+    virtual void saveFrame(const std::string& destFile, FXColor* buf);
 
     ///@brief Ends a video snapshot
     virtual void endSnapshot() {}
@@ -187,7 +187,7 @@ public:
     virtual void checkSnapshots();
 
     ///@brief get the current simulation time
-    virtual SUMOTime getCurrentTimeStep() const;    // PABLO #1916
+    virtual SUMOTime getCurrentTimeStep() const;
     ///@}
 
     ///@brief get the viewport and create it on first access
@@ -206,13 +206,13 @@ public:
     virtual bool setColorScheme(const std::string&);
 
     ///@brief get visualitation settings
-    GUIVisualizationSettings* getVisualisationSettings() const; // PABLO #1916
+    GUIVisualizationSettings* getVisualisationSettings() const;
 
     ///@brief remove viewport
-    void remove(GUIDialog_EditViewport*);   // PABLO #1916
+    void remove(GUIDialog_EditViewport*);
 
     ///@brief remove view settings
-    void remove(GUIDialog_ViewSettings*);    // PABLO #1916
+    void remove(GUIDialog_ViewSettings*);
 
     ///@brief get grid width
     // @todo: check why this is here
@@ -223,16 +223,16 @@ public:
     SUMOReal getGridHeight() const;
 
     ///@brief star track
-    virtual void startTrack(int /*id*/);    // PABLO #1916
+    virtual void startTrack(int /*id*/);
 
     ///@brief stop track
-    virtual void stopTrack();   // PABLO #1916
+    virtual void stopTrack();
 
     ///@brief get tracked id
-    virtual int getTrackedID() const;   // PABLO #1916
+    virtual int getTrackedID() const;
 
     ///@brief on gaming click
-    virtual void onGamingClick(Position /*pos*/);   // PABLO #1916
+    virtual void onGamingClick(Position /*pos*/);
 
     ///@brief @name Additional visualisations
     ///@{
@@ -265,7 +265,7 @@ public:
     ///@brief A decal (an image) that can be shown
     struct Decal {
         ///@brief Constructor
-        Decal();    // PABLO #1916
+        Decal();
 
         ///@brief The path to the file the image is located at
         std::string filename;
@@ -307,10 +307,10 @@ public:
     Position getPositionInformation() const;
 
     ///@brief add decals
-    void addDecals(const std::vector<Decal>& decals);   // PABLO #1916
+    void addDecals(const std::vector<Decal>& decals);
 
     ///@brief get visualisation settings
-    GUIVisualizationSettings* getVisualisationSettings();   // PABLO #1916
+    GUIVisualizationSettings* getVisualisationSettings();
 
     ///@brief Returns the delay of the parent application
     SUMOReal getDelay() const;
@@ -326,7 +326,7 @@ protected:
     void updatePositionInformation() const;
 
     ///@brief paint GL
-    virtual int doPaintGL(int /*mode*/, const Boundary& /*boundary*/);  // PABLO #1916
+    virtual int doPaintGL(int /*mode*/, const Boundary& /*boundary*/);
 
     ///@brief doInit
     virtual void doInit();

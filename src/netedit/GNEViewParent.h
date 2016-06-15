@@ -95,31 +95,31 @@ public:
     /// @brief Destructor
     ~GNEViewParent();
 
-    /// @brief get frame for GNE_MODE_INSPECT       // PABLO #2036
-    GNEInspectorFrame* getInspectorFrame() const;   // PABLO #2036
+    /// @brief get frame for GNE_MODE_INSPECT
+    GNEInspectorFrame* getInspectorFrame() const;
 
-    /// @brief get frame for GNE_MODE_SELECT        // PABLO #2036
-    GNESelectorFrame* getSelectorFrame() const;     // PABLO #2036
+    /// @brief get frame for GNE_MODE_SELECT
+    GNESelectorFrame* getSelectorFrame() const;
 
-    /// @brief get frame for GNE_MODE_CONNECT       // PABLO #2036
-    GNEConnectorFrame* getConnectorFrame() const;   // PABLO #2036
+    /// @brief get frame for GNE_MODE_CONNECT
+    GNEConnectorFrame* getConnectorFrame() const;
 
-    /// @brief get frame for GNE_MODE_TLS           // PABLO #2036
-    GNETLSEditorFrame* getTLSEditorFrame() const;   // PABLO #2036
+    /// @brief get frame for GNE_MODE_TLS
+    GNETLSEditorFrame* getTLSEditorFrame() const;
 
-    /// @brief get frame for GNE_MODE_ADDITIONAL    // PABLO #2036
-    GNEAdditionalFrame* getAdditionalFrame() const; // PABLO #2036
+    /// @brief get frame for GNE_MODE_ADDITIONAL
+    GNEAdditionalFrame* getAdditionalFrame() const;
 
-    /// @brief show frames area if at least a GNEFrame is showed    // PABLO #2036
-    /// @note this function is called in GNEFrame::Show();          // PABLO #2036
-    void showFramesArea();                                          // PABLO #2036
+    /// @brief show frames area if at least a GNEFrame is showed
+    /// @note this function is called in GNEFrame::Show();
+    void showFramesArea();
 
-    /// @brief hide frames area if all GNEFrames are hidden     // PABLO #2036
-    /// @note this function is called in GNEFrame::Show();      // PABLO #2036
-    void hideFramesArea();                                      // PABLO #2036
+    /// @brief hide frames area if all GNEFrames are hidden
+    /// @note this function is called in GNEFrame::Show();
+    void hideFramesArea();
 
-    /// @brief get width of the Frames Area // PABLO #2036
-    int getFramesAreaWidth();               // PABLO #2036
+    /// @brief get width of the Frames Area
+    int getFramesAreaWidth();
 
     /// @name FOX-callbacks
     /// @{
@@ -150,26 +150,26 @@ private:
     /// @brief frame to hold myView and myAttributePanel
     FXHorizontalFrame* myViewArea;
 
-    /// @brief frame to hold GNEFrames      // PABLO #2036
-    FXHorizontalFrame* myFramesArea;        // PABLO #2036
+    /// @brief frame to hold GNEFrames
+    FXHorizontalFrame* myFramesArea;
 
-    /// @brief Splitter to divide ViewNet und GNEFrames     // PABLO #2036
-    FXSplitter *myFramesSplitter;                           // PABLO #2036
+    /// @brief Splitter to divide ViewNet und GNEFrames
+    FXSplitter *myFramesSplitter;
 
-    /// @brief the panel for GNE_MODE_INSPECT           // PABLO #2036
-    GNEInspectorFrame* myInspectorFrame;                // PABLO #2036
+    /// @brief the panel for GNE_MODE_INSPECT
+    GNEInspectorFrame* myInspectorFrame;
 
-    /// @brief the panel for GNE_MODE_SELECT            // PABLO #2036
-    GNESelectorFrame* mySelectorFrame;                  // PABLO #2036
+    /// @brief the panel for GNE_MODE_SELECT
+    GNESelectorFrame* mySelectorFrame;
 
-    /// @brief the panel for GNE_MODE_CONNECT           // PABLO #2036
-    GNEConnectorFrame* myConnectorFrame;                // PABLO #2036
+    /// @brief the panel for GNE_MODE_CONNECT
+    GNEConnectorFrame* myConnectorFrame;
 
-    /// @brief the panel for GNE_MODE_TLS               // PABLO #2036
-    GNETLSEditorFrame* myTLSEditorFrame;                // PABLO #2036
+    /// @brief the panel for GNE_MODE_TLS
+    GNETLSEditorFrame* myTLSEditorFrame;
 
-    /// @brief the panel for GNE_MODE_ADDITIONAL        // PABLO #2036
-    GNEAdditionalFrame* myAdditionalFrame;              // PABLO #2036
+    /// @brief the panel for GNE_MODE_ADDITIONAL
+    GNEAdditionalFrame* myAdditionalFrame;
 };
 
 

@@ -92,7 +92,7 @@ FXDEFMAP(GUISUMOAbstractView) GUISUMOAbstractViewMap[] = {
     FXMAPFUNC(SEL_MIDDLEBUTTONRELEASE,  0,      GUISUMOAbstractView::onMiddleBtnRelease),
     FXMAPFUNC(SEL_RIGHTBUTTONPRESS,     0,      GUISUMOAbstractView::onRightBtnPress),
     FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,   0,      GUISUMOAbstractView::onRightBtnRelease),
-    FXMAPFUNC(SEL_DOUBLECLICKED,        0,      GUISUMOAbstractView::onDoubleClicked),  // PABLO #1916
+    FXMAPFUNC(SEL_DOUBLECLICKED,        0,      GUISUMOAbstractView::onDoubleClicked),
     FXMAPFUNC(SEL_MOUSEWHEEL,           0,      GUISUMOAbstractView::onMouseWheel),
     FXMAPFUNC(SEL_MOTION,               0,      GUISUMOAbstractView::onMouseMove),
     FXMAPFUNC(SEL_LEAVE,                0,      GUISUMOAbstractView::onMouseLeft),
@@ -156,10 +156,10 @@ GUISUMOAbstractView::isInEditMode() {
 }
 
 
-GUIPerspectiveChanger&                      // PABLO #1916
-GUISUMOAbstractView::getChanger() const {   // PABLO #1916
-    return *myChanger;                      // PABLO #1916
-}                                           // PABLO #1916
+GUIPerspectiveChanger&
+GUISUMOAbstractView::getChanger() const {
+    return *myChanger;
+}
 
 
 void
@@ -181,16 +181,16 @@ GUISUMOAbstractView::getPositionInformation() const {
 }
 
 
-void                                                                // PABLO #1916
-GUISUMOAbstractView::addDecals(const std::vector<Decal>& decals) {  // PABLO #1916
-    myDecals.insert(myDecals.end(), decals.begin(), decals.end());  // PABLO #1916
-}                                                                   // PABLO #1916
+void
+GUISUMOAbstractView::addDecals(const std::vector<Decal>& decals) {
+    myDecals.insert(myDecals.end(), decals.begin(), decals.end());
+}
 
 
-GUIVisualizationSettings*                           // PABLO #1916
-GUISUMOAbstractView::getVisualisationSettings() {   // PABLO #1916
-    return myVisualizationSettings;                 // PABLO #1916
-}                                                   // PABLO #1916
+GUIVisualizationSettings*
+GUISUMOAbstractView::getVisualisationSettings() {
+    return myVisualizationSettings;
+}
 
 
 void
@@ -207,15 +207,15 @@ GUISUMOAbstractView::updatePositionInformation() const {
 }
 
 
-int                                                                                     // PABLO #1916
-GUISUMOAbstractView::doPaintGL(int /*mode*/, const Boundary& /*boundary*/) {            // PABLO #1916
-    return 0;                                                                           // PABLO #1916
-}                                                                                       // PABLO #1916
+int
+GUISUMOAbstractView::doPaintGL(int /*mode*/, const Boundary& /*boundary*/) {
+    return 0;
+}
 
 
-void                                                                                // PABLO #1916
-GUISUMOAbstractView::doInit() {                                                     // PABLO #1916
-}                                                                                   // PABLO #1916
+void
+GUISUMOAbstractView::doInit() {
+}
 
 
 Boundary
@@ -634,9 +634,9 @@ GUISUMOAbstractView::onLeftBtnPress(FXObject*, FXSelector , void* data) {
     }
     myChanger->onLeftBtnPress(data);
     grab();
-    // Check there are double click                         // PABLO #1916
-    if (e->click_count == 2)                                // PABLO #1916
-        handle(this, FXSEL(SEL_DOUBLECLICKED, 0), data);    // PABLO #1916
+    // Check there are double click
+    if (e->click_count == 2)
+        handle(this, FXSEL(SEL_DOUBLECLICKED, 0), data);
     return 1;
 }
 
@@ -653,16 +653,16 @@ GUISUMOAbstractView::onLeftBtnRelease(FXObject*, FXSelector , void* data) {
 }
 
 
-long                                                                                            // PABLO #1916
-GUISUMOAbstractView::onMiddleBtnPress(FXObject*, FXSelector, void*) {                           // PABLO #1916
-    return 1;                                                                                   // PABLO #1916
-}                                                                                               // PABLO #1916
+long
+GUISUMOAbstractView::onMiddleBtnPress(FXObject*, FXSelector, void*) {
+    return 1;
+}
 
 
-long                                                                                            // PABLO #1916
-GUISUMOAbstractView::onMiddleBtnRelease(FXObject*, FXSelector, void*) {                         // PABLO #1916
-    return 1;                                                                                   // PABLO #1916
-}                                                                                               // PABLO #1916
+long
+GUISUMOAbstractView::onMiddleBtnRelease(FXObject*, FXSelector, void*) {
+    return 1;
+}
 
 
 long
@@ -686,10 +686,10 @@ GUISUMOAbstractView::onRightBtnRelease(FXObject* o, FXSelector sel, void* data) 
 }
 
 
-long                                                                    // PABLO #1916
-GUISUMOAbstractView::onDoubleClicked(FXObject*, FXSelector, void*) {    // PABLO #1916
-    return 1;                                                           // PABLO #1916
-}                                                                       // PABLO #1916
+long
+GUISUMOAbstractView::onDoubleClicked(FXObject*, FXSelector, void*) {
+    return 1;
+}
 
 
 long
@@ -929,11 +929,11 @@ GUISUMOAbstractView::makeSnapshot(const std::string& destFile) {
 }
 
 
-void                                                                            // PABLO #1916
-GUISUMOAbstractView::saveFrame(const std::string& destFile, FXColor* buf) {     // PABLO #1916
-    UNUSED_PARAMETER(destFile);                                                 // PABLO #1916
-    UNUSED_PARAMETER(buf);                                                      // PABLO #1916
-}                                                                               // PABLO #1916
+void
+GUISUMOAbstractView::saveFrame(const std::string& destFile, FXColor* buf) {
+    UNUSED_PARAMETER(destFile);
+    UNUSED_PARAMETER(buf);
+}
 
 
 void
@@ -948,10 +948,10 @@ GUISUMOAbstractView::checkSnapshots() {
 }
 
 
-SUMOTime                                            // PABLO #1916
-GUISUMOAbstractView::getCurrentTimeStep() const {   // PABLO #1916
-        return 0;                                   // PABLO #1916
-}                                                   // PABLO #1916
+SUMOTime
+GUISUMOAbstractView::getCurrentTimeStep() const {
+        return 0;
+}
 
 
 void
@@ -1003,28 +1003,28 @@ GUISUMOAbstractView::showToolTips(bool val) {
 }
 
 
-bool                                                        // PABLO #1916
-GUISUMOAbstractView::setColorScheme(const std::string&) {   // PABLO #1916
-    return true;                                            // PABLO #1916
-}                                                           // PABLO #1916
+bool
+GUISUMOAbstractView::setColorScheme(const std::string&) {
+    return true;
+}
 
 
-GUIVisualizationSettings*                                   // PABLO #1916
-GUISUMOAbstractView::getVisualisationSettings() const {     // PABLO #1916
-    return myVisualizationSettings;                         // PABLO #1916
-}                                                           // PABLO #1916
+GUIVisualizationSettings*
+GUISUMOAbstractView::getVisualisationSettings() const {
+    return myVisualizationSettings;
+}
 
 
 void 
-GUISUMOAbstractView::remove(GUIDialog_EditViewport*) {      // PABLO #1916
-    myViewportChooser = 0;                                  // PABLO #1916
-}                                                           // PABLO #1916
+GUISUMOAbstractView::remove(GUIDialog_EditViewport*) {
+    myViewportChooser = 0;
+}
 
 
-void                                                        // PABLO #1916
-GUISUMOAbstractView::remove(GUIDialog_ViewSettings*) {      // PABLO #1916
-    myVisualizationChanger = 0;                             // PABLO #1916
-}                                                           // PABLO #1916
+void
+GUISUMOAbstractView::remove(GUIDialog_ViewSettings*) {
+    myVisualizationChanger = 0;
+}
 
 
 SUMOReal
@@ -1039,25 +1039,25 @@ GUISUMOAbstractView::getGridHeight() const {
 }
 
 
-void                                                                                    // PABLO #1916
-GUISUMOAbstractView::startTrack(int /*id*/) {                                           // PABLO #1916
-}                                                                                       // PABLO #1916
+void
+GUISUMOAbstractView::startTrack(int /*id*/) {
+}
 
 
-void                                                                                    // PABLO #1916
-GUISUMOAbstractView::stopTrack() {                                                      // PABLO #1916
-}                                                                                       // PABLO #1916                
+void
+GUISUMOAbstractView::stopTrack() {
+}                
 
 
-int                                                                                     // PABLO #1916
-GUISUMOAbstractView::getTrackedID() const {                                             // PABLO #1916
-    return -1;                                                                          // PABLO #1916
-}                                                                                       // PABLO #1916
+int
+GUISUMOAbstractView::getTrackedID() const {
+    return -1;
+}
 
 
-void                                                                                        // PABLO #1916
-GUISUMOAbstractView::onGamingClick(Position /*pos*/) {                                      // PABLO #1916
-}                                                                                           // PABLO #1916
+void
+GUISUMOAbstractView::onGamingClick(Position /*pos*/) {
+}
 
 
 FXComboBox&
@@ -1256,23 +1256,23 @@ GUISUMOAbstractView::setDelay(SUMOReal delay) {
 }
 
 
-GUISUMOAbstractView::Decal::Decal() :   // PABLO #1916
-    filename(),                         // PABLO #1916
-    centerX(0),                         // PABLO #1916
-    centerY(0),                         // PABLO #1916
-    centerZ(0),                         // PABLO #1916
-    width(0),                           // PABLO #1916
-    height(0),                          // PABLO #1916
-    altitude(0),                        // PABLO #1916
-    rot(0),                             // PABLO #1916
-    tilt(0),                            // PABLO #1916
-    roll(0),                            // PABLO #1916
-    layer(0),                           // PABLO #1916
-    initialised(false),                 // PABLO #1916
-    skip2D(false),                      // PABLO #1916
-    glID(-1),                           // PABLO #1916
-    image(0) {                          // PABLO #1916
-}                                       // PABLO #1916
+GUISUMOAbstractView::Decal::Decal() :
+    filename(),
+    centerX(0),
+    centerY(0),
+    centerZ(0),
+    width(0),
+    height(0),
+    altitude(0),
+    rot(0),
+    tilt(0),
+    roll(0),
+    layer(0),
+    initialised(false),
+    skip2D(false),
+    glID(-1),
+    image(0) {
+}
 
 
 /****************************************************************************/

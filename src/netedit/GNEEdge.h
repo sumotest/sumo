@@ -39,8 +39,8 @@
 class GNENet;
 class GNEJunction;
 class GNELane;
-class GNEAdditional;    // PABLO #1916
-class GNEAdditionalSet; // PABLO #1916
+class GNEAdditional;
+class GNEAdditionalSet;
 
 // ===========================================================================
 // class definitions
@@ -61,11 +61,11 @@ public:
     /// @brief Definition of the lane's positions vector
     typedef std::vector<GNELane*> LaneVector;
 
-    /// @brief Definition of the additionals list       // PABLO #1916
-    typedef std::list<GNEAdditional*> AdditionalList;   // PABLO #1916
+    /// @brief Definition of the additionals list
+    typedef std::list<GNEAdditional*> AdditionalList;
 
-    /// @brief Definition of the additionalSets list        // PABLO #1916
-    typedef std::list<GNEAdditionalSet*> AdditionalSetList; // PABLO #1916
+    /// @brief Definition of the additionalSets list
+    typedef std::list<GNEAdditionalSet*> AdditionalSetList;
 
     /**@brief Constructor.
      * @param[in] nbe The represented edge
@@ -215,23 +215,23 @@ public:
     /// @brief override to also set lane ids
     void setMicrosimID(const std::string& newID);
 
-    /// @brief add additional to this edge          // PABLO #1916
-    bool addAdditional(GNEAdditional *additional);  // PABLO #1916
+    /// @brief add additional to this edge
+    bool addAdditional(GNEAdditional *additional);
 
-    /// @brief remove additional from this edge         // PABLO #1916
-    bool removeAdditional(GNEAdditional *additional);   // PABLO #1916
+    /// @brief remove additional from this edge
+    bool removeAdditional(GNEAdditional *additional);
 
-    /// @brief return list of additionals associated with this edge // PABLO #1916
-    std::list<GNEAdditional*> getAdditionals();                     // PABLO #1916
+    /// @brief return list of additionals associated with this edge
+    std::list<GNEAdditional*> getAdditionals();
 
-    /// @brief add GNEAdditionalSet to this edge                // PABLO #1916
-    bool addAdditionalSet(GNEAdditionalSet *additionalSet);     // PABLO #1916
+    /// @brief add GNEAdditionalSet to this edge
+    bool addAdditionalSet(GNEAdditionalSet *additionalSet);
 
-    /// @brief remove GNEAdditionalSet from this edge           // PABLO #1916
-    bool removeAdditionalSet(GNEAdditionalSet *additionalSet);  // PABLO #1916
+    /// @brief remove GNEAdditionalSet from this edge
+    bool removeAdditionalSet(GNEAdditionalSet *additionalSet);
 
-    /// @brief return list of additionalSets associated with this edge  // PABLO #1916
-    const std::list<GNEAdditionalSet*> &getAdditionalSets();            // PABLO #1916
+    /// @brief return list of additionalSets associated with this edge
+    const std::list<GNEAdditionalSet*> &getAdditionalSets();
 
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
@@ -255,11 +255,11 @@ protected:
     /// @brief modification status of the connections
     std::string myConnectionStatus;
 
-    /// @brief list with the additonals vinculated with this edge   // PABLO #1916
-    AdditionalList myAdditionals;                                   // PABLO #1916
+    /// @brief list with the additonals vinculated with this edge
+    AdditionalList myAdditionals;
 
-    /// @brief list with the additonalSets vinculated with this edge    // PABLO #1916
-    AdditionalSetList myAdditionalSets;                                 // PABLO #1916
+    /// @brief list with the additonalSets vinculated with this edge
+    AdditionalSetList myAdditionalSets;
 
 private:
     /// @brief set attribute after validation

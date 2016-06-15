@@ -320,31 +320,27 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame *
     myInspectorFrameParent(inspectorFrameParent), 
     myTag(SUMO_TAG_NOTHING), 
     myAttr(SUMO_ATTR_NOTHING) {
+    // Create and hidde ButtonCombinableChoices
+    myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myButtonCombinableChoices->hide();
     // Create and hide label
-    myLabel = new FXLabel(this, "attributeLabel", 0, FRAME_LINE | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myLabel = new FXLabel(this, "attributeLabel", 0, FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myLabel->hide();
-    // Create, disable and hide textField unique
-    myTextFieldUniques = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
-    myTextFieldUniques->disable();
-    myTextFieldUniques->hide();
     // Create and hide textField int
-    myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_LINE | TEXTFIELD_INTEGER | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_THICK | TEXTFIELD_INTEGER | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myTextFieldInt->hide();
     // Create and hide textField real
-    myTextFieldReal = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_LINE | TEXTFIELD_REAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldReal = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_THICK | TEXTFIELD_REAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myTextFieldReal->hide();
     // Create and hide textField string
     myTextFieldStrings = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myTextFieldStrings->hide();
     // Create and hide ComboBox
-    myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_SUNKEN | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_THICK | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myChoicesCombo->hide();
     // Create and hide checkButton
     myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, JUSTIFY_LEFT | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
     myCheckBox->hide();
-    // Create and hidde ButtonCombinableChoices
-    myButtonCombinableChoices = new FXButton(this, "Edit", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
-    myButtonCombinableChoices->hide();
 }
 
     
@@ -356,12 +352,8 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
     // ShowLabel
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
-    //Show a different element depending of the type of attribute
-    if(GNEAttributeCarrier::isUnique(myAttr)) {
-        // Show unique attribute in a non-editable text field
-        myTextFieldUniques->setText(value.c_str());
-        myTextFieldUniques->show();
-    } else if(GNEAttributeCarrier::isBool(myAttr)) {
+    // Set field depending of the type of value
+    if(GNEAttributeCarrier::isBool(myAttr)) {
         // set value of checkbox
         if(value == "true")
             myCheckBox->setCheck(true);
@@ -373,7 +365,14 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
         const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
         // Check if are combinable coices
         if(choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr)) {
+            // hide label
+            myLabel->hide();
+            // Show button combinable choices
+            myButtonCombinableChoices->setText(toString(myAttr).c_str());
             myButtonCombinableChoices->show();
+            // Show string with the values
+            myTextFieldStrings->setText(value.c_str());
+            myTextFieldStrings->show();
         } else {
             // fill comboBox
             myChoicesCombo->clearItems();
@@ -405,7 +404,6 @@ void
 GNEInspectorFrame::AttrInput::hiddeAttribute() {
     // Hide all elements
     myLabel->hide();
-    myTextFieldUniques->hide();
     myTextFieldInt->hide();
     myTextFieldReal->hide();
     myTextFieldStrings->hide();

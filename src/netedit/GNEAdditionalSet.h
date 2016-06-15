@@ -65,8 +65,8 @@ public:
      */
     GNEAdditionalSet(const std::string& id, GNEViewNet* viewNet, Position pos, SumoXMLTag tag, bool blocked = false, 
                      std::vector<GNEAdditional*> additionalChilds = std::vector<GNEAdditional*>(), 
-                     std::vector<GNEEdge*> edgeChilds = std::vector<GNEEdge*>(), std::vector<GNELane*> 
-                     laneChilds = std::vector<GNELane*>());
+                     std::vector<GNEEdge*> edgeChilds = std::vector<GNEEdge*>(), 
+                     std::vector<GNELane*> laneChilds = std::vector<GNELane*>());
 
     /// @brief Destructor
     ~GNEAdditionalSet();

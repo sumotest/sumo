@@ -106,10 +106,13 @@ public:
     /// @brief get all editable attributes for tag and their default values.
     static const std::vector<std::pair <SumoXMLAttr, std::string> >& allowedAttributes(SumoXMLTag tag);
 
-    /// @brief get all editable attributes for tag.
+    /// @brief get all editable for tag.
     static const std::vector<SumoXMLTag>& allowedTags();
 
-    /// @brief get editable attributes for additional tags.
+    /// @brief get all editable tags for netElements
+    static const std::vector<SumoXMLTag>& allowedNetElementTags();
+
+    /// @brief get all editable tags for additionals
     static const std::vector<SumoXMLTag>& allowedAdditionalTags();
 
     /// @brief whether an attribute is numerical (int or float)
@@ -134,8 +137,8 @@ public:
     /// @note unique attributes don't have a default value
     static bool isUnique(SumoXMLAttr attr);
 
-    /// @brief whether an attribute is Discrete                 // PABLO #2067
-    static bool isDiscrete(SumoXMLTag tag, SumoXMLAttr attr);   // PABLO #2067
+    /// @brief whether an attribute is Discrete
+    static bool isDiscrete(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief check if a element with certain tag has another additional element as parent
     static bool hasParent(SumoXMLTag tag);
@@ -152,8 +155,8 @@ public:
     /// @brief return definition of a certain SumoXMLAttr
     static std::string getDefinition(SumoXMLTag tag, SumoXMLAttr attr);
 
-    /// @brief return the number of attributes of the tag with the most highter number of attributes    // PABLO #2067
-    static int getHigherNumberOfAttributes();                                                           // PABLO #2067
+    /// @brief return the number of attributes of the tag with the most highter number of attributes
+    static int getHigherNumberOfAttributes();
 
     /// @brief return the default value of the attribute of an element
     /// @note It's advisable to check before with function hasDefaultValue if  exits a default value
@@ -219,6 +222,9 @@ private:
 
     /// @brief vector with the allowed tags
     static std::vector<SumoXMLTag> myAllowedTags;
+
+    /// @brief vector with the allowed tags of netElements
+    static std::vector<SumoXMLTag> myAllowedNetElementTags;
 
     /// @brief vector with the allowed tags of additionals
     static std::vector<SumoXMLTag> myAllowedAdditionalTags;
