@@ -126,7 +126,7 @@ MSPModel_Striping::~MSPModel_Striping() {
 PedestrianState*
 MSPModel_Striping::add(MSPerson* person, MSPerson::MSPersonStage_Walking* stage, SUMOTime) {
     assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
-    const MSLane* lane = getSidewalk<MSEdge, MSLane>(person->getEdge());
+    const MSLane* lane = getSidewalk<MSEdge, MSLane>(*stage->getRoute().begin());
     PState* ped = new PState(person, stage, lane);
     myActiveLanes[lane].push_back(ped);
     myNumActivePedestrians++;
@@ -274,7 +274,7 @@ MSPModel_Striping::NextLaneInfo
 MSPModel_Striping::getNextLane(const PState& ped, const MSLane* currentLane, const MSLane* prevLane) {
     const MSEdge* currentEdge = &currentLane->getEdge();
     const MSJunction* junction = ped.myDir == FORWARD ? currentEdge->getToJunction() : currentEdge->getFromJunction();
-    const MSEdge* nextRouteEdge = ped.myStage->getNextRouteEdge();
+    const MSEdge* nextRouteEdge = ped.getNextEdge();
     const MSLane* nextRouteLane = getSidewalk<MSEdge, MSLane>(nextRouteEdge);
     // result values
     const MSLane* nextLane = nextRouteLane;
@@ -808,6 +808,9 @@ MSPModel_Striping::PState::PState(MSPerson* person, MSPerson::MSPersonStage_Walk
     myWaitingTime(0),
     myWalkingAreaPath(0),
     myAmJammed(false) {
+
+	myRouteStep = myStage->getRoute().begin();
+
     const MSEdge* currentEdge = &lane->getEdge();
     assert(!currentEdge->isWalkingArea());
     const ConstMSEdgeVector& route = myStage->getRoute();
@@ -921,7 +924,7 @@ MSPModel_Striping::PState::otherStripe() const {
 
 SUMOReal
 MSPModel_Striping::PState::distToLaneEnd() const {
-    if (myStage->getNextRouteEdge() == 0) {
+    if (getNextEdge() == 0) {
         return myDir * (myStage->getArrivalPos() - myRelX) - POSITION_EPS;
     } else {
         const SUMOReal length = myWalkingAreaPath == 0 ? myLane->getLength() : myWalkingAreaPath->length;
@@ -944,6 +947,7 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 	//std::cout << " newY=" << ped.myRelY << " myDir=" << ped.myDir << " newDir=" << newDir;
 	const int oldDir = myDir;
 	const MSLane* oldLane = myLane;
+
 	myLane = myNLI.lane;
 	myDir = myNLI.dir;
 	if DEBUGCOND(myPerson->getID()) {
@@ -955,10 +959,16 @@ MSPModel_Striping::PState::moveToNextLane(SUMOTime currentTime) {
 				<< " newDir=" << myDir
 				<< "\n";
 	}
+
+
 	myStage->moveToNextEdge(myPerson, currentTime, &oldLane->getEdge(),myLane == 0 ? 0 : &myLane->getEdge());
+	if (!myLane->getEdge().isInternal() && !myLane-getEdge()->isWalkingArea()&& !myLane-getEdge()->isCrossing()){
+		incrEdge();
+	}
 	if (myLane != 0) {
 		assert(myDir != UNDEFINED_DIRECTION);
 		myNLI = getNextLane(*this, myLane, oldLane);
+		std::cout << "oldLane: " << oldLane->getID() << " newLane" << myNLI.lane->getID() << std::endl;
 		assert(myNLI.lane != oldLane); // do not turn around
 		if DEBUGCOND(myPerson->getID()) {
 			std::cout << "    nextLane=" << (myNLI.lane == 0 ? "NULL" : myNLI.lane->getID()) << "\n";
@@ -1264,7 +1274,16 @@ const MSEdge* MSPModel_Striping::PState::getEdge() const {
 
 const MSEdge*
 MSPModel_Striping::PState::getNextEdge() const {
-    return myNLI.lane == 0 ? 0 : &myNLI.lane->getEdge();
+	return myRouteStep == myStage->getRoute().end() - 1 ? 0 : *(myRouteStep + 1);
+}
+
+
+const MSEdge* MSPModel_Striping::PState::incrEdge() {
+	if (myRouteStep == myStage->getRoute().end()-1) {
+		return 0;
+	}
+	myRouteStep++;
+	return *myRouteStep;
 }
 
 
@@ -1295,6 +1314,7 @@ MSPModel_Striping::PState::mergeObstacles(Obstacles& into, const Obstacles& obs2
         }
     }
 }
+
 
 
 

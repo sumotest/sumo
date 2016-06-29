@@ -136,7 +136,7 @@ SUMOTime
 MSPModel_NonInteracting::PState::computeWalkingTime(const MSEdge* prev, const MSPerson::MSPersonStage_Walking& stage, SUMOTime currentTime) {
     myLastEntryTime = currentTime;
     const MSEdge* edge = stage.getEdge();
-    const MSEdge* next = stage.getNextRouteEdge();
+    const MSEdge* next = getNextEdge();
     int dir = UNDEFINED_DIRECTION;
     if (prev == 0) {
         myCurrentBeginPos = stage.getDepartPos();

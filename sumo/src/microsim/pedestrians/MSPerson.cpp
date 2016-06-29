@@ -81,11 +81,7 @@ MSPerson::MSPersonStage_Walking::~MSPersonStage_Walking() {
 
 const MSEdge*
 MSPerson::MSPersonStage_Walking::getEdge() const {
-    if (myCurrentInternalEdge != 0) {
-        return myCurrentInternalEdge;
-    } else {
-        return *myRouteStep;
-    }
+        return myPedestrianState->getEdge();
 }
 
 
@@ -128,7 +124,7 @@ MSPerson::MSPersonStage_Walking::getSpeed() const {
 void
 MSPerson::MSPersonStage_Walking::proceed(MSNet* net, MSTransportable* person, SUMOTime now, Stage* previous) {
     previous->getEdge()->removePerson(person);
-    myRouteStep = myRoute.begin();
+//    myRouteStep = myRoute.begin();
     if (myWalkingTime == 0) {
         if (!person->proceed(net, now)) {
             MSNet::getInstance()->getPersonControl().erase(person);
@@ -142,7 +138,7 @@ MSPerson::MSPersonStage_Walking::proceed(MSNet* net, MSTransportable* person, SU
         }
     }
     myPedestrianState = MSPModel::getModel()->add(dynamic_cast<MSPerson*>(person), this, now);
-    (*myRouteStep)->addPerson(person);
+    person->getEdge()->addPerson(person);
 }
 
 

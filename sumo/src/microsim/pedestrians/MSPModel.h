@@ -111,6 +111,9 @@ public:
 
     /// @brief return the list of internal edges if the pedestrian is on an intersection
     virtual const MSEdge* getNextEdge() const = 0;
+
+    /// @brief return the current edge
+    virtual const MSEdge* getEdge() const = 0;
 };
 
 

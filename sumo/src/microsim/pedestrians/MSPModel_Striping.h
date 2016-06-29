@@ -297,6 +297,11 @@ protected:
         int stripe(const SUMOReal relY) const;
         int otherStripe(const SUMOReal relY) const;
 
+
+        const MSEdge* incrEdge();
+
+        std::vector<const MSEdge*>::const_iterator myRouteStep;
+
         /* @brief calculate distance to the given obstacle,
          * - non-negative values signify an obstacle in front of ego
          * the special values DIST_OVERLAP and DIST_BEHIND are used to signify

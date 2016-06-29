@@ -28,7 +28,7 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-//#define DEBUG 0
+#define DEBUG 0
 
 const int FWD(1);
 const int BWD(-1);
@@ -58,7 +58,7 @@ void MSGRPCClient::initalized() {
 	ClientContext context;
 	Status st = hybridsimStub->initScenario(&context,req,&rpl);
 	if(!st.ok()){
-		std::cerr << "something went wrong!" << std::endl;
+		std::cerr << "Remote side could not initialize scenario!" << std::endl;
 		exit(-1);
 	}
 }
@@ -483,7 +483,9 @@ void MSGRPCClient::extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, 
 }
 
 bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
-
+#ifdef DEBUG
+	std::cout << "MSGRPCClient::transmitPedestrian" << std::endl;
+#endif	
 
 	std::string id = st->getPerson()->getID();
 	std::string fromId = st->getEdge()->getID();
@@ -555,7 +557,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
 
 	auto ret = laneMapping[(lane)];
-#ifdef DEBUG
+#ifdef DEBUG1
 	std::cout << "**************************************************" << std::endl;
 	std::cout << "queried edge:" << lane->getEdge().getID() << " queried lane:" << lane->getID() << " pedestrians:" << ret.size() << std::endl;
 	std::cout << "**************************************************" << std::endl;
@@ -565,6 +567,9 @@ std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
 
 void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates,SUMOTime time) {
 
+#ifdef DEBUG
+	std::cout << "MSGRPCClient::receiveTrajectories" << std::endl;
+#endif
 	hybridsim::Empty req;
 	hybridsim::Trajectories rpl;
 	ClientContext context;
@@ -644,15 +649,38 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 
 void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pstates,MSNet* net, SUMOTime time) {
 
+#ifdef DEBUG
+	std::cout << "MSGRPCClient::retrieveAgents" << std::endl;
+#endif
 	hybridsim::Empty req;
 	hybridsim::Agents rpl;
 	ClientContext context;
 
 	Status st = hybridsimStub->retrieveAgents(&context,req,&rpl);
 	if (st.ok()) {
+#ifdef DEBUG
+	std::cout << "MSGRPCClient::retrieveAgents st.ok() nr:" << rpl.agents_size() << std::endl;
+#endif
 		for (int i = 0; i < rpl.agents_size(); i++) {
 			const hybridsim::Agent a = rpl.agents(i);
 			MSPRCPState* st = pstates[a.id()];
+				for (const MSLane * ln : st->getEdge()->getLanes()) {
+					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+						//unmap ped from lane
+						std::set<MSPRCPState*> * set = &laneMapping[ln];
+#ifdef DEBUG
+						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+						std::cout << set->size() << std::endl;
+#endif
+						set->erase(st);
+#ifdef DEBUG
+						std::cout << set->size() << std::endl;
+						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+#endif
+						break;
+					}
+				}
+			//std::set<MSPRCPState*> * set = &laneMapping[ln];
 			st->getMyStage()->moveToNextEdge(st->getPerson(),time,st->getEdge(),0);
 			int s0 = pstates.size();
 			pstates.erase(a.id());
@@ -666,5 +694,8 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pst
 		std::cerr << "Error retrieving pedestrians from external simulation" << std::endl;
 		exit(-1);
 	}
+#ifdef DEBUG
+	std::cout << "MSGRPCClient::retrieveAgents done." << std::endl;
+#endif
 }
 
