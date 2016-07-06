@@ -84,6 +84,7 @@ class MSPRCPState : public PedestrianState {
 
 		int myCurrentEdgeNumericalID;
 
+
 	public:
 	MSPerson * getPerson()  {
 		return myPerson;
@@ -91,6 +92,7 @@ class MSPRCPState : public PedestrianState {
 	MSPerson::MSPersonStage_Walking* getMyStage() {
 		return myStage;
 	}
+
 
 	;
 };

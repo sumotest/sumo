@@ -28,15 +28,19 @@
 #include <regex>
 #include "MSGRPCClient.h"
 
-#define DEBUG 0
+
+
+#define DEBUG2 0
 
 const int FWD(1);
 const int BWD(-1);
 const int UNDEF(0);
 const SUMOReal EPSILON(0.001*0.001);//1mm^2
+const SUMOReal TOO_SHORT_EDGE_WARNING_MAX_LENGTH(1.);
+
 
 MSGRPCClient::MSGRPCClient(std::shared_ptr<Channel> channel, MSNet* net) :
-								hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
+												hybridsimStub(hybridsim::HybridSimulation::NewStub(channel)), net(net)
 {
 	initalized();
 }
@@ -196,6 +200,15 @@ void MSGRPCClient::encodeEnvironment(hybridsim::Environment* env) {
 
 			for (MSLane * l : e->getLanes()) {
 				if (l->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+
+
+					if (l->getLength() <= TOO_SHORT_EDGE_WARNING_MAX_LENGTH) {
+						WRITE_WARNING("Edge with id '" + e->getID()
+								+ "' of length '" + toString(l->getLength()) +"' is"
+								" very short and thus JuPedSim is likely "
+								"to crash if a pedestrian actually tries walking "
+								"along that edge. Consider revising your network file.");
+					}
 
 					hybridsim::Room * room = env->add_room();
 					room->set_caption(e->getID());
@@ -557,7 +570,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
 
 	auto ret = laneMapping[(lane)];
-#ifdef DEBUG1
+#ifdef DEBUG
 	std::cout << "**************************************************" << std::endl;
 	std::cout << "queried edge:" << lane->getEdge().getID() << " queried lane:" << lane->getID() << " pedestrians:" << ret.size() << std::endl;
 	std::cout << "**************************************************" << std::endl;
@@ -659,36 +672,28 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pst
 	Status st = hybridsimStub->retrieveAgents(&context,req,&rpl);
 	if (st.ok()) {
 #ifdef DEBUG
-	std::cout << "MSGRPCClient::retrieveAgents st.ok() nr:" << rpl.agents_size() << std::endl;
+		std::cout << "MSGRPCClient::retrieveAgents st.ok() nr:" << rpl.agents_size() << std::endl;
 #endif
 		for (int i = 0; i < rpl.agents_size(); i++) {
 			const hybridsim::Agent a = rpl.agents(i);
+
+#ifdef DEBUG1
+			std::cout << "MSGRPCClient::retrieveAgents  pers left:" << a.id() << std::endl;
+#endif
 			MSPRCPState* st = pstates[a.id()];
-				for (const MSLane * ln : st->getEdge()->getLanes()) {
-					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
-						//unmap ped from lane
-						std::set<MSPRCPState*> * set = &laneMapping[ln];
-#ifdef DEBUG
-						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-						std::cout << set->size() << std::endl;
-#endif
-						set->erase(st);
-#ifdef DEBUG
-						std::cout << set->size() << std::endl;
-						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-#endif
-						break;
-					}
+			for (const MSLane * ln : net->getEdgeControl().getEdges()[st->getCurrentEdgeNumericalID()]->getLanes()) {
+				if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
+					//unmap ped from lane
+					std::set<MSPRCPState*> * set = &laneMapping[ln];
+					set->erase(st);
+					break;
 				}
-			//std::set<MSPRCPState*> * set = &laneMapping[ln];
-			st->getMyStage()->moveToNextEdge(st->getPerson(),time,st->getEdge(),0);
-			int s0 = pstates.size();
-			pstates.erase(a.id());
-			int s1 = pstates.size();
-			if (s0 == s1) {
-				std::cerr << "something went wrong!" << std::endl;
 			}
-			delete st;
+
+			pstates.erase(a.id());
+			st->getMyStage()->moveToNextEdge(st->getPerson(),time,st->getEdge(),0);
+
+			//			delete st;
 		}
 	} else {
 		std::cerr << "Error retrieving pedestrians from external simulation" << std::endl;

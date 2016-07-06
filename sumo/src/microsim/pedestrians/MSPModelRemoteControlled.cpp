@@ -19,6 +19,8 @@
 #include <utils/options/OptionsCont.h>
 #include "MSPModelRemoteControlled.h"
 
+//#define DEBUG1 1
+
 //params
 const SUMOReal MSPModelRemoteControlled::BLOCKER_LOOKAHEAD(10.0); // meters
 const int FWD(1);
@@ -69,6 +71,9 @@ bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 
 //	assert(lane->getEdge().isCrossing());
 
+#ifdef DEBUG1
+	std::cout << lane->getEdge().getID() << std::endl;
+#endif
 	const std::set<MSPRCPState*> pedestrians = grpcClient->getPedestrians(lane);
 
 	if (lane->getEdge().isCrossing() && pedestrians.size() > 0) {
@@ -80,6 +85,10 @@ bool MSPModelRemoteControlled::blockedAtDist(const MSLane* lane,
 		Position p0 = Position(dy,-dx);
 
 		for (MSPRCPState * ped : pedestrians) {
+
+#ifdef DEBUG1
+		std::cout << "MSPModelRemoteControlled::blockedAtDist pers:" << ped->getPerson()->getID() << std::endl;
+#endif
 
 			//			Position p1 = Position(ped->ge)
 			Position cross = p0.crossProduct(ped->getVelocity());
