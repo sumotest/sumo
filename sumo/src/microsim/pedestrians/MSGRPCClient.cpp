@@ -55,7 +55,7 @@ void MSGRPCClient::initalized() {
 	generateGoals(&req);
 	generateGroupsAndSources(&req);
 
-	MSGRPCClient::CONFIGURE_STATIC_PARAMS(&req);
+	MSGRPCClient::CONFIGURE_STATIC_PARAMS_GOMPERTZ(&req);
 
 
 	hybridsim::Empty rpl;

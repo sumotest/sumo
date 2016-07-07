@@ -53,9 +53,10 @@ message Router {
 }
 
 message Model {
-    enum Type { Gompertz = 0;}
+    enum Type { Gompertz = 0; Tordeux2015 = 1;}
     Type type = 1;
     Gompertz gompertz = 2;
+    Tordeux2015 tordeux2015 = 3;
 }
 
 message Gompertz {
@@ -67,6 +68,19 @@ message Gompertz {
     Force force_ped = 6;
     Force force_wall = 7;
     AgentParams agent_params = 8;
+}
+
+message Tordeux2015 {
+    string solver = 1;
+    double stepsize = 2;
+    int32 exit_crossing_strategy = 3;
+    bool linked_cells_enabled = 4;
+    double cell_size = 5;
+    Tordeux2015Force force_ped = 6;
+    Tordeux2015Force force_wall = 7;
+    AgentParams agent_params = 8;
+    int32 periodic = 9;
+
 }
 
 message AgentParams {
@@ -95,6 +109,11 @@ message Force {
     double a = 2;
     double b = 3;
     double c = 4;
+}
+
+message Tordeux2015Force {
+	double a = 1;
+	double D = 2;
 }
 
 message Group {

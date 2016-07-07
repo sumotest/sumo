@@ -100,12 +100,12 @@ private:
 	void createWalkingAreaSubroom(hybridsim::Subroom * subroom, const PositionVector shape, std::vector<hybridsim::Transition>& vec);
 
 private:
-	static void CONFIGURE_STATIC_PARAMS(hybridsim::Scenario * sc) {
+	static void CONFIGURE_STATIC_PARAMS_GOMPERTZ(hybridsim::Scenario * sc) {
 		hybridsim::Model * m = sc->mutable_model();
 		m->set_type(hybridsim::Model::Gompertz);
 		hybridsim::Gompertz * gmp = m->mutable_gompertz();
 		gmp->set_solver("euler");
-		gmp->set_stepsize(0.01);
+		gmp->set_stepsize(0.04);
 		gmp->set_exit_crossing_strategy(3);
 		gmp->set_linked_cells_enabled(true);
 		gmp->set_cell_size(2.2);
@@ -141,6 +141,50 @@ private:
 		hybridsim::Router * router = sc->add_router();
 		router->set_router_id(1);
 		router->set_description("global_shortest");
+
+	}
+	static void CONFIGURE_STATIC_PARAMS_TORDEUX2015(hybridsim::Scenario * sc) {
+		hybridsim::Model * m = sc->mutable_model();
+		m->set_type(hybridsim::Model::Tordeux2015);
+		hybridsim::Tordeux2015 * gmp = m->mutable_tordeux2015();
+		gmp->set_solver("euler");
+		gmp->set_stepsize(0.1);
+		gmp->set_exit_crossing_strategy(8);
+		gmp->set_linked_cells_enabled(true);
+		gmp->set_cell_size(30);
+		gmp->set_periodic(0);
+		hybridsim::Tordeux2015Force * pf = gmp->mutable_force_ped();
+		pf->set_a(5);
+		pf->set_d(0.1);
+		hybridsim::Tordeux2015Force * wf = gmp->mutable_force_wall();
+		wf->set_a(5);
+		wf->set_d(0.02);
+		hybridsim::AgentParams * ap = gmp->mutable_agent_params();
+		hybridsim::Distribution * v0 = ap->mutable_v0();
+		v0->set_mu(1.34);
+		v0->set_sigma(0);
+		hybridsim::Distribution * bMax = ap->mutable_b_max();
+		bMax->set_mu(0.15);
+		bMax->set_sigma(0.0);
+		hybridsim::Distribution * bMin = ap->mutable_b_min();
+		bMin->set_mu(0.15);
+		bMin->set_sigma(0.0);
+		hybridsim::Distribution * aMin = ap->mutable_a_min();
+		aMin->set_mu(0.15);
+		aMin->set_sigma(0.0);
+		hybridsim::Distribution * tau = ap->mutable_tau();
+		tau->set_mu(0.5);
+		tau->set_sigma(0.0);
+		hybridsim::Distribution * aTau = ap->mutable_atau();
+		aTau->set_mu(0.0);
+		aTau->set_sigma(0.0);
+		hybridsim::Distribution * t = ap->mutable_t();
+		t->set_mu(1.0);
+		t->set_sigma(0.0);
+
+		hybridsim::Router * router = sc->add_router();
+		router->set_router_id(1);
+		router->set_description("ff_global_shortest");
 
 	}
 };
