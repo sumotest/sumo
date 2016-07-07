@@ -90,7 +90,7 @@ MSLaneChangerSublane::change() {
     assert(vehicle->getLane() == (*myCandi).lane);
     assert(!vehicle->getLaneChangeModel().isChangingLanes());
 #ifndef NO_TRACI
-    if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
+    if (vehicle->isRemoteControlled()) {
         return false; // !!! temporary; just because it broke, here
     }
 #endif
@@ -117,6 +117,7 @@ MSLaneChangerSublane::change() {
         if (vehicle->getLaneChangeModel().debugVehicle()) {
             std::cout << SIMTIME << " decision=" << toString((LaneChangeAction)decision.state) << " latDist=" << decision.latDist << "\n";
         }
+        vehicle->getLaneChangeModel().setOwnState(decision.state);
         return startChangeSublane(vehicle, myCandi, decision.latDist);
     }
 

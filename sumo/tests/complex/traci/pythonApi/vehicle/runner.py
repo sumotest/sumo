@@ -73,6 +73,7 @@ def check(vehID):
     print("NOx", traci.vehicle.getNOxEmission(vehID))
     print("fuel", traci.vehicle.getFuelConsumption(vehID))
     print("noise", traci.vehicle.getNoiseEmission(vehID))
+    print("Elec", traci.vehicle.getElectricityConsumption(vehID))
     print("traveltime", traci.vehicle.getAdaptedTraveltime(vehID, 0, "1o"))
     print("effort", traci.vehicle.getEffort(vehID, 0, "1o"))
     print("route valid", traci.vehicle.isRouteValid(vehID))
@@ -154,6 +155,8 @@ check("2")
 print("nextTLS", traci.vehicle.getNextTLS("2"))
 traci.vehicle.setSpeedMode(vehID, 0)  # disable all checks
 traci.vehicle.setSpeed(vehID, 20)
+print("speedmode", traci.vehicle.getSpeedMode(vehID))
+print("slope", traci.vehicle.getSlope(vehID))
 print("leader", traci.vehicle.getLeader("2"))
 traci.vehicle.subscribeLeader("2")
 for i in range(6):
@@ -292,9 +295,10 @@ for i in range(3):
 moved = "movedVeh"
 traci.vehicle.add(moved, "vertical")
 print("step", step())
-traci.vehicle.moveToXY(moved, "dummy", 0, 448.99, 491.19, 90, False)
+traci.vehicle.moveToXY(moved, "dummy", 0, 448.99, 491.19, 90, 0)
 print("step", step())
 check(moved)
 
 # done
 traci.close()
+sumoProcess.wait()

@@ -144,11 +144,11 @@ NLBuilder::build() {
         if (myOptions.isDefault("begin")) {
             myOptions.set("begin", time2string(h.getTime()));
         }
-        if (h.getTime() != string2time(myOptions.getString("begin"))) {
-            WRITE_WARNING("State was written at a different time " + time2string(h.getTime()) + " than the begin time " + myOptions.getString("begin") + "!");
-        }
         if (MsgHandler::getErrorInstance()->wasInformed()) {
             return false;
+        }
+        if (h.getTime() != string2time(myOptions.getString("begin"))) {
+            WRITE_WARNING("State was written at a different time " + time2string(h.getTime()) + " than the begin time " + myOptions.getString("begin") + "!");
         }
         PROGRESS_TIME_MESSAGE(before);
     }
@@ -200,6 +200,10 @@ NLBuilder::build() {
         if (!ShapeHandler::loadFiles(myOptions.getStringVector("additional-files"), sh)) {
             return false;
         }
+    }
+    // optionally switch off traffic lights
+    if (myOptions.getBool("tls.all-off")) {
+        myNet.getTLSControl().switchOffAll();
     }
     WRITE_MESSAGE("Loading done.");
     return true;

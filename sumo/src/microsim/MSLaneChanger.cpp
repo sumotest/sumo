@@ -252,7 +252,7 @@ MSLaneChanger::change() {
     }
 
 #ifndef NO_TRACI
-    if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
+    if (vehicle->isRemoteControlled()) {
         return false; // !!! temporary; just because it broke, here
     }
 #endif
@@ -268,6 +268,7 @@ MSLaneChanger::change() {
         bool changingAllowed1 = (state1 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state1 & LCA_RIGHT) != 0 && changingAllowed1) {
+            vehicle->getLaneChangeModel().setOwnState(state1);
             startChange(vehicle, myCandi, -1);
             return true;
         }
@@ -288,6 +289,7 @@ MSLaneChanger::change() {
         bool changingAllowed2 = (state2 & LCA_BLOCKED) == 0;
         // change if the vehicle wants to and is allowed to change
         if ((state2 & LCA_LEFT) != 0 && changingAllowed2) {
+            vehicle->getLaneChangeModel().setOwnState(state2);
             startChange(vehicle, myCandi, 1);
             return true;
         }
@@ -525,7 +527,12 @@ MSLaneChanger::checkChangeWithinEdge(
     const std::vector<MSVehicle::LaneQ>& preb) const {
 
     std::pair<MSVehicle* const, SUMOReal> neighLead = getRealLeader(myCandi + laneOffset);
-    std::pair<MSVehicle* const, SUMOReal> neighFollow = getRealFollower(myCandi + laneOffset);
+    std::pair<MSVehicle*, SUMOReal> neighFollow = getRealFollower(myCandi + laneOffset);
+    if (neighLead.first != 0 && neighLead.first == neighFollow.first) {
+        // vehicles should not be leader and follower at the same time to avoid
+        // contradictory behavior
+        neighFollow.first = 0;
+    }
     ChangerIt target = myCandi + laneOffset;
     return checkChange(laneOffset, target->lane, leader, neighLead, neighFollow, preb);
 }

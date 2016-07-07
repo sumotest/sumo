@@ -238,6 +238,7 @@ public:
         SUMOReal getNOxEmission(const std::string& edgeID) const;
         SUMOReal getFuelConsumption(const std::string& edgeID) const;
         SUMOReal getNoiseEmission(const std::string& edgeID) const;
+        SUMOReal getElectricityConsumption(const std::string& edgeID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& edgeID) const;
         SUMOReal getLastStepOccupancy(const std::string& edgeID) const;
         SUMOReal getLastStepLength(const std::string& edgeID) const;
@@ -393,6 +394,7 @@ public:
         SUMOReal getNOxEmission(const std::string& laneID) const;
         SUMOReal getFuelConsumption(const std::string& laneID) const;
         SUMOReal getNoiseEmission(const std::string& laneID) const;
+        SUMOReal getElectricityConsumption(const std::string& laneID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& laneID) const;
         SUMOReal getLastStepOccupancy(const std::string& laneID) const;
         SUMOReal getLastStepLength(const std::string& laneID) const;
@@ -722,15 +724,25 @@ public:
         std::string getRoadID(const std::string& vehicleID) const;
         std::string getLaneID(const std::string& vehicleID) const;
         unsigned int getLaneIndex(const std::string& vehicleID) const;
-        std::string getvehicleID(const std::string& vehicleID) const;
+        std::string getTypeID(const std::string& vehicleID) const;
         std::string getRouteID(const std::string& vehicleID) const;
         unsigned int getRouteIndex(const std::string& vehicleID) const;
         std::vector<std::string> getEdges(const std::string& vehicleID) const;
         TraCIColor getColor(const std::string& vehicleID) const;
         SUMOReal getLanePosition(const std::string& vehicleID) const;
+        SUMOReal getCO2Emission(const std::string& vehicleID) const;
+        SUMOReal getCOEmission(const std::string& vehicleID) const;
+        SUMOReal getHCEmission(const std::string& vehicleID) const;
+        SUMOReal getPMxEmission(const std::string& vehicleID) const;
+        SUMOReal getNOxEmission(const std::string& vehicleID) const;
+        SUMOReal getFuelConsumption(const std::string& vehicleID) const;
+        SUMOReal getNoiseEmission(const std::string& vehicleID) const;
+        SUMOReal getElectricityConsumption(const std::string& vehicleID) const;
         unsigned int getSignalStates(const std::string& vehicleID) const;
         SUMOReal getWaitingTime(const std::string& vehicleID) const;
         std::vector<NextTLSData> getNextTLS(const std::string& vehID) const;
+        int getSpeedMode(const std::string& vehicleID) const;
+        SUMOReal getSlope(const std::string& vehicleID) const;
 
         /* /// not yet implemented
         SUMOReal getCO2Emissions(const std::string& vehicleID) const;
@@ -774,7 +786,7 @@ public:
                  int personNumber = 0) const;
 
         void moveTo(const std::string& vehicleID, const std::string& laneID, SUMOReal position) const;
-        void moveToXY(const std::string& vehicleID, const std::string& edgeID, int lane, SUMOReal x, SUMOReal y, SUMOReal angle, bool keepRoute) const;
+        void moveToXY(const std::string& vehicleID, const std::string& edgeID, const int lane, const SUMOReal x, const SUMOReal y, const SUMOReal angle, const int keepRoute) const;
         void slowDown(const std::string& vehicleID, SUMOReal speed, int duration) const;
         void setSpeed(const std::string& vehicleID, SUMOReal speed) const;
         void remove(const std::string& vehicleID, char reason = REMOVE_VAPORIZED) const;
@@ -901,6 +913,9 @@ protected:
                                             int domain, SUMOReal range, const std::vector<int>& vars) const;
     /// @}
 
+
+    void send_commandMoveToXY(const std::string& vehicleID, const std::string& edgeID, const int lane,
+                              const SUMOReal x, const SUMOReal y, const SUMOReal angle, const int keepRoute) const;
 
 
     /// @name Command sending methods

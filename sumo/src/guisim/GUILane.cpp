@@ -175,6 +175,20 @@ GUILane::detectCollisions(SUMOTime timestep, const std::string& stage) {
 }
 
 
+SUMOReal
+GUILane::setPartialOccupation(MSVehicle* v) {
+    AbstractMutex::ScopedLocker locker(myLock);
+    return MSLane::setPartialOccupation(v);
+}
+
+
+void
+GUILane::resetPartialOccupation(MSVehicle* v) {
+    AbstractMutex::ScopedLocker locker(myLock);
+    MSLane::resetPartialOccupation(v);
+}
+
+
 // ------ Drawing methods ------
 void
 GUILane::drawLinkNo(const GUIVisualizationSettings& s) const {
@@ -710,7 +724,7 @@ GUILane::getPopUpMenu(GUIMainWindow& app,
 GUIParameterTableWindow*
 GUILane::getParameterWindow(GUIMainWindow& app,
                             GUISUMOAbstractView&) {
-    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 11);
+    GUIParameterTableWindow* ret = new GUIParameterTableWindow(app, *this, 14);
     // add items
     ret->mkItem("maxspeed [m/s]", false, getSpeedLimit());
     ret->mkItem("length [m]", false, myLength);
@@ -718,7 +732,9 @@ GUILane::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("street name", false, myEdge->getStreetName());
     ret->mkItem("stored traveltime [s]", true, new FunctionBinding<GUILane, SUMOReal>(this, &GUILane::getStoredEdgeTravelTime));
     ret->mkItem("loaded weight", true, new FunctionBinding<GUILane, SUMOReal>(this, &GUILane::getLoadedEdgeWeight));
-    ret->mkItem("occupancy [%]", true, new FunctionBinding<GUILane, SUMOReal>(this, &GUILane::getBruttoOccupancy, 100.));
+    ret->mkItem("routing speed [m/s]", true, new FunctionBinding<MSEdge, SUMOReal>(myEdge, &MSEdge::getRoutingSpeed));
+    ret->mkItem("brutto occupancy [%]", true, new FunctionBinding<GUILane, SUMOReal>(this, &GUILane::getBruttoOccupancy, 100.));
+    ret->mkItem("netto occupancy [%]", true, new FunctionBinding<GUILane, SUMOReal>(this, &GUILane::getNettoOccupancy, 100.));
     ret->mkItem("edge type", false, myEdge->getEdgeType());
     ret->mkItem("priority", false, myEdge->getPriority());
     ret->mkItem("allowed vehicle class", false, getVehicleClassNames(myPermissions));
@@ -796,7 +812,7 @@ GUILane::getLoadedEdgeWeight() const {
     if (!ews.knowsEffort(myEdge)) {
         return -1;
     } else {
-        SUMOReal value(0);
+        SUMOReal value(-1);
         ews.retrieveExistingEffort(myEdge, STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep()), value);
         return value;
     }
@@ -940,7 +956,7 @@ GUILane::getColorValue(size_t activeScheme) const {
         }
         case 27: {
             // color by routing device assumed speed
-            return MSDevice_Routing::getAssumedSpeed(&getEdge());
+            return myEdge->getRoutingSpeed();
         }
         case 28:
             return getElectricityConsumption() / myLength;

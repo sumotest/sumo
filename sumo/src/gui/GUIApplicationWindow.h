@@ -103,7 +103,9 @@ public:
 
     void dependentBuild();
 
-    void setStatusBarText(const std::string&);
+    void setStatusBarText(const std::string& text);
+
+    void addRecentFile(const FX::FXString& f, const bool isNet);
 
     FXGLCanvas* getBuildGLCanvas() const;
     SUMOTime getCurrentSimTime() const;
@@ -323,7 +325,7 @@ protected:
                 *myWindowsMenu, *myHelpMenu;
 
     /// Buttons showing and running values and triggering statistic windows
-    FXButton* myNetStatButton, *myVehStatButton, *myPedStatButton;
+    std::vector<FXButton*> myStatButtons;
 
     /// A window to display messages, warnings and error in
     GUIMessageWindow* myMessageWindow;
