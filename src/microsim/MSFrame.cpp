@@ -201,6 +201,8 @@ MSFrame::fillOptions() {
     oc.doRegister("bt-output", new Option_FileName());
     oc.addDescription("bt-output", "Output", "Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender)");
 
+    oc.doRegister("lanechange-output", new Option_FileName());
+    oc.addDescription("lanechange-output", "Output", "Record lane changes and their motivations for all vehicles into FILE");
 
 #ifdef _DEBUG
     oc.doRegister("movereminder-output", new Option_FileName());
@@ -288,6 +290,9 @@ MSFrame::fillOptions() {
 
     oc.doRegister("lanechange.overtake-right", new Option_Bool(false));
     oc.addDescription("lanechange.overtake-right", "Processing", "Whether overtaking on the right on motorways is permitted");
+
+    oc.doRegister("tls.all-off", new Option_Bool(false));
+    oc.addDescription("tls.all-off", "Processing", "Switches off all traffic lights.");
 
     // pedestrian model
     oc.doRegister("pedestrian.model", new Option_String("striping"));
@@ -390,6 +395,9 @@ MSFrame::fillOptions() {
     oc.doRegister("start", 'S', new Option_Bool(false));
     oc.addDescription("start", "GUI Only", "Start the simulation after loading");
 
+    oc.doRegister("demo", 'D', new Option_Bool(false));
+    oc.addDescription("demo", "GUI Only", "Restart the simulation after ending (demo mode)");
+
     oc.doRegister("disable-textures", 'T', new Option_Bool(false));
     oc.addDescription("disable-textures", "GUI Only", "Do not load background pictures");
 
@@ -419,6 +427,7 @@ MSFrame::buildStreams() {
     //OutputDevice::createDeviceByOption("vtk-output", "vtk-export");
     OutputDevice::createDeviceByOption("link-output", "link-output");
     OutputDevice::createDeviceByOption("bt-output", "bt-output");
+    OutputDevice::createDeviceByOption("lanechange-output", "lanechanges");
 
 #ifdef _DEBUG
     OutputDevice::createDeviceByOption("movereminder-output", "movereminder-output");
@@ -449,6 +458,13 @@ MSFrame::checkOptions() {
     if (oc.isSet("gui-settings-file") &&
             oc.getString("gui-settings-file") != "" &&
             !oc.isUsableFileList("gui-settings-file")) {
+        ok = false;
+    }
+    if (oc.getBool("demo") && oc.isDefault("start")) {
+        oc.set("start", "true");
+    }
+    if (oc.getBool("demo") && oc.getBool("quit-on-end")) {
+        WRITE_ERROR("You can either restart or quit on end.");
         ok = false;
     }
     if (oc.getBool("meso-junction-control.limited") && !oc.getBool("meso-junction-control")) {

@@ -65,6 +65,7 @@ class GNEApplicationWindow;
 class GNEAttributeCarrier;
 class GNEEdge;
 class GNELane;
+class GNEConnection;
 class GNEJunction;
 class GNEUndoList;
 class GNEAdditional;
@@ -88,6 +89,7 @@ class GNENet : public GUIGlObject {
     /// @brief declare friend class
     friend class GNEChange_Junction;
     friend class GNEChange_Edge;
+    friend class GNEChange_Connection;
 
 public:
     /// @brief color of selection
@@ -123,7 +125,7 @@ public:
      * @return The built parameter window
      * @see GUIGlObject::getParameterWindow
      */
-    GUIParameterTableWindow* getParameterWindow( GUIMainWindow& app, GUISUMOAbstractView& parent);
+    GUIParameterTableWindow* getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
 
     /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *
@@ -252,13 +254,15 @@ public:
      */
     GNEEdge* retrieveEdge(const std::string& id, bool failHard = true);
 
+    /**@brief get connection by NBEdge::connection **/
+    GNEConnection *retrieveConnection(unsigned int fromLane, NBEdge *toEdge, unsigned int toLane) const;
+
     /**@brief get the attribute carriers based on GlIDs
      * @param[in] ids The set of ids for which to retrive the ACs
      * @param[in] type The GUI-type of the objects with the given ids
      * @throws InvalidArgument if any given id does not match the declared type
      */
-    std::vector<GNEAttributeCarrier*> retrieveAttributeCarriers(
-                                      const std::set<GUIGlID>& ids, GUIGlObjectType type);
+    std::vector<GNEAttributeCarrier*> retrieveAttributeCarriers(const std::set<GUIGlID>& ids, GUIGlObjectType type);
 
     /**@brief return all edges
      * @param[in] onlySelected Whether to return only selected edges
@@ -275,7 +279,7 @@ public:
      * @param[in] failHard Whether attempts to retrieve a nonexisting lane should result in an exception
      * @throws UnknownElement
     */
-    GNELane *retrieveLane(const std::string &id, bool failHard = true);
+    GNELane* retrieveLane(const std::string& id, bool failHard = true);
 
     /**@brief return all junctions
      * @param[in] onlySelected Whether to return only selected junctions
@@ -290,7 +294,7 @@ public:
     /**@brief save additional elements of the network
      * @param[in] filename name of the file in wich save additionals
      */
-    void saveAdditionals(const std::string &filename);
+    void saveAdditionals(const std::string& filename);
 
     /**@brief save plain xml representation of the network (and nothing else)
      * @param[in] oc The OptionsCont which knows how and where to save
@@ -380,13 +384,18 @@ public:
 
     /**@brief Insert a additional element previously created in GNEAdditionalHandler
      * @param[in] additional pointer to the additional element to add
+     * @param[in] hardFail enable or disable exception if additional to insert is duplicated
      */
-    void insertAdditional(GNEAdditional* additional);
+    void insertAdditional(GNEAdditional* additional, bool hardFail = true);
 
     /**@brief delete additional element previously inserted
      * @param[in] additional The additional element to remove
      */
     void deleteAdditional(GNEAdditional* additional);
+
+    /// @brief update additional ID in container
+    /// @note this function is automatically called when user changes the ID of an additional
+    void updateAdditionalID(const std::string& oldID, GNEAdditional* additional);
 
     /**@brief Returns the named additional
      * @param[in] type tag with the type of additional
@@ -414,8 +423,14 @@ public:
      * @return Number of additionals of the net
      */
     int getNumberOfAdditionals(SumoXMLTag type = SUMO_TAG_NOTHING);
+    
+    /// @brief inserts a single connection into the net
+    void insertConnection(GNEConnection* connection);
 
-private:
+    /// @brief deletes a single connection
+    void deleteConnection(GNEConnection* connection);
+
+protected:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)
     SUMORTree myGrid;
 
@@ -427,16 +442,20 @@ private:
 
     /// @name internal GNE components
     /// @{
-    typedef std::map<std::string, GNEEdge*> GNEEdges;
     typedef std::map<std::string, GNEJunction*> GNEJunctions;
-    typedef std::map<std::string, GNEAdditional*> GNEAdditionals;
+    typedef std::map<std::string, GNEEdge*> GNEEdges;
+    typedef std::vector<GNEConnection*> GNEConnections; // @TODO OPTIMIZE
+    typedef std::map<std::pair<std::string, SumoXMLTag>, GNEAdditional*> GNEAdditionals;
     // @}
+
+    /// @brief map with the name and pointer to junctions of net
+    GNEJunctions myJunctions;
 
     /// @brief map with the name and pointer to edges of net
     GNEEdges myEdges;
 
-    /// @brief map with the name and pointer to junctions of net
-    GNEJunctions myJunctions;
+    /// @brief map with the name and pointer to connections of net
+    GNEConnections myConnections;
 
     /// @brief map with the name and pointer to additional elements of net
     GNEAdditionals myAdditionals;
@@ -468,6 +487,8 @@ private:
 
     /// @brief inserts a single edge into the net and into the underlying netbuild-container
     void insertEdge(GNEEdge* edge);
+
+
 
     /// @brief registers a junction with GNENet containers
     GNEJunction* registerJunction(GNEJunction* junction);

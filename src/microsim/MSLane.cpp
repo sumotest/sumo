@@ -1021,7 +1021,7 @@ MSLane::detectCollisions(SUMOTime timestep, const std::string& stage) {
 
 bool
 MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim,
-                               std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>& toRemove, 
+                               std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>& toRemove,
                                std::set<const MSVehicle*>& toTeleport) const {
     assert(collider->isFrontOnLane(this));
 #ifndef NO_TRACI
@@ -1067,7 +1067,7 @@ MSLane::detectCollisionBetween(SUMOTime timestep, const std::string& stage, cons
 
 void
 MSLane::handleCollisionBetween(SUMOTime timestep, const std::string& stage, const MSVehicle* collider, const MSVehicle* victim,
-                               SUMOReal gap, SUMOReal latGap, std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>& toRemove, 
+                               SUMOReal gap, SUMOReal latGap, std::set<const MSVehicle*, SUMOVehicle::ComparatorIdLess>& toRemove,
                                std::set<const MSVehicle*>& toTeleport) const {
     std::string prefix;
     switch (myCollisionAction) {
@@ -2139,7 +2139,13 @@ MSLane::vehicle_position_sorter::operator()(MSVehicle* v1, MSVehicle* v2) const 
 
 int
 MSLane::vehicle_natural_position_sorter::operator()(MSVehicle* v1, MSVehicle* v2) const {
-    return v1->getBackPositionOnLane(myLane) < v2->getBackPositionOnLane(myLane);
+    const SUMOReal pos1 = v1->getBackPositionOnLane(myLane);
+    const SUMOReal pos2 = v2->getBackPositionOnLane(myLane);
+    if (pos1 != pos2) {
+        return pos1 < pos2;
+    } else {
+        return v1->getLateralPositionOnLane() < v2->getLateralPositionOnLane();
+    }
 }
 
 MSLane::by_connections_to_sorter::by_connections_to_sorter(const MSEdge* const e) :

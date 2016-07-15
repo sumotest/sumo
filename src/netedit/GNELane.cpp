@@ -66,13 +66,14 @@
 // ===========================================================================
 // FOX callback mapping
 // ===========================================================================
+
 // Object implementation
 FXIMPLEMENT(GNELane, FXDelegator, 0, 0)
-
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
+
 GNELane::GNELane(GNEEdge& edge, const int index) :
     GNENetElement(edge.getNet(), edge.getNBEdge()->getLaneID(index), GLO_LANE, SUMO_TAG_LANE),
     myParentEdge(edge),
@@ -93,8 +94,9 @@ GNELane::GNELane() :
 
 GNELane::~GNELane() {
     // Remove all references to this lane in their additionals
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
-        (*i)->removeLaneReference();                                                                                       
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        (*i)->removeLaneReference();
+    }
 }
 
 
@@ -409,8 +411,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 
 
 GUIParameterTableWindow*
-GNELane::getParameterWindow(GUIMainWindow& app,
-                            GUISUMOAbstractView&) {
+GNELane::getParameterWindow(GUIMainWindow& app, GUISUMOAbstractView&) {
     GUIParameterTableWindow* ret =
         new GUIParameterTableWindow(app, *this, 2);
     // add items
@@ -418,6 +419,11 @@ GNELane::getParameterWindow(GUIMainWindow& app,
     // close building
     ret->closeBuilding();
     return ret;
+}
+
+Boundary
+GNELane::getBoundary() const {
+    return myParentEdge.getNBEdge()->getLaneStruct(myIndex).shape.getBoxBoundary();
 }
 
 
@@ -446,13 +452,6 @@ GNELane::getShapeLengths() const {
     return myShapeLengths;
 }
 
-
-Boundary
-GNELane::getBoundary() const {
-    return myParentEdge.getNBEdge()->getLaneStruct(myIndex).shape.getBoxBoundary();
-}
-
-
 void
 GNELane::updateGeometry() {
     myShapeRotations.clear();
@@ -471,11 +470,13 @@ GNELane::updateGeometry() {
         }
     }
     // Update geometry of additionals vinculated with this lane
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         (*i)->updateGeometry();
+    }
     // Update geometry of additionalSets vinculated to this lane
-    for (AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i)
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
         (*i)->updateGeometry();
+    }
 }
 
 unsigned int
@@ -521,16 +522,16 @@ GNELane::getPositionRelativeToShapeLenght(SUMOReal position) const {
 
 
 void
-GNELane::addAdditional(GNEAdditional *additional) {
+GNELane::addAdditional(GNEAdditional* additional) {
     myAdditionals.push_back(additional);
 }
 
 
 bool
-GNELane::removeAdditional(GNEAdditional *additional) {
+GNELane::removeAdditional(GNEAdditional* additional) {
     // Find and remove stoppingPlace
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        if(*i == additional) {
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        if (*i == additional) {
             myAdditionals.erase(i);
             return true;
         }
@@ -539,38 +540,41 @@ GNELane::removeAdditional(GNEAdditional *additional) {
 }
 
 
-std::list<GNEAdditional*>
-GNELane::getAdditionals() {
+const std::vector<GNEAdditional*>&
+GNELane::getAdditionals() const {
     return myAdditionals;
 }
 
 
 bool
-GNELane::addAdditionalSet(GNEAdditionalSet *additionalSet) {
+GNELane::addAdditionalSet(GNEAdditionalSet* additionalSet) {
     // Check if additionalSet already exists before insertion
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
-        if((*i) == additionalSet)
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
+        if ((*i) == additionalSet) {
             return false;
+        }
+    }
     // Insert it and retur true
     myAdditionalSets.push_back(additionalSet);
     return true;
 }
-    
+
 
 bool
-GNELane::removeAdditionalSet(GNEAdditionalSet *additionalSet) {
+GNELane::removeAdditionalSet(GNEAdditionalSet* additionalSet) {
     // search additionalSet and remove it
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
-        if((*i) == additionalSet) {
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
+        if ((*i) == additionalSet) {
             myAdditionalSets.erase(i);
             return true;
         }
+    }
     // If additionalSet wasn't found, return false
     return false;
 }
 
 
-const std::list<GNEAdditionalSet*> &
+const std::vector<GNEAdditionalSet*>&
 GNELane::getAdditionalSets() {
     return myAdditionalSets;
 }

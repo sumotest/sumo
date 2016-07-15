@@ -41,6 +41,7 @@ class GNEJunction;
 class GNELane;
 class GNEAdditional;
 class GNEAdditionalSet;
+class GNEConnection;
 
 // ===========================================================================
 // class definitions
@@ -61,11 +62,14 @@ public:
     /// @brief Definition of the lane's positions vector
     typedef std::vector<GNELane*> LaneVector;
 
-    /// @brief Definition of the additionals list
-    typedef std::list<GNEAdditional*> AdditionalList;
+    /// @brief Definition of the additionals vector
+    typedef std::vector<GNEAdditional*> AdditionalVector;
 
-    /// @brief Definition of the additionalSets list
-    typedef std::list<GNEAdditionalSet*> AdditionalSetList;
+    /// @brief Definition of the additionalSets vector
+    typedef std::vector<GNEAdditionalSet*> AdditionalSetVector;
+
+    /// @brief Definition of the connections map
+    typedef std::map<int, GNEConnection*> connectionMap;
 
     /**@brief Constructor.
      * @param[in] nbe The represented edge
@@ -129,7 +133,13 @@ public:
     /// @brief returns the destination-junction
     GNEJunction* getDest() const;
 
-    /**@brief change the edge geometry 
+    /// @brief returns vector of GNEConnections of this edge
+    std::vector<GNEConnection*> getGNEConnections() const;
+
+    /// @brief returns vector of GNEConnections of a concrete lane
+    std::vector<GNEConnection*> getGNEConnectionsFromLane(int laneIndex) const;
+
+    /**@brief change the edge geometry
      * It is up to the Edge to decide whether an new geometry node should be
      * generated or an existing node should be moved
      * @param[in] oldPos The origin of the mouse movement
@@ -142,7 +152,7 @@ public:
     //// @brief manipulate the given geometry and return whether it was changed
     static bool changeGeometry(PositionVector& geom, const std::string& id, const Position& oldPos, const Position& newPos, bool relative = false, bool moveEndPoints = false);
 
-    /**@brief change the edge geometry 
+    /**@brief change the edge geometry
      * @param[in] delta All inner points are moved by adding delta
      */
     void moveGeometry(const Position& delta);
@@ -194,7 +204,7 @@ public:
      * let the lanes recompute their precomputed geometry information
      * (needed after computing junction shapes)
      */
-    void updateLaneGeometriesAndAdditionals();
+    void updateLaneGeometries();
 
     /// @brief copy edge attributes from tpl
     void copyTemplate(GNEEdge* tpl, GNEUndoList* undolist);
@@ -216,22 +226,22 @@ public:
     void setMicrosimID(const std::string& newID);
 
     /// @brief add additional to this edge
-    bool addAdditional(GNEAdditional *additional);
+    bool addAdditional(GNEAdditional* additional);
 
     /// @brief remove additional from this edge
-    bool removeAdditional(GNEAdditional *additional);
+    bool removeAdditional(GNEAdditional* additional);
 
     /// @brief return list of additionals associated with this edge
-    std::list<GNEAdditional*> getAdditionals();
+    const std::vector<GNEAdditional*>& getAdditionals() const;
 
     /// @brief add GNEAdditionalSet to this edge
-    bool addAdditionalSet(GNEAdditionalSet *additionalSet);
+    bool addAdditionalSet(GNEAdditionalSet* additionalSet);
 
     /// @brief remove GNEAdditionalSet from this edge
-    bool removeAdditionalSet(GNEAdditionalSet *additionalSet);
+    bool removeAdditionalSet(GNEAdditionalSet* additionalSet);
 
     /// @brief return list of additionalSets associated with this edge
-    const std::list<GNEAdditionalSet*> &getAdditionalSets();
+    const std::vector<GNEAdditionalSet*>& getAdditionalSets();
 
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
@@ -255,11 +265,14 @@ protected:
     /// @brief modification status of the connections
     std::string myConnectionStatus;
 
-    /// @brief list with the additonals vinculated with this edge
-    AdditionalList myAdditionals;
+    /// @brief vector with the additonals vinculated with this edge
+    AdditionalVector myAdditionals;
 
-    /// @brief list with the additonalSets vinculated with this edge
-    AdditionalSetList myAdditionalSets;
+    /// @brief vector with the additonalSets vinculated with this edge
+    AdditionalSetVector myAdditionalSets;
+
+    /// @brief map with the connections vinculated with this edge
+    connectionMap myConnections;
 
 private:
     /// @brief set attribute after validation

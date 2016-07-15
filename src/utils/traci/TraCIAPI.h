@@ -238,6 +238,7 @@ public:
         SUMOReal getNOxEmission(const std::string& edgeID) const;
         SUMOReal getFuelConsumption(const std::string& edgeID) const;
         SUMOReal getNoiseEmission(const std::string& edgeID) const;
+        SUMOReal getElectricityConsumption(const std::string& edgeID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& edgeID) const;
         SUMOReal getLastStepOccupancy(const std::string& edgeID) const;
         SUMOReal getLastStepLength(const std::string& edgeID) const;
@@ -393,6 +394,7 @@ public:
         SUMOReal getNOxEmission(const std::string& laneID) const;
         SUMOReal getFuelConsumption(const std::string& laneID) const;
         SUMOReal getNoiseEmission(const std::string& laneID) const;
+        SUMOReal getElectricityConsumption(const std::string& laneID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& laneID) const;
         SUMOReal getLastStepOccupancy(const std::string& laneID) const;
         SUMOReal getLastStepLength(const std::string& laneID) const;
@@ -722,15 +724,25 @@ public:
         std::string getRoadID(const std::string& vehicleID) const;
         std::string getLaneID(const std::string& vehicleID) const;
         unsigned int getLaneIndex(const std::string& vehicleID) const;
-        std::string getvehicleID(const std::string& vehicleID) const;
+        std::string getTypeID(const std::string& vehicleID) const;
         std::string getRouteID(const std::string& vehicleID) const;
         unsigned int getRouteIndex(const std::string& vehicleID) const;
         std::vector<std::string> getEdges(const std::string& vehicleID) const;
         TraCIColor getColor(const std::string& vehicleID) const;
         SUMOReal getLanePosition(const std::string& vehicleID) const;
+        SUMOReal getCO2Emission(const std::string& vehicleID) const;
+        SUMOReal getCOEmission(const std::string& vehicleID) const;
+        SUMOReal getHCEmission(const std::string& vehicleID) const;
+        SUMOReal getPMxEmission(const std::string& vehicleID) const;
+        SUMOReal getNOxEmission(const std::string& vehicleID) const;
+        SUMOReal getFuelConsumption(const std::string& vehicleID) const;
+        SUMOReal getNoiseEmission(const std::string& vehicleID) const;
+        SUMOReal getElectricityConsumption(const std::string& vehicleID) const;
         unsigned int getSignalStates(const std::string& vehicleID) const;
         SUMOReal getWaitingTime(const std::string& vehicleID) const;
         std::vector<NextTLSData> getNextTLS(const std::string& vehID) const;
+        int getSpeedMode(const std::string& vehicleID) const;
+        SUMOReal getSlope(const std::string& vehicleID) const;
 
         /* /// not yet implemented
         SUMOReal getCO2Emissions(const std::string& vehicleID) const;
@@ -788,11 +800,11 @@ public:
 
     };
 
-    /** @class PersonScope     
-     * * @brief Scope for interaction with vehicles     
-     * */        
-    class PersonScope : public TraCIScopeWrapper {  
-    public:         
+    /** @class PersonScope
+     * * @brief Scope for interaction with vehicles
+     * */
+    class PersonScope : public TraCIScopeWrapper {
+    public:
         PersonScope(TraCIAPI& parent) : TraCIScopeWrapper(parent) {}
         virtual ~PersonScope() {}
 
@@ -800,12 +812,12 @@ public:
         unsigned int getIDCount() const;
         SUMOReal getSpeed(const std::string& typeID) const;
         TraCIPosition getPosition(const std::string& typeID) const;
-        std::string getRoadID(const std::string& typeID) const; 
-        std::string getTypeID(const std::string& typeID) const; 
-        SUMOReal getWaitingTime(const std::string& typeID) const; 
+        std::string getRoadID(const std::string& typeID) const;
+        std::string getTypeID(const std::string& typeID) const;
+        SUMOReal getWaitingTime(const std::string& typeID) const;
         std::string getNextEdge(const std::string& typeID) const;
 
-     private:        
+    private:
         /// @brief invalidated copy constructor
         PersonScope(const PersonScope& src);
 
@@ -842,7 +854,7 @@ public:
     VehicleTypeScope vehicletype;
     /// @brief Scope for interaction with vehicles
     VehicleScope vehicle;
-    /// @brief Scope for interaction with persons    
+    /// @brief Scope for interaction with persons
     PersonScope person;
 
 
@@ -925,9 +937,9 @@ protected:
     void processGET(tcpip::Storage& inMsg, int command, int expectedType, bool ignoreCommandId = false) const;
     /// @}
 
-    void readVariableSubscription(tcpip::Storage &inMsg);
-    void readContextSubscription(tcpip::Storage &inMsg);
-    void readVariables(tcpip::Storage &inMsg, const std::string &objectID, int variableCount, SubscribedValues& into);
+    void readVariableSubscription(tcpip::Storage& inMsg);
+    void readContextSubscription(tcpip::Storage& inMsg);
+    void readVariables(tcpip::Storage& inMsg, const std::string& objectID, int variableCount, SubscribedValues& into);
 
     template <class T>
     static inline std::string toString(const T& t, std::streamsize accuracy = OUTPUT_ACCURACY) {

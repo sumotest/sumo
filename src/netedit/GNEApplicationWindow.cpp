@@ -50,6 +50,7 @@
 #include <utils/gui/div/GUIUserIO.h>
 #include <utils/gui/events/GUIEvent_Message.h>
 #include <utils/gui/images/GUIIconSubSys.h>
+#include <utils/gui/images/GUITextureSubSys.h>
 #include <utils/gui/settings/GUICompleteSchemeStorage.h>
 #include <utils/gui/settings/GUISettingsHandler.h>
 #include <utils/gui/windows/GUIAppEnum.h>
@@ -165,18 +166,20 @@ FXIMPLEMENT(GNEApplicationWindow, FXMainWindow, GNEApplicationWindowMap, ARRAYNU
 #ifdef _MSC_VER
 #pragma warning(disable: 4355)
 #endif
-GNEApplicationWindow::GNEApplicationWindow(FXApp* a,
-        const std::string& configPattern)
-    : GUIMainWindow(a),
-      myLoadThread(0),
-      myAmLoading(false),
-      myRecentNets(a, "nets"),
-      myConfigPattern(configPattern),
-      hadDependentBuild(false),
-      myNet(0),
-      myUndoList(new GNEUndoList(this)),
-      myTitlePrefix("NETEDIT " VERSION_STRING) {
+GNEApplicationWindow::GNEApplicationWindow(FXApp* a, const std::string& configPattern) :
+    GUIMainWindow(a),
+    myLoadThread(0),
+    myAmLoading(false),
+    myRecentNets(a, "nets"),
+    myConfigPattern(configPattern),
+    hadDependentBuild(false),
+    myNet(0),
+    myUndoList(new GNEUndoList(this)),
+    myTitlePrefix("NETEDIT " VERSION_STRING) {
+    // Load icons
     GUIIconSubSys::init(a);
+    // Load Gifs (Textures)
+    GUITextureSubSys::init(a);
 }
 #ifdef _MSC_VER
 #pragma warning(default: 4355)
@@ -290,8 +293,10 @@ GNEApplicationWindow::create() {
 
 GNEApplicationWindow::~GNEApplicationWindow() {
     closeAllWindows();
-    //
+    // Close icons
     GUIIconSubSys::close();
+    // Close gifs (Textures)
+    GUITextureSubSys::close();
     delete myGLVisual;
     // must delete menus to avoid segfault on removing accelerators
     // (http://www.fox-toolkit.net/faq#TOC-What-happens-when-the-application-s)
@@ -932,7 +937,8 @@ GNEApplicationWindow::closeAllWindows() {
         GeoConvHelper::resetLoaded();
     }
     myMessageWindow->unregisterMsgHandlers();
-    GNEJunction::resetDecal();
+    // Load Gifs (Textures)
+    GUITextureSubSys::reset();
 }
 
 
@@ -944,41 +950,8 @@ GNEApplicationWindow::getDefaultCursor() {
 
 void
 GNEApplicationWindow::loadOnStartup() {
-    OptionsCont& oc = OptionsCont::getOptions();
-    if (oc.isSet("configuration-file")) {
-        loadConfigOrNet(oc.getString("configuration-file"), false, false, true);
-    } else {
-        loadConfigOrNet(oc.getString("sumo-net-file"), true, false, true);
-        oc.resetWritable();
-        oc.set("output-file", oc.getString("sumo-net-file"));
-    }
+    loadConfigOrNet("", false, false, true);
 }
-
-/*
-long
-GNEApplicationWindow::onCmdCutSwell(FXObject*, FXSelector, void*)
-{
-    /
-    GUIDialog_CutSwell *about =
-        new GUIDialog_CutSwell(this, "Simulating...", 0, 0);
-    about->create();
-    about->show(PLACEMENT_OWNER);
-    /
-    std::string prev = myStatusbar->getStatusLine()->getText().text();
-    std::string text = std::string("Computing strategies.");
-    myStatusbar->getStatusLine()->setText(text.c_str());
-    myStatusbar->getStatusLine()->setNormalText(text.c_str());
-    for(int i=0; i<100; ++i) {
-        fxsleep(3000);
-        myProgressBar->setProgress(i);
-    }
-//    delete about;
-    myProgressBar->setProgress(0);
-    myStatusbar->getStatusLine()->setText(prev.c_str());
-    myStatusbar->getStatusLine()->setNormalText(prev.c_str());
-    return 1;
-}
-*/
 
 
 void
@@ -1187,8 +1160,7 @@ GNEApplicationWindow::onUpdNeedsNetwork(FXObject* sender, FXSelector, void*) {
 
 long
 GNEApplicationWindow::onUpdReload(FXObject* sender, FXSelector, void*) {
-    sender->handle(this, myNet == 0 || !OptionsCont::getOptions().isSet("sumo-net-file")
-                   ? FXSEL(SEL_COMMAND, ID_DISABLE) : FXSEL(SEL_COMMAND, ID_ENABLE), 0);
+    sender->handle(this, myNet == 0 || !OptionsCont::getOptions().isSet("sumo-net-file") ? FXSEL(SEL_COMMAND, ID_DISABLE) : FXSEL(SEL_COMMAND, ID_ENABLE), 0);
     return 1;
 }
 
@@ -1222,7 +1194,6 @@ GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {
         return 1;
     }
     std::string filename = file.text();
-    // XXX Not yet implemented
     getApp()->beginWaitCursor();
     try {
         myNet->saveAdditionals(filename);
@@ -1278,8 +1249,8 @@ GNEApplicationWindow::continueWithUnsavedChanges() {
 
 
 GNEApplicationWindow::GNEShapeHandler::GNEShapeHandler(const std::string& file, GNENet* net, ShapeContainer& sc) :
-            ShapeHandler(file, sc),
-            myNet(net) {}
+    ShapeHandler(file, sc),
+    myNet(net) {}
 
 
 GNEApplicationWindow::GNEShapeHandler::~GNEShapeHandler() {}
@@ -1288,12 +1259,12 @@ GNEApplicationWindow::GNEShapeHandler::~GNEShapeHandler() {}
 Position
 GNEApplicationWindow::GNEShapeHandler::getLanePos(const std::string& poiID, const std::string& laneID, SUMOReal lanePos) {
     std::string edgeID = laneID;
-    unsigned int lane = 0;
+    int lane = 0;
     size_t underscore = laneID.rfind('_');
 
     if (underscore != std::string::npos) {
         edgeID = laneID.substr(0, underscore);
-        lane = static_cast<unsigned int>(TplConvert::_2intSec(laneID.substr(underscore).c_str(), 0));
+        lane = TplConvert::_2intSec(laneID.substr(underscore).c_str(), 0);
     }
     NBEdge* edge = myNet->retrieveEdge(edgeID)->getNBEdge();
     if (edge == 0 || edge->getNumLanes() <= lane) {

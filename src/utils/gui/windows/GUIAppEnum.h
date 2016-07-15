@@ -75,8 +75,8 @@ enum {
     MID_OPEN_NETWORK,
     /// Load additional file with poi and polygons
     MID_OPEN_SHAPES,
-	/// Load additional file with additional elements	
-    MID_OPEN_ADDITIONALS,								
+    /// Load additional file with additional elements
+    MID_OPEN_ADDITIONALS,
     /// Reload the previously loaded simulation
     MID_RELOAD,
     /// Loads a file previously loaded
@@ -309,6 +309,10 @@ enum {
 
     /// Close simulation at end - Option
     MID_QUITONSIMEND,
+    /// Start simulation when loaded - Option
+    MID_AUTOSTART,
+    /// Demo mode - Option
+    MID_DEMO,
     /// Allow textures - Option
     MID_ALLOWTEXTURES,
     /// Locate links in messages - Option
@@ -415,7 +419,7 @@ enum {
     /// selector match box messages
     MID_GNE_SELMB_TAG,
     MID_GNE_SELMB_STRING,
-    
+
     /// additional match box messages
     MID_GNE_MODE_ADDITIONAL_ITEM,
     MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
@@ -432,6 +436,16 @@ enum {
     MID_GNE_VARIABLESPEEDSIGNAL_ADDROW,
     MID_GNE_VARIABLESPEEDSIGNAL_REMOVEROW,
     MID_GNE_VARIABLESPEEDSIGNAL_CHANGEVALUE,
+
+    /// Rerouter dialog
+    MID_GNE_REROUTER_ADDROW,
+    MID_GNE_REROUTER_REMOVEROW,
+    MID_GNE_REROUTER_CHANGEVALUE,
+
+    /// Calibrator dialog
+    MID_GNE_CALIBRATOR_ADDROW,
+    MID_GNE_CALIBRATOR_REMOVEROW,
+    MID_GNE_CALIBRATOR_CHANGEVALUE,
 
     /// Additional dialogs
     MID_GNE_MODE_ADDITIONALDIALOG_ACCEPT,
@@ -493,6 +507,8 @@ enum {
     MID_GNE_SELECTADDITIONALSET,
     /** netEdit search edge */
     MID_GNE_SEARCHEDGE,
+    /** netEdit use selected edge */
+    MID_GNE_USESELECTEDEDGES,
     /** netEdit select edge */
     MID_GNE_SELECTEDGE,
     /** netEdit clear selection of edges */
@@ -501,6 +517,8 @@ enum {
     MID_GNE_INVERTEDGESELECTION,
     /** netEdit search lane */
     MID_GNE_SEARCHLANE,
+    /** netEdit use selected lanes */
+    MID_GNE_USESELECTEDLANES,
     /** netEdit select lane */
     MID_GNE_SELECTLANE,
     /** netEdit clear selection of lanes */
@@ -537,6 +555,8 @@ enum {
     MID_GNE_SET_TEMPLATE,
     /** copy template*/
     MID_GNE_COPY_TEMPLATE,
+    /** remove template*/
+    MID_GNE_REMOVE_TEMPLATE,
     /** select dead end lanes */
     MID_GNE_SELECT_DEAD_ENDS,
     /** select lanes that have no connection leading to it */

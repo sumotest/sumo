@@ -2,7 +2,7 @@
 /// @file    GNEConnectorFrame.cpp
 /// @author  Jakob Erdmann
 /// @date    May 2011
-/// @version $Id: GNEConnectorFrame.cpp 20472 2016-04-15 15:36:45Z palcraft $
+/// @version $Id$
 ///
 // The Widget for modifying lane-to-lane connections
 /****************************************************************************/
@@ -216,7 +216,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
             case UNCONNECTED:
                 if (toggle) {
                     myViewNet->getUndoList()->add(new GNEChange_Connection(&srcEdge, fromIndex,
-                                    destEdgeID, lane->getIndex(), mayDefinitelyPass, true), true);
+                                                  destEdgeID, lane->getIndex(), mayDefinitelyPass, true), true);
                     lane->setSpecialColor(mayDefinitelyPass ? &targetPassColor : &targetColor);
                     changed = true;
                 }
@@ -224,7 +224,7 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
             case CONNECTED:
             case CONNECTED_PASS:
                 myViewNet->getUndoList()->add(new GNEChange_Connection(&srcEdge, fromIndex, destEdgeID, lane->getIndex(),
-                                status == CONNECTED_PASS, false), true);
+                                              status == CONNECTED_PASS, false), true);
                 lane->setSpecialColor(&potentialTargetColor);
                 changed = true;
                 deletedConnection = NBConnection(srcEdge.getNBEdge(), fromIndex,

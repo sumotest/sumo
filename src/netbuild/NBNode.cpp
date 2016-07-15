@@ -78,7 +78,8 @@
 // minimum length for a weaving section at a combined on-off ramp
 #define MIN_WEAVE_LENGTH 20.0
 
-#define DEBUGID "C"
+//#define DEBUG_SMOOTH_GEOM
+#define DEBUGCOND true
 
 // ===========================================================================
 // static members
@@ -113,7 +114,7 @@ NBNode::ApproachingDivider::ApproachingDivider(
     // lanes that will be connected from walkingAreas and forbidden lanes)
     // if the lane is targeted by an explicitly set connection we need
     // to make it available anyway
-    for (int i = 0; i < (int)currentOutgoing->getNumLanes(); ++i) {
+    for (int i = 0; i < currentOutgoing->getNumLanes(); ++i) {
         if ((currentOutgoing->getPermissions(i) == SVC_PEDESTRIAN
                 || isForbidden(currentOutgoing->getPermissions(i)))
                 && approachedLanes.count(i) == 0) {
@@ -477,13 +478,32 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
                            SUMOReal extrapolateBeg,
                            SUMOReal extrapolateEnd) const {
 
+    PositionVector init = bezierControlPoints(begShape, endShape, isTurnaround, extrapolateBeg, extrapolateEnd);
+    if (init.size() == 0) {
+        PositionVector ret;
+        ret.push_back(begShape.back());
+        ret.push_back(endShape.front());
+        return ret;
+    } else {
+        assert(init[0].z() == myPosition.z());
+        return bezier(init, numPoints);
+    }
+}
+
+PositionVector
+NBNode::bezierControlPoints(
+    const PositionVector& begShape,
+    const PositionVector& endShape,
+    bool isTurnaround,
+    SUMOReal extrapolateBeg,
+    SUMOReal extrapolateEnd,
+    SUMOReal minimumSLength) {
+
     const Position beg = begShape.back();
     const Position end = endShape.front();
-    PositionVector ret;
     PositionVector init;
-    bool noSpline = false;
     if (beg.distanceTo(end) < POSITION_EPS || beg.distanceTo(begShape[-2]) < POSITION_EPS || end.distanceTo(endShape[1]) < POSITION_EPS) {
-        noSpline = true;
+        return init;
     } else {
         init.push_back(beg);
         if (isTurnaround) {
@@ -498,19 +518,24 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
             const SUMOReal angle = fabs(GeomHelper::angleDiff(begShape.angleAt2D(-2), endShape.angleAt2D(0)));
             PositionVector endShapeBegLine(endShape[0], endShape[1]);
             PositionVector begShapeEndLineRev(begShape[-1], begShape[-2]);
-            endShapeBegLine.extrapolate(100, true);
-            begShapeEndLineRev.extrapolate(100, true);
+            endShapeBegLine.extrapolate2D(100, true);
+            begShapeEndLineRev.extrapolate2D(100, true);
             if (angle < M_PI / 4.) {
-                // very low angle: almost straight
+                // very low angle: could be an s-shape or a straight line
+                const SUMOReal displacementAngle = fabs(GeomHelper::angleDiff(begShape.angleAt2D(-2), beg.angleTo2D(end)));
                 const SUMOReal halfDistance = beg.distanceTo(end) / 2.;
-                if (halfDistance > 5) {
-                    const SUMOReal endLength = begShape[-2].distanceTo(begShape[-1]);
+                if (displacementAngle > DEG2RAD(5) && halfDistance * 2 > minimumSLength) {
+                    const SUMOReal endLength = begShape[-2].distanceTo2D(begShape[-1]);
                     const SUMOReal off1 = endLength + MIN2(extrapolateBeg, halfDistance);
                     init.push_back(PositionVector::positionAtOffset(begShapeEndLineRev[1], begShapeEndLineRev[0], off1));
                     const SUMOReal off2 = 100. - MIN2(extrapolateEnd, halfDistance);
                     init.push_back(PositionVector::positionAtOffset(endShapeBegLine[0], endShapeBegLine[1], off2));
                 } else {
-                    noSpline = true;
+#ifdef DEBUG_SMOOTH_GEOM
+                    if (DEBUGCOND) std::cout << "   bezierControlPoints identified straight line beg=" << beg << " end=" << end
+                                                 << " angle=" << RAD2DEG(angle) << " displacementAngle=" << RAD2DEG(displacementAngle) << "\n";
+#endif
+                    return PositionVector();
                 }
             } else {
                 // turning
@@ -518,49 +543,44 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
                 //  - intersection of the extrapolated lanes
                 //  - begin of outgoing lane
                 // attention: if there is no intersection, use a straight line
-                init.push_back(endShapeBegLine.intersectionPosition2D(begShapeEndLineRev));
-                if (init[-1] == Position::INVALID) {
-                    noSpline = true;
+                const Position intersect = endShapeBegLine.intersectionPosition2D(begShapeEndLineRev);
+                if (intersect == Position::INVALID) {
+#ifdef DEBUG_SMOOTH_GEOM
+                    if (DEBUGCOND) {
+                        std::cout << "   bezierControlPoints failed beg=" << beg << " end=" << end << " intersect=" << intersect << "\n";
+                    }
+#endif
+                    return PositionVector();
+                }
+                const SUMOReal minControlLength = 1.0;
+                const bool lengthenBeg = intersect.distanceTo2D(beg) <= minControlLength;
+                const bool lengthenEnd = intersect.distanceTo2D(end) <= minControlLength;
+                if (lengthenBeg && lengthenEnd) {
+#ifdef DEBUG_SMOOTH_GEOM
+                    if (DEBUGCOND) std::cout << "   bezierControlPoints failed beg=" << beg << " end=" << end << " intersect=" << intersect
+                                                 << " dist1=" << intersect.distanceTo2D(beg) << " dist2=" << intersect.distanceTo2D(end) << "\n";
+#endif
+                    return PositionVector();
+                } else if (lengthenBeg || lengthenEnd) {
+                    init.push_back(begShapeEndLineRev.positionAtOffset2D(100 - minControlLength));
+                    init.push_back(endShapeBegLine.positionAtOffset2D(100 - minControlLength));
+                } else {
+                    init.push_back(intersect);
                 }
             }
         }
         init.push_back(end);
     }
-    //
-    if (noSpline) {
-        ret.push_back(beg);
-        ret.push_back(end);
-    } else {
-        SUMOReal* def = new SUMOReal[1 + (int)init.size() * 3];
-        for (int i = 0; i < (int)init.size(); ++i) {
-            // starts at index 1
-            def[i * 3 + 1] = init[i].x();
-            def[i * 3 + 2] = 0;
-            def[i * 3 + 3] = init[i].y();
-        }
-        SUMOReal* ret_buf = new SUMOReal[numPoints * 3 + 1];
-        bezier((int)init.size(), def, numPoints, ret_buf);
-        delete[] def;
-        Position prev;
-        for (int i = 0; i < (int)numPoints; i++) {
-            Position current(ret_buf[i * 3 + 1], ret_buf[i * 3 + 3], myPosition.z());
-            if (prev != current && !ISNAN(current.x()) && !ISNAN(current.y())) {
-                ret.push_back(current);
-            }
-            prev = current;
-        }
-        delete[] ret_buf;
-    }
-    return ret;
+    return init;
 }
 
 
 PositionVector
 NBNode::computeInternalLaneShape(NBEdge* fromE, const NBEdge::Connection& con, int numPoints) const {
-    if (con.fromLane >= (int) fromE->getNumLanes()) {
+    if (con.fromLane >= fromE->getNumLanes()) {
         throw ProcessError("Connection '" + fromE->getID() + "_" + toString(con.fromLane) + "->" + con.toEdge->getID() + "_" + toString(con.toLane) + "' starts at a non-existant lane.");
     }
-    if (con.toLane >= (int) con.toEdge->getNumLanes()) {
+    if (con.toLane >= con.toEdge->getNumLanes()) {
         throw ProcessError("Connection '" + fromE->getID() + "_" + toString(con.fromLane) + "->" + con.toEdge->getID() + "_" + toString(con.toLane) + "' targets a non-existant lane.");
     }
     PositionVector ret;
@@ -755,7 +775,7 @@ NBNode::computeLanes2Lanes() {
                 && in->getNumLanes() - inOffset == out->getNumLanes() - outOffset - 1
                 && in != out
                 && in->isConnectedTo(out)) {
-            for (int i = inOffset; i < (int) in->getNumLanes(); ++i) {
+            for (int i = inOffset; i < in->getNumLanes(); ++i) {
                 in->setConnection(i, out, i - inOffset + outOffset + 1, NBEdge::L2L_COMPUTED);
             }
             in->setConnection(inOffset, out, outOffset, NBEdge::L2L_COMPUTED);
@@ -789,13 +809,13 @@ NBNode::computeLanes2Lanes() {
                 std::swap(in1, in2);
                 std::swap(in1Offset, in2Offset);
             }
-            in1->addLane2LaneConnections(in1Offset, out, outOffset, in1->getNumLanes() - in1Offset, NBEdge::L2L_VALIDATED, true, true);
-            in2->addLane2LaneConnections(in2Offset, out, in1->getNumLanes() + outOffset - in1Offset, in2->getNumLanes() - in2Offset, NBEdge::L2L_VALIDATED, true, true);
+            in1->addLane2LaneConnections(in1Offset, out, outOffset, in1->getNumLanes() - in1Offset, NBEdge::L2L_VALIDATED, true);
+            in2->addLane2LaneConnections(in2Offset, out, in1->getNumLanes() + outOffset - in1Offset, in2->getNumLanes() - in2Offset, NBEdge::L2L_VALIDATED, true);
             return;
         }
     }
     // special case c):
-    //  one in, two out, the incoming has the same number of lanes as the sum of the outgoing
+    //  one in, two out, the incoming has the same number of lanes or only 1 lane less than the sum of the outgoing lanes
     //  --> highway off-ramp
     if (myIncomingEdges.size() == 1 && myOutgoingEdges.size() == 2) {
         NBEdge* in = myIncomingEdges[0];
@@ -804,19 +824,23 @@ NBNode::computeLanes2Lanes() {
         const int inOffset = MAX2(0, in->getFirstNonPedestrianLaneIndex(FORWARD, true));
         int out1Offset = MAX2(0, out1->getFirstNonPedestrianLaneIndex(FORWARD, true));
         int out2Offset = MAX2(0, out2->getFirstNonPedestrianLaneIndex(FORWARD, true));
-        if (in->getNumLanes() - inOffset == out2->getNumLanes() + out1->getNumLanes() - out1Offset - out2Offset
+        const int deltaLaneSum = (out2->getNumLanes() + out1->getNumLanes() - out1Offset - out2Offset) - (in->getNumLanes() - inOffset);
+        if ((deltaLaneSum == 0 || (deltaLaneSum == 1 && in->getPermissionVariants(inOffset, in->getNumLanes()).size() == 1))
                 && (in->getStep() <= NBEdge::LANES2EDGES)
                 && in != out1
                 && in != out2
                 && in->isConnectedTo(out1)
-                && in->isConnectedTo(out2)) {
+                && in->isConnectedTo(out2)
+                && !in->isTurningDirectionAt(out1)
+                && !in->isTurningDirectionAt(out2)
+           ) {
             // for internal: check which one is the rightmost
             if (NBContHelper::relative_outgoing_edge_sorter(in)(out2, out1)) {
                 std::swap(out1, out2);
                 std::swap(out1Offset, out2Offset);
             }
-            in->addLane2LaneConnections(inOffset, out1, out1Offset, out1->getNumLanes() - out1Offset, NBEdge::L2L_VALIDATED, true, true);
-            in->addLane2LaneConnections(out1->getNumLanes() + inOffset - out1Offset, out2, out2Offset, out2->getNumLanes() - out2Offset, NBEdge::L2L_VALIDATED, false, true);
+            in->addLane2LaneConnections(inOffset, out1, out1Offset, out1->getNumLanes() - out1Offset, NBEdge::L2L_VALIDATED, true);
+            in->addLane2LaneConnections(out1->getNumLanes() + inOffset - out1Offset - deltaLaneSum, out2, out2Offset, out2->getNumLanes() - out2Offset, NBEdge::L2L_VALIDATED, false);
             return;
         }
     }
@@ -836,8 +860,8 @@ NBNode::computeLanes2Lanes() {
                 && in->getNumLanes() - inOffset == out->getNumLanes() - outOffset + 1
                 && in != out
                 && in->isConnectedTo(out)) {
-            for (int i = inOffset; i < (int) in->getNumLanes(); ++i) {
-                in->setConnection(i, out, MIN2(outOffset + i, ((int)out->getNumLanes() - 1)), NBEdge::L2L_COMPUTED, true);
+            for (int i = inOffset; i < in->getNumLanes(); ++i) {
+                in->setConnection(i, out, MIN2(outOffset + i, out->getNumLanes() - 1), NBEdge::L2L_COMPUTED, true);
             }
             return;
         }
@@ -858,7 +882,7 @@ NBNode::computeLanes2Lanes() {
                 && in->getNumLanes() - inOffset == out->getNumLanes() - outOffset
                 && in != out
                 && in->isConnectedTo(out)) {
-            for (int i = inOffset; i < (int) in->getNumLanes(); ++i) {
+            for (int i = inOffset; i < in->getNumLanes(); ++i) {
                 in->setConnection(i, out, i - inOffset + outOffset, NBEdge::L2L_COMPUTED);
             }
             //std::cout << " special case f at node=" << getID() << " inOffset=" << inOffset << " outOffset=" << outOffset << "\n";
@@ -902,9 +926,9 @@ NBNode::computeLanes2Lanes() {
                 if (unsatisfied != 0) {
                     //std::cout << " unsatisfied modes from edge=" << incoming->getID() << " toEdge=" << currentOutgoing->getID() << " deadModes=" << getVehicleClassNames(unsatisfied) << "\n";
                     int fromLane = 0;
-                    while (unsatisfied != 0 && fromLane < (int)incoming->getNumLanes()) {
+                    while (unsatisfied != 0 && fromLane < incoming->getNumLanes()) {
                         if ((incoming->getPermissions(fromLane) & unsatisfied) != 0) {
-                            for (int toLane = 0; toLane < (int)currentOutgoing->getNumLanes(); ++toLane) {
+                            for (int toLane = 0; toLane < currentOutgoing->getNumLanes(); ++toLane) {
                                 const SVCPermissions satisfied = incoming->getPermissions(fromLane) & currentOutgoing->getPermissions(toLane) & unsatisfied;
                                 if (satisfied != 0) {
                                     incoming->setConnection((unsigned int)fromLane, currentOutgoing, toLane, NBEdge::L2L_COMPUTED);

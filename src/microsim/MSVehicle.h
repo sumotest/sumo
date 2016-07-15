@@ -785,7 +785,7 @@ public:
     /** @brief Returns the information whether the vehicle is fully controlled via TraCI
      * @return Whether the vehicle is remote-controlled
      */
-    bool isRemoteControlled() const; 
+    bool isRemoteControlled() const;
 
     /// @brief return the distance to the next stop or SUMORealMax if there is none.
     SUMOReal nextStopDist() const {
@@ -1123,6 +1123,8 @@ public:
          */
         void setLaneTimeLine(const std::vector<std::pair<SUMOTime, unsigned int> >& laneTimeLine);
 
+        /// @brief return the current speed mode
+        int getSpeedMode() const;
 
         /** @brief Applies stored velocity information on the speed to use
          *

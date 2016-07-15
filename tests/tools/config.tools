@@ -1,5 +1,6 @@
 import_config_file:../config_all
 binary:$TEXTTEST_HOME/toolrunner.py
+copy_test_path:runner.py
 copy_test_path:routes.rou.xml
 copy_test_path:routes2.rou.xml
 copy_test_path:net.net.xml
@@ -158,6 +159,7 @@ image:href="[^"]*"{REPLACE href="ReplacedTransientHREF"}
 [floating_point_tolerance]
 net:0.0101
 image:0.001
+osmbatch:0.001
 
 [unordered_text]
 errors:ERROR:SCHEMA

@@ -587,13 +587,13 @@ TraCIServer::initialiseSubscription(const TraCIServer::Subscription& s) {
         } else {
             bool needNewSubscription = true;
             for (std::vector<Subscription>::iterator i = mySubscriptions.begin(); i != mySubscriptions.end(); ++i) {
-                if (s.commandId == i->commandId && s.id == i->id && 
-                    s.beginTime == i->beginTime && s.endTime == i->endTime &&
-                    s.contextVars == i->contextVars && s.contextDomain == i->contextDomain && s.range == i->range) {
+                if (s.commandId == i->commandId && s.id == i->id &&
+                        s.beginTime == i->beginTime && s.endTime == i->endTime &&
+                        s.contextVars == i->contextVars && s.contextDomain == i->contextDomain && s.range == i->range) {
                     std::vector<std::vector<unsigned char> >::const_iterator k = s.parameters.begin();
                     for (std::vector<int>::const_iterator j = s.variables.begin(); j != s.variables.end(); ++j, ++k) {
                         const int offset = std::find(i->variables.begin(), i->variables.end(), *j) - i->variables.begin();
-                        if (offset == i->variables.size() || i->parameters[offset] != *k) {
+                        if (offset == (int)i->variables.size() || i->parameters[offset] != *k) {
                             i->variables.push_back(*j);
                             i->parameters.push_back(*k);
                         }

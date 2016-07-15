@@ -255,6 +255,16 @@ MSVehicle::Influencer::setLaneTimeLine(const std::vector<std::pair<SUMOTime, uns
 }
 
 
+int
+MSVehicle::Influencer::getSpeedMode() const {
+    return (1 * myConsiderSafeVelocity +
+            2 * myConsiderMaxAcceleration +
+            4 * myConsiderMaxDeceleration +
+            8 * myRespectJunctionPriority +
+            16 * myEmergencyBrakeRedLight);
+}
+
+
 SUMOReal
 MSVehicle::Influencer::influenceSpeed(SUMOTime currentTime, SUMOReal speed, SUMOReal vSafe, SUMOReal vMin, SUMOReal vMax) {
     // keep original speed
@@ -589,7 +599,7 @@ MSVehicle::onRemovalFromNet(const MSMoveReminder::Notification reason) {
 // ------------ interaction with the route
 bool
 MSVehicle::hasArrived() const {
-    return (myCurrEdge == myRoute->end() - 1 
+    return (myCurrEdge == myRoute->end() - 1
             && (myStops.empty() || myStops.front().edge != myCurrEdge)
             && myState.myPos > myArrivalPos - POSITION_EPS
             && !isRemoteControlled());
@@ -1008,10 +1018,11 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
     if (stop.reached) {
         // ok, we have already reached the next stop
         // any waiting persons may board now
-        bool boarded = MSNet::getInstance()->getPersonControl().boardAnyWaiting(&myLane->getEdge(), this, &stop);
+        MSNet* const net = MSNet::getInstance();
+        bool boarded = net->hasPersons() && net->getPersonControl().boardAnyWaiting(&myLane->getEdge(), this, &stop);
         boarded &= stop.awaitedPersons.size() == 0;
         // load containers
-        bool loaded = MSNet::getInstance()->getContainerControl().loadAnyWaiting(&myLane->getEdge(), this, &stop);
+        bool loaded = net->hasContainers() && net->getContainerControl().loadAnyWaiting(&myLane->getEdge(), this, &stop);
         loaded &= stop.awaitedContainers.size() == 0;
         if (boarded) {
             if (stop.busstop != 0) {
@@ -2645,7 +2656,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
     }
 #ifdef DEBUG_BESTLANES
     if (DEBUG_COND) {
-        std::cout << "   last edge:\n"; 
+        std::cout << "   last edge:\n";
         std::vector<LaneQ>& laneQs = myBestLanes.back();
         for (std::vector<LaneQ>::iterator j = laneQs.begin(); j != laneQs.end(); ++j) {
             std::cout << "     lane=" << (*j).lane->getID() << " length=" << (*j).length << " bestOffset=" << (*j).bestLaneOffset << "\n";
@@ -2702,7 +2713,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             }
 #ifdef DEBUG_BESTLANES
             if (DEBUG_COND) {
-                std::cout << "   edge=" << cE.getID() << "\n"; 
+                std::cout << "   edge=" << cE.getID() << "\n";
                 std::vector<LaneQ>& laneQs = clanes;
                 for (std::vector<LaneQ>::iterator j = laneQs.begin(); j != laneQs.end(); ++j) {
                     std::cout << "     lane=" << (*j).lane->getID() << " length=" << (*j).length << " bestOffset=" << (*j).bestLaneOffset << "\n";
@@ -2753,7 +2764,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
     updateOccupancyAndCurrentBestLane(startLane);
 #ifdef DEBUG_BESTLANES
     if (DEBUG_COND) {
-        std::cout << SIMTIME << " veh=" << getID() << " bestCont=" << toString(getBestLanesContinuation()) << "\n"; 
+        std::cout << SIMTIME << " veh=" << getID() << " bestCont=" << toString(getBestLanesContinuation()) << "\n";
     }
 #endif
     return;
@@ -2886,8 +2897,9 @@ MSVehicle::getLeader(SUMOReal dist) const {
     }
     const SUMOReal seen = myLane->getLength() - getPositionOnLane();
     const std::vector<MSLane*>& bestLaneConts = getBestLanesContinuation(myLane);
+    std::pair<const MSVehicle* const, SUMOReal> result = myLane->getLeaderOnConsecutive(dist, seen, getSpeed(), *this, bestLaneConts);
     myLane->releaseVehicles();
-    return myLane->getLeaderOnConsecutive(dist, seen, getSpeed(), *this, bestLaneConts);
+    return result;
 }
 
 
@@ -3469,7 +3481,7 @@ MSVehicle::influenceChangeDecision(int state) {
 }
 
 
-void 
+void
 MSVehicle::setVTDState(Position xyPos) {
     myCachedPosition = xyPos;
 }

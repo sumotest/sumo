@@ -42,13 +42,12 @@
 #include <utils/gui/div/GUIParameterTableWindow.h>
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/images/GUITexturesHelper.h>
-#include <utils/gui/images/GUIIconSubSys.h>
+#include <utils/gui/images/GUITextureSubSys.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/globjects/GUIGLObjectPopupMenu.h>
 #include <netbuild/NBOwnTLDef.h>
 #include <netbuild/NBLoadedSUMOTLDef.h>
 #include <netbuild/NBAlgorithms.h>
-#include "GNELogo_TLS.cpp"
 #include "GNENet.h"
 #include "GNEEdge.h"
 #include "GNECrossing.h"
@@ -62,13 +61,6 @@
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
-
-
-// ===========================================================================
-// static members
-// ===========================================================================
-int GNEJunction::TLSDecalGlID = 0;
-bool GNEJunction::TLSDecalInitialized = false;
 
 // ===========================================================================
 // method definitions
@@ -213,20 +205,13 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         if (s.editMode == GNE_MODE_TLS && myNBNode.isTLControlled() && !myAmTLSSelected) {
-            // decorate in tls mode
-            if (!TLSDecalInitialized) {
-                FXImage* i = new FXGIFImage(myNet->getApp(), GNELogo_TLS, IMAGE_KEEP | IMAGE_SHMI | IMAGE_SHMP);
-                TLSDecalGlID = GUITexturesHelper::add(i);
-                TLSDecalInitialized = true;
-                delete i;
-            }
             glPushMatrix();
             Position pos = myNBNode.getPosition();
             glTranslated(pos.x(), pos.y(), getType() + 0.1);
             glColor3d(1, 1, 1);
             const SUMOReal halfWidth = 32 / s.scale;
             const SUMOReal halfHeight = 64 / s.scale;
-            GUITexturesHelper::drawTexturedBox(TLSDecalGlID, -halfWidth, -halfHeight, halfWidth, halfHeight);
+            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_TLS), -halfWidth, -halfHeight, halfWidth, halfHeight);
             glPopMatrix();
         }
         // draw crossings
@@ -247,7 +232,7 @@ GNEJunction::getBoundary() const {
 }
 
 
-NBNode* 
+NBNode*
 GNEJunction::getNBNode() const {
     return &myNBNode;
 }
@@ -308,18 +293,29 @@ GNEJunction::invalidateShape() {
 void
 GNEJunction::setLogicValid(bool valid, GNEUndoList* undoList, const std::string& status) {
     myHasValidLogic = valid;
+    // If new logic isn't valid
     if (!valid) {
+
+        // Check preconditions
         assert(undoList != 0);
         assert(undoList->hasCommandGroup());
+
+        // Registre a modification of status
         undoList->add(new GNEChange_Attribute(this, GNE_ATTR_MODIFICATION_STATUS, status));
+
         // allow edges to recompute their connections
         NBTurningDirectionsComputer::computeTurnDirectionsForNode(&myNBNode, false);
-        EdgeVector incoming = EdgeVector(myNBNode.getIncomingEdges());
+
+        // Obtain a copy of incoming edges
+        EdgeVector incoming = myNBNode.getIncomingEdges();
+
+        // Iterate over incoming edges
         for (EdgeVector::iterator it = incoming.begin(); it != incoming.end(); it++) {
             NBEdge* srcNBE = *it;
             NBEdge* turnEdge = srcNBE->getTurnDestination();
             GNEEdge* srcEdge = myNet->retrieveEdge(srcNBE->getID());
-            std::vector<NBEdge::Connection> connections = srcNBE->getConnections(); // make a copy!
+            // Make a copy of connections
+            std::vector<NBEdge::Connection> connections = srcNBE->getConnections();
             // delete in reverse so that undoing will add connections in the original order
             for (std::vector<NBEdge::Connection>::reverse_iterator con_it = connections.rbegin(); con_it != connections.rend(); con_it++) {
                 bool hasTurn = con_it->toEdge == turnEdge;
@@ -334,6 +330,7 @@ GNEJunction::setLogicValid(bool valid, GNEUndoList* undoList, const std::string&
             }
             undoList->add(new GNEChange_Attribute(srcEdge, GNE_ATTR_MODIFICATION_STATUS, status), true);
         }
+        // Invalidate traffic light
         invalidateTLS(undoList);
     } else {
         rebuildCrossings(false);
@@ -358,6 +355,7 @@ GNEJunction::invalidateTLS(GNEUndoList* undoList, const NBConnection& deletedCon
                 replacementDef = repl;
             } else {
                 replacementDef = new NBOwnTLDef(newID, tlDef->getOffset(), tlDef->getType());
+                replacementDef->setProgramID(tlDef->getProgramID());
             }
             undoList->add(new GNEChange_TLS(this, tlDef, false), true);
             undoList->add(new GNEChange_TLS(this, replacementDef, true, false, newID), true);
@@ -390,12 +388,6 @@ GNEJunction::removeFromCrossings(GNEEdge* edge, GNEUndoList* undoList) {
 bool
 GNEJunction::isLogicValid() {
     return myHasValidLogic;
-}
-
-
-void
-GNEJunction::resetDecal() {
-    TLSDecalInitialized = false;
 }
 
 

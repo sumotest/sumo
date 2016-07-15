@@ -56,12 +56,11 @@ class GNELane : public GNENetElement, public FXDelegator {
     FXDECLARE(GNELane)
 
 public:
-    /// @brief Definition of the additionals list
-    typedef std::list<GNEAdditional*> AdditionalList;
+    /// @brief Definition of the additionals vector
+    typedef std::vector<GNEAdditional*> AdditionalVector;
 
-    /// @brief Definition of the additionalSets list
-    typedef std::list<GNEAdditionalSet*> AdditionalSetList;
-
+    /// @brief Definition of the additionalSets vector
+    typedef std::vector<GNEAdditionalSet*> AdditionalSetVector;
 
     /**@brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
@@ -100,9 +99,7 @@ public:
     /// @brief multiplexes message to two targets
     long onDefault(FXObject*, FXSelector, void*);
 
-    /**@brief Returns underlying parent edge
-     * @return The underlying GNEEdge
-     */
+    /// @brief Returns underlying parent edge
     GNEEdge& getParentEdge();
 
     /**@brief Returns the boundary to which the view shall be centered in order to show the object
@@ -128,12 +125,12 @@ public:
     /// @brief returns the vector with the shape lengths
     const std::vector<SUMOReal>& getShapeLengths() const;
 
-    /// @brief returns the boundry (including lanes)
-    Boundary getBoundary() const;
-
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
+
+    /// @brief returns the boundry (including lanes)
+    Boundary getBoundary() const;
 
     /// @brief returns the index of the lane
     unsigned int getIndex() const;
@@ -170,26 +167,26 @@ public:
     /* @brief method for adding a reference of a additional element placed in this lane
      * @param[in] additional Pointer to additional element
      */
-    void addAdditional(GNEAdditional *additional);
+    void addAdditional(GNEAdditional* additional);
 
     /* @brief method for remove a reference of a additional element placed in this lane
      * @param[in] additional Pointer to additional element previously added
        @return true if additional element was sucesfully removed, flase in other case
      */
-    bool removeAdditional(GNEAdditional *additional);
+    bool removeAdditional(GNEAdditional* additional);
 
     /// @brief method to obtain a list of additional elements associated to this lane
     /// @return set with all additional elements
-    std::list<GNEAdditional*> getAdditionals();
+    const std::vector<GNEAdditional*>& getAdditionals() const;
 
     /// @brief add GNEAdditionalSet to this lane
-    bool addAdditionalSet(GNEAdditionalSet *additionalSet);
+    bool addAdditionalSet(GNEAdditionalSet* additionalSet);
 
     /// @brief remove GNEAdditionalSet from this lane
-    bool removeAdditionalSet(GNEAdditionalSet *additionalSet);
+    bool removeAdditionalSet(GNEAdditionalSet* additionalSet);
 
     /// @brief return list of additionalSets associated with this lane
-    const std::list<GNEAdditionalSet*> &getAdditionalSets();
+    const std::vector<GNEAdditionalSet*>& getAdditionalSets();
 
     /// @name inherited from GNEAttributeCarrier
     /// @{
@@ -239,10 +236,10 @@ protected:
     /// @}
 
     /// @brief list with the additonals vinculated with this lane
-    AdditionalList myAdditionals;
+    AdditionalVector myAdditionals;
 
     /// @brief list with the additonalSets vinculated with this lane
-    AdditionalSetList myAdditionalSets;
+    AdditionalSetVector myAdditionalSets;
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;

@@ -49,6 +49,7 @@
 #include "GNELane.h"
 #include "GNEAdditional.h"
 #include "GNEAdditionalSet.h"
+#include "GNEConnection.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -93,8 +94,9 @@ GNEEdge::~GNEEdge() {
         delete &myNBEdge;
     }
     // Remove all references to this edge in their additionals
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         (*i)->removeEdgeReference();
+    }
 }
 
 
@@ -113,6 +115,14 @@ GNEEdge::getBoundary() const {
 }
 
 
+Boundary
+GNEEdge::getCenteringBoundary() const {
+    Boundary b = getBoundary();
+    b.grow(20);
+    return b;
+}
+
+
 GUIGLObjectPopupMenu*
 GNEEdge::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
@@ -125,14 +135,6 @@ GNEEdge::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 }
 
 
-Boundary
-GNEEdge::getCenteringBoundary() const {
-    Boundary b = getBoundary();
-    b.grow(20);
-    return b;
-}
-
-
 GNEJunction*
 GNEEdge::getSource() const {
     return myNet->retrieveJunction(myNBEdge.getFromNode()->getID());
@@ -142,6 +144,27 @@ GNEEdge::getSource() const {
 GNEJunction*
 GNEEdge::getDest() const {
     return myNet->retrieveJunction(myNBEdge.getToNode()->getID());
+}
+
+
+std::vector<GNEConnection*> 
+GNEEdge::getGNEConnections() const {
+    std::vector<GNEConnection*> GNEConnections;
+    const std::vector<NBEdge::Connection> &connections = myNBEdge.getConnections();
+
+    for(std::vector<NBEdge::Connection>::const_iterator i = connections.begin(); i != connections.end(); i++) {
+        GNEConnections.push_back(myNet->retrieveConnection(i->fromLane, i->toEdge, i->toLane));
+    }
+
+    return GNEConnections;
+}
+
+
+std::vector<GNEConnection*> 
+GNEEdge::getGNEConnectionsFromLane(int laneIndex) const {
+    std::vector<GNEConnection*> GNEConnectionsFromLane;
+
+    return GNEConnectionsFromLane;
 }
 
 
@@ -363,7 +386,7 @@ GNEEdge::resetEndpoint(const Position& pos, GNEUndoList* undoList) {
 void
 GNEEdge::setGeometry(PositionVector geom, bool inner) {
     myNBEdge.setGeometry(geom, inner);
-    updateLaneGeometriesAndAdditionals();
+    updateLaneGeometries();
     getSource()->invalidateShape();
     getDest()->invalidateShape();
     myNet->refreshElement(this);
@@ -371,17 +394,23 @@ GNEEdge::setGeometry(PositionVector geom, bool inner) {
 
 
 void
-GNEEdge::updateLaneGeometriesAndAdditionals() {
+GNEEdge::updateLaneGeometries() {
     // Update geometry of lanes
-    for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i)
+    for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
         (*i)->updateGeometry();
+    }
     // Update geometry of additionals vinculated to this edge
-    for (AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i)
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) {
         (*i)->updateGeometry();
+    }
     // Update geometry of additionalSets vinculated to this edge
-    for (AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i)
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
         (*i)->updateGeometry();
-
+    }
+    // Update geometry of connections vinculated to this edge
+    for(connectionMap::iterator i = myConnections.begin(); i != myConnections.end(); ++i) {
+        i->second->updateGeometry();
+    }
 }
 
 
@@ -752,9 +781,6 @@ GNEEdge::addLane(GNELane* lane, const NBEdge::Lane& laneAttrs) {
     for (int i = 0; i < (int)myLanes.size(); ++i) {
         myLanes[i]->setIndex(i);
     }
-    // Add references to this lane in additionalSets
-    for(std::list<GNEAdditionalSet*>::const_iterator i = lane->getAdditionalSets().begin(); i != lane->getAdditionalSets().end(); i++)
-        (*i)->addLaneChild(lane);
     /* while technically correct, this looks ugly
     getSource()->invalidateShape();
     getDest()->invalidateShape();
@@ -771,9 +797,6 @@ GNEEdge::removeLane(GNELane* lane) {
     if (lane == 0) {
         lane = myLanes.back();
     }
-    // Remove additionalSets vinculated with this Lane
-    for(std::list<GNEAdditionalSet*>::const_iterator i = lane->getAdditionalSets().begin(); i != lane->getAdditionalSets().end(); i++)
-        (*i)->removeLaneChild(lane);
     myNBEdge.deleteLane(lane->getIndex());
     lane->decRef("GNEEdge::removeLane");
     myLanes.erase(myLanes.begin() + lane->getIndex());
@@ -792,11 +815,15 @@ GNEEdge::removeLane(GNELane* lane) {
     myNet->refreshElement(this);
 }
 
-
 void
 GNEEdge::addConnection(unsigned int fromLane, const std::string& toEdgeID, unsigned int toLane, bool mayPass) {
-    NBEdge* destEdge = myNet->retrieveEdge(toEdgeID)->getNBEdge();
-    myNBEdge.setConnection(fromLane, destEdge, toLane, NBEdge::L2L_USER, true, mayPass);
+    GNEEdge* destEdge = myNet->retrieveEdge(toEdgeID);
+    myNBEdge.setConnection(fromLane, destEdge->getNBEdge(), toLane, NBEdge::L2L_USER, true, mayPass);
+
+    /// @todo arreglar esto
+    GNEConnection *connection = new GNEConnection(*this, fromLane, *destEdge, toLane, mayPass, 0, 0, 0);
+    myNet->insertConnection(connection);
+
     myNet->refreshElement(this); // actually we only do this to force a redraw
 }
 
@@ -808,9 +835,36 @@ GNEEdge::removeConnection(unsigned int fromLane, const std::string& toEdgeID, un
         myNet->removeExplicitTurnaround(getMicrosimID());
     }
     myNBEdge.removeFromConnections(destEdge, fromLane, toLane);
+
+    GNEConnection *connectionToErase = myNet->retrieveConnection(fromLane, destEdge, toLane);
+    
+    if(connectionToErase) {
+        myNet->deleteConnection(connectionToErase);
+
+        delete connectionToErase;
+    }
+
     myNet->refreshElement(this); // actually we only do this to force a redraw
 }
 
+
+/*****
+void
+GNEEdge::addConnection(GNEConnection *connection) {
+    myNBEdge.setConnection(connection->getFromLaneIndex(), connection->getEdgeTo().getNBEdge(), connection->getToLaneIndex(), NBEdge::L2L_USER, true, connection->getPass());
+    myNet->refreshElement(this); // actually we only do this to force a redraw
+}
+
+
+void
+GNEEdge::removeConnection(GNEConnection *connection) {
+    if (connection->getEdgeTo().getNBEdge() == myNBEdge.getTurnDestination()) {
+        myNet->removeExplicitTurnaround(getMicrosimID());
+    }
+    myNBEdge.removeFromConnections(connection->getEdgeTo().getNBEdge(), connection->getFromLaneIndex(), connection->getToLaneIndex());
+    myNet->refreshElement(this); // actually we only do this to force a redraw
+}
+*****/
 
 void
 GNEEdge::setMicrosimID(const std::string& newID) {
@@ -822,62 +876,68 @@ GNEEdge::setMicrosimID(const std::string& newID) {
 
 
 bool
-GNEEdge::addAdditional(GNEAdditional *additional) {
+GNEEdge::addAdditional(GNEAdditional* additional) {
     // Check if additional already exists before insertion
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
-        if((*i) == additional)
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        if ((*i) == additional) {
             return false;
+        }
+    }
     // Insert it and retur true
     myAdditionals.push_back(additional);
     return true;
 }
-    
+
 
 bool
-GNEEdge::removeAdditional(GNEAdditional *additional) {
+GNEEdge::removeAdditional(GNEAdditional* additional) {
     // search additional and remove it
-    for(AdditionalList::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++)
-        if((*i) == additional) {
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        if ((*i) == additional) {
             myAdditionals.erase(i);
             return true;
         }
+    }
     // If additional wasn't found, return false
     return false;
 }
 
 
-std::list<GNEAdditional*>
-GNEEdge::getAdditionals() {
+const std::vector<GNEAdditional*>&
+GNEEdge::getAdditionals() const {
     return myAdditionals;
 }
 
 
 bool
-GNEEdge::addAdditionalSet(GNEAdditionalSet *additionalSet) {
+GNEEdge::addAdditionalSet(GNEAdditionalSet* additionalSet) {
     // Check if additionalSet already exists before insertion
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
-        if((*i) == additionalSet)
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
+        if ((*i) == additionalSet) {
             return false;
+        }
+    }
     // Insert it and retur true
     myAdditionalSets.push_back(additionalSet);
     return true;
 }
-    
+
 
 bool
-GNEEdge::removeAdditionalSet(GNEAdditionalSet *additionalSet) {
+GNEEdge::removeAdditionalSet(GNEAdditionalSet* additionalSet) {
     // search additionalSet and remove it
-    for(AdditionalSetList::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++)
-        if((*i) == additionalSet) {
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
+        if ((*i) == additionalSet) {
             myAdditionalSets.erase(i);
             return true;
         }
+    }
     // If additionalSet wasn't found, return false
     return false;
 }
 
 
-const std::list<GNEAdditionalSet*> &
+const std::vector<GNEAdditionalSet*>&
 GNEEdge::getAdditionalSets() {
     return myAdditionalSets;
 }
