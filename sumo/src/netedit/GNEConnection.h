@@ -45,7 +45,6 @@ class GNEEdge;
 class GNEConnection : public GNENetElement {
 public:
     /**@brief Constructor.
-     * @param[in] junction junction in which this connection is placed
      * @param[in] from The edge the vehicles leave
      * @param[in] fromLane index of the incoming lane
      * @param[in] to The edge the vehicles may reach when leaving "from"
@@ -54,9 +53,15 @@ public:
      * @param[in] keepClear if set to false, vehicles which pass this (lane-2-lane) connection) will not worry about blocking the intersection.
      * @param[in] contPos If set to a positive value, an internal junction will be built at this position (in m) from the start of the internal lane for this connection.
      * @param[in] uncontrolled if set to true, This connection will not be TLS-controlled despite its node being controlled.
-     * @param[in[ tlIndex tlIndex of connection (By default is invalid)
      */
-    GNEConnection(GNEEdge &from, int fromLane, GNEEdge &to, int toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled, int tlIndex = NBConnection::InvalidTlIndex);
+    GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled);
+
+    /** Constructor
+     * @param[in] from The edge the vehicles leave
+     * @param[in] connection NBEdge::Connection in which the rest of parameters are defined
+     * @param[in] uncontrolled if set to true, This connection will not be TLS-controlled despite its node being controlled.
+    **/
+    GNEConnection(GNEEdge *from, NBEdge::Connection connection, bool uncontrolled = false);
 
     /// @brief Destructor
     ~GNEConnection();
@@ -69,10 +74,10 @@ public:
     Boundary getBoundary() const;
 
     /// @brief get the name of the edge the vehicles leave
-    GNEEdge  &getEdgeFrom() const;
+    GNEEdge *getEdgeFrom() const;
 
     /// @brief get the name of the edge the vehicles may reach when leaving "from"
-    GNEEdge &getEdgeTo() const;
+    GNEEdge *getEdgeTo() const;
 
     /// @briefthe get lane of the incoming lane
     GNELane* getFromLane() const;
@@ -97,9 +102,6 @@ public:
 
     /// @briefif get parameter uncontrolled
     bool getUncontrolled();
-
-    /// @brief get NBConnection
-    const NBConnection &getNBConnection() const;
 
     /// @brief get Edge::NBConnection
     const NBEdge::Connection &getNBEdgeConnection() const;
@@ -173,31 +175,16 @@ public:
     /// @}
 
 protected:
-    /// @brief NBConnection associated with this connection
-    NBConnection myNBConnection;
-
     /// @brief NBEdge::Connection associated with this connection
     NBEdge::Connection myConnection;
 
     /// @brief incoming edge of this connection
-    GNEEdge &myFromEdge;
-
-    /// @brief outcoming edge of this connection
-    GNEEdge &myToEdge;
+    GNEEdge *myFromEdge;
 
     /// @brief junction in which this connection is placed
     NBNode *myJunction;
 
-    /// @brief if set, vehicles which pass this (lane-2-lane) connection) will not wait
-    bool myPass;
-
-    /// @brief if set to false, vehicles which pass this (lane-2-lane) connection) will not worry about blocking the intersection.
-    bool myKeepClear;
-
-    /// @brief if set to 0, no internal junction will be built for this connection. If set to a positive value, an internal junction will be built at this position (in m) from the start of the internal lane for this connection.
-    SUMOReal myContPos;
-
-    /// @brief if set to true, This connection will not be TLS-controlled despite its node being controlled.
+    /// @brief check if this connection is uncontrollec
     bool myUncontrolled;
 
     /// @brief the shape of the edge

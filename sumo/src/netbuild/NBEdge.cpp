@@ -2770,4 +2770,30 @@ NBEdge::getFinalLength() const {
     return result;
 }
 
+
+NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) : 
+    fromLane(fromLane_), 
+    toEdge(toEdge_), 
+    toLane(toLane_),
+    mayDefinitelyPass(false), 
+    keepClear(true), 
+    haveVia(false) {}
+
+
+NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, bool keepClear_, SUMOReal contPos_, bool haveVia_) : 
+    fromLane(fromLane_), 
+    toEdge(toEdge_), 
+    toLane(toLane_),
+    mayDefinitelyPass(mayDefinitelyPass_), 
+    keepClear(keepClear_), 
+    contPos(contPos_),
+    haveVia(haveVia_) {}
+
+NBEdge::Lane::Lane(NBEdge* e, const std::string& origID_) :
+    speed(e->getSpeed()), 
+    permissions(SVCAll), 
+    preferred(0),
+    endOffset(e->getEndOffset()), width(e->getLaneWidth()),
+    origID(origID_) {}
+
 /****************************************************************************/

@@ -49,6 +49,7 @@
 #include "GNEJunction.h"
 #include "GNEEdge.h"
 #include "GNELane.h"
+#include "GNENet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -65,20 +66,27 @@ int NUM_POINTS = 5;
 // method definitions
 // ===========================================================================
 
-GNEConnection::GNEConnection(GNEEdge &from, int fromLane, GNEEdge &to, int toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled, int tlIndex) :
-    GNENetElement(from.getNet(), from.getID() + "_" + toString(fromLane) + "_" + to.getID() + "_" + toString(toLane) , GLO_JUNCTION, SUMO_TAG_CONNECTION),
-    myNBConnection(from.getNBEdge(), fromLane, to.getNBEdge(), toLane, tlIndex), 
-    myConnection(fromLane, to.getNBEdge(), toLane),
+GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled) :
+    myConnection(fromLane, to->getNBEdge(), toLane, pass, keepClear, contPos, false),    
+    GNENetElement(from->getNet(), myConnection.id , GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
-    myToEdge(to),
-    myJunction(from.getNBEdge()->getToNode()),
-    myPass(pass),
-    myKeepClear(keepClear),
-    myContPos(contPos),
+    myJunction(from->getNBEdge()->getToNode()),
     myUncontrolled(uncontrolled) {
     // Update geometry
     updateGeometry();
 }
+
+
+GNEConnection::GNEConnection(GNEEdge *from, NBEdge::Connection connection, bool uncontrolled) :
+    GNENetElement(from->getNet(), connection.id, GLO_JUNCTION, SUMO_TAG_CONNECTION),
+    myConnection(connection),
+    myFromEdge(from),
+    myJunction(from->getNBEdge()->getToNode()),
+    myUncontrolled(uncontrolled) {
+    // Update geometry
+    updateGeometry();
+}
+
 
 GNEConnection::~GNEConnection() {}
 
@@ -86,7 +94,7 @@ GNEConnection::~GNEConnection() {}
 void
 GNEConnection::updateGeometry() {
     // Get shape of connection
-    myShape = myJunction->computeInternalLaneShape(myFromEdge.getNBEdge(), myConnection, NUM_POINTS);
+    myShape = myJunction->computeInternalLaneShape(myFromEdge->getNBEdge(), myConnection, NUM_POINTS);
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -107,27 +115,27 @@ GNEConnection::getBoundary() const {
 }
 
 
-GNEEdge&
+GNEEdge*
 GNEConnection::getEdgeFrom() const {
     return myFromEdge;
 }
 
 
-GNEEdge&
+GNEEdge*
 GNEConnection::getEdgeTo() const {
-    return myToEdge;
+    return myFromEdge->getNet()->retrieveEdge(myConnection.toEdge->getID());
 }
 
 
 GNELane* 
 GNEConnection::getFromLane() const {
-    return myFromEdge.getLanes().at(myConnection.fromLane);
+    return myFromEdge->getLanes().at(myConnection.fromLane);
 }
 
 
 GNELane* 
 GNEConnection::getToLane() const {
-    return myToEdge.getLanes().at(myConnection.toLane);
+    return myFromEdge->getNet()->retrieveEdge(myConnection.toEdge->getID())->getLanes().at(myConnection.toLane);
 }
 
 
@@ -145,19 +153,19 @@ GNEConnection::getToLaneIndex() const {
 
 bool
 GNEConnection::getPass() {
-    return myPass;
+    return myConnection.mayDefinitelyPass;
 }
 
 
 bool
 GNEConnection::getKeepClear() {
-    return myKeepClear;
+    return myConnection.keepClear;
 }
 
 
 SUMOReal
 GNEConnection::getContPos() {
-    return myContPos;
+    return myConnection.contPos;
 }
 
 
@@ -167,32 +175,27 @@ GNEConnection::getUncontrolled() {
 }
 
 
-const NBConnection& 
-GNEConnection::getNBConnection() const {
-    return myNBConnection;
-}
-
-
 const NBEdge::Connection&
 GNEConnection::getNBEdgeConnection() const {
     return myConnection;
 }
 
+
 void
 GNEConnection::setPass(bool pass) {
-    myPass = pass;
+    myConnection.mayDefinitelyPass = pass;
 }
 
 
 void
 GNEConnection::setKeepClear(bool keepClear) {
-    myKeepClear = keepClear;
+    myConnection.keepClear = keepClear;
 }
 
 
 void
 GNEConnection::setContPos(SUMOReal contPos) {
-    myContPos = contPos;
+    myConnection.contPos = contPos;
 }
 
 

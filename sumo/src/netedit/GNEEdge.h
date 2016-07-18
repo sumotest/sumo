@@ -39,6 +39,7 @@
 class GNENet;
 class GNEJunction;
 class GNELane;
+class GNEConnection;    // PABLO #2067
 class GNEAdditional;
 class GNEAdditionalSet;
 
@@ -58,13 +59,16 @@ class GNEEdge : public GNENetElement {
     friend class GNEChange_Connection;
 
 public:
-    /// @brief Definition of the lane's positions vector
+    /// @brief Definition of the lane's vector
     typedef std::vector<GNELane*> LaneVector;
 
-    /// @brief Definition of the additionals list
+    /// @brief Definition of the connection's vector        // PABLO #2067
+    typedef std::vector<GNEConnection*> ConnectionVector;   // PABLO #2067
+
+    /// @brief Definition of the additionals vector
     typedef std::vector<GNEAdditional*> AdditionalVector;
 
-    /// @brief Definition of the additionalSets list
+    /// @brief Definition of the additionalSets vector
     typedef std::vector<GNEAdditionalSet*> AdditionalSetVector;
 
     /**@brief Constructor.
@@ -243,8 +247,11 @@ protected:
     /// @brief restore point for undo
     PositionVector myOrigShape;
 
-    /// @brief List of this edges lanes
+    /// @brief vectgor with the lanes of this edge
     LaneVector myLanes;
+
+    /// @brief vector with the connections of this edge     // PABLO #2067
+    ConnectionVector myGNEConnections;                      // PABLO #2067
 
     /// @brief whether we are responsible for deleting myNBNode
     bool myAmResponsible;
