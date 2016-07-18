@@ -62,6 +62,7 @@ public:
     /// @brief Definition of the additionalSets vector
     typedef std::vector<GNEAdditionalSet*> AdditionalSetVector;
 
+
     /**@brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
      * @param[in] the edge this lane belongs to
@@ -125,12 +126,12 @@ public:
     /// @brief returns the vector with the shape lengths
     const std::vector<SUMOReal>& getShapeLengths() const;
 
+    /// @brief returns the boundry (including lanes)
+    Boundary getBoundary() const;
+
     /// @brief update pre-computed geometry information
     //  @note: must be called when geometry changes (i.e. junction moved)
     void updateGeometry();
-
-    /// @brief returns the boundry (including lanes)
-    Boundary getBoundary() const;
 
     /// @brief returns the index of the lane
     unsigned int getIndex() const;

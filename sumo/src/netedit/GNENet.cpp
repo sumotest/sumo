@@ -74,7 +74,6 @@
 #include "GNEAdditionalSet.h"
 #include "GNEStoppingPlace.h"
 #include "GNEDetector.h"
-#include "GNEConnection.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -628,19 +627,6 @@ GNENet::retrieveEdge(const std::string& id, bool failHard) {
 }
 
 
-GNEConnection*
-GNENet::retrieveConnection(unsigned int fromLane, NBEdge *toEdge, unsigned int toLane) const {
-    /// @todo optimize
-    for(GNEConnections::const_iterator i = myConnections.begin(); i != myConnections.end(); i++) {
-        if(((*i)->getNBEdgeConnection().fromLane == fromLane) &&
-           ((*i)->getNBEdgeConnection().toEdge == toEdge) &&
-           ((*i)->getNBEdgeConnection().toLane == toLane)) {
-            return (*i);
-        }
-    }
-}
-
-
 std::vector<GNEEdge*>
 GNENet::retrieveEdges(bool onlySelected) {
     std::vector<GNEEdge*> result;
@@ -1172,16 +1158,6 @@ GNENet::insertEdge(GNEEdge* edge) {
 }
 
 
-void 
-GNENet::insertConnection(GNEConnection* connection) {
-    connection->incRef("GNENet::registerConnection");
-    myConnections.push_back(connection);
-    myGrid.add(connection->getBoundary());
-    myGrid.addAdditionalGLObject(connection);
-    update();
-}
-
-
 GNEJunction*
 GNENet::registerJunction(GNEJunction* junction) {
     junction->incRef("GNENet::registerJunction");
@@ -1224,6 +1200,7 @@ GNENet::deleteSingleJunction(GNEJunction* junction) {
 
 void
 GNENet::deleteSingleEdge(GNEEdge* edge) {
+
     myGrid.removeAdditionalGLObject(edge);
     myEdges.erase(edge->getMicrosimID());
     myNetBuilder->getEdgeCont().extract(
@@ -1231,16 +1208,6 @@ GNENet::deleteSingleEdge(GNEEdge* edge) {
     edge->decRef("GNENet::deleteSingleEdge");
     edge->setResponsible(true);
     // invalidate junction logic
-    update();
-}
-
-
-void
-GNENet::deleteConnection(GNEConnection* connection) {
-    myGrid.removeAdditionalGLObject(connection);
-
-    myEdges.erase(connection->getMicrosimID());
-    connection->decRef("GNENet::deleteConnection");
     update();
 }
 
@@ -1277,7 +1244,7 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
     myNetBuilder->compute(oc, liveExplicitTurnarounds, false);
     // update precomputed lane geometries
     for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); it++) {
-        it->second->updateLaneGeometries();
+        it->second->updateLaneGeometriesAndAdditionals();
     }
     for (GNEJunctions::const_iterator it = myJunctions.begin(); it != myJunctions.end(); it++) {
         it->second->setLogicValid(true);
