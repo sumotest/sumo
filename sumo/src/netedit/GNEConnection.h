@@ -181,8 +181,9 @@ protected:
     /// @brief incoming edge of this connection
     GNEEdge *myFromEdge;
 
-    /// @brief junction in which this connection is placed
-    NBNode *myJunction;
+/// @brief junction in which this connection is placed
+NBNode *myJunction;
+/// REMOVE IT!!!!
 
     /// @brief check if this connection is uncontrollec
     bool myUncontrolled;

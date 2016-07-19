@@ -50,6 +50,8 @@
 #include "GNEEdge.h"
 #include "GNELane.h"
 #include "GNENet.h"
+#include "GNEChange_Attribute.h"
+#include "GNEUndoList.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -68,7 +70,7 @@ int NUM_POINTS = 5;
 
 GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled) :
     myConnection(fromLane, to->getNBEdge(), toLane, pass, keepClear, contPos, false),    
-    GNENetElement(from->getNet(), myConnection.id , GLO_JUNCTION, SUMO_TAG_CONNECTION),
+    GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(fromLane) + to->getID() + toString(toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
     myJunction(from->getNBEdge()->getToNode()),
     myUncontrolled(uncontrolled) {
@@ -78,8 +80,8 @@ GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLan
 
 
 GNEConnection::GNEConnection(GNEEdge *from, NBEdge::Connection connection, bool uncontrolled) :
-    GNENetElement(from->getNet(), connection.id, GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myConnection(connection),
+    GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(connection.fromLane) + connection.toEdge->getID() + toString(connection.toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
     myJunction(from->getNBEdge()->getToNode()),
     myUncontrolled(uncontrolled) {
@@ -95,6 +97,7 @@ void
 GNEConnection::updateGeometry() {
     // Get shape of connection
     myShape = myJunction->computeInternalLaneShape(myFromEdge->getNBEdge(), myConnection, NUM_POINTS);
+    
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -249,23 +252,57 @@ GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
 
 std::string
 GNEConnection::getAttribute(SumoXMLAttr key) const {
-    // Currently ignored before implementation to avoid warnings
-    UNUSED_PARAMETER(key);
-    return "";
+    switch (key) {
+        case SUMO_ATTR_ID:
+            return getMicrosimID();
+        case SUMO_ATTR_FROM:
+            return myFromEdge->getID();
+        case SUMO_ATTR_TO:
+            return myConnection.toEdge->getID();
+        case SUMO_ATTR_FROM_LANE:
+            return toString(myConnection.toLane);
+        case SUMO_ATTR_TO_LANE:
+            return toString(myConnection.toLane);
+        case SUMO_ATTR_PASS:
+            return toString(myConnection.mayDefinitelyPass);
+        case SUMO_ATTR_KEEP_CLEAR:
+            return toString(myConnection.keepClear);
+        case SUMO_ATTR_CONTPOS:
+            return toString(myConnection.contPos);
+        case SUMO_ATTR_UNCONTROLLED:
+            return toString(myUncontrolled);
+        default:
+            throw InvalidArgument("connection attribute '" + toString(key) + "' not allowed");
+    }
 }
 
 
 void
 GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
-    // Currently ignored before implementation to avoid warnings
-    UNUSED_PARAMETER(key);
-    UNUSED_PARAMETER(value);
-    UNUSED_PARAMETER(undoList);
+    switch (key) {
+        case SUMO_ATTR_ID:
+            throw InvalidArgument("modifying connection attribute '" + toString(key) + "' not allowed");
+        case SUMO_ATTR_FROM:
+        case SUMO_ATTR_TO:
+        case SUMO_ATTR_FROM_LANE:
+        case SUMO_ATTR_TO_LANE:
+        case SUMO_ATTR_PASS:
+        case SUMO_ATTR_KEEP_CLEAR:
+        case SUMO_ATTR_CONTPOS:
+        case SUMO_ATTR_UNCONTROLLED:
+            // no special handling
+            undoList->p_add(new GNEChange_Attribute(this, key, value));
+            break;
+        default:
+            throw InvalidArgument("connection attribute '" + toString(key) + "' not allowed");
+    }
 }
 
 
 bool
 GNEConnection::isValid(SumoXMLAttr key, const std::string& value) {
+
+
     // Currently ignored before implementation to avoid warnings
     UNUSED_PARAMETER(key);
     UNUSED_PARAMETER(value);
@@ -275,6 +312,8 @@ GNEConnection::isValid(SumoXMLAttr key, const std::string& value) {
 
 void
 GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value) {
+
+
     // Currently ignored before implementation to avoid warnings
     UNUSED_PARAMETER(key);
     UNUSED_PARAMETER(value);
