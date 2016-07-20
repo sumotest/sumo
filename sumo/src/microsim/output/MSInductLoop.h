@@ -200,7 +200,7 @@ public:
      * @return The number of vehicles that have passed the detector
      * @todo recheck (especially if more than one vehicle has passed)
      */
-    unsigned int getCurrentPassedNumber() const;
+    int getCurrentPassedNumber() const;
 
 
     /** @brief Returns the ids of vehicles that have passed the detector
@@ -350,7 +350,7 @@ protected:
     SUMOReal myLastOccupancy;
 
     /// @brief The number of dismissed vehicles
-    unsigned myDismissedVehicleNumber;
+    int myDismissedVehicleNumber;
 
 
     /// @brief Type of myVehicleDataCont.

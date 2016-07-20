@@ -56,7 +56,9 @@ GUIVisualizationSettings::GUIVisualizationSettings()
       internalEdgeName(false, 40, RGBColor(128, 64, 0, 255)),
       cwaEdgeName(false, 50, RGBColor::MAGENTA),
       streetName(false, 55, RGBColor::YELLOW),
-      hideConnectors(false), laneWidthExaggeration(1),
+      hideConnectors(false), 
+      laneWidthExaggeration(1),
+      laneMinSize(0),
       vehicleQuality(0), showBlinker(true),
       drawLaneChangePreference(false), drawMinGap(false),
       showBTRange(false), vehicleSize(1),
@@ -74,6 +76,7 @@ GUIVisualizationSettings::GUIVisualizationSettings()
       showLane2Lane(false),
       drawJunctionShape(true),
       drawCrossingsAndWalkingareas(true),
+      junctionSize(1),
       addMode(0),
       addSize(1),
       addName(false, 50, RGBColor(255, 0, 128, 255)),
@@ -595,7 +598,7 @@ GUIVisualizationSettings::GUIVisualizationSettings()
 }
 
 
-size_t
+int
 GUIVisualizationSettings::getLaneEdgeMode() const {
     if (UseMesoSim) {
         return edgeColorer.getActive();
@@ -604,7 +607,7 @@ GUIVisualizationSettings::getLaneEdgeMode() const {
 }
 
 
-size_t
+int
 GUIVisualizationSettings::getLaneEdgeScaleMode() const {
     if (UseMesoSim) {
         return edgeScaler.getActive();
@@ -653,6 +656,7 @@ GUIVisualizationSettings::save(OutputDevice& dev) const {
     dev.writeAttr("showRails", showRails);
     dev.writeAttr("hideConnectors", hideConnectors);
     dev.writeAttr("widthExaggeration", laneWidthExaggeration);
+    dev.writeAttr("minSize", laneMinSize);
     dev.lf();
     dev << "               ";
     edgeName.print(dev, "edgeName");
@@ -721,6 +725,7 @@ GUIVisualizationSettings::save(OutputDevice& dev) const {
     dev.writeAttr("showLane2Lane", showLane2Lane);
     dev.writeAttr("drawShape", drawJunctionShape);
     dev.writeAttr("drawCrossingsAndWalkingareas", drawCrossingsAndWalkingareas);
+    junctionSize.print(dev, "junction");
     junctionColorer.save(dev);
     dev.closeTag();
     // additionals
@@ -810,6 +815,9 @@ GUIVisualizationSettings::operator==(const GUIVisualizationSettings& v2) {
     if (laneWidthExaggeration != v2.laneWidthExaggeration) {
         return false;
     }
+    if (laneMinSize != v2.laneMinSize) {
+        return false;
+    }
     if (!(vehicleColorer == v2.vehicleColorer)) {
         return false;
     }
@@ -883,6 +891,9 @@ GUIVisualizationSettings::operator==(const GUIVisualizationSettings& v2) {
     }
 
     if (drawCrossingsAndWalkingareas != v2.drawCrossingsAndWalkingareas) {
+        return false;
+    }
+    if (junctionSize != v2.junctionSize) {
         return false;
     }
 

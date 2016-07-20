@@ -166,6 +166,8 @@ public:
     bool hideConnectors;
     /// @brief The lane exaggeration (upscale thickness)
     float laneWidthExaggeration;
+    /// @brief The minimum visual lane width for drawing
+    float laneMinSize;
     //@}
 
 
@@ -232,6 +234,8 @@ public:
     bool drawJunctionShape;
     /// @brief whether crosings and walkingareas shall be drawn
     bool drawCrossingsAndWalkingareas;
+    // Setting bundles for controling the size of the drawn junction
+    GUIVisualizationSizeSettings junctionSize;
     //@}
 
 
@@ -295,12 +299,12 @@ public:
     /** @brief Returns the number of the active lane (edge) coloring schme
      * @return number of the active scheme
      */
-    size_t getLaneEdgeMode() const;
+    int getLaneEdgeMode() const;
 
     /** @brief Returns the number of the active lane (edge) scaling schme
      * @return number of the active scheme
      */
-    size_t getLaneEdgeScaleMode() const;
+    int getLaneEdgeScaleMode() const;
 
     /** @brief Returns the current lane (edge) coloring schme
      * @return current scheme

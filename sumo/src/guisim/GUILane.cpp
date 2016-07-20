@@ -69,14 +69,15 @@
 #endif // CHECK_MEMORY_LEAKS
 
 //#define GUILane_DEBUG_DRAW_WALKING_AREA_VERTICES
+//#define GUILane_DEBUG_DRAW_VERTICES
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
 GUILane::GUILane(const std::string& id, SUMOReal maxSpeed, SUMOReal length,
-                 MSEdge* const edge, unsigned int numericalID,
+                 MSEdge* const edge, int numericalID,
                  const PositionVector& shape, SUMOReal width,
-                 SVCPermissions permissions, unsigned int index) :
+                 SVCPermissions permissions, int index) :
     MSLane(id, maxSpeed, length, edge, numericalID, shape, width, permissions, index),
     GUIGlObject(GLO_LANE, id),
     myAmClosed(false) {
@@ -192,7 +193,7 @@ GUILane::resetPartialOccupation(MSVehicle* v) {
 // ------ Drawing methods ------
 void
 GUILane::drawLinkNo(const GUIVisualizationSettings& s) const {
-    unsigned int noLinks = (unsigned int)myLinks.size();
+    int noLinks = (int)myLinks.size();
     if (noLinks == 0) {
         return;
     }
@@ -220,7 +221,7 @@ GUILane::drawLinkNo(const GUIVisualizationSettings& s) const {
 
 void
 GUILane::drawTLSLinkNo(const GUIVisualizationSettings& s, const GUINet& net) const {
-    unsigned int noLinks = (unsigned int)myLinks.size();
+    int noLinks = (int)myLinks.size();
     if (noLinks == 0) {
         return;
     }
@@ -267,7 +268,7 @@ GUILane::drawTextAtEnd(const std::string& text, const PositionVector& shape, SUM
 
 void
 GUILane::drawLinkRules(const GUIVisualizationSettings& s, const GUINet& net) const {
-    unsigned int noLinks = (unsigned int)myLinks.size();
+    int noLinks = (int)myLinks.size();
     if (noLinks == 0) {
         drawLinkRule(s, net, 0, getShape(), 0, 0);
         return;
@@ -285,7 +286,7 @@ GUILane::drawLinkRules(const GUIVisualizationSettings& s, const GUINet& net) con
     SUMOReal w = myWidth / (SUMOReal) noLinks;
     SUMOReal x1 = 0;
     const bool lefthand = MSNet::getInstance()->lefthand();
-    for (unsigned int i = 0; i < noLinks; ++i) {
+    for (int i = 0; i < noLinks; ++i) {
         SUMOReal x2 = x1 + w;
         drawLinkRule(s, net, myLinks[lefthand ? noLinks - 1 - i : i], getShape(), x1, x2);
         x1 = x2;
@@ -477,7 +478,7 @@ GUILane::drawGL(const GUIVisualizationSettings& s) const {
     // recognize full transparency and simply don't draw
     GLfloat color[4];
     glGetFloatv(GL_CURRENT_COLOR, color);
-    if (color[3] != 0) {
+    if (color[3] != 0 && s.scale * exaggeration > s.laneMinSize) {
         // draw lane
         // check whether it is not too small
         if (s.scale * exaggeration < 1.) {
@@ -541,6 +542,9 @@ GUILane::drawGL(const GUIVisualizationSettings& s) const {
                     GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, halfWidth * exaggeration, cornerDetail, offset);
                 }
             }
+#ifdef GUILane_DEBUG_DRAW_VERTICES
+            GLHelper::debugVertices(myShape, 80 / s.scale);
+#endif
             glPopMatrix();
             // draw ROWs (not for inner lanes)
             if ((!isInternal || isCrossing) && drawDetails) {
@@ -829,7 +833,7 @@ GUILane::setColor(const GUIVisualizationSettings& s) const {
 
 
 bool
-GUILane::setFunctionalColor(size_t activeScheme) const {
+GUILane::setFunctionalColor(int activeScheme) const {
     switch (activeScheme) {
         case 18: {
             SUMOReal hue = GeomHelper::naviDegree(myShape.beginEndAngle()); // [0-360]
@@ -844,7 +848,7 @@ GUILane::setFunctionalColor(size_t activeScheme) const {
 
 bool
 GUILane::setMultiColor(const GUIColorer& c) const {
-    const size_t activeScheme = c.getActive();
+    const int activeScheme = c.getActive();
     myShapeColors.clear();
     switch (activeScheme) {
         case 22: // color by height at segment start
@@ -865,7 +869,7 @@ GUILane::setMultiColor(const GUIColorer& c) const {
 
 
 SUMOReal
-GUILane::getColorValue(size_t activeScheme) const {
+GUILane::getColorValue(int activeScheme) const {
     switch (activeScheme) {
         case 0:
             switch (myPermissions) {
@@ -966,7 +970,7 @@ GUILane::getColorValue(size_t activeScheme) const {
 
 
 SUMOReal
-GUILane::getScaleValue(size_t activeScheme) const {
+GUILane::getScaleValue(int activeScheme) const {
     switch (activeScheme) {
         case 0:
             return 0;

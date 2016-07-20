@@ -138,7 +138,7 @@ GUISUMOAbstractView::GUISUMOAbstractView(FXComposite* p, GUIMainWindow& app, GUI
 
 GUISUMOAbstractView::~GUISUMOAbstractView() {
     gSchemeStorage.setDefault(myVisualizationSettings->name);
-    gSchemeStorage.saveViewport(myChanger->getXPos(), myChanger->getYPos(), myChanger->getZoom());
+    gSchemeStorage.saveViewport(myChanger->getXPos(), myChanger->getYPos(), myChanger->getZPos());
     delete myPopup;
     delete myChanger;
     delete myViewportChooser;
@@ -231,11 +231,11 @@ GUISUMOAbstractView::paintGL() {
         return;
     }
 
-    if (getTrackedID() > 0) {
+    if (getTrackedID() != GUIGlObject::INVALID_ID) {
         centerTo(getTrackedID(), false);
     }
 
-    unsigned int id = 0;
+    GUIGlID id = GUIGlObject::INVALID_ID;
     if (myUseToolTips) {
         id = getObjectUnderCursor();
     }
@@ -271,7 +271,7 @@ GUISUMOAbstractView::paintGL() {
     }
     // check whether the select mode /tooltips)
     //  shall be computed, too
-    if (myUseToolTips && id != 0) {
+    if (myUseToolTips && id != GUIGlObject::INVALID_ID) {
         showToolTipFor(id);
     }
     swapBuffers();
@@ -292,7 +292,7 @@ GUISUMOAbstractView::getObjectAtPosition(Position pos) {
     selection.grow(SENSITIVITY);
     const std::vector<GUIGlID> ids = getObjectsInBoundary(selection);
     // Interpret results
-    unsigned int idMax = 0;
+    int idMax = 0;
     SUMOReal maxLayer = -std::numeric_limits<SUMOReal>::max();
     for (std::vector<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         GUIGlID id = *it;
@@ -397,7 +397,7 @@ GUISUMOAbstractView::getObjectsInBoundary(const Boundary& bound) {
 
 
 void
-GUISUMOAbstractView::showToolTipFor(unsigned int id) {
+GUISUMOAbstractView::showToolTipFor(const GUIGlID id) {
     if (id != 0) {
         GUIGlObject* object = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
         if (object != 0) {
@@ -445,17 +445,17 @@ GUISUMOAbstractView::paintGLGrid() {
 void
 GUISUMOAbstractView::displayLegend() {
     // compute the scale bar length
-    size_t length = 1;
+    int length = 1;
     const std::string text("10000000000");
-    size_t noDigits = 1;
-    size_t pixelSize = (size_t) m2p((SUMOReal) length);
+    int noDigits = 1;
+    int pixelSize = (int) m2p((SUMOReal) length);
     while (pixelSize <= 20) {
         length *= 10;
         noDigits++;
         if (noDigits > text.length()) {
             return;
         }
-        pixelSize = (size_t) m2p((SUMOReal) length);
+        pixelSize = (int) m2p((SUMOReal) length);
     }
     SUMOReal lineWidth = 1.0;
     glLineWidth((SUMOReal) lineWidth);
@@ -621,7 +621,7 @@ GUISUMOAbstractView::onLeftBtnPress(FXObject*, FXSelector , void* data) {
     if ((e->state & CONTROLMASK) != 0) {
         // try to get the object-id if so
         if (makeCurrent()) {
-            unsigned int id = getObjectUnderCursor();
+            int id = getObjectUnderCursor();
             if (id != 0) {
                 gSelected.toggleSelection(id);
             }
@@ -731,7 +731,7 @@ GUISUMOAbstractView::openObjectDialog() {
     }
     if (makeCurrent()) {
         // initialise the select mode
-        unsigned int id = getObjectUnderCursor();
+        int id = getObjectUnderCursor();
         GUIGlObject* o = 0;
         if (id != 0) {
             o = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);
@@ -893,8 +893,8 @@ GUISUMOAbstractView::makeSnapshot(const std::string& destFile) {
         makeNonCurrent();
         update();
         // mirror
-        size_t mwidth = getWidth();
-        size_t mheight = getHeight();
+        int mwidth = getWidth();
+        int mheight = getHeight();
         FXColor* paa = buf;
         FXColor* pbb = buf + mwidth * (mheight - 1);
         do {
@@ -986,16 +986,24 @@ GUISUMOAbstractView::getViewportEditor() {
 void
 GUISUMOAbstractView::showViewportEditor() {
     getViewportEditor(); // make sure it exists;
-    Position p(myChanger->getXPos(), myChanger->getYPos(), myChanger->getZoom());
+    Position p(myChanger->getXPos(), myChanger->getYPos(), myChanger->getZPos());
     myViewportChooser->setOldValues(p, Position::INVALID);
     myViewportChooser->show();
 }
 
 
 void
-GUISUMOAbstractView::setViewport(const Position& lookFrom, const Position& /* lookAt */) {
-    myChanger->setViewport(lookFrom.z(), lookFrom.x(), lookFrom.y());
+GUISUMOAbstractView::setViewportFromTo(const Position& lookFrom, const Position& /* lookAt */) {
+    myChanger->setViewportFrom(lookFrom.x(), lookFrom.y(), lookFrom.z());
     update();
+}
+
+
+void 
+GUISUMOAbstractView::copyViewportTo(GUISUMOAbstractView* view) {
+    // look straight down
+    view->setViewportFromTo(Position(myChanger->getXPos(), myChanger->getYPos(), myChanger->getZPos()), 
+            Position(myChanger->getXPos(), myChanger->getYPos(), 0));
 }
 
 
@@ -1051,9 +1059,9 @@ GUISUMOAbstractView::stopTrack() {
 }
 
 
-int
+GUIGlID
 GUISUMOAbstractView::getTrackedID() const {
-    return -1;
+    return GUIGlObject::INVALID_ID;
 }
 
 
@@ -1200,7 +1208,7 @@ GUISUMOAbstractView::addAdditionalGLVisualisation(const GUIGlObject* const which
 
 bool
 GUISUMOAbstractView::removeAdditionalGLVisualisation(const GUIGlObject* const which) {
-    if (getTrackedID() == static_cast<int>(which->getGlID())) {
+    if (getTrackedID() == which->getGlID()) {
         stopTrack();
     }
     if (myAdditionallyDrawn.find(which) == myAdditionallyDrawn.end()) {
