@@ -120,35 +120,27 @@ public:
      * @brief An (internal) definition of a single lane of an edge
      */
     struct Lane {
-        /** @brief Constructor
-         * @param[in] e parent edge of lane
-         * @param[in] origID origin id
-         */
-        Lane(NBEdge* e, const std::string& origID_);
-
+        Lane(NBEdge* e, const std::string& _origID) :
+            speed(e->getSpeed()), permissions(SVCAll), preferred(0),
+            endOffset(e->getEndOffset()), width(e->getLaneWidth()),
+            origID(_origID) {}
         /// @brief The lane's shape
         PositionVector shape;
-
         /// @brief The speed allowed on this lane
         SUMOReal speed;
-
         /// @brief List of vehicle types that are allowed on this lane
         SVCPermissions permissions;
-
         /// @brief List of vehicle types that are preferred on this lane
         SVCPermissions preferred;
-
         /// @brief This lane's offset to the intersection begin
         SUMOReal endOffset;
-
         /// @brief This lane's width
         SUMOReal width;
-
         /// @brief An original ID, if given
         std::string origID;
-
         /// @brief An opposite lane ID, if given
         std::string oppositeID;
+
     };
 
 
@@ -161,101 +153,65 @@ public:
          * @param[in] toEdge_ The edge the connections yields in
          * @param[in] toLane_ The lane the connections yields in
          */
-        Connection(int fromLane_, NBEdge* toEdge_, int toLane_);
+        Connection(int fromLane_, NBEdge* toEdge_, int toLane_)
+            : fromLane(fromLane_), toEdge(toEdge_), toLane(toLane_),
+              mayDefinitelyPass(false), keepClear(true), haveVia(false) { }
 
-        /** @brief Constructor
-         * @param[in] fromLane_ The lane the connections starts at
-         * @param[in] toEdge_ The edge the connections yields in
-         * @param[in] toLane_ The lane the connections yields in
-         * @param[in] mayDefinitelyPass_ Information about being definitely free to drive (on-ramps)
-         * @param[in] keepClear_ whether the junction must be kept clear when using this connection
-         * @param[in] contPos_ custom position for internal junction on this connection
-         * @param[in] haveVia_
-         */
-        Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, bool keepClear_, SUMOReal contPos_, bool haveVia_ = false);
+        ~Connection() { }
 
-        /// @brief destructor
-        ~Connection() {}
-
-        /// @brief get internal lane ID
-        std::string getInternalLaneID() const;
 
         /// @brief The lane the connections starts at
         int fromLane;
-
         /// @brief The edge the connections yields in
         NBEdge* toEdge;
-
         /// @brief The lane the connections yields in
         int toLane;
-
         /// @brief The id of the traffic light that controls this connection
         std::string tlID;
-
         /// @brief The index of this connection within the controlling traffic light
         int tlLinkNo;
-
         /// @brief Information about being definitely free to drive (on-ramps)
         bool mayDefinitelyPass;
-
         /// @brief whether the junction must be kept clear when using this connection
         bool keepClear;
-
         /// @brief custom position for internal junction on this connection
         SUMOReal contPos;
 
-        /// @brief origen id
+
         std::string origID;
 
-        /// @brief id of connection
         std::string id;
-
-        /// @brief shape of connection
         PositionVector shape;
-
-        /// @brief maximum velocity
         SUMOReal vmax;
 
-        /// @brief check if connection has a via
         bool haveVia;
-
-        /// @brief id of connection's via
         std::string viaID;
-
-        /// @brief maximun velocity of via
         SUMOReal viaVmax;
-
-        /// @brief shape of via
         PositionVector viaShape;
 
-        /// @brief FOE internal links
-        std::vector<unsigned int> foeInternalLinks;
-
-        /// @brief FOE incomings lanes
+        std::vector<int> foeInternalLinks;
         std::string foeIncomingLanes;
 
         /// @brief The lane index of this internal lane within the internal edge
-        unsigned int internalLaneIndex;
+        int internalLaneIndex;
+
+        std::string getInternalLaneID() const;
+
     };
 
     /// @brief unspecified lane width
     static const SUMOReal UNSPECIFIED_WIDTH;
-
     /// @brief unspecified lane offset
     static const SUMOReal UNSPECIFIED_OFFSET;
-
     /// @brief unspecified lane speed
     static const SUMOReal UNSPECIFIED_SPEED;
-
     /// @brief unspecified internal junction position
     static const SUMOReal UNSPECIFIED_CONTPOS;
 
     /// @brief no length override given
     static const SUMOReal UNSPECIFIED_LOADED_LENGTH;
-
     /// @brief unspecified signal offset
     static const SUMOReal UNSPECIFIED_SIGNAL_OFFSET;
-
     /// @brief the distance at which to take the default angle
     static const SUMOReal ANGLE_LOOKAHEAD;
 
@@ -280,7 +236,7 @@ public:
      */
     NBEdge(const std::string& id,
            NBNode* from, NBNode* to, std::string type,
-           SUMOReal speed, unsigned int nolanes, int priority,
+           SUMOReal speed, int nolanes, int priority,
            SUMOReal width, SUMOReal offset,
            const std::string& streetName = "",
            LaneSpreadFunction spread = LANESPREAD_RIGHT);
@@ -309,7 +265,7 @@ public:
      */
     NBEdge(const std::string& id,
            NBNode* from, NBNode* to, std::string type,
-           SUMOReal speed, unsigned int nolanes, int priority,
+           SUMOReal speed, int nolanes, int priority,
            SUMOReal width, SUMOReal offset,
            PositionVector geom,
            const std::string& streetName = "",
@@ -356,7 +312,7 @@ public:
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
      */
     void reinit(NBNode* from, NBNode* to, const std::string& type,
-                SUMOReal speed, unsigned int nolanes, int priority,
+                SUMOReal speed, int nolanes, int priority,
                 PositionVector geom, SUMOReal width, SUMOReal offset,
                 const std::string& streetName,
                 LaneSpreadFunction spread = LANESPREAD_RIGHT,
@@ -653,7 +609,7 @@ public:
     /** @brief Returns the shape of the nth lane
      * @return The shape of the lane given by its index (counter from right)
      */
-    const PositionVector& getLaneShape(unsigned int i) const;
+    const PositionVector& getLaneShape(int i) const;
 
 
     /** @brief (Re)sets how the lanes lateral offset shall be computed
@@ -736,8 +692,8 @@ public:
      * @see setConnection
      * @todo Check difference between "setConnection" and "addLane2LaneConnection"
      */
-    bool addLane2LaneConnection(unsigned int fromLane, NBEdge* dest,
-                                unsigned int toLane, Lane2LaneInfoType type,
+    bool addLane2LaneConnection(int fromLane, NBEdge* dest,
+                                int toLane, Lane2LaneInfoType type,
                                 bool mayUseSameDestination = false,
                                 bool mayDefinitelyPass = false,
                                 bool keepClear = true,
@@ -761,8 +717,8 @@ public:
      * @see addLane2LaneConnection
      * @see invalidateConnections
      */
-    bool addLane2LaneConnections(unsigned int fromLane,
-                                 NBEdge* dest, unsigned int toLane, unsigned int no,
+    bool addLane2LaneConnections(int fromLane,
+                                 NBEdge* dest, int toLane, int no,
                                  Lane2LaneInfoType type, bool invalidatePrevious = false,
                                  bool mayDefinitelyPass = false);
 
@@ -777,8 +733,8 @@ public:
      * @param[in] mayDefinitelyPass Whether this connection is definitely undistrubed (special case for on-ramps)
      * @todo Check difference between "setConnection" and "addLane2LaneConnection"
      */
-    bool setConnection(unsigned int lane, NBEdge* destEdge,
-                       unsigned int destLane,
+    bool setConnection(int lane, NBEdge* destEdge,
+                       int destLane,
                        Lane2LaneInfoType type,
                        bool mayUseSameDestination = false,
                        bool mayDefinitelyPass = false,
@@ -812,7 +768,7 @@ public:
      * @param[in] fromLane If a value >= 0 is given, only return true if a connection from the given lane exists
      * @return whether a connection to the specified lane exists
      */
-    bool hasConnectionTo(NBEdge* destEdge, unsigned int destLane, int fromLane = -1) const;
+    bool hasConnectionTo(NBEdge* destEdge, int destLane, int fromLane = -1) const;
 
 
     /** @brief Returns the information whethe a connection to the given edge has been added (or computed)
@@ -886,12 +842,12 @@ public:
 
     void invalidateConnections(bool reallowSetting = false);
 
-    void replaceInConnections(NBEdge* which, NBEdge* by, unsigned int laneOff);
+    void replaceInConnections(NBEdge* which, NBEdge* by, int laneOff);
     void replaceInConnections(NBEdge* which, const std::vector<NBEdge::Connection>& origConns);
     void copyConnectionsFrom(NBEdge* src);
 
     /// @brief modifify the toLane for all connections to the given edge
-    void shiftToLanesToEdge(NBEdge* to, unsigned int laneOff);
+    void shiftToLanesToEdge(NBEdge* to, int laneOff);
     /// @}
 
 
@@ -1048,7 +1004,7 @@ public:
     bool hasSignalisedConnectionTo(const NBEdge* const e) const;
 
 
-    void moveOutgoingConnectionsFrom(NBEdge* e, unsigned int laneOff);
+    void moveOutgoingConnectionsFrom(NBEdge* e, int laneOff);
 
     /* @brief return the turn destination if it exists
      * @param[in] possibleDestination Wether myPossibleTurnDestination should be returned if no turnaround connection
@@ -1056,11 +1012,11 @@ public:
      */
     NBEdge* getTurnDestination(bool possibleDestination = false) const;
 
-    std::string getLaneID(unsigned int lane) const;
+    std::string getLaneID(int lane) const;
 
-    std::string getLaneIDInsecure(unsigned int lane) const;
+    std::string getLaneIDInsecure(int lane) const;
 
-    SUMOReal getLaneSpeed(unsigned int lane) const;
+    SUMOReal getLaneSpeed(int lane) const;
 
     bool isNearEnough2BeJoined2(NBEdge* e, SUMOReal threshold) const;
 
@@ -1086,13 +1042,13 @@ public:
     SUMOReal getAngleAtNodeToCenter(const NBNode* const node) const;
 
 
-    void incLaneNo(unsigned int by);
+    void incLaneNo(int by);
 
-    void decLaneNo(unsigned int by);
+    void decLaneNo(int by);
 
-    void deleteLane(unsigned int index, bool recompute = true);
+    void deleteLane(int index, bool recompute = true);
 
-    void addLane(unsigned int index, bool recompute = true);
+    void addLane(int index, bool recompute = true);
 
     void markAsInLane2LaneState();
 
@@ -1131,12 +1087,12 @@ public:
 
 
     // returns a reference to the internal structure for the convenience of NETEDIT
-    Lane& getLaneStruct(unsigned int lane) {
+    Lane& getLaneStruct(int lane) {
         return myLanes[lane];
     }
 
     // returns a reference to the internal structure for the convenience of NETEDIT
-    const Lane& getLaneStruct(unsigned int lane) const {
+    const Lane& getLaneStruct(int lane) const {
         return myLanes[lane];
     }
 
@@ -1152,7 +1108,7 @@ public:
      * @param[in,out] splitIndex The number of via edges already built
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
      */
-    void buildInnerEdges(const NBNode& n, unsigned int noInternalNoSplits, unsigned int& linkIndex, unsigned int& splitIndex);
+    void buildInnerEdges(const NBNode& n, int noInternalNoSplits, int& linkIndex, int& splitIndex);
 
     inline const std::vector<NBSign>& getSigns() const {
         return mySigns;
@@ -1174,7 +1130,7 @@ private:
     class ToEdgeConnectionsAdder : public Bresenham::BresenhamCallBack {
     private:
         /// map of edges to this edge's lanes that reach them
-        std::map<NBEdge*, std::vector<unsigned int> > myConnections;
+        std::map<NBEdge*, std::vector<int> > myConnections;
 
         /// the transition from the virtual lane to the edge it belongs to
         const EdgeVector& myTransitions;
@@ -1188,9 +1144,9 @@ private:
         ~ToEdgeConnectionsAdder() { }
 
         /// executes a bresenham - step
-        void execute(const unsigned int lane, const unsigned int virtEdge);
+        void execute(const int lane, const int virtEdge);
 
-        const std::map<NBEdge*, std::vector<unsigned int> >& getBuiltConnections() const {
+        const std::map<NBEdge*, std::vector<int> >& getBuiltConnections() const {
             return myConnections;
         }
 
@@ -1246,7 +1202,7 @@ private:
     };
 
     /// Computes the shape for the given lane
-    PositionVector computeLaneShape(unsigned int lane, SUMOReal offset) const;
+    PositionVector computeLaneShape(int lane, SUMOReal offset) const;
 
     void computeLaneShapes();
 
@@ -1269,7 +1225,7 @@ private:
      * @param[in] tryIgnoreNodePositions Does not add node geometries if geom.size()>=2
      * @param[in] origID The original ID this edge had
      */
-    void init(unsigned int noLanes, bool tryIgnoreNodePositions, const std::string& origID);
+    void init(int noLanes, bool tryIgnoreNodePositions, const std::string& origID);
 
 
     /** divides the lanes on the outgoing edges */
@@ -1294,14 +1250,14 @@ private:
 
     /** moves a connection one place to the left;
         Attention! no checking for field validity */
-    void moveConnectionToLeft(unsigned int lane);
+    void moveConnectionToLeft(int lane);
 
     /** moves a connection one place to the right;
         Attention! no checking for field validity */
-    void moveConnectionToRight(unsigned int lane);
+    void moveConnectionToRight(int lane);
 
     /// @brief whether the connection can originate on newFromLane
-    bool canMoveConnection(const Connection& con, unsigned int newFromLane) const;
+    bool canMoveConnection(const Connection& con, int newFromLane) const;
     /// @}
 
 
