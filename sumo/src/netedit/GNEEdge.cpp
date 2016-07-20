@@ -49,6 +49,7 @@
 #include "GNELane.h"
 #include "GNEAdditional.h"
 #include "GNEAdditionalSet.h"
+#include "GNEConnection.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -383,7 +384,7 @@ GNEEdge::resetEndpoint(const Position& pos, GNEUndoList* undoList) {
 void
 GNEEdge::setGeometry(PositionVector geom, bool inner) {
     myNBEdge.setGeometry(geom, inner);
-    updateLaneGeometries();
+    updateGeometries();
     getSource()->invalidateShape();
     getDest()->invalidateShape();
     myNet->refreshElement(this);
@@ -391,7 +392,7 @@ GNEEdge::setGeometry(PositionVector geom, bool inner) {
 
 
 void
-GNEEdge::updateLaneGeometries() {
+GNEEdge::updateGeometries() {
     // Update geometry of lanes
     for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
         (*i)->updateGeometry();
