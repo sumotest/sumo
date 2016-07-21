@@ -128,7 +128,7 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
 
     buildEditModeControls();
     myUndoList->mark();
-    myNet->setUpdateTarget(this);
+    myNet->setViewNet(this);
     ((GUIDanielPerspectiveChanger*)myChanger)->setDragDelay(100000000); // 100 milliseconds
 
     // init color schemes
@@ -306,6 +306,16 @@ GNEViewNet::setStatusBarText(const std::string& text) {
 bool
 GNEViewNet::selectEdges() {
     return mySelectEdges->getCheck() != 0;
+}
+
+
+bool                                                // PABLO #2067
+GNEViewNet::showConnections() {                     // PABLO #2067
+    if(myEditMode == GNE_MODE_CONNECT) {            // PABLO #2067
+        return true;                                // PABLO #2067
+    } else {                                        // PABLO #2067
+        return myShowConnections->getCheck() != 0;  // PABLO #2067
+    }                                               // PABLO #2067
 }
 
 
@@ -1186,6 +1196,8 @@ GNEViewNet::buildEditModeControls() {
             "two-way\t\tAutomatically create an edge in the opposite direction", this, 0);
     mySelectEdges = new FXMenuCheck(myToolbar, "select edges\t\tToggle whether clicking should select edges or lanes", this, 0);
     mySelectEdges->setCheck();
+    myShowConnections = new FXMenuCheck(myToolbar, "show connections\t\tToggle show connections over junctions", this, 0);  // PABLO #2067
+    myShowConnections->setCheck();                                                                                          // PABLO #2067
     myExtendToEdgeNodes = new FXMenuCheck(myToolbar, "auto-select nodes\t\tToggle whether selecting multiple edges should automatically select their nodes", this, 0);
 
     myWarnAboutMerge = new FXMenuCheck(myToolbar, "ask for merge\t\tAsk for confirmation before merging junctions.", this, 0);
@@ -1206,6 +1218,7 @@ GNEViewNet::updateModeSpecificControls() {
     myChainCreateEdge->hide();
     myAutoCreateOppositeEdge->hide();
     mySelectEdges->hide();
+    myShowConnections->hide();  // PABLO #2067
     myExtendToEdgeNodes->hide();
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
@@ -1235,20 +1248,24 @@ GNEViewNet::updateModeSpecificControls() {
     switch (myEditMode) {
         case GNE_MODE_CREATE_EDGE:
             myChainCreateEdge->show();
+            myShowConnections->show();  // PABLO #2067
             myAutoCreateOppositeEdge->show();
             break;
         case GNE_MODE_DELETE:
             mySelectEdges->show();
+            myShowConnections->show();  // PABLO #2067
             break;
         case GNE_MODE_INSPECT:
             widthChange -= myViewParent->getInspectorFrame()->getWidth() + addChange;
             myViewParent->getInspectorFrame()->show();
             mySelectEdges->show();
+            myShowConnections->show();  // PABLO #2067
             break;
         case GNE_MODE_SELECT:
             widthChange -= myViewParent->getSelectorFrame()->getWidth() + addChange;
             myViewParent->getSelectorFrame()->show();
             mySelectEdges->show();
+            myShowConnections->show();  // PABLO #2067
             myExtendToEdgeNodes->show();
             break;
         case GNE_MODE_MOVE:
@@ -1266,6 +1283,7 @@ GNEViewNet::updateModeSpecificControls() {
         case GNE_MODE_ADDITIONAL:
             widthChange -= myViewParent->getAdditionalFrame()->getWidth() + addChange;
             myViewParent->getAdditionalFrame()->show();
+            myShowConnections->show();  // PABLO #2067
             break;
         default:
             break;

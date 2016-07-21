@@ -203,6 +203,9 @@ public:
     /// @brief whether inspection, selection and inversion should apply to edges or to lanes
     bool selectEdges();
 
+    /// @brief show connections over junctions
+    bool showConnections();
+
     /// @brief whether to autoselect nodes or to lanes
     bool autoSelectNodes();
 
@@ -240,6 +243,9 @@ private:
 
     /// @brief menu check to select only edges
     FXMenuCheck* mySelectEdges;
+
+    /// @brief menu check to show connections   // PABLO #2067
+    FXMenuCheck* myShowConnections;             // PABLO #2067
 
     /// @brief menu check to extend to edge nodes
     FXMenuCheck* myExtendToEdgeNodes;

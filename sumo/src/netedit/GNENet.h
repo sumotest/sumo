@@ -302,8 +302,8 @@ public:
      */
     void saveJoined(OptionsCont& oc);
 
-    /// @brief Set the target to be notified of network changes
-    void setUpdateTarget(FXWindow* updateTarget);
+    /// @brief Set the viewNet to be notified of network changes
+    void setViewNet(GNEViewNet* viewNet);
 
     /// @brief refreshes boundary information for o and update
     void refreshElement(GUIGlObject* o);
@@ -316,6 +316,9 @@ public:
 
     /// @brief modifies endpoins of the given edge
     void changeEdgeEndpoints(GNEEdge* edge, const std::string& newSourceID, const std::string& newDestID);
+
+    /// @brief get view net
+    GNEViewNet* getViewNet() const;
 
     /// @brief returns the tllcont of the underlying netbuilder
     NBTrafficLightLogicCont& getTLLogicCont();
@@ -424,8 +427,8 @@ protected:
     /// @brief the rtree which contains all GUIGlObjects (so named for historical reasons)
     SUMORTree myGrid;
 
-    /// @brief The window to be notofied of about changes
-    FXWindow* myUpdateTarget;
+    /// @brief The viewNet to be notofied of about changes
+    GNEViewNet* myViewNet;
 
     /// @brief The internal netbuilder
     NBNetBuilder* myNetBuilder;
@@ -488,7 +491,7 @@ private:
     /// @brief deletes a single edge
     void deleteSingleEdge(GNEEdge* edge);
 
-    /// @brief notify myUpdateTarget
+    /// @brief notify myViewNet
     void update();
 
     /// @brief reserve edge ID (To avoid duplicates)

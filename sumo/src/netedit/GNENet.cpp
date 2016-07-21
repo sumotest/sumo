@@ -74,6 +74,7 @@
 #include "GNEAdditionalSet.h"
 #include "GNEStoppingPlace.h"
 #include "GNEDetector.h"
+#include "GNEViewNet.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -93,7 +94,7 @@ const SUMOReal GNENet::Z_INITIALIZED = 1;
 // ===========================================================================
 GNENet::GNENet(NBNetBuilder* netBuilder) :
     GUIGlObject(GLO_NETWORK, ""),
-    myUpdateTarget(0),
+    myViewNet(0),
     myNetBuilder(netBuilder),
     myJunctions(),
     myEdges(),
@@ -594,8 +595,8 @@ GNENet::saveJoined(OptionsCont& oc) {
 
 
 void
-GNENet::setUpdateTarget(FXWindow* updateTarget) {
-    myUpdateTarget = updateTarget;
+GNENet::setViewNet(GNEViewNet* viewNet) {
+    myViewNet = viewNet;
 }
 
 
@@ -845,7 +846,7 @@ GNENet::requireRecompute() {
 
 FXApp*
 GNENet::getApp() {
-    return myUpdateTarget->getApp();
+    return myViewNet->getApp();
 }
 
 
@@ -953,6 +954,12 @@ GNENet::changeEdgeEndpoints(GNEEdge* edge, const std::string& newSource, const s
     edge->getNBEdge()->reinitNodes(from, to);
     requireRecompute();
     update();
+}
+
+
+GNEViewNet* 
+GNENet::getViewNet() const {
+    return myViewNet;
 }
 
 
@@ -1215,8 +1222,8 @@ GNENet::deleteSingleEdge(GNEEdge* edge) {
 
 void
 GNENet::update() {
-    if (myUpdateTarget) {
-        myUpdateTarget->update();
+    if (myViewNet) {
+        myViewNet->update();
     }
 }
 

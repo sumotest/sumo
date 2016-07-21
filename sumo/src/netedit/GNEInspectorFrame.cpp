@@ -45,6 +45,7 @@
 #include "GNEAdditional.h"
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"
+#include "GNEConnection.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -56,26 +57,31 @@
 // ===========================================================================
 
 FXDEFMAP(GNEInspectorFrame) GNEInspectorFrameMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_COPY_TEMPLATE,   GNEInspectorFrame::onCmdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_TEMPLATE,    GNEInspectorFrame::onCmdSetTemplate),
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_COPY_TEMPLATE,   GNEInspectorFrame::onUpdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_BLOCKING,    GNEInspectorFrame::onCmdSetBlocking),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onCmdCopyTemplate),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_TEMPLATE,  GNEInspectorFrame::onCmdSetTemplate),
+    FXMAPFUNC(SEL_UPDATE,  MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onUpdCopyTemplate),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_BLOCKING,  GNEInspectorFrame::onCmdSetBlocking),
 };
 
 
 FXDEFMAP(GNEInspectorFrame::AttrInput) AttrInputMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_ATTRIBUTE,         GNEInspectorFrame::AttrInput::onCmdSetAttribute),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor)
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_ATTRIBUTE,         GNEInspectorFrame::AttrInput::onCmdSetAttribute),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor)
 };
 
-FXDEFMAP(GNEInspectorFrame::AttrEditor) AttrEditorMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_INSPECT_RESET,  GNEInspectorFrame::AttrEditor::onCmdReset),
+FXDEFMAP(GNEInspectorFrame::AttrEditor) AttrConnectionMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_INSPECT_RESET, GNEInspectorFrame::AttrEditor::onCmdReset),
 };
+
+FXDEFMAP(GNEInspectorFrame::AttrConnection) AttrEditorMap[] = {                                                 // PABLO #2067
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTION, GNEInspectorFrame::AttrConnection::onCmdSetShowConnection), // PABLO #2067
+};                                                                                                              // PABLO #2067
 
 // Object implementation
 FXIMPLEMENT(GNEInspectorFrame, FXScrollWindow, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
 FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXMatrix, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 FXIMPLEMENT(GNEInspectorFrame::AttrEditor, FXDialogBox, AttrEditorMap, ARRAYNUMBER(AttrEditorMap))
+FXIMPLEMENT(GNEInspectorFrame::AttrConnection, FXHorizontalFrame, AttrConnectionMap, ARRAYNUMBER(AttrConnectionMap))  // PABLO #2067
 
 // ===========================================================================
 // method definitions
@@ -162,7 +168,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
 
         // Hide all AttrInput
         for (std::vector<GNEInspectorFrame::AttrInput*>::iterator i = vectorOfAttrInput.begin(); i != vectorOfAttrInput.end(); i++) {
-            (*i)->hiddeAttribute();
+            (*i)->hideAttribute();
         }
 
         // Gets attributes of element
@@ -329,7 +335,7 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     myInspectorFrameParent(inspectorFrameParent),
     myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
-    // Create and hidde ButtonCombinableChoices
+    // Create and hide ButtonCombinableChoices
     myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
     myButtonCombinableChoices->hide();
     // Create and hide label
@@ -416,7 +422,7 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
 
 
 void
-GNEInspectorFrame::AttrInput::hiddeAttribute() {
+GNEInspectorFrame::AttrInput::hideAttribute() {
     // Hide all elements
     myLabel->hide();
     myTextFieldInt->hide();
@@ -616,5 +622,75 @@ GNEInspectorFrame::AttrEditor::onCmdReset(FXObject*, FXSelector, void*) {
     }
     return 1;
 }
+
+
+
+GNEInspectorFrame::AttrConnection::AttrConnection(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) : 
+    FXHorizontalFrame(parent, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH), 
+    myInspectorFrameParent(inspectorFrameParent),
+    myConnection(NULL) {
+    // Create label for connection
+    myConnectionInfoLabel = new FXLabel(parent, "", NULL, LAYOUT_FILL_X);
+    // Create checkButton for show connection
+    myShowConnection = new FXCheckButton(parent,"", this, MID_GNE_SHOW_CONNECTION);
+}
+
+
+GNEInspectorFrame::AttrConnection::~AttrConnection() {}
+
+
+void                                                                            // PABLO #2067
+GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) { // PABLO #2067
+    // Set pointer to current connection                                        // PABLO #2067
+    myConnection = connection;                                                  // PABLO #2067
+    // set Label                                                                // PABLO #2067
+    myConnectionInfoLabel->setText(std::string(                                 // PABLO #2067
+        "From " + myConnection->getEdgeFrom()->getID() +                        // PABLO #2067
+        "[" + toString(myConnection->getFromLane()) +                           // PABLO #2067
+        "] to " + myConnection->getEdgeTo()->getID() +                          // PABLO #2067
+        "[" + toString(myConnection->getToLane()) +                             // PABLO #2067
+        "]").c_str());                                                          // PABLO #2067
+    // Show Label                                                               // PABLO #2067
+    myConnectionInfoLabel->show();                                              // PABLO #2067
+    // set show Connection                                                      // PABLO #2067
+    myShowConnection->setCheck(myConnection->getDrawConnection());              // PABLO #2067
+    // show Show Connection                                                     // PABLO #2067
+    myShowConnection->show();                                                   // PABLO #2067
+    // Show AttrConnection                                                      // PABLO #2067
+    show();                                                                     // PABLO #2067
+}                                                                               // PABLO #2067
+
+
+void 
+GNEInspectorFrame::AttrConnection::hideConnections() {  // PABLO #2067
+    // hide all elements                                // PABLO #2067
+    myConnectionInfoLabel->hide();                      // PABLO #2067
+    myShowConnection->hide();                           // PABLO #2067
+    hide();                                             // PABLO #2067
+}                                                       // PABLO #2067
+
+
+long                                                                                        // PABLO #2067
+GNEInspectorFrame::AttrConnection::onCmdSetShowConnection(FXObject*, FXSelector, void*) {   // PABLO #2067
+    if(myShowConnection->getCheck()) {                                                      // PABLO #2067
+        myConnection->setDrawConnection(true);                                              // PABLO #2067
+    } else {                                                                                // PABLO #2067
+         myConnection->setDrawConnection(false);                                            // PABLO #2067
+    }                                                                                       // PABLO #2067
+    return 1;                                                                               // PABLO #2067
+}                                                                                           // PABLO #2067
+
+
+void                                        // PABLO #2067
+GNEInspectorFrame::AttrConnection::show() { // PABLO #2067
+    FXHorizontalFrame::show();              // PABLO #2067
+}                                           // PABLO #2067
+
+
+void                                        // PABLO #2067
+GNEInspectorFrame::AttrConnection::hide() { // PABLO #2067
+    FXHorizontalFrame::hide();              // PABLO #2067
+}                                           // PABLO #2067
+
 
 /****************************************************************************/

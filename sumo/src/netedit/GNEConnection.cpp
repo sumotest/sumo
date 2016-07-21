@@ -52,6 +52,7 @@
 #include "GNENet.h"
 #include "GNEChange_Attribute.h"
 #include "GNEUndoList.h"
+#include "GNEViewNet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -73,7 +74,8 @@ GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLan
     GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(fromLane) + to->getID() + toString(toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
     myJunction(from->getNBEdge()->getToNode()),
-    myUncontrolled(uncontrolled) {
+    myUncontrolled(uncontrolled),
+    myDrawConnection(true) {
     // Update geometry
     updateGeometry();
 }
@@ -98,6 +100,19 @@ GNEConnection::updateGeometry() {
     // Get shape of connection
     myShape = myJunction->computeInternalLaneShape(myFromEdge->getNBEdge(), myConnection, NUM_POINTS);
     
+/**
+    PositionVector laneShapeFrom = myFromEdge->getLanes().at(myConnection.fromLane)->getShape();
+    PositionVector laneShapeTo = myConnection.toEdge->getLaneShape(myConnection.toLane);
+
+    // Cut shape using as delimitators from start position and end position
+    laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.size() - 20);
+    laneShapeTo = laneShapeTo.getSubpart(20, laneShapeTo.size());
+
+    myShape = myJunction->computeSmoothShape(laneShapeFrom, laneShapeTo,
+                             NUM_POINTS, myFromEdge->getNBEdge()->getTurnDestination() == myConnection.toEdge,
+                             (SUMOReal) 5. * (SUMOReal) myFromEdge->getNBEdge()->getNumLanes(),
+                             (SUMOReal) 5. * (SUMOReal) myConnection.toEdge->getNumLanes());
+**/
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -184,6 +199,12 @@ GNEConnection::getNBEdgeConnection() const {
 }
 
 
+bool 
+GNEConnection::getDrawConnection() const {
+    return myDrawConnection;
+}
+
+
 void
 GNEConnection::setPass(bool pass) {
     myConnection.mayDefinitelyPass = pass;
@@ -205,6 +226,12 @@ GNEConnection::setContPos(SUMOReal contPos) {
 void
 GNEConnection::setUncontrolled(bool uncontrolled) {
     myUncontrolled = uncontrolled ;
+}
+
+
+void 
+GNEConnection::setDrawConnection(bool drawConnection) {
+    myDrawConnection = drawConnection;
 }
 
 
@@ -234,19 +261,22 @@ GNEConnection::getCenteringBoundary() const {
 
 void
 GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
-    glPushMatrix();
-    glPushName(getGlID());
-    glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction
-//    GLHelper::setColor(colorForLinksState(myState));
-    // draw lane
-    // check whether it is not too small
-    if (s.scale < 1.) {
-        GLHelper::drawLine(myShape);
-    } else {
-        GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, 0.2);
+    // Check if connection must be drawed
+    if((myDrawConnection == true) && (myNet)->getViewNet()->showConnections() == true) {
+        glPushMatrix();
+        glPushName(getGlID());
+        glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction
+    //    GLHelper::setColor(colorForLinksState(myState));
+        // draw lane
+        // check whether it is not too small
+        if (s.scale < 1.) {
+            GLHelper::drawLine(myShape);
+        } else {
+            GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, 0.2);
+        }
+        glPopName();
+        glPopMatrix();
     }
-    glPopName();
-    glPopMatrix();
 }
 
 

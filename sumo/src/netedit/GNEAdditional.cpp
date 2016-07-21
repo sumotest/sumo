@@ -325,44 +325,46 @@ GNEAdditional::setBlockIconRotation(GNELane* lane) {
 
 void
 GNEAdditional::drawLockIcon(SUMOReal size) const {
-    // Start pushing matrix
-    glPushMatrix();
-    // Traslate to middle of shape
-    glTranslated(myBlockIconPosition.x(), myBlockIconPosition.y(), getType() + 0.1);
-    // Set draw color
-    glColor3d(1, 1, 1);
-    // Rotate depending of myBlockIconRotation
-    glRotated(myBlockIconRotation, 0, 0, -1);
-    // Rotate 180º
-    glRotated(180, 0, 0, 1);
-    // Traslate depending of the offset
-    glTranslated(myBlockIconOffset.x(), myBlockIconOffset.y(), 0);
-    // Draw icon depending of the state of additional
-    if (isAdditionalSelected()) {
-        if (myMovable == false) {
-            // Draw not movable texture if additional isn't movable and is selected
-            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_NOTMOVINGSELECTED), size);
-        } else if (myBlocked) {
-            // Draw lock texture if additional is movable, is blocked and is selected
-            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_LOCKSELECTED), size);
+    if(myViewNet->showLockIcon()) {
+        // Start pushing matrix
+        glPushMatrix();
+        // Traslate to middle of shape
+        glTranslated(myBlockIconPosition.x(), myBlockIconPosition.y(), getType() + 0.1);
+        // Set draw color
+        glColor3d(1, 1, 1);
+        // Rotate depending of myBlockIconRotation
+        glRotated(myBlockIconRotation, 0, 0, -1);
+        // Rotate 180º
+        glRotated(180, 0, 0, 1);
+        // Traslate depending of the offset
+        glTranslated(myBlockIconOffset.x(), myBlockIconOffset.y(), 0);
+        // Draw icon depending of the state of additional
+        if (isAdditionalSelected()) {
+            if (myMovable == false) {
+                // Draw not movable texture if additional isn't movable and is selected
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_NOTMOVINGSELECTED), size);
+            } else if (myBlocked) {
+                // Draw lock texture if additional is movable, is blocked and is selected
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_LOCKSELECTED), size);
+            } else {
+                // Draw empty texture if additional is movable, isn't blocked and is selected
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_EMPTYSELECTED), size);
+            }
         } else {
-            // Draw empty texture if additional is movable, isn't blocked and is selected
-            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_EMPTYSELECTED), size);
+            if (myMovable == false) {
+                // Draw not movable texture if additional isn't movable
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_NOTMOVING), size);
+            } else if (myBlocked) {
+                // Draw lock texture if additional is movable and is blocked
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_LOCK), size);
+            } else {
+                // Draw empty texture if additional is movable and isn't blocked
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_EMPTY), size);
+            }
         }
-    } else {
-        if (myMovable == false) {
-            // Draw not movable texture if additional isn't movable
-            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_NOTMOVING), size);
-        } else if (myBlocked) {
-            // Draw lock texture if additional is movable and is blocked
-            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_LOCK), size);
-        } else {
-            // Draw empty texture if additional is movable and isn't blocked
-            GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_EMPTY), size);
-        }
+        // Pop matrix
+        glPopMatrix();
     }
-    // Pop matrix
-    glPopMatrix();
 }
 
 

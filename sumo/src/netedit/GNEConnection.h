@@ -100,11 +100,14 @@ public:
     /// @brief get parameter ContPos
     SUMOReal getContPos();
 
-    /// @briefif get parameter uncontrolled
+    /// @brief get parameter uncontrolled
     bool getUncontrolled();
 
     /// @brief get Edge::NBConnection
     const NBEdge::Connection &getNBEdgeConnection() const;
+
+    /// @brief get Draw connection
+    bool getDrawConnection() const;
 
     /// @brief set parameter pass
     void setPass(bool pass);
@@ -115,8 +118,11 @@ public:
     /// @brief set parameter ContPos
     void setContPos(SUMOReal contPos);
 
-    /// @briefif set parameter uncontrolled
+    /// @brief set parameter uncontrolled
     void setUncontrolled(bool uncontrolled);
+
+    /// @brief enable or disable draw connection
+    void setDrawConnection(bool drawConnection);
 
     /// @name inherited from GUIGlObject
     /// @{
@@ -193,12 +199,16 @@ NBNode *myJunction;
 
     /// @name computed only once (for performance) in updateGeometry()
     /// @{
-    /// The rotations of the shape parts
+    /// @brief The rotations of the shape parts
     std::vector<SUMOReal> myShapeRotations;
 
-    /// The lengths of the shape parts
+    /// @brief The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
     /// @}
+
+    /// @brief Enable or disable draw connection
+    /// @note by default is enabled
+    bool myDrawConnection;
 
 private:
     /// @brief set attribute after validation

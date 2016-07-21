@@ -39,6 +39,7 @@ class GNENet;
 class GNEEdge;
 class GNEAttributeCarrier;
 class GNEAdditional;
+class GNEConnection;
 
 // ===========================================================================
 // class definitions
@@ -69,7 +70,7 @@ public:
         void showAttribute(SumoXMLTag tag, SumoXMLAttr attr, const std::string& value);
 
         /// @brief show attribute
-        void hiddeAttribute();
+        void hideAttribute();
 
         /// @brief get current tag
         SumoXMLTag getTag() const;
@@ -172,6 +173,54 @@ public:
         /// @brief Button Reset
         FXButton* myResetButton;
     };
+
+    // ===========================================================================      // PABLO #2067
+    // class AttrConnection                                                             // PABLO #2067
+    // ===========================================================================      // PABLO #2067
+                                                                                        // PABLO #2067
+    class AttrConnection : public FXHorizontalFrame  {                                  // PABLO #2067
+        /// @brief FOX-declaration                                                      // PABLO #2067
+        FXDECLARE(GNEInspectorFrame::AttrConnection)                                    // PABLO #2067
+                                                                                        // PABLO #2067
+    public:                                                                             // PABLO #2067
+        /// @brief constructor                                                          // PABLO #2067
+        AttrConnection(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent);   // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief destructor                                                           // PABLO #2067
+        ~AttrConnection();                                                              // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief show attribute                                                       // PABLO #2067
+        void showConnections(GNEConnection* connection);                                // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief show attribute                                                       // PABLO #2067
+        void hideConnections();                                                         // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief try to set new attribute value                                       // PABLO #2067
+        long onCmdSetShowConnection(FXObject*, FXSelector, void*);                      // PABLO #2067
+                                                                                        // PABLO #2067
+    protected:                                                                          // PABLO #2067
+        /// @brief FOX needs this                                                       // PABLO #2067
+        AttrConnection() {}                                                             // PABLO #2067
+                                                                                        // PABLO #2067
+    private:                                                                            // PABLO #2067
+        /// @brief pointer to inspectorFrame Parent                                     // PABLO #2067
+        GNEInspectorFrame *myInspectorFrameParent;                                      // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief pointer to current connection                                        // PABLO #2067
+        GNEConnection *myConnection;                                                    // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief Label for show information of connection                             // PABLO #2067
+        FXLabel *myConnectionInfoLabel;                                                 // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief FXCheckBox to hide/show connection individually                      // PABLO #2067
+        FXCheckButton *myShowConnection;                                                // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief set show as private function                                         // PABLO #2067
+        void show();                                                                    // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief set hide as private function                                         // PABLO #2067
+        void hide();                                                                    // PABLO #2067
+    };                                                                                  // PABLO #2067
 
 public:
     /**@brief Constructor
