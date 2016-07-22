@@ -310,7 +310,7 @@ GNEViewNet::selectEdges() {
 
 
 bool                                                // PABLO #2067
-GNEViewNet::showConnections() {                     // PABLO #2067
+GNEViewNet::showAttrConnection() {                     // PABLO #2067
     if(myEditMode == GNE_MODE_CONNECT) {            // PABLO #2067
         return true;                                // PABLO #2067
     } else {                                        // PABLO #2067

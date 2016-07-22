@@ -36,11 +36,13 @@
 #include <cassert>
 #include <iostream>
 #include <utils/foxtools/MFXUtils.h>
+#include <utils/common/MsgHandler.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/images/GUIIconSubSys.h>
 #include "GNEInspectorFrame.h"
 #include "GNEUndoList.h"
 #include "GNEEdge.h"
+#include "GNELane.h"
 #include "GNEAttributeCarrier.h"
 #include "GNEAdditional.h"
 #include "GNEViewNet.h"
@@ -51,6 +53,12 @@
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
+
+// ===========================================================================  // PABLO #2067
+// static                                                                       // PABLO #2067
+// ===========================================================================  // PABLO #2067
+
+const unsigned int MAXNUMBEROFATTRCONNECTIONS = 50;                             // PABLO #2067
 
 // ===========================================================================
 // FOX callback mapping
@@ -69,13 +77,14 @@ FXDEFMAP(GNEInspectorFrame::AttrInput) AttrInputMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor)
 };
 
-FXDEFMAP(GNEInspectorFrame::AttrEditor) AttrConnectionMap[] = {
+FXDEFMAP(GNEInspectorFrame::AttrEditor) AttrEditorMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_INSPECT_RESET, GNEInspectorFrame::AttrEditor::onCmdReset),
 };
 
-FXDEFMAP(GNEInspectorFrame::AttrConnection) AttrEditorMap[] = {                                                 // PABLO #2067
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTION, GNEInspectorFrame::AttrConnection::onCmdSetShowConnection), // PABLO #2067
-};                                                                                                              // PABLO #2067
+FXDEFMAP(GNEInspectorFrame::AttrConnection) AttrConnectionMap[] = {                                                 // PABLO #2067
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTION, GNEInspectorFrame::AttrConnection::onCmdSetShowConnection),     // PABLO #2067
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_INSPECT_CONNECTION, GNEInspectorFrame::AttrConnection::onCmdInspectConnection),  // PABLO #2067
+};                                                                                                                  // PABLO #2067
 
 // Object implementation
 FXIMPLEMENT(GNEInspectorFrame, FXScrollWindow, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
@@ -91,6 +100,9 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     GNEFrame(parent, viewNet, "Inspector"),
     myEdgeTemplate(0) {
 
+    //myBackButton = bew FX
+    //myHeaderFrame
+
     // Create groupBox for attributes
     myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
     myGroupBoxForAttributes->hide();
@@ -101,7 +113,7 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     }
 
     // Create groupBox for templates
-    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "templates", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "Templates", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
     myGroupBoxForTemplates->hide();
 
     // Create copy template button
@@ -119,6 +131,15 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // Create check blocked button
     myCheckBlocked = new FXCheckButton(myGroupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);
     myCheckBlocked->hide();
+
+    // Create groupBox for AttrConnection                                                                                               // PABLO #2067
+    myGroupBoxForAttrConnections = new FXGroupBox(myContentFrame, "Connections", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X); // PABLO #2067
+    myGroupBoxForAttrConnections->hide();                                                                                               // PABLO #2067
+
+    // Create AttrConnections                                                                   // PABLO #2067
+    for (int i = 0; i < MAXNUMBEROFATTRCONNECTIONS; i++) {                                      // PABLO #2067
+        myAttrConnections.push_back(new AttrConnection(myGroupBoxForAttrConnections, this));    // PABLO #2067
+    }                                                                                           // PABLO #2067
 }
 
 GNEInspectorFrame::~GNEInspectorFrame() {
@@ -153,7 +174,15 @@ void
 GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
     // Assing ACS to myACs
     myACs = ACs;
-
+    // Hide all elements
+    myGroupBoxForAttributes->hide();
+    myGroupBoxForTemplates->hide();
+    myCopyTemplateButton->hide();
+    mySetTemplateButton->hide();
+    myGroupBoxForEditor->hide();
+    myGroupBoxForEditor->hide();
+    myCheckBlocked->hide();
+    myGroupBoxForAttrConnections->hide();   // PABLO #2067
     // If vector of attribute Carriers contain data
     if (myACs.size() > 0) {
         // Set header
@@ -170,6 +199,11 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
         for (std::vector<GNEInspectorFrame::AttrInput*>::iterator i = vectorOfAttrInput.begin(); i != vectorOfAttrInput.end(); i++) {
             (*i)->hideAttribute();
         }
+
+        // Hide all AttrConnections                             // PABLO #2067
+        for (int i = 0; i < MAXNUMBEROFATTRCONNECTIONS; i++) {  // PABLO #2067
+            myAttrConnections.at(i)->hideAttrConnection();      // PABLO #2067
+        }                                                       // PABLO #2067
 
         // Gets attributes of element
         const std::vector<SumoXMLAttr>& attrs = myACs.front()->getAttrs();
@@ -212,12 +246,37 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
             if (myACs.size() == 1) {
                 mySetTemplateButton->show();
             }
-        } else {
-            // Hidde all template elements
-            myGroupBoxForTemplates->hide();
-            myCopyTemplateButton->hide();
-            mySetTemplateButton->hide();
-        }
+            // Obtain connections of edge                                                                                                                                                       // PABLO #2067
+            const std::vector<GNEConnection*>& connections = dynamic_cast<GNEEdge*>(myACs.front())->getGNEConnections();                                                                        // PABLO #2067
+            if(connections.size() > 0) {                                                                                                                                                        // PABLO #2067
+                // Check if all connections are editables                                                                                                                                       // PABLO #2067
+                if(connections.size() > MAXNUMBEROFATTRCONNECTIONS) {                                                                                                                           // PABLO #2067
+                    WRITE_WARNING("Number of connections of " + myACs.front()->getID() + " is greater than the number of editable connections (" + toString(MAXNUMBEROFATTRCONNECTIONS) + ")"); // PABLO #2067
+                }                                                                                                                                                                               // PABLO #2067
+                // Show AttrConnections                                                                                                                                                         // PABLO #2067
+                for (int i = 0; (i < connections.size()) && (i < MAXNUMBEROFATTRCONNECTIONS); i++) {                                                                                            // PABLO #2067
+                    myAttrConnections.at(i)->showConnections(connections.at(i));                                                                                                                // PABLO #2067
+                }                                                                                                                                                                               // PABLO #2067
+                myGroupBoxForAttrConnections->show();                                                                                                                                           // PABLO #2067
+            }                                                                                                                                                                                   // PABLO #2067
+        }                                                                                                                                                                                       // PABLO #2067                                                                                           
+
+        // If attributes correspond to a lane                                                                                                                                                   // PABLO #2067
+        if (dynamic_cast<GNELane*>(myACs.front())) {                                                                                                                                            // PABLO #2067
+            // Obtain connections of lane                                                                                                                                                       // PABLO #2067
+            std::vector<GNEConnection*> connections = dynamic_cast<GNELane*>(myACs.front())->getGNEConnections();                                                                               // PABLO #2067
+            if(connections.size() > 0) {                                                                                                                                                        // PABLO #2067
+                // Check if all connections are editables                                                                                                                                       // PABLO #2067
+                if(connections.size() > MAXNUMBEROFATTRCONNECTIONS) {                                                                                                                           // PABLO #2067
+                    WRITE_WARNING("Number of connections of " + myACs.front()->getID() + " is greater than the number of editable connections (" + toString(MAXNUMBEROFATTRCONNECTIONS) + ")"); // PABLO #2067
+                }                                                                                                                                                                               // PABLO #2067
+                // Show AttrConnections                                                                                                                                                         // PABLO #2067
+                for (int i = 0; (i < connections.size()) && (i < MAXNUMBEROFATTRCONNECTIONS); i++) {                                                                                            // PABLO #2067
+                    myAttrConnections.at(i)->showConnections(connections.at(i));                                                                                                                // PABLO #2067
+                }                                                                                                                                                                               // PABLO #2067
+                myGroupBoxForAttrConnections->show();                                                                                                                                           // PABLO #2067
+            }                                                                                                                                                                                   // PABLO #2067
+        }                                                                                                                                                                                       // PABLO #2067
 
         // If attributes correspond to an Additional
         if (dynamic_cast<GNEAdditional*>(myACs.front())) {
@@ -235,23 +294,9 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
             if (showGroupBoxForEditor == true) {
                 myGroupBoxForEditor->show();
             }
-
-        } else {
-            // Hide all additional elements
-            myGroupBoxForEditor->hide();
-            myGroupBoxForEditor->hide();
-            myCheckBlocked->hide();
         }
     } else {
         getFrameHeaderLabel()->setText("No Object selected");
-        // Hide all elements
-        myGroupBoxForAttributes->hide();
-        myGroupBoxForTemplates->hide();
-        myCopyTemplateButton->hide();
-        mySetTemplateButton->hide();
-        myGroupBoxForEditor->hide();
-        myGroupBoxForEditor->hide();
-        myCheckBlocked->hide();
     }
 }
 
@@ -625,18 +670,20 @@ GNEInspectorFrame::AttrEditor::onCmdReset(FXObject*, FXSelector, void*) {
 
 
 
-GNEInspectorFrame::AttrConnection::AttrConnection(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) : 
-    FXHorizontalFrame(parent, LAYOUT_FILL_X | PACK_UNIFORM_WIDTH), 
-    myInspectorFrameParent(inspectorFrameParent),
-    myConnection(NULL) {
-    // Create label for connection
-    myConnectionInfoLabel = new FXLabel(parent, "", NULL, LAYOUT_FILL_X);
-    // Create checkButton for show connection
-    myShowConnection = new FXCheckButton(parent,"", this, MID_GNE_SHOW_CONNECTION);
-}
+GNEInspectorFrame::AttrConnection::AttrConnection(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :                                                                   // PABLO #2067
+    FXHorizontalFrame(parent, LAYOUT_FILL_X),                                                                                                                                       // PABLO #2067
+    myInspectorFrameParent(inspectorFrameParent),                                                                                                                                   // PABLO #2067
+    myConnection(NULL) {                                                                                                                                                            // PABLO #2067
+    // Create label for connection                                                                                                                                                  // PABLO #2067
+    myConnectionInfoLabel = new FXLabel(this, "", NULL, FRAME_THICK | LAYOUT_FILL_X);                                                                                               // PABLO #2067
+    // Create checkButton for show connection                                                                                                                                       // PABLO #2067
+    myShowConnection = new FXCheckButton(this,"Show", this, MID_GNE_SHOW_CONNECTION);                                                                                               // PABLO #2067
+    // Create FXButton for inspectConnection                                                                                                                                        // PABLO #2067
+    myInspectConnection = new FXButton(this, "inspect", 0, this, MID_GNE_INSPECT_CONNECTION, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);   // PABLO #2067
+}                                                                                                                                                                                   // PABLO #2067
 
 
-GNEInspectorFrame::AttrConnection::~AttrConnection() {}
+GNEInspectorFrame::AttrConnection::~AttrConnection() {} // PABLO #2067
 
 
 void                                                                            // PABLO #2067
@@ -646,9 +693,9 @@ GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) { 
     // set Label                                                                // PABLO #2067
     myConnectionInfoLabel->setText(std::string(                                 // PABLO #2067
         "From " + myConnection->getEdgeFrom()->getID() +                        // PABLO #2067
-        "[" + toString(myConnection->getFromLane()) +                           // PABLO #2067
+        "[" + toString(myConnection->getFromLane()->getIndex()) +               // PABLO #2067
         "] to " + myConnection->getEdgeTo()->getID() +                          // PABLO #2067
-        "[" + toString(myConnection->getToLane()) +                             // PABLO #2067
+        "[" + toString(myConnection->getToLane()->getIndex()) +                 // PABLO #2067
         "]").c_str());                                                          // PABLO #2067
     // Show Label                                                               // PABLO #2067
     myConnectionInfoLabel->show();                                              // PABLO #2067
@@ -662,12 +709,12 @@ GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) { 
 
 
 void 
-GNEInspectorFrame::AttrConnection::hideConnections() {  // PABLO #2067
-    // hide all elements                                // PABLO #2067
-    myConnectionInfoLabel->hide();                      // PABLO #2067
-    myShowConnection->hide();                           // PABLO #2067
-    hide();                                             // PABLO #2067
-}                                                       // PABLO #2067
+GNEInspectorFrame::AttrConnection::hideAttrConnection() {   // PABLO #2067
+    // hide all elements                                    // PABLO #2067
+    myConnectionInfoLabel->hide();                          // PABLO #2067
+    myShowConnection->hide();                               // PABLO #2067
+    hide();                                                 // PABLO #2067
+}                                                           // PABLO #2067
 
 
 long                                                                                        // PABLO #2067
@@ -677,6 +724,15 @@ GNEInspectorFrame::AttrConnection::onCmdSetShowConnection(FXObject*, FXSelector,
     } else {                                                                                // PABLO #2067
          myConnection->setDrawConnection(false);                                            // PABLO #2067
     }                                                                                       // PABLO #2067
+    return 1;                                                                               // PABLO #2067
+}                                                                                           // PABLO #2067
+
+
+long                                                                                        // PABLO #2067
+GNEInspectorFrame::AttrConnection::onCmdInspectConnection(FXObject*, FXSelector, void*) {   // PABLO #2067
+    std::vector<GNEAttributeCarrier*> itemToInspect;                                        // PABLO #2067
+    itemToInspect.push_back(myConnection);                                                  // PABLO #2067
+    myInspectorFrameParent->inspect(itemToInspect);                                         // PABLO #2067
     return 1;                                                                               // PABLO #2067
 }                                                                                           // PABLO #2067
 

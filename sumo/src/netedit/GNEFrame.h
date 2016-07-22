@@ -93,6 +93,9 @@ protected:
     /// @brief the panel to hold all member widgets
     FXVerticalFrame* myContentFrame;
 
+    /// @brief fame for header elements // PABLO #2067
+    FXHorizontalFrame * myHeaderFrame;  // PABLO #2067
+
 private:
     /// @brief Invalidated copy constructor.
     GNEFrame(const GNEFrame&);

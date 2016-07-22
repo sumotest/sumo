@@ -58,6 +58,7 @@
 #include "GNEChange_Attribute.h"
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"
+#include "GNEConnection.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -844,5 +845,19 @@ GNELane::getParentEdge() {
     return myParentEdge;
 }
 
+
+std::vector<GNEConnection*>                                                                                         // PABLO #2067
+GNELane::getGNEConnections() {                                                                                      // PABLO #2067
+    // Obtain GNEConnection of edge parent                                                                          // PABLO #2067
+    const std::vector<GNEConnection*>& edgeConnections = myParentEdge.getGNEConnections();                          // PABLO #2067
+    std::vector<GNEConnection*> laneConnections;                                                                    // PABLO #2067
+    // Obtain outgoing connections                                                                                  // PABLO #2067
+    for(std::vector<GNEConnection*>::const_iterator i = edgeConnections.begin(); i != edgeConnections.end(); i++) { // PABLO #2067
+        if((*i)->getNBEdgeConnection().fromLane == getIndex()) {                                                    // PABLO #2067
+            laneConnections.push_back(*i);                                                                          // PABLO #2067
+        }                                                                                                           // PABLO #2067
+    }                                                                                                               // PABLO #2067
+    return laneConnections;                                                                                         // PABLO #2067
+}                                                                                                                   // PABLO #2067
 
 /****************************************************************************/

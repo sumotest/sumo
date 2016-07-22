@@ -450,6 +450,12 @@ GNEEdge::getLanes() {
 }
 
 
+const std::vector<GNEConnection*>&  // PABLO #2067
+GNEEdge::getGNEConnections() {      // PABLO #2067
+    return myGNEConnections;        // PABLO #2067
+}                                   // PABLO #2067
+
+
 bool
 GNEEdge::wasSplit() {
     return myWasSplit;

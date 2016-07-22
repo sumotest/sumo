@@ -204,7 +204,7 @@ public:
     bool selectEdges();
 
     /// @brief show connections over junctions
-    bool showConnections();
+    bool showAttrConnection();
 
     /// @brief whether to autoselect nodes or to lanes
     bool autoSelectNodes();

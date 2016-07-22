@@ -193,10 +193,13 @@ public:
         void showConnections(GNEConnection* connection);                                // PABLO #2067
                                                                                         // PABLO #2067
         /// @brief show attribute                                                       // PABLO #2067
-        void hideConnections();                                                         // PABLO #2067
+        void hideAttrConnection();                                                      // PABLO #2067
                                                                                         // PABLO #2067
-        /// @brief try to set new attribute value                                       // PABLO #2067
+        /// @brief set show connection attribute                                        // PABLO #2067
         long onCmdSetShowConnection(FXObject*, FXSelector, void*);                      // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief inspect connection                                                   // PABLO #2067
+        long onCmdInspectConnection(FXObject*, FXSelector, void*);                      // PABLO #2067
                                                                                         // PABLO #2067
     protected:                                                                          // PABLO #2067
         /// @brief FOX needs this                                                       // PABLO #2067
@@ -214,6 +217,9 @@ public:
                                                                                         // PABLO #2067
         /// @brief FXCheckBox to hide/show connection individually                      // PABLO #2067
         FXCheckButton *myShowConnection;                                                // PABLO #2067
+                                                                                        // PABLO #2067
+        /// @brief FXCheckBox to hide/show connection individually                      // PABLO #2067
+        FXButton *myInspectConnection;                                                  // PABLO #2067
                                                                                         // PABLO #2067
         /// @brief set show as private function                                         // PABLO #2067
         void show();                                                                    // PABLO #2067
@@ -269,9 +275,12 @@ protected:
 private:
     /// @brief groupBox for attributes
     FXGroupBox* myGroupBoxForAttributes;
-
+    
     /// @brief list of Attribute inputs
     std::vector<GNEInspectorFrame::AttrInput*> vectorOfAttrInput;
+    
+    /// @brief back Button      // PABLO #2067
+    FXButton *myBackButton;     // PABLO #2067
 
     /// @brief groupBox for templates
     FXGroupBox* myGroupBoxForTemplates;
@@ -293,6 +302,12 @@ private:
 
     /// @brief pointer to additional element
     GNEAdditional* myAdditional;
+
+    /// @brief groupBox for AttrConnection      // PABLO #2067
+    FXGroupBox* myGroupBoxForAttrConnections;   // PABLO #2067
+
+    /// @brief vector of attrConnections            // PABLO #2067
+    std::vector<AttrConnection*> myAttrConnections; // PABLO #2067
 
     /// @brief the multi-selection currently being inspected
     std::vector<GNEAttributeCarrier*> myACs;

@@ -369,5 +369,8 @@
     <None Include="..\..\..\src\utils\gui\images\app_table.xpm">
       <Filter>Textures</Filter>
     </None>
+    <None Include="..\..\..\src\utils\gui\images\neteditarrow.xpm">
+      <Filter>Textures</Filter>
+    </None>
   </ItemGroup>
 </Project>

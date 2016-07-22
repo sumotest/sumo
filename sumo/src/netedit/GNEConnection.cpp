@@ -262,7 +262,7 @@ GNEConnection::getCenteringBoundary() const {
 void
 GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
     // Check if connection must be drawed
-    if((myDrawConnection == true) && (myNet)->getViewNet()->showConnections() == true) {
+    if((myDrawConnection == true) && (myNet)->getViewNet()->showAttrConnection() == true) {
         glPushMatrix();
         glPushName(getGlID());
         glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction

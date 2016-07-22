@@ -209,6 +209,9 @@ public:
     /// @brief returns a reference to the lane vector
     const std::vector<GNELane*>& getLanes();
 
+    /// @brief returns a reference to the GNEConnection vector  // PABLO #2067
+    const std::vector<GNEConnection*>& getGNEConnections();     // PABLO #2067
+
     /// @brief whether this edge was created from a split
     bool wasSplit();
 

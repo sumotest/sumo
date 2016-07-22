@@ -140,6 +140,7 @@ enum GUIIcon {
     ICON_LOCK,
     ICON_ADD,
     ICON_REMOVE,
+    ICON_NETEDITARROW,  // PABLO #2067
 
     ICON_MAX
 };

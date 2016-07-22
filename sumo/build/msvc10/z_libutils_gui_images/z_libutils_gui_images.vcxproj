@@ -193,6 +193,7 @@
     <None Include="..\..\..\src\utils\gui\images\lock.xpm" />
     <None Include="..\..\..\src\utils\gui\images\magnify.xpm" />
     <None Include="..\..\..\src\utils\gui\images\netedit.xpm" />
+    <None Include="..\..\..\src\utils\gui\images\neteditarrow.xpm" />
     <None Include="..\..\..\src\utils\gui\images\netopen.xpm" />
     <None Include="..\..\..\src\utils\gui\images\new_window.xpm" />
     <None Include="..\..\..\src\utils\gui\images\no.xpm" />

@@ -42,6 +42,7 @@ class GNEEdge;
 class GNENet;
 class GNEAdditional;
 class GNEAdditionalSet;
+class GNEConnection;    // PABLO #2067
 
 // ===========================================================================
 // class definitions
@@ -61,7 +62,6 @@ public:
 
     /// @brief Definition of the additionalSets vector
     typedef std::vector<GNEAdditionalSet*> AdditionalSetVector;
-
 
     /**@brief Constructor
      * @param[in] idStorage The storage of gl-ids to get the one for this lane representation from
@@ -102,6 +102,9 @@ public:
 
     /// @brief Returns underlying parent edge
     GNEEdge& getParentEdge();
+
+    /// @brief returns a vector with the outgoing GNEConnections of this lane   // PABLO #2067
+    std::vector<GNEConnection*> getGNEConnections();                            // PABLO #2067
 
     /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *

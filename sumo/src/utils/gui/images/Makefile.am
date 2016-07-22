@@ -28,7 +28,7 @@ undo.xpm redo.xpm netedit.xpm \
 step.xpm stop.xpm view1.xpm view2.xpm view3.xpm \
 windows_cascade.xpm windows_tile_horizontally.xpm windows_tile_vertically.xpm \
 yellow_edge.xpm yellow_person.xpm yellow_vehicle.xpm \
-yes.xpm lock.xpm add.xpm remove.xpm \
+yes.xpm lock.xpm add.xpm remove.xpm neteditarrow.xpm \
 GNETexture_Rerouter.cpp GNETexture_RerouterSelected.cpp \
 GNETexture_RouteProbe.cpp GNETexture_RouteProbeSelected.cpp \
 GNETexture_VariableSpeedSignal.cpp GNETexture_VariableSpeedSignalSelected.cpp \
