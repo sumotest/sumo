@@ -121,7 +121,7 @@
 #include "lock.xpm"
 #include "add.xpm"
 #include "remove.xpm"
-#include "netEditArrow.xpm" // PABLO #2067
+#include "neteditarrow.xpm" // PABLO #2067
 
 #include "cut.xpm"
 #include "ext.xpm"
