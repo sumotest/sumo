@@ -54,13 +54,12 @@ GNEChange_Lane::GNEChange_Lane(GNEEdge* edge, GNELane* lane, const NBEdge::Lane&
     GNEChange(0, forward),
     myEdge(edge),
     myLane(lane),
-    myLaneAttrs(laneAttrs),
-    myAdditionalSets(myLane->getAdditionalSets()) {
+    myLaneAttrs(laneAttrs) {
     myEdge->incRef("GNEChange_Lane");
     if (myLane) {
-        // non-zero pointer is only passsed in case of removal
-        assert(!forward);
+        // non-zero pointer is passsed in case of removal or duplication
         myLane->incRef("GNEChange_Lane");
+        myAdditionalSets = myLane->getAdditionalSets();
     } else {
         assert(forward);
     }

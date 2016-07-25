@@ -551,9 +551,8 @@ GUILane::drawGL(const GUIVisualizationSettings& s) const {
                 glPushMatrix();
                 glTranslated(0, 0, GLO_JUNCTION); // must draw on top of junction shape
                 glTranslated(0, 0, .5);
-                if (MSGlobals::gLateralResolution > 0) {
+                if (MSGlobals::gLateralResolution > 0 && s.showSublanes) {
                     // draw sublane-borders
-                    // XXX make configurable
                     GLHelper::setColor(GLHelper::getColor().changedBrightness(51));
                     for (SUMOReal offset = -myHalfLaneWidth; offset < myHalfLaneWidth; offset += MSGlobals::gLateralResolution) {
                         GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, 0.01, 0, offset);
@@ -567,6 +566,9 @@ GUILane::drawGL(const GUIVisualizationSettings& s) const {
                     // this should be independent to the geometry:
                     //  draw from end of first to the begin of second
                     drawLane2LaneConnections();
+                }
+                if (s.showLaneDirection) {
+                    drawDirectionIndicators();
                 }
                 glTranslated(0, 0, .1);
                 if (s.drawLinkJunctionIndex.show) {
@@ -693,6 +695,32 @@ GUILane::drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) co
     }
     glPopMatrix();
 }
+
+
+void
+GUILane::drawDirectionIndicators() const {
+    glColor3d(0.3, 0.3, 0.3);
+    glPushMatrix();
+    glTranslated(0, 0, GLO_EDGE);
+    int e = (int) getShape().size() - 1;
+    for (int i = 0; i < e; ++i) {
+        glPushMatrix();
+        glTranslated(getShape()[i].x(), getShape()[i].y(), 0.1);
+        glRotated(myShapeRotations[i], 0, 0, 1);
+        for (SUMOReal t = 0; t < myShapeLengths[i]; t += myWidth) {
+            const SUMOReal length = MIN2((SUMOReal)myHalfLaneWidth, myShapeLengths[i] - t);
+            glBegin(GL_TRIANGLES);
+            glVertex2d(0, -t - length);
+            glVertex2d(-myQuarterLaneWidth, -t);
+            glVertex2d(+myQuarterLaneWidth, -t);
+            glEnd();
+        }
+        glPopMatrix();
+    }
+    glPopMatrix();
+}
+
+
 
 // ------ inherited from GUIGlObject
 GUIGLObjectPopupMenu*
