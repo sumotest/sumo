@@ -244,8 +244,11 @@ public:
     /// @brief hide Frame
     void hide();
 
+    /// @brief Inspect a single element                                                 // PABLO #2067
+    void inspect(GNEAttributeCarrier* AC, GNEAttributeCarrier* previousElement = NULL); // PABLO #2067
+
     /// @brief Inspect the given multi-selection
-    void inspect(const std::vector<GNEAttributeCarrier*>& ACs);
+    void inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttributeCarrier* previousElement = NULL);
 
     /// @brief get current list of ACs
     const std::vector<GNEAttributeCarrier*>& getACs() const;
@@ -267,6 +270,9 @@ public:
 
     /// @brief called when user toogle the blocking button
     long onCmdSetBlocking(FXObject*, FXSelector, void*);
+
+    /// @brief called when user toogle the go back button   // PABLO #2067
+    long onCmdGoBack(FXObject*, FXSelector, void*);         // PABLO #2067
 
 protected:
     /// @brief FOX needs this
@@ -302,6 +308,9 @@ private:
 
     /// @brief pointer to additional element
     GNEAdditional* myAdditional;
+
+    /// @brief pointer to previous element (If exist)   // PABLO #2067
+    GNEAttributeCarrier* myPreviousElement;             // PABLO #2067
 
     /// @brief groupBox for AttrConnection      // PABLO #2067
     FXGroupBox* myGroupBoxForAttrConnections;   // PABLO #2067

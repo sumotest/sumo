@@ -96,6 +96,12 @@ protected:
     /// @brief fame for header elements // PABLO #2067
     FXHorizontalFrame * myHeaderFrame;  // PABLO #2067
 
+    /// @brief fame for left header elements    // PABLO #2067
+    FXHorizontalFrame * myHeaderLeftFrame;      // PABLO #2067
+
+    /// @brief fame for right header elements   // PABLO #2067
+    FXHorizontalFrame * myHeaderRightFrame;     // PABLO #2067
+
 private:
     /// @brief Invalidated copy constructor.
     GNEFrame(const GNEFrame&);

@@ -48,6 +48,7 @@
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"
 #include "GNEConnection.h"
+#include "GNEViewNet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -65,10 +66,11 @@ const unsigned int MAXNUMBEROFATTRCONNECTIONS = 50;                             
 // ===========================================================================
 
 FXDEFMAP(GNEInspectorFrame) GNEInspectorFrameMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onCmdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_TEMPLATE,  GNEInspectorFrame::onCmdSetTemplate),
-    FXMAPFUNC(SEL_UPDATE,  MID_GNE_COPY_TEMPLATE, GNEInspectorFrame::onUpdCopyTemplate),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_BLOCKING,  GNEInspectorFrame::onCmdSetBlocking),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_COPY_TEMPLATE,  GNEInspectorFrame::onCmdCopyTemplate),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_TEMPLATE,   GNEInspectorFrame::onCmdSetTemplate),
+    FXMAPFUNC(SEL_UPDATE,  MID_GNE_COPY_TEMPLATE,  GNEInspectorFrame::onUpdCopyTemplate),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_BLOCKING,   GNEInspectorFrame::onCmdSetBlocking),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_INSPECT_GOBACK,GNEInspectorFrame::onCmdGoBack), // PABLO #2067
 };
 
 
@@ -98,10 +100,13 @@ FXIMPLEMENT(GNEInspectorFrame::AttrConnection, FXHorizontalFrame, AttrConnection
 
 GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     GNEFrame(parent, viewNet, "Inspector"),
-    myEdgeTemplate(0) {
+    myEdgeTemplate(0),
+    myAdditional(0),
+    myPreviousElement(0) {
 
-    //myBackButton = bew FX
-    //myHeaderFrame
+    // Create back button                                                                                                                                                                       // PABLO #2067
+    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, ICON_BEFORE_TEXT | FRAME_THICK | FRAME_RAISED | LAYOUT_FILL);   // PABLO #2067
+    myBackButton->hide();                                                                                                                                                                       // PABLO #2067
 
     // Create groupBox for attributes
     myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
@@ -170,10 +175,28 @@ GNEInspectorFrame::hide() {
 }
 
 
+void                                                                                                // PABLO #2067
+GNEInspectorFrame::inspect(GNEAttributeCarrier* AC, GNEAttributeCarrier* previousElement) {         // PABLO #2067
+    // Use the implementation of inspect for multiple AttributeCarriers to avoid repetition of code // PABLO #2067  
+    std::vector<GNEAttributeCarrier*> itemToInspect;                                                // PABLO #2067
+    itemToInspect.push_back(AC);                                                                    // PABLO #2067
+    inspect(itemToInspect, previousElement);                                                        // PABLO #2067
+}                                                                                                   // PABLO #2067
+
+
 void
-GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
-    // Assing ACS to myACs
+GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttributeCarrier* previousElement) {
+    // Assing ACs to myACs
     myACs = ACs;
+    // Show back button if previousElement was defined  // PABLO #2067
+    myPreviousElement = previousElement;                // PABLO #2067
+    if(myPreviousElement != NULL) {                     // PABLO #2067
+        myHeaderLeftFrame->show();                      // PABLO #2067
+        myBackButton->show();                           // PABLO #2067
+    } else {                                            // PABLO #2067
+        myHeaderLeftFrame->hide();                      // PABLO #2067
+        myBackButton->hide();                           // PABLO #2067
+    }                                                   // PABLO #2067
     // Hide all elements
     myGroupBoxForAttributes->hide();
     myGroupBoxForTemplates->hide();
@@ -186,10 +209,17 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs) {
     // If vector of attribute Carriers contain data
     if (myACs.size() > 0) {
         // Set header
-        std::string headerString = toString(myACs.front()->getTag());
+        std::string headerString;
         if (myACs.size() > 1) {
-            headerString = toString(myACs.size()) + " " + headerString + "s";
-        }
+            headerString = "Selection: " + toString(myACs.size()) + " " + toString(myACs.front()->getTag()) + "s";
+        } else {                                                                    // PABLO #2067
+            if(dynamic_cast<GNENetElement*>(myACs.front())) {                       // PABLO #2067
+                headerString = "Net: " + toString(myACs.front()->getTag());         // PABLO #2067
+            } else if(dynamic_cast<GNEAdditional*>(myACs.front())) {                // PABLO #2067
+                headerString = "Additional: " + toString(myACs.front()->getTag());  // PABLO #2067
+            }                                                                       // PABLO #2067
+        }                                                                           // PABLO #2067
+        // Set headerString into header label
         getFrameHeaderLabel()->setText(headerString.c_str());
 
         //Show myGroupBoxForAttributes
@@ -364,6 +394,16 @@ GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
     }
     return 1;
 }
+
+
+long                                                                // PABLO #2067
+GNEInspectorFrame::onCmdGoBack(FXObject*, FXSelector, void*) {      // PABLO #2067
+    // Inspect previous element (if was defined)                    // PABLO #2067
+    if(myPreviousElement) {                                         // PABLO #2067
+        inspect(myPreviousElement);                                 // PABLO #2067
+    }                                                               // PABLO #2067
+    return 1;                                                       // PABLO #2067
+}                                                                   // PABLO #2067
 
 
 const std::vector<GNEAttributeCarrier*>&
@@ -693,9 +733,9 @@ GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) { 
     // set Label                                                                // PABLO #2067
     myConnectionInfoLabel->setText(std::string(                                 // PABLO #2067
         "From " + myConnection->getEdgeFrom()->getID() +                        // PABLO #2067
-        "[" + toString(myConnection->getFromLane()->getIndex()) +               // PABLO #2067
+        "[" + toString(myConnection->getLaneFrom()->getIndex()) +               // PABLO #2067
         "] to " + myConnection->getEdgeTo()->getID() +                          // PABLO #2067
-        "[" + toString(myConnection->getToLane()->getIndex()) +                 // PABLO #2067
+        "[" + toString(myConnection->getLaneTo()->getIndex()) +                 // PABLO #2067
         "]").c_str());                                                          // PABLO #2067
     // Show Label                                                               // PABLO #2067
     myConnectionInfoLabel->show();                                              // PABLO #2067
@@ -730,9 +770,12 @@ GNEInspectorFrame::AttrConnection::onCmdSetShowConnection(FXObject*, FXSelector,
 
 long                                                                                        // PABLO #2067
 GNEInspectorFrame::AttrConnection::onCmdInspectConnection(FXObject*, FXSelector, void*) {   // PABLO #2067
-    std::vector<GNEAttributeCarrier*> itemToInspect;                                        // PABLO #2067
-    itemToInspect.push_back(myConnection);                                                  // PABLO #2067
-    myInspectorFrameParent->inspect(itemToInspect);                                         // PABLO #2067
+    // Inspect connection depending of the checkBox "selectEdges"                           // PABLO #2067
+    if(myInspectorFrameParent->getViewNet()->selectEdges()) {                               // PABLO #2067
+        myInspectorFrameParent->inspect(myConnection, myConnection->getEdgeFrom());         // PABLO #2067
+    } else {                                                                                // PABLO #2067
+        myInspectorFrameParent->inspect(myConnection, myConnection->getLaneFrom());         // PABLO #2067
+    }                                                                                       // PABLO #2067
     return 1;                                                                               // PABLO #2067
 }                                                                                           // PABLO #2067
 

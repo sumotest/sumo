@@ -80,10 +80,10 @@ public:
     GNEEdge *getEdgeTo() const;
 
     /// @briefthe get lane of the incoming lane
-    GNELane* getFromLane() const;
+    GNELane* getLaneFrom() const;
 
     /// @briefthe get lane of the outgoing lane
-    GNELane* getToLane() const;
+    GNELane* getLaneTo() const;
 
     /// @briefthe get lane index of the incoming lane
     int getFromLaneIndex() const;

@@ -146,13 +146,13 @@ GNEConnection::getEdgeTo() const {
 
 
 GNELane* 
-GNEConnection::getFromLane() const {
+GNEConnection::getLaneFrom() const {
     return myFromEdge->getLanes().at(myConnection.fromLane);
 }
 
 
 GNELane* 
-GNEConnection::getToLane() const {
+GNEConnection::getLaneTo() const {
     return myFromEdge->getNet()->retrieveEdge(myConnection.toEdge->getID())->getLanes().at(myConnection.toLane);
 }
 

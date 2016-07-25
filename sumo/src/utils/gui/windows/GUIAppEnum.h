@@ -493,10 +493,12 @@ enum {
     MID_GNE_SET_ATTRIBUTE,
     /** netEdit attribute blocking */
     MID_GNE_SET_BLOCKING,
-    /** netEdit show connection */      // PABLO #2067
-    MID_GNE_SHOW_CONNECTION,            // PABLO #2067
-    /** netEdit inspect connection */   // PABLO #2067
-    MID_GNE_INSPECT_CONNECTION,         // PABLO #2067
+    /** netEdit show connection */                  // PABLO #2067
+    MID_GNE_SHOW_CONNECTION,                        // PABLO #2067
+    /** netEdit inspect connection */               // PABLO #2067
+    MID_GNE_INSPECT_CONNECTION,                     // PABLO #2067
+    /** netEdit go back to the previous element */  // PABLO #2067
+    MID_GNE_INSPECT_GOBACK,                         // PABLO #2067
     /** netEdit add row */
     MID_GNE_ADDROW,
     /** netEdit remove row */

@@ -240,7 +240,7 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
     myIcons[ICON_LOCK]    = new FXXPMIcon(a, lock_xpm);
     myIcons[ICON_ADD]     = new FXXPMIcon(a, add_xpm);
     myIcons[ICON_REMOVE]  = new FXXPMIcon(a, remove_xpm);
-    myIcons[ICON_NETEDITARROW]  = new FXXPMIcon(a, remove_xpm); // PABLO #2067
+    myIcons[ICON_NETEDITARROW]  = new FXXPMIcon(a, netEditArrow_xmp); // PABLO #2067
 
     myIcons[ICON_EXT]    = new FXXPMIcon(a, ext_xpm);
     myIcons[ICON_CUT_SWELL]    = new FXXPMIcon(a, cut_xpm);
