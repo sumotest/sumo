@@ -311,7 +311,7 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         // draw ROWs only if target junction has a valid logic)
-        if (myParentEdge.getDest()->isLogicValid() && s.scale > 3) {
+        if (myParentEdge.getGNEJunctionDest()->isLogicValid() && s.scale > 3) {
             drawArrows();
         }
         if (s.showLaneDirection) {
@@ -497,6 +497,18 @@ GNELane::updateGeometry() {
     for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
         (*i)->updateGeometry();
     }
+
+    // Update incoming connections of this lane                                                                         // PABLO #2067
+    std::vector<GNEConnection*> incomingConnections = getGNEIncomingConnections();                                      // PABLO #2067
+    for(std::vector<GNEConnection*>::iterator i = incomingConnections.begin(); i != incomingConnections.end(); i++) {   // PABLO #2067
+        (*i)->updateGeometry();                                                                                         // PABLO #2067
+    }                                                                                                                   // PABLO #2067
+
+    // Update outgoings connections of this lane                                                                        // PABLO #2067
+    std::vector<GNEConnection*> outGoingConnections = getGNEOutcomingConnections();                                     // PABLO #2067
+    for(std::vector<GNEConnection*>::iterator i = outGoingConnections.begin(); i != outGoingConnections.end(); i++) {   // PABLO #2067
+        (*i)->updateGeometry();                                                                                         // PABLO #2067
+    }                                                                                                                   // PABLO #2067
 }
 
 int
@@ -875,18 +887,40 @@ GNELane::getParentEdge() {
 }
 
 
+std::vector<GNEConnection*>                                                                                                                     // PABLO #2067
+GNELane::getGNEIncomingConnections() {                                                                                                          // PABLO #2067
+    // Declare a vector to save incoming connections                                                                                            // PABLO #2067
+    std::vector<GNEConnection*> incomingConnections;                                                                                            // PABLO #2067
+    // Obtain incoming edges if junction source was already created                                                                             // PABLO #2067
+    GNEJunction *junctionSource =  myParentEdge.getGNEJunctionSource();                                                                         // PABLO #2067
+    if(junctionSource) {                                                                                                                        // PABLO #2067
+        std::vector<GNEEdge*> incomingEdges = junctionSource->getIncomingGNEEdges();                                                            // PABLO #2067
+        // Iterate over incoming edges                                                                                                          // PABLO #2067
+        for(std::vector<GNEEdge*>::iterator i = incomingEdges.begin(); i != incomingEdges.end(); i++) {                                         // PABLO #2067
+            // Iterate over connection of incoming edges                                                                                        // PABLO #2067
+            for(std::vector<GNEConnection*>::const_iterator j = (*i)->getGNEConnections().begin(); j != (*i)->getGNEConnections().end(); j++) { // PABLO #2067
+                if((*j)->getNBEdgeConnection().fromLane == getIndex()) {                                                                        // PABLO #2067
+                    incomingConnections.push_back(*j);                                                                                          // PABLO #2067
+                }                                                                                                                               // PABLO #2067
+            }                                                                                                                                   // PABLO #2067
+        }                                                                                                                                       // PABLO #2067
+    }                                                                                                                                           // PABLO #2067
+    return incomingConnections;                                                                                                                 // PABLO #2067
+}                                                                                                                                               // PABLO #2067
+
+
 std::vector<GNEConnection*>                                                                                         // PABLO #2067
-GNELane::getGNEConnections() {                                                                                      // PABLO #2067
+GNELane::getGNEOutcomingConnections() {                                                                             // PABLO #2067
     // Obtain GNEConnection of edge parent                                                                          // PABLO #2067
     const std::vector<GNEConnection*>& edgeConnections = myParentEdge.getGNEConnections();                          // PABLO #2067
-    std::vector<GNEConnection*> laneConnections;                                                                    // PABLO #2067
+    std::vector<GNEConnection*> outcomingConnections;                                                               // PABLO #2067
     // Obtain outgoing connections                                                                                  // PABLO #2067
     for(std::vector<GNEConnection*>::const_iterator i = edgeConnections.begin(); i != edgeConnections.end(); i++) { // PABLO #2067
         if((*i)->getNBEdgeConnection().fromLane == getIndex()) {                                                    // PABLO #2067
-            laneConnections.push_back(*i);                                                                          // PABLO #2067
+            outcomingConnections.push_back(*i);                                                                     // PABLO #2067
         }                                                                                                           // PABLO #2067
     }                                                                                                               // PABLO #2067
-    return laneConnections;                                                                                         // PABLO #2067
+    return outcomingConnections;                                                                                    // PABLO #2067
 }                                                                                                                   // PABLO #2067
 
 /****************************************************************************/

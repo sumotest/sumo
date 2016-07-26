@@ -103,8 +103,11 @@ public:
     /// @brief Returns underlying parent edge
     GNEEdge& getParentEdge();
 
+    /// @brief returns a vector with the incoming GNEConnections of this lane   // PABLO #2067
+    std::vector<GNEConnection*> getGNEIncomingConnections();                    // PABLO #2067
+
     /// @brief returns a vector with the outgoing GNEConnections of this lane   // PABLO #2067
-    std::vector<GNEConnection*> getGNEConnections();                            // PABLO #2067
+    std::vector<GNEConnection*> getGNEOutcomingConnections();                   // PABLO #2067
 
     /**@brief Returns the boundary to which the view shall be centered in order to show the object
      *

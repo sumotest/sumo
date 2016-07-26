@@ -73,7 +73,6 @@ GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLan
     myConnection(fromLane, to->getNBEdge(), toLane, pass, keepClear, contPos, false),    
     GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(fromLane) + to->getID() + toString(toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
-    myJunction(from->getNBEdge()->getToNode()),
     myUncontrolled(uncontrolled),
     myDrawConnection(true) {
     // Update geometry
@@ -85,7 +84,6 @@ GNEConnection::GNEConnection(GNEEdge *from, NBEdge::Connection connection, bool 
     myConnection(connection),
     GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(connection.fromLane) + connection.toEdge->getID() + toString(connection.toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
-    myJunction(from->getNBEdge()->getToNode()),
     myUncontrolled(uncontrolled) {
     // Update geometry
     updateGeometry();
@@ -97,22 +95,23 @@ GNEConnection::~GNEConnection() {}
 
 void
 GNEConnection::updateGeometry() {
-    // Get shape of connection
-    myShape = myJunction->computeInternalLaneShape(myFromEdge->getNBEdge(), myConnection, NUM_POINTS);
+    myShapeRotations.clear();
+    myShapeLengths.clear();
     
-/**
+    // Get shape of from and to lanes
     PositionVector laneShapeFrom = myFromEdge->getLanes().at(myConnection.fromLane)->getShape();
     PositionVector laneShapeTo = myConnection.toEdge->getLaneShape(myConnection.toLane);
 
     // Cut shape using as delimitators from start position and end position
-    laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.size() - 20);
-    laneShapeTo = laneShapeTo.getSubpart(20, laneShapeTo.size());
+    laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - 10);
+    laneShapeTo = laneShapeTo.getSubpart(10, laneShapeTo.length());
 
-    myShape = myJunction->computeSmoothShape(laneShapeFrom, laneShapeTo,
-                             NUM_POINTS, myFromEdge->getNBEdge()->getTurnDestination() == myConnection.toEdge,
-                             (SUMOReal) 5. * (SUMOReal) myFromEdge->getNBEdge()->getNumLanes(),
-                             (SUMOReal) 5. * (SUMOReal) myConnection.toEdge->getNumLanes());
-**/
+    // Calculate shape
+    myShape = myFromEdge->getNBEdge()->getToNode()->computeSmoothShape(laneShapeFrom, laneShapeTo,
+                NUM_POINTS, myFromEdge->getNBEdge()->getTurnDestination() == myConnection.toEdge,
+                (SUMOReal) 5. * (SUMOReal) myFromEdge->getNBEdge()->getNumLanes(),
+                (SUMOReal) 5. * (SUMOReal) myConnection.toEdge->getNumLanes());
+    
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -262,7 +261,7 @@ GNEConnection::getCenteringBoundary() const {
 void
 GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
     // Check if connection must be drawed
-    if((myDrawConnection == true) && (myNet)->getViewNet()->showAttrConnection() == true) {
+    //if((myDrawConnection == true) && (myNet)->getViewNet()->showAttrConnection() == true) {
         glPushMatrix();
         glPushName(getGlID());
         glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction
@@ -276,7 +275,7 @@ GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
         }
         glPopName();
         glPopMatrix();
-    }
+    //}
 }
 
 

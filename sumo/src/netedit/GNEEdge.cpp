@@ -151,14 +151,14 @@ GNEEdge::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 
 
 GNEJunction*
-GNEEdge::getSource() const {
-    return myNet->retrieveJunction(myNBEdge.getFromNode()->getID());
+GNEEdge::getGNEJunctionSource() const {
+    return myNet->retrieveJunction(myNBEdge.getFromNode()->getID(), false);
 }
 
 
 GNEJunction*
-GNEEdge::getDest() const {
-    return myNet->retrieveJunction(myNBEdge.getToNode()->getID());
+GNEEdge::getGNEJunctionDest() const {
+    return myNet->retrieveJunction(myNBEdge.getToNode()->getID(), false);
 }
 
 void
@@ -233,7 +233,7 @@ GNEEdge::updateJunctionPosition(GNEJunction* junction, const Position& origPos) 
     Position delta = junction->getNBNode()->getPosition() - origPos;
     PositionVector geom = myNBEdge.getGeometry();
     // geometry endpoint need not equal junction position hence we modify it with delta
-    if (junction == getSource()) {
+    if (junction == getGNEJunctionSource()) {
         geom[0].add(delta);
     } else {
         geom[-1].add(delta);
@@ -352,14 +352,14 @@ GNEEdge::setEndpoint(Position pos, GNEUndoList* undoList) {
     if (geom[index].distanceTo(pos) < SNAP_RADIUS) { // snap to existing geometry
         pos = geom[index];
     }
-    Position destPos = getDest()->getNBNode()->getPosition();
-    Position sourcePos = getSource()->getNBNode()->getPosition();
+    Position destPos = getGNEJunctionDest()->getNBNode()->getPosition();
+    Position sourcePos = getGNEJunctionSource()->getNBNode()->getPosition();
     if (pos.distanceTo2D(destPos) < pos.distanceTo2D(sourcePos)) {
         setAttribute(GNE_ATTR_SHAPE_END, toString(pos), undoList);
-        getDest()->invalidateShape();
+        getGNEJunctionDest()->invalidateShape();
     } else {
         setAttribute(GNE_ATTR_SHAPE_START, toString(pos), undoList);
-        getSource()->invalidateShape();
+        getGNEJunctionSource()->invalidateShape();
     }
     // possibly existing inner point is no longer needed
     deleteGeometry(pos, undoList);
@@ -369,14 +369,14 @@ GNEEdge::setEndpoint(Position pos, GNEUndoList* undoList) {
 
 void
 GNEEdge::resetEndpoint(const Position& pos, GNEUndoList* undoList) {
-    Position destPos = getDest()->getNBNode()->getPosition();
-    Position sourcePos = getSource()->getNBNode()->getPosition();
+    Position destPos = getGNEJunctionDest()->getNBNode()->getPosition();
+    Position sourcePos = getGNEJunctionSource()->getNBNode()->getPosition();
     if (pos.distanceTo2D(destPos) < pos.distanceTo2D(sourcePos)) {
         setAttribute(GNE_ATTR_SHAPE_END, toString(destPos), undoList);
-        getDest()->invalidateShape();
+        getGNEJunctionDest()->invalidateShape();
     } else {
         setAttribute(GNE_ATTR_SHAPE_START, toString(sourcePos), undoList);
-        getSource()->invalidateShape();
+        getGNEJunctionSource()->invalidateShape();
     }
 }
 
@@ -385,8 +385,8 @@ void
 GNEEdge::setGeometry(PositionVector geom, bool inner) {
     myNBEdge.setGeometry(geom, inner);
     updateGeometries();
-    getSource()->invalidateShape();
-    getDest()->invalidateShape();
+    getGNEJunctionSource()->invalidateShape();
+    getGNEJunctionDest()->invalidateShape();
     myNet->refreshElement(this);
 }
 
@@ -468,9 +468,9 @@ GNEEdge::getAttribute(SumoXMLAttr key) const {
         case SUMO_ATTR_ID:
             return getMicrosimID();
         case SUMO_ATTR_FROM:
-            return getSource()->getMicrosimID();
+            return getGNEJunctionSource()->getMicrosimID();
         case SUMO_ATTR_TO:
-            return getDest()->getMicrosimID();
+            return getGNEJunctionDest()->getMicrosimID();
         case SUMO_ATTR_NUMLANES:
             return toString(myNBEdge.getNumLanes());
         case SUMO_ATTR_PRIORITY:
@@ -550,20 +550,20 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* un
         case SUMO_ATTR_FROM: {
             undoList->p_begin("change edge attribute");
             undoList->p_add(new GNEChange_Attribute(this, key, value));
-            getSource()->setLogicValid(false, undoList);
+            getGNEJunctionSource()->setLogicValid(false, undoList);
             myNet->retrieveJunction(value)->setLogicValid(false, undoList);
-            setAttribute(GNE_ATTR_SHAPE_START, toString(getSource()->getNBNode()->getPosition()), undoList);
-            getSource()->invalidateShape();
+            setAttribute(GNE_ATTR_SHAPE_START, toString(getGNEJunctionSource()->getNBNode()->getPosition()), undoList);
+            getGNEJunctionSource()->invalidateShape();
             undoList->p_end();
             break;
         }
         case SUMO_ATTR_TO: {
             undoList->p_begin("change edge attribute");
             undoList->p_add(new GNEChange_Attribute(this, key, value));
-            getDest()->setLogicValid(false, undoList);
+            getGNEJunctionDest()->setLogicValid(false, undoList);
             myNet->retrieveJunction(value)->setLogicValid(false, undoList);
-            setAttribute(GNE_ATTR_SHAPE_END, toString(getDest()->getNBNode()->getPosition()), undoList);
-            getDest()->invalidateShape();
+            setAttribute(GNE_ATTR_SHAPE_END, toString(getGNEJunctionDest()->getNBNode()->getPosition()), undoList);
+            getGNEJunctionDest()->invalidateShape();
             undoList->p_end();
             break;
         }
@@ -609,10 +609,10 @@ GNEEdge::isValid(SumoXMLAttr key, const std::string& value) {
             return isValidID(value) && myNet->retrieveEdge(value, false) == 0;
             break;
         case SUMO_ATTR_FROM:
-            return isValidID(value) && myNet->retrieveJunction(value, false) != 0 && value != getDest()->getMicrosimID();
+            return isValidID(value) && myNet->retrieveJunction(value, false) != 0 && value != getGNEJunctionDest()->getMicrosimID();
             break;
         case SUMO_ATTR_TO:
-            return isValidID(value) && myNet->retrieveJunction(value, false) != 0 && value != getSource()->getMicrosimID();
+            return isValidID(value) && myNet->retrieveJunction(value, false) != 0 && value != getGNEJunctionSource()->getMicrosimID();
             break;
         case SUMO_ATTR_SPEED:
             return isPositive<SUMOReal>(value);
@@ -673,10 +673,10 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value) {
             myNet->renameEdge(this, value);
             break;
         case SUMO_ATTR_FROM:
-            myNet->changeEdgeEndpoints(this, value, getDest()->getMicrosimID());
+            myNet->changeEdgeEndpoints(this, value, getGNEJunctionDest()->getMicrosimID());
             break;
         case SUMO_ATTR_TO:
-            myNet->changeEdgeEndpoints(this, getSource()->getMicrosimID(), value);
+            myNet->changeEdgeEndpoints(this, getGNEJunctionSource()->getMicrosimID(), value);
             break;
         case SUMO_ATTR_NUMLANES:
             throw InvalidArgument("GNEEdge::setAttribute (private) called for attr SUMO_ATTR_NUMLANES. This should never happen");
@@ -743,8 +743,8 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value) {
 void
 GNEEdge::setNumLanes(int numLanes, GNEUndoList* undoList) {
     undoList->p_begin("change number of lanes");
-    getSource()->setLogicValid(false, undoList);
-    getDest()->setLogicValid(false, undoList);
+    getGNEJunctionSource()->setLogicValid(false, undoList);
+    getGNEJunctionDest()->setLogicValid(false, undoList);
 
     const int oldNumLanes = (int)myLanes.size();
     for (int i = oldNumLanes; i < numLanes; i++) {
@@ -786,8 +786,8 @@ GNEEdge::addLane(GNELane* lane, const NBEdge::Lane& laneAttrs) {
         myLanes[i]->setIndex(i);
     }
     /* while technically correct, this looks ugly
-    getSource()->invalidateShape();
-    getDest()->invalidateShape();
+    getGNEJunctionSource()->invalidateShape();
+    getGNEJunctionDest()->invalidateShape();
     */
     myNet->refreshElement(this);
 }
@@ -812,8 +812,8 @@ GNEEdge::removeLane(GNELane* lane) {
         myLanes[i]->setIndex(i);
     }
     /* while technically correct, this looks ugly
-    getSource()->invalidateShape();
-    getDest()->invalidateShape();
+    getGNEJunctionSource()->invalidateShape();
+    getGNEJunctionDest()->invalidateShape();
     */
 
     myNet->refreshElement(this);

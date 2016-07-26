@@ -128,10 +128,10 @@ public:
     NBEdge* getNBEdge();
 
     /// @brief returns the source-junction
-    GNEJunction* getSource() const;
+    GNEJunction* getGNEJunctionSource() const;
 
     /// @brief returns the destination-junction
-    GNEJunction* getDest() const;
+    GNEJunction* getGNEJunctionDest() const;
 
     /**@brief change the edge geometry
      * It is up to the Edge to decide whether an new geometry node should be

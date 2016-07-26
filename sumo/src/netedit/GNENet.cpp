@@ -349,10 +349,10 @@ GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
         undoList->add(new GNEChange_Selection(std::set<GUIGlID>(), deselected, true), true);
     }
 
-    edge->getSource()->removeFromCrossings(edge, undoList);
-    edge->getDest()->removeFromCrossings(edge, undoList);
-    edge->getSource()->setLogicValid(false, undoList);
-    edge->getDest()->setLogicValid(false, undoList);
+    edge->getGNEJunctionSource()->removeFromCrossings(edge, undoList);
+    edge->getGNEJunctionDest()->removeFromCrossings(edge, undoList);
+    edge->getGNEJunctionSource()->setLogicValid(false, undoList);
+    edge->getGNEJunctionDest()->setLogicValid(false, undoList);
     requireRecompute();
     undoList->p_end();
 }
@@ -375,10 +375,10 @@ GNENet::deleteLane(GNELane* lane, GNEUndoList* undoList) {
             undoList->add(new GNEChange_Selection(std::set<GUIGlID>(), deselected, true), true);
         }
         if (sidewalk) {
-            edge->getSource()->removeFromCrossings(edge, undoList);
-            edge->getDest()->removeFromCrossings(edge, undoList);
-            edge->getSource()->setLogicValid(false, undoList);
-            edge->getDest()->setLogicValid(false, undoList);
+            edge->getGNEJunctionSource()->removeFromCrossings(edge, undoList);
+            edge->getGNEJunctionDest()->removeFromCrossings(edge, undoList);
+            edge->getGNEJunctionSource()->setLogicValid(false, undoList);
+            edge->getGNEJunctionDest()->setLogicValid(false, undoList);
         }
         requireRecompute();
         undoList->p_end();
@@ -433,9 +433,9 @@ GNENet::splitEdge(GNEEdge* edge, const Position& pos, GNEUndoList* undoList, GNE
     if (newJunction == 0) {
         newJunction = createJunction(pos, undoList);
     }
-    GNEEdge* firstPart = createEdge(edge->getSource(), newJunction, edge,
+    GNEEdge* firstPart = createEdge(edge->getGNEJunctionSource(), newJunction, edge,
                                     undoList, baseName + toString(posBase), true);
-    GNEEdge* secondPart = createEdge(newJunction, edge->getDest(), edge,
+    GNEEdge* secondPart = createEdge(newJunction, edge->getGNEJunctionDest(), edge,
                                      undoList, baseName + toString(posBase + (int)linePos), true);
     // fix geometry
     firstPart->setAttribute(GNE_ATTR_SHAPE_START, toString(newGeoms.first[0]), undoList);
@@ -475,7 +475,7 @@ void
 GNENet::reverseEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("reverse edge");
     deleteEdge(edge, undoList); // still exists. we delete it so we can reuse the name in case of resplit
-    GNEEdge* reversed = createEdge(edge->getDest(), edge->getSource(), edge, undoList, edge->getID(), false, true);
+    GNEEdge* reversed = createEdge(edge->getGNEJunctionDest(), edge->getGNEJunctionSource(), edge, undoList, edge->getID(), false, true);
     assert(reversed != 0);
     reversed->setAttribute(SUMO_ATTR_SHAPE, toString(edge->getNBEdge()->getInnerGeometry().reverse()), undoList);
     undoList->p_end();
@@ -487,7 +487,7 @@ GNENet::addReversedEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("add reversed edge");
     GNEEdge* reversed = 0;
     if (edge->getNBEdge()->getLaneSpreadFunction() == LANESPREAD_RIGHT) {
-        GNEEdge* reversed = createEdge(edge->getDest(), edge->getSource(), edge, undoList, "-" + edge->getID(), false, true);
+        GNEEdge* reversed = createEdge(edge->getGNEJunctionDest(), edge->getGNEJunctionSource(), edge, undoList, "-" + edge->getID(), false, true);
         assert(reversed != 0);
         reversed->setAttribute(SUMO_ATTR_SHAPE, toString(edge->getNBEdge()->getInnerGeometry().reverse()), undoList);
     } else {
@@ -526,13 +526,13 @@ GNENet::mergeJunctions(GNEJunction* moved, GNEJunction* target, GNEUndoList* und
     const EdgeVector incoming = moved->getNBNode()->getIncomingEdges();
     for (EdgeVector::const_iterator it = incoming.begin(); it != incoming.end(); it++) {
         GNEEdge* oldEdge = myEdges[(*it)->getID()];
-        remapEdge(oldEdge, oldEdge->getSource(), target, undoList);
+        remapEdge(oldEdge, oldEdge->getGNEJunctionSource(), target, undoList);
     }
     // deleting edges changes in the underlying EdgeVector so we have to make a copy
     const EdgeVector outgoing = moved->getNBNode()->getOutgoingEdges();
     for (EdgeVector::const_iterator it = outgoing.begin(); it != outgoing.end(); it++) {
         GNEEdge* oldEdge = myEdges[(*it)->getID()];
-        remapEdge(oldEdge, target, oldEdge->getDest(), undoList);
+        remapEdge(oldEdge, target, oldEdge->getGNEJunctionDest(), undoList);
     }
     deleteJunction(moved, undoList);
     undoList->p_end();
@@ -885,11 +885,11 @@ GNENet::joinSelectedJunctions(GNEUndoList* undoList) {
     // remap edges
     for (EdgeVector::const_iterator it = allIncoming.begin(); it != allIncoming.end(); it++) {
         GNEEdge* oldEdge = myEdges[(*it)->getID()];
-        remapEdge(oldEdge, oldEdge->getSource(), joined, undoList, true);
+        remapEdge(oldEdge, oldEdge->getGNEJunctionSource(), joined, undoList, true);
     }
     for (EdgeVector::const_iterator it = allOutgoing.begin(); it != allOutgoing.end(); it++) {
         GNEEdge* oldEdge = myEdges[(*it)->getID()];
-        remapEdge(oldEdge, joined, oldEdge->getDest(), undoList, true);
+        remapEdge(oldEdge, joined, oldEdge->getGNEJunctionDest(), undoList, true);
     }
     // delete original junctions
     for (std::vector<GNEJunction*>::iterator it = selected.begin(); it != selected.end(); it++) {
@@ -927,7 +927,7 @@ GNENet::replaceJunctionByGeometry(GNEJunction* junction, GNEUndoList* undoList) 
         GNEEdge* continuation = myEdges[(*j).second->getID()];
         deleteEdge(begin, undoList);
         deleteEdge(continuation, undoList);
-        GNEEdge* newEdge = createEdge(begin->getSource(), continuation->getDest(), begin, undoList, begin->getMicrosimID(), false, true);
+        GNEEdge* newEdge = createEdge(begin->getGNEJunctionSource(), continuation->getGNEJunctionDest(), begin, undoList, begin->getMicrosimID(), false, true);
         PositionVector newShape = begin->getNBEdge()->getInnerGeometry();
         newShape.push_back(junction->getNBNode()->getPosition());
         newShape.append(continuation->getNBEdge()->getInnerGeometry());
@@ -1007,8 +1007,8 @@ GNENet::moveSelection(const Position& moveSrc, const Position& moveDest) {
     for (std::vector<GNEEdge*>::iterator it = edges.begin(); it != edges.end(); it++) {
         GNEEdge* edge = *it;
         if (edge) {
-            if (junctionSet.count(edge->getSource()) > 0 &&
-                    junctionSet.count(edge->getDest()) > 0) {
+            if (junctionSet.count(edge->getGNEJunctionSource()) > 0 &&
+                    junctionSet.count(edge->getGNEJunctionDest()) > 0) {
                 // edge and its endpoints are selected, move all the inner points as well
                 edge->moveGeometry(delta);
             } else {

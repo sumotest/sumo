@@ -107,6 +107,12 @@ public:
     /// @brief Return net build node
     NBNode* getNBNode() const;
 
+    /// @brief Return incoming GNEEdges                 // PABLO #2067
+    std::vector<GNEEdge*> getIncomingGNEEdges() const;  // PABLO #2067
+
+    /// @brief Return incoming GNEEdges                 // PABLO #2067
+    std::vector<GNEEdge*> getOutgoingGNEEdges() const;  // PABLO #2067
+
     /// @brief marks as first junction in createEdge-mode
     void markAsCreateEdgeSource();
 

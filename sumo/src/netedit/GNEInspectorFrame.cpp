@@ -294,7 +294,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
         // If attributes correspond to a lane                                                                                                                                                   // PABLO #2067
         if (dynamic_cast<GNELane*>(myACs.front())) {                                                                                                                                            // PABLO #2067
             // Obtain connections of lane                                                                                                                                                       // PABLO #2067
-            std::vector<GNEConnection*> connections = dynamic_cast<GNELane*>(myACs.front())->getGNEConnections();                                                                               // PABLO #2067
+            std::vector<GNEConnection*> connections = dynamic_cast<GNELane*>(myACs.front())->getGNEOutcomingConnections();                                                                      // PABLO #2067
             if(connections.size() > 0) {                                                                                                                                                        // PABLO #2067
                 // Check if all connections are editables                                                                                                                                       // PABLO #2067
                 if(connections.size() > MAXNUMBEROFATTRCONNECTIONS) {                                                                                                                           // PABLO #2067
