@@ -1,4 +1,4 @@
-/****************************************************************************/
+﻿/****************************************************************************/
 /// @file    GNEInspectorFrame.cpp
 /// @author  Jakob Erdmann
 /// @date    Mar 2011
@@ -732,9 +732,9 @@ GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) { 
     myConnection = connection;                                                  // PABLO #2067
     // set Label                                                                // PABLO #2067
     myConnectionInfoLabel->setText(std::string(                                 // PABLO #2067
-        "From " + myConnection->getEdgeFrom()->getID() +                        // PABLO #2067
+        myConnection->getEdgeFrom()->getID() +                                  // PABLO #2067
         "[" + toString(myConnection->getLaneFrom()->getIndex()) +               // PABLO #2067
-        "] to " + myConnection->getEdgeTo()->getID() +                          // PABLO #2067
+        "] -> " + myConnection->getEdgeTo()->getID() +                          // PABLO #2067
         "[" + toString(myConnection->getLaneTo()->getIndex()) +                 // PABLO #2067
         "]").c_str());                                                          // PABLO #2067
     // Show Label                                                               // PABLO #2067

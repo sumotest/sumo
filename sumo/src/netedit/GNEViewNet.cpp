@@ -82,19 +82,20 @@
 // FOX callback mapping
 // ===========================================================================
 FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_MODE_CHANGE, GNEViewNet::onCmdChangeMode),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SPLIT_EDGE, GNEViewNet::onCmdSplitEdge),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SPLIT_EDGE_BIDI, GNEViewNet::onCmdSplitEdgeBidi),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_REVERSE_EDGE, GNEViewNet::onCmdReverseEdge),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_ADD_REVERSE_EDGE, GNEViewNet::onCmdAddReversedEdge),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SET_EDGE_ENDPOINT, GNEViewNet::onCmdSetEdgeEndpoint),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_RESET_EDGE_ENDPOINT, GNEViewNet::onCmdResetEdgeEndpoint),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_STRAIGHTEN, GNEViewNet::onCmdStraightenEdges),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SIMPLIFY_SHAPE, GNEViewNet::onCmdSimplifyShape),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_DELETE_GEOMETRY, GNEViewNet::onCmdDeleteGeometry),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_DUPLICATE_LANE, GNEViewNet::onCmdDuplicateLane),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_NODE_SHAPE, GNEViewNet::onCmdNodeShape),
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_NODE_REPLACE, GNEViewNet::onCmdNodeReplace)
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CHANGE,         GNEViewNet::onCmdChangeMode),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE,          GNEViewNet::onCmdSplitEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE_BIDI,     GNEViewNet::onCmdSplitEdgeBidi),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_REVERSE_EDGE,        GNEViewNet::onCmdReverseEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_ADD_REVERSE_EDGE,    GNEViewNet::onCmdAddReversedEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_EDGE_ENDPOINT,   GNEViewNet::onCmdSetEdgeEndpoint),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_RESET_EDGE_ENDPOINT, GNEViewNet::onCmdResetEdgeEndpoint),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_STRAIGHTEN,          GNEViewNet::onCmdStraightenEdges),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SIMPLIFY_SHAPE,      GNEViewNet::onCmdSimplifyShape),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_DELETE_GEOMETRY,     GNEViewNet::onCmdDeleteGeometry),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_DUPLICATE_LANE,      GNEViewNet::onCmdDuplicateLane),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_SHAPE,          GNEViewNet::onCmdNodeShape),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_REPLACE,        GNEViewNet::onCmdNodeReplace),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTIONS,    GNEViewNet::onCmdToogleShowConnection)  // PABLO #2067
 };
 
 // Object implementation
@@ -314,9 +315,9 @@ GNEViewNet::showAttrConnection() {                      // PABLO #2067
     if(myEditMode == GNE_MODE_CONNECT) {                // PABLO #2067
         return true;                                    // PABLO #2067
     } else {                                            // PABLO #2067
-        return (myShowConnections->getCheck() == true); // PABLO #2067
+        return (myShowConnections->getCheck() == 1);    // PABLO #2067
     }                                                   // PABLO #2067
-}
+}                                                       // PABLO #2067
 
 
 bool
@@ -1140,6 +1141,14 @@ GNEViewNet::onCmdNodeReplace(FXObject*, FXSelector, void*) {
     return 1;
 }
 
+
+long                                                                    // PABLO #2067
+GNEViewNet::onCmdToogleShowConnection(FXObject*, FXSelector, void*) {   // PABLO #2067
+    // Update viewnNet to show/hide conections                          // PABLO #2067
+    update();                                                           // PABLO #2067
+    return 1;                                                           // PABLO #2067
+}                                                                       // PABLO #2067
+
 // ===========================================================================
 // private
 // ===========================================================================
@@ -1196,8 +1205,10 @@ GNEViewNet::buildEditModeControls() {
             "two-way\t\tAutomatically create an edge in the opposite direction", this, 0);
     mySelectEdges = new FXMenuCheck(myToolbar, "select edges\t\tToggle whether clicking should select edges or lanes", this, 0);
     mySelectEdges->setCheck();
-    myShowConnections = new FXMenuCheck(myToolbar, "show connections\t\tToggle show connections over junctions", this, 0);  // PABLO #2067
-    myShowConnections->setCheck();                                                                                          // PABLO #2067
+    
+    myShowConnections = new FXMenuCheck(myToolbar, "show connections\t\tToggle show connections over junctions", this, MID_GNE_SHOW_CONNECTIONS);   // PABLO #2067
+    myShowConnections->setCheck();                                                                                                                  // PABLO #2067
+    
     myExtendToEdgeNodes = new FXMenuCheck(myToolbar, "auto-select nodes\t\tToggle whether selecting multiple edges should automatically select their nodes", this, 0);
 
     myWarnAboutMerge = new FXMenuCheck(myToolbar, "ask for merge\t\tAsk for confirmation before merging junctions.", this, 0);

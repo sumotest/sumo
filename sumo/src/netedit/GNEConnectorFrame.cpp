@@ -568,9 +568,6 @@ GNEConnectorFrame::buildIinternalLanes(NBNode* node) {
             for (std::vector<NBEdge::Connection>::const_iterator it_con = conns.begin(); it_con != conns.end(); ++it_con) {
                 // Calculate shape of internal lane
                 const PositionVector shape = node->computeInternalLaneShape(*it_edg, *it_con, NUM_POINTS);
-
-if((*it_edg)->getID() == "L2") std::cout << (*it_edg)->getID() << " - " << shape << std::endl;
-
                 // Get link state
                 LinkState state = node->getLinkState(*it_edg, it_con->toEdge, it_con->fromLane, it_con->toLane, it_con->mayDefinitelyPass, it_con->tlID);
                 // Create internal lane

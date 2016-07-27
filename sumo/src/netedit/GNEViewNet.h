@@ -166,6 +166,9 @@ public:
     /// @brief replace node by geometry
     long onCmdNodeReplace(FXObject*, FXSelector, void*);
 
+    /// @brief toogle show connections                              // PABLO #2067
+    long onCmdToogleShowConnection(FXObject*, FXSelector, void*);   // PABLO #2067
+
     /// @brief sets edit mode (from hotkey)
     /// @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
     void setEditModeFromHotkey(FXushort selid);

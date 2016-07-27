@@ -489,6 +489,8 @@ enum {
     MID_GNE_SAVE_ADDITIONALS,
     /** insert contents of another network */
     MID_GNE_INSERT_NETWORK,
+    /** show connections **/    // PABLO #2067
+    MID_GNE_SHOW_CONNECTIONS,   // PABLO #2067
     /** attribute edited */
     MID_GNE_SET_ATTRIBUTE,
     /** netEdit attribute blocking */

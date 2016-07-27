@@ -95,6 +95,7 @@ GNEConnection::~GNEConnection() {}
 
 void
 GNEConnection::updateGeometry() {
+    // Clear containers
     myShapeRotations.clear();
     myShapeLengths.clear();
     
@@ -102,16 +103,28 @@ GNEConnection::updateGeometry() {
     PositionVector laneShapeFrom = myFromEdge->getLanes().at(myConnection.fromLane)->getShape();
     PositionVector laneShapeTo = myConnection.toEdge->getLaneShape(myConnection.toLane);
 
-    // Cut shape using as delimitators from start position and end position
-    laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - 10);
-    laneShapeTo = laneShapeTo.getSubpart(10, laneShapeTo.length());
+    // Cut laneShapeFrom using as delimitators from start position and end position depending of maxNumberOfLanes
+    if(myFromEdge->getNBEdge()->getNumLanes() <= 2) {
+        laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - 3);
+    } else {
+        laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - (myFromEdge->getNBEdge()->getNumLanes() * 3));
+    }
 
-    // Calculate shape
-    myShape = myFromEdge->getNBEdge()->getToNode()->computeSmoothShape(laneShapeFrom, laneShapeTo,
+    // Cut laneShapeTo using as delimitators from start position and end position depending of maxNumberOfLanes
+    if(myConnection.toEdge->getNumLanes() <= 2) {
+        laneShapeTo = laneShapeTo.getSubpart(3, laneShapeTo.length());
+    } else {
+        laneShapeTo = laneShapeTo.getSubpart((myConnection.toEdge->getNumLanes() * 3), laneShapeTo.length());
+    }
+
+    // Calculate shape using a smooth shape
+    myShape = myFromEdge->getNBEdge()->getToNode()->computeSmoothShape(
+                laneShapeFrom, laneShapeTo,
                 NUM_POINTS, myFromEdge->getNBEdge()->getTurnDestination() == myConnection.toEdge,
                 (SUMOReal) 5. * (SUMOReal) myFromEdge->getNBEdge()->getNumLanes(),
                 (SUMOReal) 5. * (SUMOReal) myConnection.toEdge->getNumLanes());
     
+    // Obtain lenghts and shape rotations
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -261,7 +274,7 @@ GNEConnection::getCenteringBoundary() const {
 void
 GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
     // Check if connection must be drawed
-    //if((myDrawConnection == true) && (myNet)->getViewNet()->showAttrConnection() == true) {
+    if(myDrawConnection && (myNet->getViewNet()->showAttrConnection())) {
         glPushMatrix();
         glPushName(getGlID());
         glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction
@@ -275,7 +288,7 @@ GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
         }
         glPopName();
         glPopMatrix();
-    //}
+    }
 }
 
 
