@@ -70,7 +70,7 @@ FXDEFMAP(GNEInspectorFrame) GNEInspectorFrameMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_TEMPLATE,   GNEInspectorFrame::onCmdSetTemplate),
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_COPY_TEMPLATE,  GNEInspectorFrame::onUpdCopyTemplate),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_BLOCKING,   GNEInspectorFrame::onCmdSetBlocking),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_INSPECT_GOBACK,GNEInspectorFrame::onCmdGoBack), // PABLO #2067
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_INSPECT_GOBACK, GNEInspectorFrame::onCmdGoBack),     // PABLO #2067
 };
 
 
@@ -764,6 +764,8 @@ GNEInspectorFrame::AttrConnection::onCmdSetShowConnection(FXObject*, FXSelector,
     } else {                                                                                // PABLO #2067
          myConnection->setDrawConnection(false);                                            // PABLO #2067
     }                                                                                       // PABLO #2067
+    // Update view net                                                                      // PABLO #2067
+    myInspectorFrameParent->getViewNet()->update();                                         // PABLO #2067
     return 1;                                                                               // PABLO #2067
 }                                                                                           // PABLO #2067
 
