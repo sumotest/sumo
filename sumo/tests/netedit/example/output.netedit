@@ -1,0 +1,11 @@
++++ running this Java
++++ trying to run SikuliX
++++ using: -Xms64M -Xmx512M -Dfile.encoding=UTF-8 -Dsikuli.FromCommandLine -jar C:\Sikulix\sikulix.jar -r C:/Proyectos/Sumo_BranchPablo/tests/netedit/example
+[log] App.open [1780:netEdit.exe]
+[log] CLICK on L(353,35)@S(0)[0,0 1366x768]
+[log] ( Ctrl )  TYPE "a"
+[log]  TYPE "e"
+[log] CLICK on L(418,418)@S(0)[0,0 1366x768]
+[log] CLICK on L(841,456)@S(0)[0,0 1366x768]
+[log] ( Ctrl )  TYPE "q"
+[log] ( Alt )  TYPE "y"
