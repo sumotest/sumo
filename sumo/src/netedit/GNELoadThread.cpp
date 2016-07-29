@@ -31,6 +31,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <utils/xml/XMLSubSys.h>
 #include <utils/gui/events/GUIEvent_Message.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
@@ -113,6 +114,7 @@ GNELoadThread::run() {
         submitEndAndCleanup(net);
         return 0;
     }
+    XMLSubSys::setValidation(oc.getString("xml-validation"), oc.getString("xml-validation.net"));
     // this netbuilder instance becomes the responsibility of the GNENet
     NBNetBuilder* netBuilder = new NBNetBuilder();
 
@@ -200,6 +202,9 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.addOptionSubTopic("Building Defaults");
     oc.addOptionSubTopic("Visualisation");
 
+    oc.doRegister("new", new Option_Bool(false)); // !!!
+    oc.addDescription("new", "Input", "Start with a new network");
+
     oc.doRegister("disable-textures", 'T', new Option_Bool(false)); // !!!
     oc.addDescription("disable-textures", "Visualisation", "");
 
@@ -208,6 +213,9 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
 
     oc.doRegister("registry-viewport", new Option_Bool(false));
     oc.addDescription("registry-viewport", "Visualisation", "Load current viewport from registry");
+
+    oc.doRegister("window-size", new Option_String());
+    oc.addDescription("window-size", "Visualisation", "Create initial window with the given x,y size");
 
     SystemFrame::addReportOptions(oc); // this subtopic is filled here, too
 
