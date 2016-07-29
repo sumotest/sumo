@@ -1,9 +1,21 @@
 import_config_file:../config_all
-binary:$NETEDIT_BINARY
+binary:$TEXTTEST_HOME/sikulixrunner.py
 copy_test_path:input_net.net.xml
+copy_test_path_merge:test.sikuli
+
 [collate_file]
-config:config.cfg
+net:net.net.xml
+cfg:config.cfg
 log:log.txt
+
 [run_dependent_text]
-output:netedit.exe{REPLACE sumo-netedit}
-net:Version
+net:<!--{[->]}-->
+output:done \(.*\)\.{REPLACE done.}
+log:done \(.*\)\.{REPLACE done.}
+errors:Leaked object at 
+errors:*** 9 leaks found
+errors:delete: freed
+
+[floating_point_tolerance]
+net:0.0101
+output:0.0101
