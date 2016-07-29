@@ -1,6 +1,6 @@
 import_config_file:../config_all
-binary:$NETEDIT_BINARY
-copy_test_path:input_net.net.xml
+binary:$SYKULIX
+copy_test_path: 
 [collate_file]
 config:config.cfg
 log:log.txt

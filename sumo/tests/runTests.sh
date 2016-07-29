@@ -26,7 +26,7 @@ export GUISIM_BINARY="$SUMO_BINDIR/sumo-gui"
 export MAROUTER_BINARY="$SUMO_BINDIR/marouter"
 export NETEDIT_BINARY="$SUMO_BINDIR/netEdit"
 export PYTHON="python"
-export PYTHON="runsikulix.cmd"
+export PYTHON="runsikulix"
 
 if which texttest &> /dev/null; then
   texttest "$@"
