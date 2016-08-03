@@ -1,4 +1,5 @@
 set TEXTTEST_HOME=%~dp0
+set NETEDITRESOURCES=%~dp0\netedit\resources\
 IF "%SUMO_HOME%"=="" SET SUMO_HOME=%~dp0\..
 set ACTIVITYGEN_BINARY=%~dp0\..\bin\activitygen%1.exe
 set DFROUTER_BINARY=%~dp0\..\bin\dfrouter%1.exe
@@ -19,4 +20,7 @@ set SIKULIX=runsikulix.cmd
 
 SET TEXTTESTPY=texttest.py
 python -c "import texttestlib"
+
 IF NOT ERRORLEVEL 1 SET TEXTTESTPY=texttest.pyw
+
+
