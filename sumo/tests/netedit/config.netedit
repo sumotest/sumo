@@ -5,6 +5,7 @@ copy_test_path_merge:test.sikuli
 
 [collate_file]
 net:net.net.xml
+additionals:additionals.xml
 cfg:config.cfg
 log:log.txt
 

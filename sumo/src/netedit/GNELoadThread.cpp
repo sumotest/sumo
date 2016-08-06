@@ -217,6 +217,9 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.doRegister("window-size", new Option_String());
     oc.addDescription("window-size", "Visualisation", "Create initial window with the given x,y size");
 
+    oc.doRegister("additionals-output", new Option_String());                                           // PABLO #501
+    oc.addDescription("additionals-output", "Output", "default value for additionals output file");     // PABLO #501
+
     SystemFrame::addReportOptions(oc); // this subtopic is filled here, too
 
     NIFrame::fillOptions();
