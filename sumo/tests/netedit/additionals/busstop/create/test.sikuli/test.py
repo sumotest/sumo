@@ -43,7 +43,7 @@ click(netEditResources + "additionals/editorParameters/referenceRight.png")
 #create busstop in mode "reference right"
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(475,400))
 
-#change reference to right
+#change reference to center
 click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
 click(netEditResources + "additionals/editorParameters/referenceCenter.png")
 
@@ -84,6 +84,18 @@ click(netEditResources + "additionals/editorParameters/referenceCenter.png")
 
 #Create busstop with a different lenght forcing position
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350,400))
+
+#Check UndoRedo (5 busStops -> 5 times)
+#type("z", Key.CTRL)
+#type("z", Key.CTRL)
+#type("z", Key.CTRL)
+#type("z", Key.CTRL)
+#type("z", Key.CTRL)
+#type("y", Key.CTRL)
+#type("y", Key.CTRL)
+#type("y", Key.CTRL)
+#type("y", Key.CTRL)
+#type("y", Key.CTRL)
 
 # save additional
 type("f", Key.ALT)
