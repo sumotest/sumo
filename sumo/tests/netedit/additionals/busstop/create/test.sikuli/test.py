@@ -34,38 +34,56 @@ type("a")
 # by default, additional is busstop, then isn't needed to select "busstop"
 
 #create busstop in mode "reference left"
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350, 400))
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 400))
 
 #change reference to right
 click(netEditResources + "additionals/editorParameters/comboBox-referenceLeft.png")
 click(netEditResources + "additionals/editorParameters/referenceRight.png")
 
 #create busstop in mode "reference right"
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(450,400))
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(475,400))
 
 #change reference to right
 click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
 click(netEditResources + "additionals/editorParameters/referenceCenter.png")
 
 #create busstop in mode "reference center"
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(550,400))
-
-#change reference to left
-click(netEditResources + "additionals/editorParameters/comboBox-referenceCenter.png")
-click(netEditResources + "additionals/editorParameters/referenceLeft.png")
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(575,400))
 
 #change default lenght to 20
 doubleClick(netEditResources + "additionals/editorParameters/length-10.png")
 type("20" + Key.ENTER)
 
+#change reference to left
+click(netEditResources + "additionals/editorParameters/comboBox-referenceCenter.png")
+click(netEditResources + "additionals/editorParameters/referenceLeft.png")
+
 #try to create busstop with a different lenght WITHOUT forcing position. BusStop musn't be created
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(650,400))
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(625,400))
+
+#change reference to right
+click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
+click(netEditResources + "additionals/editorParameters/referenceCenter.png")
+
+#try to create busstop with a different lenght WITHOUT forcing position. BusStop musn't be created
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350,400))
 
 #change forcin position to TRUE
 click(Pattern(netEditResources + "additionals/editorParameters/forcePosition.png").targetOffset(45, 0))
 
+#change reference to left
+click(netEditResources + "additionals/editorParameters/comboBox-referenceCenter.png")
+click(netEditResources + "additionals/editorParameters/referenceLeft.png")
+
 #Create busstop with a different lenght forcing position
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(650,400))
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(625,400))
+
+#change reference to right
+click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
+click(netEditResources + "additionals/editorParameters/referenceCenter.png")
+
+#Create busstop with a different lenght forcing position
+click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350,400))
 
 # save additional
 type("f", Key.ALT)
