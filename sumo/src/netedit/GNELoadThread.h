@@ -115,6 +115,12 @@ protected:
 
     /// @brief if true, a new net is created
     bool myNewNet;
+
+    /// @brief filename with additionals input  // PABLO #501
+    std::string myAdditionalFile;               // PABLO #501
+
+    /// @brief filename for the additionals output  // PABLO #501
+    std::string myAdditionalOutputFile;             // PABLO #501
 };
 
 

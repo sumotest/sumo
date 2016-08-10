@@ -89,8 +89,8 @@ public:
     /// @brief detaches the tool/menu bar
     virtual void detach();
 
-    /// @brief load net on startup
-    void loadOnStartup(bool newNet);
+    /// @brief load net on startup  // PABLO #501
+    void loadOptionOnStartup();     // PABLO #501
 
     /// @brief build dependent
     void dependentBuild();

@@ -847,6 +847,15 @@ GNEApplicationWindow::handleEvent_NetworkLoaded(GUIEvent* e) {
     }
     getApp()->endWaitCursor();
     myMessageWindow->registerMsgHandlers();
+    if(OptionsCont::getOptions().isSet("sumo-additionals-file")) {                                  // PABLO #5017
+        std::string additionalFile = OptionsCont::getOptions().getString("sumo-additionals-file");  // PABLO #5017
+        WRITE_MESSAGE("Loading additionals from '" + additionalFile + "'");                         // PABLO #5017
+        GNEAdditionalHandler additionalHandler(additionalFile, myNet->getViewNet());                // PABLO #5017
+        // Run parser                                                                               // PABLO #5017
+        if (!XMLSubSys::runParser(additionalHandler, additionalFile, false)) {                      // PABLO #5017
+            WRITE_ERROR("Loading of " + additionalFile + " failed.");                               // PABLO #5017
+        }                                                                                           // PABLO #5017
+    }                                                                                               // PABLO #5017
     update();
 }
 
@@ -969,10 +978,18 @@ GNEApplicationWindow::getDefaultCursor() {
 }
 
 
-void
-GNEApplicationWindow::loadOnStartup(bool newNet) {
-    loadConfigOrNet("", false, false, true, newNet);
-}
+void                                                                                // PABLO #501
+GNEApplicationWindow::loadOptionOnStartup() {                                       // PABLO #501
+    // get options                                                                  // PABLO #501
+    const OptionsCont& OC = OptionsCont::getOptions();                              // PABLO #501
+    // depending of the options, create a new net, or load a existent net depet     // PABLO #501
+    if(OC.getBool("new")) {                                                         // PABLO #501
+        loadConfigOrNet("", true, false, true, true);                               // PABLO #501
+    }                                                                               // PABLO #501
+    if(OC.isSet("sumo-net-file")) {                                                 // PABLO #501
+        loadConfigOrNet(OC.getString("sumo-net-file"), true, false, true, false);   // PABLO #501
+    }                                                                               // PABLO #501
+}                                                                                   // PABLO #501
 
 
 void

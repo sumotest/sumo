@@ -53,6 +53,7 @@
 #include "GNELoadThread.h"
 #include "GNENet.h"
 #include "GNEEvent_NetworkLoaded.h"
+#include "GNEAdditionalHandler.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -141,12 +142,23 @@ GNELoadThread::run() {
             if (oc.getBool("ignore-errors")) {
                 MsgHandler::getErrorInstance()->clear();
             }
+            
             // check whether any errors occured
             if (MsgHandler::getErrorInstance()->wasInformed()) {
                 throw ProcessError();
             } else {
                 net = new GNENet(netBuilder);
             }
+
+            // enable load additionals after creation of net if was specified in the command line   // PABLO #501
+            if(myAdditionalFile != "") {                                                            // PABLO #501
+                net->setAdditionalsFile(myAdditionalFile);                                          // PABLO #501
+            }                                                                                       // PABLO #501
+
+            // Set additionals output file                                                          // PABLO #501
+            if(myAdditionalOutputFile != "") {                                                      // PABLO #501
+                net->setAdditionalsOutputFile(myAdditionalOutputFile);                              // PABLO #501
+            }                                                                                       // PABLO #501
         } catch (ProcessError& e) {
             if (std::string(e.what()) != std::string("Process Error") && std::string(e.what()) != std::string("")) {
                 WRITE_ERROR(e.what());
@@ -204,6 +216,9 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
 
     oc.doRegister("new", new Option_Bool(false)); // !!!
     oc.addDescription("new", "Input", "Start with a new network");
+
+    oc.doRegister("sumo-additionals-file", new Option_String());                // PABLO #501
+    oc.addDescription("sumo-additionals-file", "Input", "load additionals");    // PABLO #501
 
     oc.doRegister("disable-textures", 'T', new Option_Bool(false)); // !!!
     oc.addDescription("disable-textures", "Visualisation", "");
@@ -268,6 +283,15 @@ void
 GNELoadThread::loadConfigOrNet(const std::string& file, bool isNet, bool optionsReady, bool newNet) {
     myFile = file;
     myLoadNet = isNet;
+
+    const OptionsCont& OC = OptionsCont::getOptions();                  // PABLO #501
+    if(OC.isSet("sumo-additionals-file")) {                             // PABLO #501
+        myAdditionalFile = OC.getString("sumo-additionals-file");       // PABLO #501
+    }                                                                   // PABLO #501
+    if(OC.isSet("additionals-output")) {                                // PABLO #501
+        myAdditionalOutputFile = OC.getString("additionals-output");    // PABLO #501
+    }                                                                   // PABLO #501
+
     if (myFile != "") {
         OptionsIO::setArgs(0, 0);
     }

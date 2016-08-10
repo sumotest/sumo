@@ -49,6 +49,7 @@
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
+#include <utils/xml/XMLSubSys.h>
 
 #include "GNEViewNet.h"
 #include "GNEEdge.h"
@@ -130,6 +131,7 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
     buildEditModeControls();
     myUndoList->mark();
     myNet->setViewNet(this);
+
     ((GUIDanielPerspectiveChanger*)myChanger)->setDragDelay(100000000); // 100 milliseconds
 
     // init color schemes

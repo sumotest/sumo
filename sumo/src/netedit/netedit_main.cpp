@@ -105,10 +105,12 @@ main(int argc, char** argv) {
         application.addSignal(SIGINT, window, MID_QUIT);
         application.create();
         // Load configuration given on command line
-        if (argc > 1) {
-            OptionsIO::setArgs(argc, argv);
-            window->loadOnStartup(OptionsCont::getOptions().getBool("new"));
-        }
+        if (argc > 1) {                     // PABLO #501
+            // Set default options          // PABLO #501
+            OptionsIO::setArgs(argc, argv); // PABLO #501
+            // load options                 // PABLO #501
+            window->loadOptionOnStartup();  // PABLO #501
+        }                                   // PABLO #501
         // Run
         ret = application.run();
 #ifndef _DEBUG

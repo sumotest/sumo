@@ -381,6 +381,14 @@ public:
     /// @brief get shape container
     ShapeContainer& getShapeContainer();
 
+    /// @brief set additionals File                             // PABLO #501
+    /// @note used to load additionals throught command line    // PABLO #501
+    void setAdditionalsFile(const std::string &additionalFile); // PABLO #501
+
+    /// @brief set additionals File                                         // PABLO #501
+    /// @note used to set additionals output file throught command line     // PABLO #501
+    void setAdditionalsOutputFile(const std::string &additionalOutputFile); // PABLO #501
+
     /**@brief Insert a additional element previously created in GNEAdditionalHandler
      * @param[in] additional pointer to the additional element to add
      * @param[in] hardFail enable or disable exception if additional to insert is duplicated
