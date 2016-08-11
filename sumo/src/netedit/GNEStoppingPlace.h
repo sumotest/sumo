@@ -69,12 +69,11 @@ public:
     /// @brief Returns position of StoppingPlace in view
     Position getPositionInView() const;
 
-    /**@brief change the position of the StoppingPlace geometry
-     * @param[in] posx new position of StoppingPlaceover lane
-     * @param[in] posy unused
-     * @param[in] undoList pointer to the undo list
-     */
-    void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList* undoList);
+    /// @brief change the position of the StoppingPlace geometry
+    void moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety);
+
+    /// @brief updated geometry changes in the attributes of additional 
+    void commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList);
 
     /**@brief writte additional element into a xml file
      * @param[in] device device in which write parameters of additional element

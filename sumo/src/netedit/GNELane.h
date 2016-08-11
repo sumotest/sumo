@@ -180,7 +180,7 @@ public:
      * @param[in] additional Pointer to additional element previously added
        @return true if additional element was sucesfully removed, flase in other case
      */
-    bool removeAdditional(GNEAdditional* additional);
+    bool removeAdditionalGeometry(GNEAdditional* additional);
 
     /// @brief method to obtain a list of additional elements associated to this lane
     /// @return set with all additional elements
@@ -190,7 +190,7 @@ public:
     bool addAdditionalSet(GNEAdditionalSet* additionalSet);
 
     /// @brief remove GNEAdditionalSet from this lane
-    bool removeAdditionalSet(GNEAdditionalSet* additionalSet);
+    bool removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet);
 
     /// @brief return list of additionalSets associated with this lane
     const std::vector<GNEAdditionalSet*>& getAdditionalSets();

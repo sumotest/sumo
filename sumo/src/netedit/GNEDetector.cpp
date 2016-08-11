@@ -74,23 +74,34 @@ GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag 
 
 GNEDetector::~GNEDetector() {
     if (myLane) {
-        myLane->removeAdditional(this);
+        myLane->removeAdditionalGeometry(this);
     }
 }
 
 
 void
-GNEDetector::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList* undoList) {
-    // Due a detector is placed over an lane ignore Warning of posy
-    UNUSED_PARAMETER(posy);
-    // if item isn't blocked
-    if (myBlocked == false) {
-        // Move to Right if posx is positive, to left if posx is negative
-        if (((posx > 0) && ((myPosition.x() + posx) < myLane->getLaneShapeLenght())) || ((posx < 0) && ((myPosition.x() + posx) > 0))) {
-            // change attribute
-            undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x() + posx)));
-        }
-    }
+GNEDetector::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
+    // Due a detector is placed over an lane ignore Warning of posy                                                                     // PABLO #501
+    UNUSED_PARAMETER(offsety);                                                                                                          // PABLO #501
+    // declare start and end positions                                                                                                  // PABLO #501
+    SUMOReal startPos = myPosition.x();                                                                                                 // PABLO #501
+    SUMOReal endPos = 0;                                                                                                                // PABLO #501
+    // set endPos if additional has the attribute lenght                                                                                // PABLO #501
+    if(GNEAttributeCarrier::hasAttribute(getTag(), SUMO_ATTR_LENGTH)) {                                                                 // PABLO #501
+        endPos = startPos + GNEAttributeCarrier::parse<SUMOReal>(getAttribute(SUMO_ATTR_LENGTH));                                       // PABLO #501
+    }                                                                                                                                   // PABLO #501
+    // Move to Right if distance is positive, to left if distance is negative                                                           // PABLO #501
+    if (((offsetx > 0) && ((endPos + offsetx) < myLane->getLaneShapeLenght())) || ((offsetx < 0) && ((startPos + offsetx) > 0))) {      // PABLO #501
+        // change attribute                                                                                                             // PABLO #501
+        myPosition.set(myPosition.x() + offsetx, 0);                                                                                    // PABLO #501
+        // Update geometry                                                                                                              // PABLO #501
+        updateGeometry();                                                                                                               // PABLO #501
+    }                                                                                                                                   // PABLO #501
+}
+
+
+void 
+GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {
 }
 
 
@@ -154,7 +165,7 @@ GNEDetector::setFilename(std::string filename) {
 
 void
 GNEDetector::changeLane(GNELane* newLane) {
-    myLane->removeAdditional(this);
+    myLane->removeAdditionalGeometry(this);
     myLane = newLane;
     myLane->addAdditional(this);
     updateGeometry();

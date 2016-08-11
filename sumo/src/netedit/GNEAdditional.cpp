@@ -90,9 +90,21 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
 GNEAdditional::~GNEAdditional() {
     // If this additional belongs to a set, remove it.
     if (myAdditionalSetParent) {
-        myAdditionalSetParent->removeAdditionalChild(this);
+        myAdditionalSetParent->removeAdditionalGeometryChild(this);
     }
 }
+
+
+void                                                            // PABLO #501
+GNEAdditional::moveAdditionalGeometry(const Position &offset) { // PABLO #501
+    moveAdditionalGeometry(offset.x(), offset.y());             // PABLO #501
+}                                                               // PABLO #501
+
+
+void                                                                                            // PABLO #501
+GNEAdditional::commmitAdditionalGeometryMoved(const Position &oldPos, GNEUndoList* undoList) {  // PABLO #501
+    commmitAdditionalGeometryMoved(oldPos.x(), oldPos.y(), undoList);                           // PABLO #501
+}                                                                                               // PABLO #501
 
 
 void

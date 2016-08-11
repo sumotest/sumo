@@ -83,7 +83,7 @@ GNEVaporizer::GNEVaporizer(const std::string& id, GNEViewNet* viewNet, GNEEdge* 
 
 GNEVaporizer::~GNEVaporizer() {
     if (myEdge) {
-        myEdge->removeAdditional(this);
+        myEdge->removeAdditionalGeometry(this);
     }
 }
 
@@ -134,9 +134,15 @@ GNEVaporizer::getPositionInView() const {
 
 
 void
-GNEVaporizer::moveAdditional(SUMOReal, SUMOReal, GNEUndoList*) {
+GNEVaporizer::moveAdditionalGeometry(SUMOReal, SUMOReal) {
     // This additional cannot be moved
 }
+
+
+void                                                                                // PABLO #501
+GNEVaporizer::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {    // PABLO #501
+    // This additional cannot be moved                                              // PABLO #501
+}                                                                                   // PABLO #501
 
 
 void
@@ -336,7 +342,7 @@ GNEVaporizer::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_EDGE:
-            myEdge->removeAdditional(this);
+            myEdge->removeAdditionalGeometry(this);
             myEdge = myViewNet->getNet()->retrieveEdge(value);
             myEdge->addAdditional(this);
             updateGeometry();

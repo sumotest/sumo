@@ -75,14 +75,35 @@ public:
     /// @brief Destructor
     ~GNEAdditional();
 
-    /**@brief change the position of the additional geometry
-     * @param[in] posx new x position of idem in the map or over lane
-     * @param[in] posy new y position of item in the map
-     * @param[in] undoList pointer to the undo list
-     * @note if additional belongs to a Lane, posx correspond to position over lane and posy is ignored
+    /**@brief change the position of the additional geometry                                        // PABLO #501
+     * @param[in] offset offset of movement                                                         // PABLO #501
+     * @note simply call the function moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety)    // PABLO #501
+     */                                                                                             // PABLO #501
+    void moveAdditionalGeometry(const Position &offset);                                            // PABLO #501
+
+    /**@brief change the position of the additional geometry                        // PABLO #501
+     * @param[in] offsetx horizontal offset of movement                             // PABLO #501
+     * @param[in] offsety vertical offset of movement                               // PABLO #501
+     * @note if additional belongs to a Lane, offsety is ignored                    // PABLO #501
+     * @note must be implemented in ALL childrens                                   // PABLO #501
+     */                                                                             // PABLO #501
+    virtual void moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) = 0;    // PABLO #501
+
+    /**@brief updated geometry changes in the attributes of additional                                                          // PABLO #501
+     * @param[in] oldPos old position X of additional                                                                           // PABLO #501
+     * @param[in] undoList The undoList on which to register changes                                                            // PABLO #501
+     * @note simply call function commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList)     // PABLO #501
+     */                                                                                                                         // PABLO #501
+    void commmitAdditionalGeometryMoved(const Position &oldPos, GNEUndoList* undoList);                                         // PABLO #501
+    
+    /**@brief updated geometry changes in the attributes of additional 
+     * @param[in] oldPosx old position X of additional
+     * @param[in] oldPosy old position Y of additional
+     * @param[in] undoList The undoList on which to register changes
+     * @note if additional belongs to a Lane, oldPosy is ignored
      * @note must be implemented in ALL childrens
      */
-    virtual void moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList* undoList) = 0;
+    virtual void commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) = 0;
 
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved) and implemented in ALL childrens

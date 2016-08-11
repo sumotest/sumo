@@ -560,7 +560,7 @@ GNELane::addAdditional(GNEAdditional* additional) {
 
 
 bool
-GNELane::removeAdditional(GNEAdditional* additional) {
+GNELane::removeAdditionalGeometry(GNEAdditional* additional) {
     // Find and remove stoppingPlace
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         if (*i == additional) {
@@ -593,7 +593,7 @@ GNELane::addAdditionalSet(GNEAdditionalSet* additionalSet) {
 
 
 bool
-GNELane::removeAdditionalSet(GNEAdditionalSet* additionalSet) {
+GNELane::removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet) {
     // search additionalSet and remove it
     for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
         if ((*i) == additionalSet) {

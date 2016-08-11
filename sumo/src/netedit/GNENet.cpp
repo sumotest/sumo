@@ -1091,7 +1091,7 @@ GNENet::deleteAdditional(GNEAdditional* additional) {
         myAdditionals.erase(positionToRemove);
         myGrid.removeAdditionalGLObject(additional);
         if (additional->getAdditionalSetParent() != NULL) {
-            additional->getAdditionalSetParent()->removeAdditionalChild(additional);
+            additional->getAdditionalSetParent()->removeAdditionalGeometryChild(additional);
         }
         update();
     }
@@ -1220,7 +1220,6 @@ GNENet::deleteSingleJunction(GNEJunction* junction) {
 
 void
 GNENet::deleteSingleEdge(GNEEdge* edge) {
-
     myGrid.removeAdditionalGLObject(edge);
     myEdges.erase(edge->getMicrosimID());
     myNetBuilder->getEdgeCont().extract(

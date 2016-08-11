@@ -226,7 +226,7 @@ public:
     bool addAdditional(GNEAdditional* additional);
 
     /// @brief remove additional from this edge
-    bool removeAdditional(GNEAdditional* additional);
+    bool removeAdditionalGeometry(GNEAdditional* additional);
 
     /// @brief return list of additionals associated with this edge
     const std::vector<GNEAdditional*>& getAdditionals() const;
@@ -235,7 +235,7 @@ public:
     bool addAdditionalSet(GNEAdditionalSet* additionalSet);
 
     /// @brief remove GNEAdditionalSet from this edge
-    bool removeAdditionalSet(GNEAdditionalSet* additionalSet);
+    bool removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet);
 
     /// @brief return list of additionalSets associated with this edge
     const std::vector<GNEAdditionalSet*>& getAdditionalSets();

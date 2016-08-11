@@ -84,7 +84,7 @@ GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge
 
 GNERouteProbe::~GNERouteProbe() {
     if (myEdge) {
-        myEdge->removeAdditional(this);
+        myEdge->removeAdditionalGeometry(this);
     }
 }
 
@@ -138,10 +138,15 @@ GNERouteProbe::getPositionInView() const {
 
 
 void
-GNERouteProbe::moveAdditional(SUMOReal, SUMOReal, GNEUndoList*) {
+GNERouteProbe::moveAdditionalGeometry(SUMOReal, SUMOReal) {
     // This additional cannot be moved
 }
 
+
+void                                                                                // PABLO #501
+GNERouteProbe::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {   // PABLO #501
+    // This additional cannot be moved                                              // PABLO #501
+}                                                                                   // PABLO #501
 
 void
 GNERouteProbe::writeAdditional(OutputDevice& device, const std::string&) {
@@ -356,7 +361,7 @@ GNERouteProbe::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_EDGE:
-            myEdge->removeAdditional(this);
+            myEdge->removeAdditionalGeometry(this);
             myEdge = myViewNet->getNet()->retrieveEdge(value);
             myEdge->addAdditional(this);
             updateGeometry();

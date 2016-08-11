@@ -558,7 +558,7 @@ public:
     /**@brief remove an additional element previously added
      * @param[in] additional element to erase
      */
-    void removeAdditional(GNEAdditional* additional);
+    void removeAdditionalGeometry(GNEAdditional* additional);
 
     /// @name FOX-callbacks
     /// @{

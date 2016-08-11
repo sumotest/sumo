@@ -896,7 +896,7 @@ GNEEdge::addAdditional(GNEAdditional* additional) {
 
 
 bool
-GNEEdge::removeAdditional(GNEAdditional* additional) {
+GNEEdge::removeAdditionalGeometry(GNEAdditional* additional) {
     // search additional and remove it
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         if ((*i) == additional) {
@@ -930,7 +930,7 @@ GNEEdge::addAdditionalSet(GNEAdditionalSet* additionalSet) {
 
 
 bool
-GNEEdge::removeAdditionalSet(GNEAdditionalSet* additionalSet) {
+GNEEdge::removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet) {
     // search additionalSet and remove it
     for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
         if ((*i) == additionalSet) {

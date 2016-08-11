@@ -280,8 +280,11 @@ private:
     /// @brief the stoppingPlace element which shape is being moved
     GNEAdditional* myAdditionalToMove;
 
-    /// @brief variable to save the firstposition of the additional before move
-    Position myAdditionalFirstPosition;
+    /// @brief variable for calculating moving offset of additionals
+    Position myAdditionalMovingReference;
+
+    /// @brief variable for saving additional position before moving    // PABLO #501
+    Position myOldAdditionalPosition;                                   // PABLO #501
 
     /// @brief position from which to move edge geometry
     Position myMoveSrc;

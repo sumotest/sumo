@@ -61,7 +61,10 @@ public:
     ~GNEVaporizer();
 
     /// @brief change the position of the RouteProbe geometry
-    void moveAdditional(SUMOReal, SUMOReal, GNEUndoList*);
+    void moveAdditionalGeometry(SUMOReal, SUMOReal);
+
+    /// @brief updated geometry changes in the attributes of additional 
+    void commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*);
 
     /// @brief update pre-computed geometry information
     /// @note: must be called when geometry changes (i.e. lane moved)

@@ -116,13 +116,19 @@ GNEDetectorE3::getPositionInView() const {
 
 
 void
-GNEDetectorE3::moveAdditional(SUMOReal posx, SUMOReal posy, GNEUndoList* undoList) {
-    // if item isn't blocked
-    if (myBlocked == false) {
-        // change Position
-        undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(Position(posx, posy, 0))));
-    }
+GNEDetectorE3::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
+    // change Position                          // PABLO #501
+    myPosition = Position(offsetx, offsety);    // PABLO #501
+    updateGeometry();                           // PABLO #501
 }
+
+
+void                                                                                                                                        // PABLO #501
+GNEDetectorE3::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {                                  // PABLO #501
+    undoList->p_begin("position of " + toString(getTag()));                                                                                 // PABLO #501
+    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition), true, toString(Position(oldPosx, oldPosy))));   // PABLO #501
+    undoList->p_end();                                                                                                                      // PABLO #501
+}                                                                                                                                           // PABLO #501
 
 
 void

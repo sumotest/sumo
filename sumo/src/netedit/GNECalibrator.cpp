@@ -90,9 +90,15 @@ GNECalibrator::~GNECalibrator() {
 
 
 void
-GNECalibrator::moveAdditional(SUMOReal, SUMOReal, GNEUndoList*) {
+GNECalibrator::moveAdditionalGeometry(SUMOReal, SUMOReal) {
     // This additional cannot be moved
 }
+
+
+void                                                                                // PABLO #501
+GNECalibrator::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {   // PABLO #501
+    // This additional cannot be moved                                              // PABLO #501
+}                                                                                   // PABLO #501
 
 
 void
@@ -370,7 +376,7 @@ GNECalibrator::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_LANE:
-            myEdge->removeAdditional(this);
+            myEdge->removeAdditionalGeometry(this);
             myEdge = &(myViewNet->getNet()->retrieveLane(value)->getParentEdge());
             myEdge->addAdditional(this);
             updateGeometry();
