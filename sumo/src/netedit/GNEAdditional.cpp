@@ -104,6 +104,8 @@ GNEAdditional::moveAdditionalGeometry(const Position &offset) { // PABLO #501
 void                                                                                            // PABLO #501
 GNEAdditional::commmitAdditionalGeometryMoved(const Position &oldPos, GNEUndoList* undoList) {  // PABLO #501
     commmitAdditionalGeometryMoved(oldPos.x(), oldPos.y(), undoList);                           // PABLO #501
+    // Refresh element                                                                          // PABLO #501
+    myViewNet->getNet()->refreshElement(this);                                                  // PABLO #501
 }                                                                                               // PABLO #501
 
 

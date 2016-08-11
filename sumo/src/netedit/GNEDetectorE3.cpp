@@ -128,6 +128,8 @@ GNEDetectorE3::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy
     undoList->p_begin("position of " + toString(getTag()));                                                                                 // PABLO #501
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition), true, toString(Position(oldPosx, oldPosy))));   // PABLO #501
     undoList->p_end();                                                                                                                      // PABLO #501
+    // Refresh element                                                                                                                      // PABLO #501
+    myViewNet->getNet()->refreshElement(this);                                                                                              // PABLO #501
 }                                                                                                                                           // PABLO #501
 
 

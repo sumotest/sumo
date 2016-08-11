@@ -112,6 +112,8 @@ GNEStoppingPlace::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldP
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(getStartPosition()), true, toString(oldPosx)));  // PABLO #501
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(getEndPosition()), true, toString(oldPosy)));      // PABLO #501
     undoList->p_end();                                                                                                          // PABLO #501
+    // Refresh element                                                                                                          // PABLO #501
+    myViewNet->getNet()->refreshElement(this);                                                                                  // PABLO #501
 }                                                                                                                               // PABLO #501
 
 
