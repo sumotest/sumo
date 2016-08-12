@@ -9,6 +9,7 @@ net:net.net.xml
 additionals:additionals.xml
 cfg:config.cfg
 log:log.txt
+sikulixLog:sikulixLog.txt
 
 [run_dependent_text]
 net:<!--{[->]}-->
@@ -17,9 +18,9 @@ log:done \(.*\)\.{REPLACE done.}
 errors:Leaked object at 
 errors:*** 9 leaks found
 errors:delete: freed
-errors:java version "1.8.0_101"
-errors:Java(TM) SE Runtime Environment (build 1.8.0_101-b13)
-errors:Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)
+errors:java{LINES 1}
+errors:Java{LINES 1}
+sikulixLog:log{LINES 1}
 
 [floating_point_tolerance]
 net:0.0101

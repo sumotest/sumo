@@ -21,5 +21,5 @@ import subprocess
 import sys
 
 # we do not need sikulix log output
-subprocess.call([os.environ.get('SIKULIX', 'runsikulix')] + sys.argv[1:], env=os.environ,
+subprocess.call([os.environ.get('SIKULIX', 'runsikulix')] + ["-f"] + ["sikulixLog.txt"] + sys.argv[1:], env=os.environ,
                 stdout=open(os.devnull, 'wb'), stderr=sys.stderr)
