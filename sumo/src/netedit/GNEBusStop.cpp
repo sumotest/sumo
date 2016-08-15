@@ -309,6 +309,8 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
             return toString(myEndPos);
         case SUMO_ATTR_LINES:
             return joinToString(myLines, " ");
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            return toString(myBlocked);     // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -326,6 +328,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
         case SUMO_ATTR_STARTPOS:
         case SUMO_ATTR_ENDPOS:
         case SUMO_ATTR_LINES:
+        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -356,6 +359,8 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myStartPos);
         case SUMO_ATTR_LINES:
             return isValidStringVector(value);
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            return canParse<bool>(value);   // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -389,6 +394,10 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             SUMOSAXAttributes::parseStringVector(value, myLines);
             getViewNet()->update();
             break;
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            myBlocked = parse<bool>(value); // PABLO 501
+            getViewNet()->update();         // PABLO 501
+            break;                          // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }

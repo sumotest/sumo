@@ -146,9 +146,6 @@ public:
     /// @brief set the ID of additional
     void setAdditionalID(const std::string& id);
 
-    /// @brief Block or unblock additional element(i.e. cannot be moved with mouse)
-    void setBlocked(bool value);
-
     /// @brief set new position in the view
     /// @note movement cannot be undo with GNEUndoRedo
     void setPositionInView(const Position& pos);

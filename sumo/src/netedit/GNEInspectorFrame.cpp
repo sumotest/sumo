@@ -388,10 +388,13 @@ GNEInspectorFrame::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
 
 long
 GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
-    if (myAdditional) {
-        myAdditional->setBlocked(myCheckBlocked->getCheck() == 1 ? true : false);
-        myViewNet->update();
-    }
+    if (myAdditional) {                                                                                 // PABLO 501
+        if(myCheckBlocked->getCheck() == 1) {                                                           // PABLO 501
+            myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "true", getViewNet()->getUndoList());   // PABLO 501
+        } else {                                                                                        // PABLO 501
+             myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "false", getViewNet()->getUndoList()); // PABLO 501
+        }                                                                                               // PABLO 501
+    }                                                                                                   // PABLO 501
     return 1;
 }
 

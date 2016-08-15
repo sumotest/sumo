@@ -177,13 +177,6 @@ GNEAdditional::setAdditionalID(const std::string& id) {
     myViewNet->getNet()->updateAdditionalID(oldID, this);
 }
 
-
-void
-GNEAdditional::setBlocked(bool value) {
-    myBlocked = value;
-}
-
-
 void
 GNEAdditional::setPositionInView(const Position& pos) {
     myPosition = pos;

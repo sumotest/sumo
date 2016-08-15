@@ -376,6 +376,8 @@ GNEChargingStation::getAttribute(SumoXMLAttr key) const {
             return toString(myChargeInTransit);
         case SUMO_ATTR_CHARGEDELAY:
             return toString(myChargeDelay);
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            return toString(myBlocked);     // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -396,6 +398,7 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value, GNEU
         case SUMO_ATTR_EFFICIENCY:
         case SUMO_ATTR_CHARGEINTRANSIT:
         case SUMO_ATTR_CHARGEDELAY:
+        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             break;
         default:
@@ -431,6 +434,8 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
             return canParse<bool>(value);
         case SUMO_ATTR_CHARGEDELAY:
             return (canParse<int>(value) && parse<int>(value) >= 0);
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            return canParse<bool>(value);   // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -466,15 +471,15 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
             myEfficiency = parse<SUMOReal>(value);
             break;
         case SUMO_ATTR_CHARGEINTRANSIT:
-            if (value == "true") {
-                myChargeInTransit = true;
-            } else {
-                myChargeInTransit = false;
-            }
+            myChargeInTransit = parse<bool>(value);
             break;
         case SUMO_ATTR_CHARGEDELAY:
             myChargeDelay = parse<int>(value);
             break;
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            myBlocked = parse<bool>(value); // PABLO 501
+            getViewNet()->update();         // PABLO 501
+            break;                          // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + "attribute '" + toString(key) + "' not allowed");
     }

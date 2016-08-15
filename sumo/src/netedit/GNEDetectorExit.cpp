@@ -200,6 +200,8 @@ GNEDetectorExit::getAttribute(SumoXMLAttr key) const {
             return toString(myLane->getAttribute(SUMO_ATTR_ID));
         case SUMO_ATTR_POSITION:
             return toString(myPosition.x());
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            return toString(myBlocked);     // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -213,12 +215,9 @@ GNEDetectorExit::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndo
     }
     switch (key) {
         case SUMO_ATTR_ID:
-            setAdditionalID(value);
-            break;
         case SUMO_ATTR_LANE:
-            changeLane(myViewNet->getNet()->retrieveLane(value));
-            break;
         case SUMO_ATTR_POSITION:
+        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -246,6 +245,8 @@ GNEDetectorExit::isValid(SumoXMLAttr key, const std::string& value) {
             }
         case SUMO_ATTR_POSITION:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) <= (myLane->getLaneParametricLenght()));
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            return canParse<bool>(value);   // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -265,6 +266,10 @@ GNEDetectorExit::setAttribute(SumoXMLAttr key, const std::string& value) {
             updateGeometry();
             getViewNet()->update();
             break;
+        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
+            myBlocked = parse<bool>(value); // PABLO 501
+            getViewNet()->update();         // PABLO 501
+            break;                          // PABLO 501
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
