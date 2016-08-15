@@ -157,6 +157,9 @@ GNEDetectorE2::writeAdditional(OutputDevice& device, const std::string&) {
     device.writeAttr(SUMO_ATTR_HALTING_TIME_THRESHOLD, time2string(myTimeThreshold));
     device.writeAttr(SUMO_ATTR_HALTING_SPEED_THRESHOLD, mySpeedThreshold);
     device.writeAttr(SUMO_ATTR_JAM_DIST_THRESHOLD, myJamThreshold);
+    if(myBlocked) {                                             // PABLO #501
+        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);   // PABLO #501
+    }                                                           // PABLO #501
     // Close tag
     device.closeTag();
 }

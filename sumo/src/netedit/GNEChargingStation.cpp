@@ -158,12 +158,11 @@ GNEChargingStation::writeAdditional(OutputDevice& device, const std::string&) {
     device.writeAttr(SUMO_ATTR_ENDPOS, myEndPos);
     device.writeAttr(SUMO_ATTR_CHARGINGPOWER, myChargingPower);
     device.writeAttr(SUMO_ATTR_EFFICIENCY, myEfficiency);
-    if (myChargeInTransit) {
-        device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, "true");
-    } else {
-        device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, "false");
-    }
+    device.writeAttr(SUMO_ATTR_CHARGEINTRANSIT, myChargeInTransit);
     device.writeAttr(SUMO_ATTR_CHARGEDELAY, myChargeDelay);
+    if(myBlocked) {                                             // PABLO #501
+        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);   // PABLO #501
+    }                                                           // PABLO #501
     // Close tag
     device.closeTag();
 }
