@@ -3,6 +3,7 @@ binary:$TEXTTEST_HOME/sikulixrunner.py
 copy_test_path:input_net.net.xml
 copy_test_path:input_additionals.add.xml
 copy_test_path_merge:test.sikuli
+config_module:default
 
 [collate_file]
 net:net.net.xml
