@@ -3,20 +3,44 @@ Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
 netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
+
+# abort function
+def abort(process, reason): 
+	process.kill()
+	sys.exit("Killed netedit process. '" + reason + "' not found")
+	
+# undo operation
+def undo(netEditProcess):
+	try:
+		click(netEditResources + "toolbar/toolbar-edit.png")
+		click(netEditResources + "toolbar/toolbar-edit/edit-undo.png")
+	except:
+		abort(netEditProcess, "edit-undo.png")
+		
+# redo operation
+def redo(netEditProcess):
+	try:
+		click(netEditResources + "toolbar/toolbar-edit.png")
+		click(netEditResources + "toolbar/toolbar-edit/edit-redo.png")
+	except:
+		abort(netEditProcess, "edit-redo.png")
 #****#
 
 # Import libraries
 import os, sys, subprocess
 
 #Open netedit
-subprocess.Popen([os.environ['NETEDIT_BINARY'], 
-                  '--window-size', '800,600',
-                  '--new', 
-                  '--additionals-output', 'additionals.xml'], 
-                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+netEditProcess = subprocess.Popen([os.environ['NETEDIT_BINARY'], 
+								  '--window-size', '800,600',
+								  '--new', 
+								  '--additionals-output', 'additionals.xml'], 
+								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 #Settings.MinSimilarity = 0.1
-wait(netEditResources + "neteditIcon.png")
+try:
+	wait(netEditResources + "neteditIcon.png", 60)
+except:
+	abort(netEditProcess, "neteditIcon.png")
 
 # focus
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
@@ -37,7 +61,10 @@ type("i")
 
 # duplicate lane in the first nodes
 rightClick(Pattern(netEditResources + "neteditIcon.png").targetOffset(300,205))
-click(netEditResources + "netElements/edges/menu-duplicateLane.png")
+try:
+	click(netEditResources + "netElements/edges/menu-duplicateLane.png")
+except:
+	abort(netEditProcess, "menu-duplicateLane.png")
 
 # Change to create additional
 type("a")
@@ -45,8 +72,11 @@ type("a")
 # by default, additional is busstop, then isn't needed to select "busstop"
 
 #change reference to center
-click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
-click(netEditResources + "additionals/editorParameters/referenceCenter.png")
+try:
+	click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
+	click(netEditResources + "additionals/editorParameters/referenceCenter.png")
+except:
+	abort(netEditProcess, "comboBox-referenceRight.png or referenceCenter.png")
 
 #create busstop in mode "reference center" in the first two nodes
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(500,210))
@@ -61,77 +91,117 @@ type("i")
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,315))
 
 #Change parameter 1 with a non valid value (Duplicated ID)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-id.png")
 type("busStop_gneE0_1_0" + Key.ENTER)
 
 #Change parameter 1 with a valid value
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-id.png")
 type("correct ID" + Key.ENTER)
 
 #Change parameter 2 with a non valid value (dummy lane)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-lane.png")
 type("dummyLane" + Key.ENTER)
 
 #Change parameter 2 with a valid value (different edge)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-lane.png")
 type("gneE0_0" + Key.ENTER)
 
 #Change parameter 2 with a valid value (same edge, different lane)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-lane.png")
 type("gneE0_1" + Key.ENTER)
 
 #Change parameter 3 with a non valid value (negative)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-startPos.png")
 type("-5" + Key.ENTER)
 
 #Change parameter 3 with a non valid value (> endPos)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-startPos.png")
 type("60" + Key.ENTER)
 
 #Change parameter 3 with a valid value
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-startPos.png")
 type("20" + Key.ENTER)
 
 #Change parameter 4 with a non valid value (out of range)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-endPos.png")
 type("3000" + Key.ENTER)
 
 #Change parameter 4 with a non valid value (<startPos)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-endPos.png")
 type("10" + Key.ENTER)
 
 #Change parameter 4 with a valid value
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-endPos.png")
 type("30" + Key.ENTER)
 
 #Change parameter 5 with a non valid value (throw warning)
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-lines.png")
 type("line1, line2" + Key.ENTER)
 
 #Change parameter 5 with a valid value
-doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-lines.png")
 type("line1 line2" + Key.ENTER)
 
 #go to a empty area
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350,350))
 
-#Check UndoRedo (5 attributes -> 5 times)
-#type("z", Key.CTRL)
-#type("z", Key.CTRL)
-#type("z", Key.CTRL)
-#type("z", Key.CTRL)
-#type("z", Key.CTRL)
-#type("y", Key.CTRL)
-#type("y", Key.CTRL)
-#type("y", Key.CTRL)
-#type("y", Key.CTRL)
-#type("y", Key.CTRL)
+#Check UndoRedo (8 attribute changes, 1 creation)
+for x in range(0, 9):
+    undo(netEditProcess)
+	
+for x in range(0, 9):
+    redo(netEditProcess)
 
-#save additional
-type("f", Key.ALT)
-click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
+# save additional
+try:
+	click(netEditResources + "toolbar/toolbar-file.png")
+	click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
+except:
+	abort(netEditProcess, "file-saveAdditionals.png or toolbar-file.png")
 
 #quit
 type("q", Key.CTRL)
-wait(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
-type("y", Key.ALT)
+try:
+	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
+	type("y", Key.ALT)
+except:
+	abort(netEditProcess, "dialog-confirmClosingNetwork")

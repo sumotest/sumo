@@ -5,28 +5,42 @@ Settings.DelayAfterDrag = 0.1
 netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
 
 # abort function
-def abort(reason): 
-	neteditApp.close()
-	sys.exit("'" + reason + "' not found")
+def abort(process, reason): 
+	process.kill()
+	sys.exit("Killed netedit process. '" + reason + "' not found")
+
+# undo operation
+def undo(netEditProcess):
+	try:
+		click(netEditResources + "toolbar/toolbar-edit.png")
+		click(netEditResources + "toolbar/toolbar-edit/edit-undo.png")
+	except:
+		abort(netEditProcess, "edit-undo.png")
+		
+# redo operation
+def redo(netEditProcess):
+	try:
+		click(netEditResources + "toolbar/toolbar-edit.png")
+		click(netEditResources + "toolbar/toolbar-edit/edit-redo.png")
+	except:
+		abort(netEditProcess, "edit-redo.png")
 #****#
 
 # Import libraries
-import os, sys
+import os, sys, subprocess
 
-# get netedit route and parameters
-neteditRoute = [os.environ['NETEDIT_BINARY'], 
-				'--window-size', '800,600',
-				'--new', 
-				'--additionals-output', 'additionals.xml']
+#Open netedit
+netEditProcess = subprocess.Popen([os.environ['NETEDIT_BINARY'], 
+								  '--window-size', '800,600',
+								  '--new', 
+								  '--additionals-output', 'additionals.xml'], 
+								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
-# open netedit 
-neteditApp = App.open(' '.join(neteditRoute))
-				  	  
 #Settings.MinSimilarity = 0.1
 try:
-	wait(netEditResources + "neteditIcon.png", 20)
+	wait(netEditResources + "neteditIcon.png", 60)
 except:
-	abort("neteditIcon.png")
+	abort(netEditProcess, "neteditIcon.png")
 	
 # focus
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
@@ -49,9 +63,15 @@ click(Pattern(netEditResources + "neteditIcon.png").targetOffset(365, 400))
 # Change to move
 type("m")
 
+# Change mouse move delay
+Settings.MoveMouseDelay = 1
+
 # Move unlocked
 dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
 dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407))
+
+# Change back mouse move delay
+Settings.MoveMouseDelay = 0.1
 
 # Change to inspect
 type("i")
@@ -63,19 +83,31 @@ click(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407))
 try:
 	click(netEditResources + "additionals/editorParameters/blockMovement.png")
 except:
-	abort("blockMovement.png")
-
+	abort(netEditProcess, "blockMovement.png")
+	
 # Change to move
 type("m")
+
+# Change mouse move delay
+Settings.MoveMouseDelay = 1
 
 # try to move blocked (cannot be possible)
 dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
 
-# redo block movement 
-type("z", Key.CTRL)
+# Change back mouse move delay
+Settings.MoveMouseDelay = 0.1
+
+# undo block movement again
+undo(netEditProcess)
+
+# Change mouse move delay
+Settings.MoveMouseDelay = 1
 
 # now can be moved 
 dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
+
+# Change back mouse move delay
+Settings.MoveMouseDelay = 0.1
 
 # Change to inspect
 type("i")
@@ -87,14 +119,14 @@ click(Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
 try:
 	click(netEditResources + "additionals/editorParameters/blockMovement.png")
 except:
-	abort("blockMovement.png")
+	abort(netEditProcess, "blockMovement.png")
 	
 # save additional
 type("f", Key.ALT)
 try:
 	click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
 except:
-	abort("file-saveAdditionals.png")
+	abort(netEditProcess, "file-saveAdditionals.png")
 
 #quit
 type("q", Key.CTRL)
@@ -102,4 +134,4 @@ try:
 	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
 	type("y", Key.ALT)
 except:
-	abort("dialog-confirmClosingNetwork")
+	abort(netEditProcess, "dialog-confirmClosingNetwork")
