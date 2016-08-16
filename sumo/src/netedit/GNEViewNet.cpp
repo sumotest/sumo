@@ -576,7 +576,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     myNet->getShapeContainer().removePOI(pointed_poi->getMicrosimID());
                     update();
                 } else if (pointed_additional) {
-                    myViewParent->getAdditionalFrame()->removeAdditionalGeometry(pointed_additional);
+                    myViewParent->getAdditionalFrame()->removeAdditional(pointed_additional);
                     update();
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);

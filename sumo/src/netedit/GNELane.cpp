@@ -560,7 +560,7 @@ GNELane::addAdditional(GNEAdditional* additional) {
 
 
 bool
-GNELane::removeAdditionalGeometry(GNEAdditional* additional) {
+GNELane::removeAdditional(GNEAdditional* additional) {
     // Find and remove stoppingPlace
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         if (*i == additional) {

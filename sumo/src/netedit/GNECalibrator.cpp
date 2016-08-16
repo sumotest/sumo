@@ -376,7 +376,7 @@ GNECalibrator::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_LANE:
-            myEdge->removeAdditionalGeometry(this);
+            myEdge->removeAdditional(this);
             myEdge = &(myViewNet->getNet()->retrieveLane(value)->getParentEdge());
             myEdge->addAdditional(this);
             updateGeometry();

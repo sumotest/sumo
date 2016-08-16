@@ -361,7 +361,7 @@ GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView
 }
 
 void
-GNEAdditionalFrame::removeAdditionalGeometry(GNEAdditional* additional) {
+GNEAdditionalFrame::removeAdditional(GNEAdditional* additional) {
     myViewNet->getUndoList()->p_begin("delete " + additional->getDescription());
     myViewNet->getUndoList()->add(new GNEChange_Additional(myViewNet->getNet(), additional, false), true);
     myViewNet->getUndoList()->p_end();

@@ -74,7 +74,7 @@ GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag 
 
 GNEDetector::~GNEDetector() {
     if (myLane) {
-        myLane->removeAdditionalGeometry(this);
+        myLane->removeAdditional(this);
     }
 }
 
@@ -170,7 +170,7 @@ GNEDetector::setFilename(std::string filename) {
 
 void
 GNEDetector::changeLane(GNELane* newLane) {
-    myLane->removeAdditionalGeometry(this);
+    myLane->removeAdditional(this);
     myLane = newLane;
     myLane->addAdditional(this);
     updateGeometry();

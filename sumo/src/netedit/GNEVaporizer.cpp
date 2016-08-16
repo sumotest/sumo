@@ -83,7 +83,7 @@ GNEVaporizer::GNEVaporizer(const std::string& id, GNEViewNet* viewNet, GNEEdge* 
 
 GNEVaporizer::~GNEVaporizer() {
     if (myEdge) {
-        myEdge->removeAdditionalGeometry(this);
+        myEdge->removeAdditional(this);
     }
 }
 
@@ -342,7 +342,7 @@ GNEVaporizer::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_EDGE:
-            myEdge->removeAdditionalGeometry(this);
+            myEdge->removeAdditional(this);
             myEdge = myViewNet->getNet()->retrieveEdge(value);
             myEdge->addAdditional(this);
             updateGeometry();

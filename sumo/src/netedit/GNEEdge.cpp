@@ -896,7 +896,7 @@ GNEEdge::addAdditional(GNEAdditional* additional) {
 
 
 bool
-GNEEdge::removeAdditionalGeometry(GNEAdditional* additional) {
+GNEEdge::removeAdditional(GNEAdditional* additional) {
     // search additional and remove it
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
         if ((*i) == additional) {

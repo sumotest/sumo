@@ -80,7 +80,7 @@ GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, S
 
 GNEStoppingPlace::~GNEStoppingPlace() {
     if (myLane) {
-        myLane->removeAdditionalGeometry(this);
+        myLane->removeAdditional(this);
     }
 }
 
@@ -130,7 +130,7 @@ GNEStoppingPlace::removeLaneReference() {
 
 void
 GNEStoppingPlace::changeLane(GNELane* newLane) {
-    myLane->removeAdditionalGeometry(this);
+    myLane->removeAdditional(this);
     myLane = newLane;
     myLane->addAdditional(this);
     updateGeometry();

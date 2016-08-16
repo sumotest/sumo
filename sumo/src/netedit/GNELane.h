@@ -180,7 +180,7 @@ public:
      * @param[in] additional Pointer to additional element previously added
        @return true if additional element was sucesfully removed, flase in other case
      */
-    bool removeAdditionalGeometry(GNEAdditional* additional);
+    bool removeAdditional(GNEAdditional* additional);
 
     /// @brief method to obtain a list of additional elements associated to this lane
     /// @return set with all additional elements

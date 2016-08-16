@@ -84,7 +84,7 @@ GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge
 
 GNERouteProbe::~GNERouteProbe() {
     if (myEdge) {
-        myEdge->removeAdditionalGeometry(this);
+        myEdge->removeAdditional(this);
     }
 }
 
@@ -361,7 +361,7 @@ GNERouteProbe::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_EDGE:
-            myEdge->removeAdditionalGeometry(this);
+            myEdge->removeAdditional(this);
             myEdge = myViewNet->getNet()->retrieveEdge(value);
             myEdge->addAdditional(this);
             updateGeometry();
