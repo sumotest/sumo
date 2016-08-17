@@ -22,6 +22,7 @@ errors:delete: freed
 errors:java{LINES 1}
 errors:Java{LINES 1}
 sikulixLog:log{LINES 1}
+sikulixLog:script{LINES 1}
 
 [floating_point_tolerance]
 net:0.0101
