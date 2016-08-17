@@ -136,6 +136,9 @@ GNEConnection::updateGeometry() {
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
     }
+
+    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
+    //myNet->refreshElement(this);                                // PABLO #501
 }
 
 

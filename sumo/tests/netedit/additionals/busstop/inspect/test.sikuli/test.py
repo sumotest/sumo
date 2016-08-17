@@ -71,120 +71,141 @@ type("a")
 
 # by default, additional is busstop, then isn't needed to select "busstop"
 
-#change reference to center
+# change reference to center
 try:
 	click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
 	click(netEditResources + "additionals/editorParameters/referenceCenter.png")
 except:
 	abort(netEditProcess, "comboBox-referenceRight.png or referenceCenter.png")
 
-#create busstop in mode "reference center" in the first two nodes
+# create busstop in mode "reference center" in the first two nodes
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(500,210))
 
-#create busstop in mode "reference center" in the second two nodes
+# create busstop in mode "reference center" in the second two nodes
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,310))
 
 # Change to inspect
 type("i")
 
-#inspect busStop
+# inspect busStop
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,315))
 
-#Change parameter 1 with a non valid value (Duplicated ID)
+# Change parameter 1 with a non valid value (Duplicated ID)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-id.png")
 type("busStop_gneE0_1_0" + Key.ENTER)
 
-#Change parameter 1 with a valid value
+# Change parameter 1 with a valid value
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-id.png")
 type("correct ID" + Key.ENTER)
 
-#Change parameter 2 with a non valid value (dummy lane)
+# Change parameter 2 with a non valid value (dummy lane)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-lane.png")
 type("dummyLane" + Key.ENTER)
 
-#Change parameter 2 with a valid value (different edge)
+# Change parameter 2 with a valid value (different edge)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-lane.png")
 type("gneE0_0" + Key.ENTER)
 
-#Change parameter 2 with a valid value (same edge, different lane)
+# Change parameter 2 with a valid value (same edge, different lane)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-lane.png")
 type("gneE0_1" + Key.ENTER)
 
-#Change parameter 3 with a non valid value (negative)
+# Change parameter 3 with a non valid value (negative)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-startPos.png")
 type("-5" + Key.ENTER)
 
-#Change parameter 3 with a non valid value (> endPos)
+# Change parameter 3 with a non valid value (> endPos)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-startPos.png")
 type("60" + Key.ENTER)
 
-#Change parameter 3 with a valid value
+# Change parameter 3 with a valid value
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-startPos.png")
 type("20" + Key.ENTER)
 
-#Change parameter 4 with a non valid value (out of range)
+# Change parameter 4 with a non valid value (out of range, and not accepted)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-endPos.png")
 type("3000" + Key.ENTER)
 
-#Change parameter 4 with a non valid value (<startPos)
+# Wait to dialog
+try:
+	wait(netEditResources + "additionals/dialogs/dialog-endPositionOutOfRange.png")
+	type("n", Key.ALT)
+except:
+	abort(netEditProcess, "additionals/dialogs/dialog-endPositionOutOfRange.png")
+	
+# Change parameter 4 with a valid value (out of range, but adapted to the end of lane)
+try:
+	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
+except:
+	abort(netEditProcess, "parameter-endPos.png")
+type("3000" + Key.ENTER)
+
+# Wait to dialog
+try:
+	wait(netEditResources + "additionals/dialogs/dialog-endPositionOutOfRange.png")
+	type("y", Key.ALT)
+except:
+	abort(netEditProcess, "additionals/dialogs/dialog-endPositionOutOfRange.png")
+
+# Change parameter 4 with a non valid value (<startPos)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-endPos.png")
 type("10" + Key.ENTER)
 
-#Change parameter 4 with a valid value
+# Change parameter 4 with a valid value
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-endPos.png")
 type("30" + Key.ENTER)
 
-#Change parameter 5 with a non valid value (throw warning)
+# Change parameter 5 with a non valid value (throw warning)
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-lines.png")
 type("line1, line2" + Key.ENTER)
 
-#Change parameter 5 with a valid value
+# Change parameter 5 with a valid value
 try:
 	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
 except:
 	abort(netEditProcess, "parameter-lines.png")
 type("line1 line2" + Key.ENTER)
 
-#go to a empty area
+# go to a empty area
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350,350))
 
-#Check UndoRedo (8 attribute changes, 1 creation)
+# Check UndoRedo (8 attribute changes, 1 creation)
 for x in range(0, 9):
     undo(netEditProcess)
 	
@@ -198,7 +219,7 @@ try:
 except:
 	abort(netEditProcess, "file-saveAdditionals.png or toolbar-file.png")
 
-#quit
+# quit
 type("q", Key.CTRL)
 try:
 	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")

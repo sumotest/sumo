@@ -392,6 +392,9 @@ GNERerouter::updateGeometry() {
 
     // Update geometry of additionalSet parent
     updateConnections();
+
+    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
+    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
 }
 
 

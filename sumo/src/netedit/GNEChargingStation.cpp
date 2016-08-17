@@ -145,6 +145,9 @@ GNEChargingStation::updateGeometry() {
 
     // Set block icon rotation, and using their rotation for sign
     setBlockIconRotation(myLane);
+
+    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
+    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
 }
 
 
@@ -423,8 +426,26 @@ GNEChargingStation::isValid(SumoXMLAttr key, const std::string& value) {
             }
         case SUMO_ATTR_STARTPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myEndPos - 1));
-        case SUMO_ATTR_ENDPOS:
-            return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myStartPos);
+        case SUMO_ATTR_ENDPOS: {
+            if(canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myStartPos) {                                   // PABLO 501
+                // If extension is larger than Lane                                                                                                 // PABLO 501
+                if(parse<SUMOReal>(value) > myLane->getLaneParametricLenght()) {                                                                    // PABLO 501
+                    // Ask user if want to assign the lenght of lane as endPosition                                                                 // PABLO 501
+                    FXuint answer = FXMessageBox::question(getViewNet()->getApp(), MBOX_YES_NO,                                                     // PABLO 501
+                                            "EndPosition exceeds the size of the lane", "%s",                                                       // PABLO 501
+                                            "EndPosition exceeds the size of the lane. You want to assign the size of the lane as endPosition?");   // PABLO 501
+                    if (answer == 1) { //1:yes, 2:no, 4:esc                                                                                         // PABLO 501
+                        return true;                                                                                                                // PABLO 501
+                    } else {                                                                                                                        // PABLO 501
+                        return false;                                                                                                               // PABLO 501
+                    }                                                                                                                               // PABLO 501
+                } else {                                                                                                                            // PABLO 501
+                    return true;                                                                                                                    // PABLO 501
+                }                                                                                                                                   // PABLO 501
+            } else {                                                                                                                                // PABLO 501
+                return false;                                                                                                                       // PABLO 501
+            }                                                                                                                                       // PABLO 501
+        }                                                                                                                                           // PABLO 501
         case SUMO_ATTR_CHARGINGPOWER:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0);
         case SUMO_ATTR_EFFICIENCY:
@@ -459,7 +480,11 @@ GNEChargingStation::setAttribute(SumoXMLAttr key, const std::string& value) {
             getViewNet()->update();
             break;
         case SUMO_ATTR_ENDPOS:
-            myEndPos = parse<SUMOReal>(value);
+            if(parse<SUMOReal>(value) > myLane->getLaneParametricLenght()) {    // PABLO 501
+                myEndPos = myLane->getLaneParametricLenght();                   // PABLO 501
+            } else {                                                            // PABLO 501
+                myEndPos = parse<SUMOReal>(value);                              // PABLO 501
+            }                                                                   // PABLO 501
             updateGeometry();
             getViewNet()->update();
             break;

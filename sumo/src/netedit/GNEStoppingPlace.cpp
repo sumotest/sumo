@@ -96,7 +96,9 @@ GNEStoppingPlace::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
     // Due a stoppingplace is placed over an lane ignore Warning of posy                                                                    // PABLO #501
     UNUSED_PARAMETER(offsety);                                                                                                              // PABLO #501
     // Move to Right if distance is positive, to left if distance is negative                                                               // PABLO #501
-    if (((offsetx > 0) && ((myEndPos + offsetx) < myLane->getLaneShapeLenght())) || ((offsetx < 0) && ((myStartPos + offsetx) > 0))) {      // PABLO #501
+    if (((offsetx > 0) &&                                                                                                                   // PABLO #501
+        ((myLane->getPositionRelativeToParametricLenght(myEndPos) + offsetx) < myLane->getLaneParametricLenght())) ||                       // PABLO #501
+        ((offsetx < 0) && ((myLane->getPositionRelativeToParametricLenght(myStartPos) + offsetx) > 0))) {                                   // PABLO #501
         // change attribute                                                                                                                 // PABLO #501
         myStartPos += offsetx;                                                                                                              // PABLO #501
         myEndPos += offsetx;                                                                                                                // PABLO #501
