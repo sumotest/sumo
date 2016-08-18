@@ -353,19 +353,19 @@ GNEApplicationWindow::fillMenuBar() {
                       "&New Network...\tCtrl+A\tCreate a new network.",
                       GUIIconSubSys::getIcon(ICON_OPEN_NET), this, MID_GNE_NEW_NETWORK);
     new FXMenuCommand(myFileMenu,
-                      "Open &Network...\tCtrl+N\tOpen a SUMO network.",
+                      "&Open Network...\tCtrl+N\tOpen a SUMO network.",
                       GUIIconSubSys::getIcon(ICON_OPEN_NET), this, MID_OPEN_NETWORK);
     new FXMenuCommand(myFileMenu,
-                      "&Open Configuration...\tCtrl+O\tOpen a NETCONVERT configuration file.",
+                      "Open &Configuration...\tCtrl+O\tOpen a NETCONVERT configuration file.",
                       GUIIconSubSys::getIcon(ICON_OPEN_CONFIG), this, MID_OPEN_CONFIG);
     new FXMenuCommand(myFileMenu,
                       "Import &Foreign Network...\t\tImport a foreign network such as OSM.",
                       GUIIconSubSys::getIcon(ICON_OPEN_NET), this, MID_GNE_OPEN_FOREIGN);
     new FXMenuCommand(myFileMenu,
-                      "Load &Shapes...\tCtrl+P\tLoad shapes into the network view.",
+                      "Load S&hapes...\tCtrl+P\tLoad shapes into the network view.",
                       GUIIconSubSys::getIcon(ICON_OPEN_SHAPES), this, MID_OPEN_SHAPES);
     new FXMenuCommand(myFileMenu,
-                      "Load &Additionals...\tCtrl+D\tLoad additional elements.",
+                      "&Load Additionals...\tCtrl+D\tLoad additional elements.",
                       GUIIconSubSys::getIcon(ICON_OPEN_ADDITIONALS), this, MID_OPEN_ADDITIONALS);
     new FXMenuCommand(myFileMenu,
                       "&Reload\tCtrl+R\tReloads the network.",
@@ -374,26 +374,26 @@ GNEApplicationWindow::fillMenuBar() {
                       "&Save Network...\tCtrl+S\tSave the network.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_NETWORK);
     new FXMenuCommand(myFileMenu,
-                      "&Save Network As...\tCtrl+Shift-S\tSave the network.",
+                      "Save Net&work As...\tCtrl+Shift-S\tSave the network.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_AS_NETWORK);
     new FXMenuCommand(myFileMenu,
-                      "&Save plain xml...\t\tSave plain xml representation the network.",
+                      "Save plain &xml...\t\tSave plain xml representation the network.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_PLAIN_XML);
     new FXMenuCommand(myFileMenu,
-                      "&Save joined junctions...\t\tSave log of joined junctions (allows reproduction of joins).",
+                      "Save &joined junctions...\t\tSave log of joined junctions (allows reproduction of joins).",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_JOINED);
     new FXMenuCommand(myFileMenu,
-                      "&Save POIs As ...\t\tSave the POIs.",
+                      "Save &POIs As ...\t\tSave the POIs.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_POIS);
     new FXMenuCommand(myFileMenu,                                                               // PABLO #501
-                      "&Save additionals\t\tSave additional elements.",                         // PABLO #501
+                      "Save &additionals\t\tSave additional elements.",                         // PABLO #501
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);       // PABLO #501
     new FXMenuCommand(myFileMenu,
-                      "&Save additionals As...\t\tSave additional elements.",
+                      "Save a&dditionals As...\t\tSave additional elements.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS_AS);
     new FXMenuSeparator(myFileMenu);
     new FXMenuCommand(myFileMenu,
-                      "Close\tCtrl+W\tClose the network.",
+                      "Close\tCtrl+W\tClose &the network.",
                       GUIIconSubSys::getIcon(ICON_CLOSE), this, MID_CLOSE);
     // Recent files
     FXMenuSeparator* sep1 = new FXMenuSeparator(myFileMenu);
@@ -409,7 +409,7 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCommand(myFileMenu, "", 0, &myRecentConfigs, FXRecentFiles::ID_FILE_8);
     new FXMenuCommand(myFileMenu, "", 0, &myRecentConfigs, FXRecentFiles::ID_FILE_9);
     new FXMenuCommand(myFileMenu, "", 0, &myRecentConfigs, FXRecentFiles::ID_FILE_10);
-    new FXMenuCommand(myFileMenu, "C&lear Recent Configurations", 0, &myRecentConfigs, FXRecentFiles::ID_CLEAR);
+    new FXMenuCommand(myFileMenu, "Clear Recent Configurat&ions", 0, &myRecentConfigs, FXRecentFiles::ID_CLEAR);
     myRecentConfigs.setTarget(this);
     myRecentConfigs.setSelector(MID_RECENTFILE);
     FXMenuSeparator* sep2 = new FXMenuSeparator(myFileMenu);
@@ -437,10 +437,10 @@ GNEApplicationWindow::fillMenuBar() {
     myEditMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "&Edit", 0, myEditMenu);
     new FXMenuCommand(myEditMenu,
-                      "Undo\tCtrl+Z\tUndo the last change.",
+                      "&Undo\tCtrl+Z\tUndo the last change.",
                       GUIIconSubSys::getIcon(ICON_UNDO), myUndoList, FXUndoList::ID_UNDO);
     new FXMenuCommand(myEditMenu,
-                      "Redo\tCtrl+Y\tRedo the last change.",
+                      "&Redo\tCtrl+Y\tRedo the last change.",
                       GUIIconSubSys::getIcon(ICON_REDO), myUndoList, FXUndoList::ID_REDO);
 
 
@@ -453,18 +453,18 @@ GNEApplicationWindow::fillMenuBar() {
 
     // processing menu (trigger netbuild computations)
     myProcessingMenu = new FXMenuPane(this);
-    new FXMenuTitle(myMenuBar, "Processing", 0, myProcessingMenu);
+    new FXMenuTitle(myMenuBar, "&Processing", 0, myProcessingMenu);
     new FXMenuCommand(myProcessingMenu,
-                      "Compute Junctions\tF5\tComputes junction shape and logic.",
+                      "&Compute Junctions\tF5\tComputes junction shape and logic.",
                       0, this, MID_GNE_COMPUTE_JUNCTIONS);
     new FXMenuCommand(myProcessingMenu,
-                      "Clean Junctions\tF6\tRemoves solitary junctions.",
+                      "Clean &Junctions\tF6\tRemoves solitary junctions.",
                       0, this, MID_GNE_CLEAN_JUNCTIONS);
     new FXMenuCommand(myProcessingMenu,
-                      "Join Selected Junctions\tF7\tJoins selected junctions into a single junction.",
+                      "Join &Selected Junctions\tF7\tJoins selected junctions into a single junction.",
                       0, this, MID_GNE_JOIN_JUNCTIONS);
     new FXMenuCommand(myProcessingMenu,
-                      "Options\t\tConfigure Processing Options.",
+                      "&Options\t\tConfigure Processing Options.",
                       0, this, MID_GNE_OPTIONS);
 
     // build settings menu
@@ -492,10 +492,10 @@ GNEApplicationWindow::fillMenuBar() {
     myWindowsMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "&Windows", 0, myWindowsMenu);
     new FXMenuCheck(myWindowsMenu,
-                    "Show Status Line\t\tToggle this Status Bar on/off.",
+                    "&Show Status Line\t\tToggle this Status Bar on/off.",
                     myStatusbar, FXWindow::ID_TOGGLESHOWN);
     new FXMenuCheck(myWindowsMenu,
-                    "Show Message Window\t\tToggle the Message Window on/off.",
+                    "Show &Message Window\t\tToggle the Message Window on/off.",
                     myMessageWindow, FXWindow::ID_TOGGLESHOWN);
     /*
     new FXMenuSeparator(myWindowsMenu);
@@ -521,7 +521,7 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuSeparator(myWindowsMenu);
     */
     new FXMenuCommand(myWindowsMenu,
-                      "Clear Message Window\t\tClear the message window.",
+                      "&Clear Message Window\t\tClear the message window.",
                       0, this, MID_CLEARMESSAGEWINDOW);
 
     // build help menu
