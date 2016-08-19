@@ -98,6 +98,15 @@
     <ClCompile Include="..\..\..\src\utils\gui\images\manip.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\gui\images\GNETexture_LaneBike.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\gui\images\GNETexture_LaneBus.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\gui\images\GNETexture_LanePedestrian.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\utils\gui\images\GUIIcons.h">

@@ -53,6 +53,9 @@
 #include "GNETexture_VariableSpeedSignalSelected.cpp"
 #include "GNETexture_NotMoving.cpp"
 #include "GNETexture_NotMovingSelected.cpp"
+#include "GNETexture_LaneBus.cpp"
+#include "GNETexture_LanePedestrian.cpp"
+#include "GNETexture_LaneBike.cpp"
 
 
 #ifdef CHECK_MEMORY_LEAKS
