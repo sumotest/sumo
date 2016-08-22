@@ -393,8 +393,24 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
         }
         if (gSelected.isSelected(GLO_LANE, getGlID())) {
             new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
+            // Create panel for lane transformations                                                            // PABLO #1568
+            FXMenuPane *laneTransformations = new FXMenuPane(ret);                                              // PABLO #1568
+            // Create menu comands for all possible transformations                                             // PABLO #1568
+            new FXMenuCommand(laneTransformations, "Sidewalk", 0, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);    // PABLO #1568
+            new FXMenuCommand(laneTransformations, "Bikelane", 0, &parent, MID_GNE_TRANSFORM_LANE_BIKE);        // PABLO #1568
+            new FXMenuCommand(laneTransformations, "Buslane", 0, &parent, MID_GNE_TRANSFORM_LANE_BUS);          // PABLO #1568
+            // add menuCascade for lane transformations                                                         // PABLO #1568
+            new FXMenuCascade(ret, "Transform selected lanes to", 0, laneTransformations);                      // PABLO #1568
         } else {
             new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
+            // Create panel for lane transformations                                                            // PABLO #1568
+            FXMenuPane *laneTransformations = new FXMenuPane(ret);                                              // PABLO #1568
+            // Create menu comands for all possible transformations                                             // PABLO #1568
+            new FXMenuCommand(laneTransformations, "Sidewalk", 0, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);    // PABLO #1568
+            new FXMenuCommand(laneTransformations, "Bikelane", 0, &parent, MID_GNE_TRANSFORM_LANE_BIKE);        // PABLO #1568
+            new FXMenuCommand(laneTransformations, "Buslane", 0, &parent, MID_GNE_TRANSFORM_LANE_BUS);          // PABLO #1568
+            // add menuCascade for lane transformations                                                         // PABLO #1568
+            new FXMenuCascade(ret, "Transform lane to", 0, laneTransformations);                                // PABLO #1568
         }
     } else if (editMode == GNE_MODE_TLS) {
         myTLSEditor = static_cast<GNEViewNet&>(parent).getViewParent()->getTLSEditorFrame();

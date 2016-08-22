@@ -64,6 +64,7 @@
 #include "GNEEdge.h"
 #include "GNELane.h"
 #include "GNEUndoList.h"
+#include "GNEChange_Attribute.h"
 #include "GNEChange_Junction.h"
 #include "GNEChange_Edge.h"
 #include "GNEChange_Lane.h"
@@ -396,6 +397,47 @@ GNENet::duplicateLane(GNELane* lane, GNEUndoList* undoList) {
     requireRecompute();
     undoList->p_end();
 }
+
+
+void                                                                        // PABLO #1568
+GNENet::transformLaneToSidewalk(GNELane* lane, GNEUndoList* undoList) {     // PABLO #1568
+    undoList->p_begin("transform lanes to Sidewalks");                      // PABLO #1568
+    NBEdge* NB = lane->getParentEdge().getNBEdge();                         // PABLO #1568
+
+
+    NB->addSidewalk(NB->getLaneStruct(lane->getIndex()).width);
+    refreshElement(lane);
+                                                                            // PABLO #1568
+    undoList->p_end();                                                      // PABLO #1568
+}                                                                           // PABLO #1568
+
+
+void                                                                        // PABLO #1568
+GNENet::transformLaneToBikelane(GNELane* lane, GNEUndoList* undoList) {     // PABLO #1568
+    undoList->p_begin("transform lanes to Bikelane");                       // PABLO #1568
+    NBEdge* NB = lane->getParentEdge().getNBEdge();                         // PABLO #1568
+    
+    NB->addBikeLane(NB->getLaneStruct(lane->getIndex()).width);
+    refreshElement(lane);
+    
+    requireRecompute();                                                     // PABLO #1568
+    undoList->p_end();                                                      // PABLO #1568
+}                                                                           // PABLO #1568
+
+
+void                                                                        // PABLO #1568
+GNENet::transformLaneToBuslane(GNELane* lane, GNEUndoList* undoList) {      // PABLO #1568
+    undoList->p_begin("transform lanes to Buslane");                        // PABLO #1568
+    NBEdge *nb = lane->getParentEdge().getNBEdge();                         // PABLO #1568
+    /*
+    GNEEdge* edge = &lane->getParentEdge();
+    const NBEdge::Lane& laneAttrs = edge->getNBEdge()->getLaneStruct(lane->getIndex());
+    GNELane* newLane = new GNELane(*edge, lane->getIndex());
+    undoList->add(new GNEChange_Lane(edge, newLane, laneAttrs, true), true);
+    */
+    requireRecompute();                                                     // PABLO #1568
+    undoList->p_end();                                                      // PABLO #1568
+}                                                                           // PABLO #1568
 
 
 void

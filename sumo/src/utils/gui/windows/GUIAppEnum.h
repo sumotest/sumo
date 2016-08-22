@@ -561,6 +561,12 @@ enum {
     MID_GNE_DELETE_GEOMETRY,
     /** duplicate a lane */
     MID_GNE_DUPLICATE_LANE,
+    /** transform lane to sidewalk */   // PABLO #1568
+    MID_GNE_TRANSFORM_LANE_SIDEWALK,    // PABLO #1568
+    /** transform lane to bikelane */   // PABLO #1568
+    MID_GNE_TRANSFORM_LANE_BIKE,        // PABLO #1568
+    /** transform lane to busLane */    // PABLO #1568
+    MID_GNE_TRANSFORM_LANE_BUS,         // PABLO #1568
     /** set object as template*/
     MID_GNE_SET_TEMPLATE,
     /** copy template*/

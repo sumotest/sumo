@@ -101,7 +101,7 @@ GNEDetector::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
 
 
 void                                                                                                                        // PABLO #501
-GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {                    // PABLO #501
+GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal, GNEUndoList* undoList) {                            // PABLO #501
     undoList->p_begin("position of " + toString(getTag()));                                                                 // PABLO #501
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x()), true, toString(oldPosx)));  // PABLO #501
     undoList->p_end();                                                                                                      // PABLO #501

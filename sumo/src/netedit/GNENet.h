@@ -199,6 +199,24 @@ public:
      */
     void duplicateLane(GNELane* lane, GNEUndoList* undoList);
 
+    /**@brief transform lane to sidewalk lane                               // PABLO #1568
+     * @param[in] lane The lane to be transfomred                           // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
+     */                                                                     // PABLO #1568
+    void transformLaneToSidewalk(GNELane* lane, GNEUndoList* undoList);     // PABLO #1568
+
+    /**@brief transform lane to bikelane                                    // PABLO #1568
+     * @param[in] lane The lane to be transfomred                           // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
+     */                                                                     // PABLO #1568
+    void transformLaneToBikelane(GNELane* lane, GNEUndoList* undoList);     // PABLO #1568
+
+    /**@brief transform lane to buslane                                     // PABLO #1568
+     * @param[in] lane The lane to be transfomred                           // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
+     */                                                                     // PABLO #1568
+    void transformLaneToBuslane(GNELane* lane, GNEUndoList* undoList);      // PABLO #1568
+
     /**@brief removes geometry when pos is close to a geometry node, deletes
      * the whole edge otherwise
      * @param[in] edge The edge to be removed

@@ -160,6 +160,15 @@ public:
     /// @brief duplicate selected lane
     long onCmdDuplicateLane(FXObject*, FXSelector, void*);
 
+    /// @brief transform lane to sidewalk (Only pedestrian are allowed) // PABLO #1568
+    long onCmdTransformLaneToSidewalk(FXObject*, FXSelector, void*);    // PABLO #1568
+
+    /// @brief transform lane to bike lane (Only bikes are allowed) // PABLO #1568
+    long onCmdTransformLaneToBike(FXObject*, FXSelector, void*);    // PABLO #1568
+
+    /// @brief transform lane to bus lane (Only bus are allowed)    // PABLO #1568
+    long onCmdTransformLaneToBus(FXObject*, FXSelector, void*);     // PABLO #1568
+
     /// @brief input custom node shape
     long onCmdNodeShape(FXObject*, FXSelector, void*);
 

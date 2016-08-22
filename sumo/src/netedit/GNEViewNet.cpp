@@ -83,20 +83,23 @@
 // FOX callback mapping
 // ===========================================================================
 FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CHANGE,         GNEViewNet::onCmdChangeMode),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE,          GNEViewNet::onCmdSplitEdge),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE_BIDI,     GNEViewNet::onCmdSplitEdgeBidi),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_REVERSE_EDGE,        GNEViewNet::onCmdReverseEdge),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_ADD_REVERSE_EDGE,    GNEViewNet::onCmdAddReversedEdge),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_EDGE_ENDPOINT,   GNEViewNet::onCmdSetEdgeEndpoint),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_RESET_EDGE_ENDPOINT, GNEViewNet::onCmdResetEdgeEndpoint),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_STRAIGHTEN,          GNEViewNet::onCmdStraightenEdges),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SIMPLIFY_SHAPE,      GNEViewNet::onCmdSimplifyShape),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_DELETE_GEOMETRY,     GNEViewNet::onCmdDeleteGeometry),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_DUPLICATE_LANE,      GNEViewNet::onCmdDuplicateLane),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_SHAPE,          GNEViewNet::onCmdNodeShape),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_REPLACE,        GNEViewNet::onCmdNodeReplace),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTIONS,    GNEViewNet::onCmdToogleShowConnection)  // PABLO #2067
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CHANGE,             GNEViewNet::onCmdChangeMode),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE,              GNEViewNet::onCmdSplitEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE_BIDI,         GNEViewNet::onCmdSplitEdgeBidi),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_REVERSE_EDGE,            GNEViewNet::onCmdReverseEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_ADD_REVERSE_EDGE,        GNEViewNet::onCmdAddReversedEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_EDGE_ENDPOINT,       GNEViewNet::onCmdSetEdgeEndpoint),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_RESET_EDGE_ENDPOINT,     GNEViewNet::onCmdResetEdgeEndpoint),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_STRAIGHTEN,              GNEViewNet::onCmdStraightenEdges),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SIMPLIFY_SHAPE,          GNEViewNet::onCmdSimplifyShape),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_DELETE_GEOMETRY,         GNEViewNet::onCmdDeleteGeometry),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_DUPLICATE_LANE,          GNEViewNet::onCmdDuplicateLane),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_TRANSFORM_LANE_SIDEWALK, GNEViewNet::onCmdTransformLaneToSidewalk),  // PABLO #1568
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_TRANSFORM_LANE_BIKE,     GNEViewNet::onCmdTransformLaneToBike),      // PABLO #1568
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_TRANSFORM_LANE_BUS,      GNEViewNet::onCmdTransformLaneToBus),       // PABLO #1568
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_SHAPE,              GNEViewNet::onCmdNodeShape),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_REPLACE,            GNEViewNet::onCmdNodeReplace),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTIONS,        GNEViewNet::onCmdToogleShowConnection)  // PABLO #2067
 };
 
 // Object implementation
@@ -1116,6 +1119,93 @@ GNEViewNet::onCmdDuplicateLane(FXObject*, FXSelector, void*) {
     }
     return 1;
 }
+
+
+long                                                                                            // PABLO #1568
+GNEViewNet::onCmdTransformLaneToSidewalk(FXObject*, FXSelector, void*) {                        // PABLO #1568
+    GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                       // PABLO #1568
+    if (lane != 0) {                                                                            // PABLO #1568
+        if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                  // PABLO #1568
+            // begin undo operation                                                             // PABLO #1568
+            myUndoList->p_begin("transform lanes to Sidewalks");                                // PABLO #1568
+            // get selected lanes                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                           // PABLO #1568
+            // iterate over selected lanes                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) { // PABLO #1568
+                // Transform lane to sidewalk                                                   // PABLO #1568
+                myNet->transformLaneToSidewalk(*it, myUndoList);                                // PABLO #1568
+            }                                                                                   // PABLO #1568
+            // end undo operation                                                               // PABLO #1568
+            myUndoList->p_end();                                                                // PABLO #1568
+        } else {                                                                                // PABLO #1568
+            // begin undo operation                                                             // PABLO #1568
+            myUndoList->p_begin("transform lane to Sidewalk");                                  // PABLO #1568
+            // Transform lane to sidewalk                                                       // PABLO #1568
+            myNet->transformLaneToSidewalk(lane, myUndoList);                                   // PABLO #1568
+            // end undo operation                                                               // PABLO #1568
+            myUndoList->p_end();                                                                // PABLO #1568
+        }                                                                                       // PABLO #1568
+    }                                                                                           // PABLO #1568
+    return 1;                                                                                   // PABLO #1568
+}                                                                                               // PABLO #1568
+
+
+long                                                                                            // PABLO #1568
+GNEViewNet::onCmdTransformLaneToBike(FXObject*, FXSelector, void*) {                            // PABLO #1568
+    GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                       // PABLO #1568
+    if (lane != 0) {                                                                            // PABLO #1568
+        if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                  // PABLO #1568
+            // begin undo operation                                                             // PABLO #1568
+            myUndoList->p_begin("transform lanes to Bikelanes");                                // PABLO #1568
+            // get selected lanes                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                           // PABLO #1568
+            // iterate over selected lanes                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) { // PABLO #1568
+                // Transform lane to sidewalk                                                   // PABLO #1568
+                myNet->transformLaneToBikelane(*it, myUndoList);                                // PABLO #1568
+            }                                                                                   // PABLO #1568
+            // end undo operation                                                               // PABLO #1568
+            myUndoList->p_end();                                                                // PABLO #1568
+        } else {                                                                                // PABLO #1568
+            // begin undo operation                                                             // PABLO #1568
+            myUndoList->p_begin("transform lane to Bikelane");                                  // PABLO #1568
+            // Transform lane to sidewalk                                                       // PABLO #1568
+            myNet->transformLaneToBikelane(lane, myUndoList);                                   // PABLO #1568
+            // end undo operation                                                               // PABLO #1568
+            myUndoList->p_end();                                                                // PABLO #1568
+        }                                                                                       // PABLO #1568
+    }                                                                                           // PABLO #1568
+    return 1;                                                                                   // PABLO #1568
+}                                                                                               // PABLO #1568
+
+
+long                                                                                            // PABLO #1568
+GNEViewNet::onCmdTransformLaneToBus(FXObject*, FXSelector, void*) {                             // PABLO #1568
+    GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                       // PABLO #1568
+    if (lane != 0) {                                                                            // PABLO #1568
+        if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                  // PABLO #1568
+            // begin undo operation                                                             // PABLO #1568
+            myUndoList->p_begin("transform lanes to Buslanes");                                 // PABLO #1568
+            // get selected lanes                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                           // PABLO #1568
+            // iterate over selected lanes                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) { // PABLO #1568
+                // Transform lane to sidewalk                                                   // PABLO #1568
+                myNet->transformLaneToBuslane(*it, myUndoList);                                 // PABLO #1568
+            }                                                                                   // PABLO #1568
+            // end undo operation                                                               // PABLO #1568
+            myUndoList->p_end();                                                                // PABLO #1568
+        } else {                                                                                // PABLO #1568
+            // begin undo operation                                                             // PABLO #1568
+            myUndoList->p_begin("transform lane to Buslane");                                   // PABLO #1568
+            // Transform lane to sidewalk                                                       // PABLO #1568
+            myNet->transformLaneToBuslane(lane, myUndoList);                                    // PABLO #1568
+            // end undo operation                                                               // PABLO #1568
+            myUndoList->p_end();                                                                // PABLO #1568
+        }                                                                                       // PABLO #1568
+    }                                                                                           // PABLO #1568
+    return 1;                                                                                   // PABLO #1568
+}                                                                                               // PABLO #1568
 
 
 long
