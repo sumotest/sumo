@@ -1039,15 +1039,28 @@ public:
 
     void markAsInLane2LaneState();
 
-    /// add a pedestrian sidewalk of the given width and shift existing connctions
+    /// @brief add a pedestrian sidewalk of the given width and shift existing connctions
     void addSidewalk(SUMOReal width);
+
+    /// @brief restore an previously added sidewalk                                                                                         // PABLO #1568
+    void restoreSidewalk(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);   // PABLO #1568
+
+    /// @brief check if current edge hat a sideWalk
+    bool hatSidewalk() const;
 
     /// add a bicycle lane of the given width and shift existing connctions
     void addBikeLane(SUMOReal width);
 
+    /// @brief restore an previously added BikeLane                                                                                        // PABLO #1568
+    void restoreBikelane(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);  // PABLO #1568
+
+    /// @brief check if current edge hat a bikelane
+    bool hatBikelane() const;
+
     /// @brief set allowed/disallowed classes for the given lane or for all lanes if -1 is given
     void setPermissions(SVCPermissions permissions, int lane = -1);
 
+    /// @brief set preferred Vehicle Class
     void setPreferredVehicleClass(SVCPermissions permissions, int lane = -1);
 
     /// @brief set allowed class for the given lane or for all lanes if -1 is given
@@ -1255,9 +1268,12 @@ private:
     /// @brief compute the first intersection point between the given lane geometries considering their rspective widths 
     static SUMOReal firstIntersection(const PositionVector& v1, const PositionVector& v2, SUMOReal width2);
 
-    /// @brief add a lane of the given width, restricted to the given class and shift existing connctions
+    /// @brief add a lane of the given width, restricted to the given class and shift existing connections
     void addRestrictedLane(SUMOReal width, SUMOVehicleClass vclass);
 
+    /// @brief restore a restricted lane                                                                                                                                    // PABLO #1568
+    void restoreRestrictedLane(SUMOVehicleClass vclass, std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);    // PABLO #1568
+    
 private:
     /** @brief The building step
      * @see EdgeBuildingStep
@@ -1294,6 +1310,7 @@ private:
 
     /// @brief The turn destination edge (if a connection exists)
     NBEdge* myTurnDestination;
+
     /// @brief The edge that would be the turn destination if there was one
     NBEdge* myPossibleTurnDestination;
 
@@ -1376,7 +1393,6 @@ public:
         tls_disable_finder& operator=(const tls_disable_finder& s);
 
     };
-
 
 
     /**
@@ -1532,8 +1548,6 @@ private:
 
     /// @brief invalidated assignment operator
     NBEdge& operator=(const NBEdge& s);
-
-
 };
 
 
