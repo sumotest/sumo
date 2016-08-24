@@ -125,7 +125,7 @@
 
 #include "lanebike.xpm"         // PABLO #1568
 #include "lanebus.xpm"          // PABLO #1568
-#include "lanePedestrian.xpm"   // PABLO #1568
+#include "lanepedestrian.xpm"   // PABLO #1568
 
 #include "cut.xpm"
 #include "ext.xpm"
