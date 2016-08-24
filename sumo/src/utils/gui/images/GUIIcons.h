@@ -142,6 +142,10 @@ enum GUIIcon {
     ICON_REMOVE,
     ICON_NETEDITARROW,  // PABLO #2067
 
+    ICON_LANEPEDESTRIAN,    // PABLO #1568
+    ICON_LANEBUS,           // PABLO #1568
+    ICON_LANEBIKE,          // PABLO #1568
+
     ICON_MAX
 };
 

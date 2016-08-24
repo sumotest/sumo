@@ -47,6 +47,7 @@
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/images/GUITexturesHelper.h>
+#include <utils/gui/images/GUITextureSubSys.h>
 
 #include "GNELane.h"
 #include "GNEEdge.h"
@@ -256,12 +257,10 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (!setFunctionalColor(c.getActive()) && !setMultiColor(c)) {
             GLHelper::setColor(c.getScheme().getColor(getColorValue(c.getActive())));
         }
-    };
+    }
 
     // draw lane
     // check whether it is not too small
-
-
     const SUMOReal selectionScale = selected || selectedEdge ? s.selectionScale : 1;
     SUMOReal exaggeration = selectionScale * s.laneWidthExaggeration; // * s.laneScaler.getScheme().getColor(getScaleValue(s.laneScaler.getActive()));
     // XXX apply usefull scale values
@@ -317,8 +316,34 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (s.showLaneDirection) {
             drawDirectionIndicators();
         }
+        // If there are icons to draw:
+        if(myLaneIconsPositions.size() > 0) {
+            GUIGlID icon = 0;
+            // Get icon depending of type of lane restriction
+            if (myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_PEDESTRIAN) {            // PABLO #1568
+                icon = GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN);                                     // PABLO #1568
+            } else if (myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_BICYCLE) {        // PABLO #1568
+                icon = GUITextureSubSys::getGif(GNETEXTURE_LANEBIKE);                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // Draw list of icons                                                                               // PABLO #1568
+            for(int i = 0; i < (int)myLaneIconsPositions.size(); i++) {                                         // PABLO #1568
+                // Push draw matrix                                                                             // PABLO #1568
+                glPushMatrix();                                                                                 // PABLO #1568
+                // Set draw color                                                                               // PABLO #1568
+                glColor3d(1, 1, 1);                                                                             // PABLO #1568
+                // Traslate matrix                                                                              // PABLO #1568
+                glTranslated(myLaneIconsPositions.at(i).x(), myLaneIconsPositions.at(i).y(), getType() + 0.1);  // PABLO #1568
+                // Rotate matrix                                                                                // PABLO #1568
+                glRotated(myLaneIconsRotations.at(i), 0, 0, -1);                                                // PABLO #1568
+                glRotated(90, 0, 0, 1);                                                                         // PABLO #1568
+                // draw texture box depending                                                                   // PABLO #1568
+                GUITexturesHelper::drawTexturedBox(icon, 1);                                                    // PABLO #1568
+                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN), 1);     // PABLO #1568
+                // Pop logo matrix                                                                              // PABLO #1568
+                glPopMatrix();                                                                                  // PABLO #1568
+            }                                                                                                   // PABLO #1568
+        }                                                                                                       // PABLO #1568
     }
-
     glPopName();
 }
 
@@ -504,10 +529,15 @@ GNELane::getBoundary() const {
 
 void
 GNELane::updateGeometry() {
+    // Clear containers
     myShapeRotations.clear();
     myShapeLengths.clear();
+    myLaneIconsPositions.clear();   // PABLO #1568
+    myLaneIconsRotations.clear();   // PABLO #1568
     //SUMOReal length = myParentEdge.getLength(); // @todo see ticket #448
     // may be different from length
+    
+    // Obtain lane and shape rotations
     int segments = (int) getShape().size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
@@ -527,18 +557,27 @@ GNELane::updateGeometry() {
     for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
         (*i)->updateGeometry();
     }
-
     // Update incoming connections of this lane                                                                         // PABLO #2067
     std::vector<GNEConnection*> incomingConnections = getGNEIncomingConnections();                                      // PABLO #2067
     for(std::vector<GNEConnection*>::iterator i = incomingConnections.begin(); i != incomingConnections.end(); i++) {   // PABLO #2067
         (*i)->updateGeometry();                                                                                         // PABLO #2067
     }                                                                                                                   // PABLO #2067
-
     // Update outgoings connections of this lane                                                                        // PABLO #2067
     std::vector<GNEConnection*> outGoingConnections = getGNEOutcomingConnections();                                     // PABLO #2067
     for(std::vector<GNEConnection*>::iterator i = outGoingConnections.begin(); i != outGoingConnections.end(); i++) {   // PABLO #2067
         (*i)->updateGeometry();                                                                                         // PABLO #2067
     }                                                                                                                   // PABLO #2067
+    // If lane is a special lane and has enought lenght                                             // PABLO #1568
+    if((getLaneShapeLenght() > 2) &&                                                                // PABLO #1568
+       ((myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_PEDESTRIAN) ||      // PABLO #1568
+        (myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_BICYCLE)    )) {    // PABLO #1568
+        // get values for position and rotation of icons                                            // PABLO #1568
+        for(int i = 1; i < getLaneShapeLenght() - 1; i += 15) {                                     // PABLO #1568
+            // @todo optimice getting it in UpdateGeometry()                                        // PABLO #1568
+            myLaneIconsPositions.push_back(getShape().positionAtOffset(i));                         // PABLO #1568
+            myLaneIconsRotations.push_back(getShape().rotationDegreeAtOffset(i));                   // PABLO #1568
+        }                                                                                           // PABLO #1568
+    }                                                                                               // PABLO #1568
 }
 
 int

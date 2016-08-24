@@ -240,8 +240,14 @@ protected:
 
     /// @brief The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
-    /// @}
 
+    /// @brief Position of lane icons           // PABLO #1568
+    std::vector<Position> myLaneIconsPositions; // PABLO #1568
+
+    /// @brief Rotations of lane icons          // PABLO #1568
+    std::vector<SUMOReal> myLaneIconsRotations; // PABLO #1568
+    /// @}
+    
     /// @brief list with the additonals vinculated with this lane
     AdditionalVector myAdditionals;
 

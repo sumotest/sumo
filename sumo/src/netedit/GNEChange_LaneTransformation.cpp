@@ -213,6 +213,8 @@ GNEChange_LaneTransformation::doTransformLaneToSidewalk() {
     myConnections = nb->getConnections();
     // add Sidewalk
     nb->addSidewalk(nb->getLaneWidth());
+    // Update geometry
+    myLane->updateGeometry();
     // Refresh element
     myLane->getNet()->refreshElement(myLane);
 }
@@ -222,6 +224,8 @@ void
 GNEChange_LaneTransformation::undoTransformLaneToSidewalk() {
     // Restore values of lane
     myLane->getParentEdge().getNBEdge()->restoreSidewalk(myVectorOfLanes, myGeometry, myConnections);
+    // Update geometry
+    myLane->updateGeometry();
     // Refresh element
     myLane->getNet()->refreshElement(myLane);
 }
@@ -237,6 +241,8 @@ GNEChange_LaneTransformation::doTransformLaneToBikeLane() {
     myConnections = nb->getConnections();
     // add Sidewalk
     nb->addBikeLane(nb->getLaneWidth());
+    // Update geometry
+    myLane->updateGeometry();
     // Refresh element
     myLane->getNet()->refreshElement(myLane);
 }
@@ -246,6 +252,8 @@ void
 GNEChange_LaneTransformation::undoTransformLaneToBikeLane() {
     // Restore values of lane
     myLane->getParentEdge().getNBEdge()->restoreBikelane(myVectorOfLanes, myGeometry, myConnections);
+    // Update geometry
+    myLane->updateGeometry();
     // Refresh element
     myLane->getNet()->refreshElement(myLane);
 }
