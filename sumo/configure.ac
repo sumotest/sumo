@@ -11,9 +11,13 @@ AM_INIT_AUTOMAKE([gnu dist-zip tar-ustar])
 
 AC_LANG([C++])
 
-dnl the debug check has to be made before the program checks because it modifies
-dnl CXXFLAGS.
-
+dnl the debug check has to be made before the program checks
+dnl because it modifies CXXFLAGS
+if test x$CXX = xclang++; then
+    CXXFLAGS="-msse2 $CXXFLAGS"
+else
+    CXXFLAGS="-msse2 -mfpmath=sse $CXXFLAGS -std=c++11"
+fi
 AC_ARG_ENABLE([debug], [AS_HELP_STRING([--enable-debug],[enable sumo debugging code [default=no].])])
 if test x$enable_debug = xyes; then
     AC_DEFINE(_DEBUG, 1, [Define to 1 in order to enable sumo debugging code.])
@@ -426,8 +430,13 @@ else
   ac_disabled="$ac_disabled ffmpeg"
 fi
 
-dnl - - - - - - - - - - - - - - - - - - - - - - -
-dnl  general flags
+AC_CHECK_HEADER([grpc++/grpc++.h], 
+                [AM_CPPFLAGS="$CPPFLAGS $AM_CPPFLAGS"
+                 AC_DEFINE([HAVE_GRPC], [1], [defined if grpc is available])
+                 GRPC_LIBS="-lgrpc++ -lprotobuf -lgrpc" AC_SUBST(GRPC_LIBS)
+                 ac_enabled="$ac_enabled grpc"],
+                [ac_disabled="$ac_disabled grpc"])
+
 AM_CPPFLAGS="-I$PWD/$srcdir/src $AM_CPPFLAGS"
 AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_CXXFLAGS)
