@@ -242,7 +242,7 @@ public:
 
     static SUMOReal freeSpeed(const SUMOReal currentSpeed, const SUMOReal decel, const SUMOReal dist, const SUMOReal maxSpeed, const bool onInsertion);
 
-    /** @brief Returns the minimum gap to reserve if the leader is braking at maximum
+    /** @brief Returns the minimum gap to reserve if the leader is braking at maximum (>=0)
       * @param[in] speed EGO's speed
       * @param[in] leaderSpeed LEADER's speed
       * @param[in] leaderMaxDecel LEADER's max. deceleration rate

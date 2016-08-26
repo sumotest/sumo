@@ -56,7 +56,7 @@ extern SUMOTime DELTA_T;
 // x/deltaT
 #define DIST2SPEED(x) ((x)/TS)
 // x*deltaT*deltaT
-#define ACCEL2DIST(x) ((x)*TS*TS)
+#define ACCEL2DIST(x) ((x)*TS*TS) // XXX: This should rather defined as ((x)*TS*TS)/2 from a physical point of view... (Leo)
 // x*deltaT
 #define ACCEL2SPEED(x) ((x)*TS)
 // x*deltaT

@@ -5,6 +5,7 @@
 /// @author  Friedemann Wesner
 /// @author  Sascha Krieg
 /// @author  Michael Behrisch
+/// @author  Leonhard Luecken
 /// @date    Fri, 08.10.2013
 /// @version $Id$
 ///
@@ -69,6 +70,12 @@
 
 #define URGENCY (SUMOReal)2.0
 
+// factor by which the sense of urgency for strategic lc is divided on roundabout edges
+// (by multiplying the distances to be covered along the roundabout that exceed
+// ROUNDABOUT_DIST_TRESH meters by this factor)
+#define ROUNDABOUT_DIST_FACTOR (SUMOReal)2.0
+#define ROUNDABOUT_DIST_TRESH (SUMOReal)10.0
+
 #define ROUNDABOUT_DIST_BONUS (SUMOReal)80.0
 
 #define KEEP_RIGHT_TIME (SUMOReal)5.0 // the number of seconds after which a vehicle should move to the right lane
@@ -83,15 +90,16 @@
 // ===========================================================================
 //#define DEBUG_VEHICLE_GUI_SELECTION 1
 
-//#define DEBUG_PATCH_SPEED
-//#define DEBUG_INFORMED
-//#define DEBUG_INFORMER
+#define DEBUG_PATCH_SPEED
+#define DEBUG_INFORMED
+#define DEBUG_INFORMER
 //#define DEBUG_CONSTRUCTOR
-//#define DEBUG_WANTS_CHANGE
-//#define DEBUG_SLOW_DOWN
+#define DEBUG_WANTS_CHANGE
+#define DEBUG_SLOW_DOWN
 //#define DEBUG_SAVE_BLOCKER_LENGTH
 //#define DEBUG_COND (myVehicle.getID() == "v3.229" || myVehicle.getID() == "v3.235" || myVehicle.getID() == "high.3")
-#define DEBUG_COND false
+#define DEBUG_COND (myVehicle.getID() == "Costa_70_356") || myVehicle.getID() == "XXI_Aprile_12_314" // || myVehicle.getID() == "XXI_Aprile_1_617")
+//#define DEBUG_COND false
 
 // ===========================================================================
 // member method definitions
@@ -260,7 +268,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         }
     }
 
-    if (gotOne && !myDontBrake) {
+    if (gotOne && !myDontBrake) { // XXX: myDontBrake is initialized as false and seems not to be changed anywhere... What's its purpose???
 #ifdef DEBUG_PATCH_SPEED
     	if (DEBUG_COND) {
     		std::cout << time << " veh=" << myVehicle.getID() << " got vSafe "<< nVSafe << "\n";
@@ -274,10 +282,6 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
         if ((state & LCA_STRATEGIC) != 0) {
             // necessary decelerations are controlled via vSafe. If there are
             // none it means we should speed up
-        	// XXX: It seems that this could lead to returning a value > wanted (==vSafe, if we use Krauss)
-        	//      (at least if myDontBrake==true and max>wanted. However, the latter is never true when using Krauss,
-        	//       so this didn't expose itself, yet) (Leo)
-            // XXX: It seems that this could lead to returning a value > wanted (==vSafe, if we use Krauss)
 #ifdef DEBUG_PATCH_SPEED
         	if (DEBUG_COND) {
         		std::cout << time << " veh=" << myVehicle.getID() << " LCA_WANTS_LANECHANGE (strat, no vSafe)\n";
@@ -286,21 +290,34 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
             return (max + wanted) / (SUMOReal) 2.0;
         } else if ((state & LCA_COOPERATIVE) != 0) {
             // only minor adjustments in speed should be done
-            if ((state & LCA_BLOCKED_BY_LEADER) != 0) {
-#ifdef DEBUG_PATCH_SPEED
-        		if (DEBUG_COND) {
-        			std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_LEADER (coop)\n";
-        		}
-#endif
-                return (min + wanted) / (SUMOReal) 2.0;
-            }
+
+
             if ((state & LCA_BLOCKED_BY_FOLLOWER) != 0) {
 #ifdef DEBUG_PATCH_SPEED
-        		if (DEBUG_COND) {
-        			std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_FOLLOWER (coop)\n";
-        		}
+                if (DEBUG_COND) {
+                    std::cout << time << " veh=" << myVehicle.getID()
+                            << " LCA_BLOCKED_BY_FOLLOWER (coop)\n"
+                            << "min = " << min << " wanted = " << wanted;
+                }
 #endif
                 return (max + wanted) / (SUMOReal) 2.0;
+            }
+
+
+            //            if (MSGlobals::gSemiImplicitEulerUpdate && (state & LCA_BLOCKED_BY_LEADER) != 0) {
+            if ((state & LCA_BLOCKED_BY_LEADER) != 0) {
+                // NOTE: For the ballistic case, this block leads to
+                //       vehicles stopping on the right side of a standing queue
+                //       because they wish to use the left lane of a two-lane roundabout ahead
+                //       due to cooperative reasons (see iTetris acosta plain scenario, e.g.)
+#ifdef DEBUG_PATCH_SPEED
+                if (DEBUG_COND) {
+                    std::cout << time << " veh=" << myVehicle.getID()
+                                                << " LCA_BLOCKED_BY_LEADER (coop) "
+                                                << "min = " << min << " wanted = " << wanted;
+                }
+#endif
+                return (min + wanted) / (SUMOReal) 2.0;
             }
         }
     }
@@ -350,9 +367,9 @@ MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
     return (void*) true;
 }
 
-
+/*
 SUMOReal
-MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) {
+MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) const {
 	SUMOReal overtakeTime;
 	const MSVehicle* v1 = &myVehicle;
 	// estimate overtakeTime (calculating with constant acceleration accelX)
@@ -376,10 +393,10 @@ MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, S
                 dist += (*(i++))->getLength();
             }
         }
-    }/* else {
-        // Debug (Leo)
-        std::cout << "length bestlanes == 0!" << std::endl;
-    }*/
+//    } else {
+//        // Debug (Leo)
+//        std::cout << "length bestlanes == 0!" << std::endl;
+    }
 
 	// times until reaching maximal or minimal velocities
 	const SUMOReal tmEgo = accelEgo != 0 ?
@@ -431,7 +448,7 @@ MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, S
 
 	if(!overtaken) {
 		// until time t1, overtaking didn't succeed
-		if(t1 > remainingSeconds || d1 > myLeftSpace) {
+		if(t1 > remainingSeconds || d1 > myLeftSpace-myLeadingBlockerLength) {
 			// -> set overtakeTime to something indicating impossibility of overtaking
 			overtakeTime = remainingSeconds + 1;
 		} else {
@@ -463,7 +480,7 @@ MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, S
 
 	if(!overtaken){
 		// no overtaking until both reach stationary velocities
-		if(t2 > remainingSeconds || d2 > myLeftSpace || dv2 <= 0){
+		if(t2 > remainingSeconds || d2 > myLeftSpace-myLeadingBlockerLength || dv2 <= 0){
 			overtakeTime = remainingSeconds + 1;
 		} else {
 			overtakeTime = t2 + (overtakeDist - d2)/dv2;
@@ -472,10 +489,11 @@ MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, S
 
 	return overtakeTime;
 }
+*/
 
 
 SUMOReal
-MSLCM_LC2013::overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap) {
+MSLCM_LC2013::overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap) const {
 	SUMOReal overtakeDist = (gap // drive to back of leader
 			+ leader->getVehicleType().getLengthWithGap() // drive to front of leader
 			+ follower->getVehicleType().getLength() // follower back reaches leader front
@@ -483,6 +501,7 @@ MSLCM_LC2013::overtakeDistance(const MSVehicle* follower, const MSVehicle* leade
 					leader->getSpeed(), follower->getSpeed(), follower->getCarFollowModel().getMaxDecel()));
 	return MAX2(overtakeDist, 0.);
 }
+
 
 SUMOReal
 MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
@@ -516,17 +535,27 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         SUMOReal overtakeTime;
         const SUMOReal overtakeDist = overtakeDistance(&myVehicle, nv, neighLead.second);
         const SUMOReal dv = plannedSpeed - nv->getSpeed();
-        if(MSGlobals::gSemiImplicitEulerUpdate){
-        	if(dv > 0){
-        		overtakeTime = overtakeDist/dv;
-        	} else {
-        		// -> set overtakeTime to something indicating impossibility of overtaking
-        		overtakeTime = remainingSeconds + 1;
-        	}
+
+        if(dv > 0){
+            overtakeTime = overtakeDist/dv;
         } else {
-            // XXX: this is a bit expensive to evaluate every step (Leo)
-        	overtakeTime = estimateOvertakeTime(nv, overtakeDist, remainingSeconds);
+            // -> set overtakeTime to something indicating impossibility of overtaking
+            overtakeTime = remainingSeconds + 1;
         }
+
+// // This chunk uses the estimate overtaking time function for the ballistic case
+// // remove at merge (Leo)
+//        if(MSGlobals::gSemiImplicitEulerUpdate){
+//        	if(dv > 0){
+//        		overtakeTime = overtakeDist/dv;
+//        	} else {
+//        		// -> set overtakeTime to something indicating impossibility of overtaking
+//        		overtakeTime = remainingSeconds + 1;
+//        	}
+//        } else {
+//            // XXX: this is a bit expensive to evaluate every step (Leo)
+//        	overtakeTime = estimateOvertakeTime(nv, overtakeDist, remainingSeconds);
+//        }
 
 /*        
 // Debug (Leo)
@@ -548,8 +577,8 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         if (// overtaking on the right on an uncongested highway is forbidden (noOvertakeLCLeft)
 			(dir == LCA_MLEFT && !myVehicle.congested() && !myAllowOvertakingRight)
 			// not enough space to overtake?
-            || myLeftSpace - myLeadingBlockerLength < overtakeDist
-//            || myLeftSpace < overtakeDist
+//            || myLeftSpace - myLeadingBlockerLength < overtakeDist
+            || myLeftSpace < overtakeDist
 			// not enough time to overtake?
 			|| remainingSeconds < overtakeTime) {
             // cannot overtake
@@ -605,7 +634,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         	}
 #endif
             msgPass.informNeighLeader(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGLEADER), &myVehicle);
-            return -1;  // XXX: using -1 is ambiguous! (Leo)
+            return -1;  // XXX: using -1 is ambiguous for the ballistic update! Currently this is being catched in patchSpeed() (Leo)
         }
     } else if (neighLead.first != 0) { // (remainUnblocked)
         // we are not blocked now. make sure we stay far enough from the leader
@@ -634,6 +663,52 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 }
 
 
+
+
+SUMOReal
+MSLCM_LC2013::gapExtrapolation(SUMOReal currentGap, const MSVehicle* veh2, SUMOReal a1, SUMOReal a2, SUMOReal duration) const{
+
+    assert(TS <= duration); // NOTE: below, we assume this when taking tl=MIN2(tl,TS).
+
+    SUMOReal dv = myVehicle.getSpeed() - veh2->getSpeed(); // current velocity difference
+
+    // determine times t2, t1 for which vehicles can break until stop (within duration)
+    SUMOReal t2, t1;
+    if(a2 < 0 && veh2->getSpeed() > 0){
+        const SUMOReal followerStopTime = -veh2->getSpeed()*veh2->getSpeed()/(2*a2);
+        t2 = MIN2(followerStopTime, duration);
+    } else if (veh2->getSpeed() == 0) {
+        t2 = 0;
+    } else if (a2 >= 0){
+        t2 = duration;
+    }
+
+    if(a1 < 0 && myVehicle.getSpeed() > 0){
+        const SUMOReal leaderStopTime =  - myVehicle.getSpeed()*myVehicle.getSpeed()/(2*a1);
+        t1 = MIN2(leaderStopTime, duration);
+    } else if (a1 <= 0 && myVehicle.getSpeed()==0) {
+        t1 = 0;
+    } else if (a1 >= 0) {
+        t1 = duration;
+    }
+
+    // NOTE: this assumes that the planned acceleration is performed over the next followerBreakTime seconds
+    //       (if no vehicle stops before)
+    SUMOReal ta = MIN2(t2,t1); SUMOReal tb = MAX2(t2,t1)-ta;
+    SUMOReal da1 = a1-a2;
+    SUMOReal da2 = ta == t1 ? -a2 : a1;
+    SUMOReal dv2 = ta == t1 ?  - veh2->getSpeed() - ta*a2 : myVehicle.getSpeed() + ta*a1;
+
+    // gap after ta
+    SUMOReal decelGap = currentGap + dv*ta + da1*ta*ta/2;
+    // gap after ta+tb (i.e. after followerBreakTime)
+    decelGap += dv2*tb + tb*tb*da2/2.;
+
+    return decelGap;
+}
+
+
+
 void
 MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                              int blocked,
@@ -641,7 +716,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                              const std::pair<MSVehicle*, SUMOReal>& neighFollow,
                              SUMOReal remainingSeconds,
                              SUMOReal plannedSpeed) {
-    if ((blocked & LCA_BLOCKED_BY_FOLLOWER) != 0) {
+        if ((blocked & LCA_BLOCKED_BY_FOLLOWER) != 0) {
         assert(neighFollow.first != 0);
         MSVehicle* nv = neighFollow.first;
 #ifdef DEBUG_INFORMER
@@ -656,15 +731,17 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             const SUMOReal neededGap = nv->getCarFollowModel().getSecureGap(nv->getSpeed(), plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel());
             if ((neededGap - neighFollow.second) / remainingSeconds < (plannedSpeed - nv->getSpeed())) {
 #ifdef DEBUG_INFORMER
-            	if(DEBUG_COND){
-            		std::cout << " wants to cut in before  nv=" << nv->getID() << " without any help neededGap=" << neededGap << "\n";
-            	}
+                if (DEBUG_COND) {
+                    std::cout << " wants to cut in before  nv=" << nv->getID() << " without any help." << "\nneededGap = " << neededGap << "\n";
+                }
 #endif
                 // follower might even accelerate but not to much
+                // XXX: I don't understand this. The needed gap was determined for nv->getSpeed(), not for (plannedSpeed - HELP_OVERTAKE)?! (Leo)
                 msgPass.informNeighFollower(new Info(plannedSpeed - HELP_OVERTAKE, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
                 return;
             }
         }
+
         // decide whether we will request help to cut in before the follower or allow to be overtaken
 
         // PARAMETERS
@@ -672,13 +749,14 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         // maximum deceleration to help us (will probably be spread over
         // multiple seconds)
         // -----------
-        const SUMOReal helpDecel = nv->getCarFollowModel().getMaxDecel() * HELP_DECEL_FACTOR ;
+        const SUMOReal helpDecel = nv->getCarFollowModel().getMaxDecel() * HELP_DECEL_FACTOR;
 
         // follower's new speed in next step
         SUMOReal neighNewSpeed;
         // follower's new speed after 1s. (resp. followerBreakTime)
         SUMOReal neighNewSpeed1s;
     	const SUMOReal plannedAccel = SPEED2ACCEL(plannedSpeed - myVehicle.getSpeed());
+    	// velocity difference, gap after follower-deceleration
         SUMOReal dv, decelGap;
 
         // (ballistic) breaking times of follower (tf) and leader (tl) till coming to a v=0
@@ -692,23 +770,23 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             // change in the gap between ego and blocker over 1 second (not STEP!) XXX: though here it is calculated as if it were one step!? (Leo)
             dv = plannedSpeed - neighNewSpeed1s;
         	// new gap between follower and self in case the follower does brake for 1s
-            // XXX: if the step-length is not 1s., this is not the gap after 1s. deceleration (Leo)
+            // XXX: if the step-length is not 1s., this is not the gap after 1s. deceleration! And this formula overestimates the real gap. Isn't that problematic? (Leo)
             // XXX: Below, it seems that decelGap > secureGap is taken to indicate the possibility
-            //      to cut in within the next time-step. However, this is not the case, if TS<1s.!
+            //      to cut in within the next time-step. However, this is not the case, if TS<1s.,
+            //      since decelGap is (not exactly, though!) the gap after 1s.
         	decelGap = neighFollow.second + dv;
-
         } else {
-        	// ballistic
+        	// ballistic ()
         	// negative newSpeed-extrapolation possible, if stop lies within the next time-step
             neighNewSpeed = nv->getSpeed() - ACCEL2SPEED(helpDecel);
             neighNewSpeed1s = nv->getSpeed() - helpDecel;
 
         	// the follower's breaktime investment for helping (too large values might
-        	// corrupt the below assumption on constant acceleration - see NOTE)
-        	const SUMOReal followerBreakTime = 1.; // NOTE: below, we assume: followerBreakTime > TS (when taking tl=MAX2(tl,TS))
-        	dv = myVehicle.getSpeed()- nv->getSpeed();
+        	// corrupt the below assumption on constant acceleration - see NOTE in gapExtrapolation())
+        	const SUMOReal followerBreakTime = 1.;
+        	dv = myVehicle.getSpeed() - nv->getSpeed(); // current velocity difference
 
-        	// determine times tf, tl for which vehicle can break until stop (within followerBreakTime)
+        	// determine times tf, tl for which vehicles can break until stop (within followerBreakTime)
         	if(helpDecel > 0 && nv->getSpeed() > 0){
         		const SUMOReal followerStopTime = nv->getSpeed()*nv->getSpeed()/(2*helpDecel);
         		tf = MIN2(followerStopTime, followerBreakTime);
@@ -727,19 +805,23 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         		tl = followerBreakTime;
         	}
 
-        	// NOTE: this assumes that the planned acceleration is performed over the next followerBreakTime seconds
-        	SUMOReal t1 = MIN2(tf,tl); SUMOReal t2 = MAX2(tf,tl)-t1;
-        	SUMOReal a1 = helpDecel+plannedAccel;
-        	SUMOReal a2 = t1 == tl ? helpDecel : plannedAccel;
-        	SUMOReal dv2 = t1 == tl ?  - nv->getSpeed() + t1*helpDecel : myVehicle.getSpeed() + t1*plannedAccel;
+//        	// NOTE: this assumes that the planned acceleration is performed over the next followerBreakTime seconds
+//        	//       (if no vehicle stops before)
+//        	SUMOReal t1 = MIN2(tf,tl); SUMOReal t2 = MAX2(tf,tl)-t1;
+//        	SUMOReal a1 = helpDecel+plannedAccel;
+//        	SUMOReal a2 = t1 == tl ? helpDecel : plannedAccel;
+//        	SUMOReal dv2 = t1 == tl ?  - nv->getSpeed() + t1*helpDecel : myVehicle.getSpeed() + t1*plannedAccel;
+//
+//        	// gap after t1
+//            decelGap = neighFollow.second + dv*t1 + a1*t1*t1/2;
+//            // gap after t1+t2 (i.e. after followerBreakTime)
+//        	decelGap += dv2*t2 + t2*t2*a2/2.;
 
-        	// gap after t1
-            decelGap = neighFollow.second + dv*t1 + a1*t1*t1/2;
-            // gap after t2
-        	decelGap += dv2*t2 + t2*t2*a2/2.;
+        	decelGap = gapExtrapolation(neighFollow.second, nv, plannedAccel, -helpDecel, followerBreakTime);
+
         }
 
-        // same line for euler and ballistic
+
     	const SUMOReal secureGap = nv->getCarFollowModel().getSecureGap(MAX2(neighNewSpeed1s,0.), plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel());
 
     	
@@ -758,10 +840,10 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 #endif
 	
         if (decelGap > 0 && decelGap >= secureGap) {
-        	// XXX: This does not assure that the leader can cut in in the next step if TS < 1,
+        	// XXX: This does not assure that the leader can cut in in the next step if TS < 1 (see above)
         	//      this seems to be supposed in the following...?! (Leo)
 
-            // if the blocking neighbor brakes it could help
+            // if the blocking follower brakes it could help
             // how hard does it actually need to be?
             // to be safe in the next step the following equation has to hold for the follower's vsafe:
             //   vsafe <= followSpeed(gap=currentGap - SPEED2DIST(vsafe), ...)
@@ -778,29 +860,26 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
         	} else {
         		// ballistic
                 // we compute an upper bound on vsafe
-        		// adjust tl to TS instead of leaderBreakTime
-            	tl = MIN2(tl,TS);
-        		// gap after next time step (assuming no deceleration for follower) => small gap
-        		const SUMOReal gap1 = neighFollow.second + dv*tl + (tl*tl*plannedAccel)/2.;
-        		// safe speed for follower when this gap is assumed (=> smaller vsafe)
-				const SUMOReal vsafe1 = MAX2(neighNewSpeed, nv->getCarFollowModel().followSpeed(
-												 nv, nv->getSpeed(), gap1, plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel()));
-        		// gap in next step (assuming vnext=vsafe1 for follower)
-				const SUMOReal helpDecel2 = -SPEED2ACCEL(vsafe1-nv->getSpeed());
-				if (helpDecel2 > 0){
-					tf = MIN2(nv->getSpeed()*nv->getSpeed()/(2*helpDecel2), TS);
-				} else {
-					tf = TS;
-				}
-				const SUMOReal gap2 = neighFollow.second + dv*MAX2(tl,tf) + (tf*tf*helpDecel2 + tl*tl*plannedAccel)/2.;
-				// safe speed assuming larger gap (=> larger vsafe)
-				vsafe = MAX2(neighNewSpeed, nv->getCarFollowModel().followSpeed(
-												nv, nv->getSpeed(), gap2, plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel()));
-				assert(vsafe <= vsafe1);
+        	    // next step's gap without help deceleration
+        	    SUMOReal next_gap = neighFollow.second + TS*dv + (TS*TS*plannedAccel*plannedAccel)/(SUMOReal) 2.;
+        	    vsafe1 = MAX2(neighNewSpeed, nv->getCarFollowModel().followSpeed(
+        	                            nv, nv->getSpeed(), next_gap, plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel()));
 
-	            
+                // next step's gap with possibly less than maximal help deceleration (in case vsafe1 < neighNewSpeed)
+        	    SUMOReal dd_gap = plannedAccel + SPEED2ACCEL(nv->getSpeed() - vsafe1);
+                next_gap = neighFollow.second + TS*dv + (TS*TS*dd_gap*dd_gap)/(SUMOReal) 2.;
+
+                // vsafe = MAX(neighNewSpeed, safe speed assuming next_gap)
+                // Thus, the gap resulting from vsafe is larger or equal to next_gap
+                // in contrast to the euler case, where nv's follow speed doesn't depend on the actual speed,
+                // we need to assure, that nv doesn't accelerate
+        	    vsafe = MIN2(nv->getSpeed(), MAX2(neighNewSpeed, nv->getCarFollowModel().followSpeed(
+                        nv, nv->getSpeed(), next_gap, plannedSpeed, myVehicle.getCarFollowModel().getMaxDecel())));
+        	    assert(vsafe <= vsafe1);
         	}
+
             msgPass.informNeighFollower(new Info(vsafe, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+
 #ifdef DEBUG_INFORMER
             if(DEBUG_COND){
             	std::cout << " wants to cut in before nv=" << nv->getID()
@@ -814,124 +893,118 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             // euler
             // NOTE: This case corresponds to the situation, where some time is left to perform the lc
             // decelerating once is sufficient to open up a large enough gap in time
-            // XXX: decelerating *once* does not necessarily lead to the gap decelGap! (if TS<1s.)
+            // XXX: 1) Decelerating *once* does not necessarily lead to the gap decelGap! (if TS<1s.) (Leo)
+            //      2) Probably, the if() should test for dv * (remainingSeconds-1) > ... ?!
             msgPass.informNeighFollower(new Info(neighNewSpeed, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
 #ifdef DEBUG_INFORMER
             if(DEBUG_COND){
                 std::cout << " wants to cut in before nv=" << nv->getID() << " (eventually)\n";
         	}
 #endif
-        } else if (!MSGlobals::gSemiImplicitEulerUpdate && dv > 0 && dv * remainingSeconds > secureGap + POSITION_EPS) {
+        } else if (!MSGlobals::gSemiImplicitEulerUpdate && dv > 0 && dv * (remainingSeconds-1) > secureGap - decelGap + POSITION_EPS) {
+//        } else if (!MSGlobals::gSemiImplicitEulerUpdate && (plannedSpeed - neighNewSpeed1s) > 0 && (plannedSpeed - neighNewSpeed1s) * (remainingSeconds-1) > secureGap - decelGap + POSITION_EPS) {
         	// ballistic
         	// NOTE: This case corresponds to the situation, where some time is left to perform the lc
-            // prevent follower from accelerating
-        	msgPass.informNeighFollower(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            // That means, if the follower breaks with helpDecel for one second, this vehicle attains the plannedSpeed,
+            // and both continue with their speeds for remainingSeconds seconds the gap will suffice for a laneChange
+        	msgPass.informNeighFollower(new Info(neighNewSpeed, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+#ifdef DEBUG_INFORMER
+            if(DEBUG_COND){
+                std::cout << " wants to cut in before nv=" << nv->getID() << " (eventually)\n";
+            }
+#endif
         } else {
             SUMOReal vhelp = MAX2(nv->getSpeed(), myVehicle.getSpeed() + HELP_OVERTAKE);
             //if (dir == LCA_MRIGHT && myVehicle.getWaitingSeconds() > LCA_RIGHT_IMPATIENCE &&
             //        nv->getSpeed() > myVehicle.getSpeed()) {
             if (nv->getSpeed() > myVehicle.getSpeed() &&
-                    ((dir == LCA_MRIGHT && myVehicle.getWaitingSeconds() > LCA_RIGHT_IMPATIENCE)
+                    ((dir == LCA_MRIGHT && myVehicle.getWaitingSeconds() > LCA_RIGHT_IMPATIENCE) // NOTE: it might be considered to use myVehicle.getAccumulatedWaitingSeconds() > LCA_RIGHT_IMPATIENCE instead (Leo).
                      || (dir == LCA_MLEFT && plannedSpeed > CUT_IN_LEFT_SPEED_THRESHOLD) // VARIANT_22 (slowDownLeft)
                     )) {
-                // let the follower slow down to increase the likelyhood that later vehicles will be slow enough to help
+                // let the follower slow down to increase the likelihood that later vehicles will be slow enough to help
                 // follower should still be fast enough to open a gap
-            	vhelp = MAX2(neighNewSpeed, myVehicle.getSpeed() + HELP_OVERTAKE);
+                // XXX: The probability for that success would be larger if the slow down of the appropriate following vehicle
+                //      would take place without the immediate follower slowing down. We might consider to model reactions of
+                //      vehicles that are not immediate followers. (Leo)
+            	vhelp = MAX2(neighNewSpeed, myVehicle.getSpeed() + HELP_OVERTAKE); // XXX: should this be HELP_OVERTAKE*TS? (otherwise it'd very dependent on the step size) (Leo)
 #ifdef DEBUG_INFORMER
             	if(DEBUG_COND){
+            	    // NOTE: the condition labeled "VARIANT_22" seems to imply that this could as well concern the left follower?! (Leo)
             		std::cout << " wants right follower to slow down a bit\n";
             	}
 #endif
 
-            	// estimate deceleration needed from follower to reach a secure gap after remainingSeconds:
-            	// (1) check the possible continuation speed contV for the leader
-            	// (2) estimate leader accel as min(0, (contV - currentV)/remainingSeconds)
-            	// (3) obtain needed accel for follower to establish a secureGap g0 after remaining Seconds,
-            	//     where the gap should be secure for contV of leader (and current speed of follower)
-            	// (4) decide whether follower is asked to slow down for this maneuver
 
-            	// (1)
-                SUMOReal currentV = myVehicle.getSpeed();
-//                SUMOReal currentV = plannedSpeed;
-                SUMOReal contV = currentV;
-                const std::vector<MSLane*>& bestLanesCont = myVehicle.getBestLanesContinuation();
-                if(bestLanesCont.size() != 0){
-                    std::vector<MSLane*>::const_iterator i = bestLanesCont.begin();
-                    SUMOReal dist;
-                    if(*i != 0) dist = (*i)->getLength() - myVehicle.getPositionOnLane();
-                    while(true){
-                        // look ahead for a minute for speed limitations
-                        if(*i==0 || i == bestLanesCont.end() || dist > myLookAheadSpeed*60){
-                            break;
-                        } else {
-                            contV = MIN2(contV, (*i)->getVehicleMaxSpeed(&myVehicle));
-                            dist += (*(i++))->getLength();
-                        }
-                    }
-                }
-                // (2)
-                SUMOReal a = (contV-currentV)/remainingSeconds;
-                // (3)
-                SUMOReal g = nv->getCarFollowModel().getSecureGap(nv->getSpeed(), currentV, myVehicle.getCarFollowModel().getMaxDecel());
-                SUMOReal neededDecel = (2*g/remainingSeconds - currentV + nv->getSpeed())/remainingSeconds + a;
-
+            	if (MSGlobals::gSemiImplicitEulerUpdate) {
+            	    if((nv->getSpeed() - myVehicle.getSpeed()) / helpDecel < remainingSeconds) {
+            	        //            	if ((nv->getSpeed() - myVehicle.getSpeed()) / helpDecel < remainingSeconds) {
+            	        // euler
 #ifdef DEBUG_INFORMER
-                    if(DEBUG_COND){
-                        std::cout << SIMTIME
-                                << " extrapolated decel (leader): " << -a
-                                << " needed gap: " << g
-                                << " requested decel (follower): " << neededDecel
-                                << std::endl;
-                    }
+            	        if(DEBUG_COND){
+            	            // NOTE: the condition labeled "VARIANT_22" seems to imply that this could as well concern the left follower?!
+            	            std::cout << " wants to cut in before right follower nv=" << nv->getID() << " (eventually)\n";
+            	        }
 #endif
+            	        // XXX: I don't understand. This vhelp might be larger than nv->getSpeed() but the above condition seems to rely
+            	        //      on the reasoning that if nv breaks with helpDecel for remaining Seconds, nv will be so slow, that this
+            	        //      vehicle will be able to cut in. But nv might have overtaken this vehicle already (or am I missing sth?). (Leo)
+            	        msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            	        return;
+            	    }
+            	} else {
 
-                if (neededDecel < helpDecel/remainingSeconds) {
-                    vhelp = nv->getSpeed()-ACCEL2SPEED(MIN2(0.,neededDecel));
-//                if ((nv->getSpeed() - myVehicle.getSpeed()) / helpDecel < remainingSeconds) {
+            	    // ballistic
+            	    // estimate gap after remainingSeconds.
+            	    // Assumptions:
+            	    // (A1) leader continues with currentSpeed. (XXX: That might be wrong: Think of an on-ramp!)
+            	    // (A2) follower breaks with helpDecel.
+            	    const SUMOReal gapAfterRemainingSecs = gapExtrapolation(neighFollow.second, nv, 0, -helpDecel, remainingSeconds);
+            	    const SUMOReal secureGapAfterRemainingSecs = nv->getCarFollowModel().getSecureGap(MAX2(nv->getSpeed() - remainingSeconds*helpDecel,0.), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel());
+            	    if(gapAfterRemainingSecs >= secureGapAfterRemainingSecs){
+            	        //
 #ifdef DEBUG_INFORMER
-            		if(DEBUG_COND){
-            			std::cout << " wants to cut in before right follower nv=" << nv->getID() << " (eventually)\n";
-            		}
+            	        if(DEBUG_COND){
+            	            std::cout << " wants to cut in before follower nv=" << nv->getID() << " (eventually)\n";
+            	        }
 #endif
-                    msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
-                    return;
-                }
+            	        // NOTE: ballistic uses neighNewSpeed instead of vhelp. (Leo)
+            	        msgPass.informNeighFollower(new Info(neighNewSpeed, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
+            	        return;
+            	    }
+            	}
+
+
             }
 
 
 #ifdef DEBUG_INFORMER
-        if(DEBUG_COND){
+            if(DEBUG_COND){
                 std::cout << SIMTIME
-                          << " veh=" << myVehicle.getID()
-                          << " informs follower " << nv->getID()
-                          << " vhelp=" << vhelp
-                          << "\n";
+                        << " veh=" << myVehicle.getID()
+                        << " informs follower " << nv->getID()
+                        << " vhelp=" << vhelp
+                        << "\n";
             }
 #endif
 
             msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
-            // this follower is supposed to overtake us. slow down smoothly to allow this
+            // This follower is supposed to overtake us. Slow down smoothly to allow this.
             const SUMOReal overtakeDist = overtakeDistance(neighFollow.first, &myVehicle, neighFollow.second);
-//                    (neighFollow.second // follower reaches ego back
-//                                           + myVehicle.getVehicleType().getLengthWithGap() // follower reaches ego front
-//                                           + nv->getVehicleType().getLength() // follower back at ego front
-//                                           + myVehicle.getCarFollowModel().getSecureGap( // follower has safe dist to ego
-//                                               plannedSpeed, vhelp, nv->getCarFollowModel().getMaxDecel()));
             // speed difference to create a sufficiently large gap
             const SUMOReal needDV = overtakeDist / remainingSeconds;
             // make sure the deceleration is not to strong
             myVSafes.push_back(MAX2(vhelp - needDV, myVehicle.getSpeed() - ACCEL2SPEED(myVehicle.getCarFollowModel().getMaxDecel())));
 #ifdef DEBUG_INFORMER
-        if(DEBUG_COND){
+            if(DEBUG_COND){
                 std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
-                          << " veh=" << myVehicle.getID()
-                          << " wants to be overtaken by=" << nv->getID()
-                          << " overtakeDist=" << overtakeDist
-                          << " vneigh=" << nv->getSpeed()
-                          << " vhelp=" << vhelp
-                          << " needDV=" << needDV
-                          << " vsafe=" << myVSafes.back()
-                          << "\n";
+                                  << " veh=" << myVehicle.getID()
+                                  << " wants to be overtaken by=" << nv->getID()
+                                  << " overtakeDist=" << overtakeDist
+                                  << " vneigh=" << nv->getSpeed()
+                                  << " vhelp=" << vhelp
+                                  << " needDV=" << needDV
+                                  << " vsafe=" << myVSafes.back()
+                                  << "\n";
             }
 #endif
         }
@@ -979,7 +1052,7 @@ MSLCM_LC2013::_wantsChange(
     const std::pair<MSVehicle*, SUMOReal>& neighLead,
     const std::pair<MSVehicle*, SUMOReal>& neighFollow,
     const MSLane& neighLane,
-    const std::vector<MSVehicle::LaneQ>& preb,
+    const std::vector<MSVehicle::LaneQ>& preb, // Q: What does "preb" stand for? Please comment. (Leo)
     MSVehicle** lastBlocked,
     MSVehicle** firstBlocked) {
     assert(laneOffset == 1 || laneOffset == -1);
@@ -987,6 +1060,10 @@ MSLCM_LC2013::_wantsChange(
     // compute bestLaneOffset
     MSVehicle::LaneQ curr, neigh, best;
     int bestLaneOffset = 0;
+    // What do these "dists" mean? Please comment. (Leo) I strongly suspect the following:
+    // currentDist is the distance that the vehicle can go on its route without having to
+    // change lanes from the current lane. neighDist as currentDist for the considered target lane (i.e., neigh)
+    // If this is true I suggest to put this into the docu of wantsChange()
     SUMOReal currentDist = 0;
     SUMOReal neighDist = 0;
     int currIdx = 0;
@@ -1102,32 +1179,110 @@ MSLCM_LC2013::_wantsChange(
     // @note: while this lets vehicles change earlier into the correct direction
     // it also makes the vehicles more "selfish" and prevents changes which are necessary to help others
 
+
+    // In what follows, we check whether a roundabout is ahead (or the vehicle is on a roundabout)
+    // We calculate the lengths of the continuations described by curr and neigh,
+    // which are part of the roundabout.
+    SUMOReal roundaboutDistanceAhead = 0.0;
+    SUMOReal roundaboutDistanceAheadNeigh = 0.0;
+    // That is a bit tedious since neigh and curr do not contain internal lanes.
+    // We start with the current edge.
+    if(myVehicle.getEdge()->getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL){
+        // It's an internal edge
+        // Check wether it lies on a roundabout, i.e., both surrounding normal edges are roundabout edges
+        TODO
+
+    } else {
+        // vehicle is on a non-internal edge
+        assert(myVehicle.getLane() == curr.lane);
+        if(myVehicle.getEdge()->isRoundabout()){
+            // left space on the current lane
+            roundaboutDistanceAhead += myVehicle.getLane()->getLength() - myVehicle.getPositionOnLane();
+            // we just set the same for the neigh lane
+            // Is this ok? can neigh have a (wildly) different length from curr?
+            roundaboutDistanceAheadNeigh += neigh.lane->getLength() - myVehicle.getPositionOnLane();
+        }
+
+    }
+
+
     int roundaboutEdgesAhead = 0;
     for (std::vector<MSLane*>::iterator it = curr.bestContinuations.begin(); it != curr.bestContinuations.end(); ++it) {
         if ((*it) != 0 && (*it)->getEdge().isRoundabout()) {
             roundaboutEdgesAhead += 1;
+            if(myVehicle.getLane() != (*it)){
+                // add roundabout lane length
+                roundaboutDistanceAhead += (*it)->getLength();
+                // since bestContinuations contains no internal edges
+                // add consecutive connection length if it is part of the route and the
+                // consecutive edge is on the roundabout as well
+                if(it+1 != curr.bestContinuations.end() && *(it+1)!=0 && (*(it+1))->getEdge().isRoundabout()){
+                    // add internal
+                    GO ON HERE // THEN do the same for neigh
+                } else {
+                    break; // TODO: this makes below code obsolete, prefer leaving the below in place...
+                }
+            }
+
+#ifdef DEBUG_WANTS_CHANGE
+    if(DEBUG_COND){
+        std::cout << "roundaboutlane ahead: '" << (*it)->getID() << "'\nlength = " << (*it)->getLength() << std::endl;
+    }
+#endif
         } else if (roundaboutEdgesAhead > 0) {
             // only check the next roundabout
             break;
         }
     }
+
     int roundaboutEdgesAheadNeigh = 0;
+    if(neigh.lane->getEdge().isRoundabout()){
+    }
     for (std::vector<MSLane*>::iterator it = neigh.bestContinuations.begin(); it != neigh.bestContinuations.end(); ++it) {
         if ((*it) != 0 && (*it)->getEdge().isRoundabout()) {
             roundaboutEdgesAheadNeigh += 1;
+            roundaboutDistanceAheadNeigh += (*it)->getLength();
+#ifdef DEBUG_WANTS_CHANGE
+    if(DEBUG_COND){
+        std::cout << "neigh-roundaboutlane ahead: '" << (*it)->getID() << "'\nlength = " << (*it)->getLength() << std::endl;
+    }
+#endif
         } else if (roundaboutEdgesAheadNeigh > 0) {
             // only check the next roundabout
             break;
         }
     }
-    if (roundaboutEdgesAhead > 1) {
-        currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
-        neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
-    }
+
+//    if(MSGlobals::gSemiImplicitEulerUpdate){
+        if (roundaboutEdgesAhead > 1) {
+            // What does this do? Please comment... (Leo) Let me try an answer:
+            // It adds a bonus length for each upcoming roundabout edge to the distance,
+            // which the vehicle may continue on its route without a lanechange.
+            // This fakes the vehicle into believing strategic reasons are not urgent.
+            // that becomes problematic, if the vehicle enters the last round about edge,
+            // realizes suddenly that the change is very urgent and finds itself with very
+            // few space to complete the urgent strategic change frequently leading to
+            // a hang up on the inner lane.
+            // XXX: This might better be resolved by taking into account the actual *distance* on
+            // an upcoming roundabout with some scale factor.
+            currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+            neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+        }
+//    } else {
+//        if(roundaboutDistanceAheadNeigh > ROUNDABOUT_DIST_TRESH){
+//            neighDist += (roundaboutDistanceAheadNeigh-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
+//        }
+//        if(roundaboutDistanceAhead > ROUNDABOUT_DIST_TRESH){
+//            currentDist += (roundaboutDistanceAhead-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
+//        }
+//    }
+
+
 #ifdef DEBUG_WANTS_CHANGE
     if(DEBUG_COND){
     	if (roundaboutEdgesAhead > 0) {
-    		std::cout << " roundaboutEdgesAhead=" << roundaboutEdgesAhead << " roundaboutEdgesAheadNeigh=" << roundaboutEdgesAheadNeigh << "\n";
+            std::cout << " roundaboutEdgesAhead=" << roundaboutEdgesAhead << " roundaboutEdgesAheadNeigh=" << roundaboutEdgesAheadNeigh << "\n";
+            std::cout << " roundaboutDistanceAhead=" << roundaboutDistanceAhead << " roundaboutDistanceAheadNeigh=" << roundaboutDistanceAheadNeigh << "\n";
     	}
     }
 #endif
@@ -1250,7 +1405,7 @@ MSLCM_LC2013::_wantsChange(
         }
 
         const SUMOReal remainingSeconds = ((ret & LCA_TRACI) == 0 ?
-                                           MAX2((SUMOReal)STEPS2TIME(TS), myLeftSpace / MAX2(myLookAheadSpeed, NUMERICAL_EPS) / abs(bestLaneOffset) / URGENCY) :
+                                           MAX2((SUMOReal)STEPS2TIME(TS), (myLeftSpace-myLeadingBlockerLength) / MAX2(myLookAheadSpeed, NUMERICAL_EPS) / abs(bestLaneOffset) / URGENCY) :
                                            myVehicle.getInfluencer().changeRequestRemainingSeconds(currentTime));
         const SUMOReal plannedSpeed = informLeader(msgPass, blocked, myLca, neighLead, remainingSeconds);
         if (plannedSpeed >= 0) {
@@ -1274,10 +1429,21 @@ MSLCM_LC2013::_wantsChange(
     if (roundaboutEdgesAhead > 1) {
         // try to use the inner lanes of a roundabout to increase throughput
         // unless we are approaching the exit
+
         if (lca == LCA_LEFT) {
-            req = ret | lca | LCA_COOPERATIVE;
+            // Patch ballistic branch (Leo):
+            // if the target lane more occupied than the origin ignore the upcoming roundabout
+            // (XXX: One additional vehicle might trigger a collective wish to change...)
+            if(MSGlobals::gSemiImplicitEulerUpdate || neighLane.getBruttoOccupancy() < myVehicle.getLane()->getBruttoOccupancy()){
+                req = ret | lca | LCA_COOPERATIVE;
+            }
         } else {
-            req = ret | LCA_STAY | LCA_COOPERATIVE;
+            // Patch ballistic branch (Leo):
+            // if the original lane is more occupied than the target ignore the upcoming roundabout
+            // (XXX: One additional vehicle might trigger a collective wish to change...)
+            if(MSGlobals::gSemiImplicitEulerUpdate || neighLane.getBruttoOccupancy() > myVehicle.getLane()->getBruttoOccupancy()){
+                req = ret | LCA_STAY | LCA_COOPERATIVE;
+            }
         }
         if (!cancelRequest(req)) {
             return ret | req;

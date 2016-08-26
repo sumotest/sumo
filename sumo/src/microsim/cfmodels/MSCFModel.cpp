@@ -146,7 +146,7 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     	vMin = getSpeedAfterMaxDecel(oldV);
     } else {
     	// for ballistic update, negative vnext must be allowed to
-    	// indicate a stop within the coming timestep
+    	// indicate a stop within the coming timestep (i.e., to attain negative values)
     	vMin = oldV - ACCEL2SPEED(getMaxDecel());
     }
     const SUMOReal vMax = MIN3(veh->getLane()->getVehicleMaxSpeed(veh), maxNextSpeed(oldV, veh), vSafe);
@@ -157,8 +157,8 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
 	// (Leo) moveHelper() is responsible for assuring that the next
     // velocity is chosen in accordance with maximal decelerations.
     // At this point vNext may also be negative indicating a stop within next step.
-    // This would have resulted from a call to maximumSafeStopSpeed(), which does not
-    // consider deceleration bounds. Therefore, we cap vNext here.
+    // Moreover, because maximumSafeStopSpeed() does not consider deceleration bounds
+    // vNext can be a large negative value at this point. We cap vNext here.
 	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
 
     return vNext;

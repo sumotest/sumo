@@ -1880,7 +1880,7 @@ MSVehicle::executeMove() {
     }
 
 
-    // XXX braking due to lane-changing is not registered and due to processing stops is not registered
+    // XXX braking due to lane-changing and processing stops is not registered
     //     To avoid casual blinking brake lights at high speeds due to dawdling of the
     //      leading vehicle, we don't show brake lights when the deceleration could be caused
     //     by frictional forces and air resistance (i.e. proportional to v^2, coefficient could be adapted further)

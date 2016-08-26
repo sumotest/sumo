@@ -71,6 +71,8 @@ public:
 
     bool debugVehicle() const;
 
+
+    // TODO: improve documentation of wantsChange() (Leo)
     /** @brief Called to examine whether the vehicle wants to change
      * using the given laneOffset.
      * This method gets the information about the surrounding vehicles
@@ -140,22 +142,34 @@ protected:
 
     /* @brief compute the distance to cover until a safe gap to the vehicle v in front is reached
      *        assuming the current velocities
-         * @param[in] follower the vehicle behind leader
+         * @param[in] follower the vehicle behind this
          * @param[in] leader the vehicle to be overtaken
          * @param[in] gap initial between this and v
          * @return the distance that the relative positions would have to change.
          */
-    SUMOReal overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap);
+    SUMOReal overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap) const;
 
 
-    /* @brief estimate the time it takes until vehicle v1 has overtaken v2
-         * @param[in] v1 the vehicle behind v2
-         * @param[in] v2 the vehicle to be overtaken
-         * @param[in] overtakeDist estimated relative distance that v1 has to gain
-         * @param[in] remainingSeconds time left to complete overtaking maneuver
-         * @return either the estimated time for the maneuver or something larger, indicating impossibility
+//    /* @brief estimate the time it takes until this vehicle has overtaken v2
+//         * @param[in] v2 the vehicle to be overtaken
+//         * @param[in] overtakeDist estimated relative distance that v1 has to gain
+//         * @param[in] remainingSeconds time left to complete overtaking maneuver
+//         * @return either the estimated time for the maneuver or something larger, indicating impossibility
+//         */
+//    SUMOReal estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) const;
+
+
+
+    /* @brief return the resulting gap if, starting with gap currentGap, this vehicle and vehicle veh2 continue with constant accelerations (bounded by 0 and maxSpeed)
+         * @param[in] currentGap (at start)
+         * @param[in] veh2 vehicle 2
+         * @param[in] a1 acceleration of this vehicle 1
+         * @param[in] a2 acceleration of vehicle 2
+         * @param[in] duration time span for the process
+         * @return
          */
-    SUMOReal estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds);
+    SUMOReal gapExtrapolation(SUMOReal currentGap, const MSVehicle* veh2, SUMOReal a1, SUMOReal a2, SUMOReal duration) const;
+
 
     /// @brief compute useful slowdowns for blocked vehicles
     int slowDownForBlocked(MSVehicle** blocked, int state);
@@ -208,7 +222,7 @@ protected:
     SUMOReal myLookAheadSpeed;
 
     std::vector<SUMOReal> myVSafes;
-    bool myDontBrake;
+    bool myDontBrake; // XXX: myDontBrake is initialized as false and seems not to be changed anywhere... What's its purpose???
 
     /// @name user configurable model parameters
     //@{
