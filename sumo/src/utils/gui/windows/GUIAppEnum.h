@@ -567,6 +567,20 @@ enum {
     MID_GNE_TRANSFORM_LANE_BIKE,        // PABLO #1568
     /** transform lane to busLane */    // PABLO #1568
     MID_GNE_TRANSFORM_LANE_BUS,         // PABLO #1568
+    /** revert transformation */        // PABLO #1568
+    MID_GNE_REVERT_TRANSFORMATION,      // PABLO #1568
+    /** add sidewalk */                 // PABLO #1568
+    MID_GNE_ADD_LANE_SIDEWALK,          // PABLO #1568
+    /** add bikelane */                 // PABLO #1568
+    MID_GNE_ADD_LANE_BIKE,              // PABLO #1568
+    /** add busLane */                  // PABLO #1568
+    MID_GNE_ADD_LANE_BUS,               // PABLO #1568
+    /** remove sidewalk */              // PABLO #1568
+    MID_GNE_REMOVE_LANE_SIDEWALK,       // PABLO #1568
+    /** remove bikelane */              // PABLO #1568
+    MID_GNE_REMOVE_LANE_BIKE,           // PABLO #1568
+    /** remove busLane */               // PABLO #1568
+    MID_GNE_REMOVE_LANE_BUS,            // PABLO #1568
     /** set object as template*/
     MID_GNE_SET_TEMPLATE,
     /** copy template*/

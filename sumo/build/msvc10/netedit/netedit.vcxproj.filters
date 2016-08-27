@@ -258,9 +258,6 @@
     <ClCompile Include="..\..\..\src\netedit\GNEVaporizer.cpp">
       <Filter>Quellcodedateien\Items\Additionals</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\netedit\GNEChange_LaneTransformation.cpp">
-      <Filter>Quellcodedateien\Items\Changes</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\netedit\netedit.rc">
@@ -441,9 +438,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\netedit\GNEVaporizer.h">
       <Filter>Header-Dateien\Items\Additionals</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\netedit\GNEChange_LaneTransformation.h">
-      <Filter>Header-Dateien\Items\Changes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

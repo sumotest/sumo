@@ -68,7 +68,6 @@
 #include "GNEChange_Junction.h"
 #include "GNEChange_Edge.h"
 #include "GNEChange_Lane.h"
-#include "GNEChange_LaneTransformation.h"
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
 #include "GNEChange_Additional.h"
@@ -400,25 +399,187 @@ GNENet::duplicateLane(GNELane* lane, GNEUndoList* undoList) {
 }
 
 
-void                                                                                    // PABLO #1568
-GNENet::transformLaneToSidewalk(GNELane* lane, GNEUndoList* undoList) {                 // PABLO #1568
-    undoList->add(new GNEChange_LaneTransformation(lane, SVC_PEDESTRIAN, true), true);  // PABLO #1568
-    requireRecompute();                                                                 // PABLO #1568
-}                                                                                       // PABLO #1568
+bool                                                                                                            // PABLO #1568
+GNENet::transformLaneToSidewalk(GNELane* lane, GNEUndoList* undoList) {                                         // PABLO #1568
+    // First check that edge don't have a sidewalk                                                              // PABLO #1568
+    GNEEdge &edge = lane->getParentEdge();                                                                      // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isSidewalk()) {                                                                                // PABLO #1568
+            return false;                                                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Get all possible vehicle classes                                                                         // PABLO #1568
+    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                   // PABLO #1568
+    std::vector<std::string> disallowedVClasses;                                                                // PABLO #1568
+    std::string pedestrian = toString(SVC_PEDESTRIAN);                                                          // PABLO #1568
+    std::string ignoring = toString(SVC_IGNORING);                                                              // PABLO #1568
+    // Iterate over vehicle classes to filter                                                                   // PABLO #1568
+    for(int i = 0; i < (int)VClasses.size(); i++) {                                                             // PABLO #1568
+        if((VClasses.at(i) != pedestrian) && (VClasses.at(i) != ignoring)) {                                    // PABLO #1568
+            disallowedVClasses.push_back(VClasses.at(i));                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Change allow and disallow attributes of lane                                                             // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_ALLOW, pedestrian, undoList);                                                  // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_DISALLOW, joinToString(disallowedVClasses, " "), undoList);                    // PABLO #1568
+    return true;                                                                                                // PABLO #1568
+}                                                                                                               // PABLO #1568
 
 
-void                                                                                // PABLO #1568
-GNENet::transformLaneToBikelane(GNELane* lane, GNEUndoList* undoList) {             // PABLO #1568
-    undoList->add(new GNEChange_LaneTransformation(lane, SVC_BICYCLE, true), true); // PABLO #1568
-    requireRecompute();                                                             // PABLO #1568
-}                                                                                   // PABLO #1568
+bool                                                                                                            // PABLO #1568
+GNENet::transformLaneToBikelane(GNELane* lane, GNEUndoList* undoList) {                                         // PABLO #1568
+    // First check that edge don't have a bikelane                                                              // PABLO #1568
+    GNEEdge &edge = lane->getParentEdge();                                                                      // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isBikelane()) {                                                                                // PABLO #1568
+            return false;                                                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Get all possible vehicle classes                                                                         // PABLO #1568
+    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                   // PABLO #1568
+    std::vector<std::string> disallowedVClasses;                                                                // PABLO #1568
+    std::string bicycle = toString(SVC_BICYCLE);                                                                // PABLO #1568
+    std::string ignoring = toString(SVC_IGNORING);                                                              // PABLO #1568
+    // Iterate over vehicle classes to filter                                                                   // PABLO #1568
+    for(int i = 0; i < (int)VClasses.size(); i++) {                                                             // PABLO #1568
+        if((VClasses.at(i) != bicycle) && (VClasses.at(i) != ignoring)) {                                       // PABLO #1568
+            disallowedVClasses.push_back(VClasses.at(i));                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Change allow and disallow attributes of lane                                                             // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_ALLOW, bicycle, undoList);                                                     // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_DISALLOW, joinToString(disallowedVClasses, " "), undoList);                    // PABLO #1568
+    return true;                                                                                                // PABLO #1568
+}                                                                                                               // PABLO #1568
 
 
-void                                                                                // PABLO #1568
-GNENet::transformLaneToBuslane(GNELane* lane, GNEUndoList* undoList) {              // PABLO #1568
-    undoList->add(new GNEChange_LaneTransformation(lane, SVC_BUS, true), true);     // PABLO #1568
-    requireRecompute();                                                             // PABLO #1568
-}                                                                                   // PABLO #1568
+bool                                                                                                            // PABLO #1568
+GNENet::transformLaneToBuslane(GNELane* lane, GNEUndoList* undoList) {                                          // PABLO #1568
+    // First check that edge don't have a buslane                                                               // PABLO #1568
+    GNEEdge &edge = lane->getParentEdge();                                                                      // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isBuslane()) {                                                                                 // PABLO #1568
+            return false;                                                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Get all possible vehicle classes                                                                         // PABLO #1568
+    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                   // PABLO #1568
+    std::vector<std::string> disallowedVClasses;                                                                // PABLO #1568
+    std::string bus = toString(SVC_BUS);                                                                        // PABLO #1568
+    std::string ignoring = toString(SVC_IGNORING);                                                              // PABLO #1568
+    // Iterate over vehicle classes to filter                                                                   // PABLO #1568
+    for(int i = 0; i < (int)VClasses.size(); i++) {                                                             // PABLO #1568
+        if((VClasses.at(i) != bus) && (VClasses.at(i) != ignoring)) {                                           // PABLO #1568
+            disallowedVClasses.push_back(VClasses.at(i));                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Change allow and disallow attributes of lane                                                             // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_ALLOW, bus, undoList);                                                         // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_DISALLOW, joinToString(disallowedVClasses, " "), undoList);                    // PABLO #1568
+    return true;                                                                                                // PABLO #1568
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::revertLaneTransformation(GNELane* lane, GNEUndoList* undoList) {                                        // PABLO #1568
+    // Check that this lane is a special lane                                                                   // PABLO #1568
+    if(lane->isBikelane() == false && lane->isBuslane() == false && lane->isSidewalk()) {                       // PABLO #1568
+        return false;                                                                                           // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // Get all possible vehicle classes                                                                         // PABLO #1568
+    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                   // PABLO #1568
+    // Change allow and disallow attributes of lane                                                             // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_ALLOW, joinToString(VClasses, " "), undoList);                                 // PABLO #1568
+    lane->setAttribute(SUMO_ATTR_DISALLOW, std::string(), undoList);                                            // PABLO #1568
+    return true;                                                                                                // PABLO #1568
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::addSidewalk(GNEEdge &edge, GNEUndoList* undoList) {                                                     // PABLO #1568
+    // First check that edge don't have a sidewalk                                                              // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isSidewalk()) {                                                                                // PABLO #1568
+            return false;                                                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // duplicate last lane                                                                                      // PABLO #1568
+    duplicateLane(edge.getLanes().at(0), undoList);                                                             // PABLO #1568
+    // transform the created (last) lane to a sidewalk                                                          // PABLO #1568
+    return transformLaneToSidewalk(edge.getLanes().at(0), undoList);                                            // PABLO #1568                                                     
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::addBikelane(GNEEdge &edge, GNEUndoList* undoList) {                                                     // PABLO #1568
+    // First check that edge don't have a bikelane                                                              // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isBikelane()) {                                                                                // PABLO #1568
+            return false;                                                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // first step is duplicate last lane                                                                        // PABLO #1568
+    duplicateLane(edge.getLanes().at(0), undoList);                                                             // PABLO #1568
+    // second step is transform the created (last) lane to a sidewalk                                           // PABLO #1568
+    return transformLaneToBikelane(edge.getLanes().at(0), undoList);                                            // PABLO #1568
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::addBuslane(GNEEdge &edge, GNEUndoList* undoList) {                                                      // PABLO #1568
+    // First check that edge don't have a buslane                                                               // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isBuslane()) {                                                                                 // PABLO #1568
+            return false;                                                                                       // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    // first step is duplicate last lane                                                                        // PABLO #1568
+    duplicateLane(edge.getLanes().at(0), undoList);                                                             // PABLO #1568
+    // second step is transform the created (last) lane to a sidewalk                                           // PABLO #1568
+    return transformLaneToBuslane(edge.getLanes().at(0), undoList);                                             // PABLO #1568
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::removeSidewalk(GNEEdge &edge, GNEUndoList* undoList) {                                                  // PABLO #1568
+    // iterate over lanes of edge                                                                               // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isSidewalk()) {                                                                                // PABLO #1568
+            // Delete lane                                                                                      // PABLO #1568
+            deleteLane(*i, undoList);                                                                           // PABLO #1568
+            return true;                                                                                        // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    return false;                                                                                               // PABLO #1568
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::removeBikelane(GNEEdge &edge, GNEUndoList* undoList) {                                                  // PABLO #1568
+    // iterate over lanes of edge                                                                               // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isBikelane()) {                                                                                // PABLO #1568
+            // Delete lane                                                                                      // PABLO #1568
+            deleteLane(*i, undoList);                                                                           // PABLO #1568
+            return true;                                                                                        // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    return false;                                                                                               // PABLO #1568
+}                                                                                                               // PABLO #1568
+
+
+bool                                                                                                            // PABLO #1568
+GNENet::removeBuslane(GNEEdge &edge, GNEUndoList* undoList) {                                                   // PABLO #1568
+    // iterate over lanes of edge                                                                               // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
+        if((*i)->isBuslane ()) {                                                                                // PABLO #1568
+            // Delete lane                                                                                      // PABLO #1568
+            deleteLane(*i, undoList);                                                                           // PABLO #1568
+            return true;                                                                                        // PABLO #1568
+        }                                                                                                       // PABLO #1568
+    }                                                                                                           // PABLO #1568
+    return false;                                                                                               // PABLO #1568
+}                                                                                                               // PABLO #1568
 
 
 void
@@ -427,7 +588,7 @@ GNENet::deleteGeometryOrEdge(GNEEdge* edge, const Position& pos, GNEUndoList* un
         deleteEdge(edge, undoList);
     }
 }
-
+                            
 
 GNEJunction*
 GNENet::splitEdge(GNEEdge* edge, const Position& pos, GNEUndoList* undoList, GNEJunction* newJunction) {

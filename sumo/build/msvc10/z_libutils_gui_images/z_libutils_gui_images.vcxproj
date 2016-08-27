@@ -184,6 +184,9 @@
     <None Include="..\..\..\src\utils\gui\images\green_person.xpm" />
     <None Include="..\..\..\src\utils\gui\images\green_vehicle.xpm" />
     <None Include="..\..\..\src\utils\gui\images\halt.xpm" />
+    <None Include="..\..\..\src\utils\gui\images\lanebike.xpm" />
+    <None Include="..\..\..\src\utils\gui\images\lanebus.xpm" />
+    <None Include="..\..\..\src\utils\gui\images\lanepedestrian.xpm" />
     <None Include="..\..\..\src\utils\gui\images\locate.xpm" />
     <None Include="..\..\..\src\utils\gui\images\locate_add.xpm" />
     <None Include="..\..\..\src\utils\gui\images\locate_edge.xpm" />
