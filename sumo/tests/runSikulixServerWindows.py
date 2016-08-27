@@ -7,7 +7,7 @@ import httplib
 
 # Define global variables for Tray
 TRAY_TOOLTIP = 'Sikulix server'
-TRAY_ICON = 'sikulixicon.png'
+TRAY_ICON = os.environ.get('TEXTTEST_HOME', '.') + "/sikulixicon.png"
 
 # function to create a menu item
 def createMenuItem(menu, label, func):
