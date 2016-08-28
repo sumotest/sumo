@@ -1413,8 +1413,8 @@ GNEViewNet::onCmdRemoveBikelane(FXObject*, FXSelector, void*) {                 
 }                                                                                                               // PABLO #1568
 
 
-long                                                                                            // PABLO #1568
-GNEViewNet::onCmdRemoveBuslane(FXObject*, FXSelector, void*) {                                  // PABLO #1568
+long                                                                                                            // PABLO #1568
+GNEViewNet::onCmdRemoveBuslane(FXObject*, FXSelector, void*) {                                                  // PABLO #1568
     GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                       // PABLO #1568
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568

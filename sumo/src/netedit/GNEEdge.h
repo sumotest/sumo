@@ -194,12 +194,6 @@ public:
      */
     void setGeometry(PositionVector geom, bool inner);
 
-    /**@brief update edge geometry and inform the lanes, Additionals and connections
-     * let the lanes recompute their precomputed geometry information
-     * (needed after computing junction shapes)
-     */
-    void updateGeometries();
-
     /// @brief copy edge attributes from tpl
     void copyTemplate(GNEEdge* tpl, GNEUndoList* undolist);
 

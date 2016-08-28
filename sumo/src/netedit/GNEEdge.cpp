@@ -116,7 +116,24 @@ GNEEdge::~GNEEdge() {
 
 
 void
-GNEEdge::updateGeometry() {}
+GNEEdge::updateGeometry() {
+    // Update geometry of lanes
+    for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
+        (*i)->updateGeometry();
+    }
+    // Update geometry of connections                                                                       // PABLO #2067
+    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) { // PABLO #2067
+        (*i)->updateGeometry();                                                                             // PABLO #2067
+    }                                                                                                       // PABLO #2067
+    // Update geometry of additionals vinculated to this edge
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) {
+        (*i)->updateGeometry();
+    }
+    // Update geometry of additionalSets vinculated to this edge
+    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
+        (*i)->updateGeometry();
+    }
+}
 
 
 Boundary
@@ -384,33 +401,11 @@ GNEEdge::resetEndpoint(const Position& pos, GNEUndoList* undoList) {
 void
 GNEEdge::setGeometry(PositionVector geom, bool inner) {
     myNBEdge.setGeometry(geom, inner);
-    updateGeometries();
+    updateGeometry();
     getGNEJunctionSource()->invalidateShape();
     getGNEJunctionDest()->invalidateShape();
     myNet->refreshElement(this);
 }
-
-
-void
-GNEEdge::updateGeometries() {
-    // Update geometry of lanes
-    for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
-        (*i)->updateGeometry();
-    }
-    // Update geometry of connections                                                                       // PABLO #2067
-    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) { // PABLO #2067
-        (*i)->updateGeometry();                                                                             // PABLO #2067
-    }                                                                                                       // PABLO #2067
-    // Update geometry of additionals vinculated to this edge
-    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) {
-        (*i)->updateGeometry();
-    }
-    // Update geometry of additionalSets vinculated to this edge
-    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
-        (*i)->updateGeometry();
-    }
-}
-
 
 void
 GNEEdge::copyTemplate(GNEEdge* tpl, GNEUndoList* undoList) {
@@ -790,6 +785,7 @@ GNEEdge::addLane(GNELane* lane, const NBEdge::Lane& laneAttrs) {
     getGNEJunctionDest()->invalidateShape();
     */
     myNet->refreshElement(this);
+    updateGeometry(); // PABLO #1568
 }
 
 
@@ -815,8 +811,8 @@ GNEEdge::removeLane(GNELane* lane) {
     getGNEJunctionSource()->invalidateShape();
     getGNEJunctionDest()->invalidateShape();
     */
-
     myNet->refreshElement(this);
+    updateGeometry(); // PABLO #1568
 }
 
 void

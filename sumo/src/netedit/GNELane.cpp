@@ -81,6 +81,7 @@ GNELane::GNELane(GNEEdge& edge, const int index) :
     myParentEdge(edge),
     myIndex(index),
     mySpecialColor(0),
+    myIcon(0),  // PABLO #1568
     myTLSEditor(0) {
     updateGeometry();
 }
@@ -90,6 +91,7 @@ GNELane::GNELane() :
     myParentEdge(*static_cast<GNEEdge*>(0)),
     myIndex(-1),
     mySpecialColor(0),
+    myIcon(0),  // PABLO #1568
     myTLSEditor(0) {
 }
 
@@ -318,13 +320,6 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         }
         // If there are icons to draw:
         if(myLaneIconsPositions.size() > 0) {
-            GUIGlID icon = 0;
-            // Get icon depending of type of lane restriction
-            if (myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_PEDESTRIAN) {            // PABLO #1568
-                icon = GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN);                                     // PABLO #1568
-            } else if (myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_BICYCLE) {        // PABLO #1568
-                icon = GUITextureSubSys::getGif(GNETEXTURE_LANEBIKE);                                           // PABLO #1568
-            }                                                                                                   // PABLO #1568
             // Draw list of icons                                                                               // PABLO #1568
             for(int i = 0; i < (int)myLaneIconsPositions.size(); i++) {                                         // PABLO #1568
                 // Push draw matrix                                                                             // PABLO #1568
@@ -337,8 +332,7 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
                 glRotated(myLaneIconsRotations.at(i), 0, 0, -1);                                                // PABLO #1568
                 glRotated(90, 0, 0, 1);                                                                         // PABLO #1568
                 // draw texture box depending                                                                   // PABLO #1568
-                GUITexturesHelper::drawTexturedBox(icon, 1);                                                    // PABLO #1568
-                GUITexturesHelper::drawTexturedBox(GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN), 1);     // PABLO #1568
+                GUITexturesHelper::drawTexturedBox(myIcon, 1);                                                  // PABLO #1568
                 // Pop logo matrix                                                                              // PABLO #1568
                 glPopMatrix();                                                                                  // PABLO #1568
             }                                                                                                   // PABLO #1568
@@ -627,17 +621,30 @@ GNELane::updateGeometry() {
     for(std::vector<GNEConnection*>::iterator i = outGoingConnections.begin(); i != outGoingConnections.end(); i++) {   // PABLO #2067
         (*i)->updateGeometry();                                                                                         // PABLO #2067
     }                                                                                                                   // PABLO #2067
-    // If lane is a special lane and has enought lenght                                             // PABLO #1568
-    if((getLaneShapeLenght() > 2) &&                                                                // PABLO #1568
-       ((myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_PEDESTRIAN) ||      // PABLO #1568
-        (myParentEdge.getNBEdge()->getLanes().at(getIndex()).permissions == SVC_BICYCLE)    )) {    // PABLO #1568
-        // get values for position and rotation of icons                                            // PABLO #1568
-        for(int i = 1; i < getLaneShapeLenght() - 1; i += 15) {                                     // PABLO #1568
-            // @todo optimice getting it in UpdateGeometry()                                        // PABLO #1568
-            myLaneIconsPositions.push_back(getShape().positionAtOffset(i));                         // PABLO #1568
-            myLaneIconsRotations.push_back(getShape().rotationDegreeAtOffset(i));                   // PABLO #1568
-        }                                                                                           // PABLO #1568
-    }                                                                                               // PABLO #1568
+    // If lane has enought lenght                                                       // PABLO #1568
+    if((getLaneShapeLenght() > 4)) {                                                    // PABLO #1568
+        bool calculatePositionAndRotations = true;                                      // PABLO #1568
+        // check if lane is special                                                     // PABLO #1568
+        if(isSidewalk()) {                                                              // PABLO #1568
+            myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN);               // PABLO #1568
+        } else if (isBikelane()) {                                                      // PABLO #1568
+            myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEBIKE);                     // PABLO #1568
+        } else if (isBuslane()) {                                                       // PABLO #1568
+            myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEBUS);                      // PABLO #1568
+        } else {                                                                        // PABLO #1568
+            calculatePositionAndRotations = false;                                      // PABLO #1568
+            myIcon = 0;                                                                 // PABLO #1568
+        }                                                                               // PABLO #1568
+        // If lane is special                                                           // PABLO #1568
+        if (calculatePositionAndRotations) {                                            // PABLO #1568
+            // get values for position and rotation of icons                            // PABLO #1568
+            for(int i = 2; i < getLaneShapeLenght() - 1; i += 15) {                     // PABLO #1568
+                // @todo optimice getting it in UpdateGeometry()                        // PABLO #1568
+                myLaneIconsPositions.push_back(getShape().positionAtOffset(i));         // PABLO #1568
+                myLaneIconsRotations.push_back(getShape().rotationDegreeAtOffset(i));   // PABLO #1568
+            }                                                                           // PABLO #1568
+        }                                                                               // PABLO #1568
+    }                                                                                   // PABLO #1568
 }
 
 int
@@ -741,70 +748,34 @@ GNELane::getAdditionalSets() {
 }
 
 
-bool                                                                                                                            // PABLO #1568
-GNELane::isSidewalk() const {                                                                                                   // PABLO #1568
-    // Get all possible vehicle classes                                                                                         // PABLO #1568
-    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                                   // PABLO #1568
-    std::vector<std::string> disallowedVClasses;                                                                                // PABLO #1568
-    std::string pedestr = toString(SVC_PEDESTRIAN);                                                                             // PABLO #1568
-    std::string ignoring = toString(SVC_IGNORING);                                                                              // PABLO #1568
-    // Iterate over vehicle classes to filter                                                                                   // PABLO #1568
-    for(int i = 0; i < (int)VClasses.size(); i++) {                                                                             // PABLO #1568
-        if((VClasses.at(i) != pedestr) && (VClasses.at(i) != ignoring)) {                                                       // PABLO #1568
-            disallowedVClasses.push_back(VClasses.at(i));                                                                       // PABLO #1568
-        }                                                                                                                       // PABLO #1568
-    }                                                                                                                           // PABLO #1568
-    // Change allow and disallow attributes of lane                                                                             // PABLO #1568
-    if(getAttribute(SUMO_ATTR_ALLOW) == pedestr && getAttribute(SUMO_ATTR_DISALLOW) == joinToString(disallowedVClasses, " ")) { // PABLO #1568
-        return true;                                                                                                            // PABLO #1568
-    } else {                                                                                                                    // PABLO #1568
-        return false;                                                                                                           // PABLO #1568
-    }                                                                                                                           // PABLO #1568
-}                                                                                                                               // PABLO #1568
+bool                                                                    // PABLO #1568
+GNELane::isSidewalk() const {                                           // PABLO #1568
+    if(myParentEdge.getNBEdge()->getPermissions(myIndex) == 1048576) {  // PABLO #1568
+        return true;                                                    // PABLO #1568
+    } else {                                                            // PABLO #1568
+        return false;                                                   // PABLO #1568
+    }                                                                   // PABLO #1568
+}                                                                       // PABLO #1568
 
 
-bool                                                                                                                            // PABLO #1568
-GNELane::isBikelane() const {                                                                                                   // PABLO #1568
-    // Get all possible vehicle classes                                                                                         // PABLO #1568
-    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                                   // PABLO #1568
-    std::vector<std::string> disallowedVClasses;                                                                                // PABLO #1568
-    std::string bicycle = toString(SVC_BICYCLE);                                                                                // PABLO #1568
-    std::string ignoring = toString(SVC_IGNORING);                                                                              // PABLO #1568
-    // Iterate over vehicle classes to filter                                                                                   // PABLO #1568
-    for(int i = 0; i < (int)VClasses.size(); i++) {                                                                             // PABLO #1568
-        if((VClasses.at(i) != bicycle) && (VClasses.at(i) != ignoring)) {                                                       // PABLO #1568
-            disallowedVClasses.push_back(VClasses.at(i));                                                                       // PABLO #1568
-        }                                                                                                                       // PABLO #1568
-    }                                                                                                                           // PABLO #1568
-    // Change allow and disallow attributes of lane                                                                             // PABLO #1568
-    if(getAttribute(SUMO_ATTR_ALLOW) == bicycle && getAttribute(SUMO_ATTR_DISALLOW) == joinToString(disallowedVClasses, " ")) { // PABLO #1568
-        return true;                                                                                                            // PABLO #1568
-    } else {                                                                                                                    // PABLO #1568
-        return false;                                                                                                           // PABLO #1568
-    }                                                                                                                           // PABLO #1568
-}                                                                                                                               // PABLO #1568
+bool                                                                    // PABLO #1568
+GNELane::isBikelane() const {                                           // PABLO #1568
+    if(myParentEdge.getNBEdge()->getPermissions(myIndex) == 524288) {   // PABLO #1568
+        return true;                                                    // PABLO #1568
+    } else {                                                            // PABLO #1568
+        return false;                                                   // PABLO #1568
+    }                                                                   // PABLO #1568
+}                                                                       // PABLO #1568
 
 
-bool                                                                                                                            // PABLO #1568
-GNELane::isBuslane() const {                                                                                                    // PABLO #1568
-    // Get all possible vehicle classes                                                                                         // PABLO #1568
-    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                                   // PABLO #1568
-    std::vector<std::string> disallowedVClasses;                                                                                // PABLO #1568
-    std::string bus = toString(SVC_BUS);                                                                                        // PABLO #1568
-    std::string ignoring = toString(SVC_IGNORING);                                                                              // PABLO #1568
-    // Iterate over vehicle classes to filter                                                                                   // PABLO #1568
-    for(int i = 0; i < (int)VClasses.size(); i++) {                                                                             // PABLO #1568
-        if((VClasses.at(i) != bus) && (VClasses.at(i) != ignoring)) {                                                           // PABLO #1568
-            disallowedVClasses.push_back(VClasses.at(i));                                                                       // PABLO #1568
-        }                                                                                                                       // PABLO #1568
-    }                                                                                                                           // PABLO #1568
-    // Change allow and disallow attributes of lane                                                                             // PABLO #1568
-    if(getAttribute(SUMO_ATTR_ALLOW) == bus && getAttribute(SUMO_ATTR_DISALLOW) == joinToString(disallowedVClasses, " ")) {     // PABLO #1568
-        return true;                                                                                                            // PABLO #1568
-    } else {                                                                                                                    // PABLO #1568
-        return false;                                                                                                           // PABLO #1568
-    }                                                                                                                           // PABLO #1568
-}                                                                                                                               // PABLO #1568
+bool                                                                    // PABLO #1568
+GNELane::isBuslane() const {                                            // PABLO #1568
+    if(myParentEdge.getNBEdge()->getPermissions(myIndex) == 256) {      // PABLO #1568
+        return true;                                                    // PABLO #1568
+    } else {                                                            // PABLO #1568
+        return false;                                                   // PABLO #1568
+    }                                                                   // PABLO #1568
+}                                                                       // PABLO #1568
 
 
 std::string
