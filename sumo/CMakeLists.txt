@@ -107,4 +107,18 @@ endif(FOX_FOUND)
 message(STATUS "including: " ${FOX_INCLUDE_DIR})
 include_directories(${FOX_INCLUDE_DIR})
 #targe_link_libraries ( ${PROJECT_NAME} ${FOX_LIBRARY})
-#add_subdirectory(src)
+
+
+
+
+add_subdirectory(src)
+
+if (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    message(STATUS "configuring for OSX compiler flags")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+    SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
+endif (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
