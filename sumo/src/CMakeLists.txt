@@ -30,5 +30,5 @@ add_subdirectory(traci-server)
 add_subdirectory(utils)
 
 
-add_executable( sumo sumo_main.cpp microsim/MSMoveReminder.cpp)
+add_executable( sumo sumo_main.cpp)
 target_link_libraries(sumo netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions mstraffic_lights mesosim utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c FOX-1.6 PROJ)
