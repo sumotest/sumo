@@ -109,9 +109,9 @@ include_directories(${FOX_INCLUDE_DIR})
 #targe_link_libraries ( ${PROJECT_NAME} ${FOX_LIBRARY})
 
 
+set(warning_flags "-Wno-deprecated-register")
 
-
-add_subdirectory(src)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warning_flags}")
 
 if (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     message(STATUS "configuring for OSX compiler flags")
@@ -122,3 +122,4 @@ if (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
 endif (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
+add_subdirectory(src)
