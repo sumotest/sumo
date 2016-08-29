@@ -318,8 +318,8 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (s.showLaneDirection) {
             drawDirectionIndicators();
         }
-        // If there are icons to draw:
-        if(myLaneIconsPositions.size() > 0) {
+        // If there are icons to draw:                                                                          // PABLO #1568
+        if((!OptionsCont::getOptions().getBool("disable-laneIcons")) && myLaneIconsPositions.size() > 0) {      // PABLO #1568
             // Draw list of icons                                                                               // PABLO #1568
             for(int i = 0; i < (int)myLaneIconsPositions.size(); i++) {                                         // PABLO #1568
                 // Push draw matrix                                                                             // PABLO #1568
@@ -399,6 +399,11 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     const int editMode = parent.getVisualisationSettings()->editMode;
     myTLSEditor = 0;
     if (editMode != GNE_MODE_CONNECT && editMode != GNE_MODE_TLS && editMode != GNE_MODE_CREATE_EDGE) {
+        // Get icons                                                            // PABLO #1568
+        FXIcon* pedestrianIcon = GUIIconSubSys::getIcon(ICON_LANEPEDESTRIAN);   // PABLO #1568
+        FXIcon* bikeIcon = GUIIconSubSys::getIcon(ICON_LANEBIKE);               // PABLO #1568
+        FXIcon* busIcon = GUIIconSubSys::getIcon(ICON_LANEBUS);                 // PABLO #1568
+        // Create basic commands
         new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
         new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
         new FXMenuCommand(ret, "Reverse edge", 0, &parent, MID_GNE_REVERSE_EDGE);
@@ -456,20 +461,20 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);                                                                                           // PABLO #1568
             FXMenuPane *transformSlanes = new FXMenuPane(ret);                                                                                              // PABLO #1568 
             // Create menu comands for all add special lanes                                                                                                // PABLO #1568
-            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", 0, &parent, MID_GNE_ADD_LANE_SIDEWALK);                             // PABLO #1568
-            FXMenuCommand *addBikelane = new FXMenuCommand(addSpecialLanes, "Bikelane", 0, &parent, MID_GNE_ADD_LANE_BIKE);                                 // PABLO #1568
-            FXMenuCommand *addBuslane = new FXMenuCommand(addSpecialLanes, "Buslane", 0, &parent, MID_GNE_ADD_LANE_BUS);                                    // PABLO #1568
+            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);                // PABLO #1568
+            FXMenuCommand *addBikelane = new FXMenuCommand(addSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);                          // PABLO #1568
+            FXMenuCommand *addBuslane = new FXMenuCommand(addSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_ADD_LANE_BUS);                              // PABLO #1568
             // Create menu comands for all remove special lanes and disable it                                                                              // PABLO #1568
-            FXMenuCommand *removeSidewalk = new FXMenuCommand(removeSpecialLanes, "Sidewalk", 0, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);                    // PABLO #1568
+            FXMenuCommand *removeSidewalk = new FXMenuCommand(removeSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);       // PABLO #1568
             removeSidewalk->disable();                                                                                                                      // PABLO #1568 
-            FXMenuCommand *removeBikelane = new FXMenuCommand(removeSpecialLanes, "Bikelane", 0, &parent, MID_GNE_REMOVE_LANE_BIKE);                        // PABLO #1568
+            FXMenuCommand *removeBikelane = new FXMenuCommand(removeSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_REMOVE_LANE_BIKE);                 // PABLO #1568
             removeBikelane->disable();                                                                                                                      // PABLO #1568 
-            FXMenuCommand *removeBuslane = new FXMenuCommand(removeSpecialLanes, "Buslane", 0, &parent, MID_GNE_REMOVE_LANE_BUS);                           // PABLO #1568
+            FXMenuCommand *removeBuslane = new FXMenuCommand(removeSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_REMOVE_LANE_BUS);                     // PABLO #1568
             removeBuslane->disable();                                                                                                                       // PABLO #1568 
             // Create menu comands for all trasform special lanes and disable it                                                                            // PABLO #1568
-            FXMenuCommand *transformLaneToSidewalk = new FXMenuCommand(transformSlanes, "Sidewalk", 0, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);           // PABLO #1568
-            FXMenuCommand *transformLaneToBikelane = new FXMenuCommand(transformSlanes, "Bikelane", 0, &parent, MID_GNE_TRANSFORM_LANE_BIKE);               // PABLO #1568
-            FXMenuCommand *transformLaneToBuslane = new FXMenuCommand(transformSlanes, "Buslane", 0, &parent, MID_GNE_TRANSFORM_LANE_BUS);                  // PABLO #1568
+            FXMenuCommand *transformLaneToSidewalk = new FXMenuCommand(transformSlanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);// PABLO #1568
+            FXMenuCommand *transformLaneToBikelane = new FXMenuCommand(transformSlanes, "Bikelane", bikeIcon, &parent, MID_GNE_TRANSFORM_LANE_BIKE);        // PABLO #1568
+            FXMenuCommand *transformLaneToBuslane = new FXMenuCommand(transformSlanes, "Buslane", busIcon, &parent, MID_GNE_TRANSFORM_LANE_BUS);            // PABLO #1568
             FXMenuCommand *revertTransformation = new FXMenuCommand(transformSlanes, "revert transformation", 0, &parent, MID_GNE_REVERT_TRANSFORMATION);   // PABLO #1568
             // add menuCascade for lane operations                                                                                                          // PABLO #1568
             FXMenuCascade* cascadeAddSpecialLane = new FXMenuCascade(ret, "add special lane", 0, addSpecialLanes);                                          // PABLO #1568

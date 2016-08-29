@@ -220,6 +220,9 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.doRegister("sumo-additionals-file", new Option_String());                // PABLO #501
     oc.addDescription("sumo-additionals-file", "Input", "load additionals");    // PABLO #501
 
+    oc.doRegister("disable-laneIcons", new Option_Bool(false));                                 // PABLO #1568
+    oc.addDescription("disable-laneIcons", "Visualisation", "Disable icons of special lanes");  // PABLO #1568
+
     oc.doRegister("disable-textures", 'T', new Option_Bool(false)); // !!!
     oc.addDescription("disable-textures", "Visualisation", "");
 
