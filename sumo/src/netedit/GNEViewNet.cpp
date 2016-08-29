@@ -146,7 +146,7 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
     // init color schemes
     GUIColorer laneColorer;
     GUIColorScheme scheme = GUIColorScheme("uniform", RGBColor::BLACK, "road", true);
-    scheme.addColor(RGBColor::GREY, 1, "sidewalk");
+    scheme.addColor(RGBColor::GREY, 1, "Sidewalk");
     scheme.addColor(RGBColor(192, 66, 44), 2, "bike lane");
     scheme.addColor(RGBColor(200, 255, 200), 3, "green verge");
     scheme.addColor(RGBColor(150, 200, 200), 4, "waterway");
@@ -1132,16 +1132,35 @@ GNEViewNet::onCmdTransformLaneToSidewalk(FXObject*, FXSelector, void*) {        
     GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                       // PABLO #1568
     if (lane != 0) {                                                                                            // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-
-            /** numero de transformaciones **/
-
-            // begin undo operation                                                                             // PABLO #1568
-            myUndoList->p_begin("transform lanes to Sidewalks");                                                // PABLO #1568
             // get selected lanes                                                                               // PABLO #1568
             std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Sidewalks                                                          // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
             // iterate over selected lanes                                                                      // PABLO #1568
             for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
-                // Transform lane to sidewalk                                                                   // PABLO #1568
+                if((*it)->getParentEdge().hasSidewalk()) {                                                      // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes own a Sidewalk, stop function                                                       // PABLO #1568
+            if(counter == (int)lanes.size()) {                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Transform selected lanes to Sidewalks", "All lanes own already a Sidewalk");               // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Transform selected lanes to Sidewalks", "%s",                                          // PABLO #1568
+                        (toString(lanes.size() - counter) + " lanes will be converted to Sidewalks. continue?").c_str());// PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("transform lanes to Sidewalks");                                                // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // Transform lane to Sidewalk                                                                   // PABLO #1568
                 myNet->transformLaneToSidewalk(*it, myUndoList);                                                // PABLO #1568
             }                                                                                                   // PABLO #1568
             // end undo operation                                                                               // PABLO #1568
@@ -1149,7 +1168,7 @@ GNEViewNet::onCmdTransformLaneToSidewalk(FXObject*, FXSelector, void*) {        
         } else {                                                                                                // PABLO #1568
             // begin undo operation                                                                             // PABLO #1568
             myUndoList->p_begin("transform lane to Sidewalk");                                                  // PABLO #1568
-            // Transform lane to sidewalk                                                                       // PABLO #1568
+            // Transform lane to Sidewalk                                                                       // PABLO #1568
             myNet->transformLaneToSidewalk(lane, myUndoList);                                                   // PABLO #1568
             // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1164,16 +1183,35 @@ GNEViewNet::onCmdTransformLaneToBikelane(FXObject*, FXSelector, void*) {        
     GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                       // PABLO #1568
     if (lane != 0) {                                                                                            // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-            // begin undo operation                                                                             // PABLO #1568
-
-            /** numero de transformaciones **/
-
-            myUndoList->p_begin("transform lanes to Bikelanes");                                                // PABLO #1568
             // get selected lanes                                                                               // PABLO #1568
             std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Bikelanes                                                          // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
             // iterate over selected lanes                                                                      // PABLO #1568
             for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
-                // Transform lane to sidewalk                                                                   // PABLO #1568
+                if((*it)->getParentEdge().hasBikelane()) {                                                      // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes own a sidwealk stop function                                                        // PABLO #1568
+            if(counter == (int)lanes.size()) {                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Transform selected lanes to Bikelanes", "All lanes own already a Bikelane");               // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Transform selected lanes to Bikelanes", "%s",                                           // PABLO #1568
+                        (toString(lanes.size() - counter) + " lanes will be converted to Bikelanes. continue?").c_str());// PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("transform lanes to Bikelanes");                                                // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // Transform lane to Sidewalk                                                                   // PABLO #1568
                 myNet->transformLaneToBikelane(*it, myUndoList);                                                // PABLO #1568
             }                                                                                                   // PABLO #1568
             // end undo operation                                                                               // PABLO #1568
@@ -1181,7 +1219,7 @@ GNEViewNet::onCmdTransformLaneToBikelane(FXObject*, FXSelector, void*) {        
         } else {                                                                                                // PABLO #1568
             // begin undo operation                                                                             // PABLO #1568
             myUndoList->p_begin("transform lane to Bikelane");                                                  // PABLO #1568
-            // Transform lane to sidewalk                                                                       // PABLO #1568
+            // Transform lane to Sidewalk                                                                       // PABLO #1568
             myNet->transformLaneToBikelane(lane, myUndoList);                                                   // PABLO #1568
             // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1196,17 +1234,35 @@ GNEViewNet::onCmdTransformLaneToBuslane(FXObject*, FXSelector, void*) {         
     GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                       // PABLO #1568
     if (lane != 0) {                                                                                            // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-            // begin undo operation                                                                             // PABLO #1568
-            myUndoList->p_begin("transform lanes to Buslanes");                                                 // PABLO #1568
-
-
-            /** numero de transformaciones **/
-
             // get selected lanes                                                                               // PABLO #1568
             std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Buslanes                                                           // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
             // iterate over selected lanes                                                                      // PABLO #1568
             for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
-                // Transform lane to sidewalk                                                                   // PABLO #1568
+                if((*it)->getParentEdge().hasBuslane()) {                                                       // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes own a bus lane, stop function                                                       // PABLO #1568
+            if(counter == (int)lanes.size()) {                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Transform selected lanes to Buslanes", "All lanes own already a Buslane");                 // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Transform selected lanes to Buslanes", "%s",                                           // PABLO #1568
+                        (toString(lanes.size() - counter) + " lanes will be converted to Buslanes. continue?").c_str());// PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("transform lanes to Buslanes");                                                 // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // Transform lane to Sidewalk                                                                   // PABLO #1568
                 myNet->transformLaneToBuslane(*it, myUndoList);                                                 // PABLO #1568
             }                                                                                                   // PABLO #1568
             // end undo operation                                                                               // PABLO #1568
@@ -1214,7 +1270,7 @@ GNEViewNet::onCmdTransformLaneToBuslane(FXObject*, FXSelector, void*) {         
         } else {                                                                                                // PABLO #1568
             // begin undo operation                                                                             // PABLO #1568
             myUndoList->p_begin("transform lane to Buslane");                                                   // PABLO #1568
-            // Transform lane to sidewalk                                                                       // PABLO #1568
+            // Transform lane to Sidewalk                                                                       // PABLO #1568
             myNet->transformLaneToBuslane(lane, myUndoList);                                                    // PABLO #1568
             // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1229,14 +1285,32 @@ GNEViewNet::onCmdRevertTransformation(FXObject*, FXSelector, void*) {           
     GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                       // PABLO #1568
     if (lane != 0) {                                                                                            // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-            // begin undo operation                                                                             // PABLO #1568
-            myUndoList->p_begin("revert transformations");                                                      // PABLO #1568
-
-
-            /** numero de transformaciones **/
-
             // get selected lanes                                                                               // PABLO #1568
             std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Buslanes                                                           // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if(((*it)->isSidewalk()) || ((*it)->isBikelane()) || ((*it)->isBuslane())) {                    // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if none of selected lanes has a transformation, stop                                             // PABLO #1568
+            if(counter == 0) {                                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Revert transformations", "None of selected lanes has a previous transformation");          // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Revert transformations", "%s",                                                         // PABLO #1568
+                        (toString(counter) + " transformed lanes will be reverted. continue?").c_str());        // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("revert transformations");                                                      // PABLO #1568
             // iterate over selected lanes                                                                      // PABLO #1568
             for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
                 // revert transformation                                                                        // PABLO #1568
@@ -1263,21 +1337,43 @@ GNEViewNet::onCmdAddSidewalk(FXObject*, FXSelector, void*) {                    
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-            // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("add sidewalks");                                                               // PABLO #1568
-            // retrieve selected lanes                                                                          // PABLO #1568
-            std::vector<GNELane*> selectedLanes = myNet->retrieveLanes(true);                                   // PABLO #1568
-            // iterate over lanes                                                                               // PABLO #1568
-            for (std::vector<GNELane*>::iterator it = selectedLanes.begin(); it != selectedLanes.end(); it++) { // PABLO #1568
-                // Add sidewalk                                                                                 // PABLO #1568
+            // get selected lanes                                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Sidewalks                                                          // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if((*it)->getParentEdge().hasSidewalk()) {                                                      // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes own a Sidewalk, stop function                                                       // PABLO #1568
+            if(counter == (int)lanes.size()) {                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Add Sidewalks to selected lanes", "All lanes own already a Sidewalk");                     // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Add Sidewalks to selected lanes", "%s",                                                // PABLO #1568
+                        (toString(lanes.size() - counter) + " Sidewalks will be added. continue?").c_str());    // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("add Sidewalks");                                                               // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // add Sidewalk                                                                                 // PABLO #1568
                 myNet->addSidewalk((*it)->getParentEdge(), myUndoList);                                         // PABLO #1568
             }                                                                                                   // PABLO #1568
-            // end undo/redo operation                                                                          // PABLO #1568
+            // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
         } else {                                                                                                // PABLO #1568
             // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("add sidewalk");                                                                // PABLO #1568
-            // Add sidewalk                                                                                     // PABLO #1568
+            myUndoList->p_begin("add Sidewalk");                                                                // PABLO #1568
+            // Add Sidewalk                                                                                     // PABLO #1568
             myNet->addSidewalk(lane->getParentEdge(), myUndoList);                                              // PABLO #1568
             // end undo/redo operation                                                                          // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1293,21 +1389,43 @@ GNEViewNet::onCmdAddBikelane(FXObject*, FXSelector, void*) {                    
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-            // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("add bikelanes");                                                               // PABLO #1568
-            // retrieve selected lanes                                                                          // PABLO #1568
-            std::vector<GNELane*> selectedLanes = myNet->retrieveLanes(true);                                   // PABLO #1568
-            // iterate over lanes                                                                               // PABLO #1568
-            for (std::vector<GNELane*>::iterator it = selectedLanes.begin(); it != selectedLanes.end(); it++) { // PABLO #1568
-                // Add bikelane                                                                                 // PABLO #1568
+            // get selected lanes                                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Bikelanes                                                          // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if((*it)->getParentEdge().hasBikelane()) {                                                      // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes own a Bikelane, stop function                                                       // PABLO #1568
+            if(counter == (int)lanes.size()) {                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Add Bikelanes to selected lanes", "All lanes own already a Bikelane");                     // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Add Bikelanes to selected lanes", "%s",                                                // PABLO #1568
+                        (toString(lanes.size() - counter) + " Bikelanes will be added. continue?").c_str());    // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("add Bikelanes");                                                               // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // add Bikelane                                                                                 // PABLO #1568
                 myNet->addBikelane((*it)->getParentEdge(), myUndoList);                                         // PABLO #1568
             }                                                                                                   // PABLO #1568
-            // end undo/redo operation                                                                          // PABLO #1568
+            // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
         } else {                                                                                                // PABLO #1568
             // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("add bikelane");                                                                // PABLO #1568
-            // Add bikelane                                                                                     // PABLO #1568
+            myUndoList->p_begin("add Bikelane");                                                                // PABLO #1568
+            // Add Bikelane                                                                                     // PABLO #1568
             myNet->addBikelane(lane->getParentEdge(), myUndoList);                                              // PABLO #1568
             // end undo/redo operation                                                                          // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1323,21 +1441,43 @@ GNEViewNet::onCmdAddBuslane(FXObject*, FXSelector, void*) {                     
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-            // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("add buslanes");                                                                // PABLO #1568
-            // retrieve selected lanes                                                                          // PABLO #1568
-            std::vector<GNELane*> selectedLanes = myNet->retrieveLanes(true);                                   // PABLO #1568
-            // iterate over lanes                                                                               // PABLO #1568
-            for (std::vector<GNELane*>::iterator it = selectedLanes.begin(); it != selectedLanes.end(); it++) { // PABLO #1568
-                // Add buslane                                                                                  // PABLO #1568
+            // get selected lanes                                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Buslanes                                                           // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if((*it)->getParentEdge().hasBuslane()) {                                                       // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes own a Buslane, stop function                                                        // PABLO #1568
+            if(counter == (int)lanes.size()) {                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Add Buslanes to selected lanes", "All lanes own already a Buslane");                       // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Add Buslanes to selected lanes", "%s",                                                 // PABLO #1568
+                        (toString(lanes.size() - counter) + " Buslanes will be added. continue?").c_str());     // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("add Buslanes");                                                                // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // add Buslane                                                                                  // PABLO #1568
                 myNet->addBuslane((*it)->getParentEdge(), myUndoList);                                          // PABLO #1568
             }                                                                                                   // PABLO #1568
-            // end undo/redo operation                                                                          // PABLO #1568
+            // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
         } else {                                                                                                // PABLO #1568
             // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("add buslane");                                                                 // PABLO #1568
-            // Add buslane                                                                                      // PABLO #1568
+            myUndoList->p_begin("add Buslane");                                                                 // PABLO #1568
+            // Add Buslane                                                                                      // PABLO #1568
             myNet->addBuslane(lane->getParentEdge(), myUndoList);                                               // PABLO #1568
             // end undo/redo operation                                                                          // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1353,24 +1493,43 @@ GNEViewNet::onCmdRemoveSidewalk(FXObject*, FXSelector, void*) {                 
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-
-            //// buscar cuantas hay
-
-            // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("remove sidewalks");                                                            // PABLO #1568
-            // retrieve selected lanes                                                                          // PABLO #1568
-            std::vector<GNELane*> selectedLanes = myNet->retrieveLanes(true);                                   // PABLO #1568
-            // iterate over lanes                                                                               // PABLO #1568
-            for (std::vector<GNELane*>::iterator it = selectedLanes.begin(); it != selectedLanes.end(); it++) { // PABLO #1568
-                // Remove sidewalk                                                                              // PABLO #1568
+            // get selected lanes                                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Sidewalks                                                          // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if((*it)->getParentEdge().hasSidewalk()) {                                                      // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes don't own a Sidewalk, stop function                                                 // PABLO #1568
+            if(counter == 0) {                                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Remove Sidewalks to selected lanes", "Selected lanes haven't a Sidewalk");                 // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Remove Sidewalks to selected lanes", "%s",                                             // PABLO #1568
+                        (toString(counter) + " Sidewalks will be removed. continue?").c_str());                 // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("remove Sidewalks");                                                            // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // remove Sidewalk                                                                              // PABLO #1568
                 myNet->removeSidewalk((*it)->getParentEdge(), myUndoList);                                      // PABLO #1568
             }                                                                                                   // PABLO #1568
-            // end undo/redo operation                                                                          // PABLO #1568
+            // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
         } else {                                                                                                // PABLO #1568
             // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("remove sidewalk");                                                             // PABLO #1568
-            // Remove sidewalk                                                                                  // PABLO #1568
+            myUndoList->p_begin("remove Sidewalk");                                                             // PABLO #1568
+            // Remove Sidewalk                                                                                  // PABLO #1568
             myNet->removeSidewalk(lane->getParentEdge(), myUndoList);                                           // PABLO #1568
             // end undo/redo operation                                                                          // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1386,24 +1545,43 @@ GNEViewNet::onCmdRemoveBikelane(FXObject*, FXSelector, void*) {                 
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-
-            //// buscar cuantas hay
-
-            // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("remove bikelanes");                                                            // PABLO #1568
-            // retrieve selected lanes                                                                          // PABLO #1568
-            std::vector<GNELane*> selectedLanes = myNet->retrieveLanes(true);                                   // PABLO #1568
-            // iterate over lanes                                                                               // PABLO #1568
-            for (std::vector<GNELane*>::iterator it = selectedLanes.begin(); it != selectedLanes.end(); it++) { // PABLO #1568
-                // Remove bikelane                                                                              // PABLO #1568
+            // get selected lanes                                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Bikelanes                                                          // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if((*it)->getParentEdge().hasBikelane()) {                                                      // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes don't own a Bikelane, stop function                                                 // PABLO #1568
+            if(counter == 0) {                                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Remove Bikelanes to selected lanes", "Selected lanes haven't a Bikelane");                 // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Remove Bikelanes to selected lanes", "%s",                                             // PABLO #1568
+                        (toString(counter) + " Bikelanes will be removed. continue?").c_str());                 // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("remove Bikelanes");                                                            // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // remove Bikelane                                                                              // PABLO #1568
                 myNet->removeBikelane((*it)->getParentEdge(), myUndoList);                                      // PABLO #1568
             }                                                                                                   // PABLO #1568
-            // end undo/redo operation                                                                          // PABLO #1568
+            // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
         } else {                                                                                                // PABLO #1568
             // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("remove bikelane");                                                             // PABLO #1568
-            // Remove bikelane                                                                                  // PABLO #1568
+            myUndoList->p_begin("remove Bikelane");                                                             // PABLO #1568
+            // Remove Bikelane                                                                                  // PABLO #1568
             myNet->removeBikelane(lane->getParentEdge(), myUndoList);                                           // PABLO #1568
             // end undo/redo operation                                                                          // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
@@ -1419,24 +1597,43 @@ GNEViewNet::onCmdRemoveBuslane(FXObject*, FXSelector, void*) {                  
     if (lane != 0) {                                                                                            // PABLO #1568
         // Check if we have a set of selected lanes                                                             // PABLO #1568
         if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                  // PABLO #1568
-
-            //// buscar cuantas hay
-
-            // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("remove buslanes");                                                             // PABLO #1568
-            // retrieve selected lanes                                                                          // PABLO #1568
-            std::vector<GNELane*> selectedLanes = myNet->retrieveLanes(true);                                   // PABLO #1568
-            // iterate over lanes                                                                               // PABLO #1568
-            for (std::vector<GNELane*>::iterator it = selectedLanes.begin(); it != selectedLanes.end(); it++) { // PABLO #1568
-                // Remove buslane                                                                               // PABLO #1568
+            // get selected lanes                                                                               // PABLO #1568
+            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                           // PABLO #1568
+            // declare counter for number of Buslanes                                                           // PABLO #1568
+            int counter = 0;                                                                                    // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                if((*it)->getParentEdge().hasBuslane()) {                                                       // PABLO #1568
+                    counter++;                                                                                  // PABLO #1568
+                }                                                                                               // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // if all lanes don't own a Buslane, stop function                                                  // PABLO #1568
+            if(counter == 0) {                                                                                  // PABLO #1568
+                FXMessageBox::information(getApp(), MBOX_OK,                                                    // PABLO #1568
+                    "Remove Buslanes to selected lanes", "Selected lanes haven't a Buslane");                   // PABLO #1568
+                return 0;                                                                                       // PABLO #1568
+            } else {                                                                                            // PABLO #1568
+                    // Ask confirmation to user                                                                 // PABLO #1568
+                    FXuint answer = FXMessageBox::question(getApp(), MBOX_YES_NO,                               // PABLO #1568
+                        "Remove Buslanes to selected lanes", "%s",                                              // PABLO #1568
+                        (toString(counter) + " Buslanes will be removed. continue?").c_str());                  // PABLO #1568
+                    if (answer != 1) { //1:yes, 2:no, 4:esc                                                     // PABLO #1568
+                        return 0;                                                                               // PABLO #1568
+                    }                                                                                           // PABLO #1568
+            }                                                                                                   // PABLO #1568
+            // begin undo operation                                                                             // PABLO #1568
+            myUndoList->p_begin("remove Buslanes");                                                             // PABLO #1568
+            // iterate over selected lanes                                                                      // PABLO #1568
+            for (std::vector<GNELane*>::iterator it = lanes.begin(); it != lanes.end(); it++) {                 // PABLO #1568
+                // remove Buslane                                                                               // PABLO #1568
                 myNet->removeBuslane((*it)->getParentEdge(), myUndoList);                                       // PABLO #1568
             }                                                                                                   // PABLO #1568
-            // end undo/redo operation                                                                          // PABLO #1568
+            // end undo operation                                                                               // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568
         } else {                                                                                                // PABLO #1568
             // start undo/redo operation                                                                        // PABLO #1568
-            myUndoList->p_begin("remove buslane");                                                              // PABLO #1568
-            // Remove buslane                                                                                   // PABLO #1568
+            myUndoList->p_begin("remove Buslane");                                                              // PABLO #1568
+            // Remove Buslane                                                                                   // PABLO #1568
             myNet->removeBuslane(lane->getParentEdge(), myUndoList);                                            // PABLO #1568
             // end undo/redo operation                                                                          // PABLO #1568
             myUndoList->p_end();                                                                                // PABLO #1568

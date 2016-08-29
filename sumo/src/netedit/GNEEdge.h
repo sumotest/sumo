@@ -234,6 +234,15 @@ public:
     /// @brief return list of additionalSets associated with this edge
     const std::vector<GNEAdditionalSet*>& getAdditionalSets();
 
+    /// @brief check if edge has a sidewalk     // PABLO #1568
+    bool hasSidewalk() const;                   // PABLO #1568
+
+    /// @brief check if edge has a bikelane     // PABLO #1568
+    bool hasBikelane() const;                   // PABLO #1568
+
+    /// @brief check if edge has a buslane      // PABLO #1568
+    bool hasBuslane() const;                    // PABLO #1568
+
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;
 

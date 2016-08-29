@@ -944,4 +944,36 @@ GNEEdge::getAdditionalSets() {
     return myAdditionalSets;
 }
 
+
+bool                                                                                            // PABLO #1568
+GNEEdge::hasSidewalk() const {                                                                  // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = myLanes.begin(); i != myLanes.end(); i++) {   // PABLO #1568
+        if((*i)->isSidewalk()) {                                                                // PABLO #1568
+            return true;                                                                        // PABLO #1568
+        }                                                                                       // PABLO #1568
+    }                                                                                           // PABLO #1568
+    return false;                                                                               // PABLO #1568
+}                                                                                               // PABLO #1568
+
+
+bool                                                                                            // PABLO #1568
+GNEEdge::hasBikelane() const {                                                                  // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = myLanes.begin(); i != myLanes.end(); i++) {   // PABLO #1568
+        if((*i)->isBikelane()) {                                                                // PABLO #1568
+            return true;                                                                        // PABLO #1568
+        }                                                                                       // PABLO #1568
+    }                                                                                           // PABLO #1568
+    return false;                                                                               // PABLO #1568
+}                                                                                               // PABLO #1568
+
+bool                                                                                            // PABLO #1568
+GNEEdge::hasBuslane() const {                                                                   // PABLO #1568
+    for(std::vector<GNELane*>::const_iterator i = myLanes.begin(); i != myLanes.end(); i++) {   // PABLO #1568
+        if((*i)->isBuslane()) {                                                                 // PABLO #1568
+            return true;                                                                        // PABLO #1568
+        }                                                                                       // PABLO #1568
+    }                                                                                           // PABLO #1568
+    return false;                                                                               // PABLO #1568
+}                                                                                               // PABLO #1568
+
 /****************************************************************************/

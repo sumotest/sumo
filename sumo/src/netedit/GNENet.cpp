@@ -483,7 +483,7 @@ GNENet::transformLaneToBuslane(GNELane* lane, GNEUndoList* undoList) {          
 bool                                                                                                            // PABLO #1568
 GNENet::revertLaneTransformation(GNELane* lane, GNEUndoList* undoList) {                                        // PABLO #1568
     // Check that this lane is a special lane                                                                   // PABLO #1568
-    if(lane->isBikelane() == false && lane->isBuslane() == false && lane->isSidewalk()) {                       // PABLO #1568
+    if(lane->isBikelane() == false && lane->isBuslane() == false && lane->isSidewalk()== false) {               // PABLO #1568
         return false;                                                                                           // PABLO #1568
     }                                                                                                           // PABLO #1568
     // Get all possible vehicle classes                                                                         // PABLO #1568
