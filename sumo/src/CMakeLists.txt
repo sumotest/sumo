@@ -31,4 +31,7 @@ add_subdirectory(utils)
 
 
 add_executable( sumo sumo_main.cpp)
-target_link_libraries(sumo netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions mstraffic_lights mesosim utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c FOX-1.6 PROJ)
+target_link_libraries(sumo netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions mstraffic_lights mesosim utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c ${FOX_LIBRARY} PROJ)
+
+add_executable(sumo-gui guisim_main.cpp)
+target_link_libraries(sumo-gui gui guinetload guisim guidialogs utguiwindows utguiglobjects utguidiv utguisettings utguiimages utguitracker utfoxtools osgview netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions mstraffic_lights mesosim utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c ${FOX_LIBRARY} PROJ)
