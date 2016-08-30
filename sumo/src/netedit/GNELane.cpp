@@ -318,25 +318,25 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (s.showLaneDirection) {
             drawDirectionIndicators();
         }
-        // If there are icons to draw:                                                                          // PABLO #1568
-        if((!OptionsCont::getOptions().getBool("disable-laneIcons")) && myLaneIconsPositions.size() > 0) {      // PABLO #1568
-            // Draw list of icons                                                                               // PABLO #1568
-            for(int i = 0; i < (int)myLaneIconsPositions.size(); i++) {                                         // PABLO #1568
-                // Push draw matrix                                                                             // PABLO #1568
-                glPushMatrix();                                                                                 // PABLO #1568
-                // Set draw color                                                                               // PABLO #1568
-                glColor3d(1, 1, 1);                                                                             // PABLO #1568
-                // Traslate matrix                                                                              // PABLO #1568
-                glTranslated(myLaneIconsPositions.at(i).x(), myLaneIconsPositions.at(i).y(), getType() + 0.1);  // PABLO #1568
-                // Rotate matrix                                                                                // PABLO #1568
-                glRotated(myLaneIconsRotations.at(i), 0, 0, -1);                                                // PABLO #1568
-                glRotated(90, 0, 0, 1);                                                                         // PABLO #1568
-                // draw texture box depending                                                                   // PABLO #1568
-                GUITexturesHelper::drawTexturedBox(myIcon, 1);                                                  // PABLO #1568
-                // Pop logo matrix                                                                              // PABLO #1568
-                glPopMatrix();                                                                                  // PABLO #1568
-            }                                                                                                   // PABLO #1568
-        }                                                                                                       // PABLO #1568
+        // If there are icons to draw:                                                                                  // PABLO #1568
+        if((OptionsCont::getOptions().getBool("disable-laneIcons") == false) && myLaneIconsPositions.size() > 0) {      // PABLO #1568
+            // Draw list of icons                                                                                       // PABLO #1568
+            for(int i = 0; i < (int)myLaneIconsPositions.size(); i++) {                                                 // PABLO #1568
+                // Push draw matrix                                                                                     // PABLO #1568
+                glPushMatrix();                                                                                         // PABLO #1568
+                // Set draw color                                                                                       // PABLO #1568
+                glColor3d(1, 1, 1);                                                                                     // PABLO #1568
+                // Traslate matrix                                                                                      // PABLO #1568
+                glTranslated(myLaneIconsPositions.at(i).x(), myLaneIconsPositions.at(i).y(), getType() + 0.1);          // PABLO #1568
+                // Rotate matrix                                                                                        // PABLO #1568
+                glRotated(myLaneIconsRotations.at(i), 0, 0, -1);                                                        // PABLO #1568
+                glRotated(90, 0, 0, 1);                                                                                 // PABLO #1568
+                // draw texture box depending                                                                           // PABLO #1568
+                GUITexturesHelper::drawTexturedBox(myIcon, 1);                                                          // PABLO #1568
+                // Pop logo matrix                                                                                      // PABLO #1568
+                glPopMatrix();                                                                                          // PABLO #1568
+            }                                                                                                           // PABLO #1568
+        }                                                                                                               // PABLO #1568
     }
     glPopName();
 }

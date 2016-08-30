@@ -3,11 +3,13 @@ import os
 import subprocess
 import sys
 import socket
-import httplib
 
-# Define global variables for Tray
+import socket
+
+# Define global variables for Server
 TRAY_TOOLTIP = 'Sikulix server'
-TRAY_ICON = os.environ.get('TEXTTEST_HOME', '.') + "/sikulixicon.png"
+TRAY_ICON = os.environ.get('SUMO_Home', '.') + "/tests/sikulixicon.png"
+LOG_PATH = os.environ.get('SUMO_Home', '.') + "/tests/netEdit/currentEnvironment.tmp"
 
 # function to create a menu item
 def createMenuItem(menu, label, func):
@@ -20,13 +22,15 @@ def createMenuItem(menu, label, func):
 def openSikulixServer():
 	# open Sikulix
 	subprocess.Popen([os.environ.get('SIKULIX', 'runsikulix.cmd')] + ["-s"] + sys.argv[1:], env=os.environ,
-                stdout=open(os.devnull, 'wb'), stderr=sys.stderr)
-	# get status of sikulix server
-	stopHTTP = httplib.HTTPConnection('localhost:50001')
-	stopHTTP.request("GET", "/")
-
-	#if status is 200, sikulix server is running
-	if (stopHTTP.getresponse().status == 200):
+                stdout=open(LOG_PATH, 'wb'), stderr=sys.stderr)
+	
+	#get status of sikulixServer
+	statusSocket = socket.socket()
+	statusSocket.connect(("localhost", 50001))
+	statusSocket.send("GET / HTTP/1.1\n\n")
+	statusReceived = (statusSocket.recv(1024))
+	statusSocket.close()
+	if "200 OK" in statusReceived:
 		return True
 	else:
 		return False
@@ -83,7 +87,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 class SingleApp(wx.App):
 	def OnInit(self):
 		# give unique name to app
-		self.name = "SingleApp-%s" % wx.GetUserId()
+		self.name = "SikulixServer"
 		# get a single instance of 
 		self.instance = wx.SingleInstanceChecker(self.name)
 		#only create a TaskBarIcon app if currently there isn't another running

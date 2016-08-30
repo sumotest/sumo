@@ -19,59 +19,42 @@ the Free Software Foundation; either version 3 of the License, or
 import socket
 import os
 import sys
-import httplib
-import time
-import subprocess
 
 
-if len(sys.argv) != 2:
-	print "missing argument. script folder must be specified"
-else :
-	# get value of TEXTTEST_HOME
-	neteditTestFolder = os.environ.get('SUMO_HOME', '.') + "/test/netedit/"
+# get enviroment values
+SUMOFolder = os.environ.get('SUMO_HOME', '.')
+neteditApp = os.environ.get('NETEDIT_BINARY', '.')
+textTestSandBox = os.environ.get('TEXTTEST_SANDBOX', '.')
 
-	# Run sikulix server (if isn't already running)
-	#subprocess.Popen(["python"] + [os.environ.get('TEXTTEST_HOME', '.') + "/runSikulixServerWindows.py"])
-	
-	#IMAGES
+#IMAGES
+imagesSocket = socket.socket()
+imagesSocket.connect(("localhost", 50001))
+imagesSocket.send("GET /images/" + SUMOFolder + "/tests/netedit/imageResources HTTP/1.1\n\n")
+imagesReceived = (imagesSocket.recv(1024))
+imagesSocket.close()
+if "200 OK" in imagesReceived:
+	print "imageResources folder sucesfully added"
+else:
+	print "Error adding imageResources folder '" + SUMOFolder + "/tests/netedit/imageResources'"
 
-	imagesSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#SCRIPT	
+scriptSocket = socket.socket()
+scriptSocket.connect(("localhost", 50001))
+scriptSocket.send("GET /scripts/" + textTestSandBox + " HTTP/1.1\n\n")
+scriptReceived = (scriptSocket.recv(1024))
+scriptSocket.close()
+if "200 OK" in scriptReceived:
+	print "script folder sucesfully added"
+else:
+	print "Error adding script folder '" + SUMOFolder + + "/tests/netedit/" + sys.argv[1] + "'"
 
-	imagesSocket.connect(("localhost", 50001))
-
-	imagesSocket.send("IMAGES/" + neteditTestFolder + "imageResources")
-
-	imagesSocket.close()
-	
-	#SCRIPT
-		
-	scriptSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-	scriptSocket.connect(("localhost", 50001))
-
-	scriptSocket.send("scripts/C:/Proyectos/Sumo_BranchPablo/tests/netedit/basic/new_net_1edge")
-
-	scriptSocket.close()
-	
-	#RUN
-
-	runSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-	runSocket.connect(("localhost", 50001))
-
-	runSocket.send("RUN/test.sikuli")
-
-	runSocket.close();
-
-	# wait to the end
-	stop = False;
-	stopHTTP = httplib.HTTPConnection('localhost:50001')
-
-	while (stop == False):
-		stopHTTP.request("GET", "/")
-
-		if (stopHTTP.getresponse().status == 200):
-			stop = True
-		# Other conditions
-		else:
-			time.sleep(0.1)
+#RUN
+runSocket = socket.socket()
+runSocket.connect(("localhost", 50001))
+runSocket.send("GET /run/test.sikuli HTTP/1.1\n\n")
+runReceived = (runSocket.recv(1024))
+runSocket.close();
+if "200 OK" in runReceived:
+	print "script sucesfully runned"
+else:
+	print "error running 'test.sikuli'"
