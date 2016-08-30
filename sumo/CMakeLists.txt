@@ -118,7 +118,12 @@ if (X11_FOUND)
 	link_directories(${X11_LIBRARY_DIR})
 	include_directories(${X11_INCLUDE_DIR})
 endif(X11_FOUND)
-find_package(OpenGL REQUIRED)
+#find_package(OpenGL REQUIRED)
+
+find_package(FFMPEG REQUIRED)
+if (FFMPEG_FOUND)
+	message(${FFMPEG_LIBRARIES})
+endif()
 
 	
 set(warning_flags "-Wno-deprecated-register")
