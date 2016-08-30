@@ -110,12 +110,17 @@ endif(GDAL_FOUND)
 find_package(FOX REQUIRED)
 if (FOX_FOUND)
 	message(STATUS "Found Fox Toolkit")
-	message(STATUS "including: " ${FOX_INCLUDE_DIR})
-	#set(libs "${libs} FOX-1.6")
-	include_directories(${FOX_INCLUDE_DIR})
+	add_definitions(${FOX_CXX_FLAGS})
 endif(FOX_FOUND)
 
+find_package(X11)
+if (X11_FOUND)
+	link_directories(${X11_LIBRARY_DIR})
+	include_directories(${X11_INCLUDE_DIR})
+endif(X11_FOUND)
+find_package(OpenGL REQUIRED)
 
+	
 set(warning_flags "-Wno-deprecated-register")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warning_flags}")
