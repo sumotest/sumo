@@ -123,6 +123,23 @@ endif(X11_FOUND)
 find_package(FFMPEG REQUIRED)
 if (FFMPEG_FOUND)
 	message(${FFMPEG_LIBRARIES})
+    include_directories(${GRPC_INCLUDE_DIR})
+
+endif()
+
+
+find_package(GRPC)
+if(GRPC_FOUND)
+    add_definitions(-DBUILD_REMOTE_MODEL)
+    add_definitions(${GRPC_DEFINITONS})
+    link_directories(${PC_GRPC_LIBRARY_DIRS})
+    find_package(Protobuf REQUIRED)
+    set(GRPC_DIR "${CMAKE_SOURCE_DIR}/cmake_modules/")
+
+    file(GLOB ProtoFiles "${CMAKE_SOURCE_DIR}/src/microsim/pedestrians/hybridsim.proto")
+    PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
+    PROTOBUF_GENERATE_GRPC_CPP(ProtoGRPCSources ProtoGRPCHeaders ${ProtoFiles})
+    set(GRPC_LIBS grpc++ grpc protobuf dl)
 endif()
 
 	

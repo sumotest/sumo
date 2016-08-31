@@ -567,7 +567,12 @@ public:
         const PositionVector& endShape,
         bool isTurnaround,
         SUMOReal extrapolateBeg,
-        SUMOReal extrapolateEnd);
+        SUMOReal extrapolateEnd,
+        bool& ok);
+
+
+    /// @brief compute the width of the maximum s curved connection
+    SUMOReal getMaximumSCurveWidth() const;
 
     /** @brief Replaces occurences of the first edge within the list of incoming by the second
         Connections are remapped, too */

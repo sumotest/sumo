@@ -140,8 +140,8 @@ NBNodeShapeComputer::computeNodeShapeDefault(bool simpleContinuation) {
         return PositionVector();
     }
     // magic values
-    const SUMOReal radius = (myNode.getRadius() == NBNode::UNSPECIFIED_RADIUS ?
-                             OptionsCont::getOptions().getFloat("default.junctions.radius") : myNode.getRadius());
+    const bool defaultRadius = myNode.getRadius() == NBNode::UNSPECIFIED_RADIUS;  
+    const SUMOReal radius = (defaultRadius ? OptionsCont::getOptions().getFloat("default.junctions.radius") : myNode.getRadius());
     const int cornerDetail = OptionsCont::getOptions().getInt("junctions.corner-detail");
 
     // initialise
@@ -235,9 +235,19 @@ NBNodeShapeComputer::computeNodeShapeDefault(bool simpleContinuation) {
                     // since there are only two (almost parallel) directions, the
                     // concept of a turning radius does not quite fit. Instead we need
                     // to enlarge the intersection to accomodate the change in
-                    // the number of lanes
-                    // @todo: make this independently configurable
-                    dist += radius;
+                    // the number of lanes (s-curve)
+                    SUMOReal sCurveRadius = radius;
+                    const SUMOReal sCurveStretch = OptionsCont::getOptions().getFloat("junctions.scurve-stretch");
+                    if (defaultRadius) {
+                        const SUMOReal sCurveWidth = myNode.getMaximumSCurveWidth();
+                        if (sCurveWidth > 0) {
+                            // heuristic that yields reasonable values for
+                            // stretch values in [0.8,1.3]. The special case of
+                            // 0 results in the old non-stretched behavior
+                            sCurveRadius = radius + sCurveWidth / SUMO_const_laneWidth * sCurveStretch * pow((*i)->getSpeed(), 2 + sCurveStretch) / 1000;
+                        }
+                    }
+                    dist += sCurveRadius;
                 }
                 distances[*i] = dist;
             }

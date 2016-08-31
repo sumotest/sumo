@@ -30,8 +30,15 @@ add_subdirectory(traci-server)
 add_subdirectory(utils)
 
 
+
 add_executable( sumo sumo_main.cpp)
-target_link_libraries(sumo netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions mstraffic_lights mesosim utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c ${FOX_LIBRARIES} PROJ)
+target_link_libraries(sumo netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions
+        mstraffic_lights mesosim utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml
+        utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c ${FOX_LIBRARIES} PROJ ${GRPC_LIBS})
 
 add_executable(sumo-gui guisim_main.cpp)
-target_link_libraries(sumo-gui gui guinetload guisim guidialogs utguiwindows utguiglobjects utguidiv utguisettings utguiimages utguitracker utfoxtools osgview netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians mstrigger msactions mstraffic_lights mesosim mesogui utgeom utvehicle utshapes utemissions traci-server uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c ${FOX_LIBRARY} PROJ ${FOX_LIBRARIES} GDAL ${FFMPEG_LIBRARIES} gl2ps foreignpolyfonts)
+target_link_libraries(sumo-gui gui guinetload guisim guidialogs utguiwindows utguiglobjects utguidiv utguisettings
+        utguiimages utguitracker utfoxtools osgview netload ms mscfmodels mslcmodels msdevices msoutput mspedestrians
+        mstrigger msactions mstraffic_lights mesosim mesogui utgeom utvehicle utshapes utemissions traci-server
+        uttraci utoptions utxml utcommon utimportio utiodevices foreignphemlight foreigntcpip xerces-c ${FOX_LIBRARY}
+        PROJ ${FOX_LIBRARIES} GDAL ${FFMPEG_LIBRARIES} gl2ps foreignpolyfonts ${GRPC_LIBS})

@@ -4,7 +4,7 @@
 @file    findMinDiffModel.py
 @author  Michael Behrisch
 @date    2016-08-24
-@version $Id: evaluateHBEFA3vsPHEM.py 20433 2016-04-13 08:00:14Z behrisch $
+@version $Id$
 
 This script takes the output file of the emission tests and tries to
 find models most similar to a given model concerning the emission values.
@@ -48,7 +48,7 @@ for refModel in sys.argv[2:]:
             relDiff = 0.
         elif model != refModel and line[:7] == "Success":
             if "HDV" in model:
-                print(refModel, model, relDiff / len(minDiff))
+                print(refModel, model, relDiff / len(minDiff), fuelDiff)
             if minRelDiff is None or relDiff < minRelDiff[0]:
                 minRelDiff = (relDiff, model)
         elif model != refModel and len(l) > 1:
@@ -56,6 +56,8 @@ for refModel in sys.argv[2:]:
             if emission != "length" and emission != "electricity":
                 diff = float(l[1]) - refValue[emission]
                 relDiff += abs(diff) / refValue[emission]
+                if emission == "fuel":
+                    fuelDiff = abs(diff) / refValue[emission]
                 if emission not in minDiff or abs(diff) < abs(minDiff[emission][0]):
                     minDiff[emission] = (diff, model)
     print(refModel, minRelDiff[1], minRelDiff[0] / len(minDiff))

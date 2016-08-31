@@ -72,14 +72,49 @@ const SUMOReal NBEdge::UNSPECIFIED_CONTPOS = -1;
 const SUMOReal NBEdge::UNSPECIFIED_SIGNAL_OFFSET = -1;
 const SUMOReal NBEdge::UNSPECIFIED_LOADED_LENGTH = -1;
 const SUMOReal NBEdge::ANGLE_LOOKAHEAD = 10.0;
+const int NBEdge::UNSPECIFIED_INTERNAL_LANE_INDEX = -1;
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
 std::string
-NBEdge::Connection:: getInternalLaneID() const {
+NBEdge::Connection::getInternalLaneID() const {
     return id + "_" + toString(internalLaneIndex);
 }
+
+
+NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) : 
+    fromLane(fromLane_), 
+    toEdge(toEdge_), 
+    toLane(toLane_),
+    mayDefinitelyPass(false), 
+    keepClear(true), 
+    haveVia(false),
+    id(toEdge_ == 0 ? "" : toEdge->getFromNode()->getID()),
+    internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX)
+{}
+
+
+NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, bool keepClear_, SUMOReal contPos_, bool haveVia_) : 
+    fromLane(fromLane_), 
+    toEdge(toEdge_), 
+    toLane(toLane_),
+    mayDefinitelyPass(mayDefinitelyPass_), 
+    keepClear(keepClear_), 
+    contPos(contPos_),
+    haveVia(haveVia_),
+    id(toEdge_ == 0 ? "" : toEdge->getFromNode()->getID()),
+    internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX)
+{}
+
+NBEdge::Lane::Lane(NBEdge* e, const std::string& origID_) :
+    speed(e->getSpeed()), 
+    permissions(SVCAll), 
+    preferred(0),
+    endOffset(e->getEndOffset()), width(e->getLaneWidth()),
+    origID(origID_) 
+{}
+
 
 /* -------------------------------------------------------------------------
  * NBEdge::ToEdgeConnectionsAdder-methods
