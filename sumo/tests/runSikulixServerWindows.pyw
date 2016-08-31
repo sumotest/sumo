@@ -9,7 +9,8 @@ import socket
 # Define global variables for Server
 TRAY_TOOLTIP = 'Sikulix server'
 TRAY_ICON = os.environ.get('SUMO_Home', '.') + "/tests/sikulixicon.png"
-LOG_PATH = os.environ.get('SUMO_Home', '.') + "/tests/netEdit/currentEnvironment.tmp"
+LOG_PATH = os.environ.get('SUMO_Home', '.') + "/tests/netEdit/sikulixLog.tmp"
+ERROR_PATH = os.environ.get('SUMO_Home', '.') + "/tests/netEdit/sikulixError.tmp"
 
 # function to create a menu item
 def createMenuItem(menu, label, func):
@@ -21,8 +22,8 @@ def createMenuItem(menu, label, func):
 
 def openSikulixServer():
 	# open Sikulix
-	subprocess.Popen([os.environ.get('SIKULIX', 'runsikulix.cmd')] + ["-s"] + sys.argv[1:], env=os.environ,
-                stdout=open(LOG_PATH, 'wb'), stderr=sys.stderr)
+	subprocess.Popen([os.environ.get('SIKULIX', '.')] + ["-s"], 
+					env=os.environ, stdout=open(LOG_PATH, 'w'), stderr=open(ERROR_PATH, 'w'), shell=True)
 	
 	#get status of sikulixServer
 	statusSocket = socket.socket()

@@ -1,18 +1,24 @@
+# Import libraries
+import os, sys, subprocess
+
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
-netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
+# get paths 
+SUMOFolder = os.environ.get('SUMO_HOME', '.')
+netEditResources = SUMOFolder + "/tests/netedit/imageResources/"
+file = open(SUMOFolder + "/tests/netEdit/currentEnvironment.tmp", "r")
+neteditApp = file.readline().replace("\n", "")
+textTestSandBox = file.readline().replace("\n", "")
+file.close()
 #****#
 
-# Import libraries
-import os, sys, subprocess
-
 #Open netedit
-subprocess.Popen([os.environ['SUMO_HOME'] + "/bin/netedit.exe", 
+subprocess.Popen([neteditApp, 
                   '--window-size', '800,600',
                   '--new', 
-                  '-o', 'net.net.xml'], 
+                  '-o', textTestSandBox + "/net.net.xml"], 
                   env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 #Settings.MinSimilarity = 0.1
