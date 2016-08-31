@@ -9,8 +9,12 @@ set(microsimpeds_files
 
 
 if(GRPC_FOUND)
-
+    set(GRPC_DIR "${CMAKE_SOURCE_DIR}/cmake_modules/")
+    file(GLOB ProtoFiles "${CMAKE_SOURCE_DIR}/src/microsim/pedestrians/*.proto")
+    PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
+    PROTOBUF_GENERATE_GRPC_CPP(ProtoGRPCSources ProtoGRPCHeaders ${ProtoFiles})
     set(microsimpeds_files ${microsimpeds_files} hybridsim.grpc.pb.cc hybridsim.grpc.pb.h hybridsim.pb.cc hybridsim.pb.h RemoteModel.cpp RemoteModel.h)
+
 
 endif()
 
