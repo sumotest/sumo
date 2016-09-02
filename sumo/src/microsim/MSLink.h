@@ -357,7 +357,7 @@ public:
         return myHasFoes;
     }
 
-
+    // @todo documentation
     bool isCont() const {
         return myAmCont;
     }
@@ -497,6 +497,7 @@ private:
     /// @brief Whether any foe links exist
     bool myHasFoes;
 
+    // @todo documentation
     bool myAmCont;
 
     bool myKeepClear;

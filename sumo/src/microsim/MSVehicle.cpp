@@ -91,7 +91,7 @@
 //#define DEBUG_EXEC_MOVE
 //#define DEBUG_FURTHER
 //#define DEBUG_STOPS
-//#define DEBUG_COND (getID() == "veh0")
+//#define DEBUG_COND (getID() == "Togliatti_9_13")
 #define DEBUG_COND false
 
 #define STOPPING_PLACE_OFFSET 0.5
@@ -1503,7 +1503,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // if stopping is possible, arrivalTime can be arbitrarily large. A small value keeps fractional times (impatience) meaningful
         SUMOReal arrivalSpeedBraking = 0;
         SUMOTime arrivalTimeBraking = arrivalTime + TIME2STEPS(30);
-        if (seen < cfModel.brakeGap(v)) {
+        if (seen < cfModel.brakeGap(v)) { // XXX: this should use teh current speed (at least for the ballistic case) (Leo)
             // vehicle cannot come to a complete stop in time
         	if(MSGlobals::gSemiImplicitEulerUpdate){
 				arrivalSpeedBraking = cfModel.getMinimalArrivalSpeedEuler(seen, v);
@@ -1561,6 +1561,14 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(lane->getLength(), v, cfModel.getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
+
+    // Debug (Leo)
+#ifdef DEBUG_PLAN_MOVE
+    if(DEBUG_COND){
+        std::cout << "planMoveInternal found safe speed\nv = " << v << std::endl;
+    }
+#endif
+
 //
 //    // Debug (Leo)
 //    gDebugFlag1=false;
@@ -1658,6 +1666,29 @@ MSVehicle::getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leader
 }
 
 
+
+SUMOReal
+MSVehicle::getDeltaPos(SUMOReal accel){
+    SUMOReal vNext = myState.mySpeed + ACCEL2SPEED(accel);
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        // apply implicit Euler positional update
+        return SPEED2DIST(MAX2(vNext,0.));
+    }else{
+        // apply ballistic update
+        if(vNext >= 0){
+            // assume constant acceleration during this time step
+            return SPEED2DIST(myState.mySpeed + 0.5*ACCEL2SPEED(accel));
+        } else {
+            // negative vNext indicates a stop within the middle of time step
+            // The corresponding stop time is s = mySpeed/deceleration \in [0,dt], and the
+            // covered distance is therefore deltaPos = mySpeed*s - 0.5*deceleration*s^2.
+            // Here, deceleration = (myState.mySpeed - vNext)/dt is the constant deceleration
+            // until the vehicle stops.
+            return -SPEED2DIST(0.5*myState.mySpeed*myState.mySpeed/ACCEL2SPEED(accel));
+        }
+    }
+}
+
 bool
 MSVehicle::executeMove() {
 #ifdef DEBUG_VEHICLE_GUI_SELECTION
@@ -1687,46 +1718,46 @@ MSVehicle::executeMove() {
     assert(myLFLinkLanes.size() != 0 || (myInfluencer != 0 && myInfluencer->isVTDControlled()));
     DriveItemVector::iterator i;
 
-    // Debug (Leo)
-    int pcount = 0;
-    if (gDebugFlag1) {
-        std::cout
-                << ("\ncalled executeMove() for vehicle " + getID() + " at time "
-                        + toString(MSNet::getInstance()->getCurrentTimeStep()) + " :" + "\nposition = "
-                        + toString(myState.myPos, 20) + "\non lane '" + getLane()->getID() + "' with speed limit "
-                        + toString(getLane()->getSpeedLimit()) + "\nspeed = " + toString(myState.mySpeed)
-                        + "\nDrive Process items:") << std::endl;
-
-    }
+//    // Debug (Leo)
+//    int pcount = 0;
+//    if (gDebugFlag1) {
+//        std::cout
+//                << ("\ncalled executeMove() for vehicle " + getID() + " at time "
+//                        + toString(MSNet::getInstance()->getCurrentTimeStep()) + " :" + "\nposition = "
+//                        + toString(myState.myPos, 20) + "\non lane '" + getLane()->getID() + "' with speed limit "
+//                        + toString(getLane()->getSpeedLimit()) + "\nspeed = " + toString(myState.mySpeed)
+//                        + "\nDrive Process items:") << std::endl;
+//
+//    }
 
     for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end(); ++i) {
 
-        // Debug (Leo)
-        if (gDebugFlag1) {
-            if (i->myLink != 0) {
-                std::cout
-                        << ("\nitem " + toString(pcount) + ":" + "\nlinkLane = " + i->myLink->getLane()->getID()
-//        			+"\nlinkApproachingLane = " + i->myLink->getApproachingLane()->getID()
-//        			+"\nlinkViaLane = " + i->myLink->getViaLane()->getID()
-                                + "\nlinkViaLaneOrLane = " + i->myLink->getViaLaneOrLane()->getID()
-//        			+"\nlinkInternalLaneBefore = " + i->myLink->getInternalLaneBefore()->getID()
-                                + "\nlinkIndex = " + toString(i->myLink->getIndex()) + "\nmyDistance ="
-                                + toString(i->myDistance) + "\nmyLinkLength=" + toString(i->myLink->getLength())
-                                + "\narrivalTime =" + toString(i->myArrivalTime) + "\narrivalSpeed ="
-                                + toString(i->myArrivalSpeed) + "\naccelV (leave speed?!) =" + toString(i->accelV)
-                                + "\nVLinkPass =" + toString(i->myVLinkPass) + "\nVLinkWait ="
-                                + toString(i->myVLinkWait) + "\narrivalTimeBraking ="
-                                + toString(i->myArrivalTimeBraking) + "\narrivalSpeedBraking ="
-                                + toString(i->myArrivalSpeedBraking) + "\nsetRequest =" + toString(i->mySetRequest)
-                                + "\nhasFoes =" + toString(i->myLink->hasFoes()) + "\nhasApproachingFoe ="
-                                + toString(
-                                        i->myLink->hasApproachingFoe(i->myArrivalTime, i->myArrivalTime + 1000,
-                                                i->getLeaveSpeed(), getCarFollowModel().getMaxDecel()))) << std::endl;
-            } else {
-                std::cout << ("\nitem " + toString(pcount) + "\nlink == 0...") << std::endl;
-            }
-            pcount++;
-        }
+//        // Debug (Leo)
+//        if (gDebugFlag1) {
+//            if (i->myLink != 0) {
+//                std::cout
+//                        << ("\nitem " + toString(pcount) + ":" + "\nlinkLane = " + i->myLink->getLane()->getID()
+////        			+"\nlinkApproachingLane = " + i->myLink->getApproachingLane()->getID()
+////        			+"\nlinkViaLane = " + i->myLink->getViaLane()->getID()
+//                                + "\nlinkViaLaneOrLane = " + i->myLink->getViaLaneOrLane()->getID()
+////        			+"\nlinkInternalLaneBefore = " + i->myLink->getInternalLaneBefore()->getID()
+//                                + "\nlinkIndex = " + toString(i->myLink->getIndex()) + "\nmyDistance ="
+//                                + toString(i->myDistance) + "\nmyLinkLength=" + toString(i->myLink->getLength())
+//                                + "\narrivalTime =" + toString(i->myArrivalTime) + "\narrivalSpeed ="
+//                                + toString(i->myArrivalSpeed) + "\naccelV (leave speed?!) =" + toString(i->accelV)
+//                                + "\nVLinkPass =" + toString(i->myVLinkPass) + "\nVLinkWait ="
+//                                + toString(i->myVLinkWait) + "\narrivalTimeBraking ="
+//                                + toString(i->myArrivalTimeBraking) + "\narrivalSpeedBraking ="
+//                                + toString(i->myArrivalSpeedBraking) + "\nsetRequest =" + toString(i->mySetRequest)
+//                                + "\nhasFoes =" + toString(i->myLink->hasFoes()) + "\nhasApproachingFoe ="
+//                                + toString(
+//                                        i->myLink->hasApproachingFoe(i->myArrivalTime, i->myArrivalTime + 1000,
+//                                                i->getLeaveSpeed(), getCarFollowModel().getMaxDecel()))) << std::endl;
+//            } else {
+//                std::cout << ("\nitem " + toString(pcount) + "\nlink == 0...") << std::endl;
+//            }
+//            pcount++;
+//        }
         MSLink* link = (*i).myLink;
 
 #ifdef DEBUG_EXEC_MOVE
@@ -1847,7 +1878,8 @@ MSVehicle::executeMove() {
     }
 
     // Debug (Leo)
-    if (gDebugFlag1) {
+#ifdef DEBUG_EXEC_MOVE
+    if (DEBUG_COND) {
         std::cout << "\nvCurrent = " << toString(getSpeed(), 24) << "" << std::endl;
         std::cout << "vSafe = " << toString(vSafe, 24) << "" << std::endl;
         std::cout << "vSafeMin = " << toString(vSafeMin, 24) << "" << std::endl;
@@ -1858,26 +1890,37 @@ MSVehicle::executeMove() {
         std::cout << "vSafeStoppedLeader = " << toString(getCarFollowModel().stopSpeed(this, getSpeed(), gap), 24)
                 << "\n" << std::endl;
     }
+#endif
 
-    if (vSafe + NUMERICAL_EPS < vSafeMin) {
+    if ((MSGlobals::gSemiImplicitEulerUpdate && vSafe + NUMERICAL_EPS < vSafeMin)
+            || (vSafe + NUMERICAL_EPS < vSafeMin && vSafeMin != 0)) { // this might be good for the euler case as well
         // cannot drive across a link so we need to stop before it
-        // XXX: (Leo) This often calls stopSpeed with vSafeMinDist==0 (for the ballistic update), since vSafe can become negative
-        //		For the Euler update the term '+ NUMERICAL_EPS' prevented a call here... However, if this code is not called,
-        //		vSafe is not computed correctly for the ballistic update (the prior code can give negative, but still to large, vSafe).
-        //		I still need to understand why.
+        // XXX: (Leo) This often called stopSpeed with vSafeMinDist==0 (for the ballistic update), since vSafe can become negative
+        //		For the Euler update the term '+ NUMERICAL_EPS' prevented a call here...
+        //
         vSafe = MIN2(vSafe, getCarFollowModel().stopSpeed(this, getSpeed(), vSafeMinDist));
         vSafeMin = 0;
         myHaveToWaitOnNextLink = true;
+        // Debug (Leo)
+#ifdef DEBUG_EXEC_MOVE
+        if (DEBUG_COND) {
+            std::cout << "vSafeMin Problem?" << std::endl;
+        }
+#endif
     }
     // vehicles inside a roundabout should maintain their requests
     if (myLane->getEdge().isRoundabout()) {
         myHaveToWaitOnNextLink = false;
     }
+
     vSafe = MIN2(vSafe, vSafeZipper);
+
     // Debug (Leo)
-    if(gDebugFlag1){
+#ifdef DEBUG_EXEC_MOVE
+    if (DEBUG_COND) {
     	std::cout << "vSafe = " << toString(vSafe,12) << "\n" << std::endl;
     }
+#endif
 
 
     // XXX braking due to lane-changing and processing stops is not registered
@@ -1968,56 +2011,12 @@ MSVehicle::executeMove() {
         switchOffSignal(VEH_SIGNAL_BRAKELIGHT);
     }
 
-    // the mean acceleration during the next step
-    // NOTE: for the ballistic update this is in general 
-    // not equal to  vNext - myState.mySpeed
-    myAcceleration = SPEED2ACCEL(MAX2(vNext,0.) - myState.mySpeed);
-
-    // update position and speed
-    SUMOReal deltaPos; // positional change
-    if(MSGlobals::gSemiImplicitEulerUpdate){
-    	// apply implicit Euler positional update
-    	deltaPos = SPEED2DIST(MAX2(vNext,0.));
-    }else{
-    	// apply ballistic update
-    	if(vNext >= 0){
-    		// assume constant acceleration during this time step
-    		deltaPos = SPEED2DIST(myState.mySpeed + 0.5*ACCEL2SPEED(myAcceleration));
-    	} else {
-    		// negative vNext indicates a stop within the middle of time step
-    		// The corresponding stop time is s = mySpeed/deceleration \in [0,dt], and the
-    		// covered distance is therefore deltaPos = mySpeed*s - 0.5*deceleration*s^2.
-    		// Here, deceleration = (myState.mySpeed - vNext)/dt is the constant deceleration
-    		// until the vehicle stops.
-    		deltaPos = SPEED2DIST(0.5*myState.mySpeed*myState.mySpeed/(myState.mySpeed - vNext));
-    	}
-    }
-
-    // Debug (Leo)
-    if (gDebugFlag1) {
-        std::cout << "deltaPos = " << deltaPos << std::endl;
-    }
-
-    myState.myPreviousSpeed = myState.mySpeed;
-    myState.mySpeed = MAX2(vNext,0.);
-
-#ifndef NO_TRACI
-    if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
-        deltaPos = myInfluencer->implicitDeltaPosVTD(this);
-    }
-#endif
-    // update position
+    // remember last position
     SUMOReal oldPos = myState.myPos;
 
-    if (getLaneChangeModel().isOpposite()) {
-        // transform to the forward-direction lane, move and then transform back
-        myState.myPos = myLane->getOppositePos(myState.myPos);
-        myLane = myLane->getOpposite();
-    }
-    myState.myPos += deltaPos;
-    myState.myLastCoveredDist = deltaPos;
+    // update position and speed
+    updateState(vNext);
     
-    myCachedPosition = Position::INVALID;
     std::vector<MSLane*> passedLanes;
     for (std::vector<MSLane*>::reverse_iterator i = myFurtherLanes.rbegin(); i != myFurtherLanes.rend(); ++i) {
         passedLanes.push_back(*i);
@@ -2031,7 +2030,7 @@ MSVehicle::executeMove() {
     if (myState.myPos <= myLane->getLength()) {
         // we are staying at our lane
         //  there is no need to go over succeeding lanes
-        workOnMoveReminders(oldPos, oldPos + deltaPos, vNext);
+        workOnMoveReminders(oldPos, myState.myPos, vNext);
     } else {
         // we are moving at least to the next lane (maybe pass even more than one)
         if (myCurrEdge != myRoute->end() - 1) {
@@ -2144,6 +2143,46 @@ MSVehicle::executeMove() {
         }
     }
     return moved;
+}
+
+
+void
+MSVehicle::updateState(SUMOReal vNext) {
+    // update position and speed
+    SUMOReal deltaPos = getDeltaPos(SPEED2ACCEL(vNext - myState.mySpeed)); // positional change
+
+    // the mean acceleration during the next step
+    // NOTE: for the ballistic update this is in general
+    // not equal to  vNext - myState.mySpeed
+    myAcceleration = SPEED2ACCEL(MAX2(vNext,0.) - myState.mySpeed);
+
+
+    // Debug (Leo)
+#ifdef DEBUG_EXEC_MOVE
+    if (DEBUG_COND) {
+        std::cout << "deltaPos = " << deltaPos << std::endl;
+    }
+#endif
+
+    myState.myPreviousSpeed = myState.mySpeed;
+    myState.mySpeed = MAX2(vNext,0.);
+
+#ifndef NO_TRACI
+    if (myInfluencer != 0 && myInfluencer->isVTDControlled()) {
+        deltaPos = myInfluencer->implicitDeltaPosVTD(this);
+    }
+#endif
+
+    if (getLaneChangeModel().isOpposite()) {
+        // transform to the forward-direction lane, move and then transform back
+        myState.myPos = myLane->getOppositePos(myState.myPos);
+        myLane = myLane->getOpposite();
+    }
+    myState.myPos += deltaPos;
+    myState.myLastCoveredDist = deltaPos;
+
+    myCachedPosition = Position::INVALID;
+
 }
 
 
@@ -3038,6 +3077,7 @@ MSVehicle::getBestLanesContinuation() const {
 const std::vector<MSLane*>&
 MSVehicle::getBestLanesContinuation(const MSLane* const l) const {
     const MSLane* lane = l;
+    // XXX: shouldn't this be a "while" to cover more than one internal lane? (Leo)
     if (lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL) {
         // internal edges are not kept inside the bestLanes structure
         lane = lane->getLinkCont()[0]->getLane();

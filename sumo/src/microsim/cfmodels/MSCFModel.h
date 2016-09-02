@@ -229,6 +229,18 @@ public:
     virtual SUMOReal maxNextSpeed(SUMOReal speed, const MSVehicle* const veh) const;
 
 
+    /** @brief Returns the minimum speed given the current speed
+     * (depends on the numerical update scheme and its step width)
+     * Note that it wouldn't have to depend on the numerical update
+     * scheme if the semantics would rely on acceleration instead of velocity.
+     *
+     * @param[in] speed The vehicle's current speed
+     * @param[in] speed The vehicle itself, for obtaining other values, if needed as e.g. road conditions.
+     * @return The minimum possible speed for the next step
+     */
+    SUMOReal minNextSpeed(SUMOReal speed, const MSVehicle* const veh = 0) const;
+
+
     /** @brief Returns the distance the vehicle needs to halt including driver's reaction time,
      * assuming that during the reaction time, the speed remains constant
      * @param[in] speed The vehicle's current speed
@@ -261,6 +273,7 @@ public:
     	//        assert(maximumSafeSpeed <= speed + NUMERICAL_EPS && maximumSafeSpeed >= speed - NUMERICAL_EPS);
 
         const SUMOReal followDecel = MIN2(myDecel, leaderMaxDecel);
+        // XXX: returning 0 can be wrong if the leader is slower than the follower! (Leo)
         SUMOReal secureGap = MAX2((SUMOReal) 0, brakeGap(speed, followDecel, myHeadwayTime) - brakeGap(leaderSpeed, leaderMaxDecel, 0));
         return secureGap;
 
@@ -294,6 +307,24 @@ public:
      * @param[in] currentSpeed Actual speed of vehicle
      */
     SUMOReal getMinimalArrivalSpeedEuler(SUMOReal dist, SUMOReal currentSpeed) const;
+
+
+    // XXX: make static
+    /* @brief return the resulting gap if, starting with gap currentGap, two vehicles
+     * continue with constant accelerations (velocities bounded by 0 and maxSpeed) for
+     * a given timespan of length 'duration'.
+         * @param[in] currentGap (pos(veh1) - pos(veh2) at start)
+         * @param[in] v1 initial speed of vehicle 1
+         * @param[in] v2 initial speed of vehicle 2
+         * @param[in] a1 acceleration of vehicle 1
+         * @param[in] a2 acceleration of vehicle 2
+         * @param[in] maxV1 maximal speed of vehicle 1
+         * @param[in] maxV2 maximal speed of vehicle 2
+         * @param[in] duration time span for the process
+         * @return estimated gap after 'duration' seconds
+         */
+    SUMOReal gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, SUMOReal v1,  SUMOReal v2, SUMOReal a1=0, SUMOReal a2=0, const SUMOReal maxV1=std::numeric_limits<SUMOReal>::max(), const SUMOReal maxV2=std::numeric_limits<SUMOReal>::max()) const;
+
 
     /* @brief estimate speed while accelerating for the given distance
      * @param[in] dist The distance during which accelerating takes place

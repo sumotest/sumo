@@ -356,6 +356,15 @@ public:
     bool executeMove();
 
 
+    /** @brief calculates the distance covered in the next integration step given
+     *         an acceleration and assuming the current velocity. (gives different
+     *         results for different integration methods, e.g., euler vs. ballistic)
+     *  @param[in] accel the assumed acceleration
+     *  @return distance covered in next integration step
+     */
+    SUMOReal getDeltaPos(SUMOReal accel);
+
+
     /// @name state setter/getter
     //@{
 
@@ -477,6 +486,20 @@ public:
      */
     MSLane* getLane() const {
         return myLane;
+    }
+
+
+    /** @brief Returns the maximal speed for the vehicle on its current lane (including speed factor and deviation,
+     *         i.e., not necessarily the allowed speed limit)
+     * @return The vehicle's max speed
+     */
+    SUMOReal
+    getMaxSpeedOnLane() const {
+        if(myLane != 0){
+            return myLane->getVehicleMaxSpeed(this);
+        } else {
+            return myType->getMaxSpeed();
+        }
     }
 
 
@@ -1556,6 +1579,15 @@ protected:
 
     // @brief get the position of the back bumper;
     const Position getBackPosition() const;
+
+    /** @brief updates the vehicles state, given a next value for its speed.
+     *         This value can be negative in case of the ballistic update to indicate
+     *         a stop within the next timestep. (You can call this a 'hack' to
+     *         emulate reasoning based on accelerations: The assumed constant
+     *         acceleration a within the next time step is then a = (vNext - vCurrent)/TS )
+     *  @param[in] vNext speed in the next time step
+     */
+    void updateState(SUMOReal vNext);
 
 private:
     /* @brief The vehicle's knowledge about edge efforts/travel times; @see MSEdgeWeightsStorage

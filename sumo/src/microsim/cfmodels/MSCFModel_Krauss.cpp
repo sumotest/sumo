@@ -77,7 +77,7 @@ MSCFModel_Krauss::followSpeed(const MSVehicle* const veh, SUMOReal speed, SUMORe
 //				<< "\nfollowSpeedBallistic = " <<  maxSafeFollowSpeedBallistic << std::endl;
 //	}
 
-	return MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
+	return MAX2(MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh)), minNextSpeed(speed));
 }
 
 

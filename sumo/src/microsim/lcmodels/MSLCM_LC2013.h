@@ -140,8 +140,9 @@ protected:
                         SUMOReal plannedSpeed);
 
 
+    // XXX: make static, migrate to MSCFModel
     /* @brief compute the distance to cover until a safe gap to the vehicle v in front is reached
-     *        assuming the current velocities
+     *        assuming constant velocities
          * @param[in] follower the vehicle behind this
          * @param[in] leader the vehicle to be overtaken
          * @param[in] gap initial between this and v
@@ -157,18 +158,6 @@ protected:
 //         * @return either the estimated time for the maneuver or something larger, indicating impossibility
 //         */
 //    SUMOReal estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) const;
-
-
-
-    /* @brief return the resulting gap if, starting with gap currentGap, this vehicle and vehicle veh2 continue with constant accelerations (bounded by 0 and maxSpeed)
-         * @param[in] currentGap (at start)
-         * @param[in] veh2 vehicle 2
-         * @param[in] a1 acceleration of this vehicle 1
-         * @param[in] a2 acceleration of vehicle 2
-         * @param[in] duration time span for the process
-         * @return
-         */
-    SUMOReal gapExtrapolation(SUMOReal currentGap, const MSVehicle* veh2, SUMOReal a1, SUMOReal a2, SUMOReal duration) const;
 
 
     /// @brief compute useful slowdowns for blocked vehicles
@@ -227,7 +216,7 @@ protected:
     /// @name user configurable model parameters
     //@{
     const SUMOReal myStrategicParam;
-    const SUMOReal myCooperativeParam;
+    const SUMOReal myCooperativeParam; // in [0,1]
     const SUMOReal mySpeedGainParam;
     const SUMOReal myKeepRightParam;
     //@}

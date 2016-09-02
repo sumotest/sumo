@@ -67,7 +67,7 @@ MSCFModel::brakeGap(const SUMOReal speed, const SUMOReal decel, const SUMOReal h
 		return SPEED2DIST(steps * speed - speedReduction * steps * (steps + 1) / 2) + speed * headwayTime;
 	} else {
 		// ballistic
-		return speed * (headwayTime + 0.5*speed/decel);
+		return MAX2(speed, 0.) * (headwayTime + 0.5*MAX2(speed, 0.)/decel);
 	}
 }
 
@@ -149,7 +149,7 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     	// indicate a stop within the coming timestep (i.e., to attain negative values)
     	vMin = oldV - ACCEL2SPEED(getMaxDecel());
     }
-    const SUMOReal vMax = MIN3(veh->getLane()->getVehicleMaxSpeed(veh), maxNextSpeed(oldV, veh), vSafe);
+    const SUMOReal vMax = MIN3(veh->getMaxSpeedOnLane(), maxNextSpeed(oldV, veh), vSafe);
     assert(vMin <= vMax);
 
     SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vMax, vMax, *this);
@@ -183,6 +183,16 @@ MSCFModel::interactionGap(const MSVehicle* const veh, SUMOReal vL) const {
 SUMOReal
 MSCFModel::maxNextSpeed(SUMOReal speed, const MSVehicle* const /*veh*/) const {
     return MIN2(speed + (SUMOReal) ACCEL2SPEED(getMaxAccel()), myType->getMaxSpeed());
+}
+
+SUMOReal
+MSCFModel::minNextSpeed(SUMOReal speed, const MSVehicle* const /*veh*/) const {
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        return MAX2(speed - (SUMOReal) ACCEL2SPEED(getMaxDecel()), 0.);
+    } else {
+        // NOTE: ballistic update allows for negative speeds to indicate a stop within the next timestep
+        return speed - (SUMOReal) ACCEL2SPEED(getMaxDecel());
+    }
 }
 
 
@@ -261,6 +271,95 @@ MSCFModel::getMinimalArrivalSpeedEuler(SUMOReal dist, SUMOReal currentSpeed) con
 		arrivalSpeedBraking = getMaxDecel();
 	}
 	return arrivalSpeedBraking;
+}
+
+
+
+
+SUMOReal
+MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, SUMOReal v1,  SUMOReal v2, SUMOReal a1, SUMOReal a2, const SUMOReal maxV1, const SUMOReal maxV2) const{
+
+    SUMOReal newGap = currentGap;
+
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        for(unsigned int steps=1; steps*TS <= duration; ++steps){
+            v1 = MIN2(MAX2(v1 + a1, 0.), maxV1);
+            v2 = MIN2(MAX2(v2 + a2, 0.), maxV2);
+            newGap += TS*(v1-v2);
+        }
+    } else {
+        assert(TS <= duration); // NOTE: below, we assume this when taking tl=MIN2(tl,TS).
+
+        // determine times t1, t2 for which vehicles can break until stop (within duration)
+        // and t3, t4 for which they reach their maximal speed on their current lanes.
+        SUMOReal t1=0, t2=0, t3=0, t4=0;
+
+        // t1: ego veh stops
+        if(a1 < 0 && v1 > 0){
+            const SUMOReal leaderStopTime =  - v1/a1;
+            t1 = MIN2(leaderStopTime, duration);
+        } else if (a1 >= 0) {
+            t1 = duration;
+        }
+        // t2: veh2 stops
+        if(a2 < 0 && v2 > 0){
+            const SUMOReal followerStopTime = -v2/a2;
+            t2 = MIN2(followerStopTime, duration);
+        } else if (a2 >= 0){
+            t2 = duration;
+        }
+        // t3: ego veh reaches vMax
+        if(a1 > 0 && v1 < maxV1){
+            const SUMOReal leaderMaxSpeedTime =  (maxV1 - v1)/a1;
+            t3 = MIN2(leaderMaxSpeedTime, duration);
+        } else if (a1 <= 0) {
+            t3 = duration;
+        }
+        // t4: veh2 reaches vMax
+        if(a2 > 0 && v2 < maxV2){
+            const SUMOReal followerMaxSpeedTime =  (maxV2 - v2)/a2;
+            t4 = MIN2(followerMaxSpeedTime, duration);
+        } else if (a2 <= 0) {
+            t4 = duration;
+        }
+
+        // NOTE: this assumes that the accelerations a1 and a2 are constant over the next
+        //       followerBreakTime seconds (if no vehicle stops before or reaches vMax)
+        std::list<SUMOReal> l;
+        l.push_back(t1);l.push_back(t2);l.push_back(t3);l.push_back(t4);l.sort();
+        std::list<SUMOReal>::const_iterator i;
+        SUMOReal tLast = 0.;
+        for(i=l.begin(); i!=l.end(); ++i) {
+            if(*i != tLast){
+                SUMOReal dt = MIN2(*i,duration) - tLast; // time between *i and tLast
+                SUMOReal dv = v1 - v2; // current velocity difference
+                SUMOReal da = a1 - a2; // current acceleration difference
+                newGap += dv*dt + da*dt*dt / 2.; // update gap
+                v1 += dt*a1; v2 += dt*a2;
+            }
+            if(*i == t1 || *i == t3){
+                // ego veh reached velocity bound
+                a1 = 0.;
+            } else if(*i == t2 || *i == t4) {
+                // veh2 reached velocity bound
+                a2 = 0.;
+            }
+            tLast = MIN2(*i, duration);
+            if(tLast == duration){
+                break;
+            }
+        }
+
+        if(duration != tLast){
+            // (both vehicles have zero acceleration)
+            assert(a1==0. && a2==0.);
+            SUMOReal dt = duration - tLast; // remaining time until duration
+            SUMOReal dv = v1 - v2; // current velocity difference
+            newGap += dv*dt; // update gap
+        }
+    }
+
+    return newGap;
 }
 
 

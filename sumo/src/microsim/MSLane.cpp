@@ -79,6 +79,7 @@
 //#define DEBUG_CONTEXT
 //#define DEBUG_OPPOSITE
 #define DEBUG_COND (getID() == "disabled")
+#define DEBUG_COND (vehicle->getLane == "disabled")
 #define DEBUG_COND2(obj) ((obj != 0 && (obj)->getID() == "disabled")
 
 // ===========================================================================
@@ -1641,7 +1642,7 @@ SUMOReal
 MSLane::getMaximumBrakeDist() const {
     const MSVehicleControl& vc = MSNet::getInstance()->getVehicleControl();
     const SUMOReal maxSpeed = getSpeedLimit() * vc.getMaxSpeedFactor();
-    // this is an upper bound on the actual braking distance (see ticket #860)
+    // NOTE: For the euler update this is an upper bound on the actual braking distance (see ticket #860)
     return maxSpeed * maxSpeed * 0.5 / vc.getMinDeceleration();
 }
 
@@ -1670,23 +1671,27 @@ MSLane::getFollowerOnConsecutive(
     std::vector<MSLane::IncomingLaneInfo> toExamine = myIncomingLanes;
     while (toExamine.size() != 0) {
         for (std::vector<MSLane::IncomingLaneInfo>::iterator i = toExamine.begin(); i != toExamine.end(); ++i) {
-            MSLane* next = (*i).lane;
+            MSLane* next = i->lane;
 #ifdef DEBUG_CONTEXT
             if (DEBUG_COND) {
                 std::cout << SIMTIME << "     nextLane=" << next->getID() << "\n";
             }
 #endif
+            // why take a MAX here? Even if some upcoming lane allows to go faster, the follower should be able
+            // to brake in time if we only consider 'next->getMaximumBrakeDist() - backOffset'.
             dist = MAX2(dist, next->getMaximumBrakeDist() - backOffset);
+            // Checking the first vehicle on the considered lane.
+            // XXX: Could there be a problem if someone fast is just overtaking a a slow first vehicle, e.g.? (Leo)
             MSVehicle* v = next->getFirstAnyVehicle();
             SUMOReal agap = 0;
             if (v != 0) {
-                // the front of v is already on divergent trajectory from the ego vehicle
-                // for which this method is called (in the context of MSLaneChanger).
-                // Therefore, technically v is not a follower but only an obstruction and
-                // the gap is not between the front of v and the back of ego
-                // but rather between the flank of v and the back of ego.
                 if (!v->isFrontOnLane(next)) {
-                    agap = (*i).length - next->getLength() + backOffset
+                    // the front of v is already on divergent trajectory from the ego vehicle
+                    // for which this method is called (in the context of MSLaneChanger).
+                    // Therefore, technically v is not a follower but only an obstruction and
+                    // the gap is not between the front of v and the back of ego
+                    // but rather between the flank of v and the back of ego.
+                    agap = i->length - next->getLength() + backOffset
                            /// XXX dubious term. here for backwards compatibility
                            - v->getVehicleType().getMinGap();
                     if (agap > 0) {
@@ -1694,11 +1699,11 @@ MSLane::getFollowerOnConsecutive(
                         // Otherwise we ignore it and look for another follower
                         v = next->getFirstFullVehicle();
                         if (v != 0) {
-                            agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                            agap = i->length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
                         }
                     }
                 } else {
-                    agap = (*i).length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
+                    agap = i->length - v->getPositionOnLane() + backOffset - v->getVehicleType().getMinGap();
                 }
 #ifdef DEBUG_CONTEXT
                 if (DEBUG_COND) std::cout << SIMTIME << "    "
@@ -1716,15 +1721,15 @@ MSLane::getFollowerOnConsecutive(
                     result.second = agap;
                 }
             } else {
-                if ((*i).length < dist) {
+                if (i->length < dist) {
                     const std::vector<MSLane::IncomingLaneInfo>& followers = next->getIncomingLanes();
                     for (std::vector<MSLane::IncomingLaneInfo>::const_iterator j = followers.begin(); j != followers.end(); ++j) {
-                        if (visited.find((*j).lane) == visited.end()) {
-                            visited.insert((*j).lane);
+                        if (visited.find(j->lane) == visited.end()) { // prevent multiple checks for the same lane in a recurrent network
+                            visited.insert(j->lane);
                             MSLane::IncomingLaneInfo ili;
-                            ili.lane = (*j).lane;
-                            ili.length = (*j).length + (*i).length;
-                            ili.viaLink = (*j).viaLink;
+                            ili.lane = j->lane;
+                            ili.length = j->length + i->length;
+                            ili.viaLink = j->viaLink;
                             newFound.push_back(ili);
                         }
                     }
