@@ -1145,7 +1145,7 @@ GNEViewNet::onCmdTransformLaneToSidewalk(FXObject*, FXSelector, void*) {        
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1211,7 +1211,7 @@ GNEViewNet::onCmdTransformLaneToBikelane(FXObject*, FXSelector, void*) {        
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1277,7 +1277,7 @@ GNEViewNet::onCmdTransformLaneToBuslane(FXObject*, FXSelector, void*) {         
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1343,7 +1343,7 @@ GNEViewNet::onCmdRevertTransformation(FXObject*, FXSelector, void*) {           
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1409,7 +1409,7 @@ GNEViewNet::onCmdAddSidewalk(FXObject*, FXSelector, void*) {                    
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1475,7 +1475,7 @@ GNEViewNet::onCmdAddBikelane(FXObject*, FXSelector, void*) {                    
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1541,7 +1541,7 @@ GNEViewNet::onCmdAddBuslane(FXObject*, FXSelector, void*) {                     
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1607,7 +1607,7 @@ GNEViewNet::onCmdRemoveSidewalk(FXObject*, FXSelector, void*) {                 
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1673,7 +1673,7 @@ GNEViewNet::onCmdRemoveBikelane(FXObject*, FXSelector, void*) {                 
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
@@ -1739,7 +1739,7 @@ GNEViewNet::onCmdRemoveBuslane(FXObject*, FXSelector, void*) {                  
             }                                                                                                               // PABLO #1568
         } else if (gSelected.isSelected(GLO_LANE, lane->getGlID())) {                                                       // PABLO #1568
             // get selected lanes                                                                                           // PABLO #1568
-            std::vector<GNELane*> lanes = myNet->retrieveLanes(true);                                                       // PABLO #1568
+            lanes = myNet->retrieveLanes(true);                                                                             // PABLO #1568
         }                                                                                                                   // PABLO #1568
         // If we handeln a set of lanes                                                                                     // PABLO #1568
         if(lanes.size() > 0) {                                                                                              // PABLO #1568
