@@ -4,6 +4,7 @@
 project(SUMO)
 cmake_minimum_required(VERSION 2.8)
 
+
 set(CMAKE_COLOR_MAKEFILE ON)
 
  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
@@ -84,7 +85,7 @@ if (XercesC_FOUND)
 	message(STATUS "including: " ${XercesC_INCLUDE_DIR})
 	include_directories( ${XercesC_INCLUDE_DIR} )
 	#set(libs "${libs}${XercesC_LIBRARY}")
-endif (XercesC_FOUND) 
+endif (XercesC_FOUND)
 #target_link_libraries ( ${PROJECT_NAME} ${XercesC_LIBRARY} )
 #
 find_package(Proj REQUIRED)
