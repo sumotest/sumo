@@ -160,35 +160,17 @@ public:
     /// @brief duplicate selected lane
     long onCmdDuplicateLane(FXObject*, FXSelector, void*);
 
-    /// @brief transform lane to sidewalk (Only pedestrian are allowed) // PABLO #1568
-    long onCmdTransformLaneToSidewalk(FXObject*, FXSelector, void*);    // PABLO #1568
+    /// @brief transform lane to special lane (Sidewalk, Bikelane or Buslane        // PABLO #1568
+    long onCmdTransformLane(FXObject*, FXSelector typeOfTransformation, void*);     // PABLO #1568
 
-    /// @brief transform lane to bike lane (Only bikes are allowed)     // PABLO #1568
-    long onCmdTransformLaneToBikelane(FXObject*, FXSelector, void*);    // PABLO #1568
-
-    /// @brief transform lane to bus lane (Only bus are allowed)        // PABLO #1568
-    long onCmdTransformLaneToBuslane(FXObject*, FXSelector, void*);     // PABLO #1568
-
-    /// @brief revert transformation                                    // PABLO #1568
-    long onCmdRevertTransformation(FXObject*, FXSelector, void*);       // PABLO #1568
+    /// @brief revert transformation                                                // PABLO #1568
+    long onCmdRevertTransformation(FXObject*, FXSelector, void*);                   // PABLO #1568
     
-    /// @brief Add sidewalk (Only pedestrian are allowed)               // PABLO #1568
-    long onCmdAddSidewalk(FXObject*, FXSelector, void*);                // PABLO #1568
+    /// @brief Add special lane (Sidewalk, Bikelane or Buslane)                     // PABLO #1568
+    long onCmdAddSpecialLane(FXObject*, FXSelector typeOfTransformation, void*);    // PABLO #1568
 
-    /// @brief Add bike lane (Only bikes are allowed)                   // PABLO #1568
-    long onCmdAddBikelane(FXObject*, FXSelector, void*);                // PABLO #1568
-
-    /// @brief Add bus lane (Only bus are allowed)                      // PABLO #1568
-    long onCmdAddBuslane(FXObject*, FXSelector, void*);                 // PABLO #1568
-
-    /// @brief remove sidewalk (Only pedestrian are allowed)            // PABLO #1568
-    long onCmdRemoveSidewalk(FXObject*, FXSelector, void*);             // PABLO #1568
-
-    /// @brief remove bike lane (Only bikes are allowed)                // PABLO #1568
-    long onCmdRemoveBikelane(FXObject*, FXSelector, void*);             // PABLO #1568
-
-    /// @brief remove bus lane (Only bus are allowed)                   // PABLO #1568
-    long onCmdRemoveBuslane(FXObject*, FXSelector, void*);              // PABLO #1568
+    /// @brief remove special lane (Sidewalk, Bikelane or Buslane)                  // PABLO #1568
+    long onCmdRemoveSpecialLane(FXObject*, FXSelector, void*);                      // PABLO #1568
 
     /// @brief input custom node shape
     long onCmdNodeShape(FXObject*, FXSelector, void*);
