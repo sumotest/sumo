@@ -91,8 +91,7 @@
 //#define DEBUG_EXEC_MOVE
 //#define DEBUG_FURTHER
 //#define DEBUG_STOPS
-//#define DEBUG_COND (getID() == "Togliatti_9_13")
-#define DEBUG_COND false
+#define DEBUG_COND (getID() == "disabled")
 
 #define STOPPING_PLACE_OFFSET 0.5
 
@@ -1212,7 +1211,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) {
         std::cout
-                << "\n\n"
+                << "\nPLAN_MOVE\n"
                 << STEPS2TIME(t)
                 << " veh=" << getID()
                 << " lane=" << myLane->getID()
@@ -1565,7 +1564,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     // Debug (Leo)
 #ifdef DEBUG_PLAN_MOVE
     if(DEBUG_COND){
-        std::cout << "planMoveInternal found safe speed\nv = " << v << std::endl;
+        std::cout << "planMoveInternal found safe speed v = " << v << std::endl;
     }
 #endif
 
@@ -1630,6 +1629,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                     //std::cout << std::setprecision(10);
                     << " veh=" << getID()
                     << " lead=" << leaderInfo.first->getID()
+                    << " leadSpeed=" << leaderInfo.first->getSpeed()
                     << " gap=" << leaderInfo.second
                     << " leadLane=" << leaderInfo.first->getLane()->getID()
                     << " predPos=" << leaderInfo.first->getPositionOnLane()
@@ -1638,6 +1638,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                     << " myLane=" << myLane->getID()
                     << " dTC=" << distToCrossing
                     << " v=" << v
+                    << " vSafeLeader=" << v
                     << " vLinkPass=" << vLinkPass
                     << "\n";
 #endif
@@ -1653,6 +1654,13 @@ MSVehicle::getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leader
     SUMOReal vsafeLeader = 0;
     if (leaderInfo.second >= 0) {
         vsafeLeader = cfModel.followSpeed(this, getSpeed(), leaderInfo.second, leaderInfo.first->getSpeed(), leaderInfo.first->getCarFollowModel().getMaxDecel());
+
+//#ifdef DEBUG_PLAN_MOVE
+//        if (DEBUG_COND) std::cout
+//                    << SIMTIME
+//					<< " here\n";
+//#endif
+
     } else {
         // the leading, in-lapping vehicle is occupying the complete next lane
         // stop before entering this lane
@@ -1698,9 +1706,8 @@ MSVehicle::executeMove() {
 #endif
 
 #ifdef DEBUG_EXEC_MOVE
-        if (DEBUG_COND) std::cout << "\n"
+        if (DEBUG_COND) std::cout << "\nEXECUTE_MOVE\n"
                     << SIMTIME
-                    << " executeMove()"
                     << " veh=" << getID()
                     << " speed=" << toString(getSpeed(), 24)
                     << std::endl;
@@ -1893,7 +1900,7 @@ MSVehicle::executeMove() {
 #endif
 
     if ((MSGlobals::gSemiImplicitEulerUpdate && vSafe + NUMERICAL_EPS < vSafeMin)
-            || (vSafe + NUMERICAL_EPS < vSafeMin && vSafeMin != 0)) { // this might be good for the euler case as well
+            || (!MSGlobals::gSemiImplicitEulerUpdate && (vSafe + NUMERICAL_EPS < vSafeMin && vSafeMin != 0))) { // this might be good for the euler case as well
         // cannot drive across a link so we need to stop before it
         // XXX: (Leo) This often called stopSpeed with vSafeMinDist==0 (for the ballistic update), since vSafe can become negative
         //		For the Euler update the term '+ NUMERICAL_EPS' prevented a call here...

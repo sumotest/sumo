@@ -78,9 +78,8 @@
 //#define DEBUG_PLAN_MOVE
 //#define DEBUG_CONTEXT
 //#define DEBUG_OPPOSITE
-#define DEBUG_COND (getID() == "disabled")
-#define DEBUG_COND (vehicle->getLane == "disabled")
-#define DEBUG_COND2(obj) ((obj != 0 && (obj)->getID() == "disabled")
+//#define DEBUG_COND (getID() == "disabled")
+//#define DEBUG_COND2(obj) (obj != 0 && (obj)->getID() == "disabled")
 
 // ===========================================================================
 // static member definitions
@@ -530,6 +529,13 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
                       aVehicle->getID() + "'. Inserting at lane end instead.");
         pos = myLength;
     }
+
+#ifdef DEBUG_INSERTION
+                    if (DEBUG_COND2(aVehicle)) std::cout << SIMTIME
+                                                             << " isInsertionSuccess lane=" << getID()
+															<< " veh '" << aVehicle->getID()<< "'\n";
+#endif
+
     aVehicle->setTentativeLaneAndPosition(this, pos, posLat);
     aVehicle->updateBestLanes(false, this);
     const MSCFModel& cfModel = aVehicle->getCarFollowModel();
@@ -601,6 +607,10 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
             SUMOReal gap = 0;
             MSVehicle* leader = nextLane->getLastAnyVehicle();
             if (leader != 0) {
+#ifdef DEBUG_INSERTION
+                if (DEBUG_COND2(aVehicle)) std::cout << SIMTIME
+                		<< "leader on lane '" << nextLane->getID() << "': " << leader->getID() << "\n";
+#endif
                 gap = seen + leader->getBackPositionOnLane(nextLane) -  aVehicle->getVehicleType().getMinGap();
             }
             if (leader != 0) {
@@ -670,15 +680,7 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
     //if (aVehicle->getID() == "disabled") std::cout << " leaders=" << leaders.toString() << "\n";
     const SUMOReal nspeed = safeInsertionSpeed(aVehicle, leaders, speed);
     if (nspeed < 0 || checkFailure(aVehicle, speed, dist, nspeed, patchSpeed, "")) {
-//    // Debug (Leo)
-//    if(aVehicle->getID() == "flow.2"){
-//    	std::cout << "\nin isInsertionSuccess(veh flow.2):\ngap = " << gap
-//    			<< "\nleader = " << (leader == 0 ? 0 : leader->getID()) << std::endl;
-//    }
-//        // Debug (Leo)
-//        if(aVehicle->getID() == "flow.2"){
-//        	std::cout << "\nin isInsertionSuccess(veh flow.2):\nnspeed = " <<  nspeed << std::endl;
-//        }
+    	// XXX: checking for nspeed<0 might appear naturally with ballistic update (see #860, Leo)
 
         // we may not drive with the given velocity - we crash into the leader
 #ifdef DEBUG_INSERTION
@@ -696,6 +698,12 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
 #endif
         return false;
     }
+#ifdef DEBUG_INSERTION
+        if (DEBUG_COND2(aVehicle)) std::cout << SIMTIME
+        		<< " speed = " << speed
+				<< " nspeed = " << nspeed
+								<< std::endl;
+#endif
 
     MSLeaderDistanceInfo followers = getFollowersOnConsecutive(aVehicle, false);
     for (int i = 0; i < followers.numSublanes(); ++i) {

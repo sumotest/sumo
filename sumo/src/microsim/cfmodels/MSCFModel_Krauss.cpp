@@ -77,7 +77,22 @@ MSCFModel_Krauss::followSpeed(const MSVehicle* const veh, SUMOReal speed, SUMORe
 //				<< "\nfollowSpeedBallistic = " <<  maxSafeFollowSpeedBallistic << std::endl;
 //	}
 
-	return MAX2(MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh)), minNextSpeed(speed));
+	SUMOReal vsafe = maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), vmin=minNextSpeed(speed), vmax =maxNextSpeed(speed, veh);
+
+////	 Debug (Leo)
+//	if(veh->getID() == "f.28"){
+//		std::cout
+//		<< " MSCF_Krauss::followSpeed()\n"
+//		<< "vsafe = " << vsafe
+//		<< " vmin = " << vmin
+//		<< " vmax = " << vmax
+//		<< "\n";
+//	}
+	if(MSGlobals::gSemiImplicitEulerUpdate){
+		return MIN2(vsafe, vmax); // XXX: the euler variant can break as strong as it wishes -- immediately!
+	} else {
+		return MAX2(MIN2(vsafe, vmax), vmin);
+	}
 }
 
 

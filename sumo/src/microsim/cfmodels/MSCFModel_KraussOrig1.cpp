@@ -94,20 +94,18 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
 SUMOReal
 MSCFModel_KraussOrig1::followSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
 	if(MSGlobals::gSemiImplicitEulerUpdate){
-		return MIN2(vsafe(gap, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
+		return MIN2(vsafe(gap, predSpeed, predMaxDecel), maxNextSpeed(speed, veh)); // XXX: and why not cap with minNextSpeed!? (Leo)
 	} else {
-		return MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh));
+		return MAX2(MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh)), minNextSpeed(speed));
 	}
 }
 
 
 SUMOReal
 MSCFModel_KraussOrig1::insertionFollowSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap2pred, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
-    // since the Krauss model tries to compute the maximum follow speed in
-    // method followSpeed this is also used for insertionFollowSpeed
-    // (due to discretization error this may not always be the same value as
-    // returned by maximumSafeFollowSpeed)
 	if(MSGlobals::gSemiImplicitEulerUpdate){
+		// NOTE: I changed this, because we need a flag to indicate, e.g., that we don't want
+		// the speed returned to be limited within actual speed +- maxDecel/maxAccel.
 		return followSpeed(veh, speed, gap2pred, predSpeed, predMaxDecel);
 	} else {
 		// ballistic update
