@@ -21,6 +21,7 @@ import os
 import subprocess
 import sys
 import socket
+import platform
 
 # Define global variables for Server
 TRAY_TOOLTIP = 'Sikulix server'
@@ -60,8 +61,12 @@ def checkStatus():
 
 # start Sikulix Server
 def startSikulixServer():
-	# Call a subprocess of this Python Script to run Sikulix Server
-	subprocess.Popen([os.environ.get('SIKULIX', "c:\\Sikulix\\runSikulix.cmd")] + ["-s"], 
+	# Call a subprocess of this Python Script to run Sikulix Server depending of operating system
+	if platform.system() == 'Linux':
+		subprocess.Popen([os.environ.get('SIKULIX', "runSikulix")] + ["-s"], 
+						env=os.environ, stdout=open(LOG_PATH, 'w'), stderr=None, shell=True)
+	else :
+		subprocess.Popen([os.environ.get('SIKULIX', "runSikulix.cmd")] + ["-s"], 
 					env=os.environ, stdout=open(LOG_PATH, 'w'), stderr=None, shell=True)
 	
 	#return status of sikulixServer
