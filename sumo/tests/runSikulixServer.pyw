@@ -63,7 +63,7 @@ def checkStatus():
 def startSikulixServer():
 	# Call a subprocess of this Python Script to run Sikulix Server depending of operating system
 	if platform.system() == 'Linux':
-		subprocess.Popen([os.environ.get('SIKULIX', "runSikulix")] + ["-s"], 
+		subprocess.Popen([os.environ.get('SIKULIX', "runsikulix")] + ["-s"], 
 						env=os.environ, stdout=open(LOG_PATH, 'w'), stderr=None, shell=True)
 	else :
 		subprocess.Popen([os.environ.get('SIKULIX', "runSikulix.cmd")] + ["-s"], 
