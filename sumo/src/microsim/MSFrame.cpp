@@ -289,8 +289,8 @@ MSFrame::fillOptions() {
     oc.doRegister("lanechange.overtake-right", new Option_Bool(false));
     oc.addDescription("lanechange.overtake-right", "Processing", "Whether overtaking on the right on motorways is permitted");
 
-    oc.doRegister("euler", new Option_Bool(false));
-    oc.addDescription("euler", "Processing", "Whether to use semi-implicit Euler integration method (default previous to version 0.27)");
+    oc.doRegister("step-method.ballistic", new Option_Bool(false));
+    oc.addDescription("step-method.ballistic", "Processing", "Whether to use ballistic method for the positional update of vehicles (default is a semi-implicit Euler method).");
 
     // pedestrian model
     oc.doRegister("pedestrian.model", new Option_String("striping"));
@@ -524,7 +524,7 @@ MSFrame::setMSGlobals(OptionsCont& oc) {
     MSGlobals::gMesoLimitedJunctionControl = oc.getBool("meso-junction-control.limited");
     MSGlobals::gMesoOvertaking = oc.getBool("meso-overtaking");
     MSGlobals::gMesoTLSPenalty = oc.getFloat("meso-tls-penalty");
-    MSGlobals::gSemiImplicitEulerUpdate = oc.getBool("euler");
+    MSGlobals::gSemiImplicitEulerUpdate = !oc.getBool("step-method.ballistic");
     if (MSGlobals::gUseMesoSim) {
         MSGlobals::gUsingInternalLanes = false;
     }
