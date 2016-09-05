@@ -25,7 +25,7 @@ import socket
 # Define global variables for Server
 TRAY_TOOLTIP = 'Sikulix server'
 TRAY_ICON = os.environ.get('SUMO_HOME', '.') + "/tests/sikulixicon.png"
-LOG_PATH = os.environ.get('SUMO_HOME', '.') + "/tests/netEdit/sikulixLog.tmp" 
+LOG_PATH = os.environ.get('SUMO_HOME', '.') + "/tests/netedit/sikulixLog.tmp" 
 
 # Open message dialog to User
 def messageDialog(data=None):
