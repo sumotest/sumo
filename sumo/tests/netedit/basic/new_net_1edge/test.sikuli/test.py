@@ -22,7 +22,7 @@ subprocess.Popen([neteditApp,
                   env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 #Settings.MinSimilarity = 0.1
-wait(netEditResources + "neteditIcon.png")
+match = wait(netEditResources + "neteditNewNet.png", 10)
 
 # focus
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
@@ -31,8 +31,8 @@ click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
 type("e")
 
 # Create two nodes
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(200,400))
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(600,400))
+click(match.getTarget().offset(-200,0))
+click(match.getTarget().offset(200,0))
 
 # save network and quit
 type("s", Key.CTRL)

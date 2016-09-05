@@ -27,13 +27,13 @@
 
 <net version="0.27" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
-    <location netOffset="0.00,0.00" convBoundary="-16.14,25.91,74.77,25.91" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
+    <location netOffset="0.00,0.00" convBoundary="-18.41,45.91,72.50,45.91" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
 
     <edge id="gneE0" from="gneJ0" to="gneJ1" priority="1">
-        <lane id="gneE0_0" index="0" speed="13.89" length="90.91" shape="-16.14,24.26 74.77,24.26"/>
+        <lane id="gneE0_0" index="0" speed="13.89" length="90.91" shape="-18.41,44.26 72.50,44.26"/>
     </edge>
 
-    <junction id="gneJ0" type="unregulated" x="-16.14" y="25.91" incLanes="" intLanes="" shape="-16.14,25.86 -16.14,22.66"/>
-    <junction id="gneJ1" type="unregulated" x="74.77" y="25.91" incLanes="gneE0_0" intLanes="" shape="74.77,22.66 74.77,25.86"/>
+    <junction id="gneJ0" type="unregulated" x="-18.41" y="45.91" incLanes="" intLanes="" shape="-18.41,45.86 -18.41,42.66"/>
+    <junction id="gneJ1" type="unregulated" x="72.50" y="45.91" incLanes="gneE0_0" intLanes="" shape="72.50,42.66 72.50,45.86"/>
 
 </net>
