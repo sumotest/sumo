@@ -8,7 +8,7 @@ Settings.DelayAfterDrag = 0.1
 # get paths 
 SUMOFolder = os.environ.get('SUMO_HOME', '.')
 netEditResources = SUMOFolder + "/tests/netedit/imageResources/"
-file = open(SUMOFolder + "/tests/netEdit/currentEnvironment.tmp", "r")
+file = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
 neteditApp = file.readline().replace("\n", "")
 textTestSandBox = file.readline().replace("\n", "")
 file.close()

@@ -26,7 +26,7 @@ neteditApp = os.environ.get('NETEDIT_BINARY', '.')
 textTestSandBox = os.environ.get('TEXTTEST_SANDBOX', '.')
 
 #Write enviroment variables in currentEnvironment.tmp
-file = open(SUMOFolder + "/tests/netEdit/currentEnvironment.tmp", "w")
+file = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "w")
 file.write(neteditApp + "\n" + textTestSandBox)
 file.close()
 
@@ -62,4 +62,4 @@ runSocket.send("GET /run/test.sikuli HTTP/1.1\n\n")
 runReceived = (runSocket.recv(1024))
 runSocket.close();
 if "200 OK" not in runReceived:
-	print "error running 'test.sikuli'"
+	print "error running 'test.sikuli' %s" % runReceived
