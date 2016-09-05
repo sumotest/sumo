@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:48:03 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 14:01:10 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -10,6 +10,10 @@
         <route-files value="input_routes.rou.xml"/>
         <additional-files value="input_additional.add.xml"/>
     </input>
+
+    <processing>
+        <euler value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -21,6 +25,7 @@
 -->
 
 <instantE1>
-    <instantOut id="test" time="25.12" state="enter" vehID="veh0" speed="11.11" length="5.00" type="DEFAULT_VEHTYPE"/>
-    <instantOut id="test" time="25.57" state="leave" vehID="veh0" speed="11.11" length="5.00" type="DEFAULT_VEHTYPE" occupancy="0.45"/>
+    <instantOut id="test" time="24.62" state="enter" vehID="veh0" speed="11.11" length="5.00" type="DEFAULT_VEHTYPE"/>
+    <instantOut id="test" time="25.00" state="stay" vehID="veh0" speed="11.11" length="5.00" type="DEFAULT_VEHTYPE"/>
+    <instantOut id="test" time="25.06" state="leave" vehID="veh0" speed="13.71" length="5.00" type="DEFAULT_VEHTYPE" occupancy="0.44"/>
 </instantE1>

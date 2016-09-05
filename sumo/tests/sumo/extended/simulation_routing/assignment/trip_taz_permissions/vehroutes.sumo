@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 04/21/16 12:55:48 by SUMO Version dev-SVN-r20509
+<!-- generated on Thu May 19 11:03:26 2016 by SUMO Version dev-SVN-r20747
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -13,6 +13,10 @@
     <output>
         <vehroute-output value="vehroutes.xml"/>
     </output>
+
+    <processing>
+        <euler value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -54,13 +58,13 @@
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="5" depart="100.00" arrival="201.00" fromTaz="1" toTaz="2">
+    <vehicle id="5" depart="100.00" arrival="200.00" fromTaz="1" toTaz="2">
         <routeDistribution>
             <route edges="beg2left left left2end end"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="6" depart="120.00" arrival="221.00" fromTaz="1" toTaz="2">
+    <vehicle id="6" depart="120.00" arrival="220.00" fromTaz="1" toTaz="2">
         <routeDistribution>
             <route edges="beg2left left left2end end"/>
         </routeDistribution>
@@ -78,7 +82,7 @@
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="9" depart="180.00" arrival="280.00" fromTaz="1" toTaz="2">
+    <vehicle id="9" depart="180.00" arrival="279.00" fromTaz="1" toTaz="2">
         <routeDistribution>
             <route edges="beg2left left left2end end"/>
         </routeDistribution>

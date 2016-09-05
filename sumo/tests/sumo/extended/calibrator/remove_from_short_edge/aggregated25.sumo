@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:45:11 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 13:59:49 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -15,6 +15,10 @@
         <vehroute-output value="vehroutes.xml"/>
     </output>
 
+    <processing>
+        <euler value="true"/>
+    </processing>
+
     <report>
         <xml-validation value="never"/>
         <duration-log.disable value="true"/>
@@ -26,8 +30,8 @@
 
 <meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
     <interval begin="0.00" end="300.00" id="expect10vehs">
-        <edge id="beg" sampledSeconds="2250.50" traveltime="22.87" density="15.00" occupancy="7.50" waitingTime="0.00" speed="21.86" departed="100" arrived="0" entered="0" left="92" laneChangedFrom="0" laneChangedTo="0"/>
-        <edge id="end" sampledSeconds="476.38" traveltime="39.03" density="1.46" occupancy="0.73" waitingTime="0.00" speed="27.80" departed="0" arrived="10" entered="92" left="82" laneChangedFrom="0" laneChangedTo="0" vaporized="82"/>
-        <edge id="middle" sampledSeconds="46.00" traveltime="0.54" density="10.22" occupancy="5.11" waitingTime="0.00" speed="27.80" departed="0" arrived="0" entered="92" left="92" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="beg" sampledSeconds="2674.29" traveltime="23.33" density="17.83" occupancy="8.91" waitingTime="0.00" speed="21.43" departed="120" arrived="0" entered="0" left="111" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="end" sampledSeconds="411.02" traveltime="39.03" density="1.26" occupancy="0.63" waitingTime="0.00" speed="27.80" departed="0" arrived="10" entered="60" left="50" laneChangedFrom="0" laneChangedTo="0" vaporized="50"/>
+        <edge id="middle" sampledSeconds="77.65" traveltime="0.54" density="17.26" occupancy="8.63" waitingTime="0.00" speed="27.80" departed="0" arrived="0" entered="111" left="111" laneChangedFrom="0" laneChangedTo="0" vaporized="51"/>
     </interval>
 </meandata>

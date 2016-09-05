@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:46:28 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 14:01:03 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -14,6 +14,10 @@
         <vehroute-output value="vehroutes.xml"/>
     </output>
 
+    <processing>
+        <euler value="true"/>
+    </processing>
+
     <report>
         <xml-validation value="never"/>
         <duration-log.disable value="true"/>
@@ -24,11 +28,11 @@
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-    <vehicle id="veh0" type="Car" depart="1.00" arrival="39.00">
+    <vehicle id="veh0" type="Car" depart="1.00" arrival="38.00">
         <route edges="in1 1to2 out2"/>
     </vehicle>
 
-    <vehicle id="veh1" type="Car" depart="2.00" arrival="40.00">
+    <vehicle id="veh1" type="Car" depart="2.00" arrival="39.00">
         <route edges="in2 2to1 out1"/>
     </vehicle>
 

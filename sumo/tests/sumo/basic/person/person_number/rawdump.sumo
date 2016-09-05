@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May 12 13:36:05 2016 by SUMO Version dev-SVN-r20713
+<!-- generated on Thu May 12 14:20:35 2016 by SUMO Version dev-SVN-r20713
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -21,6 +21,7 @@
     </time>
 
     <processing>
+        <euler value="true"/>
         <pedestrian.model value="nonInteracting"/>
     </processing>
 
@@ -47,7 +48,7 @@
     <timestep time="1.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="1.30" speed="2.60"/>
+                <vehicle id="bus.0" pos="2.60" speed="2.60"/>
             </lane>
         </edge>
         <edge id="2/3to1/3">
@@ -57,7 +58,7 @@
     <timestep time="2.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="5.20" speed="5.20"/>
+                <vehicle id="bus.0" pos="7.80" speed="5.20"/>
             </lane>
         </edge>
         <edge id="2/3to1/3">
@@ -67,7 +68,7 @@
     <timestep time="3.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="11.70" speed="7.80"/>
+                <vehicle id="bus.0" pos="15.60" speed="7.80"/>
             </lane>
         </edge>
         <edge id="2/3to1/3">
@@ -77,7 +78,7 @@
     <timestep time="4.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="20.80" speed="10.40"/>
+                <vehicle id="bus.0" pos="26.00" speed="10.40"/>
             </lane>
         </edge>
         <edge id="2/3to1/3">
@@ -87,7 +88,7 @@
     <timestep time="5.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="32.50" speed="13.00"/>
+                <vehicle id="bus.0" pos="39.00" speed="13.00"/>
             </lane>
         </edge>
         <edge id="2/3to1/3">
@@ -97,7 +98,7 @@
     <timestep time="6.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="45.95" speed="13.90"/>
+                <vehicle id="bus.0" pos="52.90" speed="13.90"/>
             </lane>
         </edge>
         <edge id="2/3to1/3">
@@ -110,7 +111,7 @@
         </edge>
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="59.85" speed="13.90"/>
+                <vehicle id="bus.0" pos="66.80" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
@@ -120,24 +121,24 @@
         </edge>
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="73.75" speed="13.90"/>
+                <vehicle id="bus.0" pos="80.70" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="9.00">
+        <edge id=":1/3_0">
+            <lane id=":1/3_0_0">
+                <vehicle id="bus.0" pos="4.10" speed="13.90"/>
+            </lane>
+        </edge>
         <edge id="1/3to0/3">
             <person id="person0" pos="2.78" angle="270.00" stage="walking"/>
-        </edge>
-        <edge id="1/4to1/3">
-            <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="87.65" speed="13.90"/>
-            </lane>
         </edge>
     </timestep>
     <timestep time="10.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="6.05" speed="13.90"/>
+                <vehicle id="bus.0" pos="13.00" speed="13.90"/>
             </lane>
             <person id="person0" pos="4.17" angle="270.00" stage="walking"/>
         </edge>
@@ -145,7 +146,7 @@
     <timestep time="11.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="19.95" speed="13.90"/>
+                <vehicle id="bus.0" pos="26.90" speed="13.90"/>
             </lane>
             <person id="person0" pos="5.56" angle="270.00" stage="walking"/>
         </edge>
@@ -153,7 +154,7 @@
     <timestep time="12.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="33.85" speed="13.90"/>
+                <vehicle id="bus.0" pos="40.80" speed="13.90"/>
             </lane>
             <person id="person0" pos="6.94" angle="270.00" stage="walking"/>
         </edge>
@@ -161,7 +162,7 @@
     <timestep time="13.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="46.34" speed="11.09"/>
+                <vehicle id="bus.0" pos="51.70" speed="10.90"/>
             </lane>
             <person id="person0" pos="8.33" angle="270.00" stage="walking"/>
         </edge>
@@ -169,7 +170,7 @@
     <timestep time="14.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="55.18" speed="6.59"/>
+                <vehicle id="bus.0" pos="58.10" speed="6.40"/>
             </lane>
             <person id="person0" pos="9.72" angle="270.00" stage="walking"/>
         </edge>
@@ -177,7 +178,7 @@
     <timestep time="15.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="59.52" speed="2.09"/>
+                <vehicle id="bus.0" pos="60.00" speed="1.90"/>
             </lane>
             <person id="person0" pos="11.11" angle="270.00" stage="walking"/>
         </edge>
@@ -622,8 +623,8 @@
     <timestep time="68.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="61.30" speed="2.60" personNumber="1">
-                    <person id="person0" pos="61.30" angle="270.00" stage="driving"/>
+                <vehicle id="bus.0" pos="62.60" speed="2.60" personNumber="1">
+                    <person id="person0" pos="62.60" angle="270.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -631,8 +632,8 @@
     <timestep time="69.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="65.20" speed="5.20" personNumber="1">
-                    <person id="person0" pos="65.20" angle="270.00" stage="driving"/>
+                <vehicle id="bus.0" pos="67.80" speed="5.20" personNumber="1">
+                    <person id="person0" pos="67.80" angle="270.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -640,8 +641,8 @@
     <timestep time="70.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="71.70" speed="7.80" personNumber="1">
-                    <person id="person0" pos="71.70" angle="270.00" stage="driving"/>
+                <vehicle id="bus.0" pos="75.60" speed="7.80" personNumber="1">
+                    <person id="person0" pos="75.60" angle="270.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -649,8 +650,8 @@
     <timestep time="71.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="80.35" speed="9.51" personNumber="1">
-                    <person id="person0" pos="80.35" angle="270.00" stage="driving"/>
+                <vehicle id="bus.0" pos="85.03" speed="9.43" personNumber="1">
+                    <person id="person0" pos="85.03" angle="270.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -658,17 +659,17 @@
     <timestep time="72.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="bus.0" pos="87.61" speed="5.01" personNumber="1">
-                    <person id="person0" pos="87.61" angle="270.00" stage="driving"/>
+                <vehicle id="bus.0" pos="89.97" speed="4.93" personNumber="1">
+                    <person id="person0" pos="89.97" angle="270.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
     </timestep>
     <timestep time="73.00">
-        <edge id=":0/3_3">
-            <lane id=":0/3_3_0">
-                <vehicle id="bus.0" pos="3.42" speed="7.61" personNumber="1">
-                    <person id="person0" pos="3.42" angle="289.63" stage="driving"/>
+        <edge id="0/3to0/4">
+            <lane id="0/3to0/4_0">
+                <vehicle id="bus.0" pos="2.00" speed="7.53" personNumber="1">
+                    <person id="person0" pos="2.00" angle="345.29" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -676,8 +677,8 @@
     <timestep time="74.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="7.33" speed="10.21" personNumber="1">
-                    <person id="person0" pos="7.33" angle="0.00" stage="driving"/>
+                <vehicle id="bus.0" pos="12.13" speed="10.13" personNumber="1">
+                    <person id="person0" pos="12.13" angle="0.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -685,8 +686,8 @@
     <timestep time="75.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="18.84" speed="12.81" personNumber="1">
-                    <person id="person0" pos="18.84" angle="0.00" stage="driving"/>
+                <vehicle id="bus.0" pos="24.87" speed="12.73" personNumber="1">
+                    <person id="person0" pos="24.87" angle="0.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -694,8 +695,8 @@
     <timestep time="76.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="32.19" speed="13.90" personNumber="1">
-                    <person id="person0" pos="32.19" angle="0.00" stage="driving"/>
+                <vehicle id="bus.0" pos="38.77" speed="13.90" personNumber="1">
+                    <person id="person0" pos="38.77" angle="0.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -703,8 +704,8 @@
     <timestep time="77.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="46.09" speed="13.90" personNumber="1">
-                    <person id="person0" pos="46.09" angle="0.00" stage="driving"/>
+                <vehicle id="bus.0" pos="52.67" speed="13.90" personNumber="1">
+                    <person id="person0" pos="52.67" angle="0.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -712,8 +713,8 @@
     <timestep time="78.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="59.99" speed="13.90" personNumber="1">
-                    <person id="person0" pos="59.99" angle="0.00" stage="driving"/>
+                <vehicle id="bus.0" pos="66.57" speed="13.90" personNumber="1">
+                    <person id="person0" pos="66.57" angle="0.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -721,17 +722,17 @@
     <timestep time="79.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="73.89" speed="13.90" personNumber="1">
-                    <person id="person0" pos="73.89" angle="0.00" stage="driving"/>
+                <vehicle id="bus.0" pos="80.47" speed="13.90" personNumber="1">
+                    <person id="person0" pos="80.47" angle="0.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
     </timestep>
     <timestep time="80.00">
-        <edge id="0/3to0/4">
-            <lane id="0/3to0/4_0">
-                <vehicle id="bus.0" pos="87.79" speed="13.90" personNumber="1">
-                    <person id="person0" pos="87.79" angle="0.00" stage="driving"/>
+        <edge id=":0/4_2">
+            <lane id=":0/4_2_0">
+                <vehicle id="bus.0" pos="2.37" speed="13.90" personNumber="1">
+                    <person id="person0" pos="2.37" angle="18.26" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -739,8 +740,8 @@
     <timestep time="81.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="7.11" speed="13.90" personNumber="1">
-                    <person id="person0" pos="7.11" angle="90.00" stage="driving"/>
+                <vehicle id="bus.0" pos="13.69" speed="13.90" personNumber="1">
+                    <person id="person0" pos="13.69" angle="90.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -748,8 +749,8 @@
     <timestep time="82.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="21.01" speed="13.90" personNumber="1">
-                    <person id="person0" pos="21.01" angle="90.00" stage="driving"/>
+                <vehicle id="bus.0" pos="27.59" speed="13.90" personNumber="1">
+                    <person id="person0" pos="27.59" angle="90.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -757,8 +758,8 @@
     <timestep time="83.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="34.91" speed="13.90" personNumber="1">
-                    <person id="person0" pos="34.91" angle="90.00" stage="driving"/>
+                <vehicle id="bus.0" pos="41.49" speed="13.90" personNumber="1">
+                    <person id="person0" pos="41.49" angle="90.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -766,8 +767,8 @@
     <timestep time="84.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="47.22" speed="10.72" personNumber="1">
-                    <person id="person0" pos="47.22" angle="90.00" stage="driving"/>
+                <vehicle id="bus.0" pos="52.16" speed="10.67" personNumber="1">
+                    <person id="person0" pos="52.16" angle="90.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -775,8 +776,8 @@
     <timestep time="85.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="55.70" speed="6.22" personNumber="1">
-                    <person id="person0" pos="55.70" angle="90.00" stage="driving"/>
+                <vehicle id="bus.0" pos="58.33" speed="6.17" personNumber="1">
+                    <person id="person0" pos="58.33" angle="90.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -784,8 +785,8 @@
     <timestep time="86.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="59.67" speed="1.72" personNumber="1">
-                    <person id="person0" pos="59.67" angle="90.00" stage="driving"/>
+                <vehicle id="bus.0" pos="60.00" speed="1.67" personNumber="1">
+                    <person id="person0" pos="60.00" angle="90.00" stage="driving"/>
                 </vehicle>
             </lane>
         </edge>
@@ -969,7 +970,7 @@
     <timestep time="109.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="61.30" speed="2.60"/>
+                <vehicle id="bus.0" pos="62.60" speed="2.60"/>
             </lane>
             <person id="person0" pos="90.56" angle="90.00" stage="walking"/>
         </edge>
@@ -977,7 +978,7 @@
     <timestep time="110.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="65.20" speed="5.20"/>
+                <vehicle id="bus.0" pos="67.80" speed="5.20"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -987,7 +988,7 @@
     <timestep time="111.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="71.70" speed="7.80"/>
+                <vehicle id="bus.0" pos="75.60" speed="7.80"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -997,7 +998,7 @@
     <timestep time="112.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="bus.0" pos="80.80" speed="10.40"/>
+                <vehicle id="bus.0" pos="86.00" speed="10.40"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1005,9 +1006,9 @@
         </edge>
     </timestep>
     <timestep time="113.00">
-        <edge id=":1/4_6">
-            <lane id=":1/4_6_0">
-                <vehicle id="bus.0" pos="0.50" speed="13.00"/>
+        <edge id="1/4to1/3">
+            <lane id="1/4to1/3_0">
+                <vehicle id="bus.0" pos="2.00" speed="13.00"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1017,7 +1018,7 @@
     <timestep time="114.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="8.95" speed="13.90"/>
+                <vehicle id="bus.0" pos="15.90" speed="13.90"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1027,7 +1028,7 @@
     <timestep time="115.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="22.85" speed="13.90"/>
+                <vehicle id="bus.0" pos="29.80" speed="13.90"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1037,7 +1038,7 @@
     <timestep time="116.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="36.75" speed="13.90"/>
+                <vehicle id="bus.0" pos="43.70" speed="13.90"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1047,7 +1048,7 @@
     <timestep time="117.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="50.65" speed="13.90"/>
+                <vehicle id="bus.0" pos="57.60" speed="13.90"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1057,7 +1058,7 @@
     <timestep time="118.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="64.55" speed="13.90"/>
+                <vehicle id="bus.0" pos="71.50" speed="13.90"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">
@@ -1067,7 +1068,7 @@
     <timestep time="119.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="bus.0" pos="78.45" speed="13.90"/>
+                <vehicle id="bus.0" pos="85.40" speed="13.90"/>
             </lane>
         </edge>
         <edge id="1/4to2/4">

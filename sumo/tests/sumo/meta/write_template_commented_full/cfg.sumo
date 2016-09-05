@@ -214,7 +214,7 @@
         <lanechange.overtake-right value="false" type="BOOL"/>
 
         <!-- Whether to use semi-implicit Euler integration method (default previous to version 0.27) -->
-        <euler value="false" type="BOOL"/>
+        <euler value="" type="BOOL"/>
 
         <!-- Select among pedestrian models [&apos;nonInteracting&apos;, &apos;striping&apos;] -->
         <pedestrian.model value="striping" type="STR"/>

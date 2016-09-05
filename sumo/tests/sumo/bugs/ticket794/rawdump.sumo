@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:48:01 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 14:01:08 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -13,6 +13,10 @@
     <output>
         <netstate-dump value="rawdump.xml"/>
     </output>
+
+    <processing>
+        <euler value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -33,21 +37,21 @@
     <timestep time="1.00">
         <edge id="beg">
             <lane id="beg_0">
-                <vehicle id="glitch" pos="29.42" speed="28.84"/>
+                <vehicle id="glitch" pos="28.84" speed="28.84"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="2.00">
         <edge id="beg">
             <lane id="beg_0">
-                <vehicle id="glitch" pos="58.38" speed="29.07"/>
+                <vehicle id="glitch" pos="57.92" speed="29.07"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="3.00">
         <edge id="beg">
             <lane id="beg_0">
-                <vehicle id="glitch" pos="87.89" speed="29.94"/>
+                <vehicle id="glitch" pos="87.86" speed="29.94"/>
             </lane>
         </edge>
     </timestep>

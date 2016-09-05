@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:40:23 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 13:36:38 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -19,6 +19,10 @@
         <end value="0"/>
     </time>
 
+    <processing>
+        <euler value="true"/>
+    </processing>
+
     <report>
         <xml-validation value="never"/>
         <duration-log.disable value="true"/>
@@ -33,8 +37,8 @@
         <edge id="beg">
             <lane id="beg_0">
                 <vehicle id="1" pos="0.00" speed="27.80"/>
-                <vehicle id="2" pos="121.27" speed="27.80"/>
-                <vehicle id="3" pos="242.54" speed="27.80"/>
+                <vehicle id="2" pos="107.70" speed="27.80"/>
+                <vehicle id="3" pos="215.40" speed="27.80"/>
             </lane>
             <lane id="beg_1"/>
             <lane id="beg_2"/>

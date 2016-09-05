@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on Tue Apr  5 13:43:39 2016 by SUMO Version dev-SVN-r20343
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="motorway.net.xml"/>
+        <route-files value="input_routes.rou.xml"/>
+        <additional-files value="input_additional.add.xml"/>
+    </input>
+
+    <processing>
+        <max-depart-delay value="1"/>
+    </processing>
+
+    <report>
+        <xml-validation value="never"/>
+        <duration-log.disable value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+</configuration>
+-->
+
+<detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e1_file.xsd">
+   <interval begin="0.00" end="900.00" id="beg2_0" nVehContrib="482" flow="1928.00" occupancy="9.37" speed="28.80" length="5.00" nVehEntered="482"/>
+   <interval begin="0.00" end="900.00" id="beg2_1" nVehContrib="538" flow="2152.00" occupancy="9.13" speed="32.94" length="5.00" nVehEntered="538"/>
+   <interval begin="900.00" end="1800.00" id="beg2_0" nVehContrib="518" flow="2072.00" occupancy="10.20" speed="28.66" length="5.00" nVehEntered="518"/>
+   <interval begin="900.00" end="1800.00" id="beg2_1" nVehContrib="596" flow="2384.00" occupancy="10.32" speed="32.23" length="5.00" nVehEntered="596"/>
+   <interval begin="1800.00" end="1906.00" id="beg2_0" nVehContrib="59" flow="2003.77" occupancy="9.39" speed="29.78" length="5.00" nVehEntered="59"/>
+   <interval begin="1800.00" end="1906.00" id="beg2_1" nVehContrib="66" flow="2241.51" occupancy="9.95" speed="31.49" length="5.00" nVehEntered="66"/>
+</detector>

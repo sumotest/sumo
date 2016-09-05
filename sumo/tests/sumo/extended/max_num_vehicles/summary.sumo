@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:45:23 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 13:59:56 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -20,6 +20,7 @@
 
     <processing>
         <max-num-vehicles value="20"/>
+        <euler value="true"/>
     </processing>
 
     <report>
@@ -117,19 +118,19 @@
     <step time="82.00" loaded="21" inserted="20" running="20" waiting="1" ended="0" meanWaitingTime="0.00" meanTravelTime="-1.00"/>
     <step time="83.00" loaded="21" inserted="20" running="20" waiting="1" ended="0" meanWaitingTime="0.00" meanTravelTime="-1.00"/>
     <step time="84.00" loaded="21" inserted="20" running="20" waiting="1" ended="0" meanWaitingTime="0.00" meanTravelTime="-1.00"/>
-    <step time="85.00" loaded="21" inserted="21" running="20" waiting="0" ended="1" meanWaitingTime="2.62" meanTravelTime="84.00"/>
-    <step time="86.00" loaded="58" inserted="22" running="20" waiting="36" ended="2" meanWaitingTime="5.00" meanTravelTime="85.00"/>
-    <step time="87.00" loaded="58" inserted="22" running="20" waiting="36" ended="2" meanWaitingTime="5.00" meanTravelTime="85.00"/>
-    <step time="88.00" loaded="58" inserted="23" running="20" waiting="35" ended="3" meanWaitingTime="7.17" meanTravelTime="85.00"/>
-    <step time="89.00" loaded="58" inserted="24" running="20" waiting="34" ended="4" meanWaitingTime="9.17" meanTravelTime="85.00"/>
-    <step time="90.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="91.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="92.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="93.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="94.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="95.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="96.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="97.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="98.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
-    <step time="99.00" loaded="58" inserted="25" running="20" waiting="33" ended="5" meanWaitingTime="10.96" meanTravelTime="84.80"/>
+    <step time="85.00" loaded="21" inserted="20" running="20" waiting="1" ended="0" meanWaitingTime="0.00" meanTravelTime="-1.00"/>
+    <step time="86.00" loaded="21" inserted="21" running="20" waiting="0" ended="1" meanWaitingTime="2.67" meanTravelTime="85.00"/>
+    <step time="87.00" loaded="59" inserted="22" running="20" waiting="37" ended="2" meanWaitingTime="5.09" meanTravelTime="86.00"/>
+    <step time="88.00" loaded="59" inserted="23" running="20" waiting="36" ended="3" meanWaitingTime="7.26" meanTravelTime="85.67"/>
+    <step time="89.00" loaded="59" inserted="23" running="20" waiting="36" ended="3" meanWaitingTime="7.26" meanTravelTime="85.67"/>
+    <step time="90.00" loaded="59" inserted="24" running="20" waiting="35" ended="4" meanWaitingTime="9.29" meanTravelTime="85.75"/>
+    <step time="91.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="92.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="93.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="94.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="95.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="96.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="97.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="98.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
+    <step time="99.00" loaded="59" inserted="25" running="20" waiting="34" ended="5" meanWaitingTime="11.12" meanTravelTime="85.60"/>
 </summary>

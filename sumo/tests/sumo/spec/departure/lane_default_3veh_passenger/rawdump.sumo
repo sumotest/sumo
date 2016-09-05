@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:40:21 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 13:36:35 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -18,6 +18,10 @@
         <begin value="0"/>
         <end value="10"/>
     </time>
+
+    <processing>
+        <euler value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -42,7 +46,7 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="1" pos="5.82" speed="1.44"/>
+                <vehicle id="1" pos="6.54" speed="1.44"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -51,7 +55,7 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="1" pos="8.10" speed="3.12"/>
+                <vehicle id="1" pos="9.66" speed="3.12"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -60,7 +64,8 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="1" pos="12.49" speed="5.66"/>
+                <vehicle id="2" pos="5.10" speed="0.00"/>
+                <vehicle id="1" pos="15.31" speed="5.66"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -69,8 +74,8 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="2" pos="5.10" speed="0.00"/>
-                <vehicle id="1" pos="19.12" speed="7.62"/>
+                <vehicle id="2" pos="6.93" speed="1.83"/>
+                <vehicle id="1" pos="22.93" speed="7.62"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -79,8 +84,8 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="2" pos="6.37" speed="2.54"/>
-                <vehicle id="1" pos="27.66" speed="9.45"/>
+                <vehicle id="2" pos="10.40" speed="3.47"/>
+                <vehicle id="1" pos="33.09" speed="10.16"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -89,8 +94,9 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="2" pos="10.05" speed="4.82"/>
-                <vehicle id="1" pos="37.92" speed="11.08"/>
+                <vehicle id="3" pos="5.10" speed="0.00"/>
+                <vehicle id="2" pos="15.76" speed="5.36"/>
+                <vehicle id="1" pos="45.53" speed="12.44"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -99,9 +105,9 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="3" pos="5.10" speed="0.00"/>
-                <vehicle id="2" pos="15.69" speed="6.45"/>
-                <vehicle id="1" pos="49.95" speed="12.98"/>
+                <vehicle id="3" pos="6.83" speed="1.73"/>
+                <vehicle id="2" pos="23.71" speed="7.95"/>
+                <vehicle id="1" pos="59.60" speed="14.07"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -110,9 +116,9 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="3" pos="6.10" speed="1.99"/>
-                <vehicle id="2" pos="23.01" speed="8.18"/>
-                <vehicle id="1" pos="64.22" speed="15.57"/>
+                <vehicle id="3" pos="10.41" speed="3.59"/>
+                <vehicle id="2" pos="33.67" speed="9.96"/>
+                <vehicle id="1" pos="75.67" speed="16.06"/>
             </lane>
             <lane id="beg_2"/>
         </edge>
@@ -121,9 +127,9 @@
         <edge id="beg">
             <lane id="beg_0"/>
             <lane id="beg_1">
-                <vehicle id="3" pos="9.22" speed="4.25"/>
-                <vehicle id="2" pos="32.12" speed="10.04"/>
-                <vehicle id="1" pos="80.80" speed="17.58"/>
+                <vehicle id="3" pos="15.46" speed="5.05"/>
+                <vehicle id="2" pos="46.15" speed="12.48"/>
+                <vehicle id="1" pos="93.99" speed="18.32"/>
             </lane>
             <lane id="beg_2"/>
         </edge>

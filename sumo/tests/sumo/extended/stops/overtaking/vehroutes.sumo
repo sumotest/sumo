@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:45:01 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 13:59:44 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -16,6 +16,10 @@
         <vehroute-output.sorted value="true"/>
     </output>
 
+    <processing>
+        <euler value="true"/>
+    </processing>
+
     <report>
         <xml-validation value="never"/>
         <duration-log.disable value="true"/>
@@ -26,12 +30,12 @@
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-    <vehicle id="stopped" depart="1.00" arrival="672.00">
-        <route edges="1fi 1si 1o 1fi 1si" exitTimes="26.00 587.00 632.00 654.00 672.00"/>
+    <vehicle id="stopped" depart="1.00" arrival="671.00">
+        <route edges="1fi 1si 1o 1fi 1si" exitTimes="25.00 586.00 631.00 654.00 671.00"/>
     </vehicle>
 
-    <vehicle id="overtaking_right" depart="10.00" arrival="144.00">
-        <route edges="1fi 1si 1o 1fi 1si" exitTimes="35.00 58.00 104.00 126.00 144.00"/>
+    <vehicle id="overtaking_right" depart="10.00" arrival="139.00">
+        <route edges="1fi 1si 1o 1fi 1si" exitTimes="34.00 55.00 100.00 122.00 139.00"/>
     </vehicle>
 
 </routes>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:44:52 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Tue Apr  5 13:59:38 2016 by SUMO Version dev-SVN-r20343
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -21,6 +21,7 @@
 
     <processing>
         <ignore-route-errors value="true"/>
+        <euler value="true"/>
     </processing>
 
     <report>
@@ -37,21 +38,21 @@
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-    <vehicle id="flow_maybe_detour.0" depart="0.00" arrival="210.00">
+    <vehicle id="flow_maybe_detour.0" depart="0.00" arrival="207.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.1" depart="2.00" arrival="211.00">
+    <vehicle id="flow_maybe_detour.1" depart="2.00" arrival="209.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.2" depart="4.00" arrival="213.00">
+    <vehicle id="flow_maybe_detour.2" depart="4.00" arrival="211.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
@@ -65,42 +66,42 @@
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.4" depart="8.00" arrival="217.00">
+    <vehicle id="flow_maybe_detour.4" depart="8.00" arrival="216.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.5" depart="10.00" arrival="219.00">
+    <vehicle id="flow_maybe_detour.5" depart="10.00" arrival="218.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.6" depart="12.00" arrival="221.00">
+    <vehicle id="flow_maybe_detour.6" depart="12.00" arrival="220.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.7" depart="14.00" arrival="223.00">
+    <vehicle id="flow_maybe_detour.7" depart="14.00" arrival="222.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.8" depart="16.00" arrival="225.00">
+    <vehicle id="flow_maybe_detour.8" depart="16.00" arrival="224.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.9" depart="18.00" arrival="227.00">
+    <vehicle id="flow_maybe_detour.9" depart="18.00" arrival="226.00">
         <routeDistribution>
             <route replacedOnEdge="beg" replacedAtTime="20.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
