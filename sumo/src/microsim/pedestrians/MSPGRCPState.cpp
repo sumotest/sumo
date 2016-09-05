@@ -18,29 +18,29 @@
 /****************************************************************************/
 
 
-#include "MSPRCPState.h"
+#include "MSPGRCPState.h"
 
 
-MSPRCPState::MSPRCPState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage) : myPerson(person),
+MSPGRCPState::MSPGRCPState(MSPerson* person,MSPerson::MSPersonStage_Walking* stage) : myPerson(person),
 myStage(stage),
 myPosition(0,0){
 	myRoutePt = stage->getRoute().begin();
 	myCurrentEdgeNumericalID = (*myRoutePt)->getNumericalID();
 }
 
-const MSEdge* MSPRCPState::getEdge() const {
+const MSEdge* MSPGRCPState::getEdge() const {
 	return *myRoutePt;
 }
 
-MSPRCPState::~MSPRCPState() {
+MSPGRCPState::~MSPGRCPState() {
 }
 
-const MSEdge* MSPRCPState::getNextEdge() const {
+const MSEdge* MSPGRCPState::getNextEdge() const {
 
 	return myRoutePt == myStage->getRoute().end()-1 ? 0 : *(myRoutePt+1);
 }
 
-const MSEdge* MSPRCPState::incrEdge() {
+const MSEdge* MSPGRCPState::incrEdge() {
 	if (myRoutePt == myStage->getRoute().end()-1) {
 		return 0;
 	}
@@ -48,7 +48,7 @@ const MSEdge* MSPRCPState::incrEdge() {
 	return *myRoutePt;
 }
 
-const MSEdge * MSPRCPState::updateEdge(const int edgeId) {
+const MSEdge * MSPGRCPState::updateEdge(const int edgeId) {
 
 	std::vector<const MSEdge*>::const_iterator tmp = myRoutePt;
 	for (;tmp < myStage->getRoute().end(); tmp++) {
@@ -69,14 +69,14 @@ const MSEdge * MSPRCPState::updateEdge(const int edgeId) {
 	return 0;
 }
 
-int MSPRCPState::getCurrentEdgeNumericalID() {
+int MSPGRCPState::getCurrentEdgeNumericalID() {
 	return myCurrentEdgeNumericalID;
 }
 
-double MSPRCPState::getLength() const {
+double MSPGRCPState::getLength() const {
 	 return myPerson->getVehicleType().getLength();
 }
 
-void MSPRCPState::setCurrentEdgeNumericalID(int numericalID) {
+void MSPGRCPState::setCurrentEdgeNumericalID(int numericalID) {
 	myCurrentEdgeNumericalID = numericalID;
 }

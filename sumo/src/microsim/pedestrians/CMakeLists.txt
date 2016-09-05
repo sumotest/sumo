@@ -9,11 +9,24 @@ set(microsimpeds_files
 
 
 if(GRPC_FOUND)
-    set(GRPC_DIR "${CMAKE_SOURCE_DIR}/cmake_modules/")
-    file(GLOB ProtoFiles "${CMAKE_SOURCE_DIR}/src/microsim/pedestrians/*.proto")
-    PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
-    PROTOBUF_GENERATE_GRPC_CPP(ProtoGRPCSources ProtoGRPCHeaders ${ProtoFiles})
-    set(microsimpeds_files ${microsimpeds_files} hybridsim.grpc.pb.cc hybridsim.grpc.pb.h hybridsim.pb.cc hybridsim.pb.h RemoteModel.cpp RemoteModel.h)
+
+	message(STATUS "generating protobuf files")
+	set(GRPC_DIR "${CMAKE_SOURCE_DIR}/cmake_modules/")
+	file(GLOB ProtoFiles "${CMAKE_SOURCE_DIR}/src/microsim/pedestrians/*.proto")
+	PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
+	PROTOBUF_GENERATE_GRPC_CPP(ProtoGRPCSources ProtoGRPCHeaders ${ProtoFiles})
+	message(STATUS "generated the following files:
+        ${ProtoSources}
+        ${ProtoGRPCSources}
+        ${ProtoHeaders}
+        ${ProtoGRPCHeaders}")
+
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+    set(microsimpeds_files ${microsimpeds_files} ${ProtoSources}
+            ${ProtoGRPCSources} ${ProtoHeaders} ${ProtoGRPCHeaders}
+            MSPModel_RemoteControlled.cpp MSPModel_RemoteControlled.h MSPGRPCClient.h MSPGRPCClient.cpp
+            MSPGRCPState.h MSPGRCPState.cpp)
 
 
 endif()

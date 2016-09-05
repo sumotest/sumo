@@ -29,7 +29,7 @@
 #include <microsim/MSEdge.h>
 #include <microsim/MSLane.h>
 #include "MSPerson.h"
-#include "MSPRCPState.h"
+#include "MSPGRCPState.h"
 #include "hybridsim.grpc.pb.h"
 using grpc::Channel;
 using grpc::ClientContext;
@@ -50,24 +50,24 @@ public:
 
 	//hybrid simulation
 	void simulateTimeInterval(SUMOTime fromIncl, SUMOTime toExcl);
-	bool transmitPedestrian(MSPRCPState* st);
-	void receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates, SUMOTime time);
-	void retrieveAgents(std::map<const std::string,MSPRCPState*>& pstates,MSNet* net, SUMOTime time);
+	bool transmitPedestrian(MSPGRCPState* st);
+	void receiveTrajectories(std::map<const std::string,MSPGRCPState*>& pstates, SUMOTime time);
+	void retrieveAgents(std::map<const std::string,MSPGRCPState*>& pstates,MSNet* net, SUMOTime time);
 
-	std::set<MSPRCPState*> getPedestrians(const MSLane * lane);
+	std::set<MSPGRCPState*> getPedestrians(const MSLane * lane);
 
 private:
 
-	std::map<const MSLane*,std::set<MSPRCPState*>> laneMapping;
+	std::map<const MSLane*,std::set<MSPGRCPState*>> laneMapping;
 
-	std::set<MSPRCPState*> emptySet;
+	std::set<MSPGRCPState*> emptySet;
 
 
 	std::unique_ptr<hybridsim::HybridSimulation::Stub> hybridsimStub;
 	MSNet* net;
 
 
-	//	void extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPRCPState * st);
+	//	void extractEnterAndLeaveCoordinate(hybridsim::Coordinate * enterC, hybridsim::Coordinate * leaveC, MSPGRCPState * st);
 	void extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, SUMOReal pos);
 	//	int inSim = 0;
 

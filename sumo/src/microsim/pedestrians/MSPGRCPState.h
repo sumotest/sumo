@@ -35,10 +35,10 @@
  * @class MSPRCPState
  *
  */
-class MSPRCPState : public PedestrianState {
+class MSPGRCPState : public PedestrianState {
 	public:
-		MSPRCPState(MSPerson * person,MSPerson::MSPersonStage_Walking* stage);//: myPerson(person), myRoutePt(rp){};
-		virtual ~MSPRCPState();
+		MSPGRCPState(MSPerson * person,MSPerson::MSPersonStage_Walking* stage);//: myPerson(person), myRoutePt(rp){};
+		virtual ~MSPGRCPState();
 
 		/// @brief abstract methods inherited from PedestrianState
 		/// @{
@@ -97,12 +97,12 @@ class MSPRCPState : public PedestrianState {
 	;
 };
 
-//inline const MSEdge* MSPRCPState::getEdge() const {
+//inline const MSEdge* MSPGRCPState::getEdge() const {
 //	const MSEdge * rt = *myRoutePt;
 //	return rt;
 //}
 //
-//inline const MSEdge* MSPRCPState::getNextEdge() const {
+//inline const MSEdge* MSPGRCPState::getNextEdge() const {
 //	const MSEdge * rt = *(myRoutePt+1);
 //	return rt;
 //}

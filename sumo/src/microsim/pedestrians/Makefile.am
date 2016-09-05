@@ -4,8 +4,9 @@ libmicrosimpeds_a_SOURCES = MSPerson.cpp MSPerson.h \
 MSPModel.cpp MSPModel.h \
 MSPModel_Striping.cpp MSPModel_Striping.h \
 MSPModel_NonInteracting.cpp MSPModel_NonInteracting.h \
+MSPModel_RemoteControlled.cpp MSPModel_RemoteControlled.h \
 MSGRPCClient.cpp MSGRPCClient.h \
-MSPRCPState.cpp MSPRCPState.h \
+MSPGRCPState.cpp MSPGRCPState.h \
 hybridsim.grpc.pb.cc hybridsim.grpc.pb.h \
 hybridsim.pb.cc hybridsim.pb.h
 

@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_COLOR_MAKEFILE ON)
 
- set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(warnings "-Wall -Wextra")
@@ -81,67 +81,66 @@ endif (APPLE)
 
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
-	message(STATUS "Found xerces-c: " ${XercesC_VERSION})
-	message(STATUS "including: " ${XercesC_INCLUDE_DIR})
-	include_directories( ${XercesC_INCLUDE_DIR} )
-	#set(libs "${libs}${XercesC_LIBRARY}")
+    message(STATUS "Found xerces-c: " ${XercesC_VERSION})
+    message(STATUS "including: " ${XercesC_INCLUDE_DIR})
+    include_directories(${XercesC_INCLUDE_DIR})
+    #set(libs "${libs}${XercesC_LIBRARY}")
 endif (XercesC_FOUND)
 #target_link_libraries ( ${PROJECT_NAME} ${XercesC_LIBRARY} )
 #
 find_package(Proj REQUIRED)
 if (PROJ_FOUND)
-	message(STATUS "including: " ${PROJ_INCLUDE_DIR})
-	#set(libs "${libs}${PROJ_LIBRARY}")
-	link_directories(${PROJ_LIBRARY})
-	include_directories( ${PROJ_INCLUDE_DIR})
-	#target_link_libraries ( ${PROJECT_NAME} ${PROJ_LIBRARY} )
-endif(PROJ_FOUND)
+    message(STATUS "including: " ${PROJ_INCLUDE_DIR})
+    #set(libs "${libs}${PROJ_LIBRARY}")
+    link_directories(${PROJ_LIBRARY})
+    include_directories(${PROJ_INCLUDE_DIR})
+    #target_link_libraries ( ${PROJECT_NAME} ${PROJ_LIBRARY} )
+endif (PROJ_FOUND)
 
 find_package(GDAL REQUIRED)
 if (GDAL_FOUND)
-	message(STATUS "Found GDAL")
-	#set(libs "${libs} GDAL")
-	message(STATUS "including: " ${GDAL_INCLUDE_DIR})
-	include_directories(${GDAL_INCLUDE_DIR})
-	link_directories( ${GDAL_LIBRARIES})
-	#target_link_libraries ( ${PROJECT_NAME} ${GDAL_LIBRARY} )
-endif(GDAL_FOUND)
+    message(STATUS "Found GDAL")
+    #set(libs "${libs} GDAL")
+    message(STATUS "including: " ${GDAL_INCLUDE_DIR})
+    include_directories(${GDAL_INCLUDE_DIR})
+    link_directories(${GDAL_LIBRARIES})
+    #target_link_libraries ( ${PROJECT_NAME} ${GDAL_LIBRARY} )
+endif (GDAL_FOUND)
 
 
 find_package(FOX REQUIRED)
 if (FOX_FOUND)
-	message(STATUS "Found Fox Toolkit")
-	add_definitions(${FOX_CXX_FLAGS})
-endif(FOX_FOUND)
+    message(STATUS "Found Fox Toolkit")
+    add_definitions(${FOX_CXX_FLAGS})
+endif (FOX_FOUND)
 
 find_package(X11)
 if (X11_FOUND)
-	link_directories(${X11_LIBRARY_DIR})
-	include_directories(${X11_INCLUDE_DIR})
-endif(X11_FOUND)
+    link_directories(${X11_LIBRARY_DIR})
+    include_directories(${X11_INCLUDE_DIR})
+endif (X11_FOUND)
 #find_package(OpenGL REQUIRED)
 
 find_package(FFMPEG REQUIRED)
 if (FFMPEG_FOUND)
-	message(${FFMPEG_LIBRARIES})
+    message(${FFMPEG_LIBRARIES})
     include_directories(${GRPC_INCLUDE_DIR})
 
-endif()
-
-
-
+endif ()
 
 
 find_package(GRPC)
-if(GRPC_FOUND)
+if (GRPC_FOUND)
+    find_package(Protobuf REQUIRED)
+
     add_definitions(-DBUILD_REMOTE_MODEL)
     add_definitions(${GRPC_DEFINITONS})
     link_directories(${PC_GRPC_LIBRARY_DIRS})
-    find_package(Protobuf REQUIRED)
+
+
+
     set(GRPC_LIBS grpc++ grpc protobuf dl)
-endif()
-
-
+endif ()
 
 
 set(warning_flags "-Wno-deprecated-register")

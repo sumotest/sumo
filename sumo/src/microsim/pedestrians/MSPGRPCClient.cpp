@@ -26,7 +26,7 @@
 #include <utils/geom/PositionVector.h>
 #include <utils/geom/Position.h>
 #include <regex>
-#include "MSGRPCClient.h"
+#include "MSPGRPCClient.h"
 
 
 
@@ -495,7 +495,7 @@ void MSGRPCClient::extractCoordinate(hybridsim::Coordinate *c,const MSLane * l, 
 	c->set_x(p.x());
 }
 
-bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
+bool MSGRPCClient::transmitPedestrian(MSPGRCPState* st) {
 #ifdef DEBUG
 	std::cout << "MSGRPCClient::transmitPedestrian" << std::endl;
 #endif	
@@ -567,7 +567,7 @@ bool MSGRPCClient::transmitPedestrian(MSPRCPState* st) {
 
 }
 
-std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
+std::set<MSPGRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
 
 	auto ret = laneMapping[(lane)];
 #ifdef DEBUG
@@ -578,7 +578,7 @@ std::set<MSPRCPState*> MSGRPCClient::getPedestrians(const MSLane* lane) {
 	return ret;
 }
 
-void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>& pstates,SUMOTime time) {
+void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPGRCPState*>& pstates,SUMOTime time) {
 
 #ifdef DEBUG
 	std::cout << "MSGRPCClient::receiveTrajectories" << std::endl;
@@ -595,7 +595,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 				std::cerr << "Error receiving pedestrian trajectories from external simulation" << std::endl;
 				exit(-1);
 			}
-			MSPRCPState* st = pstates[t.id()];
+			MSPGRCPState* st = pstates[t.id()];
 			st->setXY(t.x(),t.y());
 			st->setSpeed(t.spd());
 			st->setAngle(t.phi());
@@ -614,7 +614,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 				for (const MSLane * ln : last->getLanes()) {
 					if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 						//unmap ped from lane
-						std::set<MSPRCPState*> * set = &laneMapping[ln];
+						std::set<MSPGRCPState*> * set = &laneMapping[ln];
 #ifdef DEBUG
 						std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 						std::cout << set->size() << std::endl;
@@ -635,7 +635,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 						std::cout << "+++++++++++++++++++++++++++++++" << std::endl;
 						std::cout << "ped: " << t.id() <<" mapped to lane: " << ln->getID() << " on edge: " << current->getID() << std::endl;
 #endif
-						std::set<MSPRCPState*> * set = &laneMapping[ln];
+						std::set<MSPGRCPState*> * set = &laneMapping[ln];
 						set->insert(st);
 						break;
 					}
@@ -661,7 +661,7 @@ void MSGRPCClient::receiveTrajectories(std::map<const std::string,MSPRCPState*>&
 	}
 }
 
-void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pstates,MSNet* net, SUMOTime time) {
+void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPGRCPState*>& pstates,MSNet* net, SUMOTime time) {
 
 #ifdef DEBUG
 	std::cout << "MSGRPCClient::retrieveAgents" << std::endl;
@@ -681,11 +681,11 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPRCPState*>& pst
 #ifdef DEBUG1
 			std::cout << "MSGRPCClient::retrieveAgents  pers left:" << a.id() << std::endl;
 #endif
-			MSPRCPState* st = pstates[a.id()];
+			MSPGRCPState* st = pstates[a.id()];
 			for (const MSLane * ln : net->getEdgeControl().getEdges()[st->getCurrentEdgeNumericalID()]->getLanes()) {
 				if (ln->allowsVehicleClass(SUMOVehicleClass::SVC_PEDESTRIAN)) {
 					//unmap ped from lane
-					std::set<MSPRCPState*> * set = &laneMapping[ln];
+					std::set<MSPGRCPState*> * set = &laneMapping[ln];
 					set->erase(st);
 					break;
 				}

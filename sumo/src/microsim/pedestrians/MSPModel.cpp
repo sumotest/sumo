@@ -39,7 +39,7 @@
 #include "MSPModel.h"
 
 #ifdef BUILD_REMOTE_MODEL
-#include "RemoteModel.h"
+#include "MSPModel_RemoteControlled.h"
 
 #endif
 
@@ -76,7 +76,7 @@ MSPModel::getModel() {
             myModel = new MSPModel_NonInteracting(oc, net);
 #ifdef BUILD_REMOTE_MODEL
         } else if(model == "remote") {
-            myModel = new RemoteModel(oc,net);
+            myModel = new MSPModel_RemoteControlled(oc,net);
 
 #endif
         } else {
