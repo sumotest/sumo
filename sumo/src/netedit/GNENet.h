@@ -199,65 +199,32 @@ public:
      */
     void duplicateLane(GNELane* lane, GNEUndoList* undoList);
 
-    /**@brief transform lane to sidewalk lane                               // PABLO #1568
-     * @param[in] lane The lane to be trasformed                            // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool transformLaneToSidewalk(GNELane* lane, GNEUndoList* undoList);     // PABLO #1568
+    /**@brief transform lane to restricted lane                                                 // PABLO #1568
+     * @param[in] vclass vehicle class to restrict                                              // PABLO #1568
+     * @param[in] lane The lane to be trasformed                                                // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
+     */                                                                                         // PABLO #1568
+    bool restrictLane(SUMOVehicleClass vclass, GNELane* lane, GNEUndoList* undoList);           // PABLO #1568
 
-    /**@brief transform lane to bikelane                                    // PABLO #1568
-     * @param[in] lane The lane to be transfomred                           // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool transformLaneToBikelane(GNELane* lane, GNEUndoList* undoList);     // PABLO #1568
+    /**@brief revert prevously restricted lane                                                  // PABLO #1568
+     * @param[in] lane The lane to be unrestricted                                              // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
+     */                                                                                         // PABLO #1568
+    bool revertLaneRestriction(GNELane* lane, GNEUndoList* undoList);                           // PABLO #1568
 
-    /**@brief transform lane to buslane                                     // PABLO #1568
-     * @param[in] lane The lane to be trasformed                            // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool transformLaneToBuslane(GNELane* lane, GNEUndoList* undoList);      // PABLO #1568
+    /**@brief add restricted lane to edge                                                       // PABLO #1568
+     * @param[in] vclass vehicle class to restrict                                              // PABLO #1568
+     * @param[in] edge The edge in which insert restricted lane                                 // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
+     */                                                                                         // PABLO #1568
+    bool addSRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList);     // PABLO #1568
 
-    /**@brief revert prevously transformation of a lane to buslane          // PABLO #1568
-     * @param[in] lane The lane to be trasformed                            // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool revertLaneTransformation(GNELane* lane, GNEUndoList* undoList);    // PABLO #1568
-
-    /**@brief add sidewalk to edge                                          // PABLO #1568
-     * @param[in] edge The edge in which insert sidewalk                    // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool addSidewalk(GNEEdge &edge, GNEUndoList* undoList);                 // PABLO #1568
-
-    /**@brief add bikelane to edge                                          // PABLO #1568
-     * @param[in] edge The edge in which insert bikelane                    // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool addBikelane(GNEEdge &edge, GNEUndoList* undoList);                 // PABLO #1568
-
-    /**@brief add buslane to edge                                           // PABLO #1568
-     * @param[in] edge The edge in which insert buslane                     // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool addBuslane(GNEEdge &edge, GNEUndoList* undoList);                  // PABLO #1568
-
-    /**@brief remove sidewalk lane                                          // PABLO #1568
-     * @param[in] edge the edge in which remove sidewalk                    // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool removeSidewalk(GNEEdge &edge, GNEUndoList* undoList);              // PABLO #1568
-
-    /**@brief remove bikelane                                               // PABLO #1568
-     * @param[in] edge the edge in which remove bikelane                    // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool removeBikelane(GNEEdge &edge, GNEUndoList* undoList);              // PABLO #1568
-
-    /**@brief remove buslane                                                // PABLO #1568
-     * @param[in] edge the edge in which remove buslane                     // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes            // PABLO #1568
-     */                                                                     // PABLO #1568
-    bool removeBuslane(GNEEdge &edge, GNEUndoList* undoList);               // PABLO #1568
+    /**@brief remove restricted lane                                                            // PABLO #1568
+     * @param[in] vclass vehicle class to restrict                                              // PABLO #1568
+     * @param[in] edge the edge in which remove sidewalk                                        // PABLO #1568
+     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
+     */                                                                                         // PABLO #1568
+    bool removeRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList);   // PABLO #1568
 
     /**@brief removes geometry when pos is close to a geometry node, deletes
      * the whole edge otherwise

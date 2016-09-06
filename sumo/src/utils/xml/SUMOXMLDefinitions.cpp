@@ -289,6 +289,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "lcKeepRight",            SUMO_ATTR_LCA_KEEPRIGHT_PARAM },
     { "lcSublane",              SUMO_ATTR_LCA_SUBLANE_PARAM },
     { "lcPushy",                SUMO_ATTR_LCA_PUSHY },
+    { "lcAssertive",            SUMO_ATTR_LCA_ASSERTIVE },
 
     { "last",                   SUMO_ATTR_LAST },
     { "cost",                   SUMO_ATTR_COST },
@@ -591,7 +592,6 @@ StringBijection<TrafficLightType>::Entry SUMOXMLDefinitions::trafficLightTypesVa
 StringBijection<LaneChangeModel>::Entry SUMOXMLDefinitions::laneChangeModelValues[] = {
     { "DK2008",     LCM_DK2008 },
     { "LC2013",     LCM_LC2013 },
-    { "JE2013",     LCM_JE2013 },
     { "SL2015",     LCM_SL2015 },
     { "default",    LCM_DEFAULT } //< must be the last one
 };
@@ -625,7 +625,7 @@ StringBijection<LaneChangeAction>::Entry SUMOXMLDefinitions::laneChangeActionVal
     { "strategic",   LCA_STRATEGIC },
     { "cooperative", LCA_COOPERATIVE },
     { "speedGain",   LCA_SPEEDGAIN },
-    { "keepRaight",  LCA_KEEPRIGHT },
+    { "keepRight",   LCA_KEEPRIGHT },
     { "sublane",     LCA_SUBLANE },
     { "traci",       LCA_TRACI },
     { "urgent",      LCA_URGENT },

@@ -160,17 +160,35 @@ public:
     /// @brief duplicate selected lane
     long onCmdDuplicateLane(FXObject*, FXSelector, void*);
 
-    /// @brief transform lane to special lane (Sidewalk, Bikelane or Buslane        // PABLO #1568
-    long onCmdTransformLane(FXObject*, FXSelector typeOfTransformation, void*);     // PABLO #1568
+    /// @brief restrict lane to pedestrians                                                     // PABLO #1568
+    long onCmdRestrictLaneSidewalk(FXObject*, FXSelector typeOfTransformation, void*);          // PABLO #1568
 
-    /// @brief revert transformation                                                // PABLO #1568
-    long onCmdRevertTransformation(FXObject*, FXSelector, void*);                   // PABLO #1568
+    /// @brief restrict lane to bikes                                                           // PABLO #1568
+    long onCmdRestrictLaneBikelane(FXObject*, FXSelector typeOfTransformation, void*);          // PABLO #1568
+
+    /// @brief restrict lane to buslanes                                                        // PABLO #1568
+    long onCmdRestrictLaneBuslane(FXObject*, FXSelector typeOfTransformation, void*);           // PABLO #1568
+
+    /// @brief revert transformation                                                            // PABLO #1568
+    long onCmdRevertRestriction(FXObject*, FXSelector, void*);                                  // PABLO #1568
     
-    /// @brief Add special lane (Sidewalk, Bikelane or Buslane)                     // PABLO #1568
-    long onCmdAddSpecialLane(FXObject*, FXSelector typeOfTransformation, void*);    // PABLO #1568
+    /// @brief Add restricted lane for pedestrians                                              // PABLO #1568
+    long onCmdAddRestrictedLaneSidewalk(FXObject*, FXSelector typeOfTransformation, void*);     // PABLO #1568
+    
+    /// @brief Add restricted lane for bikes                                                    // PABLO #1568
+    long onCmdAddRestrictedLaneBikelane(FXObject*, FXSelector typeOfTransformation, void*);     // PABLO #1568
+    
+    /// @brief Add restricted lane for buses                                                    // PABLO #1568
+    long onCmdAddRestrictedLaneBuslane(FXObject*, FXSelector typeOfTransformation, void*);      // PABLO #1568
 
-    /// @brief remove special lane (Sidewalk, Bikelane or Buslane)                  // PABLO #1568
-    long onCmdRemoveSpecialLane(FXObject*, FXSelector, void*);                      // PABLO #1568
+    /// @brief remove restricted lane for pedestrians                                           // PABLO #1568
+    long onCmdRemoveRestrictedLaneSidewalk(FXObject*, FXSelector typeOfTransformation, void*);  // PABLO #1568
+
+        /// @brief remove restricted lane for bikes                                             // PABLO #1568
+    long onCmdRemoveRestrictedLaneBikelane(FXObject*, FXSelector typeOfTransformation, void*);  // PABLO #1568
+
+        /// @brief remove restricted lane for bus                                               // PABLO #1568
+    long onCmdRemoveRestrictedLaneBuslane(FXObject*, FXSelector typeOfTransformation, void*);   // PABLO #1568
 
     /// @brief input custom node shape
     long onCmdNodeShape(FXObject*, FXSelector, void*);
@@ -375,6 +393,15 @@ private:
 
     /// @brief remove the currently edited polygon
     void removeCurrentPoly();
+
+    /// @brief restrict lane                            // PABLO #1568
+    bool restrictLane(SUMOVehicleClass vclass);         // PABLO #1568
+    
+    /// @brief add restricted lane                      // PABLO #1568
+    bool addRestrictedLane(SUMOVehicleClass vclass);    // PABLO #1568
+
+    /// @brief remove restricted lane                   // PABLO #1568
+    bool removeRestrictedLane(SUMOVehicleClass vclass); // PABLO #1568
 
     /// @brief Invalidated copy constructor.
     GNEViewNet(const GNEViewNet&);

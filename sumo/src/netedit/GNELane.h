@@ -195,14 +195,8 @@ public:
     /// @brief return list of additionalSets associated with this lane
     const std::vector<GNEAdditionalSet*>& getAdditionalSets();
 
-    /// @brief check if this lane is a sidewalk     // PABLO #1568
-    bool isSidewalk() const;                        // PABLO #1568
-
-    /// @brief check if this lane is a bikelane     // PABLO #1568
-    bool isBikelane() const;                        // PABLO #1568
-
-    /// @brief check if this lane is a buslane      // PABLO #1568
-    bool isBuslane() const;                         // PABLO #1568
+    /// @brief check if this lane is restricted         // PABLO #1568
+    bool isRestricted(SUMOVehicleClass vclass) const;   // PABLO #1568
 
     /// @name inherited from GNEAttributeCarrier
     /// @{

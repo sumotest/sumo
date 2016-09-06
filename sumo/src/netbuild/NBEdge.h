@@ -227,6 +227,7 @@ public:
         std::string getInternalLaneID() const;
     };
 
+
     /// @brief unspecified lane width
     static const SUMOReal UNSPECIFIED_WIDTH;
 
@@ -247,6 +248,8 @@ public:
 
     /// @brief the distance at which to take the default angle
     static const SUMOReal ANGLE_LOOKAHEAD;
+    /// @brief internal lane computation not yet done
+    static const int UNSPECIFIED_INTERNAL_LANE_INDEX;
 
     /// @brief junction priority values set by setJunctionPriority
     enum JunctionPriority { 

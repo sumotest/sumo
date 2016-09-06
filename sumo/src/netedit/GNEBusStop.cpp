@@ -213,7 +213,7 @@ GNEBusStop::drawGL(const GUIVisualizationSettings& s) const {
         }
 
         // Iterate over every line
-        for (int i = 0; i != myLines.size(); ++i) {
+        for (int i = 0; i < (int)myLines.size(); ++i) {
             // Add a new push matrix
             glPushMatrix();
 

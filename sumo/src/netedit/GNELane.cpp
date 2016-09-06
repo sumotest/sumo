@@ -399,10 +399,10 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     const int editMode = parent.getVisualisationSettings()->editMode;
     myTLSEditor = 0;
     if (editMode != GNE_MODE_CONNECT && editMode != GNE_MODE_TLS && editMode != GNE_MODE_CREATE_EDGE) {
-        // Get icons                                                            // PABLO #1568
-        FXIcon* pedestrianIcon = GUIIconSubSys::getIcon(ICON_LANEPEDESTRIAN);   // PABLO #1568
-        FXIcon* bikeIcon = GUIIconSubSys::getIcon(ICON_LANEBIKE);               // PABLO #1568
-        FXIcon* busIcon = GUIIconSubSys::getIcon(ICON_LANEBUS);                 // PABLO #1568
+        // Get icons                                                                                                                                            // PABLO #1568
+        FXIcon* pedestrianIcon = GUIIconSubSys::getIcon(ICON_LANEPEDESTRIAN);                                                                                   // PABLO #1568
+        FXIcon* bikeIcon = GUIIconSubSys::getIcon(ICON_LANEBIKE);                                                                                               // PABLO #1568
+        FXIcon* busIcon = GUIIconSubSys::getIcon(ICON_LANEBUS);                                                                                                 // PABLO #1568
         // Create basic commands
         new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
         new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
@@ -441,9 +441,9 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
         } else {
             new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
             // Declare flags                                                                                                                                    // PABLO #1568
-            bool edgeHasSidewalk = myParentEdge.hasSidewalk();                                                                                                  // PABLO #1568
-            bool edgeHasBikelane = myParentEdge.hasBikelane();                                                                                                  // PABLO #1568
-            bool edgeHasBuslane = myParentEdge.hasBuslane();                                                                                                    // PABLO #1568
+            bool edgeHasSidewalk = myParentEdge.hasRestrictedLane(SVC_PEDESTRIAN);                                                                              // PABLO #1568
+            bool edgeHasBikelane = myParentEdge.hasRestrictedLane(SVC_BICYCLE);                                                                                 // PABLO #1568
+            bool edgeHasBuslane = myParentEdge.hasRestrictedLane(SVC_BUS);                                                                                      // PABLO #1568
             // Create panel for lane operations                                                                                                                 // PABLO #1568
             FXMenuPane *addSpecialLanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568
             FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);                                                                                               // PABLO #1568
@@ -492,7 +492,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
                 cascadeRemoveSpecialLane->disable();                                                                                                            // PABLO #1568
             }                                                                                                                                                   // PABLO #1568
             // Enable or disable revert transformation                                                                                                          // PABLO #1568
-            if(isSidewalk() || isBikelane() || isBuslane()) {                                                                                                   // PABLO #1568
+            if(isRestricted(SVC_PEDESTRIAN) || isRestricted(SVC_BICYCLE) || isRestricted(SVC_BUS)) {                                                            // PABLO #1568
                 revertTransformation->enable();                                                                                                                 // PABLO #1568
             } else {                                                                                                                                            // PABLO #1568
                 revertTransformation->disable();                                                                                                                // PABLO #1568
@@ -618,11 +618,11 @@ GNELane::updateGeometry() {
     if((getLaneShapeLenght() > 4)) {                                                    // PABLO #1568
         bool calculatePositionAndRotations = true;                                      // PABLO #1568
         // check if lane is special                                                     // PABLO #1568
-        if(isSidewalk()) {                                                              // PABLO #1568
+        if(isRestricted(SVC_PEDESTRIAN)) {                                              // PABLO #1568
             myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN);               // PABLO #1568
-        } else if (isBikelane()) {                                                      // PABLO #1568
+        } else if (isRestricted(SVC_BICYCLE)) {                                         // PABLO #1568
             myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEBIKE);                     // PABLO #1568
-        } else if (isBuslane()) {                                                       // PABLO #1568
+        } else if (isRestricted(SVC_BUS)) {                                             // PABLO #1568
             myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEBUS);                      // PABLO #1568
         } else {                                                                        // PABLO #1568
             calculatePositionAndRotations = false;                                      // PABLO #1568
@@ -741,34 +741,18 @@ GNELane::getAdditionalSets() {
 }
 
 
-bool                                                                    // PABLO #1568
-GNELane::isSidewalk() const {                                           // PABLO #1568
-    if(myParentEdge.getNBEdge()->getPermissions(myIndex) == 1048576) {  // PABLO #1568
-        return true;                                                    // PABLO #1568
-    } else {                                                            // PABLO #1568
-        return false;                                                   // PABLO #1568
-    }                                                                   // PABLO #1568
-}                                                                       // PABLO #1568
-
-
-bool                                                                    // PABLO #1568
-GNELane::isBikelane() const {                                           // PABLO #1568
-    if(myParentEdge.getNBEdge()->getPermissions(myIndex) == 524288) {   // PABLO #1568
-        return true;                                                    // PABLO #1568
-    } else {                                                            // PABLO #1568
-        return false;                                                   // PABLO #1568
-    }                                                                   // PABLO #1568
-}                                                                       // PABLO #1568
-
-
-bool                                                                    // PABLO #1568
-GNELane::isBuslane() const {                                            // PABLO #1568
-    if(myParentEdge.getNBEdge()->getPermissions(myIndex) == 256) {      // PABLO #1568
-        return true;                                                    // PABLO #1568
-    } else {                                                            // PABLO #1568
-        return false;                                                   // PABLO #1568
-    }                                                                   // PABLO #1568
-}                                                                       // PABLO #1568
+bool                                                                            // PABLO #1568
+GNELane::isRestricted(SUMOVehicleClass vclass) const {                          // PABLO #1568
+    if(vclass == SVC_PEDESTRIAN) {                                              // PABLO #1568
+        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 1048576);  // PABLO #1568
+    } else if(vclass == SVC_BICYCLE) {                                          // PABLO #1568
+        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 524288);   // PABLO #1568
+    } else if(vclass == SVC_BUS) {                                              // PABLO #1568
+        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 256);      // PABLO #1568
+    } else {                                                                    // PABLO #1568
+        return false;                                                           // PABLO #1568
+    }                                                                           // PABLO #1568
+}                                                                               // PABLO #1568
 
 
 std::string

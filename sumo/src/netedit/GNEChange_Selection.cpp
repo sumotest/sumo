@@ -30,6 +30,8 @@
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include "GNEChange_Selection.h"
+#include "GNENet.h"
+#include "GNEViewNet.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -47,8 +49,8 @@ FXIMPLEMENT_ABSTRACT(GNEChange_Selection, GNEChange, NULL, 0)
 
 
 // Constructor for changing selection
-GNEChange_Selection::GNEChange_Selection(const std::set<GUIGlID>& selected, const std::set<GUIGlID>& deselected, bool forward):
-    GNEChange(0, forward),
+GNEChange_Selection::GNEChange_Selection(GNENet* net, const std::set<GUIGlID>& selected, const std::set<GUIGlID>& deselected, bool forward):
+    GNEChange(net, forward),
     mySelectedIDs(selected),
     myDeselectedIDs(deselected) {
 }
@@ -82,6 +84,7 @@ void GNEChange_Selection::undo() {
             }
         }
     }
+    myNet->getViewNet()->update();
 }
 
 
@@ -109,6 +112,7 @@ void GNEChange_Selection::redo() {
             }
         }
     }
+    myNet->getViewNet()->update();
 }
 
 
