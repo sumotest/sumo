@@ -1227,7 +1227,7 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
     if (MSGlobals::gLateralResolution > 0) {
         // trigger sorting of vehicles as their order may have changed
         lanesWithVehiclesToIntegrate.push_back(this);
-    }2
+    }
     return myVehicles.size() == 0;
 }
 

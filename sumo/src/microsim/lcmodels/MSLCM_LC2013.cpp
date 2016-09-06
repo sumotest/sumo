@@ -799,12 +799,9 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             // how hard does it actually need to be?
             // to be safe in the next step the following equation has to hold for the follower's vsafe:
             //   vsafe <= followSpeed(gap=currentGap - SPEED2DIST(vsafe), ...)
-<<<<<<< .working
-
             SUMOReal vsafe, vsafe1;
 
-
-        	if(MSGlobals::gSemiImplicitEulerUpdate){
+            if(MSGlobals::gSemiImplicitEulerUpdate){
                     // euler
                     // we compute an upper bound on vsafe by doing the computation twice
                     vsafe1 = MAX2(neighNewSpeed, nv->getCarFollowModel().followSpeed(
@@ -1490,7 +1487,7 @@ MSLCM_LC2013::_wantsChange(
     // a high inconvenience prevents collaborative changes.
     const SUMOReal inconvenience = MIN2((SUMOReal)1.0, (laneOffset < 0
                                         ? mySpeedGainProbability / myChangeProbThresholdRight
-                                        : -mySpeedGainProbability / myChangeProbT0hresholdLeft));
+                                        : -mySpeedGainProbability / myChangeProbThresholdLeft));
     const bool speedGainInconvenient = inconvenience > myCooperativeParam;
     const bool neighOccupancyInconvenient = neigh.lane->getBruttoOccupancy() > curr.lane->getBruttoOccupancy();
 

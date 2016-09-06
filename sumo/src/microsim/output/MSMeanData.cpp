@@ -121,7 +121,6 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     }
     if (newPos - veh.getVehicleType().getLength() > myLaneLength && oldPos - veh.getVehicleType().getLength() <= myLaneLength) {
         assert(newSpeed != 0); // how could it move across the lane boundary otherwise
-<<<<<<< .working
     	// (Leo) vehicle left this lane (it can also have skipped over it in one time step -> therefore we use "timeOnLane -= ..." and ( ... - timeOnLane) below)
     	if(MSGlobals::gSemiImplicitEulerUpdate){
     		timeOnLane -= (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;

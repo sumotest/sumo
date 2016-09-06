@@ -2008,7 +2008,6 @@ MSVehicle::executeMove() {
                 }
                 if (approachedLane != myLane && approachedLane != 0) {
                     myState.myPos -= myLane->getLength();
-                    pos -= myLane->getLength();
                     assert(myState.myPos > 0);
                     enterLaneAtMove(approachedLane);
                     myLane = approachedLane;
@@ -2090,7 +2089,7 @@ MSVehicle::executeMove() {
             myCachedPosition = Position::INVALID;
         }
     }
-    workOnMoveReminders(pos, myState.myPos, myState.mySpeed);
+    workOnMoveReminders(myState.myPos - myState.myLastCoveredDist, myState.myPos, myState.mySpeed);
     return moved;
 }
 

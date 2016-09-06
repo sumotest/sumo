@@ -142,7 +142,6 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //  in this case, we neglect dawdling, nonetheless, using
     //  vSafe does not incorporate speed reduction due to interaction
     //  on lane changing
-<<<<<<< .working
     SUMOReal vMin;
     const SUMOReal vMax = MIN3(veh->getMaxSpeedOnLane(), maxNextSpeed(oldV, veh), vSafe);
     if(MSGlobals::gSemiImplicitEulerUpdate){
