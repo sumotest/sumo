@@ -129,11 +129,20 @@
         <!-- Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender) -->
         <bt-output value="" type="FILE"/>
 
+        <!-- Record lane changes and their motivations for all vehicles into FILE -->
+        <lanechange-output value="" type="FILE"/>
+
         <!-- Use INT[] as times at which a network state written -->
         <save-state.times value="" type="INT[]"/>
 
+        <!-- save state repeatedly after TIME period -->
+        <save-state.period value="-1" type="TIME"/>
+
         <!-- Prefix for network states -->
         <save-state.prefix value="state" type="FILE"/>
+
+        <!-- Suffix for network states (.sbx or .xml) -->
+        <save-state.suffix value=".sbx" type="FILE"/>
 
         <!-- Files for network states -->
         <save-state.files value="" type="FILE"/>
@@ -213,8 +222,8 @@
         <!-- Whether overtaking on the right on motorways is permitted -->
         <lanechange.overtake-right value="false" type="BOOL"/>
 
-        <!-- Whether to use semi-implicit Euler integration method (default previous to version 0.27) -->
-        <euler value="" type="BOOL"/>
+        <!-- Switches off all traffic lights. -->
+        <tls.all-off value="false" type="BOOL"/>
 
         <!-- Select among pedestrian models [&apos;nonInteracting&apos;, &apos;striping&apos;] -->
         <pedestrian.model value="striping" type="STR"/>
@@ -252,8 +261,11 @@
         <!-- The rerouting period before depart -->
         <device.rerouting.pre-period value="1" synonymes="device.routing.pre-period" type="TIME"/>
 
-        <!-- The weight of prior edge weights -->
+        <!-- The weight of prior edge weights for exponential moving average -->
         <device.rerouting.adaptation-weight value="0.5" synonymes="device.routing.adaptation-weight" type="FLOAT"/>
+
+        <!-- The number of steps for moving average weight of prior edge weights -->
+        <device.rerouting.adaptation-steps value="0" synonymes="device.routing.adaptation-steps" type="INT"/>
 
         <!-- The interval for updating the edge weights -->
         <device.rerouting.adaptation-interval value="1" synonymes="device.routing.adaptation-interval" type="TIME"/>
@@ -402,11 +414,11 @@
         <!-- Length of an edge segment in mesoscopic simulation -->
         <meso-edgelength value="98" type="FLOAT"/>
 
-        <!-- Factor for calculating the free-free headway time -->
-        <meso-tauff value="1.4" type="TIME"/>
+        <!-- Factor for calculating the net free-free headway time -->
+        <meso-tauff value="1.13" type="TIME"/>
 
-        <!-- Factor for calculating the free-jam headway time -->
-        <meso-taufj value="1.4" type="TIME"/>
+        <!-- Factor for calculating the net free-jam headway time -->
+        <meso-taufj value="1.13" type="TIME"/>
 
         <!-- Factor for calculating the jam-free headway time -->
         <meso-taujf value="2" type="TIME"/>
@@ -459,8 +471,14 @@
         <!-- Start the simulation after loading -->
         <start value="false" synonymes="S" type="BOOL"/>
 
+        <!-- Restart the simulation after ending (demo mode) -->
+        <demo value="false" synonymes="D" type="BOOL"/>
+
         <!-- Do not load background pictures -->
         <disable-textures value="false" synonymes="T" type="BOOL"/>
+
+        <!-- Create initial window with the given x,y size -->
+        <window-size value="" type="STR"/>
 
     </gui_only>
 

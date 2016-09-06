@@ -1,4 +1,4 @@
-SUMO netconvert Version dev-SVN-r20635
+SUMO netconvert Version dev-SVN-r21370
  Copyright (C) 2001-2016 DLR and contributors; http://sumo.dlr.de
 Road network importer / builder for the road traffic simulation SUMO.
 
@@ -203,6 +203,9 @@ Processing Options:
   --osm.skip-duplicates-check          Skips the check for duplicate nodes and
                                          edges
   --osm.elevation                      Imports elevation data
+  --osm.layer-elevation FLOAT          Reconstruct (relative) elevation based
+                                         on layer data. Each layer is raised by
+                                         FLOAT m
   --opendrive.import-all-lanes         Imports all lane types
   --opendrive.ignore-widths            Whether lane widths shall be ignored.
   --no-internal-links                  Omits internal links
@@ -259,11 +262,16 @@ Processing Options:
   --speed.offset FLOAT                 Modifies all edge speeds by adding FLOAT
   --speed.factor FLOAT                 Modifies all edge speeds by multiplying
                                          by FLOAT
+  --speed.minimum FLOAT                Modifies all edge speeds to at least
+                                         FLOAT
   --junctions.corner-detail INT        Generate INT intermediate points to
                                          smooth out intersection corners
   --junctions.internal-link-detail INT  Generate INT intermediate points to
                                          smooth out lanes within the
                                          intersection
+  --junctions.scurve-stretch FLOAT     Generate longer intersections to allow
+                                         for smooth s-curves when the number of
+                                         lanes changes
   --check-lane-foes.roundabout         Allow driving onto a multi-lane road if
                                          there are foes on other lanes (at
                                          roundabouts)

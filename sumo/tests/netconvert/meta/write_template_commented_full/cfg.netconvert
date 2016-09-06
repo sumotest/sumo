@@ -372,6 +372,9 @@
         <!-- Imports elevation data -->
         <osm.elevation value="false" type="BOOL"/>
 
+        <!-- Reconstruct (relative) elevation based on layer data. Each layer is raised by FLOAT m -->
+        <osm.layer-elevation value="0" type="FLOAT"/>
+
         <!-- Imports all lane types -->
         <opendrive.import-all-lanes value="false" type="BOOL"/>
 
@@ -465,11 +468,17 @@
         <!-- Modifies all edge speeds by multiplying by FLOAT -->
         <speed.factor value="1" type="FLOAT"/>
 
+        <!-- Modifies all edge speeds to at least FLOAT -->
+        <speed.minimum value="" type="FLOAT"/>
+
         <!-- Generate INT intermediate points to smooth out intersection corners -->
         <junctions.corner-detail value="0" type="INT"/>
 
         <!-- Generate INT intermediate points to smooth out lanes within the intersection -->
         <junctions.internal-link-detail value="5" type="INT"/>
+
+        <!-- Generate longer intersections to allow for smooth s-curves when the number of lanes changes -->
+        <junctions.scurve-stretch value="0" type="FLOAT"/>
 
         <!-- Allow driving onto a multi-lane road if there are foes on other lanes (at roundabouts) -->
         <check-lane-foes.roundabout value="true" type="BOOL"/>

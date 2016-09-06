@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:59:44 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on 05/20/16 15:37:22 by SUMO Version dev-SVN-r20765
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -13,10 +13,6 @@
     <output>
         <vehroute-output value="vehroutes.xml"/>
     </output>
-
-    <processing>
-        <euler value="true"/>
-    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -40,7 +36,7 @@
         <route edges="1to2 out"/>
     </vehicle>
 
-    <person id="p2" depart="200.00" arrival="201.00">
+    <person id="p2" depart="200.00">
         <ride from="1to2" to="out" lines="veh0"/>
     </person>
 

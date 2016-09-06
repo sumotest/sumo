@@ -1,5 +1,6 @@
 import_config_file:../config_all
 binary:$TEXTTEST_HOME/toolrunner.py
+copy_test_path:runner.py
 copy_test_path:routes.rou.xml
 copy_test_path:routes2.rou.xml
 copy_test_path:net.net.xml
@@ -57,6 +58,7 @@ copy_test_path:osm_bbox.osm.xml
 copy_test_path:weights.src.xml
 copy_test_path:weights.dst.xml
 copy_test_path:weights.via.xml
+copy_test_path:config.txt
 
 [collate_file]
 detectors:e1.add.xml
@@ -151,12 +153,13 @@ osmbatch:python.*randomTrips\.py{REPLACE python /path/to/randomTrips.py}
 osmbatch:python.*route2trips\.py{REPLACE python /path/to/route2trips.py}
 osmbatch:--trip-attributes.*--{REPLACE --trip-attributes <attrs-with-os-dependent-quoting> --}
 image:id="[^"]*"{REPLACE id="ReplacedTransientID"}
-image:url\(.*\){REPLACE ulr(ReplacedTransientURL)}
+image:url\(.*\){REPLACE url(ReplacedTransientURL)}
 image:href="[^"]*"{REPLACE href="ReplacedTransientHREF"}
 
 [floating_point_tolerance]
 net:0.0101
 image:0.001
+osmbatch:0.001
 
 [unordered_text]
 errors:ERROR:SCHEMA

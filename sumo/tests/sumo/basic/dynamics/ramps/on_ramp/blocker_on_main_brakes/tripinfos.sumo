@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Mon Jun  6 08:36:13 2016 by SUMO Version dev-SVN-r20877
+<!-- generated on Fri Jun  3 17:02:34 2016 by SUMO Version dev-SVN-r20868
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -13,10 +13,6 @@
     <output>
         <tripinfo-output value="tripinfos.xml"/>
     </output>
-
-    <processing>
-        <euler value="true"/>
-    </processing>
 
     <report>
         <verbose value="true"/>

@@ -49,8 +49,11 @@
         <vehroute-output.write-unfinished value="false" type="BOOL" help="Write vehroute output for vehicles which have not arrived at simulation end"/>
         <link-output value="" type="FILE" help="Save links states into FILE"/>
         <bt-output value="" type="FILE" help="Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender)"/>
+        <lanechange-output value="" type="FILE" help="Record lane changes and their motivations for all vehicles into FILE"/>
         <save-state.times value="" type="INT[]" help="Use INT[] as times at which a network state written"/>
+        <save-state.period value="-1" type="TIME" help="save state repeatedly after TIME period"/>
         <save-state.prefix value="state" type="FILE" help="Prefix for network states"/>
+        <save-state.suffix value=".sbx" type="FILE" help="Suffix for network states (.sbx or .xml)"/>
         <save-state.files value="" type="FILE" help="Files for network states"/>
     </output>
 
@@ -81,7 +84,7 @@
         <lanechange.allow-swap value="false" type="BOOL" help="Whether blocking vehicles trying to change lanes may be swapped"/>
         <lanechange.duration value="0" type="TIME" help="Duration of a lane change maneuver (default 0)"/>
         <lanechange.overtake-right value="false" type="BOOL" help="Whether overtaking on the right on motorways is permitted"/>
-        <euler value="" type="BOOL" help="Whether to use semi-implicit Euler integration method (default previous to version 0.27)"/>
+        <tls.all-off value="false" type="BOOL" help="Switches off all traffic lights."/>
         <pedestrian.model value="striping" type="STR" help="Select among pedestrian models [&apos;nonInteracting&apos;, &apos;striping&apos;]"/>
         <pedestrian.striping.stripe-width value="0.65" type="FLOAT" help="Width of parallel stripes for segmenting a sidewalk (meters) for use with model &apos;striping&apos;"/>
         <pedestrian.striping.dawdling value="0.2" type="FLOAT" help="factor for random slow-downs [0,1] for use with model &apos;striping&apos;"/>
@@ -96,7 +99,8 @@
         <device.rerouting.deterministic value="false" type="BOOL" help="The &apos;rerouting&apos; devices are set deterministic using a fraction of 1000"/>
         <device.rerouting.period value="0" synonymes="device.routing.period" type="TIME" help="The period with which the vehicle shall be rerouted"/>
         <device.rerouting.pre-period value="1" synonymes="device.routing.pre-period" type="TIME" help="The rerouting period before depart"/>
-        <device.rerouting.adaptation-weight value="0.5" synonymes="device.routing.adaptation-weight" type="FLOAT" help="The weight of prior edge weights"/>
+        <device.rerouting.adaptation-weight value="0.5" synonymes="device.routing.adaptation-weight" type="FLOAT" help="The weight of prior edge weights for exponential moving average"/>
+        <device.rerouting.adaptation-steps value="0" synonymes="device.routing.adaptation-steps" type="INT" help="The number of steps for moving average weight of prior edge weights"/>
         <device.rerouting.adaptation-interval value="1" synonymes="device.routing.adaptation-interval" type="TIME" help="The interval for updating the edge weights"/>
         <device.rerouting.with-taz value="false" synonymes="device.routing.with-taz with-taz" type="BOOL" help="Use zones (districts) as routing start- and endpoints"/>
         <device.rerouting.init-with-loaded-weights value="false" type="BOOL" help="Use given weight files for initializing edge weights"/>
@@ -160,8 +164,8 @@
     <mesoscopic>
         <mesosim value="false" type="BOOL" help="Enables mesoscopic simulation"/>
         <meso-edgelength value="98" type="FLOAT" help="Length of an edge segment in mesoscopic simulation"/>
-        <meso-tauff value="1.4" type="TIME" help="Factor for calculating the free-free headway time"/>
-        <meso-taufj value="1.4" type="TIME" help="Factor for calculating the free-jam headway time"/>
+        <meso-tauff value="1.13" type="TIME" help="Factor for calculating the net free-free headway time"/>
+        <meso-taufj value="1.13" type="TIME" help="Factor for calculating the net free-jam headway time"/>
         <meso-taujf value="2" type="TIME" help="Factor for calculating the jam-free headway time"/>
         <meso-taujj value="1.4" type="TIME" help="Factor for calculating the jam-jam headway time"/>
         <meso-jam-threshold value="-1" type="FLOAT" help="Minimum percentage of occupied space to consider a segment jammed. A negative argument causes thresholds to be computed based on edge speed and tauff (default)"/>
@@ -183,7 +187,9 @@
         <quit-on-end value="false" synonymes="Q" type="BOOL" help="Quits the GUI when the simulation stops"/>
         <game value="false" synonymes="G" type="BOOL" help="Start the GUI in gaming mode"/>
         <start value="false" synonymes="S" type="BOOL" help="Start the simulation after loading"/>
+        <demo value="false" synonymes="D" type="BOOL" help="Restart the simulation after ending (demo mode)"/>
         <disable-textures value="false" synonymes="T" type="BOOL" help="Do not load background pictures"/>
+        <window-size value="" type="STR" help="Create initial window with the given x,y size"/>
     </gui_only>
 
 </configuration>

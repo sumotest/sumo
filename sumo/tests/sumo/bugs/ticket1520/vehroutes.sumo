@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May 19 11:06:31 2016 by SUMO Version dev-SVN-r20747
+<!-- generated on 05/20/16 14:21:05 by SUMO Version dev-SVN-r20765
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -17,7 +17,6 @@
 
     <processing>
         <time-to-teleport value="10"/>
-        <euler value="true"/>
     </processing>
 
     <report>
@@ -33,8 +32,8 @@
         <route edges="beg end" exitTimes="12.00 31.00"/>
     </vehicle>
 
-    <vehicle id="blocker" type="t0" depart="0.00" arrival="73.00">
-        <route edges="beg end" exitTimes="11.00 73.00"/>
+    <vehicle id="blocker" type="t0" depart="0.00" arrival="72.00">
+        <route edges="beg end" exitTimes="11.00 72.00"/>
     </vehicle>
 
 </routes>
