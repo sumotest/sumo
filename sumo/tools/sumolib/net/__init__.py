@@ -5,6 +5,7 @@
 @author  Karol Stosiek
 @author  Michael Behrisch
 @author  Jakob Erdmann
+@author  Robert Hilbrich
 @date    2008-03-27
 @version $Id$
 
@@ -201,16 +202,8 @@ class Net:
         return self._id2edge[id]
 
     def getLane(self, laneID):
-        p = re.compile("^(:)?(-)?([^\W_]+)((#\d+)?(_\d+)?)(_\d+)?$")
-        g = p.match(laneID).groups("")
-        edge_id = g[0] + g[1] + g[2] + g[3]
-        lane_index = g[6][1:]
-
-        for e in self._edges:
-            if e.getID() == edge_id:
-                return e.getLane(int(lane_index))
-
-        return None
+        edge_id, lane_index = laneID.rsplit("_", 1)
+        return self.getEdge(edge_id).getLane(int(lane_index))
 
     def _initRTree(self, shapeList, includeJunctions=True):
         import rtree
@@ -341,6 +334,16 @@ class Net:
                     for oID in lane.getParam("origId", "").split():
                         self._origIdx[oID].add(edge)
         return self._origIdx[origID]
+
+    def getBBoxXY(self):
+        """
+        Get the bounding box (bottom left and top right coordinates) for a net;
+        Coordinates are in X and Y (not Lat and Lon)
+
+        :return [(bottom_left_X, bottom_left_Y), (top_right_X, top_right_Y)]
+        """
+        return [(self._ranges[0][0], self._ranges[1][0]),
+                (self._ranges[0][1], self._ranges[1][1])]
 
     # the diagonal of the bounding box of all nodes
     def getBBoxDiameter(self):
