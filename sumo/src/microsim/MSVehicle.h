@@ -242,7 +242,6 @@ public:
     virtual ~MSVehicle();
 
 
-
     /// @name insertion/removal
     //@{
 
@@ -284,8 +283,8 @@ public:
      */
     bool willPass(const MSEdge* const edge) const;
 
-    unsigned int getRoutePosition() const;
-    void resetRoutePosition(unsigned int index);
+    int getRoutePosition() const;
+    void resetRoutePosition(int index);
 
     /** @brief Returns the vehicle's internal edge travel times/efforts container
      *
@@ -836,6 +835,11 @@ public:
      */
     bool isParking() const;
 
+    /** @brief Returns the information whether the vehicle is fully controlled via TraCI
+     * @return Whether the vehicle is remote-controlled
+     */
+    bool isRemoteControlled() const;
+
     /// @brief return the distance to the next stop or SUMORealMax if there is none.
     SUMOReal nextStopDist() const {
         return myStopDist;
@@ -852,7 +856,7 @@ public:
     /// @}
 
     bool knowsEdgeTest(MSEdge& edge) const;
-    unsigned int getLaneIndex() const;
+    int getLaneIndex() const;
 
     /**
      * Compute distance that will be covered, if the vehicle moves to a given position on its route,
@@ -971,12 +975,12 @@ public:
     /** @brief Returns the number of persons
      * @return The number of passengers on-board
      */
-    unsigned int getPersonNumber() const;
+    int getPersonNumber() const;
 
     /** @brief Returns the number of containers
      * @return The number of contaiers on-board
      */
-    unsigned int getContainerNumber() const;
+    int getContainerNumber() const;
 
     /// @name Access to bool signals
     /// @{
@@ -1170,8 +1174,10 @@ public:
         /** @brief Sets a new lane timeline
          * @param[in] laneTimeLine The time line of lanes to use
          */
-        void setLaneTimeLine(const std::vector<std::pair<SUMOTime, unsigned int> >& laneTimeLine);
+        void setLaneTimeLine(const std::vector<std::pair<SUMOTime, int> >& laneTimeLine);
 
+        /// @brief return the current speed mode
+        int getSpeedMode() const;
 
         /** @brief Applies stored velocity information on the speed to use
          *
@@ -1193,7 +1199,7 @@ public:
          * @param[in] state The LaneChangeAction flags as computed by the laneChangeModel
          * @return The new LaneChangeAction flags to use
          */
-        int influenceChangeDecision(const SUMOTime currentTime, const MSEdge& currentEdge, const unsigned int currentLaneIndex, int state);
+        int influenceChangeDecision(const SUMOTime currentTime, const MSEdge& currentEdge, const int currentLaneIndex, int state);
 
 
         /** @brief Return the remaining number of seconds of the current
@@ -1262,7 +1268,7 @@ public:
             return myOriginalSpeed;
         }
 
-        void setVTDControlled(MSLane* l, SUMOReal pos, SUMOReal posLat, SUMOReal angle, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t);
+        void setVTDControlled(Position xyPos, MSLane* l, SUMOReal pos, SUMOReal posLat, SUMOReal angle, int edgeOffset, const ConstMSEdgeVector& route, SUMOTime t);
 
         SUMOTime getLastAccessTimeStep() const {
             return myLastVTDAccess;
@@ -1285,7 +1291,7 @@ public:
         std::vector<std::pair<SUMOTime, SUMOReal> > mySpeedTimeLine;
 
         /// @brief The lane usage time line to apply
-        std::vector<std::pair<SUMOTime, unsigned int> > myLaneTimeLine;
+        std::vector<std::pair<SUMOTime, int> > myLaneTimeLine;
 
         /// @brief The velocity before influence
         SUMOReal myOriginalSpeed;
@@ -1308,6 +1314,7 @@ public:
         /// @brief Whether red lights are a reason to brake
         bool myEmergencyBrakeRedLight;
 
+        Position myVTDXYPos;
         MSLane* myVTDLane;
         SUMOReal myVTDPos;
         SUMOReal myVTDPosLat;
@@ -1350,6 +1357,9 @@ public:
 
     /// @brief allow TraCI to influence a lane change decision
     int influenceChangeDecision(int state);
+
+    /// @brief sets position outside the road network
+    void setVTDState(Position xyPos);
 
     /// @brief compute safe speed for following the given leader
     SUMOReal getSafeFollowSpeed(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
@@ -1410,6 +1420,9 @@ protected:
     /** @brief Returns the list of still pending stop edges
      */
     const ConstMSEdgeVector getStopEdges() const;
+
+    /// @brief register vehicle for drawing while outside the network
+    virtual void drawOutsideNetwork(bool /*add*/) const {};
 
     /// @brief The time the vehicle waits (is not faster than 0.1m/s) in seconds
     SUMOTime myWaitingTime;

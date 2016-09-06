@@ -90,7 +90,7 @@ MSLaneChangerSublane::change() {
     assert(vehicle->getLane() == (*myCandi).lane);
     assert(!vehicle->getLaneChangeModel().isChangingLanes());
 #ifndef NO_TRACI
-    if (vehicle->hasInfluencer() && vehicle->getInfluencer().isVTDControlled()) {
+    if (vehicle->isRemoteControlled()) {
         return false; // !!! temporary; just because it broke, here
     }
 #endif
@@ -117,6 +117,7 @@ MSLaneChangerSublane::change() {
         if (vehicle->getLaneChangeModel().debugVehicle()) {
             std::cout << SIMTIME << " decision=" << toString((LaneChangeAction)decision.state) << " latDist=" << decision.latDist << "\n";
         }
+        vehicle->getLaneChangeModel().setOwnState(decision.state);
         return startChangeSublane(vehicle, myCandi, decision.latDist);
     }
 
@@ -156,6 +157,7 @@ MSLaneChangerSublane::startChangeSublane(MSVehicle* vehicle, ChangerIt& from, SU
     // 1) update vehicles lateral position according to latDist and target lane
     vehicle->myState.myPosLat += latDist;
     vehicle->myCachedPosition = Position::INVALID;
+    vehicle->setAngle(atan2(latDist, SPEED2DIST(vehicle->getSpeed())));
 
     // 2) distinguish several cases
     //   a) vehicle moves completely within the same lane

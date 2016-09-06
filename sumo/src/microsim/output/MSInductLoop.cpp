@@ -178,10 +178,10 @@ MSInductLoop::getCurrentOccupancy() const {
 }
 
 
-unsigned int
+int
 MSInductLoop::getCurrentPassedNumber() const {
     std::vector<VehicleData> d = collectVehiclesOnDet(MSNet::getInstance()->getCurrentTimeStep() - DELTA_T);
-    return (unsigned int) d.size();
+    return (int) d.size();
 }
 
 
@@ -249,7 +249,7 @@ void
 MSInductLoop::writeTypedXMLOutput(OutputDevice& dev, SUMOTime startTime, SUMOTime stopTime,
                                   const std::string& type, const VehicleDataCont& vdc, const VehicleMap& vm) {
     SUMOReal t(STEPS2TIME(stopTime - startTime));
-    unsigned nVehCrossed = (unsigned) vdc.size();
+    int nVehCrossed = (int) vdc.size();
     if (type == "") {
         nVehCrossed += myDismissedVehicleNumber;
     }
@@ -319,16 +319,16 @@ MSInductLoop::leaveDetectorByLaneChange(SUMOVehicle& veh, SUMOReal lastPos) {
 
 
 std::vector<MSInductLoop::VehicleData>
-MSInductLoop::collectVehiclesOnDet(SUMOTime tMS) const {
+MSInductLoop::collectVehiclesOnDet(SUMOTime tMS, bool leaveTime) const {
     SUMOReal t = STEPS2TIME(tMS);
     std::vector<VehicleData> ret;
     for (VehicleDataCont::const_iterator i = myVehicleDataCont.begin(); i != myVehicleDataCont.end(); ++i) {
-        if ((*i).entryTimeM >= t) {
+        if ((*i).entryTimeM >= t || (leaveTime && (*i).leaveTimeM >= t)) {
             ret.push_back(*i);
         }
     }
     for (VehicleDataCont::const_iterator i = myLastVehicleDataCont.begin(); i != myLastVehicleDataCont.end(); ++i) {
-        if ((*i).entryTimeM >= t) {
+        if ((*i).entryTimeM >= t || (leaveTime && (*i).leaveTimeM >= t)) {
             ret.push_back(*i);
         }
     }

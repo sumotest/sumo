@@ -117,7 +117,7 @@ public:
     void selectBlockingFoes() const;
 
     /// @brief gets the color value according to the current scheme index
-    SUMOReal getColorValue(size_t activeScheme) const;
+    SUMOReal getColorValue(int activeScheme) const;
 
     /** @brief Returns an own parameter window
      *
@@ -135,6 +135,10 @@ public:
      * @return The built parameter window
      */
     GUIParameterTableWindow* getTypeParameterWindow(GUIMainWindow& app, GUISUMOAbstractView& parent);
+
+protected:
+    /// @brief register vehicle for drawing while outside the network
+    void drawOutsideNetwork(bool /*add*/) const;
 
 private:
 

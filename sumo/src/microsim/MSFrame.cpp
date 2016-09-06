@@ -201,6 +201,8 @@ MSFrame::fillOptions() {
     oc.doRegister("bt-output", new Option_FileName());
     oc.addDescription("bt-output", "Output", "Save bluetooth visibilities into FILE (in conjunction with device.btreceiver and device.btsender)");
 
+    oc.doRegister("lanechange-output", new Option_FileName());
+    oc.addDescription("lanechange-output", "Output", "Record lane changes and their motivations for all vehicles into FILE");
 
 #ifdef _DEBUG
     oc.doRegister("movereminder-output", new Option_FileName());
@@ -209,11 +211,15 @@ MSFrame::fillOptions() {
     oc.addDescription("movereminder-output.vehicles", "Output", "List of vehicle ids which shall save their movereminder states");
 #endif
 
-    oc.doRegister("save-state.times", new Option_IntVector(IntVector()));//!!! check, describe
+    oc.doRegister("save-state.times", new Option_IntVector(IntVector()));
     oc.addDescription("save-state.times", "Output", "Use INT[] as times at which a network state written");
-    oc.doRegister("save-state.prefix", new Option_FileName("state"));//!!! check, describe
+    oc.doRegister("save-state.period", new Option_String("-1", "TIME"));
+    oc.addDescription("save-state.period", "Output", "save state repeatedly after TIME period");
+    oc.doRegister("save-state.prefix", new Option_FileName("state"));
     oc.addDescription("save-state.prefix", "Output", "Prefix for network states");
-    oc.doRegister("save-state.files", new Option_FileName());//!!! check, describe
+    oc.doRegister("save-state.suffix", new Option_FileName(".sbx"));
+    oc.addDescription("save-state.suffix", "Output", "Suffix for network states (.sbx or .xml)");
+    oc.doRegister("save-state.files", new Option_FileName());//
     oc.addDescription("save-state.files", "Output", "Files for network states");
 
     // register the simulation settings
@@ -292,6 +298,9 @@ MSFrame::fillOptions() {
     oc.doRegister("step-method.ballistic", new Option_Bool(false));
     oc.addDescription("step-method.ballistic", "Processing", "Whether to use ballistic method for the positional update of vehicles (default is a semi-implicit Euler method).");
 
+    oc.doRegister("tls.all-off", new Option_Bool(false));
+    oc.addDescription("tls.all-off", "Processing", "Switches off all traffic lights.");
+
     // pedestrian model
     oc.doRegister("pedestrian.model", new Option_String("striping"));
     oc.addDescription("pedestrian.model", "Processing", "Select among pedestrian models ['nonInteracting', 'striping']");
@@ -349,10 +358,10 @@ MSFrame::fillOptions() {
     oc.addDescription("mesosim", "Mesoscopic", "Enables mesoscopic simulation");
     oc.doRegister("meso-edgelength", new Option_Float(98.0f));
     oc.addDescription("meso-edgelength", "Mesoscopic", "Length of an edge segment in mesoscopic simulation");
-    oc.doRegister("meso-tauff", new Option_String("1.4", "TIME"));
-    oc.addDescription("meso-tauff", "Mesoscopic", "Factor for calculating the free-free headway time");
-    oc.doRegister("meso-taufj", new Option_String("1.4", "TIME"));
-    oc.addDescription("meso-taufj", "Mesoscopic", "Factor for calculating the free-jam headway time");
+    oc.doRegister("meso-tauff", new Option_String("1.13", "TIME"));
+    oc.addDescription("meso-tauff", "Mesoscopic", "Factor for calculating the net free-free headway time");
+    oc.doRegister("meso-taufj", new Option_String("1.13", "TIME"));
+    oc.addDescription("meso-taufj", "Mesoscopic", "Factor for calculating the net free-jam headway time");
     oc.doRegister("meso-taujf", new Option_String("2", "TIME"));
     oc.addDescription("meso-taujf", "Mesoscopic", "Factor for calculating the jam-free headway time");
     oc.doRegister("meso-taujj", new Option_String("1.4", "TIME"));
@@ -393,8 +402,14 @@ MSFrame::fillOptions() {
     oc.doRegister("start", 'S', new Option_Bool(false));
     oc.addDescription("start", "GUI Only", "Start the simulation after loading");
 
+    oc.doRegister("demo", 'D', new Option_Bool(false));
+    oc.addDescription("demo", "GUI Only", "Restart the simulation after ending (demo mode)");
+
     oc.doRegister("disable-textures", 'T', new Option_Bool(false));
     oc.addDescription("disable-textures", "GUI Only", "Do not load background pictures");
+
+    oc.doRegister("window-size", new Option_String());
+    oc.addDescription("window-size", "GUI Only", "Create initial window with the given x,y size");
 
 #ifdef HAVE_OSG
     oc.doRegister("osg-view", new Option_Bool(false));
@@ -422,6 +437,7 @@ MSFrame::buildStreams() {
     //OutputDevice::createDeviceByOption("vtk-output", "vtk-export");
     OutputDevice::createDeviceByOption("link-output", "link-output");
     OutputDevice::createDeviceByOption("bt-output", "bt-output");
+    OutputDevice::createDeviceByOption("lanechange-output", "lanechanges");
 
 #ifdef _DEBUG
     OutputDevice::createDeviceByOption("movereminder-output", "movereminder-output");
@@ -452,6 +468,13 @@ MSFrame::checkOptions() {
     if (oc.isSet("gui-settings-file") &&
             oc.getString("gui-settings-file") != "" &&
             !oc.isUsableFileList("gui-settings-file")) {
+        ok = false;
+    }
+    if (oc.getBool("demo") && oc.isDefault("start")) {
+        oc.set("start", "true");
+    }
+    if (oc.getBool("demo") && oc.getBool("quit-on-end")) {
+        WRITE_ERROR("You can either restart or quit on end.");
         ok = false;
     }
     if (oc.getBool("meso-junction-control.limited") && !oc.getBool("meso-junction-control")) {
@@ -494,6 +517,7 @@ MSFrame::checkOptions() {
     if (oc.getBool("duration-log.statistics") && oc.isDefault("verbose")) {
         oc.set("verbose", "true");
     }
+    ok &= MSDevice::checkOptions(oc);
     return ok;
 }
 

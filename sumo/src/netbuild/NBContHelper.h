@@ -97,6 +97,37 @@ public:
 
 
     /**
+     * straightness_sorter
+     * Class to sort edges according to how straight they are in relation to the
+     * reference edge at the given node
+     */
+    class straightness_sorter {
+    public:
+        /// constructor
+        explicit straightness_sorter(const NBNode* n, const NBEdge* e):
+            myRefIncoming(e->getToNode() == n)
+        {
+            if (myRefIncoming) {
+                myReferencePos = e->getLaneShape(0).back();
+                myReferenceAngle = e->getShapeEndAngle(); 
+            } else {
+                myReferencePos = e->getLaneShape(0).front();
+                myReferenceAngle = e->getShapeStartAngle(); 
+            }
+        }
+
+    public:
+        /// comparing operation
+        int operator()(NBEdge* e1, NBEdge* e2) const;
+
+    private:
+        bool myRefIncoming;
+        Position myReferencePos;
+        SUMOReal myReferenceAngle;
+    };
+
+
+    /**
      * relative_incoming_edge_sorter
      * Class to sort edges by their angle in relation to an outgoing edge.
      * This is normally done to sort edges incoming at the starting node of this edge

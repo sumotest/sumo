@@ -103,7 +103,9 @@ public:
 
     void dependentBuild();
 
-    void setStatusBarText(const std::string&);
+    void setStatusBarText(const std::string& text);
+
+    void addRecentFile(const FX::FXString& f, const bool isNet);
 
     FXGLCanvas* getBuildGLCanvas() const;
     SUMOTime getCurrentSimTime() const;
@@ -232,6 +234,9 @@ public:
     /// @brief Called on menu commands from the Locator menu
     long onCmdLocate(FXObject*, FXSelector, void*);
 
+    /// @brief Called on commands from the statistic buttons
+    long onCmdShowStats(FXObject*, FXSelector, void*);
+
     /// @brief Called on an event from the loading thread
     long onLoadThreadEvent(FXObject*, FXSelector, void*);
 
@@ -309,7 +314,7 @@ protected:
     bool myWasStarted;
 
     /// The current view number
-    size_t myViewNumber;
+    int myViewNumber;
 
     /// information whether the gui is currently loading and the load-options shall be greyed out
     bool myAmLoading;
@@ -318,6 +323,9 @@ protected:
     FXMenuPane* myFileMenu, *myEditMenu, *mySelectByPermissions, *mySettingsMenu,
                 *myLocatorMenu, *myControlMenu,
                 *myWindowsMenu, *myHelpMenu;
+
+    /// Buttons showing and running values and triggering statistic windows
+    std::vector<FXButton*> myStatButtons;
 
     /// A window to display messages, warnings and error in
     GUIMessageWindow* myMessageWindow;
@@ -390,7 +398,7 @@ protected:
     SUMOReal myJamSoundTime;
     /// @brief A random number generator used to choose a gaming sound
     static MTRand myGamingRNG;
-    unsigned int myPreviousCollisionNumber;
+    int myPreviousCollisionNumber;
 
     /// performance indicators
     FXEX::FXLCDLabel* myWaitingTimeLabel;

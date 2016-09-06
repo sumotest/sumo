@@ -77,6 +77,7 @@ MSCFModel::freeSpeed(const SUMOReal currentSpeed, const SUMOReal decel, const SU
 	// XXX: (Leo) This seems to be exclusively called with decel = myDecel (max deceleration) and is not overridden
 	// by any specific CFModel. That may cause undesirable hard braking (at junctions where the vehicle
 	// changes to a road with a lower speed limit). It relies on the same logic as the maximalSafeSpeed calculations.
+        // XXX: Don't duplicate the code from there, if possible!!! Can maximumSafeSpeed() call freeSpeed  (Leo)
 
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		// adapt speed to succeeding lane, no reaction time is involved
@@ -141,26 +142,28 @@ MSCFModel::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //  in this case, we neglect dawdling, nonetheless, using
     //  vSafe does not incorporate speed reduction due to interaction
     //  on lane changing
+<<<<<<< .working
     SUMOReal vMin;
+    const SUMOReal vMax = MIN3(veh->getMaxSpeedOnLane(), maxNextSpeed(oldV, veh), vSafe);
     if(MSGlobals::gSemiImplicitEulerUpdate){
-    	vMin = getSpeedAfterMaxDecel(oldV);
+        // we cannot rely on never braking harder than maxDecel because TraCI or strange cf models may decide to do so
+    	vMin = MIN2(getSpeedAfterMaxDecel(oldV), vMax);
     } else {
     	// for ballistic update, negative vnext must be allowed to
     	// indicate a stop within the coming timestep (i.e., to attain negative values)
     	vMin = oldV - ACCEL2SPEED(getMaxDecel());
     }
-    const SUMOReal vMax = MIN3(veh->getMaxSpeedOnLane(), maxNextSpeed(oldV, veh), vSafe);
-    assert(vMin <= vMax);
 
     SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vMax, vMax, *this);
 
-	// (Leo) moveHelper() is responsible for assuring that the next
+    // (Leo) moveHelper() is responsible for assuring that the next
     // velocity is chosen in accordance with maximal decelerations.
-    // At this point vNext may also be negative indicating a stop within next step.
-    // Moreover, because maximumSafeStopSpeed() does not consider deceleration bounds
-    // vNext can be a large negative value at this point. We cap vNext here.
-	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
-
+    if(!MSGlobals::gSemiImplicitEulerUpdate && vNext < 0) {
+        // At this point vNext may also be negative indicating a stop within next step.
+        // Moreover, because maximumSafeStopSpeed() does not consider deceleration bounds
+        // vNext can be a large negative value at this point. We cap vNext here.
+        vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
+    }
     return vNext;
 }
 
@@ -198,30 +201,8 @@ MSCFModel::minNextSpeed(SUMOReal speed, const MSVehicle* const /*veh*/) const {
 
 SUMOReal
 MSCFModel::freeSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal seen, SUMOReal maxSpeed, const bool onInsertion) const {
-
-//    // Debug (Leo)
-//	if(gDebugFlag1){
-//    	std::cout
-//    	<< "called freeSpeed() for vehicle " << veh->getID()
-//    	<< (onInsertion ? " on insertion":"")
-//    	<< "\nspeed = " << speed
-//    	<< "\ndist = " << seen
-//    	<< "\nmax speed = " << maxSpeed
-//    	<< "\nmyDecel = " << myDecel
-//    	<< std::endl;
-//    }
-
 	SUMOReal vSafe = freeSpeed(speed, myDecel, seen, maxSpeed, onInsertion);
-
-//    // Debug (Leo)
-//	if(gDebugFlag1){
-//    	std::cout
-//    	<< "vSafe " << vSafe
-//    	<< std::endl;
-//	}
-
 	return vSafe;
-
 }
 
 
@@ -416,7 +397,7 @@ MSCFModel::maximumSafeStopSpeedEuler(SUMOReal gap) const {
 
 SUMOReal
 MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/, bool onInsertion, SUMOReal headway) const {
-
+        // TODO: Formatting (tabs->spaces)!!!
 	// (Leo) Note that in contrast to the Euler update, for the ballistic update
 	// the distance covered in the coming step depends on the current velocity, in general.
 	// one exception is the situation when the vehicle is just being inserted.
@@ -496,7 +477,7 @@ MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal pred
 
     // if leader is stopped, calculate stopSpeed without time-headway to prevent creeping stop
     // NOTE: this can lead to the strange phenomenon (for the Krauss-model at least) that if the leader comes to a stop,
-    //       the follower accelerates for a short period of time. (Leo)
+    //       the follower accelerates for a short period of time. Refs #2310 (Leo)
     const SUMOReal headway = predSpeed > 0. ? myHeadwayTime : 0.;
 	const SUMOReal x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), egoSpeed, onInsertion, headway);
 	assert(x >= 0);

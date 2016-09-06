@@ -204,12 +204,17 @@ parseVehicleClasses(const std::string& allowedS) {
     StringTokenizer sta(allowedS, " ");
     while (sta.hasNext()) {
         const std::string s = sta.next();
-        const SUMOVehicleClass vc = getVehicleClassID(s);
-        const std::string& realName = SumoVehicleClassStrings.getString(vc);
-        if (realName != s) {
-            deprecatedVehicleClassesSeen.insert(s);
+        if (!SumoVehicleClassStrings.hasString(s)) {
+	    WRITE_ERROR("Unknown vehicle class '" + s + "' encountered. It will be ignored.");
         }
-        result |= vc;
+	else {
+	    const SUMOVehicleClass vc = getVehicleClassID(s);
+	    const std::string& realName = SumoVehicleClassStrings.getString(vc);
+	    if (realName != s) {
+		deprecatedVehicleClassesSeen.insert(s);
+	    }
+	    result |= vc;
+	}
     }
     return result;
 }
@@ -267,7 +272,7 @@ writePermissions(OutputDevice& into, SVCPermissions permissions) {
         into.writeAttr(SUMO_ATTR_DISALLOW, "all");
         return;
     } else {
-        size_t num_allowed = 0;
+        int num_allowed = 0;
         for (int mask = 1; mask <= SUMOVehicleClass_MAX; mask = mask << 1) {
             if ((mask & permissions) == mask) {
                 ++num_allowed;

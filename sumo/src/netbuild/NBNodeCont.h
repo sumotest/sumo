@@ -51,7 +51,6 @@
 class NBDistrict;
 class OptionsCont;
 class OutputDevice;
-class NBJoinedEdgesMap;
 
 
 // ===========================================================================
@@ -158,12 +157,12 @@ public:
 
     /** @brief Joins loaded junction clusters (see NIXMLNodesHandler)
      */
-    unsigned int joinLoadedClusters(NBDistrictCont& dc, NBEdgeCont& ec, NBTrafficLightLogicCont& tlc);
+    int joinLoadedClusters(NBDistrictCont& dc, NBEdgeCont& ec, NBTrafficLightLogicCont& tlc);
 
 
     /** @brief Joins junctions that are very close together
      */
-    unsigned int joinJunctions(SUMOReal maxDist, NBDistrictCont& dc, NBEdgeCont& ec, NBTrafficLightLogicCont& tlc);
+    int joinJunctions(SUMOReal maxDist, NBDistrictCont& dc, NBEdgeCont& ec, NBTrafficLightLogicCont& tlc);
     /// @}
 
 
@@ -215,12 +214,11 @@ public:
      * The node is removed from the list of tls-controlled nodes.
      * @param[in, opt. changed] dc The district container needed if a node shall be removed
      * @param[in, opt. changed] ec The edge container needed for joining edges
-     * @param[in, opt. changed] je The map of joined edges (changes are stored here)
      * @param[in, opt. changed] tlc The traffic lights container to remove nodes from
      * @param[in] removeGeometryNodes Whether geometry nodes shall also be removed
      * @return The number of removed nodes
      */
-    unsigned int removeUnwishedNodes(NBDistrictCont& dc, NBEdgeCont& ec, NBJoinedEdgesMap& je,
+    int removeUnwishedNodes(NBDistrictCont& dc, NBEdgeCont& ec,
                                      NBTrafficLightLogicCont& tlc, bool removeGeometryNodes);
     /// @}
 
@@ -270,8 +268,8 @@ public:
     /** @brief Returns the number of known nodes
      * @return The number of nodes stored in this container
      */
-    unsigned int size() const {
-        return (unsigned int) myNodes.size();
+    int size() const {
+        return (int) myNodes.size();
     }
 
     /** deletes all nodes */

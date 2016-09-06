@@ -59,8 +59,9 @@ MSInsertionControl::MSInsertionControl(MSVehicleControl& vc,
     myVehicleControl(vc),
     myMaxDepartDelay(maxDepartDelay),
     myCheckEdgesOnce(checkEdgesOnce),
-    myMaxVehicleNumber(maxVehicleNumber) {
-}
+    myMaxVehicleNumber(maxVehicleNumber),
+    myPendingEmitsUpdateTime(SUMOTime_MIN) 
+{ }
 
 
 MSInsertionControl::~MSInsertionControl() {
@@ -83,42 +84,21 @@ MSInsertionControl::add(SUMOVehicleParameter* const pars) {
     }
     Flow flow;
     flow.pars = pars;
-    flow.isVolatile = pars->departLaneProcedure == DEPART_LANE_RANDOM ||
-                      pars->departPosProcedure == DEPART_POS_RANDOM ||
-                      MSNet::getInstance()->getVehicleControl().hasVTypeDistribution(pars->vtypeid);
     flow.index = 0;
-    if (!flow.isVolatile) {
-        const RandomDistributor<const MSRoute*>* dist = MSRoute::distDictionary(pars->routeid);
-        if (dist != 0) {
-            const std::vector<const MSRoute*>& routes = dist->getVals();
-            const MSEdge* e = 0;
-            for (std::vector<const MSRoute*>::const_iterator i = routes.begin(); i != routes.end(); ++i) {
-                if (e == 0) {
-                    e = (*i)->getEdges()[0];
-                } else {
-                    if (e != (*i)->getEdges()[0]) {
-                        flow.isVolatile = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    flow.vehicle = 0;
     myFlows.push_back(flow);
     myFlowIDs.insert(pars->id);
     return true;
 }
 
 
-unsigned int
+int
 MSInsertionControl::emitVehicles(SUMOTime time) {
     // check whether any vehicles shall be emitted within this time step
     const bool havePreChecked = MSDevice_Routing::isEnabled();
     if (myPendingEmits.empty() || (havePreChecked && myEmitCandidates.empty())) {
         return 0;
     }
-    unsigned int numEmitted = 0;
+    int numEmitted = 0;
     // we use buffering for the refused emits to save time
     //  for this, we have two lists; one contains previously refused emits, the second
     //  will be used to append those vehicles that will not be able to depart in this
@@ -140,7 +120,7 @@ MSInsertionControl::emitVehicles(SUMOTime time) {
 }
 
 
-unsigned int
+int
 MSInsertionControl::tryInsert(SUMOTime time, SUMOVehicle* veh,
                               MSVehicleContainer::VehicleVector& refusedEmits) {
     assert(veh->getParameter().depart < time + DELTA_T);
@@ -152,21 +132,17 @@ MSInsertionControl::tryInsert(SUMOTime time, SUMOVehicle* veh,
             && (!myCheckEdgesOnce || edge.getLastFailedInsertionTime() != time)
             && edge.insertVehicle(*veh, time)) {
         // Successful insertion
-        checkFlowWait(veh);
         return 1;
     }
     if (myMaxDepartDelay >= 0 && time - veh->getParameter().depart > myMaxDepartDelay) {
         // remove vehicles waiting too long for departure
-        checkFlowWait(veh);
         myVehicleControl.deleteVehicle(veh, true);
     } else if (edge.isVaporizing()) {
         // remove vehicles if the edge shall be empty
-        checkFlowWait(veh);
         myVehicleControl.deleteVehicle(veh, true);
     } else if (myAbortedEmits.count(veh) > 0) {
         // remove vehicles which shall not be inserted for some reason
         myAbortedEmits.erase(veh);
-        checkFlowWait(veh);
         myVehicleControl.deleteVehicle(veh, true);
     } else {
         // let the vehicle wait one step, we'll retry then
@@ -174,17 +150,6 @@ MSInsertionControl::tryInsert(SUMOTime time, SUMOVehicle* veh,
     }
     edge.setLastFailedInsertionTime(time);
     return 0;
-}
-
-
-void
-MSInsertionControl::checkFlowWait(SUMOVehicle* veh) {
-    for (std::vector<Flow>::iterator i = myFlows.begin(); i != myFlows.end(); ++i) {
-        if (i->vehicle == veh) {
-            i->vehicle = 0;
-            break;
-        }
-    }
 }
 
 
@@ -218,11 +183,6 @@ MSInsertionControl::determineCandidates(SUMOTime time) {
     MSVehicleControl& vehControl = MSNet::getInstance()->getVehicleControl();
     for (std::vector<Flow>::iterator i = myFlows.begin(); i != myFlows.end();) {
         SUMOVehicleParameter* pars = i->pars;
-        if (!i->isVolatile && i->vehicle != 0 && pars->repetitionProbability < 0) {
-            ++i;
-            //std::cout << SIMTIME << " volatile=" << i->isVolatile << " veh=" << i->vehicle << "\n";
-            continue;
-        }
         bool tryEmitByProb = pars->repetitionProbability > 0;
         while ((pars->repetitionProbability < 0
                 && pars->repetitionsDone < pars->repetitionNumber
@@ -242,24 +202,23 @@ MSInsertionControl::determineCandidates(SUMOTime time) {
             if (vehControl.getVehicle(newPars->id) == 0) {
                 const MSRoute* route = MSRoute::dictionary(pars->routeid);
                 const MSVehicleType* vtype = vehControl.getVType(pars->vtypeid, MSRouteHandler::getParsingRNG());
-                i->vehicle = vehControl.buildVehicle(newPars, route, vtype, false);
-                unsigned int quota = vehControl.getQuota();
+                SUMOVehicle* vehicle = vehControl.buildVehicle(newPars, route, vtype, false);
+                int quota = vehControl.getQuota();
                 if (quota > 0) {
-                    vehControl.addVehicle(newPars->id, i->vehicle);
-                    add(i->vehicle);
+                    vehControl.addVehicle(newPars->id, vehicle);
+                    add(vehicle);
                     i->index++;
                     while (--quota > 0) {
                         SUMOVehicleParameter* quotaPars = new SUMOVehicleParameter(*pars);
                         quotaPars->id = pars->id + "." + toString(i->index);
                         quotaPars->depart = pars->repetitionProbability > 0 ? time : (SUMOTime)(pars->depart + pars->repetitionsDone * pars->repetitionOffset);
-                        i->vehicle = vehControl.buildVehicle(quotaPars, route, vtype, false);
-                        vehControl.addVehicle(quotaPars->id, i->vehicle);
-                        add(i->vehicle);
+                        SUMOVehicle* vehicle = vehControl.buildVehicle(quotaPars, route, vtype, false);
+                        vehControl.addVehicle(quotaPars->id, vehicle);
+                        add(vehicle);
                         i->index++;
                     }
                 } else {
-                    vehControl.deleteVehicle(i->vehicle, true);
-                    i->vehicle = 0;
+                    vehControl.deleteVehicle(vehicle, true);
                 }
             } else {
                 // strange: another vehicle with the same id already exists
@@ -282,9 +241,9 @@ MSInsertionControl::determineCandidates(SUMOTime time) {
 }
 
 
-unsigned int
+int
 MSInsertionControl::getWaitingVehicleNo() const {
-    return (unsigned int)myPendingEmits.size();
+    return (int)myPendingEmits.size();
 }
 
 
@@ -321,6 +280,30 @@ MSInsertionControl::clearPendingVehicles(std::string& route) {
     }
 }
 
+
+int 
+MSInsertionControl::getPendingEmits(const MSLane* lane) {
+    if (MSNet::getInstance()->getCurrentTimeStep() > myPendingEmitsUpdateTime) {
+        // updated pending emits (only once per time step)
+        myPendingEmitsForLane.clear();
+        for (MSVehicleContainer::VehicleVector::const_iterator veh = myPendingEmits.begin(); veh != myPendingEmits.end(); ++veh) {
+            const MSLane* lane = (*veh)->getLane();
+            if (lane != 0) {
+                myPendingEmitsForLane[lane]++;
+            } else {
+                // no (tentative) departLane was set, increase count for all
+                // lanes of the depart edge
+                const MSEdge* edge = (*veh)->getEdge();
+                const std::vector<MSLane*>& lanes = edge->getLanes();
+                for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
+                    myPendingEmitsForLane[*i]++;
+                }
+            }
+        }
+        myPendingEmitsUpdateTime = MSNet::getInstance()->getCurrentTimeStep();
+    }
+    return myPendingEmitsForLane[lane];
+}
 
 /****************************************************************************/
 

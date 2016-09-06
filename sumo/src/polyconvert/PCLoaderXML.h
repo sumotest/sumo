@@ -35,7 +35,7 @@
 #include <string>
 #include "PCPolyContainer.h"
 #include "PCTypeMap.h"
-#include <utils/xml/SUMOSAXHandler.h>
+#include <utils/shapes/ShapeHandler.h>
 #include <utils/common/UtilExceptions.h>
 
 
@@ -55,7 +55,7 @@ class OptionsCont;
  * Reads pois stored as XML definition. The definitions must match
  *  the format POLYCONVERT generates.
  */
-class PCLoaderXML : public SUMOSAXHandler {
+class PCLoaderXML : public ShapeHandler {
 public:
     /** @brief Loads pois/polygons assumed to be stored as XML
      *
@@ -71,6 +71,8 @@ public:
     static void loadIfSet(OptionsCont& oc, PCPolyContainer& toFill,
                           PCTypeMap& tm);
 
+
+    Position getLanePos(const std::string& poiID, const std::string& laneID, SUMOReal lanePos);
 
 protected:
     /** @brief Constructor
@@ -102,35 +104,11 @@ protected:
 
 
 private:
-    /// @brief The container to store the converted polygons/pois into
-    PCPolyContainer& myCont;
-
     /// @brief The type map to use
     PCTypeMap& myTypeMap;
 
     /// @brief Settings to use
     OptionsCont& myOptions;
-
-
-    /// @name Temporary storages used when parsing polygons
-    /// @{
-
-    /// @brief The id of the currently parsed polygon
-    std::string myCurrentID;
-
-    /// @brief The type of the currently parsed polygon
-    std::string myCurrentType;
-
-    /// @brief The color of the currently parsed polygon
-    RGBColor myCurrentColor;
-
-    /// @brief Whether the current polygon must not be prunned
-    bool myCurrentIgnorePrunning;
-
-    /// @brief The layer of the currently parsed polygon
-    SUMOReal myCurrentLayer;
-    /// @}
-
 
 };
 

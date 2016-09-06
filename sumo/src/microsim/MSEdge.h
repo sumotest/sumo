@@ -339,8 +339,8 @@ public:
     /** @brief Returns the number of edges that may be reached from this edge
      * @return The number of following edges
      */
-    unsigned int getNumSuccessors() const {
-        return (unsigned int) mySuccessors.size();
+    int getNumSuccessors() const {
+        return (int) mySuccessors.size();
     }
 
 
@@ -362,8 +362,8 @@ public:
      *
      * @return The number of edges following this edge
      */
-    unsigned int getNumPredecessors() const {
-        return (unsigned int) myPredecessors.size();
+    int getNumPredecessors() const {
+        return (int) myPredecessors.size();
     }
 
 
@@ -460,6 +460,10 @@ public:
     static inline SUMOReal getTravelTimeStatic(const MSEdge* const edge, const SUMOVehicle* const veh, SUMOReal time) {
         return MSNet::getInstance()->getTravelTime(edge, veh, time);
     }
+
+    /** @brief Returns the averaged speed used by the routing device
+     */
+    SUMOReal getRoutingSpeed() const;
 
 
     /// @name Methods releated to vehicle insertion
@@ -644,8 +648,8 @@ public:
     /// @brief whether this edge allows changing to the opposite direction edge
     bool canChangeToOpposite();
 
-    /// @brief get the mean speed for mesoscopic simulation
-    SUMOReal getMesoMeanSpeed() const;
+    /// @brief get the mean speed
+    SUMOReal getMeanSpeed() const;
 
     /// @brief grant exclusive access to the mesoscopic state
     virtual void lock() const {}
@@ -662,7 +666,7 @@ public:
     static MSEdge* dictionary(const std::string& id);
 
     /// @brief Returns the number of edges
-    static size_t dictSize();
+    static int dictSize();
 
     /// @brief Returns all edges with a numerical id
     static const MSEdgeVector& getAllEdges();

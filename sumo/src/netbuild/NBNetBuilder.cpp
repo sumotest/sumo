@@ -145,7 +145,7 @@ NBNetBuilder::compute(OptionsCont& oc,
     if (oc.exists("junctions.join-exclude") && oc.isSet("junctions.join-exclude")) {
         myNodeCont.addJoinExclusion(oc.getStringVector("junctions.join-exclude"));
     }
-    unsigned int numJoined = myNodeCont.joinLoadedClusters(myDistrictCont, myEdgeCont, myTLLCont);
+    int numJoined = myNodeCont.joinLoadedClusters(myDistrictCont, myEdgeCont, myTLLCont);
     if (oc.getBool("junctions.join")) {
         before = SysUtils::getCurrentMillis();
         PROGRESS_BEGIN_MESSAGE("Joining junction clusters");
@@ -162,13 +162,13 @@ NBNetBuilder::compute(OptionsCont& oc,
     }
     //
     if (removeElements) {
-        unsigned int no = 0;
+        int no = 0;
         const bool removeGeometryNodes = oc.exists("geometry.remove") && oc.getBool("geometry.remove");
         before = SysUtils::getCurrentMillis();
         PROGRESS_BEGIN_MESSAGE("Removing empty nodes" + std::string(removeGeometryNodes ? " and geometry nodes" : ""));
         // removeUnwishedNodes needs turnDirections. @todo: try to call this less often
         NBTurningDirectionsComputer::computeTurnDirections(myNodeCont, false);
-        no = myNodeCont.removeUnwishedNodes(myDistrictCont, myEdgeCont, myJoinedEdges, myTLLCont, removeGeometryNodes);
+        no = myNodeCont.removeUnwishedNodes(myDistrictCont, myEdgeCont, myTLLCont, removeGeometryNodes);
         PROGRESS_TIME_MESSAGE(before);
         WRITE_MESSAGE("   " + toString(no) + " nodes removed.");
     }
@@ -200,7 +200,6 @@ NBNetBuilder::compute(OptionsCont& oc,
     if (removeElements && oc.getBool("edges.join")) {
         before = SysUtils::getCurrentMillis();
         PROGRESS_BEGIN_MESSAGE("Joining similar edges");
-        myJoinedEdges.init(myEdgeCont);
         myNodeCont.joinSimilarEdges(myDistrictCont, myEdgeCont, myTLLCont);
         PROGRESS_TIME_MESSAGE(before);
     }
@@ -289,11 +288,12 @@ NBNetBuilder::compute(OptionsCont& oc,
     if (oc.exists("speed.offset")) {
         const SUMOReal speedOffset = oc.getFloat("speed.offset");
         const SUMOReal speedFactor = oc.getFloat("speed.factor");
-        if (speedOffset != 0 || speedFactor != 1) {
+        if (speedOffset != 0 || speedFactor != 1 || oc.isSet("speed.minimum")) {
+            const SUMOReal speedMin = oc.isSet("speed.minimum") ? oc.getFloat("speed.minimum") : -std::numeric_limits<SUMOReal>::infinity();
             before = SysUtils::getCurrentMillis();
             PROGRESS_BEGIN_MESSAGE("Applying speed modifications");
             for (std::map<std::string, NBEdge*>::const_iterator i = myEdgeCont.begin(); i != myEdgeCont.end(); ++i) {
-                (*i).second->setSpeed(-1, (*i).second->getSpeed() * speedFactor + speedOffset);
+                (*i).second->setSpeed(-1, MAX2((*i).second->getSpeed() * speedFactor + speedOffset, speedMin));
             }
             PROGRESS_TIME_MESSAGE(before);
         }
@@ -422,7 +422,7 @@ NBNetBuilder::compute(OptionsCont& oc,
     //
     before = SysUtils::getCurrentMillis();
     PROGRESS_BEGIN_MESSAGE("Computing traffic light logics");
-    std::pair<unsigned int, unsigned int> numbers = myTLLCont.computeLogics(oc);
+    std::pair<int, int> numbers = myTLLCont.computeLogics(oc);
     PROGRESS_TIME_MESSAGE(before);
     std::string progCount = "";
     if (numbers.first != numbers.second) {
@@ -445,6 +445,19 @@ NBNetBuilder::compute(OptionsCont& oc,
             (*i).second->sortOutgoingConnectionsByIndex();
         }
         // walking areas shall only be built if crossings are wished as well
+        for (std::map<std::string, NBNode*>::const_iterator i = myNodeCont.begin(); i != myNodeCont.end(); ++i) {
+            (*i).second->buildInnerEdges();
+        }
+        PROGRESS_TIME_MESSAGE(before);
+    }
+    // PATCH NODE SHAPES 
+    if (OptionsCont::getOptions().getFloat("junctions.scurve-stretch") > 0) {
+        // @note: notes have collected correction hints in buildInnerEdges()
+        before = SysUtils::getCurrentMillis();
+        PROGRESS_BEGIN_MESSAGE("stretching junctions to smooth geometries");
+        myEdgeCont.computeLaneShapes();
+        myNodeCont.computeNodeShapes();
+        myEdgeCont.computeEdgeShapes();
         for (std::map<std::string, NBNode*>::const_iterator i = myNodeCont.begin(); i != myNodeCont.end(); ++i) {
             (*i).second->buildInnerEdges();
         }

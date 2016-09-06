@@ -190,6 +190,9 @@ NBFrame::fillOptions(bool forNetgen) {
 
         oc.doRegister("speed.factor", new Option_Float(1));
         oc.addDescription("speed.factor", "Processing", "Modifies all edge speeds by multiplying by FLOAT");
+
+        oc.doRegister("speed.minimum", new Option_Float());
+        oc.addDescription("speed.minimum", "Processing", "Modifies all edge speeds to at least FLOAT");
     }
 
     oc.doRegister("junctions.corner-detail", new Option_Integer(0));
@@ -197,6 +200,9 @@ NBFrame::fillOptions(bool forNetgen) {
 
     oc.doRegister("junctions.internal-link-detail", new Option_Integer(5));
     oc.addDescription("junctions.internal-link-detail", "Processing", "Generate INT intermediate points to smooth out lanes within the intersection");
+
+    oc.doRegister("junctions.scurve-stretch", new Option_Float(0));
+    oc.addDescription("junctions.scurve-stretch", "Processing", "Generate longer intersections to allow for smooth s-curves when the number of lanes changes");
 
     oc.doRegister("check-lane-foes.roundabout", new Option_Bool(true));
     oc.addDescription("check-lane-foes.roundabout", "Processing",
@@ -380,7 +386,6 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addSynonyme("keep-nodes-unregulated.district-nodes", "keep-unregulated.district-nodes");
     oc.addDescription("keep-nodes-unregulated.district-nodes", "Unregulated Nodes", "Do not regulate district nodes");
 
-
     // ramp guessing options
     if (!forNetgen) {
         oc.doRegister("ramps.guess", new Option_Bool(false));
@@ -443,6 +448,13 @@ NBFrame::checkOptions() {
     if (oc.getInt("junctions.internal-link-detail") < 2) {
         WRITE_ERROR("junctions.internal-link-detail must >= 2");
         ok = false;
+    }
+    if (oc.getFloat("junctions.scurve-stretch") > 0) {
+        if (oc.getBool("no-internal-links")) {
+            WRITE_WARNING("option 'junctions.scurve-stretch' requires internal lanes to work. Option '--no-internal-links' was disabled.");
+        }
+        // make sure the option is set so heuristics cannot ignore it
+        oc.set("no-internal-links", "false");
     }
     return ok;
 }

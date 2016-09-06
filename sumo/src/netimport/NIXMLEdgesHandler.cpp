@@ -303,10 +303,6 @@ NIXMLEdgesHandler::addLane(const SUMOSAXAttributes& attrs) {
     } else {
         lane = attrs.get<int>(SUMO_ATTR_INDEX, myCurrentID.c_str(), ok);
     }
-    std::string allowed, disallowed, preferred;
-    allowed    = attrs.getOpt<std::string>(SUMO_ATTR_ALLOW, 0, ok, "");
-    disallowed = attrs.getOpt<std::string>(SUMO_ATTR_DISALLOW, 0, ok, "");
-    preferred  = attrs.getOpt<std::string>(SUMO_ATTR_PREFER, 0, ok, "");
     if (!ok) {
         return;
     }
@@ -315,9 +311,16 @@ NIXMLEdgesHandler::addLane(const SUMOSAXAttributes& attrs) {
         WRITE_ERROR("Lane index is larger than number of lanes (edge '" + myCurrentID + "').");
         return;
     }
-    // set information about allowed / disallowed vehicle classes
-    myCurrentEdge->setPermissions(parseVehicleClasses(allowed, disallowed), lane);
-    myCurrentEdge->setPreferredVehicleClass(parseVehicleClasses(preferred), lane);
+    // set information about allowed / disallowed vehicle classes (if specified)
+    if (attrs.hasAttribute(SUMO_ATTR_ALLOW) || attrs.hasAttribute(SUMO_ATTR_DISALLOW)) {
+        const std::string allowed = attrs.getOpt<std::string>(SUMO_ATTR_ALLOW, 0, ok, "");
+        const std::string disallowed = attrs.getOpt<std::string>(SUMO_ATTR_DISALLOW, 0, ok, "");
+        myCurrentEdge->setPermissions(parseVehicleClasses(allowed, disallowed), lane);
+    }
+    if (attrs.hasAttribute(SUMO_ATTR_PREFER)) {
+        const std::string preferred  = attrs.get<std::string>(SUMO_ATTR_PREFER, 0, ok);
+        myCurrentEdge->setPreferredVehicleClass(parseVehicleClasses(preferred), lane);
+    }
     // try to get the width
     if (attrs.hasAttribute(SUMO_ATTR_WIDTH)) {
         myCurrentEdge->setLaneWidth(lane, attrs.get<SUMOReal>(SUMO_ATTR_WIDTH, myCurrentID.c_str(), ok));
@@ -370,8 +373,8 @@ void NIXMLEdgesHandler::addSplit(const SUMOSAXAttributes& attrs) {
             }
         }
         if (e.lanes.empty()) {
-            for (size_t l = 0; l < myCurrentEdge->getNumLanes(); ++l) {
-                e.lanes.push_back((int) l);
+            for (int l = 0; l < myCurrentEdge->getNumLanes(); ++l) {
+                e.lanes.push_back(l);
             }
         }
         e.speed = attrs.getOpt(SUMO_ATTR_SPEED, 0, ok, myCurrentEdge->getSpeed());
@@ -511,18 +514,18 @@ NIXMLEdgesHandler::myEndElement(int element) {
             std::vector<Split>::iterator i;
             NBEdge* e = myCurrentEdge;
             sort(mySplits.begin(), mySplits.end(), split_sorter());
-            unsigned int noLanesMax = e->getNumLanes();
+            int noLanesMax = e->getNumLanes();
             // compute the node positions and sort the lanes
             for (i = mySplits.begin(); i != mySplits.end(); ++i) {
                 sort((*i).lanes.begin(), (*i).lanes.end());
-                noLanesMax = MAX2(noLanesMax, (unsigned int)(*i).lanes.size());
+                noLanesMax = MAX2(noLanesMax, (int)(*i).lanes.size());
             }
             // split the edge
             std::vector<int> currLanes;
-            for (unsigned int l = 0; l < e->getNumLanes(); ++l) {
+            for (int l = 0; l < e->getNumLanes(); ++l) {
                 currLanes.push_back(l);
             }
-            if (e->getNumLanes() != mySplits.back().lanes.size()) {
+            if (e->getNumLanes() != (int)mySplits.back().lanes.size()) {
                 // invalidate traffic light definitions loaded from a SUMO network
                 // XXX it would be preferable to reconstruct the phase definitions heuristically
                 e->getToNode()->invalidateTLS(myTLLogicCont);
@@ -542,7 +545,7 @@ NIXMLEdgesHandler::myEndElement(int element) {
                         //  split the edge
                         std::string pid = e->getID();
                         myEdgeCont.splitAt(myDistrictCont, e, exp.pos - seen, exp.node,
-                                           pid, exp.node->getID(), e->getNumLanes(), (unsigned int) exp.lanes.size(), exp.speed);
+                                           pid, exp.node->getID(), e->getNumLanes(), (int) exp.lanes.size(), exp.speed);
                         seen = exp.pos;
                         std::vector<int> newLanes = exp.lanes;
                         NBEdge* pe = myEdgeCont.retrieve(pid);
@@ -550,19 +553,19 @@ NIXMLEdgesHandler::myEndElement(int element) {
                         // reconnect lanes
                         pe->invalidateConnections(true);
                         //  new on right
-                        unsigned int rightMostP = currLanes[0];
-                        unsigned int rightMostN = newLanes[0];
+                        int rightMostP = currLanes[0];
+                        int rightMostN = newLanes[0];
                         for (int l = 0; l < (int) rightMostP - (int) rightMostN; ++l) {
                             pe->addLane2LaneConnection(0, ne, l, NBEdge::L2L_VALIDATED, true);
                         }
                         //  new on left
-                        unsigned int leftMostP = currLanes.back();
-                        unsigned int leftMostN = newLanes.back();
+                        int leftMostP = currLanes.back();
+                        int leftMostN = newLanes.back();
                         for (int l = 0; l < (int) leftMostN - (int) leftMostP; ++l) {
                             pe->addLane2LaneConnection(pe->getNumLanes() - 1, ne, leftMostN - l - rightMostN, NBEdge::L2L_VALIDATED, true);
                         }
                         //  all other connected
-                        for (unsigned int l = 0; l < noLanesMax; ++l) {
+                        for (int l = 0; l < noLanesMax; ++l) {
                             if (find(currLanes.begin(), currLanes.end(), l) == currLanes.end()) {
                                 continue;
                             }
@@ -578,10 +581,11 @@ NIXMLEdgesHandler::myEndElement(int element) {
                         WRITE_WARNING("Error on parsing a split (edge '" + myCurrentID + "').");
                     }
                 }  else if (exp.pos == 0) {
-                    if (e->getNumLanes() < exp.lanes.size()) {
-                        e->incLaneNo((int) exp.lanes.size() - e->getNumLanes());
+                    const int laneCountDiff = e->getNumLanes() - (int)exp.lanes.size();
+                    if (laneCountDiff < 0) {
+                        e->incLaneNo(-laneCountDiff);
                     } else {
-                        e->decLaneNo(e->getNumLanes() - (int) exp.lanes.size());
+                        e->decLaneNo(laneCountDiff);
                     }
                     currLanes = exp.lanes;
                     // invalidate traffic light definition loaded from a SUMO network
@@ -604,7 +608,7 @@ NIXMLEdgesHandler::myEndElement(int element) {
             }
             i = mySplits.begin();
             for (; i != mySplits.end(); ++i) {
-                unsigned int maxLeft = (*i).lanes.back();
+                int maxLeft = (*i).lanes.back();
                 SUMOReal offset = 0;
                 if (maxLeft < noLanesMax) {
                     if (e->getLaneSpreadFunction() == LANESPREAD_RIGHT) {
@@ -613,7 +617,7 @@ NIXMLEdgesHandler::myEndElement(int element) {
                         offset = SUMO_const_halfLaneAndOffset * (noLanesMax - 1 - maxLeft);
                     }
                 }
-                unsigned int maxRight = (*i).lanes.front();
+                int maxRight = (*i).lanes.front();
                 if (maxRight > 0 && e->getLaneSpreadFunction() == LANESPREAD_CENTER) {
                     offset -= SUMO_const_halfLaneAndOffset * maxRight;
                 }

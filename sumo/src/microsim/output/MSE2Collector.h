@@ -12,7 +12,7 @@
 // An areal (along a single lane) detector
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
-// Copyright (C) 2014 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -82,6 +82,22 @@ class OutputDevice;
  */
 class MSE2Collector : public MSMoveReminder, public MSDetectorFileOutput {
 public:
+    /** @brief Internal representation of a vehicle
+    */
+    struct VehicleInfo {
+        VehicleInfo(std::string _id, std::string _type, SUMOReal _speed, SUMOReal _timeOnDet, SUMOReal _lengthOnDet, SUMOReal _position, SUMOReal _lengthWithGap, SUMOReal _accel)
+            : id(_id), type(_type), speed(_speed), timeOnDet(_timeOnDet), lengthOnDet(_lengthOnDet), position(_position), lengthWithGap(_lengthWithGap), accel(_accel) {}
+        std::string id;
+        std::string type;
+        SUMOReal speed;
+        SUMOReal timeOnDet;
+        SUMOReal lengthOnDet;
+        SUMOReal position;
+        SUMOReal lengthWithGap;
+        SUMOReal accel;
+    };
+
+
     /** @brief Constructor
      *
      * @param[in] id The detector's unique id.
@@ -240,7 +256,7 @@ public:
     /// @{
 
     /** @brief Returns the number of vehicles currently on the detector */
-    unsigned getCurrentVehicleNumber() const;
+    int getCurrentVehicleNumber() const;
 
     /** @brief Returns the curent detector occupancy */
     SUMOReal getCurrentOccupancy() const;
@@ -252,22 +268,22 @@ public:
     SUMOReal getCurrentMeanLength() const;
 
     /** @brief Returns the current number of jams */
-    unsigned getCurrentJamNumber() const;
+    int getCurrentJamNumber() const;
 
     /** @brief Returns the length in vehicles of the currently largest jam */
-    unsigned getCurrentMaxJamLengthInVehicles() const;
+    int getCurrentMaxJamLengthInVehicles() const;
 
     /** @brief Returns the length in meters of the currently largest jam */
     SUMOReal getCurrentMaxJamLengthInMeters() const;
 
     /** @brief Returns the length of all jams in vehicles */
-    unsigned getCurrentJamLengthInVehicles() const;
+    int getCurrentJamLengthInVehicles() const;
 
     /** @brief Returns the length of all jams in meters */
     SUMOReal getCurrentJamLengthInMeters() const;
 
     /** @brief Returns the length of all jams in meters */
-    unsigned getCurrentStartedHalts() const;
+    int getCurrentStartedHalts() const;
 
     /** @brief Returns the number of current haltings within the area
     *
@@ -286,14 +302,14 @@ public:
      *
      * @return The vehicles that have passed the entry, but not yet an exit point
      */
-    const std::list<SUMOVehicle*>& getCurrentVehicles() const;
+    const std::vector<VehicleInfo>& getCurrentVehicles() const;
     /// @}
 
     /** \brief Returns the number of vehicles passed over the sensor.
      *
      * @return number of cars passed over the sensor
      */
-    unsigned int getPassedVeh() {
+    int getPassedVeh() {
         return myPassedVeh;
     }
 
@@ -305,7 +321,7 @@ public:
         myPassedVeh -= passed;
     }
 
-protected:
+private:
     /** @brief Internal representation of a jam
      *
      * Used in execute, instances of this structure are used to track
@@ -313,58 +329,13 @@ protected:
      */
     struct JamInfo {
         /// @brief The first standing vehicle
-        std::list<SUMOVehicle*>::const_iterator firstStandingVehicle;
+        std::vector<VehicleInfo>::const_iterator firstStandingVehicle;
 
         /// @brief The last standing vehicle
-        std::list<SUMOVehicle*>::const_iterator lastStandingVehicle;
+        std::vector<VehicleInfo>::const_iterator lastStandingVehicle;
     };
 
 
-    /** @brief A class used to sort known vehicles by their position
-     *
-     * Sorting is needed, because the order may change if a vehicle has
-     *  entered the lane by lane changing.
-     *
-     * We need to have the lane, because the vehicle's position - used
-     *  for the sorting - may be beyond the lane's end (the vehicle may
-     *  be on a new lane) and we have to ask for the vehicle's position
-     *  using this information.
-     */
-    class by_vehicle_position_sorter {
-    public:
-        /** @brief constructor
-         *
-         * @param[in] lane The lane the detector is placed at
-         */
-        by_vehicle_position_sorter(const MSLane* const lane)
-            : myLane(lane) { }
-
-
-        /** @brief copy constructor
-         *
-         * @param[in] s The instance to copy
-         */
-        by_vehicle_position_sorter(const by_vehicle_position_sorter& s)
-            : myLane(s.myLane) { }
-
-
-        /** @brief Comparison funtcion
-         *
-         * @param[in] v1 First vehicle to compare
-         * @param[in] v2 Second vehicle to compare
-         * @return Whether the position of the first vehicles is smaller than the one of the second
-         */
-        int operator()(const SUMOVehicle* v1, const SUMOVehicle* v2);
-
-    private:
-        by_vehicle_position_sorter& operator=(const by_vehicle_position_sorter&); // just to avoid a compiler warning
-    private:
-        /// @brief The lane the detector is placed at
-        const MSLane* const myLane;
-    };
-
-
-private:
     /// @name Detector parameter
     /// @{
 
@@ -384,13 +355,13 @@ private:
     DetectorUsage myUsage;
 
     /// @brief List of known vehicles
-    std::list<SUMOVehicle*> myKnownVehicles;
+    std::vector<VehicleInfo> myKnownVehicles;
 
     /// @brief Storage for halting durations of known vehicles (for halting vehicles)
-    std::map<const SUMOVehicle*, SUMOTime> myHaltingVehicleDurations;
+    std::map<const std::string, SUMOTime> myHaltingVehicleDurations;
 
     /// @brief Storage for halting durations of known vehicles (current interval)
-    std::map<const SUMOVehicle*, SUMOTime> myIntervalHaltingVehicleDurations;
+    std::map<const std::string, SUMOTime> myIntervalHaltingVehicleDurations;
 
     /// @brief Halting durations of ended halts [s]
     std::vector<SUMOTime> myPastStandingDurations;
@@ -409,27 +380,27 @@ private:
     /// @brief The sum of jam lengths [m]
     SUMOReal myJamLengthInMetersSum;
     /// @brief The sum of jam lengths [#veh]
-    unsigned myJamLengthInVehiclesSum;
+    int myJamLengthInVehiclesSum;
     /// @brief The number of collected samples [#]
-    unsigned myVehicleSamples;
+    SUMOReal myVehicleSamples;
     /// @brief The current aggregation duration [#steps]
-    unsigned myTimeSamples;
+    int myTimeSamples;
     /// @brief The sum of occupancies [%]
     SUMOReal myOccupancySum;
     /// @brief The maximum occupancy [%]
     SUMOReal myMaxOccupancy;
     /// @brief The mean jam length [#veh]
-    unsigned myMeanMaxJamInVehicles;
+    int myMeanMaxJamInVehicles;
     /// @brief The mean jam length [m]
     SUMOReal myMeanMaxJamInMeters;
     /// @brief The max jam length [#veh]
-    unsigned myMaxJamInVehicles;
+    int myMaxJamInVehicles;
     /// @brief The max jam length [m]
     SUMOReal myMaxJamInMeters;
     /// @brief The mean number of vehicles [#veh]
-    unsigned myMeanVehicleNumber;
+    int myMeanVehicleNumber;
     /// @brief The max number of vehicles [#veh]
-    unsigned myMaxVehicleNumber;
+    int myMaxVehicleNumber;
     /// @}
 
 
@@ -443,21 +414,21 @@ private:
     /// @brief The current mean length
     SUMOReal myCurrentMeanLength;
     /// @brief The current jam number
-    unsigned myCurrentJamNo;
+    int myCurrentJamNo;
     /// @brief the current maximum jam length in meters
     SUMOReal myCurrentMaxJamLengthInMeters;
     /// @brief The current maximum jam length in vehicles
-    unsigned myCurrentMaxJamLengthInVehicles;
+    int myCurrentMaxJamLengthInVehicles;
     /// @brief The overall jam length in meters
     SUMOReal myCurrentJamLengthInMeters;
     /// @brief The overall jam length in vehicles
-    unsigned myCurrentJamLengthInVehicles;
+    int myCurrentJamLengthInVehicles;
     /// @brief The number of started halts in the last step
-    unsigned myCurrentStartedHalts;
+    int myCurrentStartedHalts;
     /// @brief The number of halted vehicles [#]
     int myCurrentHaltingsNumber;
     /// @brief The number of vehicles passed on the sensor
-    unsigned int myPassedVeh;
+    int myPassedVeh;
     /// @}
 
 

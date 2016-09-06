@@ -54,9 +54,14 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-RODFNet::RODFNet(bool amInHighwayMode)
-    : RONet(), myAmInHighwayMode(amInHighwayMode),
-      mySourceNumber(0), mySinkNumber(0), myInBetweenNumber(0), myInvalidNumber(0) {
+RODFNet::RODFNet(bool amInHighwayMode) : 
+    RONet(), myAmInHighwayMode(amInHighwayMode),
+      mySourceNumber(0), mySinkNumber(0), myInBetweenNumber(0), myInvalidNumber(0),
+      myMaxSpeedFactorPKW(1),
+      myMaxSpeedFactorLKW(1),
+      myAvgSpeedFactorPKW(1),
+      myAvgSpeedFactorLKW(1)
+{
     myDisallowedEdges = OptionsCont::getOptions().getStringVector("disallowed-edges");
     myKeepTurnarounds = OptionsCont::getOptions().getBool("keep-turnarounds");
 }
@@ -294,7 +299,7 @@ RODFNet::computeRoutesFor(ROEdge* edge, RODFRouteDesc& base, int /*no*/,
         // ... else: loop over the next edges
         const ROEdgeVector& appr  = myApproachedEdges.find(last)->second;
         bool hadOne = false;
-        for (size_t i = 0; i < appr.size(); i++) {
+        for (int i = 0; i < (int)appr.size(); i++) {
             if (find(current.edges2Pass.begin(), current.edges2Pass.end(), appr[i]) != current.edges2Pass.end()) {
                 // do not append an edge twice (do not build loops)
                 continue;
@@ -747,17 +752,17 @@ RODFNet::isSource(const RODFDetector& det, ROEdge* edge,
                 // the next is a hack for the A100 scenario...
                 //  We have to look into further edges herein edges
                 const ROEdgeVector& appr = myApproachingEdges.find(edge)->second;
-                size_t noOk = 0;
-                size_t noFalse = 0;
-                size_t noSkipped = 0;
-                for (size_t i = 0; i < appr.size(); i++) {
+                int noOk = 0;
+                int noFalse = 0;
+                int noSkipped = 0;
+                for (int i = 0; i < (int)appr.size(); i++) {
                     if (!hasDetector(appr[i])) {
                         noOk++;
                     } else {
                         noFalse++;
                     }
                 }
-                if ((noFalse + noSkipped) == appr.size()) {
+                if (noFalse + noSkipped == (int)appr.size()) {
                     return false;
                 }
             }
@@ -781,27 +786,26 @@ RODFNet::isSource(const RODFDetector& det, ROEdge* edge,
 
     // let's check the edges in front
     const ROEdgeVector& appr = myApproachingEdges.find(edge)->second;
-    size_t noOk = 0;
-    size_t noFalse = 0;
-    size_t noSkipped = 0;
+    int numOk = 0;
+    int numFalse = 0;
+    int numSkipped = 0;
     seen.push_back(edge);
-    for (size_t i = 0; i < appr.size(); i++) {
+    for (int i = 0; i < (int)appr.size(); i++) {
         bool had = std::find(seen.begin(), seen.end(), appr[i]) != seen.end();
         if (!had) {
             if (isSource(det, appr[i], seen, detectors, strict)) {
-                noOk++;
+                numOk++;
             } else {
-                noFalse++;
+                numFalse++;
             }
         } else {
-            noSkipped++;
+            numSkipped++;
         }
     }
-    if (!strict) {
-        return (noFalse + noSkipped) != appr.size();
-    } else {
-        return (noOk + noSkipped) == appr.size();
+    if (strict) {
+        return numOk + numSkipped == (int)appr.size();
     }
+    return numFalse + numSkipped != (int)appr.size();
 }
 
 
@@ -867,9 +871,9 @@ RODFNet::isDestination(const RODFDetector& det, ROEdge* edge, ROEdgeVector& seen
     }
     const ROEdgeVector& appr  = myApproachedEdges.find(edge)->second;
     bool isall = true;
-    size_t no = 0;
+    int no = 0;
     seen.push_back(edge);
-    for (size_t i = 0; i < appr.size() && isall; i++) {
+    for (int i = 0; i < (int)appr.size() && isall; i++) {
         bool had = std::find(seen.begin(), seen.end(), appr[i]) != seen.end();
         if (!had) {
             if (!isDestination(det, appr[i], seen, detectors)) {
@@ -917,7 +921,7 @@ RODFNet::isFalseSource(const RODFDetector& det, ROEdge* edge, ROEdgeVector& seen
 
     const ROEdgeVector& appr  = myApproachedEdges.find(edge)->second;
     bool isall = false;
-    for (size_t i = 0; i < appr.size() && !isall; i++) {
+    for (int i = 0; i < (int)appr.size() && !isall; i++) {
         //printf("checking %s->\n", appr[i].c_str());
         bool had = std::find(seen.begin(), seen.end(), appr[i]) != seen.end();
         if (!had) {
@@ -936,8 +940,15 @@ RODFNet::buildEdgeFlowMap(const RODFDetectorFlows& flows,
                           SUMOTime startTime, SUMOTime endTime,
                           SUMOTime stepOffset) {
     std::map<ROEdge*, std::vector<std::string>, idComp>::iterator i;
+    SUMOReal speedFactorSumPKW = 0;
+    SUMOReal speedFactorSumLKW = 0;
+    int speedFactorCountPKW = 0;
+    int speedFactorCountLKW = 0;
     for (i = myDetectorsOnEdges.begin(); i != myDetectorsOnEdges.end(); ++i) {
         ROEdge* into = (*i).first;
+        const SUMOReal maxSpeedPKW = into->getVClassMaxSpeed(SVC_PASSENGER);
+        const SUMOReal maxSpeedLKW = into->getVClassMaxSpeed(SVC_TRUCK);
+
         const std::vector<std::string>& dets = (*i).second;
         std::map<SUMOReal, std::vector<std::string> > cliques;
         std::vector<std::string>* maxClique = 0;
@@ -988,18 +999,36 @@ RODFNet::buildEdgeFlowMap(const RODFDetectorFlows& flows,
                 fd.vPKW += (srcFD.vPKW / (SUMOReal) maxClique->size());
                 fd.fLKW += (srcFD.fLKW / (SUMOReal) maxClique->size());
                 fd.isLKW += (srcFD.isLKW / (SUMOReal) maxClique->size());
+                const SUMOReal speedFactorPKW = srcFD.vPKW / 3.6 / maxSpeedPKW;
+                const SUMOReal speedFactorLKW = srcFD.vLKW / 3.6 / maxSpeedLKW;
+                myMaxSpeedFactorPKW = MAX2(myMaxSpeedFactorPKW, speedFactorPKW);
+                myMaxSpeedFactorLKW = MAX2(myMaxSpeedFactorLKW, speedFactorLKW);
+                speedFactorCountPKW += srcFD.qPKW;
+                speedFactorCountLKW += srcFD.qLKW;
+                speedFactorSumPKW += srcFD.qPKW * speedFactorPKW;
+                speedFactorSumLKW += srcFD.qLKW * speedFactorLKW;
                 if (!didWarn && srcFD.vPKW > 0 && srcFD.vPKW < 255 && srcFD.vPKW / 3.6 > into->getSpeed()) {
-                    WRITE_MESSAGE("Detected PKW speed higher than allowed speed at '" + (*l) + "' on edge '" + into->getID() + "'.");
+                    WRITE_MESSAGE("Detected PKW speed (" + toString(srcFD.vPKW / 3.6, 3) + ") higher than allowed speed (" + toString(into->getSpeed(), 3) + ") at '" + (*l) + "' on edge '" + into->getID() + "'.");
                     didWarn = true;
                 }
                 if (!didWarn && srcFD.vLKW > 0 && srcFD.vLKW < 255 && srcFD.vLKW / 3.6 > into->getSpeed()) {
-                    WRITE_MESSAGE("Detected LKW speed higher than allowed speed at '" + (*l) + "' on edge '" + into->getID() + "'.");
+                    WRITE_MESSAGE("Detected LKW speed (" + toString(srcFD.vLKW / 3.6, 3) + ") higher than allowed speed (" + toString(into->getSpeed(), 3) + ") at '" + (*l) + "' on edge '" + into->getID() + "'.");
                     didWarn = true;
                 }
             }
         }
         static_cast<RODFEdge*>(into)->setFlows(mflows);
     }
+    // @note: this assumes that the speedFactors are independent of location and time
+    if (speedFactorCountPKW > 0) {
+        myAvgSpeedFactorPKW = speedFactorSumPKW / speedFactorCountPKW;
+        WRITE_MESSAGE("Average speedFactor for PKW is " + toString(myAvgSpeedFactorPKW) + " maximum speedFactor is " + toString(myMaxSpeedFactorPKW) + ".");
+    }
+    if (speedFactorCountLKW > 0) {
+        myAvgSpeedFactorLKW = speedFactorSumLKW / speedFactorCountLKW;
+        WRITE_MESSAGE("Average speedFactor for LKW is " + toString(myAvgSpeedFactorLKW) + " maximum speedFactor is " + toString(myMaxSpeedFactorLKW) + ".");
+    }
+    
 }
 
 

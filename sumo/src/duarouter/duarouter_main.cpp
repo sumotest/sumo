@@ -106,7 +106,7 @@ computeRoutes(RONet& net, ROLoader& loader, OptionsCont& oc) {
     // prepare the output
     const std::string& filename = oc.getString("output-file");
     std::string altFilename = filename + ".alt";
-    const size_t len = filename.length();
+    const int len = (int)filename.length();
     if (len > 4 && filename.substr(len - 4) == ".xml") {
         altFilename = filename.substr(0, len - 4) + ".alt.xml";
     } else if (len > 4 && filename.substr(len - 4) == ".sbx") {
@@ -184,11 +184,11 @@ computeRoutes(RONet& net, ROLoader& loader, OptionsCont& oc) {
                 ROEdge::getAllEdges(), oc.getBool("ignore-errors"), op, &ROEdge::getTravelTimeStatic);
         }
     }
-    net.openOutput(filename, altFilename, oc.getString("vtype-output"));
     RORouterProvider provider(router, new PedestrianRouterDijkstra<ROEdge, ROLane, RONode, ROVehicle>(),
                               new ROIntermodalRouter(RONet::adaptIntermodalRouter));
     // process route definitions
     try {
+        net.openOutput(oc, altFilename);
         loader.processRoutes(string2time(oc.getString("begin")), string2time(oc.getString("end")),
                              string2time(oc.getString("route-steps")), net, provider);
         // end the processing

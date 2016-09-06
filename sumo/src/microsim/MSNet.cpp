@@ -46,8 +46,7 @@
 #include <ctime>
 #include <utils/common/UtilExceptions.h>
 #include "MSNet.h"
-#include "MSPersonControl.h"
-#include "MSContainerControl.h"
+#include "MSTransportableControl.h"
 #include "MSEdgeControl.h"
 #include "MSJunctionControl.h"
 #include "MSInsertionControl.h"
@@ -211,12 +210,13 @@ MSNet::MSNet(MSVehicleControl* vc, MSEventControl* beginOfTimestepEvents,
 
 
 void
-MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
+MSNet::closeBuilding(const OptionsCont& oc, MSEdgeControl* edges, MSJunctionControl* junctions,
                      SUMORouteLoaderControl* routeLoaders,
                      MSTLLogicControl* tlc,
                      std::vector<SUMOTime> stateDumpTimes,
                      std::vector<std::string> stateDumpFiles,
                      bool hasInternalLinks,
+                     bool hasNeighs,
                      bool lefthand,
                      SUMOReal version) {
     myEdges = edges;
@@ -226,6 +226,9 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
     // save the time the network state shall be saved at
     myStateDumpTimes = stateDumpTimes;
     myStateDumpFiles = stateDumpFiles;
+    myStateDumpPeriod = string2time(oc.getString("save-state.period"));
+    myStateDumpPrefix = oc.getString("save-state.prefix");
+    myStateDumpSuffix = oc.getString("save-state.suffix");
 
     // set requests/responses
     myJunctions->postloadInitContainer();
@@ -235,6 +238,7 @@ MSNet::closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
         mySimBeginMillis = SysUtils::getCurrentMillis();
     }
     myHasInternalLinks = hasInternalLinks;
+    myHasNeighs = hasNeighs;
     myHasElevation = checkElevation();
     myLefthand = lefthand;
     myVersion = version;
@@ -390,12 +394,12 @@ MSNet::closeSimulation(SUMOTime start) {
         if (myVehicleControl->getEmergencyStops() > 0) {
             msg << "Emergency Stops: " << myVehicleControl->getEmergencyStops() << "\n";
         }
-        if (myPersonControl != 0 && myPersonControl->getLoadedPersonNumber() > 0) {
+        if (myPersonControl != 0 && myPersonControl->getLoadedNumber() > 0) {
             msg << "Persons: " << "\n"
-                << " Inserted: " << myPersonControl->getLoadedPersonNumber() << "\n"
-                << " Running: " << myPersonControl->getRunningPersonNumber() << "\n";
-            if (myPersonControl->getJammedPersonNumber() > 0) {
-                msg << " Jammed: " << myPersonControl->getJammedPersonNumber() << "\n";
+                << " Inserted: " << myPersonControl->getLoadedNumber() << "\n"
+                << " Running: " << myPersonControl->getRunningNumber() << "\n";
+            if (myPersonControl->getJammedNumber() > 0) {
+                msg << " Jammed: " << myPersonControl->getJammedNumber() << "\n";
             }
         }
         if (OptionsCont::getOptions().getBool("duration-log.statistics")) {
@@ -435,6 +439,9 @@ MSNet::simulationStep() {
         const int dist = (int)distance(myStateDumpTimes.begin(), timeIt);
         MSStateHandler::saveState(myStateDumpFiles[dist], myStep);
     }
+    if (myStateDumpPeriod > 0 && myStep % myStateDumpPeriod == 0) {
+        MSStateHandler::saveState(myStateDumpPrefix + "_" + time2string(myStep) + myStateDumpSuffix, myStep);
+    }
     myBeginOfTimestepEvents->execute(myStep);
 #ifdef HAVE_FOX
     MSDevice_Routing::waitForAll();
@@ -471,14 +478,15 @@ MSNet::simulationStep() {
     loadRoutes();
 
     // persons
-    if (myPersonControl != 0 && myPersonControl->hasPersons()) {
-        myPersonControl->checkWaitingPersons(this, myStep);
+    if (myPersonControl != 0 && myPersonControl->hasTransportables()) {
+        myPersonControl->checkWaiting(this, myStep);
+    }
+    // containers
+    if (myContainerControl != 0 && myContainerControl->hasTransportables()) {
+        myContainerControl->checkWaiting(this, myStep);
     }
     // insert vehicles
-    myInserter->determineCandidates(myStep);    // containers
-    if (myContainerControl != 0) {
-        myContainerControl->checkWaitingContainers(this, myStep);
-    }
+    myInserter->determineCandidates(myStep);
     myInsertionEvents->execute(myStep);
 #ifdef HAVE_FOX
     MSDevice_Routing::waitForAll();
@@ -644,9 +652,9 @@ MSNet::writeOutput() {
     // summary output
     if (OptionsCont::getOptions().isSet("summary-output")) {
         OutputDevice& od = OutputDevice::getDeviceByOption("summary-output");
-        unsigned int departedVehiclesNumber = myVehicleControl->getDepartedVehicleNo();
+        int departedVehiclesNumber = myVehicleControl->getDepartedVehicleNo();
         const SUMOReal meanWaitingTime = departedVehiclesNumber != 0 ? myVehicleControl->getTotalDepartureDelay() / (SUMOReal) departedVehiclesNumber : -1.;
-        unsigned int endedVehicleNumber = myVehicleControl->getEndedVehicleNo();
+        int endedVehicleNumber = myVehicleControl->getEndedVehicleNo();
         const SUMOReal meanTravelTime = endedVehicleNumber != 0 ? myVehicleControl->getTotalTravelTime() / (SUMOReal) endedVehicleNumber : -1.;
         od.openTag("step").writeAttr("time", time2string(myStep)).writeAttr("loaded", myVehicleControl->getLoadedVehicleNo())
         .writeAttr("inserted", myVehicleControl->getDepartedVehicleNo()).writeAttr("running", myVehicleControl->getRunningVehicleNo())
@@ -687,18 +695,18 @@ MSNet::logSimulationDuration() const {
 }
 
 
-MSPersonControl&
+MSTransportableControl&
 MSNet::getPersonControl() {
     if (myPersonControl == 0) {
-        myPersonControl = new MSPersonControl();
+        myPersonControl = new MSTransportableControl();
     }
     return *myPersonControl;
 }
 
-MSContainerControl&
+MSTransportableControl&
 MSNet::getContainerControl() {
     if (myContainerControl == 0) {
-        myContainerControl = new MSContainerControl();
+        myContainerControl = new MSTransportableControl();
     }
     return *myContainerControl;
 }

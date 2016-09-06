@@ -45,6 +45,9 @@
 #include <microsim/MSGlobals.h>
 #include <microsim/MSEdge.h>
 #include <microsim/MSVehicle.h>
+#include <microsim/MSEdgeControl.h>
+#include <microsim/MSInsertionControl.h>
+#include <microsim/MSTransportableControl.h>
 
 #include "GUISUMOViewParent.h"
 #include "GUILoadThread.h"
@@ -56,6 +59,8 @@
 
 #include <utils/common/ToString.h>
 #include <utils/common/RandHelper.h>
+#include <utils/common/TplCheck.h>
+#include <utils/common/TplConvert.h>
 #include <utils/foxtools/MFXUtils.h>
 #include <utils/foxtools/FXLCDLabel.h>
 #include <utils/foxtools/FXRealSpinDial.h>
@@ -125,6 +130,10 @@ FXDEFMAP(GUIApplicationWindow) GUIApplicationWindowMap[] = {
     FXMAPFUNC(SEL_COMMAND,  MID_TIME_TOOGLE,        GUIApplicationWindow::onCmdTimeToggle),
     FXMAPFUNC(SEL_COMMAND,  MID_DELAY_TOOGLE,       GUIApplicationWindow::onCmdDelayToggle),
     FXMAPFUNC(SEL_COMMAND,  MID_CLEARMESSAGEWINDOW, GUIApplicationWindow::onCmdClearMsgWindow),
+
+    FXMAPFUNC(SEL_COMMAND,  MID_SHOWNETSTATS,       GUIApplicationWindow::onCmdShowStats),
+    FXMAPFUNC(SEL_COMMAND,  MID_SHOWVEHSTATS,       GUIApplicationWindow::onCmdShowStats),
+    FXMAPFUNC(SEL_COMMAND,  MID_SHOWPERSONSTATS,    GUIApplicationWindow::onCmdShowStats),
 
     FXMAPFUNC(SEL_UPDATE,   MID_OPEN_CONFIG,       GUIApplicationWindow::onUpdOpen),
     FXMAPFUNC(SEL_UPDATE,   MID_OPEN_NETWORK,      GUIApplicationWindow::onUpdOpen),
@@ -238,6 +247,11 @@ GUIApplicationWindow::dependentBuild() {
             new FXHorizontalFrame(myStatusbar, LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y | LAYOUT_RIGHT | FRAME_SUNKEN,
                                   0, 0, 20, 0, 0, 0, 0, 0, 0, 0);
         myCartesianCoordinate = new FXLabel(myCartesianFrame, "N/A\t\tNetwork coordinate", 0, LAYOUT_CENTER_Y);
+        myStatButtons.push_back(new FXButton(myStatusbar, "-", GUIIconSubSys::getIcon(ICON_GREENVEHICLE), this, MID_SHOWVEHSTATS));
+        myStatButtons.push_back(new FXButton(myStatusbar, "-", GUIIconSubSys::getIcon(ICON_GREENPERSON), this, MID_SHOWPERSONSTATS));
+        myStatButtons.back()->hide();
+        myStatButtons.push_back(new FXButton(myStatusbar, "-", GUIIconSubSys::getIcon(ICON_GREENEDGE), this, MID_SHOWVEHSTATS));
+        myStatButtons.back()->hide();
     }
 
     // make the window a mdi-window
@@ -278,11 +292,26 @@ GUIApplicationWindow::dependentBuild() {
 
 void
 GUIApplicationWindow::create() {
-    if (getApp()->reg().readIntEntry("SETTINGS", "maximized", 0) == 0) {
+    int windowWidth = getApp()->reg().readIntEntry("SETTINGS", "width", 600);
+    int windowHeight = getApp()->reg().readIntEntry("SETTINGS", "height", 400);
+    const OptionsCont& oc = OptionsCont::getOptions();
+    if (oc.isSet("window-size")) {
+        std::vector<std::string> windowSize = oc.getStringVector("window-size");
+        if (windowSize.size() != 2 
+                || !TplCheck::_str2int(windowSize[0])
+                || !TplCheck::_str2int(windowSize[1])) {
+            WRITE_ERROR("option window-size requires INT,INT");
+        } else {
+            windowWidth = TplConvert::_str2int(windowSize[0]);
+            windowHeight = TplConvert::_str2int(windowSize[1]);
+        }
+    }
+
+    if (oc.isSet("window-size") || getApp()->reg().readIntEntry("SETTINGS", "maximized", 0) == 0) {
         setX(getApp()->reg().readIntEntry("SETTINGS", "x", 150));
         setY(getApp()->reg().readIntEntry("SETTINGS", "y", 150));
-        setWidth(getApp()->reg().readIntEntry("SETTINGS", "width", 600));
-        setHeight(getApp()->reg().readIntEntry("SETTINGS", "height", 400));
+        setWidth(windowWidth);
+        setHeight(windowHeight);
     }
     gCurrentFolder = getApp()->reg().readStringEntry("SETTINGS", "basedir", "");
     FXMainWindow::create();
@@ -308,8 +337,10 @@ GUIApplicationWindow::create() {
     myGeoFrame->setWidth(width);
 
     show(PLACEMENT_SCREEN);
-    if (getApp()->reg().readIntEntry("SETTINGS", "maximized", 0) == 1) {
-        maximize();
+    if (!OptionsCont::getOptions().isSet("window-size")) {
+        if (getApp()->reg().readIntEntry("SETTINGS", "maximized", 0) == 1) {
+            maximize();
+        }
     }
     myShowTimeAsHMS = (getApp()->reg().readIntEntry("gui", "timeasHMS", 0) == 1);
     myAlternateSimDelay = getApp()->reg().readIntEntry("gui", "alternateSimDelay", 100);
@@ -482,7 +513,7 @@ GUIApplicationWindow::fillMenuBar() {
                       GUIIconSubSys::getIcon(ICON_LOCATEPOLY), this, MID_LOCATEPOLY);
     new FXMenuSeparator(myLocatorMenu);
     new FXMenuCheck(myLocatorMenu,
-                    "Show Internal Structures\t\tShow internal junctions and streets in locator Dialog.",
+                    "Show Internal Structures\t\tShow internal junctions and streets in locator dialog.",
                     this, MID_LISTINTERNAL);
     // build control menu
     myControlMenu = new FXMenuPane(this);
@@ -742,7 +773,7 @@ GUIApplicationWindow::onCmdNetedit(FXObject*, FXSelector, void*) {
     const GUISUMOAbstractView* const v = static_cast<GUIGlChildWindow*>(mySubWindows[0])->getView();
     reg.writeIntEntry("viewport", "x", v->getChanger().getXPos());
     reg.writeIntEntry("viewport", "y", v->getChanger().getYPos());
-    reg.writeIntEntry("viewport", "z", v->getChanger().getZoom());
+    reg.writeIntEntry("viewport", "z", v->getChanger().getZPos());
     reg.write();
     std::string netedit = "netedit";
     const char* sumoPath = getenv("SUMO_HOME");
@@ -829,7 +860,6 @@ GUIApplicationWindow::onCmdOpenShapes(FXObject*, FXSelector, void*) {
     }
     return 1;
 }
-
 
 long
 GUIApplicationWindow::onCmdReload(FXObject*, FXSelector, void*) {
@@ -1020,6 +1050,17 @@ GUIApplicationWindow::onCmdLocate(FXObject*, FXSelector sel, void*) {
     return 1;
 }
 
+
+long
+GUIApplicationWindow::onCmdShowStats(FXObject*, FXSelector, void*) {
+    if (myMDIClient->numChildren() > 0) {
+        GUISUMOViewParent* w = dynamic_cast<GUISUMOViewParent*>(myMDIClient->getActiveChild());
+        GUINet::getGUIInstance()->getParameterWindow(*this, *w->getView());
+    }
+    return 1;
+}
+
+
 long
 GUIApplicationWindow::onCmdAppSettings(FXObject*, FXSelector, void*) {
     GUIDialog_AppSettings* d = new GUIDialog_AppSettings(this);
@@ -1188,6 +1229,7 @@ GUIApplicationWindow::eventOccured() {
             case EVENT_MESSAGE_OCCURED:
             case EVENT_WARNING_OCCURED:
             case EVENT_ERROR_OCCURED:
+            case EVENT_STATUS_OCCURED:
                 handleEvent_Message(e);
                 break;
             case EVENT_SIMULATION_ENDED:
@@ -1250,7 +1292,7 @@ GUIApplicationWindow::handleEvent_SimulationLoaded(GUIEvent* e) {
                     }
                     std::string settingsName = settings.addSettings(view);
                     view->addDecals(settings.getDecals());
-                    settings.setViewport(view);
+                    settings.applyViewport(view);
                     settings.setSnapshots(view);
                     if (settings.getDelay() > 0) {
                         mySimDelayTarget->setValue(settings.getDelay());
@@ -1278,6 +1320,9 @@ GUIApplicationWindow::handleEvent_SimulationLoaded(GUIEvent* e) {
             }
             // set simulation step begin information
             myLCDLabel->setText("-------------");
+            for (std::vector<FXButton*>::const_iterator it = myStatButtons.begin(); it != myStatButtons.end(); ++it) {
+                (*it)->setText("-");
+            }
         }
     }
     getApp()->endWaitCursor();
@@ -1293,6 +1338,30 @@ void
 GUIApplicationWindow::handleEvent_SimulationStep(GUIEvent*) {
     updateChildren();
     updateTimeLCD(myRunThread->getNet().getCurrentTimeStep());
+    const int running = myRunThread->getNet().getVehicleControl().getRunningVehicleNo();
+    const int backlog = myRunThread->getNet().getInsertionControl().getWaitingVehicleNo();
+    if (backlog > running) {
+        if (myStatButtons.front()->getIcon() == GUIIconSubSys::getIcon(ICON_GREENVEHICLE)) {
+            myStatButtons.front()->setIcon(GUIIconSubSys::getIcon(ICON_YELLOWVEHICLE));
+        }
+    } else {
+        if (myStatButtons.front()->getIcon() == GUIIconSubSys::getIcon(ICON_YELLOWVEHICLE)) {
+            myStatButtons.front()->setIcon(GUIIconSubSys::getIcon(ICON_GREENVEHICLE));
+        }
+    }
+    myStatButtons.front()->setText(toString(running).c_str());
+    if (myRunThread->getNet().hasPersons()) {
+        if (!myStatButtons[1]->shown()) {
+            myStatButtons[1]->show();
+        }
+        myStatButtons[1]->setText(toString(myRunThread->getNet().getPersonControl().getRunningNumber()).c_str());
+    }
+    if (myRunThread->getNet().hasContainers()) {
+        if (!myStatButtons[2]->shown()) {
+            myStatButtons[2]->show();
+        }
+        myStatButtons[2]->setText(toString(myRunThread->getNet().getContainerControl().getRunningNumber()).c_str());
+    }
     if (myAmGaming) {
         checkGamingEvents();
     }
@@ -1306,7 +1375,11 @@ GUIApplicationWindow::handleEvent_SimulationStep(GUIEvent*) {
 void
 GUIApplicationWindow::handleEvent_Message(GUIEvent* e) {
     GUIEvent_Message* ec = static_cast<GUIEvent_Message*>(e);
-    myMessageWindow->appendMsg(ec->getOwnType(), ec->getMsg());
+    if (ec->getOwnType() == EVENT_STATUS_OCCURED) {
+        setStatusBarText(ec->getMsg());
+    } else {
+        myMessageWindow->appendMsg(ec->getOwnType(), ec->getMsg());
+    }
 }
 
 
@@ -1317,6 +1390,8 @@ GUIApplicationWindow::handleEvent_SimulationEnded(GUIEvent* e) {
     if (GUIGlobals::gQuitOnEnd) {
         closeAllWindows();
         getApp()->exit(ec->getReason() == MSNet::SIMSTATE_ERROR_IN_SIM);
+    } else if (GUIGlobals::gDemoAutoReload) {
+        onCmdReload(0, 0, 0);
     } else if (!myHaveNotifiedAboutSimEnd) {
         // build the text
         const std::string text = "Simulation ended at time: " + time2string(ec->getTimeStep()) +
@@ -1366,7 +1441,7 @@ GUIApplicationWindow::checkGamingEvents() {
         }
     }
     if (myCollisionSounds.getOverallProb() > 0) {
-        unsigned int collisions = MSNet::getInstance()->getVehicleControl().getCollisionCount();
+        int collisions = MSNet::getInstance()->getVehicleControl().getCollisionCount();
         if (myPreviousCollisionNumber != collisions) {
             const std::string cmd = myCollisionSounds.get(&myGamingRNG);
             if (cmd != "") {
@@ -1413,11 +1488,22 @@ GUIApplicationWindow::openNewView(GUISUMOViewParent::ViewType vt) {
         myStatusbar->getStatusLine()->setText("No simulation loaded!");
         return 0;
     }
+    GUISUMOAbstractView* oldView = 0;
+    if (myMDIClient->numChildren() > 0) {
+        GUISUMOViewParent* w = dynamic_cast<GUISUMOViewParent*>(myMDIClient->getActiveChild());
+        if (w != 0) {
+            oldView = w->getView();
+        }
+    }
     std::string caption = "View #" + toString(myViewNumber++);
     FXuint opts = MDI_TRACKING;
     GUISUMOViewParent* w = new GUISUMOViewParent(myMDIClient, myMDIMenu, FXString(caption.c_str()),
             this, GUIIconSubSys::getIcon(ICON_APP), opts, 10, 10, 300, 200);
     GUISUMOAbstractView* v = w->init(getBuildGLCanvas(), myRunThread->getNet(), vt);
+    if (oldView != 0) {
+        // copy viewport
+        oldView->copyViewportTo(v);
+    }
     w->create();
     if (myMDIClient->numChildren() == 1) {
         w->maximize();
@@ -1425,6 +1511,7 @@ GUIApplicationWindow::openNewView(GUISUMOViewParent::ViewType vt) {
         myMDIClient->vertical(true);
     }
     myMDIClient->setActiveChild(w);
+
     return v;
 }
 
@@ -1444,12 +1531,18 @@ void
 GUIApplicationWindow::closeAllWindows() {
     myTrackerLock.lock();
     myLCDLabel->setText("-------------");
+    for (std::vector<FXButton*>::const_iterator it = myStatButtons.begin(); it != myStatButtons.end(); ++it) {
+        (*it)->setText("-");
+        if (it != myStatButtons.begin()) {
+            (*it)->hide();
+        }
+    }
     // remove trackers and other external windows
-    size_t i;
-    for (i = 0; i < mySubWindows.size(); ++i) {
+    int i;
+    for (i = 0; i < (int)mySubWindows.size(); ++i) {
         mySubWindows[i]->destroy();
     }
-    for (i = 0; i < myTrackerWindows.size(); ++i) {
+    for (i = 0; i < (int)myTrackerWindows.size(); ++i) {
         myTrackerWindows[i]->destroy();
     }
     // delete the simulation
@@ -1500,6 +1593,16 @@ void
 GUIApplicationWindow::setStatusBarText(const std::string& text) {
     myStatusbar->getStatusLine()->setText(text.c_str());
     myStatusbar->getStatusLine()->setNormalText(text.c_str());
+}
+
+
+void
+GUIApplicationWindow::addRecentFile(const FX::FXString& f, const bool isNet) {
+    if (isNet) {
+        myRecentNets.appendFile(f);
+    } else {
+        myRecentConfigs.appendFile(f);
+    }
 }
 
 

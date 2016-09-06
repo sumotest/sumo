@@ -176,6 +176,57 @@ NBContHelper::relative_outgoing_edge_sorter::operator()(NBEdge* e1, NBEdge* e2) 
 
 
 /* -------------------------------------------------------------------------
+ * methods from straightness_sorter
+ * ----------------------------------------------------------------------- */
+int
+NBContHelper::straightness_sorter::operator()(NBEdge* e1, NBEdge* e2) const {
+    if (e1 == 0 || e2 == 0) {
+        return -1;
+    }
+    SUMOReal relAngle1 = NBHelpers::normRelAngle(
+                             myReferenceAngle, myRefIncoming ? e1->getShapeStartAngle() : e1->getShapeEndAngle());
+    SUMOReal relAngle2 = NBHelpers::normRelAngle(
+                             myReferenceAngle, myRefIncoming ? e2->getShapeStartAngle() : e2->getShapeEndAngle());
+    const int geomIndex = myRefIncoming ? 0 : -1;
+
+    //std::cout << " e1=" << e1->getID() << " e2=" << e2->getID() << " refA=" << myReferenceAngle << " initially a1=" << relAngle1 << " a2=" << relAngle2 << "\n";
+    const SUMOReal e1Length = e1->getGeometry().length2D();
+    const SUMOReal e2Length = e2->getGeometry().length2D();
+    const SUMOReal maxLookAhead = MAX2(e1Length, e2Length);
+    SUMOReal lookAhead = MIN2(maxLookAhead, 2 * NBEdge::ANGLE_LOOKAHEAD);
+    while (fabs(relAngle1 - relAngle2) < 3.0) {
+        // look at further geometry segments to resolve ambiguity
+        const SUMOReal offset1 = myRefIncoming ? lookAhead : e1Length - lookAhead;
+        const SUMOReal offset2 = myRefIncoming ? lookAhead : e2Length - lookAhead;
+        const Position referencePos1 = e1->getGeometry().positionAtOffset2D(offset1);
+        const Position referencePos2 = e2->getGeometry().positionAtOffset2D(offset2);
+
+        relAngle1 = NBHelpers::normRelAngle(myReferenceAngle, GeomHelper::legacyDegree(
+                    e1->getGeometry()[geomIndex].angleTo2D(referencePos1), true));
+        relAngle2 = NBHelpers::normRelAngle(myReferenceAngle, GeomHelper::legacyDegree(
+                    e2->getGeometry()[geomIndex].angleTo2D(referencePos2), true));
+            
+        if (lookAhead > maxLookAhead) {
+            break;
+        }
+        lookAhead *= 2;
+    }
+    if (fabs(relAngle1 - relAngle2) < 3.0) {
+        // use angle to end of reference edge as tiebraker
+        relAngle1 = NBHelpers::normRelAngle(myReferenceAngle, GeomHelper::legacyDegree(
+                                                myReferencePos.angleTo2D(e1->getLaneShape(0)[geomIndex]), true));
+        relAngle2 = NBHelpers::normRelAngle(myReferenceAngle, GeomHelper::legacyDegree(
+                                                myReferencePos.angleTo2D(e2->getLaneShape(0)[geomIndex]), true));
+        //std::cout << "  tiebraker refPos=" << myReferencePos << " abs1="
+        //    << GeomHelper::legacyDegree(myReferencePos.angleTo2D(e1->getLaneShape(0).front()), true)
+        //    << " abs2=" << GeomHelper::legacyDegree(myReferencePos.angleTo2D(e2->getLaneShape(0).front()), true) <<  "\n";
+    }
+    //std::cout << " e1=" << e1->getID() << " e2=" << e2->getID() << " a1=" << relAngle1 << " a2=" << relAngle2 << "\n";
+    return fabs(relAngle1) < fabs(relAngle2);
+}
+
+
+/* -------------------------------------------------------------------------
  * methods from relative_incoming_edge_sorter
  * ----------------------------------------------------------------------- */
 int
@@ -264,17 +315,19 @@ NBContHelper::edge_by_angle_to_nodeShapeCentroid_sorter::operator()(const NBEdge
                               || (e1->getToNode() == myNode && e2->getToNode() == myNode));
         if (sameDir) {
             // put edges that allow pedestrians on the 'outside', but be aware if both allow / disallow
+            const bool e1Peds = (e1->getPermissions() & SVC_PEDESTRIAN) != 0;
+            const bool e2Peds = (e2->getPermissions() & SVC_PEDESTRIAN) != 0;
             if (e1->getToNode() == myNode) {
-                if ((e1->getPermissions() & SVC_PEDESTRIAN) != 0) {
-                    if ((e2->getPermissions() & SVC_PEDESTRIAN) == 0) {
-                        return true;
-                    }
+                if (e1Peds && !e2Peds) {
+                    return true;
+                } else if (!e1Peds && e2Peds) {
+                    return false;
                 }
             } else {
-                if ((e1->getPermissions() & SVC_PEDESTRIAN) == 0) {
-                    if ((e2->getPermissions() & SVC_PEDESTRIAN) != 0) {
-                        return true;
-                    }
+                if (!e1Peds && e2Peds) {
+                    return true;
+                } else if (e1Peds && !e2Peds) {
+                    return false;
                 }
             }
             // break ties to ensure strictly weak ordering

@@ -53,8 +53,7 @@
 #include <microsim/MSJunctionControl.h>
 #include <guisim/GUIEdge.h>
 #include <guisim/GUILane.h>
-#include <guisim/GUIPersonControl.h>
-#include <guisim/GUIContainerControl.h>
+#include <guisim/GUITransportableControl.h>
 #include <guisim/GUILaneSpeedTrigger.h>
 #include <guisim/GUIDetectorWrapper.h>
 #include <guisim/GUITrafficLightLogicWrapper.h>
@@ -121,19 +120,19 @@ GUINet::getBoundary() const {
 }
 
 
-MSPersonControl&
+MSTransportableControl&
 GUINet::getPersonControl() {
     if (myPersonControl == 0) {
-        myPersonControl = new GUIPersonControl();
+        myPersonControl = new GUITransportableControl();
     }
     return *myPersonControl;
 }
 
 
-MSContainerControl&
+MSTransportableControl&
 GUINet::getContainerControl() {
     if (myContainerControl == 0) {
-        myContainerControl = new GUIContainerControl();
+        myContainerControl = new GUITransportableControl();
     }
     return *myContainerControl;
 }
@@ -192,7 +191,7 @@ GUINet::vehicleExists(const std::string& name) const {
 }
 
 
-unsigned int
+int
 GUINet::getLinkTLID(MSLink* link) const {
     if (myLinks2Logic.count(link) == 0) {
         assert(false);
@@ -224,7 +223,6 @@ void
 GUINet::guiSimulationStep() {
     GLObjectValuePassConnector<SUMOReal>::updateAll();
     GLObjectValuePassConnector<std::pair<SUMOTime, MSPhaseDefinition> >::updateAll();
-    GUIParameterTableWindow::updateAll();
 }
 
 
@@ -281,7 +279,7 @@ GUINet::initGUIStructures() {
     // initialise edge storage for gui
     GUIEdge::fill(myEdgeWrapper);
     // initialise junction storage for gui
-    size_t size = myJunctions->size();
+    int size = myJunctions->size();
     myJunctionWrapper.reserve(size);
     const std::map<std::string, MSJunction*>& junctions = myJunctions->getMyMap();
     for (std::map<std::string, MSJunction*>::const_iterator i = junctions.begin(); i != junctions.end(); ++i) {
@@ -326,13 +324,13 @@ GUINet::initGUIStructures() {
 }
 
 
-unsigned int
+int
 GUINet::getWholeDuration() const {
     return myLastSimDuration +/*myLastVisDuration+*/myLastIdleDuration;
 }
 
 
-unsigned int
+int
 GUINet::getSimDuration() const {
     return myLastSimDuration;
 }
@@ -382,7 +380,7 @@ GUINet::getMeanUPS() const {
 }
 
 
-unsigned int
+int
 GUINet::getIdleDuration() const {
     return myLastIdleDuration;
 }
@@ -429,39 +427,39 @@ GUINet::getParameterWindow(GUIMainWindow& app,
         new GUIParameterTableWindow(app, *this, 28);
     // add items
     ret->mkItem("loaded vehicles [#]", true,
-                new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getLoadedVehicleNo));
+                new FunctionBinding<MSVehicleControl, int>(&getVehicleControl(), &MSVehicleControl::getLoadedVehicleNo));
     ret->mkItem("insertion-backlogged vehicles [#]", true,
-                new FunctionBinding<MSInsertionControl, unsigned int>(&getInsertionControl(), &MSInsertionControl::getWaitingVehicleNo));
+                new FunctionBinding<MSInsertionControl, int>(&getInsertionControl(), &MSInsertionControl::getWaitingVehicleNo));
     ret->mkItem("departed vehicles [#]", true,
-                new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getDepartedVehicleNo));
+                new FunctionBinding<MSVehicleControl, int>(&getVehicleControl(), &MSVehicleControl::getDepartedVehicleNo));
     ret->mkItem("running vehicles [#]", true,
-                new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getRunningVehicleNo));
+                new FunctionBinding<MSVehicleControl, int>(&getVehicleControl(), &MSVehicleControl::getRunningVehicleNo));
     ret->mkItem("arrived vehicles [#]", true,
-                new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getEndedVehicleNo));
+                new FunctionBinding<MSVehicleControl, int>(&getVehicleControl(), &MSVehicleControl::getEndedVehicleNo));
     ret->mkItem("collisions [#]", true,
-                new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getCollisionCount));
+                new FunctionBinding<MSVehicleControl, int>(&getVehicleControl(), &MSVehicleControl::getCollisionCount));
     ret->mkItem("teleports [#]", true,
-                new FunctionBinding<MSVehicleControl, unsigned int>(&getVehicleControl(), &MSVehicleControl::getTeleportCount));
+                new FunctionBinding<MSVehicleControl, int>(&getVehicleControl(), &MSVehicleControl::getTeleportCount));
     if (myPersonControl != 0) {
         ret->mkItem("loaded persons [#]", true,
-                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getLoadedPersonNumber));
+                    new FunctionBinding<MSTransportableControl, int>(&getPersonControl(), &MSTransportableControl::getLoadedNumber));
         ret->mkItem("running persons [#]", true,
-                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getRunningPersonNumber));
+                    new FunctionBinding<MSTransportableControl, int>(&getPersonControl(), &MSTransportableControl::getRunningNumber));
         ret->mkItem("jammed persons [#]", true,
-                    new FunctionBinding<MSPersonControl, unsigned int>(&getPersonControl(), &MSPersonControl::getJammedPersonNumber));
+                    new FunctionBinding<MSTransportableControl, int>(&getPersonControl(), &MSTransportableControl::getJammedNumber));
     }
     ret->mkItem("end time [s]", false, OptionsCont::getOptions().getString("end"));
     ret->mkItem("begin time [s]", false, OptionsCont::getOptions().getString("begin"));
 //    ret->mkItem("time step [s]", true, new FunctionBinding<GUINet, SUMOTime>(this, &GUINet::getCurrentTimeStep));
     if (logSimulationDuration()) {
-        ret->mkItem("step duration [ms]", true, new FunctionBinding<GUINet, unsigned int>(this, &GUINet::getWholeDuration));
-        ret->mkItem("simulation duration [ms]", true, new FunctionBinding<GUINet, unsigned int>(this, &GUINet::getSimDuration));
+        ret->mkItem("step duration [ms]", true, new FunctionBinding<GUINet, int>(this, &GUINet::getWholeDuration));
+        ret->mkItem("simulation duration [ms]", true, new FunctionBinding<GUINet, int>(this, &GUINet::getSimDuration));
         /*
         ret->mkItem("visualisation duration [ms]", true,
             new CastingFunctionBinding<GUINet, SUMOReal, int>(
                 &(getNet()), &GUINet::getVisDuration));
         */
-        ret->mkItem("idle duration [ms]", true, new FunctionBinding<GUINet, unsigned int>(this, &GUINet::getIdleDuration));
+        ret->mkItem("idle duration [ms]", true, new FunctionBinding<GUINet, int>(this, &GUINet::getIdleDuration));
         ret->mkItem("duration factor []", true, new FunctionBinding<GUINet, SUMOReal>(this, &GUINet::getRTFactor));
         /*
         ret->mkItem("mean duration factor []", true,

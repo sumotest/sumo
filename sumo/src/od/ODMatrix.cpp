@@ -60,7 +60,7 @@
 // method definitions
 // ===========================================================================
 ODMatrix::ODMatrix(const ODDistrictCont& dc)
-    : myDistricts(dc), myNoLoaded(0), myNoWritten(0), myNoDiscarded(0) {}
+    : myDistricts(dc), myNumLoaded(0), myNumWritten(0), myNumDiscarded(0) {}
 
 
 ODMatrix::~ODMatrix() {
@@ -71,44 +71,57 @@ ODMatrix::~ODMatrix() {
 }
 
 
-void
+bool
 ODMatrix::add(SUMOReal vehicleNumber, SUMOTime begin,
               SUMOTime end, const std::string& origin, const std::string& destination,
               const std::string& vehicleType) {
-    myNoLoaded += vehicleNumber;
+    myNumLoaded += vehicleNumber;
     if (myDistricts.get(origin) == 0 && myDistricts.get(destination) == 0) {
         WRITE_WARNING("Missing origin '" + origin + "' and destination '" + destination + "' (" + toString(vehicleNumber) + " vehicles).");
+        myMissingDistricts.insert(origin);
+        myMissingDistricts.insert(destination);
+        return false;
     } else if (myDistricts.get(origin) == 0 && vehicleNumber > 0) {
         WRITE_ERROR("Missing origin '" + origin + "' (" + toString(vehicleNumber) + " vehicles).");
-        myNoDiscarded += vehicleNumber;
+        myNumDiscarded += vehicleNumber;
+        myMissingDistricts.insert(origin);
+        return false;
     } else if (myDistricts.get(destination) == 0 && vehicleNumber > 0) {
         WRITE_ERROR("Missing destination '" + destination + "' (" + toString(vehicleNumber) + " vehicles).");
-        myNoDiscarded += vehicleNumber;
-    } else {
-        if (myDistricts.get(origin)->sourceNumber() == 0) {
-            WRITE_ERROR("District '" + origin + "' has no source.");
-            myNoDiscarded += vehicleNumber;
-        } else if (myDistricts.get(destination)->sinkNumber() == 0) {
-            WRITE_ERROR("District '" + destination + "' has no sink.");
-            myNoDiscarded += vehicleNumber;
-        } else {
-            ODCell* cell = new ODCell();
-            cell->begin = begin;
-            cell->end = end;
-            cell->origin = origin;
-            cell->destination = destination;
-            cell->vehicleType = vehicleType;
-            cell->vehicleNumber = vehicleNumber;
-            myContainer.push_back(cell);
-        }
+        myNumDiscarded += vehicleNumber;
+        myMissingDistricts.insert(destination);
+        return false;
     }
+    if (myDistricts.get(origin)->sourceNumber() == 0) {
+        WRITE_ERROR("District '" + origin + "' has no source.");
+        myNumDiscarded += vehicleNumber;
+        return false;
+    } else if (myDistricts.get(destination)->sinkNumber() == 0) {
+        WRITE_ERROR("District '" + destination + "' has no sink.");
+        myNumDiscarded += vehicleNumber;
+        return false;
+    }
+    ODCell* cell = new ODCell();
+    cell->begin = begin;
+    cell->end = end;
+    cell->origin = origin;
+    cell->destination = destination;
+    cell->vehicleType = vehicleType;
+    cell->vehicleNumber = vehicleNumber;
+    myContainer.push_back(cell);
+    return true;
 }
 
 
-void
+bool
 ODMatrix::add(const std::string& id, const SUMOTime depart,
               const std::pair<const std::string, const std::string>& od,
               const std::string& vehicleType) {
+    if (myMissingDistricts.count(od.first) > 0 || myMissingDistricts.count(od.second) > 0) {
+        myNumLoaded += 1.;
+        myNumDiscarded += 1.;
+        return false;
+    }
     // we start looking from the end because there is a high probability that the input is sorted by time
     std::vector<ODCell*>& odList = myShortCut[od];
     ODCell* cell = 0;
@@ -121,19 +134,24 @@ ODMatrix::add(const std::string& id, const SUMOTime depart,
     if (cell == 0) {
         const SUMOTime interval = string2time(OptionsCont::getOptions().getString("aggregation-interval"));
         const int intervalIdx = (int)(depart / interval);
-        add(1., intervalIdx * interval, (intervalIdx + 1) * interval, od.first, od.second, vehicleType);
-        cell = myContainer.back();
-        odList.push_back(cell);
+        if (add(1., intervalIdx * interval, (intervalIdx + 1) * interval, od.first, od.second, vehicleType)) {
+            cell = myContainer.back();
+            odList.push_back(cell);
+        } else {
+            return false;
+        }
     } else {
+        myNumLoaded += 1.;
         cell->vehicleNumber += 1.;
     }
     cell->departures[depart].push_back(id);
+    return true;
 }
 
 
 SUMOReal
 ODMatrix::computeDeparts(ODCell* cell,
-                         size_t& vehName, std::vector<ODVehicle>& into,
+                         int& vehName, std::vector<ODVehicle>& into,
                          const bool uniform, const bool differSourceSink,
                          const std::string& prefix) {
     int vehicles2insert = (int) cell->vehicleNumber;
@@ -208,7 +226,7 @@ ODMatrix::write(SUMOTime begin, const SUMOTime end,
         return;
     }
     std::map<std::pair<std::string, std::string>, SUMOReal> fractionLeft;
-    size_t vehName = 0;
+    int vehName = 0;
     sortByBeginTime();
     // recheck begin time
     begin = MAX2(begin, myContainer.front()->begin);
@@ -231,9 +249,9 @@ ODMatrix::write(SUMOTime begin, const SUMOTime end,
                 fractionLeft[odID] = 0;
             }
             // get the new departures (into tmp)
-            const size_t oldSize = vehicles.size();
+            const int oldSize = (int)vehicles.size();
             const SUMOReal fraction = computeDeparts(*next, vehName, vehicles, uniform, differSourceSink, prefix);
-            if (oldSize != vehicles.size()) {
+            if (oldSize != (int)vehicles.size()) {
                 changed = true;
             }
             if (fraction != 0) {
@@ -246,7 +264,7 @@ ODMatrix::write(SUMOTime begin, const SUMOTime end,
         }
         for (std::vector<ODVehicle>::reverse_iterator i = vehicles.rbegin(); i != vehicles.rend() && (*i).depart == t; ++i) {
             if (t >= begin) {
-                myNoWritten++;
+                myNumWritten++;
                 dev.openTag(SUMO_TAG_TRIP).writeAttr(SUMO_ATTR_ID, (*i).id).writeAttr(SUMO_ATTR_DEPART, time2string(t));
                 dev.writeAttr(SUMO_ATTR_FROM, (*i).from).writeAttr(SUMO_ATTR_TO, (*i).to);
                 writeDefaultAttrs(dev, noVtype, i->cell);
@@ -276,7 +294,7 @@ ODMatrix::writeFlows(const SUMOTime begin, const SUMOTime end,
     if (myContainer.size() == 0) {
         return;
     }
-    size_t flowName = 0;
+    int flowName = 0;
     sortByBeginTime();
     // recheck begin time
     for (std::vector<ODCell*>::const_iterator i = myContainer.begin(); i != myContainer.end(); ++i) {
@@ -465,26 +483,26 @@ ODMatrix::readO(LineReader& lr, SUMOReal scale,
 
 
 SUMOReal
-ODMatrix::getNoLoaded() const {
-    return myNoLoaded;
+ODMatrix::getNumLoaded() const {
+    return myNumLoaded;
 }
 
 
 SUMOReal
-ODMatrix::getNoWritten() const {
-    return myNoWritten;
+ODMatrix::getNumWritten() const {
+    return myNumWritten;
 }
 
 
 SUMOReal
-ODMatrix::getNoDiscarded() const {
-    return myNoDiscarded;
+ODMatrix::getNumDiscarded() const {
+    return myNumDiscarded;
 }
 
 
 void
 ODMatrix::applyCurve(const Distribution_Points& ps, ODCell* cell, std::vector<ODCell*>& newCells) {
-    for (size_t i = 0; i < ps.getAreaNo(); ++i) {
+    for (int i = 0; i < ps.getAreaNo(); ++i) {
         ODCell* ncell = new ODCell();
         ncell->begin = TIME2STEPS(ps.getAreaBegin(i));
         ncell->end = TIME2STEPS(ps.getAreaEnd(i));
@@ -588,15 +606,15 @@ ODMatrix::parseTimeLine(const std::vector<std::string>& def, bool timelineDayInH
         }
         points.push_back(Position((SUMOReal)(24 * 3600), prob));
     } else {
-        size_t i = 0;
-        while (i < def.size()) {
+        int i = 0;
+        while (i < (int)def.size()) {
             StringTokenizer st2(def[i++], ":");
             if (st2.size() != 2) {
                 throw ProcessError("Broken time line definition: missing a value in '" + def[i - 1] + "'.");
             }
-            int time = TplConvert::_2int(st2.next().c_str());
+            const SUMOReal time = TplConvert::_2SUMOReal(st2.next().c_str());
             prob = TplConvert::_2SUMOReal(st2.next().c_str());
-            points.push_back(Position((SUMOReal) time, prob));
+            points.push_back(Position(time, prob));
         }
     }
     return Distribution_Points("N/A", points, interpolating);

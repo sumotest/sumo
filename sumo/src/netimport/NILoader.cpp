@@ -4,6 +4,7 @@
 /// @author  Jakob Erdmann
 /// @author  Sascha Krieg
 /// @author  Michael Behrisch
+/// @author  Robert Hilbrich
 /// @date    Tue, 20 Nov 2001
 /// @version $Id$
 ///
@@ -115,7 +116,7 @@ NILoader::load(OptionsCont& oc) {
     if (oc.getBool("tls.discard-loaded") || oc.getBool("tls.discard-simple")) {
         myNetBuilder.getNodeCont().discardTrafficLights(myNetBuilder.getTLLogicCont(), oc.getBool("tls.discard-simple"),
                 oc.getBool("tls.guess-signals"));
-        size_t removed = myNetBuilder.getTLLogicCont().getNumExtracted();
+        int removed = myNetBuilder.getTLLogicCont().getNumExtracted();
         if (removed > 0) {
             WRITE_MESSAGE(" Removed " + toString(removed) + " traffic lights before loading plain-XML");
         }

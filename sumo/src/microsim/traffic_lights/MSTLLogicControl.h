@@ -144,7 +144,6 @@ public:
         void addLink(MSLink* link, MSLane* lane, int pos);
 
 
-
     private:
         /// @brief The currently used program
         MSTrafficLightLogic* myCurrentProgram;
@@ -375,6 +374,9 @@ public:
      */
     std::pair<SUMOTime, MSPhaseDefinition> getPhaseDef(const std::string& tlid) const;
 
+    /// @brief switch all logic variants to 'off'
+    void switchOffAll();
+
 
 
 protected:
@@ -392,7 +394,7 @@ protected:
          * @param[in] wautid The id of the WAUT
          * @param[in] index The first position within the WAUT table
          */
-        SwitchInitCommand(MSTLLogicControl& p, const std::string& wautid, unsigned int index)
+        SwitchInitCommand(MSTLLogicControl& p, const std::string& wautid, int index)
             : myParent(p), myWAUTID(wautid), myIndex(index) { }
 
 
@@ -436,7 +438,7 @@ protected:
         /** @brief Returns a reference to the index
          * @return A reference to the index
          */
-        unsigned int& getIndex() {
+        int& getIndex() {
             return myIndex;
         }
 
@@ -449,7 +451,7 @@ protected:
         std::string myWAUTID;
 
         /// @brief The current index within the WAUT switch table
-        unsigned int myIndex;
+        int myIndex;
 
 
     private:
@@ -581,7 +583,7 @@ protected:
          * @return The GSP value; 0 if not given.
          * @see MSTrafficLightLogic::getParameterValue
          */
-        unsigned int getGSPValue(const MSTrafficLightLogic& logic) const;
+        int getGSPValue(const MSTrafficLightLogic& logic) const;
 
 
     protected:

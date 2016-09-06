@@ -372,9 +372,9 @@ TraCITestClient::validateSubscription(tcpip::Storage& inMsg) {
         if (cmdId >= RESPONSE_SUBSCRIBE_INDUCTIONLOOP_VARIABLE && cmdId <= RESPONSE_SUBSCRIBE_GUI_VARIABLE) {
             answerLog << "  CommandID=" << cmdId;
             answerLog << "  ObjectID=" << inMsg.readString();
-            unsigned int varNo = inMsg.readUnsignedByte();
+            int varNo = inMsg.readUnsignedByte();
             answerLog << "  #variables=" << varNo << std::endl;
-            for (unsigned int i = 0; i < varNo; ++i) {
+            for (int i = 0; i < varNo; ++i) {
                 answerLog << "      VariableID=" << inMsg.readUnsignedByte();
                 bool ok = inMsg.readUnsignedByte() == RTYPE_OK;
                 answerLog << "      ok=" << ok;
@@ -386,13 +386,13 @@ TraCITestClient::validateSubscription(tcpip::Storage& inMsg) {
             answerLog << "  CommandID=" << cmdId;
             answerLog << "  ObjectID=" << inMsg.readString();
             answerLog << "  Domain=" << inMsg.readUnsignedByte();
-            unsigned int varNo = inMsg.readUnsignedByte();
+            int varNo = inMsg.readUnsignedByte();
             answerLog << "  #variables=" << varNo << std::endl;
-            unsigned int objNo = inMsg.readInt();
+            int objNo = inMsg.readInt();
             answerLog << "  #objects=" << objNo << std::endl;
-            for (unsigned int j = 0; j < objNo; ++j) {
+            for (int j = 0; j < objNo; ++j) {
                 answerLog << "   ObjectID=" << inMsg.readString() << std::endl;
-                for (unsigned int i = 0; i < varNo; ++i) {
+                for (int i = 0; i < varNo; ++i) {
                     answerLog << "      VariableID=" << inMsg.readUnsignedByte();
                     bool ok = inMsg.readUnsignedByte() == RTYPE_OK;
                     answerLog << "      ok=" << ok;
@@ -687,14 +687,24 @@ TraCITestClient::testAPI() {
     answerLog << "  vehicle:\n";
     answerLog << "    getRoadID: " << vehicle.getRoadID("0") << "\n";
     answerLog << "    getLaneID: " << vehicle.getLaneID("0") << "\n";
+    answerLog << "    getSpeedMode: " << vehicle.getSpeedMode("0") << "\n";
+    answerLog << "    getSlope: " << vehicle.getSlope("0") << "\n";
+    TraCIColor col1;
+    col1.r = 255;
+    col1.g = 255;
+    col1.b = 0;
+    col1.a = 128;
+    vehicle.setColor("0", col1);
+    TraCIColor col2 = vehicle.getColor("0");
+    answerLog << "    getColor: " << col2.r << "r=" << col2.r << " g=" << col2.g << " b=" << col2.b << " a=" << col2.a << "\n";
     answerLog << "    getNextTLS:\n";
     std::vector<VehicleScope::NextTLSData> result = vehicle.getNextTLS("0");
     for (int i = 0; i < (int)result.size(); ++i) {
         const VehicleScope::NextTLSData& d = result[i];
         answerLog << "      tls=" << d.id << " tlIndex=" << d.tlIndex << " dist=" << d.dist << " state=" << d.state << "\n";
     }
-    answerLog << "    moveToVTD, simStep:\n";
-    vehicle.moveToXY("0", "dummy", 0, 2231.61, 498.29, 90, true);
+    answerLog << "    moveToXY, simStep:\n";
+    vehicle.moveToXY("0", "dummy", 0, 2231.61, 498.29, 90, 1);
     simulationStep();
     answerLog << "    getRoadID: " << vehicle.getRoadID("0") << "\n";
     answerLog << "    getLaneID: " << vehicle.getLaneID("0") << "\n";
@@ -738,6 +748,13 @@ TraCITestClient::testAPI() {
     for (SubscribedValues::iterator it = result4.begin(); it != result4.end(); ++it) {
         answerLog << "      vehicle=" << it->first << " pos=" << it->second[VAR_LANEPOSITION].scalar << "\n";
     }
+
+    answerLog << "  person:\n";
+    answerLog << "    getIDList: " << joinToString(person.getIDList(), " ") << "\n";
+    answerLog << "    getRoadID: " << person.getRoadID("p0") << "\n";
+    answerLog << "    getTypeID: " << person.getTypeID("p0") << "\n";
+    answerLog << "    getWaitingTime: " << person.getWaitingTime("p0") << "\n";
+    answerLog << "    getNextEdge: " << person.getNextEdge("p0") << "\n";
 
     answerLog << "  gui:\n";
     try {

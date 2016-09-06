@@ -227,20 +227,19 @@ RONet::addRouteDef(RORouteDef* def) {
 
 
 void
-RONet::openOutput(const std::string& filename, const std::string altFilename, const std::string typeFilename) {
-    if (filename != "") {
-        myRoutesOutput = &OutputDevice::getDevice(filename);
-        myRoutesOutput->writeHeader<ROEdge>(SUMO_TAG_ROUTES);
-        myRoutesOutput->writeAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").writeAttr("xsi:noNamespaceSchemaLocation", "http://sumo.dlr.de/xsd/routes_file.xsd");
+RONet::openOutput(const OptionsCont& options, const std::string altFilename) {
+    if (options.isSet("output-file") && options.getString("output-file") != "") {
+        OutputDevice::createDeviceByOption("output-file", "routes", "routes_file.xsd");
+        myRoutesOutput = &OutputDevice::getDeviceByOption("output-file");
     }
     if (altFilename != "") {
         myRouteAlternativesOutput = &OutputDevice::getDevice(altFilename);
         myRouteAlternativesOutput->writeHeader<ROEdge>(SUMO_TAG_ROUTES);
         myRouteAlternativesOutput->writeAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").writeAttr("xsi:noNamespaceSchemaLocation", "http://sumo.dlr.de/xsd/routes_file.xsd");
     }
-    if (typeFilename != "") {
-        myTypesOutput = &OutputDevice::getDevice(typeFilename);
-        myTypesOutput->writeXMLHeader("routes", "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://sumo.dlr.de/xsd/routes_file.xsd\"");
+    if (options.isSet("vtype-output") && options.getString("vtype-output") != "") {
+        OutputDevice::createDeviceByOption("vtype-output", "routes", "routes_file.xsd");
+        myTypesOutput = &OutputDevice::getDeviceByOption("vtype-output");
     }
 }
 
@@ -476,7 +475,7 @@ RONet::checkFlows(SUMOTime time, MsgHandler* errorHandler) {
 
 void
 RONet::createBulkRouteRequests(const RORouterProvider& provider, const SUMOTime time, const bool removeLoops) {
-    std::map<const unsigned int, std::vector<RORoutable*> > bulkVehs;
+    std::map<const int, std::vector<RORoutable*> > bulkVehs;
     for (RoutablesMap::const_iterator i = myRoutables.begin(); i != myRoutables.end(); ++i) {
         if (i->first >= time) {
             break;
@@ -495,7 +494,7 @@ RONet::createBulkRouteRequests(const RORouterProvider& provider, const SUMOTime 
         }
     }
     int workerIndex = 0;
-    for (std::map<const unsigned int, std::vector<RORoutable*> >::const_iterator i = bulkVehs.begin(); i != bulkVehs.end(); ++i) {
+    for (std::map<const int, std::vector<RORoutable*> >::const_iterator i = bulkVehs.begin(); i != bulkVehs.end(); ++i) {
 #ifdef HAVE_FOX
         if (myThreadPool.size() > 0) {
             RORoutable* const first = i->second.front();
@@ -628,7 +627,7 @@ RONet::furtherStored() {
 }
 
 
-size_t
+int
 RONet::getEdgeNo() const {
     return myEdges.size();
 }

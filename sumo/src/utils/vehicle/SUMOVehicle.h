@@ -35,6 +35,7 @@
 #include <vector>
 #include <typeinfo>
 #include <utils/common/SUMOTime.h>
+#include <utils/common/Named.h>
 #include <utils/vehicle/SUMOAbstractRouter.h>
 #include <utils/vehicle/SUMOVehicleParameter.h>
 #include <utils/iodevices/OutputDevice.h>
@@ -64,6 +65,8 @@ typedef std::vector<const MSEdge*> ConstMSEdgeVector;
  */
 class SUMOVehicle {
 public:
+    typedef Named::NamedLikeComparatorIdLess<SUMOVehicle> ComparatorIdLess;
+
     /// @brief Destructor
     virtual ~SUMOVehicle() {}
 
@@ -223,6 +226,12 @@ public:
      */
     virtual bool isParking() const = 0;
 
+    /** @brief Returns the information whether the vehicle is fully controlled
+     * via TraCI
+     * @return Whether the vehicle is remote-controlled
+     */
+    virtual bool isRemoteControlled() const = 0;
+
     /** @brief Returns this vehicle's real departure time
      * @return This vehicle's real departure time
      */
@@ -254,7 +263,7 @@ public:
     /** @brief Returns the number of new routes this vehicle got
      * @return the number of new routes this vehicle got
      */
-    virtual unsigned int getNumberReroutes() const = 0;
+    virtual int getNumberReroutes() const = 0;
 
     /** @brief Returns this vehicle's devices
      * @return This vehicle's devices

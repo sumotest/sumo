@@ -83,9 +83,9 @@ public:
      * @see MSLane
      */
     GUILane(const std::string& id, SUMOReal maxSpeed,
-            SUMOReal length, MSEdge* const edge, unsigned int numericalID,
+            SUMOReal length, MSEdge* const edge, int numericalID,
             const PositionVector& shape, SUMOReal width,
-            SVCPermissions permissions, unsigned int index);
+            SVCPermissions permissions, int index);
 
 
     /// @brief Destructor
@@ -152,6 +152,20 @@ public:
     MSVehicle* removeVehicle(MSVehicle* remVehicle, MSMoveReminder::Notification notification, bool notify);
 
 
+    /** @brief Sets the information about a vehicle lapping into this lane
+     *
+     * This vehicle is added to myVehicles and may be distinguished from regular
+     * vehicles by the disparity between this lane and v->getLane()
+     * @param[in] v The vehicle which laps into this lane
+     * @return This lane's length
+     */
+    SUMOReal setPartialOccupation(MSVehicle* v);
+
+    /** @brief Removes the information about a vehicle lapping into this lane
+     * @param[in] v The vehicle which laps into this lane
+     */
+    void resetPartialOccupation(MSVehicle* v);
+
 
     /// @name inherited from GUIGlObject
     //@{
@@ -209,6 +223,9 @@ public:
 
     /// @brief draw crossties for railroads or pedestrian crossings
     void drawCrossties(SUMOReal length, SUMOReal spacing, SUMOReal halfWidth) const;
+
+    /// @brief direction indicators for lanes
+    void drawDirectionIndicators() const;
 
     SUMOReal getEdgeLaneNumber() const;
 
@@ -272,13 +289,13 @@ private:
 
 private:
     /// @brief gets the color value according to the current scheme index
-    SUMOReal getColorValue(size_t activeScheme) const;
+    SUMOReal getColorValue(int activeScheme) const;
 
     /// @brief gets the scaling value according to the current scheme index
-    SUMOReal getScaleValue(size_t activeScheme) const;
+    SUMOReal getScaleValue(int activeScheme) const;
 
     /// @brief sets the color according to the current scheme index and some lane function
-    bool setFunctionalColor(size_t activeScheme) const;
+    bool setFunctionalColor(int activeScheme) const;
 
     /// @brief sets multiple colors according to the current scheme index and some lane function
     bool setMultiColor(const GUIColorer& c) const;

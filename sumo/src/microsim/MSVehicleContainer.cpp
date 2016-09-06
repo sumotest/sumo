@@ -73,7 +73,7 @@ MSVehicleContainer::DepartFinder::operator()
 /* -------------------------------------------------------------------------
  * methods from MSVehicleContainer
  * ----------------------------------------------------------------------- */
-MSVehicleContainer::MSVehicleContainer(size_t capacity)
+MSVehicleContainer::MSVehicleContainer(int capacity)
     : currentSize(0), array(capacity + 1, VehicleDepartureVector()) {}
 
 
@@ -145,11 +145,11 @@ MSVehicleContainer::addReplacing(const VehicleDepartureVector& x) {
     // Percolate up
     int hole = ++currentSize;
     for (; hole > 1 && (x.first < array[ hole / 2 ].first); hole /= 2) {
-        assert(array.size() > (size_t) hole);
-        array[ hole ] = array[ hole / 2 ];
+        assert((int)array.size() > hole);
+        array[hole] = array[ hole / 2 ];
     }
-    assert(array.size() > (size_t) hole);
-    array[ hole ] = x;
+    assert((int)array.size() > hole);
+    array[hole] = x;
 }
 
 
@@ -208,27 +208,27 @@ MSVehicleContainer::isFull() const {
 void
 MSVehicleContainer::percolateDown(int hole) {
     int child;
-    assert(array.size() > (size_t)hole);
+    assert((int)array.size() > hole);
     VehicleDepartureVector tmp = array[ hole ];
 
     for (; hole * 2 <= currentSize; hole = child) {
         child = hole * 2;
-        if (child != currentSize && (array[ child + 1 ].first < array[ child ].first)) {
+        if (child != currentSize && (array[child + 1].first < array[child].first)) {
             child++;
         }
         if ((array[ child ].first < tmp.first)) {
-            assert(array.size() > (size_t) hole);
-            array[ hole ] = array[ child ];
+            assert((int)array.size() > hole);
+            array[hole] = array[child];
         } else {
             break;
         }
     }
-    assert(array.size() > (size_t) hole);
-    array[ hole ] = tmp;
+    assert((int)array.size() > hole);
+    array[hole] = tmp;
 }
 
 
-size_t
+int
 MSVehicleContainer::size() const {
     return currentSize;
 }

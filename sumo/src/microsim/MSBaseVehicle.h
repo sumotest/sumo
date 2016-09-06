@@ -135,6 +135,14 @@ public:
         return true;
     }
 
+    /** @brief Returns the information whether the vehicle is fully controlled
+     * via TraCI
+     * @return Whether the vehicle is remote-controlled
+     */
+    virtual bool isRemoteControlled() const {
+        return false;
+    }
+
     /** @brief Returns the information whether the front of the vehhicle is on the given lane
      * @return Whether the vehicle's front is on that lane
      */
@@ -261,7 +269,7 @@ public:
     /** @brief Returns the number of new routes this vehicle got
      * @return the number of new routes this vehicle got
      */
-    inline unsigned int getNumberReroutes() const {
+    inline int getNumberReroutes() const {
         return myNumberReroutes;
     }
 
@@ -414,7 +422,7 @@ protected:
     int myArrivalLane;
 
     /// @brief The number of reroutings
-    unsigned int myNumberReroutes;
+    int myNumberReroutes;
 
     /* @brief magic value for undeparted vehicles
      * @note: in previous versions this was -1

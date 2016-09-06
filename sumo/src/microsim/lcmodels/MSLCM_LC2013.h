@@ -71,8 +71,6 @@ public:
 
     bool debugVehicle() const;
 
-
-    // TODO: improve documentation of wantsChange() (Leo)
     /** @brief Called to examine whether the vehicle wants to change
      * using the given laneOffset.
      * This method gets the information about the surrounding vehicles

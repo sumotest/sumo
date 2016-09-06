@@ -79,7 +79,7 @@ TraCIServerAPI_Polygon::processGet(TraCIServer& server, tcpip::Storage& inputSto
             tempMsg.writeInt((int) ids.size());
         }
     } else {
-        Polygon* p = getPolygon(id);
+        SUMO::Polygon* p = getPolygon(id);
         if (p == 0) {
             return server.writeErrorStatusCmd(CMD_GET_POLYGON_VARIABLE, "Polygon '" + id + "' is not known", outputStorage);
         }
@@ -97,8 +97,8 @@ TraCIServerAPI_Polygon::processGet(TraCIServer& server, tcpip::Storage& inputSto
                 break;
             case VAR_SHAPE:
                 tempMsg.writeUnsignedByte(TYPE_POLYGON);
-                tempMsg.writeUnsignedByte(MIN2(static_cast<int>(255), static_cast<int>(p->getShape().size())));
-                for (unsigned int iPoint = 0; iPoint < MIN2(static_cast<size_t>(255), p->getShape().size()); ++iPoint) {
+                tempMsg.writeUnsignedByte(MIN2(255, (int)p->getShape().size()));
+                for (int iPoint = 0; iPoint < MIN2(255, (int)p->getShape().size()); ++iPoint) {
                     tempMsg.writeDouble(p->getShape()[iPoint].x());
                     tempMsg.writeDouble(p->getShape()[iPoint].y());
                 }
@@ -138,7 +138,7 @@ TraCIServerAPI_Polygon::processSet(TraCIServer& server, tcpip::Storage& inputSto
     }
     // id
     std::string id = inputStorage.readString();
-    Polygon* p = 0;
+    SUMO::Polygon* p = 0;
     ShapeContainer& shapeCont = MSNet::getInstance()->getShapeContainer();
     if (variable != ADD && variable != REMOVE) {
         p = getPolygon(id);
@@ -252,7 +252,7 @@ TraCIServerAPI_Polygon::processSet(TraCIServer& server, tcpip::Storage& inputSto
 
 bool
 TraCIServerAPI_Polygon::getShape(const std::string& id, PositionVector& shape) {
-    Polygon* poly = getPolygon(id);
+    SUMO::Polygon* poly = getPolygon(id);
     if (poly == 0) {
         return false;
     }
@@ -261,7 +261,7 @@ TraCIServerAPI_Polygon::getShape(const std::string& id, PositionVector& shape) {
 }
 
 
-Polygon*
+SUMO::Polygon*
 TraCIServerAPI_Polygon::getPolygon(const std::string& id) {
     return MSNet::getInstance()->getShapeContainer().getPolygons().get(id);
 }
@@ -271,8 +271,8 @@ NamedRTree*
 TraCIServerAPI_Polygon::getTree() {
     NamedRTree* t = new NamedRTree();
     ShapeContainer& shapeCont = MSNet::getInstance()->getShapeContainer();
-    const std::map<std::string, Polygon*>& polygons = shapeCont.getPolygons().getMyMap();
-    for (std::map<std::string, Polygon*>::const_iterator i = polygons.begin(); i != polygons.end(); ++i) {
+    const std::map<std::string, SUMO::Polygon*>& polygons = shapeCont.getPolygons().getMyMap();
+    for (std::map<std::string, SUMO::Polygon*>::const_iterator i = polygons.begin(); i != polygons.end(); ++i) {
         Boundary b = (*i).second->getShape().getBoxBoundary();
         const float cmin[2] = {(float) b.xmin(), (float) b.ymin()};
         const float cmax[2] = {(float) b.xmax(), (float) b.ymax()};

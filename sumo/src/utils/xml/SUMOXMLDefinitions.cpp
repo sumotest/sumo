@@ -202,7 +202,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "entrance",                   AGEN_TAG_ENTRANCE },
     { "parameters",                 AGEN_TAG_PARAM },
     // Other
-    { "",                           SUMO_TAG_NOTHING }
+    { "",                           SUMO_TAG_NOTHING } //< must be the last one
 };
 
 
@@ -289,6 +289,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "lcKeepRight",            SUMO_ATTR_LCA_KEEPRIGHT_PARAM },
     { "lcSublane",              SUMO_ATTR_LCA_SUBLANE_PARAM },
     { "lcPushy",                SUMO_ATTR_LCA_PUSHY },
+    { "lcAssertive",            SUMO_ATTR_LCA_ASSERTIVE },
 
     { "last",                   SUMO_ATTR_LAST },
     { "cost",                   SUMO_ATTR_COST },
@@ -490,6 +491,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "departureVariation",     AGEN_ATTR_DEP_VARIATION },
 
     { "targetLanes",            SUMO_ATTR_TARGETLANE },
+    { "crossing",               SUMO_ATTR_CROSSING },
 
     // netEdit
     { "modificationStatusNotForPrinting",   GNE_ATTR_MODIFICATION_STATUS },
@@ -499,7 +501,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "parentOfAdditional",                 GNE_ATTR_PARENT },
 
     // Other
-    { "",                       SUMO_ATTR_NOTHING }
+    { "",                       SUMO_ATTR_NOTHING } //< must be the last one
 };
 
 
@@ -519,7 +521,7 @@ StringBijection<SumoXMLNodeType>::Entry SUMOXMLDefinitions::sumoNodeTypeValues[]
     {"internal",                    NODETYPE_INTERNAL},
     {"dead_end",                    NODETYPE_DEAD_END},
     {"DEAD_END",                    NODETYPE_DEAD_END_DEPRECATED},
-    {"unknown",                     NODETYPE_UNKNOWN}
+    {"unknown",                     NODETYPE_UNKNOWN} //< must be the last one
 };
 
 
@@ -531,13 +533,13 @@ StringBijection<SumoXMLEdgeFunc>::Entry SUMOXMLDefinitions::sumoEdgeFuncValues[]
     {"crossing",     EDGEFUNC_CROSSING},
     {"walkingarea",  EDGEFUNC_WALKINGAREA},
 
-    {"internal",     EDGEFUNC_INTERNAL}
+    {"internal",     EDGEFUNC_INTERNAL} //< must be the last one
 };
 
 
 StringBijection<LaneSpreadFunction>::Entry SUMOXMLDefinitions::laneSpreadFunctionValues[] = {
     {"right",   LANESPREAD_RIGHT }, // default
-    {"center",  LANESPREAD_CENTER }
+    {"center",  LANESPREAD_CENTER } //< must be the last one
 };
 
 
@@ -556,7 +558,7 @@ StringBijection<LinkState>::Entry SUMOXMLDefinitions::linkStateValues[] = {
     { "s", LINKSTATE_STOP },
     { "w", LINKSTATE_ALLWAY_STOP },
     { "Z", LINKSTATE_ZIPPER },
-    { "-", LINKSTATE_DEADEND }
+    { "-", LINKSTATE_DEADEND } //< must be the last one
 };
 
 
@@ -568,7 +570,7 @@ StringBijection<LinkDirection>::Entry SUMOXMLDefinitions::linkDirectionValues[] 
     { "r",      LINKDIR_RIGHT },
     { "L",      LINKDIR_PARTLEFT },
     { "R",      LINKDIR_PARTRIGHT },
-    { "invalid", LINKDIR_NODIR }
+    { "invalid", LINKDIR_NODIR } //< must be the last one
 };
 
 
@@ -590,9 +592,8 @@ StringBijection<TrafficLightType>::Entry SUMOXMLDefinitions::trafficLightTypesVa
 StringBijection<LaneChangeModel>::Entry SUMOXMLDefinitions::laneChangeModelValues[] = {
     { "DK2008",     LCM_DK2008 },
     { "LC2013",     LCM_LC2013 },
-    { "JE2013",     LCM_JE2013 },
     { "SL2015",     LCM_SL2015 },
-    { "default",    LCM_DEFAULT },
+    { "default",    LCM_DEFAULT } //< must be the last one
 };
 
 StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = {
@@ -605,7 +606,7 @@ StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = 
     { "Daniel1",     SUMO_TAG_CF_DANIEL1 },
     { "PWagner2009", SUMO_TAG_CF_PWAGNER2009 },
     { "BKerner",     SUMO_TAG_CF_BKERNER },
-    { "Wiedemann",   SUMO_TAG_CF_WIEDEMANN },
+    { "Wiedemann",   SUMO_TAG_CF_WIEDEMANN } //< must be the last one
 };
 
 StringBijection<LateralAlignment>::Entry SUMOXMLDefinitions::lateralAlignmentValues[] = {
@@ -614,7 +615,7 @@ StringBijection<LateralAlignment>::Entry SUMOXMLDefinitions::lateralAlignmentVal
     { "arbitrary",     LATALIGN_ARBITRARY },
     { "nice",          LATALIGN_NICE },
     { "compact",       LATALIGN_COMPACT },
-    { "left",          LATALIGN_LEFT }
+    { "left",          LATALIGN_LEFT } //< must be the last one
 };
 
 StringBijection<LaneChangeAction>::Entry SUMOXMLDefinitions::laneChangeActionValues[] = {
@@ -624,11 +625,11 @@ StringBijection<LaneChangeAction>::Entry SUMOXMLDefinitions::laneChangeActionVal
     { "strategic",   LCA_STRATEGIC },
     { "cooperative", LCA_COOPERATIVE },
     { "speedGain",   LCA_SPEEDGAIN },
-    { "keepRaight",  LCA_KEEPRIGHT },
+    { "keepRight",   LCA_KEEPRIGHT },
     { "sublane",     LCA_SUBLANE },
     { "traci",       LCA_TRACI },
     { "urgent",      LCA_URGENT },
-    { "blocked",     LCA_BLOCKED }
+    { "blocked",     LCA_BLOCKED } //< must be the last one
 };
 
 StringBijection<int> SUMOXMLDefinitions::Tags(

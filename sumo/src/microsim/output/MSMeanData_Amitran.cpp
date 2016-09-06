@@ -77,7 +77,7 @@ MSMeanData_Amitran::MSLaneMeanDataValues::addTo(MSMeanData::MeanDataValues& val)
     v.amount += amount;
     v.sampleSeconds += sampleSeconds;
     v.travelledDistance += travelledDistance;
-    for (std::map<const MSVehicleType*, unsigned>::const_iterator it = typedAmount.begin(); it != typedAmount.end(); ++it) {
+    for (std::map<const MSVehicleType*, int>::const_iterator it = typedAmount.begin(); it != typedAmount.end(); ++it) {
         v.typedAmount[it->first] += it->second;
     }
     for (std::map<const MSVehicleType*, SUMOReal>::const_iterator it = typedSamples.begin(); it != typedSamples.end(); ++it) {
@@ -90,7 +90,7 @@ MSMeanData_Amitran::MSLaneMeanDataValues::addTo(MSMeanData::MeanDataValues& val)
 
 
 void
-MSMeanData_Amitran::MSLaneMeanDataValues::notifyMoveInternal(SUMOVehicle& veh, SUMOReal timeOnLane, SUMOReal speed) {
+MSMeanData_Amitran::MSLaneMeanDataValues::notifyMoveInternal(SUMOVehicle& veh, SUMOReal /* frontOnLane */, SUMOReal timeOnLane, SUMOReal speed) {
     sampleSeconds += timeOnLane;
     travelledDistance += speed * timeOnLane;
     typedSamples[&veh.getVehicleType()] += timeOnLane;
@@ -130,7 +130,7 @@ MSMeanData_Amitran::MSLaneMeanDataValues::write(OutputDevice& dev, const SUMOTim
         dev.writeAttr("amount", amount).writeAttr("averageSpeed", "-1");
     }
     if (myVehicleTypes != 0 && !myVehicleTypes->empty()) {
-        for (std::map<const MSVehicleType*, unsigned>::const_iterator it = typedAmount.begin(); it != typedAmount.end(); ++it) {
+        for (std::map<const MSVehicleType*, int>::const_iterator it = typedAmount.begin(); it != typedAmount.end(); ++it) {
             dev.openTag("actorConfig").writeAttr(SUMO_ATTR_ID, it->first->getNumericalID());
             dev.writeAttr("amount", it->second).writeAttr("averageSpeed", int(100 * typedTravelDistance.find(it->first)->second / typedSamples.find(it->first)->second));
             dev.closeTag();

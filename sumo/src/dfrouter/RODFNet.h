@@ -91,6 +91,21 @@ public:
     bool hasDetector(ROEdge* edge) const;
     const std::vector<std::string>& getDetectorList(ROEdge* edge) const;
 
+    SUMOReal getMaxSpeedFactorPKW() const {
+        return myMaxSpeedFactorPKW;
+    }
+
+    SUMOReal getMaxSpeedFactorLKW() const {
+        return myMaxSpeedFactorLKW;
+    }
+
+    SUMOReal getAvgSpeedFactorPKW() const {
+        return myAvgSpeedFactorPKW;
+    }
+
+    SUMOReal getAvgSpeedFactorLKW() const {
+        return myAvgSpeedFactorLKW;
+    }
 
 protected:
     void revalidateFlows(const RODFDetector* detector,
@@ -168,13 +183,19 @@ private:
     mutable std::map<std::string, ROEdge*> myDetectorEdges;
 
     bool myAmInHighwayMode;
-    mutable size_t mySourceNumber, mySinkNumber, myInBetweenNumber, myInvalidNumber;
+    mutable int mySourceNumber, mySinkNumber, myInBetweenNumber, myInvalidNumber;
 
     /// @brief List of ids of edges that shall not be used
     std::vector<std::string> myDisallowedEdges;
 
 
     bool myKeepTurnarounds;
+
+    /// @brief maximum speed factor in measurements
+    SUMOReal myMaxSpeedFactorPKW;
+    SUMOReal myMaxSpeedFactorLKW;
+    SUMOReal myAvgSpeedFactorPKW;
+    SUMOReal myAvgSpeedFactorLKW;
 
 };
 

@@ -478,9 +478,12 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
     const SUMOVehicleParameter& pars = v.getParameter();
     const MSVehicleType& type = v.getVehicleType();
     if (pars.departSpeedProcedure == DEPART_SPEED_GIVEN && pars.departSpeed > getVehicleMaxSpeed(&v)) {
-        if (type.getSpeedDeviation() > 0 && pars.departSpeed <= type.getSpeedFactor() * getSpeedLimit() * (2 * type.getSpeedDeviation() + 1.)) {
-            WRITE_WARNING("Choosing new speed factor for vehicle '" + pars.id + "' to match departure speed.");
+        if (type.getSpeedDeviation() > 0) {
             v.setChosenSpeedFactor(type.computeChosenSpeedDeviation(0, pars.departSpeed / (type.getSpeedFactor() * getSpeedLimit())));
+            if (v.getChosenSpeedFactor() > type.getSpeedFactor() * (2 * type.getSpeedDeviation() + 1)) {
+                // only warn for significant deviation
+                WRITE_WARNING("Choosing new speed factor " + toString(v.getChosenSpeedFactor()) + " for vehicle '" + pars.id + "' to match departure speed.");
+            }
         } else {
             throw ProcessError("Departure speed for vehicle '" + pars.id +
                                "' is too high for the departure edge '" + getID() + "'.");
@@ -619,20 +622,30 @@ MSEdge::getInternalFollowingEdge(const MSEdge* followerAfterInternal) const {
 
 
 SUMOReal
-MSEdge::getMesoMeanSpeed() const {
+MSEdge::getMeanSpeed() const {
     SUMOReal v = 0;
     SUMOReal no = 0;
-    for (MESegment* segment = MSGlobals::gMesoNet->getSegmentForEdge(*this); segment != 0; segment = segment->getNextSegment()) {
-        SUMOReal vehNo = (SUMOReal) segment->getCarNumber();
-        v += vehNo * segment->getMeanSpeed();
-        no += vehNo;
-    }
-    if (no == 0) {
-        return getLength() / myEmptyTraveltime; // may include tls-penalty
+    if (MSGlobals::gUseMesoSim) {
+        for (MESegment* segment = MSGlobals::gMesoNet->getSegmentForEdge(*this); segment != 0; segment = segment->getNextSegment()) {
+            const SUMOReal vehNo = (SUMOReal) segment->getCarNumber();
+            v += vehNo * segment->getMeanSpeed();
+            no += vehNo;
+        }
+        if (no == 0) {
+            return getLength() / myEmptyTraveltime; // may include tls-penalty
+        }
+    } else {
+        for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
+            const SUMOReal vehNo = (SUMOReal)(*i)->getVehicleNumber();
+            v += vehNo * (*i)->getMeanSpeed();
+            no += vehNo;
+        }
+        if (no == 0) {
+            return getSpeedLimit();
+        }
     }
     return v / no;
 }
-
 
 
 SUMOReal
@@ -641,17 +654,15 @@ MSEdge::getCurrentTravelTime(SUMOReal minSpeed) const {
     if (!myAmDelayed) {
         return myEmptyTraveltime;
     }
-    SUMOReal v = 0;
-    if (MSGlobals::gUseMesoSim) {
-        v = getMesoMeanSpeed();
-    } else {
-        for (std::vector<MSLane*>::const_iterator i = myLanes->begin(); i != myLanes->end(); ++i) {
-            v += (*i)->getMeanSpeed();
-        }
-        v /= (SUMOReal) myLanes->size();
-    }
-    return getLength() / MAX2(minSpeed, v);
+    return getLength() / MAX2(minSpeed, getMeanSpeed());
 }
+
+
+SUMOReal
+MSEdge::getRoutingSpeed() const {
+    return MSDevice_Routing::getAssumedSpeed(this);
+}
+
 
 
 bool
@@ -681,9 +692,9 @@ MSEdge::dictionary(const std::string& id) {
 }
 
 
-size_t
+int
 MSEdge::dictSize() {
-    return myDict.size();
+    return (int)myDict.size();
 }
 
 

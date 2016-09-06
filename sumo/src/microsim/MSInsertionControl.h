@@ -96,7 +96,7 @@ public:
      * @param[in] time The current simulation time
      * @return The number of vehicles that could be inserted into the net
      */
-    unsigned int emitVehicles(SUMOTime time);
+    int emitVehicles(SUMOTime time);
 
 
     /** @brief Adds a single vehicle for departure
@@ -123,7 +123,7 @@ public:
      *
      * @return The number of vehicles that could not (yet) be inserted into the net
      */
-    unsigned int getWaitingVehicleNo() const;
+    int getWaitingVehicleNo() const;
 
 
     /** @brief Returns the number of flows that are still active
@@ -149,6 +149,8 @@ public:
      */
     void determineCandidates(SUMOTime time);
 
+    /// @brief return the number of pending emits for the given lane
+    int getPendingEmits(const MSLane* lane);
 
 private:
     /** @brief Tries to emit the vehicle
@@ -165,15 +167,8 @@ private:
      * @param[in] refusedEmits Container to insert vehicles that could not be emitted into
      * @return The number of emitted vehicles (0 or 1)
      */
-    unsigned int tryInsert(SUMOTime time, SUMOVehicle* veh,
+    int tryInsert(SUMOTime time, SUMOVehicle* veh,
                            MSVehicleContainer::VehicleVector& refusedEmits);
-
-
-    /** @brief Checks whether any flow is blocked due to this vehicle and clears the block
-     *
-     * @param[in] veh The vehicle to check for
-     */
-    void checkFlowWait(SUMOVehicle* veh);
 
 
     /** @brief Adds all vehicles that should have been emitted earlier to the refuse container
@@ -206,12 +201,8 @@ private:
     struct Flow {
         /// @brief The paramters
         SUMOVehicleParameter* pars;
-        /// @brief whether it has route or vehicle type distribution
-        bool isVolatile;
-        /// @brief The last created vehicle
-        SUMOVehicle* vehicle;
         /// @brief the running index
-        unsigned int index;
+        int index;
     };
 
     /// @brief Container for periodical vehicle parameters
@@ -228,6 +219,12 @@ private:
 
     /// @brief Storage for maximum vehicle number
     int myMaxVehicleNumber;
+
+    /// @brief Last time at which pending emits for each edge where counted
+    SUMOTime myPendingEmitsUpdateTime;
+
+    /// @brief the number of pending emits for each edge in the current time step
+    std::map<const MSLane*, int> myPendingEmitsForLane;
 
 
 private:

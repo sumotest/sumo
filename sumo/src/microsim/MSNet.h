@@ -70,8 +70,7 @@ class MSEdgeControl;
 class MSJunctionControl;
 class MSInsertionControl;
 class SUMORouteLoaderControl;
-class MSPersonControl;
-class MSContainerControl;
+class MSTransportableControl;
 class MSVehicle;
 class MSRoute;
 class MSLane;
@@ -150,6 +149,7 @@ public:
     /** @brief Closes the network's building process
      *
      * Assigns the structures built while loading to this network.
+     * @param[in] oc The options to use
      * @param[in] edges The control of edges which belong to this network
      * @param[in] junctions The control of junctions which belong to this network
      * @param[in] routeLoaders The route loaders used
@@ -161,11 +161,10 @@ public:
      * @param[in] version The network version
      * @todo Try to move all this to the constructor?
      */
-    void closeBuilding(MSEdgeControl* edges, MSJunctionControl* junctions,
+    void closeBuilding(const OptionsCont& oc, MSEdgeControl* edges, MSJunctionControl* junctions,
                        SUMORouteLoaderControl* routeLoaders, MSTLLogicControl* tlc,
                        std::vector<SUMOTime> stateDumpTimes, std::vector<std::string> stateDumpFiles,
-                       bool hasInternalLinks,
-                       bool lefthand,
+                       bool hasInternalLinks, bool hasNeighs, bool lefthand,
                        SUMOReal version);
 
 
@@ -318,7 +317,13 @@ public:
      * @see MSPersonControl
      * @see myPersonControl
      */
-    virtual MSPersonControl& getPersonControl();
+    virtual MSTransportableControl& getPersonControl();
+
+    /** @brief Returns whether persons are simulated
+     */
+    bool hasPersons() const {
+        return myPersonControl != 0;
+    }
 
     /** @brief Returns the container control
      *
@@ -328,7 +333,13 @@ public:
      * @see MSContainerControl
      * @see myContainerControl
      */
-    virtual MSContainerControl& getContainerControl();
+    virtual MSTransportableControl& getContainerControl();
+
+    /** @brief Returns whether containers are simulated
+    */
+    bool hasContainers() const {
+        return myContainerControl != 0;
+    }
 
 
     /** @brief Returns the edge control
@@ -629,7 +640,12 @@ public:
         return myHasInternalLinks;
     }
 
-    /// @brief return whether the network contains internal links
+    /// @brief return whether the network contains explicit neighbor lanes
+    bool hasNeighs() const {
+        return myHasNeighs;
+    }
+
+    /// @brief return whether the network contains elevation data
     bool hasElevation() const {
         return myHasElevation;
     }
@@ -665,10 +681,10 @@ protected:
 
     /// @brief Controls vehicle building and deletion; @see MSVehicleControl
     MSVehicleControl* myVehicleControl;
-    /// @brief Controls person building and deletion; @see MSPersonControl
-    MSPersonControl* myPersonControl;
-    /// @brief Controls container building and deletion; @see MSContainerControl
-    MSContainerControl* myContainerControl;
+    /// @brief Controls person building and deletion; @see MSTransportableControl
+    MSTransportableControl* myPersonControl;
+    /// @brief Controls container building and deletion; @see MSTransportableControl
+    MSTransportableControl* myContainerControl;
     /// @brief Controls edges, performs vehicle movement; @see MSEdgeControl
     MSEdgeControl* myEdges;
     /// @brief Controls junctions, realizes right-of-way rules; @see MSJunctionControl
@@ -721,6 +737,11 @@ protected:
     std::vector<SUMOTime> myStateDumpTimes;
     /// @brief The names for the state files
     std::vector<std::string> myStateDumpFiles;
+    /// @brief The period for writing state
+    SUMOTime myStateDumpPeriod;
+    /// @brief name components for periodic state
+    std::string myStateDumpPrefix;
+    std::string myStateDumpSuffix;
     /// @}
 
 
@@ -733,6 +754,9 @@ protected:
 
     /// @brief Whether the network contains internal links/lanes/edges
     bool myHasInternalLinks;
+
+    /// @brief Whether the network contains explicit neighbor lanes
+    bool myHasNeighs;
 
     /// @brief Whether the network contains elevation data
     bool myHasElevation;

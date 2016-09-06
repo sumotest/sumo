@@ -112,14 +112,14 @@ public:
 
     class TraCILogic {
     public:
-        TraCILogic(const std::string& _subID, int _type, const std::map<std::string, SUMOReal>& _subParameter, unsigned int _currentPhaseIndex, const std::vector<TraCIPhase>& _phases)
+        TraCILogic(const std::string& _subID, int _type, const std::map<std::string, SUMOReal>& _subParameter, int _currentPhaseIndex, const std::vector<TraCIPhase>& _phases)
             : subID(_subID), type(_type), subParameter(_subParameter), currentPhaseIndex(_currentPhaseIndex), phases(_phases) {}
         ~TraCILogic() {}
 
         std::string subID;
         int type;
         std::map<std::string, SUMOReal> subParameter;
-        unsigned int currentPhaseIndex;
+        int currentPhaseIndex;
         std::vector<TraCIPhase> phases;
     };
 
@@ -228,7 +228,7 @@ public:
         virtual ~EdgeScope() {}
 
         std::vector<std::string> getIDList() const;
-        unsigned int getIDCount() const;
+        int getIDCount() const;
         SUMOReal getAdaptedTraveltime(const std::string& edgeID, SUMOTime time) const;
         SUMOReal getEffort(const std::string& edgeID, SUMOTime time) const;
         SUMOReal getCO2Emission(const std::string& edgeID) const;
@@ -238,11 +238,12 @@ public:
         SUMOReal getNOxEmission(const std::string& edgeID) const;
         SUMOReal getFuelConsumption(const std::string& edgeID) const;
         SUMOReal getNoiseEmission(const std::string& edgeID) const;
+        SUMOReal getElectricityConsumption(const std::string& edgeID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& edgeID) const;
         SUMOReal getLastStepOccupancy(const std::string& edgeID) const;
         SUMOReal getLastStepLength(const std::string& edgeID) const;
         SUMOReal getTraveltime(const std::string& edgeID) const;
-        unsigned int getLastStepVehicleNumber(const std::string& edgeID) const;
+        int getLastStepVehicleNumber(const std::string& edgeID) const;
         SUMOReal getLastStepHaltingNumber(const std::string& edgeID) const;
         std::vector<std::string> getLastStepVehicleIDs(const std::string& edgeID) const;
 
@@ -323,7 +324,7 @@ public:
         std::vector<std::string> getIDList() const;
         SUMOReal  getPosition(const std::string& loopID) const;
         std::string getLaneID(const std::string& loopID) const;
-        unsigned int getLastStepVehicleNumber(const std::string& loopID) const;
+        int getLastStepVehicleNumber(const std::string& loopID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& loopID) const;
         std::vector<std::string> getLastStepVehicleIDs(const std::string& loopID) const;
         SUMOReal getLastStepOccupancy(const std::string& loopID) const;
@@ -383,7 +384,7 @@ public:
         SUMOReal getWidth(const std::string& laneID) const;
         std::vector<std::string> getAllowed(const std::string& laneID) const;
         std::vector<std::string> getDisallowed(const std::string& laneID) const;
-        unsigned int getLinkNumber(const std::string& laneID) const;
+        int getLinkNumber(const std::string& laneID) const;
         TraCIPositionVector getShape(const std::string& laneID) const;
         std::string getEdgeID(const std::string& laneID) const;
         SUMOReal getCO2Emission(const std::string& laneID) const;
@@ -393,12 +394,13 @@ public:
         SUMOReal getNOxEmission(const std::string& laneID) const;
         SUMOReal getFuelConsumption(const std::string& laneID) const;
         SUMOReal getNoiseEmission(const std::string& laneID) const;
+        SUMOReal getElectricityConsumption(const std::string& laneID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& laneID) const;
         SUMOReal getLastStepOccupancy(const std::string& laneID) const;
         SUMOReal getLastStepLength(const std::string& laneID) const;
         SUMOReal getTraveltime(const std::string& laneID) const;
-        unsigned int getLastStepVehicleNumber(const std::string& laneID) const;
-        unsigned int getLastStepHaltingNumber(const std::string& laneID) const;
+        int getLastStepVehicleNumber(const std::string& laneID) const;
+        int getLastStepHaltingNumber(const std::string& laneID) const;
         std::vector<std::string> getLastStepVehicleIDs(const std::string& laneID) const;
 
         void setAllowed(const std::string& laneID, const std::vector<std::string>& allowedClasses) const;
@@ -447,10 +449,10 @@ public:
         virtual ~MeMeScope() {}
 
         std::vector<std::string> getIDList() const;
-        unsigned int getLastStepVehicleNumber(const std::string& detID) const;
+        int getLastStepVehicleNumber(const std::string& detID) const;
         SUMOReal getLastStepMeanSpeed(const std::string& detID) const;
         std::vector<std::string> getLastStepVehicleIDs(const std::string& detID) const;
-        unsigned int getLastStepHaltingNumber(const std::string& detID) const;
+        int getLastStepHaltingNumber(const std::string& detID) const;
 
     private:
         /// @brief invalidated copy constructor
@@ -567,19 +569,19 @@ public:
         virtual ~SimulationScope() {}
 
         SUMOTime getCurrentTime() const;
-        unsigned int getLoadedNumber() const;
+        int getLoadedNumber() const;
         std::vector<std::string> getLoadedIDList() const;
-        unsigned int getDepartedNumber() const;
+        int getDepartedNumber() const;
         std::vector<std::string> getDepartedIDList() const;
-        unsigned int getArrivedNumber() const;
+        int getArrivedNumber() const;
         std::vector<std::string> getArrivedIDList() const;
-        unsigned int getStartingTeleportNumber() const;
+        int getStartingTeleportNumber() const;
         std::vector<std::string> getStartingTeleportIDList() const;
-        unsigned int getEndingTeleportNumber() const;
+        int getEndingTeleportNumber() const;
         std::vector<std::string> getEndingTeleportIDList() const;
         SUMOTime getDeltaT() const;
         TraCIBoundary getNetBoundary() const;
-        unsigned int getMinExpectedNumber() const;
+        int getMinExpectedNumber() const;
 
         void subscribe(int domID, const std::string& objID, SUMOTime beginTime, SUMOTime endTime, const std::vector<int>& vars) const;
         void subscribeContext(int domID, const std::string& objID, SUMOTime beginTime, SUMOTime endTime, int domain, SUMOReal range, const std::vector<int>& vars) const;
@@ -617,13 +619,13 @@ public:
         std::vector<std::string> getControlledLanes(const std::string& tlsID) const;
         std::vector<TraCIAPI::TraCILink> getControlledLinks(const std::string& tlsID) const;
         std::string getProgram(const std::string& tlsID) const;
-        unsigned int getPhase(const std::string& tlsID) const;
-        unsigned int getNextSwitch(const std::string& tlsID) const;
+        int getPhase(const std::string& tlsID) const;
+        int getNextSwitch(const std::string& tlsID) const;
 
         void setRedYellowGreenState(const std::string& tlsID, const std::string& state) const;
-        void setPhase(const std::string& tlsID, unsigned int index) const;
+        void setPhase(const std::string& tlsID, int index) const;
         void setProgram(const std::string& tlsID, const std::string& programID) const;
-        void setPhaseDuration(const std::string& tlsID, unsigned int phaseDuration) const;
+        void setPhaseDuration(const std::string& tlsID, int phaseDuration) const;
         void setCompleteRedYellowGreenDefinition(const std::string& tlsID, const TraCIAPI::TraCILogic& logic) const;
 
     private:
@@ -715,22 +717,32 @@ public:
 
 
         std::vector<std::string> getIDList() const;
-        unsigned int getIDCount() const;
+        int getIDCount() const;
         SUMOReal getSpeed(const std::string& vehicleID) const;
         TraCIPosition getPosition(const std::string& vehicleID) const;
         SUMOReal getAngle(const std::string& vehicleID) const;
         std::string getRoadID(const std::string& vehicleID) const;
         std::string getLaneID(const std::string& vehicleID) const;
-        unsigned int getLaneIndex(const std::string& vehicleID) const;
-        std::string getvehicleID(const std::string& vehicleID) const;
+        int getLaneIndex(const std::string& vehicleID) const;
+        std::string getTypeID(const std::string& vehicleID) const;
         std::string getRouteID(const std::string& vehicleID) const;
-        unsigned int getRouteIndex(const std::string& vehicleID) const;
+        int getRouteIndex(const std::string& vehicleID) const;
         std::vector<std::string> getEdges(const std::string& vehicleID) const;
         TraCIColor getColor(const std::string& vehicleID) const;
         SUMOReal getLanePosition(const std::string& vehicleID) const;
-        unsigned int getSignalStates(const std::string& vehicleID) const;
+        SUMOReal getCO2Emission(const std::string& vehicleID) const;
+        SUMOReal getCOEmission(const std::string& vehicleID) const;
+        SUMOReal getHCEmission(const std::string& vehicleID) const;
+        SUMOReal getPMxEmission(const std::string& vehicleID) const;
+        SUMOReal getNOxEmission(const std::string& vehicleID) const;
+        SUMOReal getFuelConsumption(const std::string& vehicleID) const;
+        SUMOReal getNoiseEmission(const std::string& vehicleID) const;
+        SUMOReal getElectricityConsumption(const std::string& vehicleID) const;
+        int getSignalStates(const std::string& vehicleID) const;
         SUMOReal getWaitingTime(const std::string& vehicleID) const;
         std::vector<NextTLSData> getNextTLS(const std::string& vehID) const;
+        int getSpeedMode(const std::string& vehicleID) const;
+        SUMOReal getSlope(const std::string& vehicleID) const;
 
         /* /// not yet implemented
         SUMOReal getCO2Emissions(const std::string& vehicleID) const;
@@ -740,8 +752,8 @@ public:
         SUMOReal getNOxEmissions(const std::string& vehicleID) const;
         SUMOReal getFuelConsumption(const std::string& vehicleID) const;
         SUMOReal getNoiseEmission(const std::string& vehicleID) const;
-        unsigned int getBestLanes(const std::string& vehicleID) const;
-        unsigned int getStopState(const std::string& vehicleID) const;
+        int getBestLanes(const std::string& vehicleID) const;
+        int getStopState(const std::string& vehicleID) const;
         SUMOReal getLength(const std::string& vehicleID) const;
         SUMOReal getMaxSpeed(const std::string& vehicleID) const;
         SUMOReal getAccel(const std::string& vehicleID) const;
@@ -774,10 +786,11 @@ public:
                  int personNumber = 0) const;
 
         void moveTo(const std::string& vehicleID, const std::string& laneID, SUMOReal position) const;
-        void moveToXY(const std::string& vehicleID, const std::string& edgeID, int lane, SUMOReal x, SUMOReal y, SUMOReal angle, bool keepRoute) const;
+        void moveToXY(const std::string& vehicleID, const std::string& edgeID, const int lane, const SUMOReal x, const SUMOReal y, const SUMOReal angle, const int keepRoute) const;
         void slowDown(const std::string& vehicleID, SUMOReal speed, int duration) const;
         void setSpeed(const std::string& vehicleID, SUMOReal speed) const;
         void remove(const std::string& vehicleID, char reason = REMOVE_VAPORIZED) const;
+        void setColor(const std::string& vehicleID, const TraCIColor& c) const;
 
     private:
         /// @brief invalidated copy constructor
@@ -787,6 +800,33 @@ public:
         VehicleScope& operator=(const VehicleScope& src);
 
     };
+
+    /** @class PersonScope
+     * * @brief Scope for interaction with vehicles
+     * */
+    class PersonScope : public TraCIScopeWrapper {
+    public:
+        PersonScope(TraCIAPI& parent) : TraCIScopeWrapper(parent) {}
+        virtual ~PersonScope() {}
+
+        std::vector<std::string> getIDList() const;
+        int getIDCount() const;
+        SUMOReal getSpeed(const std::string& typeID) const;
+        TraCIPosition getPosition(const std::string& typeID) const;
+        std::string getRoadID(const std::string& typeID) const;
+        std::string getTypeID(const std::string& typeID) const;
+        SUMOReal getWaitingTime(const std::string& typeID) const;
+        std::string getNextEdge(const std::string& typeID) const;
+
+    private:
+        /// @brief invalidated copy constructor
+        PersonScope(const PersonScope& src);
+
+        /// @brief invalidated assignment operator
+        PersonScope& operator=(const PersonScope& src);
+    };
+
+
 
 public:
     /// @brief Scope for interaction with edges
@@ -815,6 +855,8 @@ public:
     VehicleTypeScope vehicletype;
     /// @brief Scope for interaction with vehicles
     VehicleScope vehicle;
+    /// @brief Scope for interaction with persons
+    PersonScope person;
 
 
 protected:
@@ -873,6 +915,9 @@ protected:
     /// @}
 
 
+    void send_commandMoveToXY(const std::string& vehicleID, const std::string& edgeID, const int lane,
+                              const SUMOReal x, const SUMOReal y, const SUMOReal angle, const int keepRoute) const;
+
 
     /// @name Command sending methods
     /// @{
@@ -893,9 +938,9 @@ protected:
     void processGET(tcpip::Storage& inMsg, int command, int expectedType, bool ignoreCommandId = false) const;
     /// @}
 
-    void readVariableSubscription(tcpip::Storage &inMsg);
-    void readContextSubscription(tcpip::Storage &inMsg);
-    void readVariables(tcpip::Storage &inMsg, const std::string &objectID, int variableCount, SubscribedValues& into);
+    void readVariableSubscription(tcpip::Storage& inMsg);
+    void readContextSubscription(tcpip::Storage& inMsg);
+    void readVariables(tcpip::Storage& inMsg, const std::string& objectID, int variableCount, SubscribedValues& into);
 
     template <class T>
     static inline std::string toString(const T& t, std::streamsize accuracy = OUTPUT_ACCURACY) {

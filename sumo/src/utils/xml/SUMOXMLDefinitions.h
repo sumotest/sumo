@@ -94,8 +94,6 @@ enum SumoXMLTag {
     SUMO_TAG_CALIBRATOR,
     /// @brief A rerouter
     SUMO_TAG_REROUTER,
-    /// @brief A rerouteredge
-    SUMO_TAG_REROUTEREDGE,
     /// @brief A bus stop
     SUMO_TAG_BUS_STOP,
     /// @brief A train stop (alias for bus stop)
@@ -362,6 +360,7 @@ enum SumoXMLAttr {
     SUMO_ATTR_LCA_KEEPRIGHT_PARAM,
     SUMO_ATTR_LCA_SUBLANE_PARAM,
     SUMO_ATTR_LCA_PUSHY,
+    SUMO_ATTR_LCA_ASSERTIVE,
     /* route alternatives / distribution attributes */
     SUMO_ATTR_LAST,
     SUMO_ATTR_COST,
@@ -616,7 +615,8 @@ enum SumoXMLAttr {
     GNE_ATTR_PARENT,
     //@}
 
-    SUMO_ATTR_TARGETLANE
+    SUMO_ATTR_TARGETLANE,
+    SUMO_ATTR_CROSSING
 };
 
 /*
@@ -851,7 +851,6 @@ enum LaneChangeAction {
 enum LaneChangeModel {
     LCM_DK2008,
     LCM_LC2013,
-    LCM_JE2013,
     LCM_SL2015,
     LCM_DEFAULT
 };

@@ -73,7 +73,7 @@
 #include <microsim/MSEdgeControl.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSJunctionControl.h>
-#include <microsim/MSPersonControl.h>
+#include <microsim/MSTransportableControl.h>
 #include <microsim/traffic_lights/MSTLLogicControl.h>
 #include <microsim/traffic_lights/MSSimpleTrafficLightLogic.h>
 #include <utils/common/RGBColor.h>
@@ -267,6 +267,16 @@ GUIOSGView::buildViewToolBars(GUIGlChildWindow& v) {
 void
 GUIOSGView::recenterView() {
     stopTrack();
+    Position center = myGrid->getCenter();
+    osg::Vec3d lookFromOSG, lookAtOSG, up;
+    myViewer->getCameraManipulator()->getHomePosition(lookFromOSG, lookAtOSG, up);
+    lookFromOSG[0] = center.x();
+    lookFromOSG[1] = center.y();
+    lookFromOSG[2] = myChanger->zoom2ZPos(100);
+    lookAtOSG[0] = center.x();
+    lookAtOSG[1] = center.y();
+    lookAtOSG[2] = 0;
+    myViewer->getCameraManipulator()->setHomePosition(lookFromOSG, lookAtOSG, up);
     myViewer->home();
 }
 
@@ -386,7 +396,7 @@ GUIOSGView::onPaint(FXObject*, FXSelector, void*) {
         myCameraManipulator->setByInverseMatrix(m);
     }
 
-    for (std::map<std::string, MSTransportable*>::const_iterator it = MSNet::getInstance()->getPersonControl().loadedPersonsBegin(); it != MSNet::getInstance()->getPersonControl().loadedPersonsEnd(); ++it) {
+    for (std::map<std::string, MSTransportable*>::const_iterator it = MSNet::getInstance()->getPersonControl().loadedBegin(); it != MSNet::getInstance()->getPersonControl().loadedEnd(); ++it) {
         MSTransportable* person = (*it).second;
         // XXX if not departed: continue
         if (myPersons.find(person) == myPersons.end()) {
@@ -433,7 +443,7 @@ GUIOSGView::showViewportEditor() {
 
 
 void
-GUIOSGView::setViewport(const Position& lookFrom, const Position& lookAt) {
+GUIOSGView::setViewportFromTo(const Position& lookFrom, const Position& lookAt) {
     osg::Vec3d lookFromOSG, lookAtOSG, up;
     myViewer->getCameraManipulator()->getHomePosition(lookFromOSG, lookAtOSG, up);
     lookFromOSG[0] = lookFrom.x();
@@ -445,6 +455,17 @@ GUIOSGView::setViewport(const Position& lookFrom, const Position& lookAt) {
     myViewer->getCameraManipulator()->setHomePosition(lookFromOSG, lookAtOSG, up);
     myViewer->home();
 }
+
+
+
+void 
+GUIOSGView::copyViewportTo(GUISUMOAbstractView* view) {
+    osg::Vec3d lookFrom, lookAt, up;
+    myCameraManipulator->getHomePosition(lookFrom, lookAt, up);
+    view->setViewportFromTo(Position(lookFrom[0], lookFrom[1], lookFrom[2]), 
+            Position(lookAt[0], lookAt[1], lookAt[2]));
+}
+
 
 
 void
@@ -484,9 +505,9 @@ GUIOSGView::stopTrack() {
 }
 
 
-int
+GUIGlID
 GUIOSGView::getTrackedID() const {
-    return myTracked == 0 ? -1 : myTracked->getGlID();
+    return myTracked == 0 ? GUIGlObject::INVALID_ID : myTracked->getGlID();
 }
 
 
@@ -516,7 +537,7 @@ GUIOSGView::onGamingClick(Position pos) {
         const std::vector<MSTrafficLightLogic*> logics = vars.getAllLogics();
         if (logics.size() > 1) {
             MSSimpleTrafficLightLogic* l = (MSSimpleTrafficLightLogic*) logics[0];
-            for (unsigned int i = 0; i < logics.size() - 1; i++) {
+            for (int i = 0; i < (int)logics.size() - 1; i++) {
                 if (minTll->getProgramID() == logics[i]->getProgramID()) {
                     l = (MSSimpleTrafficLightLogic*) logics[i + 1];
                     tlsControl.switchTo(minTll->getID(), l->getProgramID());

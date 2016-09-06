@@ -79,6 +79,7 @@ NLHandler::NLHandler(const std::string& file, MSNet& net,
     myHaveWarnedAboutDeprecatedLanes(false),
     myLastParameterised(0),
     myHaveSeenInternalEdge(false),
+    myHaveSeenNeighs(false),
     myLefthand(false),
     myNetworkVersion(0),
     myNetIsLoaded(false) {
@@ -107,6 +108,7 @@ NLHandler::myStartElement(int element,
                 break;
             case SUMO_TAG_NEIGH:
                 myEdgeControlBuilder.addNeigh(attrs.getString(SUMO_ATTR_LANE));
+                myHaveSeenNeighs = true;
                 break;
             case SUMO_TAG_JUNCTION:
                 openJunction(attrs);
@@ -1024,8 +1026,8 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
             WRITE_ERROR("Unknown to-edge '" + toID + "' in connection");
             return;
         }
-        if (fromLaneIdx < 0 || static_cast<unsigned int>(fromLaneIdx) >= from->getLanes().size() ||
-                toLaneIdx < 0 || static_cast<unsigned int>(toLaneIdx) >= to->getLanes().size()) {
+        if (fromLaneIdx < 0 || fromLaneIdx >= (int)from->getLanes().size() ||
+              toLaneIdx < 0 || toLaneIdx >= (int)to->getLanes().size()) {
             WRITE_ERROR("Invalid lane index in connection from '" + from->getID() + "' to '" + to->getID() + "'.");
             return;
         }
@@ -1079,8 +1081,9 @@ NLHandler::addConnection(const SUMOSAXAttributes& attrs) {
 
         // if a traffic light is responsible for it, inform the traffic light
         // check whether this link is controlled by a traffic light
-        if (logic != 0) {
-            logic->addLink(link, fromLane, tlLinkIdx);
+        // we can not reuse logic here because it might be an inactive one
+        if (tlID != "") {
+            myJunctionControlBuilder.getTLLogic(tlID).addLink(link, fromLane, tlLinkIdx);
         }
         // add the link
         fromLane->addLink(link);

@@ -40,6 +40,7 @@
 #include <utils/common/MsgHandler.h>
 #include "GUIAppEnum.h"
 #include "GUIMainWindow.h"
+#include "GUIGlChildWindow.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -151,7 +152,7 @@ GUIMainWindow::updateChildren() {
     myMDIClient->forallWindows(this, FXSEL(SEL_COMMAND, MID_SIMSTEP), 0);
     // inform other windows
     myTrackerLock.lock();
-    for (size_t i = 0; i < myTrackerWindows.size(); i++) {
+    for (int i = 0; i < (int)myTrackerWindows.size(); i++) {
         myTrackerWindows[i]->handle(this, FXSEL(SEL_COMMAND, MID_SIMSTEP), 0);
     }
     myTrackerLock.unlock();
@@ -184,6 +185,15 @@ GUIMainWindow::getInstance() {
     throw ProcessError("A GUIMainWindow instance was not yet constructed.");
 }
 
+
+GUISUMOAbstractView*
+GUIMainWindow::getActiveView() const {
+    GUIGlChildWindow* w = dynamic_cast<GUIGlChildWindow*>(myMDIClient->getActiveChild());
+    if (w != 0) {
+        return w->getView();
+    }
+    return 0;
+}
 
 /****************************************************************************/
 

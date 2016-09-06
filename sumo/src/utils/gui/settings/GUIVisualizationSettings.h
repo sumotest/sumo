@@ -166,6 +166,12 @@ public:
     bool hideConnectors;
     /// @brief The lane exaggeration (upscale thickness)
     float laneWidthExaggeration;
+    /// @brief The minimum visual lane width for drawing
+    float laneMinSize;
+    /// @brief Whether to show direction indicators for lanes
+    bool showLaneDirection;
+    /// @brief Whether to show sublane boundaries
+    bool showSublanes;
     //@}
 
 
@@ -232,6 +238,8 @@ public:
     bool drawJunctionShape;
     /// @brief whether crosings and walkingareas shall be drawn
     bool drawCrossingsAndWalkingareas;
+    // Setting bundles for controling the size of the drawn junction
+    GUIVisualizationSizeSettings junctionSize;
     //@}
 
 
@@ -278,6 +286,9 @@ public:
     /// @brief the current NETEDIT mode (temporary)
     int editMode;
 
+    /// @brief the current NETEDIT additional mode (temporary)
+    int editAdditionalMode;
+
     /// @brief the current selection scaling in NETEDIT (temporary)
     SUMOReal selectionScale;
 
@@ -292,12 +303,12 @@ public:
     /** @brief Returns the number of the active lane (edge) coloring schme
      * @return number of the active scheme
      */
-    size_t getLaneEdgeMode() const;
+    int getLaneEdgeMode() const;
 
     /** @brief Returns the number of the active lane (edge) scaling schme
      * @return number of the active scheme
      */
-    size_t getLaneEdgeScaleMode() const;
+    int getLaneEdgeScaleMode() const;
 
     /** @brief Returns the current lane (edge) coloring schme
      * @return current scheme
