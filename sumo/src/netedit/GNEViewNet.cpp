@@ -1183,7 +1183,7 @@ GNEViewNet::onCmdRemoveRestrictedLaneBuslane(FXObject*, FXSelector, void*) {    
 
 bool                                                                                                                                    // PABLO #1568
 GNEViewNet::restrictLane(SUMOVehicleClass vclass) {                                                                                     // PABLO #1568
-GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                                                   // PABLO #1568
+    GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                                               // PABLO #1568
     if (lane != 0) {                                                                                                                    // PABLO #1568
         // Get selected lanes                                                                                                           // PABLO #1568
         std::vector<GNELane*> lanes = myNet->retrieveLanes(true); ;                                                                     // PABLO #1568
@@ -1242,12 +1242,13 @@ GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                           
             myUndoList->p_end();                                                                                                        // PABLO #1568
         }                                                                                                                               // PABLO #1568
     }                                                                                                                                   // PABLO #1568
+    return 1;                                                                                                                           // PABLO #1568
 }                                                                                                                                       // PABLO #1568
     
 
 bool                                                                                                                                    // PABLO #1568
 GNEViewNet::addRestrictedLane(SUMOVehicleClass vclass) {                                                                                // PABLO #1568
-GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                                                   // PABLO #1568
+    GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                                                                               // PABLO #1568
     if (lane != 0) {                                                                                                                    // PABLO #1568
         // Get selected edges                                                                                                           // PABLO #1568
         std::vector<GNEEdge*> edges = myNet->retrieveEdges(true);                                                                       // PABLO #1568
@@ -1308,6 +1309,7 @@ GNELane* lane = getLaneAtCurserPosition(myPopupSpot);                           
             myUndoList->p_end();                                                                                                        // PABLO #1568
         }                                                                                                                               // PABLO #1568
     }                                                                                                                                   // PABLO #1568
+    return 1;                                                                                                                           // PABLO #1568
 }                                                                                                                                       // PABLO #1568
 
 
@@ -1374,6 +1376,7 @@ GNEViewNet::removeRestrictedLane(SUMOVehicleClass vclass) {                     
             myUndoList->p_end();                                                                                                        // PABLO #1568
         }                                                                                                                               // PABLO #1568
     }                                                                                                                                   // PABLO #1568
+    return 1;                                                                                                                           // PABLO #1568
 }                                                                                                                                       // PABLO #1568
 
 

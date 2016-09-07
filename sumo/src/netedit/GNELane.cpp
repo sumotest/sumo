@@ -445,13 +445,23 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             bool edgeHasBikelane = myParentEdge.hasRestrictedLane(SVC_BICYCLE);                                                                                 // PABLO #1568
             bool edgeHasBuslane = myParentEdge.hasRestrictedLane(SVC_BUS);                                                                                      // PABLO #1568
             // Create panel for lane operations                                                                                                                 // PABLO #1568
-            FXMenuPane *addSpecialLanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568
-            FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);                                                                                               // PABLO #1568
-            FXMenuPane *transformSlanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568 
+            //FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);                                                                                             // PABLO #1568
+            //FXMenuPane *transformSlanes = new FXMenuPane(ret);                                                                                                // PABLO #1568 
+/************************************************************/
+            /** Wir stellen ein neue FXMenuPane für die drei unterschiende Optionen (Sidewalks, Bikelane und Buslane **/
+            FXMenuPane *addSpecialLanes = new FXMenuPane(ret); 
             // Create menu comands for all add special lanes                                                                                                    // PABLO #1568
-            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);                    // PABLO #1568
+            /** Das Produziert ein Fehler wenn das net geschlossen ist (Cntrl + W) **/
+            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", 0, &parent, MID_GNE_ADD_LANE_SIDEWALK); 
+            
+            /** Das nicht Produziert ein Fehler wenn das net geschlossen ist (Cntrl + W) **/
+            //FXMenuCommand *addSidewalk = new FXMenuCommand(ret, "Sidewalk", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);                
+/************************************************************/
+            FXMenuCascade* cascadeAddSpecialLane = new FXMenuCascade(ret, "add special lane", 0, addSpecialLanes); 
+            /*
             FXMenuCommand *addBikelane = new FXMenuCommand(addSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);                              // PABLO #1568
             FXMenuCommand *addBuslane = new FXMenuCommand(addSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_ADD_LANE_BUS);                                  // PABLO #1568
+            
             // Create menu comands for all remove special lanes and disable it                                                                                  // PABLO #1568
             FXMenuCommand *removeSidewalk = new FXMenuCommand(removeSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);           // PABLO #1568
             removeSidewalk->disable();                                                                                                                          // PABLO #1568 
@@ -497,6 +507,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             } else {                                                                                                                                            // PABLO #1568
                 revertTransformation->disable();                                                                                                                // PABLO #1568
             }                                                                                                                                                   // PABLO #1568
+            */
         }
     } else if (editMode == GNE_MODE_TLS) {
         myTLSEditor = static_cast<GNEViewNet&>(parent).getViewParent()->getTLSEditorFrame();
