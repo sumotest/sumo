@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Wed May 11 15:38:11 2016 by SUMO Version dev-SVN-r20703
+<!-- generated on Fri Feb 26 13:34:52 2016 by SUMO Version dev-SVN-r20091
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -20,10 +20,6 @@
         <begin value="1.00"/>
     </time>
 
-    <processing>
-        <euler value="true"/>
-    </processing>
-
     <report>
         <verbose value="true"/>
         <xml-validation value="never"/>
@@ -34,7 +30,7 @@
 </configuration>
 -->
 
-<snapshot version="dev-SVN-r20703" time="10.00">
+<snapshot version="dev-SVN-r20091" time="10.00">
     <route id="r0" state="1" edges="beg middle end"/>
     <delay number="2" begin="2" end="0" depart="4.00" time="0.00"/>
     <vType id="DEFAULT_PEDTYPE" vClass="pedestrian"/>

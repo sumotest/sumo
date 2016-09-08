@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 14:00:55 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Thu Oct 29 13:02:45 2015 by SUMO Version dev-SVN-r19172I
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -17,10 +17,6 @@
     <time>
         <step-length value="0.2"/>
     </time>
-
-    <processing>
-        <euler value="true"/>
-    </processing>
 
     <report>
         <xml-validation value="never"/>

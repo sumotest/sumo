@@ -162,6 +162,9 @@
     </time>
 
     <processing>
+        <!-- Whether to use ballistic method for the positional update of vehicles (default is a semi-implicit Euler method). -->
+        <step-method.ballistic value="false" type="BOOL"/>
+
         <!-- Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane -->
         <lateral-resolution value="-1" type="FLOAT"/>
 

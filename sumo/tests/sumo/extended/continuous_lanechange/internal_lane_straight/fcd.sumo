@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May 19 11:03:34 2016 by SUMO Version dev-SVN-r20747
+<!-- generated on Thu Nov  5 10:15:30 2015 by SUMO Version dev-SVN-r19265
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -21,7 +21,6 @@
 
     <processing>
         <lanechange.duration value="10"/>
-        <euler value="true"/>
     </processing>
 
     <report>

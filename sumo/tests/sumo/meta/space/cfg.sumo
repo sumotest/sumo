@@ -12,10 +12,6 @@
         <end value="100"/>
     </time>
 
-    <processing>
-        <euler value="true"/>
-    </processing>
-
     <report>
         <duration-log.disable value="true"/>
     </report>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:59:00 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Wed 17 Feb 2016 08:18:28 AM CET by SUMO gui Version dev-SVN-r19989
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
 
     <input>
         <net-file value="net.net.xml"/>
@@ -14,10 +14,6 @@
     <time>
         <step-length value="0.1"/>
     </time>
-
-    <processing>
-        <euler value="true"/>
-    </processing>
 
     <report>
         <xml-validation value="never"/>

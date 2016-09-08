@@ -64,6 +64,7 @@
     </time>
 
     <processing>
+        <step-method.ballistic value="false" type="BOOL" help="Whether to use ballistic method for the positional update of vehicles (default is a semi-implicit Euler method)."/>
         <lateral-resolution value="-1" type="FLOAT" help="Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane"/>
         <route-steps value="200" synonymes="s" type="TIME" help="Load routes for the next number of seconds ahead"/>
         <no-internal-links value="false" type="BOOL" help="Disable (junction) internal links"/>

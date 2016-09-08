@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May 19 11:02:55 2016 by SUMO Version dev-SVN-r20747
+<!-- generated on Tue May 10 08:24:57 2016 by SUMO Version dev-SVN-r20678
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -14,10 +14,6 @@
         <vehroute-output value="vehroutes.xml"/>
         <vehroute-output.exit-times value="true"/>
     </output>
-
-    <processing>
-        <euler value="true"/>
-    </processing>
 
     <report>
         <xml-validation value="never"/>

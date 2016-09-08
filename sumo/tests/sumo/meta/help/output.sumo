@@ -1,4 +1,4 @@
-SUMO Version dev-SVN-r21270
+SUMO Version dev-SVN-r21424
  Copyright (C) 2001-2016 DLR and contributors; http://sumo.dlr.de
 A microscopic road traffic simulation.
 
@@ -91,6 +91,9 @@ Time Options:
   --step-length TIME                   Defines the step duration in seconds
 
 Processing Options:
+  --step-method.ballistic              Whether to use ballistic method for the
+                                         positional update of vehicles (default
+                                         is a semi-implicit Euler method).
   --lateral-resolution FLOAT           Defines the resolution in m when
                                          handling lateral positioning within a
                                          lane (with -1 all vehicles drive at the

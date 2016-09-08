@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:36:41 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on 05/02/13 14:09:35 by SUMO sumo Version 0.17.0
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -14,13 +14,8 @@
         <netstate-dump value="rawdump.xml"/>
     </output>
 
-    <processing>
-        <euler value="true"/>
-    </processing>
-
     <report>
-        <xml-validation value="never"/>
-        <duration-log.disable value="true"/>
+        <no-duration-log value="true"/>
         <no-step-log value="true"/>
     </report>
 

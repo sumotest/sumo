@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 14:00:55 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Fri Feb 19 13:17:08 2016 by SUMO Version dev-SVN-r20022
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -13,10 +13,6 @@
     <output>
         <netstate-dump value="rawdump.xml"/>
     </output>
-
-    <processing>
-        <euler value="true"/>
-    </processing>
 
     <report>
         <xml-validation value="never"/>
