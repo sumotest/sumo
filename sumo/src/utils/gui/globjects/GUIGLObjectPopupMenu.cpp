@@ -71,22 +71,37 @@ FXIMPLEMENT(GUIGLObjectPopupMenu, FXMenuPane, GUIGLObjectPopupMenuMap, ARRAYNUMB
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GUIGLObjectPopupMenu::GUIGLObjectPopupMenu(GUIMainWindow& app,
-        GUISUMOAbstractView& parent,
-        GUIGlObject& o)
-    : FXMenuPane(&parent), myParent(&parent), myObject(&o),
-      myApplication(&app), myNetworkPosition(parent.getPositionInformation()),
-      myMenuPane(0)
-{
+GUIGLObjectPopupMenu::GUIGLObjectPopupMenu(GUIMainWindow& app, GUISUMOAbstractView& parent, GUIGlObject& o) : 
+    FXMenuPane(&parent), 
+    myParent(&parent), 
+    myObject(&o),
+    myApplication(&app), 
+    myNetworkPosition(parent.getPositionInformation()) {
 }
 
 
 GUIGLObjectPopupMenu::~GUIGLObjectPopupMenu() {
-    if (myMenuPane != 0) {
-        std::cout << " destruct GUIGLObjectPopupMenu::myMenuPane\n";
+    // Delete MenuPaneChilds
+    for(std::vector<FXMenuPane*>::iterator i = myMenuPanes.begin(); i != myMenuPanes.end(); i++) {
+        delete(*i);
     }
-    delete myMenuPane;
-    std::cout << " destruct GUIGLObjectPopupMenu\n";
+}
+
+
+void 
+GUIGLObjectPopupMenu::insertMenuPaneChild(FXMenuPane* child) {
+    // Check that MenuPaneChild isn't NULL
+    if(child == NULL) {
+        throw ProcessError("MenuPaneChild cannot be NULL");
+    }
+    // Check that MenuPaneChild wasn't already inserted
+    for(std::vector<FXMenuPane*>::iterator i = myMenuPanes.begin(); i != myMenuPanes.end(); i++) {
+        if((*i) == child) {
+            throw ProcessError("MenuPaneChild already inserted");
+        }
+    }
+    // Insert MenuPaneChild
+    myMenuPanes.push_back(child);
 }
 
 
