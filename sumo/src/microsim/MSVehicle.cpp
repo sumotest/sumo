@@ -1245,7 +1245,6 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
 
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) {
-        std::cout
                 << "\nPLAN_MOVE\n"
                 << STEPS2TIME(t)
                 << " veh=" << getID()
@@ -1297,14 +1296,6 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     if (gDebugSelectedVehicle == getID()) {
         int bla = 0;
     }
-#endif
-
-#ifdef DEBUG_PLAN_MOVE
-        if (DEBUG_COND) std::cout << "\n"
-                    << SIMTIME
-                    << " planMoveInternal()"
-                    << " veh=" << getID()
-                    << std::endl;
 #endif
 
     // remove information about approaching links, will be reset later in this step
@@ -1573,12 +1564,12 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         lastLink = &lfLinks.back();
     }
 
-    // Debug (Leo)
-#ifdef DEBUG_PLAN_MOVE
-    if(DEBUG_COND){
-        std::cout << "planMoveInternal found safe speed v = " << v << std::endl;
-    }
-#endif
+//    // Debug (Leo)
+//#ifdef DEBUG_PLAN_MOVE
+//    if(DEBUG_COND){
+//        std::cout << "planMoveInternal found safe speed v = " << v << std::endl;
+//    }
+//#endif
 
 }
 
@@ -1844,20 +1835,20 @@ MSVehicle::executeMove() {
         }
     }
 
-    // Debug (Leo)
-#ifdef DEBUG_EXEC_MOVE
-    if (DEBUG_COND) {
-        std::cout << "\nvCurrent = " << toString(getSpeed(), 24) << "" << std::endl;
-        std::cout << "vSafe = " << toString(vSafe, 24) << "" << std::endl;
-        std::cout << "vSafeMin = " << toString(vSafeMin, 24) << "" << std::endl;
-        std::cout << "vSafeMinDist = " << toString(vSafeMinDist, 24) << "" << std::endl;
-
-        SUMOReal gap = getLeader().second;
-        std::cout << "gap = " << toString(gap, 24) << std::endl;
-        std::cout << "vSafeStoppedLeader = " << toString(getCarFollowModel().stopSpeed(this, getSpeed(), gap), 24)
-                << "\n" << std::endl;
-    }
-#endif
+//    // Debug (Leo)
+//#ifdef DEBUG_EXEC_MOVE
+//    if (DEBUG_COND) {
+//        std::cout << "\nvCurrent = " << toString(getSpeed(), 24) << "" << std::endl;
+//        std::cout << "vSafe = " << toString(vSafe, 24) << "" << std::endl;
+//        std::cout << "vSafeMin = " << toString(vSafeMin, 24) << "" << std::endl;
+//        std::cout << "vSafeMinDist = " << toString(vSafeMinDist, 24) << "" << std::endl;
+//
+//        SUMOReal gap = getLeader().second;
+//        std::cout << "gap = " << toString(gap, 24) << std::endl;
+//        std::cout << "vSafeStoppedLeader = " << toString(getCarFollowModel().stopSpeed(this, getSpeed(), gap), 24)
+//                << "\n" << std::endl;
+//    }
+//#endif
 
     if ((MSGlobals::gSemiImplicitEulerUpdate && vSafe + NUMERICAL_EPS < vSafeMin)
             || (!MSGlobals::gSemiImplicitEulerUpdate && (vSafe + NUMERICAL_EPS < vSafeMin && vSafeMin != 0))) { // this might be good for the euler case as well
@@ -1881,13 +1872,13 @@ MSVehicle::executeMove() {
     }
 
     vSafe = MIN2(vSafe, vSafeZipper);
-
-    // Debug (Leo)
-#ifdef DEBUG_EXEC_MOVE
-    if (DEBUG_COND) {
-    	std::cout << "vSafe = " << toString(vSafe,12) << "\n" << std::endl;
-    }
-#endif
+//
+//    // Debug (Leo)
+//#ifdef DEBUG_EXEC_MOVE
+//    if (DEBUG_COND) {
+//    	std::cout << "vSafe = " << toString(vSafe,12) << "\n" << std::endl;
+//    }
+//#endif
 
     // XXX braking due to lane-changing and processing stops is not registered
     //     To avoid casual blinking brake lights at high speeds due to dawdling of the
@@ -1900,6 +1891,12 @@ MSVehicle::executeMove() {
     SUMOReal vNext;
     if(MSGlobals::gSemiImplicitEulerUpdate){
     	vNext = MAX2(getCarFollowModel().moveHelper(this, vSafe), vSafeMin);
+
+    //	// Debug (Leo)
+    //	if(SIMTIME >= 1000.){
+    //		std::cout << SIMTIME << " vehicle '" << getID() << "' (after moveHelper()) at t = " << SIMTIME << std::endl;
+    //	}
+
     } else {
     	// in case of ballistic position update, negative speeds can indicate desired stops within next timestep.
     	if(vSafeMin == 0){
@@ -1914,7 +1911,7 @@ MSVehicle::executeMove() {
     }
 #ifdef DEBUG_EXEC_MOVE
     if (DEBUG_COND) {
-        std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << toString(vNext,24) << "\n";
+        std::cout << SIMTIME << " moveHelper vSafe=" << vSafe << " vSafeMin=" << vSafeMin << " vNext=" << vNext << "\n";
     }
 #endif
 
@@ -1966,6 +1963,12 @@ MSVehicle::executeMove() {
 
     // update position and speed
     updateState(vNext);
+
+//    //Debug(Leo)
+//    std::cout << SIMTIME <<  "veh '"<< getID() << "' \ndeltaPos = " << toString(myState.myLastCoveredDist, 24)
+//    	    	    		<< "\nvSafe = " << toString(vSafe, 24)
+//		    	    		<< "\nvNext = " << toString(vNext, 24)
+//					<< "\npos = " << toString(myState.myPos, 24);
     
     std::vector<MSLane*> passedLanes;
     for (std::vector<MSLane*>::reverse_iterator i = myFurtherLanes.rbegin(); i != myFurtherLanes.rend(); ++i) {
@@ -2097,7 +2100,16 @@ MSVehicle::executeMove() {
 void
 MSVehicle::updateState(SUMOReal vNext) {
     // update position and speed
-    SUMOReal deltaPos = getDeltaPos(SPEED2ACCEL(vNext - myState.mySpeed)); // positional change
+    SUMOReal deltaPos; // positional change
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+    	deltaPos = SPEED2DIST(vNext);
+    } else {
+    	// ballistic
+    	// XXX: this is ok for the euler update, too. However, small differences
+    	//		will to the above formula result from rounding. (introduced this too have
+    	// 		exact cooincidence of test results)
+    	deltaPos = getDeltaPos(SPEED2ACCEL(vNext - myState.mySpeed));
+    }
 
     // the mean acceleration during the next step
     // NOTE: for the ballistic update this is in general
@@ -2105,12 +2117,12 @@ MSVehicle::updateState(SUMOReal vNext) {
     myAcceleration = SPEED2ACCEL(MAX2(vNext,0.) - myState.mySpeed);
 
 
-    // Debug (Leo)
-#ifdef DEBUG_EXEC_MOVE
-    if (DEBUG_COND) {
-        std::cout << "deltaPos = " << deltaPos << std::endl;
-    }
-#endif
+//    // Debug (Leo)
+//#ifdef DEBUG_EXEC_MOVE
+//    if (DEBUG_COND) {
+//        std::cout << "deltaPos = " << deltaPos << std::endl;
+//    }
+//#endif
 
     myState.myPreviousSpeed = myState.mySpeed;
     myState.mySpeed = MAX2(vNext,0.);

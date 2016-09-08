@@ -37,6 +37,7 @@
 #include "MSAbstractLaneChangeModel.h"
 #include <vector>
 
+#define INVALID_SPEED 299792458 + 1 // nothing can go faster than the speed of light! :-)
 
 // ===========================================================================
 // class definitions
@@ -138,15 +139,16 @@ protected:
                         SUMOReal plannedSpeed);
 
 
-    // XXX: make static, migrate to MSCFModel
     /* @brief compute the distance to cover until a safe gap to the vehicle v in front is reached
      *        assuming constant velocities
-         * @param[in] follower the vehicle behind this
+         * @param[in] follower the vehicle which overtakes
          * @param[in] leader the vehicle to be overtaken
-         * @param[in] gap initial between this and v
+         * @param[in] gap initial distance between front of follower and back of leader
+         * @param[in] leaderSpeed an assumed speed for the leader (default uses the current speed)
+         * @param[in] followerSpeed an assumed speed for the follower (default uses the current speed)
          * @return the distance that the relative positions would have to change.
          */
-    SUMOReal overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap) const;
+    static SUMOReal overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, const SUMOReal gap, SUMOReal followerSpeed = INVALID_SPEED, SUMOReal leaderSpeed = INVALID_SPEED);
 
 
 //    /* @brief estimate the time it takes until this vehicle has overtaken v2

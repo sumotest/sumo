@@ -190,19 +190,26 @@ MSLCM_LC2013::wantsChange(
 
 SUMOReal
 MSLCM_LC2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
+
+#ifdef DEBUG_PATCH_SPEED
+    if (DEBUG_COND) {
+        std::cout << "\nPATCH_SPEED\n"
+                  << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+                  << " veh=" << myVehicle.getID()
+                  << " lane=" << myVehicle.getLane()->getID()
+                  << " pos=" << myVehicle.getPositionOnLane()
+                  << " v=" << myVehicle.getSpeed()
+                  << " wanted=" << wanted << "\n";
+    }
+#endif
+
     const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
 
 #ifdef DEBUG_PATCH_SPEED
     if (DEBUG_COND) {
         const std::string patched = (wanted != newSpeed ? " patched=" + toString(newSpeed) : "");
-        std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
-                  << " veh=" << myVehicle.getID()
-                  << " lane=" << myVehicle.getLane()->getID()
-                  << " pos=" << myVehicle.getPositionOnLane()
-                  << " v=" << myVehicle.getSpeed()
-                  << " wanted=" << wanted
-                  << patched
-                  << "\n\n";
+        std::cout << patched
+                  << "\n";
     }
 #endif
 
@@ -539,13 +546,15 @@ MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, S
 
 
 SUMOReal
-MSLCM_LC2013::overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, SUMOReal gap) const {
-	SUMOReal overtakeDist = (gap // drive to back of leader
-			+ leader->getVehicleType().getLengthWithGap() // drive to front of leader
-			+ follower->getVehicleType().getLength() // follower back reaches leader front
-			+ leader->getCarFollowModel().getSecureGap( // save gap to leader
-					leader->getSpeed(), follower->getSpeed(), follower->getCarFollowModel().getMaxDecel()));
-	return MAX2(overtakeDist, 0.);
+MSLCM_LC2013::overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, const SUMOReal gap, SUMOReal followerSpeed, SUMOReal leaderSpeed) {
+    followerSpeed = followerSpeed == INVALID_SPEED ? follower->getSpeed() : followerSpeed;
+    leaderSpeed = leaderSpeed == INVALID_SPEED ? leader->getSpeed() : leaderSpeed;
+    SUMOReal overtakeDist = (gap // drive to back of leader
+            + leader->getVehicleType().getLengthWithGap() // drive to front of leader
+            + follower->getVehicleType().getLength() // follower back reaches leader front
+            + leader->getCarFollowModel().getSecureGap( // save gap to leader
+                    leaderSpeed, followerSpeed, follower->getCarFollowModel().getMaxDecel()));
+    return MAX2(overtakeDist, 0.);
 }
 
 
@@ -565,7 +574,8 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
     }
 #ifdef DEBUG_INFORMER
     if (DEBUG_COND) {
-        std::cout << " informLeader speed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
+        std::cout << "\nINFORM_LEADER"
+        		<< "\nspeed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
     }
 #endif
 
@@ -630,7 +640,10 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                               << " cannot overtake leader nv=" << nv->getID()
                               << " dv=" << dv
+                              << " overtakeDist=" << overtakeDist
                               << " remainingSeconds=" << remainingSeconds
+                              << " currentGap=" << neighLead.second
+                              << " secureGap=" << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel())
                               << " targetSpeed=" << targetSpeed
                               << " nextSpeed=" << nextSpeed
                               << "\n";
@@ -645,7 +658,9 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                               << " cannot overtake fast leader nv=" << nv->getID()
                               << " dv=" << dv
+                              << " overtakeDist=" << overtakeDist
                               << " remainingSeconds=" << remainingSeconds
+                              << " currentGap=" << neighLead.second
                               << " targetSpeed=" << targetSpeed
                               << "\n";
                 }
@@ -660,10 +675,10 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                           << " wants to overtake leader nv=" << nv->getID()
                           << " dv=" << dv
+                          << " overtakeDist=" << overtakeDist
                           << " remainingSeconds=" << remainingSeconds
                           << " currentGap=" << neighLead.second
                           << " secureGap=" << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel())
-                          << " overtakeDist=" << overtakeDist
                           << "\n";
             }
 #endif
@@ -953,7 +968,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 
             msgPass.informNeighFollower(new Info(vhelp, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
             // This follower is supposed to overtake us. Slow down smoothly to allow this.
-            const SUMOReal overtakeDist = overtakeDistance(nv, &myVehicle, neighFollow.second);
+            const SUMOReal overtakeDist = overtakeDistance(nv, &myVehicle, neighFollow.second, vhelp, plannedSpeed);
             // speed difference to create a sufficiently large gap
             const SUMOReal needDV = overtakeDist / remainingSeconds;
             // make sure the deceleration is not to strong (XXX: should be assured in moveHelper -> TODO: remove the MAX2 if agreed) -> prob with possibly non-existing maximal deceleration for som CF Models(?)
@@ -1484,7 +1499,7 @@ MSLCM_LC2013::_wantsChange(
 
         return ret;
     }
-    // a high inconvenience prevents collaborative changes.
+    // a high inconvenience prevents cooperative changes.
     const SUMOReal inconvenience = MIN2((SUMOReal)1.0, (laneOffset < 0
                                         ? mySpeedGainProbability / myChangeProbThresholdRight
                                         : -mySpeedGainProbability / myChangeProbThresholdLeft));

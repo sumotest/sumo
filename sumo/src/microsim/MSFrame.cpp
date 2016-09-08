@@ -232,6 +232,9 @@ MSFrame::fillOptions() {
     oc.doRegister("step-length", new Option_String("1", "TIME"));
     oc.addDescription("step-length", "Time", "Defines the step duration in seconds");
 
+    oc.doRegister("step-method.ballistic", new Option_Bool(false));
+    oc.addDescription("step-method.ballistic", "Processing", "Whether to use ballistic method for the positional update of vehicles (default is a semi-implicit Euler method).");
+
     oc.doRegister("lateral-resolution", new Option_Float(-1));
     oc.addDescription("lateral-resolution", "Processing", "Defines the resolution in m when handling lateral positioning within a lane (with -1 all vehicles drive at the center of their lane");
 
@@ -294,9 +297,6 @@ MSFrame::fillOptions() {
 
     oc.doRegister("lanechange.overtake-right", new Option_Bool(false));
     oc.addDescription("lanechange.overtake-right", "Processing", "Whether overtaking on the right on motorways is permitted");
-
-    oc.doRegister("step-method.ballistic", new Option_Bool(false));
-    oc.addDescription("step-method.ballistic", "Processing", "Whether to use ballistic method for the positional update of vehicles (default is a semi-implicit Euler method).");
 
     oc.doRegister("tls.all-off", new Option_Bool(false));
     oc.addDescription("tls.all-off", "Processing", "Switches off all traffic lights.");

@@ -74,7 +74,12 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //    WRITE_WARNING("Maximum speed of vehicle '" + veh->getID() + "' is lower than the minimum speed (min: " + toString(vMin) + ", max: " + toString(vMax) + ").");
     //}
 #endif
-    SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, MAX2(vMin, dawdle(vMax)), vMax, *this);
+
+    const SUMOReal vDawdle = MAX2(vMin, dawdle(vMax));
+    SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vDawdle, vMax, *this);
+
+// Debug (Leo)
+//     if(veh->getID() == "high.62") std::cout << " vMin = " << vMin <<  " vMax = " << vMax <<" vDawdle = " << vDawdle << " vNext = " << vNext << std::endl;
 
     //	// Debug (Leo)
     //    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
@@ -82,7 +87,9 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
 	// (Leo) At this point vNext may also be negative indicating a stop within next step.
     // This would have resulted from a call to maximumSafeStopSpeed(), which does not
     // consider deceleration bounds. Therefore, we cap vNext here.
-	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
+    if(!MSGlobals::gSemiImplicitEulerUpdate){
+    	vNext = MAX2(vNext, veh->getSpeed() - ACCEL2SPEED(getMaxDecel()));
+    }
 
 	//	// Debug (Leo)
 	//    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
