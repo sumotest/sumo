@@ -452,7 +452,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             FXMenuPane *transformSlanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568 
             ret->insertMenuPaneChild(transformSlanes);                                                                                                          // PABLO #1568 
             // Create menu comands for all add special lanes                                                                                                    // PABLO #1568
-            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", 0, &parent, MID_GNE_ADD_LANE_SIDEWALK);                                 // PABLO #1568
+            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);                    // PABLO #1568
             FXMenuCommand *addBikelane = new FXMenuCommand(addSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);                              // PABLO #1568
             FXMenuCommand *addBuslane = new FXMenuCommand(addSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_ADD_LANE_BUS);                                  // PABLO #1568
             // Create menu comands for all remove special lanes and disable it                                                                                  // PABLO #1568
