@@ -75,11 +75,19 @@ GUIGLObjectPopupMenu::GUIGLObjectPopupMenu(GUIMainWindow& app,
         GUISUMOAbstractView& parent,
         GUIGlObject& o)
     : FXMenuPane(&parent), myParent(&parent), myObject(&o),
-      myApplication(&app), myNetworkPosition(parent.getPositionInformation()) {
+      myApplication(&app), myNetworkPosition(parent.getPositionInformation()),
+      myMenuPane(0)
+{
 }
 
 
-GUIGLObjectPopupMenu::~GUIGLObjectPopupMenu() {}
+GUIGLObjectPopupMenu::~GUIGLObjectPopupMenu() {
+    if (myMenuPane != 0) {
+        std::cout << " destruct GUIGLObjectPopupMenu::myMenuPane\n";
+    }
+    delete myMenuPane;
+    std::cout << " destruct GUIGLObjectPopupMenu\n";
+}
 
 
 long

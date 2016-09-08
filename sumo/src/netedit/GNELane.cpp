@@ -450,6 +450,7 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
 /************************************************************/
             /** Wir stellen ein neue FXMenuPane für die drei unterschiende Optionen (Sidewalks, Bikelane und Buslane **/
             FXMenuPane *addSpecialLanes = new FXMenuPane(ret); 
+            ret->setMenuPaneChild(addSpecialLanes);
             // Create menu comands for all add special lanes                                                                                                    // PABLO #1568
             /** Das Produziert ein Fehler wenn das net geschlossen ist (Cntrl + W) **/
             FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", 0, &parent, MID_GNE_ADD_LANE_SIDEWALK); 

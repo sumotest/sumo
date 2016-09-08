@@ -69,6 +69,10 @@ public:
     /// @brief Destructor
     virtual ~GUIGLObjectPopupMenu();
 
+    void setMenuPaneChild(FXMenuPane* child) {
+        myMenuPane = child;
+    }
+
 
 public:
     /// Called if the assigned objects shall be centered
@@ -118,6 +122,8 @@ protected:
 
     /// @brief The position within the network the cursor was above when instanting the popup
     Position myNetworkPosition;
+
+    FXMenuPane* myMenuPane;
 
 
 protected:
