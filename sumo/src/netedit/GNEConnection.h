@@ -109,6 +109,9 @@ public:
     /// @brief get Draw connection
     bool getDrawConnection() const;
 
+    /// @brief get LinkState
+    int getLinkState() const;
+
     /// @brief set parameter pass
     void setPass(bool pass);
 

@@ -53,6 +53,7 @@
 #include "GNEChange_Attribute.h"
 #include "GNEUndoList.h"
 #include "GNEViewNet.h"
+#include "GNEInternalLane.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -136,9 +137,6 @@ GNEConnection::updateGeometry() {
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
     }
-
-    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
-    //myNet->refreshElement(this);                                // PABLO #501
 }
 
 
@@ -213,6 +211,15 @@ GNEConnection::getNBEdgeConnection() const {
     return myConnection;
 }
 
+int 
+GNEConnection::getLinkState() const {
+    return myFromEdge->getNBEdge()->getToNode()->getLinkState(myFromEdge->getNBEdge(), 
+                                                              myConnection.toEdge, 
+                                                              myConnection.fromLane, 
+                                                              myConnection.toLane, 
+                                                              myConnection.mayDefinitelyPass, 
+                                                              myConnection.tlID);    
+}
 
 bool 
 GNEConnection::getDrawConnection() const {
@@ -281,7 +288,9 @@ GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
         glPushMatrix();
         glPushName(getGlID());
         glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction
-    //    GLHelper::setColor(colorForLinksState(myState));
+        
+        // Set color depending of the link state
+        GLHelper::setColor(GNEInternalLane::colorForLinksState(getLinkState()));
         // draw lane
         // check whether it is not too small
         if (s.scale < 1.) {
