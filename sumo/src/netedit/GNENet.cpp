@@ -399,78 +399,78 @@ GNENet::duplicateLane(GNELane* lane, GNEUndoList* undoList) {
 }
 
 
-bool                                                                                                            // PABLO #1568
-GNENet::restrictLane(SUMOVehicleClass vclass, GNELane* lane, GNEUndoList* undoList) {                           // PABLO #1568
-    // First check that edge don't have a sidewalk                                                              // PABLO #1568
-    GNEEdge &edge = lane->getParentEdge();                                                                      // PABLO #1568
-    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
-        if((*i)->isRestricted(vclass)) {                                                                        // PABLO #1568
-            return false;                                                                                       // PABLO #1568
-        }                                                                                                       // PABLO #1568
-    }                                                                                                           // PABLO #1568
-    // Get all possible vehicle classes                                                                         // PABLO #1568
-    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                   // PABLO #1568
-    std::vector<std::string> disallowedVClasses;                                                                // PABLO #1568
-    std::string restriction = toString(vclass);                                                                 // PABLO #1568
-    std::string ignoring = toString(SVC_IGNORING);                                                              // PABLO #1568
-    // Iterate over vehicle classes to filter                                                                   // PABLO #1568
-    for(int i = 0; i < (int)VClasses.size(); i++) {                                                             // PABLO #1568
-        if((VClasses.at(i) != restriction) && (VClasses.at(i) != ignoring)) {                                   // PABLO #1568
-            disallowedVClasses.push_back(VClasses.at(i));                                                       // PABLO #1568
-        }                                                                                                       // PABLO #1568
-    }                                                                                                           // PABLO #1568
-    // Change allow and disallow attributes of lane                                                             // PABLO #1568
-    lane->setAttribute(SUMO_ATTR_ALLOW, restriction, undoList);                                                 // PABLO #1568
-    lane->setAttribute(SUMO_ATTR_DISALLOW, joinToString(disallowedVClasses, " "), undoList);                    // PABLO #1568
-    return true;                                                                                                // PABLO #1568
-}                                                                                                               // PABLO #1568
+bool
+GNENet::restrictLane(SUMOVehicleClass vclass, GNELane* lane, GNEUndoList* undoList) {
+    // First check that edge don't have a sidewalk
+    GNEEdge &edge = lane->getParentEdge();
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {
+        if((*i)->isRestricted(vclass)) {
+            return false;
+        }
+    }
+    // Get all possible vehicle classes
+    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();
+    std::vector<std::string> disallowedVClasses;
+    std::string restriction = toString(vclass);
+    std::string ignoring = toString(SVC_IGNORING);
+    // Iterate over vehicle classes to filter
+    for(int i = 0; i < (int)VClasses.size(); i++) {
+        if((VClasses.at(i) != restriction) && (VClasses.at(i) != ignoring)) {
+            disallowedVClasses.push_back(VClasses.at(i));
+        }
+    }
+    // Change allow and disallow attributes of lane
+    lane->setAttribute(SUMO_ATTR_ALLOW, restriction, undoList);
+    lane->setAttribute(SUMO_ATTR_DISALLOW, joinToString(disallowedVClasses, " "), undoList);
+    return true;
+}
 
 
-bool                                                                                                            // PABLO #1568
-GNENet::revertLaneRestriction(GNELane* lane, GNEUndoList* undoList) {                                           // PABLO #1568
-    // First check that this lane is restricted                                                                 // PABLO #1568
-    if(lane->isRestricted(SVC_PEDESTRIAN) == false &&                                                           // PABLO #1568
-       lane->isRestricted(SVC_BICYCLE) == false &&                                                              // PABLO #1568
-       lane->isRestricted(SVC_BUS) == false) {                                                                  // PABLO #1568
-           return false;                                                                                        // PABLO #1568
-    }                                                                                                           // PABLO #1568
-                                                                                                                // PABLO #1568
-    // Get all possible vehicle classes                                                                         // PABLO #1568
-    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();                                   // PABLO #1568
-    // Change allow and disallow attributes of lane                                                             // PABLO #1568
-    lane->setAttribute(SUMO_ATTR_ALLOW, joinToString(VClasses, " "), undoList);                                 // PABLO #1568
-    lane->setAttribute(SUMO_ATTR_DISALLOW, std::string(), undoList);                                            // PABLO #1568
-    return true;                                                                                                // PABLO #1568
-}                                                                                                               // PABLO #1568
+bool
+GNENet::revertLaneRestriction(GNELane* lane, GNEUndoList* undoList) {
+    // First check that this lane is restricted
+    if(lane->isRestricted(SVC_PEDESTRIAN) == false &&
+       lane->isRestricted(SVC_BICYCLE) == false &&
+       lane->isRestricted(SVC_BUS) == false) {
+           return false;
+    }
+
+    // Get all possible vehicle classes
+    std::vector<std::string> VClasses = SumoVehicleClassStrings.getStrings();
+    // Change allow and disallow attributes of lane
+    lane->setAttribute(SUMO_ATTR_ALLOW, joinToString(VClasses, " "), undoList);
+    lane->setAttribute(SUMO_ATTR_DISALLOW, std::string(), undoList);
+    return true;
+}
 
 
-bool                                                                                                            // PABLO #1568
-GNENet::addSRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList) {                     // PABLO #1568
-    // First check that edge don't have a sidewalk                                                              // PABLO #1568
-    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
-        if((*i)->isRestricted(vclass)) {                                                                        // PABLO #1568
-            return false;                                                                                       // PABLO #1568
-        }                                                                                                       // PABLO #1568
-    }                                                                                                           // PABLO #1568
-    // duplicate last lane                                                                                      // PABLO #1568
-    duplicateLane(edge.getLanes().at(0), undoList);                                                             // PABLO #1568
-    // transform the created (last) lane to a sidewalk                                                          // PABLO #1568
-    return restrictLane(vclass, edge.getLanes().at(0), undoList);                                               // PABLO #1568                                                     
-}                                                                                                               // PABLO #1568
+bool
+GNENet::addSRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList) {
+    // First check that edge don't have a sidewalk
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {
+        if((*i)->isRestricted(vclass)) {
+            return false;
+        }
+    }
+    // duplicate last lane
+    duplicateLane(edge.getLanes().at(0), undoList);
+    // transform the created (last) lane to a sidewalk
+    return restrictLane(vclass, edge.getLanes().at(0), undoList);
+}
 
 
-bool                                                                                                            // PABLO #1568
-GNENet::removeRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList) {                   // PABLO #1568
-    // iterate over lanes of edge                                                                               // PABLO #1568
-    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {   // PABLO #1568
-        if((*i)->isRestricted(vclass)) {                                                                        // PABLO #1568
-            // Delete lane                                                                                      // PABLO #1568
-            deleteLane(*i, undoList);                                                                           // PABLO #1568
-            return true;                                                                                        // PABLO #1568
-        }                                                                                                       // PABLO #1568
-    }                                                                                                           // PABLO #1568
-    return false;                                                                                               // PABLO #1568
-}                                                                                                               // PABLO #1568
+bool
+GNENet::removeRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList) {
+    // iterate over lanes of edge
+    for(std::vector<GNELane*>::const_iterator i = edge.getLanes().begin(); i != edge.getLanes().end(); i++) {
+        if((*i)->isRestricted(vclass)) {
+            // Delete lane
+            deleteLane(*i, undoList);
+            return true;
+        }
+    }
+    return false;
+}
 
 
 void

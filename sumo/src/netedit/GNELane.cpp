@@ -81,7 +81,7 @@ GNELane::GNELane(GNEEdge& edge, const int index) :
     myParentEdge(edge),
     myIndex(index),
     mySpecialColor(0),
-    myIcon(0),  // PABLO #1568
+    myLaneRestrictedTexture(0),
     myTLSEditor(0) {
     updateGeometry();
 }
@@ -91,7 +91,7 @@ GNELane::GNELane() :
     myParentEdge(*static_cast<GNEEdge*>(0)),
     myIndex(-1),
     mySpecialColor(0),
-    myIcon(0),  // PABLO #1568
+    myLaneRestrictedTexture(0),
     myTLSEditor(0) {
 }
 
@@ -318,25 +318,25 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if (s.showLaneDirection) {
             drawDirectionIndicators();
         }
-        // If there are icons to draw:                                                                                  // PABLO #1568
-        if((OptionsCont::getOptions().getBool("disable-laneIcons") == false) && myLaneIconsPositions.size() > 0) {      // PABLO #1568
-            // Draw list of icons                                                                                       // PABLO #1568
-            for(int i = 0; i < (int)myLaneIconsPositions.size(); i++) {                                                 // PABLO #1568
-                // Push draw matrix                                                                                     // PABLO #1568
-                glPushMatrix();                                                                                         // PABLO #1568
-                // Set draw color                                                                                       // PABLO #1568
-                glColor3d(1, 1, 1);                                                                                     // PABLO #1568
-                // Traslate matrix                                                                                      // PABLO #1568
-                glTranslated(myLaneIconsPositions.at(i).x(), myLaneIconsPositions.at(i).y(), getType() + 0.1);          // PABLO #1568
-                // Rotate matrix                                                                                        // PABLO #1568
-                glRotated(myLaneIconsRotations.at(i), 0, 0, -1);                                                        // PABLO #1568
-                glRotated(90, 0, 0, 1);                                                                                 // PABLO #1568
-                // draw texture box depending                                                                           // PABLO #1568
-                GUITexturesHelper::drawTexturedBox(myIcon, 1);                                                          // PABLO #1568
-                // Pop logo matrix                                                                                      // PABLO #1568
-                glPopMatrix();                                                                                          // PABLO #1568
-            }                                                                                                           // PABLO #1568
-        }                                                                                                               // PABLO #1568
+        // If there are texture of restricted lanes to draw, and draw lane icons is enabled in options
+        if((OptionsCont::getOptions().getBool("disable-laneIcons") == false) && myLaneRestrictedTexturePositions.size() > 0) {
+            // Draw list of icons
+            for(int i = 0; i < (int)myLaneRestrictedTexturePositions.size(); i++) {
+                // Push draw matrix
+                glPushMatrix();
+                // Set draw color
+                glColor3d(1, 1, 1);
+                // Traslate matrix
+                glTranslated(myLaneRestrictedTexturePositions.at(i).x(), myLaneRestrictedTexturePositions.at(i).y(), getType() + 0.1);
+                // Rotate matrix
+                glRotated(myLaneRestrictedTextureRotations.at(i), 0, 0, -1);
+                glRotated(90, 0, 0, 1);
+                // draw texture box depending
+                GUITexturesHelper::drawTexturedBox(myLaneRestrictedTexture, 1);
+                // Pop logo matrix
+                glPopMatrix();
+            }
+        }
     }
     glPopName();
 }
@@ -399,10 +399,10 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     const int editMode = parent.getVisualisationSettings()->editMode;
     myTLSEditor = 0;
     if (editMode != GNE_MODE_CONNECT && editMode != GNE_MODE_TLS && editMode != GNE_MODE_CREATE_EDGE) {
-        // Get icons                                                                                                                                            // PABLO #1568
-        FXIcon* pedestrianIcon = GUIIconSubSys::getIcon(ICON_LANEPEDESTRIAN);                                                                                   // PABLO #1568
-        FXIcon* bikeIcon = GUIIconSubSys::getIcon(ICON_LANEBIKE);                                                                                               // PABLO #1568
-        FXIcon* busIcon = GUIIconSubSys::getIcon(ICON_LANEBUS);                                                                                                 // PABLO #1568
+        // Get icons
+        FXIcon* pedestrianIcon = GUIIconSubSys::getIcon(ICON_LANEPEDESTRIAN);
+        FXIcon* bikeIcon = GUIIconSubSys::getIcon(ICON_LANEBIKE);
+        FXIcon* busIcon = GUIIconSubSys::getIcon(ICON_LANEBUS);
         // Create basic commands
         new FXMenuCommand(ret, "Split edge here", 0, &parent, MID_GNE_SPLIT_EDGE);
         new FXMenuCommand(ret, "Split edges in both direction here", 0, &parent, MID_GNE_SPLIT_EDGE_BIDI);
@@ -417,89 +417,89 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
         }
         if (gSelected.isSelected(GLO_LANE, getGlID())) {
             new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
-            // Create panel for lane operations                                                                                                                 // PABLO #1568
-            FXMenuPane *addSpecialLanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568
-            FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);                                                                                               // PABLO #1568
-            FXMenuPane *transformSlanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568 
-            // Create menu comands for all add special lanes                                                                                                    // PABLO #1568
-            new FXMenuCommand(addSpecialLanes, "Sidewalks", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);                                                // PABLO #1568
-            new FXMenuCommand(addSpecialLanes, "Bikelanes", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);                                                          // PABLO #1568
-            new FXMenuCommand(addSpecialLanes, "Buslanes", busIcon, &parent, MID_GNE_ADD_LANE_BUS);                                                             // PABLO #1568
-            // Create menu comands for all remove special lanes and disable it                                                                                  // PABLO #1568
-            new FXMenuCommand(removeSpecialLanes, "Sidewalks", pedestrianIcon, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);                                          // PABLO #1568
-            new FXMenuCommand(removeSpecialLanes, "Bikelanes", bikeIcon, &parent, MID_GNE_REMOVE_LANE_BIKE);                                                    // PABLO #1568
-            new FXMenuCommand(removeSpecialLanes, "Buslanes", busIcon, &parent, MID_GNE_REMOVE_LANE_BUS);                                                       // PABLO #1568
-            // Create menu comands for all trasform special lanes and disable it                                                                                // PABLO #1568
-            new FXMenuCommand(transformSlanes, "Sidewalsk", pedestrianIcon, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);                                          // PABLO #1568
-            new FXMenuCommand(transformSlanes, "Bikelanes", bikeIcon, &parent, MID_GNE_TRANSFORM_LANE_BIKE);                                                    // PABLO #1568
-            new FXMenuCommand(transformSlanes, "Buslanes", busIcon, &parent, MID_GNE_TRANSFORM_LANE_BUS);                                                       // PABLO #1568
-            new FXMenuCommand(transformSlanes, "revert transformations", 0, &parent, MID_GNE_REVERT_TRANSFORMATION);                                            // PABLO #1568
-            // add menuCascade for lane operations                                                                                                              // PABLO #1568
-            new FXMenuCascade(ret, "add special lanes", 0, addSpecialLanes);                                                                                    // PABLO #1568
-            new FXMenuCascade(ret, "remove special lanes", 0, removeSpecialLanes);                                                                              // PABLO #1568
-            new FXMenuCascade(ret, "transform to special lanes", 0, transformSlanes);                                                                           // PABLO #1568
+            // Create panel for lane operations
+            FXMenuPane *addSpecialLanes = new FXMenuPane(ret);
+            FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);
+            FXMenuPane *transformSlanes = new FXMenuPane(ret);
+            // Create menu comands for all add special lanes
+            new FXMenuCommand(addSpecialLanes, "Sidewalks", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);
+            new FXMenuCommand(addSpecialLanes, "Bikelanes", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);
+            new FXMenuCommand(addSpecialLanes, "Buslanes", busIcon, &parent, MID_GNE_ADD_LANE_BUS);
+            // Create menu comands for all remove special lanes and disable it
+            new FXMenuCommand(removeSpecialLanes, "Sidewalks", pedestrianIcon, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);
+            new FXMenuCommand(removeSpecialLanes, "Bikelanes", bikeIcon, &parent, MID_GNE_REMOVE_LANE_BIKE);
+            new FXMenuCommand(removeSpecialLanes, "Buslanes", busIcon, &parent, MID_GNE_REMOVE_LANE_BUS);
+            // Create menu comands for all trasform special lanes and disable it
+            new FXMenuCommand(transformSlanes, "Sidewalsk", pedestrianIcon, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);
+            new FXMenuCommand(transformSlanes, "Bikelanes", bikeIcon, &parent, MID_GNE_TRANSFORM_LANE_BIKE);
+            new FXMenuCommand(transformSlanes, "Buslanes", busIcon, &parent, MID_GNE_TRANSFORM_LANE_BUS);
+            new FXMenuCommand(transformSlanes, "revert transformations", 0, &parent, MID_GNE_REVERT_TRANSFORMATION);
+            // add menuCascade for lane operations
+            new FXMenuCascade(ret, "add special lanes", 0, addSpecialLanes);
+            new FXMenuCascade(ret, "remove special lanes", 0, removeSpecialLanes);
+            new FXMenuCascade(ret, "transform to special lanes", 0, transformSlanes);
         } else {
             new FXMenuCommand(ret, "Duplicate lane", 0, &parent, MID_GNE_DUPLICATE_LANE);
-            // Declare flags                                                                                                                                    // PABLO #1568
-            bool edgeHasSidewalk = myParentEdge.hasRestrictedLane(SVC_PEDESTRIAN);                                                                              // PABLO #1568
-            bool edgeHasBikelane = myParentEdge.hasRestrictedLane(SVC_BICYCLE);                                                                                 // PABLO #1568
-            bool edgeHasBuslane = myParentEdge.hasRestrictedLane(SVC_BUS);                                                                                      // PABLO #1568
-            // Create panel for lane operations and insert it in ret                                                                                            // PABLO #1568
-            FXMenuPane *addSpecialLanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568 
-            ret->insertMenuPaneChild(addSpecialLanes);                                                                                                          // PABLO #1568 
-            FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);                                                                                               // PABLO #1568
-            ret->insertMenuPaneChild(removeSpecialLanes);                                                                                                       // PABLO #1568 
-            FXMenuPane *transformSlanes = new FXMenuPane(ret);                                                                                                  // PABLO #1568 
-            ret->insertMenuPaneChild(transformSlanes);                                                                                                          // PABLO #1568 
-            // Create menu comands for all add special lanes                                                                                                    // PABLO #1568
-            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);                    // PABLO #1568
-            FXMenuCommand *addBikelane = new FXMenuCommand(addSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);                              // PABLO #1568
-            FXMenuCommand *addBuslane = new FXMenuCommand(addSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_ADD_LANE_BUS);                                  // PABLO #1568
-            // Create menu comands for all remove special lanes and disable it                                                                                  // PABLO #1568
-            FXMenuCommand *removeSidewalk = new FXMenuCommand(removeSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);           // PABLO #1568
-            removeSidewalk->disable();                                                                                                                          // PABLO #1568 
-            FXMenuCommand *removeBikelane = new FXMenuCommand(removeSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_REMOVE_LANE_BIKE);                     // PABLO #1568
-            removeBikelane->disable();                                                                                                                          // PABLO #1568 
-            FXMenuCommand *removeBuslane = new FXMenuCommand(removeSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_REMOVE_LANE_BUS);                         // PABLO #1568
-            removeBuslane->disable();                                                                                                                           // PABLO #1568 
-            // Create menu comands for all trasform special lanes and disable it                                                                                // PABLO #1568
-            FXMenuCommand *transformLaneToSidewalk = new FXMenuCommand(transformSlanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);  // PABLO #1568
-            FXMenuCommand *transformLaneToBikelane = new FXMenuCommand(transformSlanes, "Bikelane", bikeIcon, &parent, MID_GNE_TRANSFORM_LANE_BIKE);            // PABLO #1568
-            FXMenuCommand *transformLaneToBuslane = new FXMenuCommand(transformSlanes, "Buslane", busIcon, &parent, MID_GNE_TRANSFORM_LANE_BUS);                // PABLO #1568
-            FXMenuCommand *revertTransformation = new FXMenuCommand(transformSlanes, "revert transformation", 0, &parent, MID_GNE_REVERT_TRANSFORMATION);       // PABLO #1568
-            // add menuCascade for lane operations                                                                                                              // PABLO #1568
-            FXMenuCascade* cascadeAddSpecialLane = new FXMenuCascade(ret, "add special lane", 0, addSpecialLanes);                                              // PABLO #1568
-            FXMenuCascade* cascadeRemoveSpecialLane = new FXMenuCascade(ret, "remove special lane", 0, removeSpecialLanes);                                     // PABLO #1568
-            new FXMenuCascade(ret, "transform to special lane", 0, transformSlanes);                                                                            // PABLO #1568
-            // Enable and disable options depending of current transform of the lane                                                                            // PABLO #1568
-            if(edgeHasSidewalk) {                                                                                                                               // PABLO #1568
-                transformLaneToSidewalk->disable();                                                                                                             // PABLO #1568
-                addSidewalk->disable();                                                                                                                         // PABLO #1568
-                removeSidewalk->enable();                                                                                                                       // PABLO #1568
-            }                                                                                                                                                   // PABLO #1568
-            if (edgeHasBikelane) {                                                                                                                              // PABLO #1568
-                transformLaneToBikelane->disable();                                                                                                             // PABLO #1568
-                addBikelane->disable();                                                                                                                         // PABLO #1568
-                removeBikelane->enable();                                                                                                                       // PABLO #1568
-            }                                                                                                                                                   // PABLO #1568
-            if (edgeHasBuslane){                                                                                                                                // PABLO #1568
-                transformLaneToBuslane->disable();                                                                                                              // PABLO #1568
-                addBuslane->disable();                                                                                                                          // PABLO #1568
-                removeBuslane->enable();                                                                                                                        // PABLO #1568
-            }                                                                                                                                                   // PABLO #1568
-            // Check if cascade menus must be disabled                                                                                                          // PABLO #1568
-            if(edgeHasSidewalk && edgeHasBikelane && edgeHasBuslane) {                                                                                          // PABLO #1568
-                cascadeAddSpecialLane->disable();                                                                                                               // PABLO #1568
-            }                                                                                                                                                   // PABLO #1568
-            if(!edgeHasSidewalk && !edgeHasBikelane && !edgeHasBuslane) {                                                                                       // PABLO #1568
-                cascadeRemoveSpecialLane->disable();                                                                                                            // PABLO #1568
-            }                                                                                                                                                   // PABLO #1568
-            // Enable or disable revert transformation                                                                                                          // PABLO #1568
-            if(isRestricted(SVC_PEDESTRIAN) || isRestricted(SVC_BICYCLE) || isRestricted(SVC_BUS)) {                                                            // PABLO #1568
-                revertTransformation->enable();                                                                                                                 // PABLO #1568
-            } else {                                                                                                                                            // PABLO #1568
-                revertTransformation->disable();                                                                                                                // PABLO #1568
-            }                                                                                                                                                   // PABLO #1568
+            // Declare flags
+            bool edgeHasSidewalk = myParentEdge.hasRestrictedLane(SVC_PEDESTRIAN);
+            bool edgeHasBikelane = myParentEdge.hasRestrictedLane(SVC_BICYCLE);
+            bool edgeHasBuslane = myParentEdge.hasRestrictedLane(SVC_BUS);
+            // Create panel for lane operations and insert it in ret
+            FXMenuPane *addSpecialLanes = new FXMenuPane(ret);
+            ret->insertMenuPaneChild(addSpecialLanes);
+            FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);
+            ret->insertMenuPaneChild(removeSpecialLanes);
+            FXMenuPane *transformSlanes = new FXMenuPane(ret);
+            ret->insertMenuPaneChild(transformSlanes);
+            // Create menu comands for all add special lanes
+            FXMenuCommand *addSidewalk = new FXMenuCommand(addSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);
+            FXMenuCommand *addBikelane = new FXMenuCommand(addSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);
+            FXMenuCommand *addBuslane = new FXMenuCommand(addSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_ADD_LANE_BUS);
+            // Create menu comands for all remove special lanes and disable it
+            FXMenuCommand *removeSidewalk = new FXMenuCommand(removeSpecialLanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_REMOVE_LANE_SIDEWALK);
+            removeSidewalk->disable();
+            FXMenuCommand *removeBikelane = new FXMenuCommand(removeSpecialLanes, "Bikelane", bikeIcon, &parent, MID_GNE_REMOVE_LANE_BIKE);
+            removeBikelane->disable();
+            FXMenuCommand *removeBuslane = new FXMenuCommand(removeSpecialLanes, "Buslane", busIcon, &parent, MID_GNE_REMOVE_LANE_BUS);
+            removeBuslane->disable();
+            // Create menu comands for all trasform special lanes and disable it
+            FXMenuCommand *transformLaneToSidewalk = new FXMenuCommand(transformSlanes, "Sidewalk", pedestrianIcon, &parent, MID_GNE_TRANSFORM_LANE_SIDEWALK);
+            FXMenuCommand *transformLaneToBikelane = new FXMenuCommand(transformSlanes, "Bikelane", bikeIcon, &parent, MID_GNE_TRANSFORM_LANE_BIKE);
+            FXMenuCommand *transformLaneToBuslane = new FXMenuCommand(transformSlanes, "Buslane", busIcon, &parent, MID_GNE_TRANSFORM_LANE_BUS);
+            FXMenuCommand *revertTransformation = new FXMenuCommand(transformSlanes, "revert transformation", 0, &parent, MID_GNE_REVERT_TRANSFORMATION);
+            // add menuCascade for lane operations
+            FXMenuCascade* cascadeAddSpecialLane = new FXMenuCascade(ret, "add special lane", 0, addSpecialLanes);
+            FXMenuCascade* cascadeRemoveSpecialLane = new FXMenuCascade(ret, "remove special lane", 0, removeSpecialLanes);
+            new FXMenuCascade(ret, "transform to special lane", 0, transformSlanes);
+            // Enable and disable options depending of current transform of the lane
+            if(edgeHasSidewalk) {
+                transformLaneToSidewalk->disable();
+                addSidewalk->disable();
+                removeSidewalk->enable();
+            }
+            if (edgeHasBikelane) {
+                transformLaneToBikelane->disable();
+                addBikelane->disable();
+                removeBikelane->enable();
+            }
+            if (edgeHasBuslane){
+                transformLaneToBuslane->disable();
+                addBuslane->disable();
+                removeBuslane->enable();
+            }
+            // Check if cascade menus must be disabled
+            if(edgeHasSidewalk && edgeHasBikelane && edgeHasBuslane) {
+                cascadeAddSpecialLane->disable();
+            }
+            if(!edgeHasSidewalk && !edgeHasBikelane && !edgeHasBuslane) {
+                cascadeRemoveSpecialLane->disable();
+            }
+            // Enable or disable revert transformation
+            if(isRestricted(SVC_PEDESTRIAN) || isRestricted(SVC_BICYCLE) || isRestricted(SVC_BUS)) {
+                revertTransformation->enable();
+            } else {
+                revertTransformation->disable();
+            }
         }
     } else if (editMode == GNE_MODE_TLS) {
         myTLSEditor = static_cast<GNEViewNet&>(parent).getViewParent()->getTLSEditorFrame();
@@ -582,8 +582,8 @@ GNELane::updateGeometry() {
     // Clear containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-    myLaneIconsPositions.clear();   // PABLO #1568
-    myLaneIconsRotations.clear();   // PABLO #1568
+    myLaneRestrictedTexturePositions.clear();
+    myLaneRestrictedTextureRotations.clear();
     //SUMOReal length = myParentEdge.getLength(); // @todo see ticket #448
     // may be different from length
     
@@ -617,30 +617,29 @@ GNELane::updateGeometry() {
     for(std::vector<GNEConnection*>::iterator i = outGoingConnections.begin(); i != outGoingConnections.end(); i++) {   // PABLO #2067
         (*i)->updateGeometry();                                                                                         // PABLO #2067
     }                                                                                                                   // PABLO #2067
-    // If lane has enought lenght                                                       // PABLO #1568
-    if((getLaneShapeLenght() > 4)) {                                                    // PABLO #1568
-        bool calculatePositionAndRotations = true;                                      // PABLO #1568
-        // check if lane is special                                                     // PABLO #1568
-        if(isRestricted(SVC_PEDESTRIAN)) {                                              // PABLO #1568
-            myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN);               // PABLO #1568
-        } else if (isRestricted(SVC_BICYCLE)) {                                         // PABLO #1568
-            myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEBIKE);                     // PABLO #1568
-        } else if (isRestricted(SVC_BUS)) {                                             // PABLO #1568
-            myIcon = GUITextureSubSys::getGif(GNETEXTURE_LANEBUS);                      // PABLO #1568
-        } else {                                                                        // PABLO #1568
-            calculatePositionAndRotations = false;                                      // PABLO #1568
-            myIcon = 0;                                                                 // PABLO #1568
-        }                                                                               // PABLO #1568
-        // If lane is special                                                           // PABLO #1568
-        if (calculatePositionAndRotations) {                                            // PABLO #1568
-            // get values for position and rotation of icons                            // PABLO #1568
-            for(int i = 2; i < getLaneShapeLenght() - 1; i += 15) {                     // PABLO #1568
-                // @todo optimice getting it in UpdateGeometry()                        // PABLO #1568
-                myLaneIconsPositions.push_back(getShape().positionAtOffset(i));         // PABLO #1568
-                myLaneIconsRotations.push_back(getShape().rotationDegreeAtOffset(i));   // PABLO #1568
-            }                                                                           // PABLO #1568
-        }                                                                               // PABLO #1568
-    }                                                                                   // PABLO #1568
+    // If lane has enought lenght for show textures of restricted lanes
+    if((getLaneShapeLenght() > 4)) {
+        bool calculatePositionAndRotations = true;
+        // check if lane is restricted, and type of restriction
+        if(isRestricted(SVC_PEDESTRIAN)) {
+            myLaneRestrictedTexture = GUITextureSubSys::getGif(GNETEXTURE_LANEPEDESTRIAN);
+        } else if (isRestricted(SVC_BICYCLE)) {
+            myLaneRestrictedTexture = GUITextureSubSys::getGif(GNETEXTURE_LANEBIKE);
+        } else if (isRestricted(SVC_BUS)) {
+            myLaneRestrictedTexture = GUITextureSubSys::getGif(GNETEXTURE_LANEBUS);
+        } else {
+            calculatePositionAndRotations = false;
+            myLaneRestrictedTexture = 0;
+        }
+        // If lane is restricted
+        if (calculatePositionAndRotations) {
+            // get values for position and rotation of icons
+            for(int i = 2; i < getLaneShapeLenght() - 1; i += 15) {
+                myLaneRestrictedTexturePositions.push_back(getShape().positionAtOffset(i));
+                myLaneRestrictedTextureRotations.push_back(getShape().rotationDegreeAtOffset(i));
+            }
+        }
+    }
 }
 
 int
@@ -744,18 +743,18 @@ GNELane::getAdditionalSets() {
 }
 
 
-bool                                                                            // PABLO #1568
-GNELane::isRestricted(SUMOVehicleClass vclass) const {                          // PABLO #1568
-    if(vclass == SVC_PEDESTRIAN) {                                              // PABLO #1568
-        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 1048576);  // PABLO #1568
-    } else if(vclass == SVC_BICYCLE) {                                          // PABLO #1568
-        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 524288);   // PABLO #1568
-    } else if(vclass == SVC_BUS) {                                              // PABLO #1568
-        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 256);      // PABLO #1568
-    } else {                                                                    // PABLO #1568
-        return false;                                                           // PABLO #1568
-    }                                                                           // PABLO #1568
-}                                                                               // PABLO #1568
+bool
+GNELane::isRestricted(SUMOVehicleClass vclass) const {
+    if(vclass == SVC_PEDESTRIAN) {
+        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 1048576);
+    } else if(vclass == SVC_BICYCLE) {
+        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 524288);
+    } else if(vclass == SVC_BUS) {
+        return (myParentEdge.getNBEdge()->getPermissions(myIndex) == 256);
+    } else {
+        return false;
+    }
+}
 
 
 std::string
@@ -846,13 +845,13 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value) {
             break;
         case SUMO_ATTR_ALLOW:
             edge->setPermissions(parseVehicleClasses(value), myIndex);
-            updateGeometry();               // PABLO #1568
-            myNet->getViewNet()->update();  // PABLO #1568
+            updateGeometry();
+            myNet->getViewNet()->update();
             break;
         case SUMO_ATTR_DISALLOW:
             edge->setPermissions(~parseVehicleClasses(value), myIndex); // negation yields allowed
-            updateGeometry();               // PABLO #1568
-            myNet->getViewNet()->update();  // PABLO #1568
+            updateGeometry();
+            myNet->getViewNet()->update();
             break;
         case SUMO_ATTR_WIDTH:
             edge->setLaneWidth(myIndex, parse<SUMOReal>(value));

@@ -123,9 +123,9 @@
 #include "remove.xpm"
 #include "neteditarrow.xpm" // PABLO #2067
 
-#include "lanebike.xpm"         // PABLO #1568
-#include "lanebus.xpm"          // PABLO #1568
-#include "lanepedestrian.xpm"   // PABLO #1568
+#include "lanebike.xpm"
+#include "lanebus.xpm"
+#include "lanepedestrian.xpm"
 
 #include "cut.xpm"
 #include "ext.xpm"
@@ -246,9 +246,9 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
     myIcons[ICON_REMOVE]  = new FXXPMIcon(a, remove_xpm);
     myIcons[ICON_NETEDITARROW]  = new FXXPMIcon(a, netEditArrow_xmp); // PABLO #2067
 
-    myIcons[ICON_LANEPEDESTRIAN]  = new FXXPMIcon(a, lanepedestrian);   // PABLO #1568
-    myIcons[ICON_LANEBUS]  = new FXXPMIcon(a, lanebus);                 // PABLO #1568
-    myIcons[ICON_LANEBIKE]  = new FXXPMIcon(a, lanebike);               // PABLO #1568
+    myIcons[ICON_LANEPEDESTRIAN]  = new FXXPMIcon(a, lanepedestrian);
+    myIcons[ICON_LANEBUS]  = new FXXPMIcon(a, lanebus);
+    myIcons[ICON_LANEBIKE]  = new FXXPMIcon(a, lanebike);
 
 
     myIcons[ICON_EXT]    = new FXXPMIcon(a, ext_xpm);

@@ -561,26 +561,26 @@ enum {
     MID_GNE_DELETE_GEOMETRY,
     /** duplicate a lane */
     MID_GNE_DUPLICATE_LANE,
-    /** transform lane to sidewalk */   // PABLO #1568
-    MID_GNE_TRANSFORM_LANE_SIDEWALK,    // PABLO #1568
-    /** transform lane to bikelane */   // PABLO #1568
-    MID_GNE_TRANSFORM_LANE_BIKE,        // PABLO #1568
-    /** transform lane to busLane */    // PABLO #1568
-    MID_GNE_TRANSFORM_LANE_BUS,         // PABLO #1568
-    /** revert transformation */        // PABLO #1568
-    MID_GNE_REVERT_TRANSFORMATION,      // PABLO #1568
-    /** add sidewalk */                 // PABLO #1568
-    MID_GNE_ADD_LANE_SIDEWALK,          // PABLO #1568
-    /** add bikelane */                 // PABLO #1568
-    MID_GNE_ADD_LANE_BIKE,              // PABLO #1568
-    /** add busLane */                  // PABLO #1568
-    MID_GNE_ADD_LANE_BUS,               // PABLO #1568
-    /** remove sidewalk */              // PABLO #1568
-    MID_GNE_REMOVE_LANE_SIDEWALK,       // PABLO #1568
-    /** remove bikelane */              // PABLO #1568
-    MID_GNE_REMOVE_LANE_BIKE,           // PABLO #1568
-    /** remove busLane */               // PABLO #1568
-    MID_GNE_REMOVE_LANE_BUS,            // PABLO #1568
+    /** transform lane to sidewalk */
+    MID_GNE_TRANSFORM_LANE_SIDEWALK,
+    /** transform lane to bikelane */
+    MID_GNE_TRANSFORM_LANE_BIKE,
+    /** transform lane to busLane */
+    MID_GNE_TRANSFORM_LANE_BUS,
+    /** revert transformation */
+    MID_GNE_REVERT_TRANSFORMATION,
+    /** add sidewalk */
+    MID_GNE_ADD_LANE_SIDEWALK,
+    /** add bikelane */
+    MID_GNE_ADD_LANE_BIKE,
+    /** add busLane */
+    MID_GNE_ADD_LANE_BUS,
+    /** remove sidewalk */
+    MID_GNE_REMOVE_LANE_SIDEWALK,
+    /** remove bikelane */
+    MID_GNE_REMOVE_LANE_BIKE,
+    /** remove busLane */
+    MID_GNE_REMOVE_LANE_BUS,
     /** set object as template*/
     MID_GNE_SET_TEMPLATE,
     /** copy template*/

@@ -234,8 +234,8 @@ public:
     /// @brief return list of additionalSets associated with this edge
     const std::vector<GNEAdditionalSet*>& getAdditionalSets();
 
-    /// @brief check if edge has a restricted lane          // PABLO #1568
-    bool hasRestrictedLane(SUMOVehicleClass vclass) const;  // PABLO #1568
+    /// @brief check if edge has a restricted lane
+    bool hasRestrictedLane(SUMOVehicleClass vclass) const;
 
     // the radius in which to register clicks for geometry nodes
     static const SUMOReal SNAP_RADIUS;

@@ -1045,8 +1045,8 @@ public:
     /// @brief add a pedestrian sidewalk of the given width and shift existing connctions
     void addSidewalk(SUMOReal width);
 
-    /// @brief restore an previously added sidewalk                                                                                         // PABLO #1568
-    void restoreSidewalk(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);   // PABLO #1568
+    /// @brief restore an previously added sidewalk
+    void restoreSidewalk(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);
 
     /// @brief check if current edge hat a sideWalk
     bool hatSidewalk() const;
@@ -1054,8 +1054,8 @@ public:
     /// add a bicycle lane of the given width and shift existing connctions
     void addBikeLane(SUMOReal width);
 
-    /// @brief restore an previously added BikeLane                                                                                        // PABLO #1568
-    void restoreBikelane(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);  // PABLO #1568
+    /// @brief restore an previously added BikeLane
+    void restoreBikelane(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);
 
     /// @brief check if current edge hat a bikelane
     bool hatBikelane() const;
@@ -1274,8 +1274,8 @@ private:
     /// @brief add a lane of the given width, restricted to the given class and shift existing connections
     void addRestrictedLane(SUMOReal width, SUMOVehicleClass vclass);
 
-    /// @brief restore a restricted lane                                                                                                                                    // PABLO #1568
-    void restoreRestrictedLane(SUMOVehicleClass vclass, std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);    // PABLO #1568
+    /// @brief restore a restricted lane
+    void restoreRestrictedLane(SUMOVehicleClass vclass, std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections);
     
 private:
     /** @brief The building step

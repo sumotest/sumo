@@ -199,32 +199,32 @@ public:
      */
     void duplicateLane(GNELane* lane, GNEUndoList* undoList);
 
-    /**@brief transform lane to restricted lane                                                 // PABLO #1568
-     * @param[in] vclass vehicle class to restrict                                              // PABLO #1568
-     * @param[in] lane The lane to be trasformed                                                // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
-     */                                                                                         // PABLO #1568
-    bool restrictLane(SUMOVehicleClass vclass, GNELane* lane, GNEUndoList* undoList);           // PABLO #1568
+    /**@brief transform lane to restricted lane
+     * @param[in] vclass vehicle class to restrict
+     * @param[in] lane The lane to be trasformed
+     * @param[in] undoList The undolist in which to mark changes
+     */
+    bool restrictLane(SUMOVehicleClass vclass, GNELane* lane, GNEUndoList* undoList);
 
-    /**@brief revert prevously restricted lane                                                  // PABLO #1568
-     * @param[in] lane The lane to be unrestricted                                              // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
-     */                                                                                         // PABLO #1568
-    bool revertLaneRestriction(GNELane* lane, GNEUndoList* undoList);                           // PABLO #1568
+    /**@brief revert prevously restricted lane
+     * @param[in] lane The lane to be unrestricted
+     * @param[in] undoList The undolist in which to mark changes
+     */
+    bool revertLaneRestriction(GNELane* lane, GNEUndoList* undoList);
 
-    /**@brief add restricted lane to edge                                                       // PABLO #1568
-     * @param[in] vclass vehicle class to restrict                                              // PABLO #1568
-     * @param[in] edge The edge in which insert restricted lane                                 // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
-     */                                                                                         // PABLO #1568
-    bool addSRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList);     // PABLO #1568
+    /**@brief add restricted lane to edge
+     * @param[in] vclass vehicle class to restrict
+     * @param[in] edge The edge in which insert restricted lane
+     * @param[in] undoList The undolist in which to mark changes
+     */
+    bool addSRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList);
 
-    /**@brief remove restricted lane                                                            // PABLO #1568
-     * @param[in] vclass vehicle class to restrict                                              // PABLO #1568
-     * @param[in] edge the edge in which remove sidewalk                                        // PABLO #1568
-     * @param[in] undoList The undolist in which to mark changes                                // PABLO #1568
-     */                                                                                         // PABLO #1568
-    bool removeRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList);   // PABLO #1568
+    /**@brief remove restricted lane
+     * @param[in] vclass vehicle class to restrict
+     * @param[in] edge the edge in which remove sidewalk
+     * @param[in] undoList The undolist in which to mark changes
+     */
+    bool removeRestrictedLane(SUMOVehicleClass vclass, GNEEdge &edge, GNEUndoList* undoList);
 
     /**@brief removes geometry when pos is close to a geometry node, deletes
      * the whole edge otherwise

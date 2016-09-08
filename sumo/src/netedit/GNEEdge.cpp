@@ -785,7 +785,7 @@ GNEEdge::addLane(GNELane* lane, const NBEdge::Lane& laneAttrs) {
     getGNEJunctionDest()->invalidateShape();
     */
     myNet->refreshElement(this);
-    updateGeometry(); // PABLO #1568
+    updateGeometry();
 }
 
 
@@ -812,7 +812,7 @@ GNEEdge::removeLane(GNELane* lane) {
     getGNEJunctionDest()->invalidateShape();
     */
     myNet->refreshElement(this);
-    updateGeometry(); // PABLO #1568
+    updateGeometry();
 }
 
 void
@@ -945,14 +945,14 @@ GNEEdge::getAdditionalSets() {
 }
 
 
-bool                                                                                            // PABLO #1568
-GNEEdge::hasRestrictedLane(SUMOVehicleClass vclass) const {                                     // PABLO #1568
-    for(std::vector<GNELane*>::const_iterator i = myLanes.begin(); i != myLanes.end(); i++) {   // PABLO #1568
-        if((*i)->isRestricted(vclass)) {                                                        // PABLO #1568
-            return true;                                                                        // PABLO #1568
-        }                                                                                       // PABLO #1568
-    }                                                                                           // PABLO #1568
-    return false;                                                                               // PABLO #1568
-}                                                                                               // PABLO #1568
+bool
+GNEEdge::hasRestrictedLane(SUMOVehicleClass vclass) const {
+    for(std::vector<GNELane*>::const_iterator i = myLanes.begin(); i != myLanes.end(); i++) {
+        if((*i)->isRestricted(vclass)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /****************************************************************************/

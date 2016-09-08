@@ -2710,20 +2710,20 @@ NBEdge::addSidewalk(SUMOReal width) {
 }
 
 
-void                                                                                                                                        // PABLO #1568
-NBEdge::restoreSidewalk(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections) {   // PABLO #1568
-    restoreRestrictedLane(SVC_PEDESTRIAN, oldLanes, oldGeometry, oldConnections);                                                           // PABLO #1568
-}                                                                                                                                           // PABLO #1568
+void
+NBEdge::restoreSidewalk(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections) {
+    restoreRestrictedLane(SVC_PEDESTRIAN, oldLanes, oldGeometry, oldConnections);
+}
 
 
-bool                                                // PABLO #1568
-NBEdge::hatSidewalk() const {                       // PABLO #1568
-    if (myLanes[0].permissions == SVC_PEDESTRIAN) { // PABLO #1568
-        return true;                                // PABLO #1568
-    } else {                                        // PABLO #1568
-        return false;                               // PABLO #1568
-    }                                               // PABLO #1568
-}                                                   // PABLO #1568
+bool
+NBEdge::hatSidewalk() const {
+    if (myLanes[0].permissions == SVC_PEDESTRIAN) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 void
@@ -2732,20 +2732,20 @@ NBEdge::addBikeLane(SUMOReal width) {
 }
 
 
-void                                                                                                                                        // PABLO #1568
-NBEdge::restoreBikelane(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections) {   // PABLO #1568
-    restoreRestrictedLane(SVC_BICYCLE, oldLanes, oldGeometry, oldConnections);                                                              // PABLO #1568
-}                                                                                                                                           // PABLO #1568
+void
+NBEdge::restoreBikelane(std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections) {
+    restoreRestrictedLane(SVC_BICYCLE, oldLanes, oldGeometry, oldConnections);
+}
 
 
-bool                                                // PABLO #1568
-NBEdge::hatBikelane() const {                       // PABLO #1568
-    if (myLanes[0].permissions == SVC_BICYCLE) {    // PABLO #1568
-        return true;                                // PABLO #1568
-    } else {                                        // PABLO #1568
-        return false;                               // PABLO #1568
-    }                                               // PABLO #1568
-}                                                   // PABLO #1568
+bool
+NBEdge::hatBikelane() const {
+    if (myLanes[0].permissions == SVC_BICYCLE) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 void
@@ -2782,27 +2782,27 @@ NBEdge::addRestrictedLane(SUMOReal width, SUMOVehicleClass vclass) {
 }
 
 
-void                                                                                                                                                                        // PABLO #1568
-NBEdge::restoreRestrictedLane(SUMOVehicleClass vclass, std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections) {    // PABLO #1568
-    // check that previously lane was transformed                                                                                                                           // PABLO #1568
-    if (myLanes[0].permissions != vclass) {                                                                                                                                 // PABLO #1568
-        WRITE_WARNING("Edge '" + getID() + "' don't have a dedicated lane for " + toString(vclass) + "s. Cannot be restored");                                              // PABLO #1568
-        return;                                                                                                                                                             // PABLO #1568
-    }                                                                                                                                                                       // PABLO #1568
-    // restore old values                                                                                                                                                   // PABLO #1568
-    myGeom = oldGeometry;                                                                                                                                                   // PABLO #1568
-    myLanes = oldLanes;                                                                                                                                                     // PABLO #1568
-    myConnections = oldConnections;                                                                                                                                         // PABLO #1568
-    // shift incoming connections to the right                                                                                                                              // PABLO #1568
-    const EdgeVector& incoming = myFrom->getIncomingEdges();                                                                                                                // PABLO #1568
-    for (EdgeVector::const_iterator it = incoming.begin(); it != incoming.end(); ++it) {                                                                                    // PABLO #1568
-        (*it)->shiftToLanesToEdge(this, 0);                                                                                                                                 // PABLO #1568
-    }                                                                                                                                                                       // PABLO #1568
-    // Shift TL conections                                                                                                                                                  // PABLO #1568
-    myFrom->shiftTLConnectionLaneIndex(this, 0);                                                                                                                            // PABLO #1568
-    myTo->shiftTLConnectionLaneIndex(this, 0);                                                                                                                              // PABLO #1568
-    computeLaneShapes();                                                                                                                                                    // PABLO #1568
-}                                                                                                                                                                           // PABLO #1568
+void
+NBEdge::restoreRestrictedLane(SUMOVehicleClass vclass, std::vector<NBEdge::Lane> oldLanes, PositionVector oldGeometry, std::vector<NBEdge::Connection> oldConnections) {
+    // check that previously lane was transformed
+    if (myLanes[0].permissions != vclass) {
+        WRITE_WARNING("Edge '" + getID() + "' don't have a dedicated lane for " + toString(vclass) + "s. Cannot be restored");
+        return;
+    }
+    // restore old values
+    myGeom = oldGeometry;
+    myLanes = oldLanes;
+    myConnections = oldConnections;
+    // shift incoming connections to the right
+    const EdgeVector& incoming = myFrom->getIncomingEdges();
+    for (EdgeVector::const_iterator it = incoming.begin(); it != incoming.end(); ++it) {
+        (*it)->shiftToLanesToEdge(this, 0);
+    }
+    // Shift TL conections
+    myFrom->shiftTLConnectionLaneIndex(this, 0);
+    myTo->shiftTLConnectionLaneIndex(this, 0);
+    computeLaneShapes();
+}
    
 
 void

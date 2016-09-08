@@ -195,8 +195,8 @@ public:
     /// @brief return list of additionalSets associated with this lane
     const std::vector<GNEAdditionalSet*>& getAdditionalSets();
 
-    /// @brief check if this lane is restricted         // PABLO #1568
-    bool isRestricted(SUMOVehicleClass vclass) const;   // PABLO #1568
+    /// @brief check if this lane is restricted
+    bool isRestricted(SUMOVehicleClass vclass) const;
 
     /// @name inherited from GNEAttributeCarrier
     /// @{
@@ -244,14 +244,14 @@ protected:
     /// @brief The lengths of the shape parts
     std::vector<SUMOReal> myShapeLengths;
 
-    /// @brief Position of lane icons           // PABLO #1568
-    std::vector<Position> myLaneIconsPositions; // PABLO #1568
+    /// @brief Position of textures of restricted lanes
+    std::vector<Position> myLaneRestrictedTexturePositions;
 
-    /// @brief Rotations of lane icons          // PABLO #1568
-    std::vector<SUMOReal> myLaneIconsRotations; // PABLO #1568
+    /// @brief Rotations of textures of restricted lanes
+    std::vector<SUMOReal> myLaneRestrictedTextureRotations;
 
-    /// @brief current texture for lane icon    // PABLO #1568
-    GUIGlID myIcon;                             // PABLO #1568
+    /// @brief current texture for restricted lanes
+    GUIGlID myLaneRestrictedTexture;
     /// @}
     
     /// @brief list with the additonals vinculated with this lane
