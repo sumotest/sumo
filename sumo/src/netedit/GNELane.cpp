@@ -419,8 +419,11 @@ GNELane::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
             new FXMenuCommand(ret, "Duplicate selected lanes", 0, &parent, MID_GNE_DUPLICATE_LANE);
             // Create panel for lane operations
             FXMenuPane *addSpecialLanes = new FXMenuPane(ret);
+            ret->insertMenuPaneChild(addSpecialLanes);
             FXMenuPane *removeSpecialLanes = new FXMenuPane(ret);
+            ret->insertMenuPaneChild(removeSpecialLanes);
             FXMenuPane *transformSlanes = new FXMenuPane(ret);
+            ret->insertMenuPaneChild(transformSlanes);
             // Create menu comands for all add special lanes
             new FXMenuCommand(addSpecialLanes, "Sidewalks", pedestrianIcon, &parent, MID_GNE_ADD_LANE_SIDEWALK);
             new FXMenuCommand(addSpecialLanes, "Bikelanes", bikeIcon, &parent, MID_GNE_ADD_LANE_BIKE);
