@@ -967,7 +967,7 @@ GNEApplicationWindow::closeAllWindows() {
         GeoConvHelper::resetLoaded();
     }
     myMessageWindow->unregisterMsgHandlers();
-    // Load Gifs (Textures)
+    // Reset textures
     GUITextureSubSys::reset();
 }
 

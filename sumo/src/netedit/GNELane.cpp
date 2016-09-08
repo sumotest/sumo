@@ -241,12 +241,18 @@ GNELane::drawLane2LaneConnections() const {
 
 void
 GNELane::drawGL(const GUIVisualizationSettings& s) const {
+    // Push draw matrix 1
     glPushMatrix();
+    // Push name
     glPushName(getGlID());
+    // Traslate to fromt
     glTranslated(0, 0, getType());
+    // Check if edge parent or this lane is selected
     const bool selectedEdge = gSelected.isSelected(myParentEdge.getType(), myParentEdge.getGlID());
     const bool selected = gSelected.isSelected(getType(), getGlID());
+    // Set color
     if (mySpecialColor != 0) {
+        // If special color is enabled, set it
         GLHelper::setColor(*mySpecialColor);
     } else if (selected && s.laneColorer.getActive() != 1) {
         // override with special colors (unless the color scheme is based on selection)
@@ -255,14 +261,14 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         // override with special colors (unless the color scheme is based on selection)
         GLHelper::setColor(GNENet::selectionColor);
     } else {
+        // Get normal lane color
         const GUIColorer& c = s.laneColorer;
         if (!setFunctionalColor(c.getActive()) && !setMultiColor(c)) {
             GLHelper::setColor(c.getScheme().getColor(getColorValue(c.getActive())));
         }
     }
 
-    // draw lane
-    // check whether it is not too small
+    // start drawing lane checikg whether it is not too small
     const SUMOReal selectionScale = selected || selectedEdge ? s.selectionScale : 1;
     SUMOReal exaggeration = selectionScale * s.laneWidthExaggeration; // * s.laneScaler.getScheme().getColor(getScaleValue(s.laneScaler.getActive()));
     // XXX apply usefull scale values
@@ -272,33 +278,41 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
     GLfloat color[4];
     glGetFloatv(GL_CURRENT_COLOR, color);
     if (color[3] == 0 || s.scale * exaggeration < s.laneMinSize) {
+        // Pop draw matrix 1
         glPopMatrix();
     } else if (s.scale * exaggeration < 1.) {
-        // draw as lines
+        // draw as lines, depending of myShapeColors
         if (myShapeColors.size() > 0) {
             GLHelper::drawLine(getShape(), myShapeColors);
         } else {
             GLHelper::drawLine(getShape());
         }
+        // Pop draw matrix 1
         glPopMatrix();
     } else {
         if (drawAsRailway(s)) {
             // draw as railway
             const SUMOReal halfRailWidth = 0.725 * exaggeration;
+            // Draw box depending of myShapeColors
             if (myShapeColors.size() > 0) {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfRailWidth);
             } else {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfRailWidth);
             }
+            // Save current color
             RGBColor current = GLHelper::getColor();
+            // Set white color
             glColor3d(1, 1, 1);
+            // Traslate matrix 1
             glTranslated(0, 0, .1);
+            // Draw Box
             GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfRailWidth - 0.2);
+            // Set current color back
             GLHelper::setColor(current);
+            // Draw crossties
             drawCrossties(0.3 * exaggeration, 1 * exaggeration, 1 * exaggeration);
         } else {
-            // the actual lane
-            // reduce lane width to make sure that a selected edge can still be seen
+            // Draw as a normal lane, and reduce width to make sure that a selected edge can still be seen
             const SUMOReal halfWidth = selectionScale * (myParentEdge.getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
             if (myShapeColors.size() > 0) {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfWidth);
@@ -306,15 +320,17 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, halfWidth);
             }
         }
+        // Pop draw matrix 1
         glPopMatrix();
+        // if exaggeration is 1, draw drawMarkings
         if (exaggeration == 1) {
             drawMarkings(selectedEdge, exaggeration);
         }
-
         // draw ROWs only if target junction has a valid logic)
         if (myParentEdge.getGNEJunctionDest()->isLogicValid() && s.scale > 3) {
             drawArrows();
         }
+        // Draw direction indicators if the correspondient option is enabled
         if (s.showLaneDirection) {
             drawDirectionIndicators();
         }
@@ -322,22 +338,23 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         if((OptionsCont::getOptions().getBool("disable-laneIcons") == false) && myLaneRestrictedTexturePositions.size() > 0) {
             // Draw list of icons
             for(int i = 0; i < (int)myLaneRestrictedTexturePositions.size(); i++) {
-                // Push draw matrix
+                // Push draw matrix 2
                 glPushMatrix();
-                // Set draw color
+                // Set white color
                 glColor3d(1, 1, 1);
-                // Traslate matrix
+                // Traslate matrix 2
                 glTranslated(myLaneRestrictedTexturePositions.at(i).x(), myLaneRestrictedTexturePositions.at(i).y(), getType() + 0.1);
-                // Rotate matrix
+                // Rotate matrix 2
                 glRotated(myLaneRestrictedTextureRotations.at(i), 0, 0, -1);
                 glRotated(90, 0, 0, 1);
                 // draw texture box depending
                 GUITexturesHelper::drawTexturedBox(myLaneRestrictedTexture, 1);
-                // Pop logo matrix
+                // Pop draw matrix 2
                 glPopMatrix();
             }
         }
     }
+    // Pop Name
     glPopName();
 }
 
