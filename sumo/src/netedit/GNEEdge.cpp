@@ -408,7 +408,12 @@ void                                                                            
 GNEEdge::remakeGNEConnections() {                                                                                       // PABLO #2067
     // Drop all existents connections                                                                                   // PABLO #2067
     for(ConnectionVector::iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); i++) {                    // PABLO #2067
-        delete (*i);                                                                                                    // PABLO #2067
+        // Dec reference of connection                                                                                  // PABLO #2067
+        (*i)->decRef("GNEEdge::removeConnection");                                                                      // PABLO #2067
+        // Delete GNEConnectionToErase if is unreferenced                                                               // PABLO #2067
+        if((*i)->unreferenced()) {                                                                                      // PABLO #2067
+            delete (*i);                                                                                                // PABLO #2067
+        }                                                                                                               // PABLO #2067
     }                                                                                                                   // PABLO #2067
     myGNEConnections.clear();                                                                                           // PABLO #2067
     // Create connections                                                                                               // PABLO #2067

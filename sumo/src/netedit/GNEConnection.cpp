@@ -72,7 +72,7 @@ int NUM_POINTS = 5;
 
 GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLane, bool pass, bool keepClear, SUMOReal contPos, bool uncontrolled) :
     myConnection(fromLane, to->getNBEdge(), toLane, pass, keepClear, contPos, false),    
-    GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(fromLane) + to->getID() + toString(toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
+    GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(fromLane) + to->getID() + toString(toLane), GLO_CONNECTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
     myUncontrolled(uncontrolled),
     myDrawConnection(true) {
@@ -83,7 +83,7 @@ GNEConnection::GNEConnection(GNEEdge *from, int fromLane, GNEEdge *to, int toLan
 
 GNEConnection::GNEConnection(GNEEdge *from, NBEdge::Connection connection, bool uncontrolled) :
     myConnection(connection),
-    GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(connection.fromLane) + connection.toEdge->getID() + toString(connection.toLane), GLO_JUNCTION, SUMO_TAG_CONNECTION),
+    GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(connection.fromLane) + connection.toEdge->getID() + toString(connection.toLane), GLO_CONNECTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
     myUncontrolled(uncontrolled) {
     // Update geometry
@@ -101,8 +101,8 @@ GNEConnection::updateGeometry() {
     myShapeLengths.clear();
     
     // Get shape of from and to lanes
-    PositionVector laneShapeFrom = myFromEdge->getLanes().at(myConnection.fromLane)->getShape();
-    PositionVector laneShapeTo = myConnection.toEdge->getLaneShape(myConnection.toLane);
+    PositionVector laneShapeFrom = myFromEdge->getNBEdge()->getLanes().at(myConnection.fromLane).shape;
+    PositionVector laneShapeTo = myConnection.toEdge->getLanes().at(myConnection.toLane).shape;
 
     // Cut laneShapeFrom using as delimitators from start position and end position depending of maxNumberOfLanes
     if(myFromEdge->getNBEdge()->getNumLanes() <= 2) {
