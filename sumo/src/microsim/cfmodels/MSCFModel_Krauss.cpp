@@ -39,7 +39,6 @@
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <utils/common/RandHelper.h>
 
-
 // ===========================================================================
 // method definitions
 // ===========================================================================
@@ -54,12 +53,7 @@ MSCFModel_Krauss::~MSCFModel_Krauss() {}
 
 SUMOReal
 MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap) const {
-//    // Debug (Leo)
-//    std::cout << "maximumSafeStopSpeedBallistic()"
-//            << "\ngap = "<< gap << " speed = "<< speed
-//            << std::endl;
-
-    return MIN2(maximumSafeStopSpeed(gap, speed, false, 0.), maxNextSpeed(speed, veh));
+    return MIN2(maximumSafeStopSpeed(gap, speed, false, 0.), maxNextSpeed(speed, veh)); // NOTE: allows return of smaller values than minNextSpeed()
 }
 
 

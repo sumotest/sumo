@@ -91,6 +91,7 @@
 //#define DEBUG_STOPS
 //#define DEBUG_BESTLANES
 #define DEBUG_COND (getID() == "disabled")
+//#define DEBUG_COND (getID() == "v0" || getID() == "v1")
 
 #define STOPPING_PLACE_OFFSET 0.5
 
@@ -1053,7 +1054,7 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
 
 #ifdef DEBUG_STOPS
     if(DEBUG_COND){
-        std::cout << SIMTIME << " vehicle '" << getID() << "' processNextStop()" << std::endl;
+        std::cout << "\nPROCESS_NEXT_STOP\n" << SIMTIME << " vehicle '" << getID() << "'" << std::endl;
     }
 #endif
 
@@ -1156,8 +1157,13 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
             	return 0;
             } else {
             	// ballistic:
-            	// XXX: this leads to a creeping approach -> #2310 (Leo, check again)
-            	return getCarFollowModel().stopSpeed(this, getSpeed(), stop.endPos - myState.pos());
+                SUMOReal haltingPos = stop.endPos;
+                if(stop.busstop != 0){
+                    haltingPos = stop.busstop->getStoppingPosition(this);
+                } else if (stop.containerstop != 0){
+                    haltingPos = stop.containerstop->getStoppingPosition(this);
+                }
+            	return getCarFollowModel().stopSpeed(this, getSpeed(), haltingPos - myState.pos());
             }
         }
     } else {
@@ -1245,6 +1251,8 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
 
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) {
+        std::cout.precision(24);
+        std::cout
                 << "\nPLAN_MOVE\n"
                 << STEPS2TIME(t)
                 << " veh=" << getID()
@@ -1374,6 +1382,14 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             }
             v = MIN2(v, stopSpeed);
             lfLinks.push_back(DriveProcessItem(v, myStopDist));
+
+#ifdef DEBUG_PLAN_MOVE
+      if(DEBUG_COND){
+          std::cout << "\n" << SIMTIME << " next stop: distance = "<< myStopDist << " requires stopSpeed = " << stopSpeed << "\n";
+
+      }
+#endif
+
             break;
         }
 
@@ -1616,6 +1632,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                          SUMOReal distToCrossing) const {
     if (leaderInfo.first != 0) {
         const SUMOReal vsafeLeader = getSafeFollowSpeed(leaderInfo, seen, lane, distToCrossing);
+
         if (lastLink != 0) {
             lastLink->adaptLeaveSpeed(vsafeLeader);
         }
@@ -1637,7 +1654,7 @@ MSVehicle::adaptToLeader(const std::pair<const MSVehicle*, SUMOReal> leaderInfo,
                     << " myLane=" << myLane->getID()
                     << " dTC=" << distToCrossing
                     << " v=" << v
-                    << " vSafeLeader=" << v
+                    << " vSafeLeader=" << vsafeLeader
                     << " vLinkPass=" << vLinkPass
                     << "\n";
 #endif
@@ -1701,7 +1718,7 @@ MSVehicle::executeMove() {
         if (DEBUG_COND) std::cout << "\nEXECUTE_MOVE\n"
                     << SIMTIME
                     << " veh=" << getID()
-                    << " speed=" << toString(getSpeed(), 24)
+                    << " speed=" << getSpeed() // toString(getSpeed(), 24)
                     << std::endl;
 #endif
 

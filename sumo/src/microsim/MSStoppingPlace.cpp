@@ -30,6 +30,7 @@
 #endif
 
 #include <cassert>
+#include <map>
 #include <utils/vehicle/SUMOVehicle.h>
 #include <utils/geom/Position.h>
 #include <microsim/MSVehicleType.h>
@@ -78,6 +79,8 @@ MSStoppingPlace::getEndLanePosition() const {
 
 void
 MSStoppingPlace::enter(SUMOVehicle* what, SUMOReal beg, SUMOReal end) {
+    // Debug (Leo)
+//    std::cout << "veh '" << (what!=0?what->getID():"NULL") << "' enters stopping place..." << std::endl;
     myEndPositions[what] = std::pair<SUMOReal, SUMOReal>(beg, end);
     computeLastFreePos();
 }
@@ -97,6 +100,16 @@ MSStoppingPlace::getWaitPosition() const {
     return myLane.getShape().positionAtOffset(myLane.interpolateLanePosToGeometryPos(myWaitingPos), .5);
 }
 
+
+SUMOReal
+MSStoppingPlace::getStoppingPosition(const SUMOVehicle * veh) const {
+    std::map<const SUMOVehicle*, std::pair<SUMOReal, SUMOReal> >::const_iterator i = myEndPositions.find(veh);
+    if(i != myEndPositions.end()){
+        return i->second.second;
+    } else {
+        return getLastFreePos(*veh);
+    }
+}
 
 void
 MSStoppingPlace::addTransportable(MSTransportable* p) {
@@ -131,7 +144,7 @@ MSStoppingPlace::leaveFrom(SUMOVehicle* what) {
 void
 MSStoppingPlace::computeLastFreePos() {
     myLastFreePos = myEndPos;
-    std::map<SUMOVehicle*, std::pair<SUMOReal, SUMOReal> >::iterator i;
+    std::map<const SUMOVehicle*, std::pair<SUMOReal, SUMOReal> >::iterator i;
     for (i = myEndPositions.begin(); i != myEndPositions.end(); i++) {
         if (myLastFreePos > (*i).second.second) {
             myLastFreePos = (*i).second.second;

@@ -75,16 +75,13 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     //}
 #endif
 
+ //   const SUMOReal vDawdle = !MSGlobals::gSemiImplicitEulerUpdate && vMax < 5.0 ? vMax // don't dawdle for low speeds (when approaching a stop, e.g.)
+//            : MAX2(vMin, dawdle(vMax));
     const SUMOReal vDawdle = MAX2(vMin, dawdle(vMax));
+
     SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vDawdle, vMax, *this);
 
-// Debug (Leo)
-//     if(veh->getID() == "high.62") std::cout << " vMin = " << vMin <<  " vMax = " << vMax <<" vDawdle = " << vDawdle << " vNext = " << vNext << std::endl;
-
-    //	// Debug (Leo)
-    //    if(gDebugFlag1) std::cout << "vNext = " << vNext << std::endl;
-
-	// (Leo) At this point vNext may also be negative indicating a stop within next step.
+    // (Leo) At this point vNext may also be negative indicating a stop within next step.
     // This would have resulted from a call to maximumSafeStopSpeed(), which does not
     // consider deceleration bounds. Therefore, we cap vNext here.
     if(!MSGlobals::gSemiImplicitEulerUpdate){

@@ -276,6 +276,10 @@ public:
                             MSMoveReminder::Notification notification);
 
     bool checkFailure(MSVehicle* aVehicle, SUMOReal& speed, SUMOReal& dist, const SUMOReal nspeed, const bool patchSpeed, const std::string errorMsg) const;
+
+    /** @todo documentation
+     *
+     */
     bool lastInsertion(MSVehicle& veh, SUMOReal mspeed);
 
     /** @brief Tries to insert the given vehicle on any place
