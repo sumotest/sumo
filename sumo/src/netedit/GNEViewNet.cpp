@@ -1504,6 +1504,8 @@ long                                                                    // PABLO
 GNEViewNet::onCmdToogleShowConnection(FXObject*, FXSelector, void*) {   // PABLO #2067
     // Update viewnNet to show/hide conections                          // PABLO #2067
     update();                                                           // PABLO #2067
+    // Hide/show connections requiere recompute                         // PABLO #2067
+    getNet()->requireRecompute();                                       // PABLO #2067
     return 1;                                                           // PABLO #2067
 }                                                                       // PABLO #2067
 
@@ -1521,6 +1523,12 @@ GNEViewNet::setEditMode(EditMode mode) {
         myPreviousEditMode = myEditMode;
         myEditMode = mode;
         switch (mode) {
+            case GNE_MODE_INSPECT:                                              // PABLO #2067
+                // If show connections checkbox is enabled, requiere recompute  // PABLO #2067
+                if(myShowConnections->getCheck()) {                             // PABLO #2067
+                    getNet()->requireRecompute();                               // PABLO #2067
+                }                                                               // PABLO #2067
+                break;
             case GNE_MODE_CONNECT:
             case GNE_MODE_TLS:
                 // modes which depend on computed data

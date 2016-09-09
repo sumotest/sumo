@@ -63,6 +63,7 @@
 #include "GNEJunction.h"
 #include "GNEEdge.h"
 #include "GNELane.h"
+#include "GNEConnection.h"
 #include "GNEUndoList.h"
 #include "GNEChange_Attribute.h"
 #include "GNEChange_Junction.h"
@@ -1342,6 +1343,9 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
     myNetBuilder->compute(oc, liveExplicitTurnarounds, false);
     // update precomputed lane geometries
     for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); it++) {
+        // Remake all connections of edge   // PABLO #2067
+        it->second->remakeGNEConnections(); // PABLO #2067
+        // Update geometry of connections
         it->second->updateGeometry();
     }
     for (GNEJunctions::const_iterator it = myJunctions.begin(); it != myJunctions.end(); it++) {
@@ -1350,6 +1354,7 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
         it->second->updateGeometry();
         refreshElement(it->second);
     }
+    // Set flag to false
     myNeedRecompute = false;
 }
 

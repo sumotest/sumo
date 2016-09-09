@@ -194,6 +194,9 @@ public:
      */
     void setGeometry(PositionVector geom, bool inner);
 
+    /// @brief remake connections   // PABLO #2067
+    void remakeGNEConnections();    // PABLO #2067
+
     /// @brief copy edge attributes from tpl
     void copyTemplate(GNEEdge* tpl, GNEUndoList* undolist);
 

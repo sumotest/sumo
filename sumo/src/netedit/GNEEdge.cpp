@@ -81,12 +81,8 @@ GNEEdge::GNEEdge(NBEdge& nbe, GNENet* net, bool wasSplit, bool loaded):
         myLanes.push_back(new GNELane(*this, i));
         myLanes.back()->incRef("GNEEdge::GNEEdge");
     }
-    // Create connections                                                                                               // PABLO #2067
-    const std::vector<NBEdge::Connection>& myConnections = myNBEdge.getConnections();                                   // PABLO #2067
-    for(std::vector<NBEdge::Connection>::const_iterator i = myConnections.begin(); i != myConnections.end(); i++) {     // PABLO #2067
-        myGNEConnections.push_back(new GNEConnection(this, *i));                                                        // PABLO #2067
-        myGNEConnections.back()->incRef("GNEEdge::GNEEdge");                                                            // PABLO #2067
-    }                                                                                                                   // PABLO #2067
+    // Remake connections       // PABLO #2067
+    remakeGNEConnections();     // PABLO #2067
 }
 
 
@@ -406,6 +402,23 @@ GNEEdge::setGeometry(PositionVector geom, bool inner) {
     getGNEJunctionDest()->invalidateShape();
     myNet->refreshElement(this);
 }
+
+
+void                                                                                                                    // PABLO #2067
+GNEEdge::remakeGNEConnections() {                                                                                       // PABLO #2067
+    // Drop all existents connections                                                                                   // PABLO #2067
+    for(ConnectionVector::iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); i++) {                    // PABLO #2067
+        delete (*i);                                                                                                    // PABLO #2067
+    }                                                                                                                   // PABLO #2067
+    myGNEConnections.clear();                                                                                           // PABLO #2067
+    // Create connections                                                                                               // PABLO #2067
+    const std::vector<NBEdge::Connection>& myConnections = myNBEdge.getConnections();                                   // PABLO #2067
+    for(std::vector<NBEdge::Connection>::const_iterator i = myConnections.begin(); i != myConnections.end(); i++) {     // PABLO #2067
+        myGNEConnections.push_back(new GNEConnection(this, *i));                                                        // PABLO #2067
+        myGNEConnections.back()->incRef("GNEEdge::GNEEdge");                                                            // PABLO #2067
+    }                                                                                                                   // PABLO #2067
+}                                                                                                                       // PABLO #2067
+
 
 void
 GNEEdge::copyTemplate(GNEEdge* tpl, GNEUndoList* undoList) {
