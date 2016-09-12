@@ -104,18 +104,21 @@ GNEConnection::updateGeometry() {
     PositionVector laneShapeFrom = myFromEdge->getNBEdge()->getLanes().at(myConnection.fromLane).shape;
     PositionVector laneShapeTo = myConnection.toEdge->getLanes().at(myConnection.toLane).shape;
 
-    // Cut laneShapeFrom using as delimitators from start position and end position depending of maxNumberOfLanes
-    if(myFromEdge->getNBEdge()->getNumLanes() <= 2) {
-        laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - 3);
-    } else {
-        laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - (myFromEdge->getNBEdge()->getNumLanes() * 3));
-    }
+    // Check if shape of connections must be adjusted (depend of the size of Junction shape)
+    if(myFromEdge->getNBEdge()->getToNode()->getShape().size() <= 0) {
+        // Cut laneShapeFrom using as delimitators from start position and end position depending of maxNumberOfLanes
+        if(myFromEdge->getNBEdge()->getNumLanes() <= 2) {
+            laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - 3);
+        } else {
+            laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - (myFromEdge->getNBEdge()->getNumLanes() * 3));
+        }
 
-    // Cut laneShapeTo using as delimitators from start position and end position depending of maxNumberOfLanes
-    if(myConnection.toEdge->getNumLanes() <= 2) {
-        laneShapeTo = laneShapeTo.getSubpart(3, laneShapeTo.length());
-    } else {
-        laneShapeTo = laneShapeTo.getSubpart((myConnection.toEdge->getNumLanes() * 3), laneShapeTo.length());
+        // Cut laneShapeTo using as delimitators from start position and end position depending of maxNumberOfLanes
+        if(myConnection.toEdge->getNumLanes() <= 2) {
+            laneShapeTo = laneShapeTo.getSubpart(3, laneShapeTo.length());
+        } else {
+            laneShapeTo = laneShapeTo.getSubpart((myConnection.toEdge->getNumLanes() * 3), laneShapeTo.length());
+        }
     }
 
     // Calculate shape using a smooth shape
