@@ -72,6 +72,7 @@
 #include "GNEAdditionalSet.h"
 #include "GNEAdditionalDialog.h"
 #include "GNERerouter.h"
+#include "GNEConnection.h"
 
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -424,6 +425,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
         GNEPoly* pointed_poly = 0;
         GNECrossing* pointed_crossing = 0;
         GNEAdditional* pointed_additional = 0;
+        GNEConnection* pointed_connection = 0;  // PABLO #2067
         if (pointed) {
             switch (pointed->getType()) {
                 case GLO_JUNCTION:
@@ -448,6 +450,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 case GLO_ADDITIONAL:
                     pointed_additional = (GNEAdditional*)pointed;
                     break;
+                case GLO_CONNECTION:                                // PABLO #2067
+                    pointed_connection = (GNEConnection*)pointed;   // PABLO #2067
+                    break;                                          // PABLO #2067
                 default:
                     pointed = 0;
                     break;
@@ -587,6 +592,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_additional) {
                     myViewParent->getAdditionalFrame()->removeAdditional(pointed_additional);
                     update();
+                } else if (pointed_connection) {                                // PABLO #2067
+                    myNet->deleteConnection(pointed_connection, myUndoList);    // PABLO #2067
+                    update();                                                   // PABLO #2067
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
@@ -615,7 +623,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_additional) {
                     pointedAC = pointed_additional;
                     pointedO = pointed_additional;
-                }
+                } else if (pointed_connection) {    // PABLO #2067
+                    pointedAC = pointed_connection; // PABLO #2067
+                    pointedO = pointed_connection;  // PABLO #2067
+                }                                   // PABLO #2067
 
                 std::vector<GNEAttributeCarrier*> selected;
                 if (pointedO && gSelected.isSelected(pointedO->getType(), pointedO->getGlID())) {

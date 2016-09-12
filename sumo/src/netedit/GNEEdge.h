@@ -121,7 +121,7 @@ public:
     void drawGL(const GUIVisualizationSettings& s) const;
     /// @}
 
-    /**@brief update edge geometry after junction move */
+    /// @brief update edge geometry after junction move
     void updateJunctionPosition(GNEJunction* junction, const Position& origPos);
 
     /// @brief returns the internal NBEdge

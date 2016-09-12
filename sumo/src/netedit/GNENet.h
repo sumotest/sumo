@@ -75,6 +75,7 @@ class GNEDetectorE1;
 class GNEDetectorE2;
 class GNEDetectorE3;
 class GNEDetectorE3EntryExit;
+class GNEConnection;    // PABLO #2067
 
 // ===========================================================================
 // class definitions
@@ -192,6 +193,12 @@ public:
      * @param[in] undoList The undolist in which to mark changes
      */
     void deleteLane(GNELane* lane, GNEUndoList* undoList);
+
+    /**@brief remove connectino                                                 // PABLO #2067
+     * @param[in] connection The connection to be removed                       // PABLO #2067
+     * @param[in] undoList The undolist in which to mark changes                // PABLO #2067
+     */                                                                         // PABLO #2067
+    void deleteConnection(GNEConnection *connection, GNEUndoList* undoList);    // PABLO #2067
 
     /**@brief duplicates lane
      * @param[in] lane The lane to be duplicated

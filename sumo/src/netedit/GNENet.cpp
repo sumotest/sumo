@@ -388,6 +388,15 @@ GNENet::deleteLane(GNELane* lane, GNEUndoList* undoList) {
 }
 
 
+void                                                                                                                    // PABLO #2067
+GNENet::deleteConnection(GNEConnection *connection, GNEUndoList* undoList) {                                            // PABLO #2067
+    undoList->p_begin("delete connection");                                                                             // PABLO #2067
+    undoList->add(new GNEChange_Connection(connection->getEdgeFrom(), connection->getNBEdgeConnection(), false), true);  // PABLO #2067
+    requireRecompute();                                                                                                 // PABLO #2067
+    undoList->p_end();                                                                                                  // PABLO #2067
+}                                                                                                                       // PABLO #2067
+
+
 void
 GNENet::duplicateLane(GNELane* lane, GNEUndoList* undoList) {
     undoList->p_begin("duplicate lane");
