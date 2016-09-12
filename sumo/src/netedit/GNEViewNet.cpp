@@ -323,9 +323,11 @@ GNEViewNet::selectEdges() {
 
 
 bool                                                    // PABLO #2067
-GNEViewNet::showAttrConnection() {                      // PABLO #2067
+GNEViewNet::showConnections() {                         // PABLO #2067
     if(myEditMode == GNE_MODE_CONNECT) {                // PABLO #2067
         return true;                                    // PABLO #2067
+    } else if (myShowConnections->shown() == false) {   // PABLO #2067
+        return false;                                   // PABLO #2067
     } else {                                            // PABLO #2067
         return (myShowConnections->getCheck() == 1);    // PABLO #2067
     }                                                   // PABLO #2067
@@ -1636,7 +1638,6 @@ GNEViewNet::updateModeSpecificControls() {
     switch (myEditMode) {
         case GNE_MODE_CREATE_EDGE:
             myChainCreateEdge->show();
-            myShowConnections->show();  // PABLO #2067
             myAutoCreateOppositeEdge->show();
             break;
         case GNE_MODE_DELETE:
@@ -1671,7 +1672,6 @@ GNEViewNet::updateModeSpecificControls() {
         case GNE_MODE_ADDITIONAL:
             widthChange -= myViewParent->getAdditionalFrame()->getWidth() + addChange;
             myViewParent->getAdditionalFrame()->show();
-            myShowConnections->show();  // PABLO #2067
             break;
         default:
             break;

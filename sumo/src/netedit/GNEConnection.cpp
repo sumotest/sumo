@@ -284,7 +284,7 @@ GNEConnection::getCenteringBoundary() const {
 void
 GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
     // Check if connection must be drawed
-    if(myDrawConnection && (myNet->getViewNet()->showAttrConnection())) {
+    if(myDrawConnection && (myNet->getViewNet()->showConnections())) {
         // Push draw matrix 1
         glPushMatrix();
         // Push name

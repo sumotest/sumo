@@ -236,8 +236,8 @@ public:
     /// @brief whether inspection, selection and inversion should apply to edges or to lanes
     bool selectEdges();
 
-    /// @brief show connections over junctions
-    bool showAttrConnection();
+    /// @brief show connections over junctions  // PABLO #2067
+    bool showConnections();                     // PABLO #2067
 
     /// @brief whether to autoselect nodes or to lanes
     bool autoSelectNodes();
