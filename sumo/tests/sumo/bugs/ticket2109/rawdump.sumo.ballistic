@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:48:09 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Mon Sep 12 13:17:58 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -18,6 +18,10 @@
     <time>
         <end value="25"/>
     </time>
+
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -45,19 +49,19 @@
         <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="36.85" route="r1" type="passenger" waiting="1.00" lane="4/1to3/1_0" pos="398.99" speed="0.06" angle="270.00" x="1205.74" y="401.65"/>
     </timestep>
     <timestep time="5.00">
-        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.68" route="r1" type="passenger" waiting="2.00" lane="4/1to3/1_0" pos="398.99" speed="0.00" angle="270.00" x="1205.74" y="401.65"/>
+        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.68" route="r1" type="passenger" waiting="2.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
     </timestep>
     <timestep time="6.00">
-        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="56.01" route="r1" type="passenger" waiting="3.00" lane="4/1to3/1_0" pos="399.00" speed="0.01" angle="270.00" x="1205.73" y="401.65"/>
+        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.94" route="r1" type="passenger" waiting="3.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
     </timestep>
     <timestep time="7.00">
-        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.88" route="r1" type="passenger" waiting="4.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
+        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.94" route="r1" type="passenger" waiting="4.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
     </timestep>
     <timestep time="8.00">
-        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.97" route="r1" type="passenger" waiting="5.00" lane="4/1to3/1_0" pos="399.00" speed="0.01" angle="270.00" x="1205.73" y="401.65"/>
+        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.94" route="r1" type="passenger" waiting="5.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
     </timestep>
     <timestep time="9.00">
-        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.92" route="r1" type="passenger" waiting="6.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
+        <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.94" route="r1" type="passenger" waiting="6.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>
     </timestep>
     <timestep time="10.00">
         <vehicle id="0" eclass="PHEMlight/PKW_D_EU4" CO2="506.58" CO="0.07" HC="0.04" NOx="1.65" PMx="0.04" fuel="0.19" electricity="0.00" noise="55.94" route="r1" type="passenger" waiting="7.00" lane="4/1to3/1_0" pos="399.00" speed="0.00" angle="270.00" x="1205.73" y="401.65"/>

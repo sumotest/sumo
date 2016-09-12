@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Mon May 30 14:26:30 2016 by SUMO Version dev-SVN-r20808
+<!-- generated on Thu Sep  8 11:35:58 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -19,6 +19,10 @@
     <time>
         <end value="240"/>
     </time>
+
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
 
     <report>
         <verbose value="true"/>
@@ -999,22 +1003,13 @@
     <timestep time="107.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="vehicle1" pos="60.00" speed="0.00" containerNumber="1">
-                    <container id="container0" pos="60.00" angle="270.00" stage="transport"/>
-                </vehicle>
-            </lane>
-        </edge>
-    </timestep>
-    <timestep time="108.00">
-        <edge id="1/3to0/3">
-            <lane id="1/3to0/3_0">
                 <vehicle id="vehicle1" pos="61.30" speed="2.60" containerNumber="1">
                     <container id="container0" pos="61.30" angle="270.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
     </timestep>
-    <timestep time="109.00">
+    <timestep time="108.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
                 <vehicle id="vehicle1" pos="65.20" speed="5.20" containerNumber="1">
@@ -1023,11 +1018,20 @@
             </lane>
         </edge>
     </timestep>
+    <timestep time="109.00">
+        <edge id="1/3to0/3">
+            <lane id="1/3to0/3_0">
+                <vehicle id="vehicle1" pos="71.70" speed="7.80" containerNumber="1">
+                    <container id="container0" pos="71.70" angle="270.00" stage="transport"/>
+                </vehicle>
+            </lane>
+        </edge>
+    </timestep>
     <timestep time="110.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="vehicle1" pos="71.71" speed="7.80" containerNumber="1">
-                    <container id="container0" pos="71.71" angle="270.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="80.35" speed="9.51" containerNumber="1">
+                    <container id="container0" pos="80.35" angle="270.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1035,22 +1039,13 @@
     <timestep time="111.00">
         <edge id="1/3to0/3">
             <lane id="1/3to0/3_0">
-                <vehicle id="vehicle1" pos="80.36" speed="9.51" containerNumber="1">
-                    <container id="container0" pos="80.36" angle="270.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="87.61" speed="5.01" containerNumber="1">
+                    <container id="container0" pos="87.61" angle="270.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
     </timestep>
     <timestep time="112.00">
-        <edge id="1/3to0/3">
-            <lane id="1/3to0/3_0">
-                <vehicle id="vehicle1" pos="87.62" speed="5.01" containerNumber="1">
-                    <container id="container0" pos="87.62" angle="270.00" stage="transport"/>
-                </vehicle>
-            </lane>
-        </edge>
-    </timestep>
-    <timestep time="113.00">
         <edge id=":0/3_3">
             <lane id=":0/3_3_0">
                 <vehicle id="vehicle1" pos="3.42" speed="7.61" containerNumber="1">
@@ -1059,7 +1054,7 @@
             </lane>
         </edge>
     </timestep>
-    <timestep time="114.00">
+    <timestep time="113.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
                 <vehicle id="vehicle1" pos="7.33" speed="10.21" containerNumber="1">
@@ -1068,11 +1063,20 @@
             </lane>
         </edge>
     </timestep>
+    <timestep time="114.00">
+        <edge id="0/3to0/4">
+            <lane id="0/3to0/4_0">
+                <vehicle id="vehicle1" pos="18.84" speed="12.81" containerNumber="1">
+                    <container id="container0" pos="18.84" angle="0.00" stage="transport"/>
+                </vehicle>
+            </lane>
+        </edge>
+    </timestep>
     <timestep time="115.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="vehicle1" pos="18.83" speed="12.81" containerNumber="1">
-                    <container id="container0" pos="18.83" angle="0.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="32.19" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="32.19" angle="0.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1080,8 +1084,8 @@
     <timestep time="116.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="vehicle1" pos="32.18" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="32.18" angle="0.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="46.09" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="46.09" angle="0.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1089,8 +1093,8 @@
     <timestep time="117.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="vehicle1" pos="46.08" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="46.08" angle="0.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="59.99" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="59.99" angle="0.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1098,8 +1102,8 @@
     <timestep time="118.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="vehicle1" pos="59.98" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="59.98" angle="0.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="73.89" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="73.89" angle="0.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1107,17 +1111,17 @@
     <timestep time="119.00">
         <edge id="0/3to0/4">
             <lane id="0/3to0/4_0">
-                <vehicle id="vehicle1" pos="73.88" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="73.88" angle="0.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="87.79" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="87.79" angle="0.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
     </timestep>
     <timestep time="120.00">
-        <edge id="0/3to0/4">
-            <lane id="0/3to0/4_0">
-                <vehicle id="vehicle1" pos="87.78" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="87.78" angle="0.00" stage="transport"/>
+        <edge id="0/4to1/4">
+            <lane id="0/4to1/4_0">
+                <vehicle id="vehicle1" pos="7.11" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="7.11" angle="90.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1125,8 +1129,8 @@
     <timestep time="121.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="7.10" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="7.10" angle="90.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="21.01" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="21.01" angle="90.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1134,8 +1138,8 @@
     <timestep time="122.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="21.00" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="21.00" angle="90.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="34.91" speed="13.90" containerNumber="1">
+                    <container id="container0" pos="34.91" angle="90.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1143,8 +1147,8 @@
     <timestep time="123.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="34.90" speed="13.90" containerNumber="1">
-                    <container id="container0" pos="34.90" angle="90.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="47.22" speed="10.72" containerNumber="1">
+                    <container id="container0" pos="47.22" angle="90.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1152,8 +1156,8 @@
     <timestep time="124.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="47.22" speed="10.73" containerNumber="1">
-                    <container id="container0" pos="47.22" angle="90.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="55.70" speed="6.22" containerNumber="1">
+                    <container id="container0" pos="55.70" angle="90.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1161,8 +1165,8 @@
     <timestep time="125.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="55.69" speed="6.23" containerNumber="1">
-                    <container id="container0" pos="55.69" angle="90.00" stage="transport"/>
+                <vehicle id="vehicle1" pos="59.67" speed="1.72" containerNumber="1">
+                    <container id="container0" pos="59.67" angle="90.00" stage="transport"/>
                 </vehicle>
             </lane>
         </edge>
@@ -1170,9 +1174,7 @@
     <timestep time="126.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="59.67" speed="1.73" containerNumber="1">
-                    <container id="container0" pos="59.67" angle="90.00" stage="transport"/>
-                </vehicle>
+                <vehicle id="vehicle1" pos="60.00" speed="0.00"/>
             </lane>
         </edge>
     </timestep>
@@ -1319,94 +1321,82 @@
     <timestep time="147.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="60.00" speed="0.00"/>
+                <vehicle id="vehicle1" pos="61.30" speed="2.60"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="148.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="60.00" speed="0.00"/>
+                <vehicle id="vehicle1" pos="65.20" speed="5.20"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="149.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="61.30" speed="2.60"/>
+                <vehicle id="vehicle1" pos="71.70" speed="7.80"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="150.00">
         <edge id="0/4to1/4">
             <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="65.20" speed="5.20"/>
+                <vehicle id="vehicle1" pos="80.80" speed="10.40"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="151.00">
-        <edge id="0/4to1/4">
-            <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="71.71" speed="7.80"/>
+        <edge id=":1/4_6">
+            <lane id=":1/4_6_0">
+                <vehicle id="vehicle1" pos="0.50" speed="13.00"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="152.00">
-        <edge id="0/4to1/4">
-            <lane id="0/4to1/4_0">
-                <vehicle id="vehicle1" pos="80.81" speed="10.40"/>
+        <edge id="1/4to1/3">
+            <lane id="1/4to1/3_0">
+                <vehicle id="vehicle1" pos="8.95" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="153.00">
-        <edge id=":1/4_6">
-            <lane id=":1/4_6_0">
-                <vehicle id="vehicle1" pos="0.51" speed="13.00"/>
+        <edge id="1/4to1/3">
+            <lane id="1/4to1/3_0">
+                <vehicle id="vehicle1" pos="22.85" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="154.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="vehicle1" pos="8.96" speed="13.90"/>
+                <vehicle id="vehicle1" pos="36.75" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="155.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="vehicle1" pos="22.86" speed="13.90"/>
+                <vehicle id="vehicle1" pos="50.65" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="156.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="vehicle1" pos="36.76" speed="13.90"/>
+                <vehicle id="vehicle1" pos="64.55" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="157.00">
         <edge id="1/4to1/3">
             <lane id="1/4to1/3_0">
-                <vehicle id="vehicle1" pos="50.66" speed="13.90"/>
+                <vehicle id="vehicle1" pos="78.45" speed="13.90"/>
             </lane>
         </edge>
     </timestep>
-    <timestep time="158.00">
-        <edge id="1/4to1/3">
-            <lane id="1/4to1/3_0">
-                <vehicle id="vehicle1" pos="64.56" speed="13.90"/>
-            </lane>
-        </edge>
-    </timestep>
-    <timestep time="159.00">
-        <edge id="1/4to1/3">
-            <lane id="1/4to1/3_0">
-                <vehicle id="vehicle1" pos="78.46" speed="13.90"/>
-            </lane>
-        </edge>
-    </timestep>
+    <timestep time="158.00"/>
+    <timestep time="159.00"/>
     <timestep time="160.00"/>
     <timestep time="161.00"/>
     <timestep time="162.00"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Wed Jun  1 10:57:35 2016 by SUMO Version dev-SVN-r20832
+<!-- generated on Fri Sep  9 14:56:25 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -19,6 +19,10 @@
         <end value="1000"/>
     </time>
 
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
+
     <report>
         <xml-validation value="never"/>
         <duration-log.disable value="true"/>
@@ -29,6 +33,6 @@
 -->
 
 <tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
-    <tripinfo id="v0" depart="0.00" departLane="gneE0_0" departPos="50.00" departSpeed="0.00" departDelay="0.00" arrival="111.00" arrivalLane="gneE2_0" arrivalPos="278.05" arrivalSpeed="13.34" duration="111.00" routeLength="834.99" waitSteps="1" timeLoss="19.18" rerouteNo="0" devices="tripinfo_v0" vType="busShort" vaporized=""/>
-    <tripinfo id="v1" depart="0.00" departLane="gneE0_0" departPos="0.00" departSpeed="0.00" departDelay="0.00" arrival="154.00" arrivalLane="gneE2_0" arrivalPos="278.05" arrivalSpeed="13.33" duration="154.00" routeLength="884.99" waitSteps="32" timeLoss="58.55" rerouteNo="0" devices="tripinfo_v1" vType="bus" vaporized=""/>
+    <tripinfo id="v0" depart="0.00" departLane="gneE0_0" departPos="50.00" departSpeed="0.00" departDelay="0.00" arrival="110.00" arrivalLane="gneE2_0" arrivalPos="278.05" arrivalSpeed="13.60" duration="110.00" routeLength="834.99" waitSteps="0" timeLoss="17.66" rerouteNo="0" devices="tripinfo_v0" vType="busShort" vaporized=""/>
+    <tripinfo id="v1" depart="0.00" departLane="gneE0_0" departPos="0.00" departSpeed="0.00" departDelay="0.00" arrival="152.00" arrivalLane="gneE2_0" arrivalPos="278.05" arrivalSpeed="13.55" duration="152.00" routeLength="884.99" waitSteps="31" timeLoss="56.09" rerouteNo="0" devices="tripinfo_v1" vType="bus" vaporized=""/>
 </tripinfos>

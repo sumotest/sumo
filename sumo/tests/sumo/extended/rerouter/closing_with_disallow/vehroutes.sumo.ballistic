@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Mon May 30 15:06:52 2016 by SUMO Version dev-SVN-r20814
+<!-- generated on Fri Sep  9 15:30:24 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -20,6 +20,7 @@
     </time>
 
     <processing>
+        <step-method.ballistic value="true"/>
         <ignore-route-errors value="true"/>
     </processing>
 
@@ -81,20 +82,27 @@
         <route edges="beg middle end rend"/>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.11" depart="110.00" arrival="206.00">
-        <route edges="beg middle end rend"/>
-    </vehicle>
-
-    <vehicle id="flow_maybe_detour.13" depart="130.00" arrival="226.00">
-        <route edges="beg middle end rend"/>
-    </vehicle>
-
     <vehicle id="flow_maybe_detour.14" depart="140.00" arrival="236.00">
+        <route edges="beg middle end rend"/>
+    </vehicle>
+
+    <vehicle id="flow_maybe_detour.15" depart="150.00" arrival="246.00">
+        <route edges="beg middle end rend"/>
+    </vehicle>
+
+    <vehicle id="flow_maybe_detour.16" depart="160.00" arrival="256.00">
         <route edges="beg middle end rend"/>
     </vehicle>
 
     <vehicle id="flow_maybe_detour.18" depart="180.00" arrival="276.00">
         <route edges="beg middle end rend"/>
+    </vehicle>
+
+    <vehicle id="flow_maybe_detour.11" depart="110.00" arrival="320.00">
+        <routeDistribution>
+            <route replacedOnEdge="beg" replacedAtTime="110.00" probability="0" edges="beg middle end rend"/>
+            <route edges="beg beg2right right right2end end rend"/>
+        </routeDistribution>
     </vehicle>
 
     <vehicle id="flow_maybe_detour.12" depart="120.00" arrival="330.00">
@@ -104,16 +112,9 @@
         </routeDistribution>
     </vehicle>
 
-    <vehicle id="flow_maybe_detour.15" depart="150.00" arrival="360.00">
+    <vehicle id="flow_maybe_detour.13" depart="130.00" arrival="340.00">
         <routeDistribution>
-            <route replacedOnEdge="beg" replacedAtTime="150.00" probability="0" edges="beg middle end rend"/>
-            <route edges="beg beg2right right right2end end rend"/>
-        </routeDistribution>
-    </vehicle>
-
-    <vehicle id="flow_maybe_detour.16" depart="160.00" arrival="370.00">
-        <routeDistribution>
-            <route replacedOnEdge="beg" replacedAtTime="160.00" probability="0" edges="beg middle end rend"/>
+            <route replacedOnEdge="beg" replacedAtTime="130.00" probability="0" edges="beg middle end rend"/>
             <route edges="beg beg2right right right2end end rend"/>
         </routeDistribution>
     </vehicle>

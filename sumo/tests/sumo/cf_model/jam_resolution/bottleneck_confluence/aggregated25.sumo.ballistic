@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:46:11 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Fri Sep  9 15:31:34 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -15,6 +15,10 @@
         <end value="1440"/>
     </time>
 
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
+
     <report>
         <verbose value="true"/>
         <xml-validation value="never"/>
@@ -26,8 +30,8 @@
 
 <meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
     <interval begin="0.00" end="1440.00" id="expect_300_vehs">
-        <edge id="in1" sampledSeconds="86859.21" traveltime="100000.00" density="122.40" occupancy="30.60" waitingTime="73591.00" speed="-0.34" departed="77" arrived="0" entered="0" left="12" laneChangedFrom="0" laneChangedTo="0"/>
-        <edge id="in2" sampledSeconds="18318.85" traveltime="40.13" density="25.88" occupancy="6.47" waitingTime="0.00" speed="12.25" departed="458" arrived="0" entered="0" left="445" laneChangedFrom="0" laneChangedTo="0"/>
-        <edge id="out" sampledSeconds="17153.62" traveltime="37.77" density="23.90" occupancy="11.95" waitingTime="0.00" speed="13.20" departed="0" arrived="444" entered="457" left="0" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="in1" sampledSeconds="87305.61" traveltime="1989.83" overlapTraveltime="2012.70" density="123.03" occupancy="30.76" waitingTime="78473.00" speed="0.25" departed="76" arrived="0" entered="0" left="11" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="in2" sampledSeconds="18425.31" traveltime="40.10" overlapTraveltime="40.51" density="26.03" occupancy="6.51" waitingTime="0.00" speed="12.25" departed="461" arrived="0" entered="0" left="448" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="out" sampledSeconds="17223.67" traveltime="37.75" overlapTraveltime="38.13" density="23.99" occupancy="12.00" waitingTime="0.00" speed="13.20" departed="0" arrived="446" entered="459" left="0" laneChangedFrom="0" laneChangedTo="0"/>
     </interval>
 </meandata>

@@ -7,7 +7,7 @@
 
     <vehicle id="obstruction" type="slow" depart="0" route="middle"/>
 
-    <flow id="rerouting_device" begin="0" end="20" number="10" route="left" color="blue">
+    <flow id="rerouting_device" begin="0" end="20" number="10" route="left" color="green">
         <param key="has.rerouting.device" value="true"/>
     </flow>
     <flow id="no_device" begin="0" end="20" number="10" route="left" color="yellow"/>

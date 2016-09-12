@@ -7,4 +7,12 @@
         <route-files value="input_routes.rou.xml"/>
     </input>
 
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
+
+    <report>
+        <xml-validation value="never"/>
+    </report>
+
 </configuration>

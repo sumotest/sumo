@@ -64,6 +64,7 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     } else {
     	// for ballistic update, negative vnext must be allowed to
     	// indicate a stop within the coming timestep
+        // XXX: put into getSpeedAfterMaxDecel()
     	vMin = oldV - ACCEL2SPEED(getMaxDecel());
     }
     // do not exceed max decel even if it is unsafe

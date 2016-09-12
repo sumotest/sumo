@@ -12,7 +12,12 @@
         <end value="100"/>
     </time>
 
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
+
     <report>
+        <xml-validation value="never"/>
         <duration-log.disable value="true"/>
     </report>
 

@@ -722,6 +722,13 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
     MSVehicle* nv = neighFollow.first;
     const SUMOReal plannedAccel = SPEED2ACCEL(MAX2(MIN2(myCarFollowModel.getMaxAccel(), plannedSpeed - myVehicle.getSpeed()), -myCarFollowModel.getMaxDecel()));
 
+#ifdef DEBUG_INFORMER
+    if (DEBUG_COND) {
+        std::cout << "\nINFORM_FOLLOWER"
+                << "\nspeed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
+    }
+
+#endif
     if ((blocked & LCA_BLOCKED_BY_FOLLOWER) != 0) {
         assert(nv != 0);
 #ifdef DEBUG_INFORMER
