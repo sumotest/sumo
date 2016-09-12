@@ -486,9 +486,9 @@ enum {
     MID_GNE_SAVE_PLAIN_XML,
     MID_GNE_SAVE_JOINED,
     MID_GNE_SAVE_POIS,
-    /** Save additionals **/        // PABLO #501
-    MID_GNE_SAVE_ADDITIONALS,       // PABLO #501
-    MID_GNE_SAVE_ADDITIONALS_AS,    // PABLO #501
+    /** Save additionals **/
+    MID_GNE_SAVE_ADDITIONALS,
+    MID_GNE_SAVE_ADDITIONALS_AS,
     /** insert contents of another network */
     MID_GNE_INSERT_NETWORK,
     /** show connections **/    // PABLO #2067

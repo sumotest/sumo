@@ -95,18 +95,18 @@ GNEAdditional::~GNEAdditional() {
 }
 
 
-void                                                            // PABLO #501
-GNEAdditional::moveAdditionalGeometry(const Position &offset) { // PABLO #501
-    moveAdditionalGeometry(offset.x(), offset.y());             // PABLO #501
-}                                                               // PABLO #501
+void
+GNEAdditional::moveAdditionalGeometry(const Position &offset) {
+    moveAdditionalGeometry(offset.x(), offset.y());
+}
 
 
-void                                                                                            // PABLO #501
-GNEAdditional::commmitAdditionalGeometryMoved(const Position &oldPos, GNEUndoList* undoList) {  // PABLO #501
-    commmitAdditionalGeometryMoved(oldPos.x(), oldPos.y(), undoList);                           // PABLO #501
-    // Refresh element                                                                          // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                                                  // PABLO #501
-}                                                                                               // PABLO #501
+void
+GNEAdditional::commmitAdditionalGeometryMoved(const Position &oldPos, GNEUndoList* undoList) {
+    commmitAdditionalGeometryMoved(oldPos.x(), oldPos.y(), undoList);
+    // Refresh element
+    myViewNet->getNet()->refreshElement(this);
+}
 
 
 void

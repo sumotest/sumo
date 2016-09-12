@@ -531,36 +531,36 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                     if (gSelected.isSelected(GLO_ADDITIONAL, pointed_additional->getGlID())) {
                         myMoveSelection = true;
                     } else {
-                        // Only move additional if can be moved                                                                                                                 // PABLO #501
-                        if(pointed_additional->isAdditionalBlocked() == false) {                                                                                                // PABLO #501
-                            myAdditionalToMove = pointed_additional;                                                                                                            // PABLO #501
-                            if (myAdditionalToMove->getLane()) {                                                                                                                // PABLO #501
-                                if(GNEAttributeCarrier::hasAttribute(myAdditionalToMove->getTag(), SUMO_ATTR_STARTPOS)) {                                                       // PABLO #501
-                                    // Obtain start position                                                                                                                    // PABLO #501
-                                    SUMOReal startPos = GNEAttributeCarrier::parse<SUMOReal>(myAdditionalToMove->getAttribute(SUMO_ATTR_STARTPOS));                             // PABLO #501
-                                    if(GNEAttributeCarrier::hasAttribute(myAdditionalToMove->getTag(), SUMO_ATTR_ENDPOS)) {                                                     // PABLO #501
-                                        // Obtain end position                                                                                                                  // PABLO #501
-                                        SUMOReal endPos = GNEAttributeCarrier::parse<SUMOReal>(myAdditionalToMove->getAttribute(SUMO_ATTR_ENDPOS));                             // PABLO #501
-                                        // Save both values in myOldAdditionalPosition                                                                                          // PABLO #501
-                                        myOldAdditionalPosition.set(startPos, endPos);                                                                                          // PABLO #501
-                                    } else if (GNEAttributeCarrier::hasAttribute(myAdditionalToMove->getTag(), SUMO_ATTR_LENGTH)) {                                             // PABLO #501
-                                        // Obtain length attribute                                                                                                              // PABLO #501
-                                        SUMOReal length = GNEAttributeCarrier::parse<SUMOReal>(myAdditionalToMove->getAttribute(SUMO_ATTR_LENGTH));                             // PABLO #501
-                                        // Save both values in myOldAdditionalPosition                                                                                          // PABLO #501
-                                        myOldAdditionalPosition.set(startPos, length);                                                                                          // PABLO #501
-                                    } else {                                                                                                                                    // PABLO #501
-                                        // Save only startpos in myOldAdditionalPosition                                                                                        // PABLO #501
-                                        myOldAdditionalPosition.set(startPos, 0);                                                                                               // PABLO #501
-                                    }                                                                                                                                           // PABLO #501
-                                }                                                                                                                                               // PABLO #501
-                                // Set myAdditionalMovingReference                                                                                                              // PABLO #501
-                                myAdditionalMovingReference.set(pointed_additional->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false), 0, 0);    // PABLO #501
-                            } else {                                                                                                                                            // PABLO #501
-                                // Set myOldAdditionalPosition and myAdditionalMovingReference                                                                                  // PABLO #501
-                                myOldAdditionalPosition = getPositionInformation();                                                                                             // PABLO #501
-                                myAdditionalMovingReference = pointed_additional->getPositionInView() - getPositionInformation();                                               // PABLO #501
-                            }                                                                                                                                                   // PABLO #501
-                        }                                                                                                                                                       // PABLO #501
+                        // Only move additional if can be moved
+                        if(pointed_additional->isAdditionalBlocked() == false) {
+                            myAdditionalToMove = pointed_additional;
+                            if (myAdditionalToMove->getLane()) {
+                                if(GNEAttributeCarrier::hasAttribute(myAdditionalToMove->getTag(), SUMO_ATTR_STARTPOS)) {
+                                    // Obtain start position
+                                    SUMOReal startPos = GNEAttributeCarrier::parse<SUMOReal>(myAdditionalToMove->getAttribute(SUMO_ATTR_STARTPOS));
+                                    if(GNEAttributeCarrier::hasAttribute(myAdditionalToMove->getTag(), SUMO_ATTR_ENDPOS)) {
+                                        // Obtain end position
+                                        SUMOReal endPos = GNEAttributeCarrier::parse<SUMOReal>(myAdditionalToMove->getAttribute(SUMO_ATTR_ENDPOS));
+                                        // Save both values in myOldAdditionalPosition
+                                        myOldAdditionalPosition.set(startPos, endPos);
+                                    } else if (GNEAttributeCarrier::hasAttribute(myAdditionalToMove->getTag(), SUMO_ATTR_LENGTH)) {
+                                        // Obtain length attribute
+                                        SUMOReal length = GNEAttributeCarrier::parse<SUMOReal>(myAdditionalToMove->getAttribute(SUMO_ATTR_LENGTH));
+                                        // Save both values in myOldAdditionalPosition
+                                        myOldAdditionalPosition.set(startPos, length);
+                                    } else {
+                                        // Save only startpos in myOldAdditionalPosition
+                                        myOldAdditionalPosition.set(startPos, 0);
+                                    }
+                                }
+                                // Set myAdditionalMovingReference
+                                myAdditionalMovingReference.set(pointed_additional->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false), 0, 0);
+                            } else {
+                                // Set myOldAdditionalPosition and myAdditionalMovingReference
+                                myOldAdditionalPosition = getPositionInformation();
+                                myAdditionalMovingReference = pointed_additional->getPositionInView() - getPositionInformation();
+                            }
+                        }
                     }
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -712,13 +712,13 @@ GNEViewNet::onLeftBtnRelease(FXObject* obj, FXSelector sel, void* data) {
         myEdgeToMove->setAttribute(SUMO_ATTR_SHAPE, newShape, myUndoList);
         myEdgeToMove = 0;
     } else if (myAdditionalToMove) {
-        if(myAdditionalToMove->getLane()) {                                                                                         // PABLO #501
-            myAdditionalToMove->commmitAdditionalGeometryMoved(myOldAdditionalPosition, myUndoList);                                // PABLO #501
-            myAdditionalToMove = 0;                                                                                                 // PABLO #501
-        } else {                                                                                                                    // PABLO #501
-            myAdditionalToMove->commmitAdditionalGeometryMoved(myOldAdditionalPosition + myAdditionalMovingReference, myUndoList);  // PABLO #501
-            myAdditionalToMove = 0;                                                                                                 // PABLO #501
-        }                                                                                                                           // PABLO #501
+        if(myAdditionalToMove->getLane()) {
+            myAdditionalToMove->commmitAdditionalGeometryMoved(myOldAdditionalPosition, myUndoList);
+            myAdditionalToMove = 0;
+        } else {
+            myAdditionalToMove->commmitAdditionalGeometryMoved(myOldAdditionalPosition + myAdditionalMovingReference, myUndoList);
+            myAdditionalToMove = 0;
+        }
     } else if (myMoveSelection) {
         // positions and shapes are already up to date but we must register with myUndoList
         myNet->finishMoveSelection(myUndoList);
@@ -780,9 +780,9 @@ GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {
             myAdditionalToMove->moveAdditionalGeometry(posOfMouseOverLane - myAdditionalMovingReference.x(), 0);
             myAdditionalMovingReference.set(posOfMouseOverLane, 0, 0);
         } else {
-            // Calculate offset movement                                                                                        // PABLO #501
-            Position offsetPosition = getPositionInformation() - myOldAdditionalPosition;                                       // PABLO #501
-            myAdditionalToMove->moveAdditionalGeometry(myOldAdditionalPosition + offsetPosition + myAdditionalMovingReference); // PABLO #501
+            // Calculate offset movement
+            Position offsetPosition = getPositionInformation() - myOldAdditionalPosition;
+            myAdditionalToMove->moveAdditionalGeometry(myOldAdditionalPosition + offsetPosition + myAdditionalMovingReference);
         }
         update();
     } else if (myMoveSelection) {

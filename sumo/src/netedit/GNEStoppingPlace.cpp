@@ -93,30 +93,30 @@ GNEStoppingPlace::getPositionInView() const {
 
 void
 GNEStoppingPlace::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
-    // Due a stoppingplace is placed over an lane ignore Warning of posy                                                                    // PABLO #501
-    UNUSED_PARAMETER(offsety);                                                                                                              // PABLO #501
-    // Move to Right if distance is positive, to left if distance is negative                                                               // PABLO #501
-    if (((offsetx > 0) &&                                                                                                                   // PABLO #501
-        ((myLane->getPositionRelativeToParametricLenght(myEndPos) + offsetx) < myLane->getLaneParametricLenght())) ||                       // PABLO #501
-        ((offsetx < 0) && ((myLane->getPositionRelativeToParametricLenght(myStartPos) + offsetx) > 0))) {                                   // PABLO #501
-        // change attribute                                                                                                                 // PABLO #501
-        myStartPos += offsetx;                                                                                                              // PABLO #501
-        myEndPos += offsetx;                                                                                                                // PABLO #501
-        // Update geometry                                                                                                                  // PABLO #501
-        updateGeometry();                                                                                                                   // PABLO #501
-    }                                                                                                                                       // PABLO #501
+    // Due a stoppingplace is placed over an lane ignore Warning of posy
+    UNUSED_PARAMETER(offsety);
+    // Move to Right if distance is positive, to left if distance is negative
+    if (((offsetx > 0) &&
+        ((myLane->getPositionRelativeToParametricLenght(myEndPos) + offsetx) < myLane->getLaneParametricLenght())) ||
+        ((offsetx < 0) && ((myLane->getPositionRelativeToParametricLenght(myStartPos) + offsetx) > 0))) {
+        // change attribute
+        myStartPos += offsetx;
+        myEndPos += offsetx;
+        // Update geometry
+        updateGeometry();
+    }
 }
 
 
-void                                                                                                                            // PABLO #501
-GNEStoppingPlace::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {                   // PABLO #501
-    undoList->p_begin("position of " + toString(getTag()));                                                                     // PABLO #501
-    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(getStartPosition()), true, toString(oldPosx)));  // PABLO #501
-    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(getEndPosition()), true, toString(oldPosy)));      // PABLO #501
-    undoList->p_end();                                                                                                          // PABLO #501
-    // Refresh element                                                                                                          // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                                                                                  // PABLO #501
-}                                                                                                                               // PABLO #501
+void
+GNEStoppingPlace::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {
+    undoList->p_begin("position of " + toString(getTag()));
+    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_STARTPOS, toString(getStartPosition()), true, toString(oldPosx)));
+    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(getEndPosition()), true, toString(oldPosy)));
+    undoList->p_end();
+    // Refresh element
+    myViewNet->getNet()->refreshElement(this);
+}
 
 
 GNELane*

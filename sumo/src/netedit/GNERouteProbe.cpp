@@ -125,8 +125,8 @@ GNERouteProbe::updateGeometry() {
     // Set block icon rotation, and using their rotation for logo
     setBlockIconRotation(firstLane);
 
-    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
+    // Refresh element (neccesary to avoid grabbing problems)
+    myViewNet->getNet()->refreshElement(this);
 }
 
 
@@ -146,10 +146,10 @@ GNERouteProbe::moveAdditionalGeometry(SUMOReal, SUMOReal) {
 }
 
 
-void                                                                                // PABLO #501
-GNERouteProbe::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {   // PABLO #501
-    // This additional cannot be moved                                              // PABLO #501
-}                                                                                   // PABLO #501
+void
+GNERouteProbe::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {
+    // This additional cannot be moved
+}
 
 void
 GNERouteProbe::writeAdditional(OutputDevice& device, const std::string&) {

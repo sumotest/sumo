@@ -95,10 +95,10 @@ GNECalibrator::moveAdditionalGeometry(SUMOReal, SUMOReal) {
 }
 
 
-void                                                                                // PABLO #501
-GNECalibrator::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {   // PABLO #501
-    // This additional cannot be moved                                              // PABLO #501
-}                                                                                   // PABLO #501
+void
+GNECalibrator::commmitAdditionalGeometryMoved(SUMOReal, SUMOReal, GNEUndoList*) {
+    // This additional cannot be moved
+}
 
 
 void
@@ -126,8 +126,8 @@ GNECalibrator::updateGeometry() {
         myShapeRotations.push_back(myEdge->getLanes().at(i)->getShape().rotationDegreeAtOffset(myEdge->getLanes().at(i)->getPositionRelativeToParametricLenght(myPosition.x())) * -1);
     }
 
-    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
+    // Refresh element (neccesary to avoid grabbing problems)
+    myViewNet->getNet()->refreshElement(this);
 }
 
 

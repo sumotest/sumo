@@ -142,8 +142,8 @@ GNEBusStop::updateGeometry() {
     // Set block icon rotation, and using their rotation for sign
     setBlockIconRotation(myLane);
 
-    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
+    // Refresh element (neccesary to avoid grabbing problems)
+    myViewNet->getNet()->refreshElement(this);
 }
 
 
@@ -158,9 +158,9 @@ GNEBusStop::writeAdditional(OutputDevice& device, const std::string&) {
     if (myLines.size() > 0) {
         device.writeAttr(SUMO_ATTR_LINES, getAttribute(SUMO_ATTR_LINES));
     }
-    if(myBlocked) {                                             // PABLO #501
-        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);   // PABLO #501
-    }                                                           // PABLO #501
+    if(myBlocked) {
+        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);
+    }
     // Close tag
     device.closeTag();
 }

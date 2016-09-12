@@ -142,10 +142,10 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_JOINED,           GNEApplicationWindow::onUpdNeedsNetwork), // same condition
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_POIS,             GNEApplicationWindow::onCmdSavePois),
     FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_POIS,             GNEApplicationWindow::onUpdNeedsNetwork), // same condition
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onCmdSaveAdditionals),                // PABLO #501
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onUpdNeedsNetwork), // same condition // PABLO #501
-    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS_AS,   GNEApplicationWindow::onCmdSaveAdditionalsAs),              // PABLO #501
-    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS_AS,   GNEApplicationWindow::onUpdNeedsNetwork), // same condition // PABLO #501
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onCmdSaveAdditionals),
+    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS,      GNEApplicationWindow::onUpdNeedsNetwork), // same condition
+    FXMAPFUNC(SEL_COMMAND,  MID_GNE_SAVE_ADDITIONALS_AS,   GNEApplicationWindow::onCmdSaveAdditionalsAs),
+    FXMAPFUNC(SEL_UPDATE,   MID_GNE_SAVE_ADDITIONALS_AS,   GNEApplicationWindow::onUpdNeedsNetwork), // same condition
 
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_ABORT,                 GNEApplicationWindow::onCmdAbort),
     FXMAPFUNC(SEL_COMMAND,  MID_GNE_HOTKEY_DEL,            GNEApplicationWindow::onCmdDel),
@@ -385,9 +385,9 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCommand(myFileMenu,
                       "Save &POIs As ...\t\tSave the POIs.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_POIS);
-    new FXMenuCommand(myFileMenu,                                                               // PABLO #501
-                      "Save &additionals\t\tSave additional elements.",                         // PABLO #501
-                      GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);       // PABLO #501
+    new FXMenuCommand(myFileMenu,
+                      "Save &additionals\t\tSave additional elements.",
+                      GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS);
     new FXMenuCommand(myFileMenu,
                       "Save a&dditionals As...\t\tSave additional elements.",
                       GUIIconSubSys::getIcon(ICON_SAVE), this, MID_GNE_SAVE_ADDITIONALS_AS);
@@ -847,15 +847,15 @@ GNEApplicationWindow::handleEvent_NetworkLoaded(GUIEvent* e) {
     }
     getApp()->endWaitCursor();
     myMessageWindow->registerMsgHandlers();
-    if(OptionsCont::getOptions().isSet("sumo-additionals-file")) {                                  // PABLO #5017
-        std::string additionalFile = OptionsCont::getOptions().getString("sumo-additionals-file");  // PABLO #5017
-        WRITE_MESSAGE("Loading additionals from '" + additionalFile + "'");                         // PABLO #5017
-        GNEAdditionalHandler additionalHandler(additionalFile, myNet->getViewNet());                // PABLO #5017
-        // Run parser                                                                               // PABLO #5017
-        if (!XMLSubSys::runParser(additionalHandler, additionalFile, false)) {                      // PABLO #5017
-            WRITE_ERROR("Loading of " + additionalFile + " failed.");                               // PABLO #5017
-        }                                                                                           // PABLO #5017
-    }                                                                                               // PABLO #5017
+    if(OptionsCont::getOptions().isSet("sumo-additionals-file")) {
+        std::string additionalFile = OptionsCont::getOptions().getString("sumo-additionals-file");
+        WRITE_MESSAGE("Loading additionals from '" + additionalFile + "'");
+        GNEAdditionalHandler additionalHandler(additionalFile, myNet->getViewNet());
+        // Run parser
+        if (!XMLSubSys::runParser(additionalHandler, additionalFile, false)) {
+            WRITE_ERROR("Loading of " + additionalFile + " failed.");
+        }
+    }
     update();
 }
 
@@ -978,18 +978,18 @@ GNEApplicationWindow::getDefaultCursor() {
 }
 
 
-void                                                                                // PABLO #501
-GNEApplicationWindow::loadOptionOnStartup() {                                       // PABLO #501
-    // get options                                                                  // PABLO #501
-    const OptionsCont& OC = OptionsCont::getOptions();                              // PABLO #501
-    // depending of the options, create a new net, or load a existent net depet     // PABLO #501
-    if(OC.getBool("new")) {                                                         // PABLO #501
-        loadConfigOrNet("", true, false, true, true);                               // PABLO #501
-    }                                                                               // PABLO #501
-    if(OC.isSet("sumo-net-file")) {                                                 // PABLO #501
-        loadConfigOrNet(OC.getString("sumo-net-file"), true, false, true, false);   // PABLO #501
-    }                                                                               // PABLO #501
-}                                                                                   // PABLO #501
+void
+GNEApplicationWindow::loadOptionOnStartup() {
+    // get options
+    const OptionsCont& OC = OptionsCont::getOptions();
+    // depending of the options, create a new net, or load a existent net depet
+    if(OC.getBool("new")) {
+        loadConfigOrNet("", true, false, true, true);
+    }
+    if(OC.isSet("sumo-net-file")) {
+        loadConfigOrNet(OC.getString("sumo-net-file"), true, false, true, false);
+    }
+}
 
 
 void
@@ -1221,35 +1221,35 @@ GNEApplicationWindow::onCmdSaveNetwork(FXObject*, FXSelector, void*) {
 }
 
 
-long                                                                                        // PABLO #501
-GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {                  // PABLO #501
-    OptionsCont& oc = OptionsCont::getOptions();                                            // PABLO #501
-    std::string filename;                                                                   // PABLO #501
-    if(!oc.isSet("additionals-output")) {                                                   // PABLO #501
-        FXString file = MFXUtils::getFilename2Write(this,                                   // PABLO #501
-                        "Select name of the additional file", ".xml",                       // PABLO #501
-                        GUIIconSubSys::getIcon(ICON_EMPTY),                                 // PABLO #501
-                        gCurrentFolder);                                                    // PABLO #501
-        if (file == "") {                                                                   // PABLO #501
-            return 1;                                                                       // PABLO #501
-        } else {                                                                            // PABLO #501
-            oc.set("additionals-output", file.text());                                      // PABLO #501
-            filename = file.text();                                                         // PABLO #501
-        }                                                                                   // PABLO #501
-    } else {                                                                                // PABLO #501
-        filename = oc.getString("additionals-output");                                      // PABLO #501
-    }                                                                                       // PABLO #501
-    getApp()->beginWaitCursor();                                                            // PABLO #501
-    try {                                                                                   // PABLO #501
-        myNet->saveAdditionals(filename);                                                   // PABLO #501
-        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");          // PABLO #501
-    } catch (IOError& e) {                                                                  // PABLO #501
-        FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());   // PABLO #501
-    }                                                                                       // PABLO #501
-    myMessageWindow->addSeparator();                                                        // PABLO #501
-    getApp()->endWaitCursor();                                                              // PABLO #501
-    return 1;                                                                               // PABLO #501
-}                                                                                           // PABLO #501
+long
+GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {
+    OptionsCont& oc = OptionsCont::getOptions();
+    std::string filename;
+    if(!oc.isSet("additionals-output")) {
+        FXString file = MFXUtils::getFilename2Write(this,
+                        "Select name of the additional file", ".xml",
+                        GUIIconSubSys::getIcon(ICON_EMPTY),
+                        gCurrentFolder);
+        if (file == "") {
+            return 1;
+        } else {
+            oc.set("additionals-output", file.text());
+            filename = file.text();
+        }
+    } else {
+        filename = oc.getString("additionals-output");
+    }
+    getApp()->beginWaitCursor();
+    try {
+        myNet->saveAdditionals(filename);
+        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");
+    } catch (IOError& e) {
+        FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());
+    }
+    myMessageWindow->addSeparator();
+    getApp()->endWaitCursor();
+    return 1;
+}
 
 
 long

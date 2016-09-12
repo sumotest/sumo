@@ -104,8 +104,8 @@ GNEDetectorExit::updateGeometry() {
     // Update parent geometry
     myAdditionalSetParent->updateGeometry();
 
-    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
+    // Refresh element (neccesary to avoid grabbing problems)
+    myViewNet->getNet()->refreshElement(this);
 }
 
 
@@ -121,9 +121,9 @@ GNEDetectorExit::writeAdditional(OutputDevice& device, const std::string&) {
     device.openTag(getTag());
     device.writeAttr(SUMO_ATTR_LANE, myLane->getID());
     device.writeAttr(SUMO_ATTR_POSITION, myPosition.x());
-    if(myBlocked) {                                             // PABLO #501
-        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);   // PABLO #501
-    }                                                           // PABLO #501
+    if(myBlocked) {
+        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);
+    }
     // Close tag
     device.closeTag();
 }

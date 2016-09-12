@@ -89,8 +89,8 @@ public:
     /// @brief detaches the tool/menu bar
     virtual void detach();
 
-    /// @brief load net on startup  // PABLO #501
-    void loadOptionOnStartup();     // PABLO #501
+    /// @brief load net on startup
+    void loadOptionOnStartup();
 
     /// @brief build dependent
     void dependentBuild();
@@ -148,8 +148,8 @@ public:
     /// @brief called when the command/FXCall save additionals is executed
     long onCmdSaveAdditionals(FXObject*, FXSelector, void*);
 
-    /// @brief called when the command/FXCall save additionals as is executed   // PABLO #501
-    long onCmdSaveAdditionalsAs(FXObject*, FXSelector, void*);                  // PABLO #501
+    /// @brief called when the command/FXCall save additionals as is executed
+    long onCmdSaveAdditionalsAs(FXObject*, FXSelector, void*);
 
     /// @brief called when the update/FXCall save network is executed
     long onUpdSaveNetwork(FXObject*, FXSelector, void*);

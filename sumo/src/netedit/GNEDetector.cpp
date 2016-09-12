@@ -81,33 +81,33 @@ GNEDetector::~GNEDetector() {
 
 void
 GNEDetector::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
-    // Due a detector is placed over an lane ignore Warning of posy                                                                     // PABLO #501
-    UNUSED_PARAMETER(offsety);                                                                                                          // PABLO #501
-    // declare start and end positions                                                                                                  // PABLO #501
-    SUMOReal startPos = myPosition.x();                                                                                                 // PABLO #501
-    SUMOReal endPos = 0;                                                                                                                // PABLO #501
-    // set endPos if additional has the attribute lenght                                                                                // PABLO #501
-    if(GNEAttributeCarrier::hasAttribute(getTag(), SUMO_ATTR_LENGTH)) {                                                                 // PABLO #501
-        endPos = startPos + GNEAttributeCarrier::parse<SUMOReal>(getAttribute(SUMO_ATTR_LENGTH));                                       // PABLO #501
-    }                                                                                                                                   // PABLO #501
-    // Move to Right if distance is positive, to left if distance is negative                                                           // PABLO #501
-    if (((offsetx > 0) && ((endPos + offsetx) < myLane->getLaneShapeLenght())) || ((offsetx < 0) && ((startPos + offsetx) > 0))) {      // PABLO #501
-        // change attribute                                                                                                             // PABLO #501
-        myPosition.set(myPosition.x() + offsetx, 0);                                                                                    // PABLO #501
-        // Update geometry                                                                                                              // PABLO #501
-        updateGeometry();                                                                                                               // PABLO #501
-    }                                                                                                                                   // PABLO #501
+    // Due a detector is placed over an lane ignore Warning of posy
+    UNUSED_PARAMETER(offsety);
+    // declare start and end positions
+    SUMOReal startPos = myPosition.x();
+    SUMOReal endPos = 0;
+    // set endPos if additional has the attribute lenght
+    if(GNEAttributeCarrier::hasAttribute(getTag(), SUMO_ATTR_LENGTH)) {
+        endPos = startPos + GNEAttributeCarrier::parse<SUMOReal>(getAttribute(SUMO_ATTR_LENGTH));
+    }
+    // Move to Right if distance is positive, to left if distance is negative
+    if (((offsetx > 0) && ((endPos + offsetx) < myLane->getLaneShapeLenght())) || ((offsetx < 0) && ((startPos + offsetx) > 0))) {
+        // change attribute
+        myPosition.set(myPosition.x() + offsetx, 0);
+        // Update geometry
+        updateGeometry();
+    }
 }
 
 
-void                                                                                                                        // PABLO #501
-GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal, GNEUndoList* undoList) {                            // PABLO #501
-    undoList->p_begin("position of " + toString(getTag()));                                                                 // PABLO #501
-    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x()), true, toString(oldPosx)));  // PABLO #501
-    undoList->p_end();                                                                                                      // PABLO #501
-    // Refresh element                                                                                                      // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                                                                              // PABLO #501
-}                                                                                                                           // PABLO #501
+void
+GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal, GNEUndoList* undoList) {
+    undoList->p_begin("position of " + toString(getTag()));
+    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x()), true, toString(oldPosx)));
+    undoList->p_end();
+    // Refresh element
+    myViewNet->getNet()->refreshElement(this);
+}
 
 
 GNELane*

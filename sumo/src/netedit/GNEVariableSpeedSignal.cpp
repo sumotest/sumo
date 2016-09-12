@@ -106,8 +106,8 @@ GNEVariableSpeedSignal::updateGeometry() {
     // Update connections
     updateConnections();
 
-    // Refresh element (neccesary to avoid grabbing problems)   // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                  // PABLO #501
+    // Refresh element (neccesary to avoid grabbing problems)
+    myViewNet->getNet()->refreshElement(this);
 }
 
 
@@ -125,20 +125,20 @@ GNEVariableSpeedSignal::openAdditionalDialog() {
 
 void
 GNEVariableSpeedSignal::moveAdditionalGeometry(SUMOReal offsetx, SUMOReal offsety) {
-    // change Position                          // PABLO #501
-    myPosition = Position(offsetx, offsety);    // PABLO #501
-    updateGeometry();                           // PABLO #501
+    // change Position
+    myPosition = Position(offsetx, offsety);
+    updateGeometry();
 }
 
 
-void                                                                                                                                        // PABLO #501
-GNEVariableSpeedSignal::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {                         // PABLO #501
-    undoList->p_begin("position of " + toString(getTag()));                                                                                 // PABLO #501
-    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition), true, toString(Position(oldPosx, oldPosy))));   // PABLO #501
-    undoList->p_end();                                                                                                                      // PABLO #501
-    // Refresh element                                                                                                                      // PABLO #501
-    myViewNet->getNet()->refreshElement(this);                                                                                              // PABLO #501
-}                                                                                                                                           // PABLO #501
+void
+GNEVariableSpeedSignal::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, GNEUndoList* undoList) {
+    undoList->p_begin("position of " + toString(getTag()));
+    undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition), true, toString(Position(oldPosx, oldPosy))));
+    undoList->p_end();
+    // Refresh element
+    myViewNet->getNet()->refreshElement(this);
+}
 
 
 void
@@ -179,9 +179,9 @@ GNEVariableSpeedSignal::writeAdditional(OutputDevice& device, const std::string&
             device.closeTag();
         }
     }
-    if(myBlocked) {                                             // PABLO #501
-        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);   // PABLO #501
-    }                                                           // PABLO #501
+    if(myBlocked) {
+        device.writeAttr(GNE_ATTR_BLOCK_MOVEMENT, myBlocked);
+    }
     // Close tag
     device.closeTag();
 }

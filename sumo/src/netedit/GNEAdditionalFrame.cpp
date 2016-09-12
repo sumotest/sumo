@@ -239,23 +239,23 @@ GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView
         SUMOReal positionOfTheMouseOverEdge = pointed_edge->getLanes().at(0)->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         // If element has a StartPosition and EndPosition over edge, extract attributes
         if (GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
-            SUMOReal startPos = setStartPosition(positionOfTheMouseOverEdge, myEditorParameters->getLenght());                                                                  // PABLO #501
-            SUMOReal endPos = setEndPosition(pointed_edge->getLanes().at(0)->getLaneShapeLenght(), positionOfTheMouseOverEdge, myEditorParameters->getLenght());                // PABLO #501
-            // Only set start position if are valid (!= -1)                                                                                                                     // PABLO #501
-            if(startPos != -1) {                                                                                                                                                // PABLO #501
-                valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);                                                                                                       // PABLO #501
-            } else {                                                                                                                                                            // PABLO #501
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid"); // PABLO #501
-                return false;                                                                                                                                                   // PABLO #501
-            }                                                                                                                                                                   // PABLO #501
-            // Only set end position if are valid (!= -1)                                                                                                                       // PABLO #501
-            if(endPos != -1) {                                                                                                                                                  // PABLO #501
-                valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);                                                                                                           // PABLO #501
-            } else {                                                                                                                                                            // PABLO #501
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");   // PABLO #501
-                return false;                                                                                                                                                   // PABLO #501
-            }                                                                                                                                                                   // PABLO #501
-        }                                                                                                                                                                       // PABLO #501
+            SUMOReal startPos = setStartPosition(positionOfTheMouseOverEdge, myEditorParameters->getLenght());
+            SUMOReal endPos = setEndPosition(pointed_edge->getLanes().at(0)->getLaneShapeLenght(), positionOfTheMouseOverEdge, myEditorParameters->getLenght());
+            // Only set start position if are valid (!= -1)
+            if(startPos != -1) {
+                valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);
+            } else {
+                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid");
+                return false;
+            }
+            // Only set end position if are valid (!= -1)
+            if(endPos != -1) {
+                valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);
+            } else {
+                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");
+                return false;
+            }
+        }
         // Extract position of lane
         valuesOfElement[SUMO_ATTR_POSITION] = toString(positionOfTheMouseOverEdge);
     } else if (pointed_lane) {
@@ -263,23 +263,23 @@ GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView
         SUMOReal positionOfTheMouseOverLane = pointed_lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         // If element has a StartPosition and EndPosition over lane, extract attributes
         if (GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
-            SUMOReal startPos = setStartPosition(positionOfTheMouseOverLane, myEditorParameters->getLenght());                                                                  // PABLO #501
-            SUMOReal endPos = setEndPosition(pointed_lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameters->getLenght());                                  // PABLO #501
-            // Only set start position if are valid (!= -1)                                                                                                                     // PABLO #501
-            if(startPos != -1) {                                                                                                                                                // PABLO #501
-                valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);                                                                                                       // PABLO #501
-            } else {                                                                                                                                                            // PABLO #501
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid"); // PABLO #501
-                return false;                                                                                                                                                   // PABLO #501
-            }                                                                                                                                                                   // PABLO #501
-            // Only set end position if are valid (!= -1)                                                                                                                       // PABLO #501
-            if(endPos != -1) {                                                                                                                                                  // PABLO #501
-                valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);                                                                                                           // PABLO #501
-            } else {                                                                                                                                                            // PABLO #501
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");   // PABLO #501
-                return false;                                                                                                                                                   // PABLO #501
-            }                                                                                                                                                                   // PABLO #501
-        }                                                                                                                                                                       // PABLO #501
+            SUMOReal startPos = setStartPosition(positionOfTheMouseOverLane, myEditorParameters->getLenght());
+            SUMOReal endPos = setEndPosition(pointed_lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameters->getLenght());
+            // Only set start position if are valid (!= -1)
+            if(startPos != -1) {
+                valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);
+            } else {
+                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid");
+                return false;
+            }
+            // Only set end position if are valid (!= -1)
+            if(endPos != -1) {
+                valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);
+            } else {
+                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");
+                return false;
+            }
+        }
         // Extract position of lane
         valuesOfElement[SUMO_ATTR_POSITION] = toString(positionOfTheMouseOverLane);
     } else {

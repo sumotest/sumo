@@ -1135,16 +1135,16 @@ GNENet::getShapeContainer() {
 }
 
 
-void                                                                        // PABLO #5017
-GNENet::setAdditionalsFile(const std::string &additionalFile) {             // PABLO #5017
-    OptionsCont::getOptions().set("sumo-additionals-file", additionalFile); // PABLO #5017
-}                                                                           // PABLO #5017
+void
+GNENet::setAdditionalsFile(const std::string &additionalFile) {
+    OptionsCont::getOptions().set("sumo-additionals-file", additionalFile);
+}
 
 
-void                                                                            // PABLO #5017
-GNENet::setAdditionalsOutputFile(const std::string &additionalOutputFile) {     // PABLO #5017
-    OptionsCont::getOptions().set("additionals-output", additionalOutputFile);  // PABLO #5017
-}                                                                               // PABLO #5017
+void
+GNENet::setAdditionalsOutputFile(const std::string &additionalOutputFile) {
+    OptionsCont::getOptions().set("additionals-output", additionalOutputFile);
+}
 
 
 void

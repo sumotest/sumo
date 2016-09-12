@@ -150,15 +150,15 @@ GNELoadThread::run() {
                 net = new GNENet(netBuilder);
             }
 
-            // enable load additionals after creation of net if was specified in the command line   // PABLO #501
-            if(myAdditionalFile != "") {                                                            // PABLO #501
-                net->setAdditionalsFile(myAdditionalFile);                                          // PABLO #501
-            }                                                                                       // PABLO #501
+            // enable load additionals after creation of net if was specified in the command line
+            if(myAdditionalFile != "") {
+                net->setAdditionalsFile(myAdditionalFile);
+            }
 
-            // Set additionals output file                                                          // PABLO #501
-            if(myAdditionalOutputFile != "") {                                                      // PABLO #501
-                net->setAdditionalsOutputFile(myAdditionalOutputFile);                              // PABLO #501
-            }                                                                                       // PABLO #501
+            // Set additionals output file
+            if(myAdditionalOutputFile != "") {
+                net->setAdditionalsOutputFile(myAdditionalOutputFile);
+            }
         } catch (ProcessError& e) {
             if (std::string(e.what()) != std::string("Process Error") && std::string(e.what()) != std::string("")) {
                 WRITE_ERROR(e.what());
@@ -217,8 +217,8 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.doRegister("new", new Option_Bool(false)); // !!!
     oc.addDescription("new", "Input", "Start with a new network");
 
-    oc.doRegister("sumo-additionals-file", new Option_String());                // PABLO #501
-    oc.addDescription("sumo-additionals-file", "Input", "load additionals");    // PABLO #501
+    oc.doRegister("sumo-additionals-file", new Option_String());
+    oc.addDescription("sumo-additionals-file", "Input", "load additionals");
 
     oc.doRegister("disable-laneIcons", new Option_Bool(false));
     oc.addDescription("disable-laneIcons", "Visualisation", "Disable icons of special lanes");
@@ -235,8 +235,8 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.doRegister("window-size", new Option_String());
     oc.addDescription("window-size", "Visualisation", "Create initial window with the given x,y size");
 
-    oc.doRegister("additionals-output", new Option_String());                                           // PABLO #501
-    oc.addDescription("additionals-output", "Output", "default value for additionals output file");     // PABLO #501
+    oc.doRegister("additionals-output", new Option_String());
+    oc.addDescription("additionals-output", "Output", "default value for additionals output file");
 
     SystemFrame::addReportOptions(oc); // this subtopic is filled here, too
 
@@ -287,13 +287,13 @@ GNELoadThread::loadConfigOrNet(const std::string& file, bool isNet, bool options
     myFile = file;
     myLoadNet = isNet;
 
-    const OptionsCont& OC = OptionsCont::getOptions();                  // PABLO #501
-    if(OC.isSet("sumo-additionals-file")) {                             // PABLO #501
-        myAdditionalFile = OC.getString("sumo-additionals-file");       // PABLO #501
-    }                                                                   // PABLO #501
-    if(OC.isSet("additionals-output")) {                                // PABLO #501
-        myAdditionalOutputFile = OC.getString("additionals-output");    // PABLO #501
-    }                                                                   // PABLO #501
+    const OptionsCont& OC = OptionsCont::getOptions();
+    if(OC.isSet("sumo-additionals-file")) {
+        myAdditionalFile = OC.getString("sumo-additionals-file");
+    }
+    if(OC.isSet("additionals-output")) {
+        myAdditionalOutputFile = OC.getString("additionals-output");
+    }
 
     if (myFile != "") {
         OptionsIO::setArgs(0, 0);
