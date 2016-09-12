@@ -285,20 +285,31 @@ void
 GNEConnection::drawGL(const GUIVisualizationSettings& s) const {
     // Check if connection must be drawed
     if(myDrawConnection && (myNet->getViewNet()->showAttrConnection())) {
+        // Push draw matrix 1
         glPushMatrix();
+        // Push name
         glPushName(getGlID());
+        // Traslate matrix
         glTranslated(0, 0, GLO_JUNCTION + 0.1); // must draw on top of junction
-        
-        // Set color depending of the link state
-        GLHelper::setColor(GNEInternalLane::colorForLinksState(getLinkState()));
-        // draw lane
-        // check whether it is not too small
+        // Set color
+        if (gSelected.isSelected(getType(), getGlID()) && s.junctionColorer.getActive() != 1) {
+            // override with special colors (unless the color scheme is based on selection)
+            GLHelper::setColor(GNENet::selectedConnectionColor);
+        } else {
+            // Set color depending of the link state
+            GLHelper::setColor(GNEInternalLane::colorForLinksState(getLinkState()));
+        }
+        // draw connection checking whether it is not too small
         if (s.scale < 1.) {
+            // If it's small, dra a simple line
             GLHelper::drawLine(myShape);
         } else {
+            // draw a list of lines
             GLHelper::drawBoxLines(myShape, myShapeRotations, myShapeLengths, 0.2);
         }
+        // Pop name
         glPopName();
+        // Pop draw matrix 1
         glPopMatrix();
     }
 }

@@ -217,6 +217,10 @@ GNESelectorFrame::onCmdInvert(FXObject*, FXSelector, void*) {
     for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {
         gSelected.toggleSelection(*it);
     }
+    ids = myViewNet->getNet()->getGlIDs(GLO_CONNECTION);                                // PABLO #2067
+    for (std::set<GUIGlID>::const_iterator it = ids.begin(); it != ids.end(); it++) {   // PABLO #2067
+        gSelected.toggleSelection(*it);                                                 // PABLO #2067
+    }                                                                                   // PABLO #2067
     myViewNet->update();
     return 1;
 }
@@ -366,6 +370,7 @@ GNESelectorFrame::getStats() const {
            toString(gSelected.getSelected(GLO_JUNCTION).size()) + " Junctions\n" +
            toString(gSelected.getSelected(GLO_EDGE).size()) + " Edges\n" +
            toString(gSelected.getSelected(GLO_LANE).size()) + " Lanes\n" +
+           toString(gSelected.getSelected(GLO_CONNECTION).size()) + " Connections\n" +    // PABLO #2067
            toString(gSelected.getSelected(GLO_ADDITIONAL).size()) + " Additionals\n";
 }
 

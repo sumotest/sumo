@@ -98,6 +98,9 @@ public:
     /// @brief color of selected lane
     static const RGBColor selectedLaneColor;
 
+    /// @brief color of selected connection         // PABLO #2067
+    static const RGBColor selectedConnectionColor;  // PABLO #2067
+
     /**@brief Constructor
      * @param[in] netbuilder the netbuilder which may already have been filled
      * GNENet becomes responsible for cleaning this up

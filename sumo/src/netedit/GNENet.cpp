@@ -89,6 +89,7 @@
 // ===========================================================================
 const RGBColor GNENet::selectionColor(0, 0, 204, 255);
 const RGBColor GNENet::selectedLaneColor(0, 0, 128, 255);
+const RGBColor GNENet::selectedConnectionColor(0, 0, 100, 255);  // PABLO #2067
 const SUMOReal GNENet::Z_INITIALIZED = 1;
 
 // ===========================================================================
@@ -833,6 +834,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             knownTypes.insert(GLO_LANE);
             // knownTypes.insert(GLO_TLLOGIC); makes no sense to include them
             knownTypes.insert(GLO_ADDITIONAL);
+            knownTypes.insert(GLO_CONNECTION);  // PABLO #2067
             for (std::set<GUIGlObjectType>::const_iterator it = knownTypes.begin(); it != knownTypes.end(); it++) {
                 const std::set<GUIGlID> tmp = getGlIDs(*it);
                 result.insert(tmp.begin(), tmp.end());
@@ -859,8 +861,7 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             break;
         }
         case GLO_TLLOGIC: {
-            // return all junctions which have a traffic light (we do not
-            // have a GUIGlObject for each traffic light)
+            // return all junctions which have a traffic light (we do not have a GUIGlObject for each traffic light)
             for (GNEJunctions::const_iterator it = myJunctions.begin(); it != myJunctions.end(); it++) {
                 if (it->second->getNBNode()->isTLControlled()) {
                     result.insert(it->second->getGlID());
@@ -869,10 +870,24 @@ GNENet::getGlIDs(GUIGlObjectType type) {
             break;
         }
         case GLO_ADDITIONAL: {
+            // Iterate over all additionals of net
             for (GNEAdditionals::iterator it = myAdditionals.begin(); it != myAdditionals.end(); it++) {
+                // Insert every additional in result
                 result.insert(it->second->getGlID());
             }
             break;
+        }
+        case GLO_CONNECTION: {                                                                                              // PABLO #2067
+            for (GNEEdges::const_iterator i = myEdges.begin(); i != myEdges.end(); i++) {                                   // PABLO #2067
+                // Get connections of edge                                                                                  // PABLO #2067
+                const std::vector<GNEConnection*>& connections = i->second->getGNEConnections();                            // PABLO #2067
+                // Iterate over connections                                                                                 // PABLO #2067
+                for (std::vector<GNEConnection*>::const_iterator j = connections.begin(); j != connections.end(); j++) {    // PABLO #2067
+                    // Insert every connection of edge it in result                                                         // PABLO #2067
+                    result.insert((*j)->getGlID());                                                                         // PABLO #2067
+                }                                                                                                           // PABLO #2067
+            }                                                                                                               // PABLO #2067
+            break;                                                                                                          // PABLO #2067
         }
         default: // add other types once we know them
             break;
