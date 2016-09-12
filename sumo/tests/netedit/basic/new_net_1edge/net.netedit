@@ -1,39 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Fri 29 Jul 2016 01:12:55 PM CEST by Netedit Version dev-SVN-r21260
-<?xml version="1.0" encoding="UTF-8"?>
-
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netedit.exeConfiguration.xsd">
-
-    <input>
-        <new value="true"/>
-    </input>
-
-    <output>
-        <output-file value="net.net.xml"/>
-    </output>
-
-    <processing>
-        <no-turnarounds value="true"/>
-        <offset.disable-normalization value="true"/>
-    </processing>
-
-    <visualisation>
-        <window-size value="800,600"/>
-    </visualisation>
-
-</configuration>
--->
 
 <net version="0.27" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
-    <location netOffset="0.00,0.00" convBoundary="-18.41,45.91,72.50,45.91" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
+    <location netOffset="0.00,0.00" convBoundary="-2.95,42.95,87.95,42.95" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
 
     <edge id="gneE0" from="gneJ0" to="gneJ1" priority="1">
-        <lane id="gneE0_0" index="0" speed="13.89" length="90.91" shape="-18.41,44.26 72.50,44.26"/>
+        <lane id="gneE0_0" index="0" speed="13.89" length="90.91" shape="-2.95,41.30 87.95,41.30"/>
     </edge>
 
-    <junction id="gneJ0" type="unregulated" x="-18.41" y="45.91" incLanes="" intLanes="" shape="-18.41,45.86 -18.41,42.66"/>
-    <junction id="gneJ1" type="unregulated" x="72.50" y="45.91" incLanes="gneE0_0" intLanes="" shape="72.50,42.66 72.50,45.86"/>
+    <junction id="gneJ0" type="unregulated" x="-2.95" y="42.95" incLanes="" intLanes="" shape="-2.95,42.90 -2.95,39.70"/>
+    <junction id="gneJ1" type="unregulated" x="87.95" y="42.95" incLanes="gneE0_0" intLanes="" shape="87.95,39.70 87.95,42.90"/>
 
 </net>
