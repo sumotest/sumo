@@ -189,19 +189,27 @@ MSLCM_LC2013::wantsChange(
 
 SUMOReal
 MSLCM_LC2013::patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOReal max, const MSCFModel& cfModel) {
-    const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
 
 #ifdef DEBUG_PATCH_SPEED
     if (DEBUG_COND) {
-        const std::string patched = (wanted != newSpeed ? " patched=" + toString(newSpeed) : "");
-        std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
+        std::cout << "\nPATCH_SPEED\n" 
+                  << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                   << " veh=" << myVehicle.getID()
                   << " lane=" << myVehicle.getLane()->getID()
                   << " pos=" << myVehicle.getPositionOnLane()
                   << " v=" << myVehicle.getSpeed()
-                  << " wanted=" << wanted
-                  << patched
-                  << "\n\n";
+                  << " wanted=" << wanted<< "\n";
+    }
+#endif
+
+    const SUMOReal newSpeed = _patchSpeed(min, wanted, max, cfModel);
+
+
+#ifdef DEBUG_PATCH_SPEED
+    if (DEBUG_COND) {
+        const std::string patched = (wanted != newSpeed ? " patched=" + toString(newSpeed) : "");
+        std::cout << patched
+                  << "\n";
     }
 #endif
 
@@ -214,7 +222,10 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     int state = myOwnState;
 #ifdef DEBUG_PATCH_SPEED
     if (DEBUG_COND) {
-        std::cout << SIMTIME << " patchSpeed state=" << state << " myVSafes=" << toString(myVSafes) << "\n";
+        std::cout << SIMTIME << " patchSpeed state=" << state << " myVSafes=" << toString(myVSafes)
+            << " \nv=" << myVehicle.getSpeed()
+            << " min=" << min
+            << " wanted=" << wanted<< std::endl;
     }
 #endif
     // letting vehicles merge in at the end of the lane in case of counter-lane change, step#2
@@ -417,7 +428,8 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
     }
 #ifdef DEBUG_INFORMER
     if (DEBUG_COND) {
-        std::cout << " informLeader speed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
+        std::cout << "\nINFORM_LEADER"
+            << "\nspeed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
     }
 #endif
 
@@ -438,13 +450,22 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                                        + nv->getCarFollowModel().getSecureGap( // save gap to follower
                                            nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel()));
 
+
+        SUMOReal overtakeTime;
+        if(dv > 0){
+            overtakeTime = overtakeDist/dv;
+        } else {
+            // -> set overtakeTime to something indicating impossibility of overtaking
+            overtakeTime = remainingSeconds + 1;
+        }
+
         if (dv < 0
                 // overtaking on the right on an uncongested highway is forbidden (noOvertakeLCLeft)
                 || (dir == LCA_MLEFT && !myVehicle.congested() && !myAllowOvertakingRight)
                 // not enough space to overtake? (we will start to brake when approaching a dead end)
                 || myLeftSpace - myLeadingBlockerLength - myVehicle.getCarFollowModel().brakeGap(myVehicle.getSpeed()) < overtakeDist
                 // not enough time to overtake?
-                || dv * remainingSeconds < overtakeDist) {
+                || remainingSeconds < overtakeTime) {
             // cannot overtake
             msgPass.informNeighLeader(new Info(-1, dir | LCA_AMBLOCKINGLEADER), &myVehicle);
             // slow down smoothly to follow leader
@@ -460,7 +481,10 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                               << " cannot overtake leader nv=" << nv->getID()
                               << " dv=" << dv
+                              << " overtakeDist=" << overtakeDist
                               << " remainingSeconds=" << remainingSeconds
+                              << " currentGap=" << neighLead.second
+                              << " secureGap=" << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel())
                               << " targetSpeed=" << targetSpeed
                               << " nextSpeed=" << nextSpeed
                               << "\n";
@@ -475,7 +499,9 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                               << " cannot overtake fast leader nv=" << nv->getID()
                               << " dv=" << dv
+                              << " overtakeDist=" << overtakeDist
                               << " remainingSeconds=" << remainingSeconds
+                              << " currentGap=" << neighLead.second
                               << " targetSpeed=" << targetSpeed
                               << "\n";
                 }
@@ -490,10 +516,10 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 std::cout << STEPS2TIME(MSNet::getInstance()->getCurrentTimeStep())
                           << " wants to overtake leader nv=" << nv->getID()
                           << " dv=" << dv
+                          << " overtakeDist=" << overtakeDist
                           << " remainingSeconds=" << remainingSeconds
                           << " currentGap=" << neighLead.second
                           << " secureGap=" << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel())
-                          << " overtakeDist=" << overtakeDist
                           << "\n";
             }
 #endif
@@ -583,6 +609,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                       << " nvNewSpeed1s=" << neighNewSpeed1s
                       << " deltaGap=" << dv
                       << " decelGap=" << decelGap
+                      << " gap=" << neighFollow.second
                       << " secGap=" << secureGap
                       << "\n";
         }

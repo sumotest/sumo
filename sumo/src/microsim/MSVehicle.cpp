@@ -1147,8 +1147,8 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
 
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) {
-        std::cout
-                << "\n\n"
+    std::cout
+    << "\nPLAN_MOVE\n"
                 << STEPS2TIME(t)
                 << " veh=" << getID()
                 << " lane=" << myLane->getID()
@@ -1346,7 +1346,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         bool setRequest = (v > 0 && !abortRequestAfterMinor) || (leavingCurrentIntersection);
 
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
-        const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed) - myState.mySpeed * cfModel.getHeadwayTime();
+        const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed, getCarFollowModel().getMaxDecel(),0.);
         if (yellowOrRed && seen >= brakeDist) {
             // the vehicle is able to brake in front of a yellow/red traffic light
             lfLinks.push_back(DriveProcessItem(*link, vLinkWait, vLinkWait, false, t + TIME2STEPS(seen / MAX2(vLinkWait, NUMERICAL_EPS)), vLinkWait, 0, 0, seen));
@@ -1561,6 +1561,15 @@ MSVehicle::executeMove() {
         int bla = 0;
     }
 #endif
+
+#ifdef DEBUG_EXEC_MOVE
+        if (DEBUG_COND) std::cout << "\nEXECUTE_MOVE\n"
+                    << SIMTIME
+                    << " veh=" << getID()
+                    << " speed=" << toString(getSpeed(), 24)
+                    << std::endl;
+#endif
+
     // get safe velocities from DriveProcessItems
     SUMOReal vSafe = 0; // maximum safe velocity
     SUMOReal vSafeZipper = std::numeric_limits<SUMOReal>::max(); // speed limit due to zipper merging
@@ -1594,7 +1603,7 @@ MSVehicle::executeMove() {
             const LinkState ls = link->getState();
             // vehicles should brake when running onto a yellow light if the distance allows to halt in front
             const bool yellow = ls == LINKSTATE_TL_YELLOW_MAJOR || ls == LINKSTATE_TL_YELLOW_MINOR;
-            const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed) - getCarFollowModel().getHeadwayTime() * myState.mySpeed;
+            const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed, getCarFollowModel().getMaxDecel(), 0.);
             if (yellow && ((*i).myDistance > brakeGap || myState.mySpeed < ACCEL2SPEED(getCarFollowModel().getMaxDecel()))) {
                 vSafe = (*i).myVLinkWait;
                 myHaveToWaitOnNextLink = true;
@@ -1848,6 +1857,7 @@ MSVehicle::executeMove() {
             WRITE_WARNING("Vehicle '" + getID() + "' performs emergency stop at the end of lane '" + myLane->getID()
                           + "'" + emergencyReason
                           + " (decel=" + toString(myAcceleration - myState.mySpeed)
+                          + ", offset = " + toString(myState.myPos - myLane->getLength())
                           + "), time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()) + ".");
             MSNet::getInstance()->getVehicleControl().registerEmergencyStop();
             myState.myPos = myLane->getLength();
@@ -2212,7 +2222,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
         // abort requests
         if (removalBegin != -1 && !(removalBegin == 0 && myLane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL)) {
             while (removalBegin < (int)(lfLinks.size())) {
-                const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed) - getCarFollowModel().getHeadwayTime() * myState.mySpeed;
+                const SUMOReal brakeGap = getCarFollowModel().brakeGap(myState.mySpeed, getCarFollowModel().getMaxDecel(),0.);
                 lfLinks[removalBegin].myVLinkPass = lfLinks[removalBegin].myVLinkWait;
                 if (lfLinks[removalBegin].myDistance >= brakeGap || (lfLinks[removalBegin].myDistance > 0 && myState.mySpeed < ACCEL2SPEED(getCarFollowModel().getMaxDecel()))) {
                     lfLinks[removalBegin].mySetRequest = false;
