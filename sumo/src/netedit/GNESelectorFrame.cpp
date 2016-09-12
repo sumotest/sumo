@@ -62,6 +62,7 @@
 // FOX callback mapping
 // ===========================================================================
 FXDEFMAP(GNESelectorFrame) GNESelectorFrameMap[] = {
+    FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_ELEMENTS,   GNESelectorFrame::onCmdSubset),     // PABLO #2067
     FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_LOAD,       GNESelectorFrame::onCmdLoad),
     FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_SAVE,       GNESelectorFrame::onCmdSave),
     FXMAPFUNC(SEL_COMMAND,  MID_CHOOSEN_INVERT,     GNESelectorFrame::onCmdInvert),
@@ -84,8 +85,8 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     mySetOperationTarget(mySetOperation),
     ALL_VCLASS_NAMES_MATCH_STRING("all " + joinToString(SumoVehicleClassStrings.getStrings(), " ")) {
     // selection modification mode
-    FXGroupBox* selBox = new FXGroupBox(myContentFrame, "Modification Mode",
-                                        GROUPBOX_NORMAL | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
+    FXGroupBox* selBox = new FXGroupBox(myContentFrame, "Modification Mode", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    // Create all options buttons
     new FXRadioButton(selBox, "add\t\tSelected objects are added to the previous selection",
                       &mySetOperationTarget, FXDataTarget::ID_OPTION + SET_ADD);
     new FXRadioButton(selBox, "remove\t\tSelected objects are removed from the previous selection",
@@ -94,64 +95,95 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
                       &mySetOperationTarget, FXDataTarget::ID_OPTION + SET_RESTRICT);
     new FXRadioButton(selBox, "replace\t\tReplace previous selection by the current selection",
                       &mySetOperationTarget, FXDataTarget::ID_OPTION + SET_REPLACE);
-
-    // selection by expression matching (match box)
-    FXGroupBox* matchBox = new FXGroupBox(myContentFrame, "Match Attribute",
-                                          GROUPBOX_NORMAL | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
-    myMatchTagBox = new FXListBox(matchBox, this, MID_GNE_SELMB_TAG);
-    const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
-    for (std::vector<SumoXMLTag>::const_iterator it = tags.begin(); it != tags.end(); it++) {
-        myMatchTagBox->appendItem(toString(*it).c_str());
-    }
-    myMatchTagBox->setCurrentItem(1); // edges
-    myMatchTagBox->setNumVisible(myMatchTagBox->getNumItems());
-    myMatchAttrBox = new FXListBox(matchBox);
-    onCmdSelMBTag(0, 0, 0);
-    myMatchAttrBox->setCurrentItem(3); // speed
-    myMatchString = new FXTextField(matchBox, 12, this, MID_GNE_SELMB_STRING, TEXTFIELD_NORMAL, 0, 0, 0, 0, 4, 2, 0, 2);
+    // Create groupBox for selection by expression matching (match box)                                                                 // PABLO #2067
+    FXGroupBox* elementBox = new FXGroupBox(myContentFrame, "type of element", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);   // PABLO #2067
+    // Create MatchTagBox for tags and fill it                                                                                          // PABLO #2067
+    mySetBox = new FXListBox(elementBox, this, MID_CHOOSEN_ELEMENTS, FRAME_GROOVE | LAYOUT_FILL_X);                                     // PABLO #2067
+    mySetBox->appendItem("Net Element");                                                                                                // PABLO #2067
+    mySetBox->appendItem("Additional");                                                                                                 // PABLO #2067
+    mySetBox->setNumVisible(mySetBox->getNumItems());                                                                                   // PABLO #2067
+    // Create groupBox fro selection by expression matching (match box)
+    FXGroupBox* matchBox = new FXGroupBox(myContentFrame, "Match Attribute", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    // Create MatchTagBox for tags
+    myMatchTagBox = new FXListBox(matchBox, this, MID_GNE_SELMB_TAG, FRAME_GROOVE | LAYOUT_FILL_X);
+    // Create listBox for Attributes
+    myMatchAttrBox = new FXListBox(matchBox, NULL, 0, FRAME_GROOVE | LAYOUT_FILL_X);
+    // Set netElements as default tag                                                                                                   // PABLO #2067
+    mySetBox->setCurrentItem(0);                                                                                                        // PABLO #2067
+    // Fill list of sub-items
+    onCmdSubset(0,0,0);
+    // Set speed as default attribute
+    myMatchAttrBox->setCurrentItem(3);
+    // Create TextField for Match string
+    myMatchString = new FXTextField(matchBox, 12, this, MID_GNE_SELMB_STRING, FRAME_THICK | LAYOUT_FILL_X);
+    // Set default value for Match string
     myMatchString->setText(">10.0");
+    // Create help button
     new FXButton(matchBox, "Help", 0, this, MID_HELP);
-
-    FXGroupBox* selSizeBox = new FXGroupBox(myContentFrame, "Visual Scaling",
-                                            GROUPBOX_NORMAL | FRAME_GROOVE | LAYOUT_FILL_X, 2, 0, 0, 0, 4, 2, 2, 2);
-    mySelectionScaling =
-        new FXRealSpinDial(selSizeBox, 7, this, MID_GNE_SELECT_SCALE,
-                           LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK | LAYOUT_FILL_Y);
+    // Create Groupbox for visual scalings
+    FXGroupBox* selSizeBox = new FXGroupBox(myContentFrame, "Visual Scaling", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    // Create spin button and configure it
+    mySelectionScaling = new FXRealSpinDial(selSizeBox, 7, this, MID_GNE_SELECT_SCALE, LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK | LAYOUT_FILL_Y);
     mySelectionScaling->setNumberFormat(1);
     mySelectionScaling->setIncrements(0.1, .5, 1);
     mySelectionScaling->setRange(1, 100);
     mySelectionScaling->setValue(1);
     mySelectionScaling->setHelpText("Enlarge selected objects");
-
-    // additional buttons
-    // new FXHorizontalSeparator(this,SEPARATOR_GROOVE|LAYOUT_FILL_X);
-    // "Clear List"
-    new FXButton(myContentFrame, "Clear\t\t", 0, this, MID_CHOOSEN_CLEAR,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
-    // "Invert"
-    new FXButton(myContentFrame, "Invert\t\t", 0, this, MID_CHOOSEN_INVERT,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
-    // "Save"
-    new FXButton(myContentFrame, "Save\t\tSave ids of currently selected objects to a file.", 0, this, MID_CHOOSEN_SAVE,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
-
-    // "Load"
-    new FXButton(myContentFrame, "Load\t\tLoad ids from a file according to the current modfication mode.", 0, this, MID_CHOOSEN_LOAD,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
-
-
-    // Selection Hint
-    new FXLabel(myContentFrame, "Hold <SHIFT> for\nrectangle selection.\nPress <DEL> to\ndelete selected items.", 0, JUSTIFY_LEFT);
+    // Create groupbox for additional buttons                                                                                                           // PABLO #2067
+    FXGroupBox* additionalButtons = new FXGroupBox(myContentFrame, "Operations for selections", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);  // PABLO #2067
+    // Create "Clear List" Button
+    new FXButton(additionalButtons, "Clear\t\t", 0, this, MID_CHOOSEN_CLEAR, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    // Create "Invert" Button
+    new FXButton(additionalButtons, "Invert\t\t", 0, this, MID_CHOOSEN_INVERT, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    // Create "Save" Button
+    new FXButton(additionalButtons, "Save\t\tSave ids of currently selected objects to a file.", 0, this, MID_CHOOSEN_SAVE, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    // Create "Load" Button
+    new FXButton(additionalButtons, "Load\t\tLoad ids from a file according to the current modfication mode.", 0, this, MID_CHOOSEN_LOAD, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    // Create groupbox for information about selections                                                                                         // PABLO #2067
+    FXGroupBox* selectionHintGroupBox = new FXGroupBox(myContentFrame, "Information", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);    // PABLO #2067
+    // Create Selection Hint
+    new FXLabel(selectionHintGroupBox, " - Hold <SHIFT> for \n   rectangle selection.\n - Press <DEL> to\n   delete selected items.", 0, JUSTIFY_LEFT);
 }
 
 
 GNESelectorFrame::~GNESelectorFrame() {
     gSelected.remove2Update();
 }
+
+
+long                                                                                                // PABLO #2067
+GNESelectorFrame::onCmdSubset(FXObject*, FXSelector, void*) {                                       // PABLO #2067
+    // Clear items of myMatchTagBox                                                                 // PABLO #2067
+    myMatchTagBox->clearItems();                                                                    // PABLO #2067
+    // Set items depending of current items                                                         // PABLO #2067
+    if(mySetBox->getCurrentItem() == 0) {                                                           // PABLO #2067
+        // If we want to work with net elementsn Get net Elements allowed tags                      // PABLO #2067
+        const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedNetElementTags();         // PABLO #2067
+        // iterate over tags                                                                        // PABLO #2067
+        for (std::vector<SumoXMLTag>::const_iterator it = tags.begin(); it != tags.end(); it++) {   // PABLO #2067
+            // Add trag to MatchTagBox                                                              // PABLO #2067
+            myMatchTagBox->appendItem(toString(*it).c_str());                                       // PABLO #2067
+        }                                                                                           // PABLO #2067
+        myMatchTagBox->setCurrentItem(1); // edges                                                  // PABLO #2067
+        myMatchTagBox->setNumVisible(myMatchTagBox->getNumItems());                                 // PABLO #2067
+        // Fill attributes with the current element type                                            // PABLO #2067
+        onCmdSelMBTag(0, 0, 0);                                                                     // PABLO #2067
+    } else  {                                                                                       // PABLO #2067
+        // If we want to work with additionals, get net additionals allowed tags                    // PABLO #2067
+        const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedAdditionalTags();         // PABLO #2067
+        // iterate over tags                                                                        // PABLO #2067
+        for (std::vector<SumoXMLTag>::const_iterator it = tags.begin(); it != tags.end(); it++) {   // PABLO #2067
+            // Add trag to MatchTagBox                                                              // PABLO #2067
+            myMatchTagBox->appendItem(toString(*it).c_str());                                       // PABLO #2067
+        }                                                                                           // PABLO #2067
+        myMatchTagBox->setCurrentItem(1); // busStops                                               // PABLO #2067
+        myMatchTagBox->setNumVisible(myMatchTagBox->getNumItems());                                 // PABLO #2067
+        // Fill attributes with the current element type                                            // PABLO #2067
+        onCmdSelMBTag(0, 0, 0);                                                                     // PABLO #2067
+    }                                                                                               // PABLO #2067
+    return 1;                                                                                       // PABLO #2067
+}                                                                                                   // PABLO #2067
+
 
 long
 GNESelectorFrame::onCmdLoad(FXObject*, FXSelector, void*) {

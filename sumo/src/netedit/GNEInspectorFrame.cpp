@@ -177,7 +177,7 @@ GNEInspectorFrame::hide() {
 
 void                                                                                                // PABLO #2067
 GNEInspectorFrame::inspect(GNEAttributeCarrier* AC, GNEAttributeCarrier* previousElement) {         // PABLO #2067
-    // Use the implementation of inspect for multiple AttributeCarriers to avoid repetition of code // PABLO #2067  
+    // Use the implementation of inspect for multiple AttributeCarriers to avoid repetition of code // PABLO #2067
     std::vector<GNEAttributeCarrier*> itemToInspect;                                                // PABLO #2067
     itemToInspect.push_back(AC);                                                                    // PABLO #2067
     inspect(itemToInspect, previousElement);                                                        // PABLO #2067
@@ -289,7 +289,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
                 }                                                                                                                                                                               // PABLO #2067
                 myGroupBoxForAttrConnections->show();                                                                                                                                           // PABLO #2067
             }                                                                                                                                                                                   // PABLO #2067
-        }                                                                                                                                                                                       // PABLO #2067                                                                                           
+        }                                                                                                                                                                                       // PABLO #2067
 
         // If attributes correspond to a lane                                                                                                                                                   // PABLO #2067
         if (dynamic_cast<GNELane*>(myACs.front())) {                                                                                                                                            // PABLO #2067

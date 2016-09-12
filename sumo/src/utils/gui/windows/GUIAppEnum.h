@@ -337,6 +337,8 @@ enum {
     /// @name GLChosenEditor - Dialog IDs
     //@{
 
+    /// set subset of elements  // PABLO #2067
+    MID_CHOOSEN_ELEMENTS,       // PABLO #2067
     /// Load set
     MID_CHOOSEN_LOAD,
     /// Save set
