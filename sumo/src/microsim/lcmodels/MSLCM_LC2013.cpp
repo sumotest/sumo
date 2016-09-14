@@ -85,16 +85,17 @@
 // ===========================================================================
 // debug defines
 // ===========================================================================
-#define DEBUG_PATCH_SPEED
-#define DEBUG_INFORMED
-#define DEBUG_INFORMER
+//#define DEBUG_PATCH_SPEED
+//#define DEBUG_INFORMED
+//#define DEBUG_INFORMER
 //#define DEBUG_CONSTRUCTOR
-#define DEBUG_WANTS_CHANGE
-#define DEBUG_SLOW_DOWN
+//#define DEBUG_WANTS_CHANGE
+//#define DEBUG_SLOW_DOWN
 //#define DEBUG_SAVE_BLOCKER_LENGTH
 
-//#define DEBUG_COND (myVehicle.getID() == "disabled")
-#define DEBUG_COND (myVehicle.getID() == "Pepoli_12_116")
+#define DEBUG_COND (myVehicle.getID() == "disabled")
+//#define DEBUG_COND (myVehicle.getID() == "XXI_Aprile_1_636" || myVehicle.getID() == "Pepoli_2_1194")
+//#define DEBUG_COND (myVehicle.getID() == "high.103")
 //#define DEBUG_COND (myVehicle.getID() == "needsHelp" || myVehicle.getID() == "speedAssist" || myVehicle.getID() == "overtaking")
 
 // ===========================================================================
@@ -226,7 +227,7 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
     if (DEBUG_COND) {
         std::cout 
 	<< "\n" << SIMTIME << " patchSpeed state=" << state << " myVSafes=" << toString(myVSafes)
-	<< " \nv=" << myVehicle.getSpeed()
+	<< " \nspeed=" << myVehicle.getSpeed()
         << " min=" << min
         << " wanted=" << wanted<< std::endl;
     }
@@ -322,7 +323,11 @@ MSLCM_LC2013::_patchSpeed(const SUMOReal min, const SUMOReal wanted, const SUMOR
                     std::cout << time << " veh=" << myVehicle.getID() << " LCA_BLOCKED_BY_LEADER (coop)\n";
                 }
 #endif
-                return (min + wanted) / (SUMOReal) 2.0;
+                if(wanted >= 0.){
+                    return (MAX2(0., min) + wanted) / (SUMOReal) 2.0;
+                } else {
+                    return wanted;
+                }
             }
             if ((state & LCA_BLOCKED_BY_FOLLOWER) != 0) {
 #ifdef DEBUG_PATCH_SPEED
@@ -855,9 +860,9 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                         nv->getSpeed(), plannedAccel, 0,
                         myVehicle.getMaxSpeedOnLane(), nv->getMaxSpeedOnLane());
 #ifdef DEBUG_INFORMER
-            if (DEBUG_COND) {
-                std::cout << "next_gap=" << next_gap << " ";
-            }
+                if (DEBUG_COND) {
+                    std::cout << "next_gap=" << next_gap << " ";
+                }
 #endif
                 vsafe1 = MAX2(neighNewSpeed,
                         nv->getCarFollowModel().followSpeed(nv, nv->getSpeed(),
@@ -883,12 +888,12 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                                         myCarFollowModel.getMaxDecel())));
                 assert(vsafe <= vsafe1);
 #ifdef DEBUG_INFORMER
-            if (DEBUG_COND) {
-                std::cout << "next_gap=" << next_gap
-                        << " vsafe1=" << vsafe1
-                        << " vsafe=" << vsafe
-                        << "\n";
-            }
+                if (DEBUG_COND) {
+                    std::cout << "next_gap=" << next_gap
+                            << " vsafe1=" << vsafe1
+                            << " vsafe=" << vsafe
+                            << "\n";
+                }
 #endif
             }
             msgPass.informNeighFollower(
@@ -952,7 +957,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 // XXX: The probability for that success would be larger if the slow down of the appropriate following vehicle
                 //      would take place without the immediate follower slowing down. We might consider to model reactions of
                 //      vehicles that are not immediate followers. (Leo) -> see ticket #2532
-            	vhelp = MAX2(neighNewSpeed, myVehicle.getSpeed() + HELP_OVERTAKE); // XXX: should this be HELP_OVERTAKE*TS? (otherwise it'd very dependent on the step size) (Leo)
+            	vhelp = MAX2(neighNewSpeed, myVehicle.getSpeed() + HELP_OVERTAKE);
 #ifdef DEBUG_INFORMER
             	if(DEBUG_COND){
             	    // NOTE: the condition labeled "VARIANT_22" seems to imply that this could as well concern the left follower?! (Leo)
@@ -1557,6 +1562,16 @@ MSLCM_LC2013::_wantsChange(
 
     // VARIANT_15
     if (roundaboutEdgesAhead > 1) {
+
+#ifdef DEBUG_WANTS_CHANGE
+        if (DEBUG_COND) {
+            std::cout << STEPS2TIME(currentTime)
+                      << " veh=" << myVehicle.getID()
+                      << " roundaboutEdgesAhead=" << roundaboutEdgesAhead
+                      << " myLeftSpace=" << myLeftSpace
+                      << "\n";
+        }
+#endif
         // try to use the inner lanes of a roundabout to increase throughput
         // unless we are approaching the exit
         if (lca == LCA_LEFT) {

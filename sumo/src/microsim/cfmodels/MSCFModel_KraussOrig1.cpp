@@ -39,6 +39,9 @@
 #include <utils/common/RandHelper.h>
 #include <microsim/MSGlobals.h>
 
+//#define DEBUG_EXECUTE_MOVE
+//#define DEBUG_COND (veh->getID()=="high.163")
+
 // ===========================================================================
 // method definitions
 // ===========================================================================
@@ -81,6 +84,16 @@ MSCFModel_KraussOrig1::moveHelper(MSVehicle* const veh, SUMOReal vPos) const {
     const SUMOReal vDawdle = MAX2(vMin, dawdle(vMax));
 
     SUMOReal vNext = veh->getLaneChangeModel().patchSpeed(vMin, vDawdle, vMax, *this);
+
+#ifdef DEBUG_EXECUTE_MOVE
+    if DEBUG_COND {
+        std::cout << "\nMOVE_HELPER\n"
+                << "veh '" << veh->getID() << "' vMin="<<vMin
+                << " vMax="<<vMax<<" vDawdle="<<vDawdle
+                << " vSafe"<< vSafe << " vNext="<< vNext
+                << "\n";
+    }
+#endif
 
     // (Leo) At this point vNext may also be negative indicating a stop within next step.
     // This would have resulted from a call to maximumSafeStopSpeed(), which does not

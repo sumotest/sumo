@@ -91,7 +91,7 @@
 //#define DEBUG_STOPS
 //#define DEBUG_BESTLANES
 #define DEBUG_COND (getID() == "disabled")
-//#define DEBUG_COND (getID() == "Pepoli_12_116")
+//#define DEBUG_COND (getID() == "high.103")
 //#define DEBUG_COND (getID() == "v0" || getID() == "v1")
 
 #define STOPPING_PLACE_OFFSET 0.5

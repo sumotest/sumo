@@ -193,6 +193,8 @@ MSCFModel_Wiedemann::emergency(SUMOReal /* dv */, SUMOReal /* dx */) const {
 }
 
 
+
+// XXX: This could be replaced by maximumSafeStopSpeed()
 SUMOReal
 MSCFModel_Wiedemann::krauss_vsafe(SUMOReal gap, SUMOReal predSpeed) const {
     if (predSpeed == 0 && gap < 0.01) {
