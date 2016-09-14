@@ -275,7 +275,13 @@ public:
         const SUMOReal followDecel = MIN2(myDecel, leaderMaxDecel);
         // XXX: returning 0 can be wrong if the leader is slower than the follower! (Leo)
         SUMOReal secureGap = MAX2((SUMOReal) 0, brakeGap(speed, followDecel, myHeadwayTime) - brakeGap(leaderSpeed, leaderMaxDecel, 0));
+
         return secureGap;
+
+        // XXX: this should fix #2548:
+        //        const SUMOReal maxDecel = MAX2(myDecel, leaderMaxDecel);
+        //        SUMOReal secureGap = MAX2((SUMOReal) 0, brakeGap(speed, myDecel, myHeadwayTime) - brakeGap(leaderSpeed, maxDecel, 0));
+
 
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu Sep  8 11:35:51 2016 by SUMO Version dev-SVN-r21424
+<!-- generated on Tue Sep 13 12:06:36 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -27,7 +27,7 @@
 -->
 
 <detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e1_file.xsd">
-   <interval begin="0.00" end="900.00" id="end2_0" nVehContrib="611" flow="2444.00" occupancy="6.57" speed="31.26" length="3.00" nVehEntered="611"/>
-   <interval begin="900.00" end="1800.00" id="end2_0" nVehContrib="692" flow="2768.00" occupancy="7.68" speed="30.28" length="3.00" nVehEntered="692"/>
-   <interval begin="1800.00" end="1905.00" id="end2_0" nVehContrib="65" flow="2228.57" occupancy="5.88" speed="31.73" length="3.00" nVehEntered="65"/>
+   <interval begin="0.00" end="900.00" id="end2_0" nVehContrib="739" flow="2956.00" occupancy="8.67" speed="31.55" length="3.00" nVehEntered="739"/>
+   <interval begin="900.00" end="1800.00" id="end2_0" nVehContrib="828" flow="3312.00" occupancy="9.75" speed="31.04" length="3.00" nVehEntered="828"/>
+   <interval begin="1800.00" end="1899.00" id="end2_0" nVehContrib="89" flow="3236.36" occupancy="8.72" speed="37.36" length="3.00" nVehEntered="89"/>
 </detector>

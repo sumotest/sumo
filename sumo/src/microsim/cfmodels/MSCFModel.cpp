@@ -306,7 +306,8 @@ MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, 
         // NOTE: this assumes that the accelerations a1 and a2 are constant over the next
         //       followerBreakTime seconds (if no vehicle stops before or reaches vMax)
         std::list<SUMOReal> l;
-        l.push_back(t1);l.push_back(t2);l.push_back(t3);l.push_back(t4);l.sort();
+        l.push_back(t1);l.push_back(t2);l.push_back(t3);l.push_back(t4);
+        l.sort();
         std::list<SUMOReal>::const_iterator i;
         SUMOReal tLast = 0.;
         for(i=l.begin(); i!=l.end(); ++i) {
@@ -320,10 +321,13 @@ MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, 
             if(*i == t1 || *i == t3){
                 // ego veh reached velocity bound
                 a1 = 0.;
-            } else if(*i == t2 || *i == t4) {
+            }
+
+            if(*i == t2 || *i == t4) {
                 // veh2 reached velocity bound
                 a2 = 0.;
             }
+
             tLast = MIN2(*i, duration);
             if(tLast == duration){
                 break;
@@ -401,73 +405,67 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 //                << "\ngap = "<< g << " speed = "<< v
 //                << std::endl;
 
+    // decrease gap slightly (to avoid passing end of lane by values of magnitude ~1e-12, when exact stop is required)
+    g = MAX2(0., g - NUMERICAL_EPS);
 
 
-    // TODO: calculate with constant acceleration for time tau!
     // (Leo) Note that in contrast to the Euler update, for the ballistic update
     // the distance covered in the coming step depends on the current velocity, in general.
     // one exception is the situation when the vehicle is just being inserted.
     // In that case, it will not cover any distance until the next timestep by convention.
-    //
-    // Stopping time from time t+tau (braking full strength) on is given as
-    // ts = vn/b,
-    // with maximal deceleration b and the next step's velocity vn = v(t+dt).
-    // the distance covered in [t, t+tau+ts] is then
-    // ds = (v*dt + a*dt*dt/2) + vn*(tau-dt) + (vn*ts - b*ts*ts/2).
-    // We wish to choose the acceleration a=(vn-v)/dt such that ds == gap (this gives the safe acceleration).
-    // Thus, we solve
-    // gap = (v*dt + a*dt*dt/2) + vn*(tau-dt) + (vn*ts - b*ts*ts/2)
-    //     = (v*dt/2 + vn*dt/2) + vn*(tau-dt) + (vn*vn/b - vn*vn/(2b))
-    //     = v*dt/2 + vn*dt/2 + vn*(tau-dt) + vn*vn/(2b)
-    // i.e.,
-    // 0 = vn*vn + vn*(dt*b + (tau-dt)*2b) + v*dt*b - g*2b
-    // giving
-    // vn = -(dt*b + 2*b*(tau-dt))/2 +- sqrt( (dt + 2*(tau-dt))^2*b^2/4 + 2b*g - v*dt*b ),
-    // The desired speed is the positive root, if it exists. If it does not exist,
-    // We find that g - v*dt/2 < 0, i.e., a constant deceleration from v to 0 in the
-    // next step would still lead to a positional advance larger than g.
-    // This indicates a required stop within [t, t+dt], which is reported as
-    // a negative return value for the speed at the next time step (linearly extrapolating the required deceleration).
-    // This gives responsibility to the caller to interpret it correctly,
-    // e.g. process a stop in the middle of a time step (currently done in MSVehicle::executeMove()).
-    headway = headway<0 ? myHeadwayTime : headway;
-    SUMOReal b = myDecel;
-    SUMOReal dt;
-    if(onInsertion) {
-        dt = 0; // this assures the correct determination of insertion speed (see above)
-    } else {
-        dt = STEPS2TIME(DELTA_T);
+
+    // We treat the latter case first:
+    if(onInsertion){
+        // The distance covered with constant insertion speed v0 until time tau is given as
+        // G1 = tau*v0
+        // The distance covered between time tau and the stopping moment at time tau+v0/b is
+        // G2 = v0^2/(2b),
+        // where b is an assumed constant deceleration (= myDecel)
+        // We solve g = G1 + G2 for v0:
+        const SUMOReal btau = myDecel*myHeadwayTime;
+        const SUMOReal v0 = -btau + sqrt(btau*btau + 2*myDecel*g);
+        return v0;
     }
 
-    // decrease gap slightly (to avoid passing end of lane by values of magnitude ~1e-12, when exact stop is required)
-    g = MAX2(0., g - NUMERICAL_EPS);
+    // In the usual case during the driving task, the vehicle goes by
+    // a current speed v0=v, and we seek to determine a safe acceleration a (possibly <0)
+    // such that starting to break after accelerating with a for the time tau
+    // still allows us to stop in time.
 
-    // if there is no gap, we just demand to brake as hard as possible
-    if(g == 0) return -std::numeric_limits<double>::max();
-
-    SUMOReal D = 2*g - v*dt;
-    if(D < 0){
-        // deceleration -v/dt (i.e. stopping a the end of the coming timestep)
-        // is not sufficient to stop within gap. Therefore a stop has to take place
-        // within the timestep. Denoting the corresponding deceleration by d = -(v+vn)/2,
-        // we have a corresponding stopping time is t_s = v/d, and a covered distance t_s*v/2 = v^2/(2d).
-        // Equating this to g, we find d = v^2/2g, i.e. d = (v-vn)/dt = v^2/2g.
-        // Thus vn = v - dt*v^2/2g
-//        return -v*v/g + v;
-        return v - v*v/(2.*g);
-    } else {
-        assert(myHeadwayTime - dt >= 0.);
-        // if myHeadwayTime < dt, there are different options to deal with that.
-        // 1) Set myHeadwayTime equal dt. (chosen here)
-        // 2) Replace the acceleration phase (chosen as dt) by myHeadwayTime,
-        //    then either (i) return the resulting vN (exceeding the appropriate distance, when braking) or
-        //    (ii) adapt it to fit the distance that would be covered in the next time step, when accelerating
-        //    for time myHeadwayTime and then going on with vN for (dt-myHeadwayTime)
-        //    ((ii) exceeds the appropriate next speed, when braking).
-        SUMOReal constantSpeedTime = MAX2(headway - dt, 0.);
-        SUMOReal p = (dt/2 + constantSpeedTime)*b;
-        return -p + sqrt(p*p + D*b);
+    const SUMOReal tau = myHeadwayTime;
+    const SUMOReal v0 = MAX2(0., v);
+    // We first consider the case that a stop has to take place within time tau
+    if(v0*tau >= 2*g) {
+        if(g==0.){
+            if(v0 > 0.){
+                // indicate to brake as hard as possible
+                return -std::numeric_limits<double>::max();
+            } else {
+                // stay stopped
+                return 0.;
+            }
+        }
+        // In general we solve g = v0^2/(-2a), where the the rhs is the distance
+        // covered until stop when breaking with a<0
+        const SUMOReal a = -v0*v0/(2*g);
+        return v0 + a*TS;
     }
+
+    // The last case corresponds to a situation, where the vehicle may go with a positive
+    // speed v1 = v0 + tau*a after time tau.
+    // The distance covered until time tau is given as
+    // G1 = tau*(v0+v1)/2
+    // The distance covered between time tau and the stopping moment at time tau+v1/b is
+    // G2 = v1^2/(2b),
+    // where b is an assumed constant deceleration (= myDecel)
+    // We solve g = G1 + G2 for v1>0:
+    // <=> 0 = v1^2 + b*tau*v1 + b*tau*v0 - 2bg
+    //  => v1 = -b*tau/2 + sqrt( (b*tau)^2/4 + b(2g - tau*v0) )
+
+    const SUMOReal btau2 = myDecel*tau/2;
+    const SUMOReal v1 = -btau2 + sqrt( btau2*btau2 + myDecel*(2*g - tau*v0) );
+    const SUMOReal a = (v1-v0)/tau;
+    return v0 + a*TS;
 }
 
 
@@ -481,6 +479,15 @@ MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal pred
     // To make things safe, we ensure that the leaders brake distance is computed with an deceleration that is at least as high as the follower's.
     // @todo: this is a conservative estimate for safe speed which could be increased
 
+//    // XXX: check whether this is desireable (changes test results, therefore I exclude it for now (Leo))
+//    // for negative gaps, we return the lowest meaningful value by convention
+//    if(gap<0){
+//        if(MSGlobals::gSemiImplicitEulerUpdate){
+//            return 0.;
+//        } else {
+//            return -std::numeric_limits<SUMOReal>::max();
+//        }
+//    }
 
     // if leader is stopped, calculate stopSpeed without time-headway to prevent creeping stop
     // NOTE: this can lead to the strange phenomenon (for the Krauss-model at least) that if the leader comes to a stop,

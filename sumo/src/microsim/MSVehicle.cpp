@@ -91,6 +91,7 @@
 //#define DEBUG_STOPS
 //#define DEBUG_BESTLANES
 #define DEBUG_COND (getID() == "disabled")
+//#define DEBUG_COND (getID() == "Pepoli_12_116")
 //#define DEBUG_COND (getID() == "v0" || getID() == "v1")
 
 #define STOPPING_PLACE_OFFSET 0.5
@@ -1251,7 +1252,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
 
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) {
-        std::cout.precision(24);
+//        std::cout.precision(24);
         std::cout
                 << "\nPLAN_MOVE\n"
                 << STEPS2TIME(t)
@@ -1263,7 +1264,7 @@ MSVehicle::planMove(const SUMOTime t, const MSLeaderInfo& ahead, const SUMOReal 
                 << "\n";
     }
 #endif
-    planMoveInternal(t, ahead, myLFLinkLanes, myStopDist);
+    planMoveInternal(t, ahead, myLFLinkLanes, myStopDist); // XXX: Why do we reach over myLFLinkLanes and myStopDist as arguments?! That only seems to obscure things (Leo)
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) {
         DriveItemVector::iterator i;
@@ -1358,6 +1359,12 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // check leader on lane
         //  leader is given for the first edge only
         adaptToLeaders(ahead, 0, seen, lastLink, leaderLane, v, vLinkPass);
+#ifdef DEBUG_PLAN_MOVE
+      if(DEBUG_COND){
+          std::cout << "\nv = "<<v<<"\n";
+
+      }
+#endif
         // XXX efficiently adapt to shadow leaders using neighAhead by iteration over the whole edge in parallel (lanechanger-style)
         if (getLaneChangeModel().getShadowLane() != 0) {
             // also slow down for leaders on the shadowLane relative to the current lane
@@ -1534,7 +1541,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // if stopping is possible, arrivalTime can be arbitrarily large. A small value keeps fractional times (impatience) meaningful
         SUMOReal arrivalSpeedBraking = 0;
         SUMOTime arrivalTimeBraking = arrivalTime + TIME2STEPS(30);
-        if (seen < cfModel.brakeGap(v)) { // XXX: this should use teh current speed (at least for the ballistic case) (Leo)
+        if (seen < cfModel.brakeGap(v)) { // XXX: this should use the current speed (at least for the ballistic case) (Leo)
             // vehicle cannot come to a complete stop in time
             if(MSGlobals::gSemiImplicitEulerUpdate){
                 arrivalSpeedBraking = cfModel.getMinimalArrivalSpeedEuler(seen, v);
@@ -1599,7 +1606,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead, SUMOReal latOffset,
     ahead.getSubLanes(this, latOffset, rightmost, leftmost);
 #ifdef DEBUG_PLAN_MOVE
     if (DEBUG_COND) std::cout << SIMTIME
-                                  << " adaptToLeaders veh=" << getID()
+                                  << "\nADAPT_TO_LEADERS\nveh=" << getID()
                                   << " lane=" << lane->getID()
                                   << " rm=" << rightmost
                                   << " lm=" << leftmost
@@ -1723,7 +1730,7 @@ MSVehicle::executeMove() {
 #endif
 
     // get safe velocities from DriveProcessItems
-    SUMOReal vSafe = 0; // maximum safe velocity
+    SUMOReal vSafe = 0; // maximum safe velocity (XXX: why init this as 0 !? Confusing... (Leo))
     SUMOReal vSafeZipper = std::numeric_limits<SUMOReal>::max(); // speed limit due to zipper merging
     SUMOReal vSafeMin = 0; // minimum safe velocity
     // the distance to a link which should either be crossed this step or in
@@ -1844,6 +1851,7 @@ MSVehicle::executeMove() {
                 break;
             }
         } else {
+            // i->link == 0 || !i->setRequest
             vSafe = (*i).myVLinkWait;
             if (vSafe < getSpeed()) {
                 myHaveToWaitOnNextLink = true;
