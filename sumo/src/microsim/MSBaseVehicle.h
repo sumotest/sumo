@@ -55,6 +55,12 @@ class MSLane;
  */
 class MSBaseVehicle : public SUMOVehicle {
 public:
+    // XXX: this should be removed again after changing
+    //      notifyMove()'s interface to work with MSVehicle instead of SUMOVehicle.
+    /** @brief Returns the vehicle's previous speed
+     * @return The vehicle's speed
+     */
+    SUMOReal getPreviousSpeed() const;
 
     friend class GUIBaseVehicle;
 
@@ -368,7 +374,6 @@ public:
      * @param[in] ignoreStopErrors whether invalid stops trigger a warning only
      */
     void addStops(const bool ignoreStopErrors);
-
 
 protected:
     /** @brief (Re-)Calculates the arrival position and lane from the vehicle parameters

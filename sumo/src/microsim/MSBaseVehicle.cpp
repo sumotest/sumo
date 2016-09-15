@@ -60,6 +60,14 @@ std::set<std::string> MSBaseVehicle::myShallTraceMoveReminders;
 // ===========================================================================
 // method definitions
 // ===========================================================================
+
+SUMOReal
+MSBaseVehicle::getPreviousSpeed() const {
+    throw ProcessError("getPreviousSpeed() is not available for non-MSVehicles.");
+}
+
+
+
 MSBaseVehicle::MSBaseVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
                              const MSVehicleType* type, const SUMOReal speedFactor) :
     myParameter(pars),
@@ -448,7 +456,6 @@ MSBaseVehicle::addStops(const bool ignoreStopErrors) {
         }
     }
 }
-
 
 #ifdef _DEBUG
 void

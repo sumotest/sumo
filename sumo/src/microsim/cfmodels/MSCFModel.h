@@ -133,11 +133,24 @@ public:
      *
      * Returns the velocity of the vehicle when approaching a static object (such as the end of a lane) assuming no reaction time is needed.
      * @param[in] veh The vehicle (EGO)
-     * @param[in] gap2pred The (netto) distance to the the obstacle
+     * @param[in] speed The vehicle's speed
+     * @param[in] gap The (netto) distance to the the obstacle
      * @return EGO's safe speed for approaching a non-moving obstacle
      * @todo generic Interface, models can call for the values they need
      */
-    virtual SUMOReal stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap2pred) const = 0;
+    virtual SUMOReal stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap) const = 0;
+
+
+    /** @brief Computes the vehicle's safe speed for approaching an obstacle at insertion without constraints
+     *         due to acceleration capabilities and previous speeds.
+     * @param[in] veh The vehicle (EGO)
+     * @param[in] speed The vehicle's speed
+     * @param[in] gap The (netto) distance to the the obstacle
+     * @return EGO's safe speed for approaching a non-moving obstacle at insertion
+     * @see stopSpeed() and insertionFollowSpeed()
+     *
+     */
+    virtual SUMOReal insertionStopSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap) const;
 
 
     /** @brief Returns the maximum gap at which an interaction between both vehicles occurs
@@ -315,21 +328,35 @@ public:
     SUMOReal getMinimalArrivalSpeedEuler(SUMOReal dist, SUMOReal currentSpeed) const;
 
 
-    // XXX: make static
-    /* @brief return the resulting gap if, starting with gap currentGap, two vehicles
+    /** @brief return the resulting gap if, starting with gap currentGap, two vehicles
      * continue with constant accelerations (velocities bounded by 0 and maxSpeed) for
      * a given timespan of length 'duration'.
-         * @param[in] currentGap (pos(veh1) - pos(veh2) at start)
-         * @param[in] v1 initial speed of vehicle 1
-         * @param[in] v2 initial speed of vehicle 2
-         * @param[in] a1 acceleration of vehicle 1
-         * @param[in] a2 acceleration of vehicle 2
-         * @param[in] maxV1 maximal speed of vehicle 1
-         * @param[in] maxV2 maximal speed of vehicle 2
-         * @param[in] duration time span for the process
-         * @return estimated gap after 'duration' seconds
-         */
-    SUMOReal gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, SUMOReal v1,  SUMOReal v2, SUMOReal a1=0, SUMOReal a2=0, const SUMOReal maxV1=std::numeric_limits<SUMOReal>::max(), const SUMOReal maxV2=std::numeric_limits<SUMOReal>::max()) const;
+     * @param[in] currentGap (pos(veh1) - pos(veh2) at start)
+     * @param[in] v1 initial speed of vehicle 1
+     * @param[in] v2 initial speed of vehicle 2
+     * @param[in] a1 acceleration of vehicle 1
+     * @param[in] a2 acceleration of vehicle 2
+     * @param[in] maxV1 maximal speed of vehicle 1
+     * @param[in] maxV2 maximal speed of vehicle 2
+     * @param[in] duration time span for the process
+     * @return estimated gap after 'duration' seconds
+     */
+    static SUMOReal gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, SUMOReal v1,  SUMOReal v2, SUMOReal a1=0, SUMOReal a2=0, const SUMOReal maxV1=std::numeric_limits<SUMOReal>::max(), const SUMOReal maxV2=std::numeric_limits<SUMOReal>::max());
+
+    /**
+     * @brief Calculates the time at which the position passedPosition has been passed
+     *         In case of a ballistic update, the possibility of a stop within a time step
+     *         requires more information about the last time-step than in case of the euler update
+     *         to determine the last position if the currentSpeed is zero.
+     * @param[in] lastPos the position at time t=0 (must be < currentPos)
+     * @param[in] passedPos the position for which the passing time is to be determined (has to lie within [lastPos, currentPos)!
+     *            Note that the right limit is open.)
+     * @param[in] currentPos the position at time t=TS (one time-step after lastPos) (must be > lastPos)
+     * @param[in] lastSpeed the speed at moment t=0
+     * @param[in] currentSpeed the speed at moment t=TS
+     * @return  time t in [0,TS] at which passedPos in [lastPos, currentPos] was passed.
+     */
+    static SUMOReal passingTime(const SUMOReal lastPos, const SUMOReal passedPos, const SUMOReal currentPos, const SUMOReal lastSpeed, const SUMOReal currentSpeed);
 
 
     /* @brief estimate speed while accelerating for the given distance

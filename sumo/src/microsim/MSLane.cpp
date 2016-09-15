@@ -80,6 +80,7 @@
 //#define DEBUG_OPPOSITE
 #define DEBUG_COND (getID() == "disabled")
 #define DEBUG_COND2(obj) ((obj != 0 && (obj)->getID() == "disabled"))
+//#define DEBUG_COND2(obj) ((obj != 0 && (obj)->getID() == "v1"))
 
 // ===========================================================================
 // static member definitions
@@ -513,9 +514,9 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
     }
 
 #ifdef DEBUG_INSERTION
-                    if (DEBUG_COND2(aVehicle)) std::cout << SIMTIME
-                                                             << " isInsertionSuccess lane=" << getID()
-															<< " veh '" << aVehicle->getID()<< "'\n";
+    if (DEBUG_COND2(aVehicle)) std::cout << "\nIS_INSERTION_SUCCESS\n"
+            << SIMTIME  <<" lane=" << getID()
+            << " veh '" << aVehicle->getID()<< "'\n";
 #endif
 
     aVehicle->setTentativeLaneAndPosition(this, pos, posLat);
@@ -546,7 +547,7 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
                 }
             } else {
                 // lane does not continue
-                if (checkFailure(aVehicle, speed, dist, cfModel.stopSpeed(aVehicle, speed, seen),
+                if (checkFailure(aVehicle, speed, dist, cfModel.insertionStopSpeed(aVehicle, speed, seen),
                                  patchSpeed, "junction too close")) {
                     // we may not drive with the given velocity - we cannot stop at the junction
                     return false;
@@ -566,11 +567,18 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
                 // no sense in trying later
                 errorMsg = "unpriorised junction too close";
             }
-            if (checkFailure(aVehicle, speed, dist, cfModel.stopSpeed(aVehicle, speed, seen),
+            if (checkFailure(aVehicle, speed, dist, cfModel.insertionStopSpeed(aVehicle, speed, seen),
                              patchSpeed, errorMsg)) {
                 // we may not drive with the given velocity - we cannot stop at the junction in time
                 return false;
             }
+#ifdef DEBUG_INSERTION
+                if DEBUG_COND2(aVehicle) {
+                    std::cout << "trying insertion before minor link: "
+                            << "insertion speed = " << speed << " dist="<< dist
+                            << "\n";
+                }
+#endif
             break;
         }
         // get the next used lane (including internal)
@@ -630,7 +638,7 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
             // may already be comitted to blocking the link and unable to stop
             const SUMOTime leaveTime = (*link)->getLeaveTime(arrivalTime, speed, speed, aVehicle->getVehicleType().getLength());
             if ((*link)->hasApproachingFoe(arrivalTime, leaveTime, speed, cfModel.getMaxDecel())) {
-                if (checkFailure(aVehicle, speed, dist, cfModel.stopSpeed(aVehicle, speed, seen), patchSpeed, "")) {
+                if (checkFailure(aVehicle, speed, dist, cfModel.insertionStopSpeed(aVehicle, speed, seen), patchSpeed, "")) {
                     // we may not drive with the given velocity - we crash at the junction
                     return false;
                 }

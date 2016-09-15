@@ -122,8 +122,6 @@ MSCFModel_KraussOrig1::followSpeed(const MSVehicle* const veh, SUMOReal speed, S
 SUMOReal
 MSCFModel_KraussOrig1::insertionFollowSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap2pred, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
 	if(MSGlobals::gSemiImplicitEulerUpdate){
-		// NOTE: I changed this, because we need a flag to indicate, e.g., that we don't want
-		// the speed returned to be limited within actual speed +- maxDecel/maxAccel.
 		return followSpeed(veh, speed, gap2pred, predSpeed, predMaxDecel);
 	} else {
 		// ballistic update

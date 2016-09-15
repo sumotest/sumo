@@ -65,6 +65,16 @@ typedef std::vector<const MSEdge*> ConstMSEdgeVector;
  */
 class SUMOVehicle {
 public:
+
+
+    // XXX: this should be removed again after changing
+    //      notifyMove()'s interface to work with MSVehicle instead of SUMOVehicle.
+    /** @brief Returns the vehicle's previous speed
+     * @return The vehicle's speed
+     */
+    virtual SUMOReal getPreviousSpeed() const = 0;
+
+
     typedef Named::NamedLikeComparatorIdLess<SUMOVehicle> ComparatorIdLess;
 
     /// @brief Destructor

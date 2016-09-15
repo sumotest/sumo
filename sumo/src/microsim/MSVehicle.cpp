@@ -1341,7 +1341,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
 #endif
     SUMOReal seen = opposite ? myState.myPos : myLane->getLength() - myState.myPos; // the distance already "seen"; in the following always up to the end of the current "lane"
     SUMOReal seenNonInternal = 0;
-    SUMOReal vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(seen, v, cfModel.getMaxAccel()), laneMaxV); // upper bound
+    SUMOReal vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(seen, v, cfModel.getMaxAccel()), laneMaxV); // upper bound, XXX: using maxSpeedOnLane() may be more appropriate
     int view = 0;
     DriveProcessItem* lastLink = 0;
     bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
@@ -1521,7 +1521,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // vehicles should decelerate when approaching a minor link
         // - unless they are close enough to have clear visibility and may start to accelerate again
         // - and unless they are so close that stopping is impossible (i.e. when a green light turns to yellow when close to the junction)
-        if (!(*link)->havePriority() && stopDist > cfModel.getMaxDecel() && brakeDist < seen) {
+        if (!(*link)->havePriority() && stopDist > cfModel.getMaxDecel() && brakeDist < seen) { // XXX: the second condition references euler-logic (see ticket860) but seems unproblematic so far (Leo)
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
             arrivalSpeed = MIN2(vLinkPass, cfModel.getMaxDecel() + cfModel.getMaxAccel());
             slowedDownForMinor = true;
@@ -1541,7 +1541,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // if stopping is possible, arrivalTime can be arbitrarily large. A small value keeps fractional times (impatience) meaningful
         SUMOReal arrivalSpeedBraking = 0;
         SUMOTime arrivalTimeBraking = arrivalTime + TIME2STEPS(30);
-        if (seen < cfModel.brakeGap(v)) { // XXX: this should use the current speed (at least for the ballistic case) (Leo)
+        if (seen < cfModel.brakeGap(v)) { // XXX: should this use the current speed (at least for the ballistic case)? (Leo)
             // vehicle cannot come to a complete stop in time
             if(MSGlobals::gSemiImplicitEulerUpdate){
                 arrivalSpeedBraking = cfModel.getMinimalArrivalSpeedEuler(seen, v);

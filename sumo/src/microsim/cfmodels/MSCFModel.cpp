@@ -217,6 +217,16 @@ MSCFModel::insertionFollowSpeed(const MSVehicle* const v, SUMOReal speed, SUMORe
 
 
 SUMOReal
+MSCFModel::insertionStopSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap) const {
+    if (MSGlobals::gSemiImplicitEulerUpdate){
+        return stopSpeed(veh, speed, gap);
+    } else {
+        return MIN2(maximumSafeStopSpeed(gap, 0., true, 0.), myType->getMaxSpeed());
+    }
+}
+
+
+SUMOReal
 MSCFModel::getMinimalArrivalTime(SUMOReal dist, SUMOReal currentSpeed, SUMOReal arrivalSpeed) const{
     const SUMOReal accel = (arrivalSpeed >= currentSpeed) ? getMaxAccel() : -getMaxDecel();
     const SUMOReal accelTime = (arrivalSpeed - currentSpeed) / accel;
@@ -257,7 +267,7 @@ MSCFModel::getMinimalArrivalSpeedEuler(SUMOReal dist, SUMOReal currentSpeed) con
 
 
 SUMOReal
-MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, SUMOReal v1,  SUMOReal v2, SUMOReal a1, SUMOReal a2, const SUMOReal maxV1, const SUMOReal maxV2) const{
+MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, SUMOReal v1,  SUMOReal v2, SUMOReal a1, SUMOReal a2, const SUMOReal maxV1, const SUMOReal maxV2) {
 
     SUMOReal newGap = currentGap;
 
@@ -349,8 +359,65 @@ MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, 
 
 
 SUMOReal
+MSCFModel::passingTime(const SUMOReal lastPos, const SUMOReal passedPos, const SUMOReal currentPos, const SUMOReal lastSpeed, const SUMOReal currentSpeed){
+
+    assert(passedPos < currentPos && passedPos >= lastPos);
+    assert(currentSpeed >= 0);
+
+    if(passedPos >= currentPos || passedPos < lastPos){
+        WRITE_ERROR("passingTime(): given argument 'passedPos' doesn't lie within [lastPos, currentPos)");
+        return -1;
+    } else if(currentSpeed < 0) {
+        WRITE_ERROR("passingTime(): given argument 'currentSpeed' is negative. This case is not handled yet.");
+        return -1;
+    }
+
+    const SUMOReal distanceToPassedPos = passedPos - lastPos; // assert: >=0
+
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        // euler update (constantly moving with currentSpeed during [0,TS])
+        const SUMOReal t = distanceToPassedPos/currentSpeed;
+        return t;
+
+    } else {
+        // ballistic update (constant acceleration a during [0,TS], except in case of a stop)
+
+        // determine acceleration
+        SUMOReal a;
+        if(currentSpeed > 0){
+            // the acceleration was constant within the last time step
+            a = (currentSpeed-lastSpeed)/TS;
+        } else {
+            // the currentSpeed is zero (the last was not because lastPos<currentPos).
+            assert(currentSpeed == 0 && lastSpeed != 0);
+            // In general the stop has taken place within the last time step.
+            // The acceleration (a<0) is obtained from
+            // deltaPos = lastSpeed^2/(2*a)
+            a = lastSpeed*lastSpeed/(2*(currentPos-lastPos));
+            assert(a<0);
+        }
+
+        // determine passing time t
+        // we solve distanceToPassedPos = lastSpeed*t + a*t^2/2
+        if(a != 0){
+            const SUMOReal va = currentSpeed/a;
+            const SUMOReal t = -va + sqrt(va*va + 2*distanceToPassedPos/a);
+            assert(t>=0);
+            return t;
+        } else {
+            // constant speed within [0, TS]
+            const SUMOReal lastCoveredDistance = currentPos - lastPos; // assert: >0
+            const SUMOReal t = distanceToPassedPos/lastSpeed;
+            return t;
+        }
+    }
+}
+
+
+
+SUMOReal
 MSCFModel::estimateSpeedAfterDistance(const SUMOReal dist, const SUMOReal v, const SUMOReal accel) const {
-    // dist=v*t + 0.5*accel*t^2, solve for t and multiply with accel, then add v
+    // dist=v*t + 0.5*accel*t^2, solve for t and use v1 = v + accel*t
     return MAX2(0., MIN2(myType->getMaxSpeed(),
                 (SUMOReal)sqrt(2 * dist * accel + v * v)));
 }

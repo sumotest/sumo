@@ -36,6 +36,7 @@
 #include <microsim/MSEdge.h>
 #include <microsim/MSLane.h>
 #include <microsim/MSVehicle.h>
+#include <microsim/cfmodels/MSCFModel.h>
 #include <microsim/MSNet.h>
 #include <utils/common/SUMOTime.h>
 #include <utils/common/ToString.h>
@@ -91,6 +92,7 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     	if(MSGlobals::gSemiImplicitEulerUpdate){
         	// timeOnLane according to implicit Euler update
     		timeOnLane = newPos / newSpeed;
+//    		timeOnLane = MSCFModel::passingTime(oldPos,0,newPos,veh.getPreviousSpeed(),veh.getSpeed())
     	} else {
     		SUMOReal oldSpeed = 2*DIST2SPEED(newPos - oldPos) - newSpeed; // from deltaPos = newPos - oldPos = TS*(newSpeed + oldSpeed)/2
     		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
