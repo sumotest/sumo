@@ -405,9 +405,13 @@ protected:
     /// @{
 
     /// @brief Definition of a move reminder container
+    //         The SUMOReal value holds the relative position offset, i.e.,
+    //         offset + vehicle-position - moveReminder-position = distance,
+    //         i.e. the offset is counted up when the vehicle continues to a
+    //         succeeding lane.
     typedef std::vector< std::pair<MSMoveReminder*, SUMOReal> > MoveReminderCont;
 
-    /// @brief Current lane's move reminder
+    /// @brief Currently relevant move reminders
     MoveReminderCont myMoveReminders;
     /// @}
 
