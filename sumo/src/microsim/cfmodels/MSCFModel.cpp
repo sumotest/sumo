@@ -361,22 +361,26 @@ MSCFModel::gapExtrapolation(const SUMOReal duration, const SUMOReal currentGap, 
 SUMOReal
 MSCFModel::passingTime(const SUMOReal lastPos, const SUMOReal passedPos, const SUMOReal currentPos, const SUMOReal lastSpeed, const SUMOReal currentSpeed){
 
-    assert(passedPos < currentPos && passedPos >= lastPos);
+    assert(passedPos <= currentPos && passedPos >= lastPos && currentPos > lastPos);
     assert(currentSpeed >= 0);
 
-    if(passedPos >= currentPos || passedPos < lastPos){
-        WRITE_ERROR("passingTime(): given argument 'passedPos' doesn't lie within [lastPos, currentPos)");
+    if(passedPos > currentPos || passedPos < lastPos){
+        std::stringstream ss;
+        // Debug (Leo)
+        ss << "passingTime(): given argument passedPos = "<< passedPos <<" doesn't lie within [lastPos, currentPos] = [" << lastPos << ", " << currentPos << "]";
+        std::cout << ss.str() << "\n";
+        WRITE_ERROR(ss.str());
         return -1;
     } else if(currentSpeed < 0) {
         WRITE_ERROR("passingTime(): given argument 'currentSpeed' is negative. This case is not handled yet.");
         return -1;
     }
 
-    const SUMOReal distanceToPassedPos = passedPos - lastPos; // assert: >=0
+    const SUMOReal distanceOldToPassed = passedPos - lastPos; // assert: >=0
 
     if(MSGlobals::gSemiImplicitEulerUpdate){
         // euler update (constantly moving with currentSpeed during [0,TS])
-        const SUMOReal t = distanceToPassedPos/currentSpeed;
+        const SUMOReal t = distanceOldToPassed/currentSpeed;
         return t;
 
     } else {
@@ -398,20 +402,56 @@ MSCFModel::passingTime(const SUMOReal lastPos, const SUMOReal passedPos, const S
         }
 
         // determine passing time t
-        // we solve distanceToPassedPos = lastSpeed*t + a*t^2/2
-        if(a != 0){
-            const SUMOReal va = currentSpeed/a;
-            const SUMOReal t = -va + sqrt(va*va + 2*distanceToPassedPos/a);
-            assert(t>=0);
+        // we solve distanceOldToPassed = lastSpeed*t + a*t^2/2
+        if(fabs(a) < NUMERICAL_EPS){
+            // treat as constant speed within [0, TS]
+            const SUMOReal lastCoveredDistance = currentPos - lastPos; // assert: >0
+            const SUMOReal t = 2*distanceOldToPassed/(lastSpeed+currentSpeed);
+            return t;
+        } else if(a > 0){
+            // positive acceleration => only one positive solution
+            const SUMOReal va = lastSpeed/a;
+            const SUMOReal t = -va + sqrt(va*va + 2*distanceOldToPassed/a);
+            assert(t<1 && t>=0);
             return t;
         } else {
-            // constant speed within [0, TS]
-            const SUMOReal lastCoveredDistance = currentPos - lastPos; // assert: >0
-            const SUMOReal t = distanceToPassedPos/lastSpeed;
+            // negative acceleration => two positive solutions (pick the smaller one.)
+            const SUMOReal va = lastSpeed/a;
+            const SUMOReal t = -va - sqrt(va*va + 2*distanceOldToPassed/a);
+            assert(t<1 && t>=0);
             return t;
         }
     }
 }
+
+
+SUMOReal
+MSCFModel::speedAfterTime(const SUMOReal t, const SUMOReal v0, const SUMOReal dist){
+    assert(dist >= 0);
+    assert(t>=0 && t<=TS);
+    assert(oldSpeed>=0);
+    if (MSGlobals::gSemiImplicitEulerUpdate){
+        // euler: constant speed within [0,TS]
+        return DIST2SPEED(dist);
+    } else {
+        // ballistic: piecewise constant acceleration in [0,TS] (may become 0 for a stop within TS)
+        // We reconstruct acceleration at time t=0. Note that the covered distance in case
+        // of a stop exactly at t=TS is TS*v0/2.
+        if(dist <  TS*v0/2){
+            // stop must have occured within [0,TS], use dist = -v0^2/(2a) (stopping dist),
+            // i.e., a = -v0^2/(2*dist)
+            const SUMOReal accel = - v0*v0/(2*dist);
+            // The speed at time t is then
+            return v0 + accel*t;
+        } else {
+            // no stop occured within [0,TS], thus (from dist = v0*TS + accel*TS^2/2)
+            const SUMOReal accel = 2*(dist/TS - v0)/TS;
+            // The speed at time t is then
+            return v0 + accel*t;
+        }
+    }
+}
+
 
 
 
@@ -436,7 +476,7 @@ MSCFModel::maximumSafeStopSpeed(SUMOReal g /*gap*/, SUMOReal v /*currentSpeed*/,
 
 SUMOReal
 MSCFModel::maximumSafeStopSpeedEuler(SUMOReal gap) const {
-	gap -= NUMERICAL_EPS; // lots of code relies on some slack
+	gap -= NUMERICAL_EPS; // lots of code relies on some slack XXX: it shouldn't...
 	if (gap <= 0) {
 		return 0;
 	} else if (gap <= ACCEL2SPEED(myDecel)) {
@@ -474,7 +514,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
 
     // decrease gap slightly (to avoid passing end of lane by values of magnitude ~1e-12, when exact stop is required)
     g = MAX2(0., g - NUMERICAL_EPS);
-
+    headway = headway >= 0 ? headway : myHeadwayTime;
 
     // (Leo) Note that in contrast to the Euler update, for the ballistic update
     // the distance covered in the coming step depends on the current velocity, in general.
@@ -489,7 +529,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
         // G2 = v0^2/(2b),
         // where b is an assumed constant deceleration (= myDecel)
         // We solve g = G1 + G2 for v0:
-        const SUMOReal btau = myDecel*myHeadwayTime;
+        const SUMOReal btau = myDecel*headway;
         const SUMOReal v0 = -btau + sqrt(btau*btau + 2*myDecel*g);
         return v0;
     }
@@ -499,7 +539,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(SUMOReal g /*gap*/, SUMOReal v /*curren
     // such that starting to break after accelerating with a for the time tau
     // still allows us to stop in time.
 
-    const SUMOReal tau = myHeadwayTime;
+    const SUMOReal tau = headway;
     const SUMOReal v0 = MAX2(0., v);
     // We first consider the case that a stop has to take place within time tau
     if(v0*tau >= 2*g) {
@@ -546,8 +586,7 @@ MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal pred
     // To make things safe, we ensure that the leaders brake distance is computed with an deceleration that is at least as high as the follower's.
     // @todo: this is a conservative estimate for safe speed which could be increased
 
-//    // XXX: check whether this is desireable (changes test results, therefore I exclude it for now (Leo))
-//    // for negative gaps, we return the lowest meaningful value by convention
+//    // For negative gaps, we return the lowest meaningful value by convention XXX: check whether this is desireable (changes test results, therefore I exclude it for now (Leo))
 //    if(gap<0){
 //        if(MSGlobals::gSemiImplicitEulerUpdate){
 //            return 0.;
@@ -556,10 +595,13 @@ MSCFModel::maximumSafeFollowSpeed(SUMOReal gap, SUMOReal egoSpeed, SUMOReal pred
 //        }
 //    }
 
+    // The following commented code is a variant to assure brief stopping behind a stopped leading vehicle:
     // if leader is stopped, calculate stopSpeed without time-headway to prevent creeping stop
     // NOTE: this can lead to the strange phenomenon (for the Krauss-model at least) that if the leader comes to a stop,
     //       the follower accelerates for a short period of time. Refs #2310 (Leo)
-    const SUMOReal headway = predSpeed > 0. ? myHeadwayTime : 0.;
+//    const SUMOReal headway = predSpeed > 0. ? myHeadwayTime : 0.;
+
+    const SUMOReal headway = myHeadwayTime;
 	const SUMOReal x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), egoSpeed, onInsertion, headway);
 	assert(x >= 0);
 	assert(!ISNAN(x));

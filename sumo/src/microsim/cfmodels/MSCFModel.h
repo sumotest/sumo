@@ -349,14 +349,31 @@ public:
      *         requires more information about the last time-step than in case of the euler update
      *         to determine the last position if the currentSpeed is zero.
      * @param[in] lastPos the position at time t=0 (must be < currentPos)
-     * @param[in] passedPos the position for which the passing time is to be determined (has to lie within [lastPos, currentPos)!
-     *            Note that the right limit is open.)
+     * @param[in] passedPos the position for which the passing time is to be determined (has to lie within [lastPos, currentPos]!)
      * @param[in] currentPos the position at time t=TS (one time-step after lastPos) (must be > lastPos)
      * @param[in] lastSpeed the speed at moment t=0
      * @param[in] currentSpeed the speed at moment t=TS
      * @return  time t in [0,TS] at which passedPos in [lastPos, currentPos] was passed.
      */
     static SUMOReal passingTime(const SUMOReal lastPos, const SUMOReal passedPos, const SUMOReal currentPos, const SUMOReal lastSpeed, const SUMOReal currentSpeed);
+
+
+
+    /**
+     * @brief Calculates the speed after a time t \in [0,TS]
+     *        given the initial speed and the distance traveled in an interval of step length TS.
+     * @note  If the acceleration were known, this would be much nicer, but in this way
+     *        we need to reconstruct it (for the ballistic update at least, where we assume that
+     *        a stop may occur within the interval)
+     * @param[in] t time in [0,TS] for which the speed shall be determined
+     * @param[in] oldSpeed speed before the last time step (referred to as t == 0)
+     * @param[in] distance covered
+     * @return    speed at time t
+     */
+    static SUMOReal speedAfterTime(const SUMOReal t, const SUMOReal oldSpeed, const SUMOReal dist);
+
+
+
 
 
     /* @brief estimate speed while accelerating for the given distance
