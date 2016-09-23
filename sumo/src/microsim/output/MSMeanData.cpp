@@ -84,83 +84,80 @@ bool
 MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpeed) {
     // if the vehicle has arrived, the reminder must be kept so it can be
     // notified of the arrival subsequently
-    SUMOReal timeOnLane = TS;
-    SUMOReal frontOnLane = TS;
-    bool ret = true;
-    if (oldPos < 0 && newSpeed != 0) {
-    	// (Leo) vehicle was not on this lane before
-    	if(MSGlobals::gSemiImplicitEulerUpdate){
-        	// timeOnLane according to implicit Euler update
-    		timeOnLane = newPos / newSpeed;
-//    		timeOnLane = MSCFModel::passingTime(oldPos,0,newPos,veh.getPreviousSpeed(),veh.getSpeed())
-    	} else {
-    		SUMOReal oldSpeed = 2*DIST2SPEED(newPos - oldPos) - newSpeed; // from deltaPos = newPos - oldPos = TS*(newSpeed + oldSpeed)/2
-    		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
 
-    		// (Leo) We calculate the time tc until arrival of the beginning of the lane,
-    		// i.e. 0 = x(tc) = x0 + v0*tc + a*tc*tc/2,
-    		// where x0 = oldPos. That is:
-    		// 0 = tc*tc + 2*v0*tc/a + 2*x0/a, thus
-    		// tc = -v0/a +- sqrt( (v0/a)^2 - 2*x0/a )
-    		// 1) Note that we can  exclude  - x0 < v0^2/2*a (negativity of the discriminant)
-    		// since that would mean a stop before x = x(tc) = 0. (the vehicle couldn't have entered the lane)
-    		// 2) If a<0, (x0 is as well) we need to choose the negative sqrt, for a>0 the positive,
-    		// and for a=0 we can use the simple formula.
-    		// 3) Note, that a possible negative newSpeed (indicating stop within time step)
-    		// is processed in the above formula, since the stop must occur after time tc.
 
-    		if(accel > 0){
-    			SUMOReal p_half = oldSpeed/accel; // v0/a
-    			timeOnLane = TS - ( - p_half + sqrt(p_half*p_half - 2*oldPos/accel) );
-    		} else if(accel < 0) {
-    			SUMOReal p_half = oldSpeed/accel;
-    			timeOnLane = TS - ( - p_half - sqrt(p_half*p_half - 2*oldPos/accel) );
-    		} else { // accel \approx 0
-        		timeOnLane = newPos / newSpeed;
-    		}
-    	}
-        frontOnLane = newPos / newSpeed;
+    // TODO: apply similar changes to MSE2, MSE3, MSInductionloop, MSInstantInductionloop
+
+    const SUMOReal oldSpeed = veh.getPreviousSpeed();
+    SUMOReal enterSpeed = MSGlobals::gSemiImplicitEulerUpdate ? newSpeed : oldSpeed; // NOTE: For the euler update, the vehicle is assumed to travel at constant speed for the whole time step
+    SUMOReal leaveSpeed = newSpeed, leaveSpeedFront = newSpeed;
+
+    SUMOReal timeOnLane = TS, frontOnLane = TS; // These values will be further decreased below
+    if(!MSGlobals::gSemiImplicitEulerUpdate && oldPos > myLaneLength){
+        frontOnLane = 0.; // XXX: fixes #2556 (awaits fixing in trunk for euler update as well - check if done at merge)
     }
-    if (newPos - veh.getVehicleType().getLength() > myLaneLength && oldPos - veh.getVehicleType().getLength() <= myLaneLength) {
-        assert(newSpeed != 0); // how could it move across the lane boundary otherwise
-    	// (Leo) vehicle left this lane (it can also have skipped over it in one time step -> therefore we use "timeOnLane -= ..." and ( ... - timeOnLane) below)
-    	if(MSGlobals::gSemiImplicitEulerUpdate){
-    		timeOnLane -= (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
-            if (fabs(timeOnLane) < NUMERICAL_EPS) { // reduce rounding errors
-                timeOnLane = 0.;
-            }
-    	} else {
-    		// (Leo) Analogous situation as above. Crossing time for the
-    		// back bumper is tc, with x(tc) = len(veh) + len(lane).
-    		// given by:
-    		// tc = -v0/a +- sqrt( (v0/a)^2 - 2*(x0-x(tc))/a )
-    		// Taking into account the possibility that this lane was not the origin (i.e. oldPos < 0),
-    		// we have to substract (TS-tc) from the timeOnLane value computed before
+    bool ret = true;
 
-    		SUMOReal oldSpeed = 2*DIST2SPEED(newPos - oldPos) - newSpeed;
-    		SUMOReal accel = SPEED2ACCEL(newSpeed - oldSpeed);
-    		SUMOReal dPos = oldPos - (myLaneLength +  veh.getVehicleType().getLength());
 
-    		if(accel > 0){
-    			SUMOReal p_half = oldSpeed/accel; // v0/a
-    			timeOnLane = ( - p_half + sqrt(p_half*p_half - 2*dPos/accel) - (TS - timeOnLane));
-    		} else if(accel < 0) {
-    			SUMOReal p_half = oldSpeed/accel;
-    			timeOnLane = ( - p_half - sqrt(p_half*p_half - 2*dPos/accel) - (TS - timeOnLane));
-    		} else { // accel \approx 0
-        		timeOnLane -= (newPos - veh.getVehicleType().getLength() - myLaneLength) / newSpeed;
-    		}
+    // Treat the case that the vehicle entered the lane in the last step
+//    if (oldPos < 0 && newSpeed != 0) {
+    if (oldPos < 0 && newPos >= 0) {
+        // Vehicle was not on this lane in the last time step
+        const SUMOReal timeBeforeEnter = MSCFModel::passingTime(oldPos, 0, newPos, oldSpeed, newSpeed);
+        timeOnLane = TS - timeBeforeEnter;
+        frontOnLane = timeOnLane;
+        enterSpeed = MSCFModel::speedAfterTime(timeBeforeEnter, oldSpeed, newPos-oldPos);
+    }
 
-    	}
+
+    // Treat the case that the vehicle's back left the lane in the last step
+    const SUMOReal oldBackPos = oldPos - veh.getVehicleType().getLength();
+    const SUMOReal newBackPos = newPos - veh.getVehicleType().getLength();
+    if (newBackPos > myLaneLength // vehicle's back has left the lane
+            && oldBackPos <= myLaneLength) { // and hasn't left the lane before, XXX: this shouldn't occur, should it? For instance, in the E2 code this is not checked (Leo)
+        assert(!MSGlobals::gSemiImplicitEulerUpdate || newSpeed != 0); // how could it move across the lane boundary otherwise
+
+        // (Leo) vehicle left this lane (it can also have skipped over it in one time step -> therefore we use "timeOnLane -= ..." and ( ... - timeOnLane) below)
+        const SUMOReal timeBeforeLeave = MSCFModel::passingTime(oldBackPos, myLaneLength, newBackPos, oldSpeed, newSpeed);
+        const SUMOReal timeAfterLeave = TS-timeBeforeLeave;
+        timeOnLane -= timeAfterLeave;
+        leaveSpeed = MSCFModel::speedAfterTime(timeBeforeLeave, oldSpeed, newPos-oldPos);
+        // XXX: Do we really need this? Why would this "reduce rounding errors"? (Leo)
+        if (fabs(timeOnLane) < NUMERICAL_EPS) { // reduce rounding errors
+            timeOnLane = 0.;
+        }
         ret = veh.hasArrived();
     }
+
+
+    // Treat the case that the vehicle's front left the lane in the last step
     if (newPos > myLaneLength && oldPos <= myLaneLength) {
-        assert(newSpeed != 0); // how could it move across the lane boundary otherwise
-        frontOnLane -= (newPos - myLaneLength) / newSpeed;
+        // vehicle's front has left the lane and has not left before
+        assert(!MSGlobals::gSemiImplicitEulerUpdate || newSpeed != 0);
+        const SUMOReal timeBeforeLeave = MSCFModel::passingTime(oldPos, myLaneLength, newPos, oldSpeed, newSpeed);
+        const SUMOReal timeAfterLeave = TS-timeBeforeLeave;
+        frontOnLane -= timeAfterLeave;
+        // XXX: Do we really need this? Why would this "reduce rounding errors"? (Leo)
         if (fabs(frontOnLane) < NUMERICAL_EPS) { // reduce rounding errors
             frontOnLane = 0.;
         }
+        leaveSpeedFront = MSCFModel::speedAfterTime(timeBeforeLeave, oldSpeed, newPos-oldPos);
     }
+
+//    // Debug (Leo)
+//    std::cout << "\nNOTIFY_MOVE\n"
+//            << "oldPos = " << oldPos
+//            << " newPos = " << newPos
+//            << "\noldSpeed = " << oldSpeed
+//            << " newSpeed = " << newSpeed
+//            << "\ntimeOnLane = " << timeOnLane
+//            << " enterSpeed = " << enterSpeed
+//            << "\nfrontOnLane = " << frontOnLane
+//            << " leaveSpeed = " << leaveSpeed
+//            << "\n";
+//
+
+
     if (timeOnLane < 0) {
         WRITE_ERROR("Negative vehicle step fraction for '" + veh.getID() + "' on lane '" + getLane()->getID() + "'.");
         return veh.hasArrived();
@@ -168,7 +165,40 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     if (timeOnLane == 0) {
         return veh.hasArrived();
     }
-    notifyMoveInternal(veh, frontOnLane, timeOnLane, newSpeed);
+
+    // XXX: use this, when #2556 is fixed!
+//    const SUMOReal travelledDistanceFrontOnLane = MIN2(newPos, myLaneLength) - MAX2(oldPos, 0.);
+//    const SUMOReal travelledDistanceVehicleOnLane = MIN2(newPos, myLaneLength) - MAX2(oldPos, 0.) + MIN2(MAX2(0., newPos-myLaneLength), veh.getVehicleType().getLength());
+    // XXX: #2556 fixed for ballistic update
+    const SUMOReal travelledDistanceFrontOnLane = MSGlobals::gSemiImplicitEulerUpdate ? frontOnLane*newSpeed
+             : MAX2(0., MIN2(newPos, myLaneLength) - MAX2(oldPos, 0.));
+    const SUMOReal travelledDistanceVehicleOnLane = MSGlobals::gSemiImplicitEulerUpdate ? timeOnLane*newSpeed
+             : MIN2(newPos, myLaneLength) - MAX2(oldPos, 0.) + MIN2(MAX2(0., newPos-myLaneLength), veh.getVehicleType().getLength());
+//    // XXX: no fix
+//    const SUMOReal travelledDistanceFrontOnLane = frontOnLane*newSpeed;
+//    const SUMOReal travelledDistanceVehicleOnLane = timeOnLane*newSpeed;
+
+
+//
+//    // Debug (Leo)
+//    if(timeOnLane < frontOnLane){
+//        std::cout.precision(20);
+//        std::cout << "\nNOTIFY_MOVE_INTERNAL\n"
+//                << "myLaneLength = " << myLaneLength
+//                << "travelledDistanceFrontOnLane = " << travelledDistanceFrontOnLane
+//                << "\ntravelledDistanceVehicleOnLane = " << travelledDistanceVehicleOnLane
+//                << "\nfrontOnLane = " << frontOnLane
+//                << " timeOnLane = " << timeOnLane
+//                << "\noldPos = " << oldPos
+//                << " newPos = " << newPos
+//                << "\noldSpeed = " << oldSpeed
+//                << " newSpeed = " << newSpeed
+//                << "\n";
+//    }
+
+
+    notifyMoveInternal(veh, frontOnLane, timeOnLane, (enterSpeed + leaveSpeedFront)/2., (enterSpeed + leaveSpeed)/2., travelledDistanceFrontOnLane, travelledDistanceVehicleOnLane);
+//    notifyMoveInternal(veh, frontOnLane, timeOnLane, newSpeed, newSpeed, travelledDistanceFrontOnLane, travelledDistanceVehicleOnLane);
     return ret;
 }
 
@@ -253,8 +283,8 @@ MSMeanData::MeanDataValueTracker::addTo(MSMeanData::MeanDataValues& val) const {
 
 
 void
-MSMeanData::MeanDataValueTracker::notifyMoveInternal(SUMOVehicle& veh, SUMOReal frontOnLane, SUMOReal timeOnLane, SUMOReal speed) {
-    myTrackedData[&veh]->myValues->notifyMoveInternal(veh, frontOnLane, timeOnLane, speed);
+MSMeanData::MeanDataValueTracker::notifyMoveInternal(const SUMOVehicle& veh, const SUMOReal frontOnLane, const SUMOReal timeOnLane, const SUMOReal meanSpeedFrontOnLane, const SUMOReal meanSpeedVehicleOnLane, const SUMOReal travelledDistanceFrontOnLane, const SUMOReal travelledDistanceVehicleOnLane) {
+    myTrackedData[&veh]->myValues->notifyMoveInternal(veh, frontOnLane, timeOnLane, meanSpeedFrontOnLane, meanSpeedVehicleOnLane, travelledDistanceFrontOnLane, travelledDistanceVehicleOnLane);
 }
 
 
