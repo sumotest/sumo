@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:44:30 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Fri Sep 23 13:18:46 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -16,6 +16,7 @@
     </time>
 
     <processing>
+        <step-method.ballistic value="true"/>
         <time-to-teleport value="-1"/>
     </processing>
 
@@ -36,8 +37,8 @@
         <edge id="3/1to2/1" sampledSeconds="3120.00" CO_abs="19879.270667" CO2_abs="1877281.466667" HC_abs="1090.190400" PMx_abs="66.335837" NOx_abs="2619.271200" fuel_abs="748.442802" electricity_abs="0"
             CO_normed="2981.890600" CO2_normed="281592.220000" HC_normed="163.528560" PMx_normed="9.950375" NOx_normed="392.890680" fuel_normed="112.266420" electricity_normed="0"
             traveltime="100000.00" CO_perVeh="637156.111111" CO2_perVeh="60169277.777779" HC_perVeh="34942.000000" PMx_perVeh="2126.148611" NOx_perVeh="83951.000000" fuel_perVeh="23988.551336" electricity_perVeh="0"/>
-        <edge id="4/1to3/1" sampledSeconds="1500.00" CO_abs="9538.221844" CO2_abs="900734.653254" HC_abs="523.081717" PMx_abs="31.828483" NOx_abs="1256.747386" fuel_abs="359.108839" electricity_abs="0"
-            CO_normed="1430.733277" CO2_normed="135110.197988" HC_normed="78.462258" PMx_normed="4.774273" NOx_normed="188.512108" fuel_normed="53.866326" electricity_normed="0"
-            traveltime="100000.00" CO_perVeh="635881.456279" CO2_perVeh="60048976.883589" HC_perVeh="34872.114476" PMx_perVeh="2121.898899" NOx_perVeh="83783.159045" fuel_perVeh="23940.589248" electricity_perVeh="0"/>
+        <edge id="4/1to3/1" sampledSeconds="1500.00" CO_abs="9557.341667" CO2_abs="902539.166667" HC_abs="524.130000" PMx_abs="31.892229" NOx_abs="1259.265000" fuel_abs="359.828270" electricity_abs="0"
+            CO_normed="1433.601250" CO2_normed="135380.875000" HC_normed="78.619500" PMx_normed="4.783834" NOx_normed="188.889750" fuel_normed="53.974241" electricity_normed="0"
+            traveltime="100000.00" CO_perVeh="637156.111111" CO2_perVeh="60169277.777779" HC_perVeh="34942.000000" PMx_perVeh="2126.148611" NOx_perVeh="83951.000000" fuel_perVeh="23988.551336" electricity_perVeh="0"/>
     </interval>
 </meandata>

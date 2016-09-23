@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Sep 13 12:07:55 2016 by SUMO Version dev-SVN-r21424
+<!-- generated on Mon Sep 19 21:56:05 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -617,86 +617,86 @@
         <edge id="middle">
             <lane id="middle_0">
                 <vehicle id="follower" pos="123.05" speed="20.01"/>
-                <vehicle id="leader" pos="148.03" speed="19.74"/>
+                <vehicle id="leader" pos="148.10" speed="20.00"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="36.50">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="133.02" speed="19.89"/>
-                <vehicle id="leader" pos="157.61" speed="18.54"/>
+                <vehicle id="follower" pos="133.06" speed="20.01"/>
+                <vehicle id="leader" pos="157.96" speed="19.45"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="37.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="142.81" speed="19.25"/>
-                <vehicle id="leader" pos="166.45" speed="16.85"/>
+                <vehicle id="follower" pos="142.99" speed="19.75"/>
+                <vehicle id="leader" pos="167.13" speed="17.20"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="37.50">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="152.15" speed="18.12"/>
-                <vehicle id="leader" pos="174.39" speed="14.90"/>
+                <vehicle id="follower" pos="152.57" speed="18.55"/>
+                <vehicle id="leader" pos="175.16" speed="14.95"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="38.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="160.84" speed="16.61"/>
-                <vehicle id="leader" pos="181.32" speed="12.82"/>
+                <vehicle id="follower" pos="161.42" speed="16.86"/>
+                <vehicle id="leader" pos="182.08" speed="12.70"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="38.50">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="168.69" speed="14.83"/>
-                <vehicle id="leader" pos="187.19" speed="10.66"/>
+                <vehicle id="follower" pos="169.36" speed="14.91"/>
+                <vehicle id="leader" pos="187.86" speed="10.45"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="39.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="175.62" speed="12.87"/>
-                <vehicle id="leader" pos="191.97" speed="8.46"/>
+                <vehicle id="follower" pos="176.30" speed="12.82"/>
+                <vehicle id="leader" pos="192.53" speed="8.20"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="39.50">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="181.54" speed="10.81"/>
-                <vehicle id="leader" pos="195.64" speed="6.24"/>
+                <vehicle id="follower" pos="182.17" speed="10.66"/>
+                <vehicle id="leader" pos="196.06" speed="5.95"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="40.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="186.41" speed="8.67"/>
-                <vehicle id="leader" pos="198.20" speed="4.01"/>
+                <vehicle id="follower" pos="186.95" speed="8.47"/>
+                <vehicle id="leader" pos="198.48" speed="3.70"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="40.50">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="190.20" speed="6.50"/>
-                <vehicle id="leader" pos="199.65" speed="1.77"/>
+                <vehicle id="follower" pos="190.63" speed="6.25"/>
+                <vehicle id="leader" pos="199.77" speed="1.45"/>
             </lane>
         </edge>
     </timestep>
     <timestep time="41.00">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="192.90" speed="4.30"/>
+                <vehicle id="follower" pos="193.19" speed="4.01"/>
                 <vehicle id="leader" pos="200.00" speed="0.00"/>
             </lane>
         </edge>
@@ -704,7 +704,7 @@
     <timestep time="41.50">
         <edge id="middle">
             <lane id="middle_0">
-                <vehicle id="follower" pos="194.50" speed="2.10"/>
+                <vehicle id="follower" pos="194.64" speed="1.78"/>
                 <vehicle id="leader" pos="200.00" speed="0.00"/>
             </lane>
         </edge>

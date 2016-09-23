@@ -1,8 +1,8 @@
-# the standard structure for model tests
-circle
-
 # idm model test
 idm
+
+# the standard structure for model tests
+circle
 
 # idm model with memory test
 idmm

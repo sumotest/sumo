@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:43:56 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Mon Sep 19 15:21:55 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -10,6 +10,10 @@
         <route-files value="input_routes.rou.xml"/>
         <additional-files value="input_additional.add.xml"/>
     </input>
+
+    <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
 
     <report>
         <xml-validation value="never"/>
@@ -21,6 +25,6 @@
 -->
 
 <instantE1>
-    <instantOut id="end_of_lane" time="13.24" state="enter" vehID="0.99" speed="30.00" length="5.00" type="DEFAULT_VEHTYPE"/>
-    <instantOut id="end_of_lane" time="13.41" state="leave" vehID="0.99" speed="30.00" length="5.00" type="DEFAULT_VEHTYPE" occupancy="0.17"/>
+    <instantOut id="end_of_lane" time="12.24" state="enter" vehID="0.99" speed="30.00" length="5.00" type="DEFAULT_VEHTYPE"/>
+    <instantOut id="end_of_lane" time="12.41" state="leave" vehID="0.99" speed="30.00" length="5.00" type="DEFAULT_VEHTYPE" occupancy="0.17"/>
 </instantE1>

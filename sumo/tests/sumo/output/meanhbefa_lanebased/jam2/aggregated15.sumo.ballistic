@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Tue Apr  5 13:44:34 2016 by SUMO Version dev-SVN-r20343
+<!-- generated on Fri Sep 23 13:18:48 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -16,6 +16,7 @@
     </time>
 
     <processing>
+        <step-method.ballistic value="true"/>
         <time-to-teleport value="-1"/>
     </processing>
 
@@ -75,9 +76,9 @@
             traveltime="100000.00" CO_perVeh="637156.111111" CO2_perVeh="60169277.777779" HC_perVeh="34942.000000" PMx_perVeh="2126.148611" NOx_perVeh="83951.000000" fuel_perVeh="23988.551336" electricity_perVeh="0"/>
         </edge>
         <edge id="4/1to3/1">
-            <lane id="4/1to3/1_0" sampledSeconds="375.00" CO_abs="2370.215594" CO2_abs="223830.278254" HC_abs="129.984217" PMx_abs="7.909312" NOx_abs="312.298636" fuel_abs="89.237636" electricity_abs="0"
-            CO_normed="1422.129357" CO2_normed="134298.166952" HC_normed="77.990530" PMx_normed="4.745587" NOx_normed="187.379181" fuel_normed="53.542582" electricity_normed="0"
-            traveltime="100000.00" CO_perVeh="632057.491785" CO2_perVeh="59688074.201018" HC_perVeh="34662.457903" PMx_perVeh="2109.149764" NOx_perVeh="83279.636181" fuel_perVeh="23796.702985" electricity_perVeh="0"/>
+            <lane id="4/1to3/1_0" sampledSeconds="375.00" CO_abs="2389.335417" CO2_abs="225634.791667" HC_abs="131.032500" PMx_abs="7.973057" NOx_abs="314.816250" fuel_abs="89.957068" electricity_abs="0"
+            CO_normed="1433.601250" CO2_normed="135380.875000" HC_normed="78.619500" PMx_normed="4.783834" NOx_normed="188.889750" fuel_normed="53.974241" electricity_normed="0"
+            traveltime="100000.00" CO_perVeh="637156.111111" CO2_perVeh="60169277.777778" HC_perVeh="34942.000000" PMx_perVeh="2126.148611" NOx_perVeh="83951.000000" fuel_perVeh="23988.551336" electricity_perVeh="0"/>
         </edge>
     </interval>
     <interval begin="645.00" end="660.00" id="dump_15">
