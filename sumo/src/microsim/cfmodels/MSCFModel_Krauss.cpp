@@ -53,7 +53,10 @@ MSCFModel_Krauss::~MSCFModel_Krauss() {}
 
 SUMOReal
 MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SUMOReal gap) const {
-    return MIN2(maximumSafeStopSpeed(gap, speed, false, 0.), maxNextSpeed(speed, veh)); // NOTE: allows return of smaller values than minNextSpeed()
+    // NOTE: This allows return of smaller values than minNextSpeed().
+    // Only relevant for the ballistic update: We give the argument headway=TS, to assure that
+    // the stopping position is approached with a uniform deceleration also for tau!=TS.
+    return MIN2(maximumSafeStopSpeed(gap, speed, false, TS), maxNextSpeed(speed, veh));
 }
 
 
