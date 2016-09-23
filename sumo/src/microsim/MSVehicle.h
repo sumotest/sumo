@@ -137,7 +137,7 @@ public:
         /// the stored position
         SUMOReal myPos;
 
-        /// the stored speed
+        /// the stored speed (should be >=0 at any time)
         SUMOReal mySpeed;
 	
         /// the speed at the begin of the previous time step

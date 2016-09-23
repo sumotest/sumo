@@ -721,6 +721,10 @@ MSVehicle::workOnMoveReminders(SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpe
     // This erasure-idiom works for all stl-sequence-containers
     // See Meyers: Effective STL, Item 9
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end();) {
+        // XXX: calling notifyMove with newSpeed seems not the best choice. For the ballistic update, the average speed is calculated and used
+        //      although a higher order quadrature-formula might be more adequate.
+        //      For the euler case (where the speed is considered constant for each time step) it is conceivable that
+        //      the current calculations may lead to systematic errors for large time steps (compared to reality).
         if (!rem->first->notifyMove(*this, oldPos + rem->second, newPos + rem->second, MAX2(0., newSpeed))) {
 #ifdef _DEBUG
             if (myTraceMoveReminders) {
@@ -740,6 +744,7 @@ MSVehicle::workOnMoveReminders(SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpe
 }
 
 
+// XXX: consider renaming...
 void
 MSVehicle::adaptLaneEntering2MoveReminder(const MSLane& enteredLane) {
     // save the old work reminders, patching the position information
@@ -1229,7 +1234,7 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
             	return getCarFollowModel().stopSpeed(this, getSpeed(), endPos - myState.pos() + NUMERICAL_EPS);
             } else {
             	// ballistic
-            	return getCarFollowModel().stopSpeed(this, getSpeed(), endPos - myState.pos());
+            	return getCarFollowModel().stopSpeed(this, myState.mySpeed, endPos - myState.myPos);
             }
         }
     }
@@ -2584,6 +2589,8 @@ MSVehicle::enterLaneAtMove(MSLane* enteredLane, bool onTeleporting) {
     } else {
         activateReminders(MSMoveReminder::NOTIFICATION_TELEPORT);
         // normal move() isn't called so reset position here
+        // XXX: this seems strange to me since in activateReminders, which (e.g. for induction loops)
+        //      may call notifyEnter making use of the stored position to decide whether or not to add the vehicle... (Leo)
         myState.myPos = 0;
         myCachedPosition = Position::INVALID;
     }
