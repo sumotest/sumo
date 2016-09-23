@@ -29,7 +29,25 @@ MSPModel_RemoteControlled::MSPModel_RemoteControlled(const OptionsCont &oc, MSNe
 }
 
 PedestrianState *MSPModel_RemoteControlled::add(MSPerson *person, MSPerson::MSPersonStage_Walking *stage, SUMOTime now) {
-    return nullptr;
+    assert(person->getCurrentStageType() == MSTransportable::MOVING_WITHOUT_VEHICLE);
+
+    MSPGRCPState * state = new MSPGRCPState(person,stage);
+    const MSEdge* edge = *(stage->getRoute().begin());
+    if (buffers.find(edge->getID()) == buffers.end()) {
+        std::queue<MSPGRCPState*> buffer;
+        buffer.push(state);
+
+
+        std::string str =  edge->getID();
+        buffers[edge->getID()] = buffer;
+    } else {
+        std::queue<MSPGRCPState*> * buffer = &buffers[edge->getID()];
+        buffer->push(state);
+    }
+
+    pstates[person->getID()] = state;
+
+    return state;
 }
 
 bool MSPModel_RemoteControlled::blockedAtDist(const MSLane *lane, SUMOReal distToCrossing,
@@ -38,5 +56,43 @@ bool MSPModel_RemoteControlled::blockedAtDist(const MSLane *lane, SUMOReal distT
 }
 
 SUMOTime MSPModel_RemoteControlled::execute(SUMOTime now) {
-    return 0;
+    //do all the handling here
+
+    //1. transfer agents as long as there is space (SUMO --> external sim)
+    std::map<const std::string,std::queue<MSPGRCPState*>>::iterator it = buffers.begin();
+    while(it != buffers.end()) {
+        std::queue<MSPGRCPState*> buffer = (*it).second;
+        handleBuffer(&buffer);
+        if (buffer.empty()){
+            it = buffers.erase(it);
+        } else {
+            it++;
+        }
+    }
+
+    //2. simulate for one SUMO time step
+    grpcClient->simulateTimeInterval(now,now+DELTA_T);
+
+    //3. receive events, trajectories ...
+    grpcClient->receiveTrajectories(pstates, now);
+
+    //4. transfer agents as long as there is space (external sim --> SUMO)
+    grpcClient->retrieveAgents(pstates,myNet,now);
+
+    return DELTA_T;
+}
+
+void MSPModel_RemoteControlled::handleBuffer(std::queue<MSPGRCPState*>* buffer) {
+    while(!buffer->empty()){
+        MSPGRCPState* st = buffer->front();
+        if (transmitPedestrian(st)) {
+            buffer->pop();
+        } else {
+            return;
+        }
+    }
+}
+
+bool MSPModel_RemoteControlled::transmitPedestrian(MSPGRCPState *st) {
+    return grpcClient->transmitPedestrian(st);
 }

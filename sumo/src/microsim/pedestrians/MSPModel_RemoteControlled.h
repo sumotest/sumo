@@ -51,6 +51,13 @@ public:
 private:
     MSNet * myNet;
     MSGRPCClient *grpcClient;
+
+    std::map<const std::string,std::queue<MSPGRCPState*>> buffers;
+    std::map<const std::string,MSPGRCPState*> pstates;
+
+    void handleBuffer(std::queue<MSPGRCPState *, std::deque<_Tp, std::allocator<_Tp>>> *pQueue);
+
+    bool transmitPedestrian(MSPGRCPState *pState);
 };
 
 
