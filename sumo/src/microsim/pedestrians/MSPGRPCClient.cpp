@@ -693,7 +693,7 @@ void MSGRPCClient::retrieveAgents(std::map<const std::string, MSPGRCPState*>& ps
 
 			pstates.erase(a.id());
 			//TODO !! fix it
-//			st->getMyStage()->moveToNextEdge(st->getPerson(),time,st->getEdge(),0);
+			st->getMyStage()->moveToNextEdge(st->getPerson(),time);
 
 
 			//			delete st;
