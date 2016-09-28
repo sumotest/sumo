@@ -35,7 +35,6 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <cassert>
 #include "NBEdgeCont.h"
 #include "NBNode.h"
 #include "NBNodeCont.h"
@@ -102,8 +101,8 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool
     mayDefinitelyPass(mayDefinitelyPass_), 
     keepClear(keepClear_), 
     contPos(contPos_),
-    haveVia(haveVia_),
     id(toEdge_ == 0 ? "" : toEdge->getFromNode()->getID()),
+    haveVia(haveVia_),
     internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX)
 {}
 

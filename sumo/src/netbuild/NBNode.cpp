@@ -443,11 +443,11 @@ NBNode::addOutgoingEdge(NBEdge* edge) {
 
 
 bool
-NBNode::isSimpleContinuation() const {
+NBNode::isSimpleContinuation(bool checkLaneNumbers) const {
     // one in, one out->continuation
     if (myIncomingEdges.size() == 1 && myOutgoingEdges.size() == 1) {
         // both must have the same number of lanes
-        return (*(myIncomingEdges.begin()))->getNumLanes() == (*(myOutgoingEdges.begin()))->getNumLanes();
+        return !checkLaneNumbers || ((*(myIncomingEdges.begin()))->getNumLanes() == (*(myOutgoingEdges.begin()))->getNumLanes());
     }
     // two in and two out and both in reverse direction
     if (myIncomingEdges.size() == 2 && myOutgoingEdges.size() == 2) {
@@ -460,7 +460,7 @@ NBNode::isSimpleContinuation() const {
             }
             // both must have the same number of lanes
             NBContHelper::nextCW(myOutgoingEdges, opposite);
-            if (in->getNumLanes() != (*opposite)->getNumLanes()) {
+            if (checkLaneNumbers && in->getNumLanes() != (*opposite)->getNumLanes()) {
                 return false;
             }
         }
@@ -491,7 +491,6 @@ NBNode::computeSmoothShape(const PositionVector& begShape,
         ret.push_back(endShape.front());
         return ret;
     } else {
-        assert(init[0].z() == myPosition.z());
         return bezier(init, numPoints);
     }
 }
@@ -559,7 +558,7 @@ NBNode::bezierControlPoints(
 #endif
                     ok = false;
                     if (recordError != 0) {
-                        recordError->myDisplacementError = MAX2(recordError->myDisplacementError, fabs(sin(displacementAngle) * dist));
+                        recordError->myDisplacementError = MAX2(recordError->myDisplacementError, (SUMOReal)fabs(sin(displacementAngle) * dist));
                     }
                     return PositionVector();
                 } else {
@@ -590,7 +589,7 @@ NBNode::bezierControlPoints(
                     ok = false;
                     if (recordError != 0) {
                         // it's unclear if this error can be solved via stretching the intersection.
-                        recordError->myDisplacementError = MAX2(recordError->myDisplacementError, 1.0);
+                        recordError->myDisplacementError = MAX2(recordError->myDisplacementError, (SUMOReal)1.0);
                     }
                     return PositionVector();
                 }
@@ -604,7 +603,7 @@ NBNode::bezierControlPoints(
 #endif
                     if (recordError != 0) {
                         // This should be fixable with minor stretching
-                        recordError->myDisplacementError = MAX2(recordError->myDisplacementError, 1.0);
+                        recordError->myDisplacementError = MAX2(recordError->myDisplacementError, (SUMOReal)1.0);
                     }
                     ok = false;
                     return PositionVector();

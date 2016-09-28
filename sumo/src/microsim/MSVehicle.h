@@ -567,7 +567,7 @@ public:
     }
 
 
-    /** @brief Returns the vehicle's direction in degrees
+    /** @brief Returns the vehicle's direction in radians
      * @return The vehicle's current angle
      */
     SUMOReal getAngle() const {
@@ -1422,7 +1422,7 @@ protected:
     const ConstMSEdgeVector getStopEdges() const;
 
     /// @brief register vehicle for drawing while outside the network
-    virtual void drawOutsideNetwork(bool /*add*/) const {};
+    virtual void drawOutsideNetwork(bool /*add*/) {};
 
     /// @brief The time the vehicle waits (is not faster than 0.1m/s) in seconds
     SUMOTime myWaitingTime;
@@ -1474,7 +1474,7 @@ protected:
 
     bool myHaveToWaitOnNextLink;
 
-    /// @brief the angle (@todo consider moving this into myState)
+    /// @brief the angle in radians (@todo consider moving this into myState)
     SUMOReal myAngle;
 
     /// @brief distance to the next stop or -1 if there is none

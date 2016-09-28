@@ -905,6 +905,9 @@ PositionVector::move2side(SUMOReal amount) {
     if (size() < 2) {
         return;
     }
+    if (length2D() == 0) {
+        return;
+    }
     PositionVector shape;
     for (int i = 0; i < static_cast<int>(size()); i++) {
         if (i == 0) {

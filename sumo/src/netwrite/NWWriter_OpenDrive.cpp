@@ -129,6 +129,26 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
                 WRITE_WARNING("Could not compute smooth shape for edge '" + e->getID() + "'.");
             }
         }
+        // check if the lane geometries are compatible with OpenDRIVE assumptions (colinear stop line)
+        if (e->getNumLanes() > 1) {
+            // compute 'stop line' of rightmost lane
+            const PositionVector shape0 = e->getLaneShape(0);
+            assert(shape0.size() >= 2);
+            const Position& from = shape0[-2];
+            const Position& to = shape0[-1];
+            PositionVector stopLine;
+            stopLine.push_back(to);
+            stopLine.push_back(to - PositionVector::sideOffset(from, to, -1000.0));
+            // endpoints of all other lanes should be on the stop line
+            for (int lane = 1; lane < e->getNumLanes(); ++lane) {
+                const SUMOReal dist = stopLine.distance2D(e->getLaneShape(lane)[-1]);
+                if (dist > NUMERICAL_EPS) {
+                    WRITE_WARNING("Uneven stop line at lane '" + e->getLaneID(lane) + "' (dist=" + toString(dist) + ") cannot be represented in OpenDRIVE.");
+                }
+            }
+        }
+
+
         device << std::setprecision(OUTPUT_ACCURACY);
         device << "        </planView>\n";
         writeElevationProfile(ls, device, elevationOSS);
@@ -167,7 +187,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
         device << "    </road>\n";
     }
     device << "\n";
-    // write junction-internal edges (road)
+    // write junction-internal edges (road). In OpenDRIVE these are called 'paths' or 'connecting roads'
     for (std::map<std::string, NBNode*>::const_iterator i = nc.begin(); i != nc.end(); ++i) {
         NBNode* n = (*i).second;
         const std::vector<NBEdge*>& incoming = (*i).second->getIncomingEdges();
@@ -183,6 +203,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
                 const SUMOReal width = c.toEdge->getLaneWidth(c.toLane);
                 const PositionVector begShape = getLeftLaneBorder(inEdge, c.fromLane);
                 const PositionVector endShape = getLeftLaneBorder(outEdge, c.toLane);
+                //std::cout << "computing reference line for internal lane " << c.getInternalLaneID() << " begLane=" << inEdge->getLaneShape(c.fromLane) << " endLane=" << outEdge->getLaneShape(c.toLane) << "\n";
 
                 SUMOReal length;
                 PositionVector fallBackShape;
@@ -354,19 +375,24 @@ NWWriter_OpenDrive::getLeftLaneBorder(const NBEdge* edge, int laneIndex) {
         // leftmost lane
         laneIndex = (int)edge->getNumLanes() - 1;
     }
-    const int leftmost = (int)edge->getNumLanes() - 1;
-    SUMOReal widthOffset = -(edge->getLaneWidth(leftmost) / 2);
-
-    // collect lane widths from left border of edge to left border of lane to connect to
-    for (int i = leftmost; i > laneIndex; i--) {
-        widthOffset += edge->getLaneWidth(i);
-    }
-
-    PositionVector result = edge->getLaneShape(leftmost);
-    try {
-        result.move2side(widthOffset);
-    } catch (InvalidArgument&) { }
-    return result;
+    /// it would be tempting to use
+    // PositionVector result = edge->getLaneShape(laneIndex); 
+    // (and the moveo2side)
+    // However, the lanes in SUMO have a small lateral gap (SUMO_const_laneOffset) to account for markings
+    // In OpenDRIVE this gap does not exists so we have to do all lateral
+    // computations based on the reference line
+    // This assumes that the 'stop line' for all lanes is colinear!
+    const int leftmost = (int)edge->getNumLanes() - 1; 
+    SUMOReal widthOffset = -(edge->getLaneWidth(leftmost) / 2); 
+    // collect lane widths from left border of edge to left border of lane to connect to 
+    for (int i = leftmost; i > laneIndex; i--) { 
+        widthOffset += edge->getLaneWidth(i); 
+    } 
+    PositionVector result = edge->getLaneShape(leftmost); 
+    try { 
+        result.move2side(widthOffset); 
+    } catch (InvalidArgument&) { } 
+    return result; 
 }
 
 

@@ -1576,9 +1576,9 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
                             const MSLeaderDistanceInfo& /* neighBlockers */,
                             std::vector<CLeaderDist>* collectLeadBlockers,
                             std::vector<CLeaderDist>* collectFollowBlockers,
-                            bool saveOriginalLatDist) {
+                            bool keepLatGapManeuver) {
     // truncate latDist according to maxSpeedLat
-    if (saveOriginalLatDist) {
+    if (!keepLatGapManeuver) {
         myOrigLatDist = latDist;
     }
     const SUMOReal maxDist = SPEED2DIST(myVehicle.getVehicleType().getMaxSpeedLat());
@@ -1632,7 +1632,7 @@ MSLCM_SL2015::checkBlocking(const MSLane& neighLane, SUMOReal& latDist, int lane
                                          (laneOffset == -1 ? LCA_BLOCKED_BY_RIGHT_FOLLOWER : LCA_BLOCKED_BY_LEFT_FOLLOWER), collectFollowBlockers);
     }
 
-    if (blocked == 0 && !myCanChangeFully && myPushy == 0) {
+    if (blocked == 0 && !myCanChangeFully && myPushy == 0 && !keepLatGapManeuver) {
         // aggressive drivers immediately start moving towards potential
         // blockers and only check that the start of their maneuver (latDist) is safe. In
         // contrast, cautious drivers need to check latDist and origLatDist to
@@ -2006,6 +2006,7 @@ MSLCM_SL2015::keepLatGap(int state,
     /// XXX to be made configurable
     const SUMOReal gapFactor = (state & LCA_STRATEGIC) != 0 ? 0.0 : 1.0;
     const bool stayInLane = laneOffset == 0 || ((state & LCA_STRATEGIC) != 0 && (state & LCA_STAY) != 0);
+    const SUMOReal oldLatDist = latDist;
 
     /// XXX todo
     // - compute lateral gap after executing the current maneuver (may be LCA_NONE)
@@ -2042,8 +2043,7 @@ MSLCM_SL2015::keepLatGap(int state,
                   << " surplusGapRight=" << surplusGapRight
                   << " surplusGapLeft=" << surplusGapLeft
                   << " state=" << toString((LaneChangeAction)state)
-                  << " blockedBefore=" << toString((LaneChangeAction)blocked)
-                  << "\n";
+                  << " blockedBefore=" << toString((LaneChangeAction)blocked);
     }
     const SUMOReal maxDist = SPEED2DIST(myVehicle.getVehicleType().getMaxSpeedLat());
     if (surplusGapRight < -NUMERICAL_EPS) {
@@ -2061,11 +2061,17 @@ MSLCM_SL2015::keepLatGap(int state,
             blocked |= LCA_OVERLAPPING | LCA_BLOCKED_LEFT;
         }
     }
-    if (blocked == 0 /*&& latDist != origLatDist*/) {
-        blocked = checkBlocking(neighLane, latDist, laneOffset, leaders, followers, blockers, neighLeaders, neighFollowers, neighBlockers, 0, 0, false);
+    if (latDist != oldLatDist) {
+        blocked = checkBlocking(neighLane, latDist, laneOffset, leaders, followers, blockers, neighLeaders, neighFollowers, neighBlockers, 0, 0, true);
     }
     if (latDist != 0) {
         state = (state & ~LCA_STAY);
+    }
+    if (gDebugFlag2) {
+        std::cout << "    keepLatGap (checked)" 
+                  << " latDist2=" << latDist
+                  << " blockedAfter=" << toString((LaneChangeAction)blocked)
+                  << "\n";
     }
     return state;
 }

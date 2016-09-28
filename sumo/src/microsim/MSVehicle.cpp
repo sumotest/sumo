@@ -1482,7 +1482,6 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
 
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
         const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed, cfModel.getMaxDecel(),0.);
-
         if (yellowOrRed && seen >= brakeDist) {
             // the vehicle is able to brake in front of a yellow/red traffic light
             lfLinks.push_back(DriveProcessItem(*link, vLinkWait, vLinkWait, false, t + TIME2STEPS(seen / MAX2(vLinkWait, NUMERICAL_EPS)), vLinkWait, 0, 0, seen));
@@ -1733,7 +1732,6 @@ MSVehicle::executeMove() {
                     << " speed=" << getSpeed() // toString(getSpeed(), 24)
                     << std::endl;
 #endif
-
     // get safe velocities from DriveProcessItems
     SUMOReal vSafe = 0; // maximum safe velocity (XXX: why init this as 0 !? Confusing... (Leo))
     SUMOReal vSafeZipper = std::numeric_limits<SUMOReal>::max(); // speed limit due to zipper merging
@@ -2587,12 +2585,13 @@ MSVehicle::enterLaneAtMove(MSLane* enteredLane, bool onTeleporting) {
     if (!onTeleporting) {
         activateReminders(MSMoveReminder::NOTIFICATION_JUNCTION);
     } else {
-        activateReminders(MSMoveReminder::NOTIFICATION_TELEPORT);
-        // normal move() isn't called so reset position here
+        // normal move() isn't called so reset position here. must be done
+        // before calling reminders 
         // XXX: this seems strange to me since in activateReminders, which (e.g. for induction loops)
         //      may call notifyEnter making use of the stored position to decide whether or not to add the vehicle... (Leo)
         myState.myPos = 0;
         myCachedPosition = Position::INVALID;
+        activateReminders(MSMoveReminder::NOTIFICATION_TELEPORT);
     }
     return hasArrived();
 }

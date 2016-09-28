@@ -80,6 +80,9 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("default.sidewalk-width", new Option_Float((SUMOReal) 2.0));
     oc.addDescription("default.sidewalk-width", "Building Defaults", "The default width of added sidewalks");
 
+    oc.doRegister("default.disallow", new Option_String());
+    oc.addDescription("default.disallow", "Building Defaults", "The default for disallowed vehicle classes");
+
     oc.doRegister("default.junctions.keep-clear", new Option_Bool(true));
     oc.addDescription("default.junctions.keep-clear", "Building Defaults", "Whether junctions should be kept clear by default");
 
@@ -127,7 +130,7 @@ NBFrame::fillOptions(bool forNetgen) {
         oc.doRegister("geometry.max-segment-length", new Option_Float(0));
         oc.addDescription("geometry.max-segment-length", "Processing", "splits geometry to restrict segment length");
 
-        oc.doRegister("geometry.min-dist", new Option_Float());
+        oc.doRegister("geometry.min-dist", new Option_Float(-1));
         oc.addDescription("geometry.min-dist", "Processing", "reduces too similar geometry points");
 
         oc.doRegister("geometry.max-angle", new Option_Float(99));
@@ -191,7 +194,7 @@ NBFrame::fillOptions(bool forNetgen) {
         oc.doRegister("speed.factor", new Option_Float(1));
         oc.addDescription("speed.factor", "Processing", "Modifies all edge speeds by multiplying by FLOAT");
 
-        oc.doRegister("speed.minimum", new Option_Float());
+        oc.doRegister("speed.minimum", new Option_Float(0));
         oc.addDescription("speed.minimum", "Processing", "Modifies all edge speeds to at least FLOAT");
     }
 
@@ -301,7 +304,7 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addSynonyme("tls.yellow.patch-small", "patch-small-tyellow", true);
     oc.addDescription("tls.yellow.patch-small", "TLS Building", "Given yellow times are patched even if being too short");
 
-    oc.doRegister("tls.yellow.time", new Option_Integer());
+    oc.doRegister("tls.yellow.time", new Option_Integer(-1));
     oc.addSynonyme("tls.yellow.time", "traffic-light-yellow", true);
     oc.addDescription("tls.yellow.time", "TLS Building", "Set INT as fixed time for yellow phase durations");
 
@@ -323,7 +326,7 @@ NBFrame::fillOptions(bool forNetgen) {
 
 
     // edge pruning
-    oc.doRegister("keep-edges.min-speed", new Option_Float());
+    oc.doRegister("keep-edges.min-speed", new Option_Float(-1));
     oc.addSynonyme("keep-edges.min-speed", "edges-min-speed", true);
     oc.addDescription("keep-edges.min-speed", "Edge Removal", "Only keep edges with speed in meters/second > FLOAT");
 

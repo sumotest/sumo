@@ -582,7 +582,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 #ifdef DEBUG_INFORMER
     if (DEBUG_COND) {
         std::cout << "\nINFORM_LEADER"
-        		<< "\nspeed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
+            << "\nspeed=" <<  myVehicle.getSpeed() << " planned=" << plannedSpeed << "\n";
     }
 #endif
 
@@ -634,9 +634,8 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             || (!MSGlobals::gSemiImplicitEulerUpdate && myLeftSpace - myLeadingBlockerLength - myVehicle.getCarFollowModel().brakeGap(myVehicle.getSpeed(), myCarFollowModel.getMaxDecel(), 0.) < overtakeDist)
             // not enough time to overtake?        (skipped for a stopped leader [currently only for ballistic update XXX: check if appropriate for euler, too] to ensure that it can be overtaken if only enough space is exists) (Leo)
             || (remainingSeconds < overtakeTime && (MSGlobals::gSemiImplicitEulerUpdate || !nv->isStopped()))) {
-//            || (remainingSeconds < overtakeTime) ) {
                         // cannot overtake
-            msgPass.informNeighLeader(new Info(-1, dir | LCA_AMBLOCKINGLEADER), &myVehicle); // XXX: using -1 is ambiguous! (Leo)
+            msgPass.informNeighLeader(new Info(std::numeric_limits<SUMOReal>::max(), dir | LCA_AMBLOCKINGLEADER), &myVehicle);
             // slow down smoothly to follow leader
             const SUMOReal targetSpeed = myCarFollowModel.followSpeed(
                                              &myVehicle, myVehicle.getSpeed(), neighLead.second, nv->getSpeed(), nv->getCarFollowModel().getMaxDecel());
@@ -657,7 +656,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                               << " remainingSeconds=" << remainingSeconds
                               << " currentGap=" << neighLead.second
                               << " brakeGap=" << myVehicle.getCarFollowModel().brakeGap(myVehicle.getSpeed(), myCarFollowModel.getMaxDecel(), 0.)
-                              << " secureGap=" << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel())
+                              << " secureGap=" << nv->getCarFollowModel()
                               << " targetSpeed=" << targetSpeed
                               << " nextSpeed=" << nextSpeed
                               << "\n";
@@ -702,7 +701,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
             }
 #endif
             msgPass.informNeighLeader(new Info(nv->getSpeed(), dir | LCA_AMBLOCKINGLEADER), &myVehicle);
-            return -1;  // XXX: using -1 is ambiguous for the ballistic update! Currently this is being catched in patchSpeed() (Leo)
+            return -1;  // XXX: using -1 is ambiguous for the ballistic update! Currently this is being catched in patchSpeed() (Leo), consider returning std::numeric_limits...max()
         }
     } else if (neighLead.first != 0) { // (remainUnblocked)
         // we are not blocked now. make sure we stay far enough from the leader
@@ -1270,7 +1269,7 @@ MSLCM_LC2013::_wantsChange(
 
 //    // In what follows, we check whether a roundabout is ahead (or the vehicle is on a roundabout)
 //    // We calculate the lengths of the continuations described by curr and neigh,
-//    // which are part of the roundabout. (Leo)
+//    // which are part of the roundabout. refs #1807 (Leo)
 //    SUMOReal roundaboutDistanceAhead = 0.0;
 //    SUMOReal roundaboutDistanceAheadNeigh = 0.0;
 //
