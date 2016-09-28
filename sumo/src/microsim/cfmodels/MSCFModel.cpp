@@ -367,10 +367,15 @@ MSCFModel::passingTime(const SUMOReal lastPos, const SUMOReal passedPos, const S
     if(passedPos > currentPos || passedPos < lastPos){
         std::stringstream ss;
         // Debug (Leo)
-        ss << "passingTime(): given argument passedPos = "<< passedPos <<" doesn't lie within [lastPos, currentPos] = [" << lastPos << ", " << currentPos << "]";
-        std::cout << ss.str() << "\n";
-        WRITE_ERROR(ss.str());
-        return -1;
+        if(!MSGlobals::gSemiImplicitEulerUpdate){
+            // NOTE: error is guarded to maintain original test output for euler update (Leo).
+            ss << "passingTime(): given argument passedPos = "<< passedPos <<" doesn't lie within [lastPos, currentPos] = [" << lastPos << ", " << currentPos << "]\nExtrapolating...";
+            std::cout << ss.str() << "\n";
+            WRITE_ERROR(ss.str());
+        }
+        const SUMOReal lastCoveredDist = currentPos - lastPos;
+        const SUMOReal extrapolated = passedPos > currentPos ? TS*(passedPos - lastPos)/lastCoveredDist : TS*(currentPos - passedPos)/lastCoveredDist;
+        return extrapolated;
     } else if(currentSpeed < 0) {
         WRITE_ERROR("passingTime(): given argument 'currentSpeed' is negative. This case is not handled yet.");
         return -1;
