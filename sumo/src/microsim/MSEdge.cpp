@@ -552,7 +552,12 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
             case DEPART_LANE_GIVEN:
             case DEPART_LANE_DEFAULT:
             case DEPART_LANE_FIRST_ALLOWED: {
-                const SUMOReal occupancy = getDepartLane(static_cast<MSVehicle&>(v))->getBruttoOccupancy();
+                MSLane* insertionLane = getDepartLane(static_cast<MSVehicle&>(v));
+                if (insertionLane == 0) {
+                    WRITE_WARNING("could not insert vehicle '" + v.getID() + "' on any lane of edge '" + getID() + "', time=" + time2string(MSNet::getInstance()->getCurrentTimeStep()));
+                    return false;
+                }
+                const SUMOReal occupancy = insertionLane->getBruttoOccupancy();
                 return occupancy == (SUMOReal)0 || occupancy * myLength + v.getVehicleType().getLengthWithGap() <= myLength;
             }
             default:

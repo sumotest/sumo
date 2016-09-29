@@ -48,6 +48,7 @@
 #include <utils/common/MsgHandler.h>
 #include <utils/common/UtilExceptions.h>
 #include <utils/common/StringTokenizer.h>
+#include <utils/common/SUMOVehicleClass.h>
 #include <utils/common/SysUtils.h>
 #include <utils/common/ToString.h>
 #include <utils/geom/GeoConvHelper.h>
@@ -75,7 +76,8 @@ NBNetBuilder::~NBNetBuilder() {}
 void
 NBNetBuilder::applyOptions(OptionsCont& oc) {
     // apply options to type control
-    myTypeCont.setDefaults(oc.getInt("default.lanenumber"), oc.getFloat("default.lanewidth"), oc.getFloat("default.speed"), oc.getInt("default.priority"));
+    myTypeCont.setDefaults(oc.getInt("default.lanenumber"), oc.getFloat("default.lanewidth"), oc.getFloat("default.speed"),
+        oc.getInt("default.priority"), parseVehicleClasses("", oc.getString("default.disallow")));
     // apply options to edge control
     myEdgeCont.applyOptions(oc);
     // apply options to traffic light logics control
@@ -189,7 +191,7 @@ NBNetBuilder::compute(OptionsCont& oc,
     }
     geoConvHelper.computeFinal(lefthand); // information needed for location element fixed at this point
 
-    if (oc.exists("geometry.min-dist") && oc.isSet("geometry.min-dist")) {
+    if (oc.exists("geometry.min-dist") && !oc.isDefault("geometry.min-dist")) {
         before = SysUtils::getCurrentMillis();
         PROGRESS_BEGIN_MESSAGE("Reducing geometries");
         myEdgeCont.reduceGeometries(oc.getFloat("geometry.min-dist"));
@@ -288,8 +290,8 @@ NBNetBuilder::compute(OptionsCont& oc,
     if (oc.exists("speed.offset")) {
         const SUMOReal speedOffset = oc.getFloat("speed.offset");
         const SUMOReal speedFactor = oc.getFloat("speed.factor");
-        if (speedOffset != 0 || speedFactor != 1 || oc.isSet("speed.minimum")) {
-            const SUMOReal speedMin = oc.isSet("speed.minimum") ? oc.getFloat("speed.minimum") : -std::numeric_limits<SUMOReal>::infinity();
+        if (speedOffset != 0 || speedFactor != 1) {
+            const SUMOReal speedMin = oc.getFloat("speed.minimum");
             before = SysUtils::getCurrentMillis();
             PROGRESS_BEGIN_MESSAGE("Applying speed modifications");
             for (std::map<std::string, NBEdge*>::const_iterator i = myEdgeCont.begin(); i != myEdgeCont.end(); ++i) {

@@ -35,7 +35,6 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <cassert>
 #include "NBEdgeCont.h"
 #include "NBNode.h"
 #include "NBNodeCont.h"
@@ -102,8 +101,8 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool
     mayDefinitelyPass(mayDefinitelyPass_), 
     keepClear(keepClear_), 
     contPos(contPos_),
-    haveVia(haveVia_),
     id(toEdge_ == 0 ? "" : toEdge->getFromNode()->getID()),
+    haveVia(haveVia_),
     internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX)
 {}
 
@@ -493,13 +492,30 @@ NBEdge::setGeometry(const PositionVector& s, bool inner) {
     computeAngle();
 }
 
+void 
+NBEdge::setNodeBorder(const NBNode* node, const Position& p) {
+    SUMOReal edgeWidth = 0;
+    for (int i = 0; i < (int)myLanes.size(); i++) {
+        edgeWidth += getLaneWidth(i);
+    }
+
+    if (node == myFrom) {
+        myFromBorder = myGeom.getOrthogonal(p, 200);
+        myFromBorder.extrapolate2D(edgeWidth);
+    } else {
+        assert(node == myTo);
+        myToBorder = myGeom.getOrthogonal(p, 200);
+        myToBorder.extrapolate2D(edgeWidth);
+    }
+}
+
 
 PositionVector
 NBEdge::cutAtIntersection(const PositionVector& old) const {
     PositionVector shape = old;
-    shape = startShapeAt(shape, myFrom);
+    shape = startShapeAt(shape, myFrom, myFromBorder);
     if (shape.size() >= 2) {
-        shape = startShapeAt(shape.reverse(), myTo).reverse();
+        shape = startShapeAt(shape.reverse(), myTo, myToBorder).reverse();
     }
     // sanity checks
     if (shape.length() < POSITION_EPS) {
@@ -541,8 +557,10 @@ NBEdge::computeEdgeShape() {
 
 
 PositionVector
-NBEdge::startShapeAt(const PositionVector& laneShape, const NBNode* startNode) const {
-    const PositionVector& nodeShape = startNode->getShape();
+NBEdge::startShapeAt(const PositionVector& laneShape, const NBNode* startNode, PositionVector nodeShape) const {
+    if (nodeShape.size() == 0) {
+        nodeShape = startNode->getShape();
+    }
     PositionVector lb(laneShape.begin(), laneShape.begin() + 2);
     // this doesn't look reasonable @todo use lb.extrapolateFirstBy(100.0);
     lb.extrapolate(100.0);
@@ -1441,13 +1459,15 @@ NBEdge::computeAngle() {
                             : myGeom);
 
     // if the junction shape is suspicious we cannot trust the angle to the centroid
-    if ((hasFromShape && (myFrom->getShape().distance2D(shape[0]) > 2 * POSITION_EPS
-                          || myFrom->getShape().around(shape[-1])))
-            || (hasToShape && (myTo->getShape().distance2D(shape[-1]) > 2 * POSITION_EPS
-                               || myTo->getShape().around(shape[0])))) {
+    if (hasFromShape && (myFrom->getShape().distance2D(shape[0]) > 2 * POSITION_EPS
+                || myFrom->getShape().around(shape[-1])
+                || !(myFrom->getShape().around(fromCenter)))) {
         fromCenter = myFrom->getPosition();
+    }
+    if (hasToShape && (myTo->getShape().distance2D(shape[-1]) > 2 * POSITION_EPS
+                || myTo->getShape().around(shape[0])
+                || !(myTo->getShape().around(toCenter)))) {
         toCenter = myTo->getPosition();
-        shape = myGeom;
     }
 
     const SUMOReal angleLookahead = MIN2(shape.length2D() / 2, ANGLE_LOOKAHEAD);

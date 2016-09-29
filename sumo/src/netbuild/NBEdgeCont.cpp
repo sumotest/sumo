@@ -81,7 +81,7 @@ NBEdgeCont::~NBEdgeCont() {
 void
 NBEdgeCont::applyOptions(OptionsCont& oc) {
     // set edges dismiss/accept options
-    myEdgesMinSpeed = oc.isSet("keep-edges.min-speed") ? oc.getFloat("keep-edges.min-speed") : -1;
+    myEdgesMinSpeed = oc.getFloat("keep-edges.min-speed");
     myRemoveEdgesAfterJoining = oc.exists("keep-edges.postload") && oc.getBool("keep-edges.postload");
     // we possibly have to load the edges to keep/remove
     if (oc.isSet("keep-edges.input-file")) {
@@ -1035,11 +1035,13 @@ void
 NBEdgeCont::generateStreetSigns() {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); ++i) {
         NBEdge* e = i->second;
-        // is this a "real" junction?
-        // XXX nyi
-        //continue
         const SUMOReal offset = MAX2((SUMOReal)0, e->getLength() - 3);
-        switch (e->getToNode()->getType()) {
+        if (e->getToNode()->isSimpleContinuation(false)) {
+            // not a "real" junction?
+            continue;
+        }
+        const SumoXMLNodeType nodeType = e->getToNode()->getType();
+        switch (nodeType) {
             case NODETYPE_PRIORITY:
                 // yield or major?
                 if (e->getJunctionPriority(e->getToNode()) > 0) {
