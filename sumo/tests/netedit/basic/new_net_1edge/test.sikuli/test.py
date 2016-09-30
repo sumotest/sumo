@@ -5,13 +5,17 @@ import os, sys, subprocess
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
-# get paths 
+# SUMO Folder
 SUMOFolder = os.environ.get('SUMO_HOME', '.')
+# NetEdit Resources
 netEditResources = SUMOFolder + "/tests/netedit/imageResources/"
-file = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
-neteditApp = file.readline().replace("\n", "")
-textTestSandBox = file.readline().replace("\n", "")
-file.close()
+# Current environment
+currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
+# Path to netEdit app
+neteditApp = currentEnvironmentFile.readline().replace("\n", "")
+# SandBox folder
+textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
+currentEnvironmentFile.close()
 #****#
 
 #Open netedit
@@ -37,5 +41,3 @@ click(match.getTarget().offset(500,300))
 # save network and quit
 type("s", Key.CTRL)
 type("q", Key.CTRL)
-
-

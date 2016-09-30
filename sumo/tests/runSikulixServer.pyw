@@ -26,7 +26,6 @@ import platform
 # Define global variables for Server
 TRAY_TOOLTIP = 'Sikulix server'
 TRAY_ICON = os.environ.get('SUMO_HOME', '.') + "/tests/sikulixicon.png"
-LOG_PATH = os.environ.get('SUMO_HOME', '.') + "/tests/netedit/sikulixLog.tmp" 
 
 # Open message dialog to User
 def messageDialog(data=None):
@@ -64,12 +63,10 @@ def startSikulixServer():
     # Call a subprocess of this Python Script to run Sikulix Server depending of operating system
     if platform.system() == 'Linux':
         subprocess.Popen([os.environ.get('SIKULIX', "runsikulix"), "-s"], 
-                        env=os.environ, stdout=open(LOG_PATH, 'w'), 
-                        #stderr=None,
-                        shell=False)
+						env=os.environ, stdout=None, stderr=None, shell=False)
     else :
         subprocess.Popen([os.environ.get('SIKULIX', "runSikulix.cmd")] + ["-s"], 
-                    env=os.environ, stdout=open(LOG_PATH, 'w'), stderr=None, shell=True)
+						env=os.environ, stdout=None, stderr=None, shell=True)
     
     #return status of sikulixServer
     return checkStatus()
@@ -101,13 +98,13 @@ def closeSikulixServer():
 
 # Show status of sikulix server
 def showStatus(data=None):
-    # Show a message dialog with the status of server
-    if checkStatus():
-        messageDialog("Sikulix server is running")
-    else:
-        messageDialog("Sikulix server is stopped")
+	# Show a message dialog with the status of server
+	if checkStatus():
+		messageDialog("Sikulix server is running")
+	else:
+		messageDialog("Sikulix server is stopped")
 
-    
+
 # Close SikulixServer
 def closeApp(data=None):
     # Show message dialog if there are problems closing sikulix server
@@ -144,9 +141,9 @@ def onRightClickOverTrayIcon(data, event_button, event_time):
 
 def buildTrayIcon():
     # Set Tray icon
-    skulixIcon = gtk.status_icon_new_from_file(TRAY_ICON)
+    sikulixIcon = gtk.status_icon_new_from_file(TRAY_ICON)
     # Connect popup menu with right click over tray icon
-    skulixIcon.connect('popup-menu', onRightClickOverTrayIcon)
+    sikulixIcon.connect('popup-menu', onRightClickOverTrayIcon)
     # start gtk
     gtk.main()
 
