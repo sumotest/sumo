@@ -30,8 +30,8 @@ export SIKULIX="runsikulix"
 
 $PYTHON $SUMO_HOME/tests/runSikulixServer.pyw &
 if which texttest &> /dev/null; then
-  texttest "$@"
+  texttest -a netedit "$@"
 else
-  texttest.py "$@"
+  texttest.py -a netedit "$@"
 fi
 
