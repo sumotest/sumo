@@ -57,16 +57,16 @@ def checkStatus():
         # Cannot connect to SikulixServer, then return false
         return False
 
-
+    
 # start Sikulix Server
 def startSikulixServer():
     # Call a subprocess of this Python Script to run Sikulix Server depending of operating system
     if platform.system() == 'Linux':
         subprocess.Popen([os.environ.get('SIKULIX', "runsikulix"), "-s"], 
-						env=os.environ, stdout=None, shell=False)
+                        env=os.environ, stdout=None, stderr=None, shell=True)
     else :
         subprocess.Popen([os.environ.get('SIKULIX', "runSikulix.cmd")] + ["-s"], 
-						env=os.environ, stdout=None, stderr=None, shell=True)
+                        env=os.environ, stdout=None, stderr=None, shell=True)
     
     #return status of sikulixServer
     return checkStatus()
@@ -98,11 +98,11 @@ def closeSikulixServer():
 
 # Show status of sikulix server
 def showStatus(data=None):
-	# Show a message dialog with the status of server
-	if checkStatus():
-		messageDialog("Sikulix server is running")
-	else:
-		messageDialog("Sikulix server is stopped")
+    # Show a message dialog with the status of server
+    if checkStatus():
+        messageDialog("Sikulix server is running")
+    else:
+        messageDialog("Sikulix server is stopped")
 
 
 # Close SikulixServer
