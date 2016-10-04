@@ -7,21 +7,16 @@ Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
 # SUMO Folder
 SUMOFolder = os.environ.get('SUMO_HOME', '.')
-# NetEdit Resources
-netEditResources = SUMOFolder + "/tests/netedit/imageResources/"
 # Current environment
 currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
-# Path to netEdit app
+# Get path to netEdit app
 neteditApp = currentEnvironmentFile.readline().replace("\n", "")
-# SandBox folder
+# Get SandBox folder
 textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
+# Get resources depending of the current Operating system
+currentOS = currentEnvironmentFile.readline().replace("\n", "")
+netEditResources = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/"
 currentEnvironmentFile.close()
-if platform.system() == 'Linux':
-	netEditToolbar = netEditResources + 'neteditToolbarLinux.png'
-	neteditToolbarEmpty = netEditResources + 'neteditToolbarLinuxEmpty.png'
-else:
-	netEditToolbar = netEditResources + 'neteditToolbarWindows.png'
-	neteditToolbarEmpty = netEditResources + 'neteditToolbarWindowsEmpty.png'
 #****#
 
 #Open netedit
@@ -32,7 +27,7 @@ subprocess.Popen([neteditApp,
                   env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 #Settings.MinSimilarity = 0.1
-match = wait(netEditToolbar, 10)
+match = wait(netEditResources + "netEditToolbar.png", 10)
 
 # focus
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))

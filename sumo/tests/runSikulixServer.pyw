@@ -57,7 +57,7 @@ def checkStatus():
         # Cannot connect to SikulixServer, then return false
         return False
 
-    
+
 # start Sikulix Server
 def startSikulixServer():
     # Call a subprocess of this Python Script to run Sikulix Server depending of operating system
