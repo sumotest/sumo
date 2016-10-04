@@ -1,5 +1,5 @@
 # Import libraries
-import os, sys, subprocess
+import os, sys, subprocess, platform
 
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
@@ -16,6 +16,12 @@ neteditApp = currentEnvironmentFile.readline().replace("\n", "")
 # SandBox folder
 textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
 currentEnvironmentFile.close()
+if platform.system() == 'Linux':
+	netEditToolbar = netEditResources + 'neteditToolbarLinux.png'
+	neteditToolbarEmpty = netEditResources + 'neteditToolbarLinuxEmpty.png'
+else:
+	netEditToolbar = netEditResources + 'neteditToolbarWindows.png'
+	neteditToolbarEmpty = netEditResources + 'neteditToolbarWindowsEmpty.png'
 #****#
 
 #Open netedit
@@ -26,7 +32,7 @@ subprocess.Popen([neteditApp,
                   env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 #Settings.MinSimilarity = 0.1
-match = wait(netEditResources + "neteditToolbar.png", 10)
+match = wait(netEditToolbar, 10)
 
 # focus
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
@@ -35,8 +41,8 @@ click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
 type("e")
 
 # Create two nodes
-click(match.getTarget().offset(100,300))
-click(match.getTarget().offset(500,300))
+click(match.getTarget().offset(-200,300))
+click(match.getTarget().offset(200,300))
 
 # save network and quit
 type("s", Key.CTRL)
