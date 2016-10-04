@@ -27,7 +27,7 @@ subprocess.Popen([neteditApp,
                   env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 #Settings.MinSimilarity = 0.1
-match = wait(netEditResources + "netEditToolbar.png", 10)
+match = wait(netEditResources + "neteditToolbar.png", 10)
 
 # focus
 click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
