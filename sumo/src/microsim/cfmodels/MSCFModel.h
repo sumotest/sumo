@@ -37,6 +37,7 @@
 #include <utils/common/StdDefs.h>
 #include <utils/common/FileHelpers.h>
 
+#define INVALID_SPEED 299792458 + 1 // nothing can go faster than the speed of light!
 
 // ===========================================================================
 // class declarations
@@ -286,7 +287,7 @@ public:
     	//        assert(maximumSafeSpeed <= speed + NUMERICAL_EPS && maximumSafeSpeed >= speed - NUMERICAL_EPS);
 
         const SUMOReal followDecel = MIN2(myDecel, leaderMaxDecel);
-        // XXX: returning 0 can be wrong if the leader is slower than the follower! (Leo)
+        // XXX: returning 0 can be wrong if the leader is slower than the follower! Why not return negative values? (Leo)
         SUMOReal secureGap = MAX2((SUMOReal) 0, brakeGap(speed, followDecel, myHeadwayTime) - brakeGap(leaderSpeed, leaderMaxDecel, 0));
 
         return secureGap;

@@ -62,29 +62,8 @@ MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const SUMOReal speed, SU
 
 SUMOReal
 MSCFModel_Krauss::followSpeed(const MSVehicle* const veh, SUMOReal speed, SUMOReal gap, SUMOReal predSpeed, SUMOReal predMaxDecel) const {
-//
-//	// Debug (Leo)
-//	if(veh->getID() == "flow.2"){
-//		MSGlobals::gSemiImplicitEulerUpdate = true;
-//		SUMOReal maxSafeFollowSpeedEuler = maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel);
-//		MSGlobals::gSemiImplicitEulerUpdate = false;
-//		SUMOReal maxSafeFollowSpeedBallistic =  maximumSafeFollowSpeed(gap, 0., predSpeed, predMaxDecel);
-//		std::cout << "\nin MSCFModel_Krauss::followSpeed(veh flow.2):"
-//				<< "\nfollowSpeedEuler = " <<  maxSafeFollowSpeedEuler
-//				<< "\nfollowSpeedBallistic = " <<  maxSafeFollowSpeedBallistic << std::endl;
-//	}
-
 	SUMOReal vsafe = maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), vmin=minNextSpeed(speed), vmax =maxNextSpeed(speed, veh);
 
-////	 Debug (Leo)
-//	if(veh->getID() == "f.28"){
-//		std::cout
-//		<< " MSCF_Krauss::followSpeed()\n"
-//		<< "vsafe = " << vsafe
-//		<< " vmin = " << vmin
-//		<< " vmax = " << vmax
-//		<< "\n";
-//	}
 	if(MSGlobals::gSemiImplicitEulerUpdate){
 		return MIN2(vsafe, vmax); // XXX: the euler variant can break as strong as it wishes -- immediately!
 	} else {

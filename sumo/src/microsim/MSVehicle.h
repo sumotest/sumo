@@ -50,6 +50,7 @@
 #include "MSLink.h"
 #include "MSLane.h"
 
+#define INVALID_SPEED 299792458 + 1 // nothing can go faster than the speed of light!
 
 // ===========================================================================
 // class declarations
@@ -1507,8 +1508,8 @@ protected:
             myArrivalTimeBraking(arrivalTimeBraking), myArrivalSpeedBraking(arrivalSpeedBraking),
             myDistance(distance),
             accelV(leaveSpeed), hadVehicle(false), availableSpace(-1.) {
-            assert(vWait >= 0);
-            assert(vPass >= 0);
+            assert(vWait >= 0 || !MSGlobals::gSemiImplicitEulerUpdate);
+            assert(vPass >= 0 || !MSGlobals::gSemiImplicitEulerUpdate);
         };
 
 
@@ -1519,7 +1520,7 @@ protected:
             myArrivalTimeBraking(0), myArrivalSpeedBraking(0),
             myDistance(distance),
             accelV(-1), hadVehicle(false), availableSpace(-1.) {
-            assert(vWait >= 0);
+            assert(vWait >= 0 || !MSGlobals::gSemiImplicitEulerUpdate);
         };
 
 
