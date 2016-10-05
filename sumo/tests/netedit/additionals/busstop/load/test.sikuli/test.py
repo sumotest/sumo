@@ -1,59 +1,51 @@
+# Import libraries
+import os, sys, subprocess
+
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
-netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
-
-# abort function
-def abort(process, reason): 
-	process.kill()
-	sys.exit("Killed netedit process. '" + reason + "' not found")
-	
-# undo operation
-def undo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-undo.png")
-	except:
-		abort(netEditProcess, "edit-undo.png")
-		
-# redo operation
-def redo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-redo.png")
-	except:
-		abort(netEditProcess, "edit-redo.png")
+# SUMO Folder
+SUMOFolder = os.environ.get('SUMO_HOME', '.')
+# Current environment
+currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
+# Get path to netEdit app
+neteditApp = currentEnvironmentFile.readline().replace("\n", "")
+# Get SandBox folder
+textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
+# Get resources depending of the current Operating system
+currentOS = currentEnvironmentFile.readline().replace("\n", "")
+netEditResources = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/"
+currentEnvironmentFile.close()
 #****#
 
-# Import libraries
-import os, sys, subprocess
-
 #Open netedit
-netEditProcess = subprocess.Popen([os.environ['NETEDIT_BINARY'], 
-								  '--window-size', '800,600',
-								  '--sumo-net-file', 'input_net.net.xml',
-								  '--sumo-additionals-file', 'input_additionals.add.xml',
-								  '--additionals-output', 'additionals.xml'], 
-								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
-				  	  
-#Settings.MinSimilarity = 0.1
+netEditProcess = subprocess.Popen([neteditApp, 
+                                  '--window-size', '800,600',
+								  '--sumo-net-file', textTestSandBox + "/input_net.net.xml",
+								  '--sumo-additionals-file', textTestSandBox + "/input_additionals.add.xml",
+                                  '--additionals-output', textTestSandBox + "/additionals.xml"], 
+                                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+                        
+# Wait 10 seconds to netedit main windows
 try:
-	wait(netEditResources + "neteditIcon.png", 60)
+    match = wait(netEditResources + "neteditToolbar.png", 10)
 except:
-	abort(netEditProcess, "neteditIcon.png")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
 
-# save additional
-try:
-	click(netEditResources + "toolbar/toolbar-file.png")
-	click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
-except:
-	abort(netEditProcess, "file-saveAdditionals.png or toolbar-file.png")
+# focus netEdit window
+click(match.getTarget().offset(0,-20))
+
+# save additionals
+click(match.getTarget().offset(-375,5))
+click(match.getTarget().offset(-350,265))
 
 #quit
 type("q", Key.CTRL)
 try:
-	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
-	type("y", Key.ALT)
+    find(netEditResources + "confirmClosingNetworkDialog.png")
+    type("y", Key.ALT)
 except:
-	abort(netEditProcess, "dialog-confirmClosingNetwork")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'confirmClosingNetworkDialog.png' not found")
