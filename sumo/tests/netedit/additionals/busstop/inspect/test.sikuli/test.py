@@ -1,228 +1,190 @@
+# Import libraries
+import os, sys, subprocess
+
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
-netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
-
-# abort function
-def abort(process, reason): 
-	process.kill()
-	sys.exit("Killed netedit process. '" + reason + "' not found")
-	
-# undo operation
-def undo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-undo.png")
-	except:
-		abort(netEditProcess, "edit-undo.png")
-		
-# redo operation
-def redo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-redo.png")
-	except:
-		abort(netEditProcess, "edit-redo.png")
+# SUMO Folder
+SUMOFolder = os.environ.get('SUMO_HOME', '.')
+# Current environment
+currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
+# Get path to netEdit app
+neteditApp = currentEnvironmentFile.readline().replace("\n", "")
+# Get SandBox folder
+textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
+# Get resources depending of the current Operating system
+currentOS = currentEnvironmentFile.readline().replace("\n", "")
+netEditResources = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/"
+currentEnvironmentFile.close()
 #****#
 
-# Import libraries
-import os, sys, subprocess
-
 #Open netedit
-netEditProcess = subprocess.Popen([os.environ['NETEDIT_BINARY'], 
-								  '--window-size', '800,600',
-								  '--new', 
-								  '--additionals-output', 'additionals.xml'], 
-								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
-
-#Settings.MinSimilarity = 0.1
+netEditProcess = subprocess.Popen([neteditApp, 
+                                  '--window-size', '800,600',
+                                  '--new', 
+                                  '--additionals-output', textTestSandBox + "/additionals.xml"], 
+                                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+                        
+# Wait 10 seconds to netedit main windows
 try:
-	wait(netEditResources + "neteditIcon.png", 60)
+    match = wait(netEditResources + "neteditToolbar.png", 10)
 except:
-	abort(netEditProcess, "neteditIcon.png")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
 
-# focus
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
+# focus netEdit window
+click(match.getTarget().offset(0,-20))
 
 # Change to create mode
 type("e")
 
 # Create first two nodes
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(200,200))
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(600,200))
+click(match.getTarget().offset(-250,200))
+click(match.getTarget().offset(250,200))
 
-# Create second two another
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(200,300))
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(600,300))
+# Create second two nodes
+click(match.getTarget().offset(-250,400))
+click(match.getTarget().offset(250,400))
 
 # Change to inspect
 type("i")
 
-# duplicate lane in the first nodes
-rightClick(Pattern(netEditResources + "neteditIcon.png").targetOffset(300,205))
-try:
-	click(netEditResources + "netElements/edges/menu-duplicateLane.png")
-except:
-	abort(netEditProcess, "menu-duplicateLane.png")
+# get menu of lane and duplicate it
+rightClick(match.getTarget().offset(0,200))
+click(match.getTarget().offset(50,500))
 
 # Change to create additional
 type("a")
 
 # by default, additional is busstop, then isn't needed to select "busstop"
 
-# change reference to center
-try:
-	click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
-	click(netEditResources + "additionals/editorParameters/referenceCenter.png")
-except:
-	abort(netEditProcess, "comboBox-referenceRight.png or referenceCenter.png")
+#Go to reference mode
+click(match.getTarget().offset(-300, 300))
 
-# create busstop in mode "reference center" in the first two nodes
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(500,210))
+#Change to reference center
+click(match.getTarget().offset(-300, 360))
 
-# create busstop in mode "reference center" in the second two nodes
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,310))
+#create first busstop in mode "reference center"
+click(match.getTarget().offset(100, 400))
+
+#create second busstop in mode "reference center"
+click(match.getTarget().offset(0, 210))
 
 # Change to inspect
 type("i")
 
-# inspect busStop
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,315))
+#inspect first busstop
+click(match.getTarget().offset(100, 405))
+
+#check that default values are correct
+try:
+    find(netEditResources + "additionals/busStop-defaultAttributes.png")
+except:
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
 
 # Change parameter 1 with a non valid value (Duplicated ID)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-id.png")
-type("busStop_gneE0_1_0" + Key.ENTER)
+doubleClick(match.getTarget().offset(-250, 120))
+type("busStop_gneE0_1_1" + Key.ENTER)
 
 # Change parameter 1 with a valid value
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-id.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-id.png")
+doubleClick(match.getTarget().offset(-250, 120))
 type("correct ID" + Key.ENTER)
 
 # Change parameter 2 with a non valid value (dummy lane)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-lane.png")
+doubleClick(match.getTarget().offset(-250, 160))
 type("dummyLane" + Key.ENTER)
 
 # Change parameter 2 with a valid value (different edge)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-lane.png")
+doubleClick(match.getTarget().offset(-250, 160))
 type("gneE0_0" + Key.ENTER)
 
 # Change parameter 2 with a valid value (same edge, different lane)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lane.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-lane.png")
+doubleClick(match.getTarget().offset(-250, 160))
 type("gneE0_1" + Key.ENTER)
 
 # Change parameter 3 with a non valid value (negative)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-startPos.png")
+doubleClick(match.getTarget().offset(-250, 200))
 type("-5" + Key.ENTER)
 
 # Change parameter 3 with a non valid value (> endPos)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-startPos.png")
-type("60" + Key.ENTER)
+doubleClick(match.getTarget().offset(-250, 200))
+type("200" + Key.ENTER)
 
 # Change parameter 3 with a valid value
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-startPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-startPos.png")
+doubleClick(match.getTarget().offset(-250, 200))
 type("20" + Key.ENTER)
 
 # Change parameter 4 with a non valid value (out of range, and not accepted)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-endPos.png")
+doubleClick(match.getTarget().offset(-250, 240))
 type("3000" + Key.ENTER)
 
 # Wait to dialog
 try:
-	wait(netEditResources + "additionals/dialogs/dialog-endPositionOutOfRange.png")
-	type("n", Key.ALT)
+	wait(netEditResources + "endPositionOutOfRangeDialog.png")
 except:
-	abort(netEditProcess, "additionals/dialogs/dialog-endPositionOutOfRange.png")
-	
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'endPositionOutOfRangeDialog.png' not found")
+type("n", Key.ALT)
+
 # Change parameter 4 with a valid value (out of range, but adapted to the end of lane)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-endPos.png")
+doubleClick(match.getTarget().offset(-250, 240))
 type("3000" + Key.ENTER)
 
 # Wait to dialog
 try:
-	wait(netEditResources + "additionals/dialogs/dialog-endPositionOutOfRange.png")
-	type("y", Key.ALT)
+	wait(netEditResources + "endPositionOutOfRangeDialog.png")
 except:
-	abort(netEditProcess, "additionals/dialogs/dialog-endPositionOutOfRange.png")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'endPositionOutOfRangeDialog.png' not found")
+type("y", Key.ALT)
 
 # Change parameter 4 with a non valid value (<startPos)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-endPos.png")
+doubleClick(match.getTarget().offset(-250, 240))
 type("10" + Key.ENTER)
 
 # Change parameter 4 with a valid value
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-endPos.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-endPos.png")
+doubleClick(match.getTarget().offset(-250, 240))
 type("30" + Key.ENTER)
 
 # Change parameter 5 with a non valid value (throw warning)
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-lines.png")
+doubleClick(match.getTarget().offset(-250, 280))
 type("line1, line2" + Key.ENTER)
 
 # Change parameter 5 with a valid value
-try:
-	doubleClick(Pattern(netEditResources + "additionals/busstop/parameter-lines.png").targetOffset(75,0))
-except:
-	abort(netEditProcess, "parameter-lines.png")
+doubleClick(match.getTarget().offset(-250, 280))
 type("line1 line2" + Key.ENTER)
 
 # go to a empty area
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(350,350))
+click(match.getTarget().offset(0,450))
 
 # Check UndoRedo (8 attribute changes, 1 creation)
 for x in range(0, 9):
-    undo(netEditProcess)
+    try:
+        click(match.getTarget().offset(-325,5))
+        click(netEditResources + "undoredo/edit-undo.png")
+    except:
+        netEditProcess.kill()
+        sys.exit("Killed netedit process. 'edit-undo.png' not found")
 	
 for x in range(0, 9):
-    redo(netEditProcess)
+    try:
+        click(match.getTarget().offset(-325,5))
+        click(netEditResources + "undoredo/edit-redo.png")
+    except:
+        netEditProcess.kill()
+        sys.exit("Killed netedit process. 'edit-redo.png' not found")
 
-# save additional
-try:
-	click(netEditResources + "toolbar/toolbar-file.png")
-	click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
-except:
-	abort(netEditProcess, "file-saveAdditionals.png or toolbar-file.png")
+# save additionals
+click(match.getTarget().offset(-375,5))
+click(match.getTarget().offset(-350,265))
 
-# quit
+#quit
 type("q", Key.CTRL)
 try:
-	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
-	type("y", Key.ALT)
+    find(netEditResources + "confirmClosingNetworkDialog.png")
+    type("y", Key.ALT)
 except:
-	abort(netEditProcess, "dialog-confirmClosingNetwork")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'confirmClosingNetworkDialog.png' not found")
