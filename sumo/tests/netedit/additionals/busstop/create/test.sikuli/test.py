@@ -21,19 +21,19 @@ currentEnvironmentFile.close()
 
 #Open netedit
 netEditProcess = subprocess.Popen([neteditApp, 
-								  '--window-size', '800,600',
-								  '--new', 
-								  '--additionals-output', textTestSandBox + "/additionals.xml"], 
-								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
-				  	  
-#Settings.MinSimilarity = 0.1
+                                  '--window-size', '800,600',
+                                  '--new', 
+                                  '--additionals-output', textTestSandBox + "/additionals.xml"], 
+                                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+                        
+# Wait 10 seconds to netedit main windows
 try:
-	match = wait(netEditResources + "neteditToolbar.png", 10)
+    match = wait(netEditResources + "neteditToolbar.png", 10)
 except:
-	netEditProcess.kill()
-	sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
 
-# focus
+# focus netEdit window
 click(match.getTarget().offset(0,-20))
 
 # Change to create mode
@@ -50,10 +50,10 @@ type("a")
 
 # Check that default parameters are correct
 try:
-	find(netEditResources + "additionals/busStop-defaultParameters.png")
+    find(netEditResources + "additionals/busStop-defaultParameters.png")
 except:
-	netEditProcess.kill()
-	sys.exit("Killed netedit process. 'busStop-defaultParameters.png' not found")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'busStop-defaultParameters.png' not found")
 
 # Add three extra lines
 click(match.getTarget().offset(-310,200))
@@ -139,31 +139,31 @@ click(match.getTarget().offset(300, 400))
 
 #Check Undo (5 busStops)
 for x in range(0, 5):
-	try:
-		click(match.getTarget().offset(-325,5))
-		click(netEditResources + "undoredo/edit-undo.png")
-	except:
-		netEditProcess.kill()
-		sys.exit("Killed netedit process. 'edit-undo.png' not found")
-		
+    try:
+        click(match.getTarget().offset(-325,5))
+        click(netEditResources + "undoredo/edit-undo.png")
+    except:
+        netEditProcess.kill()
+        sys.exit("Killed netedit process. 'edit-undo.png' not found")
+        
 #Check Redo (5 busStops)
 for x in range(0, 5):
-	try:
-		click(match.getTarget().offset(-325,5))
-		click(netEditResources + "undoredo/edit-redo.png")
-	except:
-		netEditProcess.kill()
-		sys.exit("Killed netedit process. 'edit-redo.png' not found")
-		
-# save additional
+    try:
+        click(match.getTarget().offset(-325,5))
+        click(netEditResources + "undoredo/edit-redo.png")
+    except:
+        netEditProcess.kill()
+        sys.exit("Killed netedit process. 'edit-redo.png' not found")
+        
+# save additionals
 click(match.getTarget().offset(-375,5))
 click(match.getTarget().offset(-350,265))
 
 #quit
 type("q", Key.CTRL)
 try:
-	find(netEditResources + "confirmClosingNetworkDialog.png")
-	type("y", Key.ALT)
+    find(netEditResources + "confirmClosingNetworkDialog.png")
+    type("y", Key.ALT)
 except:
-	netEditProcess.kill()
-	sys.exit("Killed netedit process. 'confirmClosingNetworkDialog.png' not found")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'confirmClosingNetworkDialog.png' not found")

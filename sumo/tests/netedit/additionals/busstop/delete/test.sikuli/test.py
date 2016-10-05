@@ -1,93 +1,93 @@
+# Import libraries
+import os, sys, subprocess
+
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
-netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
-
-# abort function
-def abort(process, reason): 
-	process.kill()
-	sys.exit("Killed netedit process. '" + reason + "' not found")
-	
-# undo operation
-def undo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-undo.png")
-	except:
-		abort(netEditProcess, "edit-undo.png")
-		
-# redo operation
-def redo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-redo.png")
-	except:
-		abort(netEditProcess, "edit-redo.png")
+# SUMO Folder
+SUMOFolder = os.environ.get('SUMO_HOME', '.')
+# Current environment
+currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
+# Get path to netEdit app
+neteditApp = currentEnvironmentFile.readline().replace("\n", "")
+# Get SandBox folder
+textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
+# Get resources depending of the current Operating system
+currentOS = currentEnvironmentFile.readline().replace("\n", "")
+netEditResources = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/"
+currentEnvironmentFile.close()
 #****#
 
-# Import libraries
-import os, sys, subprocess
-
 #Open netedit
-netEditProcess = subprocess.Popen([os.environ['NETEDIT_BINARY'], 
-								  '--window-size', '800,600',
-								  '--new', 
-								  '--additionals-output', 'additionals.xml'], 
-								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
-				  	  
-#Settings.MinSimilarity = 0.1
+netEditProcess = subprocess.Popen([neteditApp, 
+                                  '--window-size', '800,600',
+                                  '--new', 
+                                  '--additionals-output', textTestSandBox + "/additionals.xml"], 
+                                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+                        
+# Wait 10 seconds to netedit main windows
 try:
-	wait(netEditResources + "neteditIcon.png", 60)
+    match = wait(netEditResources + "neteditToolbar.png", 10)
 except:
-	abort(netEditProcess, "neteditIcon.png")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
 
-# focus
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
+# focus netEdit window
+click(match.getTarget().offset(0,-20))
 
 # Change to create mode
 type("e")
 
 # Create two nodes
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(200,400))
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(600,400))
+click(match.getTarget().offset(-250,400))
+click(match.getTarget().offset(250,400))
 
 # Change to create additional
 type("a")
 
 # by default, additional is busstop, then isn't needed to select "busstop"
 
-#change reference to center
-try:
-	click(netEditResources + "additionals/editorParameters/comboBox-referenceRight.png")
-	click(netEditResources + "additionals/editorParameters/referenceCenter.png")
-except:
-	abort(netEditProcess, "comboBox-referenceRight.png or referenceCenter.png")
-	
+#Go to reference mode
+click(match.getTarget().offset(-300, 300))
+
+#Change to reference center
+click(match.getTarget().offset(-300, 360))
+
 #create busstop in mode "reference center"
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,400))
+click(match.getTarget().offset(100, 400))
 
 # Change to delete
 type("d")
 
-#delete busStop
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(400,405))
+#delete busstop
+click(match.getTarget().offset(100, 405))
 
-#Check UndoRedo
-undo(netEditProcess)
-redo(netEditProcess)
-
-# save additional
+#Check Undo
 try:
-	click(netEditResources + "toolbar/toolbar-file.png")
-	click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
+    click(match.getTarget().offset(-325,5))
+    click(netEditResources + "undoredo/edit-undo.png")
 except:
-	abort(netEditProcess, "file-saveAdditionals.png or toolbar-file.png")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'edit-undo.png' not found")
+        
+#Check Redo
+try:
+    click(match.getTarget().offset(-325,5))
+    click(netEditResources + "undoredo/edit-redo.png")
+except:
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'edit-redo.png' not found")
+        
+# save additionals
+click(match.getTarget().offset(-375,5))
+click(match.getTarget().offset(-350,265))
 
 #quit
 type("q", Key.CTRL)
 try:
-	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
-	type("y", Key.ALT)
+    find(netEditResources + "confirmClosingNetworkDialog.png")
+    type("y", Key.ALT)
 except:
-	abort(netEditProcess, "dialog-confirmClosingNetwork")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'confirmClosingNetworkDialog.png' not found")
