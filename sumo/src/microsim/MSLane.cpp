@@ -1376,6 +1376,11 @@ MSLane::isEmpty() const {
     return myVehicles.empty() && myPartialVehicles.empty();
 }
 
+bool
+MSLane::isInternal() const {
+    return myEdge->getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL;
+}
+
 MSVehicle*
 MSLane::getLastFullVehicle() const {
     if (myVehicles.size() == 0) {
@@ -1474,6 +1479,47 @@ MSLane::succLinkSec(const SUMOVehicle& veh, int nRouteSuccs,
 const MSLinkCont&
 MSLane::getLinkCont() const {
     return myLinks;
+}
+
+
+const MSLink*
+MSLane::getLinkTo(const MSLane* target) const {
+    if(target == 0) return 0;
+
+//    // Debug (Leo)
+//    std::cout << "getLinkTo(" << target->getID() << ")" << std::endl;
+
+    MSLinkCont::const_iterator i = myLinks.begin();
+    MSLink* link = 0; MSLane* lane = 0;
+    while(i != myLinks.end()){
+        link = *(i++);
+        if(link == 0) continue;
+
+        lane = link->getViaLaneOrLane();
+        while(lane != target) {
+            if(lane->getEdge().getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL){
+                // lane is a non-internal and is not the target -> check the next link
+                break;
+            } else {
+                // lane is internal (go on to the following link)
+                assert(lane->getLinkCont().size() == 1);
+
+//                // Debug (Leo)
+//                if(lane->getLinkCont().size()!=1)
+//                    std::cout << "\ninternal lane with getLinkCont().size() = " << lane->getLinkCont().size()
+//                    << " ('" << lane->getID() << "')\n";
+
+                lane = lane->getLinkCont()[0]->getViaLaneOrLane();
+                continue;
+            }
+        }
+    }
+    if(lane != target) link=0; // target is no continuation lane for this
+
+////     Debug (Leo)
+//    std::cout << "return " << (link == 0 ? "NULL" : "valid link") << std::endl;
+
+    return link;
 }
 
 

@@ -548,6 +548,8 @@ public:
     /// returns the container with all links !!!
     const MSLinkCont& getLinkCont() const;
 
+    /// return the link leading to target (if it exists)
+    const MSLink* getLinkTo(const MSLane* target) const;
 
     /// Returns true if there is not a single vehicle on the lane.
     bool empty() const {
@@ -653,6 +655,9 @@ public:
     /** Returns the information whether the lane is has no vehicle and no
         partial occupation*/
     bool isEmpty() const;
+
+    /** Returns whether the lane pertains to an internal edge*/
+    bool isInternal() const;
 
     /// @brief returns the last vehicle for which this lane is responsible or 0
     MSVehicle* getLastFullVehicle() const;

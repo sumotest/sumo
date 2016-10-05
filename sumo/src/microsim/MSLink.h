@@ -380,6 +380,11 @@ public:
     MSLane* getViaLane() const;
 
 
+    /** @brief Returns the cumulative length of all internal lanes after this link
+     *  @return sum of the lengths of all internal lanes following this link
+     */
+    SUMOReal getInternalLengthsAfter() const;
+
     /** @brief Returns all potential link leaders (vehicles on foeLanes)
      * Valid during the planMove() phase
      * @param[in] dist The distance of the vehicle who is asking about the leader to this link
