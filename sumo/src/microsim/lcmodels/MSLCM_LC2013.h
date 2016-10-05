@@ -37,7 +37,12 @@
 #include "MSAbstractLaneChangeModel.h"
 #include <vector>
 
-#define INVALID_SPEED 299792458 + 1 // nothing can go faster than the speed of light! :-)
+// INVALID_SPEED should be used when the construction of upper bound for the speed 
+// leads to no restrictions, e.g. during LC-messaging to followers or leaders. 
+// Currently either std::numeric_limits<...>.max() or -1 is used for this purpose in many places.
+// TODO: implement this everywhere and remove workarounds for ballistic update in cases of possible '-1'-returns.
+#define INVALID_SPEED 299792458 + 1 // nothing can go faster than the speed of light!
+
 
 // ===========================================================================
 // class definitions
@@ -149,16 +154,6 @@ protected:
          * @return the distance that the relative positions would have to change.
          */
     static SUMOReal overtakeDistance(const MSVehicle* follower, const MSVehicle* leader, const SUMOReal gap, SUMOReal followerSpeed = INVALID_SPEED, SUMOReal leaderSpeed = INVALID_SPEED);
-
-
-//    /* @brief estimate the time it takes until this vehicle has overtaken v2
-//         * @param[in] v2 the vehicle to be overtaken
-//         * @param[in] overtakeDist estimated relative distance that v1 has to gain
-//         * @param[in] remainingSeconds time left to complete overtaking maneuver
-//         * @return either the estimated time for the maneuver or something larger, indicating impossibility
-//         */
-//    SUMOReal estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) const;
-
 
     /// @brief compute useful slowdowns for blocked vehicles
     int slowDownForBlocked(MSVehicle** blocked, int state);

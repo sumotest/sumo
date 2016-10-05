@@ -128,8 +128,8 @@ MSCFModel::freeSpeed(const SUMOReal currentSpeed, const SUMOReal decel, const SU
 
 		if(0.5*(v0+vT)*dt >= d) return vT; // (#)
 
-		SUMOReal q = ((dt*v0 - 2*d)*b - vT*vT); // (q < 0 is fulfilled because of (#))
-		SUMOReal p = 0.5*b*dt;
+		const SUMOReal q = ((dt*v0 - 2*d)*b - vT*vT); // (q < 0 is fulfilled because of (#))
+		const SUMOReal p = 0.5*b*dt;
 		return -p + sqrt(p*p - q);
 	}
 }

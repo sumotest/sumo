@@ -665,6 +665,7 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
     const SUMOReal nspeed = safeInsertionSpeed(aVehicle, leaders, speed);
     if (nspeed < 0 || checkFailure(aVehicle, speed, dist, nspeed, patchSpeed, "")) {
     	// XXX: checking for nspeed<0... Might appear naturally with ballistic update (see #860, Leo)
+        // TODO: check if ballistic update needs adjustments here 
 
         // we may not drive with the given velocity - we crash into the leader
 #ifdef DEBUG_INSERTION
@@ -1175,11 +1176,6 @@ MSLane::executeMovements(SUMOTime t, std::vector<MSLane*>& lanesWithVehiclesToIn
             } else {
                 // vehicle has entered a new lane (leaveLane and workOnMoveReminders were already called in MSVehicle::executeMove)
                 target->myVehBuffer.push_back(veh);
-
-                // XXX (L: remove if no probs (apparently relocated to executeMove())
-                // const SUMOReal oldPos = veh->getPositionOnLane() - veh->getLastStepDist();
-                // veh->workOnMoveReminders(oldPos, veh->getPositionOnLane(), veh->getSpeed());
-
                 lanesWithVehiclesToIntegrate.push_back(target);
             }
         } else if (veh->isParking()) {
