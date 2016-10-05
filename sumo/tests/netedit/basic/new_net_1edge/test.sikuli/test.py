@@ -1,5 +1,5 @@
 # Import libraries
-import os, sys, subprocess, platform
+import os, sys, subprocess
 
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
@@ -20,17 +20,21 @@ currentEnvironmentFile.close()
 #****#
 
 #Open netedit
-subprocess.Popen([neteditApp, 
-                  '--window-size', '800,600',
-                  '--new', 
-                  '-o', textTestSandBox + "/net.net.xml"], 
-                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+netEditProcess = subprocess.Popen([neteditApp, 
+								  '--window-size', '800,600',
+								  '--new', 
+								  '-o', textTestSandBox + "/net.net.xml"], 
+								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
-#Settings.MinSimilarity = 0.1
-match = wait(netEditResources + "neteditToolbar.png", 10)
-
-# focus
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
+# Wait to netedit	
+try:
+	match = wait(netEditResources + "neteditToolbar.png", 20)
+except:
+	netEditProcess.kill()
+	sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
+	
+# focusa
+click(match.getTarget().offset(0,-20))
 
 # Change to create mode
 type("e")
