@@ -163,6 +163,18 @@ protected:
     /// @brief compute useful slowdowns for blocked vehicles
     int slowDownForBlocked(MSVehicle** blocked, int state);
 
+
+    // XXX: consider relocation (perhaps to MSVehicle...) (Leo)
+    /// @brief compute the distance on the next upcoming roundabout along a given sequence of lanes.
+    ///        (used in _wantsChange() for modifying behavior when approaching a roundabout by decreasing
+    ///         sense of urgency to use the outer lane by scaling up the roundabout distance)
+    /// @param[in] position position of the vehicle on the initial lane
+    /// @param[in] initialLane starting lane for the computation (may be internal)
+    /// @param[in] continuationLanes sequence of lanes along which the roundabout distance is to be computed (only containing non-internal lanes)
+    /// @return distance along next upcoming roundabout on the given sequence of lanes continuationLanes
+    static SUMOReal
+    distanceAlongNextRoundabout(SUMOReal position, const MSLane* initialLane, const std::vector<MSLane*>& continuationLanes);
+
     /// @brief save space for vehicles which need to counter-lane-change
     void saveBlockerLength(MSVehicle* blocker, int lcaCounter);
 

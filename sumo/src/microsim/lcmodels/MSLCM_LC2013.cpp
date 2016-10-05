@@ -75,8 +75,10 @@
 
 #define KEEP_RIGHT_TIME (SUMOReal)5.0 // the number of seconds after which a vehicle should move to the right lane
 #define KEEP_RIGHT_ACCEPTANCE (SUMOReal)7.0 // calibration factor for determining the desire to keep right
-#define ROUNDABOUT_DIST_BONUS (SUMOReal)100.0
+#define ROUNDABOUT_DIST_BONUS (SUMOReal)100.0 // valence (distance) for to faked per roundabout edge in front (inducing inner lane usage in roundabouts by decreasing sense of lc-urgency)
 
+#define ROUNDABOUT_DIST_FACTOR (SUMOReal)10.0 // Must be >=1.0, serves an alternative way of decreasing sense lc-urgency by multiplying the distance along the next roundabout
+#define ROUNDABOUT_DIST_TRESH (SUMOReal)10.0  // roundabout distances below ROUNDABOUT_DIST_TRESH are not multiplied by ROUNDABOUT_DIST_FACTOR
 
 #define KEEP_RIGHT_HEADWAY (SUMOReal)2.0
 #define MAX_ONRAMP_LENGTH (SUMOReal)200.
@@ -94,9 +96,6 @@
 //#define DEBUG_SAVE_BLOCKER_LENGTH
 
 #define DEBUG_COND (myVehicle.getID() == "disabled")
-//#define DEBUG_COND (myVehicle.getID() == "XXI_Aprile_1_636" || myVehicle.getID() == "Pepoli_2_1194")
-//#define DEBUG_COND (myVehicle.getID() == "high.103")
-//#define DEBUG_COND (myVehicle.getID() == "needsHelp" || myVehicle.getID() == "speedAssist" || myVehicle.getID() == "overtaking")
 
 // ===========================================================================
 // member method definitions
@@ -410,7 +409,7 @@ void*
 MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
     UNUSED_PARAMETER(sender);
     Info* pinfo = (Info*)info;
-    assert(pinfo->first >= 0);
+    assert(pinfo->first >= 0 || !MSGlobals::gSemiImplicitEulerUpdate);
     myVSafes.push_back(pinfo->first);
     myOwnState |= pinfo->second;
 #ifdef DEBUG_INFORMED
@@ -426,130 +425,6 @@ MSLCM_LC2013::inform(void* info, MSVehicle* sender) {
     delete pinfo;
     return (void*) true;
 }
-
-/*
-SUMOReal
-MSLCM_LC2013::estimateOvertakeTime(const MSVehicle* v2, SUMOReal overtakeDist, SUMOReal remainingSeconds) const {
-	SUMOReal overtakeTime;
-	const MSVehicle* v1 = &myVehicle;
-	// estimate overtakeTime (calculating with constant acceleration accelX)
-	// TODO: for congested traffic the estimated mean velocity should also be taken into account (instead of max speed)
-	const SUMOReal accelEgo = 0.5*SPEED2ACCEL(v1->getSpeed() - v1->getPreviousSpeed()) + 0.3; // the + 0.3 let's vehicles proceed alongside a waiting line
-	const SUMOReal accelLead = 0.9*MAX2(0., SPEED2ACCEL(v2->getSpeed() - v2->getPreviousSpeed()));
-	// maximal velocity of the overtaking vehicle
-	SUMOReal maxV1 = v1->getMaxSpeed();
-    const std::vector<MSLane*>& bestLanesCont = v1->getBestLanesContinuation();
-
-    if(bestLanesCont.size() != 0){
-        std::vector<MSLane*>::const_iterator i = bestLanesCont.begin();
-        SUMOReal dist;
-        if(*i != 0) dist = (*i)->getLength() - v1->getPositionOnLane();
-        while(true){
-            // look ahead for a minute
-            if(*i==0 || i == bestLanesCont.end() || dist > myLookAheadSpeed*60){
-                break;
-            } else {
-                maxV1 = MIN2(maxV1, (*i)->getVehicleMaxSpeed(v1));
-                dist += (*(i++))->getLength();
-            }
-        }
-//    } else {
-//        // Debug (Leo)
-//        std::cout << "length bestlanes == 0!" << std::endl;
-    }
-
-	// times until reaching maximal or minimal velocities
-	const SUMOReal tmEgo = accelEgo != 0 ?
-			(accelEgo > 0 ? (maxV1 - v1->getSpeed())/accelEgo : -v1->getSpeed()/accelEgo)
-			: remainingSeconds + 10000;
-	const SUMOReal tmLead = accelLead != 0 ?
-			(accelLead > 0 ? (v2->getMaxSpeed() - v2->getSpeed())/accelLead : -v2->getSpeed()/accelLead)
-			: remainingSeconds + 10000;
-	// initial speed difference
-	const SUMOReal dv0 = v1->getSpeed() - v2->getSpeed();
-	// non-smooth points for the gap-evolution
-	const SUMOReal t1 = MIN2(tmEgo, tmLead), t2 = MAX2(tmEgo, tmLead);
-
-	// distance covered until t1, t2
-	SUMOReal d1, d2;
-	// accel in [0,t1]
-	const SUMOReal a1 = accelEgo - accelLead;
-	// accel in [t1,t2]
-	const SUMOReal a2 = tmEgo == t1 ? - accelLead : accelEgo;
-	// speed differences at t1, t2
-	const SUMOReal dv1= dv0 + a1*t1, dv2= dv1 + a2*(t2-t1);
-
-	// flag to indicate overtake success
-	bool overtaken = false;
-	if(a1 < 0 && dv0 >0){
-		// there's a maximum at tmax = -dv0/a1.
-		const SUMOReal tmax = -dv0/a1;
-		const SUMOReal dmax = dv0*tmax + tmax*tmax*a1/2.;
-    	if(dmax > overtakeDist) {
-    		// solve for smaller root: overtakeDist = dv0*t + t*t*a1/2
-    		overtakeTime = -dv0/a1 - sqrt((dv0*dv0/a1 + 2*overtakeDist)/a1);
-    	} else {
-    		overtakeTime = t1+1.; // indicate no overtaking until t1
-    	}
-	} else if(a1 < 0 && dv0 < 0){
-		// no solution until t1
-		overtakeTime = t1+1.; // indicate no overtaking until t1
-	} else {
-		// there's a single positive solution
-		overtakeTime = -dv0/a1 + sqrt((dv0*dv0/a1 + 2*overtakeDist)/a1);
-	}
-
-	if(overtakeTime <= t1){
-		overtaken = true;
-	} else {
-		// distance after t1
-		d1 = dv0*t1 + t1*t1*a1/2.;
-	}
-
-	if(!overtaken) {
-		// until time t1, overtaking didn't succeed
-		if(t1 > remainingSeconds || d1 > myLeftSpace-myLeadingBlockerLength) {
-			// -> set overtakeTime to something indicating impossibility of overtaking
-			overtakeTime = remainingSeconds + 1;
-		} else {
-        	if(a2 < 0 && dv1 >0){
-        		// there's a maximum at t1 + tmax = t1 - dv1/a2.
-        		const SUMOReal tmax = -dv1/a2;
-        		const SUMOReal dmax = dv1*tmax + tmax*tmax*a2/2.;
-            	if(dmax > overtakeDist - d1) {
-            		// solve for smaller root: overtakeDist - d1 = dv1*t + t*t*a2/2
-            		overtakeTime = t1 - dv1/a2 - sqrt((dv1*dv1/a2 + 2*(overtakeDist - d1))/a2);
-            	} else {
-            		overtakeTime = t2 + 1.; // indicate no overtaking until t2
-            	}
-        	} else if(a2 < 0 && dv1 < 0){
-        		// no solution until t2
-        		overtakeTime = t2+1.; // indicate no overtaking until t2
-        	} else {
-        		// there's a single positive solution
-        		overtakeTime = t1 - dv1/a2 + sqrt((dv1*dv1/a2 + 2*(overtakeDist - d1))/a2);
-        	}
-        	if(overtakeTime <= t2){
-        		overtaken = true;
-        	} else {
-        		// distance after t2
-        		d2 = d1 + dv1*(t2-t1) + (t2-t1)*(t2-t1)*a2/2.;
-        	}
-		}
-	}
-
-	if(!overtaken){
-		// no overtaking until both reach stationary velocities
-		if(t2 > remainingSeconds || d2 > myLeftSpace-myLeadingBlockerLength || dv2 <= 0){
-			overtakeTime = remainingSeconds + 1;
-		} else {
-			overtakeTime = t2 + (overtakeDist - d2)/dv2;
-		}
-	}
-
-	return overtakeTime;
-}
-*/
 
 
 SUMOReal
@@ -656,7 +531,7 @@ MSLCM_LC2013::informLeader(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                               << " remainingSeconds=" << remainingSeconds
                               << " currentGap=" << neighLead.second
                               << " brakeGap=" << myVehicle.getCarFollowModel().brakeGap(myVehicle.getSpeed(), myCarFollowModel.getMaxDecel(), 0.)
-                              << " secureGap=" << nv->getCarFollowModel()
+                              << " secureGap=" << nv->getCarFollowModel().getSecureGap(nv->getSpeed(), myVehicle.getSpeed(), myVehicle.getCarFollowModel().getMaxDecel())
                               << " targetSpeed=" << targetSpeed
                               << " nextSpeed=" << nextSpeed
                               << "\n";
@@ -833,7 +708,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 	
         if (decelGap > 0 && decelGap >= secureGap) {
         	// XXX: This does not assure that the leader can cut in in the next step if TS < 1 (see above)
-        	//      this seems to be supposed in the following...?! (Leo)
+        	//      this seems to be supposed in the following (euler code)...?! (Leo)
 
             // if the blocking follower brakes it could help
             // how hard does it actually need to be?
@@ -851,26 +726,31 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                     assert(vsafe <= vsafe1);
             } else {
                 // ballistic
-                // XXX: This should actually do for euler and ballistic cases (TODO: test!)
+
+                // XXX: This block should actually do as well for euler update (TODO: test!)
                 // we compute an upper bound on vsafe
-                // next step's gap without help deceleration
-                SUMOReal next_gap = myCarFollowModel.gapExtrapolation(TS,
+                // next step's gap without help deceleration (nv's speed assumed constant)
+                SUMOReal nextGap = myCarFollowModel.gapExtrapolation(TS,
                         neighFollow.second, myVehicle.getSpeed(),
                         nv->getSpeed(), plannedAccel, 0,
                         myVehicle.getMaxSpeedOnLane(), nv->getMaxSpeedOnLane());
 #ifdef DEBUG_INFORMER
                 if (DEBUG_COND) {
-                    std::cout << "next_gap=" << next_gap << " ";
+                    std::cout << "nextGap=" << nextGap << " (without help decel) \n";
                 }
 #endif
-                vsafe1 = MAX2(neighNewSpeed,
-                        nv->getCarFollowModel().followSpeed(nv, nv->getSpeed(),
-                                next_gap, MAX2(0., plannedSpeed),
-                                myCarFollowModel.getMaxDecel()));
+
+                // NOTE: the second argument of MIN2() can get larger than nv->getSpeed()
+                vsafe1 = MIN2(nv->getSpeed(), MAX2(neighNewSpeed,
+                                nv->getCarFollowModel().followSpeed(nv,
+                                        nv->getSpeed(), nextGap,
+                                        MAX2(0., plannedSpeed),
+                                        myCarFollowModel.getMaxDecel())));
+
 
                 // next step's gap with possibly less than maximal help deceleration (in case vsafe1 > neighNewSpeed)
                 SUMOReal decel2 = SPEED2ACCEL(nv->getSpeed() - vsafe1);
-                next_gap = myCarFollowModel.gapExtrapolation(TS,
+                nextGap = myCarFollowModel.gapExtrapolation(TS,
                         neighFollow.second, myVehicle.getSpeed(),
                         nv->getSpeed(), plannedAccel, -decel2,
                         myVehicle.getMaxSpeedOnLane(), nv->getMaxSpeedOnLane());
@@ -882,18 +762,38 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                 vsafe = MIN2(nv->getSpeed(),
                         MAX2(neighNewSpeed,
                                 nv->getCarFollowModel().followSpeed(nv,
-                                        nv->getSpeed(), next_gap,
+                                        nv->getSpeed(), nextGap,
                                         MAX2(0., plannedSpeed),
                                         myCarFollowModel.getMaxDecel())));
-                assert(vsafe <= vsafe1);
+
+                assert(vsafe >= vsafe1);
+
 #ifdef DEBUG_INFORMER
                 if (DEBUG_COND) {
-                    std::cout << "next_gap=" << next_gap
-                            << " vsafe1=" << vsafe1
+                    std::cout << "nextGap=" << nextGap
+                            << " (with vsafe1 and help decel) \nvsafe1=" << vsafe1
                             << " vsafe=" << vsafe
                             << "\n";
                 }
 #endif
+
+                // For subsecond simulation, this might not lead to secure gaps for a long time,
+                // we seek to establish a secure gap as soon as possible
+                SUMOReal nextSecureGap = nv->getCarFollowModel().getSecureGap(vsafe,plannedSpeed,myCarFollowModel.getMaxDecel());
+
+                if (nextGap < nextSecureGap){
+                    // establish a secureGap as soon as possible
+                    vsafe= neighNewSpeed;
+                }
+
+#ifdef DEBUG_INFORMER
+                if (DEBUG_COND) {
+                    std::cout << "nextGap=" << nextGap
+                            << " minNextSecureGap=" << nextSecureGap
+                            << " vsafe="<< vsafe << "\n";
+                }
+#endif
+
             }
             msgPass.informNeighFollower(
                     new Info(vsafe, dir | LCA_AMBLOCKINGFOLLOWER), &myVehicle);
@@ -901,12 +801,11 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 #ifdef DEBUG_INFORMER
             if (DEBUG_COND) {
                 std::cout << " wants to cut in before nv=" << nv->getID()
-                        << " vsafe1=" << vsafe1 << " vsafe=" << vsafe
-                        << " newSecGap="
-                        << nv->getCarFollowModel().getSecureGap(vsafe,
-                                plannedSpeed,
-                                myVehicle.getCarFollowModel().getMaxDecel())
-                        << "\n";
+                                << " newSecGap="
+                                << nv->getCarFollowModel().getSecureGap(vsafe,
+                                        plannedSpeed,
+                                        myVehicle.getCarFollowModel().getMaxDecel())
+                                        << "\n";
             }
 #endif
         } else if ((MSGlobals::gSemiImplicitEulerUpdate && dv > 0 && dv * remainingSeconds > (secureGap - decelGap + POSITION_EPS))
@@ -1039,7 +938,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
 #endif
         }
     } else if (neighFollow.first != 0) {
-        // XXX: condition should be extended by '&& (blocked & LCA_BLOCKED_BY_LEADER) != 0',
+        // XXX: condition could be extended by '&& (blocked & LCA_BLOCKED_BY_LEADER) != 0',
         // otherwise we don't need to inform the follower but simply cut in
 
         // we are not blocked by the follower now, make sure it remains that way
@@ -1267,21 +1166,52 @@ MSLCM_LC2013::_wantsChange(
     // @note: while this lets vehicles change earlier into the correct direction
     // it also makes the vehicles more "selfish" and prevents changes which are necessary to help others
 
-//    // In what follows, we check whether a roundabout is ahead (or the vehicle is on a roundabout)
-//    // We calculate the lengths of the continuations described by curr and neigh,
-//    // which are part of the roundabout. refs #1807 (Leo)
-//    SUMOReal roundaboutDistanceAhead = 0.0;
-//    SUMOReal roundaboutDistanceAheadNeigh = 0.0;
-//
-//    // We start with the current edge. Note that neigh and curr do not contain internal lanes.
-//    if(myVehicle.getEdge()->isRoundabout()){
-//        // left space on the current lane
-//        roundaboutDistanceAhead += myVehicle.getLane()->getLength() - myVehicle.getPositionOnLane();
-//        // we just set the same for the neigh lane
-//        // Is this ok? can neigh have a (wildly) different length from curr?
-//        roundaboutDistanceAheadNeigh += neigh.lane->getLength() - myVehicle.getPositionOnLane();
-//    }
+    // In what follows, we check whether a roundabout is ahead (or the vehicle is on a roundabout)
+    // We calculate the lengths of the continuations described by curr and neigh,
+    // which are part of the roundabout. refs #1807 (Leo)
+    SUMOReal pos = isOpposite() ? myVehicle.getLane()->getLength() - myVehicle.getPositionOnLane() : myVehicle.getPositionOnLane();
+    SUMOReal roundaboutDistanceAhead = distanceAlongNextRoundabout(pos, myVehicle.getLane(), curr.bestContinuations);
 
+    // For the distance on the neigh.lane, we need to do a little hack since we may have the right initial lane
+    // (neigh.lane is only the first non-null lane of neigh.bestContinuations).
+    SUMOReal roundaboutDistanceAheadNeigh = 0;
+    SUMOReal neighPosition = pos;
+
+    if (myVehicle.getLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL){
+        // take care of the distance on internal lanes
+        neighPosition = 0.;
+        if(myVehicle.getLane()->getEdge().isRoundabout()) {
+            // vehicle is on internal roundabout lane -> neigh.lane is not a parallel internal lane, but the next non-internal lane
+            // add remaining length on current, internal lane to roundabout distance on neigh continuation
+            roundaboutDistanceAheadNeigh = myVehicle.getLane()->getLength() - myVehicle.getPositionOnLane();
+            MSLane* nextLane = 0;
+            for(std::vector<MSLane*>::const_iterator i = curr.bestContinuations.begin(); i != curr.bestContinuations.end(); i++){
+                if(*i != 0 && *i!=myVehicle.getLane()){
+                    nextLane = *i;
+                    break;
+                }
+            }
+            assert(nextLane!=0);
+            // add all lengths remaining internal lanes of current continuations until nextLane
+            roundaboutDistanceAheadNeigh += myVehicle.getLane()->getLinkTo(nextLane)->getInternalLengthsAfter();
+        }
+    }
+    // add roundabout distance from neigh.lane on
+    roundaboutDistanceAheadNeigh += distanceAlongNextRoundabout(neighPosition, neigh.lane, neigh.bestContinuations);
+
+//    // Debug (Leo)
+//    std::cout << "roundaboutDistanceAhead = " << roundaboutDistanceAhead
+//            << " roundaboutDistanceAheadNeigh = " << roundaboutDistanceAheadNeigh
+//            << "\n";
+
+
+#ifdef DEBUG_WANTS_CHANGE
+    if(DEBUG_COND){
+        std::cout << "roundaboutDistanceAhead = " << roundaboutDistanceAhead
+                << " roundaboutDistanceAheadNeigh = " << roundaboutDistanceAheadNeigh
+                << "\n";
+    }
+#endif
 
     // count the number of roundabout edges ahead to determine whether
     // special LC behavior is required (promoting the use of the inner lane, mainly)
@@ -1292,44 +1222,15 @@ MSLCM_LC2013::_wantsChange(
 
     int roundaboutEdgesAhead = 0;
     for (std::vector<MSLane*>::iterator it = curr.bestContinuations.begin(); it != curr.bestContinuations.end(); ++it) {
-        if ((*it) != 0 && (*it)->getEdge().isRoundabout()) {
+        const MSLane* lane = *it;
+        if (lane != 0 && lane->getEdge().isRoundabout()) {
             roundaboutEdgesAhead += 1;
 
-//            // measure distance of roundabout edges ahead
-//            if(myVehicle.getLane() != (*it)){
-//                // add roundabout lane length
-//                const MSLane* lane = *(it);
-//                roundaboutDistanceAhead += lane->getLength();
-//                // since bestContinuations contains no internal edges
-//                // add consecutive connection length if it is part of the route and the
-//                // consecutive edge is on the roundabout as well
-//                if (*(it+1) != curr.bestContinuations.end() && *(it+1) != 0){
-//                    const MSLane* nextLane = *(it+1);
-//                    const MSEdge& nextEdge = nextLane->getEdge();
-//                    if(nextEdge.isRoundabout()){
-//                        // find corresponding link for the current lane
-//                        const MSLinkCont& links = lane->getLinkCont();
-//                        MSLinkCont::const_iterator i = links.begin();
-//                        MSLink* link = 0;
-//                        while(i != links.end()){
-//                            if(*i != 0 && (*i)->getLane() == nextLane){
-//                                link = *i;
-//                                break;
-//                            }
-//                        }
-//                        do {
-//                            roundaboutDistanceAhead += link->getViaLane()->getLength();
-//                            link = link->getViaLane()->getLinkCont()[0];
-//                        } while(!link->isExitLink());
-//                    }
-//                }
-//            }
-//
-//#ifdef DEBUG_WANTS_CHANGE
-//    if(DEBUG_COND){
-//        std::cout << "roundaboutlane ahead: '" << (*it)->getID() << "'\nlength = " << (*it)->getLength() << std::endl;
-//    }
-//#endif
+#ifdef DEBUG_WANTS_CHANGE
+    if(DEBUG_COND){
+        std::cout << "roundaboutlane ahead: '" << (*it)->getID() << "'" << std::endl;
+    }
+#endif
         } else if (roundaboutEdgesAhead > 0) {
             // only check the next roundabout
             break;
@@ -1340,46 +1241,45 @@ MSLCM_LC2013::_wantsChange(
     for (std::vector<MSLane*>::iterator it = neigh.bestContinuations.begin(); it != neigh.bestContinuations.end(); ++it) {
         if ((*it) != 0 && (*it)->getEdge().isRoundabout()) {
             roundaboutEdgesAheadNeigh += 1;
-//            roundaboutDistanceAheadNeigh += (*it)->getLength();
-//#ifdef DEBUG_WANTS_CHANGE
-//    if(DEBUG_COND){
-//        std::cout << "neigh-roundaboutlane ahead: '" << (*it)->getID() << "'\nlength = " << (*it)->getLength() << std::endl;
-//    }
-//#endif
         } else if (roundaboutEdgesAheadNeigh > 0) {
             // only check the next roundabout
             break;
         }
     }
 
-//    if(MSGlobals::gSemiImplicitEulerUpdate){
-
-    if (roundaboutEdgesAhead > 1) {
-        // What does this do? Please comment... (Leo) Let me try an answer:
-        // It adds a bonus length for each upcoming roundabout edge to the distance,
-        // which the vehicle may continue on its route without a lanechange.
-        // This fakes the vehicle into believing strategic reasons are not urgent.
-        // that becomes problematic, if the vehicle enters the last round about edge,
-        // realizes suddenly that the change is very urgent and finds itself with very
-        // few space to complete the urgent strategic change frequently leading to
-        // a hang up on the inner lane.
-        // XXX: This might better be resolved by taking into account the actual *distance* on
-        // an upcoming roundabout with some scale factor.
-        currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
-        neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+    // Here we assign to roundabout edges a larger distance than to normal edges
+    // in order to decrease sense of lc urgency and induce higher usage of inner roundabout lanes.
+    // XXX: Currently there are two variants, one taking into account only the number
+    //      of upcoming non-internal roundabout edges and adding ROUNDABOUT_DIST_BONUS per upcoming edge except the first.
+    //      Another variant uses the actual distance and multiplies it by a factor ROUNDABOUT_DIST_FACTOR.
+    //      Currently, the update rule decides which variant to take because the second was experimentally implemented
+    //      in the ballistic branch (ticket860). Both variants may be combined in future.
+    if(MSGlobals::gSemiImplicitEulerUpdate){
+        if (roundaboutEdgesAhead > 1) {
+            // What does this do? Please comment... (Leo) Let me try an answer:
+            // It adds a bonus length for each upcoming roundabout edge to the distance,
+            // which the vehicle may continue on its route without a lanechange.
+            // This fakes the vehicle into believing strategic reasons are not urgent.
+            // that becomes problematic, if the vehicle enters the last round about edge,
+            // realizes suddenly that the change is very urgent and finds itself with very
+            // few space to complete the urgent strategic change frequently leading to
+            // a hang up on the inner lane.
+            // XXX: This might better be resolved by taking into account the actual *distance* on
+            // an upcoming roundabout with some scale factor.
+            currentDist += roundaboutEdgesAhead * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+            neighDist += roundaboutEdgesAheadNeigh * ROUNDABOUT_DIST_BONUS * myCooperativeParam;
+        }
+    } else {
+        // This weighs the roundabout edges' distance with a larger factor
+        // to reduce the sense of urgency within roundabouts and promote the
+        // use of the inner lane.
+        if(roundaboutDistanceAheadNeigh > ROUNDABOUT_DIST_TRESH){
+            neighDist += (roundaboutDistanceAheadNeigh-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
+        }
+        if(roundaboutDistanceAhead > ROUNDABOUT_DIST_TRESH){
+            currentDist += (roundaboutDistanceAhead-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
+        }
     }
-
-//    } else {
-        //    // This weighs the roundabout edges' distance with a larger factor
-        //    // to reduce the sense of urgency within roundabouts and promote the
-        //    // use of the inner lane.
-//        if(roundaboutDistanceAheadNeigh > ROUNDABOUT_DIST_TRESH){
-//            neighDist += (roundaboutDistanceAheadNeigh-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
-//        }
-//        if(roundaboutDistanceAhead > ROUNDABOUT_DIST_TRESH){
-//            currentDist += (roundaboutDistanceAhead-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
-//        }
-//    }
 
 
 #ifdef DEBUG_WANTS_CHANGE
@@ -1864,6 +1764,108 @@ MSLCM_LC2013::_wantsChange(
 
     return ret;
 }
+
+SUMOReal
+MSLCM_LC2013::distanceAlongNextRoundabout(SUMOReal position, const MSLane* initialLane, const std::vector<MSLane*>& continuationLanes){
+
+//    // Debug (Leo)
+//    std::cout << "\ncalled distanceAlongNextRoundabout():\n"
+//            << "position = " << position
+//            << " initialLane = " << (initialLane != 0 ? initialLane->getID() : "NULL")
+//            << " continuationLanes = " << toString(continuationLanes) << std::endl;
+
+
+    for(std::vector<MSLane*>::const_iterator i = continuationLanes.begin(); i != continuationLanes.end(); i++){
+        assert((*i)==0 || (*i)->getEdge().getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL);
+    }
+
+    // We start with the current edge.
+    const MSEdge& initialEdge = initialLane->getEdge();
+    bool encounteredRoundabout = false;
+    bool accountedForInitialLane = false;
+    SUMOReal roundaboutDistanceAhead = 0.;
+
+    // set an iterator to the first non-zero entry of continuationLanes
+    std::vector<MSLane*>::const_iterator j = continuationLanes.begin();
+    while(j != continuationLanes.end() && *j == 0) ++j;
+
+    // differentiate possible situations
+    if(j == continuationLanes.end()){
+        // continuations end here
+        assert(initialLane == 0);
+        return 0.;
+    } else if(initialLane == 0){
+        // NOTE: this may occur when calling distanceAlongNextRoundabout() with neigh.lane in _wantsChange().
+        // In that case, the possible internal lengths have been taken into account in _wantsChange().
+        // Thus we set initialLane to the first non-zero lane in continuationLanes
+        initialLane = *j;
+    } else if(!initialLane->isInternal() && initialLane != *j){
+        // this may occur during opposite direction driving where the initial Lane
+        // is the reverse lane of *j. This should not happen on a roundabout! Therefore we can skip initialLane.
+        assert(!initialLane->getEdge().isRoundabout());
+        initialLane = *j;
+    } else if(initialLane->getEdge().isRoundabout()){
+        // initial lane is on roundabout
+        if(!initialLane->isInternal()){
+            assert(initialLane == *j);
+            roundaboutDistanceAhead += initialLane->getLength() - position;
+            MSLane* nextLane = 0;
+            if(j+1 == continuationLanes.end() || *(j+1) == 0 || !(*(j+1))->getEdge().isRoundabout()){
+                // following connection is not part of the roundabout
+            } else {
+                // add internal lengths
+                const MSLane* nextLane = *(j+1);
+                const MSLink* link = initialLane->getLinkTo(nextLane);
+                assert(link!=0);
+                roundaboutDistanceAhead += link->getInternalLengthsAfter();
+            }
+            j++;
+        } else {
+            // initialLane is an internal roundabout lane -> add length to roundaboutDistanceAhead
+            roundaboutDistanceAhead += initialLane->getLength() - position;
+            assert(initialLane->getLinkCont().size()==1);
+            roundaboutDistanceAhead += initialLane->getLinkCont()[0]->getInternalLengthsAfter();
+        }
+    }
+
+    assert(position >= 0. && position <= initialLane->getLength());
+
+    for (std::vector<MSLane*>::const_iterator it = j; it != continuationLanes.end(); ++it) {
+        const MSLane* lane = *it;
+        assert(lane != 0); // possible leading NULL lanes in continuationLanes were treated above
+        if (lane->getEdge().isRoundabout()) {
+//            // Debug (Leo)
+//            std::cout << "'"<< lane->getID() << "' is a roundabout lane!" << std::endl;
+            encounteredRoundabout = true;
+            // add roundabout lane length
+            roundaboutDistanceAhead += lane->getLength();
+
+            // since bestContinuations contains no internal edges
+            // add consecutive connection lengths if it is part of the route and the
+            // consecutive edge is on the roundabout as well
+            if (it+1 != continuationLanes.end() && *(it+1) != 0 && (*(it+1))->getEdge().isRoundabout()){
+                // find corresponding link for the current lane
+                const MSLink* link = lane->getLinkTo(*(it+1));
+                assert(link!=0);
+                SUMOReal linkLength = link->getInternalLengthsAfter();
+                roundaboutDistanceAhead += linkLength;
+                //                    // Debug (Leo)
+                //                    std::cout << "has internal length behind: " << std::endl
+                //                            << linkLength  << std::endl;
+            }
+
+
+
+
+        } else if (encounteredRoundabout) {
+            // only check the next roundabout
+            break;
+        }
+    }
+
+    return roundaboutDistanceAhead;
+}
+
 
 
 int
