@@ -214,6 +214,13 @@
                                 <xsd:attribute name="disallow" type="xsd:string" use="optional"/>
                             </xsd:complexType>
                         </xsd:element>
+                        <xsd:element name="closingLaneReroute">
+                            <xsd:complexType>
+                                <xsd:attribute name="id" type="xsd:string" use="required"/>
+                                <xsd:attribute name="allow" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="disallow" type="xsd:string" use="optional"/>
+                            </xsd:complexType>
+                        </xsd:element>
                         <xsd:element name="destProbReroute">
                             <xsd:complexType>
                                 <xsd:attribute name="id" type="xsd:string" use="required"/>
@@ -302,7 +309,7 @@
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
         <xsd:attribute name="type" type="xsd:string" use="optional"/>
-        <xsd:attribute name="color" type="colorType" use="required"/>
+        <xsd:attribute name="color" type="colorType" use="optional"/>
         <xsd:attribute name="fill" type="boolType" use="optional"/>
         <xsd:attribute name="geo" type="boolType" use="optional"/>
         <xsd:attribute name="layer" type="xsd:float" use="optional"/>
@@ -317,7 +324,7 @@
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
         <xsd:attribute name="type" type="xsd:string" use="optional"/>
-        <xsd:attribute name="color" type="colorType" use="required"/>
+        <xsd:attribute name="color" type="colorType" use="optional"/>
         <xsd:attribute name="layer" type="xsd:float" use="optional"/>
         <xsd:attribute name="x" type="xsd:float" use="optional"/>
         <xsd:attribute name="y" type="xsd:float" use="optional"/>
