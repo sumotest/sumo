@@ -1,3 +1,6 @@
+# If a stop is placed shortly after a vehicle's insertion position and the vehicle is provided a too high departSpeed, it misses the stop.
+ticket2543
+
 # Time which the vehicle's front spends on a lane is computed wrongly
 ticket2556
 
@@ -210,6 +213,3 @@ ticket2360
 # Warning about different begin-times is displayed
 ticket2370
 ticket2494
-
-# If a stop is placed shortly after a vehicle's insertion position and the vehicle is provided a too high departSpeed, it misses the stop.
-ticket2543

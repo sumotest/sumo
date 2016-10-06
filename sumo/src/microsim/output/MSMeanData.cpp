@@ -85,17 +85,13 @@ MSMeanData::MeanDataValues::notifyMove(SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     // if the vehicle has arrived, the reminder must be kept so it can be
     // notified of the arrival subsequently
 
-
-    // TODO: apply similar changes to MSE2, MSE3, MSInductionloop, MSInstantInductionloop
-
     const SUMOReal oldSpeed = veh.getPreviousSpeed();
     SUMOReal enterSpeed = MSGlobals::gSemiImplicitEulerUpdate ? newSpeed : oldSpeed; // NOTE: For the euler update, the vehicle is assumed to travel at constant speed for the whole time step
     SUMOReal leaveSpeed = newSpeed, leaveSpeedFront = newSpeed;
 
-    SUMOReal timeOnLane = TS, frontOnLane = TS; // These values will be further decreased below
-    if(!MSGlobals::gSemiImplicitEulerUpdate && oldPos > myLaneLength){
-        frontOnLane = 0.; // XXX: fixes #2556 (awaits fixing in trunk for euler update as well - check if done at merge)
-    }
+    // These values will be further decreased below
+    SUMOReal timeOnLane = TS;
+    SUMOReal frontOnLane = oldPos > myLaneLength ? 0. : TS;
     bool ret = true;
 
 

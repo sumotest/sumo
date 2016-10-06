@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Fri Sep 23 13:18:55 2016 by SUMO Version dev-SVN-r21424
+<!-- generated on Thu Oct  6 14:16:27 2016 by SUMO Version dev-SVN-r21424
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -86,7 +86,7 @@
         <edge id="1si">
             <lane id="1si_0" sampledSeconds="505.58" traveltime="86.39" overlapTraveltime="86.39" density="21.32" occupancy="10.66" waitingTime="332.00" speed="2.80" departed="0" arrived="0" entered="1" left="9" laneChangedFrom="0" laneChangedTo="0"/>
             <lane id="1si_1" sampledSeconds="207.92" traveltime="20.41" overlapTraveltime="20.84" density="8.77" occupancy="4.38" waitingTime="19.00" speed="11.62" departed="0" arrived="0" entered="10" left="9" laneChangedFrom="0" laneChangedTo="0"/>
-            <lane id="1si_2" sampledSeconds="2773.47" traveltime="301.63" overlapTraveltime="306.29" density="116.95" occupancy="58.47" waitingTime="1646.00" speed="0.79" departed="0" arrived="0" entered="8" left="7" laneChangedFrom="0" laneChangedTo="0"/>
+            <lane id="1si_2" sampledSeconds="2773.47" traveltime="301.65" overlapTraveltime="306.29" density="116.95" occupancy="58.47" waitingTime="1646.00" speed="0.79" departed="0" arrived="0" entered="8" left="7" laneChangedFrom="0" laneChangedTo="0"/>
         </edge>
         <edge id="2fi">
             <lane id="2fi_0" sampledSeconds="863.80" traveltime="24.76" overlapTraveltime="25.24" density="34.76" occupancy="17.38" waitingTime="0.00" speed="10.04" departed="11" arrived="9" entered="22" left="26" laneChangedFrom="0" laneChangedTo="0"/>

@@ -145,7 +145,7 @@ public:
 
     /** @brief Returns the nSuccs'th successor of edge the vehicle is currently at
      *
-     * If the rest of the route (counted from the current edge) than nSuccs,
+     * If the rest of the route (counted from the current edge) is shorter than nSuccs,
      *  0 is returned.
      * @param[in] nSuccs The number of edge to look forward
      * @return The nSuccs'th following edge in the vehicle's route

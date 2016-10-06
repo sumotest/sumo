@@ -275,6 +275,7 @@ public:
                             bool recheckNextLanes,
                             MSMoveReminder::Notification notification);
 
+    // XXX: Documentation?
     bool checkFailure(MSVehicle* aVehicle, SUMOReal& speed, SUMOReal& dist, const SUMOReal nspeed, const bool patchSpeed, const std::string errorMsg) const;
 
     /** @todo documentation
@@ -634,6 +635,7 @@ public:
 
 
 
+    // XXX: succLink does not exist... Documentation?
     /** Same as succLink, but does not throw any assertions when
         the succeeding link could not be found;
         Returns the myLinks.end() instead; Further, the number of edges to

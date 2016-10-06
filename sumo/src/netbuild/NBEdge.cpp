@@ -492,13 +492,45 @@ NBEdge::setGeometry(const PositionVector& s, bool inner) {
     computeAngle();
 }
 
+void 
+NBEdge::setNodeBorder(const NBNode* node, const Position& p) {
+    const SUMOReal extend = 200;
+    const SUMOReal distanceOfClosestThreshold = 1.0; // very rough heuristic, actually depends on angle
+    SUMOReal distanceOfClosest = distanceOfClosestThreshold;
+    PositionVector border = myGeom.getOrthogonal(p, extend, distanceOfClosest);
+    if (distanceOfClosest < distanceOfClosestThreshold) {
+        // shift border forward / backward
+        const SUMOReal shiftDirection = (node == myFrom ? 1.0 : -1.0);
+        SUMOReal base = myGeom.nearest_offset_to_point2D(p);
+        if (base != GeomHelper::INVALID_OFFSET) {
+            base += shiftDirection * (distanceOfClosestThreshold - distanceOfClosest);
+            PositionVector tmp = myGeom;
+            tmp.move2side(1.0);
+            border = myGeom.getOrthogonal(tmp.positionAtOffset2D(base), extend, distanceOfClosest);
+        }
+    }
+    if (border.size() == 2) {
+        SUMOReal edgeWidth = 0;
+        for (int i = 0; i < (int)myLanes.size(); i++) {
+            edgeWidth += getLaneWidth(i);
+        }
+        border.extrapolate2D(edgeWidth);
+        if (node == myFrom) {
+            myFromBorder = border;
+        } else {
+            assert(node == myTo);
+            myToBorder = border;
+        }
+    }
+}
+
 
 PositionVector
 NBEdge::cutAtIntersection(const PositionVector& old) const {
     PositionVector shape = old;
-    shape = startShapeAt(shape, myFrom);
+    shape = startShapeAt(shape, myFrom, myFromBorder);
     if (shape.size() >= 2) {
-        shape = startShapeAt(shape.reverse(), myTo).reverse();
+        shape = startShapeAt(shape.reverse(), myTo, myToBorder).reverse();
     }
     // sanity checks
     if (shape.length() < POSITION_EPS) {
@@ -540,8 +572,10 @@ NBEdge::computeEdgeShape() {
 
 
 PositionVector
-NBEdge::startShapeAt(const PositionVector& laneShape, const NBNode* startNode) const {
-    const PositionVector& nodeShape = startNode->getShape();
+NBEdge::startShapeAt(const PositionVector& laneShape, const NBNode* startNode, PositionVector nodeShape) const {
+    if (nodeShape.size() == 0) {
+        nodeShape = startNode->getShape();
+    }
     PositionVector lb(laneShape.begin(), laneShape.begin() + 2);
     // this doesn't look reasonable @todo use lb.extrapolateFirstBy(100.0);
     lb.extrapolate(100.0);
@@ -1440,13 +1474,15 @@ NBEdge::computeAngle() {
                             : myGeom);
 
     // if the junction shape is suspicious we cannot trust the angle to the centroid
-    if ((hasFromShape && (myFrom->getShape().distance2D(shape[0]) > 2 * POSITION_EPS
-                          || myFrom->getShape().around(shape[-1])))
-            || (hasToShape && (myTo->getShape().distance2D(shape[-1]) > 2 * POSITION_EPS
-                               || myTo->getShape().around(shape[0])))) {
+    if (hasFromShape && (myFrom->getShape().distance2D(shape[0]) > 2 * POSITION_EPS
+                || myFrom->getShape().around(shape[-1])
+                || !(myFrom->getShape().around(fromCenter)))) {
         fromCenter = myFrom->getPosition();
+    }
+    if (hasToShape && (myTo->getShape().distance2D(shape[-1]) > 2 * POSITION_EPS
+                || myTo->getShape().around(shape[0])
+                || !(myTo->getShape().around(toCenter)))) {
         toCenter = myTo->getPosition();
-        shape = myGeom;
     }
 
     const SUMOReal angleLookahead = MIN2(shape.length2D() / 2, ANGLE_LOOKAHEAD);

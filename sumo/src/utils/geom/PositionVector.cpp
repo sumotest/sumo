@@ -1168,5 +1168,50 @@ PositionVector::rotate2D(SUMOReal angle) {
     }
 }
 
+
+PositionVector 
+PositionVector::simplified() const {
+    PositionVector result = *this;
+    bool changed = true;
+    while (changed && result.size() > 3) {
+        changed = false;
+        for (int i = 0; i < (int)result.size(); i++) {
+            const Position& p1 = result[i];
+            const Position& p2 = result[(i + 2) % result.size()];
+            const int middleIndex = (i + 1) % result.size();
+            const Position& p0 = result[middleIndex];
+            // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
+            const SUMOReal triangleArea2 = fabs((p2.y() - p1.y()) * p0.x() - (p2.x() - p1.x()) * p0.y() + p2.x() * p1.y()  - p2.y() * p1.x());
+            const SUMOReal distIK = p1.distanceTo2D(p2);
+            if (distIK > NUMERICAL_EPS && triangleArea2 / distIK < NUMERICAL_EPS) {
+                changed = true;
+                result.erase(result.begin() + middleIndex); 
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+
+PositionVector 
+PositionVector::getOrthogonal(const Position& p, SUMOReal extend, SUMOReal& distToClosest) const {
+    PositionVector result;
+    PositionVector tmp = *this;
+    tmp.extrapolate2D(extend);
+    const SUMOReal baseOffset = tmp.nearest_offset_to_point2D(p);
+    if (baseOffset == GeomHelper::INVALID_OFFSET) {
+        // fail
+        return result;
+    }
+    Position base = tmp.positionAtOffset2D(baseOffset);
+    distToClosest = tmp[tmp.indexOfClosest(base)].distanceTo2D(base);
+    if (p.distanceTo2D(base) > NUMERICAL_EPS) {
+        result.push_back(p);
+        result.push_back(base);
+    }
+    return result;
+}
+
 /****************************************************************************/
 
