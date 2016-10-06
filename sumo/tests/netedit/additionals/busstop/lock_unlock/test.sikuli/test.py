@@ -1,137 +1,121 @@
+# Import libraries
+import os, sys, subprocess
+
 #** Common parameters **#
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
-netEditResources = os.environ['SUMO_HOME'] + "/tests/netedit/imageResources/"
-
-# abort function
-def abort(process, reason): 
-	process.kill()
-	sys.exit("Killed netedit process. '" + reason + "' not found")
-
-# undo operation
-def undo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-undo.png")
-	except:
-		abort(netEditProcess, "edit-undo.png")
-		
-# redo operation
-def redo(netEditProcess):
-	try:
-		click(netEditResources + "toolbar/toolbar-edit.png")
-		click(netEditResources + "toolbar/toolbar-edit/edit-redo.png")
-	except:
-		abort(netEditProcess, "edit-redo.png")
+# SUMO Folder
+SUMOFolder = os.environ.get('SUMO_HOME', '.')
+# Current environment
+currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
+# Get path to netEdit app
+neteditApp = currentEnvironmentFile.readline().replace("\n", "")
+# Get SandBox folder
+textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
+# Get resources depending of the current Operating system
+currentOS = currentEnvironmentFile.readline().replace("\n", "")
+netEditResources = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/"
+currentEnvironmentFile.close()
 #****#
 
-# Import libraries
-import os, sys, subprocess
-
 #Open netedit
-netEditProcess = subprocess.Popen([os.environ['NETEDIT_BINARY'], 
-								  '--window-size', '800,600',
+netEditProcess = subprocess.Popen([neteditApp, 
+                                  '--window-size', '800,600',
 								  '--new', 
-								  '--additionals-output', 'additionals.xml'], 
-								  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
-
-#Settings.MinSimilarity = 0.1
+                                  '--additionals-output', textTestSandBox + "/additionals.xml"], 
+                                  env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+                        
+# Wait 10 seconds to netedit main windows
 try:
-	wait(netEditResources + "neteditIcon.png", 60)
+    match = wait(netEditResources + "neteditToolbar.png", 10)
 except:
-	abort(netEditProcess, "neteditIcon.png")
-	
-# focus
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(30,0))
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'neteditToolbar.png' not found")
+
+# focus netEdit window
+click(match.getTarget().offset(0,-20))
 
 # Change to create mode
 type("e")
 
 # Create two nodes
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(200,400))
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(600,400))
+click(match.getTarget().offset(-250,400))
+click(match.getTarget().offset(250,400))
 
 # Change to create additional
 type("a")
 
 # by default, additional is busstop, then isn't needed to select "busstop"
 
-#create busstop in mode "reference left"
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(365, 400))
+#Go to reference mode
+click(match.getTarget().offset(-300, 300))
 
-# Change to move
+#Change to reference center
+click(match.getTarget().offset(-300, 360))
+
+#create busstop in mode "reference center"
+click(match.getTarget().offset(100, 400))
+
+# Change to movement mode
 type("m")
 
 # Change mouse move delay
 Settings.MoveMouseDelay = 1
 
 # Move unlocked
-dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
-dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407))
+dragDrop(match.getTarget().offset(100, 405), match.getTarget().offset(-100, 405))
+dragDrop(match.getTarget().offset(-100, 405), match.getTarget().offset(100, 405))
 
 # Change back mouse move delay
 Settings.MoveMouseDelay = 0.1
 
-# Change to inspect
+# Change to inspect mode
 type("i")
 
 # inspect busStop
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407))
+click(match.getTarget().offset(100, 405))
 
-# Block movement of  busStop
-try:
-	click(netEditResources + "additionals/editorParameters/blockMovement.png")
-except:
-	abort(netEditProcess, "blockMovement.png")
-	
-# Change to move
+#Go to reference mode
+click(match.getTarget().offset(-330, 330))
+
+# Change to movement mode
 type("m")
 
-# Change mouse move delay
+# Change back mouse move delay
 Settings.MoveMouseDelay = 1
 
-# try to move blocked (cannot be possible)
-dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
+# Try to move locked busstop
+dragDrop(match.getTarget().offset(100, 405), match.getTarget().offset(-100, 405))
 
 # Change back mouse move delay
 Settings.MoveMouseDelay = 0.1
 
-# undo block movement again
-undo(netEditProcess)
-
-# Change mouse move delay
-Settings.MoveMouseDelay = 1
-
-# now can be moved 
-dragDrop(Pattern(netEditResources + "neteditIcon.png").targetOffset(375, 407), Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
-
-# Change back mouse move delay
-Settings.MoveMouseDelay = 0.1
-
-# Change to inspect
-type("i")
-
-# inspect again busStop
-click(Pattern(netEditResources + "neteditIcon.png").targetOffset(500, 407))
-
-# Block movement again of  busStop
+#Check Undo of block movement
 try:
-	click(netEditResources + "additionals/editorParameters/blockMovement.png")
+	click(match.getTarget().offset(-325,5))
+	click(netEditResources + "undoredo/edit-undo.png")
 except:
-	abort(netEditProcess, "blockMovement.png")
-	
-# save additional
-type("f", Key.ALT)
+	netEditProcess.kill()
+	sys.exit("Killed netedit process. 'edit-undo.png' not found")
+        
+#Check Redo of block movement
 try:
-	click(netEditResources + "toolbar/toolbar-file/file-saveAdditionals.png")
+	click(match.getTarget().offset(-325,5))
+	click(netEditResources + "undoredo/edit-redo.png")
 except:
-	abort(netEditProcess, "file-saveAdditionals.png")
+	netEditProcess.kill()
+	sys.exit("Killed netedit process. 'edit-redo.png' not found")
+        
+# save additionals
+click(match.getTarget().offset(-375,5))
+click(match.getTarget().offset(-350,265))
 
 #quit
 type("q", Key.CTRL)
 try:
-	find(netEditResources + "dialogs/dialog-confirmClosingNetwork.png")
-	type("y", Key.ALT)
+    find(netEditResources + "confirmClosingNetworkDialog.png")
+    type("y", Key.ALT)
 except:
-	abort(netEditProcess, "dialog-confirmClosingNetwork")
+    netEditProcess.kill()
+    sys.exit("Killed netedit process. 'confirmClosingNetworkDialog.png' not found")
