@@ -104,30 +104,22 @@ GNEConnection::updateGeometry() {
     PositionVector laneShapeFrom = myFromEdge->getNBEdge()->getLanes().at(myConnection.fromLane).shape;
     PositionVector laneShapeTo = myConnection.toEdge->getLanes().at(myConnection.toLane).shape;
 
-    // Check if shape of connections must be adjusted (depend of the size of Junction shape)
-    if(myFromEdge->getNBEdge()->getToNode()->getShape().size() <= 0) {
-        // Cut laneShapeFrom using as delimitators from start position and end position depending of maxNumberOfLanes
-        if(myFromEdge->getNBEdge()->getNumLanes() <= 2) {
-            laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - 3);
-        } else {
-            laneShapeFrom = laneShapeFrom.getSubpart(0, laneShapeFrom.length() - (myFromEdge->getNBEdge()->getNumLanes() * 3));
-        }
-
-        // Cut laneShapeTo using as delimitators from start position and end position depending of maxNumberOfLanes
-        if(myConnection.toEdge->getNumLanes() <= 2) {
-            laneShapeTo = laneShapeTo.getSubpart(3, laneShapeTo.length());
-        } else {
-            laneShapeTo = laneShapeTo.getSubpart((myConnection.toEdge->getNumLanes() * 3), laneShapeTo.length());
-        }
+    // Calculate shape of connection depending of the size of Junction shape
+    if(myFromEdge->getNBEdge()->getToNode()->getShape().area() > 4) { // Obtanied from GNEJunction::drawgl
+        // Calculate shape using a smooth shape
+        myShape = myFromEdge->getNBEdge()->getToNode()->computeSmoothShape(
+                    laneShapeFrom, 
+                    laneShapeTo,
+                    NUM_POINTS, myFromEdge->getNBEdge()->getTurnDestination() == myConnection.toEdge,
+                    (SUMOReal) 5. * (SUMOReal) myFromEdge->getNBEdge()->getNumLanes(),
+                    (SUMOReal) 5. * (SUMOReal) myConnection.toEdge->getNumLanes());
+    
+    } else {
+        myShape.clear();
+        myShape.push_back(laneShapeFrom.positionAtOffset(laneShapeFrom.length() - 1));
+        myShape.push_back(laneShapeTo.positionAtOffset(1));
     }
 
-    // Calculate shape using a smooth shape
-    myShape = myFromEdge->getNBEdge()->getToNode()->computeSmoothShape(
-                laneShapeFrom, laneShapeTo,
-                NUM_POINTS, myFromEdge->getNBEdge()->getTurnDestination() == myConnection.toEdge,
-                (SUMOReal) 5. * (SUMOReal) myFromEdge->getNBEdge()->getNumLanes(),
-                (SUMOReal) 5. * (SUMOReal) myConnection.toEdge->getNumLanes());
-    
     // Obtain lenghts and shape rotations
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {

@@ -1536,12 +1536,7 @@ GNEViewNet::setEditMode(EditMode mode) {
         myPreviousEditMode = myEditMode;
         myEditMode = mode;
         switch (mode) {
-            case GNE_MODE_INSPECT:                                              // PABLO #2067
-                // If show connections checkbox is enabled, requiere recompute  // PABLO #2067
-                if(myShowConnections->getCheck()) {                             // PABLO #2067
-                    getNet()->requireRecompute();                               // PABLO #2067
-                }                                                               // PABLO #2067
-                break;
+            case GNE_MODE_INSPECT:
             case GNE_MODE_CONNECT:
             case GNE_MODE_TLS:
                 // modes which depend on computed data
