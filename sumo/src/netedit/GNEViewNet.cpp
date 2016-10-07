@@ -106,7 +106,7 @@ FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_REMOVE_LANE_BUS,         GNEViewNet::onCmdRemoveRestrictedLaneBuslane),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_SHAPE,              GNEViewNet::onCmdNodeShape),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NODE_REPLACE,            GNEViewNet::onCmdNodeReplace),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTIONS,        GNEViewNet::onCmdToogleShowConnection)  // PABLO #2067
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOW_CONNECTIONS,        GNEViewNet::onCmdToogleShowConnection)
 };
 
 // Object implementation
@@ -322,16 +322,16 @@ GNEViewNet::selectEdges() {
 }
 
 
-bool                                                    // PABLO #2067
-GNEViewNet::showConnections() {                         // PABLO #2067
-    if(myEditMode == GNE_MODE_CONNECT) {                // PABLO #2067
-        return true;                                    // PABLO #2067
-    } else if (myShowConnections->shown() == false) {   // PABLO #2067
-        return false;                                   // PABLO #2067
-    } else {                                            // PABLO #2067
-        return (myShowConnections->getCheck() == 1);    // PABLO #2067
-    }                                                   // PABLO #2067
-}                                                       // PABLO #2067
+bool
+GNEViewNet::showConnections() {
+    if(myEditMode == GNE_MODE_CONNECT) {
+        return true;
+    } else if (myShowConnections->shown() == false) {
+        return false;
+    } else {
+        return (myShowConnections->getCheck() == 1);
+    }
+}
 
 
 bool
@@ -427,7 +427,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
         GNEPoly* pointed_poly = 0;
         GNECrossing* pointed_crossing = 0;
         GNEAdditional* pointed_additional = 0;
-        GNEConnection* pointed_connection = 0;  // PABLO #2067
+        GNEConnection* pointed_connection = 0;
         if (pointed) {
             switch (pointed->getType()) {
                 case GLO_JUNCTION:
@@ -452,9 +452,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 case GLO_ADDITIONAL:
                     pointed_additional = (GNEAdditional*)pointed;
                     break;
-                case GLO_CONNECTION:                                // PABLO #2067
-                    pointed_connection = (GNEConnection*)pointed;   // PABLO #2067
-                    break;                                          // PABLO #2067
+                case GLO_CONNECTION:
+                    pointed_connection = (GNEConnection*)pointed;
+                    break;
                 default:
                     pointed = 0;
                     break;
@@ -594,9 +594,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_additional) {
                     myViewParent->getAdditionalFrame()->removeAdditional(pointed_additional);
                     update();
-                } else if (pointed_connection) {                                // PABLO #2067
-                    myNet->deleteConnection(pointed_connection, myUndoList);    // PABLO #2067
-                    update();                                                   // PABLO #2067
+                } else if (pointed_connection) {
+                    myNet->deleteConnection(pointed_connection, myUndoList);
+                    update();
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
@@ -625,10 +625,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_additional) {
                     pointedAC = pointed_additional;
                     pointedO = pointed_additional;
-                } else if (pointed_connection) {    // PABLO #2067
-                    pointedAC = pointed_connection; // PABLO #2067
-                    pointedO = pointed_connection;  // PABLO #2067
-                }                                   // PABLO #2067
+                } else if (pointed_connection) {
+                    pointedAC = pointed_connection;
+                    pointedO = pointed_connection;
+                }
 
                 std::vector<GNEAttributeCarrier*> selected;
                 if (pointedO && gSelected.isSelected(pointedO->getType(), pointedO->getGlID())) {
@@ -1513,14 +1513,14 @@ GNEViewNet::onCmdNodeReplace(FXObject*, FXSelector, void*) {
 }
 
 
-long                                                                    // PABLO #2067
-GNEViewNet::onCmdToogleShowConnection(FXObject*, FXSelector, void*) {   // PABLO #2067
-    // Update viewnNet to show/hide conections                          // PABLO #2067
-    update();                                                           // PABLO #2067
-    // Hide/show connections requiere recompute                         // PABLO #2067
-    getNet()->requireRecompute();                                       // PABLO #2067
-    return 1;                                                           // PABLO #2067
-}                                                                       // PABLO #2067
+long
+GNEViewNet::onCmdToogleShowConnection(FXObject*, FXSelector, void*) {
+    // Update viewnNet to show/hide conections
+    update();
+    // Hide/show connections requiere recompute
+    getNet()->requireRecompute();
+    return 1;
+}
 
 // ===========================================================================
 // private
@@ -1580,8 +1580,8 @@ GNEViewNet::buildEditModeControls() {
     mySelectEdges = new FXMenuCheck(myToolbar, "select edges\t\tToggle whether clicking should select edges or lanes", this, 0);
     mySelectEdges->setCheck();
     
-    myShowConnections = new FXMenuCheck(myToolbar, "show connections\t\tToggle show connections over junctions", this, MID_GNE_SHOW_CONNECTIONS);   // PABLO #2067
-    myShowConnections->setCheck();                                                                                                                  // PABLO #2067
+    myShowConnections = new FXMenuCheck(myToolbar, "show connections\t\tToggle show connections over junctions", this, MID_GNE_SHOW_CONNECTIONS);
+    myShowConnections->setCheck();
     
     myExtendToEdgeNodes = new FXMenuCheck(myToolbar, "auto-select nodes\t\tToggle whether selecting multiple edges should automatically select their nodes", this, 0);
 
@@ -1603,7 +1603,7 @@ GNEViewNet::updateModeSpecificControls() {
     myChainCreateEdge->hide();
     myAutoCreateOppositeEdge->hide();
     mySelectEdges->hide();
-    myShowConnections->hide();  // PABLO #2067
+    myShowConnections->hide();
     myExtendToEdgeNodes->hide();
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
@@ -1637,19 +1637,19 @@ GNEViewNet::updateModeSpecificControls() {
             break;
         case GNE_MODE_DELETE:
             mySelectEdges->show();
-            myShowConnections->show();  // PABLO #2067
+            myShowConnections->show();
             break;
         case GNE_MODE_INSPECT:
             widthChange -= myViewParent->getInspectorFrame()->getWidth() + addChange;
             myViewParent->getInspectorFrame()->show();
             mySelectEdges->show();
-            myShowConnections->show();  // PABLO #2067
+            myShowConnections->show();
             break;
         case GNE_MODE_SELECT:
             widthChange -= myViewParent->getSelectorFrame()->getWidth() + addChange;
             myViewParent->getSelectorFrame()->show();
             mySelectEdges->show();
-            myShowConnections->show();  // PABLO #2067
+            myShowConnections->show();
             myExtendToEdgeNodes->show();
             break;
         case GNE_MODE_MOVE:

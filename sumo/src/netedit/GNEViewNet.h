@@ -196,8 +196,8 @@ public:
     /// @brief replace node by geometry
     long onCmdNodeReplace(FXObject*, FXSelector, void*);
 
-    /// @brief toogle show connections                              // PABLO #2067
-    long onCmdToogleShowConnection(FXObject*, FXSelector, void*);   // PABLO #2067
+    /// @brief toogle show connections
+    long onCmdToogleShowConnection(FXObject*, FXSelector, void*);
 
     /// @brief sets edit mode (from hotkey)
     /// @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
@@ -236,8 +236,8 @@ public:
     /// @brief whether inspection, selection and inversion should apply to edges or to lanes
     bool selectEdges();
 
-    /// @brief show connections over junctions  // PABLO #2067
-    bool showConnections();                     // PABLO #2067
+    /// @brief show connections over junctions
+    bool showConnections();
 
     /// @brief whether to autoselect nodes or to lanes
     bool autoSelectNodes();
@@ -277,8 +277,8 @@ private:
     /// @brief menu check to select only edges
     FXMenuCheck* mySelectEdges;
 
-    /// @brief menu check to show connections   // PABLO #2067
-    FXMenuCheck* myShowConnections;             // PABLO #2067
+    /// @brief menu check to show connections
+    FXMenuCheck* myShowConnections;
 
     /// @brief menu check to extend to edge nodes
     FXMenuCheck* myExtendToEdgeNodes;

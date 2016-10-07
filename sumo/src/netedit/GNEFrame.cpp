@@ -62,19 +62,19 @@ GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string& 
     // Create frame for contect
     myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
 
-    // Create frame for header                                              // PABLO #2067
-    myHeaderFrame = new FXHorizontalFrame(myContentFrame, LAYOUT_FILL_X);   // PABLO #2067
+    // Create frame for header
+    myHeaderFrame = new FXHorizontalFrame(myContentFrame, LAYOUT_FILL_X);
 
-    // Create frame for left elements of header (By default unused) // PABLO #2067
-    myHeaderLeftFrame = new FXHorizontalFrame(myHeaderFrame);       // PABLO #2067
-    myHeaderLeftFrame->hide();                                      // PABLO #2067
+    // Create frame for left elements of header (By default unused)
+    myHeaderLeftFrame = new FXHorizontalFrame(myHeaderFrame);
+    myHeaderLeftFrame->hide();
 
     // Create titel frame
     myFrameHeaderLabel = new FXLabel(myHeaderFrame, frameLabel.c_str(), 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
 
-    // Create frame for right elements of header (By default unused)    // PABLO #2067
-    myHeaderRightFrame = new FXHorizontalFrame(myHeaderFrame);          // PABLO #2067
-    myHeaderRightFrame->hide();                                         // PABLO #2067
+    // Create frame for right elements of header (By default unused)
+    myHeaderRightFrame = new FXHorizontalFrame(myHeaderFrame);
+    myHeaderRightFrame->hide();
 
     // Set font of header
     myFrameHeaderLabel->setFont(myFrameHeaderFont);

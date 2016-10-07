@@ -82,8 +82,8 @@ GNEEdge::GNEEdge(NBEdge& nbe, GNENet* net, bool wasSplit, bool loaded):
         myLanes.push_back(new GNELane(*this, i));
         myLanes.back()->incRef("GNEEdge::GNEEdge");
     }
-    // Remake connections       // PABLO #2067
-    remakeGNEConnections();     // PABLO #2067
+    // Remake connections
+    remakeGNEConnections();
 }
 
 
@@ -95,13 +95,13 @@ GNEEdge::~GNEEdge() {
             delete *i;
         }
     }
-    // delete connections                                                                                       // PABLO #2067
-    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) {     // PABLO #2067
-        (*i)->decRef("GNEEdge::~GNEEdge");                                                                      // PABLO #2067
-        if ((*i)->unreferenced()) {                                                                             // PABLO #2067
-            delete (*i);                                                                                        // PABLO #2067
-        }                                                                                                       // PABLO #2067
-    }                                                                                                           // PABLO #2067
+    // delete connections
+    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) {
+        (*i)->decRef("GNEEdge::~GNEEdge");
+        if ((*i)->unreferenced()) {
+            delete (*i);
+        }
+    }
     if (myAmResponsible) {
         delete &myNBEdge;
     }
@@ -118,10 +118,10 @@ GNEEdge::updateGeometry() {
     for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
         (*i)->updateGeometry();
     }
-    // Update geometry of connections                                                                       // PABLO #2067
-    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) { // PABLO #2067
-        (*i)->updateGeometry();                                                                             // PABLO #2067
-    }                                                                                                       // PABLO #2067
+    // Update geometry of connections
+    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) {
+        (*i)->updateGeometry();
+    }
     // Update geometry of additionals vinculated to this edge
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) {
         (*i)->updateGeometry();
@@ -187,10 +187,10 @@ GNEEdge::drawGL(const GUIVisualizationSettings& s) const {
         (*i)->drawGL(s);
     }
 
-    // draw the connections                                                                                 // PABLO #2067
-    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) { // PABLO #2067
-        (*i)->drawGL(s);                                                                                    // PABLO #2067
-    }                                                                                                       // PABLO #2067
+    // draw the connections
+    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) {
+        (*i)->drawGL(s);
+    }
 
     // draw geometry hints
     if (s.scale * SNAP_RADIUS > 1.) { // check whether it is not too small
@@ -414,25 +414,25 @@ GNEEdge::setGeometry(PositionVector geom, bool inner) {
 }
 
 
-void                                                                                                                    // PABLO #2067
-GNEEdge::remakeGNEConnections() {                                                                                       // PABLO #2067
-    // Drop all existents connections                                                                                   // PABLO #2067
-    for(ConnectionVector::iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); i++) {                    // PABLO #2067
-        // Dec reference of connection                                                                                  // PABLO #2067
-        (*i)->decRef("GNEEdge::removeConnection");                                                                      // PABLO #2067
-        // Delete GNEConnectionToErase if is unreferenced                                                               // PABLO #2067
-        if((*i)->unreferenced()) {                                                                                      // PABLO #2067
-            delete (*i);                                                                                                // PABLO #2067
-        }                                                                                                               // PABLO #2067
-    }                                                                                                                   // PABLO #2067
-    myGNEConnections.clear();                                                                                           // PABLO #2067
-    // Create connections                                                                                               // PABLO #2067
-    const std::vector<NBEdge::Connection>& myConnections = myNBEdge.getConnections();                                   // PABLO #2067
-    for(std::vector<NBEdge::Connection>::const_iterator i = myConnections.begin(); i != myConnections.end(); i++) {     // PABLO #2067
-        myGNEConnections.push_back(new GNEConnection(this, *i));                                                        // PABLO #2067
-        myGNEConnections.back()->incRef("GNEEdge::GNEEdge");                                                            // PABLO #2067
-    }                                                                                                                   // PABLO #2067
-}                                                                                                                       // PABLO #2067
+void
+GNEEdge::remakeGNEConnections() {
+    // Drop all existents connections
+    for(ConnectionVector::iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); i++) {
+        // Dec reference of connection
+        (*i)->decRef("GNEEdge::removeConnection");
+        // Delete GNEConnectionToErase if is unreferenced
+        if((*i)->unreferenced()) {
+            delete (*i);
+        }
+    }
+    myGNEConnections.clear();
+    // Create connections
+    const std::vector<NBEdge::Connection>& myConnections = myNBEdge.getConnections();
+    for(std::vector<NBEdge::Connection>::const_iterator i = myConnections.begin(); i != myConnections.end(); i++) {
+        myGNEConnections.push_back(new GNEConnection(this, *i));
+        myGNEConnections.back()->incRef("GNEEdge::GNEEdge");
+    }
+}
 
 
 void
@@ -473,10 +473,10 @@ GNEEdge::getLanes() {
 }
 
 
-const std::vector<GNEConnection*>&  // PABLO #2067
-GNEEdge::getGNEConnections() {      // PABLO #2067
-    return myGNEConnections;        // PABLO #2067
-}                                   // PABLO #2067
+const std::vector<GNEConnection*>&
+GNEEdge::getGNEConnections() {
+    return myGNEConnections;
+}
 
 
 bool
@@ -846,15 +846,15 @@ GNEEdge::removeLane(GNELane* lane) {
 void
 GNEEdge::addConnection(int fromLane, const std::string& toEdgeID, int toLane, bool mayPass) {
     NBEdge* destEdge = myNet->retrieveEdge(toEdgeID)->getNBEdge();
-    // If a new connection was sucesfully created                                                   // PABLO #2067
-    if(myNBEdge.setConnection(fromLane, destEdge, toLane, NBEdge::L2L_USER, true, mayPass)) {       // PABLO #2067
-        // get created connection                                                                   // PABLO #2067
-        NBEdge::Connection createdConnection = myNBEdge.getConnection(fromLane, destEdge, toLane);  // PABLO #2067
-        // Create GNEConection                                                                      // PABLO #2067
-        myGNEConnections.push_back(new GNEConnection(this, createdConnection));                     // PABLO #2067
-        // Add reference                                                                            // PABLO #2067
-        myGNEConnections.back()->incRef("GNEEdge::addConnection");                                  // PABLO #2067
-    }                                                                                               // PABLO #2067
+    // If a new connection was sucesfully created
+    if(myNBEdge.setConnection(fromLane, destEdge, toLane, NBEdge::L2L_USER, true, mayPass)) {
+        // get created connection
+        NBEdge::Connection createdConnection = myNBEdge.getConnection(fromLane, destEdge, toLane);
+        // Create GNEConection
+        myGNEConnections.push_back(new GNEConnection(this, createdConnection));
+        // Add reference
+        myGNEConnections.back()->incRef("GNEEdge::addConnection");
+    }
     myNet->refreshElement(this); // actually we only do this to force a redraw
 }
 
@@ -865,33 +865,33 @@ GNEEdge::removeConnection(int fromLane, const std::string& toEdgeID, int toLane)
     if (destEdge == myNBEdge.getTurnDestination()) {
         myNet->removeExplicitTurnaround(getMicrosimID());
     }
-    // Get connection to remove                                                                                                             // PABLO #2067
-    NBEdge::Connection connectionToRemove = myNBEdge.getConnection(fromLane, destEdge, toLane);                                             // PABLO #2067
-    myNBEdge.removeFromConnections(destEdge, fromLane, toLane);                                                                             // PABLO #2067
-    // Iterate over GNEConnections to find the GNEConnection to remove                                                                      // PABLO #2067
-    GNEConnection *GNEConnectionToErase = NULL;                                                                                             // PABLO #2067
-    int position = 0;                                                                                                                       // PABLO #2067
-    for(ConnectionVector::iterator i = myGNEConnections.begin(); (i != myGNEConnections.end()) && (GNEConnectionToErase == NULL); ++i) {    // PABLO #2067
-        // If NBEdge::Connection was founded                                                                                                // PABLO #2067
-        if(((*i)->getNBEdgeConnection().fromLane == connectionToRemove.fromLane) &&                                                         // PABLO #2067
-           ((*i)->getNBEdgeConnection().toEdge == connectionToRemove.toEdge) &&                                                             // PABLO #2067
-           ((*i)->getNBEdgeConnection().toLane == connectionToRemove.toLane)) {                                                             // PABLO #2067
-                // get GNEConnectionToErase                                                                                                 // PABLO #2067
-                GNEConnectionToErase = (*i);                                                                                                // PABLO #2067
-        } else {                                                                                                                            // PABLO #2067
-            position++;                                                                                                                     // PABLO #2067
-        }                                                                                                                                   // PABLO #2067
-    }                                                                                                                                       // PABLO #2067
-    // If GNEConnectionToErase was found                                                                                                    // PABLO #2067
-    if(GNEConnectionToErase != NULL ) {                                                                                                     // PABLO #2067
-        // Remove connection of list                                                                                                        // PABLO #2067
-        GNEConnectionToErase->decRef("GNEEdge::removeConnection");                                                                          // PABLO #2067
-        myGNEConnections.erase(myGNEConnections.begin() + position);                                                                        // PABLO #2067
-        // Delete GNEConnectionToErase if was found and is unreferenced                                                                     // PABLO #2067
-        if(GNEConnectionToErase->unreferenced()) {                                                                                          // PABLO #2067
-            delete GNEConnectionToErase;                                                                                                    // PABLO #2067
-        }                                                                                                                                   // PABLO #2067
-    }                                                                                                                                       // PABLO #2067
+    // Get connection to remove
+    NBEdge::Connection connectionToRemove = myNBEdge.getConnection(fromLane, destEdge, toLane);
+    myNBEdge.removeFromConnections(destEdge, fromLane, toLane);
+    // Iterate over GNEConnections to find the GNEConnection to remove
+    GNEConnection *GNEConnectionToErase = NULL;
+    int position = 0;
+    for(ConnectionVector::iterator i = myGNEConnections.begin(); (i != myGNEConnections.end()) && (GNEConnectionToErase == NULL); ++i) {
+        // If NBEdge::Connection was founded
+        if(((*i)->getNBEdgeConnection().fromLane == connectionToRemove.fromLane) &&
+           ((*i)->getNBEdgeConnection().toEdge == connectionToRemove.toEdge) &&
+           ((*i)->getNBEdgeConnection().toLane == connectionToRemove.toLane)) {
+                // get GNEConnectionToErase
+                GNEConnectionToErase = (*i);
+        } else {
+            position++;
+        }
+    }
+    // If GNEConnectionToErase was found
+    if(GNEConnectionToErase != NULL ) {
+        // Remove connection of list
+        GNEConnectionToErase->decRef("GNEEdge::removeConnection");
+        myGNEConnections.erase(myGNEConnections.begin() + position);
+        // Delete GNEConnectionToErase if was found and is unreferenced
+        if(GNEConnectionToErase->unreferenced()) {
+            delete GNEConnectionToErase;
+        }
+    }
     myNet->refreshElement(this); // actually we only do this to force a redraw
 }
 

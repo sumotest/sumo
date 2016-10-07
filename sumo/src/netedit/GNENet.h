@@ -75,7 +75,7 @@ class GNEDetectorE1;
 class GNEDetectorE2;
 class GNEDetectorE3;
 class GNEDetectorE3EntryExit;
-class GNEConnection;    // PABLO #2067
+class GNEConnection;
 
 // ===========================================================================
 // class definitions
@@ -98,8 +98,8 @@ public:
     /// @brief color of selected lane
     static const RGBColor selectedLaneColor;
 
-    /// @brief color of selected connection         // PABLO #2067
-    static const RGBColor selectedConnectionColor;  // PABLO #2067
+    /// @brief color of selected connection
+    static const RGBColor selectedConnectionColor;
 
     /**@brief Constructor
      * @param[in] netbuilder the netbuilder which may already have been filled
@@ -197,11 +197,11 @@ public:
      */
     void deleteLane(GNELane* lane, GNEUndoList* undoList);
 
-    /**@brief remove connectino                                                 // PABLO #2067
-     * @param[in] connection The connection to be removed                       // PABLO #2067
-     * @param[in] undoList The undolist in which to mark changes                // PABLO #2067
-     */                                                                         // PABLO #2067
-    void deleteConnection(GNEConnection *connection, GNEUndoList* undoList);    // PABLO #2067
+    /**@brief remove connectino
+     * @param[in] connection The connection to be removed
+     * @param[in] undoList The undolist in which to mark changes
+     */
+    void deleteConnection(GNEConnection *connection, GNEUndoList* undoList);
 
     /**@brief duplicates lane
      * @param[in] lane The lane to be duplicated

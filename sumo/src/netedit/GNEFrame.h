@@ -93,14 +93,14 @@ protected:
     /// @brief the panel to hold all member widgets
     FXVerticalFrame* myContentFrame;
 
-    /// @brief fame for header elements // PABLO #2067
-    FXHorizontalFrame * myHeaderFrame;  // PABLO #2067
+    /// @brief fame for header elements
+    FXHorizontalFrame * myHeaderFrame;
 
-    /// @brief fame for left header elements    // PABLO #2067
-    FXHorizontalFrame * myHeaderLeftFrame;      // PABLO #2067
+    /// @brief fame for left header elements
+    FXHorizontalFrame * myHeaderLeftFrame;
 
-    /// @brief fame for right header elements   // PABLO #2067
-    FXHorizontalFrame * myHeaderRightFrame;     // PABLO #2067
+    /// @brief fame for right header elements
+    FXHorizontalFrame * myHeaderRightFrame;
 
 private:
     /// @brief Invalidated copy constructor.

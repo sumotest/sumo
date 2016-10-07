@@ -337,8 +337,8 @@ enum {
     /// @name GLChosenEditor - Dialog IDs
     //@{
 
-    /// set subset of elements  // PABLO #2067
-    MID_CHOOSEN_ELEMENTS,       // PABLO #2067
+    /// set subset of elements
+    MID_CHOOSEN_ELEMENTS, 
     /// Load set
     MID_CHOOSEN_LOAD,
     /// Save set
@@ -493,18 +493,18 @@ enum {
     MID_GNE_SAVE_ADDITIONALS_AS,
     /** insert contents of another network */
     MID_GNE_INSERT_NETWORK,
-    /** show connections **/    // PABLO #2067
-    MID_GNE_SHOW_CONNECTIONS,   // PABLO #2067
+    /** show connections **/
+    MID_GNE_SHOW_CONNECTIONS, 
     /** attribute edited */
     MID_GNE_SET_ATTRIBUTE,
     /** netEdit attribute blocking */
     MID_GNE_SET_BLOCKING,
-    /** netEdit show connection */                  // PABLO #2067
-    MID_GNE_SHOW_CONNECTION,                        // PABLO #2067
-    /** netEdit inspect connection */               // PABLO #2067
-    MID_GNE_INSPECT_CONNECTION,                     // PABLO #2067
-    /** netEdit go back to the previous element */  // PABLO #2067
-    MID_GNE_INSPECT_GOBACK,                         // PABLO #2067
+    /** netEdit show connection */
+    MID_GNE_SHOW_CONNECTION,
+    /** netEdit inspect connection */ 
+    MID_GNE_INSPECT_CONNECTION, 
+    /** netEdit go back to the previous element */
+    MID_GNE_INSPECT_GOBACK, 
     /** netEdit add row */
     MID_GNE_ADDROW,
     /** netEdit remove row */

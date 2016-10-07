@@ -39,7 +39,7 @@
 class GNENet;
 class GNEJunction;
 class GNELane;
-class GNEConnection;    // PABLO #2067
+class GNEConnection;
 class GNEAdditional;
 class GNEAdditionalSet;
 
@@ -62,8 +62,8 @@ public:
     /// @brief Definition of the lane's vector
     typedef std::vector<GNELane*> LaneVector;
 
-    /// @brief Definition of the connection's vector        // PABLO #2067
-    typedef std::vector<GNEConnection*> ConnectionVector;   // PABLO #2067
+    /// @brief Definition of the connection's vector
+    typedef std::vector<GNEConnection*> ConnectionVector;
 
     /// @brief Definition of the additionals vector
     typedef std::vector<GNEAdditional*> AdditionalVector;
@@ -194,8 +194,8 @@ public:
      */
     void setGeometry(PositionVector geom, bool inner);
 
-    /// @brief remake connections   // PABLO #2067
-    void remakeGNEConnections();    // PABLO #2067
+    /// @brief remake connections
+    void remakeGNEConnections();
 
     /// @brief copy edge attributes from tpl
     void copyTemplate(GNEEdge* tpl, GNEUndoList* undolist);
@@ -206,8 +206,8 @@ public:
     /// @brief returns a reference to the lane vector
     const std::vector<GNELane*>& getLanes();
 
-    /// @brief returns a reference to the GNEConnection vector  // PABLO #2067
-    const std::vector<GNEConnection*>& getGNEConnections();     // PABLO #2067
+    /// @brief returns a reference to the GNEConnection vector
+    const std::vector<GNEConnection*>& getGNEConnections();
 
     /// @brief whether this edge was created from a split
     bool wasSplit();
@@ -253,8 +253,8 @@ protected:
     /// @brief vectgor with the lanes of this edge
     LaneVector myLanes;
 
-    /// @brief vector with the connections of this edge     // PABLO #2067
-    ConnectionVector myGNEConnections;                      // PABLO #2067
+    /// @brief vector with the connections of this edge
+    ConnectionVector myGNEConnections;
 
     /// @brief whether we are responsible for deleting myNBNode
     bool myAmResponsible;

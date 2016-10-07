@@ -249,26 +249,26 @@ GNEJunction::getNBNode() const {
 }
 
 
-std::vector<GNEEdge*>                                                                                                                   // PABLO #2067
-GNEJunction::getIncomingGNEEdges() const {                                                                                              // PABLO #2067
-    std::vector<GNEEdge*> incomingEdges;                                                                                                // PABLO #2067
-    // iterate over incoming edges                                                                                                      // PABLO #2067
-    for(std::vector<NBEdge*>::const_iterator i = myNBNode.getIncomingEdges().begin(); i != myNBNode.getIncomingEdges().end(); i++) {    // PABLO #2067
-        incomingEdges.push_back(myNet->retrieveEdge((*i)->getID()));                                                                    // PABLO #2067
-    }                                                                                                                                   // PABLO #2067
-    return incomingEdges;                                                                                                               // PABLO #2067
-}                                                                                                                                       // PABLO #2067
+std::vector<GNEEdge*>
+GNEJunction::getIncomingGNEEdges() const {
+    std::vector<GNEEdge*> incomingEdges;
+    // iterate over incoming edges
+    for(std::vector<NBEdge*>::const_iterator i = myNBNode.getIncomingEdges().begin(); i != myNBNode.getIncomingEdges().end(); i++) {
+        incomingEdges.push_back(myNet->retrieveEdge((*i)->getID()));
+    }
+    return incomingEdges;
+}
 
 
-std::vector<GNEEdge*>                                                                                                                   // PABLO #2067
-GNEJunction::getOutgoingGNEEdges() const {                                                                                              // PABLO #2067
-    std::vector<GNEEdge*> outgoingEdges;                                                                                                // PABLO #2067
-    // iterate over outgoing edges                                                                                                      // PABLO #2067
-    for(std::vector<NBEdge*>::const_iterator i = myNBNode.getOutgoingEdges().begin(); i != myNBNode.getOutgoingEdges().end(); i++) {    // PABLO #2067
-        outgoingEdges.push_back(myNet->retrieveEdge((*i)->getID()));                                                                    // PABLO #2067
-    }                                                                                                                                   // PABLO #2067
-    return outgoingEdges;                                                                                                               // PABLO #2067
-}                                                                                                                                       // PABLO #2067
+std::vector<GNEEdge*>
+GNEJunction::getOutgoingGNEEdges() const {
+    std::vector<GNEEdge*> outgoingEdges;
+    // iterate over outgoing edges
+    for(std::vector<NBEdge*>::const_iterator i = myNBNode.getOutgoingEdges().begin(); i != myNBNode.getOutgoingEdges().end(); i++) {
+        outgoingEdges.push_back(myNet->retrieveEdge((*i)->getID()));
+    }
+    return outgoingEdges;
+}
 
 
 void
