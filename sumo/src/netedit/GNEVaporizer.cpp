@@ -122,7 +122,7 @@ GNEVaporizer::updateGeometry() {
     setBlockIconRotation(firstLane);
 
     // Refresh element (neccesary to avoid grabbing problems)
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 

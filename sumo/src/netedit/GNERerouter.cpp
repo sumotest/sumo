@@ -394,7 +394,7 @@ GNERerouter::updateGeometry() {
     updateConnections();
 
     // Refresh element (neccesary to avoid grabbing problems)
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 
@@ -424,7 +424,7 @@ GNERerouter::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldPosy, 
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition), true, toString(Position(oldPosx, oldPosy))));
     undoList->p_end();
     // Refresh element
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 

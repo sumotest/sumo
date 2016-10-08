@@ -107,7 +107,7 @@ GNEVariableSpeedSignal::updateGeometry() {
     updateConnections();
 
     // Refresh element (neccesary to avoid grabbing problems)
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 
@@ -137,7 +137,7 @@ GNEVariableSpeedSignal::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMORea
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition), true, toString(Position(oldPosx, oldPosy))));
     undoList->p_end();
     // Refresh element
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 

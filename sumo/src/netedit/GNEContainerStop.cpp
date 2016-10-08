@@ -143,7 +143,7 @@ GNEContainerStop::updateGeometry() {
     setBlockIconRotation(myLane);
 
     // Refresh element (neccesary to avoid grabbing problems)
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 

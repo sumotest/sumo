@@ -115,7 +115,7 @@ GNEStoppingPlace::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldP
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_ENDPOS, toString(getEndPosition()), true, toString(oldPosy)));
     undoList->p_end();
     // Refresh element
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 

@@ -781,6 +781,18 @@ GNENet::refreshElement(GUIGlObject* o) {
 }
 
 
+void 
+GNENet::refreshAdditional(GNEAdditional *additional) {
+    GNEAdditionals::iterator positionToRemove = myAdditionals.find(std::pair<std::string, SumoXMLTag>(additional->getID(), additional->getTag()));
+    // Check if additional element exists before refresh
+    if (positionToRemove != myAdditionals.end()) {
+        myGrid.removeAdditionalGLObject(additional);
+        myGrid.addAdditionalGLObject(additional);
+        update();
+    }
+}
+
+
 std::vector<GNEAttributeCarrier*>
 GNENet::retrieveAttributeCarriers(const std::set<GUIGlID>& ids, GUIGlObjectType type) {
     std::vector<GNEAttributeCarrier*> result;

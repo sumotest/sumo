@@ -105,7 +105,7 @@ void
 GNEAdditional::commmitAdditionalGeometryMoved(const Position &oldPos, GNEUndoList* undoList) {
     commmitAdditionalGeometryMoved(oldPos.x(), oldPos.y(), undoList);
     // Refresh element
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 

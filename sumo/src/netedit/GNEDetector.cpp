@@ -106,7 +106,7 @@ GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal, GNEUndoL
     undoList->p_add(new GNEChange_Attribute(this, SUMO_ATTR_POSITION, toString(myPosition.x()), true, toString(oldPosx)));
     undoList->p_end();
     // Refresh element
-    myViewNet->getNet()->refreshElement(this);
+    myViewNet->getNet()->refreshAdditional(this);
 }
 
 
