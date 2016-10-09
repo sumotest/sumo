@@ -330,8 +330,8 @@ GNEVariableSpeedSignal::getAttribute(SumoXMLAttr key) const {
             return toString(myPosition);
         case SUMO_ATTR_FILE:
             return myFilename;
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return toString(myBlocked);     // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return toString(myBlocked);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -348,7 +348,7 @@ GNEVariableSpeedSignal::setAttribute(SumoXMLAttr key, const std::string& value, 
         case SUMO_ATTR_LANES:
         case SUMO_ATTR_POSITION:
         case SUMO_ATTR_FILE:
-        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -387,8 +387,8 @@ GNEVariableSpeedSignal::isValid(SumoXMLAttr key, const std::string& value) {
         }
         case SUMO_ATTR_FILE:
             return isValidFileValue(value);
-                case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return canParse<bool>(value);   // PABLO 501
+                case GNE_ATTR_BLOCK_MOVEMENT:
+            return canParse<bool>(value);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -427,10 +427,10 @@ GNEVariableSpeedSignal::setAttribute(SumoXMLAttr key, const std::string& value) 
         case SUMO_ATTR_FILE:
             myFilename = value;
             break;
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            myBlocked = parse<bool>(value); // PABLO 501
-            getViewNet()->update();         // PABLO 501
-            break;                          // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            myBlocked = parse<bool>(value);
+            getViewNet()->update();
+            break;
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }

@@ -586,8 +586,8 @@ GNERerouter::getAttribute(SumoXMLAttr key) const {
             return toString(myProbability);
         case SUMO_ATTR_OFF:
             return toString(myOff);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return toString(myBlocked);     // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return toString(myBlocked);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -606,7 +606,7 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
         case SUMO_ATTR_FILE:
         case SUMO_ATTR_PROB:
         case SUMO_ATTR_OFF:
-        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -649,8 +649,8 @@ GNERerouter::isValid(SumoXMLAttr key, const std::string& value) {
             return canParse<SUMOReal>(value);
         case SUMO_ATTR_OFF:
             return canParse<bool>(value);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return canParse<bool>(value);   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return canParse<bool>(value);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -695,10 +695,10 @@ GNERerouter::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_OFF:
             myOff = parse<bool>(value);
             break;
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            myBlocked = parse<bool>(value); // PABLO 501
-            getViewNet()->update();         // PABLO 501
-            break;                          // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            myBlocked = parse<bool>(value);
+            getViewNet()->update();
+            break;
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }

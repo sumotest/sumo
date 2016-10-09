@@ -220,8 +220,8 @@ GNEDetectorE3::getAttribute(SumoXMLAttr key) const {
             return toString(myTimeThreshold);
         case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
             return toString(mySpeedThreshold);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return toString(myBlocked);     // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return toString(myBlocked);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -240,7 +240,7 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
         case SUMO_ATTR_FILE:
         case SUMO_ATTR_HALTING_TIME_THRESHOLD:
         case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
-        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -271,8 +271,8 @@ GNEDetectorE3::isValid(SumoXMLAttr key, const std::string& value) {
             return canParse<int>(value);
         case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
             return canParse<SUMOReal>(value);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return canParse<bool>(value);   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return canParse<bool>(value);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -304,10 +304,10 @@ GNEDetectorE3::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_HALTING_SPEED_THRESHOLD:
             mySpeedThreshold = parse<SUMOReal>(value);
             break;
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            myBlocked = parse<bool>(value); // PABLO 501
-            getViewNet()->update();         // PABLO 501
-            break;                          // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            myBlocked = parse<bool>(value);
+            getViewNet()->update();
+            break;
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }

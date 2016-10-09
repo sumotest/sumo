@@ -224,8 +224,8 @@ GNEDetectorE1::getAttribute(SumoXMLAttr key) const {
             return myFilename;
         case SUMO_ATTR_SPLIT_VTYPE:
             return toString(mySplitByType);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return toString(myBlocked);     // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return toString(myBlocked);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -244,7 +244,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
         case SUMO_ATTR_FREQUENCY:
         case SUMO_ATTR_FILE:
         case SUMO_ATTR_SPLIT_VTYPE:
-        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -278,8 +278,8 @@ GNEDetectorE1::isValid(SumoXMLAttr key, const std::string& value) {
             return isValidFileValue(value);
         case SUMO_ATTR_SPLIT_VTYPE:
             return canParse<bool>(value);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return canParse<bool>(value);   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return canParse<bool>(value);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -312,10 +312,10 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_SPLIT_VTYPE:
             mySplitByType = parse<bool>(value);
             break;
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            myBlocked = parse<bool>(value); // PABLO 501
-            getViewNet()->update();         // PABLO 501
-            break;                          // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            myBlocked = parse<bool>(value);
+            getViewNet()->update();
+            break;
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }

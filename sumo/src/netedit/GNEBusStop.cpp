@@ -315,8 +315,8 @@ GNEBusStop::getAttribute(SumoXMLAttr key) const {
             return toString(myEndPos);
         case SUMO_ATTR_LINES:
             return joinToString(myLines, " ");
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return toString(myBlocked);     // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return toString(myBlocked);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -334,7 +334,7 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList*
         case SUMO_ATTR_STARTPOS:
         case SUMO_ATTR_ENDPOS:
         case SUMO_ATTR_LINES:
-        case GNE_ATTR_BLOCK_MOVEMENT:   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             updateGeometry();
             break;
@@ -362,29 +362,29 @@ GNEBusStop::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_STARTPOS:
             return (canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 0 && parse<SUMOReal>(value) < (myEndPos - 1));
         case SUMO_ATTR_ENDPOS: {
-            if(canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myStartPos) {                                   // PABLO 501
-                // If extension is larger than Lane                                                                                                 // PABLO 501
-                if(parse<SUMOReal>(value) > myLane->getLaneParametricLenght()) {                                                                    // PABLO 501
-                    // Ask user if want to assign the lenght of lane as endPosition                                                                 // PABLO 501
-                    FXuint answer = FXMessageBox::question(getViewNet()->getApp(), MBOX_YES_NO,                                                     // PABLO 501
-                                            "EndPosition exceeds the size of the lane", "%s",                                                       // PABLO 501
-                                            "EndPosition exceeds the size of the lane. You want to assign the size of the lane as endPosition?");   // PABLO 501
-                    if (answer == 1) { //1:yes, 2:no, 4:esc                                                                                         // PABLO 501
-                        return true;                                                                                                                // PABLO 501
-                    } else {                                                                                                                        // PABLO 501
-                        return false;                                                                                                               // PABLO 501
-                    }                                                                                                                               // PABLO 501
-                } else {                                                                                                                            // PABLO 501
-                    return true;                                                                                                                    // PABLO 501
-                }                                                                                                                                   // PABLO 501
-            } else {                                                                                                                                // PABLO 501
-                return false;                                                                                                                       // PABLO 501
-            }                                                                                                                                       // PABLO 501
-        }                                                                                                                                           // PABLO 501
+            if(canParse<SUMOReal>(value) && parse<SUMOReal>(value) >= 1 && parse<SUMOReal>(value) > myStartPos) {
+                // If extension is larger than Lane
+                if(parse<SUMOReal>(value) > myLane->getLaneParametricLenght()) {
+                    // Ask user if want to assign the lenght of lane as endPosition
+                    FXuint answer = FXMessageBox::question(getViewNet()->getApp(), MBOX_YES_NO,
+                                            "EndPosition exceeds the size of the lane", "%s",
+                                            "EndPosition exceeds the size of the lane. You want to assign the size of the lane as endPosition?");
+                    if (answer == 1) { //1:yes, 2:no, 4:esc
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
         case SUMO_ATTR_LINES:
             return isValidStringVector(value);
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            return canParse<bool>(value);   // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            return canParse<bool>(value);
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
@@ -409,11 +409,11 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             getViewNet()->update();
             break;
         case SUMO_ATTR_ENDPOS:
-            if(parse<SUMOReal>(value) > myLane->getLaneParametricLenght()) {    // PABLO 501
-                myEndPos = myLane->getLaneParametricLenght();                   // PABLO 501
-            } else {                                                            // PABLO 501
-                myEndPos = parse<SUMOReal>(value);                              // PABLO 501
-            }                                                                   // PABLO 501
+            if(parse<SUMOReal>(value) > myLane->getLaneParametricLenght()) {
+                myEndPos = myLane->getLaneParametricLenght();
+            } else {
+                myEndPos = parse<SUMOReal>(value);
+            }
             updateGeometry();
             getViewNet()->update();
             break;
@@ -422,10 +422,10 @@ GNEBusStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             SUMOSAXAttributes::parseStringVector(value, myLines);
             getViewNet()->update();
             break;
-        case GNE_ATTR_BLOCK_MOVEMENT:       // PABLO 501
-            myBlocked = parse<bool>(value); // PABLO 501
-            getViewNet()->update();         // PABLO 501
-            break;                          // PABLO 501
+        case GNE_ATTR_BLOCK_MOVEMENT:
+            myBlocked = parse<bool>(value);
+            getViewNet()->update();
+            break;
         default:
             throw InvalidArgument(toString(getType()) + " attribute '" + toString(key) + "' not allowed");
     }
