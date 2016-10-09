@@ -171,20 +171,14 @@ public:
      */
     SUMOReal getPositionRelativeToShapeLenght(SUMOReal position) const;
 
-    /* @brief method for adding a reference of a additional element placed in this lane
-     * @param[in] additional Pointer to additional element
-     */
-    void addAdditional(GNEAdditional* additional);
+    /// @brief add additional child to this lane
+    void addAdditionalChild(GNEAdditional* additional);
 
-    /* @brief method for remove a reference of a additional element placed in this lane
-     * @param[in] additional Pointer to additional element previously added
-       @return true if additional element was sucesfully removed, flase in other case
-     */
-    bool removeAdditional(GNEAdditional* additional);
+    /// @brief remove additional child to this lane
+    void removeAdditionalChild(GNEAdditional* additional);
 
-    /// @brief method to obtain a list of additional elements associated to this lane
-    /// @return set with all additional elements
-    const std::vector<GNEAdditional*>& getAdditionals() const;
+    /// @brief get additional childs of lane
+    const std::vector<GNEAdditional*>& getAdditionalChilds() const;
 
     /// @brief add GNEAdditionalSet to this lane
     bool addAdditionalSet(GNEAdditionalSet* additionalSet);
@@ -192,8 +186,8 @@ public:
     /// @brief remove GNEAdditionalSet from this lane
     bool removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet);
 
-    /// @brief return list of additionalSets associated with this lane
-    const std::vector<GNEAdditionalSet*>& getAdditionalSets();
+    /// @brief return list of additionalSets parents of this lane
+    const std::vector<GNEAdditionalSet*>& getAdditionalSetParents();
 
     /// @brief check if this lane is restricted
     bool isRestricted(SUMOVehicleClass vclass) const;
@@ -257,8 +251,8 @@ protected:
     /// @brief list with the additonals vinculated with this lane
     AdditionalVector myAdditionals;
 
-    /// @brief list with the additonalSets vinculated with this lane
-    AdditionalSetVector myAdditionalSets;
+    /// @brief list with the additonalSets parents of this lane
+    AdditionalSetVector myAdditionalSetParents;
 
     /// @brief optional special color
     const RGBColor* mySpecialColor;

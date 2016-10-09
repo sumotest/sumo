@@ -81,13 +81,6 @@ public:
      */
     virtual void writeAdditional(OutputDevice& device, const std::string& currentDirectory) = 0;
 
-    /// @brief Returns pointer to Lane of detector
-    GNELane* getLane() const;
-
-    /// @brief Remove reference to Lane of stopping place
-    /// @note will be automatic called in lane destructor
-    void removeLaneReference();
-
     /// @brief Returns the position of the detector over lane
     SUMOReal getPositionOverLane() const;
 
@@ -113,9 +106,6 @@ public:
      * @param[in] filename new filename of detector
      */
     void setFilename(std::string filename);
-
-    /// @brief change lane of detector
-    void changeLane(GNELane* newLane);
 
     /// @name inherited from GNEAdditional
     /// @{
@@ -154,9 +144,6 @@ public:
     /// @}
 
 protected:
-    /// @brief The lane this detector belongs
-    GNELane* myLane;
-
     /// @brief The aggregation period the values the detector collects shall be summed up.
     int myFreq;
 

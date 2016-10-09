@@ -65,17 +65,14 @@
 
 GNEDetector::GNEDetector(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal posOverLane, int freq, const std::string& filename, bool blocked, GNEAdditionalSet* parent) :
     GNEAdditional(id, viewNet, Position(posOverLane, 0), tag, parent, blocked),
-    myLane(lane),
     myFreq(freq),
     myFilename(filename) {
-    myLane->addAdditional(this);
+    // This additional belongs to a Lane
+    myLane = lane;
 }
 
 
 GNEDetector::~GNEDetector() {
-    if (myLane) {
-        myLane->removeAdditional(this);
-    }
 }
 
 
@@ -107,18 +104,6 @@ GNEDetector::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal, GNEUndoL
     undoList->p_end();
     // Refresh element
     myViewNet->getNet()->refreshAdditional(this);
-}
-
-
-GNELane*
-GNEDetector::getLane() const {
-    return myLane;
-}
-
-
-void
-GNEDetector::removeLaneReference() {
-    myLane = NULL;
 }
 
 
@@ -165,16 +150,6 @@ GNEDetector::setFrequency(int freq) {
 void
 GNEDetector::setFilename(std::string filename) {
     myFilename = filename;
-}
-
-
-void
-GNEDetector::changeLane(GNELane* newLane) {
-    myLane->removeAdditional(this);
-    myLane = newLane;
-    myLane->addAdditional(this);
-    updateGeometry();
-    getViewNet()->update();
 }
 
 

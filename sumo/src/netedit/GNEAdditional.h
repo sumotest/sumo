@@ -156,20 +156,10 @@ public:
     virtual void writeAdditional(OutputDevice& device, const std::string& currentDirectory) = 0;
 
     /// @brief get edge of additional, or NULL if additional isn't placed over an edge
-    /// @note if additional is placed over a edge, this function has to be implemented in the children (See RouteProbes)
-    virtual GNEEdge* getEdge() const;
+    GNEEdge* getEdge() const;
 
     /// @brief get lane of additional, or NULL if additional isn't placed over a Lane
-    /// @note if additional is placed over a lane, this function has to be implemented in the children (See StoppingPlaces and Detectors)
-    virtual GNELane* getLane() const;
-
-    /// @brief if additional is placed over an edge, remove it reference
-    /// @note if additional is placed over a edge, this function has to be implemented in the children (See RouteProbes) AND called in edge destructor
-    virtual void removeEdgeReference();
-
-    /// @brief if additional is placed over a lane, remove it reference
-    /// @note if additional is placed over a lane, this function has to be implemented in the children (See StoppingPlaces and Detectors) AND called in lane destructor
-    virtual void removeLaneReference();
+    GNELane* getLane() const;
 
     /// @name inherited from GUIGlObject
     /// @{
@@ -216,14 +206,14 @@ public:
      */
     virtual std::string getAttribute(SumoXMLAttr key) const = 0;
 
-    /* @brief method for setting the attribute and letting the object perform additional changes
+    /**@brief method for setting the attribute and letting the object perform additional changes
      * @param[in] key The attribute key
      * @param[in] value The new value
      * @param[in] undoList The undoList on which to register changes
      */
     virtual void setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) = 0;
 
-    /* @brief method for checking if the key and their conrrespond attribute are valids
+    /**@brief method for checking if the key and their conrrespond attribute are valids
      * @param[in] key The attribute key
      * @param[in] value The value asociated to key key
      * @return true if the value is valid, false in other case
@@ -232,8 +222,29 @@ public:
     /// @}
 
 protected:
+    /**@brief change edge of additional
+     * @throw exception if additional doesn't belong to an edge
+     * @throw expcetion if edge doesn't exist
+     */
+    void changeEdge(const std::string &edgeID);
+
+    /**@brief change lane of additional
+     * @throw exception if additional doesn't belong to a lane
+     * @throw expcetion if edge doesn't exist
+     */
+    void changeLane(const std::string &laneID);
+
+protected:
     /// @brief The GNEViewNet this additional element belongs
     GNEViewNet* myViewNet;
+
+    /// @brief The edge this additional belongs
+    /// @bote NULL if additional doesnt' belongs to a edge
+    GNEEdge* myEdge;
+
+    /// @brief The lane this additional belongs
+    /// @bote NULL if additional doesnt' belongs to a lane
+    GNELane* myLane;
 
     /// @brief The position in which this additional element is located
     /// @note if this element belongs to a Lane, x() value will be the position over Lane

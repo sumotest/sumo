@@ -219,14 +219,14 @@ public:
     /// @brief override to also set lane ids
     void setMicrosimID(const std::string& newID);
 
-    /// @brief add additional to this edge
-    bool addAdditional(GNEAdditional* additional);
+    /// @brief add additional child to this edge
+    void addAdditionalChild(GNEAdditional* additional);
 
-    /// @brief remove additional from this edge
-    bool removeAdditional(GNEAdditional* additional);
+    /// @brief remove additional child from this edge
+    void removeAdditionalChild(GNEAdditional* additional);
 
     /// @brief return list of additionals associated with this edge
-    const std::vector<GNEAdditional*>& getAdditionals() const;
+    const std::vector<GNEAdditional*>& getAdditionalChilds() const;
 
     /// @brief add GNEAdditionalSet to this edge
     bool addAdditionalSet(GNEAdditionalSet* additionalSet);

@@ -97,10 +97,6 @@ GNELane::GNELane() :
 
 
 GNELane::~GNELane() {
-    // Remove all references to this lane in their additionals
-    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        (*i)->removeLaneReference();
-    }
 }
 
 
@@ -624,7 +620,7 @@ GNELane::updateGeometry() {
         (*i)->updateGeometry();
     }
     // Update geometry of additionalSets vinculated to this lane
-    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); ++i) {
+    for (AdditionalSetVector::iterator i = myAdditionalSetParents.begin(); i != myAdditionalSetParents.end(); ++i) {
         (*i)->updateGeometry();
     }
     // Update incoming connections of this lane
@@ -705,26 +701,36 @@ GNELane::getPositionRelativeToShapeLenght(SUMOReal position) const {
 
 
 void
-GNELane::addAdditional(GNEAdditional* additional) {
+GNELane::addAdditionalChild(GNEAdditional* additional) {
+    // First check that additional wasn't already inserted
+    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        if (*i == additional) {
+            throw ProcessError("additional element with ID='" + additional->getID() + "' was already inserted in lane with ID='" + getID() + "'");
+        }
+    }
     myAdditionals.push_back(additional);
 }
 
 
-bool
-GNELane::removeAdditional(GNEAdditional* additional) {
-    // Find and remove stoppingPlace
-    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        if (*i == additional) {
-            myAdditionals.erase(i);
-            return true;
-        }
+void
+GNELane::removeAdditionalChild(GNEAdditional* additional) {
+    // Declare iterator
+    AdditionalVector::iterator i = myAdditionals.begin();
+    // Find additional
+    while((*i != additional) && (i != myAdditionals.end())) {
+        i++;
     }
-    return false;
+    // If additional was found, remove it
+    if(i == myAdditionals.end()) {
+        throw ProcessError("additional element with ID='" + additional->getID() + "' doesn't exist in lane with ID='" + getID() + "'");
+    } else {
+        myAdditionals.erase(i);
+    }
 }
 
 
 const std::vector<GNEAdditional*>&
-GNELane::getAdditionals() const {
+GNELane::getAdditionalChilds() const {
     return myAdditionals;
 }
 
@@ -732,13 +738,13 @@ GNELane::getAdditionals() const {
 bool
 GNELane::addAdditionalSet(GNEAdditionalSet* additionalSet) {
     // Check if additionalSet already exists before insertion
-    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
+    for (AdditionalSetVector::iterator i = myAdditionalSetParents.begin(); i != myAdditionalSetParents.end(); i++) {
         if ((*i) == additionalSet) {
             return false;
         }
     }
     // Insert it and retur true
-    myAdditionalSets.push_back(additionalSet);
+    myAdditionalSetParents.push_back(additionalSet);
     return true;
 }
 
@@ -746,9 +752,9 @@ GNELane::addAdditionalSet(GNEAdditionalSet* additionalSet) {
 bool
 GNELane::removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet) {
     // search additionalSet and remove it
-    for (AdditionalSetVector::iterator i = myAdditionalSets.begin(); i != myAdditionalSets.end(); i++) {
+    for (AdditionalSetVector::iterator i = myAdditionalSetParents.begin(); i != myAdditionalSetParents.end(); i++) {
         if ((*i) == additionalSet) {
-            myAdditionalSets.erase(i);
+            myAdditionalSetParents.erase(i);
             return true;
         }
     }
@@ -758,8 +764,8 @@ GNELane::removeAdditionalGeometrySet(GNEAdditionalSet* additionalSet) {
 
 
 const std::vector<GNEAdditionalSet*>&
-GNELane::getAdditionalSets() {
-    return myAdditionalSets;
+GNELane::getAdditionalSetParents() {
+    return myAdditionalSetParents;
 }
 
 

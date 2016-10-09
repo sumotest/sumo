@@ -68,11 +68,12 @@
 
 GNECalibrator::GNECalibrator(const std::string& id, GNEEdge* edge, GNEViewNet* viewNet, SUMOReal pos, SUMOTime frequency, const std::string& output, const std::map<std::string, CalibratorFlow>& flowValues, bool blocked) :
     GNEAdditional(id, viewNet, Position(pos, 0), SUMO_TAG_CALIBRATOR, NULL, blocked),
-    myEdge(edge),
     myFrequency(frequency),
     myOutput(output),
     myRouteProbe(NULL), /** change this in the future **/
     myFlowValues(flowValues) {
+    // This additional belong to a edge
+    myEdge = edge;
     // this additional ISN'T movable
     myMovable = false;
     // Update geometry;
@@ -379,11 +380,7 @@ GNECalibrator::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_LANE:
-            myEdge->removeAdditional(this);
-            myEdge = &(myViewNet->getNet()->retrieveLane(value)->getParentEdge());
-            myEdge->addAdditional(this);
-            updateGeometry();
-            getViewNet()->update();
+            changeLane(value);
             break;
         case SUMO_ATTR_POSITION:
             myPosition = Position(parse<SUMOReal>(value), 0);

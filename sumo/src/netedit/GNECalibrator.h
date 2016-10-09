@@ -156,9 +156,6 @@ public:
     /// @}
 
 protected:
-    /// @brief edge in which this calibrator is placed
-    GNEEdge* myEdge;
-
     /// @brief Frequency of calibrator
     SUMOTime myFrequency;
 

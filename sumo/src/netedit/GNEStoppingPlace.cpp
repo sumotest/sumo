@@ -67,21 +67,18 @@
 
 GNEStoppingPlace::GNEStoppingPlace(const std::string& id, GNEViewNet* viewNet, SumoXMLTag tag, GNELane* lane, SUMOReal startPos, SUMOReal endPos, bool blocked) :
     GNEAdditional(id, viewNet, Position(), tag, NULL, blocked),
-    myLane(lane),
     myStartPos(startPos),
     myEndPos(endPos),
     mySignColor(RGBColor::YELLOW),
     mySignColorSelected(RGBColor::BLUE),
     myTextColor(RGBColor::CYAN),
     myTextColorSelected(RGBColor::BLUE) {
-    myLane->addAdditional(this);
+    // This additional belongs to a Lane
+    myLane = lane;
 }
 
 
 GNEStoppingPlace::~GNEStoppingPlace() {
-    if (myLane) {
-        myLane->removeAdditional(this);
-    }
 }
 
 
@@ -116,27 +113,6 @@ GNEStoppingPlace::commmitAdditionalGeometryMoved(SUMOReal oldPosx, SUMOReal oldP
     undoList->p_end();
     // Refresh element
     myViewNet->getNet()->refreshAdditional(this);
-}
-
-
-GNELane*
-GNEStoppingPlace::getLane() const {
-    return myLane;
-}
-
-
-void
-GNEStoppingPlace::removeLaneReference() {
-    myLane = NULL;
-}
-
-void
-GNEStoppingPlace::changeLane(GNELane* newLane) {
-    myLane->removeAdditional(this);
-    myLane = newLane;
-    myLane->addAdditional(this);
-    updateGeometry();
-    getViewNet()->update();
 }
 
 

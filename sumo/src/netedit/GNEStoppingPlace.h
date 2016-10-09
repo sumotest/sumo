@@ -81,16 +81,6 @@ public:
      */
     virtual void writeAdditional(OutputDevice& device, const std::string& currentDirectory) = 0;
 
-    /// @brief Returns pointer to Lane of stopping place
-    GNELane* getLane() const;
-
-    /// @brief Remove reference to Lane of stopping place
-    /// @note will be automatic called in lane destructor
-    void removeLaneReference();
-
-    /// @brief change lane of stopping place
-    void changeLane(GNELane* newLane);
-
     /// @brief Returns the Start position of the stoppingPlace
     SUMOReal getStartPosition() const;
 
@@ -146,9 +136,6 @@ public:
     /// @}
 
 protected:
-    /// @brief The lane this stopping place belongs
-    GNELane* myLane;
-
     /// @brief The start position this stopping place is located at
     SUMOReal myStartPos;
 

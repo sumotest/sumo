@@ -105,10 +105,6 @@ GNEEdge::~GNEEdge() {
     if (myAmResponsible) {
         delete &myNBEdge;
     }
-    // Remove all references to this edge in their additionals
-    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        (*i)->removeEdgeReference();
-    }
 }
 
 
@@ -905,36 +901,37 @@ GNEEdge::setMicrosimID(const std::string& newID) {
 }
 
 
-bool
-GNEEdge::addAdditional(GNEAdditional* additional) {
-    // Check if additional already exists before insertion
+void
+GNEEdge::addAdditionalChild(GNEAdditional* additional) {
+    // First check that additional wasn't already inserted
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        if ((*i) == additional) {
-            return false;
+        if (*i == additional) {
+            throw ProcessError("additional element with ID='" + additional->getID() + "' was already inserted in edge with ID='" + getID() + "'");
         }
     }
-    // Insert it and retur true
     myAdditionals.push_back(additional);
-    return true;
 }
 
 
-bool
-GNEEdge::removeAdditional(GNEAdditional* additional) {
-    // search additional and remove it
-    for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
-        if ((*i) == additional) {
-            myAdditionals.erase(i);
-            return true;
-        }
+void
+GNEEdge::removeAdditionalChild(GNEAdditional* additional) {
+    // Declare iterator
+    AdditionalVector::iterator i = myAdditionals.begin();
+    // Find additional
+    while((*i != additional) && (i != myAdditionals.end())) {
+        i++;
     }
-    // If additional wasn't found, return false
-    return false;
+    // If additional was found, remove it
+    if(i == myAdditionals.end()) {
+        throw ProcessError("additional element with ID='" + additional->getID() + "' doesn't exist in edge with ID='" + getID() + "'");
+    } else {
+        myAdditionals.erase(i);
+    }
 }
 
 
 const std::vector<GNEAdditional*>&
-GNEEdge::getAdditionals() const {
+GNEEdge::getAdditionalChilds() const {
     return myAdditionals;
 }
 

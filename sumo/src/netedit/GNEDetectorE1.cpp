@@ -296,7 +296,7 @@ GNEDetectorE1::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_LANE:
-            changeLane(myViewNet->getNet()->retrieveLane(value));
+            changeLane(value);
             break;
         case SUMO_ATTR_POSITION:
             myPosition = Position(parse<SUMOReal>(value), 0);

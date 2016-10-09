@@ -78,9 +78,6 @@ public:
      */
     void writeAdditional(OutputDevice& device, const std::string&);
 
-    /// @brief get edge in which the RouteProbe is placed
-    GNEEdge* getEdge() const;
-
     /// @brief remove reference to edge
     /// @note this function will be called automatically in destructor of GNEEdge
     void removeEdgeReference();
@@ -134,9 +131,6 @@ public:
     /// @}
 
 protected:
-    /// @brief edge in which this vaporizer is placed
-    GNEEdge* myEdge;
-
     /// @brief start time of vaporizer
     SUMOTime myStartTime;
 

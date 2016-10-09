@@ -67,14 +67,13 @@
 
 GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge* edge, int frequency, const std::string& filename, int begin, bool blocked) :
     GNEAdditional(id, viewNet, Position(), SUMO_TAG_ROUTEPROBE, NULL, blocked),
-    myEdge(edge),
     myFrequency(frequency),
     myFilename(filename),
     myBegin(begin) {
+    // This additional belongs to a edge
+    myEdge = edge;
     // this additional ISN'T movable
     myMovable = false;
-    // Add additional to edge parent
-    myEdge->addAdditional(this);
     // Update geometry;
     updateGeometry();
     // Center view in the position of routeProbe
@@ -83,9 +82,6 @@ GNERouteProbe::GNERouteProbe(const std::string& id, GNEViewNet* viewNet, GNEEdge
 
 
 GNERouteProbe::~GNERouteProbe() {
-    if (myEdge) {
-        myEdge->removeAdditional(this);
-    }
 }
 
 
@@ -164,17 +160,6 @@ GNERouteProbe::writeAdditional(OutputDevice& device, const std::string&) {
     device.writeAttr(SUMO_ATTR_BEGIN, myBegin);
     // Close tag
     device.closeTag();
-}
-
-
-GNEEdge*
-GNERouteProbe::getEdge() const {
-    return myEdge;
-}
-
-void
-GNERouteProbe::removeEdgeReference() {
-    myEdge = NULL;
 }
 
 
@@ -364,11 +349,7 @@ GNERouteProbe::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_EDGE:
-            myEdge->removeAdditional(this);
-            myEdge = myViewNet->getNet()->retrieveEdge(value);
-            myEdge->addAdditional(this);
-            updateGeometry();
-            getViewNet()->update();
+            changeEdge(value);
             break;
         case SUMO_ATTR_FILE:
             myFilename = value;

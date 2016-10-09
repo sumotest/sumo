@@ -401,7 +401,7 @@ GNEContainerStop::setAttribute(SumoXMLAttr key, const std::string& value) {
             setAdditionalID(value);
             break;
         case SUMO_ATTR_LANE:
-            changeLane(myViewNet->getNet()->retrieveLane(value));
+            changeLane(value);
             break;
         case SUMO_ATTR_STARTPOS:
             myStartPos = parse<SUMOReal>(value);

@@ -68,6 +68,8 @@ GNEAdditional::GNEAdditional(const std::string& id, GNEViewNet* viewNet, Positio
     GUIGlObject(GLO_ADDITIONAL, id),
     GNEAttributeCarrier(tag),
     myViewNet(viewNet),
+    myEdge(NULL),
+    myLane(NULL),
     myPosition(pos),
     myAdditionalSetParent(additionalSetParent),
     myBlockIconRotation(0),
@@ -185,27 +187,14 @@ GNEAdditional::setPositionInView(const Position& pos) {
 
 GNEEdge*
 GNEAdditional::getEdge() const {
-    return NULL;
+    return myEdge;
 }
 
 
 GNELane*
 GNEAdditional::getLane() const {
-    return NULL;
+    return myLane;
 }
-
-
-void
-GNEAdditional::removeEdgeReference() {
-    throw InvalidArgument("Calling virtual function removeEdgeReference() of class GNEAdditional. Implement removeEdgeReference() in additional child to avoid this exception");
-}
-
-
-void
-GNEAdditional::removeLaneReference() {
-    throw InvalidArgument("Calling virtual function removeLaneReference() of class GNEAdditional. Implement removeLaneReference() in additional child to avoid this exception");
-}
-
 
 const std::string&
 GNEAdditional::getParentName() const {
@@ -374,5 +363,32 @@ GNEAdditional::drawLockIcon(SUMOReal size) const {
     }
 }
 
+
+void 
+GNEAdditional::changeEdge(const std::string &edgeID) {
+    if(myEdge == NULL) {
+        throw InvalidArgument("Additional with id = '" + getMicrosimID() + "' doesn't belong to a edge");
+    } else {
+        myEdge->removeAdditionalChild(this);
+        myEdge = getViewNet()->getNet()->retrieveEdge(edgeID);
+        myEdge->addAdditionalChild(this);
+        updateGeometry();
+        getViewNet()->update();
+    }
+}
+
+
+void 
+GNEAdditional::changeLane(const std::string &laneID) {
+    if(myLane == NULL) {
+        throw InvalidArgument("Additional with id = '" + getMicrosimID() + "' doesn't belong to a lane");
+    } else {
+        myLane->removeAdditionalChild(this);
+        myLane = getViewNet()->getNet()->retrieveLane(laneID);
+        myLane->addAdditionalChild(this);
+        updateGeometry();
+        getViewNet()->update();
+    }
+}
 
 /****************************************************************************/

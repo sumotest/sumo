@@ -330,18 +330,6 @@ void
 GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("delete edge");
 
-    // Iterate over lanes to remove additionals
-    for (std::vector<GNELane*>::const_iterator i = edge->getLanes().begin(); i != edge->getLanes().end(); i++) {
-        for (std::vector<GNEAdditional*>::const_iterator j = (*i)->getAdditionals().begin(); j != (*i)->getAdditionals().end(); j++) {
-            undoList->add(new GNEChange_Additional(this, *j, false), true);
-        }
-    }
-
-    // Remove additionals of edge
-    for (std::vector<GNEAdditional*>::const_iterator i = edge->getAdditionals().begin(); i != edge->getAdditionals().end(); i++) {
-        undoList->add(new GNEChange_Additional(this, *i, false), true);
-    }
-
     // Delete edge
     undoList->add(new GNEChange_Edge(this, edge, false), true);
 
@@ -1185,6 +1173,14 @@ GNENet::insertAdditional(GNEAdditional* additional, bool hardFail) {
     } else {
         myAdditionals[std::pair<std::string, SumoXMLTag>(additional->getID(), additional->getTag())] = additional;
         myGrid.addAdditionalGLObject(additional);
+        // If additional is vinculated with a lane, add a reference
+        if(additional->getEdge()) {
+            additional->getEdge()->addAdditionalChild(additional);
+        }
+        // If additional is vinculated with an edge, add a reference
+        if(additional->getLane()) {
+            additional->getLane()->addAdditionalChild(additional);
+        }
         if (additional->getAdditionalSetParent() != NULL) {
             additional->getAdditionalSetParent()->addAdditionalChild(additional);
         }
@@ -1202,6 +1198,14 @@ GNENet::deleteAdditional(GNEAdditional* additional) {
     } else {
         myAdditionals.erase(positionToRemove);
         myGrid.removeAdditionalGLObject(additional);
+        // If additional is vinculated with an edge, remove reference
+        if(additional->getEdge()) {
+            additional->getEdge()->removeAdditionalChild(additional);
+        }
+        // If additional is vinculated with a lane, remove reference
+        if(additional->getLane()) {
+            additional->getLane()->removeAdditionalChild(additional);
+        }
         if (additional->getAdditionalSetParent() != NULL) {
             additional->getAdditionalSetParent()->removeAdditionalGeometryChild(additional);
         }
