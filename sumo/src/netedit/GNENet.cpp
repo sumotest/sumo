@@ -920,7 +920,6 @@ GNENet::computeEverything(GNEApplicationWindow* window, bool force) {
 
 void
 GNENet::computeJunction(GNEJunction* junction) {
-    std::cout << "computeJunction" << std::endl;
     // recompute tl-logics
     OptionsCont& oc = OptionsCont::getOptions();
     NBTrafficLightLogicCont& tllCont = getTLLogicCont();
@@ -935,6 +934,17 @@ GNENet::computeJunction(GNEJunction* junction) {
     }
 
     // @todo compute connections etc...
+}
+
+
+void 
+GNENet::updateJunctionShapes() {
+    // Update shapes of all junctions
+    for(GNEJunctions::iterator i = myJunctions.begin(); i != myJunctions.end(); i++) {
+        i->second->updateShapesAndGeometries();
+    }
+    // Update view to show the new shapes
+    myViewNet->update();
 }
 
 

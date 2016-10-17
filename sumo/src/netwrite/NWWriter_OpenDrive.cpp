@@ -94,9 +94,11 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
     device.writeAttr("south", b.ymin());
     device.writeAttr("east", b.xmax());
     device.writeAttr("west", b.xmin());
+    /* @note obsolete in 1.4
     device.writeAttr("maxRoad", ec.size());
     device.writeAttr("maxJunc", nc.size());
     device.writeAttr("maxPrg", 0);
+    */
     device.closeTag();
 
     // write normal edges (road)
@@ -158,7 +160,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
         writeEmptyCenterLane(device, "solid", 0.13);
         device << "                <right>\n";
         for (int j = e->getNumLanes(); --j >= 0;) {
-            device << "                    <lane id=\"-" << e->getNumLanes() - j << "\" type=\"" << getLaneType(e->getPermissions(j)) << "\" level=\"0\">\n";
+            device << "                    <lane id=\"-" << e->getNumLanes() - j << "\" type=\"" << getLaneType(e->getPermissions(j)) << "\" level=\"true\">\n";
             device << "                        <link/>\n";
             // this could be used for geometry-link junctions without u-turn,
             // predecessor and sucessors would be lane indices,
@@ -182,7 +184,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
         device << "        <objects/>\n";
         device << "        <signals/>\n";
         if (origNames) {
-            device << "        <userData sumoId=\"" << e->getID() << "\"/>\n";
+            device << "        <userData code=\"sumoId\" value=\"" << e->getID() << "\"/>\n";
         }
         device << "    </road>\n";
     }
@@ -244,7 +246,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
                 device << "            <laneSection s=\"0\">\n";
                 writeEmptyCenterLane(device, "none", 0);
                 device << "                <right>\n";
-                device << "                    <lane id=\"-1\" type=\"" << getLaneType(outEdge->getPermissions(c.toLane)) << "\" level=\"0\">\n";
+                device << "                    <lane id=\"-1\" type=\"" << getLaneType(outEdge->getPermissions(c.toLane)) << "\" level=\"true\">\n";
                 device << "                        <link>\n";
                 device << "                            <predecessor id=\"-" << inEdge->getNumLanes() - c.fromLane << "\"/>\n";
                 device << "                            <successor id=\"-" << outEdge->getNumLanes() - c.toLane << "\"/>\n";
@@ -265,9 +267,17 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
     // write junctions (junction)
     for (std::map<std::string, NBNode*>::const_iterator i = nc.begin(); i != nc.end(); ++i) {
         NBNode* n = (*i).second;
+        const std::vector<NBEdge*>& incoming = n->getIncomingEdges();
+        // check if any connections must be written
+        int numConnections = 0;
+        for (std::vector<NBEdge*>::const_iterator j = incoming.begin(); j != incoming.end(); ++j) {
+            numConnections += (int)((*j)->getConnections().size());
+        }
+        if (numConnections == 0) {
+            continue;
+        }
         device << "    <junction name=\"" << n->getID() << "\" id=\"" << getID(n->getID(), nodeMap, nodeID) << "\">\n";
         int index = 0;
-        const std::vector<NBEdge*>& incoming = n->getIncomingEdges();
         for (std::vector<NBEdge*>::const_iterator j = incoming.begin(); j != incoming.end(); ++j) {
             const NBEdge* inEdge = *j;
             const std::vector<NBEdge::Connection>& elv = inEdge->getConnections();
@@ -305,7 +315,7 @@ NWWriter_OpenDrive::writeGeomLines(const PositionVector& shape, OutputDevice& de
         const SUMOReal hdg = shape.angleAt2D(j);
         const SUMOReal length = p.distanceTo2D(p2);
         device << "            <geometry s=\"" << offset << "\" x=\"" << p.x() << "\" y=\"" << p.y() << "\" hdg=\"" << hdg << "\" length=\"" << length << "\"><line/></geometry>\n";
-        elevationDevice << "            <elevation s=\"" << offset << "\" a=\"" << p.z() << "\" b=\"" << (p2.z() - p.z()) / length << "\" c=\"0\" d=\"0\"/>\n";
+        elevationDevice << "            <elevation s=\"" << offset << "\" a=\"" << p.z() << "\" b=\"" << (p2.z() - p.z()) / MAX2(POSITION_EPS, length) << "\" c=\"0\" d=\"0\"/>\n";
         offset += length;
     }
     return offset;
@@ -315,10 +325,9 @@ NWWriter_OpenDrive::writeGeomLines(const PositionVector& shape, OutputDevice& de
 void
 NWWriter_OpenDrive::writeEmptyCenterLane(OutputDevice& device, const std::string& mark, SUMOReal markWidth) {
     device << "                <center>\n";
-    device << "                    <lane id=\"0\" type=\"none\" level= \"0\">\n";
+    device << "                    <lane id=\"0\" type=\"none\" level=\"true\">\n";
     device << "                        <link/>\n";
     device << "                        <roadMark sOffset=\"0\" type=\"" << mark << "\" weight=\"standard\" color=\"standard\" width=\"" << markWidth << "\"/>\n";
-    device << "                        <width sOffset=\"0\" a=\"0\" b=\"0\" c=\"0\" d=\"0\"/>\n";
     device << "                    </lane>\n";
     device << "                </center>\n";
 }
@@ -404,6 +413,9 @@ NWWriter_OpenDrive::writeGeomPP3(
     SUMOReal length,
     SUMOReal offset) {
     assert(init.size() == 3 || init.size() == 4);
+
+    // avoid division by 0
+    length = MAX2(POSITION_EPS, length);
 
     const Position p = init.front();
     const SUMOReal hdg = init.angleAt2D(0);

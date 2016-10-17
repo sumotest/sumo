@@ -108,7 +108,7 @@ MSDevice_Tripinfo::notifyMove(SUMOVehicle& veh, SUMOReal /*oldPos*/,
     // @note we are including the speed factor here, thus myTimeLoss can never be
     // negative. The value is that of a driver who compares his travel time when
     // the road is clear (which includes speed factor) with the actual travel time.
-    // @todo It might be usefull to recognize a departing vehicle and not
+    // @todo It might be useful to recognize a departing vehicle and not
     // count the time spent accelerating towards time loss since it is unavoidable
     // (current interfaces do not give access to maximum acceleration)
     const SUMOReal vmax = veh.getEdge()->getVehicleMaxSpeed(&veh);
@@ -118,18 +118,22 @@ MSDevice_Tripinfo::notifyMove(SUMOVehicle& veh, SUMOReal /*oldPos*/,
     return true;
 }
 
-
 void
-MSDevice_Tripinfo::notifyMoveInternal(SUMOVehicle& veh, SUMOReal /* frontOnLane */,
-                                      SUMOReal timeOnLane, SUMOReal speed) {
+MSDevice_Tripinfo::notifyMoveInternal(const SUMOVehicle& veh,
+        const SUMOReal /* frontOnLane */,
+        const SUMOReal timeOnLane,
+        const SUMOReal /* meanSpeedFrontOnLane */,
+        const SUMOReal meanSpeedVehicleOnLane,
+        const SUMOReal /* travelledDistanceFrontOnLane */,
+        const SUMOReal /* travelledDistanceVehicleOnLane */){
+
     // called by meso
     const SUMOReal vmax = veh.getEdge()->getVehicleMaxSpeed(&veh);
     if (vmax > 0) {
-        myTimeLoss += TIME2STEPS(timeOnLane * (vmax - speed) / vmax);
+        myTimeLoss += TIME2STEPS(timeOnLane * (vmax - meanSpeedVehicleOnLane) / vmax);
     }
     myWaitingSteps += veh.getWaitingTime() / DELTA_T;
 }
-
 
 bool
 MSDevice_Tripinfo::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {

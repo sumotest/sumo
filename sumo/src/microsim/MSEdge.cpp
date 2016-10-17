@@ -475,6 +475,9 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
     if (isVaporizing()) {
         return checkOnly;
     }
+    if (isTaz() && checkOnly) {
+        return true;
+    }
     const SUMOVehicleParameter& pars = v.getParameter();
     const MSVehicleType& type = v.getVehicleType();
     if (pars.departSpeedProcedure == DEPART_SPEED_GIVEN && pars.departSpeed > getVehicleMaxSpeed(&v)) {
@@ -488,9 +491,6 @@ MSEdge::insertVehicle(SUMOVehicle& v, SUMOTime time, const bool checkOnly) const
             throw ProcessError("Departure speed for vehicle '" + pars.id +
                                "' is too high for the departure edge '" + getID() + "'.");
         }
-    }
-    if (checkOnly && v.getEdge()->getPurpose() == MSEdge::EDGEFUNCTION_DISTRICT) {
-        return true;
     }
     if (!checkOnly) {
         std::string msg;

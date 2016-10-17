@@ -623,17 +623,21 @@ GNELane::updateGeometry() {
     for (AdditionalSetVector::iterator i = myAdditionalSetParents.begin(); i != myAdditionalSetParents.end(); ++i) {
         (*i)->updateGeometry();
     }
-    // Update incoming connections of this lane
-    std::vector<GNEConnection*> incomingConnections = getGNEIncomingConnections();
-    for(std::vector<GNEConnection*>::iterator i = incomingConnections.begin(); i != incomingConnections.end(); i++) {
-        (*i)->updateGeometry();
-    }
-    // Update outgoings connections of this lane
-    std::vector<GNEConnection*> outGoingConnections = getGNEOutcomingConnections();
-    for(std::vector<GNEConnection*>::iterator i = outGoingConnections.begin(); i != outGoingConnections.end(); i++) {
-        (*i)->updateGeometry();
+    // In Move mode, connections aren't updated
+    if(myNet->getViewNet() && myNet->getViewNet()->getCurrentEditMode() != GNE_MODE_MOVE) {
+        // Update incoming connections of this lane
+        std::vector<GNEConnection*> incomingConnections = getGNEIncomingConnections();
+        for(std::vector<GNEConnection*>::iterator i = incomingConnections.begin(); i != incomingConnections.end(); i++) {
+            (*i)->updateGeometry();
+        }
+        // Update outgoings connections of this lane
+        std::vector<GNEConnection*> outGoingConnections = getGNEOutcomingConnections();
+        for(std::vector<GNEConnection*>::iterator i = outGoingConnections.begin(); i != outGoingConnections.end(); i++) {
+            (*i)->updateGeometry();
+        }
     }
     // If lane has enought lenght for show textures of restricted lanes
+    /*
     if((getLaneShapeLenght() > 4)) {
         bool calculatePositionAndRotations = true;
         // check if lane is restricted, and type of restriction
@@ -656,6 +660,7 @@ GNELane::updateGeometry() {
             }
         }
     }
+    */
 }
 
 int
@@ -1069,7 +1074,7 @@ GNELane::getGNEIncomingConnections() {
     // Obtain incoming edges if junction source was already created
     GNEJunction *junctionSource =  myParentEdge.getGNEJunctionSource();
     if(junctionSource) {
-        std::vector<GNEEdge*> incomingEdges = junctionSource->getIncomingGNEEdges();
+        std::vector<GNEEdge*> incomingEdges = junctionSource->getGNEIncomingEdges();
         // Iterate over incoming edges
         for(std::vector<GNEEdge*>::iterator i = incomingEdges.begin(); i != incomingEdges.end(); i++) {
             // Iterate over connection of incoming edges

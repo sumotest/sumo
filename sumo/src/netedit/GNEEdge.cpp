@@ -115,10 +115,6 @@ GNEEdge::updateGeometry() {
     for (LaneVector::iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
         (*i)->updateGeometry();
     }
-    // Update geometry of connections
-    for (ConnectionVector::const_iterator i = myGNEConnections.begin(); i != myGNEConnections.end(); ++i) {
-        (*i)->updateGeometry();
-    }
     // Update geometry of additionals vinculated to this edge
     for (AdditionalVector::iterator i = myAdditionals.begin(); i != myAdditionals.end(); ++i) {
         (*i)->updateGeometry();

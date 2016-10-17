@@ -82,6 +82,7 @@ public:
     ~GNEEdge();
 
     /// @brief update pre-computed geometry information
+    /// @note if current editing mode is Move, connection's geometry will not be updated
     void updateGeometry();
 
     /// Returns the street's geometry

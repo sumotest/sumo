@@ -85,7 +85,8 @@ GNEConnection::GNEConnection(GNEEdge *from, NBEdge::Connection connection, bool 
     myConnection(connection),
     GNENetElement(from->getNet(), toString(SUMO_TAG_CONNECTION) + from->getID() + toString(connection.fromLane) + connection.toEdge->getID() + toString(connection.toLane), GLO_CONNECTION, SUMO_TAG_CONNECTION),
     myFromEdge(from),
-    myUncontrolled(uncontrolled) {
+    myUncontrolled(uncontrolled), 
+    myDrawConnection(true) {
     // Update geometry
     updateGeometry();
 }
@@ -99,13 +100,23 @@ GNEConnection::updateGeometry() {
     // Clear containers
     myShapeRotations.clear();
     myShapeLengths.clear();
-    
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Get shape of from and to lanes
-    PositionVector laneShapeFrom = myFromEdge->getNBEdge()->getLanes().at(myConnection.fromLane).shape;
-    PositionVector laneShapeTo = myConnection.toEdge->getLanes().at(myConnection.toLane).shape;
-
+    PositionVector laneShapeFrom;
+    if ((int)myFromEdge->getNBEdge()->getLanes().size() > myConnection.fromLane) {
+        laneShapeFrom = myFromEdge->getNBEdge()->getLanes().at(myConnection.fromLane).shape;
+    } else {
+        return;
+    }
+    PositionVector laneShapeTo;
+    if ((int)myConnection.toEdge->getLanes().size() > myConnection.toLane) {
+        laneShapeTo = myConnection.toEdge->getLanes().at(myConnection.toLane).shape;
+    } else {
+        return;
+    }
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Calculate shape of connection depending of the size of Junction shape
-    if(myFromEdge->getNBEdge()->getToNode()->getShape().area() > 4) { // Obtanied from GNEJunction::drawgl
+    if(myFromEdge->getNBEdge()->getToNode()->getShape().area() > 4) { // value obtanied from GNEJunction::drawgl
         // Calculate shape using a smooth shape
         myShape = myFromEdge->getNBEdge()->getToNode()->computeSmoothShape(
                     laneShapeFrom, 
@@ -331,6 +342,8 @@ GNEConnection::getAttribute(SumoXMLAttr key) const {
             return toString(myConnection.contPos);
         case SUMO_ATTR_UNCONTROLLED:
             return toString(myUncontrolled);
+        case SUMO_ATTR_VISIBILITY_DISTANCE:
+            return toString(4.5); // XXX retrieve this value from the underlying container
         default:
             throw InvalidArgument("connection attribute '" + toString(key) + "' not allowed");
     }
@@ -340,8 +353,6 @@ GNEConnection::getAttribute(SumoXMLAttr key) const {
 void
 GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* undoList) {
     switch (key) {
-        case SUMO_ATTR_ID:
-            throw InvalidArgument("modifying connection attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_FROM:
         case SUMO_ATTR_TO:
         case SUMO_ATTR_FROM_LANE:
@@ -350,6 +361,7 @@ GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
         case SUMO_ATTR_KEEP_CLEAR:
         case SUMO_ATTR_CONTPOS:
         case SUMO_ATTR_UNCONTROLLED:
+        case SUMO_ATTR_VISIBILITY_DISTANCE:
             // no special handling
             undoList->p_add(new GNEChange_Attribute(this, key, value));
             break;
