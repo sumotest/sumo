@@ -1038,7 +1038,7 @@ MSLCM_LC2013::_wantsChange(
     const std::pair<MSVehicle*, SUMOReal>& neighLead,
     const std::pair<MSVehicle*, SUMOReal>& neighFollow,
     const MSLane& neighLane,
-    const std::vector<MSVehicle::LaneQ>& preb, // Q: What does "preb" stand for? Please comment. (Leo) Refs. #2578
+    const std::vector<MSVehicle::LaneQ>& preb, // XXX: What does "preb" stand for? Please comment. (Leo) Refs. #2578, #2604
     MSVehicle** lastBlocked,
     MSVehicle** firstBlocked) {
     assert(laneOffset == 1 || laneOffset == -1);
@@ -1058,6 +1058,7 @@ MSLCM_LC2013::_wantsChange(
         // internal edges are not kept inside the bestLanes structure
         prebLane = prebLane->getLinkCont()[0]->getLane();
     }
+    // XXX: What does the following code do? Please comment. (Leo) Refs. #2578
     const bool checkOpposite = &neighLane.getEdge() != &myVehicle.getLane()->getEdge();
     const int prebOffset = (checkOpposite ? 0 : laneOffset);
     for (int p = 0; p < (int) preb.size(); ++p) {
@@ -1133,13 +1134,14 @@ MSLCM_LC2013::_wantsChange(
     // we assume we need something that depends on our velocity
     // and compare this with the free space on our wished lane
     //
-    // if the free space is somehow less than the space we need, we should
+    // if the free space is somehow(<-?) less than the space we need, we should
     //  definitely try to get to the desired lane
     //
     // this rule forces our vehicle to change the lane if a lane changing is necessary soon
-    // lookAheadDistance:
-    // we do not want the lookahead distance to change all the time so we discrectize the speed a bit
 
+
+    // we do not want the lookahead distance to change all the time so we let it decay slowly
+    // (in contrast, growth is applied instantaneously)
     if (myVehicle.getSpeed() > myLookAheadSpeed) {
         myLookAheadSpeed = myVehicle.getSpeed();
     } else {
@@ -1155,6 +1157,10 @@ MSLCM_LC2013::_wantsChange(
     // react to a stopped leader on the current lane
     if (bestLaneOffset == 0 && leader.first != 0 && leader.first->isStopped()) {
         // value is doubled for the check since we change back and forth
+        // XXX: which value is doubled??? (Leo) Refs. #2578
+        //      If I understand right, this is to induce an overtaking maneuver...
+        //      (decreasing the laDist to avoid urgency-indication below 
+        //       -> XXX: leads to lc-oscillations for subsecond simulation, refs. #2603)
         laDist = 0.5 * (myVehicle.getVehicleType().getLengthWithGap()
                         + leader.first->getVehicleType().getLengthWithGap());
     }
@@ -1168,15 +1174,14 @@ MSLCM_LC2013::_wantsChange(
 
     // In what follows, we check whether a roundabout is ahead (or the vehicle is on a roundabout)
     // We calculate the lengths of the continuations described by curr and neigh,
-    // which are part of the roundabout. refs #1807, #2576 (Leo)
+    // which are part of the roundabout. Currently only takes effect for ballistic update, refs #1807, #2576 (Leo)
     SUMOReal pos = isOpposite() ? myVehicle.getLane()->getLength() - myVehicle.getPositionOnLane() : myVehicle.getPositionOnLane();
     SUMOReal roundaboutDistanceAhead = distanceAlongNextRoundabout(pos, myVehicle.getLane(), curr.bestContinuations);
 
-    // For the distance on the neigh.lane, we need to do a little hack since we may have the right initial lane
-    // (neigh.lane is only the first non-null lane of neigh.bestContinuations).
+    // For the distance on the neigh.lane, we need to do a little hack since we may not
+    // have access to the right initial lane (neigh.lane is only the first non-null lane of neigh.bestContinuations).
     SUMOReal roundaboutDistanceAheadNeigh = 0;
     SUMOReal neighPosition = pos;
-
 #ifdef HAVE_INTERNAL_LANES
     if (myVehicle.getLane()->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL){
         // take care of the distance on internal lanes
@@ -1194,7 +1199,8 @@ MSLCM_LC2013::_wantsChange(
             }
             assert(nextLane!=0);
             // add all lengths remaining internal lanes of current continuations until nextLane
-            roundaboutDistanceAheadNeigh += myVehicle.getLane()->getLinkTo(nextLane)->getInternalLengthsAfter();
+            const MSLink* link = MSLinkContHelper::getConnectingLink(*myVehicle.getLane(), *nextLane);
+            roundaboutDistanceAheadNeigh += link->getInternalLengthsAfter();
         }
     }
 #endif
@@ -1211,38 +1217,20 @@ MSLCM_LC2013::_wantsChange(
 
     // count the number of roundabout edges ahead to determine whether
     // special LC behavior is required (promoting the use of the inner lane, mainly)
-    // This would be more naturally resolved by using the distance within the next upcoming
-    // roundabout (some code snippets in that direction are in the comments below)
-
-    // VARIANT_15 (insideRoundabout)
-
     int roundaboutEdgesAhead = 0;
     for (std::vector<MSLane*>::iterator it = curr.bestContinuations.begin(); it != curr.bestContinuations.end(); ++it) {
         const MSLane* lane = *it;
         if (lane != 0 && lane->getEdge().isRoundabout()) {
             roundaboutEdgesAhead += 1;
-
-#ifdef DEBUG_WANTS_CHANGE
-    if(DEBUG_COND){
-        std::cout << "roundaboutlane ahead: '" << (*it)->getID() << "'" << std::endl;
-    }
-#endif
         } else if (roundaboutEdgesAhead > 0) {
             // only check the next roundabout
             break;
         }
     }
-
     int roundaboutEdgesAheadNeigh = 0;
     for (std::vector<MSLane*>::iterator it = neigh.bestContinuations.begin(); it != neigh.bestContinuations.end(); ++it) {
         if ((*it) != 0 && (*it)->getEdge().isRoundabout()) {
             roundaboutEdgesAheadNeigh += 1;
-//            roundaboutDistanceAheadNeigh += (*it)->getLength();
-//#ifdef DEBUG_WANTS_CHANGE
-//    if(DEBUG_COND){
-//        std::cout << "neigh-roundaboutlane ahead: '" << (*it)->getID() << "'\nlength = " << (*it)->getLength() << std::endl;
-//    }
-//#endif
         } else if (roundaboutEdgesAheadNeigh > 0) {
             // only check the next roundabout
             break;
@@ -1256,7 +1244,7 @@ MSLCM_LC2013::_wantsChange(
     //      Another variant uses the actual distance and multiplies it by a factor ROUNDABOUT_DIST_FACTOR.
     //      Currently, the update rule decides which variant to take because the second was experimentally implemented
     //      in the ballistic branch (ticket860). Both variants may be combined in future. Refs. #2576
-    if(MSGlobals::gSemiImplicitEulerUpdate){
+    if (MSGlobals::gSemiImplicitEulerUpdate){
         if (roundaboutEdgesAhead > 1) {
             // What does this do? Please comment... (Leo) Let me try an answer:
             // It adds a bonus length for each upcoming roundabout edge to the distance,
@@ -1275,11 +1263,11 @@ MSLCM_LC2013::_wantsChange(
         // This weighs the roundabout edges' distance with a larger factor
         // to reduce the sense of urgency within roundabouts and promote the
         // use of the inner lane.
-        if(roundaboutDistanceAheadNeigh > ROUNDABOUT_DIST_TRESH){
-            neighDist += (roundaboutDistanceAheadNeigh-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
+        if (roundaboutDistanceAheadNeigh > ROUNDABOUT_DIST_TRESH){
+            neighDist += MAX2(SUMOReal(0.), roundaboutDistanceAheadNeigh-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
         }
-        if(roundaboutDistanceAhead > ROUNDABOUT_DIST_TRESH){
-            currentDist += (roundaboutDistanceAhead-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
+        if (roundaboutDistanceAhead > ROUNDABOUT_DIST_TRESH){
+            currentDist += MAX2(SUMOReal(0.), roundaboutDistanceAhead-ROUNDABOUT_DIST_TRESH)*(ROUNDABOUT_DIST_FACTOR - 1.);
         }
     }
 
@@ -1427,8 +1415,8 @@ MSLCM_LC2013::_wantsChange(
         }
 
         // XXX: Why do we use myLookAheadSpeed here? This prevents overtaking when a vehicle stops
-        //      shortly before the lane to be used for overtaking ends. Refs. #2578
-        //      (although enough space is present, see ticket 2126 test for ballistic).
+        //      shortly before the lane to be used for overtaking ends.
+        //      (although enough space is present, see ticket 2126 test for ballistic). Refs. #2578
         const SUMOReal remainingSeconds = ((ret & LCA_TRACI) == 0 ?
                                            // MAX2((SUMOReal)STEPS2TIME(TS), (myLeftSpace-myLeadingBlockerLength) / MAX2(myLookAheadSpeed, NUMERICAL_EPS) / abs(bestLaneOffset) / URGENCY) : 
                                            MAX2((SUMOReal)STEPS2TIME(TS), myLeftSpace / MAX2(myLookAheadSpeed, NUMERICAL_EPS) / abs(bestLaneOffset) / URGENCY) :
@@ -1556,52 +1544,30 @@ MSLCM_LC2013::_wantsChange(
     //    return ret;
     //}
 
-    // followSpeed returns the speed after accelerating for TS but we are
-    // interested in the speed after 1s
-    // NOTE: The following code is related to #2126 (replace followSpeed() by maximumSafeSpeed()?!) Consider patch (see trac)
-    const SUMOReal correctedSpeed = (myVehicle.getSpeed()
-                                     + myVehicle.getCarFollowModel().getMaxAccel()
-                                     - ACCEL2SPEED(myVehicle.getCarFollowModel().getMaxAccel()));
-
     SUMOReal thisLaneVSafe = myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle);
     SUMOReal neighLaneVSafe = neighLane.getVehicleMaxSpeed(&myVehicle);
     if (neighLead.first == 0) {
-        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.followSpeed(&myVehicle, correctedSpeed, neighDist, 0, 0));
+        // XXX: why stop if neigh lead is NULL? (Leo)
+        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.maximumSafeStopSpeed(neighDist, myVehicle.getSpeed(),true));
     } else {
         // @todo: what if leader is below safe gap?!!!
-        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.followSpeed(
-                                  &myVehicle, correctedSpeed, neighLead.second, neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel()));
+        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.maximumSafeFollowSpeed(neighLead.second, myVehicle.getSpeed(),
+                neighLead.first->getSpeed(),neighLead.first->getCarFollowModel().getMaxDecel(),true));
     }
     if (leader.first == 0) {
-        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.followSpeed(&myVehicle, correctedSpeed, currentDist, 0, 0));
+        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.maximumSafeStopSpeed(currentDist, myVehicle.getSpeed(),true));
     } else {
         // @todo: what if leader is below safe gap?!!!
-        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.followSpeed(&myVehicle, correctedSpeed, leader.second, leader.first->getSpeed(), leader.first->getCarFollowModel().getMaxDecel()));
+        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.maximumSafeFollowSpeed(leader.second, myVehicle.getSpeed(),
+                leader.first->getSpeed(),leader.first->getCarFollowModel().getMaxDecel(),true));
     }
 
-// Experimental try to fix #2126 as proposed (leads to problems, see test for ticket 2126)
-//    SUMOReal thisLaneVSafe = myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle);
-//    SUMOReal neighLaneVSafe = neighLane.getVehicleMaxSpeed(&myVehicle);
-//    if (neighLead.first == 0) {
-////        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.followSpeed(&myVehicle, correctedSpeed, neighDist, 0, 0));
-//        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.maximumSafeStopSpeed(neighDist, true, 0.));
-//    } else {
-//        // @todo: what if leader is below safe gap?!!!
-////        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.followSpeed(
-////                                  &myVehicle, correctedSpeed, neighLead.second, neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel()));
-//        neighLaneVSafe = MIN2(neighLaneVSafe, myCarFollowModel.maximumSafeFollowSpeed(
-//                neighLead.second, myVehicle.getSpeed(), neighLead.first->getSpeed(), neighLead.first->getCarFollowModel().getMaxDecel()));
-//    }
-//
-//    if (leader.first == 0) {
-//        //        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.followSpeed(&myVehicle, correctedSpeed, currentDist, 0, 0));
-//        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.maximumSafeStopSpeed(currentDist, true, 0.));
-//    } else {
-//        // @todo: what if leader is below safe gap?!!!
-//        //        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.followSpeed(&myVehicle, correctedSpeed, leader.second, leader.first->getSpeed(), leader.first->getCarFollowModel().getMaxDecel()));
-//        thisLaneVSafe = MIN2(thisLaneVSafe, myCarFollowModel.maximumSafeFollowSpeed(
-//                leader.second, myVehicle.getSpeed(), leader.first->getSpeed(), leader.first->getCarFollowModel().getMaxDecel()));
-//    }
+    const SUMOReal vMax = MIN2(myVehicle.getVehicleType().getMaxSpeed(), myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle));
+    thisLaneVSafe = MIN2(thisLaneVSafe, vMax);
+    neighLaneVSafe = MIN2(neighLaneVSafe, vMax);
+    const SUMOReal relativeGain = (neighLaneVSafe - thisLaneVSafe) / MAX2(neighLaneVSafe,
+                                  RELGAIN_NORMALIZATION_MIN_SPEED);
+
 
 #ifdef DEBUG_WANTS_CHANGE
     if (DEBUG_COND) {
@@ -1609,15 +1575,12 @@ MSLCM_LC2013::_wantsChange(
                   << " veh=" << myVehicle.getID()
                   << " currentDist=" << currentDist
                   << " neighDist=" << neighDist
+//                  << "\n thisLaneVSafe=" << toString(thisLaneVSafe,24)
+//                  << "\nneighLaneVSafe=" << toString(neighLaneVSafe,24)
+//                  << "\nrelativeGain=" << toString(relativeGain,24)
                   << "\n";
     }
 #endif
-
-    const SUMOReal vMax = MIN2(myVehicle.getVehicleType().getMaxSpeed(), myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle));
-    thisLaneVSafe = MIN2(thisLaneVSafe, vMax);
-    neighLaneVSafe = MIN2(neighLaneVSafe, vMax);
-    const SUMOReal relativeGain = (neighLaneVSafe - thisLaneVSafe) / MAX2(neighLaneVSafe,
-                                  RELGAIN_NORMALIZATION_MIN_SPEED);
 
     if (right) {
         // ONLY FOR CHANGING TO THE RIGHT
@@ -1798,6 +1761,7 @@ MSLCM_LC2013::distanceAlongNextRoundabout(SUMOReal position, const MSLane* initi
         initialLane = *j;
     } else if (initialLane->getEdge().isRoundabout()){
         // initial lane is on roundabout
+        assert(position >= 0. && position <= initialLane->getLength());
         if (!initialLane->isInternal()){
             assert(initialLane == *j);
             roundaboutDistanceAhead += initialLane->getLength() - position;
@@ -1806,7 +1770,7 @@ MSLCM_LC2013::distanceAlongNextRoundabout(SUMOReal position, const MSLane* initi
             } else {
                 // add internal lengths
                 const MSLane* nextLane = *(j+1);
-                const MSLink* link = initialLane->getLinkTo(nextLane);
+                const MSLink* link = MSLinkContHelper::getConnectingLink(*initialLane, *nextLane);
                 assert(link!=0);
                 roundaboutDistanceAhead += link->getInternalLengthsAfter();
             }
@@ -1818,8 +1782,6 @@ MSLCM_LC2013::distanceAlongNextRoundabout(SUMOReal position, const MSLane* initi
             roundaboutDistanceAhead += initialLane->getLinkCont()[0]->getInternalLengthsAfter();
         }
     }
-
-    assert(position >= 0. && position <= initialLane->getLength());
 
     // treat lanes beyond the initial one
     for (std::vector<MSLane*>::const_iterator it = j; it != continuationLanes.end(); ++it) {
@@ -1835,7 +1797,7 @@ MSLCM_LC2013::distanceAlongNextRoundabout(SUMOReal position, const MSLane* initi
             // consecutive edge is on the roundabout as well
             if (it+1 != continuationLanes.end() && *(it+1) != 0 && (*(it+1))->getEdge().isRoundabout()){
                 // find corresponding link for the current lane
-                const MSLink* link = lane->getLinkTo(*(it+1));
+                const MSLink* link = MSLinkContHelper::getConnectingLink(*lane, **(it + 1));
                 assert(link!=0);
                 SUMOReal linkLength = link->getInternalLengthsAfter();
                 roundaboutDistanceAhead += linkLength;

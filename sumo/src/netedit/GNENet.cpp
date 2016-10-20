@@ -42,6 +42,7 @@
 #include <map>
 
 #include <utils/shapes/ShapeContainer.h>
+#include <utils/xml/SUMOXMLDefinitions.h>
 #include <utils/common/RGBColor.h>
 #include <utils/common/TplConvert.h>
 #include <utils/common/MsgHandler.h>
@@ -330,6 +331,12 @@ void
 GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     undoList->p_begin("delete edge");
 
+    // invalidate junction
+    edge->getGNEJunctionSource()->removeFromCrossings(edge, undoList);
+    edge->getGNEJunctionDest()->removeFromCrossings(edge, undoList);
+    edge->getGNEJunctionSource()->setLogicValid(false, undoList);
+    edge->getGNEJunctionDest()->setLogicValid(false, undoList);
+
     // Delete edge
     undoList->add(new GNEChange_Edge(this, edge, false), true);
 
@@ -340,10 +347,6 @@ GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
         undoList->add(new GNEChange_Selection(this, std::set<GUIGlID>(), deselected, true), true);
     }
 
-    edge->getGNEJunctionSource()->removeFromCrossings(edge, undoList);
-    edge->getGNEJunctionDest()->removeFromCrossings(edge, undoList);
-    edge->getGNEJunctionSource()->setLogicValid(false, undoList);
-    edge->getGNEJunctionDest()->setLogicValid(false, undoList);
     requireRecompute();
     undoList->p_end();
 }
@@ -526,8 +529,7 @@ GNENet::splitEdge(GNEEdge* edge, const Position& pos, GNEUndoList* undoList, GNE
     // fix connections
     std::vector<NBEdge::Connection>& connections = edge->getNBEdge()->getConnections();
     for (std::vector<NBEdge::Connection>::iterator con_it = connections.begin(); con_it != connections.end(); con_it++) {
-        undoList->add(new GNEChange_Connection(
-                          secondPart, con_it->fromLane, con_it->toEdge->getID(), con_it->toLane, false, true), true);
+        undoList->add(new GNEChange_Connection(secondPart, *con_it, true), true);
     }
     undoList->p_end();
     return newJunction;
@@ -731,21 +733,21 @@ GNENet::retrieveLanes(bool onlySelected) {
 
 GNELane*
 GNENet::retrieveLane(const std::string& id, bool failHard) {
-    for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); ++it) {
-        const GNEEdge::LaneVector& lanes = it->second->getLanes();
+    const std::string edge_id = SUMOXMLDefinitions::getEdgeIDFromLane(id);
+    GNEEdge* edge = retrieveEdge(edge_id, failHard);
+    if (edge != 0) {
+        const GNEEdge::LaneVector& lanes = edge->getLanes();
         for (GNEEdge::LaneVector::const_iterator it_lane = lanes.begin(); it_lane != lanes.end(); ++it_lane) {
             if ((*it_lane)->getID() == id) {
                 return (*it_lane);
             }
         }
+        if (failHard) {
+            // Throw exception if failHard is enabled
+            throw UnknownElement("lane " + id);
+        }
     }
-    // If lane wasn't found:
-    if (failHard) {
-        // Throw exception if failHard is enabled
-        throw UnknownElement("lane " + id);
-    } else {
-        return NULL;
-    }
+    return 0;
 }
 
 
@@ -1382,6 +1384,14 @@ GNENet::reserveJunctionID(const std::string& id) {
 
 
 void
+GNENet::initGNEConnections() {
+    for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); it++) {
+        it->second->remakeGNEConnections();
+        it->second->updateGeometry();
+    }
+}
+
+void
 GNENet::computeAndUpdate(OptionsCont& oc) {
     // make sure we only add turn arounds to edges which currently exist within the network
     std::set<std::string> liveExplicitTurnarounds;
@@ -1391,13 +1401,8 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
         }
     }
     myNetBuilder->compute(oc, liveExplicitTurnarounds, false);
-    // update precomputed lane geometries
-    for (GNEEdges::const_iterator it = myEdges.begin(); it != myEdges.end(); it++) {
-        // Remake all connections of edge
-        it->second->remakeGNEConnections();
-        // Update geometry of connections
-        it->second->updateGeometry();
-    }
+    // update precomputed geometries
+    initGNEConnections();
     for (GNEJunctions::const_iterator it = myJunctions.begin(); it != myJunctions.end(); it++) {
         it->second->setLogicValid(true);
         // updated shape

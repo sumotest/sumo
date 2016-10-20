@@ -40,6 +40,7 @@
 #include "NBNodeCont.h"
 #include "NBContHelper.h"
 #include "NBHelpers.h"
+#include "NBTrafficLightDefinition.h"
 #include <cmath>
 #include <iomanip>
 #include "NBTypeCont.h"
@@ -67,6 +68,7 @@ const SUMOReal NBEdge::UNSPECIFIED_WIDTH = -1;
 const SUMOReal NBEdge::UNSPECIFIED_OFFSET = 0;
 const SUMOReal NBEdge::UNSPECIFIED_SPEED = -1;
 const SUMOReal NBEdge::UNSPECIFIED_CONTPOS = -1;
+const SUMOReal NBEdge::UNSPECIFIED_VISIBILITY_DISTANCE = -1;
 
 const SUMOReal NBEdge::UNSPECIFIED_SIGNAL_OFFSET = -1;
 const SUMOReal NBEdge::UNSPECIFIED_LOADED_LENGTH = -1;
@@ -88,19 +90,23 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) :
     toLane(toLane_),
     mayDefinitelyPass(false), 
     keepClear(true), 
+    contPos(UNSPECIFIED_CONTPOS),
+    visibility(UNSPECIFIED_VISIBILITY_DISTANCE),
     id(toEdge_ == 0 ? "" : toEdge->getFromNode()->getID()),
     haveVia(false),
     internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX)
+
 {}
 
 
-NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, bool keepClear_, SUMOReal contPos_, bool haveVia_) : 
+NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, bool keepClear_, SUMOReal contPos_, SUMOReal visibility_, bool haveVia_) : 
     fromLane(fromLane_), 
     toEdge(toEdge_), 
     toLane(toLane_),
     mayDefinitelyPass(mayDefinitelyPass_), 
     keepClear(keepClear_), 
     contPos(contPos_),
+    visibility(visibility_),
     id(toEdge_ == 0 ? "" : toEdge->getFromNode()->getID()),
     haveVia(haveVia_),
     internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX)
@@ -414,6 +420,10 @@ NBEdge::init(int noLanes, bool tryIgnoreNodePositions, const std::string& origID
     myLength = myFrom->getPosition().distanceTo(myTo->getPosition());
     assert(myGeom.size() >= 2);
     if ((int)myLanes.size() > noLanes) {
+        // remove connections starting at the removed lanes
+        for (int lane = noLanes; lane < (int)myLanes.size(); ++lane) {
+            removeFromConnections(0, lane, -1);
+        }
         // remove connections targeting the removed lanes
         const EdgeVector& incoming = myFrom->getIncomingEdges();
         for (EdgeVector::const_iterator i = incoming.begin(); i != incoming.end(); i++) {
@@ -767,7 +777,8 @@ NBEdge::addLane2LaneConnection(int from, NBEdge* dest,
                                bool mayUseSameDestination,
                                bool mayDefinitelyPass,
                                bool keepClear,
-                               SUMOReal contPos) {
+                               SUMOReal contPos,
+                               SUMOReal visibility) {
     if (myStep == INIT_REJECT_CONNECTIONS) {
         return true;
     }
@@ -780,7 +791,7 @@ NBEdge::addLane2LaneConnection(int from, NBEdge* dest,
     if (!addEdge2EdgeConnection(dest)) {
         return false;
     }
-    return setConnection(from, dest, toLane, type, mayUseSameDestination, mayDefinitelyPass, keepClear, contPos);
+    return setConnection(from, dest, toLane, type, mayUseSameDestination, mayDefinitelyPass, keepClear, contPos, visibility);
 }
 
 
@@ -807,7 +818,8 @@ NBEdge::setConnection(int lane, NBEdge* destEdge,
                       bool mayUseSameDestination,
                       bool mayDefinitelyPass,
                       bool keepClear,
-                      SUMOReal contPos) {
+                      SUMOReal contPos,
+                      SUMOReal visibility) {
     if (myStep == INIT_REJECT_CONNECTIONS) {
         return false;
     }
@@ -844,6 +856,7 @@ NBEdge::setConnection(int lane, NBEdge* destEdge,
     }
     myConnections.back().keepClear = keepClear;
     myConnections.back().contPos = contPos;
+    myConnections.back().visibility = visibility;
     if (type == L2L_USER) {
         myStep = LANES2LANES_USER;
     } else {
@@ -877,6 +890,20 @@ NBEdge::getConnectionsFromLane(int lane) const {
 NBEdge::Connection
 NBEdge::getConnection(int fromLane, const NBEdge* to, int toLane) const {
     for (std::vector<Connection>::const_iterator i = myConnections.begin(); i != myConnections.end(); ++i) {
+        if (
+            (*i).fromLane == fromLane
+            && (*i).toEdge == to
+            && (*i).toLane == toLane) {
+            return *i;
+        }
+    }
+    throw ProcessError("Connection from " + getID() + "_" + toString(fromLane)
+                       + " to " + to->getID() + "_" + toString(toLane) + " not found");
+}
+
+NBEdge::Connection&
+NBEdge::getConnectionRef(int fromLane, const NBEdge* to, int toLane) {
+    for (std::vector<Connection>::iterator i = myConnections.begin(); i != myConnections.end(); ++i) {
         if (
             (*i).fromLane == fromLane
             && (*i).toEdge == to
@@ -1004,9 +1031,15 @@ NBEdge::removeFromConnections(NBEdge* toEdge, int fromLane, int toLane, bool try
     // remove from "myConnections"
     for (std::vector<Connection>::iterator i = myConnections.begin(); i != myConnections.end();) {
         Connection& c = *i;
-        if (c.toEdge == toEdge
+        if ((toEdge == 0 || c.toEdge == toEdge)
                 && (fromLane < 0 || c.fromLane == fromLane)
                 && (toLane < 0 || c.toLane == toLane)) {
+            if (myTo->isTLControlled()) {
+                std::set<NBTrafficLightDefinition*> tldefs = myTo->getControllingTLS();
+                for (std::set<NBTrafficLightDefinition*>::iterator it = tldefs.begin(); it != tldefs.end(); it++) {
+                    (*it)->removeConnection(NBConnection(this, c.fromLane, c.toEdge, c.toLane));
+                }
+            }
             i = myConnections.erase(i);
             tryLater = false;
         } else {
