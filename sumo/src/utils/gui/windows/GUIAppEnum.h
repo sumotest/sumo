@@ -417,6 +417,8 @@ enum {
     MID_GNE_MODE_TLS,
     /** mode for editing additional */
     MID_GNE_MODE_ADDITIONAL,
+    /** mode for editing crossing */
+    MID_GNE_MODE_CROSSING,
 
     /// selector match box messages
     MID_GNE_SELMB_TAG,

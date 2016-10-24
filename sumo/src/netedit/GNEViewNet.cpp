@@ -695,7 +695,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
-
+            case GNE_MODE_CROSSING:
+                /****/
+                break;
             default:
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
         }
@@ -891,6 +893,9 @@ GNEViewNet::setEditModeFromHotkey(FXushort selid) {
             break;
         case MID_GNE_MODE_ADDITIONAL:
             setEditMode(GNE_MODE_ADDITIONAL);
+            break;
+        case MID_GNE_MODE_CROSSING:
+            setEditMode(GNE_MODE_CROSSING);
             break;
         default:
             FXMessageBox::error(this, MBOX_OK, "invalid edit mode", "%s", "...");
@@ -1587,6 +1592,7 @@ GNEViewNet::buildEditModeControls() {
     myEditModeNames.insert("(c) Connect", GNE_MODE_CONNECT);
     myEditModeNames.insert("(t) Traffic Lights", GNE_MODE_TLS);
     myEditModeNames.insert("(a) Additionals", GNE_MODE_ADDITIONAL);
+    myEditModeNames.insert("(r) Crossings", GNE_MODE_CROSSING);
 
     // initialize combo for modes
     myEditModesCombo =

@@ -53,15 +53,6 @@ GNEChange_Crossing::GNEChange_Crossing(GNENet* net, GNECrossing* crossing, bool 
     myCrossing(crossing) {
     assert(myNet);
     crossing->incRef("GNEChange_Crossing");
-    // Save additionals of crossing
-    myAdditionalChilds = myCrossing->getAdditionalChilds();
-    myAdditionalSetParents = myCrossing->getAdditionalSets();
-    // Iterate over lanes vinculated to crossing
-    for (std::vector<GNELane*>::const_iterator i = myCrossing->getLanes().begin(); i != myCrossing->getLanes().end(); i++) {
-        // Save additionals vinculated to lane
-        myAdditionalLanes[*i] = (*i)->getAdditionalChilds();
-        myAdditionalSetsLanes[*i] = (*i)->getAdditionalSetParents();
-    }
 }
 
 
@@ -76,18 +67,18 @@ GNEChange_Crossing::~GNEChange_Crossing() {
 
 void GNEChange_Crossing::undo() {
     if (myForward) {
-        myNet->deleteSingleCrossing(myCrossing);
+        ;//myNet->deleteSingleCrossing(myCrossing);
     } else {
-        myNet->insertCrossing(myCrossing);
+        ;//myNet->insertCrossing(myCrossing);
     }
 }
 
 
 void GNEChange_Crossing::redo() {
     if (myForward) {
-        myNet->insertCrossing(myCrossing);
+        ;//myNet->insertCrossing(myCrossing);
     } else {
-        myNet->deleteSingleCrossing(myCrossing);
+        ;//myNet->deleteSingleCrossing(myCrossing);
     }
 }
 

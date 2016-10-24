@@ -130,6 +130,7 @@
     <ClCompile Include="..\..\..\src\netedit\GNEConnectorFrame.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEContainerStop.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNECrossing.cpp" />
+    <ClCompile Include="..\..\..\src\netedit\GNECrossingFrame.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetector.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE1.cpp" />
     <ClCompile Include="..\..\..\src\netedit\GNEDetectorE2.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="..\..\..\src\netedit\GNEConnectorFrame.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEContainerStop.h" />
     <ClInclude Include="..\..\..\src\netedit\GNECrossing.h" />
+    <ClInclude Include="..\..\..\src\netedit\GNECrossingFrame.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetector.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE1.h" />
     <ClInclude Include="..\..\..\src\netedit\GNEDetectorE2.h" />

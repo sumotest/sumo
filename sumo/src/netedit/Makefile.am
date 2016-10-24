@@ -54,6 +54,7 @@ GNESelectorFrame.h GNESelectorFrame.cpp \
 GNEConnectorFrame.h GNEConnectorFrame.cpp \
 GNETLSEditorFrame.h GNETLSEditorFrame.cpp \
 GNEAdditionalFrame.h GNEAdditionalFrame.cpp \
+GNECrossingFrame.h GNECrossingFrame.cpp \
 GNEAdditionalHandler.h GNEAdditionalHandler.cpp \
 GNEAdditional.h GNEAdditional.cpp \
 GNEAdditionalSet.h GNEAdditionalSet.cpp \
