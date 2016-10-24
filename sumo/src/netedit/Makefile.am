@@ -39,6 +39,7 @@ GNEAdditionalDialog.h GNEAdditionalDialog.cpp \
 GNEChange.h GNEChange.cpp \
 GNEChange_Junction.h GNEChange_Junction.cpp \
 GNEChange_Edge.h GNEChange_Edge.cpp \
+GNEChange_Crossing.h GNEChange_Crossing.cpp \
 GNEChange_Lane.h GNEChange_Lane.cpp \
 GNEChange_Connection.h GNEChange_Connection.cpp \
 GNEChange_Attribute.h GNEChange_Attribute.cpp \
