@@ -65,6 +65,7 @@
 #include "GNEConnectorFrame.h"
 #include "GNETLSEditorFrame.h"
 #include "GNEAdditionalFrame.h"
+#include "GNECrossingFrame.h"
 #include "GNEAdditionalHandler.h"
 #include "GNEPoly.h"
 #include "GNECrossing.h"
@@ -696,7 +697,13 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
             case GNE_MODE_CROSSING:
-                /****/
+                if (pointed_crossing == NULL) {
+                    GNENetElement* netElement = dynamic_cast<GNENetElement*>(pointed);
+                    if (myViewParent->getCrossingFrame()->addCrossing(netElement)) {
+                        update();
+                    }
+                }
+                GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
             default:
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
@@ -1633,7 +1640,6 @@ GNEViewNet::updateModeSpecificControls() {
     // MAGIC modifier to avoid flicker. at least it is consistent for move AND
     // zoom. Probably has to do with spacing
     const int addChange = 4;
-
     // hide all controls
     myChainCreateEdge->hide();
     myAutoCreateOppositeEdge->hide();
@@ -1664,6 +1670,10 @@ GNEViewNet::updateModeSpecificControls() {
     if (myViewParent->getAdditionalFrame()->shown()) {
         widthChange += myViewParent->getAdditionalFrame()->getWidth() + addChange;
         myViewParent->getAdditionalFrame()->hide();
+    }
+    if (myViewParent->getCrossingFrame()->shown()) {
+        widthChange += myViewParent->getCrossingFrame()->getWidth() + addChange;
+        myViewParent->getCrossingFrame()->hide();
     }
     // enable selected controls
     switch (myEditMode) {
@@ -1704,6 +1714,10 @@ GNEViewNet::updateModeSpecificControls() {
         case GNE_MODE_ADDITIONAL:
             widthChange -= myViewParent->getAdditionalFrame()->getWidth() + addChange;
             myViewParent->getAdditionalFrame()->show();
+            break;
+        case GNE_MODE_CROSSING:
+            widthChange -= myViewParent->getCrossingFrame()->getWidth() + addChange;
+            myViewParent->getCrossingFrame()->show();
             break;
         default:
             break;

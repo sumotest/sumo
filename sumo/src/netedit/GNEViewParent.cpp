@@ -60,6 +60,7 @@
 #include "GNEConnectorFrame.h"
 #include "GNETLSEditorFrame.h"
 #include "GNEAdditionalFrame.h"
+#include "GNECrossingFrame.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -140,7 +141,10 @@ GNEViewParent::GNEViewParent(
     myConnectorFrame = new GNEConnectorFrame(myFramesArea, viewNet);
     myTLSEditorFrame = new GNETLSEditorFrame(myFramesArea, viewNet);
     myAdditionalFrame = new GNEAdditionalFrame(myFramesArea, viewNet);
-    myAdditionalFrame->hide();
+    myCrossingFrame = new GNECrossingFrame(myFramesArea, viewNet);
+    
+    // Hidde all Frames Area
+    hideFramesArea();
 
     //  Buld view toolBars
     myView->buildViewToolBars(*this);
@@ -186,14 +190,20 @@ GNEViewParent::getAdditionalFrame() const {
     return myAdditionalFrame;
 }
 
+GNECrossingFrame*
+GNEViewParent::getCrossingFrame() const {
+    return myCrossingFrame;
+}
+
 
 void
 GNEViewParent::showFramesArea() {
-    if (myInspectorFrame->shown()  == true ||
+    if (myInspectorFrame->shown()      == true ||
             mySelectorFrame->shown()   == true ||
             myConnectorFrame->shown()  == true ||
             myTLSEditorFrame->shown()  == true ||
-            myAdditionalFrame->shown() == true) {
+            myAdditionalFrame->shown() == true ||
+            myCrossingFrame->shown()   == true) {
         myFramesArea->show();
         myFramesArea->recalc();
     }
@@ -202,11 +212,12 @@ GNEViewParent::showFramesArea() {
 
 void
 GNEViewParent::hideFramesArea() {
-    if (myInspectorFrame->shown()  == false &&
+    if (myInspectorFrame->shown()      == false &&
             mySelectorFrame->shown()   == false &&
             myConnectorFrame->shown()  == false &&
             myTLSEditorFrame->shown()  == false &&
-            myAdditionalFrame->shown() == false) {
+            myAdditionalFrame->shown() == false &&
+            myCrossingFrame->shown()   == false) {
         myFramesArea->hide();
         myFramesArea->recalc();
     }

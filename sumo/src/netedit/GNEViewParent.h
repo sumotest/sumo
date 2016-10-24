@@ -52,6 +52,7 @@ class GNESelectorFrame;
 class GNEConnectorFrame;
 class GNETLSEditorFrame;
 class GNEAdditionalFrame;
+class GNECrossingFrame;
 
 // ===========================================================================
 // class declarations
@@ -109,6 +110,9 @@ public:
 
     /// @brief get frame for GNE_MODE_ADDITIONAL
     GNEAdditionalFrame* getAdditionalFrame() const;
+
+    /// @brief get frame for GNE_MODE_CROSSING
+    GNECrossingFrame* getCrossingFrame() const;
 
     /// @brief show frames area if at least a GNEFrame is showed
     /// @note this function is called in GNEFrame::Show();
@@ -170,6 +174,9 @@ private:
 
     /// @brief the panel for GNE_MODE_ADDITIONAL
     GNEAdditionalFrame* myAdditionalFrame;
+
+    /// @brief the panel for GNE_MODE_CROSSING
+    GNECrossingFrame* myCrossingFrame;
 };
 
 
