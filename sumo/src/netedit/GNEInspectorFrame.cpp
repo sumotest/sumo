@@ -105,11 +105,11 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     myPreviousElement(0) {
 
     // Create back button
-    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, ICON_BEFORE_TEXT | FRAME_THICK | FRAME_RAISED | LAYOUT_FILL);
+    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, GNEDesignButton);
     myBackButton->hide();
 
     // Create groupBox for attributes
-    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GNEDesignGroupBox);
     myGroupBoxForAttributes->hide();
 
     // Create AttrInput
@@ -118,27 +118,27 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     }
 
     // Create groupBox for templates
-    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "Templates", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "Templates", GNEDesignGroupBox);
     myGroupBoxForTemplates->hide();
 
     // Create copy template button
-    myCopyTemplateButton = new FXButton(myGroupBoxForTemplates, "", 0, this, MID_GNE_COPY_TEMPLATE, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    myCopyTemplateButton = new FXButton(myGroupBoxForTemplates, "", 0, this, MID_GNE_COPY_TEMPLATE, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
     myCopyTemplateButton->hide();
 
     // Create set template button
-    mySetTemplateButton = new FXButton(myGroupBoxForTemplates, "Set as Template\t\t", 0, this, MID_GNE_SET_TEMPLATE, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    mySetTemplateButton = new FXButton(myGroupBoxForTemplates, "Set as Template\t\t", 0, this, MID_GNE_SET_TEMPLATE, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
     mySetTemplateButton->hide();
 
     // Create groupBox for editor parameters
-    myGroupBoxForEditor = new FXGroupBox(myContentFrame, "editor", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForEditor = new FXGroupBox(myContentFrame, "editor", GNEDesignGroupBox);
     myGroupBoxForEditor->hide();
 
     // Create check blocked button
-    myCheckBlocked = new FXCheckButton(myGroupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING);
+    myCheckBlocked = new FXCheckButton(myGroupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING, GNEDesignCheckButton);
     myCheckBlocked->hide();
 
     // Create groupBox for AttrConnection
-    myGroupBoxForAttrConnections = new FXGroupBox(myContentFrame, "Connections", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForAttrConnections = new FXGroupBox(myContentFrame, "Connections", GNEDesignGroupBox);
     myGroupBoxForAttrConnections->hide();
 
     // Create AttrConnections
@@ -419,30 +419,30 @@ GNEInspectorFrame::getACs() const {
 // ===========================================================================
 
 GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
-    FXMatrix(parent, 8, MATRIX_BY_COLUMNS | LAYOUT_FILL_X | PACK_UNIFORM_WIDTH),
+    FXMatrix(parent, 8, GNEDesignMatrix3),
     myInspectorFrameParent(inspectorFrameParent),
     myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
     // Create and hide ButtonCombinableChoices
-    myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEDesignButtonAttribute);
     myButtonCombinableChoices->hide();
     // Create and hide label
-    myLabel = new FXLabel(this, "attributeLabel", 0, FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myLabel = new FXLabel(this, "attributeLabel", 0, GNEDesignLabel3);
     myLabel->hide();
     // Create and hide textField int
-    myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_THICK | TEXTFIELD_INTEGER | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeInt);
     myTextFieldInt->hide();
     // Create and hide textField real
-    myTextFieldReal = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_THICK | TEXTFIELD_REAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldReal = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
     myTextFieldReal->hide();
     // Create and hide textField string
-    myTextFieldStrings = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, TEXTFIELD_NORMAL | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myTextFieldStrings = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
     myTextFieldStrings->hide();
     // Create and hide ComboBox
-    myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, FRAME_THICK | LAYOUT_CENTER_Y | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignComboBoxAttr);
     myChoicesCombo->hide();
     // Create and hide checkButton
-    myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, JUSTIFY_LEFT | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButton);
     myCheckBox->hide();
 }
 
@@ -634,7 +634,7 @@ GNEInspectorFrame::AttrEditor::AttrEditor(AttrInput* attrInputParent, FXTextFiel
     myAttrInputParent(attrInputParent),
     myTextFieldAttr(textFieldAttr) {
     // Create matrix
-    myCheckBoxMatrix = new FXMatrix(this, 2, MATRIX_BY_COLUMNS);
+    myCheckBoxMatrix = new FXMatrix(this, 2, GNEDesignMatrix);
 
     // Obtain vector with the choices
     const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myAttrInputParent->getTag(), myAttrInputParent->getAttr());
@@ -648,7 +648,7 @@ GNEInspectorFrame::AttrEditor::AttrEditor(AttrInput* attrInputParent, FXTextFiel
     // Iterate over choices
     for (int i = 0; i < (int)choices.size(); i++) {
         // Create checkBox
-        myVectorOfCheckBox.at(i) = new FXCheckButton(myCheckBoxMatrix, choices.at(i).c_str());
+        myVectorOfCheckBox.at(i) = new FXCheckButton(myCheckBoxMatrix, choices.at(i).c_str(),NULL, 0, GNEDesignCheckButton);
         // Set initial value
         if (oldValue.find(choices.at(i)) != std::string::npos) {
             myVectorOfCheckBox.at(i)->setCheck(true);
@@ -656,19 +656,19 @@ GNEInspectorFrame::AttrEditor::AttrEditor(AttrInput* attrInputParent, FXTextFiel
     }
 
     // Add separator
-    new FXHorizontalSeparator(this, SEPARATOR_GROOVE | LAYOUT_FILL_X, 0, 0, 0, 2, 2, 2, 4, 4);
+    new FXHorizontalSeparator(this, GNEDesignHorizontalSeparator, 0, 0, 0, 2, 2, 2, 4, 4);
 
     // Create frame for buttons
-    frameButtons = new FXHorizontalFrame(this, LAYOUT_FILL_X);
+    frameButtons = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
 
     // Create accept button
-    myAcceptButton = new FXButton(frameButtons, "Accept", 0, this, FXDialogBox::ID_ACCEPT, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myAcceptButton = new FXButton(frameButtons, "Accept", 0, this, FXDialogBox::ID_ACCEPT, GNEDesignButton);
 
     // Create cancel button
-    myCancelButton = new FXButton(frameButtons, "Cancel", 0, this, FXDialogBox::ID_CANCEL, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myCancelButton = new FXButton(frameButtons, "Cancel", 0, this, FXDialogBox::ID_CANCEL, GNEDesignButton);
 
     // Create reset button
-    myResetButton = new FXButton(frameButtons, "Reset", 0, this, MID_GNE_MODE_INSPECT_RESET, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myResetButton = new FXButton(frameButtons, "Reset", 0, this, MID_GNE_MODE_INSPECT_RESET, GNEDesignButton);
 
     // Execute dialog to make it modal, and if user press button "accept", save attribute
     if (execute()) {
@@ -710,15 +710,15 @@ GNEInspectorFrame::AttrEditor::onCmdReset(FXObject*, FXSelector, void*) {
 
 
 GNEInspectorFrame::AttrConnection::AttrConnection(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
-    FXHorizontalFrame(parent, LAYOUT_FILL_X),
+    FXHorizontalFrame(parent, GNEDesignHorizontalFrame1),
     myInspectorFrameParent(inspectorFrameParent),
     myConnection(NULL) {
     // Create label for connection
-    myConnectionInfoLabel = new FXLabel(this, "", NULL, FRAME_THICK | LAYOUT_FILL_X);
+    myConnectionInfoLabel = new FXLabel(this, "", NULL, GNEDesignLabel2);
     // Create checkButton for show connection
-    myShowConnection = new FXCheckButton(this,"Show", this, MID_GNE_SHOW_CONNECTION);
+    myShowConnection = new FXCheckButton(this,"Show", this, MID_GNE_SHOW_CONNECTION, GNEDesignCheckButton);
     // Create FXButton for inspectConnection
-    myInspectConnection = new FXButton(this, "inspect", 0, this, MID_GNE_INSPECT_CONNECTION, ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED);
+    myInspectConnection = new FXButton(this, "inspect", 0, this, MID_GNE_INSPECT_CONNECTION, GNEDesignButton);
 }
 
 

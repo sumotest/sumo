@@ -35,10 +35,10 @@
 // ===========================================================================
 // class declarations
 // ===========================================================================
-class GNEAttributeCarrier;
 class GNENetElement;
 class GNECrossing;
-class GNECrossingSet;
+class GNEJunction;
+class GNEEdge;
 
 // ===========================================================================
 // class definitions
@@ -52,6 +52,96 @@ class GNECrossingFrame : public GNEFrame {
     FXDECLARE(GNECrossingFrame)
 
 public:
+
+    // ===========================================================================
+    // class edgesSelector
+    // ===========================================================================
+
+    class edgesSelector : public FXGroupBox {
+        /// @brief FOX-declaration
+        FXDECLARE(GNECrossingFrame::edgesSelector)
+
+    public:
+        /// @brief constructor
+        edgesSelector(FXComposite* parent, GNEViewNet* viewNet);
+
+        /// @brief destructor
+        ~edgesSelector();
+
+        /// @brief get vector of GNEEdges selected
+        std::vector<GNEEdge*> getGNEEdgesSelected() const;
+
+        /// @brief get current junction
+        GNEJunction* getCurrentJunction() const;
+
+        /// @brief clear list of edges
+        void clearList();
+
+        /// @brief enable edgeSelector 
+        void enableEdgeSelector(GNEJunction *currentJunction);
+
+        /// @brief disable edgeSelector 
+        void disableEdgeSelector();
+
+        /// @brief Update use selectedEdges
+        void updateUseSelectedEdges();
+
+        /// @brief get status of checkBox UseSelectedEdges
+        bool isUseSelectedEdgesEnable() const;
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief called when user trigger checkBox of useSelectedEdges
+        long onCmdUseSelectedEdges(FXObject*, FXSelector, void*);
+
+        /// @brief called when user type in search box
+        long onCmdTypeInSearchBox(FXObject*, FXSelector, void*);
+
+        /// @brief called when user select a edge of the list
+        long onCmdSelectEdge(FXObject*, FXSelector, void*);
+
+        /// @brief called when clear selection button is pressed
+        long onCmdClearSelection(FXObject*, FXSelector, void*);
+
+        /// @brief called when invert selection button is pressed
+        long onCmdInvertSelection(FXObject*, FXSelector, void*);
+
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        edgesSelector() {}
+        
+        /// @brief filter list of edges with the search criterium
+        void filterListOfEdges(std::string search = "");
+
+    private:
+        /// @brief CheckBox for selected edges
+        FXMenuCheck* myUseSelectedEdges;
+
+        /// @brief List of edgesSelector
+        FXList* myList;
+
+        /// @brief text field for search edge IDs
+        FXTextField* myEdgesSearch;
+
+        /// @brief button for help
+        FXButton* helpEdges;
+
+        /// @brief button for clear selection
+        FXButton* clearEdgesSelection;
+
+        /// @brief button for invert selection
+        FXButton* invertEdgesSelection;
+
+        /// @brief viewNet associated to GNEAdditionalFrame
+        GNEViewNet* myViewNet;
+
+        /// @brief current Junction
+        GNEJunction *myCurrentJunction;
+    };
 
     /**@brief Constructor
      * @brief parent FXFrame in which this GNEFrame is placed
@@ -93,7 +183,8 @@ protected:
     GNECrossingFrame() {}
 
 private:
-
+    /// @brief edge selector
+    GNECrossingFrame::edgesSelector *myEdgeSelector;
 };
 
 

@@ -47,6 +47,8 @@
 #include "GNECrossing.h"
 #include "GNEJunction.h"
 #include "GNEUndoList.h"
+#include "GNENet.h"
+#include "GNEViewNet.h"
 #include "GNEChange_Attribute.h"
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -226,12 +228,14 @@ GNECrossing::setAttribute(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_EDGES:
             throw InvalidArgument("modifying crossing attribute '" + toString(key) + "' not allowed");
         case SUMO_ATTR_WIDTH:
+            // Change width an refresh element
             myCrossing.width = parse<SUMOReal>(value);
-            myParentJunction.updateCrossingAttributes(myCrossing);
+            myNet->refreshElement(this);
+            //myParentJunction.updateCrossingAttributes(myCrossing);
             break;
         case SUMO_ATTR_PRIORITY:
-            myCrossing.priority = value == "true";
-            myParentJunction.updateCrossingAttributes(myCrossing);
+            myCrossing.priority = parse<bool>(value);
+            //myParentJunction.updateCrossingAttributes(myCrossing);
             break;
         default:
             throw InvalidArgument("crossing attribute '" + toString(key) + "' not allowed");

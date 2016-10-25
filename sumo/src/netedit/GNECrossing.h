@@ -49,7 +49,6 @@ class GNEJunction;
  * editor (hence inheritance from FXDelegator)
  */
 class GNECrossing : public GNENetElement {
-
 public:
 
     /**@brief Constructor
@@ -154,7 +153,6 @@ private:
 
     /// @brief Invalidated assignment operator.
     GNECrossing& operator=(const GNECrossing&);
-
 };
 
 

@@ -124,10 +124,10 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet)
     myActualAdditionalType(SUMO_TAG_NOTHING) {
 
     // Create groupBox for myAdditionalMatchBox
-    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X);
+    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GNEDesignGroupBox);
 
     // Create FXListBox in myGroupBoxForMyAdditionalMatchBox
-    myAdditionalMatchBox = new FXComboBox(myGroupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM,  FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y | LAYOUT_FILL_X);
+    myAdditionalMatchBox = new FXComboBox(myGroupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM, GNEDesignComboBox);
 
     // Create additional parameters
     myAdditionalParameters = new GNEAdditionalFrame::additionalParameters(myContentFrame, this);
@@ -531,11 +531,11 @@ GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMo
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite* parent, FXObject* tgt) :
-    FXMatrix(parent, 3, MATRIX_BY_COLUMNS | LAYOUT_FILL_X),
+    FXMatrix(parent, 3, GNEDesignMatrix2),
     myAttr(SUMO_ATTR_NOTHING) {
     // Create elements
-    myLabel = new FXLabel(this, "name", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0);
-    myTextField = new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myLabel = new FXLabel(this, "name", 0, GNEDesignLabel2, 0, 0, 60, 0);
+    myTextField = new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr);
     myMenuCheck = new FXMenuCheck(this, "", tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL, LAYOUT_FIX_WIDTH);
     // Set widht of menuCheck manually
     myMenuCheck->setWidth(20);
@@ -621,26 +621,22 @@ GNEAdditionalFrame::additionalParameter::getValue() const {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite* parent, FXObject* tgt) :
-    FXMatrix(parent, 2, MATRIX_BY_COLUMNS | LAYOUT_FILL_X),
+    FXMatrix(parent, 2, GNEDesignMatrix2),
     myAttr(SUMO_ATTR_NOTHING),
     numberOfVisibleTextfields(1),
     myMaxNumberOfValuesInParameterList(20) {
     // Create elements
     for (int i = 0; i < myMaxNumberOfValuesInParameterList; i++) {
-        myLabels.push_back(new FXLabel(this, "name", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0));
-        myTextFields.push_back(new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X));
+        myLabels.push_back(new FXLabel(this, "name", 0, GNEDesignLabel2, 0, 0, 60, 0));
+        myTextFields.push_back(new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr));
     }
     // Create label Row
-    myLabels.push_back(new FXLabel(this, "Rows", 0, JUSTIFY_RIGHT | LAYOUT_FIX_WIDTH, 0, 0, 60, 0));
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myLabels.push_back(new FXLabel(this, "Rows", 0, GNEDesignLabel2, 0, 0, 60, 0));
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame2);
     // Create add button
-    add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW,
-                       ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
-                       0, 0, 20, 20);
+    add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW, GNEDesignButton, 0, 0, 20, 20);
     // Create delete buttons
-    remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW,
-                          ICON_BEFORE_TEXT | LAYOUT_FIX_WIDTH | LAYOUT_FIX_HEIGHT | FRAME_THICK | FRAME_RAISED,
-                          0, 0, 20, 20);
+    remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW, GNEDesignButton, 0, 0, 20, 20);
     // Hide all para meters
     hideParameter();
 }
@@ -752,7 +748,7 @@ GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow(FXObject*, FXSelecto
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite* parent, FXObject* tgt) :
-    FXGroupBox(parent, "Default parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
+    FXGroupBox(parent, "Default parameters", GNEDesignGroupBox),
     myIndexParameter(0),
     myIndexParameterList(0),
     maxNumberOfParameters(GNEAttributeCarrier::getHigherNumberOfAttributes()),
@@ -769,7 +765,7 @@ GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite* pare
     }
 
     // Create help button
-    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP);
+    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
 }
 
 
@@ -878,7 +874,7 @@ GNEAdditionalFrame::additionalParameters::getNumberOfAddedAttributes() const {
 long
 GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*) {
     // Create help dialog
-    FXDialogBox* helpDialog = new FXDialogBox(this, ("Parameters of " + toString(myAdditional)).c_str(), DECOR_CLOSE | DECOR_TITLE);
+    FXDialogBox* helpDialog = new FXDialogBox(this, ("Parameters of " + toString(myAdditional)).c_str(), GNEDesignDialogBox);
     // Create FXTable
     FXTable* myTable = new FXTable(helpDialog, this, MID_TABLE, TABLE_READONLY);
     myTable->setVisibleRows((FXint)(myIndexParameter + myIndexParameterList));
@@ -951,7 +947,7 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
     header->setItemJustify(2, JUSTIFY_CENTER_X);
     header->setItemSize(2, maxSizeColumnDefinitions * 6);
     // Button Close
-    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED, 0, 0, 0, 0, 4, 4, 3, 3);
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
     helpDialog->create();
     helpDialog->show();
     return 1;
@@ -962,34 +958,31 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXObject* tgt) :
-    FXGroupBox(parent, "editor parameters", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
+    FXGroupBox(parent, "editor parameters", GNEDesignGroupBox),
     myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT) {
     // Create FXListBox for the reference points
-    myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
-            FRAME_SUNKEN | LAYOUT_LEFT  | COMBOBOX_STATIC | LAYOUT_FILL_X);
+    myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEDesignComboBox);
 
     // Create Frame for Label and TextField
-    FXHorizontalFrame* lengthFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X | LAYOUT_LEFT);
+    FXHorizontalFrame* lengthFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame2);
 
     // Create length label
-    myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
+    myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, GNEDesignLabel2);
 
     // Create length text field
-    myLengthTextField = new FXTextField(lengthFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, LAYOUT_FILL_COLUMN | LAYOUT_FILL_X);
+    myLengthTextField = new FXTextField(lengthFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr);
 
     // Set default value of length
     myLengthTextField->setText("10");
 
     // Create FXMenuCheck for the force option
-    myCheckForcePosition = new FXMenuCheck(this, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,
-                                           LAYOUT_LEFT | LAYOUT_FILL_X);
+    myCheckForcePosition = new FXMenuCheck(this, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION, GNEDesignMenuCheck);
 
     // Create FXMenuCheck for the force option
-    myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING,
-                                   LAYOUT_LEFT | LAYOUT_FILL_X);
+    myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING, GNEDesignMenuCheck);
 
     // Create help button
-    helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP);
+    helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
 
     // Add options to myReferencePointMatchBox
     myReferencePointMatchBox->appendItem("reference left");
@@ -1066,7 +1059,7 @@ GNEAdditionalFrame::editorParameters::onCmdSelectReferencePoint(FXObject*, FXSel
 
 long
 GNEAdditionalFrame::editorParameters::onCmdHelp(FXObject*, FXSelector, void*) {
-    FXDialogBox* helpDialog = new FXDialogBox(this, "Parameter editor Help", DECOR_CLOSE | DECOR_TITLE);
+    FXDialogBox* helpDialog = new FXDialogBox(this, "Parameter editor Help", GNEDesignDialogBox);
     std::ostringstream help;
     help
             << "Referece point: Mark the initial position of the additional element.\n"
@@ -1082,11 +1075,9 @@ GNEAdditionalFrame::editorParameters::onCmdHelp(FXObject*, FXSelector, void*) {
             << "\n"
             << "Block movement: if is enabled, the created additional element will be blocked. i.e. cannot be moved with\n"
             << "the mouse. This option can be modified with the Inspector.";
-    new FXLabel(helpDialog, help.str().c_str(), 0, JUSTIFY_LEFT);
+    new FXLabel(helpDialog, help.str().c_str(), 0, GNEDesignLabel1);
     // "OK"
-    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT,
-                 ICON_BEFORE_TEXT | LAYOUT_FILL_X | FRAME_THICK | FRAME_RAISED,
-                 0, 0, 0, 0, 4, 4, 3, 3);
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
     helpDialog->create();
     helpDialog->show();
     return 1;
@@ -1115,18 +1106,18 @@ GNEAdditionalFrame::getIdsSelected(const FXList* list) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalSet::additionalSet(FXComposite* parent, FXObject* tgt, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Additional Set", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
+    FXGroupBox(parent, "Additional Set", GNEDesignGroupBox),
     myType(SUMO_TAG_NOTHING),
     myViewNet(viewNet) {
 
     // Create label with the type of additionalSet
-    mySetLabel = new FXLabel(this, "Set Type:", 0, JUSTIFY_LEFT | LAYOUT_FILL_X);
+    mySetLabel = new FXLabel(this, "Set Type:", 0, GNEDesignLabel2);
 
     // Create list
-    myList = new FXList(this, tgt, MID_GNE_SELECTADDITIONALSET, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
+    myList = new FXList(this, tgt, MID_GNE_SELECTADDITIONALSET, GNEDesignListBox3, 0, 0, 0, 100);
 
     // Create help button
-    helpAdditionalSet = new FXButton(this, "Help", 0, this, MID_HELP);
+    helpAdditionalSet = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
 
     // Hide List
     hideList();
@@ -1190,28 +1181,28 @@ GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Edges", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
+    FXGroupBox(parent, "Edges", GNEDesignGroupBox),
     myViewNet(viewNet) {
     // Create CheckBox for selected edges
     myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES);
 
     // Create search box
-    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, LAYOUT_FILL_X);
+    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextFieldAttributeStr);
 
     // Create list
-    myList = new FXList(this, this, MID_GNE_SELECTEDGE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
+    myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignListBox3, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X);
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
 
     // Create button for clear selection
-    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION);
+    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
 
     // Create button for invert selection
-    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION);
+    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION), GNEDesignButtonLittle;
 
     // Create help button
-    helpEdges = new FXButton(this, "Help", 0, this, MID_HELP);
+    helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
 
     // Hide List
     hideList();
@@ -1229,10 +1220,14 @@ GNEAdditionalFrame::edgesSelector::getIdsSelected() const {
 
 void
 GNEAdditionalFrame::edgesSelector::showList(std::string search) {
-    // FIll list
+    // clear list of egdge ids
     myList->clearItems();
+    // get all edges of net
+    /// @todo this function must be improved. 
     std::vector<GNEEdge*> vectorOfEdges = myViewNet->getNet()->retrieveEdges(false);
+    // iterate over edges of net
     for (std::vector<GNEEdge*>::iterator i = vectorOfEdges.begin(); i != vectorOfEdges.end(); i++) {
+        // If search criterium is correct, then append ittem
         if ((*i)->getID().find(search) != std::string::npos) {
             myList->appendItem((*i)->getID().c_str());
         }
@@ -1347,28 +1342,28 @@ GNEAdditionalFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::lanesSelector::lanesSelector(FXComposite* parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "lanesSelector", GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X),
+    FXGroupBox(parent, "lanesSelector", GNEDesignGroupBox),
     myViewNet(viewNet) {
     // Create CheckBox for selected lanes
     myUseSelectedLanes = new FXMenuCheck(this, "Use selected Lanes", this, MID_GNE_USESELECTEDLANES);
 
     // Create search box
-    myLanesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHLANE, LAYOUT_FILL_X);
+    myLanesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHLANE, GNEDesignTextFieldAttributeStr);
 
     // Create list
-    myList = new FXList(this, this, MID_GNE_SELECTLANE, LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0, 0, 0, 100);
+    myList = new FXList(this, this, MID_GNE_SELECTLANE, GNEDesignListBox3, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, LAYOUT_FILL_X);
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
 
     // Create button for clear selection
-    clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION);
+    clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION, GNEDesignButtonLittle);
 
     // Create button for invert selection
-    invertLanesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTLANESELECTION);
+    invertLanesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTLANESELECTION, GNEDesignButtonLittle);
 
     // Create help button
-    helpLanes = new FXButton(this, "Help", 0, this, MID_HELP);
+    helpLanes = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
 
     // Hide List
     hideList();
