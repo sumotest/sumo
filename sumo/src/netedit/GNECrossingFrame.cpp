@@ -40,6 +40,7 @@
 #include <utils/gui/div/GUIGlobalSelection.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/images/GUIIconSubSys.h>
+#include "GNEFrameDesigns.h"
 #include "GNECrossingFrame.h"
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"

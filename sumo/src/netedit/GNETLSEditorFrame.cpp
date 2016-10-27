@@ -42,6 +42,7 @@
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <netbuild/NBTrafficLightDefinition.h>
 #include <netbuild/NBLoadedSUMOTLDef.h>
+#include "GNEFrameDesigns.h"
 #include "GNETLSEditorFrame.h"
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"

@@ -38,46 +38,6 @@
 #include <utils/xml/SUMOXMLDefinitions.h>
 
 // ===========================================================================
-// Definitions
-// ===========================================================================
-#define GNEDesignTextFieldAttributeInt  (TEXTFIELD_INTEGER  | FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-#define GNEDesignTextFieldAttributeReal (TEXTFIELD_REAL     | FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-#define GNEDesignTextFieldAttributeStr  (TEXTFIELD_NORMAL   | FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-
-#define GNEDesignComboBox               (COMBOBOX_STATIC    | FRAME_THICK                      | LAYOUT_FILL_X)
-#define GNEDesignComboBoxAttr           (COMBOBOX_STATIC    | FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-
-#define GNEDesignButton                 (BUTTON_NORMAL | FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_X)
-#define GNEDesignButtonAttribute        (BUTTON_NORMAL | FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-#define GNEDesignButtonLittle           (BUTTON_NORMAL)
-
-#define GNEDesignCheckButton            (JUSTIFY_LEFT | ICON_BEFORE_TEXT  | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-#define GNEDesignRadioButton            (RADIOBUTTON_NORMAL)
-
-#define GNEDesignGroupBox               (GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X)
-#define GNEDesignDialogBox              (DECOR_CLOSE | DECOR_TITLE)
-
-#define GNEDesignListBox1               (FRAME_GROOVE | LAYOUT_FILL_X) // Standard
-#define GNEDesignListBox2               (FRAME_SUNKEN | FRAME_THICK | LISTBOX_NORMAL | LAYOUT_FIX_WIDTH) // must be unified
-#define GNEDesignListBox3               (LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT)
-
-#define GNEDesignLabel1                 (JUSTIFY_LEFT)
-#define GNEDesignLabel2                 (JUSTIFY_LEFT | LAYOUT_FILL_X)
-#define GNEDesignLabel3                 (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-
-#define GNEDesignMatrix                 (MATRIX_BY_COLUMNS)
-#define GNEDesignMatrix2                (MATRIX_BY_COLUMNS | LAYOUT_FILL_X)
-#define GNEDesignMatrix3                (MATRIX_BY_COLUMNS | LAYOUT_FILL_X | PACK_UNIFORM_WIDTH)
-
-#define GNEDesignHorizontalSeparator    (SEPARATOR_GROOVE | LAYOUT_FILL_X)
-#define GNEDesignHorizontalFrame1       (LAYOUT_FILL_X)
-#define GNEDesignHorizontalFrame2       (LAYOUT_FILL_X | LAYOUT_LEFT)
-#define GNEDesignHorizontalFrame3       (0)
-
-#define GNEDesignDial                   (LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK | LAYOUT_FILL_Y)
-#define GNEDesignMenuCheck              (LAYOUT_LEFT | LAYOUT_FILL_X)
-
-// ===========================================================================
 // class declarations
 // ===========================================================================
 class GNEViewNet;
