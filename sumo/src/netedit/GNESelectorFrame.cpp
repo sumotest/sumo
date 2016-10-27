@@ -99,24 +99,24 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // Create groupBox for selection by expression matching (match box)
     FXGroupBox* elementBox = new FXGroupBox(myContentFrame, "type of element", GNEDesignGroupBox);
     // Create MatchTagBox for tags and fill it
-    mySetBox = new FXListBox(elementBox, this, MID_CHOOSEN_ELEMENTS, GNEDesignListBox1);
-    mySetBox->appendItem("Net Element");
-    mySetBox->appendItem("Additional");
-    mySetBox->setNumVisible(mySetBox->getNumItems());
+    mySetComboBox = new FXComboBox(elementBox, 10, this, MID_CHOOSEN_ELEMENTS, GNEDesignComboBox);
+    mySetComboBox->appendItem("Net Element");
+    mySetComboBox->appendItem("Additional");
+    mySetComboBox->setNumVisible(mySetComboBox->getNumItems());
     // Create groupBox fro selection by expression matching (match box)
     FXGroupBox* matchBox = new FXGroupBox(myContentFrame, "Match Attribute", GNEDesignGroupBox);
     // Create MatchTagBox for tags
-    myMatchTagBox = new FXListBox(matchBox, this, MID_GNE_SELMB_TAG, GNEDesignListBox1);
+    myMatchTagComboBox = new FXComboBox(matchBox, 12, this, MID_GNE_SELMB_TAG, GNEDesignComboBox);
     // Create listBox for Attributes
-    myMatchAttrBox = new FXListBox(matchBox, NULL, 0, GNEDesignListBox1);
+    myMatchAttrComboBox = new FXComboBox(matchBox, 12, NULL, 0, GNEDesignComboBox);
     // Set netElements as default tag
-    mySetBox->setCurrentItem(0);
+    mySetComboBox->setCurrentItem(0);
     // Fill list of sub-items
     onCmdSubset(0,0,0);
     // Set speed as default attribute
-    myMatchAttrBox->setCurrentItem(3);
+    myMatchAttrComboBox->setCurrentItem(3);
     // Create TextField for Match string
-    myMatchString = new FXTextField(matchBox, 12, this, MID_GNE_SELMB_STRING, GNEDesignTextFieldAttributeStr);
+    myMatchString = new FXTextField(matchBox, 12, this, MID_GNE_SELMB_STRING, GNEDesignTextField);
     // Set default value for Match string
     myMatchString->setText(">10.0");
     // Create help button
@@ -143,7 +143,7 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // Create groupbox for information about selections
     FXGroupBox* selectionHintGroupBox = new FXGroupBox(myContentFrame, "Information", GNEDesignGroupBox);
     // Create Selection Hint
-    new FXLabel(selectionHintGroupBox, " - Hold <SHIFT> for \n   rectangle selection.\n - Press <DEL> to\n   delete selected items.", 0, GNEDesignLabel1);
+    new FXLabel(selectionHintGroupBox, " - Hold <SHIFT> for \n   rectangle selection.\n - Press <DEL> to\n   delete selected items.", 0, GNEDesignLabel);
 }
 
 
@@ -154,19 +154,19 @@ GNESelectorFrame::~GNESelectorFrame() {
 
 long
 GNESelectorFrame::onCmdSubset(FXObject*, FXSelector, void*) {
-    // Clear items of myMatchTagBox
-    myMatchTagBox->clearItems();
+    // Clear items of myMatchTagComboBox
+    myMatchTagComboBox->clearItems();
     // Set items depending of current items
-    if(mySetBox->getCurrentItem() == 0) {
+    if(mySetComboBox->getCurrentItem() == 0) {
         // If we want to work with net elementsn Get net Elements allowed tags
         const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedNetElementTags();
         // iterate over tags
         for (std::vector<SumoXMLTag>::const_iterator it = tags.begin(); it != tags.end(); it++) {
             // Add trag to MatchTagBox
-            myMatchTagBox->appendItem(toString(*it).c_str());
+            myMatchTagComboBox->appendItem(toString(*it).c_str());
         }
-        myMatchTagBox->setCurrentItem(1); // edges
-        myMatchTagBox->setNumVisible(myMatchTagBox->getNumItems());
+        myMatchTagComboBox->setCurrentItem(1); // edges
+        myMatchTagComboBox->setNumVisible(myMatchTagComboBox->getNumItems());
         // Fill attributes with the current element type
         onCmdSelMBTag(0, 0, 0);
     } else  {
@@ -175,10 +175,10 @@ GNESelectorFrame::onCmdSubset(FXObject*, FXSelector, void*) {
         // iterate over tags
         for (std::vector<SumoXMLTag>::const_iterator it = tags.begin(); it != tags.end(); it++) {
             // Add trag to MatchTagBox
-            myMatchTagBox->appendItem(toString(*it).c_str());
+            myMatchTagComboBox->appendItem(toString(*it).c_str());
         }
-        myMatchTagBox->setCurrentItem(1); // busStops
-        myMatchTagBox->setNumVisible(myMatchTagBox->getNumItems());
+        myMatchTagComboBox->setCurrentItem(1); // busStops
+        myMatchTagComboBox->setNumVisible(myMatchTagComboBox->getNumItems());
         // Fill attributes with the current element type
         onCmdSelMBTag(0, 0, 0);
     }
@@ -262,15 +262,15 @@ GNESelectorFrame::onCmdInvert(FXObject*, FXSelector, void*) {
 long
 GNESelectorFrame::onCmdSelMBTag(FXObject*, FXSelector, void*) {
     const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
-    SumoXMLTag tag = tags[myMatchTagBox->getCurrentItem()];
-    myMatchAttrBox->clearItems();
+    SumoXMLTag tag = tags[myMatchTagComboBox->getCurrentItem()];
+    myMatchAttrComboBox->clearItems();
     const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = GNEAttributeCarrier::allowedAttributes(tag);
     for (std::vector<std::pair <SumoXMLAttr, std::string> >::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
-        myMatchAttrBox->appendItem(toString(it->first).c_str());
+        myMatchAttrComboBox->appendItem(toString(it->first).c_str());
     }
 
     // @ToDo: Here can be placed a butto to set the default value
-    myMatchAttrBox->setNumVisible(myMatchAttrBox->getNumItems());
+    myMatchAttrComboBox->setNumVisible(myMatchAttrComboBox->getNumItems());
     update();
     return 1;
 }
@@ -279,9 +279,9 @@ GNESelectorFrame::onCmdSelMBTag(FXObject*, FXSelector, void*) {
 long
 GNESelectorFrame::onCmdSelMBString(FXObject*, FXSelector, void*) {
     const std::vector<SumoXMLTag>& tags = GNEAttributeCarrier::allowedTags();
-    SumoXMLTag tag = tags[myMatchTagBox->getCurrentItem()];
+    SumoXMLTag tag = tags[myMatchTagComboBox->getCurrentItem()];
     const std::vector<std::pair <SumoXMLAttr, std::string> >& attrs = GNEAttributeCarrier::allowedAttributes(tag);
-    SumoXMLAttr attr = attrs.at(myMatchAttrBox->getCurrentItem()).first;
+    SumoXMLAttr attr = attrs.at(myMatchAttrComboBox->getCurrentItem()).first;
     std::string expr(myMatchString->getText().text());
     bool valid = true;
 
@@ -359,7 +359,7 @@ GNESelectorFrame::onCmdHelp(FXObject*, FXSelector, void*) {
             << "junction; id; 'foo' -> match all junctions that have 'foo' in their id\n"
             << "junction; type; '=priority' -> match all junctions of type 'priority', but not of type 'priority_stop'\n"
             << "edge; speed; '>10' -> match all edges with a speed above 10\n";
-    new FXLabel(helpDialog, help.str().c_str(), 0, GNEDesignLabel1);
+    new FXLabel(helpDialog, help.str().c_str(), 0, GNEDesignLabel);
     // "OK"
     new FXButton(helpDialog, "OK\t\tSave modifications", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButtonDialog, 0, 0, 0, 0, 4, 4, 3, 3);
     helpDialog->create();

@@ -92,8 +92,8 @@ GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     GNEFrame(parent, viewNet, "Edit Connections"),
     myCurrentLane(0) {
     // heading
-    myDescription = new FXLabel(myContentFrame, "", 0, GNEDesignLabel1);
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator, 0, 0, 0, 2, 2, 2, 4, 4);
+    myDescription = new FXLabel(myContentFrame, "", 0, GNEDesignLabel);
+    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
     updateDescription();
 
     // buttons
@@ -101,7 +101,7 @@ GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     new FXButton(myContentFrame, "Cancel\t\tDiscard connection modifications (Esc)", 0, this, MID_CANCEL, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
     // "OK"
     new FXButton(myContentFrame, "OK\t\tSave connection modifications (Enter)", 0, this, MID_OK, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator, 0, 0, 0, 2, 2, 2, 4, 4);
+    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
     // "Select Dead Ends"
     new FXButton(myContentFrame, "Select Dead Ends\t\tSelects all lanes that have no outgoing connection (clears previous selection)",
                  0, this, MID_GNE_SELECT_DEAD_ENDS, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
@@ -123,8 +123,8 @@ GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
 
     new FXHorizontalSeparator(this, GNEDesignHorizontalSeparator);
     // Selection Hint
-    new FXLabel(myContentFrame, "Hold <SHIFT> while\nclicking to create\nunyielding conn's.\n", 0, GNEDesignLabel1);
-    new FXLabel(myContentFrame, "Hold <CTRL> while\nclicking to create\nconflicting conn's.\n", 0, GNEDesignLabel1);
+    new FXLabel(myContentFrame, "Hold <SHIFT> while\nclicking to create\nunyielding conn's.\n", 0, GNEDesignLabel);
+    new FXLabel(myContentFrame, "Hold <CTRL> while\nclicking to create\nconflicting conn's.\n", 0, GNEDesignLabel);
     // Legend
     // init colors here to avoid static order fiasco (https://isocpp.org/wiki/faq/ctors#static-init-order)
     sourceColor = RGBColor::CYAN;
@@ -133,18 +133,18 @@ GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     targetPassColor = RGBColor::MAGENTA;
     conflictColor = RGBColor::YELLOW;
 
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator, 0, 0, 0, 2, 2, 2, 4, 4);
+    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
     FXLabel* l;
-    new FXLabel(myContentFrame, "Color Legend:", 0, GNEDesignLabel1);
-    l = new FXLabel(myContentFrame, "Source", 0, GNEDesignLabel1);
+    new FXLabel(myContentFrame, "Color Legend:", 0, GNEDesignLabel);
+    l = new FXLabel(myContentFrame, "Source", 0, GNEDesignLabel);
     l->setBackColor(MFXUtils::getFXColor(sourceColor));
-    l = new FXLabel(myContentFrame, "Target", 0, GNEDesignLabel1);
+    l = new FXLabel(myContentFrame, "Target", 0, GNEDesignLabel);
     l->setBackColor(MFXUtils::getFXColor(targetColor));
-    l = new FXLabel(myContentFrame, "Possible Target", 0, GNEDesignLabel1);
+    l = new FXLabel(myContentFrame, "Possible Target", 0, GNEDesignLabel);
     l->setBackColor(MFXUtils::getFXColor(potentialTargetColor));
-    l = new FXLabel(myContentFrame, "Target (pass)", 0, GNEDesignLabel1);
+    l = new FXLabel(myContentFrame, "Target (pass)", 0, GNEDesignLabel);
     l->setBackColor(MFXUtils::getFXColor(targetPassColor));
-    l = new FXLabel(myContentFrame, "Conflict", 0, GNEDesignLabel1);
+    l = new FXLabel(myContentFrame, "Conflict", 0, GNEDesignLabel);
     l->setBackColor(MFXUtils::getFXColor(conflictColor));
 }
 

@@ -176,8 +176,8 @@ private:
     /// @brief the traffic light definition being edited
     NBLoadedSUMOTLDef* myEditedDef;
 
-    /// @brief the listbox for selecting the tl-definition to edit
-    FXListBox* myDefBox;
+    /// @brief the comboBox for selecting the tl-definition to edit
+    FXComboBox* myDefBox;
 
     /// @brief the control for modifying offset
     FXTextField* myOffset;

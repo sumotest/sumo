@@ -94,23 +94,23 @@ GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* 
     FXGroupBox(parent, "Edges", GNEDesignGroupBox),
     myCurrentJunction(0),
     myViewNet(viewNet) {
-    // Create CheckBox for selected edges
-    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES);
-
     // Create search box
-    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextFieldAttributeStr);
+    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
 
     // Create list
-    myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignListBox3, 0, 0, 0, 100);
+    myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignList, 0, 0, 0, 100);
 
     // Create horizontal frame
     FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
-    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
+    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButton);
 
     // Create button for invert selection
-    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButtonLittle);
+    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButton);
+
+    // Create CheckBox for selected edges
+    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignMenuCheck);
 
     // Create help button
     helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);

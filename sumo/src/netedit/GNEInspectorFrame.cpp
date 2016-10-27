@@ -428,7 +428,7 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEDesignButton);
     myButtonCombinableChoices->hide();
     // Create and hide label
-    myLabel = new FXLabel(this, "attributeLabel", 0, GNEDesignLabel3);
+    myLabel = new FXLabel(this, "attributeLabel", 0, GNEDesignLabelAttribute);
     myLabel->hide();
     // Create and hide textField int
     myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeInt);
@@ -657,7 +657,7 @@ GNEInspectorFrame::AttrEditor::AttrEditor(AttrInput* attrInputParent, FXTextFiel
     }
 
     // Add separator
-    new FXHorizontalSeparator(this, GNEDesignHorizontalSeparator, 0, 0, 0, 2, 2, 2, 4, 4);
+    new FXHorizontalSeparator(this, GNEDesignHorizontalSeparator);
 
     // Create frame for buttons
     frameButtons = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
@@ -715,7 +715,7 @@ GNEInspectorFrame::AttrConnection::AttrConnection(FXComposite* parent, GNEInspec
     myInspectorFrameParent(inspectorFrameParent),
     myConnection(NULL) {
     // Create label for connection
-    myConnectionInfoLabel = new FXLabel(this, "", NULL, GNEDesignLabel2);
+    myConnectionInfoLabel = new FXLabel(this, "", NULL, GNEDesignLabelThick);
     // Create checkButton for show connection
     myShowConnection = new FXCheckButton(this,"Show", this, MID_GNE_SHOW_CONNECTION, GNEDesignCheckButton);
     // Create FXButton for inspectConnection

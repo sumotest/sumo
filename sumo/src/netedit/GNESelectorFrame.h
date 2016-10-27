@@ -131,13 +131,13 @@ private:
     FXDataTarget mySetOperationTarget;
 
     /// @brief tag of the sets of elements
-    FXListBox* mySetBox;
+    FXComboBox* mySetComboBox;
 
     /// @brief tag of the match box
-    FXListBox* myMatchTagBox;
+    FXComboBox* myMatchTagComboBox;
 
     /// @brief attributes of the match box
-    FXListBox* myMatchAttrBox;
+    FXComboBox* myMatchAttrComboBox;
 
     /// @brief string of the match
     FXTextField* myMatchString;
