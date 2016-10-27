@@ -63,17 +63,17 @@ GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string& 
     myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
 
     // Create frame for header
-    myHeaderFrame = new FXHorizontalFrame(myContentFrame, GNEDesignHorizontalFrame1);
+    myHeaderFrame = new FXHorizontalFrame(myContentFrame, GNEDesignHorizontalFrame);
 
     // Create frame for left elements of header (By default unused)
-    myHeaderLeftFrame = new FXHorizontalFrame(myHeaderFrame, GNEDesignHorizontalFrame3);
+    myHeaderLeftFrame = new FXHorizontalFrame(myHeaderFrame, GNEDesignHorizontalFrame);
     myHeaderLeftFrame->hide();
 
     // Create titel frame
     myFrameHeaderLabel = new FXLabel(myHeaderFrame, frameLabel.c_str(), 0, GNEDesignLabel2);
 
     // Create frame for right elements of header (By default unused)
-    myHeaderRightFrame = new FXHorizontalFrame(myHeaderFrame, GNEDesignHorizontalFrame3);
+    myHeaderRightFrame = new FXHorizontalFrame(myHeaderFrame, GNEDesignHorizontalFrame);
     myHeaderRightFrame->hide();
 
     // Set font of header

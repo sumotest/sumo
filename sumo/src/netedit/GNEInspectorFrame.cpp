@@ -106,7 +106,7 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     myPreviousElement(0) {
 
     // Create back button
-    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, GNEDesignButton);
+    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, GNEDesignButtonLittle);
     myBackButton->hide();
 
     // Create groupBox for attributes
@@ -425,7 +425,7 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
     // Create and hide ButtonCombinableChoices
-    myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEDesignButtonAttribute);
+    myButtonCombinableChoices = new FXButton(this, "AttributeButton", 0, this, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEDesignButton);
     myButtonCombinableChoices->hide();
     // Create and hide label
     myLabel = new FXLabel(this, "attributeLabel", 0, GNEDesignLabel3);
@@ -660,16 +660,16 @@ GNEInspectorFrame::AttrEditor::AttrEditor(AttrInput* attrInputParent, FXTextFiel
     new FXHorizontalSeparator(this, GNEDesignHorizontalSeparator, 0, 0, 0, 2, 2, 2, 4, 4);
 
     // Create frame for buttons
-    frameButtons = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
+    frameButtons = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create accept button
-    myAcceptButton = new FXButton(frameButtons, "Accept", 0, this, FXDialogBox::ID_ACCEPT, GNEDesignButton);
+    myAcceptButton = new FXButton(frameButtons, "Accept", 0, this, FXDialogBox::ID_ACCEPT, GNEDesignButtonDialog);
 
     // Create cancel button
-    myCancelButton = new FXButton(frameButtons, "Cancel", 0, this, FXDialogBox::ID_CANCEL, GNEDesignButton);
+    myCancelButton = new FXButton(frameButtons, "Cancel", 0, this, FXDialogBox::ID_CANCEL, GNEDesignButtonDialog);
 
     // Create reset button
-    myResetButton = new FXButton(frameButtons, "Reset", 0, this, MID_GNE_MODE_INSPECT_RESET, GNEDesignButton);
+    myResetButton = new FXButton(frameButtons, "Reset", 0, this, MID_GNE_MODE_INSPECT_RESET, GNEDesignButtonDialog);
 
     // Execute dialog to make it modal, and if user press button "accept", save attribute
     if (execute()) {
@@ -711,7 +711,7 @@ GNEInspectorFrame::AttrEditor::onCmdReset(FXObject*, FXSelector, void*) {
 
 
 GNEInspectorFrame::AttrConnection::AttrConnection(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
-    FXHorizontalFrame(parent, GNEDesignHorizontalFrame1),
+    FXHorizontalFrame(parent, GNEDesignHorizontalFrame),
     myInspectorFrameParent(inspectorFrameParent),
     myConnection(NULL) {
     // Create label for connection

@@ -40,9 +40,9 @@
 
 #define GNEDesignComboBox               (COMBOBOX_STATIC | FRAME_THICK | LAYOUT_FILL_COLUMN| LAYOUT_FILL_X)
 
-#define GNEDesignButton                 (BUTTON_NORMAL | FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-#define GNEDesignButtonAttribute        (BUTTON_NORMAL | FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-#define GNEDesignButtonLittle           (BUTTON_NORMAL)
+#define GNEDesignButton                 (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+#define GNEDesignButtonDialog           (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_CENTER_X | JUSTIFY_NORMAL)
+#define GNEDesignButtonLittle           (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | JUSTIFY_NORMAL)
 
 #define GNEDesignCheckButton            (JUSTIFY_LEFT | ICON_BEFORE_TEXT  | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
 #define GNEDesignRadioButton            (RADIOBUTTON_NORMAL)
@@ -63,9 +63,8 @@
 #define GNEDesignMatrix3                (MATRIX_BY_COLUMNS | LAYOUT_FILL_X | PACK_UNIFORM_WIDTH)
 
 #define GNEDesignHorizontalSeparator    (SEPARATOR_GROOVE | LAYOUT_FILL_X)
-#define GNEDesignHorizontalFrame1       (LAYOUT_FILL_X)
-#define GNEDesignHorizontalFrame2       (LAYOUT_FILL_X | LAYOUT_LEFT)
-#define GNEDesignHorizontalFrame3       (0)
+
+#define GNEDesignHorizontalFrame       (LAYOUT_FILL_X | LAYOUT_LEFT)
 
 #define GNEDesignDial                   (LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK | LAYOUT_FILL_Y)
 #define GNEDesignMenuCheck              (LAYOUT_LEFT | LAYOUT_FILL_X)

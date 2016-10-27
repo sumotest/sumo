@@ -633,7 +633,7 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
     }
     // Create label Row
     myLabels.push_back(new FXLabel(this, "Rows", 0, GNEDesignLabel2, 0, 0, 60, 0));
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame2);
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
     // Create add button
     add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW, GNEDesignButton, 0, 0, 20, 20);
     // Create delete buttons
@@ -948,7 +948,7 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
     header->setItemJustify(2, JUSTIFY_CENTER_X);
     header->setItemSize(2, maxSizeColumnDefinitions * 6);
     // Button Close
-    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButtonDialog, 0, 0, 0, 0, 4, 4, 3, 3);
     helpDialog->create();
     helpDialog->show();
     return 1;
@@ -965,7 +965,7 @@ GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXOb
     myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEDesignComboBox);
 
     // Create Frame for Label and TextField
-    FXHorizontalFrame* lengthFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame2);
+    FXHorizontalFrame* lengthFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create length label
     myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, GNEDesignLabel2);
@@ -1078,7 +1078,7 @@ GNEAdditionalFrame::editorParameters::onCmdHelp(FXObject*, FXSelector, void*) {
             << "the mouse. This option can be modified with the Inspector.";
     new FXLabel(helpDialog, help.str().c_str(), 0, GNEDesignLabel1);
     // "OK"
-    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButtonDialog, 0, 0, 0, 0, 4, 4, 3, 3);
     helpDialog->create();
     helpDialog->show();
     return 1;
@@ -1194,7 +1194,7 @@ GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignListBox3, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
     clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
@@ -1355,7 +1355,7 @@ GNEAdditionalFrame::lanesSelector::lanesSelector(FXComposite* parent, GNEViewNet
     myList = new FXList(this, this, MID_GNE_SELECTLANE, GNEDesignListBox3, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
     clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION, GNEDesignButtonLittle);

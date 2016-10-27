@@ -104,7 +104,7 @@ GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* 
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignListBox3, 0, 0, 0, 100);
 
     // Create horizontal frame
-    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame1);
+    FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
     clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
