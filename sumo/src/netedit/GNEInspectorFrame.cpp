@@ -420,7 +420,7 @@ GNEInspectorFrame::getACs() const {
 // ===========================================================================
 
 GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
-    FXMatrix(parent, 8, GNEDesignMatrix3),
+    FXMatrix(parent, 7, GNEDesignMatrix),
     myInspectorFrameParent(inspectorFrameParent),
     myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
@@ -443,7 +443,7 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignComboBox);
     myChoicesCombo->hide();
     // Create and hide checkButton
-    myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButton);
+    myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButtonAttribute);
     myCheckBox->hide();
 }
 

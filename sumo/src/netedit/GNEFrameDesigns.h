@@ -34,57 +34,81 @@
 // ===========================================================================
 // Definitions
 // ===========================================================================
-/// @brief text field extended over GNEFrame with thick frame
-#define GNEDesignTextField              (FRAME_THICK | LAYOUT_FILL_X)
 
-/// @brief text field extended over the matrix column with thick frame and limited to integers
-#define GNEDesignTextFieldAttributeInt  (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | TEXTFIELD_INTEGER)
+/// @name FXTextFields
+/// @{
+    /// @brief text field extended over GNEFrame with thick frame
+    #define GNEDesignTextField              (FRAME_THICK | LAYOUT_FILL_X)
 
-/// @brief text field extended over the matrix column with thick frame and limited to real
-#define GNEDesignTextFieldAttributeReal (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | TEXTFIELD_REAL)
+    /// @brief text field extended over the matrix column with thick frame and limited to integers
+    #define GNEDesignTextFieldAttributeInt  (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | TEXTFIELD_INTEGER)
 
-/// @brief text field extended over the matrix column with thick frame
-#define GNEDesignTextFieldAttributeStr  (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+    /// @brief text field extended over the matrix column with thick frame and limited to real
+    #define GNEDesignTextFieldAttributeReal (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | TEXTFIELD_REAL)
+
+    /// @brief text field extended over the matrix column with thick frame
+    #define GNEDesignTextFieldAttributeStr  (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+/// @}
+
+/// @name FXButtons
+/// @{
+    /// @brief button extended over over GNEFrame with thick and raise frame 
+    #define GNEDesignButton       (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+
+    /// @brief button with size limited by text, centered over GNEFrame with thick and raise frame 
+    #define GNEDesignButtonDialog (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_CENTER_X | JUSTIFY_NORMAL)
+
+    /// @brief little button for help in frames
+    #define GNEDesignButtonLittle (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | JUSTIFY_NORMAL)
+/// @}
+
+/// @name FXCheckBoxs
+/// @{
+    /// @brief Check button for GNEFrames extended over the frame
+    #define GNEDesignCheckButton          (LAYOUT_LEFT | ICON_BEFORE_TEXT)
+    
+    /// @brief Check button for attributes extended over the matrix column
+    #define GNEDesignCheckButtonAttribute (LAYOUT_LEFT | LAYOUT_FILL_COLUMN | ICON_BEFORE_TEXT)
+/// @}
+
+/// @name FXLabels
+/// @{
+    /// @brief label extended over over GNEFrame without thick
+    #define GNEDesignLabel          (JUSTIFY_LEFT | LAYOUT_FILL_X)
+
+    /// @brief label extended over over GNEFrame with thick
+    #define GNEDesignLabelThick     (FRAME_THICK | JUSTIFY_LEFT | LAYOUT_FILL_X)
+
+    /// @brief label extended over the matrix column with thick frame
+    #define GNEDesignLabelAttribute (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+/// @}
+
+/// @name FXPackers
+/// @{
+    /// @brief Horizontal design extended over frame
+    #define GNEDesignHorizontalFrame        (LAYOUT_FILL_X | LAYOUT_LEFT)
+    
+    /// @brief Matrix design extended over frame
+    #define GNEDesignMatrix                 (LAYOUT_FILL_X | MATRIX_BY_COLUMNS | PACK_UNIFORM_WIDTH)
+    
+    /// @brief Group box design extended over frame
+    #define GNEDesignGroupBox               (LAYOUT_FILL_X | FRAME_GROOVE | GROUPBOX_TITLE_CENTER)
+
+    /// @brief Horizontal separator
+    #define GNEDesignHorizontalSeparator    (SEPARATOR_GROOVE | LAYOUT_FILL_X), 0, 0, 0, 2, 2, 2, 4, 4
+/// @}
+
 
 /// @brief Combo box static (cannot be dited) extended over the matrix column or all frame with thick frame and limited to integers
 #define GNEDesignComboBox               (FRAME_THICK | LAYOUT_FILL_COLUMN| LAYOUT_FILL_X | COMBOBOX_STATIC)
 
-/// @brief button extended over over GNEFrame with thick and raise frame 
-#define GNEDesignButton                 (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-
-/// @brief button with size limited by text, centered over GNEFrame with thick and raise frame 
-#define GNEDesignButtonDialog           (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_CENTER_X | JUSTIFY_NORMAL)
-
-
-#define GNEDesignButtonLittle           (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | JUSTIFY_NORMAL)
-
-#define GNEDesignCheckButton            (JUSTIFY_LEFT | ICON_BEFORE_TEXT  | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-
 #define GNEDesignRadioButton            (RADIOBUTTON_NORMAL)
-
-#define GNEDesignGroupBox               (GROUPBOX_TITLE_CENTER | FRAME_GROOVE | LAYOUT_FILL_X)
 
 #define GNEDesignDialogBox              (DECOR_CLOSE | DECOR_TITLE)
 
 #define GNEDesignList                   (FRAME_NORMAL | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT | LIST_NORMAL)
 
-#define GNEDesignLabel                  (JUSTIFY_LEFT | LAYOUT_FILL_X)
-
-#define GNEDesignLabelThick             (FRAME_THICK | JUSTIFY_LEFT | LAYOUT_FILL_X)
-
-#define GNEDesignLabelAttribute         (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
-
-#define GNEDesignHorizontalSeparator    (SEPARATOR_GROOVE | LAYOUT_FILL_X), 0, 0, 0, 2, 2, 2, 4, 4
-
-#define GNEDesignHorizontalFrame        (LAYOUT_FILL_X | LAYOUT_LEFT)
-
 #define GNEDesignDial                   (LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK | LAYOUT_FILL_Y)
-
-#define GNEDesignMenuCheck              (LAYOUT_LEFT | LAYOUT_FILL_X)
-
-#define GNEDesignMatrix                 (MATRIX_BY_COLUMNS)
-#define GNEDesignMatrix2                (MATRIX_BY_COLUMNS | LAYOUT_FILL_X)
-#define GNEDesignMatrix3                (MATRIX_BY_COLUMNS | LAYOUT_FILL_X | PACK_UNIFORM_WIDTH)
 
 #endif
 

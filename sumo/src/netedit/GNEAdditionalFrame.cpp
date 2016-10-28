@@ -532,12 +532,12 @@ GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMo
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite* parent, FXObject* tgt) :
-    FXMatrix(parent, 3, GNEDesignMatrix2),
+    FXMatrix(parent, 3, GNEDesignMatrix),
     myAttr(SUMO_ATTR_NOTHING) {
     // Create elements
     myLabel = new FXLabel(this, "name", 0, GNEDesignLabelAttribute, 0, 0, 60, 0);
     myTextField = new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr);
-    myMenuCheck = new FXMenuCheck(this, "", tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL, LAYOUT_FIX_WIDTH);
+    myMenuCheck = new FXMenuCheck(this, "", tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL, GNEDesignCheckButtonAttribute);
     // Set widht of menuCheck manually
     myMenuCheck->setWidth(20);
     // Hide elements
@@ -622,7 +622,7 @@ GNEAdditionalFrame::additionalParameter::getValue() const {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite* parent, FXObject* tgt) :
-    FXMatrix(parent, 2, GNEDesignMatrix2),
+    FXMatrix(parent, 2, GNEDesignMatrix),
     myAttr(SUMO_ATTR_NOTHING),
     numberOfVisibleTextfields(1),
     myMaxNumberOfValuesInParameterList(20) {
@@ -977,10 +977,10 @@ GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXOb
     myLengthTextField->setText("10");
 
     // Create FXMenuCheck for the force option
-    myCheckForcePosition = new FXMenuCheck(this, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION, GNEDesignMenuCheck);
+    myCheckForcePosition = new FXMenuCheck(this, "Force position", this, MID_GNE_MODE_ADDITIONAL_FORCEPOSITION, GNEDesignCheckButton);
 
     // Create FXMenuCheck for the force option
-    myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING, GNEDesignMenuCheck);
+    myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING, GNEDesignCheckButton);
 
     // Create help button
     helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
@@ -1185,7 +1185,7 @@ GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet
     FXGroupBox(parent, "Edges", GNEDesignGroupBox),
     myViewNet(viewNet) {
     // Create CheckBox for selected edges
-    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES);
+    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
 
     // Create search box
     myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
@@ -1343,10 +1343,10 @@ GNEAdditionalFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::lanesSelector::lanesSelector(FXComposite* parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "lanesSelector", GNEDesignGroupBox),
+    FXGroupBox(parent, "Lanes", GNEDesignGroupBox),
     myViewNet(viewNet) {
     // Create CheckBox for selected lanes
-    myUseSelectedLanes = new FXMenuCheck(this, "Use selected Lanes", this, MID_GNE_USESELECTEDLANES);
+    myUseSelectedLanes = new FXMenuCheck(this, "Use selected Lanes", this, MID_GNE_USESELECTEDLANES, GNEDesignCheckButton);
 
     // Create search box
     myLanesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHLANE, GNEDesignTextField);

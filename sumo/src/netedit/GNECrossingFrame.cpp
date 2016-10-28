@@ -110,7 +110,7 @@ GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* 
     invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButton);
 
     // Create CheckBox for selected edges
-    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignMenuCheck);
+    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
 
     // Create help button
     helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
