@@ -68,6 +68,9 @@ public:
         /// @brief destructor
         ~edgesSelector();
 
+        /// @brief get IDs of selected edges
+        std::vector<std::string> getEdgeIDSSelected() const;
+
         /// @brief get vector of GNEEdges selected
         std::vector<GNEEdge*> getGNEEdgesSelected() const;
 
@@ -143,6 +146,85 @@ public:
         GNEJunction *myCurrentJunction;
     };
 
+    // ===========================================================================
+    // class crossingParameters
+    // ===========================================================================
+
+    class crossingParameters : public FXGroupBox {
+        /// @brief FOX-declaration
+        FXDECLARE(GNECrossingFrame::crossingParameters)
+
+    public:
+        /// @brief constructor
+        crossingParameters(FXComposite* parent, FXObject* tgt, GNECrossingFrame::edgesSelector *es);
+
+        /// @brief destructor
+        ~crossingParameters();
+
+        /// @brief enable crossing parameters and set the default value of parameters
+        void enableCrossingParameters();
+
+        /// @brief disable crossing parameters and clear parameters
+        void disableCrossingParameters();
+
+        /// @brief get crossing id
+        std::string getCrossingID() const;
+
+        /// @brief get crossing edges
+        std::vector<GNEEdge*> getCrossingEdges() const;
+
+        /// @brief get crossing priority
+        bool getCrossingPriority() const;
+
+        /// @brief get crossing width
+        SUMOReal getCrossingWidth() const;
+
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief Called when help button is pressed
+        long onCmdHelp(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        crossingParameters() {}
+
+    private:
+        /// @brief pointer to edge selector
+        GNECrossingFrame::edgesSelector *myEdgeSelector;
+
+        /// @brief FXMatrix for place attributes
+        FXMatrix *attributesMatrix;
+        
+        /// @brief Label for Crossing ID
+        FXLabel *crossingIDLabel;
+
+        /// @brief TextField for Crossing ID
+        FXTextField *crossingID;
+
+        /// @brief Label for edges
+        FXLabel *crossingEdgesLabel;
+
+        /// @brief TextField for edges
+        FXTextField *crossingEdges;
+
+        /// @brief Label for Priority
+        FXLabel *crossingPriorityLabel;
+
+        /// @brief CheckBox for Priority
+        FXMenuCheck *crossingPriority;
+
+        /// @brief Label for width
+        FXLabel *crossingWidthLabel;
+
+        /// @brief TextField for width
+        FXTextField *crossingWidth;
+
+        /// @brief button for help
+        FXButton* helpAdditional;
+    };
+
+
     /**@brief Constructor
      * @brief parent FXFrame in which this GNEFrame is placed
      * @brief viewNet viewNet that uses this GNEFrame
@@ -185,6 +267,9 @@ protected:
 private:
     /// @brief edge selector
     GNECrossingFrame::edgesSelector *myEdgeSelector;
+
+    /// @brief crossing parameters
+    GNECrossingFrame::crossingParameters *myCrossingParameters;
 };
 
 

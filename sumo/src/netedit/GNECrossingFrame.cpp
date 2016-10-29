@@ -77,14 +77,18 @@ FXDEFMAP(GNECrossingFrame::edgesSelector) GNEEdgesMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_HELP,                    GNECrossingFrame::edgesSelector::onCmdHelp),
 };
 
+FXDEFMAP(GNECrossingFrame::crossingParameters) GNECrossingParametersMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_HELP, GNECrossingFrame::crossingParameters::onCmdHelp),
+};
+
 // Object implementation
-FXIMPLEMENT(GNECrossingFrame,                FXScrollWindow, GNECrossingMap, ARRAYNUMBER(GNECrossingMap))
-FXIMPLEMENT(GNECrossingFrame::edgesSelector, FXGroupBox,     GNEEdgesMap,    ARRAYNUMBER(GNEEdgesMap))
+FXIMPLEMENT(GNECrossingFrame,                     FXScrollWindow, GNECrossingMap,           ARRAYNUMBER(GNECrossingMap))
+FXIMPLEMENT(GNECrossingFrame::edgesSelector,      FXGroupBox,     GNEEdgesMap,              ARRAYNUMBER(GNEEdgesMap))
+FXIMPLEMENT(GNECrossingFrame::crossingParameters, FXGroupBox,     GNECrossingParametersMap, ARRAYNUMBER(GNECrossingParametersMap))
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
-
 
 // ---------------------------------------------------------------------------
 // GNECrossingFrame::edgesSelector - methods
@@ -121,6 +125,16 @@ GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* 
 
 
 GNECrossingFrame::edgesSelector::~edgesSelector() {}
+
+
+std::vector<std::string>
+GNECrossingFrame::edgesSelector::getEdgeIDSSelected() const {
+    std::vector<std::string> IDsSelected;
+
+    ///////////////////////////
+
+    return IDsSelected;
+}
 
 
 std::vector<GNEEdge*>
@@ -292,11 +306,206 @@ GNECrossingFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 }
 
 
+// ---------------------------------------------------------------------------
+// GNECrossingFrame::editorParameters- methods
+// ---------------------------------------------------------------------------
+
+GNECrossingFrame::crossingParameters::crossingParameters(FXComposite* parent, FXObject* tgt, GNECrossingFrame::edgesSelector *es) :
+    FXGroupBox(parent, "Crossing parameters", GNEDesignGroupBox),
+    myEdgeSelector(es) {
+    // Create a Matrix for parameters
+    attributesMatrix = new FXMatrix(this, 2, GNEDesignMatrix);
+    // create label for Crossing ID
+    crossingIDLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_ID).c_str(), 0, GNEDesignLabelAttribute);
+    // create string textField for Crossing ID
+    crossingID = new FXTextField(attributesMatrix, 10, tgt, 0, GNEDesignTextFieldAttributeStr);;
+    // create label for edges
+    crossingEdgesLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_EDGES).c_str(), 0, GNEDesignLabelAttribute);
+    // create string textField for edges
+    crossingEdges = new FXTextField(attributesMatrix, 10, tgt, 0, GNEDesignTextFieldAttributeStr);
+    // create label for Priority
+    crossingPriorityLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_PRIORITY).c_str(), 0, GNEDesignLabelAttribute);
+    // create CheckBox for Priority
+    crossingPriority = new FXMenuCheck(attributesMatrix, "", tgt, 0, GNEDesignCheckButtonAttribute);
+    // create label for width
+    crossingWidthLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_WIDTH).c_str(), 0, GNEDesignLabelAttribute);
+    // create extField for width
+    crossingWidth = new FXTextField(attributesMatrix, 10, tgt, 0, GNEDesignTextFieldAttributeReal);
+    // Create help button
+    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    // At start crossing parameters is disabled
+    disableCrossingParameters();
+}
+
+
+GNECrossingFrame::crossingParameters::~crossingParameters() {
+}
+
+
+void
+GNECrossingFrame::crossingParameters::enableCrossingParameters() {
+    // Enable all elements of the crossing frames
+    crossingIDLabel->enable();
+    crossingID->enable();
+    crossingEdgesLabel->enable();
+    crossingEdges->enable();
+    crossingPriorityLabel->enable();
+    crossingPriority->enable();
+    crossingWidthLabel->enable();
+    crossingWidth->enable();
+    helpAdditional->enable();
+    // set values of parameters
+    crossingID->setText("TEMPORALID");
+    crossingEdges->setText(joinToString(myEdgeSelector->getEdgeIDSSelected(), " ").c_str());
+    crossingPriority->setCheck(GNEAttributeCarrier::getDefaultValue<bool>(SUMO_TAG_CROSSING, SUMO_ATTR_PRIORITY));
+    crossingWidth->setText(GNEAttributeCarrier::getDefaultValue<std::string>(SUMO_TAG_CROSSING, SUMO_ATTR_WIDTH).c_str());    
+}
+
+
+void
+GNECrossingFrame::crossingParameters::disableCrossingParameters() {
+    // clear all values of parameters
+    crossingID->setText("");
+    crossingEdges->setText("");
+    crossingPriority->setCheck(false);
+    crossingWidth->setText("");    
+    // Disable all elements of the crossing frames
+    crossingIDLabel->disable();
+    crossingID->disable();
+    crossingEdgesLabel->disable();
+    crossingEdges->disable();
+    crossingPriorityLabel->disable();
+    crossingPriority->disable();
+    crossingWidthLabel->disable();
+    crossingWidth->disable();
+    helpAdditional->disable();
+}
+
+
+std::string 
+GNECrossingFrame::crossingParameters::getCrossingID() const {
+    return crossingID->getText().text();
+}
+
+
+std::vector<GNEEdge*> 
+GNECrossingFrame::crossingParameters::getCrossingEdges() const {
+/*******************************************/
+    return std::vector<GNEEdge*>();
+}
+
+
+bool 
+GNECrossingFrame::crossingParameters::getCrossingPriority() const {
+    if (crossingPriority->getCheck()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+SUMOReal 
+GNECrossingFrame::crossingParameters::getCrossingWidth() const {
+    return GNEAttributeCarrier::parse<SUMOReal>(crossingWidth->getText().text());
+}
+
+
+long
+GNECrossingFrame::crossingParameters::onCmdHelp(FXObject*, FXSelector, void*) {
+    // Create help dialog
+    FXDialogBox* helpDialog = new FXDialogBox(this, ("Parameters of " + toString(SUMO_TAG_CROSSING)).c_str(), GNEDesignDialogBox);
+    // Create FXTable
+    FXTable* myTable = new FXTable(helpDialog, this, MID_TABLE, TABLE_READONLY);
+    //myTable->setVisibleRows((FXint)(myIndexParameter + myIndexParameterList));
+    myTable->setVisibleColumns(3);
+    //myTable->setTableSize((FXint)(myIndexParameter + myIndexParameterList), 3);
+    myTable->setBackColor(FXRGB(255, 255, 255));
+    myTable->setColumnText(0, "Name");
+    myTable->setColumnText(1, "Value");
+    myTable->setColumnText(2, "Definition");
+    myTable->getRowHeader()->setWidth(0);
+    FXHeader* header = myTable->getColumnHeader();
+    header->setItemJustify(0, JUSTIFY_CENTER_X);
+    header->setItemSize(0, 120);
+    header->setItemJustify(1, JUSTIFY_CENTER_X);
+    header->setItemSize(1, 80);
+    int maxSizeColumnDefinitions = 0;
+    
+/*
+    // Iterate over vector of additional parameters
+    for (int i = 0; i < myIndexParameter; i++) {
+        SumoXMLAttr attr = myVectorOfAdditionalParameter.at(i)->getAttr();
+        // Set name of attribute
+        myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
+        // Set type
+        FXTableItem* type = new FXTableItem("");
+        if (GNEAttributeCarrier::isInt(attr)) {
+            type->setText("int");
+        } else if (GNEAttributeCarrier::isFloat(attr)) {
+            type->setText("float");
+        } else if (GNEAttributeCarrier::isBool(attr)) {
+            type->setText("bool");
+        } else if (GNEAttributeCarrier::isString(attr)) {
+            type->setText("string");
+        }
+        type->setJustify(FXTableItem::CENTER_X);
+        myTable->setItem(i, 1, type);
+        // Set definition
+        FXTableItem* definition = new FXTableItem(GNEAttributeCarrier::getDefinition(myAdditional, attr).c_str());
+        definition->setJustify(FXTableItem::LEFT);
+        myTable->setItem(i, 2, definition);
+        if ((int)GNEAttributeCarrier::getDefinition(myAdditional, attr).size() > maxSizeColumnDefinitions) {
+            maxSizeColumnDefinitions = int(GNEAttributeCarrier::getDefinition(myAdditional, attr).size());
+        }
+    }
+    // Iterate over vector of additional parameters list
+    for (int i = 0; i < myIndexParameterList; i++) {
+        SumoXMLAttr attr = myVectorOfAdditionalParameterList.at(i)->getAttr();
+        // Set name of attribute
+        myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
+        // Set type
+        FXTableItem* type = new FXTableItem("");
+        if (GNEAttributeCarrier::isInt(attr)) {
+            type->setText("list of int");
+        } else if (GNEAttributeCarrier::isFloat(attr)) {
+            type->setText("list of float");
+        } else if (GNEAttributeCarrier::isBool(attr)) {
+            type->setText("list of bool");
+        } else if (GNEAttributeCarrier::isString(attr)) {
+            type->setText("list of string");
+        }
+        type->setJustify(FXTableItem::CENTER_X);
+        myTable->setItem(i, 1, type);
+        // Set definition
+        FXTableItem* definition = new FXTableItem(GNEAttributeCarrier::getDefinition(myAdditional, attr).c_str());
+        definition->setJustify(FXTableItem::LEFT);
+        myTable->setItem(i, 2, definition);
+        if ((int)GNEAttributeCarrier::getDefinition(myAdditional, attr).size() > maxSizeColumnDefinitions) {
+            maxSizeColumnDefinitions = int(GNEAttributeCarrier::getDefinition(myAdditional, attr).size());
+        }
+    }
+*/
+
+    // Set size of column
+    header->setItemJustify(2, JUSTIFY_CENTER_X);
+    header->setItemSize(2, maxSizeColumnDefinitions * 6);
+    // Button Close
+    new FXButton(helpDialog, "OK\t\tclose", 0, helpDialog, FXDialogBox::ID_ACCEPT, GNEDesignButtonDialog, 0, 0, 0, 0, 4, 4, 3, 3);
+    helpDialog->create();
+    helpDialog->show();
+    return 1;
+}
+
+// ---------------------------------------------------------------------------
+// GNECrossingFrame - methods
+// ---------------------------------------------------------------------------
+
 GNECrossingFrame::GNECrossingFrame(FXComposite* parent, GNEViewNet* viewNet):
     GNEFrame(parent, viewNet, "Crossings") {
-
     // Create edge Selector
     myEdgeSelector = new edgesSelector(myContentFrame, myViewNet);
+    // Create crossingParameters
+    myCrossingParameters = new crossingParameters(myContentFrame, myViewNet, myEdgeSelector);
 }
 
 

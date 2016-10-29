@@ -237,9 +237,9 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 break;
             case SUMO_TAG_CROSSING:
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PRIORITY, ""));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_EDGES, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PRIORITY, "false"));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, "3")); 
                 break;
             case SUMO_TAG_CONNECTION:
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_FROM, ""));
@@ -359,6 +359,7 @@ GNEAttributeCarrier::allowedTags() {
         myAllowedTags.push_back(SUMO_TAG_EDGE);
         myAllowedTags.push_back(SUMO_TAG_LANE);
         myAllowedTags.push_back(SUMO_TAG_CONNECTION);
+        myAllowedTags.push_back(SUMO_TAG_CROSSING);
         myAllowedTags.push_back(SUMO_TAG_BUS_STOP);
         myAllowedTags.push_back(SUMO_TAG_CONTAINER_STOP);
         myAllowedTags.push_back(SUMO_TAG_CHARGING_STATION);
@@ -385,6 +386,7 @@ GNEAttributeCarrier::allowedNetElementTags() {
         myAllowedNetElementTags.push_back(SUMO_TAG_EDGE);
         myAllowedNetElementTags.push_back(SUMO_TAG_LANE);
         myAllowedNetElementTags.push_back(SUMO_TAG_CONNECTION);
+        myAllowedNetElementTags.push_back(SUMO_TAG_CROSSING);
     }
     return myAllowedNetElementTags;
 }
