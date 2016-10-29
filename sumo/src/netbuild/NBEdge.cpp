@@ -539,9 +539,12 @@ PositionVector
 NBEdge::cutAtIntersection(const PositionVector& old) const {
     PositionVector shape = old;
     shape = startShapeAt(shape, myFrom, myFromBorder);
-    if (shape.size() >= 2) {
-        shape = startShapeAt(shape.reverse(), myTo, myToBorder).reverse();
+    if (shape.size() < 2) {
+        // only keep the last snippet
+        const SUMOReal oldLength = old.length();
+        shape = old.getSubpart(oldLength - 2 * POSITION_EPS, oldLength);
     }
+    shape = startShapeAt(shape.reverse(), myTo, myToBorder).reverse();
     // sanity checks
     if (shape.length() < POSITION_EPS) {
         if (old.length() < 2 * POSITION_EPS) {
@@ -557,8 +560,32 @@ NBEdge::cutAtIntersection(const PositionVector& old) const {
         // @note If the node shapes are overlapping we may get a shape which goes in the wrong direction
         // in this case the result shape should shortened
         if (DEG2RAD(135) < fabs(GeomHelper::angleDiff(shape.beginEndAngle(), old.beginEndAngle()))) {
-            shape = shape.reverse();
-            shape = shape.getSubpart(0, 2 * POSITION_EPS); // *2 because otherwhise shape has only a single point
+            // eliminate intermediate points
+            PositionVector tmp;
+            tmp.push_back(shape[0]);
+            tmp.push_back(shape[-1]);
+            shape = tmp;
+            if (tmp.length() < POSITION_EPS) {
+                // fall back to original shape
+                if (old.length() < 2 * POSITION_EPS) {
+                    shape = old;
+                } else {
+                    const SUMOReal midpoint = old.length() / 2;
+                    // EPS*2 because otherwhise shape has only a single point
+                    shape = old.getSubpart(midpoint - POSITION_EPS, midpoint + POSITION_EPS);
+                    assert(shape.size() >= 2);
+                    assert(shape.length() > 0);
+                }
+            } else {
+                const SUMOReal midpoint = shape.length() / 2;
+                // cut to size and reverse
+                shape = shape.getSubpart(midpoint - POSITION_EPS, midpoint + POSITION_EPS);
+                if (shape.length() < POSITION_EPS) {
+                    assert(false);
+                    // the shape has a sharp turn near the midpoint
+                }
+                shape = shape.reverse();
+            }
         }
     }
     return shape;
@@ -1075,8 +1102,8 @@ NBEdge::removeFromConnections(NBEdge::Connection connectionToRemove) {
             return true;
         }
     }
-    //throw exception if remove wasn't found
-    throw ProcessError("Connection from " + getID() + "_" + toString(connectionToRemove.fromLane) + " to " + connectionToRemove.toEdge->getID() + "_" + toString(connectionToRemove.toLane) + " not found");
+    assert(false);
+    return false;
 }
 
 

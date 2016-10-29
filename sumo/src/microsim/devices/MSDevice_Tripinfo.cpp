@@ -81,10 +81,12 @@ MSDevice_Tripinfo::MSDevice_Tripinfo(SUMOVehicle& holder, const std::string& id)
     MSDevice(holder, id),
     myDepartLane(""),
     myDepartSpeed(-1),
-    myWaitingSteps(0),
+    myDepartPosLat(0),
+    myWaitingTime(0),
     myArrivalTime(NOT_ARRIVED),
     myArrivalLane(""),
     myArrivalPos(-1),
+    myArrivalPosLat(0),
     myArrivalSpeed(-1),
     myTimeLoss(0) {
 }
@@ -103,7 +105,7 @@ MSDevice_Tripinfo::notifyMove(SUMOVehicle& veh, SUMOReal /*oldPos*/,
         return true;
     }
     if (newSpeed <= SUMO_const_haltingSpeed) {
-        myWaitingSteps++;
+        myWaitingTime += DELTA_T;
     }
     // @note we are including the speed factor here, thus myTimeLoss can never be
     // negative. The value is that of a driver who compares his travel time when
@@ -132,7 +134,7 @@ MSDevice_Tripinfo::notifyMoveInternal(const SUMOVehicle& veh,
     if (vmax > 0) {
         myTimeLoss += TIME2STEPS(timeOnLane * (vmax - meanSpeedVehicleOnLane) / vmax);
     }
-    myWaitingSteps += veh.getWaitingTime() / DELTA_T;
+    myWaitingTime += veh.getWaitingTime();
 }
 
 bool
@@ -140,6 +142,7 @@ MSDevice_Tripinfo::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification re
     if (reason == MSMoveReminder::NOTIFICATION_DEPARTED) {
         if (!MSGlobals::gUseMesoSim) {
             myDepartLane = static_cast<MSVehicle&>(veh).getLane()->getID();
+            myDepartPosLat = static_cast<MSVehicle&>(veh).getLateralPositionOnLane();
         }
         myDepartSpeed = veh.getSpeed();
     }
@@ -154,6 +157,7 @@ MSDevice_Tripinfo::notifyLeave(SUMOVehicle& veh, SUMOReal /*lastPos*/,
         myArrivalTime = MSNet::getInstance()->getCurrentTimeStep();
         if (!MSGlobals::gUseMesoSim) {
             myArrivalLane = static_cast<MSVehicle&>(veh).getLane()->getID();
+            myArrivalPosLat = static_cast<MSVehicle&>(veh).getLateralPositionOnLane();
         }
         // @note vehicle may have moved past its arrivalPos during the last step
         // due to non-zero arrivalspeed but we consider it as arrived at the desired position
@@ -212,15 +216,21 @@ MSDevice_Tripinfo::generateOutput() const {
     os.writeAttr("depart", time2string(myHolder.getDeparture()));
     os.writeAttr("departLane", myDepartLane);
     os.writeAttr("departPos", myHolder.getDepartPos());
+    if (MSGlobals::gLateralResolution > 0) {
+        os.writeAttr("departPosLat", myDepartPosLat);
+    }
     os.writeAttr("departSpeed", myDepartSpeed);
     os.writeAttr("departDelay", time2string(myHolder.getDepartDelay()));
     os.writeAttr("arrival", time2string(myArrivalTime));
     os.writeAttr("arrivalLane", myArrivalLane);
     os.writeAttr("arrivalPos", myArrivalPos);
+    if (MSGlobals::gLateralResolution > 0) {
+        os.writeAttr("arrivalPosLat", myArrivalPosLat);
+    }
     os.writeAttr("arrivalSpeed", myArrivalSpeed);
     os.writeAttr("duration", time2string(duration));
     os.writeAttr("routeLength", routeLength);
-    os.writeAttr("waitSteps", myWaitingSteps);
+    os.writeAttr("waitSteps", myWaitingTime / DELTA_T);
     os.writeAttr("timeLoss", time2string(myTimeLoss));
     os.writeAttr("rerouteNo", myHolder.getNumberReroutes());
     const std::vector<MSDevice*>& devices = myHolder.getDevices();
@@ -265,7 +275,7 @@ MSDevice_Tripinfo::updateStatistics() const {
     myVehicleCount++;
     myTotalRouteLength += routeLength;
     myTotalDuration += duration;
-    myTotalWaitingTime += (SUMOTime)(myWaitingSteps * DELTA_T);
+    myTotalWaitingTime += myWaitingTime;
     myTotalTimeLoss += myTimeLoss;
     myTotalDepartDelay += myHolder.getDepartDelay();
 }

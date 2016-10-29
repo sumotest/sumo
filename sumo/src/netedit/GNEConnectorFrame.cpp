@@ -177,74 +177,45 @@ GNEConnectorFrame::handleLaneClick(GNELane* lane, bool mayDefinitelyPass, bool a
         myCurrentLane = lane;
         myCurrentLane->setSpecialColor(&sourceColor);
         initTargets();
-        buildIinternalLanes(lane->getParentEdge().getNBEdge()->getToNode());
         myNumChanges = 0;
         myViewNet->getUndoList()->p_begin("modify connections");
     } else if (myPotentialTargets.count(lane) || allowConflict) {
-        // Save current 
         const int fromIndex = myCurrentLane->getIndex();
-        // Get source and destiny GNEEdges
         GNEEdge& srcEdge = myCurrentLane->getParentEdge();
         GNEEdge& destEdge = lane->getParentEdge();
         const std::string& destEdgeID = destEdge.getMicrosimID();
-        // Obtain GNEConnections from lane source
-        std::vector<GNEConnection*> sourceConnections = myCurrentLane->getGNEOutcomingConnections();
-        // Declare 'changed' flag
+        std::vector<NBEdge::Connection> connections = srcEdge.getNBEdge()->getConnectionsFromLane(fromIndex);
         bool changed = false;
-        // Declare NBConnection for save a possible deleted connection
-        NBConnection deletedConnection = NBConnection::InvalidConnection;
-        // get Lane status
-        LaneStatus status = getLaneStatus(sourceConnections, lane);
-        // Set status unconnected if status is conflicted and conflicted are allow
+        LaneStatus status = getLaneStatus(connections, lane);
         if (status == CONFLICTED && allowConflict) {
             status = UNCONNECTED;
         }
-        // switch connection status
         switch (status) {
             case UNCONNECTED:
                 if (toggle) {
                     // create new connection
-                    GNEConnection *newCon = new GNEConnection(srcEdge.getLanes().at(fromIndex), lane);
-                    // Add new connection using GNEChange_Connection
-                    myViewNet->getUndoList()->add(new GNEChange_Connection(newCon, true), true);
-                    // Change special color of lane
+                    NBEdge::Connection newCon(fromIndex, destEdge.getNBEdge(), lane->getIndex());
+                    myViewNet->getUndoList()->add(new GNEChange_Connection(&srcEdge, newCon, true), true);
                     lane->setSpecialColor(mayDefinitelyPass ? &targetPassColor : &targetColor);
-                    // set 'changed' flag to true
-                    changed = true;
+                    GNEJunction* affected = srcEdge.getGNEJunctionDest();
+                    affected->invalidateTLS(myViewNet->getUndoList());
                 }
-                // Break switch
                 break;
             case CONNECTED:
             case CONNECTED_PASS: {
                 // remove connection
-                GNEConnection* connectionToRemove = srcEdge.retrieveConnection(fromIndex, destEdge.getNBEdge(), lane->getIndex());
-                // Remove connection using GNEChange_Connection
-                myViewNet->getUndoList()->add(new GNEChange_Connection(connectionToRemove, false), true);
-                // Change lane special color
+                GNEConnection* con = srcEdge.retrieveConnection(fromIndex, destEdge.getNBEdge(), lane->getIndex());
+                myViewNet->getNet()->deleteConnection(con, myViewNet->getUndoList());
                 lane->setSpecialColor(&potentialTargetColor);
-                // set 'changed' flag to true
                 changed = true;
-                // Save deleted connection
-                deletedConnection = NBConnection(srcEdge.getNBEdge(), fromIndex,
-                                                 destEdge.getNBEdge(), lane->getIndex(),
-                                                 (int)getTLLLinkNumber(sourceConnections, lane));
-                // Break switch
                 break;
             }
             case CONFLICTED:
                 myViewNet->setStatusBarText("Another lane from the same edge already connects to that lane");
                 break;
         }
-        // if connections were changed
         if (changed) {
-            // Update number of changes
             myNumChanges += 1;
-            // get pointer to affected junction
-            GNEJunction* affected = myViewNet->getNet()->retrieveJunction(srcEdge.getGNEJunctionDest()->getMicrosimID());
-            // Invalidate TLS
-            affected->invalidateTLS(myViewNet->getUndoList(), deletedConnection);
-            // build internal lanes
-            buildIinternalLanes(myCurrentLane->getParentEdge().getNBEdge()->getToNode());
         }
     } else {
         myViewNet->setStatusBarText("Invalid target for connection");
@@ -508,7 +479,6 @@ GNEConnectorFrame::cleanup() {
     myNumChanges = 0;
     myCurrentLane->setSpecialColor(0);
     myCurrentLane = 0;
-    buildIinternalLanes(0); // only clears
     updateDescription();
 }
 
@@ -534,86 +504,6 @@ GNEConnectorFrame::getLaneStatus(const std::vector<NBEdge::Connection>& connecti
     } else {
         return UNCONNECTED;
     }
-}
-
-
-GNEConnectorFrame::LaneStatus
-GNEConnectorFrame::getLaneStatus(const std::vector<GNEConnection*>& connections, GNELane* targetLane) {
-    // Declare NBEdgeConnections
-    std::vector<NBEdge::Connection> NBEdgeConnections;
-    // Iterate over GNEConnections vector
-    for(std::vector<GNEConnection*>::const_iterator i = connections.begin(); i != connections.end(); i++) {
-        NBEdgeConnections.push_back((*i)->getNBEdgeConnection());
-    }
-    // call getLaneStatus
-    return getLaneStatus(NBEdgeConnections, targetLane);
-}
-
-
-int
-GNEConnectorFrame::getTLLLinkNumber(const std::vector<NBEdge::Connection>& connections, GNELane* targetLane) {
-    const int fromIndex = myCurrentLane->getIndex();
-    NBEdge* destEdge = targetLane->getParentEdge().getNBEdge();
-    const int toIndex = targetLane->getIndex();
-    std::vector<NBEdge::Connection>::const_iterator it = find_if(
-                connections.begin(), connections.end(),
-                NBEdge::connections_finder(fromIndex, destEdge, toIndex));
-    assert(it != connections.end());
-    return it->tlLinkNo;
-}
-
-
-int
-GNEConnectorFrame::getTLLLinkNumber(const std::vector<GNEConnection*>& connections, GNELane* targetLane) {
-    // Declare NBEdgeConnections
-    std::vector<NBEdge::Connection> NBEdgeConnections;
-    // Iterate over GNEConnections vector
-    for(std::vector<GNEConnection*>::const_iterator i = connections.begin(); i != connections.end(); i++) {
-        NBEdgeConnections.push_back((*i)->getNBEdgeConnection());
-    }
-    // call getLaneStatus
-    return getTLLLinkNumber(NBEdgeConnections, targetLane);
-}
-
-
-void
-GNEConnectorFrame::buildIinternalLanes(NBNode* node) {
-    /*
-    // clean up previous objects
-    SUMORTree& rtree = myViewNet->getNet()->getVisualisationSpeedUp();
-    for (std::map<int, GNEInternalLane*>::iterator it = myInternalLanes.begin(); it != myInternalLanes.end(); it++) {
-        rtree.removeAdditionalGLObject(it->second);
-        delete it->second;
-    }
-    myInternalLanes.clear();
-    if (node != 0) {
-        const int NUM_POINTS = 5;
-        SUMORTree& rtree = myViewNet->getNet()->getVisualisationSpeedUp();
-        std::string innerID = ":" + node->getID(); // see NWWriter_SUMO::writeInternalEdges
-
-        int index = 0;
-        const EdgeVector& incoming = node->getIncomingEdges();
-        for (EdgeVector::const_iterator it_edg = incoming.begin(); it_edg != incoming.end(); it_edg++) {
-            // Get connections from edge
-            const std::vector<NBEdge::Connection>& conns = (*it_edg)->getConnections();
-            // Iterate over connections
-            for (std::vector<NBEdge::Connection>::const_iterator it_con = conns.begin(); it_con != conns.end(); ++it_con) {
-                // Calculate shape of internal lane
-                const PositionVector shape = node->computeInternalLaneShape(*it_edg, *it_con, NUM_POINTS);
-                // Get link state
-                LinkState state = node->getLinkState(*it_edg, it_con->toEdge, it_con->fromLane, it_con->toLane, it_con->mayDefinitelyPass, it_con->tlID);
-                // Create internal lane
-                GNEInternalLane* ilane = new GNEInternalLane(0, innerID + '_' + toString(index) , shape, -1, state);
-                // Add internal lane to Visualisation SpeedUp
-                rtree.addAdditionalGLObject(ilane);
-                // Save pinter to internal lane into myInternalLanes
-                myInternalLanes[index] = ilane;
-                // Update index
-                index++;
-            }
-        }
-    }
-    */
 }
 
 
