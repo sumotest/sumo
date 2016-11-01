@@ -452,10 +452,10 @@ public:
         FXButton* helpEdges;
 
         /// @brief button for clear selection
-        FXButton* clearEdgesSelection;
+        FXButton* myClearEdgesSelection;
 
         /// @brief button for invert selection
-        FXButton* invertEdgesSelection;
+        FXButton* myInvertEdgesSelection;
 
         /// @brief viewNet associated to GNEAdditionalFrame
         GNEViewNet* myViewNet;

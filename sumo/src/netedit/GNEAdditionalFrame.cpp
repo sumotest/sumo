@@ -1197,10 +1197,10 @@ GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet
     FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
-    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
+    myClearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
 
     // Create button for invert selection
-    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION), GNEDesignButtonLittle;
+    myInvertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION), GNEDesignButtonLittle;
 
     // Create help button
     helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
@@ -1276,14 +1276,14 @@ GNEAdditionalFrame::edgesSelector::onCmdUseSelectedEdges(FXObject*, FXSelector, 
     if (myUseSelectedEdges->getCheck()) {
         myEdgesSearch->hide();
         myList->hide();
-        clearEdgesSelection->hide();
-        invertEdgesSelection->hide();
+        myClearEdgesSelection->hide();
+        myInvertEdgesSelection->hide();
         helpEdges->hide();
     } else {
         myEdgesSearch->show();
         myList->show();
-        clearEdgesSelection->show();
-        invertEdgesSelection->show();
+        myClearEdgesSelection->show();
+        myInvertEdgesSelection->show();
         helpEdges->show();
     }
     // Recalc Frame
