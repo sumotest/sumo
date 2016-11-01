@@ -65,20 +65,21 @@
 // ===========================================================================
 
 FXDEFMAP(GNECrossingFrame) GNECrossingMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL_ITEM, GNECrossingFrame::onCmdSelectCrossing),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_CREATE_CROSSING, GNECrossingFrame::onCmdCreateCrossing),
 };
 
 FXDEFMAP(GNECrossingFrame::edgesSelector) GNEEdgesMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_USESELECTEDEDGES,    GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_CLEAREDGESELECTION,  GNECrossingFrame::edgesSelector::onCmdClearSelection),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_INVERTEDGESELECTION, GNECrossingFrame::edgesSelector::onCmdInvertSelection),
-    FXMAPFUNC(SEL_CHANGED, MID_GNE_SEARCHEDGE,          GNECrossingFrame::edgesSelector::onCmdTypeInSearchBox),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTEDGE,          GNECrossingFrame::edgesSelector::onCmdSelectEdge),
-    FXMAPFUNC(SEL_COMMAND, MID_HELP,                    GNECrossingFrame::edgesSelector::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND,           MID_GNE_USESELECTEDEDGES,    GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges),
+    FXMAPFUNC(SEL_COMMAND,           MID_GNE_CLEAREDGESELECTION,  GNECrossingFrame::edgesSelector::onCmdClearSelection),
+    FXMAPFUNC(SEL_COMMAND,           MID_GNE_INVERTEDGESELECTION, GNECrossingFrame::edgesSelector::onCmdInvertSelection),
+    FXMAPFUNC(SEL_CHANGED,           MID_GNE_SEARCHEDGE,          GNECrossingFrame::edgesSelector::onCmdTypeInSearchBox),
+    FXMAPFUNC(SEL_LEFTBUTTONRELEASE, MID_GNE_SELECTEDGE,          GNECrossingFrame::edgesSelector::onCmdSelectEdge),
+    FXMAPFUNC(SEL_COMMAND,           MID_HELP,                    GNECrossingFrame::edgesSelector::onCmdHelp),
 };
 
 FXDEFMAP(GNECrossingFrame::crossingParameters) GNECrossingParametersMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_HELP, GNECrossingFrame::crossingParameters::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_ATTRIBUTE,   GNECrossingFrame::crossingParameters::onCmdSetAttribute),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,                GNECrossingFrame::crossingParameters::onCmdHelp),
 };
 
 // Object implementation
@@ -94,10 +95,13 @@ FXIMPLEMENT(GNECrossingFrame::crossingParameters, FXGroupBox,     GNECrossingPar
 // GNECrossingFrame::edgesSelector - methods
 // ---------------------------------------------------------------------------
 
-GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* viewNet) :
+GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNECrossingFrame* crossingFrameParent) :
     FXGroupBox(parent, "Edges", GNEDesignGroupBox),
     myCurrentJunction(0),
-    myViewNet(viewNet) {
+    myCrossingFrameParent(crossingFrameParent) {
+    // Create CheckBox for selected edges
+    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
+
     // Create search box
     myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
 
@@ -108,19 +112,13 @@ GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* 
     FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
-    clearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButton);
+    myClearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButton);
 
     // Create button for invert selection
-    invertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButton);
-
-    // Create CheckBox for selected edges
-    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
+    myInvertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButton);
 
     // Create help button
     helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
-
-    // Hide List
-    disableEdgeSelector();
 }
 
 
@@ -130,9 +128,14 @@ GNECrossingFrame::edgesSelector::~edgesSelector() {}
 std::vector<std::string>
 GNECrossingFrame::edgesSelector::getEdgeIDSSelected() const {
     std::vector<std::string> IDsSelected;
-
-    ///////////////////////////
-
+    // iterate over list
+    for(int i = 0; i < myList->getNumItems(); i++) {
+        // if item of list is selected
+        if(myList->getItem(i)->isSelected()) {
+            // save id of edge
+            IDsSelected.push_back(myList->getItem(i)->getText().text());
+        }
+    }
     return IDsSelected;
 }
 
@@ -140,9 +143,14 @@ GNECrossingFrame::edgesSelector::getEdgeIDSSelected() const {
 std::vector<GNEEdge*>
 GNECrossingFrame::edgesSelector::getGNEEdgesSelected() const {
     std::vector<GNEEdge*> GNEEdgesSelected;
-
-    ///////////////////////////
-
+    // iterate over list
+    for(int i = 0; i < myList->getNumItems(); i++) {
+        // if item of list is selected
+        if(myList->getItem(i)->isSelected()) {
+            // search GNEEdge and save it 
+            GNEEdgesSelected.push_back(myCrossingFrameParent->getViewNet()->getNet()->retrieveEdge(myList->getItem(i)->getText().text(), true));
+        }
+    }
     return GNEEdgesSelected;
 }
 
@@ -184,6 +192,23 @@ GNECrossingFrame::edgesSelector::clearList() {
 }
 
 
+bool 
+GNECrossingFrame::edgesSelector::markEdge(const std::string &edgeID) {
+    // iterate over list
+    for(int i = 0; i < myList->getNumItems(); i++) {
+        // if item of list is the same as the edge ID, mark it
+        if(myList->getItem(i)->getText().text() == edgeID) {
+            myList->selectItem(i);
+            // Enable crossing parameters
+            myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+            myCrossingFrameParent->setCreateCrossingButton(true);
+            return true;
+        }
+    }
+    return false;
+}
+
+
 void 
 GNECrossingFrame::edgesSelector::enableEdgeSelector(GNEJunction *currentJunction) {
     // Set current junction
@@ -193,8 +218,8 @@ GNECrossingFrame::edgesSelector::enableEdgeSelector(GNEJunction *currentJunction
     myList->enable();
     myEdgesSearch->enable();
     helpEdges->enable();
-    clearEdgesSelection->enable();
-    invertEdgesSelection->enable();
+    myClearEdgesSelection->enable();
+    myInvertEdgesSelection->enable();
     // show edges in list
     filterListOfEdges();
 }
@@ -211,8 +236,10 @@ GNECrossingFrame::edgesSelector::disableEdgeSelector() {
     myList->disable();
     myEdgesSearch->disable();
     helpEdges->disable();
-    clearEdgesSelection->disable();
-    invertEdgesSelection->disable();
+    myClearEdgesSelection->disable();
+    myInvertEdgesSelection->disable();
+    // Disable crossing parameters
+    myCrossingFrameParent->getCrossingParameters()->disableCrossingParameters();
 }
 
 
@@ -220,7 +247,7 @@ GNECrossingFrame::edgesSelector::disableEdgeSelector() {
 void
 GNECrossingFrame::edgesSelector::updateUseSelectedEdges() {
     // Enable or disable use selected edges
-    if (myViewNet->getNet()->retrieveEdges(true).size() > 0) {
+    if (myCrossingFrameParent->getViewNet()->getNet()->retrieveEdges(true).size() > 0) {
         myUseSelectedEdges->enable();
     } else {
         myUseSelectedEdges->disable();
@@ -243,14 +270,14 @@ GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges(FXObject*, FXSelector, vo
     if (myUseSelectedEdges->getCheck()) {
         myEdgesSearch->hide();
         myList->hide();
-        clearEdgesSelection->hide();
-        invertEdgesSelection->hide();
+        myClearEdgesSelection->hide();
+        myInvertEdgesSelection->hide();
         helpEdges->hide();
     } else {
         myEdgesSearch->show();
         myList->show();
-        clearEdgesSelection->show();
-        invertEdgesSelection->show();
+        myClearEdgesSelection->show();
+        myInvertEdgesSelection->show();
         helpEdges->show();
     }
     // Recalc Frame
@@ -271,29 +298,59 @@ GNECrossingFrame::edgesSelector::onCmdTypeInSearchBox(FXObject*, FXSelector, voi
 
 long
 GNECrossingFrame::edgesSelector::onCmdSelectEdge(FXObject*, FXSelector, void*) {
+    // iterate over list items
+    for (int i = 0; i < myList->getNumItems(); i++) {
+        if (myList->getItem(i)->isSelected()) {
+            // Enable crossing parameters
+            myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+            myCrossingFrameParent->setCreateCrossingButton(true);
+            return 1;
+        }
+    }
+    // disable crossing parameters and create crossing
+    myCrossingFrameParent->getCrossingParameters()->disableCrossingParameters();
+    myCrossingFrameParent->setCreateCrossingButton(false);
     return 1;
 }
 
 
 long
 GNECrossingFrame::edgesSelector::onCmdClearSelection(FXObject*, FXSelector, void*) {
+    // iterate over list items
     for (int i = 0; i < myList->getNumItems(); i++) {
         if (myList->getItem(i)->isSelected()) {
+            // Desselect items
             myList->deselectItem(i);
         }
     }
+    // disable crossing parameters and create crossing
+    myCrossingFrameParent->getCrossingParameters()->disableCrossingParameters();
+    myCrossingFrameParent->setCreateCrossingButton(false);
     return 1;
 }
 
 
 long
 GNECrossingFrame::edgesSelector::onCmdInvertSelection(FXObject*, FXSelector, void*) {
+    // by default crossing parameters will be disabled
+    bool disableCrossingParameter = true;
+    // Iterate over list items
     for (int i = 0; i < myList->getNumItems(); i++) {
         if (myList->getItem(i)->isSelected()) {
             myList->deselectItem(i);
         } else {
             myList->selectItem(i);
+            // At least there is a selected item
+            disableCrossingParameter = false;
         }
+    }
+    // Check if crossing parameters has to be enabled
+    if(disableCrossingParameter) {
+        myCrossingFrameParent->getCrossingParameters()->disableCrossingParameters();
+        myCrossingFrameParent->setCreateCrossingButton(false);
+    } else {
+        myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+        myCrossingFrameParent->setCreateCrossingButton(true);
     }
     return 1;
 }
@@ -310,27 +367,23 @@ GNECrossingFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 // GNECrossingFrame::editorParameters- methods
 // ---------------------------------------------------------------------------
 
-GNECrossingFrame::crossingParameters::crossingParameters(FXComposite* parent, FXObject* tgt, GNECrossingFrame::edgesSelector *es) :
+GNECrossingFrame::crossingParameters::crossingParameters(FXComposite* parent, GNECrossingFrame::edgesSelector *es) :
     FXGroupBox(parent, "Crossing parameters", GNEDesignGroupBox),
     myEdgeSelector(es) {
     // Create a Matrix for parameters
     attributesMatrix = new FXMatrix(this, 2, GNEDesignMatrix);
-    // create label for Crossing ID
-    crossingIDLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_ID).c_str(), 0, GNEDesignLabelAttribute);
-    // create string textField for Crossing ID
-    crossingID = new FXTextField(attributesMatrix, 10, tgt, 0, GNEDesignTextFieldAttributeStr);;
     // create label for edges
     crossingEdgesLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_EDGES).c_str(), 0, GNEDesignLabelAttribute);
     // create string textField for edges
-    crossingEdges = new FXTextField(attributesMatrix, 10, tgt, 0, GNEDesignTextFieldAttributeStr);
+    crossingEdges = new FXTextField(attributesMatrix, 10, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
     // create label for Priority
     crossingPriorityLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_PRIORITY).c_str(), 0, GNEDesignLabelAttribute);
     // create CheckBox for Priority
-    crossingPriority = new FXMenuCheck(attributesMatrix, "", tgt, 0, GNEDesignCheckButtonAttribute);
+    crossingPriority = new FXMenuCheck(attributesMatrix, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButtonAttribute);
     // create label for width
     crossingWidthLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_WIDTH).c_str(), 0, GNEDesignLabelAttribute);
     // create extField for width
-    crossingWidth = new FXTextField(attributesMatrix, 10, tgt, 0, GNEDesignTextFieldAttributeReal);
+    crossingWidth = new FXTextField(attributesMatrix, 10, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
     // Create help button
     helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
     // At start crossing parameters is disabled
@@ -345,8 +398,6 @@ GNECrossingFrame::crossingParameters::~crossingParameters() {
 void
 GNECrossingFrame::crossingParameters::enableCrossingParameters() {
     // Enable all elements of the crossing frames
-    crossingIDLabel->enable();
-    crossingID->enable();
     crossingEdgesLabel->enable();
     crossingEdges->enable();
     crossingPriorityLabel->enable();
@@ -355,7 +406,6 @@ GNECrossingFrame::crossingParameters::enableCrossingParameters() {
     crossingWidth->enable();
     helpAdditional->enable();
     // set values of parameters
-    crossingID->setText("TEMPORALID");
     crossingEdges->setText(joinToString(myEdgeSelector->getEdgeIDSSelected(), " ").c_str());
     crossingPriority->setCheck(GNEAttributeCarrier::getDefaultValue<bool>(SUMO_TAG_CROSSING, SUMO_ATTR_PRIORITY));
     crossingWidth->setText(GNEAttributeCarrier::getDefaultValue<std::string>(SUMO_TAG_CROSSING, SUMO_ATTR_WIDTH).c_str());    
@@ -365,13 +415,10 @@ GNECrossingFrame::crossingParameters::enableCrossingParameters() {
 void
 GNECrossingFrame::crossingParameters::disableCrossingParameters() {
     // clear all values of parameters
-    crossingID->setText("");
     crossingEdges->setText("");
     crossingPriority->setCheck(false);
     crossingWidth->setText("");    
     // Disable all elements of the crossing frames
-    crossingIDLabel->disable();
-    crossingID->disable();
     crossingEdgesLabel->disable();
     crossingEdges->disable();
     crossingPriorityLabel->disable();
@@ -382,16 +429,15 @@ GNECrossingFrame::crossingParameters::disableCrossingParameters() {
 }
 
 
-std::string 
-GNECrossingFrame::crossingParameters::getCrossingID() const {
-    return crossingID->getText().text();
-}
-
-
-std::vector<GNEEdge*> 
+std::vector<NBEdge*> 
 GNECrossingFrame::crossingParameters::getCrossingEdges() const {
-/*******************************************/
-    return std::vector<GNEEdge*>();
+    std::vector<NBEdge*> NBEdgeVector;
+    std::vector<GNEEdge*> GNEEdgesVector = myEdgeSelector->getGNEEdgesSelected();
+    // Iterate over GNEEdges
+    for(std::vector<GNEEdge*>::iterator i = GNEEdgesVector.begin(); i != GNEEdgesVector.end(); i++) {
+        NBEdgeVector.push_back((*i)->getNBEdge());
+    }
+    return NBEdgeVector;
 }
 
 
@@ -407,6 +453,13 @@ GNECrossingFrame::crossingParameters::getCrossingPriority() const {
 SUMOReal 
 GNECrossingFrame::crossingParameters::getCrossingWidth() const {
     return GNEAttributeCarrier::parse<SUMOReal>(crossingWidth->getText().text());
+}
+
+
+long
+GNECrossingFrame::crossingParameters::onCmdSetAttribute(FXObject*, FXSelector, void*) {
+    /***************************/
+    return 0;
 }
 
 
@@ -500,12 +553,25 @@ GNECrossingFrame::crossingParameters::onCmdHelp(FXObject*, FXSelector, void*) {
 // GNECrossingFrame - methods
 // ---------------------------------------------------------------------------
 
-GNECrossingFrame::GNECrossingFrame(FXComposite* parent, GNEViewNet* viewNet):
+GNECrossingFrame::GNECrossingFrame(FXComposite* parent, GNEViewNet* viewNet) :
     GNEFrame(parent, viewNet, "Crossings") {
+    // Create Groupbox for laelLabel
+    myGroupBoxLabel = new FXGroupBox(myContentFrame, "Junction", GNEDesignGroupBox);
+    myCurrentJunctionLabel = new FXLabel(myGroupBoxLabel, "No junction selected", 0, GNEDesignLabel);
+
     // Create edge Selector
-    myEdgeSelector = new edgesSelector(myContentFrame, myViewNet);
+    myEdgeSelector = new edgesSelector(myContentFrame, this);
+    
     // Create crossingParameters
-    myCrossingParameters = new crossingParameters(myContentFrame, myViewNet, myEdgeSelector);
+    myCrossingParameters = new crossingParameters(myContentFrame, myEdgeSelector);
+    
+    /// Create groupbox for create crossings 
+    myGroupBoxButtons = new FXGroupBox(myContentFrame, "Create", GNEDesignGroupBox);
+    myCreateCrossingButton = new FXButton(myGroupBoxButtons, "Create crossing", 0, this, MID_GNE_CREATE_CROSSING, GNEDesignButton);
+    myCreateCrossingButton->disable();
+
+    // disable edge selector
+    myEdgeSelector->disableEdgeSelector();
 }
 
 
@@ -516,22 +582,53 @@ GNECrossingFrame::~GNECrossingFrame() {
 
 bool
 GNECrossingFrame::addCrossing(GNENetElement* netElement) {
-   
+    // cast netelement
+    GNEJunction *currentJunction = dynamic_cast<GNEJunction*>(netElement);
+    GNEEdge *selectedEdge = dynamic_cast<GNEEdge*>(netElement);
+    GNELane *selectedLane = dynamic_cast<GNELane*>(netElement);
+    
+    // If current element is a junction 
+    if(currentJunction != NULL) {
+        // change label
+        myCurrentJunctionLabel->setText((std::string("Current Junction: ") + currentJunction->getID()).c_str());
+        // Enable edge selector
+        myEdgeSelector->enableEdgeSelector(currentJunction);
+    } else if(selectedEdge != NULL) {
+        myEdgeSelector->markEdge(selectedEdge->getID());
+    } else if(selectedLane != NULL) {
+        myEdgeSelector->markEdge(selectedLane->getParentEdge().getID());
+    } else {
+        // set default label
+        myCurrentJunctionLabel->setText("No junction selected");
+        // Disable edge selector
+        myEdgeSelector->disableEdgeSelector();
+    }
     return false;
-}
-
-void
-GNECrossingFrame::removeCrossing(GNECrossing* additional) {
-    myViewNet->getUndoList()->p_begin("delete " + additional->getDescription());
-    myViewNet->getUndoList()->add(new GNEChange_Crossing(myViewNet->getNet(), additional, false), true);
-    myViewNet->getUndoList()->p_end();
 }
 
 
 long
-GNECrossingFrame::onCmdSelectCrossing(FXObject*, FXSelector, void*) {
-
+GNECrossingFrame::onCmdCreateCrossing(FXObject*, FXSelector, void*) {
+    // Add crossing to NBEdge
+    myEdgeSelector->getCurrentJunction()->getNBNode()->addCrossing(myCrossingParameters->getCrossingEdges(), myCrossingParameters->getCrossingWidth(), myCrossingParameters->getCrossingPriority());
+    // rebuild crossings of junction
+    myEdgeSelector->getCurrentJunction()->getNBNode()->buildCrossings();
+    myEdgeSelector->getCurrentJunction()->rebuildCrossings(false);
+    // Update view
+    myViewNet->update();
+    // clear selected edges
+    myEdgeSelector->onCmdClearSelection(0, 0, 0);
     return 1;
+}
+
+
+void
+GNECrossingFrame::setCreateCrossingButton(bool value) {
+    if(value) {
+        myCreateCrossingButton->enable();
+    } else {
+        myCreateCrossingButton->disable();
+    }
 }
 
 
@@ -550,6 +647,12 @@ GNECrossingFrame::hide() {
     FXScrollWindow::hide();
     // Hide Frame Area in which this GNEFrame is placed
     myViewNet->getViewParent()->hideFramesArea();
+}
+
+
+GNECrossingFrame::crossingParameters*
+GNECrossingFrame::getCrossingParameters() const {
+    return myCrossingParameters;
 }
 
 /****************************************************************************/

@@ -603,7 +603,8 @@ enum {
     MID_GNE_SELECT_PASS,
     /** changes the visual scaling of selected items */
     MID_GNE_SELECT_SCALE,
-
+    /** Create crossing */
+    MID_GNE_CREATE_CROSSING,
     //@}
 
     MID_LAST

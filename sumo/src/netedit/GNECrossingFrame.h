@@ -63,7 +63,7 @@ public:
 
     public:
         /// @brief constructor
-        edgesSelector(FXComposite* parent, GNEViewNet* viewNet);
+        edgesSelector(FXComposite* parent, GNECrossingFrame* crossingFrameParent);
 
         /// @brief destructor
         ~edgesSelector();
@@ -79,6 +79,9 @@ public:
 
         /// @brief clear list of edges
         void clearList();
+
+        /// @brief mark as selected a edge of the list
+        bool markEdge(const std::string &edgeID);
 
         /// @brief enable edgeSelector 
         void enableEdgeSelector(GNEJunction *currentJunction);
@@ -121,6 +124,9 @@ public:
         void filterListOfEdges(std::string search = "");
 
     private:
+        /// @brief pointer to GNECrossingFrame parent
+        GNECrossingFrame *myCrossingFrameParent;
+
         /// @brief CheckBox for selected edges
         FXMenuCheck* myUseSelectedEdges;
 
@@ -134,13 +140,10 @@ public:
         FXButton* helpEdges;
 
         /// @brief button for clear selection
-        FXButton* clearEdgesSelection;
+        FXButton* myClearEdgesSelection;
 
         /// @brief button for invert selection
-        FXButton* invertEdgesSelection;
-
-        /// @brief viewNet associated to GNEAdditionalFrame
-        GNEViewNet* myViewNet;
+        FXButton* myInvertEdgesSelection;
 
         /// @brief current Junction
         GNEJunction *myCurrentJunction;
@@ -156,7 +159,7 @@ public:
 
     public:
         /// @brief constructor
-        crossingParameters(FXComposite* parent, FXObject* tgt, GNECrossingFrame::edgesSelector *es);
+        crossingParameters(FXComposite* parent, GNECrossingFrame::edgesSelector *es);
 
         /// @brief destructor
         ~crossingParameters();
@@ -167,11 +170,8 @@ public:
         /// @brief disable crossing parameters and clear parameters
         void disableCrossingParameters();
 
-        /// @brief get crossing id
-        std::string getCrossingID() const;
-
-        /// @brief get crossing edges
-        std::vector<GNEEdge*> getCrossingEdges() const;
+        /// @brief get crossing NBedges
+        std::vector<NBEdge*> getCrossingEdges() const;
 
         /// @brief get crossing priority
         bool getCrossingPriority() const;
@@ -181,6 +181,9 @@ public:
 
         /// @name FOX-callbacks
         /// @{
+        /// @brief Called when user set a value 
+        long onCmdSetAttribute(FXObject*, FXSelector, void*);
+
         /// @brief Called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
         /// @}
@@ -195,12 +198,6 @@ public:
 
         /// @brief FXMatrix for place attributes
         FXMatrix *attributesMatrix;
-        
-        /// @brief Label for Crossing ID
-        FXLabel *crossingIDLabel;
-
-        /// @brief TextField for Crossing ID
-        FXTextField *crossingID;
 
         /// @brief Label for edges
         FXLabel *crossingEdgesLabel;
@@ -245,10 +242,13 @@ public:
      */
     void removeCrossing(GNECrossing* Crossing);
 
+    /// @brief enable or disable button create edges
+    void setCreateCrossingButton(bool value);
+
     /// @name FOX-callbacks
     /// @{
-    /// @brief Called when the user select another Crossing Type
-    long onCmdSelectCrossing(FXObject*, FXSelector, void*);
+    /// @brief Called when the user press the button create edge
+    long onCmdCreateCrossing(FXObject*, FXSelector, void*);
     /// @}
 
     /// @brief show Crossing frame
@@ -264,12 +264,27 @@ protected:
     /// @brief FOX needs this
     GNECrossingFrame() {}
 
+    // get Crossing parameters
+    GNECrossingFrame::crossingParameters *getCrossingParameters() const;
+
 private:
     /// @brief edge selector
     GNECrossingFrame::edgesSelector *myEdgeSelector;
 
     /// @brief crossing parameters
     GNECrossingFrame::crossingParameters *myCrossingParameters;
+
+    /// @brief groupbox for the junction label
+    FXGroupBox* myGroupBoxLabel;
+
+    /// @brief Label for current Junction
+    FXLabel *myCurrentJunctionLabel;
+
+    /// @brief groupbox for buttons
+    FXGroupBox* myGroupBoxButtons;
+
+    /// @field FXButton for create Crossing
+    FXButton *myCreateCrossingButton;
 };
 
 
