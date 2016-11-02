@@ -222,6 +222,12 @@
                                 <xsd:attribute name="probability" type="positiveFloatType"/>
                             </xsd:complexType>
                         </xsd:element>
+                        <xsd:element name="parkingZoneReroute">
+                            <xsd:complexType>
+                                <xsd:attribute name="id" type="xsd:string" use="required"/>
+                                <xsd:attribute name="probability" type="positiveFloatType"/>
+                            </xsd:complexType>
+                        </xsd:element>
                     </xsd:choice>
                     <xsd:attribute name="begin" type="nonNegativeFloatType" use="required"/>
                     <xsd:attribute name="end" type="nonNegativeFloatType" use="required"/>
