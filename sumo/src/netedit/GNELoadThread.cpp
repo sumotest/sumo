@@ -142,7 +142,7 @@ GNELoadThread::run() {
             if (oc.getBool("ignore-errors")) {
                 MsgHandler::getErrorInstance()->clear();
             }
-            
+
             // check whether any errors occured
             if (MsgHandler::getErrorInstance()->wasInformed()) {
                 throw ProcessError();
@@ -151,12 +151,12 @@ GNELoadThread::run() {
             }
 
             // enable load additionals after creation of net if was specified in the command line
-            if(myAdditionalFile != "") {
+            if (myAdditionalFile != "") {
                 net->setAdditionalsFile(myAdditionalFile);
             }
 
             // Set additionals output file
-            if(myAdditionalOutputFile != "") {
+            if (myAdditionalOutputFile != "") {
                 net->setAdditionalsOutputFile(myAdditionalOutputFile);
             }
         } catch (ProcessError& e) {
@@ -236,8 +236,14 @@ GNELoadThread::fillOptions(OptionsCont& oc) {
     oc.doRegister("window-size", new Option_String());
     oc.addDescription("window-size", "Visualisation", "Create initial window with the given x,y size");
 
+    oc.doRegister("window-pos", new Option_String());
+    oc.addDescription("window-pos", "Visualisation", "Create initial window at the given x,y position");
+
     oc.doRegister("additionals-output", new Option_String());
     oc.addDescription("additionals-output", "Output", "default value for additionals output file");
+
+    oc.doRegister("gui-testing", new Option_Bool(false));
+    oc.addDescription("gui-testing", "Visualisation", "Enable ovelay for screen recognition");
 
     SystemFrame::addReportOptions(oc); // this subtopic is filled here, too
 
@@ -289,10 +295,10 @@ GNELoadThread::loadConfigOrNet(const std::string& file, bool isNet, bool useStar
     myLoadNet = isNet;
 
     const OptionsCont& OC = OptionsCont::getOptions();
-    if(OC.isSet("sumo-additionals-file")) {
+    if (OC.isSet("sumo-additionals-file")) {
         myAdditionalFile = OC.getString("sumo-additionals-file");
     }
-    if(OC.isSet("additionals-output")) {
+    if (OC.isSet("additionals-output")) {
         myAdditionalOutputFile = OC.getString("additionals-output");
     }
 

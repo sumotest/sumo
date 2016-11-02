@@ -112,7 +112,7 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // Set netElements as default tag
     mySetComboBox->setCurrentItem(0);
     // Fill list of sub-items
-    onCmdSubset(0,0,0);
+    onCmdSubset(0, 0, 0);
     // Set speed as default attribute
     myMatchAttrComboBox->setCurrentItem(3);
     // Create TextField for Match string

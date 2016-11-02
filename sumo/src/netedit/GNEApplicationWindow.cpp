@@ -270,26 +270,7 @@ GNEApplicationWindow::dependentBuild() {
 
 void
 GNEApplicationWindow::create() {
-    int windowWidth = getApp()->reg().readIntEntry("SETTINGS", "width", 600);
-    int windowHeight = getApp()->reg().readIntEntry("SETTINGS", "height", 400);
-    const OptionsCont& oc = OptionsCont::getOptions();
-    if (oc.isSet("window-size")) {
-        std::vector<std::string> windowSize = oc.getStringVector("window-size");
-        if (windowSize.size() != 2 
-                || !TplCheck::_str2int(windowSize[0])
-                || !TplCheck::_str2int(windowSize[1])) {
-            WRITE_ERROR("option window-size requires INT,INT");
-        } else {
-            windowWidth = TplConvert::_str2int(windowSize[0]);
-            windowHeight = TplConvert::_str2int(windowSize[1]);
-        }
-    }
-    if (oc.isSet("window-size") || getApp()->reg().readIntEntry("SETTINGS", "maximized", 0) == 0) {
-        setX(getApp()->reg().readIntEntry("SETTINGS", "x", 150));
-        setY(getApp()->reg().readIntEntry("SETTINGS", "y", 150));
-        setWidth(windowWidth);
-        setHeight(windowHeight);
-    }
+    setWindowSizeAndPos();
     gCurrentFolder = getApp()->reg().readStringEntry("SETTINGS", "basedir", "");
     FXMainWindow::create();
     myMenuBarDrag->create();
@@ -303,7 +284,7 @@ GNEApplicationWindow::create() {
     myCartesianFrame->setWidth(width);
     myGeoFrame->setWidth(width);
 
-    show(PLACEMENT_SCREEN);
+    show(PLACEMENT_DEFAULT);
     if (!OptionsCont::getOptions().isSet("window-size")) {
         if (getApp()->reg().readIntEntry("SETTINGS", "maximized", 0) == 1) {
             maximize();
@@ -850,7 +831,7 @@ GNEApplicationWindow::handleEvent_NetworkLoaded(GUIEvent* e) {
     }
     getApp()->endWaitCursor();
     myMessageWindow->registerMsgHandlers();
-    if(OptionsCont::getOptions().isSet("sumo-additionals-file")) {
+    if (OptionsCont::getOptions().isSet("sumo-additionals-file")) {
         std::string additionalFile = OptionsCont::getOptions().getString("sumo-additionals-file");
         WRITE_MESSAGE("Loading additionals from '" + additionalFile + "'");
         GNEAdditionalHandler additionalHandler(additionalFile, myNet->getViewNet());
@@ -1221,7 +1202,7 @@ long
 GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {
     OptionsCont& oc = OptionsCont::getOptions();
     std::string filename;
-    if(!oc.isSet("additionals-output")) {
+    if (!oc.isSet("additionals-output")) {
         FXString file = MFXUtils::getFilename2Write(this,
                         "Select name of the additional file", ".xml",
                         GUIIconSubSys::getIcon(ICON_EMPTY),

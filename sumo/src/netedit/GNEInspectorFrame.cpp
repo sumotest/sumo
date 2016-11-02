@@ -60,7 +60,7 @@
 // static
 // ===========================================================================
 
-const unsigned int MAXNUMBEROFATTRCONNECTIONS = 50;
+const int MAXNUMBEROFATTRCONNECTIONS = 50;
 
 // ===========================================================================
 // FOX callback mapping
@@ -191,7 +191,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
     myACs = ACs;
     // Show back button if previousElement was defined
     myPreviousElement = previousElement;
-    if(myPreviousElement != NULL) {
+    if (myPreviousElement != NULL) {
         myHeaderLeftFrame->show();
         myBackButton->show();
     } else {
@@ -214,9 +214,9 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
         if (myACs.size() > 1) {
             headerString = "Selection: " + toString(myACs.size()) + " " + toString(myACs.front()->getTag()) + "s";
         } else {
-            if(dynamic_cast<GNENetElement*>(myACs.front())) {
+            if (dynamic_cast<GNENetElement*>(myACs.front())) {
                 headerString = "Net: " + toString(myACs.front()->getTag());
-            } else if(dynamic_cast<GNEAdditional*>(myACs.front())) {
+            } else if (dynamic_cast<GNEAdditional*>(myACs.front())) {
                 headerString = "Additional: " + toString(myACs.front()->getTag());
             }
         }
@@ -279,9 +279,9 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
             }
             // Obtain connections of edge
             const std::vector<GNEConnection*>& connections = dynamic_cast<GNEEdge*>(myACs.front())->getGNEConnections();
-            if(connections.size() > 0) {
+            if (connections.size() > 0) {
                 // Check if all connections are editables
-                if(connections.size() > MAXNUMBEROFATTRCONNECTIONS) {
+                if ((int)connections.size() > MAXNUMBEROFATTRCONNECTIONS) {
                     WRITE_WARNING("Number of connections of " + myACs.front()->getID() + " is greater than the number of editable connections (" + toString(MAXNUMBEROFATTRCONNECTIONS) + ")");
                 }
                 // Show AttrConnections
@@ -296,9 +296,9 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
         if (dynamic_cast<GNELane*>(myACs.front())) {
             // Obtain connections of lane
             std::vector<GNEConnection*> connections = dynamic_cast<GNELane*>(myACs.front())->getGNEOutcomingConnections();
-            if(connections.size() > 0) {
+            if (connections.size() > 0) {
                 // Check if all connections are editables
-                if(connections.size() > MAXNUMBEROFATTRCONNECTIONS) {
+                if ((int)connections.size() > MAXNUMBEROFATTRCONNECTIONS) {
                     WRITE_WARNING("Number of connections of " + myACs.front()->getID() + " is greater than the number of editable connections (" + toString(MAXNUMBEROFATTRCONNECTIONS) + ")");
                 }
                 // Show AttrConnections
@@ -390,10 +390,10 @@ GNEInspectorFrame::onUpdCopyTemplate(FXObject* sender, FXSelector, void*) {
 long
 GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
     if (myAdditional) {
-        if(myCheckBlocked->getCheck() == 1) {
+        if (myCheckBlocked->getCheck() == 1) {
             myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "true", getViewNet()->getUndoList());
         } else {
-             myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "false", getViewNet()->getUndoList());
+            myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "false", getViewNet()->getUndoList());
         }
     }
     return 1;
@@ -403,7 +403,7 @@ GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
 long
 GNEInspectorFrame::onCmdGoBack(FXObject*, FXSelector, void*) {
     // Inspect previous element (if was defined)
-    if(myPreviousElement) {
+    if (myPreviousElement) {
         inspect(myPreviousElement);
     }
     return 1;
@@ -733,8 +733,8 @@ GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) {
     // set Label
     const NBEdge::Connection& con = myConnection->getNBEdgeConnection();
     myConnectionInfoLabel->setText(std::string(
-                myConnection->getEdgeFrom()->getNBEdge()->getLaneID(con.toLane) + 
-                "->" + con.toEdge->getLaneID(con.toLane)).c_str());
+                                       myConnection->getEdgeFrom()->getNBEdge()->getLaneID(con.toLane) +
+                                       "->" + con.toEdge->getLaneID(con.toLane)).c_str());
     // Show Label
     myConnectionInfoLabel->show();
     // set show Connection
@@ -746,7 +746,7 @@ GNEInspectorFrame::AttrConnection::showConnections(GNEConnection* connection) {
 }
 
 
-void 
+void
 GNEInspectorFrame::AttrConnection::hideAttrConnection() {
     // hide all elements
     myConnectionInfoLabel->hide();
@@ -757,10 +757,10 @@ GNEInspectorFrame::AttrConnection::hideAttrConnection() {
 
 long
 GNEInspectorFrame::AttrConnection::onCmdSetShowConnection(FXObject*, FXSelector, void*) {
-    if(myShowConnection->getCheck()) {
+    if (myShowConnection->getCheck()) {
         myConnection->setDrawConnection(true);
     } else {
-         myConnection->setDrawConnection(false);
+        myConnection->setDrawConnection(false);
     }
     // Update view net
     myInspectorFrameParent->getViewNet()->update();
@@ -771,7 +771,7 @@ GNEInspectorFrame::AttrConnection::onCmdSetShowConnection(FXObject*, FXSelector,
 long
 GNEInspectorFrame::AttrConnection::onCmdInspectConnection(FXObject*, FXSelector, void*) {
     // Inspect connection depending of the checkBox "selectEdges"
-    if(myInspectorFrameParent->getViewNet()->selectEdges()) {
+    if (myInspectorFrameParent->getViewNet()->selectEdges()) {
         myInspectorFrameParent->inspect(myConnection, myConnection->getEdgeFrom());
     } else {
         myInspectorFrameParent->inspect(myConnection, myConnection->getLaneFrom());

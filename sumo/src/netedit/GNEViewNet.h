@@ -173,23 +173,23 @@ public:
 
     /// @brief revert transformation
     long onCmdRevertRestriction(FXObject*, FXSelector, void*);
-    
+
     /// @brief Add restricted lane for pedestrians
     long onCmdAddRestrictedLaneSidewalk(FXObject*, FXSelector typeOfTransformation, void*);
-    
+
     /// @brief Add restricted lane for bikes
     long onCmdAddRestrictedLaneBikelane(FXObject*, FXSelector typeOfTransformation, void*);
-    
+
     /// @brief Add restricted lane for buses
     long onCmdAddRestrictedLaneBuslane(FXObject*, FXSelector typeOfTransformation, void*);
 
     /// @brief remove restricted lane for pedestrians
     long onCmdRemoveRestrictedLaneSidewalk(FXObject*, FXSelector typeOfTransformation, void*);
 
-        /// @brief remove restricted lane for bikes
+    /// @brief remove restricted lane for bikes
     long onCmdRemoveRestrictedLaneBikelane(FXObject*, FXSelector typeOfTransformation, void*);
 
-        /// @brief remove restricted lane for bus
+    /// @brief remove restricted lane for bus
     long onCmdRemoveRestrictedLaneBuslane(FXObject*, FXSelector typeOfTransformation, void*);
 
     /// @brief input custom node shape
@@ -200,10 +200,10 @@ public:
 
     /// @brief toogle show connections
     long onCmdToogleShowConnection(FXObject*, FXSelector, void*);
-    
+
     /// @brief toogle show bubbles
     long onCmdToogleShowBubbles(FXObject*, FXSelector, void*);
-    
+
     /// @brief sets edit mode (from hotkey)
     /// @param[in] selid An id MID_GNE_MODE_<foo> as defined in GUIAppEnum
     void setEditModeFromHotkey(FXushort selid);
@@ -374,6 +374,9 @@ private:
     /// @brief current polygon
     GNEPoly* myCurrentPoly;
 
+    /// @brief testing mode
+    bool myTestingMode;
+
 private:
     /// @brief set edit mode
     void setEditMode(EditMode mode);
@@ -410,7 +413,7 @@ private:
 
     /// @brief restrict lane
     bool restrictLane(SUMOVehicleClass vclass);
-    
+
     /// @brief add restricted lane
     bool addRestrictedLane(SUMOVehicleClass vclass);
 
