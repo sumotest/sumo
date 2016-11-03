@@ -73,6 +73,10 @@ GNECrossing::~GNECrossing() {}
 
 void
 GNECrossing::updateGeometry() {
+    // Clear Shape rotations and segments
+    myShapeRotations.clear();
+    myShapeLengths.clear();
+    // Obtain sgments of size and calculate it
     int segments = (int) myShape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);

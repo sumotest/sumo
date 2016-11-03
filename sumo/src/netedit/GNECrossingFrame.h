@@ -147,6 +147,9 @@ public:
 
         /// @brief current Junction
         GNEJunction *myCurrentJunction;
+
+        /// @brief current selected edges
+        std::vector<GNEEdge*> myCurrentSelectedEdges;
     };
 
     // ===========================================================================

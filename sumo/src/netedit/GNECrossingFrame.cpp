@@ -142,16 +142,24 @@ GNECrossingFrame::edgesSelector::getEdgeIDSSelected() const {
 
 std::vector<GNEEdge*>
 GNECrossingFrame::edgesSelector::getGNEEdgesSelected() const {
-    std::vector<GNEEdge*> GNEEdgesSelected;
-    // iterate over list
-    for(int i = 0; i < myList->getNumItems(); i++) {
-        // if item of list is selected
-        if(myList->getItem(i)->isSelected()) {
-            // search GNEEdge and save it 
-            GNEEdgesSelected.push_back(myCrossingFrameParent->getViewNet()->getNet()->retrieveEdge(myList->getItem(i)->getText().text(), true));
+    // if use selected edges is checked
+    if(myUseSelectedEdges->getCheck()) {
+        // Check that myCurrentSelectedEdges isn't empty 
+        assert(myCurrentSelectedEdges.size() > 0);
+        // return current selected edges
+        return myCurrentSelectedEdges;
+    } else {
+        std::vector<GNEEdge*> GNEEdgesSelected;
+        // iterate over list
+        for(int i = 0; i < myList->getNumItems(); i++) {
+            // if item of list is selected
+            if(myList->getItem(i)->isSelected()) {
+                // search GNEEdge and save it 
+                GNEEdgesSelected.push_back(myCrossingFrameParent->getViewNet()->getNet()->retrieveEdge(myList->getItem(i)->getText().text(), true));
+            }
         }
+        return GNEEdgesSelected;
     }
-    return GNEEdgesSelected;
 }
 
 
@@ -213,8 +221,24 @@ void
 GNECrossingFrame::edgesSelector::enableEdgeSelector(GNEJunction *currentJunction) {
     // Set current junction
     myCurrentJunction = currentJunction;
-    // Enable all elements of the edgesSelector
-    myUseSelectedEdges->enable();
+
+    // Obtain selected edges and filter it
+    std::set<GUIGlID> edgesSelected = gSelected.getSelected(GLO_EDGE);
+    myCurrentSelectedEdges.clear();
+    std::vector<GNEEdge*> currentJunctionEdges = myCurrentJunction->getGNEEdges();
+    for(std::vector<GNEEdge*>::iterator i = currentJunctionEdges.begin(); i != currentJunctionEdges.end(); i++) {
+        if(edgesSelected.find((*i)->getGlID()) != edgesSelected.end()) {
+            myCurrentSelectedEdges.push_back(*i);
+        }
+    }
+    // If current selected edges can be used to create a sidewalk
+    if(myCurrentSelectedEdges.size() > 0) {
+        myUseSelectedEdges->enable();
+    } else {
+        myUseSelectedEdges->disable();
+    }
+
+    // Enable rest of elements of the edgesSelector
     myList->enable();
     myEdgesSearch->enable();
     helpEdges->enable();
@@ -231,6 +255,20 @@ GNECrossingFrame::edgesSelector::disableEdgeSelector() {
     myCurrentJunction = NULL;
     // clear list of edges
     clearList();
+    // If previously UseSelectedEdges was checked
+    if(myUseSelectedEdges->getCheck()) {
+        // show all elements
+        myUseSelectedEdges->setCheck(false);
+        myEdgesSearch->show();
+        myList->show();
+        myClearEdgesSelection->show();
+        myInvertEdgesSelection->show();
+        helpEdges->show();
+        // Recalc Frame
+        recalc();
+        // Update Frame
+        update();
+    }
     // disable all elements of the edgesSelector
     myUseSelectedEdges->disable();
     myList->disable();
@@ -267,18 +305,26 @@ GNECrossingFrame::edgesSelector::isUseSelectedEdgesEnable() const {
 
 long
 GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges(FXObject*, FXSelector, void*) {
+    // If use selected edges was enabled
     if (myUseSelectedEdges->getCheck()) {
+        // Hidde all elements
         myEdgesSearch->hide();
         myList->hide();
         myClearEdgesSelection->hide();
         myInvertEdgesSelection->hide();
         helpEdges->hide();
+        // enable crossing parameters and create crossing
+        myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+        myCrossingFrameParent->setCreateCrossingButton(true);
     } else {
+        // Show rest of parameters
         myEdgesSearch->show();
         myList->show();
         myClearEdgesSelection->show();
         myInvertEdgesSelection->show();
         helpEdges->show();
+        // Check if previously there are selected edges which activate crossing parameters and create crossing button
+        onCmdSelectEdge(0,0,0);
     }
     // Recalc Frame
     recalc();
