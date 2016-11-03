@@ -879,15 +879,15 @@ MSRouteHandler::addStop(const SUMOSAXAttributes& attrs) {
     } //try to parse the assigned parking area
     else if (stop.parkingarea != "") {
         // ok, we have obviously a parking area
-        MSStoppingPlace* cs = MSNet::getInstance()->getParkingArea(stop.parkingarea);
-        if (cs == 0) {
+        MSStoppingPlace* pa = MSNet::getInstance()->getParkingArea(stop.parkingarea);
+        if (pa == 0) {
             WRITE_ERROR("The parking area '" + stop.parkingarea + "' is not known" + errorSuffix);
             return;
         }
-        const MSLane& l = cs->getLane();
+        const MSLane& l = pa->getLane();
         stop.lane = l.getID();
-        stop.endPos = cs->getEndLanePosition();
-        stop.startPos = cs->getBeginLanePosition();
+        stop.endPos = pa->getEndLanePosition();
+        stop.startPos = pa->getBeginLanePosition();
         edge = &l.getEdge();
     } else if (stop.chargingStation != "") {
         // ok, we have a Charging station
