@@ -714,6 +714,7 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
         return false;
     }
     stop.busstop = MSNet::getInstance()->getBusStop(stopPar.busstop);
+    stop.chargingStation = MSNet::getInstance()->getChargingStation(stopPar.chargingStation);
     stop.containerstop = MSNet::getInstance()->getContainerStop(stopPar.containerstop);
     stop.parkingarea = MSNet::getInstance()->getParkingArea(stopPar.parkingarea);
     stop.startPos = stopPar.startPos;
@@ -838,6 +839,68 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
 
 
 bool
+MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
+	std::string errorMsg;
+	if (myStops.empty()) {
+		errorMsg = "Vehicle '" + myParameter->id + "' has no stops.";
+		return false;
+	}
+
+	SUMOVehicleParameter::Stop stopPar;
+	Stop stop = myStops.front();
+	if (!stop.reached && stop.parkingarea != 0) {
+		stopPar.lane = parkingArea->getLane().getID();
+		if (!parkingArea->getLane().allowsVehicleClass(myType->getVehicleClass())) {
+			errorMsg = "Vehicle '" + myParameter->id + "' is not allowed to stop on lane '" + stopPar.lane + "'.";
+			return false;
+		}
+		
+		// merge duplicated stops equals to parking area
+		SUMOTime removeStops = 0;
+		SUMOTime duration = 0;
+		for (std::list<Stop>::const_iterator iter = myStops.begin(); iter != myStops.end(); ++iter) {
+			if (duration == 0) {
+				duration = iter->duration;
+				++removeStops;
+			} else {
+				if (iter->parkingarea != 0 && iter->parkingarea == parkingArea) {
+					duration += iter->duration;
+					++removeStops;
+				} else
+					break;
+			}
+		}
+
+		stopPar.index = 0;
+		stopPar.busstop = "";
+		stopPar.chargingStation = "";
+		stopPar.containerstop = "";
+		stopPar.parkingarea = parkingArea->getID();
+		stopPar.startPos = parkingArea->getBeginLanePosition();
+		stopPar.endPos = parkingArea->getEndLanePosition();
+		stopPar.duration = duration;
+		stopPar.until = stop.until;
+		stopPar.awaitedPersons = stop.awaitedPersons;
+		stopPar.awaitedContainers = stop.awaitedContainers;
+		stopPar.triggered = stop.triggered;
+		stopPar.containerTriggered = stop.containerTriggered;
+		stopPar.parking = stop.parking;
+
+		// remove stops equals to parking area
+		while (removeStops > 0) {
+			myStops.pop_front();
+			--removeStops;
+		}
+
+		return addStop(stopPar, errorMsg);
+	} else {
+		errorMsg = "Vehicle '" + myParameter->id + "' has no valid parking area.";
+		return false;
+	}
+}
+
+
+bool
 MSVehicle::isStopped() const {
     return !myStops.empty() && myStops.begin()->reached /*&& myState.mySpeed < SUMO_const_haltingSpeed @todo #1864#*/;
 }
@@ -952,6 +1015,10 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
                 if (endPos <= stop.parkingarea->getBeginLanePosition() && 
 					(stop.parkingarea->getOccupancy() == stop.parkingarea->getCapacity())) {
                     parkingAreasMustHaveSpace = false;
+					for (std::vector< MSMoveReminder* >::const_iterator rem = myLane->getMoveReminders().begin(); rem != myLane->getMoveReminders().end(); ++rem) {
+						addReminder(*rem);
+					}
+					activateReminders(MSMoveReminder::NOTIFICATION_PARKING_REROUTE);
                 }
             }
             // wWe use the same offset for container stops as for bus stops. we might have to change it at some point!

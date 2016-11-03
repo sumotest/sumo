@@ -98,6 +98,8 @@ public:
         SUMOTime end;
         /// The list of closed edges
         MSEdgeVector closed;
+        /// The distributions of new parking areas to use as destinations
+        RandomDistributor<MSParkingArea*> parkProbs;
         /// The distributions of new destinations to use
         RandomDistributor<MSEdge*> edgeProbs;
         /// The distributions of new routes to use
@@ -123,7 +125,7 @@ public:
      * @see MSMoveReminder::Notification
      */
     bool notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason);
-
+	
     /// Returns the rerouting definition valid for the given time and vehicle, 0 if none
     const RerouteInterval* getCurrentReroute(SUMOTime time, SUMOVehicle& veh) const;
 
@@ -191,6 +193,8 @@ protected:
     MSEdgeVector myCurrentClosed;
     /// List of permissions for closed edges
     SVCPermissions myCurrentPermissions;
+    /// new destinations with probabilities
+    RandomDistributor<MSParkingArea*> myCurrentParkProb;
     /// new destinations with probabilities
     RandomDistributor<MSEdge*> myCurrentEdgeProb;
     /// new routes with probabilities

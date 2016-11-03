@@ -50,6 +50,7 @@ class MSLane;
 class MSDevice;
 class MSPerson;
 class MSTransportable;
+class MSParkingArea;
 class SUMOSAXAttributes;
 
 typedef std::vector<const MSEdge*> ConstMSEdgeVector;
@@ -129,7 +130,7 @@ public:
     virtual const MSEdge* succEdge(unsigned int nSuccs) const = 0;
 
     /// Replaces the current route by the given edges
-    virtual bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false) = 0;
+    virtual bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false, bool forceNewRoute = false) = 0;
 
     /// Replaces the current route by the given one
     virtual bool replaceRoute(const MSRoute* route, bool onInit = false, int offset = 0) = 0;
@@ -252,6 +253,14 @@ public:
      * @return Whether the stop could be added
      */
     virtual bool addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& errorMsg, SUMOTime untilOffset = 0) = 0;
+	
+	/** @brief Replaces a stop
+     *
+     * The stop replace the next stop into the sorted list.
+     * @param[in] stop The stop to add
+     * @return Whether the stop could be added
+     */
+    virtual bool replaceParkingArea(MSParkingArea* parkingArea) = 0;
 
     /** @brief Returns whether the vehicle is at a stop
      * @return Whether the has stopped

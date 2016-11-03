@@ -18,4 +18,11 @@
 		<lotEntry x="888" y="591" width="4" length="8" angle="120"/>
 	</parkingArea>
 	
+	<rerouter id="REROUTER_Via_Montespirello" edges="39_Via_Montespirello 7_Via_Montespirello">
+		<interval begin="0" end="2000">
+			<parkingZoneReroute id="ParkArea:39_Via_Montespirello_0" />
+			<parkingZoneReroute id="ParkArea:7_Via_Montespirello_0" />
+		</interval>
+	</rerouter>
+	
 </additional>

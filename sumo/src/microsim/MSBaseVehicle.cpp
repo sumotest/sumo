@@ -168,7 +168,7 @@ MSBaseVehicle::reroute(SUMOTime t, SUMOAbstractRouter<MSEdge, SUMOVehicle>& rout
 
 
 bool
-MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
+MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit, bool forceNewRoute) {
     if (edges.empty()) {
         WRITE_WARNING("No route for vehicle '" + getID() + "' found.");
         return false;
@@ -192,7 +192,7 @@ MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
         }
         edges.insert(edges.begin(), myRoute->begin(), myCurrEdge);
     }
-    if (edges == myRoute->getEdges()) {
+    if (edges == myRoute->getEdges() && !forceNewRoute) {
         if (onInit) {
             // if edges = 'from to' we still need to calculate the arrivalPos once
             calculateArrivalParams();
@@ -266,6 +266,16 @@ MSBaseVehicle::addPerson(MSTransportable* /*person*/) {
 
 void
 MSBaseVehicle::addContainer(MSTransportable* /*container*/) {
+}
+
+bool
+MSBaseVehicle::addStop(const SUMOVehicleParameter::Stop& /*stopPar*/, std::string& /*errorMsg*/, SUMOTime /*untilOffse*/) {
+	return true;
+}
+
+bool
+MSBaseVehicle::replaceParkingArea(MSParkingArea* /*parkingArea*/) {
+	return true;
 }
 
 bool

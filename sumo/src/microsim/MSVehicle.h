@@ -610,6 +610,11 @@ public:
      * @return Whether the stop could be added
      */
     bool addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& errorMsg, SUMOTime untilOffset = 0);
+	
+
+    /** @brief replace the current stop with a new stop with merge duration
+     */
+	bool replaceParkingArea(MSParkingArea* parkingArea);
 
 
     /** @brief Returns whether the vehicle has to stop somewhere
@@ -639,6 +644,7 @@ public:
      */
     bool isStoppedInRange(SUMOReal pos) const;
     /// @}
+
 
     bool knowsEdgeTest(MSEdge& edge) const;
     unsigned int getLaneIndex() const;
