@@ -267,10 +267,6 @@ public:
      * @param[in] container The container to add
      */
     virtual void addContainer(MSTransportable* container);
-	
-    virtual bool addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& errorMsg, SUMOTime untilOffset = 0);
-	
-	virtual bool replaceParkingArea(MSParkingArea* parkingArea);
 
     /** @brief Validates the current route
      * @param[out] msg Description why the route is not valid (if it is the case)

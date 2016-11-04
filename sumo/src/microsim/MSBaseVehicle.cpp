@@ -269,16 +269,6 @@ MSBaseVehicle::addContainer(MSTransportable* /*container*/) {
 }
 
 bool
-MSBaseVehicle::addStop(const SUMOVehicleParameter::Stop& /*stopPar*/, std::string& /*errorMsg*/, SUMOTime /*untilOffse*/) {
-	return true;
-}
-
-bool
-MSBaseVehicle::replaceParkingArea(MSParkingArea* /*parkingArea*/) {
-	return true;
-}
-
-bool
 MSBaseVehicle::hasValidRoute(std::string& msg) const {
     MSRouteIterator last = myRoute->end() - 1;
     // check connectivity, first
