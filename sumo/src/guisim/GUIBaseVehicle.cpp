@@ -969,12 +969,12 @@ GUIBaseVehicle::drawGL(const GUIVisualizationSettings& s) const {
         GLHelper::drawText("line:" + myVehicle.getParameter().line, Position(0, 0),
                            GLO_MAX, s.vehicleName.size / s.scale, s.vehicleName.color);
     }
-	//Draw P over the vehicle when is parked
-	if (myVehicle.isParking()) {
+    //Draw P over the vehicle when is parked
+    if (myVehicle.isParking()) {
         glTranslated(0, 0.6 * s.vehicleName.size / s.scale, 0);
         GLHelper::drawText("(P)", Position(0, 0),
                            GLO_MAX, s.vehicleName.size / s.scale, s.vehicleName.color);
-	}
+    }
     glPopMatrix();
     glPopName();
     drawAction_drawPersonsAndContainers(s);

@@ -134,7 +134,7 @@ protected:
     virtual void buildContainerStop(MSNet& net, const std::string& id,
                                     const std::vector<std::string>& lines, MSLane* lane,
                                     SUMOReal frompos, SUMOReal topos);
-	
+    
     /** @brief Builds a parking area
      *
      * Simply calls the GUIParkingArea constructor.
@@ -154,9 +154,9 @@ protected:
     virtual void beginParkingArea(MSNet& net, const std::string& id,
                                   const std::vector<std::string>& lines, MSLane* lane,
                                   SUMOReal frompos, SUMOReal topos, 
-								  unsigned int capacity,
-								  SUMOReal width, SUMOReal length, SUMOReal angle);
-	
+                                  unsigned int capacity,
+                                  SUMOReal width, SUMOReal length, SUMOReal angle);
+    
 
     /** @brief Add a lot entry to current parking area
      *
@@ -170,11 +170,11 @@ protected:
      * @param[in] angle Angle of the lot rectangle
      * @exception InvalidArgument If the current parking area is 0
      */
-	virtual void addLotEntry(SUMOReal x, SUMOReal y, SUMOReal z,
+    virtual void addLotEntry(SUMOReal x, SUMOReal y, SUMOReal z,
                              SUMOReal width, SUMOReal length, SUMOReal angle);
 
-	
-	/** @brief End a parking area
+    
+    /** @brief End a parking area
      *
      * @exception InvalidArgument If the current parking area is 0
      */

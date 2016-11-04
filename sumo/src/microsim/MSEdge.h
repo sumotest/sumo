@@ -188,9 +188,9 @@ public:
 
     /** @brief Returns this edge's persons set.
      *  @brief Avoids the creation of new vector as in getSortedPersons
-    	 *
-    	 * @return This edge's persons.
-    	 */
+     *
+     * @return This edge's persons.
+     */
     inline const std::set<MSTransportable*>& getPersons() const {
         return myPersons;
     }
@@ -288,7 +288,7 @@ public:
     /**@brief Sets the crossed edge ids for a crossing edge
      *
      */
-    void setCrossingEdges(const std::vector<std::string>& crossingEdges)		{
+    void setCrossingEdges(const std::vector<std::string>& crossingEdges) {
         myCrossingEdges.clear();
         myCrossingEdges.insert(myCrossingEdges.begin(), crossingEdges.begin(), crossingEdges.end());
     }

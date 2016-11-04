@@ -139,7 +139,7 @@ MSTriggeredRerouter::myStartElement(int element,
         // add
         myCurrentEdgeProb.add(prob, to);
     }
-   
+    
 
     if (element == SUMO_TAG_CLOSING_REROUTE) {
         // by closing
@@ -179,7 +179,7 @@ MSTriggeredRerouter::myStartElement(int element,
         // add
         myCurrentRouteProb.add(prob, route);
     }
-   
+    
     if (element == SUMO_TAG_PARKING_ZONE_REROUTE) {
         // by giving probabilities of new destinations
         // get the destination edge
@@ -202,7 +202,7 @@ MSTriggeredRerouter::myStartElement(int element,
         }
         // add
         myCurrentParkProb.add(prob, pa);
-      //MSEdge* to = &(pa->getLane().getEdge());
+        //MSEdge* to = &(pa->getLane().getEdge());
         //myCurrentEdgeProb.add(prob, to);
     }
 }
@@ -215,7 +215,7 @@ MSTriggeredRerouter::myEndElement(int element) {
         ri.begin = myCurrentIntervalBegin;
         ri.end = myCurrentIntervalEnd;
         ri.closed = myCurrentClosed;
-      ri.parkProbs = myCurrentParkProb;
+        ri.parkProbs = myCurrentParkProb;
         ri.edgeProbs = myCurrentEdgeProb;
         ri.routeProbs = myCurrentRouteProb;
         ri.permissions = myCurrentPermissions;
@@ -317,79 +317,79 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
     // get vehicle params
     const MSRoute& route = veh.getRoute();
     const MSEdge* lastEdge = route.getLastEdge();
-   
-   const MSEdge* newEdge = lastEdge;
-   // ok, try using a new destination
-   SUMOReal newArrivalPos = -1;
+    
+    const MSEdge* newEdge = lastEdge;
+    // ok, try using a new destination
+    SUMOReal newArrivalPos = -1;
 
-   if (reason == MSMoveReminder::NOTIFICATION_PARKING_REROUTE) {
-      std::vector<MSParkingArea*> parks = rerouteDef->parkProbs.getVals();
-      double minRouteLength = 0.0;
-      MSParkingArea *nearParkArea = 0;
+    if (reason == MSMoveReminder::NOTIFICATION_PARKING_REROUTE) {
+        std::vector<MSParkingArea*> parks = rerouteDef->parkProbs.getVals();
+        double minRouteLength = 0.0;
+        MSParkingArea *nearParkArea = 0;
 
-      for (std::vector<MSParkingArea*>::const_iterator i = parks.begin(); i != parks.end(); ++i) {
-         if ((*i)->getOccupancy() < (*i)->getCapacity()) {
+        for (std::vector<MSParkingArea*>::const_iterator i = parks.begin(); i != parks.end(); ++i) {
+            if ((*i)->getOccupancy() < (*i)->getCapacity()) {
 
-            const MSEdge* destEdge = &((*i)->getLane().getEdge());
-         
-            ConstMSEdgeVector edges;
-            MSNet::getInstance()->getRouterTT(rerouteDef->closed).compute(
-               veh.getEdge(), destEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edges);
+                const MSEdge* destEdge = &((*i)->getLane().getEdge());
+            
+                ConstMSEdgeVector edges;
+                MSNet::getInstance()->getRouterTT(rerouteDef->closed).compute(
+                    veh.getEdge(), destEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edges);
 
-            const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
-            double routeLength = route.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
-                                               veh.getEdge(), destEdge, includeInternalLengths);
+                const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
+                double routeLength = route.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
+                                                              veh.getEdge(), destEdge, includeInternalLengths);
 
-            // get the parking area near to vehicle (should be a minimum cost function with prob, distance, and free space?)
-            if (nearParkArea == 0 || routeLength < minRouteLength) {
-               minRouteLength = routeLength;
-               nearParkArea = (*i);
+                // get the parking area near to vehicle (should be a minimum cost function with prob, distance, and free space?)
+                if (nearParkArea == 0 || routeLength < minRouteLength) {
+                    minRouteLength = routeLength;
+                    nearParkArea = (*i);
+                }
             }
-         }
-      }
+        }
 
-      if (nearParkArea != 0) {
-         veh.replaceParkingArea(nearParkArea);
-         newEdge = &(nearParkArea->getLane().getEdge());
-         newArrivalPos = nearParkArea->getEndLanePosition();
-      }
+        if (nearParkArea != 0) {
+            veh.replaceParkingArea(nearParkArea);
+            newEdge = &(nearParkArea->getLane().getEdge());
+            newArrivalPos = nearParkArea->getEndLanePosition();
+        }
 
-   } else {
-      
-      // parking probs are used only when notification is for parking reroute
-      if (rerouteDef->parkProbs.getOverallProb() > 0)
-         return false;
+    } else {
+        
+        // parking probs are used only when notification is for parking reroute
+        if (rerouteDef->parkProbs.getOverallProb() > 0)
+            return false;
 
-      // get rerouting params
-      const MSRoute* newRoute = rerouteDef->routeProbs.getOverallProb() > 0 ? rerouteDef->routeProbs.get() : 0;
-      // we will use the route if given rather than calling our own dijsktra...
-      if (newRoute != 0) {
-         veh.replaceRoute(newRoute);
-         return false;
-      }
-      const bool destUnreachable = std::find(rerouteDef->closed.begin(), rerouteDef->closed.end(), lastEdge) != rerouteDef->closed.end();
-      // if we have a closingReroute, only assign new destinations to vehicles which cannot reach their original destination
-      if (rerouteDef->closed.size() == 0 || destUnreachable) {
-         newEdge = rerouteDef->edgeProbs.getOverallProb() > 0 ? rerouteDef->edgeProbs.get() : route.getLastEdge();
-         if (newEdge == &mySpecialDest_terminateRoute) {
-            newEdge = veh.getEdge();
-            newArrivalPos = veh.getPositionOnLane(); // instant arrival
-         } else if (newEdge == &mySpecialDest_keepDestination || newEdge == lastEdge) {
-            if (destUnreachable && rerouteDef->permissions == SVCAll) {
-               // if permissions aren't set vehicles will simply drive through
-               // the closing unless terminated. If the permissions are specified, assume that the user wants
-               // vehicles to stand and wait until the closing ends
-               WRITE_WARNING("Cannot keep destination edge '" + lastEdge->getID() + "' for vehicle '" + veh.getID() + "' due to closed edges. Terminating route.");
-               newEdge = veh.getEdge();
-            } else {
-               newEdge = lastEdge;
+        // get rerouting params
+        const MSRoute* newRoute = rerouteDef->routeProbs.getOverallProb() > 0 ? rerouteDef->routeProbs.get() : 0;
+        // we will use the route if given rather than calling our own dijsktra...
+        if (newRoute != 0) {
+            veh.replaceRoute(newRoute);
+            return false;
+        }
+        const bool destUnreachable = std::find(rerouteDef->closed.begin(), rerouteDef->closed.end(), lastEdge) != rerouteDef->closed.end();
+        // if we have a closingReroute, only assign new destinations to vehicles which cannot reach their original destination
+        if (rerouteDef->closed.size() == 0 || destUnreachable) {
+            newEdge = rerouteDef->edgeProbs.getOverallProb() > 0 ? rerouteDef->edgeProbs.get() : route.getLastEdge();
+            if (newEdge == &mySpecialDest_terminateRoute) {
+                newEdge = veh.getEdge();
+                newArrivalPos = veh.getPositionOnLane(); // instant arrival
+            } else if (newEdge == &mySpecialDest_keepDestination || newEdge == lastEdge) {
+                if (destUnreachable && rerouteDef->permissions == SVCAll) {
+                    // if permissions aren't set vehicles will simply drive through
+                    // the closing unless terminated. If the permissions are specified, assume that the user wants
+                    // vehicles to stand and wait until the closing ends
+                    WRITE_WARNING("Cannot keep destination edge '" + lastEdge->getID() + "' for vehicle '" + veh.getID() + "' due to closed edges. Terminating route.");
+                    newEdge = veh.getEdge();
+                } else {
+                    newEdge = lastEdge;
+                }
+            } else if (newEdge == 0) {
+                assert(false); // this should never happen
+                newEdge = veh.getEdge();
             }
-         } else if (newEdge == 0) {
-            assert(false); // this should never happen
-            newEdge = veh.getEdge();
-         }
-      }
-   }
+        }
+    }
     // we have a new destination, let's replace the vehicle route
     ConstMSEdgeVector edges;
     MSNet::getInstance()->getRouterTT(rerouteDef->closed).compute(

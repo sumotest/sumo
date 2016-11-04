@@ -62,19 +62,19 @@
 // ===========================================================================
 GUIParkingArea::GUIParkingArea(const std::string& id, const std::vector<std::string>& lines, MSLane& lane,
                                SUMOReal frompos, SUMOReal topos, unsigned int capacity, 
-							   SUMOReal width, SUMOReal length, SUMOReal angle)
+                               SUMOReal width, SUMOReal length, SUMOReal angle)
     : MSParkingArea(id, lines, lane, frompos, topos, capacity, width, length, angle),
       GUIGlObject_AbstractAdd("parkingArea", GLO_TRIGGER, id) {
 
-	// if width and length of lot rectangle is not specified set to a default value
-	if (width == 0) width = lane.getWidth();
-	if (length == 0) length = getSpaceDim();
-	
+    // if width and length of lot rectangle is not specified set to a default value
+    if (width == 0) width = lane.getWidth();
+    if (length == 0) length = getSpaceDim();
+    
     myFGShape = lane.getShape();
-	myFGWidth = width;
-	myFGLength = length;
-	myFGAngle = angle;
-	myFGShape.move2side(lane.getWidth() / 2. + myFGWidth / 2.);
+    myFGWidth = width;
+    myFGLength = length;
+    myFGAngle = angle;
+    myFGShape.move2side(lane.getWidth() / 2. + myFGWidth / 2.);
     myFGShape = myFGShape.getSubpart(frompos, topos);
     myFGShapeRotations.reserve(myFGShape.size() - 1);
     myFGShapeLengths.reserve(myFGShape.size() - 1);
@@ -93,19 +93,19 @@ GUIParkingArea::GUIParkingArea(const std::string& id, const std::vector<std::str
         myFGSignRot = myFGShape.rotationDegreeAtOffset(SUMOReal((myFGShape.length() / 2.)));
         myFGSignRot -= 90;
     }
-	// If not specified put angle and position relative to lane
-	if (capacity > 0) {
-		for (unsigned int i = 1; i <= capacity; ++i) {
-			const Position& f = myFGShape.positionAtOffset(length * (i - 1));
-			const Position& s = myFGShape.positionAtOffset(length * (i));
-			SUMOReal lot_angle = ((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI) + angle;
-			Position pos = myFGShape.positionAtOffset(length * ((double)i - 0.5));
-			mySpaceOccupancies[i].myFGRotation = lot_angle;
-			mySpaceOccupancies[i].myFGPosition = pos;
-			mySpaceOccupancies[i].myFGLength = length;
-			mySpaceOccupancies[i].myFGWidth = width;
-		}
-	}
+    // If not specified put angle and position relative to lane
+    if (capacity > 0) {
+        for (unsigned int i = 1; i <= capacity; ++i) {
+            const Position& f = myFGShape.positionAtOffset(length * (i - 1));
+            const Position& s = myFGShape.positionAtOffset(length * (i));
+            SUMOReal lot_angle = ((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI) + angle;
+            Position pos = myFGShape.positionAtOffset(length * ((double)i - 0.5));
+            mySpaceOccupancies[i].myFGRotation = lot_angle;
+            mySpaceOccupancies[i].myFGPosition = pos;
+            mySpaceOccupancies[i].myFGLength = length;
+            mySpaceOccupancies[i].myFGWidth = width;
+        }
+    }
 
 }
 
@@ -134,8 +134,8 @@ GUIParkingArea::getParameterWindow(GUIMainWindow& app,
     // add items
     ret->mkItem("begin position [m]", false, myBegPos);
     ret->mkItem("end position [m]", false, myEndPos);
-	ret->mkItem("occupancy [#]", true, getOccupancy());
-	ret->mkItem("capacity [#]", false, getCapacity());
+    ret->mkItem("occupancy [#]", true, getOccupancy());
+    ret->mkItem("capacity [#]", false, getCapacity());
     // close building
     ret->closeBuilding();
     return ret;
@@ -157,35 +157,35 @@ GUIParkingArea::drawGL(const GUIVisualizationSettings& s) const {
     // draw details unless zoomed out to far
     const SUMOReal exaggeration = s.addSize.getExaggeration(s);
     if (s.scale * exaggeration >= 10) {
-		// draw the lots
-		glTranslated(0, 0, .1);
-		std::map<unsigned int, LotSpaceDefinition > mySpaces = mySpaceOccupancies;
-		std::map<unsigned int, LotSpaceDefinition >::iterator i;
+        // draw the lots
+        glTranslated(0, 0, .1);
+        std::map<unsigned int, LotSpaceDefinition > mySpaces = mySpaceOccupancies;
+        std::map<unsigned int, LotSpaceDefinition >::iterator i;
         for (i = mySpaces.begin(); i != mySpaces.end(); i++) {
             glPushMatrix();
-			glTranslated((*i).second.myFGPosition.x(), (*i).second.myFGPosition.y(), (*i).second.myFGPosition.z());
+            glTranslated((*i).second.myFGPosition.x(), (*i).second.myFGPosition.y(), (*i).second.myFGPosition.z());
             glRotated((*i).second.myFGRotation, 0, 0, 1);
-			Position pos = (*i).second.myFGPosition;
-			PositionVector geom;
-			SUMOReal w = (*i).second.myFGWidth / 2.;
-			SUMOReal h = (*i).second.myFGLength / 2.;
-			geom.push_back(Position(- w, + h, 0.));
-			geom.push_back(Position(+ w, + h, 0.));
-			geom.push_back(Position(+ w, - h, 0.));
-			geom.push_back(Position(- w, - h, 0.));
-			geom.push_back(Position(- w, + h, 0.));
-			/*
-			geom.push_back(Position(pos.x(), pos.y(), pos.z()));
-			geom.push_back(Position(pos.x() + (*l).second.myFGWidth, pos.y(), pos.z()));
-			geom.push_back(Position(pos.x() + (*l).second.myFGWidth, pos.y() - (*l).second.myFGLength, pos.z()));
-			geom.push_back(Position(pos.x(), pos.y() - (*l).second.myFGLength, pos.z()));
-			geom.push_back(Position(pos.x(), pos.y(), pos.z()));
-			*/
-			GLHelper::setColor((*i).second.vehicle == 0 ? green : red);
-			GLHelper::drawBoxLines(geom, 0.1);
+            Position pos = (*i).second.myFGPosition;
+            PositionVector geom;
+            SUMOReal w = (*i).second.myFGWidth / 2.;
+            SUMOReal h = (*i).second.myFGLength / 2.;
+            geom.push_back(Position(- w, + h, 0.));
+            geom.push_back(Position(+ w, + h, 0.));
+            geom.push_back(Position(+ w, - h, 0.));
+            geom.push_back(Position(- w, - h, 0.));
+            geom.push_back(Position(- w, + h, 0.));
+            /*
+            geom.push_back(Position(pos.x(), pos.y(), pos.z()));
+            geom.push_back(Position(pos.x() + (*l).second.myFGWidth, pos.y(), pos.z()));
+            geom.push_back(Position(pos.x() + (*l).second.myFGWidth, pos.y() - (*l).second.myFGLength, pos.z()));
+            geom.push_back(Position(pos.x(), pos.y() - (*l).second.myFGLength, pos.z()));
+            geom.push_back(Position(pos.x(), pos.y(), pos.z()));
+            */
+            GLHelper::setColor((*i).second.vehicle == 0 ? green : red);
+            GLHelper::drawBoxLines(geom, 0.1);
             glPopMatrix();
         }
-		GLHelper::setColor(blue);
+        GLHelper::setColor(blue);
         // draw the lines
         for (size_t i = 0; i != myLines.size(); ++i) {
             glPushMatrix();

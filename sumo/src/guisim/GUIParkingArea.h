@@ -67,7 +67,7 @@ class GUIManipulator;
  */
 class GUIParkingArea : public MSParkingArea, public GUIGlObject_AbstractAdd {
 public:
-	
+    
     /** @brief Constructor
      * @param[in] idStorage The gl-id storage for giving this object an gl-id
      * @param[in] id The id of the parking area
@@ -83,7 +83,7 @@ public:
     GUIParkingArea(const std::string& id,
                    const std::vector<std::string>& lines, MSLane& lane,
                    SUMOReal frompos, SUMOReal topos, unsigned int capacity,
-				   SUMOReal width, SUMOReal length, SUMOReal angle);
+                   SUMOReal width, SUMOReal length, SUMOReal angle);
 
 
     /// @brief Destructor
