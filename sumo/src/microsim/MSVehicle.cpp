@@ -856,7 +856,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         }
         
         // merge duplicated stops equals to parking area
-        SUMOTime removeStops = 0;
+        int removeStops = 0;
         SUMOTime duration = 0;
         for (std::list<Stop>::const_iterator iter = myStops.begin(); iter != myStops.end(); ++iter) {
             if (duration == 0) {
@@ -897,6 +897,19 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         errorMsg = "Vehicle '" + myParameter->id + "' has no valid parking area.";
         return false;
     }
+}
+
+
+MSParkingArea*
+MSVehicle::getNextParkingArea() {
+    MSParkingArea* nextParkingArea = 0;
+    if (!myStops.empty()) {
+        SUMOVehicleParameter::Stop stopPar;
+        Stop stop = myStops.front();
+        if (!stop.reached && stop.parkingarea != 0)
+            nextParkingArea = stop.parkingarea;
+    }
+    return nextParkingArea;
 }
 
 
@@ -2363,9 +2376,11 @@ MSVehicle::getLeader(SUMOReal dist) const {
     }
     const MSVehicle* lead = 0;
     const MSLane::VehCont& vehs = myLane->getVehiclesSecure();
-    MSLane::VehCont::const_iterator pred = std::find(vehs.begin(), vehs.end(), this) + 1;
-    if (pred != vehs.end()) {
-        lead = *pred;
+    if (std::find(vehs.begin(), vehs.end(), this) != vehs.end()) {
+        MSLane::VehCont::const_iterator pred = std::find(vehs.begin(), vehs.end(), this) + 1;
+        if (pred != vehs.end()) {
+            lead = *pred;
+        }
     }
     myLane->releaseVehicles();
     if (lead != 0) {

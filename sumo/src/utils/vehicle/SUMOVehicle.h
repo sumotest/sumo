@@ -253,7 +253,13 @@ public:
      * @return Whether the stop could be added
      */
     virtual bool addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& errorMsg, SUMOTime untilOffset = 0) = 0;
-   
+    
+    /**
+    * returns the next imminent stop in the stop queue
+    * @return the upcoming stop
+    */
+    virtual MSParkingArea* getNextParkingArea() = 0;
+
    /** @brief Replaces a stop
      *
      * The stop replace the next stop into the sorted list.

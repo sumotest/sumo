@@ -321,26 +321,36 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
     const MSEdge* newEdge = lastEdge;
     // ok, try using a new destination
     SUMOReal newArrivalPos = -1;
+    bool stopsAreChanged = false;
 
-    if (reason == MSMoveReminder::NOTIFICATION_PARKING_REROUTE) {
+    if (rerouteDef->parkProbs.getOverallProb() > 0) {
         std::vector<MSParkingArea*> parks = rerouteDef->parkProbs.getVals();
         double minRouteLength = 0.0;
         MSParkingArea *nearParkArea = 0;
+
+        // I have to take the next stop, check if is a parking area and check the occupancy
+        MSParkingArea *destParkArea = 0;
+        destParkArea = veh.getNextParkingArea();
+
+        // I leave the destination as initial parking area and doesn't need reroute
+        if (destParkArea != 0 && destParkArea->getOccupancy() < destParkArea->getCapacity())
+            return false;
 
         for (std::vector<MSParkingArea*>::const_iterator i = parks.begin(); i != parks.end(); ++i) {
             if ((*i)->getOccupancy() < (*i)->getCapacity()) {
 
                 const MSEdge* destEdge = &((*i)->getLane().getEdge());
-            
+                
                 ConstMSEdgeVector edges;
                 MSNet::getInstance()->getRouterTT(rerouteDef->closed).compute(
                     veh.getEdge(), destEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edges);
 
                 const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
                 double routeLength = route.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
-                                                              veh.getEdge(), destEdge, includeInternalLengths);
+                                                                veh.getEdge(), destEdge, includeInternalLengths);
 
-                // get the parking area near to vehicle (should be a minimum cost function with prob, distance, and free space?)
+                // get the parking area near to vehicle
+                // (should be a minimum cost function with prob, distance, and free space?)
                 if (nearParkArea == 0 || routeLength < minRouteLength) {
                     minRouteLength = routeLength;
                     nearParkArea = (*i);
@@ -349,17 +359,13 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
         }
 
         if (nearParkArea != 0) {
+            stopsAreChanged = true;
             veh.replaceParkingArea(nearParkArea);
             newEdge = &(nearParkArea->getLane().getEdge());
-            newArrivalPos = nearParkArea->getEndLanePosition();
+            //newArrivalPos = nearParkArea->getEndLanePosition();
         }
 
     } else {
-        
-        // parking probs are used only when notification is for parking reroute
-        if (rerouteDef->parkProbs.getOverallProb() > 0)
-            return false;
-
         // get rerouting params
         const MSRoute* newRoute = rerouteDef->routeProbs.getOverallProb() > 0 ? rerouteDef->routeProbs.get() : 0;
         // we will use the route if given rather than calling our own dijsktra...
@@ -394,7 +400,7 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
     ConstMSEdgeVector edges;
     MSNet::getInstance()->getRouterTT(rerouteDef->closed).compute(
         veh.getEdge(), newEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edges);
-    veh.replaceRouteEdges(edges, false, (reason == MSMoveReminder::NOTIFICATION_PARKING_REROUTE));
+    veh.replaceRouteEdges(edges, false, stopsAreChanged);
     if (newArrivalPos != -1) {
         // must be called here because replaceRouteEdges may also set the arrivalPos
         veh.setArrivalPos(newArrivalPos);
