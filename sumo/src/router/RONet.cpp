@@ -483,7 +483,9 @@ RONet::createBulkRouteRequests(SUMOAbstractRouter<ROEdge, ROVehicle>& router, co
             }
         }
     }
+#ifdef HAVE_FOX
     int workerIndex = 0;
+#endif
     for (std::map<const unsigned int, std::vector<ROVehicle*> >::const_iterator i = bulkVehs.begin(); i != bulkVehs.end(); ++i) {
 #ifdef HAVE_FOX
         if (myThreadPool.size() > 0) {

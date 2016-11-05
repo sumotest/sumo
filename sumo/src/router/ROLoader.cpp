@@ -208,7 +208,7 @@ ROLoader::processRoutes(const SUMOTime start, const SUMOTime end, const SUMOTime
     SUMOTime lastStep = firstStep;
     SUMOTime time = MIN2(firstStep, end);
     while (time <= end) {
-        writeStats(time, start, absNo, endGiven);
+        writeStats(time, start, (int)absNo, endGiven);
         myLoaders.loadNext(time);
         if (!net.furtherStored() || MsgHandler::getErrorInstance()->wasInformed()) {
             break;
