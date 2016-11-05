@@ -96,14 +96,14 @@ FXIMPLEMENT(GNECrossingFrame::crossingParameters, FXGroupBox,     GNECrossingPar
 // ---------------------------------------------------------------------------
 
 GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNECrossingFrame* crossingFrameParent) :
-    FXGroupBox(parent, "Edges", GNEDesignGroupBox),
+    FXGroupBox(parent, "Edges", GNEDesignGroupBoxFrame),
     myCurrentJunction(0),
     myCrossingFrameParent(crossingFrameParent) {
     // Create CheckBox for selected edges
     myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
 
     // Create search box
-    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
+    myEdgesSearch = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignList, 0, 0, 0, 100);
@@ -414,14 +414,14 @@ GNECrossingFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNECrossingFrame::crossingParameters::crossingParameters(FXComposite* parent, GNECrossingFrame::edgesSelector *es) :
-    FXGroupBox(parent, "Crossing parameters", GNEDesignGroupBox),
+    FXGroupBox(parent, "Crossing parameters", GNEDesignGroupBoxFrame),
     myEdgeSelector(es) {
     // Create a Matrix for parameters
     attributesMatrix = new FXMatrix(this, 2, GNEDesignMatrix);
     // create label for edges
     crossingEdgesLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_EDGES).c_str(), 0, GNEDesignLabelAttribute);
     // create string textField for edges
-    crossingEdges = new FXTextField(attributesMatrix, 10, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
+    crossingEdges = new FXTextField(attributesMatrix, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
     // create label for Priority
     crossingPriorityLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_PRIORITY).c_str(), 0, GNEDesignLabelAttribute);
     // create CheckBox for Priority
@@ -429,7 +429,7 @@ GNECrossingFrame::crossingParameters::crossingParameters(FXComposite* parent, GN
     // create label for width
     crossingWidthLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_WIDTH).c_str(), 0, GNEDesignLabelAttribute);
     // create extField for width
-    crossingWidth = new FXTextField(attributesMatrix, 10, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
+    crossingWidth = new FXTextField(attributesMatrix, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
     // Create help button
     helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
     // At start crossing parameters is disabled
@@ -599,10 +599,10 @@ GNECrossingFrame::crossingParameters::onCmdHelp(FXObject*, FXSelector, void*) {
 // GNECrossingFrame - methods
 // ---------------------------------------------------------------------------
 
-GNECrossingFrame::GNECrossingFrame(FXComposite* parent, GNEViewNet* viewNet) :
-    GNEFrame(parent, viewNet, "Crossings") {
+GNECrossingFrame::GNECrossingFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet) :
+    GNEFrame(horizontalFrameParent, viewNet, "Crossings") {
     // Create Groupbox for laelLabel
-    myGroupBoxLabel = new FXGroupBox(myContentFrame, "Junction", GNEDesignGroupBox);
+    myGroupBoxLabel = new FXGroupBox(myContentFrame, "Junction", GNEDesignGroupBoxFrame);
     myCurrentJunctionLabel = new FXLabel(myGroupBoxLabel, "No junction selected", 0, GNEDesignLabel);
 
     // Create edge Selector
@@ -612,7 +612,7 @@ GNECrossingFrame::GNECrossingFrame(FXComposite* parent, GNEViewNet* viewNet) :
     myCrossingParameters = new crossingParameters(myContentFrame, myEdgeSelector);
     
     /// Create groupbox for create crossings 
-    myGroupBoxButtons = new FXGroupBox(myContentFrame, "Create", GNEDesignGroupBox);
+    myGroupBoxButtons = new FXGroupBox(myContentFrame, "Create", GNEDesignGroupBoxFrame);
     myCreateCrossingButton = new FXButton(myGroupBoxButtons, "Create crossing", 0, this, MID_GNE_CREATE_CROSSING, GNEDesignButton);
     myCreateCrossingButton->disable();
 
@@ -675,24 +675,6 @@ GNECrossingFrame::setCreateCrossingButton(bool value) {
     } else {
         myCreateCrossingButton->disable();
     }
-}
-
-
-void
-GNECrossingFrame::show() {
-    // Show Scroll window
-    FXScrollWindow::show();
-    // Show Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->showFramesArea();
-}
-
-
-void
-GNECrossingFrame::hide() {
-    // Hide ScrollWindow
-    FXScrollWindow::hide();
-    // Hide Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->hideFramesArea();
 }
 
 

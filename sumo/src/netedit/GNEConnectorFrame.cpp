@@ -88,8 +88,8 @@ RGBColor GNEConnectorFrame::conflictColor;
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet, "Edit Connections"),
+GNEConnectorFrame::GNEConnectorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+    GNEFrame(horizontalFrameParent, viewNet, "Edit Connections"),
     myCurrentLane(0) {
     // heading
     myDescription = new FXLabel(myContentFrame, "", 0, GNEDesignLabel);
@@ -149,26 +149,7 @@ GNEConnectorFrame::GNEConnectorFrame(FXComposite* parent, GNEViewNet* viewNet):
 }
 
 
-GNEConnectorFrame::~GNEConnectorFrame() {
-}
-
-
-void
-GNEConnectorFrame::show() {
-    // Show Scroll window
-    FXScrollWindow::show();
-    // Show Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->showFramesArea();
-}
-
-
-void
-GNEConnectorFrame::hide() {
-    // Hide ScrollWindow
-    FXScrollWindow::hide();
-    // Hide Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->hideFramesArea();
-}
+GNEConnectorFrame::~GNEConnectorFrame() {}
 
 
 void

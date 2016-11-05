@@ -540,10 +540,10 @@ public:
     };
 
     /**@brief Constructor
-     * @brief parent FXFrame in which this GNEFrame is placed
+     * @brief parent FXHorizontalFrame in which this GNEFrame is placed
      * @brief viewNet viewNet that uses this GNEFrame
      */
-    GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet);
+    GNEAdditionalFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNEAdditionalFrame();
@@ -566,11 +566,8 @@ public:
     long onCmdSelectAdditional(FXObject*, FXSelector, void*);
     /// @}
 
-    /// @brief show additional frame
+    /// @brief show additional frame and update use selected edges/lanes
     void show();
-
-    /// @brief hidde additional frame
-    void hide();
 
     /// @brief get list of selecte id's in string format
     static std::string getIdsSelected(const FXList* list);

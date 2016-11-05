@@ -53,14 +53,15 @@
 // method definitions
 // ===========================================================================
 
-GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string& frameLabel) :
-    FXScrollWindow(parent, LAYOUT_FILL),
+GNEFrame::GNEFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet, const std::string& frameLabel) :
+    FXScrollWindow(horizontalFrameParent, LAYOUT_FILL),
+    myHorizontalFrameParent(horizontalFrameParent),
     myViewNet(viewNet) {
     // Create font
     myFrameHeaderFont = new FXFont(getApp(), "Arial", 14, FXFont::Bold),
 
-    // Create frame for contect
-    myContentFrame = new FXVerticalFrame(this, LAYOUT_FILL);
+    // Create frame for content and update their width
+    myContentFrame = new FXVerticalFrame(this, GNEDesigContentFrame);
 
     // Create frame for header
     myHeaderFrame = new FXHorizontalFrame(myContentFrame, GNEDesignHorizontalFrame);
@@ -78,7 +79,7 @@ GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string& 
 
     // Set font of header
     myFrameHeaderLabel->setFont(myFrameHeaderFont);
-
+    
     // Hide Frame
     FXScrollWindow::hide();
 }
@@ -86,6 +87,35 @@ GNEFrame::GNEFrame(FXComposite* parent, GNEViewNet* viewNet, const std::string& 
 
 GNEFrame::~GNEFrame() {
     delete myFrameHeaderFont;
+}
+
+
+void 
+GNEFrame::updateContentFrame() {
+    myHorizontalFrameParent->update();
+    // This avoid the scroll bars
+    if(myContentFrame->getHeight() > myHorizontalFrameParent->getHeight()) {
+        myContentFrame->setWidth(myHorizontalFrameParent->getWidth() - 17);
+    } else {
+        myContentFrame->setWidth(myHorizontalFrameParent->getWidth() - 2);
+    }
+}
+
+void 
+GNEFrame::show() {
+    // show scroll window
+    FXScrollWindow::show();
+    // Show and update Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->showFramesArea();
+}
+
+
+void 
+GNEFrame::hide() {
+    // hide scroll window
+    FXScrollWindow::hide();
+    // Hide Frame Area in which this GNEFrame is placed
+    myViewNet->getViewParent()->hideFramesArea();
 }
 
 
@@ -105,5 +135,6 @@ FXFont*
 GNEFrame::getFrameHeaderFont() const {
     return myFrameHeaderFont;
 }
+
 
 /****************************************************************************/

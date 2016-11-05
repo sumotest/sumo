@@ -47,6 +47,7 @@
 class GUISUMOAbstractView;
 class GNENet;
 class GNEApplicationWindow;
+class GNEFrame;
 class GNEInspectorFrame;
 class GNESelectorFrame;
 class GNEConnectorFrame;
@@ -122,9 +123,6 @@ public:
     /// @note this function is called in GNEFrame::Show();
     void hideFramesArea();
 
-    /// @brief get width of the Frames Area
-    int getFramesAreaWidth();
-
     /// @name FOX-callbacks
     /// @{
     /// @brief Called if the user wants to make a snapshot (screenshot)
@@ -141,6 +139,9 @@ public:
 
     /// @brief Called when user releases a key
     long onKeyRelease(FXObject* o, FXSelector sel, void* data);
+
+    /// @brief Called when user change the splitter between FrameArea and ViewNet
+    long onCmdUpdateFrameAreaWidth(FXObject*, FXSelector, void*);
     /// @}
 
     /// @brief true if the object is selected (may include extra logic besides calling gSelected)
@@ -160,23 +161,8 @@ private:
     /// @brief Splitter to divide ViewNet und GNEFrames
     FXSplitter* myFramesSplitter;
 
-    /// @brief the panel for GNE_MODE_INSPECT
-    GNEInspectorFrame* myInspectorFrame;
-
-    /// @brief the panel for GNE_MODE_SELECT
-    GNESelectorFrame* mySelectorFrame;
-
-    /// @brief the panel for GNE_MODE_CONNECT
-    GNEConnectorFrame* myConnectorFrame;
-
-    /// @brief the panel for GNE_MODE_TLS
-    GNETLSEditorFrame* myTLSEditorFrame;
-
-    /// @brief the panel for GNE_MODE_ADDITIONAL
-    GNEAdditionalFrame* myAdditionalFrame;
-
-    /// @brief the panel for GNE_MODE_CROSSING
-    GNECrossingFrame* myCrossingFrame;
+    /// @brief map with the Frames
+    std::map<int, GNEFrame*> myGNEFrames;
 };
 
 

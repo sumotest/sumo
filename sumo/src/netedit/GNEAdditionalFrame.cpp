@@ -120,12 +120,12 @@ FXIMPLEMENT(GNEAdditionalFrame::lanesSelector,           FXGroupBox,     GNELane
 // method definitions
 // ===========================================================================
 
-GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet, "Additionals"),
+GNEAdditionalFrame::GNEAdditionalFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+    GNEFrame(horizontalFrameParent, viewNet, "Additionals"),
     myActualAdditionalType(SUMO_TAG_NOTHING) {
 
     // Create groupBox for myAdditionalMatchBox
-    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GNEDesignGroupBox);
+    myGroupBoxForMyAdditionalMatchBox = new FXGroupBox(myContentFrame, "Additional element", GNEDesignGroupBoxFrame);
 
     // Create FXListBox in myGroupBoxForMyAdditionalMatchBox
     myAdditionalMatchBox = new FXComboBox(myGroupBoxForMyAdditionalMatchBox, 12, this, MID_GNE_MODE_ADDITIONAL_ITEM, GNEDesignComboBox);
@@ -166,7 +166,6 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXComposite* parent, GNEViewNet* viewNet)
 GNEAdditionalFrame::~GNEAdditionalFrame() {
     gSelected.remove2Update();
 }
-
 
 bool
 GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView* parent) {
@@ -384,23 +383,12 @@ GNEAdditionalFrame::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
 
 void
 GNEAdditionalFrame::show() {
-    // Show Scroll window
-    FXScrollWindow::show();
-    // Show Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->showFramesArea();
-    // Update UseAelectedLane CheckBox
+    // Show frame
+    GNEFrame::show();
+    // Update UseSelectedLane CheckBox
     myEdgesSelector->updateUseSelectedEdges();
-    // Update UseAelectedLane CheckBox
+    // Update UseSelectedLane CheckBox
     myLanesSelector->updateUseSelectedLanes();
-}
-
-
-void
-GNEAdditionalFrame::hide() {
-    // Hide ScrollWindow
-    FXScrollWindow::hide();
-    // Hide Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->hideFramesArea();
 }
 
 
@@ -536,7 +524,7 @@ GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite* parent
     myAttr(SUMO_ATTR_NOTHING) {
     // Create elements
     myLabel = new FXLabel(this, "name", 0, GNEDesignLabelAttribute, 0, 0, 60, 0);
-    myTextField = new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr);
+    myTextField = new FXTextField(this, GNEDesignTextFieldNCol, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr);
     myMenuCheck = new FXMenuCheck(this, "", tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL, GNEDesignCheckButtonAttribute);
     // Set widht of menuCheck manually
     myMenuCheck->setWidth(20);
@@ -629,7 +617,7 @@ GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite
     // Create elements
     for (int i = 0; i < myMaxNumberOfValuesInParameterList; i++) {
         myLabels.push_back(new FXLabel(this, "name", 0, GNEDesignLabelAttribute, 0, 0, 60, 0));
-        myTextFields.push_back(new FXTextField(this, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr));
+        myTextFields.push_back(new FXTextField(this, GNEDesignTextFieldNCol, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr));
     }
     // Create label Row
     myLabels.push_back(new FXLabel(this, "Rows", 0, GNEDesignLabelAttribute, 0, 0, 60, 0));
@@ -749,7 +737,7 @@ GNEAdditionalFrame::additionalParameterList::onCmdRemoveRow(FXObject*, FXSelecto
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite* parent, FXObject* tgt) :
-    FXGroupBox(parent, "Default parameters", GNEDesignGroupBox),
+    FXGroupBox(parent, "Default parameters", GNEDesignGroupBoxFrame),
     myIndexParameter(0),
     myIndexParameterList(0),
     maxNumberOfParameters(GNEAttributeCarrier::getHigherNumberOfAttributes()),
@@ -959,7 +947,7 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXObject* tgt) :
-    FXGroupBox(parent, "editor parameters", GNEDesignGroupBox),
+    FXGroupBox(parent, "editor parameters", GNEDesignGroupBoxFrame),
     myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT) {
     // Create FXListBox for the reference points
     myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEDesignComboBox);
@@ -971,7 +959,7 @@ GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXOb
     myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, GNEDesignLabelAttribute);
 
     // Create length text field
-    myLengthTextField = new FXTextField(lengthFrame, 10, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextField);
+    myLengthTextField = new FXTextField(lengthFrame, GNEDesignTextFieldNCol, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextField);
 
     // Set default value of length
     myLengthTextField->setText("10");
@@ -1107,7 +1095,7 @@ GNEAdditionalFrame::getIdsSelected(const FXList* list) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::additionalSet::additionalSet(FXComposite* parent, FXObject* tgt, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Additional Set", GNEDesignGroupBox),
+    FXGroupBox(parent, "Additional Set", GNEDesignGroupBoxFrame),
     myType(SUMO_TAG_NOTHING),
     myViewNet(viewNet) {
 
@@ -1182,13 +1170,13 @@ GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Edges", GNEDesignGroupBox),
+    FXGroupBox(parent, "Edges", GNEDesignGroupBoxFrame),
     myViewNet(viewNet) {
     // Create CheckBox for selected edges
     myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
 
     // Create search box
-    myEdgesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
+    myEdgesSearch = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignList, 0, 0, 0, 100);
@@ -1343,13 +1331,13 @@ GNEAdditionalFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::lanesSelector::lanesSelector(FXComposite* parent, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Lanes", GNEDesignGroupBox),
+    FXGroupBox(parent, "Lanes", GNEDesignGroupBoxFrame),
     myViewNet(viewNet) {
     // Create CheckBox for selected lanes
     myUseSelectedLanes = new FXMenuCheck(this, "Use selected Lanes", this, MID_GNE_USESELECTEDLANES, GNEDesignCheckButton);
 
     // Create search box
-    myLanesSearch = new FXTextField(this, 10, this, MID_GNE_SEARCHLANE, GNEDesignTextField);
+    myLanesSearch = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SEARCHLANE, GNEDesignTextField);
 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTLANE, GNEDesignList, 0, 0, 0, 100);

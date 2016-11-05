@@ -80,13 +80,13 @@ FXIMPLEMENT(GNESelectorFrame, FXScrollWindow, GNESelectorFrameMap, ARRAYNUMBER(G
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet, getStats().c_str()),
+GNESelectorFrame::GNESelectorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+    GNEFrame(horizontalFrameParent, viewNet, getStats().c_str()),
     mySetOperation(SET_ADD),
     mySetOperationTarget(mySetOperation),
     ALL_VCLASS_NAMES_MATCH_STRING("all " + joinToString(SumoVehicleClassStrings.getStrings(), " ")) {
     // selection modification mode
-    FXGroupBox* selBox = new FXGroupBox(myContentFrame, "Modification Mode", GNEDesignGroupBox);
+    FXGroupBox* selBox = new FXGroupBox(myContentFrame, "Modification Mode", GNEDesignGroupBoxFrame);
     // Create all options buttons
     new FXRadioButton(selBox, "add\t\tSelected objects are added to the previous selection",
                       &mySetOperationTarget, FXDataTarget::ID_OPTION + SET_ADD, GNEDesignRadioButton);
@@ -97,14 +97,14 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     new FXRadioButton(selBox, "replace\t\tReplace previous selection by the current selection",
                       &mySetOperationTarget, FXDataTarget::ID_OPTION + SET_REPLACE, GNEDesignRadioButton);
     // Create groupBox for selection by expression matching (match box)
-    FXGroupBox* elementBox = new FXGroupBox(myContentFrame, "type of element", GNEDesignGroupBox);
+    FXGroupBox* elementBox = new FXGroupBox(myContentFrame, "type of element", GNEDesignGroupBoxFrame);
     // Create MatchTagBox for tags and fill it
     mySetComboBox = new FXComboBox(elementBox, 10, this, MID_CHOOSEN_ELEMENTS, GNEDesignComboBox);
     mySetComboBox->appendItem("Net Element");
     mySetComboBox->appendItem("Additional");
     mySetComboBox->setNumVisible(mySetComboBox->getNumItems());
     // Create groupBox fro selection by expression matching (match box)
-    FXGroupBox* matchBox = new FXGroupBox(myContentFrame, "Match Attribute", GNEDesignGroupBox);
+    FXGroupBox* matchBox = new FXGroupBox(myContentFrame, "Match Attribute", GNEDesignGroupBoxFrame);
     // Create MatchTagBox for tags
     myMatchTagComboBox = new FXComboBox(matchBox, 12, this, MID_GNE_SELMB_TAG, GNEDesignComboBox);
     // Create listBox for Attributes
@@ -116,13 +116,13 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // Set speed as default attribute
     myMatchAttrComboBox->setCurrentItem(3);
     // Create TextField for Match string
-    myMatchString = new FXTextField(matchBox, 12, this, MID_GNE_SELMB_STRING, GNEDesignTextField);
+    myMatchString = new FXTextField(matchBox, GNEDesignTextFieldNCol, this, MID_GNE_SELMB_STRING, GNEDesignTextField);
     // Set default value for Match string
     myMatchString->setText(">10.0");
     // Create help button
     new FXButton(matchBox, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
     // Create Groupbox for visual scalings
-    FXGroupBox* selSizeBox = new FXGroupBox(myContentFrame, "Visual Scaling", GNEDesignGroupBox);
+    FXGroupBox* selSizeBox = new FXGroupBox(myContentFrame, "Visual Scaling", GNEDesignGroupBoxFrame);
     // Create spin button and configure it
     mySelectionScaling = new FXRealSpinDial(selSizeBox, 7, this, MID_GNE_SELECT_SCALE, GNEDesignDial);
     mySelectionScaling->setNumberFormat(1);
@@ -131,7 +131,7 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     mySelectionScaling->setValue(1);
     mySelectionScaling->setHelpText("Enlarge selected objects");
     // Create groupbox for additional buttons
-    FXGroupBox* additionalButtons = new FXGroupBox(myContentFrame, "Operations for selections", GNEDesignGroupBox);
+    FXGroupBox* additionalButtons = new FXGroupBox(myContentFrame, "Operations for selections", GNEDesignGroupBoxFrame);
     // Create "Clear List" Button
     new FXButton(additionalButtons, "Clear\t\t", 0, this, MID_CHOOSEN_CLEAR, GNEDesignButton);
     // Create "Invert" Button
@@ -141,7 +141,7 @@ GNESelectorFrame::GNESelectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     // Create "Load" Button
     new FXButton(additionalButtons, "Load\t\tLoad ids from a file according to the current modfication mode.", 0, this, MID_CHOOSEN_LOAD, GNEDesignButton);
     // Create groupbox for information about selections
-    FXGroupBox* selectionHintGroupBox = new FXGroupBox(myContentFrame, "Information", GNEDesignGroupBox);
+    FXGroupBox* selectionHintGroupBox = new FXGroupBox(myContentFrame, "Information", GNEDesignGroupBoxFrame);
     // Create Selection Hint
     new FXLabel(selectionHintGroupBox, " - Hold <SHIFT> for \n   rectangle selection.\n - Press <DEL> to\n   delete selected items.", 0, GNEDesignLabel);
 }
@@ -378,20 +378,20 @@ GNESelectorFrame::onCmdScaleSelection(FXObject*, FXSelector, void*) {
 
 void
 GNESelectorFrame::show() {
+    // selection may have changed due to deletions
     gSelected.add2Update(this);
-    selectionUpdated(); // selection may have changed due to deletions
-    FXScrollWindow::show();
-    // Show and Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->showFramesArea();
+    selectionUpdated(); 
+    // Show frame
+    GNEFrame::show();
 }
 
 
 void
 GNESelectorFrame::hide() {
+    // selection may have changed due to deletions
     gSelected.remove2Update();
-    FXScrollWindow::hide();
-    // Hide Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->hideFramesArea();
+    // hide frame
+    GNEFrame::hide();
 }
 
 

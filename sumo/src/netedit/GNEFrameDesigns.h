@@ -48,18 +48,24 @@
 
     /// @brief text field extended over the matrix column with thick frame
     #define GNEDesignTextFieldAttributeStr  (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+
+    /// @brief Num of column of text field
+    #define GNEDesignTextFieldNCol 5
 /// @}
 
 /// @name FXButtons
 /// @{
     /// @brief button extended over over GNEFrame with thick and raise frame 
-    #define GNEDesignButton       (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+    #define GNEDesignButton                  (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
 
     /// @brief button with size limited by text, centered over GNEFrame with thick and raise frame 
-    #define GNEDesignButtonDialog (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_CENTER_X | JUSTIFY_NORMAL)
+    #define GNEDesignButtonDialog            (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | LAYOUT_CENTER_X | JUSTIFY_NORMAL)
 
     /// @brief little button for help in frames
-    #define GNEDesignButtonLittle (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | JUSTIFY_NORMAL)
+    #define GNEDesignButtonLittle            (FRAME_THICK | FRAME_RAISED | ICON_BEFORE_TEXT | JUSTIFY_NORMAL)
+
+    /// @brief little button placed in navigation toolbar
+    #define GNEDesignButtonNavigationToolbar (ICON_BEFORE_TEXT | BUTTON_TOOLBAR | FRAME_RAISED | LAYOUT_TOP | LAYOUT_LEFT)
 /// @}
 
 /// @name FXCheckBoxs
@@ -92,15 +98,15 @@
     #define GNEDesignMatrix                 (LAYOUT_FILL_X | MATRIX_BY_COLUMNS | PACK_UNIFORM_WIDTH)
     
     /// @brief Group box design extended over frame
-    #define GNEDesignGroupBox               (LAYOUT_FILL_X | FRAME_GROOVE | GROUPBOX_TITLE_CENTER)
+    #define GNEDesignGroupBoxFrame          (LAYOUT_FILL_X | FRAME_GROOVE | GROUPBOX_TITLE_CENTER)
 
     /// @brief Horizontal separator
-    #define GNEDesignHorizontalSeparator    (SEPARATOR_GROOVE | LAYOUT_FILL_X), 0, 0, 0, 2, 2, 2, 4, 4
+    #define GNEDesignHorizontalSeparator    (LAYOUT_FILL_X | SEPARATOR_GROOVE), 0, 0, 0, 2, 2, 2, 4, 4
 /// @}
 
 
 /// @brief Combo box static (cannot be dited) extended over the matrix column or all frame with thick frame and limited to integers
-#define GNEDesignComboBox               (FRAME_THICK | LAYOUT_FILL_COLUMN| LAYOUT_FILL_X | COMBOBOX_STATIC)
+#define GNEDesignComboBox               (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | COMBOBOX_STATIC)
 
 #define GNEDesignRadioButton            (RADIOBUTTON_NORMAL)
 
@@ -109,6 +115,16 @@
 #define GNEDesignList                   (FRAME_NORMAL | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT | LIST_NORMAL)
 
 #define GNEDesignDial                   (LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK | LAYOUT_FILL_Y)
+
+#define GNEDesignSplitter               (SPLITTER_HORIZONTAL | SPLITTER_TRACKING | LAYOUT_FILL_X | LAYOUT_FILL_Y | FRAME_RAISED | FRAME_THICK)
+
+#define GNEDesignFrameArea              (FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y), 0, 0, 0, 0, 0, 0, 0, 0
+
+#define GNEDesignViewnArea              (FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y), 0, 0, 0, 0, 0, 0, 0, 0
+
+#define GNEDesignToolbarGrip            (TOOLBARGRIP_SINGLE | FRAME_SUNKEN)
+
+#define GNEDesigContentFrame            (LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y)
 
 #endif
 

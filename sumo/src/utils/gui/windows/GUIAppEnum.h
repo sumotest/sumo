@@ -605,6 +605,8 @@ enum {
     MID_GNE_SELECT_SCALE,
     /** Create crossing */
     MID_GNE_CREATE_CROSSING,
+    /** Size of frame area updated */
+    MID_GNE_SIZEOF_FRAMEAREAWIDTH_UPDATED,
     //@}
 
     MID_LAST

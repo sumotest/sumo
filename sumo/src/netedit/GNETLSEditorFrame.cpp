@@ -96,8 +96,8 @@ FXIMPLEMENT(GNETLSEditorFrame, FXScrollWindow, GNETLSEditorFrameMap, ARRAYNUMBER
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet, "Edit Traffic Light"),
+GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+    GNEFrame(horizontalFrameParent, viewNet, "Edit Traffic Light"),
     myTableFont(new FXFont(getApp(), "Courier New", 9)),
     myCurrentJunction(0),
     myHaveModifications(false),
@@ -118,7 +118,7 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXComposite* parent, GNEViewNet* viewNet):
 
     // offset control
     new FXLabel(myContentFrame, "Offset", 0, GNEDesignLabel);
-    myOffset = new FXTextField(myContentFrame, 6, this, MID_GNE_DEF_OFFSET, GNEDesignTextFieldAttributeReal, 0, 0, 0, 0, 4, 2, 0, 2);
+    myOffset = new FXTextField(myContentFrame, GNEDesignTextFieldNCol, this, MID_GNE_DEF_OFFSET, GNEDesignTextFieldAttributeReal, 0, 0, 0, 0, 4, 2, 0, 2);
 
     new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
 
@@ -162,23 +162,6 @@ GNETLSEditorFrame::~GNETLSEditorFrame() {
     cleanup();
 }
 
-
-void
-GNETLSEditorFrame::show() {
-    // Show Scroll window
-    FXScrollWindow::show();
-    // Show and update Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->showFramesArea();
-}
-
-
-void
-GNETLSEditorFrame::hide() {
-    // Hide ScrollWindow
-    FXScrollWindow::hide();
-    // Hide Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->hideFramesArea();
-}
 
 void
 GNETLSEditorFrame::editJunction(GNEJunction* junction) {

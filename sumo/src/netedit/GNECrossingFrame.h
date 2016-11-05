@@ -226,13 +226,14 @@ public:
 
 
     /**@brief Constructor
-     * @brief parent FXFrame in which this GNEFrame is placed
+     * @brief parent FXHorizontalFrame in which this GNEFrame is placed
      * @brief viewNet viewNet that uses this GNEFrame
      */
-    GNECrossingFrame(FXComposite* parent, GNEViewNet* viewNet);
+    GNECrossingFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet);
 
     /// @brief Destructor
     ~GNECrossingFrame();
+
 
     /**@brief add Crossing element
      * @param[in] netElement clicked netElement. if user dind't clicked over a GNENetElement in view, netElement will be NULL
@@ -253,12 +254,6 @@ public:
     /// @brief Called when the user press the button create edge
     long onCmdCreateCrossing(FXObject*, FXSelector, void*);
     /// @}
-
-    /// @brief show Crossing frame
-    void show();
-
-    /// @brief hidde Crossing frame
-    void hide();
 
     /// @brief get list of selecte id's in string format
     static std::string getIdsSelected(const FXList* list);

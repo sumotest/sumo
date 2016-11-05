@@ -99,8 +99,8 @@ FXIMPLEMENT(GNEInspectorFrame::AttrConnection, FXHorizontalFrame, AttrConnection
 // method definitions
 // ===========================================================================
 
-GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
-    GNEFrame(parent, viewNet, "Inspector"),
+GNEInspectorFrame::GNEInspectorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+    GNEFrame(horizontalFrameParent, viewNet, "Inspector"),
     myEdgeTemplate(0),
     myAdditional(0),
     myPreviousElement(0) {
@@ -110,7 +110,7 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     myBackButton->hide();
 
     // Create groupBox for attributes
-    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GNEDesignGroupBox);
+    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GNEDesignGroupBoxFrame);
     myGroupBoxForAttributes->hide();
 
     // Create AttrInput
@@ -119,7 +119,7 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     }
 
     // Create groupBox for templates
-    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "Templates", GNEDesignGroupBox);
+    myGroupBoxForTemplates = new FXGroupBox(myContentFrame, "Templates", GNEDesignGroupBoxFrame);
     myGroupBoxForTemplates->hide();
 
     // Create copy template button
@@ -131,7 +131,7 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     mySetTemplateButton->hide();
 
     // Create groupBox for editor parameters
-    myGroupBoxForEditor = new FXGroupBox(myContentFrame, "editor", GNEDesignGroupBox);
+    myGroupBoxForEditor = new FXGroupBox(myContentFrame, "editor", GNEDesignGroupBoxFrame);
     myGroupBoxForEditor->hide();
 
     // Create check blocked button
@@ -139,7 +139,7 @@ GNEInspectorFrame::GNEInspectorFrame(FXComposite* parent, GNEViewNet* viewNet):
     myCheckBlocked->hide();
 
     // Create groupBox for AttrConnection
-    myGroupBoxForAttrConnections = new FXGroupBox(myContentFrame, "Connections", GNEDesignGroupBox);
+    myGroupBoxForAttrConnections = new FXGroupBox(myContentFrame, "Connections", GNEDesignGroupBoxFrame);
     myGroupBoxForAttrConnections->hide();
 
     // Create AttrConnections
@@ -155,24 +155,6 @@ GNEInspectorFrame::~GNEInspectorFrame() {
             delete myEdgeTemplate;
         }
     }
-}
-
-
-void
-GNEInspectorFrame::show() {
-    // Show Scroll window
-    FXScrollWindow::show();
-    // Show and update Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->showFramesArea();
-}
-
-
-void
-GNEInspectorFrame::hide() {
-    // Hide ScrollWindow
-    FXScrollWindow::hide();
-    // Hide Frame Area in which this GNEFrame is placed
-    myViewNet->getViewParent()->hideFramesArea();
 }
 
 
@@ -329,6 +311,9 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
     } else {
         getFrameHeaderLabel()->setText("No Object selected");
     }
+
+    // Update desing of content frame to avoid scroll bars
+    updateContentFrame();
 }
 
 GNEEdge*
@@ -431,16 +416,16 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     myLabel = new FXLabel(this, "attributeLabel", 0, GNEDesignLabelAttribute);
     myLabel->hide();
     // Create and hide textField int
-    myTextFieldInt = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeInt);
+    myTextFieldInt = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeInt);
     myTextFieldInt->hide();
     // Create and hide textField real
-    myTextFieldReal = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
+    myTextFieldReal = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
     myTextFieldReal->hide();
     // Create and hide textField string
-    myTextFieldStrings = new FXTextField(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
+    myTextFieldStrings = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
     myTextFieldStrings->hide();
     // Create and hide ComboBox
-    myChoicesCombo = new FXComboBox(this, 1, this, MID_GNE_SET_ATTRIBUTE, GNEDesignComboBox);
+    myChoicesCombo = new FXComboBox(this, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignComboBox);
     myChoicesCombo->hide();
     // Create and hide checkButton
     myCheckBox = new FXCheckButton(this, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButtonAttribute);
@@ -790,6 +775,5 @@ void
 GNEInspectorFrame::AttrConnection::hide() {
     FXHorizontalFrame::hide();
 }
-
 
 /****************************************************************************/
