@@ -362,7 +362,6 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
             stopsAreChanged = true;
             veh.replaceParkingArea(nearParkArea);
             newEdge = &(nearParkArea->getLane().getEdge());
-            //newArrivalPos = nearParkArea->getEndLanePosition();
         }
 
     } else {

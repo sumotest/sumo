@@ -191,17 +191,6 @@ MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit, bool for
             oldSize = (int)edges.size();
         }
         edges.insert(edges.begin(), myRoute->begin(), myCurrEdge);
-
-        //if (edges.back() != myRoute->getEdges().back()) {
-        //    oldSize = (int)edges.size();
-        //    edges.insert(edges.end(), std::find(myRoute->begin(), myRoute->end(), edges.back()) + 1, myRoute->end());
-        //}
-            // I have to add edges from the end of reroute to to final destination
-            /*
-            for (ConstMSEdgeVector::const_iterator it = std::find(std::find(myRoute->begin(), myRoute->end(), myCurrEdge), myRoute->end(), edges.back()) + 1; it != myRoute->end(); ++it) {
-                edges.push_back(*it);
-            }
-            */
     }
     if (edges == myRoute->getEdges() && !forceNewRoute) {
         if (onInit) {
