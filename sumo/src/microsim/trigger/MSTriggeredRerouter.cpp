@@ -32,6 +32,7 @@
 
 #include <string>
 #include <algorithm>
+#include <utils/options/OptionsCont.h>
 #include <utils/common/MsgHandler.h>
 #include <utils/common/Command.h>
 #include <utils/xml/SUMOXMLDefinitions.h>
@@ -49,6 +50,7 @@
 #include <microsim/MSEdge.h>
 #include <microsim/MSNet.h>
 #include <microsim/MSGlobals.h>
+#include <microsim/devices/MSDevice_Example.h>
 #include "MSTriggeredRerouter.h"
 
 #ifdef HAVE_INTERNAL
@@ -324,49 +326,13 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
     bool stopsAreChanged = false;
 
     if (rerouteDef->parkProbs.getOverallProb() > 0) {
-        std::vector<MSParkingArea*> parks = rerouteDef->parkProbs.getVals();
-        double minRouteLength = 0.0;
-        MSParkingArea *nearParkArea = 0;
-
-        // I have to take the next stop, check if is a parking area and check the occupancy
-        MSParkingArea *destParkArea = 0;
-        destParkArea = veh.getNextParkingArea();
-
-        // I reroute destination from initial parking area to the near parking area
-        // if the next stop is a parking area, if the current parking area is on the same edge of the vehicle and if it is full
-        if (destParkArea != 0 && 
-            &(destParkArea->getLane().getEdge()) == veh.getEdge()  && 
-            destParkArea->getOccupancy() == destParkArea->getCapacity()) {
-
-            for (std::vector<MSParkingArea*>::const_iterator i = parks.begin(); i != parks.end(); ++i) {
-                if ((*i)->getOccupancy() < (*i)->getCapacity()) {
-
-                    const MSEdge* destEdge = &((*i)->getLane().getEdge());
-                
-                    ConstMSEdgeVector edges;
-                    MSNet::getInstance()->getRouterTT(rerouteDef->closed).compute(
-                        veh.getEdge(), destEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edges);
-
-                    const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
-                    double routeLength = route.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
-                                                                    veh.getEdge(), destEdge, includeInternalLengths);
-
-                    // get the parking area near to vehicle
-                    // (should be a minimum cost function with prob, distance, and free space?)
-                    if (nearParkArea == 0 || routeLength < minRouteLength) {
-                        minRouteLength = routeLength;
-                        nearParkArea = (*i);
-                    }
-                }
-            }
-
-            if (nearParkArea != 0) {
-                stopsAreChanged = true;
-                veh.replaceParkingArea(nearParkArea);
-                newEdge = &(nearParkArea->getLane().getEdge());
-            }
+        MSParkingArea *nearParkArea = rerouteParkingZone(rerouteDef, veh);
+        if (nearParkArea != 0) {
+            stopsAreChanged = true;
+            veh.replaceParkingArea(nearParkArea);
+            newEdge = &(nearParkArea->getLane().getEdge());
         }
-    } 
+    }
 
     // If the event doesn't trigger reroute for parking zone check other types
     if (!stopsAreChanged) {
@@ -443,6 +409,130 @@ MSTriggeredRerouter::getUserProbability() const {
 }
 
 
+SUMOReal
+MSTriggeredRerouter::getWeight(SUMOVehicle& veh, const std::string param, const SUMOReal defaultWeight) const {
+    OptionsCont& oc = OptionsCont::getOptions();
+    
+    // get default parameter
+    SUMOReal customParameter1 = -1;
+    if (oc.exists(param)) {
+        try {
+            customParameter1 = oc.getFloat(param);
+        } catch (...) {
+            WRITE_WARNING("Invalid value for parameter '" + param + "'");
+        }
+
+    } else {
+        std::cout << "vehicle '" << veh.getID() << "' does not supply vehicle parameter '" + param + "'. Using default of " << defaultWeight << "\n";
+    }
+    
+    // get custom vType parameter
+    SUMOReal customParameter2 = -1;
+    if (veh.getVehicleType().getParameter().knowsParameter(param)) {
+        try {
+            customParameter2 = TplConvert::_2SUMOReal(veh.getVehicleType().getParameter().getParameter(param, "-1").c_str());
+        } catch (...) {
+            WRITE_WARNING("Invalid value '" + veh.getVehicleType().getParameter().getParameter(param, "-1") + "' for vType parameter '" + param + "'");
+        }
+
+    } else {
+        std::cout << "vehicle '" << veh.getID() << "' does not supply vType parameter '" + param + "'. Using default of " << customParameter1 << "\n";
+    }
+    
+    // get custom vehicle parameter
+    SUMOReal customParameter3 = -1;
+    if (veh.getParameter().knowsParameter(param)) {
+        try {
+            customParameter3 = TplConvert::_2SUMOReal(veh.getParameter().getParameter(param, "-1").c_str());
+        } catch (...) {
+            WRITE_WARNING("Invalid value '" + veh.getParameter().getParameter(param, "-1") + "' for vehicle parameter '" + param + "'");
+        }
+
+    } else {
+        std::cout << "vehicle '" << veh.getID() << "' does not supply vehicle parameter '" + param + "'. Using default of " << customParameter2 << "\n";
+    }
+
+    return (customParameter3 != -1 ? customParameter3 : 
+           (customParameter2 != -1 ? customParameter2 : 
+           (customParameter1 != -1 ? customParameter1 : defaultWeight)));
+}
+
+
+MSParkingArea*
+MSTriggeredRerouter::rerouteParkingZone(const MSTriggeredRerouter::RerouteInterval* rerouteDef, SUMOVehicle& veh) const {
+    
+    MSParkingArea *nearParkArea = 0;
+
+    // get vehicle params
+    MSParkingArea *destParkArea = veh.getNextParkingArea();
+    const MSRoute& route = veh.getRoute();
+
+    // I reroute destination from initial parking area to the near parking area
+    // if the next stop is a parking area, if the current parking area is on the same edge of the vehicle and if it is full
+    if (destParkArea != 0 && 
+        &(destParkArea->getLane().getEdge()) == veh.getEdge()  && 
+        destParkArea->getOccupancy() == destParkArea->getCapacity()) {
+
+        double maxParkCapacity = 0;
+        double maxParkAbsFreeSpace = 0;
+        double maxParkRelFreeSpace = 0;
+        double maxRouteLengthToPark = 0.0;
+        double maxRouteLengthToEnd = 0.0;
+        double maxRouteCostToPark = 0.0;
+        double maxRouteCostToEnd = 0.0;
+        double minRouteLength = 0.0;
+
+        SUMOAbstractRouter<MSEdge, SUMOVehicle>& router = MSNet::getInstance()->getRouterTT(rerouteDef->closed);
+
+        std::vector<MSParkingArea*> parks = rerouteDef->parkProbs.getVals();
+
+        for (std::vector<MSParkingArea*>::const_iterator i = parks.begin(); i != parks.end(); ++i) {
+            if ((*i)->getOccupancy() < (*i)->getCapacity()) {
+                    
+                const SUMOReal parkCapacity = (double)((*i)->getCapacity());
+                const SUMOReal parkAbsFreeSpace = (double)((*i)->getCapacity() - (*i)->getOccupancy());
+                const SUMOReal parkRelFreeSpace = parkAbsFreeSpace / parkCapacity;
+
+                const RGBColor& c = route.getColor();
+                const MSEdge* parkEdge = &((*i)->getLane().getEdge());
+                const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
+                
+                // Compute the route from the current edge to the parking area edge
+                ConstMSEdgeVector edgesToPark;
+                router.compute(veh.getEdge(), parkEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edgesToPark);
+                MSRoute routeToPark(route.getID() + "!topark#1", edgesToPark, false, &c == &RGBColor::DEFAULT_COLOR ? 0 : new RGBColor(c), route.getStops());
+
+                // The distance from the current edge to the new parking area
+                const SUMOReal routeLengthToPark = routeToPark.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
+                                                                            routeToPark.begin(), routeToPark.end(), includeInternalLengths);
+                    
+                // The time to reach the new parking area
+                const SUMOReal routeCostToPark = router.recomputeCosts(edgesToPark, &veh, MSNet::getInstance()->getCurrentTimeStep());
+
+                // Compute the route from the current edge to the parking area edge
+                ConstMSEdgeVector edgesFromPark;
+                router.compute(parkEdge, route.getLastEdge(), &veh, MSNet::getInstance()->getCurrentTimeStep(), edgesFromPark);
+                MSRoute routeFromPark(route.getID() + "!frompark#1", edgesFromPark, false, &c == &RGBColor::DEFAULT_COLOR ? 0 : new RGBColor(c), route.getStops());
+                    
+                // The distance from the new parking area to the end of the route
+                const SUMOReal routeLengthFromPark = routeFromPark.getDistanceBetween((*i)->getBeginLanePosition(), routeFromPark.getLastEdge()->getLength(),
+                                                                                        routeFromPark.begin(), routeFromPark.end(), includeInternalLengths);
+                    
+                // The time to reach this area
+                const SUMOReal routeCostFromPark = router.recomputeCosts(edgesFromPark, &veh, MSNet::getInstance()->getCurrentTimeStep());
+
+                // get the parking area near to vehicle
+                // (should be a minimum cost function with prob, distance, and free space?)
+                if (nearParkArea == 0 || routeLengthToPark < minRouteLength) {
+                    minRouteLength = routeLengthToPark;
+                    nearParkArea = (*i);
+                }
+            }
+        }
+    }
+
+    return nearParkArea;
+}
 
 /****************************************************************************/
 

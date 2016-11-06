@@ -150,6 +150,10 @@ public:
     /// Returns the rerouting probability given by the user
     SUMOReal getUserProbability() const;
 
+    SUMOReal getWeight(SUMOVehicle& veh, const std::string param, const SUMOReal defaultWeight) const;
+    
+    MSParkingArea* rerouteParkingZone(const MSTriggeredRerouter::RerouteInterval* rerouteDef, SUMOVehicle& veh) const;
+
 protected:
     /// @name inherited from GenericSAXHandler
     //@{
