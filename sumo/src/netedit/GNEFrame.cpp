@@ -91,17 +91,6 @@ GNEFrame::~GNEFrame() {
 
 
 void 
-GNEFrame::updateContentFrame() {
-    myHorizontalFrameParent->update();
-    // This avoid the scroll bars
-    if(myContentFrame->getHeight() > myHorizontalFrameParent->getHeight()) {
-        myContentFrame->setWidth(myHorizontalFrameParent->getWidth() - 17);
-    } else {
-        myContentFrame->setWidth(myHorizontalFrameParent->getWidth() - 2);
-    }
-}
-
-void 
 GNEFrame::show() {
     // show scroll window
     FXScrollWindow::show();

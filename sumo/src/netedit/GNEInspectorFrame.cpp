@@ -311,9 +311,6 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
     } else {
         getFrameHeaderLabel()->setText("No Object selected");
     }
-
-    // Update desing of content frame to avoid scroll bars
-    updateContentFrame();
 }
 
 GNEEdge*

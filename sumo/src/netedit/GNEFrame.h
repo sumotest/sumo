@@ -62,9 +62,6 @@ public:
     /// @brief destructor
     ~GNEFrame();
 
-    /// @brief update size of contetFrame (needed to avoid size problems)
-    void updateContentFrame();
-
     /**@brief show Frame
      * @note some GNEFrames needs a re-implementation
      */

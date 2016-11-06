@@ -124,7 +124,7 @@
 
 #define GNEDesignToolbarGrip            (TOOLBARGRIP_SINGLE | FRAME_SUNKEN)
 
-#define GNEDesigContentFrame            (LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y)
+#define GNEDesigContentFrame            (LAYOUT_FILL_X | LAYOUT_FILL_Y)
 
 #endif
 
