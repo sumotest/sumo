@@ -126,6 +126,8 @@
 
 #define GNEDesigContentFrame            (LAYOUT_FILL_X | LAYOUT_FILL_Y)
 
+#define GNEDesigFrame                   (LAYOUT_FILL_X | LAYOUT_FILL_Y)
+
 #endif
 
 /****************************************************************************/

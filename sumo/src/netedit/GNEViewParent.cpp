@@ -343,12 +343,12 @@ GNEViewParent::onKeyRelease(FXObject* o, FXSelector sel, void* data) {
 }
 
 long 
-GNEViewParent::onCmdUpdateFrameAreaWidth(FXObject* , FXSelector , void*) {    
+GNEViewParent::onCmdUpdateFrameAreaWidth(FXObject*, FXSelector, void*) {    
     // Iterate over frames
-    for(std::map<int, GNEFrame*>::iterator i = myGNEFrames.begin(); i != myGNEFrames.end(); i++) {
-        // update size of content frame of GNEFrame
-        i->second->recalc();
-    }
+    //for(std::map<int, GNEFrame*>::iterator i = myGNEFrames.begin(); i != myGNEFrames.end(); i++) {
+    //    // update size of content frame of GNEFrame
+    //    i->second->updateContentFrame();
+    //}
     return 0;
 }
 

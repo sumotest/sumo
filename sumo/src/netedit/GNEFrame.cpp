@@ -54,7 +54,7 @@
 // ===========================================================================
 
 GNEFrame::GNEFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet, const std::string& frameLabel) :
-    FXScrollWindow(horizontalFrameParent, LAYOUT_FILL),
+    FXScrollWindow(horizontalFrameParent, GNEDesigFrame),
     myHorizontalFrameParent(horizontalFrameParent),
     myViewNet(viewNet) {
     // Create font
