@@ -506,11 +506,29 @@ MSVehicle::replaceRoute(const MSRoute* newRoute, bool onInit, int offset) {
     // add new stops
     for (std::vector<SUMOVehicleParameter::Stop>::const_iterator i = newRoute->getStops().begin(); i != newRoute->getStops().end(); ++i) {
         std::string error;
-        addStop(*i, error);
+        bool stopAlreadyExists = false;
+        for (std::list<Stop>::iterator iter = myReplacedStops.begin(); iter != myReplacedStops.end(); ++iter) {
+            stopAlreadyExists = (i->lane == iter->lane->getID() &&
+                                 i->busstop == (iter->busstop != 0 ? iter->busstop->getID() : "") &&
+                                 i->chargingStation == (iter->chargingStation != 0 ? iter->chargingStation->getID() : "") &&
+                                 i->containerstop == (iter->containerstop != 0 ? iter->containerstop->getID() : "") &&
+                                 i->parkingarea == (iter->parkingarea != 0 ? iter->parkingarea->getID() : "") &&
+                                 i->startPos == iter->startPos &&
+                                 i->endPos == iter->endPos &&
+                                 i->until == iter->until &&
+                                 i->duration == iter->duration &&
+                                 i->triggered == iter->triggered &&
+                                 i->containerTriggered == iter->containerTriggered &&
+                                 i->parking == iter->parking);
+            if (stopAlreadyExists) break;
+        }
+        if (!stopAlreadyExists)
+            addStop(*i, error);
         if (error != "") {
             WRITE_WARNING(error);
         }
     }
+
     return true;
 }
 
@@ -840,6 +858,10 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
 
 bool
 MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
+    // Check if there is a parking area to be replaced
+    if (parkingArea == 0)
+        return false;
+
     std::string errorMsg;
     if (myStops.empty()) {
         errorMsg = "Vehicle '" + myParameter->id + "' has no stops.";
@@ -848,7 +870,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
 
     SUMOVehicleParameter::Stop stopPar;
     Stop stop = myStops.front();
-    if (!stop.reached && stop.parkingarea != 0) {
+    if (!stop.reached && stop.parkingarea != 0 && stop.parkingarea != parkingArea) {
         stopPar.lane = parkingArea->getLane().getID();
         if (!parkingArea->getLane().allowsVehicleClass(myType->getVehicleClass())) {
             errorMsg = "Vehicle '" + myParameter->id + "' is not allowed to stop on lane '" + stopPar.lane + "'.";
@@ -871,7 +893,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
             }
         }
 
-        stopPar.index = 0;
+        stopPar.index = 1;
         stopPar.busstop = "";
         stopPar.chargingStation = "";
         stopPar.containerstop = "";
@@ -886,15 +908,28 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         stopPar.containerTriggered = stop.containerTriggered;
         stopPar.parking = stop.parking;
 
+        // save stops before replace operation
+        myReplacedStops = myStops;
+        
         // remove stops equals to parking area
         while (removeStops > 0) {
             myStops.pop_front();
             --removeStops;
         }
-
-        return addStop(stopPar, errorMsg);
+        const bool result = addStop(stopPar, errorMsg);
+        if (result) { 
+            if (myLane != 0) {
+                updateBestLanes(true);
+            }
+        } else {
+            myStops = myReplacedStops;
+        }
+        return result;
     } else {
-        errorMsg = "Vehicle '" + myParameter->id + "' has no valid parking area.";
+        if (stop.parkingarea == parkingArea)
+            errorMsg = "Vehicle '" + myParameter->id + "' has the same parking area, no need replace.";
+        else
+            errorMsg = "Vehicle '" + myParameter->id + "' has no valid parking area.";
         return false;
     }
 }

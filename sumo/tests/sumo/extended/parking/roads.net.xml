@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 05/11/2016 09:12:01 by Netedit Version dev-SVN-r21897D
+<!-- generated on 07/11/2016 15:10:58 by Netedit Version dev-SVN-r21897D
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netedit.exeConfiguration.xsd">
@@ -70,12 +70,14 @@
         <request index="5" response="001110" foes="001110"/>
     </junction>
     <junction id="18" type="district" x="843.87" y="672.62" z="65.00" incLanes="-1_Viale_Italia_R_0 7_Via_Montespirello_0 2_Viale_Italia_S_0" intLanes="" shape="849.65,673.90,65.00 847.34,667.82,65.00 845.49,666.92,65.00 839.29,668.87,65.00 838.45,671.19,65.00 840.74,677.27,65.00"/>
-    <junction id="9" type="district" x="567.01" y="493.22" z="60.00" incLanes="-6_Via_della_Fonte_Bella_0" intLanes="" shape="566.99,493.17,60.00 565.62,490.28,60.00 568.40,496.16,60.00 567.03,493.27,60.00"/>
+    <junction id="9" type="dead_end" x="567.01" y="493.22" z="60.00" incLanes="-6_Via_della_Fonte_Bella_0" intLanes="" shape="566.99,493.17,60.00 565.62,490.28,60.00 568.40,496.16,60.00 567.03,493.27,60.00"/>
     <junction id="gneJ0" type="district" x="1054.57" y="592.37" incLanes="1_Viale_Italia_R_0" intLanes="" shape="1054.59,592.42 1055.73,595.41 1053.41,589.33 1054.55,592.32"/>
-    <junction id="gneJ2" type="district" x="690.90" y="730.36" incLanes="-2_Viale_Italia_S_0" intLanes="" shape="690.88,730.31 689.75,727.32 692.05,733.40 690.92,730.41"/>
+    <junction id="gneJ2" type="dead_end" x="690.90" y="730.36" incLanes="-2_Viale_Italia_S_0" intLanes="" shape="690.88,730.31 689.75,727.32 692.05,733.40 690.92,730.41"/>
 
     <connection from="-1_Viale_Italia_R" to="-2_Viale_Italia_S" fromLane="0" toLane="0" dir="s" state="M"/>
     <connection from="-1_Viale_Italia_R" to="-7_Via_Montespirello" fromLane="0" toLane="0" dir="l" state="M"/>
+    <connection from="-2_Viale_Italia_S" to="2_Viale_Italia_S" fromLane="0" toLane="0" dir="t" state="M"/>
+    <connection from="-6_Via_della_Fonte_Bella" to="6_Via_della_Fonte_Bella" fromLane="0" toLane="0" dir="t" state="M"/>
     <connection from="-7_Via_Montespirello" to="-6_Via_della_Fonte_Bella" fromLane="0" toLane="0" dir="r" state="M"/>
     <connection from="-7_Via_Montespirello" to="-39_Via_Montespirello" fromLane="0" toLane="0" dir="s" state="M"/>
     <connection from="2_Viale_Italia_S" to="-7_Via_Montespirello" fromLane="0" toLane="0" dir="r" state="M"/>
@@ -86,5 +88,6 @@
     <connection from="6_Via_della_Fonte_Bella" to="7_Via_Montespirello" fromLane="0" toLane="0" dir="l" state="s"/>
     <connection from="7_Via_Montespirello" to="1_Viale_Italia_R" fromLane="0" toLane="0" dir="r" state="M"/>
     <connection from="7_Via_Montespirello" to="-2_Viale_Italia_S" fromLane="0" toLane="0" dir="l" state="M"/>
+    <connection from="7_Via_Montespirello" to="-7_Via_Montespirello" fromLane="0" toLane="0" dir="t" state="M"/>
 
 </net>

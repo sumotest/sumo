@@ -2,7 +2,7 @@
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://svn.code.sf.net/p/sumo/code/branches/parking/sumo/data/xsd/routes_file.xsd">
 	
 	<vType id="DEFAULT_VEHTYPE">
-	    <param key="parking.distance.weight" value="2000"/>
+	    <param key="parking.distance.weight" value="1"/>
     </vType>
 	
     <route id="route1" edges="39_Via_Montespirello 7_Via_Montespirello 1_Viale_Italia_R">
@@ -15,13 +15,13 @@
     </route>
 
     <route id="route3" edges="39_Via_Montespirello 7_Via_Montespirello 1_Viale_Italia_R"/>
-
-    <!-- not working 
-    <flow id="flow" begin="0" end="35" period="5" route="route1"/>
-    -->
 	
-    <flow id="flow" begin="0" end="35" period="5" route="route3">
+	
+    <flow id="flow1" begin="0" end="35" period="5" route="route1"/>
+	
+    <flow id="flow3" begin="40" end="75" period="5" route="route3">
 		<stop index="0" parkingArea="ParkArea:39_Via_Montespirello_0" duration="200" parking="true"/>
 		<stop index="1" parkingArea="ParkArea:7_Via_Montespirello_0" duration="200" parking="true"/>
     </flow>
+	
 </routes>
