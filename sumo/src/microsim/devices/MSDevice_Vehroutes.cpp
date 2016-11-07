@@ -223,6 +223,12 @@ MSDevice_Vehroutes::writeXMLRoute(OutputDevice& os, int index) const {
 
 void
 MSDevice_Vehroutes::generateOutput() const {
+    writeOutput(true);
+}
+
+
+void
+MSDevice_Vehroutes::writeOutput(const bool hasArrived) const {
     OutputDevice& routeOut = OutputDevice::getDeviceByOption("vehroute-output");
     OutputDevice_String od(routeOut.isBinary(), 1);
     const SUMOTime departure = myIntendedDepart ? myHolder.getParameter().depart : myHolder.getDeparture();
@@ -231,7 +237,7 @@ MSDevice_Vehroutes::generateOutput() const {
         od.writeAttr(SUMO_ATTR_TYPE, myHolder.getVehicleType().getID());
     }
     od.writeAttr(SUMO_ATTR_DEPART, time2string(departure));
-    if (myHolder.hasArrived()) {
+    if (hasArrived) {
         od.writeAttr("arrival", time2string(MSNet::getInstance()->getCurrentTimeStep()));
         if (myRouteLength) {
             const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
@@ -281,6 +287,12 @@ MSDevice_Vehroutes::generateOutput() const {
         if (myReplacedRoutes.size() > 0) {
             od.closeTag();
         }
+    }
+    for (std::vector<SUMOVehicleParameter::Stop>::const_iterator i = myHolder.getParameter().stops.begin(); i != myHolder.getParameter().stops.end(); ++i) {
+        i->write(od);
+    }
+    for (std::vector<SUMOVehicleParameter::Stop>::const_iterator i = myHolder.getRoute().getStops().begin(); i != myHolder.getRoute().getStops().end(); ++i) {
+        i->write(od);
     }
     for (std::map<std::string, std::string>::const_iterator j = myHolder.getParameter().getMap().begin(); j != myHolder.getParameter().getMap().end(); ++j) {
         od.openTag(SUMO_TAG_PARAM);
@@ -344,7 +356,7 @@ MSDevice_Vehroutes::generateOutputForUnfinished() {
     for (std::map<const SUMOVehicle*, MSDevice_Vehroutes*, Named::NamedLikeComparatorIdLess<SUMOVehicle> >::const_iterator it = myStateListener.myDevices.begin();
             it != myStateListener.myDevices.end(); ++it) {
         if (it->first->hasDeparted()) {
-            it->second->generateOutput();
+            it->second->writeOutput(false);
         }
     }
 }

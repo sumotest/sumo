@@ -219,12 +219,12 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
 
                 SUMOReal length;
                 PositionVector fallBackShape;
+                fallBackShape.push_back(begShape.back());
+                fallBackShape.push_back(endShape.front());
                 const bool turnaround = inEdge->isTurningDirectionAt(outEdge);
                 bool ok = true;
                 PositionVector init = NBNode::bezierControlPoints(begShape, endShape, turnaround, 25, 25, ok);
                 if (init.size() == 0) {
-                    fallBackShape.push_back(begShape.back());
-                    fallBackShape.push_back(endShape.front());
                     length = fallBackShape.length2D();
                     // problem with turnarounds is known, method currently returns 'ok' (#2539)
                     if (!ok) {
@@ -255,6 +255,11 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
                 device.openTag("planView");
                 device.setPrecision(8); // geometry hdg requires higher precision
                 OutputDevice_String elevationOSS(false, 3);
+#ifdef DEBUG_SMOOTH_GEOM
+                if (DEBUGCOND) {
+                    std::cout << "write planview for internal edge " << c.getInternalLaneID() << " init=" << init << " fallback=" << fallBackShape << "\n";
+                }
+#endif
                 if (init.size() == 0) {
                     writeGeomLines(fallBackShape, device, elevationOSS);
                 } else {
@@ -448,6 +453,9 @@ NWWriter_OpenDrive::writeGeomPP3(
 
     const Position p = init.front();
     const SUMOReal hdg = init.angleAt2D(0);
+
+    // backup elevation values
+    const PositionVector initZ = init;
     // translate to u,v coordinates
     init.add(-p.x(), -p.y(), -p.z());
     init.rotate2D(-hdg);
@@ -471,9 +479,9 @@ NWWriter_OpenDrive::writeGeomPP3(
         dV = 0;
 
         // elevation is not parameteric on [0:1] but on [0:length]
-        aZ = init[0].z();
-        bZ = (2 * init[1].z() - 2 * init[0].z()) / length;
-        cZ = (init[0].z() - 2 * init[1].z() + init[2].z()) / (length * length);
+        aZ = initZ[0].z();
+        bZ = (2 * initZ[1].z() - 2 * initZ[0].z()) / length;
+        cZ = (initZ[0].z() - 2 * initZ[1].z() + initZ[2].z()) / (length * length);
         dZ = 0;
 
     } else {
@@ -489,10 +497,10 @@ NWWriter_OpenDrive::writeGeomPP3(
         dV = -init[0].y() + 3 * init[1].y() - 3 * init[2].y() + init[3].y();
 
         // elevation is not parameteric on [0:1] but on [0:length]
-        aZ = init[0].z();
-        bZ = (3 * init[1].z() - 3 * init[0].z()) / length;
-        cZ = (3 * init[0].z() - 6 * init[1].z() + 3 * init[2].z()) / (length * length);
-        dZ = (-init[0].z() + 3 * init[1].z() - 3 * init[2].z() + init[3].z()) / (length * length * length);
+        aZ = initZ[0].z();
+        bZ = (3 * initZ[1].z() - 3 * initZ[0].z()) / length;
+        cZ = (3 * initZ[0].z() - 6 * initZ[1].z() + 3 * initZ[2].z()) / (length * length);
+        dZ = (-initZ[0].z() + 3 * initZ[1].z() - 3 * initZ[2].z() + initZ[3].z()) / (length * length * length);
     }
 
     device.openTag("geometry");

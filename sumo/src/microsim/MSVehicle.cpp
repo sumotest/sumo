@@ -401,32 +401,12 @@ MSVehicle::Influencer::changeRequestRemainingSeconds(const SUMOTime currentTime)
 
 
 void
-MSVehicle::Influencer::setConsiderSafeVelocity(bool value) {
-    myConsiderSafeVelocity = value;
-}
-
-
-void
-MSVehicle::Influencer::setConsiderMaxAcceleration(bool value) {
-    myConsiderMaxAcceleration = value;
-}
-
-
-void
-MSVehicle::Influencer::setConsiderMaxDeceleration(bool value) {
-    myConsiderMaxDeceleration = value;
-}
-
-
-void
-MSVehicle::Influencer::setRespectJunctionPriority(bool value) {
-    myRespectJunctionPriority = value;
-}
-
-
-void
-MSVehicle::Influencer::setEmergencyBrakeRedLight(bool value) {
-    myEmergencyBrakeRedLight = value;
+MSVehicle::Influencer::setSpeedMode(int speedMode) {
+    myConsiderSafeVelocity = ((speedMode & 1) != 0);
+    myConsiderMaxAcceleration = ((speedMode & 2) != 0);
+    myConsiderMaxDeceleration = ((speedMode & 4) != 0);
+    myRespectJunctionPriority = ((speedMode & 8) != 0);
+    myEmergencyBrakeRedLight = ((speedMode & 16) != 0);
 }
 
 
@@ -3146,8 +3126,9 @@ MSVehicle::getLeader(SUMOReal dist) const {
 
 
 SUMOReal
-MSVehicle::getTimeGap() const {
-    std::pair<const MSVehicle* const, SUMOReal> leaderInfo = getLeader();
+MSVehicle::getTimeGapOnLane() const {
+    // calling getLeader with 0 would induce a dist calculation but we only want to look for the leaders on the current lane
+    std::pair<const MSVehicle* const, SUMOReal> leaderInfo = getLeader(-1);
     if (leaderInfo.first == 0 || getSpeed() == 0) {
         return -1;
     }
@@ -3586,6 +3567,9 @@ MSVehicle::addTraciStop(MSLane* const lane, const SUMOReal startPos, const SUMOR
     newStop.parking = parking;
     newStop.index = STOP_INDEX_FIT;
     const bool result = addStop(newStop, errorMsg);
+    if (result) {
+        myParameter->stops.push_back(newStop);
+    }
     if (myLane != 0) {
         updateBestLanes(true);
     }
@@ -3636,6 +3620,9 @@ MSVehicle::addTraciBusOrContainerStop(const std::string& stopId, const SUMOTime 
     newStop.endPos = bs->getEndLanePosition();
     newStop.startPos = bs->getBeginLanePosition();
     const bool result = addStop(newStop, errorMsg);
+    if (result) {
+        myParameter->stops.push_back(newStop);
+    }
     if (myLane != 0) {
         updateBestLanes(true);
     }

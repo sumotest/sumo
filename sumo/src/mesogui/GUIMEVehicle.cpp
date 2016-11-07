@@ -133,7 +133,7 @@ GUIMEVehicle::getParameterWindow(GUIMainWindow& app,
     ret->mkItem("event time [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getEventTimeSeconds));
     ret->mkItem("entry time [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getLastEntryTimeSeconds));
     ret->mkItem("block time [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getBlockTimeSeconds));
-    ret->mkItem("tls penalty [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getCurrentTLSPenaltySeconds));
+    ret->mkItem("link penalty [s]", true, new FunctionBinding<GUIMEVehicle, SUMOReal>(this, &MEVehicle::getCurrentLinkPenaltySeconds));
     // close building
     ret->closeBuilding();
     return ret;
@@ -211,7 +211,7 @@ GUIMEVehicle::getColorValue(int activeScheme) const {
         case 23:
             return 0; // invalid getAcceleration();
         case 24:
-            return 0; // invalid getTimeGap();
+            return 0; // invalid getTimeGapOnLane();
         case 25:
             return STEPS2TIME(getDepartDelay());
     }
