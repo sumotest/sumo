@@ -421,7 +421,8 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myAmRegisteredAsWaitingForContainer(false),
     myHaveToWaitOnNextLink(false),
     myCachedPosition(Position::INVALID),
-    myEdgeWeights(0)
+    myEdgeWeights(0),
+    myReplaceParkingArea(0)
 #ifndef NO_TRACI
     , myInfluencer(0)
 #endif
@@ -503,29 +504,17 @@ MSVehicle::replaceRoute(const MSRoute* newRoute, bool onInit, int offset) {
             ++iter;
         }
     }
-    // add new stops
-    for (std::vector<SUMOVehicleParameter::Stop>::const_iterator i = newRoute->getStops().begin(); i != newRoute->getStops().end(); ++i) {
-        std::string error;
-        bool stopAlreadyExists = false;
-        for (std::list<Stop>::iterator iter = myReplacedStops.begin(); iter != myReplacedStops.end(); ++iter) {
-            stopAlreadyExists = (i->lane == iter->lane->getID() &&
-                                 i->busstop == (iter->busstop != 0 ? iter->busstop->getID() : "") &&
-                                 i->chargingStation == (iter->chargingStation != 0 ? iter->chargingStation->getID() : "") &&
-                                 i->containerstop == (iter->containerstop != 0 ? iter->containerstop->getID() : "") &&
-                                 i->parkingarea == (iter->parkingarea != 0 ? iter->parkingarea->getID() : "") &&
-                                 i->startPos == iter->startPos &&
-                                 i->endPos == iter->endPos &&
-                                 i->until == iter->until &&
-                                 i->duration == iter->duration &&
-                                 i->triggered == iter->triggered &&
-                                 i->containerTriggered == iter->containerTriggered &&
-                                 i->parking == iter->parking);
-            if (stopAlreadyExists) break;
-        }
-        if (!stopAlreadyExists)
+    // We don't want additional stops when replacing parking area       
+    if (myReplaceParkingArea != 0)
+        replaceParkingArea();
+    else {
+        // add new stops
+        for (std::vector<SUMOVehicleParameter::Stop>::const_iterator i = newRoute->getStops().begin(); i != newRoute->getStops().end(); ++i) {
+            std::string error;
             addStop(*i, error);
-        if (error != "") {
-            WRITE_WARNING(error);
+            if (error != "") {
+                WRITE_WARNING(error);
+            }
         }
     }
 
@@ -858,9 +847,16 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
 
 bool
 MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
+    if (parkingArea != 0) {
+        myReplaceParkingArea = parkingArea;
+        return true;
+    }
+
     // Check if there is a parking area to be replaced
-    if (parkingArea == 0)
+    if (myReplaceParkingArea == 0)
         return false;
+    else
+        parkingArea = myReplaceParkingArea;
 
     std::string errorMsg;
     if (myStops.empty()) {
@@ -880,6 +876,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         // merge duplicated stops equals to parking area
         int removeStops = 0;
         SUMOTime duration = 0;
+        
         for (std::list<Stop>::const_iterator iter = myStops.begin(); iter != myStops.end(); ++iter) {
             if (duration == 0) {
                 duration = iter->duration;
@@ -909,7 +906,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         stopPar.parking = stop.parking;
 
         // save stops before replace operation
-        myReplacedStops = myStops;
+        std::list<Stop> myReplacedStops = myStops;
         
         // remove stops equals to parking area
         while (removeStops > 0) {
@@ -918,6 +915,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         }
         const bool result = addStop(stopPar, errorMsg);
         if (result) { 
+            myReplaceParkingArea = 0;
             if (myLane != 0) {
                 updateBestLanes(true);
             }

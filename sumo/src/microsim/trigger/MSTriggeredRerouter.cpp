@@ -327,8 +327,7 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
 
     if (rerouteDef->parkProbs.getOverallProb() > 0) {
         MSParkingArea *newParkingArea = rerouteParkingZone(rerouteDef, veh);
-        if (newParkingArea != 0 && veh.replaceParkingArea(newParkingArea)) {
-            stopsAreChanged = true;
+        if (newParkingArea != 0) {
             newEdge = &(newParkingArea->getLane().getEdge());
 
             SUMOAbstractRouter<MSEdge, SUMOVehicle>& router = MSNet::getInstance()->getRouterTT(rerouteDef->closed);
@@ -345,7 +344,10 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
             ConstMSEdgeVector edges = edgesToPark;
             if (edgesFromPark.size() > 0)
                 edges.insert( edges.end(), edgesFromPark.begin() + 1, edgesFromPark.end() );
+
+            stopsAreChanged = veh.replaceParkingArea(newParkingArea);
             veh.replaceRouteEdges(edges, false);
+            veh.replaceParkingArea();
         }
         return false;
     }
@@ -547,67 +549,60 @@ MSTriggeredRerouter::rerouteParkingZone(const MSTriggeredRerouter::RerouteInterv
                 const RGBColor& c = route.getColor();
                 const MSEdge* parkEdge = &((*i)->getLane().getEdge());
 
-                // check if the route doesn't contain park edge before current edge
-                // and if it is current and check vehicle's position respect to park entrance
-                MSRouteIterator prevParking = std::find(route.begin(), std::find(route.begin(), route.end(), veh.getEdge()), parkEdge);
-                if (prevParking >= veh.getCurrentRouteEdge() && 
-                    (veh.getEdge() != parkEdge || veh.getPositionOnLane() < (*i)->getBeginLanePosition())) {
-
-                    const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
+                const bool includeInternalLengths = MSGlobals::gUsingInternalLanes && MSNet::getInstance()->hasInternalLinks();
                 
-                    // Compute the route from the current edge to the parking area edge
-                    ConstMSEdgeVector edgesToPark;
-                    router.compute(veh.getEdge(), parkEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edgesToPark);
+                // Compute the route from the current edge to the parking area edge
+                ConstMSEdgeVector edgesToPark;
+                router.compute(veh.getEdge(), parkEdge, &veh, MSNet::getInstance()->getCurrentTimeStep(), edgesToPark);
                 
-                    if (edgesToPark.size() > 0) {
-                        // Compute the route from the parking area edge to the end of the route
-                        ConstMSEdgeVector edgesFromPark;
-                        router.compute(parkEdge, route.getLastEdge(), &veh, MSNet::getInstance()->getCurrentTimeStep(), edgesFromPark);
+                if (edgesToPark.size() > 0) {
+                    // Compute the route from the parking area edge to the end of the route
+                    ConstMSEdgeVector edgesFromPark;
+                    router.compute(parkEdge, route.getLastEdge(), &veh, MSNet::getInstance()->getCurrentTimeStep(), edgesFromPark);
                 
-                        if (edgesFromPark.size() > 0) {
+                    if (edgesFromPark.size() > 0) {
                     
-                            parkValues["probability"] = (*p);
+                        parkValues["probability"] = (*p);
                 
-                            if (parkValues["probability"] > maxValues["probability"]) maxValues["probability"] = parkValues["probability"];
+                        if (parkValues["probability"] > maxValues["probability"]) maxValues["probability"] = parkValues["probability"];
 
-                            parkValues["capacity"] = (double)((*i)->getCapacity());
-                            parkValues["absfreespace"] = (double)((*i)->getCapacity() - (*i)->getOccupancy());
-                            parkValues["relfreespace"] = parkValues["absfreespace"] / parkValues["capacity"];
+                        parkValues["capacity"] = (double)((*i)->getCapacity());
+                        parkValues["absfreespace"] = (double)((*i)->getCapacity() - (*i)->getOccupancy());
+                        parkValues["relfreespace"] = parkValues["absfreespace"] / parkValues["capacity"];
                 
-                            if (parkValues["capacity"] > maxValues["capacity"]) maxValues["capacity"] = parkValues["capacity"];
+                        if (parkValues["capacity"] > maxValues["capacity"]) maxValues["capacity"] = parkValues["capacity"];
 
-                            if (parkValues["absfreespace"] > maxValues["absfreespace"]) maxValues["absfreespace"] = parkValues["absfreespace"];
+                        if (parkValues["absfreespace"] > maxValues["absfreespace"]) maxValues["absfreespace"] = parkValues["absfreespace"];
 
-                            if (parkValues["relfreespace"] > maxValues["relfreespace"]) maxValues["relfreespace"] = parkValues["relfreespace"];
+                        if (parkValues["relfreespace"] > maxValues["relfreespace"]) maxValues["relfreespace"] = parkValues["relfreespace"];
 
-                            MSRoute routeToPark(route.getID() + "!topark#1", edgesToPark, false, &c == &RGBColor::DEFAULT_COLOR ? 0 : new RGBColor(c), route.getStops());
+                        MSRoute routeToPark(route.getID() + "!topark#1", edgesToPark, false, &c == &RGBColor::DEFAULT_COLOR ? 0 : new RGBColor(c), route.getStops());
 
-                            // The distance from the current edge to the new parking area
-                            parkValues["distanceto"] = routeToPark.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
-                                                                                      routeToPark.begin(), routeToPark.end(), includeInternalLengths);
+                        // The distance from the current edge to the new parking area
+                        parkValues["distanceto"] = routeToPark.getDistanceBetween(veh.getPositionOnLane(), (*i)->getBeginLanePosition(),
+                                                                                    routeToPark.begin(), routeToPark.end(), includeInternalLengths);
 
-                            // The time to reach the new parking area
-                            parkValues["timeto"] = router.recomputeCosts(edgesToPark, &veh, MSNet::getInstance()->getCurrentTimeStep());
+                        // The time to reach the new parking area
+                        parkValues["timeto"] = router.recomputeCosts(edgesToPark, &veh, MSNet::getInstance()->getCurrentTimeStep());
                     
-                            if (parkValues["distanceto"] > maxValues["distanceto"]) maxValues["distanceto"] = parkValues["distanceto"];
+                        if (parkValues["distanceto"] > maxValues["distanceto"]) maxValues["distanceto"] = parkValues["distanceto"];
                
-                            if (parkValues["timeto"] > maxValues["timeto"]) maxValues["timeto"] = parkValues["timeto"];
+                        if (parkValues["timeto"] > maxValues["timeto"]) maxValues["timeto"] = parkValues["timeto"];
                     
-                            MSRoute routeFromPark(route.getID() + "!frompark#1", edgesFromPark, false, &c == &RGBColor::DEFAULT_COLOR ? 0 : new RGBColor(c), route.getStops());
+                        MSRoute routeFromPark(route.getID() + "!frompark#1", edgesFromPark, false, &c == &RGBColor::DEFAULT_COLOR ? 0 : new RGBColor(c), route.getStops());
                     
-                            // The distance from the new parking area to the end of the route
-                            parkValues["distancefrom"] = routeFromPark.getDistanceBetween((*i)->getBeginLanePosition(), routeFromPark.getLastEdge()->getLength(),
-                                                                                          routeFromPark.begin(), routeFromPark.end(), includeInternalLengths);
+                        // The distance from the new parking area to the end of the route
+                        parkValues["distancefrom"] = routeFromPark.getDistanceBetween((*i)->getBeginLanePosition(), routeFromPark.getLastEdge()->getLength(),
+                                                                                        routeFromPark.begin(), routeFromPark.end(), includeInternalLengths);
 
-                            // The time to reach this area
-                            parkValues["timefrom"] = router.recomputeCosts(edgesFromPark, &veh, MSNet::getInstance()->getCurrentTimeStep());
+                        // The time to reach this area
+                        parkValues["timefrom"] = router.recomputeCosts(edgesFromPark, &veh, MSNet::getInstance()->getCurrentTimeStep());
                     
-                            if (parkValues["distancefrom"] > maxValues["distancefrom"]) maxValues["distancefrom"] = parkValues["distancefrom"];
+                        if (parkValues["distancefrom"] > maxValues["distancefrom"]) maxValues["distancefrom"] = parkValues["distancefrom"];
 
-                            if (parkValues["timefrom"] > maxValues["timefrom"]) maxValues["timefrom"] = parkValues["timefrom"];
+                        if (parkValues["timefrom"] > maxValues["timefrom"]) maxValues["timefrom"] = parkValues["timefrom"];
 
-                            parkAreas[(*i)] = parkValues;
-                        }
+                        parkAreas[(*i)] = parkValues;
                     }
                 }
             }

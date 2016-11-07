@@ -266,7 +266,7 @@ public:
      * @param[in] stop The stop to add
      * @return Whether the stop could be added
      */
-    virtual bool replaceParkingArea(MSParkingArea* parkingArea) = 0;
+    virtual bool replaceParkingArea(MSParkingArea* parkingArea = 0) = 0;
 
     /** @brief Returns whether the vehicle is at a stop
      * @return Whether the has stopped
