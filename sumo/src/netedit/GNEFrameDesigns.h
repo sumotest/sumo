@@ -106,7 +106,7 @@
 
 
 /// @brief Combo box static (cannot be dited) extended over the matrix column or all frame with thick frame and limited to integers
-#define GNEDesignComboBox               (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | COMBOBOX_STATIC)
+#define GNEDesignComboBox               (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
 
 #define GNEDesignRadioButton            (RADIOBUTTON_NORMAL)
 
