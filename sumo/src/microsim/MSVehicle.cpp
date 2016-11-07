@@ -893,7 +893,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
             }
         }
 
-        stopPar.index = 1;
+        stopPar.index = 0;
         stopPar.busstop = "";
         stopPar.chargingStation = "";
         stopPar.containerstop = "";

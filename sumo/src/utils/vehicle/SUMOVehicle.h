@@ -130,7 +130,7 @@ public:
     virtual const MSEdge* succEdge(unsigned int nSuccs) const = 0;
 
     /// Replaces the current route by the given edges
-    virtual bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false, bool forceNewRoute = false) = 0;
+    virtual bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false) = 0;
 
     /// Replaces the current route by the given one
     virtual bool replaceRoute(const MSRoute* route, bool onInit = false, int offset = 0) = 0;

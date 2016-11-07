@@ -172,7 +172,7 @@ public:
      * @param[in] simTime The time at which the route was replaced
      * @return Whether the new route was accepted
      */
-    bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false, bool forceNewRoute = false);
+    bool replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit = false);
 
 
     /** @brief Returns the vehicle's acceleration

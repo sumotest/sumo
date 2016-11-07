@@ -168,7 +168,7 @@ MSBaseVehicle::reroute(SUMOTime t, SUMOAbstractRouter<MSEdge, SUMOVehicle>& rout
 
 
 bool
-MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit, bool forceNewRoute) {
+MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit) {
     if (edges.empty()) {
         WRITE_WARNING("No route for vehicle '" + getID() + "' found.");
         return false;
@@ -192,7 +192,7 @@ MSBaseVehicle::replaceRouteEdges(ConstMSEdgeVector& edges, bool onInit, bool for
         }
         edges.insert(edges.begin(), myRoute->begin(), myCurrEdge);
     }
-    if (edges == myRoute->getEdges() && !forceNewRoute) {
+    if (edges == myRoute->getEdges()) {
         if (onInit) {
             // if edges = 'from to' we still need to calculate the arrivalPos once
             calculateArrivalParams();
