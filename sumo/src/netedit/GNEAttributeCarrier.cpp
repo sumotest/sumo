@@ -415,13 +415,13 @@ GNEAttributeCarrier::allowedAdditionalTags() {
 
 
 bool
-GNEAttributeCarrier::isNumerical(SumoXMLAttr attr) {
-    return (isInt(attr) || isFloat(attr));
+GNEAttributeCarrier::isNumerical(SumoXMLTag tag, SumoXMLAttr attr) {
+    return (isInt(tag, attr) || isFloat(tag, attr));
 }
 
 
 bool
-GNEAttributeCarrier::isInt(SumoXMLAttr attr) {
+GNEAttributeCarrier::isInt(SumoXMLTag tag,SumoXMLAttr attr) {
     // define on first access
     if (myNumericalIntAttrs.empty()) {
         myNumericalIntAttrs.insert(SUMO_ATTR_NUMLANES);
@@ -439,7 +439,7 @@ GNEAttributeCarrier::isInt(SumoXMLAttr attr) {
 
 
 bool
-GNEAttributeCarrier::isFloat(SumoXMLAttr attr) {
+GNEAttributeCarrier::isFloat(SumoXMLTag tag,SumoXMLAttr attr) {
     // define on first access
     if (myNumericalFloatAttrs.empty()) {
         myNumericalFloatAttrs.insert(SUMO_ATTR_SPEED);
@@ -463,28 +463,26 @@ GNEAttributeCarrier::isFloat(SumoXMLAttr attr) {
 
 
 bool
-GNEAttributeCarrier::isBool(SumoXMLAttr attr) {
-    // Iterate over additional tags
-    for (std::vector<SumoXMLTag>::const_iterator i = allowedTags().begin(); i != allowedTags().end(); i++) {
-        // Obtain choices
-        std::vector<std::string> choices = discreteChoices(*i, attr);
-        // CHeck if choices are exactly "true" and "false"
-        if ((choices.size() == 2) && (choices.at(0) == "true") && (choices.at(1) == "false")) {
-            return true;
-        }
-    }
-    return false;
+GNEAttributeCarrier::isBool(SumoXMLTag tag, SumoXMLAttr attr) {
+    // get choices of tag
+    std::vector<std::string> choices = discreteChoices(tag, attr);
+    // CHeck if choices are exactly "true" and "false"
+    if ((choices.size() == 2) && (choices.at(0) == "true") && (choices.at(1) == "false")) {
+        return true;
+    } else {
+        return false;
+    }           
 }
 
 
 bool
-GNEAttributeCarrier::isString(SumoXMLAttr attr) {
-    return (!isNumerical(attr) && !isBool(attr) && !isFloat(attr));
+GNEAttributeCarrier::isString(SumoXMLTag tag,SumoXMLAttr attr) {
+    return (!isNumerical(tag, attr) && !isBool(tag, attr) && !isFloat(tag, attr));
 }
 
 
 bool
-GNEAttributeCarrier::isList(SumoXMLAttr attr) {
+GNEAttributeCarrier::isList(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myListAttrs.empty()) {
         myListAttrs.insert(SUMO_ATTR_LINES);
@@ -496,7 +494,7 @@ GNEAttributeCarrier::isList(SumoXMLAttr attr) {
 
 
 bool
-GNEAttributeCarrier::isUnique(SumoXMLAttr attr) {
+GNEAttributeCarrier::isUnique(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myUniqueAttrs.empty()) {
         myUniqueAttrs.insert(SUMO_ATTR_ID);

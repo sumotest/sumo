@@ -116,26 +116,26 @@ public:
     static const std::vector<SumoXMLTag>& allowedAdditionalTags();
 
     /// @brief whether an attribute is numerical (int or float)
-    static bool isNumerical(SumoXMLAttr attr);
+    static bool isNumerical(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is numerical or type int
-    static bool isInt(SumoXMLAttr attr);
+    static bool isInt(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is numerical of type float
-    static bool isFloat(SumoXMLAttr attr);
+    static bool isFloat(SumoXMLTag tag, SumoXMLAttr attr);
 
-    /// @brief whether an attribute is of type bool
-    static bool isBool(SumoXMLAttr attr);
+    /// @brief whether an attribute is of type bool for a certain tag
+    static bool isBool(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is of type string
-    static bool isString(SumoXMLAttr attr);
+    static bool isString(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is of type bool
-    static bool isList(SumoXMLAttr attr);
+    static bool isList(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is unique (may not be edited for a multi-selection)
     /// @note unique attributes don't have a default value
-    static bool isUnique(SumoXMLAttr attr);
+    static bool isUnique(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is Discrete
     static bool isDiscrete(SumoXMLTag tag, SumoXMLAttr attr);

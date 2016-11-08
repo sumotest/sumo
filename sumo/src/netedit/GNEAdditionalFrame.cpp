@@ -405,7 +405,7 @@ GNEAdditionalFrame::setParametersOfAdditional(SumoXMLTag actualAdditionalType) {
     std::vector<std::pair <SumoXMLAttr, std::string> > attrs = GNEAttributeCarrier::allowedAttributes(myActualAdditionalType);
     // Iterate over attributes of myActualAdditionalType
     for (std::vector<std::pair <SumoXMLAttr, std::string> >::iterator i = attrs.begin(); i != attrs.end(); i++) {
-        if (!GNEAttributeCarrier::isUnique(i->first)) {
+        if (!GNEAttributeCarrier::isUnique(myActualAdditionalType, i->first)) {
             myAdditionalParameters->addAttribute(myActualAdditionalType, i->first);
         } else if (i->first == SUMO_ATTR_ENDPOS) {
             myEditorParameters->showLengthField();
@@ -521,8 +521,9 @@ GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMo
 
 GNEAdditionalFrame::additionalParameter::additionalParameter(FXComposite* parent, FXObject* tgt) :
     FXMatrix(parent, 3, GNEDesignMatrix),
+    myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
-    // Create elements
+    // Create visual elements
     myLabel = new FXLabel(this, "name", 0, GNEDesignLabelAttribute, 0, 0, 60, 0);
     myTextField = new FXTextField(this, GNEDesignTextFieldNCol, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextFieldAttributeStr);
     myMenuCheck = new FXMenuCheck(this, "", tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL, GNEDesignCheckButtonAttribute);
@@ -537,7 +538,8 @@ GNEAdditionalFrame::additionalParameter::~additionalParameter() {}
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::string value) {
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLTag tag, SumoXMLAttr attr, std::string value) {
+    myTag = tag;
     myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
@@ -548,7 +550,8 @@ GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, std::st
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, int value) {
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLTag tag, SumoXMLAttr attr, int value) {
+    myTag = tag;
     myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
@@ -559,7 +562,8 @@ GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, int val
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, SUMOReal value) {
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLTag tag, SumoXMLAttr attr, SUMOReal value) {
+    myTag = tag;
     myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
@@ -570,7 +574,8 @@ GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, SUMORea
 
 
 void
-GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, bool value) {
+GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLTag tag, SumoXMLAttr attr, bool value) {
+    myTag = tag;
     myAttr = attr;
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
@@ -582,11 +587,18 @@ GNEAdditionalFrame::additionalParameter::showParameter(SumoXMLAttr attr, bool va
 
 void
 GNEAdditionalFrame::additionalParameter::hideParameter() {
+    myTag = SUMO_TAG_NOTHING;
     myAttr = SUMO_ATTR_NOTHING;
     myLabel->hide();
     myTextField->hide();
     myMenuCheck->hide();
     hide();
+}
+
+
+SumoXMLTag 
+GNEAdditionalFrame::additionalParameter::getTag() const {
+    return myTag;
 }
 
 
@@ -598,7 +610,7 @@ GNEAdditionalFrame::additionalParameter::getAttr() const {
 
 std::string
 GNEAdditionalFrame::additionalParameter::getValue() const {
-    if (GNEAttributeCarrier::isBool(myAttr)) {
+    if (GNEAttributeCarrier::isBool(myTag, myAttr)) {
         return (myMenuCheck->getCheck() == 1) ? "true" : "false";
     } else {
         return myTextField->getText().text();
@@ -611,6 +623,7 @@ GNEAdditionalFrame::additionalParameter::getValue() const {
 
 GNEAdditionalFrame::additionalParameterList::additionalParameterList(FXComposite* parent, FXObject* tgt) :
     FXMatrix(parent, 2, GNEDesignMatrix),
+    myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING),
     numberOfVisibleTextfields(1),
     myMaxNumberOfValuesInParameterList(20) {
@@ -635,26 +648,30 @@ GNEAdditionalFrame::additionalParameterList::~additionalParameterList() {}
 
 
 void
-GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<int> /* value */) {
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<int> /* value */) {
+    myTag = tag;
     myAttr = attr;
     std::cout << "FINISH" << std::endl;
 }
 
 void
-GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<SUMOReal> /* value */) {
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<SUMOReal> /* value */) {
+    myTag = tag;
     myAttr = attr;
     std::cout << "FINISH" << std::endl;
 }
 
 void
-GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<bool> /* value */) {
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<bool> /* value */) {
+    myTag = tag;
     myAttr = attr;
     std::cout << "FINISH" << std::endl;
 }
 
 void
-GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr, std::vector<std::string> value) {
+GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<std::string> value) {
     if ((int)value.size() < myMaxNumberOfValuesInParameterList) {
+        myTag = tag;
         myAttr = attr;
         numberOfVisibleTextfields = (int)value.size();
         if (numberOfVisibleTextfields == 0) {
@@ -676,6 +693,7 @@ GNEAdditionalFrame::additionalParameterList::showListParameter(SumoXMLAttr attr,
 
 void
 GNEAdditionalFrame::additionalParameterList::hideParameter() {
+    myTag = SUMO_TAG_NOTHING;
     myAttr = SUMO_ATTR_NOTHING;
     for (int i = 0; i < myMaxNumberOfValuesInParameterList; i++) {
         myLabels.at(i)->hide();
@@ -687,6 +705,11 @@ GNEAdditionalFrame::additionalParameterList::hideParameter() {
     hide();
 }
 
+
+SumoXMLTag
+GNEAdditionalFrame::additionalParameterList::getTag() const {
+    return myTag;
+}
 
 SumoXMLAttr
 GNEAdditionalFrame::additionalParameterList::getAttr() const {
@@ -785,18 +808,18 @@ GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, Su
     // Set current additional
     myAdditional = additional;
     // If  parameter is of type list
-    if (GNEAttributeCarrier::isList(attribute)) {
+    if (GNEAttributeCarrier::isList(myAdditional, attribute)) {
         // If parameter can be show
         if (myIndexParameterList < maxNumberOfListParameters) {
             // Check type of attribute list
-            if (GNEAttributeCarrier::isInt(attribute)) {
-                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<int> >(additional, attribute));
-            } else if (GNEAttributeCarrier::isFloat(attribute)) {
-                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<SUMOReal> >(additional, attribute));
-            } else if (GNEAttributeCarrier::isBool(attribute)) {
-                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<bool> >(additional, attribute));
-            } else if (GNEAttributeCarrier::isString(attribute)) {
-                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
+            if (GNEAttributeCarrier::isInt(myAdditional, attribute)) {
+                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(myAdditional, attribute, GNEAttributeCarrier::getDefaultValue< std::vector<int> >(additional, attribute));
+            } else if (GNEAttributeCarrier::isFloat(myAdditional, attribute)) {
+                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(myAdditional, attribute,GNEAttributeCarrier::getDefaultValue< std::vector<SUMOReal> >(additional, attribute));
+            } else if (GNEAttributeCarrier::isBool(additional, attribute)) {
+                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(myAdditional, attribute,GNEAttributeCarrier::getDefaultValue< std::vector<bool> >(additional, attribute));
+            } else if (GNEAttributeCarrier::isString(myAdditional, attribute)) {
+                myVectorOfAdditionalParameterList.at(myIndexParameterList)->showListParameter(myAdditional, attribute, GNEAttributeCarrier::getDefaultValue< std::vector<std::string> >(additional, attribute));
             }
             // Update index
             myIndexParameterList++;
@@ -806,14 +829,14 @@ GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additional, Su
     } else {
         if (myIndexParameter < maxNumberOfParameters) {
             // Check type of attribute list
-            if (GNEAttributeCarrier::isInt(attribute)) {
-                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<int>(additional, attribute));
-            } else if (GNEAttributeCarrier::isFloat(attribute)) {
-                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<SUMOReal>(additional, attribute));
-            } else if (GNEAttributeCarrier::isBool(attribute)) {
-                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<bool>(additional, attribute));
-            } else if (GNEAttributeCarrier::isString(attribute)) {
-                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(attribute, GNEAttributeCarrier::getDefaultValue<std::string>(additional, attribute));
+            if (GNEAttributeCarrier::isInt(myAdditional, attribute)) {
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(additional, attribute, GNEAttributeCarrier::getDefaultValue<int>(additional, attribute));
+            } else if (GNEAttributeCarrier::isFloat(myAdditional, attribute)) {
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(additional, attribute, GNEAttributeCarrier::getDefaultValue<SUMOReal>(additional, attribute));
+            } else if (GNEAttributeCarrier::isBool(additional, attribute)) {
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(additional, attribute, GNEAttributeCarrier::getDefaultValue<bool>(additional, attribute));
+            } else if (GNEAttributeCarrier::isString(myAdditional, attribute)) {
+                myVectorOfAdditionalParameter.at(myIndexParameter)->showParameter(additional, attribute, GNEAttributeCarrier::getDefaultValue<std::string>(additional, attribute));
             } else {
                 WRITE_WARNING("Attribute '" + toString(attribute) + "' don't have a defined type. Check definition in GNEAttributeCarrier");
             }
@@ -882,18 +905,19 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
     int maxSizeColumnDefinitions = 0;
     // Iterate over vector of additional parameters
     for (int i = 0; i < myIndexParameter; i++) {
+        SumoXMLTag tag = myVectorOfAdditionalParameter.at(i)->getTag();
         SumoXMLAttr attr = myVectorOfAdditionalParameter.at(i)->getAttr();
         // Set name of attribute
         myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
         // Set type
         FXTableItem* type = new FXTableItem("");
-        if (GNEAttributeCarrier::isInt(attr)) {
+        if (GNEAttributeCarrier::isInt(tag, attr)) {
             type->setText("int");
-        } else if (GNEAttributeCarrier::isFloat(attr)) {
+        } else if (GNEAttributeCarrier::isFloat(tag, attr)) {
             type->setText("float");
-        } else if (GNEAttributeCarrier::isBool(attr)) {
+        } else if (GNEAttributeCarrier::isBool(tag, attr)) {
             type->setText("bool");
-        } else if (GNEAttributeCarrier::isString(attr)) {
+        } else if (GNEAttributeCarrier::isString(tag, attr)) {
             type->setText("string");
         }
         type->setJustify(FXTableItem::CENTER_X);
@@ -908,18 +932,19 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
     }
     // Iterate over vector of additional parameters list
     for (int i = 0; i < myIndexParameterList; i++) {
+        SumoXMLTag tag = myVectorOfAdditionalParameterList.at(i)->getTag();
         SumoXMLAttr attr = myVectorOfAdditionalParameterList.at(i)->getAttr();
         // Set name of attribute
         myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
         // Set type
         FXTableItem* type = new FXTableItem("");
-        if (GNEAttributeCarrier::isInt(attr)) {
+        if (GNEAttributeCarrier::isInt(tag, attr)) {
             type->setText("list of int");
-        } else if (GNEAttributeCarrier::isFloat(attr)) {
+        } else if (GNEAttributeCarrier::isFloat(tag, attr)) {
             type->setText("list of float");
-        } else if (GNEAttributeCarrier::isBool(attr)) {
+        } else if (GNEAttributeCarrier::isBool(tag, attr)) {
             type->setText("list of bool");
-        } else if (GNEAttributeCarrier::isString(attr)) {
+        } else if (GNEAttributeCarrier::isString(tag, attr)) {
             type->setText("list of string");
         }
         type->setJustify(FXTableItem::CENTER_X);

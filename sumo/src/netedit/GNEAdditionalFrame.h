@@ -67,19 +67,22 @@ public:
         ~additionalParameter();
 
         /// @brief show name and value of attribute of type string
-        void showParameter(SumoXMLAttr attr, std::string value);
+        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, std::string value);
 
         /// @brief show name and value of parameters of type int
-        void showParameter(SumoXMLAttr attr, int value);
+        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, int value);
 
         /// @brief show name and value of parameters of type float/real
-        void showParameter(SumoXMLAttr attr, SUMOReal value);
+        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, SUMOReal value);
 
         /// @brief show name and value of parameters of type bool
-        void showParameter(SumoXMLAttr attr, bool value);
+        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, bool value);
 
         /// @brief hide all parameters
         void hideParameter();
+
+        /// @brief return tag
+        SumoXMLTag getTag() const;
 
         /// @brief return Attr
         SumoXMLAttr getAttr() const;
@@ -88,7 +91,10 @@ public:
         std::string getValue() const ;
 
     private:
-        /// @brief XML attribute
+        /// @brief current XML attribute
+        SumoXMLTag myTag;
+
+        /// @brief current XML attribute
         SumoXMLAttr myAttr;
 
         /// @brief lael with the name of the parameter
@@ -117,20 +123,23 @@ public:
         ~additionalParameterList();
 
         /// @brief show name and value of parameters of type int
-        void showListParameter(SumoXMLAttr attr, std::vector<int> value);
+        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<int> value);
 
         /// @brief show name and value of parameters of type float
-        void showListParameter(SumoXMLAttr attr, std::vector<SUMOReal> value);
+        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<SUMOReal> value);
 
         /// @brief show name and value of parameters of type bool
-        void showListParameter(SumoXMLAttr attr, std::vector<bool> value);
+        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<bool> value);
 
         /// @brief show name and value of parameters of type string
-        void showListParameter(SumoXMLAttr attr, std::vector<std::string> value);
+        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<std::string> value);
 
         /// @brief hide all parameters
         void hideParameter();
-
+        
+        /// @brief return tag of list
+        SumoXMLTag getTag() const;
+        
         /// @brief return attribute of list
         SumoXMLAttr getAttr() const;
 
@@ -151,7 +160,10 @@ public:
         additionalParameterList() {}
 
     private:
-        /// @brief XML attribute
+        /// @brief current XML tag
+        SumoXMLTag myTag;
+
+        /// @brief current XML attribute
         SumoXMLAttr myAttr;
 
         /// @brief vector with with the name of every parameter

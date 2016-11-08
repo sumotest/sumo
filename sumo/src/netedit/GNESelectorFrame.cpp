@@ -288,7 +288,7 @@ GNESelectorFrame::onCmdSelMBString(FXObject*, FXSelector, void*) {
     if (expr == "") {
         // the empty expression matches all objects
         handleIDs(getMatches(tag, attr, '@', 0, expr), false);
-    } else if (GNEAttributeCarrier::isNumerical(attr)) {
+    } else if (GNEAttributeCarrier::isNumerical(tag, attr)) {
         // The expression must have the form
         //  <val matches if attr < val
         //  >val matches if attr > val
@@ -493,7 +493,7 @@ GNESelectorFrame::getMatches(SumoXMLTag tag, SumoXMLAttr attr, char compOp, SUMO
     GNEAttributeCarrier* ac;
     std::vector<GUIGlID> result;
     const std::set<GUIGlID> allIDs = myViewNet->getNet()->getGlIDs();
-    const bool numerical = GNEAttributeCarrier::isNumerical(attr);
+    const bool numerical = GNEAttributeCarrier::isNumerical(tag, attr);
     for (std::set<GUIGlID>::const_iterator it = allIDs.begin(); it != allIDs.end(); it++) {
         GUIGlID id = *it;
         object = GUIGlObjectStorage::gIDStorage.getObjectBlocking(id);

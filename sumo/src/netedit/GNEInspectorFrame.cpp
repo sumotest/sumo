@@ -218,7 +218,8 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
             myAttrConnections.at(i)->hideAttrConnection();
         }
 
-        // Gets attributes of element
+        // Gets tag and tattributes of element
+        SumoXMLTag tag = myACs.front()->getTag();
         const std::vector<SumoXMLAttr>& attrs = myACs.front()->getAttrs();
 
         // Declare iterator over AttrImput
@@ -226,7 +227,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
 
         // Iterate over attributes
         for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
-            if (myACs.size() > 1 && GNEAttributeCarrier::isUnique(*it)) {
+            if (myACs.size() > 1 && GNEAttributeCarrier::isUnique(tag, *it)) {
                 // disable editing for some attributes in case of multi-selection
                 // even displaying is problematic because of string rendering restrictions
                 continue;
@@ -439,7 +440,7 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
     // Set field depending of the type of value
-    if (GNEAttributeCarrier::isBool(myAttr)) {
+    if (GNEAttributeCarrier::isBool(myTag, myAttr)) {
         // set value of checkbox
         myCheckBox->setCheck(GNEAttributeCarrier::parse<bool>(value));
         myCheckBox->show();
@@ -467,12 +468,12 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
             myChoicesCombo->setCurrentItem(myChoicesCombo->findItem(value.c_str()));
             myChoicesCombo->show();
         }
-    } else if (GNEAttributeCarrier::isFloat(myAttr)) {
+    } else if (GNEAttributeCarrier::isFloat(myTag, myAttr)) {
         // show TextField for real values
         myTextFieldReal->setText(value.c_str());
         myTextFieldReal->setTextColor(FXRGB(0, 0, 0));
         myTextFieldReal->show();
-    } else if (GNEAttributeCarrier::isInt(myAttr)) {
+    } else if (GNEAttributeCarrier::isInt(myTag, myAttr)) {
         // Show textField for int attributes
         myTextFieldInt->setText(value.c_str());
         myTextFieldInt->setTextColor(FXRGB(0, 0, 0));
@@ -528,7 +529,7 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
     // Declare changed value
     std::string newVal;
     // First, obtain the string value of the new attribute depending of their type
-    if (GNEAttributeCarrier::isBool(myAttr)) {
+    if (GNEAttributeCarrier::isBool(myTag, myAttr)) {
         // Set true o false depending of the checBox
         if (myCheckBox->getCheck()) {
             newVal = "true";
@@ -546,13 +547,13 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
             // Get value of ComboBox
             newVal = myChoicesCombo->getText().text();
         }
-    } else if (GNEAttributeCarrier::isFloat(myAttr)) {
+    } else if (GNEAttributeCarrier::isFloat(myTag, myAttr)) {
         // obtain value of myTextFieldReal
         newVal = myTextFieldReal->getText().text();
-    } else if (GNEAttributeCarrier::isInt(myAttr)) {
+    } else if (GNEAttributeCarrier::isInt(myTag, myAttr)) {
         // obtain value of myTextFieldInt
         newVal = myTextFieldInt->getText().text();
-    } else if (GNEAttributeCarrier::isString(myAttr)) {
+    } else if (GNEAttributeCarrier::isString(myTag, myAttr)) {
         // obtain value of myTextFieldStrings
         newVal = myTextFieldStrings->getText().text();
     }
@@ -571,23 +572,23 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
             myInspectorFrameParent->getViewNet()->getUndoList()->p_end();
         }
         // If previously value of TextField was red, change color to black
-        if (GNEAttributeCarrier::isFloat(myAttr) && myTextFieldStrings != 0) {
+        if (GNEAttributeCarrier::isFloat(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldReal->setTextColor(FXRGB(0, 0, 0));
             myTextFieldReal->killFocus();
-        } else if (GNEAttributeCarrier::isInt(myAttr) && myTextFieldStrings != 0) {
+        } else if (GNEAttributeCarrier::isInt(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldInt->setTextColor(FXRGB(0, 0, 0));
             myTextFieldInt->killFocus();
-        } else if (GNEAttributeCarrier::isString(myAttr) && myTextFieldStrings != 0) {
+        } else if (GNEAttributeCarrier::isString(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldStrings->setTextColor(FXRGB(0, 0, 0));
             myTextFieldStrings->killFocus();
         }
     } else {
         // IF value of TextField isn't valid, change color to Red depending of type
-        if (GNEAttributeCarrier::isFloat(myAttr) && myTextFieldStrings != 0) {
+        if (GNEAttributeCarrier::isFloat(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldReal->setTextColor(FXRGB(255, 0, 0));
-        } else if (GNEAttributeCarrier::isInt(myAttr) && myTextFieldStrings != 0) {
+        } else if (GNEAttributeCarrier::isInt(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldInt->setTextColor(FXRGB(255, 0, 0));
-        } else if (GNEAttributeCarrier::isString(myAttr) && myTextFieldStrings != 0) {
+        } else if (GNEAttributeCarrier::isString(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldStrings->setTextColor(FXRGB(255, 0, 0));
         }
     }
