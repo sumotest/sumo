@@ -658,7 +658,6 @@ GNECrossingFrame::onCmdCreateCrossing(FXObject*, FXSelector, void*) {
     // Add crossing to NBEdge
     myEdgeSelector->getCurrentJunction()->getNBNode()->addCrossing(myCrossingParameters->getCrossingEdges(), myCrossingParameters->getCrossingWidth(), myCrossingParameters->getCrossingPriority());
     // rebuild crossings of junction
-    myEdgeSelector->getCurrentJunction()->getNBNode()->buildCrossings();
     myEdgeSelector->getCurrentJunction()->rebuildCrossings(false);
     // Update view
     myViewNet->update();

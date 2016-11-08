@@ -61,8 +61,7 @@
 GNECrossing::GNECrossing(GNEJunction& parentJunction, const std::string& id) :
     GNENetElement(parentJunction.getNet(), id, GLO_CROSSING, SUMO_TAG_CROSSING),
     myParentJunction(parentJunction),
-    myCrossing(parentJunction.getNBNode()->getCrossing(id)),
-    myShape(myCrossing.shape) {
+    myCrossing(parentJunction.getNBNode()->getCrossingRef(id)) {
     // Update geometry
     updateGeometry();
 }
@@ -77,13 +76,13 @@ GNECrossing::updateGeometry() {
     myShapeRotations.clear();
     myShapeLengths.clear();
     // Obtain sgments of size and calculate it
-    int segments = (int) myShape.size() - 1;
+    int segments = (int) myCrossing.shape.size() - 1;
     if (segments >= 0) {
         myShapeRotations.reserve(segments);
         myShapeLengths.reserve(segments);
         for (int i = 0; i < segments; ++i) {
-            const Position& f = myShape[i];
-            const Position& s = myShape[i + 1];
+            const Position& f = myCrossing.shape[i];
+            const Position& s = myCrossing.shape[i + 1];
             myShapeLengths.push_back(f.distanceTo2D(s));
             myShapeRotations.push_back((SUMOReal) atan2((s.x() - f.x()), (f.y() - s.y())) * (SUMOReal) 180.0 / (SUMOReal) PI);
         }
@@ -114,10 +113,10 @@ GNECrossing::drawGL(const GUIVisualizationSettings& s) const {
         glPushMatrix();
         // draw on top of of the white area between the rails
         glTranslated(0, 0, 0.1);
-        int e = (int) myShape.size() - 1;
+        int e = (int) myCrossing.shape.size() - 1;
         for (int i = 0; i < e; ++i) {
             glPushMatrix();
-            glTranslated(myShape[i].x(), myShape[i].y(), 0.0);
+            glTranslated(myCrossing.shape[i].x(), myCrossing.shape[i].y(), 0.0);
             glRotated(myShapeRotations[i], 0, 0, 1);
             for (SUMOReal t = 0; t < myShapeLengths[i]; t += spacing) {
                 glBegin(GL_QUADS);
@@ -160,7 +159,7 @@ GNECrossing::getParameterWindow(GUIMainWindow& app,
 
 Boundary
 GNECrossing::getCenteringBoundary() const {
-    Boundary b = myShape.getBoxBoundary();
+    Boundary b = myCrossing.shape.getBoxBoundary();
     b.grow(10);
     return b;
 }
