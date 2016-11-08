@@ -67,16 +67,16 @@ public:
         ~additionalParameter();
 
         /// @brief show name and value of attribute of type string
-        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, std::string value);
+        void showParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::string value);
 
         /// @brief show name and value of parameters of type int
-        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, int value);
+        void showParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, int value);
 
         /// @brief show name and value of parameters of type float/real
-        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, SUMOReal value);
+        void showParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, SUMOReal value);
 
         /// @brief show name and value of parameters of type bool
-        void showParameter(SumoXMLTag tag, SumoXMLAttr attr, bool value);
+        void showParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, bool value);
 
         /// @brief hide all parameters
         void hideParameter();
@@ -92,10 +92,10 @@ public:
 
     private:
         /// @brief current XML attribute
-        SumoXMLTag myTag;
+        SumoXMLTag myAdditionalTag;
 
         /// @brief current XML attribute
-        SumoXMLAttr myAttr;
+        SumoXMLAttr myAdditionalAttr;
 
         /// @brief lael with the name of the parameter
         FXLabel* myLabel;
@@ -123,16 +123,16 @@ public:
         ~additionalParameterList();
 
         /// @brief show name and value of parameters of type int
-        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<int> value);
+        void showListParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::vector<int> value);
 
         /// @brief show name and value of parameters of type float
-        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<SUMOReal> value);
+        void showListParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::vector<SUMOReal> value);
 
         /// @brief show name and value of parameters of type bool
-        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<bool> value);
+        void showListParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::vector<bool> value);
 
         /// @brief show name and value of parameters of type string
-        void showListParameter(SumoXMLTag tag, SumoXMLAttr attr, std::vector<std::string> value);
+        void showListParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::vector<std::string> value);
 
         /// @brief hide all parameters
         void hideParameter();
@@ -161,10 +161,10 @@ public:
 
     private:
         /// @brief current XML tag
-        SumoXMLTag myTag;
+        SumoXMLTag myAdditionalTag;
 
         /// @brief current XML attribute
-        SumoXMLAttr myAttr;
+        SumoXMLAttr myAdditionalAttr;
 
         /// @brief vector with with the name of every parameter
         std::vector<FXLabel*> myLabels;
@@ -204,7 +204,7 @@ public:
         void clearAttributes();
 
         /// @brief add attribute
-        void addAttribute(SumoXMLTag additional, SumoXMLAttr attribute);
+        void addAttribute(SumoXMLTag additionalTag, SumoXMLAttr additionalAttribute);
 
         /// @brief show group box
         void showAdditionalParameters();
@@ -229,8 +229,8 @@ public:
         additionalParameters() {}
 
     private:
-        /// @brief current additional
-        SumoXMLTag myAdditional;
+        /// @brief current additional tag
+        SumoXMLTag myAdditionalTag;
 
         /// @brief vector with the additional parameters
         std::vector<additionalParameter*> myVectorOfAdditionalParameter;
@@ -357,7 +357,7 @@ public:
         std::string getIdSelected() const;
 
         /// @brief get current tag
-        SumoXMLTag getCurrentlyTag() const;
+        SumoXMLTag getCurrentAdditionalTag() const;
 
         /// @brief Show list of additionalSet
         void showList(SumoXMLTag type);
