@@ -421,8 +421,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myAmRegisteredAsWaitingForContainer(false),
     myHaveToWaitOnNextLink(false),
     myCachedPosition(Position::INVALID),
-    myEdgeWeights(0),
-    myReplaceParkingArea(0)
+    myEdgeWeights(0)
 #ifndef NO_TRACI
     , myInfluencer(0)
 #endif
@@ -505,9 +504,7 @@ MSVehicle::replaceRoute(const MSRoute* newRoute, bool onInit, int offset) {
         }
     }
     // We don't want additional stops when replacing parking area       
-    if (myReplaceParkingArea != 0)
-        replaceParkingArea();
-    else {
+    if (myReplacedStops.size() == 0) {
         // add new stops
         for (std::vector<SUMOVehicleParameter::Stop>::const_iterator i = newRoute->getStops().begin(); i != newRoute->getStops().end(); ++i) {
             std::string error;
@@ -516,6 +513,7 @@ MSVehicle::replaceRoute(const MSRoute* newRoute, bool onInit, int offset) {
                 WRITE_WARNING(error);
             }
         }
+        myReplacedStops.clear();
     }
 
     return true;
@@ -847,16 +845,9 @@ MSVehicle::addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& error
 
 bool
 MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
-    if (parkingArea != 0) {
-        myReplaceParkingArea = parkingArea;
-        return true;
-    }
-
     // Check if there is a parking area to be replaced
-    if (myReplaceParkingArea == 0)
+    if (parkingArea == 0)
         return false;
-    else
-        parkingArea = myReplaceParkingArea;
 
     std::string errorMsg;
     if (myStops.empty()) {
@@ -906,7 +897,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
         stopPar.parking = stop.parking;
 
         // save stops before replace operation
-        std::list<Stop> myReplacedStops = myStops;
+        myReplacedStops = myStops;
         
         // remove stops equals to parking area
         while (removeStops > 0) {
@@ -914,8 +905,7 @@ MSVehicle::replaceParkingArea(MSParkingArea* parkingArea) {
             --removeStops;
         }
         const bool result = addStop(stopPar, errorMsg);
-        if (result) { 
-            myReplaceParkingArea = 0;
+        if (result) {
             if (myLane != 0) {
                 updateBestLanes(true);
             }

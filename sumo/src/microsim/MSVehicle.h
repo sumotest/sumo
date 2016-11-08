@@ -612,8 +612,8 @@ public:
     bool addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& errorMsg, SUMOTime untilOffset = 0);
     
 
-    /// @brief saved reference of parking area to be replaced
-    MSParkingArea* myReplaceParkingArea;
+    /// @brief list of stops before stop replacing operation
+    std::list<Stop> myReplacedStops;
 
 
     /** @brief replace the current parking area stop with a new stop with merge duration

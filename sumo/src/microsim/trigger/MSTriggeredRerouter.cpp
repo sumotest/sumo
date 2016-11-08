@@ -347,7 +347,6 @@ MSTriggeredRerouter::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification 
 
             stopsAreChanged = veh.replaceParkingArea(newParkingArea);
             veh.replaceRouteEdges(edges, false);
-            veh.replaceParkingArea();
         }
         return false;
     }
