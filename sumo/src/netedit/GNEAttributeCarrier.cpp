@@ -45,10 +45,12 @@ std::map<SumoXMLTag, std::vector<std::pair <SumoXMLAttr, std::string> > > GNEAtt
 std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedTags;
 std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedNetElementTags;
 std::vector<SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalTags;
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalIntAttrs;
-std::set<SumoXMLAttr> GNEAttributeCarrier::myNumericalFloatAttrs;
-std::set<SumoXMLAttr> GNEAttributeCarrier::myListAttrs;
-std::set<SumoXMLAttr> GNEAttributeCarrier::myUniqueAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myNumericalIntAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myNumericalFloatAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myBoolAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myListAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myUniqueAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myNonEditableAttrs;
 std::map<SumoXMLTag, SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalWithParentTags;
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > GNEAttributeCarrier::myDiscreteChoices;
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string > > GNEAttributeCarrier::myAttrDefinitions;
@@ -208,9 +210,7 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 break;
             case SUMO_TAG_JUNCTION:
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
-                /* virtual attribute from the combination of the actuall
-                 * attributes SUMO_ATTR_X, SUMO_ATTR_Y */
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "")); // virtual attribute from the combination of the actually attributes SUMO_ATTR_X, SUMO_ATTR_Y
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TYPE, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_SHAPE, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_RADIUS, ""));
@@ -226,13 +226,11 @@ GNEAttributeCarrier::allowedAttributes(SumoXMLTag tag) {
                 //attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_PREFER, ));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_WIDTH, ""));
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ENDOFFSET, ""));
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_INDEX, "")); // read-only attribute
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_INDEX, ""));
                 break;
             case SUMO_TAG_POI:
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_ID, ""));
-                /* virtual attribute from the combination of the actuall
-                 * attributes SUMO_ATTR_X, SUMO_ATTR_Y */
-                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, ""));
+                attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_POSITION, "")); // virtual attribute from the combination of the actually attributes SUMO_ATTR_X, SUMO_ATTR_Y
                 attrs.push_back(std::pair<SumoXMLAttr, std::string>(SUMO_ATTR_TYPE, ""));
                 break;
             case SUMO_TAG_CROSSING:
@@ -355,24 +353,24 @@ const std::vector<SumoXMLTag>&
 GNEAttributeCarrier::allowedTags() {
     // define on first access
     if (myAllowedTags.empty()) {
-        myAllowedTags.push_back(SUMO_TAG_JUNCTION);
-        myAllowedTags.push_back(SUMO_TAG_EDGE);
-        myAllowedTags.push_back(SUMO_TAG_LANE);
-        myAllowedTags.push_back(SUMO_TAG_CONNECTION);
-        myAllowedTags.push_back(SUMO_TAG_CROSSING);
         myAllowedTags.push_back(SUMO_TAG_BUS_STOP);
-        myAllowedTags.push_back(SUMO_TAG_CONTAINER_STOP);
+        myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);
         myAllowedTags.push_back(SUMO_TAG_CHARGING_STATION);
+        myAllowedTags.push_back(SUMO_TAG_CONNECTION);
+        myAllowedTags.push_back(SUMO_TAG_CONTAINER_STOP);
+        myAllowedTags.push_back(SUMO_TAG_CROSSING);
+        myAllowedTags.push_back(SUMO_TAG_DET_ENTRY);
+        myAllowedTags.push_back(SUMO_TAG_DET_EXIT);
         myAllowedTags.push_back(SUMO_TAG_E1DETECTOR);
         myAllowedTags.push_back(SUMO_TAG_E2DETECTOR);
         myAllowedTags.push_back(SUMO_TAG_E3DETECTOR);
-        myAllowedTags.push_back(SUMO_TAG_DET_ENTRY);
-        myAllowedTags.push_back(SUMO_TAG_DET_EXIT);
-        myAllowedTags.push_back(SUMO_TAG_VSS);
-        myAllowedTags.push_back(SUMO_TAG_CALIBRATOR);
+        myAllowedTags.push_back(SUMO_TAG_EDGE);
+        myAllowedTags.push_back(SUMO_TAG_JUNCTION);
+        myAllowedTags.push_back(SUMO_TAG_LANE);
         myAllowedTags.push_back(SUMO_TAG_REROUTER);
         myAllowedTags.push_back(SUMO_TAG_ROUTEPROBE);
         myAllowedTags.push_back(SUMO_TAG_VAPORIZER);
+        myAllowedTags.push_back(SUMO_TAG_VSS);
     }
     return myAllowedTags;
 }
@@ -382,11 +380,11 @@ const std::vector<SumoXMLTag>&
 GNEAttributeCarrier::allowedNetElementTags() {
     // define on first access
     if (myAllowedNetElementTags.empty()) {
-        myAllowedNetElementTags.push_back(SUMO_TAG_JUNCTION);
-        myAllowedNetElementTags.push_back(SUMO_TAG_EDGE);
-        myAllowedNetElementTags.push_back(SUMO_TAG_LANE);
         myAllowedNetElementTags.push_back(SUMO_TAG_CONNECTION);
         myAllowedNetElementTags.push_back(SUMO_TAG_CROSSING);
+        myAllowedNetElementTags.push_back(SUMO_TAG_EDGE);
+        myAllowedNetElementTags.push_back(SUMO_TAG_JUNCTION);
+        myAllowedNetElementTags.push_back(SUMO_TAG_LANE);
     }
     return myAllowedNetElementTags;
 }
@@ -397,18 +395,18 @@ GNEAttributeCarrier::allowedAdditionalTags() {
     // define on first access
     if (myAllowedAdditionalTags.empty()) {
         myAllowedAdditionalTags.push_back(SUMO_TAG_BUS_STOP);
-        myAllowedAdditionalTags.push_back(SUMO_TAG_CONTAINER_STOP);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);
         myAllowedAdditionalTags.push_back(SUMO_TAG_CHARGING_STATION);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_CONTAINER_STOP);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);
         myAllowedAdditionalTags.push_back(SUMO_TAG_E1DETECTOR);
         myAllowedAdditionalTags.push_back(SUMO_TAG_E2DETECTOR);
         myAllowedAdditionalTags.push_back(SUMO_TAG_E3DETECTOR);
-        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_ENTRY);
-        myAllowedAdditionalTags.push_back(SUMO_TAG_DET_EXIT);
-        myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);
-        myAllowedAdditionalTags.push_back(SUMO_TAG_CALIBRATOR);
         myAllowedAdditionalTags.push_back(SUMO_TAG_REROUTER);
         myAllowedAdditionalTags.push_back(SUMO_TAG_ROUTEPROBE);
         myAllowedAdditionalTags.push_back(SUMO_TAG_VAPORIZER);
+        myAllowedAdditionalTags.push_back(SUMO_TAG_VSS);
     }
     return myAllowedAdditionalTags;
 }
@@ -424,17 +422,24 @@ bool
 GNEAttributeCarrier::isInt(SumoXMLTag tag,SumoXMLAttr attr) {
     // define on first access
     if (myNumericalIntAttrs.empty()) {
-        myNumericalIntAttrs.insert(SUMO_ATTR_NUMLANES);
-        myNumericalIntAttrs.insert(SUMO_ATTR_PRIORITY);
-        myNumericalIntAttrs.insert(SUMO_ATTR_INDEX);
-        myNumericalIntAttrs.insert(SUMO_ATTR_CHARGEDELAY);
-        myNumericalIntAttrs.insert(SUMO_ATTR_FREQUENCY);
-        myNumericalIntAttrs.insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
-        myNumericalIntAttrs.insert(SUMO_ATTR_BEGIN);
-        myNumericalIntAttrs.insert(SUMO_ATTR_FROM_LANE);
-        myNumericalIntAttrs.insert(SUMO_ATTR_TO_LANE);
+        myNumericalIntAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_FREQUENCY);
+        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGEDELAY);
+        myNumericalIntAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_FROM_LANE);
+        myNumericalIntAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_TO_LANE);
+        myNumericalIntAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_FREQUENCY);
+        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_FREQUENCY);
+        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
+        myNumericalIntAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_FREQUENCY);
+        myNumericalIntAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
+        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_NUMLANES);
+        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_PRIORITY);
+        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_INDEX);
+        myNumericalIntAttrs[SUMO_TAG_ROUTEPROBE].insert(SUMO_ATTR_BEGIN);
+        myNumericalIntAttrs[SUMO_TAG_ROUTEPROBE].insert(SUMO_ATTR_FREQUENCY);
+        myNumericalIntAttrs[SUMO_TAG_VAPORIZER].insert(SUMO_ATTR_END);
+        myNumericalIntAttrs[SUMO_TAG_VAPORIZER].insert(SUMO_ATTR_STARTTIME);
     }
-    return myNumericalIntAttrs.count(attr) == 1;
+    return myNumericalIntAttrs[tag].count(attr) == 1;
 }
 
 
@@ -442,36 +447,49 @@ bool
 GNEAttributeCarrier::isFloat(SumoXMLTag tag,SumoXMLAttr attr) {
     // define on first access
     if (myNumericalFloatAttrs.empty()) {
-        myNumericalFloatAttrs.insert(SUMO_ATTR_SPEED);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_LENGTH);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_WIDTH);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_ENDOFFSET);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_RADIUS);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_STARTPOS);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_ENDPOS);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_CHARGINGPOWER);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_EFFICIENCY);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_LENGTH);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_PROB);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_CONTPOS);
-        myNumericalFloatAttrs.insert(SUMO_ATTR_VISIBILITY_DISTANCE);
+        myNumericalIntAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_ENDPOS);
+        myNumericalIntAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_STARTPOS);
+        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGINGPOWER);
+        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_EFFICIENCY);
+        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_ENDPOS);
+        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_STARTPOS);
+        myNumericalIntAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_CONTPOS);
+        myNumericalIntAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_VISIBILITY_DISTANCE);
+        myNumericalIntAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_ENDPOS);
+        myNumericalIntAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_STARTPOS);
+        myNumericalIntAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_WIDTH);
+        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
+        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
+        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_LENGTH);
+        myNumericalIntAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
+        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_ENDOFFSET);
+        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_LENGTH);
+        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_SPEED);
+        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_WIDTH);
+        myNumericalIntAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_RADIUS);
+        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_ENDOFFSET);
+        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_SPEED);
+        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_WIDTH);
+        myNumericalIntAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_PROB);
     }
-    return myNumericalFloatAttrs.count(attr) == 1;
+    return myNumericalFloatAttrs[tag].count(attr) == 1;
 }
 
 
 bool
 GNEAttributeCarrier::isBool(SumoXMLTag tag, SumoXMLAttr attr) {
-    // get choices of tag
-    std::vector<std::string> choices = discreteChoices(tag, attr);
-    // CHeck if choices are exactly "true" and "false"
-    if ((choices.size() == 2) && (choices.at(0) == "true") && (choices.at(1) == "false")) {
-        return true;
-    } else {
-        return false;
-    }           
+    // define on first access
+    if (myBoolAttrs.empty()) {
+        myBoolAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGEINTRANSIT);
+        myBoolAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_PASS);
+        myBoolAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_UNCONTROLLED);
+        myBoolAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_PRIORITY);
+        myBoolAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_SPLIT_VTYPE);
+        myBoolAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_CONT);
+        myBoolAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_KEEP_CLEAR);
+        myBoolAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_OFF);
+    }
+    return myBoolAttrs[tag].count(attr) == 1;    
 }
 
 
@@ -485,33 +503,69 @@ bool
 GNEAttributeCarrier::isList(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myListAttrs.empty()) {
-        myListAttrs.insert(SUMO_ATTR_LINES);
-        myListAttrs.insert(SUMO_ATTR_EDGES);
-        myListAttrs.insert(SUMO_ATTR_LANES);
+        myListAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_LINES);
+        myListAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_LINES);
+        myListAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_EDGES);
+        myListAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_EDGES);
+        myListAttrs[SUMO_TAG_VSS].insert(SUMO_ATTR_LANES);
     }
-    return myListAttrs.count(attr) == 1;
+    return myListAttrs[tag].count(attr) == 1;
 }
 
 
 bool
 GNEAttributeCarrier::isUnique(SumoXMLTag tag, SumoXMLAttr attr) {
-    // define on first access
-    if (myUniqueAttrs.empty()) {
-        myUniqueAttrs.insert(SUMO_ATTR_ID);
-        myUniqueAttrs.insert(SUMO_ATTR_FROM);
-        myUniqueAttrs.insert(SUMO_ATTR_TO);
-        myUniqueAttrs.insert(SUMO_ATTR_SHAPE);
-        myUniqueAttrs.insert(SUMO_ATTR_POSITION);
-        myUniqueAttrs.insert(SUMO_ATTR_EDGES);
-        myUniqueAttrs.insert(SUMO_ATTR_STARTPOS);
-        myUniqueAttrs.insert(SUMO_ATTR_ENDPOS);
-        myUniqueAttrs.insert(SUMO_ATTR_LANE);
-        myUniqueAttrs.insert(SUMO_ATTR_EDGE);
-        myUniqueAttrs.insert(SUMO_ATTR_ROUTEPROBE);
-        myUniqueAttrs.insert(SUMO_ATTR_FROM_LANE);
-        myUniqueAttrs.insert(SUMO_ATTR_TO_LANE);
+    // ID is an atribute that always is unique
+    if(attr == SUMO_ATTR_ID) {
+        return true;
+    } else {
+        // define on first access
+        if (myUniqueAttrs.empty()) {
+	        myUniqueAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_FROM_LANE);
+	        myUniqueAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_TO);
+	        myUniqueAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_TO_LANE);
+	        myUniqueAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_FROM);
+	        myUniqueAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_TO);
+            myUniqueAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_ENDPOS);
+            myUniqueAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_STARTPOS);
+            myUniqueAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_OUTPUT);
+            myUniqueAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_ROUTEPROBE);
+            myUniqueAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_ENDPOS);
+            myUniqueAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_STARTPOS);
+            myUniqueAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_FROM);
+            myUniqueAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_ENDPOS);
+            myUniqueAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_STARTPOS);
+            myUniqueAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_EDGES);
+            myUniqueAttrs[SUMO_TAG_DET_ENTRY].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_DET_ENTRY].insert(SUMO_ATTR_POSITION);
+            myUniqueAttrs[SUMO_TAG_DET_EXIT].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_DET_EXIT].insert(SUMO_ATTR_POSITION);
+            myUniqueAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_FILE);
+            myUniqueAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_POSITION);
+            myUniqueAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_FILE);
+            myUniqueAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_LANE);
+            myUniqueAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_POSITION);
+            myUniqueAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_FILE);
+            myUniqueAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_SHAPE);
+            myUniqueAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_POSITION);
+            myUniqueAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_SHAPE);
+            myUniqueAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_TLID);
+            myUniqueAttrs[SUMO_TAG_POI].insert(SUMO_ATTR_POSITION);
+            myUniqueAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_EDGES);
+            myUniqueAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_FILE);
+            myUniqueAttrs[SUMO_TAG_ROUTEPROBE].insert(SUMO_ATTR_EDGE);
+            myUniqueAttrs[SUMO_TAG_ROUTEPROBE].insert(SUMO_ATTR_FILE);
+            myUniqueAttrs[SUMO_TAG_VAPORIZER].insert(SUMO_ATTR_EDGE);
+            myUniqueAttrs[SUMO_TAG_VAPORIZER].insert(SUMO_ATTR_FILE);
+            myUniqueAttrs[SUMO_TAG_VSS].insert(SUMO_ATTR_FILE);
+        }
+        return myUniqueAttrs[tag].count(attr) == 1;
     }
-    return myUniqueAttrs.count(attr) == 1;
 }
 
 
@@ -524,6 +578,20 @@ GNEAttributeCarrier::isDiscrete(SumoXMLTag tag, SumoXMLAttr attr) {
     }
 }
 
+
+bool 
+GNEAttributeCarrier::isNonEditable(SumoXMLTag tag, SumoXMLAttr attr) {
+    // define on first access
+    if (myNonEditableAttrs.empty()) {
+        myNonEditableAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_FROM);
+        myNonEditableAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_FROM_LANE);
+        myNonEditableAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_TO);
+        myNonEditableAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_TO_LANE);
+        myNonEditableAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_ID);
+        myNonEditableAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_INDEX);
+    }
+    return myNonEditableAttrs[tag].count(attr) == 1;
+}
 
 bool
 GNEAttributeCarrier::hasParent(SumoXMLTag tag) {
@@ -553,28 +621,26 @@ GNEAttributeCarrier::discreteChoices(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myDiscreteChoices.empty()) {
         std::vector<std::string> choices;
+        // Get type of nodes
         choices = SUMOXMLDefinitions::NodeTypes.getStrings();
         for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
             if (*it != toString(NODETYPE_DEAD_END_DEPRECATED)) {
                 myDiscreteChoices[SUMO_TAG_JUNCTION][SUMO_ATTR_TYPE].push_back(*it);
             }
         }
-
+        // Get types of traffic lights
         choices = SUMOXMLDefinitions::TrafficLightTypes.getStrings();
         for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
             if (*it != toString(TLTYPE_INVALID)) {
                 myDiscreteChoices[SUMO_TAG_JUNCTION][SUMO_ATTR_TLTYPE].push_back(*it);
             }
         }
-
-        myDiscreteChoices[SUMO_TAG_JUNCTION][SUMO_ATTR_KEEP_CLEAR].push_back("true");
-        myDiscreteChoices[SUMO_TAG_JUNCTION][SUMO_ATTR_KEEP_CLEAR].push_back("false");
-
+        // get type of lane spread functions
         choices = SUMOXMLDefinitions::LaneSpreadFunctions.getStrings();
         for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
             myDiscreteChoices[SUMO_TAG_EDGE][SUMO_ATTR_SPREADTYPE].push_back(*it);
         }
-
+        // get vehicle types
         choices = SumoVehicleClassStrings.getStrings();
         for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
             myDiscreteChoices[SUMO_TAG_EDGE][SUMO_ATTR_ALLOW].push_back(*it);
@@ -582,32 +648,7 @@ GNEAttributeCarrier::discreteChoices(SumoXMLTag tag, SumoXMLAttr attr) {
             myDiscreteChoices[SUMO_TAG_LANE][SUMO_ATTR_ALLOW].push_back(*it);
             myDiscreteChoices[SUMO_TAG_LANE][SUMO_ATTR_DISALLOW].push_back(*it);
         }
-
-        myDiscreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("true");
-        myDiscreteChoices[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("true");
-        myDiscreteChoices[SUMO_TAG_CHARGING_STATION][SUMO_ATTR_CHARGEINTRANSIT].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE].push_back("true");
-        myDiscreteChoices[SUMO_TAG_E1DETECTOR][SUMO_ATTR_SPLIT_VTYPE].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT].push_back("true");
-        myDiscreteChoices[SUMO_TAG_E2DETECTOR][SUMO_ATTR_CONT].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("true");
-        myDiscreteChoices[SUMO_TAG_REROUTER][SUMO_ATTR_OFF].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_KEEP_CLEAR].push_back("true");
-        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_KEEP_CLEAR].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_UNCONTROLLED].push_back("true");
-        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_UNCONTROLLED].push_back("false");
-
-        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_PASS].push_back("true");
-        myDiscreteChoices[SUMO_TAG_CONNECTION][SUMO_ATTR_PASS].push_back("false");
     }
-
     return myDiscreteChoices[tag][attr];
 }
 

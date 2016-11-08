@@ -133,12 +133,14 @@ public:
     /// @brief whether an attribute is of type bool
     static bool isList(SumoXMLTag tag, SumoXMLAttr attr);
 
-    /// @brief whether an attribute is unique (may not be edited for a multi-selection)
-    /// @note unique attributes don't have a default value
+    /// @brief whether an attribute is unique (may not be edited for a multi-selection and don't have a default value)
     static bool isUnique(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief whether an attribute is Discrete
     static bool isDiscrete(SumoXMLTag tag, SumoXMLAttr attr);
+
+    /// @brief whether an attribute is non editable
+    static bool isNonEditable(SumoXMLTag tag, SumoXMLAttr attr);
 
     /// @brief check if a element with certain tag has another additional element as parent
     static bool hasParent(SumoXMLTag tag);
@@ -228,17 +230,23 @@ private:
     /// @brief vector with the allowed tags of additionals
     static std::vector<SumoXMLTag> myAllowedAdditionalTags;
 
-    /// @brief set with the numerical attributes of type Int
-    static std::set<SumoXMLAttr> myNumericalIntAttrs;
+    /// @brief map with the numerical attributes of type Int
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myNumericalIntAttrs;
 
-    /// @brief set with the numerical attributes of type Float
-    static std::set<SumoXMLAttr> myNumericalFloatAttrs;
+    /// @brief map with the numerical attributes of type Float
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myNumericalFloatAttrs;
 
-    /// @brief set with the attributes of type list
-    static std::set<SumoXMLAttr> myListAttrs;
+    /// @brief map with the boolean attributes
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myBoolAttrs;
 
-    /// @brief set with the unique attributes (i.e. attributes without default values)
-    static std::set<SumoXMLAttr> myUniqueAttrs;
+    /// @brief map with the attributes of type list
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myListAttrs;
+
+    /// @brief map with the unique attributes (i.e. attributes without default values)
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myUniqueAttrs;
+
+    /// @brief map with the non-editable attributes
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myNonEditableAttrs;
 
     /// @brief map with the allowed tags of additionals with parent and their parent
     static std::map<SumoXMLTag, SumoXMLTag> myAllowedAdditionalWithParentTags;
