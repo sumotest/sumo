@@ -787,7 +787,7 @@ MSVehicle::getRerouteOrigin() const {
     }
 #ifdef HAVE_INTERNAL_LANES
     if (myLane != 0) {
-        return myLane->getInternalFollower();
+        return myLane->getNextNormal();
     }
 #endif
     return *myCurrEdge;
@@ -1303,6 +1303,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
     // iterator over subsequent lanes and fill lfLinks until stopping distance or stopped
     const MSLane* lane = opposite ? myLane->getOpposite() : myLane;
+    assert(lane != 0);
     const MSLane* leaderLane = myLane;
     while (true) {
         // check leader on lane
@@ -1426,6 +1427,14 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
 
         SUMOReal vLinkWait = MIN2(v, cfModel.stopSpeed(this, getSpeed(), stopDist));
         const SUMOReal brakeDist = cfModel.brakeGap(myState.mySpeed, cfModel.getMaxDecel(), 0.);
+#ifdef DEBUG_PLAN_MOVE
+        gDebugFlag1 = DEBUG_COND;
+        if (DEBUG_COND) std::cout 
+            << " stopDist=" << stopDist
+            << " vLinkWait=" << vLinkWait
+            << " brakeDist=" << brakeDist
+            << "\n";
+#endif
         if (yellowOrRed && seen >= brakeDist) {
             // the vehicle is able to brake in front of a yellow/red traffic light
             lfLinks.push_back(DriveProcessItem(*link, vLinkWait, vLinkWait, false, t + TIME2STEPS(seen / MAX2(vLinkWait, NUMERICAL_EPS)), vLinkWait, 0, 0, seen));
@@ -1477,6 +1486,12 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
 //        SUMOReal foeRecognitionTime = 0.0;
 //        SUMOReal determinedFoePresence = seen < visibilityDistance - myState.mySpeed*foeRecognitionTime;
 
+#ifdef DEBUG_PLAN_MOVE
+        if (DEBUG_COND){
+            std::cout << " approaching link=" << (*link)->getViaLaneOrLane()->getID() << " prio=" << (*link)->havePriority() << " seen=" << seen << " visibilityDistance=" << visibilityDistance << " brakeDist=" << brakeDist << "\n";
+        }
+#endif
+
         if (!(*link)->havePriority() && !determinedFoePresence && brakeDist < seen) {
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
             SUMOReal maxSpeedAtVisibilityDist = cfModel.maximumSafeStopSpeed(visibilityDistance, myState.mySpeed, false, 0.);
@@ -1484,6 +1499,11 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             SUMOReal maxArrivalSpeed = cfModel.estimateSpeedAfterDistance(visibilityDistance, maxSpeedAtVisibilityDist, cfModel.getMaxAccel());
             arrivalSpeed = MIN2(vLinkPass, maxArrivalSpeed);
             slowedDownForMinor = true;
+#ifdef DEBUG_PLAN_MOVE
+            if (DEBUG_COND){
+                std::cout << "   slowedDownForMinor maxArrivalSpeed=" << maxArrivalSpeed << " arrivalSpeed=" << arrivalSpeed << "\n";
+            }
+#endif
         }
 
         SUMOTime arrivalTime;
@@ -2730,7 +2750,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         }
         // adapt best lanes to fit the current internal edge:
         // keep the entries that are reachable from this edge
-        const MSEdge* nextEdge = startLane->getInternalFollower();
+        const MSEdge* nextEdge = startLane->getNextNormal();
         assert(nextEdge->getPurpose() != MSEdge::EDGEFUNCTION_INTERNAL);
         for (std::vector<std::vector<LaneQ> >::iterator it = myBestLanes.begin(); it != myBestLanes.end();) {
             std::vector<LaneQ>& lanes = *it;
@@ -3458,7 +3478,7 @@ MSVehicle::unsafeLinkAhead(const MSLane* lane) const {
                 bool found = false;
                 while (di != myLFLinkLanes.end() && !found) {
                     if ((*di).myLink != 0) {
-                        const MSLane* diPredLane = (*di).myLink->getApproachingLane();
+                        const MSLane* diPredLane = (*di).myLink->getLaneBefore();
                         if (diPredLane != 0) {
                             if (&diPredLane->getEdge() == &lane->getEdge()) {
                                 found = true;

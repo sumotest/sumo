@@ -42,6 +42,7 @@
 #include "MSEdge.h"
 #include "MSGlobals.h"
 #include "MSVehicle.h"
+#include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <microsim/pedestrians/MSPModel.h>
 
 #ifdef CHECK_MEMORY_LEAKS
@@ -492,34 +493,6 @@ MSLink::getLane() const {
     return myLane;
 }
 
-MSLane*
-MSLink::getApproachingLane() const {
-    MSLane* approachedLane; //the lane approached by this link; this lane may be an internal lane
-#ifdef HAVE_INTERNAL_LANES
-    if (myInternalLane != 0) {    // if there is an internal lane
-        approachedLane = myInternalLane;  //consider the internal lane as the approached lane
-    } else {    //if ther is no internal lane
-        approachedLane = myLane;
-    }
-#else
-    approachedLane = myLane;
-#endif
-    const std::vector<MSLane::IncomingLaneInfo> possibleLanes = approachedLane->getIncomingLanes();
-    std::vector<MSLane::IncomingLaneInfo>::const_iterator i;
-    for (i = possibleLanes.begin(); i != possibleLanes.end(); i++) {
-        MSLane* lane = (*i).lane;
-        MSLinkCont outgoingLinks = lane->getLinkCont(); //the links outgoing from lane
-        for (MSLinkCont::const_iterator j = outgoingLinks.begin(); j != outgoingLinks.end(); j++) {
-            if ((*j) == this) {
-                return lane;
-            }
-        }
-    }
-    WRITE_WARNING("No approaching lane found for the link with the index " + toString(this->getIndex()) + ".");
-    return 0;
-}
-
-
 bool
 MSLink::lastWasContMajor() const {
 #ifdef HAVE_INTERNAL_LANES
@@ -652,15 +625,23 @@ MSLink::getLeaderInfo(SUMOReal dist, SUMOReal minGap, std::vector<const MSPerson
             MSLane::AnyVehicleIterator end = foeLane->anyVehiclesEnd();
             for (MSLane::AnyVehicleIterator it_veh = foeLane->anyVehiclesBegin(); it_veh != end; ++it_veh) {
                 MSVehicle* leader = (MSVehicle*)*it_veh;
-                if (!cannotIgnore && !foeLane->getLinkCont()[0]->getApproaching(leader).willPass && leader->isFrontOnLane(foeLane)) {
+                const bool isOpposite = leader->getLaneChangeModel().isOpposite();
+                if (gDebugFlag1) {
+                    std::cout << " candiate leader=" << leader->getID() 
+                        << " cannotIgnore=" << cannotIgnore 
+                        << " willPass=" << foeLane->getLinkCont()[0]->getApproaching(leader).willPass 
+                        << " isFrontOnLane=" << leader->isFrontOnLane(foeLane) 
+                        << " isOpposite=" << isOpposite << "\n";
+                }
+                if (!cannotIgnore && !foeLane->getLinkCont()[0]->getApproaching(leader).willPass && leader->isFrontOnLane(foeLane) && !isOpposite) {
                     continue;
                 }
                 if (cannotIgnore || leader->getWaitingTime() < MSGlobals::gIgnoreJunctionBlocker) {
                     // compute distance between vehicles on the the superimposition of both lanes
                     // where the crossing point is the common point
                     SUMOReal gap;
-                    if (contLane && !sameSource) {
-                        gap = -1; // always break for vehicles which are on a continuation lane
+                    if ((contLane && !sameSource) || isOpposite) {
+                        gap = -1; // always break for vehicles which are on a continuation lane or for opposite-direction vehicles
                     } else {
                         const SUMOReal leaderBack = leader->getBackPositionOnLane(foeLane);
                         const SUMOReal leaderBackDist = foeDistToCrossing - leaderBack;

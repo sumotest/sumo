@@ -376,6 +376,8 @@ private:
 
     /// @brief testing mode
     bool myTestingMode;
+    int myTestingWidth;
+    int myTestingHeight;
 
 private:
     /// @brief set edit mode

@@ -609,20 +609,24 @@ NBEdgeCont::computeLanes2Edges() {
 void
 NBEdgeCont::recheckLanes() {
     for (EdgeCont::iterator i = myEdges.begin(); i != myEdges.end(); i++) {
-        i->second->recheckLanes();
+        NBEdge* edge = i->second;
+        edge->recheckLanes();
         // check opposites
-        if (i->second->getNumLanes() > 0) {
-            const std::string& oppositeID = i->second->getLanes().back().oppositeID;
+        if (edge->getNumLanes() > 0) {
+            const std::string& oppositeID = edge->getLanes().back().oppositeID;
             if (oppositeID != "" && oppositeID != "-") {
-                const NBEdge* oppEdge = retrieve(oppositeID.substr(0, oppositeID.rfind("_")));
-                if (oppEdge == 0) {
-                    throw ProcessError("Unknown opposite lane '" + oppositeID + "' for edge '" + i->second->getID() + "'!");
+                NBEdge* oppEdge = retrieve(oppositeID.substr(0, oppositeID.rfind("_")));
+                if (oppEdge == 0 || oppEdge->getLaneID(oppEdge->getNumLanes() - 1) != oppositeID) {
+                    WRITE_WARNING("Removing unknown opposite lane '" + oppositeID + "' for edge '" + edge->getID() + "'.");
+                    edge->getLaneStruct(edge->getNumLanes() - 1).oppositeID = "";
+                    continue;
                 }
-                if (fabs(oppEdge->getLoadedLength() - i->second->getLoadedLength()) > POSITION_EPS) {
-                    throw ProcessError("Opposite lane '" + oppositeID + "' differs in length from edge '" + i->second->getID() + "'!");
+                if (fabs(oppEdge->getLoadedLength() - edge->getLoadedLength()) > POSITION_EPS) {
+                    throw ProcessError("Opposite lane '" + oppositeID + "' (length " + toString(oppEdge->getLoadedLength()) + ") differs in length from edge '" + edge->getID() + "' (length "
+                            + toString(edge->getLoadedLength()) + ")!");
                 }
-                if (oppEdge->getFromNode() != i->second->getToNode() || oppEdge->getToNode() != i->second->getFromNode()) {
-                    throw ProcessError("Opposite lane '" + oppositeID + "' does not connect the same nodes as edge '" + i->second->getID() + "'!");
+                if (oppEdge->getFromNode() != edge->getToNode() || oppEdge->getToNode() != edge->getFromNode()) {
+                    throw ProcessError("Opposite lane '" + oppositeID + "' does not connect the same nodes as edge '" + edge->getID() + "'!");
                 }
             }
         }
@@ -1114,6 +1118,36 @@ NBEdgeCont::mapToNumericalIDs() {
         myEdges[edge->getID()] = edge;
     }
     return (int)toChange.size();
+}
+
+
+void
+NBEdgeCont::checkOverlap(SUMOReal threshold, SUMOReal zThreshold) const {
+    for (EdgeCont::const_iterator it = myEdges.begin(); it != myEdges.end(); it++) {
+        const NBEdge* e1 = it->second;
+        Boundary b1 = e1->getGeometry().getBoxBoundary();
+        b1.grow(e1->getTotalWidth());
+        PositionVector outline1 = e1->getCCWBoundaryLine(*e1->getFromNode());
+        outline1.append(e1->getCCWBoundaryLine(*e1->getToNode()));
+        // check is symmetric. only check once per pair
+        for (EdgeCont::const_iterator it2 = it; it2 != myEdges.end(); it2++) {
+            const NBEdge* e2 = it2->second;
+            if (e1 == e2) {
+                continue;
+            }
+            Boundary b2 = e2->getGeometry().getBoxBoundary();
+            b2.grow(e2->getTotalWidth());
+            if (b1.overlapsWith(b2)) {
+                PositionVector outline2 = e2->getCCWBoundaryLine(*e2->getFromNode());
+                outline2.append(e2->getCCWBoundaryLine(*e2->getToNode()));
+                const SUMOReal overlap = outline1.getOverlapWith(outline2, zThreshold);
+                if (overlap > threshold) {
+                    WRITE_WARNING("Edge '" + e1->getID() + "' overlaps with edge '" + e2->getID() + "' by " + toString(overlap) + ".");
+                }
+            }
+        }
+    }
+
 }
 
 /****************************************************************************/

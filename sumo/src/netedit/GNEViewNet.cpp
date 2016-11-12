@@ -139,8 +139,7 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
     myEditModeNames(),
     myUndoList(undoList),
     myCurrentPoly(0),
-    myTestingMode(OptionsCont::getOptions().getBool("gui-testing"))
-{
+    myTestingMode(OptionsCont::getOptions().getBool("gui-testing")) {
     // view must be the final member of actualParent
     reparent(actualParent);
 
@@ -256,6 +255,13 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
     scheme.addColor(RGBColor(128, 0, 128), 12, "rail_crossing"); // dark purple
     junctionColorer.addScheme(scheme);
     myVisualizationSettings->junctionColorer = junctionColorer;
+
+    if (myTestingMode && OptionsCont::getOptions().isSet("window-size")) {
+        std::vector<std::string> windowSize = OptionsCont::getOptions().getStringVector("window-size");
+        assert(windowSize.size() == 2);
+        myTestingWidth = TplConvert::_str2int(windowSize[0]);
+        myTestingHeight = TplConvert::_str2int(windowSize[1]);
+    }
 }
 
 
@@ -400,6 +406,14 @@ GNEViewNet::doPaintGL(int mode, const Boundary& bound) {
             paintGLGrid();
         }
         if (myTestingMode) {
+            if (myTestingWidth > 0 && (getWidth() != myTestingWidth || getHeight() != myTestingHeight)) {
+                // only resize once to avoid flickering
+                //std::cout << " before resize: view=" << getWidth() << ", " << getHeight() << " app=" << myApp->getWidth() << ", " << myApp->getHeight() << "\n";
+                myApp->resize(myTestingWidth + myTestingWidth - getWidth(), myTestingHeight + myTestingHeight - getHeight());
+                //std::cout << " directly after resize: view=" << getWidth() << ", " << getHeight() << " app=" << myApp->getWidth() << ", " << myApp->getHeight() << "\n";
+                myTestingWidth = 0;
+            }
+            //std::cout << " fixed: view=" << getWidth() << ", " << getHeight() << " app=" << myApp->getWidth() << ", " << myApp->getHeight() << "\n";
             // draw pink square in the upper left corner on top of everything
             glPushMatrix();
             const SUMOReal size = p2m(32);
