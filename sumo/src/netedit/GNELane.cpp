@@ -321,7 +321,7 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
             drawMarkings(selectedEdge, exaggeration);
         }
         // draw ROWs only if target junction has a valid logic)
-        if (myParentEdge.getGNEJunctionDest()->isLogicValid() && s.scale > 3) {
+        if (myParentEdge.getGNEJunctionDestiny()->isLogicValid() && s.scale > 3) {
             drawArrows();
         }
         // Draw direction indicators if the correspondient option is enabled
@@ -1070,9 +1070,8 @@ GNELane::getGNEIncomingConnections() {
     // Obtain incoming edges if junction source was already created
     GNEJunction* junctionSource =  myParentEdge.getGNEJunctionSource();
     if (junctionSource) {
-        std::vector<GNEEdge*> incomingEdges = junctionSource->getGNEIncomingEdges();
-        // Iterate over incoming edges
-        for (std::vector<GNEEdge*>::iterator i = incomingEdges.begin(); i != incomingEdges.end(); i++) {
+        // Iterate over incoming GNEEdges of junction
+        for (std::vector<GNEEdge*>::const_iterator i = junctionSource->getGNEIncomingEdges().begin(); i != junctionSource->getGNEIncomingEdges().end(); i++) {
             // Iterate over connection of incoming edges
             for (std::vector<GNEConnection*>::const_iterator j = (*i)->getGNEConnections().begin(); j != (*i)->getGNEConnections().end(); j++) {
                 if ((*j)->getNBEdgeConnection().fromLane == getIndex()) {
