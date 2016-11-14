@@ -98,7 +98,7 @@ public:
         /// @name FOX-callbacks
         /// @{
         /// @brief called when user trigger checkBox of useSelectedEdges
-        long onCmdUseSelectedEdges(FXObject*, FXSelector, void*);
+        long onCmdShowOnlySelectedEdges(FXObject*, FXSelector, void*);
 
         /// @brief called when user type in search box
         long onCmdTypeInSearchBox(FXObject*, FXSelector, void*);
@@ -112,7 +112,13 @@ public:
         /// @brief called when invert selection button is pressed
         long onCmdInvertSelection(FXObject*, FXSelector, void*);
 
-        /// @brief Called when help button is pressed
+        /// @brief called when user click over TextField for edge search
+        long onCmdClickEdgeSearchFocusIn(FXObject*, FXSelector, void*);
+
+        /// @brief called when user leave the TexField for edge search
+        long onCmdClickEdgeSearchFocusOut(FXObject*, FXSelector, void*);
+
+        /// @brief called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
         /// @}
 
@@ -128,7 +134,7 @@ public:
         GNECrossingFrame *myCrossingFrameParent;
 
         /// @brief CheckBox for selected edges
-        FXMenuCheck* myUseSelectedEdges;
+        FXMenuCheck* myShowOnlySelectedEdges;
 
         /// @brief List of edgesSelector
         FXList* myList;

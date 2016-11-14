@@ -69,12 +69,14 @@ FXDEFMAP(GNECrossingFrame) GNECrossingMap[] = {
 };
 
 FXDEFMAP(GNECrossingFrame::edgesSelector) GNEEdgesMap[] = {
-    FXMAPFUNC(SEL_COMMAND,           MID_GNE_USESELECTEDEDGES,    GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges),
-    FXMAPFUNC(SEL_COMMAND,           MID_GNE_CLEAREDGESELECTION,  GNECrossingFrame::edgesSelector::onCmdClearSelection),
-    FXMAPFUNC(SEL_COMMAND,           MID_GNE_INVERTEDGESELECTION, GNECrossingFrame::edgesSelector::onCmdInvertSelection),
-    FXMAPFUNC(SEL_CHANGED,           MID_GNE_SEARCHEDGE,          GNECrossingFrame::edgesSelector::onCmdTypeInSearchBox),
-    FXMAPFUNC(SEL_LEFTBUTTONRELEASE, MID_GNE_SELECTEDGE,          GNECrossingFrame::edgesSelector::onCmdSelectEdge),
-    FXMAPFUNC(SEL_COMMAND,           MID_HELP,                    GNECrossingFrame::edgesSelector::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND,           MID_GNE_SHOWONLYSELECTEDEDGES, GNECrossingFrame::edgesSelector::onCmdShowOnlySelectedEdges),
+    FXMAPFUNC(SEL_COMMAND,           MID_GNE_CLEAREDGESELECTION,    GNECrossingFrame::edgesSelector::onCmdClearSelection),
+    FXMAPFUNC(SEL_COMMAND,           MID_GNE_INVERTEDGESELECTION,   GNECrossingFrame::edgesSelector::onCmdInvertSelection),
+    FXMAPFUNC(SEL_LEFTBUTTONRELEASE, MID_GNE_SELECTEDGE,            GNECrossingFrame::edgesSelector::onCmdSelectEdge),
+    FXMAPFUNC(SEL_CHANGED,           MID_GNE_SEARCHEDGE,            GNECrossingFrame::edgesSelector::onCmdTypeInSearchBox),
+    FXMAPFUNC(SEL_FOCUSIN,           MID_GNE_SEARCHEDGE,            GNECrossingFrame::edgesSelector::onCmdClickEdgeSearchFocusIn),
+    FXMAPFUNC(SEL_FOCUSOUT,          MID_GNE_SEARCHEDGE,            GNECrossingFrame::edgesSelector::onCmdClickEdgeSearchFocusOut),
+    FXMAPFUNC(SEL_COMMAND,           MID_HELP,                      GNECrossingFrame::edgesSelector::onCmdHelp),
 };
 
 FXDEFMAP(GNECrossingFrame::crossingParameters) GNECrossingParametersMap[] = {
@@ -96,14 +98,15 @@ FXIMPLEMENT(GNECrossingFrame::crossingParameters, FXGroupBox,     GNECrossingPar
 // ---------------------------------------------------------------------------
 
 GNECrossingFrame::edgesSelector::edgesSelector(FXComposite* parent, GNECrossingFrame* crossingFrameParent) :
-    FXGroupBox(parent, "Edges", GNEDesignGroupBoxFrame),
+    FXGroupBox(parent, "selection of Edges", GNEDesignGroupBoxFrame),
     myCurrentJunction(0),
     myCrossingFrameParent(crossingFrameParent) {
     // Create CheckBox for selected edges
-    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
+    myShowOnlySelectedEdges = new FXMenuCheck(this, "Show only selected Edges", this, MID_GNE_SHOWONLYSELECTEDEDGES, GNEDesignCheckButton);
 
-    // Create search box
+    // Create search box with default text
     myEdgesSearch = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);
+    myEdgesSearch->setText("Search edge ID");
 
     // Create list
     myList = new FXList(this, this, MID_GNE_SELECTEDGE, GNEDesignList, 0, 0, 0, 100);
@@ -142,8 +145,8 @@ GNECrossingFrame::edgesSelector::getEdgeIDSSelected() const {
 
 std::vector<GNEEdge*>
 GNECrossingFrame::edgesSelector::getGNEEdgesSelected() const {
-    // if use selected edges is checked
-    if(myUseSelectedEdges->getCheck()) {
+    // if show only selected edges is checked
+    if(myShowOnlySelectedEdges->getCheck()) {
         // Check that myCurrentSelectedEdges isn't empty 
         assert(myCurrentSelectedEdges.size() > 0);
         // return current selected edges
@@ -177,17 +180,18 @@ GNECrossingFrame::edgesSelector::filterListOfEdges(std::string search) {
     std::vector<GNEEdge*> vectorOfEdges = myCurrentJunction->getGNEEdges();
     // iterate over edges of junction
     for (std::vector<GNEEdge*>::iterator i = vectorOfEdges.begin(); i != vectorOfEdges.end(); i++) {
-        // If search criterium is correct, then append ittem
+        // If search criterium is correct, then append item depending of myShowOnlySelectedEdges
         if ((*i)->getID().find(search) != std::string::npos) {
-            myList->appendItem((*i)->getID().c_str());
+            if(myShowOnlySelectedEdges->getCheck()) {
+                // Check that edge is selected
+                if(gSelected.isSelected(GLO_EDGE, (*i)->getGlID())) {
+                    myList->appendItem((*i)->getID().c_str());
+                }
+            } else {
+                myList->appendItem((*i)->getID().c_str());
+            }
         }
     }
-    // By default, CheckBox for useSelectedEdges isn't checked
-    myUseSelectedEdges->setCheck(false);
-    // Recalc Frame
-    recalc();
-    // Update Frame
-    update();
     // Show dialog
     show();
 }
@@ -233,9 +237,9 @@ GNECrossingFrame::edgesSelector::enableEdgeSelector(GNEJunction *currentJunction
     }
     // If current selected edges can be used to create a sidewalk
     if(myCurrentSelectedEdges.size() > 0) {
-        myUseSelectedEdges->enable();
+        myShowOnlySelectedEdges->enable();
     } else {
-        myUseSelectedEdges->disable();
+        myShowOnlySelectedEdges->disable();
     }
 
     // Enable rest of elements of the edgesSelector
@@ -256,9 +260,9 @@ GNECrossingFrame::edgesSelector::disableEdgeSelector() {
     // clear list of edges
     clearList();
     // If previously UseSelectedEdges was checked
-    if(myUseSelectedEdges->getCheck()) {
+    if(myShowOnlySelectedEdges->getCheck()) {
         // show all elements
-        myUseSelectedEdges->setCheck(false);
+        myShowOnlySelectedEdges->setCheck(false);
         myEdgesSearch->show();
         myList->show();
         myClearEdgesSelection->show();
@@ -270,7 +274,7 @@ GNECrossingFrame::edgesSelector::disableEdgeSelector() {
         update();
     }
     // disable all elements of the edgesSelector
-    myUseSelectedEdges->disable();
+    myShowOnlySelectedEdges->disable();
     myList->disable();
     myEdgesSearch->disable();
     helpEdges->disable();
@@ -284,18 +288,18 @@ GNECrossingFrame::edgesSelector::disableEdgeSelector() {
 
 void
 GNECrossingFrame::edgesSelector::updateUseSelectedEdges() {
-    // Enable or disable use selected edges
+    // Enable or disable show only selected edges
     if (myCrossingFrameParent->getViewNet()->getNet()->retrieveEdges(true).size() > 0) {
-        myUseSelectedEdges->enable();
+        myShowOnlySelectedEdges->enable();
     } else {
-        myUseSelectedEdges->disable();
+        myShowOnlySelectedEdges->disable();
     }
 }
 
 
 bool
 GNECrossingFrame::edgesSelector::isUseSelectedEdgesEnable() const {
-    if (myUseSelectedEdges->getCheck()) {
+    if (myShowOnlySelectedEdges->getCheck()) {
         return true;
     } else {
         return false;
@@ -304,32 +308,9 @@ GNECrossingFrame::edgesSelector::isUseSelectedEdgesEnable() const {
 
 
 long
-GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges(FXObject*, FXSelector, void*) {
-    // If use selected edges was enabled
-    if (myUseSelectedEdges->getCheck()) {
-        // Hidde all elements
-        myEdgesSearch->hide();
-        myList->hide();
-        myClearEdgesSelection->hide();
-        myInvertEdgesSelection->hide();
-        helpEdges->hide();
-        // enable crossing parameters and create crossing
-        myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
-        myCrossingFrameParent->setCreateCrossingButton(true);
-    } else {
-        // Show rest of parameters
-        myEdgesSearch->show();
-        myList->show();
-        myClearEdgesSelection->show();
-        myInvertEdgesSelection->show();
-        helpEdges->show();
-        // Check if previously there are selected edges which activate crossing parameters and create crossing button
-        onCmdSelectEdge(0,0,0);
-    }
-    // Recalc Frame
-    recalc();
-    // Update Frame
-    update();
+GNECrossingFrame::edgesSelector::onCmdShowOnlySelectedEdges(FXObject*, FXSelector, void*) {
+    // Filter list for show only selected edges
+    filterListOfEdges(myEdgesSearch->getText().text());
     return 1;
 }
 
@@ -337,7 +318,11 @@ GNECrossingFrame::edgesSelector::onCmdUseSelectedEdges(FXObject*, FXSelector, vo
 long
 GNECrossingFrame::edgesSelector::onCmdTypeInSearchBox(FXObject*, FXSelector, void*) {
     // Show only Id's of edgesSelector that contains the searched string
-    filterListOfEdges(myEdgesSearch->getText().text());
+    if(myEdgesSearch->getText() == "Search edge ID") {
+        filterListOfEdges("");
+    } else {
+        filterListOfEdges(myEdgesSearch->getText().text());
+    }
     return 1;
 }
 
@@ -397,6 +382,26 @@ GNECrossingFrame::edgesSelector::onCmdInvertSelection(FXObject*, FXSelector, voi
     } else {
         myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
         myCrossingFrameParent->setCreateCrossingButton(true);
+    }
+    return 1;
+}
+
+
+long
+GNECrossingFrame::edgesSelector::onCmdClickEdgeSearchFocusIn(FXObject*, FXSelector, void*) {
+    // if search edge is the default value, clear text
+    if(myEdgesSearch->getText() == "Search edge ID") {
+        myEdgesSearch->setText("");
+    }
+    return 1;
+}
+
+
+long
+GNECrossingFrame::edgesSelector::onCmdClickEdgeSearchFocusOut(FXObject*, FXSelector, void*) {
+    // if search edge is empty, set default value
+    if(myEdgesSearch->getText().empty()) {
+        myEdgesSearch->setText("Search edge ID");
     }
     return 1;
 }

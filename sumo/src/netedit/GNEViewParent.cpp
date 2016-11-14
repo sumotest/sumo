@@ -209,8 +209,8 @@ GNEViewParent::showFramesArea() {
     }
     // show and recalc framesArea if showFlag is enabled
     if(showFlag) {
-        myFramesArea->show();
         myFramesArea->recalc();
+        myFramesArea->show();
     }
 }
 

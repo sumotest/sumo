@@ -90,7 +90,7 @@ FXDEFMAP(GNEAdditionalFrame::additionalSet) GNEAdditionalSetMap[] = {
 };
 
 FXDEFMAP(GNEAdditionalFrame::edgesSelector) GNEEdgesMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_USESELECTEDEDGES,    GNEAdditionalFrame::edgesSelector::onCmdUseSelectedEdges),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOWONLYSELECTEDEDGES,    GNEAdditionalFrame::edgesSelector::onCmdUseSelectedEdges),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_CLEAREDGESELECTION,  GNEAdditionalFrame::edgesSelector::onCmdClearSelection),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_INVERTEDGESELECTION, GNEAdditionalFrame::edgesSelector::onCmdInvertSelection),
     FXMAPFUNC(SEL_CHANGED, MID_GNE_SEARCHEDGE,          GNEAdditionalFrame::edgesSelector::onCmdTypeInSearchBox),
@@ -1198,7 +1198,7 @@ GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet
     FXGroupBox(parent, "Edges", GNEDesignGroupBoxFrame),
     myViewNet(viewNet) {
     // Create CheckBox for selected edges
-    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_USESELECTEDEDGES, GNEDesignCheckButton);
+    myUseSelectedEdges = new FXMenuCheck(this, "Use selected Edges", this, MID_GNE_SHOWONLYSELECTEDEDGES, GNEDesignCheckButton);
 
     // Create search box
     myEdgesSearch = new FXTextField(this, GNEDesignTextFieldNCol, this, MID_GNE_SEARCHEDGE, GNEDesignTextField);

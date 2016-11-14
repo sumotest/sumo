@@ -524,7 +524,7 @@ enum {
     /** netEdit search edge */
     MID_GNE_SEARCHEDGE,
     /** netEdit use selected edge */
-    MID_GNE_USESELECTEDEDGES,
+    MID_GNE_SHOWONLYSELECTEDEDGES,
     /** netEdit select edge */
     MID_GNE_SELECTEDGE,
     /** netEdit clear selection of edges */
