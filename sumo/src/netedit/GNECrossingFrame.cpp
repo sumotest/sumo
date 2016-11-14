@@ -409,8 +409,8 @@ GNECrossingFrame::edgesSelector::onCmdClickEdgeSearchFocusOut(FXObject*, FXSelec
 
 long
 GNECrossingFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
-    std::cout << "IMPLEMENT" << std::endl;
-    return 1;
+    std::cout << "finish" << std::endl; // @todo finish
+    return 0;
 }
 
 
@@ -520,9 +520,9 @@ GNECrossingFrame::crossingParameters::onCmdHelp(FXObject*, FXSelector, void*) {
     FXDialogBox* helpDialog = new FXDialogBox(this, ("Parameters of " + toString(SUMO_TAG_CROSSING)).c_str(), GNEDesignDialogBox);
     // Create FXTable
     FXTable* myTable = new FXTable(helpDialog, this, MID_TABLE, TABLE_READONLY);
-    //myTable->setVisibleRows((FXint)(myIndexParameter + myIndexParameterList));
+    myTable->setVisibleRows((FXint)(GNEAttributeCarrier::allowedAttributes(SUMO_TAG_CROSSING).size()));
     myTable->setVisibleColumns(3);
-    //myTable->setTableSize((FXint)(myIndexParameter + myIndexParameterList), 3);
+    myTable->setTableSize((FXint)(GNEAttributeCarrier::allowedAttributes(SUMO_TAG_CROSSING).size()), 3);
     myTable->setBackColor(FXRGB(255, 255, 255));
     myTable->setColumnText(0, "Name");
     myTable->setColumnText(1, "Value");
@@ -534,62 +534,35 @@ GNECrossingFrame::crossingParameters::onCmdHelp(FXObject*, FXSelector, void*) {
     header->setItemJustify(1, JUSTIFY_CENTER_X);
     header->setItemSize(1, 80);
     int maxSizeColumnDefinitions = 0;
-    
-/*
     // Iterate over vector of additional parameters
-    for (int i = 0; i < myIndexParameter; i++) {
-        SumoXMLAttr attr = myVectorOfAdditionalParameter.at(i)->getAttr();
-        // Set name of attribute
-        myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
-        // Set type
-        FXTableItem* type = new FXTableItem("");
-        if (GNEAttributeCarrier::isInt(attr)) {
-            type->setText("int");
-        } else if (GNEAttributeCarrier::isFloat(attr)) {
-            type->setText("float");
-        } else if (GNEAttributeCarrier::isBool(attr)) {
-            type->setText("bool");
-        } else if (GNEAttributeCarrier::isString(attr)) {
-            type->setText("string");
-        }
-        type->setJustify(FXTableItem::CENTER_X);
-        myTable->setItem(i, 1, type);
-        // Set definition
-        FXTableItem* definition = new FXTableItem(GNEAttributeCarrier::getDefinition(myAdditional, attr).c_str());
-        definition->setJustify(FXTableItem::LEFT);
-        myTable->setItem(i, 2, definition);
-        if ((int)GNEAttributeCarrier::getDefinition(myAdditional, attr).size() > maxSizeColumnDefinitions) {
-            maxSizeColumnDefinitions = int(GNEAttributeCarrier::getDefinition(myAdditional, attr).size());
-        }
-    }
-    // Iterate over vector of additional parameters list
-    for (int i = 0; i < myIndexParameterList; i++) {
-        SumoXMLAttr attr = myVectorOfAdditionalParameterList.at(i)->getAttr();
-        // Set name of attribute
-        myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
-        // Set type
-        FXTableItem* type = new FXTableItem("");
-        if (GNEAttributeCarrier::isInt(attr)) {
-            type->setText("list of int");
-        } else if (GNEAttributeCarrier::isFloat(attr)) {
-            type->setText("list of float");
-        } else if (GNEAttributeCarrier::isBool(attr)) {
-            type->setText("list of bool");
-        } else if (GNEAttributeCarrier::isString(attr)) {
-            type->setText("list of string");
-        }
-        type->setJustify(FXTableItem::CENTER_X);
-        myTable->setItem(i, 1, type);
-        // Set definition
-        FXTableItem* definition = new FXTableItem(GNEAttributeCarrier::getDefinition(myAdditional, attr).c_str());
-        definition->setJustify(FXTableItem::LEFT);
-        myTable->setItem(i, 2, definition);
-        if ((int)GNEAttributeCarrier::getDefinition(myAdditional, attr).size() > maxSizeColumnDefinitions) {
-            maxSizeColumnDefinitions = int(GNEAttributeCarrier::getDefinition(myAdditional, attr).size());
+    for (int i = 0; i < GNEAttributeCarrier::allowedAttributes(SUMO_TAG_CROSSING).size(); i++) {
+        SumoXMLAttr attr = GNEAttributeCarrier::allowedAttributes(SUMO_TAG_CROSSING).at(i).first;
+        // Attribute ID cannot be edited in crossings
+        if (attr != SUMO_ATTR_ID) {
+            // Set name of attribute
+            myTable->setItem(i, 0, new FXTableItem(toString(attr).c_str()));
+            // Set type
+            FXTableItem* type = new FXTableItem("");
+            if (GNEAttributeCarrier::isInt(SUMO_TAG_CROSSING, attr)) {
+                type->setText("int");
+            } else if (GNEAttributeCarrier::isFloat(SUMO_TAG_CROSSING, attr)) {
+                type->setText("float");
+            } else if (GNEAttributeCarrier::isBool(SUMO_TAG_CROSSING, attr)) {
+                type->setText("bool");
+            } else if (GNEAttributeCarrier::isString(SUMO_TAG_CROSSING, attr)) {
+                type->setText("string");
+            }
+            type->setJustify(FXTableItem::CENTER_X);
+            myTable->setItem(i, 1, type);
+            // Set definition
+            FXTableItem* definition = new FXTableItem(GNEAttributeCarrier::getDefinition(SUMO_TAG_CROSSING, attr).c_str());
+            definition->setJustify(FXTableItem::LEFT);
+            myTable->setItem(i, 2, definition);
+            if ((int)GNEAttributeCarrier::getDefinition(SUMO_TAG_CROSSING, attr).size() > maxSizeColumnDefinitions) {
+                maxSizeColumnDefinitions = int(GNEAttributeCarrier::getDefinition(SUMO_TAG_CROSSING, attr).size());
+            }
         }
     }
-*/
-
     // Set size of column
     header->setItemJustify(2, JUSTIFY_CENTER_X);
     header->setItemSize(2, maxSizeColumnDefinitions * 6);
