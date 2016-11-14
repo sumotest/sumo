@@ -419,7 +419,7 @@ GNEAttributeCarrier::isNumerical(SumoXMLTag tag, SumoXMLAttr attr) {
 
 
 bool
-GNEAttributeCarrier::isInt(SumoXMLTag tag,SumoXMLAttr attr) {
+GNEAttributeCarrier::isInt(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myNumericalIntAttrs.empty()) {
         myNumericalIntAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_FREQUENCY);
@@ -444,33 +444,33 @@ GNEAttributeCarrier::isInt(SumoXMLTag tag,SumoXMLAttr attr) {
 
 
 bool
-GNEAttributeCarrier::isFloat(SumoXMLTag tag,SumoXMLAttr attr) {
+GNEAttributeCarrier::isFloat(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myNumericalFloatAttrs.empty()) {
-        myNumericalIntAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_ENDPOS);
-        myNumericalIntAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_STARTPOS);
-        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGINGPOWER);
-        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_EFFICIENCY);
-        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_ENDPOS);
-        myNumericalIntAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_STARTPOS);
-        myNumericalIntAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_CONTPOS);
-        myNumericalIntAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_VISIBILITY_DISTANCE);
-        myNumericalIntAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_ENDPOS);
-        myNumericalIntAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_STARTPOS);
-        myNumericalIntAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_WIDTH);
-        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
-        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
-        myNumericalIntAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_LENGTH);
-        myNumericalIntAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
-        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_ENDOFFSET);
-        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_LENGTH);
-        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_SPEED);
-        myNumericalIntAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_WIDTH);
-        myNumericalIntAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_RADIUS);
-        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_ENDOFFSET);
-        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_SPEED);
-        myNumericalIntAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_WIDTH);
-        myNumericalIntAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_PROB);
+        myNumericalFloatAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_ENDPOS);
+        myNumericalFloatAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_STARTPOS);
+        myNumericalFloatAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGINGPOWER);
+        myNumericalFloatAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_EFFICIENCY);
+        myNumericalFloatAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_ENDPOS);
+        myNumericalFloatAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_STARTPOS);
+        myNumericalFloatAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_CONTPOS);
+        myNumericalFloatAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_VISIBILITY_DISTANCE);
+        myNumericalFloatAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_ENDPOS);
+        myNumericalFloatAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_STARTPOS);
+        myNumericalFloatAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_WIDTH);
+        myNumericalFloatAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
+        myNumericalFloatAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
+        myNumericalFloatAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_LENGTH);
+        myNumericalFloatAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
+        myNumericalFloatAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_ENDOFFSET);
+        myNumericalFloatAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_LENGTH);
+        myNumericalFloatAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_SPEED);
+        myNumericalFloatAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_WIDTH);
+        myNumericalFloatAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_RADIUS);
+        myNumericalFloatAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_ENDOFFSET);
+        myNumericalFloatAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_SPEED);
+        myNumericalFloatAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_WIDTH);
+        myNumericalFloatAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_PROB);
     }
     return myNumericalFloatAttrs[tag].count(attr) == 1;
 }
@@ -494,7 +494,7 @@ GNEAttributeCarrier::isBool(SumoXMLTag tag, SumoXMLAttr attr) {
 
 
 bool
-GNEAttributeCarrier::isString(SumoXMLTag tag,SumoXMLAttr attr) {
+GNEAttributeCarrier::isString(SumoXMLTag tag, SumoXMLAttr attr) {
     return (!isNumerical(tag, attr) && !isBool(tag, attr) && !isFloat(tag, attr));
 }
 
@@ -664,49 +664,49 @@ GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myAttrDefinitions.empty()) {
         // Edge
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ID] = "ID (Must be unique)";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_FROM] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TO] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPEED] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PRIORITY] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NUMLANES] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TYPE] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ALLOW] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_DISALLOW] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PREFER] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SHAPE] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_LENGTH] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPREADTYPE] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NAME] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_WIDTH] = "";
-        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ENDOFFSET] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ID] = "The id of the edge (must be unique).";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_FROM] = "The name of a node within the nodes-file the edge shall start at.";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TO] = "The name of a node within the nodes-file the edge shall end at.";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPEED] = "The maximum speed allowed on the edge in m/s.";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PRIORITY] = "The priority of the edge.";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NUMLANES] = "The number of lanes of the edge.";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_TYPE] = "The name of a type within the SUMO edge type file";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ALLOW] = "Explicitly allows the given vehicle classes (not given will be not allowed).";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_DISALLOW] = "Explicitly disallows the given vehicle classes (not given will be allowed).";
+        //myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_PREFER] = "";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SHAPE] = "If the shape is given it should start and end with the positions of the from-node and to-node.";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_LENGTH] = "The length of the edge in meter";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_SPREADTYPE] = "Lane width for all lanes of this edge in meters (used for visualization).";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_NAME] = "street name (need not be unique, used for visualization).";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_WIDTH] = "Lane width for all lanes of this edge in meters (used for visualization).";
+        myAttrDefinitions[SUMO_TAG_EDGE][SUMO_ATTR_ENDOFFSET] = "Move the stop line back from the intersection by the given amount.";
         // Junction
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_ID] = "ID (Must be unique)";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_POSITION] = "";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TYPE] = "";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_SHAPE] = "";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_RADIUS] = "";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_KEEP_CLEAR] = "";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TLTYPE] = "";
-        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TLID] = "";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_ID] = "The name of the node (Must be unique).";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_POSITION] = "The x-y-z position of the node on the plane in meters.";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TYPE] = "An optional type for the node.";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_SHAPE] = "A custom shape for that node.";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_RADIUS] = "Optional turning radius (for all corners) for that node in meters.";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_KEEP_CLEAR] = "Whether the junction-blocking-heuristic should be activated at this node.";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TLTYPE] = "An optional type for the traffic light algorithm.";
+        myAttrDefinitions[SUMO_TAG_JUNCTION][SUMO_ATTR_TLID] = "An optional id for the traffic light program.";
         // Lane
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ID] = "ID (Must be unique)";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_SPEED] = "";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ALLOW] = "";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_DISALLOW] = "";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_PREFER] = "";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_WIDTH] = "";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ENDOFFSET] = "";
-        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_INDEX] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ID] = "ID of lane (Automatic)";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_SPEED] = "Speed in meters per second";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ALLOW] = "Explicitly allows the given vehicle classes (not given will be not allowed).";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_DISALLOW] = "Explicitly disallows the given vehicle classes (not given will be allowed).";
+        //myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_PREFER] = "";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_WIDTH] = "Width in meters (used for visualization).";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_ENDOFFSET] = "Move the stop line back from the intersection by the given amount.";
+        myAttrDefinitions[SUMO_TAG_LANE][SUMO_ATTR_INDEX] = "The enumeration index of the lane (0 is the rightmost lane, <NUMBER_LANES>-1 is the leftmost one).";
         // POI
         myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_ID] = "ID (Must be unique)";
-        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_POSITION] = "";
-        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_TYPE] = "";
+        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_POSITION] = "The position of the poi along the xyz-axis in meters.";
+        myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_TYPE] = "A typename for the poi.";
         // Crossing
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_ID] = "ID (Must be unique)";
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "";
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "";
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_ID] = "ID (Automatic)";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "The (road) edges which are crossed.";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "Whether the pedestrians have priority over the vehicles (automatically set to true at tls-controlled intersections).";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "The width of the crossings.";
         // Connection
         myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_FROM] = "The name of the edge the vehicles leave ";
         myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_TO] = "The name of the edge the vehicles may reach when leaving 'from'";

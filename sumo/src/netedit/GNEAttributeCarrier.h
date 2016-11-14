@@ -104,7 +104,7 @@ public:
     static SumoXMLTag getParentType(SumoXMLTag tag);
 
     /// @brief get all editable attributes for tag and their default values.
-    static const std::vector<std::pair <SumoXMLAttr, std::string> >& allowedAttributes(SumoXMLTag tag);
+    static const std::vector<std::pair<SumoXMLAttr, std::string> >& allowedAttributes(SumoXMLTag tag);
 
     /// @brief get all editable for tag.
     static const std::vector<SumoXMLTag>& allowedTags();
