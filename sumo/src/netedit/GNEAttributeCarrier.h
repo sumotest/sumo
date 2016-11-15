@@ -139,6 +139,12 @@ public:
     /// @brief whether an attribute is Discrete
     static bool isDiscrete(SumoXMLTag tag, SumoXMLAttr attr);
 
+    /// @brief whether an attribute is only Positive (i.e. cannot take negative values)
+    static bool isPositive(SumoXMLTag tag, SumoXMLAttr attr);
+
+    /// @brief whether an attribute is a probability (i.e. oly can values between [0, 1])
+    static bool isProbability(SumoXMLTag tag, SumoXMLAttr attr);
+
     /// @brief whether an attribute is non editable
     static bool isNonEditable(SumoXMLTag tag, SumoXMLAttr attr);
 
@@ -247,6 +253,12 @@ private:
 
     /// @brief map with the non-editable attributes
     static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myNonEditableAttrs;
+
+    /// @brief map with the positive attributes
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myPositiveAttrs;
+
+    /// @brief map with the probability attributes
+    static std::map<SumoXMLTag, std::set<SumoXMLAttr> > myProbabilityAttrs;
 
     /// @brief map with the allowed tags of additionals with parent and their parent
     static std::map<SumoXMLTag, SumoXMLTag> myAllowedAdditionalWithParentTags;

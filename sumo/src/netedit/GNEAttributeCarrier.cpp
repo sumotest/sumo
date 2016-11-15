@@ -51,6 +51,8 @@ std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myBoolAttrs;
 std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myListAttrs;
 std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myUniqueAttrs;
 std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myNonEditableAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myPositiveAttrs;
+std::map<SumoXMLTag, std::set<SumoXMLAttr> > GNEAttributeCarrier::myProbabilityAttrs;
 std::map<SumoXMLTag, SumoXMLTag> GNEAttributeCarrier::myAllowedAdditionalWithParentTags;
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::vector<std::string> > > GNEAttributeCarrier::myDiscreteChoices;
 std::map<SumoXMLTag, std::map<SumoXMLAttr, std::string > > GNEAttributeCarrier::myAttrDefinitions;
@@ -580,6 +582,65 @@ GNEAttributeCarrier::isDiscrete(SumoXMLTag tag, SumoXMLAttr attr) {
 
 
 bool 
+GNEAttributeCarrier::isPositive(SumoXMLTag tag, SumoXMLAttr attr) {
+    // define on first access
+    if (myPositiveAttrs.empty()) {
+        myPositiveAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_SPEED);
+        myPositiveAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_PRIORITY);
+        myPositiveAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_NUMLANES);
+        myPositiveAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_LENGTH);
+        myPositiveAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_WIDTH);
+        myPositiveAttrs[SUMO_TAG_EDGE].insert(SUMO_ATTR_ENDOFFSET);
+        myPositiveAttrs[SUMO_TAG_JUNCTION].insert(SUMO_ATTR_RADIUS);
+        myPositiveAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_SPEED);
+        myPositiveAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_WIDTH);
+        myPositiveAttrs[SUMO_TAG_LANE].insert(SUMO_ATTR_ENDOFFSET);
+        myPositiveAttrs[SUMO_TAG_POI].insert(SUMO_ATTR_POSITION);
+        myPositiveAttrs[SUMO_TAG_CROSSING].insert(SUMO_ATTR_PRIORITY);
+        myPositiveAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_CONTPOS);
+        myPositiveAttrs[SUMO_TAG_CONNECTION].insert(SUMO_ATTR_VISIBILITY_DISTANCE);
+        myPositiveAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_STARTPOS);
+        myPositiveAttrs[SUMO_TAG_BUS_STOP].insert(SUMO_ATTR_ENDPOS);
+        myPositiveAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_STARTPOS);
+        myPositiveAttrs[SUMO_TAG_CONTAINER_STOP].insert(SUMO_ATTR_ENDPOS);
+        myPositiveAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_STARTPOS);
+        myPositiveAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_ENDPOS);
+        myPositiveAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGINGPOWER);
+        myPositiveAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_EFFICIENCY);
+        myPositiveAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGEINTRANSIT);
+        myPositiveAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_CHARGEDELAY);
+        myPositiveAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_POSITION);
+        myPositiveAttrs[SUMO_TAG_E1DETECTOR].insert(SUMO_ATTR_FREQUENCY);
+        myPositiveAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_POSITION);
+        myPositiveAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_LENGTH);
+        myPositiveAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_FREQUENCY);
+        myPositiveAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_HALTING_TIME_THRESHOLD);
+        myPositiveAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_HALTING_SPEED_THRESHOLD);
+        myPositiveAttrs[SUMO_TAG_E2DETECTOR].insert(SUMO_ATTR_JAM_DIST_THRESHOLD);
+        myPositiveAttrs[SUMO_TAG_E3DETECTOR].insert(SUMO_ATTR_FREQUENCY);
+        myPositiveAttrs[SUMO_TAG_DET_ENTRY].insert(SUMO_ATTR_POSITION);
+        myPositiveAttrs[SUMO_TAG_DET_EXIT].insert(SUMO_ATTR_POSITION);
+        myPositiveAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_POSITION);
+        myPositiveAttrs[SUMO_TAG_CALIBRATOR].insert(SUMO_ATTR_FREQUENCY);
+        myPositiveAttrs[SUMO_TAG_ROUTEPROBE].insert(SUMO_ATTR_FREQUENCY);
+        myPositiveAttrs[SUMO_TAG_ROUTEPROBE].insert(SUMO_ATTR_BEGIN);
+        myPositiveAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_PROB);
+    }
+    return myPositiveAttrs[tag].count(attr) == 1;
+}
+
+bool 
+GNEAttributeCarrier::isProbability(SumoXMLTag tag, SumoXMLAttr attr) {
+    // define on first access
+    if (myProbabilityAttrs.empty()) {
+        myProbabilityAttrs[SUMO_TAG_CHARGING_STATION].insert(SUMO_ATTR_EFFICIENCY);
+        myProbabilityAttrs[SUMO_TAG_REROUTER].insert(SUMO_ATTR_PROB);
+    }
+    return myProbabilityAttrs[tag].count(attr) == 1;
+}
+
+
+bool 
 GNEAttributeCarrier::isNonEditable(SumoXMLTag tag, SumoXMLAttr attr) {
     // define on first access
     if (myNonEditableAttrs.empty()) {
@@ -704,9 +765,9 @@ GNEAttributeCarrier::getDefinition(SumoXMLTag tag, SumoXMLAttr attr) {
         myAttrDefinitions[SUMO_TAG_POI][SUMO_ATTR_TYPE] = "A typename for the poi.";
         // Crossing
         myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_ID] = "ID (Automatic)";
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "The (road) edges which are crossed.";
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "Whether the pedestrians have priority over the vehicles (automatically set to true at tls-controlled intersections).";
-        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "The width of the crossings.";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_PRIORITY] = "Whether the pedestrians have priority over the vehicles (automatically set to true at tls-controlled intersections).";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_WIDTH] = "The width of the crossings.";
+        myAttrDefinitions[SUMO_TAG_CROSSING][SUMO_ATTR_EDGES] = "The (road) edges which are crossed.";
         // Connection
         myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_FROM] = "The name of the edge the vehicles leave ";
         myAttrDefinitions[SUMO_TAG_CONNECTION][SUMO_ATTR_TO] = "The name of the edge the vehicles may reach when leaving 'from'";
