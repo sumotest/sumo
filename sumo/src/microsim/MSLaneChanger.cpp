@@ -307,11 +307,14 @@ MSLaneChanger::change() {
     }
     vehicle->getLaneChangeModel().setOwnState(state2 | state1);
 
-    if (!changeOpposite(leader)) {
+    // only emergency vehicles should change to the opposite side on a
+    // multi-lane road
+    if (vehicle->getVehicleType().getVehicleClass() == SVC_EMERGENCY
+            && changeOpposite(leader)) {
+        return true;
+    } else {
         registerUnchanged(vehicle);
         return false;
-    } else {
-        return true;
     }
 }
 
@@ -840,6 +843,7 @@ MSLaneChanger::changeOpposite(std::pair<MSVehicle*, SUMOReal> leader) {
         // find a leader vehicle with sufficient space ahead for merging back
         const SUMOReal overtakingSpeed = source->getVehicleMaxSpeed(vehicle); // just a guess
         const SUMOReal mergeBrakeGap = vehicle->getCarFollowModel().brakeGap(overtakingSpeed);
+        // XXX maxLookAhead should be higher if all leaders are stopped and much lower otherwise
         const SUMOReal maxLookAhead = 150; // just a guess
         std::pair<MSVehicle*, SUMOReal> columnLeader = leader;
         SUMOReal egoGap = leader.second;
@@ -852,8 +856,11 @@ MSLaneChanger::changeOpposite(std::pair<MSVehicle*, SUMOReal> leader) {
                     + vehicle->getVehicleType().getLengthWithGap());
 
 
+            // all leader vehicles on the current laneChanger edge are already moved into MSLane::myTmpVehicles
+            const bool checkTmpVehicles = (&columnLeader.first->getLane()->getEdge() == &source->getEdge());
             std::pair<MSVehicle* const, SUMOReal> leadLead = columnLeader.first->getLane()->getLeader(
-                        columnLeader.first, columnLeader.first->getPositionOnLane(), conts, requiredSpaceAfterLeader + mergeBrakeGap, true);
+                        columnLeader.first, columnLeader.first->getPositionOnLane(), conts, requiredSpaceAfterLeader + mergeBrakeGap, 
+                        checkTmpVehicles);
 
 #ifdef DEBUG_CHANGE_OPPOSITE
             if (DEBUG_COND) {
@@ -1028,13 +1035,17 @@ MSLaneChanger::changeOpposite(std::pair<MSVehicle*, SUMOReal> leader) {
 
     bool changingAllowed = (state & LCA_BLOCKED) == 0;
     // change if the vehicle wants to and is allowed to change
-    if ((state & LCA_WANTS_LANECHANGE) != 0 && changingAllowed) {
+    if ((state & LCA_WANTS_LANECHANGE) != 0 && changingAllowed
+            // do not change to the opposite direction for cooperative reasons
+            && (isOpposite || (state & LCA_COOPERATIVE) == 0)) {
         vehicle->getLaneChangeModel().startLaneChangeManeuver(source, opposite, direction);
         /// XXX use a dedicated transformation function
         vehicle->myState.myPos = source->getOppositePos(vehicle->myState.myPos);
-        vehicle->myState.myBackPos = source->getOppositePos(vehicle->myState.myBackPos);
         /// XXX compute a better lateral position
         opposite->forceVehicleInsertion(vehicle, vehicle->getPositionOnLane(), MSMoveReminder::NOTIFICATION_LANE_CHANGE, 0);
+        if (!isOpposite) {
+            vehicle->myState.myBackPos = source->getOppositePos(vehicle->myState.myBackPos);
+        }
 #ifdef DEBUG_CHANGE_OPPOSITE
         if (DEBUG_COND) {
             std::cout << SIMTIME << " changing to opposite veh=" << vehicle->getID() << " dir=" << direction << " opposite=" << Named::getIDSecure(opposite) << " state=" << state << "\n";
@@ -1054,23 +1065,37 @@ MSLaneChanger::changeOpposite(std::pair<MSVehicle*, SUMOReal> leader) {
 
 void
 MSLaneChanger::computeOvertakingTime(const MSVehicle* vehicle, const MSVehicle* leader, SUMOReal gap, SUMOReal& timeToOvertake, SUMOReal& spaceToOvertake) {
-    // Assumption: leader maintains the current speed
+    // Assumptions: 
+    // - leader maintains the current speed
+    // - vehicle merges with maxSpeed ahead of leader
     // XXX affected by ticket #860 (the formula is invalid for the current position update rule)
 
     // first compute these values for the case where vehicle is accelerating
     // without upper bound on speed
+    const SUMOReal vMax = vehicle->getLane()->getVehicleMaxSpeed(vehicle);
     const SUMOReal v = vehicle->getSpeed();
     const SUMOReal u = leader->getSpeed();
     const SUMOReal a = vehicle->getCarFollowModel().getMaxAccel();
-    const SUMOReal g = gap + vehicle->getVehicleType().getMinGap() + leader->getVehicleType().getLengthWithGap();
+    const SUMOReal d = vehicle->getCarFollowModel().getMaxDecel();
+    const SUMOReal g = (
+            // drive up to the rear of leader
+            gap + vehicle->getVehicleType().getMinGap() 
+            // drive head-to-head with the leader
+            + leader->getVehicleType().getLengthWithGap() 
+            // drive past the leader
+            + vehicle->getVehicleType().getLength()
+            // allow for safe gap between leader and vehicle
+            + leader->getCarFollowModel().getSecureGap(v, vMax, d));
     const SUMOReal sign = -1; // XXX recheck
     // v*t + t*t*a*0.5 = g + u*t
     // solve t
     // t = ((u - v - (((((2.0*(u - v))**2.0) + (8.0*a*g))**(1.0/2.0))*sign/2.0))/a)
     SUMOReal t = (u - v - sqrt(4 * (u - v) * (u - v) + 8 * a * g) * sign * 0.5) / a;
 
+    // round to multiples of step length (TS)
+    t = ceil(t / TS) * TS;
+
     /// XXX ignore speed limit when overtaking through the opposite lane?
-    const SUMOReal vMax = vehicle->getLane()->getVehicleMaxSpeed(vehicle);
     const SUMOReal timeToMaxSpeed = (vMax - v) / a;
 
     if (t <= timeToMaxSpeed) {
@@ -1084,6 +1109,8 @@ MSLaneChanger::computeOvertakingTime(const MSVehicle* vehicle, const MSVehicle* 
         // s + (t-m) * vMax = g + u*t
         // solve t
         t = (g - s + m * vMax) / (vMax - u);
+        // round to multiples of step length (TS)
+        t = ceil(t / TS) * TS;
         timeToOvertake = t;
         spaceToOvertake = s + (t - m) * vMax;
         //if (gDebugFlag1) std::cout << "     s=" << s << " m=" << m << " vMax=" << vMax << "\n";

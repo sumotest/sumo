@@ -366,7 +366,7 @@ GNEViewNet::changeAllPhases() const {
 
 bool
 GNEViewNet::showJunctionAsBubbles() const {
-    return (myEditMode == GNE_MODE_MOVE) && (myShowJunctionAsBubble->getCheck());
+    return (myEditMode == GNE_MODE_MOVE) && (myShowBubbleOverJunction->getCheck());
 }
 
 
@@ -1579,8 +1579,8 @@ GNEViewNet::onCmdToogleShowConnection(FXObject*, FXSelector, void*) {
 
 long
 GNEViewNet::onCmdToogleShowBubbles(FXObject*, FXSelector, void*) {
-    // Update Junction Shapes
-    getNet()->updateJunctionShapes();
+    // Update view net Shapes
+    update();
     return 1;
 }
 
@@ -1598,12 +1598,6 @@ GNEViewNet::setEditMode(EditMode mode) {
     } else {
         myPreviousEditMode = myEditMode;
         myEditMode = mode;
-        // First check if previous mode was MOVE
-        if (myPreviousEditMode == GNE_MODE_MOVE) {
-            // Update junctions again to calculate connections and disable bubbles
-            myNet->updateJunctionShapes();
-            myShowJunctionAsBubble->setCheck(false);
-        }
         switch (mode) {
             case GNE_MODE_CONNECT:
             case GNE_MODE_TLS:
@@ -1657,8 +1651,8 @@ GNEViewNet::buildEditModeControls() {
     myWarnAboutMerge = new FXMenuCheck(myToolbar, "ask for merge\t\tAsk for confirmation before merging junctions.", this, 0);
     myWarnAboutMerge->setCheck(true);
 
-    myShowJunctionAsBubble = new FXMenuCheck(myToolbar, "Show junction as bubbles\t\tShow juntion's shape as a bubble.", this, MID_GNE_SHOW_BUBBLES);
-    myShowJunctionAsBubble->setCheck(false);
+    myShowBubbleOverJunction = new FXMenuCheck(myToolbar, "Show bubbles over junction \t\tShow bubbles over juntion's shapes.", this, MID_GNE_SHOW_BUBBLES);
+    myShowBubbleOverJunction->setCheck(false);
 
     myChangeAllPhases = new FXMenuCheck(myToolbar, "apply change to all phases\t\tToggle whether clicking should apply state changes to all phases of the current traffic light plan", this, 0);
     myChangeAllPhases->setCheck(false);
@@ -1678,7 +1672,7 @@ GNEViewNet::updateModeSpecificControls() {
     myExtendToEdgeNodes->hide();
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
-    myShowJunctionAsBubble->hide();
+    myShowBubbleOverJunction->hide();
     int widthChange = 0;
     // Close all Frames
     if (myViewParent->getInspectorFrame()->shown()) {
@@ -1730,7 +1724,7 @@ GNEViewNet::updateModeSpecificControls() {
             break;
         case GNE_MODE_MOVE:
             myWarnAboutMerge->show();
-            myShowJunctionAsBubble->show();
+            myShowBubbleOverJunction->show();
             break;
         case GNE_MODE_CONNECT:
             widthChange -= myViewParent->getConnectorFrame()->getWidth() + addChange;
