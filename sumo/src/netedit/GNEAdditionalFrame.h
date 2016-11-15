@@ -54,17 +54,19 @@ class GNEAdditionalFrame : public GNEFrame {
 public:
 
     // ===========================================================================
-    // class additionalParameter
+    // class singleAdditionalParameter
     // ===========================================================================
 
-    class additionalParameter : public FXMatrix {
+    class singleAdditionalParameter : public FXMatrix {
+        /// @brief FOX-declaration
+        FXDECLARE(GNEAdditionalFrame::singleAdditionalParameter)
 
     public:
         /// @brief constructor
-        additionalParameter(FXComposite* parent, FXObject* tgt);
+        singleAdditionalParameter(FXComposite* parent);
 
         /// @brief destructor
-        ~additionalParameter();
+        ~singleAdditionalParameter();
 
         /// @brief show name and value of attribute of type string
         void showParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::string value);
@@ -90,6 +92,19 @@ public:
         /// @brief return value
         std::string getValue() const ;
 
+        /// @name FOX-callbacks
+        /// @{
+        /// @brief called when user set the value of an attribute of type int/float/string
+        long onCmdSetAttribute(FXObject*, FXSelector, void*);
+
+        /// @brief called when user change the value of myMenuCheck
+        long onCmdSetBooleanAttribute(FXObject*, FXSelector, void*);
+        /// @}
+
+    protected:
+        /// @brief FOX needs this
+        singleAdditionalParameter() {}
+
     private:
         /// @brief current XML attribute
         SumoXMLTag myAdditionalTag;
@@ -105,22 +120,25 @@ public:
 
         /// @brief menuCheck to enable/disable the value of parameter
         FXMenuCheck* myMenuCheck;
+
+        /// @brief Flag which indicates that the current value is correct
+        bool myCurrentValueValid;
     };
 
     // ===========================================================================
-    // class additionalParameterList
+    // class singleAdditionalParameterList
     // ===========================================================================
 
-    class additionalParameterList : public FXMatrix {
+    class singleAdditionalParameterList : public FXMatrix {
         /// @brief FOX-declaration
-        FXDECLARE(GNEAdditionalFrame::additionalParameterList)
+        FXDECLARE(GNEAdditionalFrame::singleAdditionalParameterList)
 
     public:
         /// @brief constructor
-        additionalParameterList(FXComposite* parent, FXObject* tgt);
+        singleAdditionalParameterList(FXComposite* parent);
 
         /// @brief destructor
-        ~additionalParameterList();
+        ~singleAdditionalParameterList();
 
         /// @brief show name and value of parameters of type int
         void showListParameter(SumoXMLTag additionalTag, SumoXMLAttr additionalAttr, std::vector<int> value);
@@ -157,7 +175,7 @@ public:
 
     protected:
         /// @brief FOX needs this
-        additionalParameterList() {}
+        singleAdditionalParameterList() {}
 
     private:
         /// @brief current XML tag
@@ -195,7 +213,7 @@ public:
 
     public:
         /// @brief constructor
-        additionalParameters(FXComposite* parent, FXObject* tgt);
+        additionalParameters(FXComposite* parent);
 
         /// @brief destructor
         ~additionalParameters();
@@ -207,10 +225,10 @@ public:
         void addAttribute(SumoXMLTag additionalTag, SumoXMLAttr additionalAttribute);
 
         /// @brief show group box
-        void showAdditionalParameters();
+        void showadditionalParameters();
 
         /// @brief hide group box
-        void hideAdditionalParameters();
+        void hideadditionalParameters();
 
         /// @brief get attributes
         std::map<SumoXMLAttr, std::string> getAttributes() const;
@@ -233,13 +251,13 @@ public:
         SumoXMLTag myAdditionalTag;
 
         /// @brief vector with the additional parameters
-        std::vector<additionalParameter*> myVectorOfAdditionalParameter;
+        std::vector<singleAdditionalParameter*> myVectorOfsingleAdditionalParameter;
 
-        /// @brief Index for myVectorOfAdditionalParameter
+        /// @brief Index for myVectorOfsingleAdditionalParameter
         int myIndexParameter;
 
         /// @brief vector with the additional parameters of type list
-        std::vector<additionalParameterList*> myVectorOfAdditionalParameterList;
+        std::vector<singleAdditionalParameterList*> myVectorOfsingleAdditionalParameterList;
 
         /// @brief index for myIndexParameterList
         int myIndexParameterList;
@@ -608,7 +626,7 @@ private:
     FXComboBox* myAdditionalMatchBox;
 
     /// @brief additional default parameters
-    GNEAdditionalFrame::additionalParameters* myAdditionalParameters;
+    GNEAdditionalFrame::additionalParameters* myadditionalParameters;
 
     /// @brief editor parameter
     GNEAdditionalFrame::editorParameters* myEditorParameters;
