@@ -82,20 +82,21 @@ FXDEFMAP(GNEAdditionalFrame::singleAdditionalParameterList) GNEsingleAdditionalP
 };
 
 FXDEFMAP(GNEAdditionalFrame::additionalParameters) GNEadditionalParametersMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_HELP,              GNEAdditionalFrame::additionalParameters::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP, GNEAdditionalFrame::additionalParameters::onCmdHelp),
 };
 
 FXDEFMAP(GNEAdditionalFrame::editorParameters) GNEEditorParametersMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEAdditionalFrame::editorParameters::onCmdSelectReferencePoint),
-    FXMAPFUNC(SEL_COMMAND, MID_HELP,                               GNEAdditionalFrame::editorParameters::onCmdHelp),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEAdditionalFrame::editorParameters::onCmdSetLength),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,       GNEAdditionalFrame::editorParameters::onCmdSelectReferencePoint),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,                                     GNEAdditionalFrame::editorParameters::onCmdHelp),
 };
 
-FXDEFMAP(GNEAdditionalFrame::additionalSet) GNEAdditionalSetMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTADDITIONALSET, GNEAdditionalFrame::additionalSet::onCmdSelectAdditionalSet),
-    FXMAPFUNC(SEL_COMMAND, MID_HELP,                    GNEAdditionalFrame::additionalSet::onCmdHelp),
+FXDEFMAP(GNEAdditionalFrame::additionalSetsSelector) GNEAdditionalSetsSelectorMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SELECTADDITIONALSET, GNEAdditionalFrame::additionalSetsSelector::onCmdSelectAdditionalSet),
+    FXMAPFUNC(SEL_COMMAND, MID_HELP,                    GNEAdditionalFrame::additionalSetsSelector::onCmdHelp),
 };
 
-FXDEFMAP(GNEAdditionalFrame::edgesSelector) GNEEdgesMap[] = {
+FXDEFMAP(GNEAdditionalFrame::edgesSelector) GNEEdgesSelectorMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_SHOWONLYSELECTEDEDGES, GNEAdditionalFrame::edgesSelector::onCmdUseSelectedEdges),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_CLEAREDGESELECTION,    GNEAdditionalFrame::edgesSelector::onCmdClearSelection),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_INVERTEDGESELECTION,   GNEAdditionalFrame::edgesSelector::onCmdInvertSelection),
@@ -104,7 +105,7 @@ FXDEFMAP(GNEAdditionalFrame::edgesSelector) GNEEdgesMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_HELP,                      GNEAdditionalFrame::edgesSelector::onCmdHelp),
 };
 
-FXDEFMAP(GNEAdditionalFrame::lanesSelector) GNELanesMap[] = {
+FXDEFMAP(GNEAdditionalFrame::lanesSelector) GNELanesSelectorMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_USESELECTEDLANES,    GNEAdditionalFrame::lanesSelector::onCmdUseSelectedLanes),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_CLEARLANESELECTION,  GNEAdditionalFrame::lanesSelector::onCmdClearSelection),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_INVERTLANESELECTION, GNEAdditionalFrame::lanesSelector::onCmdInvertSelection),
@@ -114,14 +115,14 @@ FXDEFMAP(GNEAdditionalFrame::lanesSelector) GNELanesMap[] = {
 };
 
 // Object implementation
-FXIMPLEMENT(GNEAdditionalFrame,                          FXScrollWindow, GNEAdditionalMap,              ARRAYNUMBER(GNEAdditionalMap))
+FXIMPLEMENT(GNEAdditionalFrame,                                FXScrollWindow, GNEAdditionalMap,                    ARRAYNUMBER(GNEAdditionalMap))
 FXIMPLEMENT(GNEAdditionalFrame::singleAdditionalParameter,     FXMatrix,       GNEsingleAdditionalParameterMap,     ARRAYNUMBER(GNEsingleAdditionalParameterMap))
 FXIMPLEMENT(GNEAdditionalFrame::singleAdditionalParameterList, FXMatrix,       GNEsingleAdditionalParameterListMap, ARRAYNUMBER(GNEsingleAdditionalParameterListMap))
-FXIMPLEMENT(GNEAdditionalFrame::additionalParameters,    FXGroupBox,     GNEadditionalParametersMap,    ARRAYNUMBER(GNEadditionalParametersMap))
-FXIMPLEMENT(GNEAdditionalFrame::editorParameters,        FXGroupBox,     GNEEditorParametersMap,        ARRAYNUMBER(GNEEditorParametersMap))
-FXIMPLEMENT(GNEAdditionalFrame::additionalSet,           FXGroupBox,     GNEAdditionalSetMap,           ARRAYNUMBER(GNEAdditionalSetMap))
-FXIMPLEMENT(GNEAdditionalFrame::edgesSelector,           FXGroupBox,     GNEEdgesMap,                   ARRAYNUMBER(GNEEdgesMap))
-FXIMPLEMENT(GNEAdditionalFrame::lanesSelector,           FXGroupBox,     GNELanesMap,                   ARRAYNUMBER(GNELanesMap))
+FXIMPLEMENT(GNEAdditionalFrame::additionalParameters,          FXGroupBox,     GNEadditionalParametersMap,          ARRAYNUMBER(GNEadditionalParametersMap))
+FXIMPLEMENT(GNEAdditionalFrame::editorParameters,              FXGroupBox,     GNEEditorParametersMap,              ARRAYNUMBER(GNEEditorParametersMap))
+FXIMPLEMENT(GNEAdditionalFrame::additionalSetsSelector,        FXGroupBox,     GNEAdditionalSetsSelectorMap,        ARRAYNUMBER(GNEAdditionalSetsSelectorMap))
+FXIMPLEMENT(GNEAdditionalFrame::edgesSelector,                 FXGroupBox,     GNEEdgesSelectorMap,                 ARRAYNUMBER(GNEEdgesSelectorMap))
+FXIMPLEMENT(GNEAdditionalFrame::lanesSelector,                 FXGroupBox,     GNELanesSelectorMap,                 ARRAYNUMBER(GNELanesSelectorMap))
 
 // ===========================================================================
 // method definitions
@@ -141,10 +142,10 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXHorizontalFrame *horizontalFrameParent,
     myadditionalParameters = new GNEAdditionalFrame::additionalParameters(myContentFrame);
 
     // Create editor parameter
-    myEditorParameters = new GNEAdditionalFrame::editorParameters(myContentFrame, this);
+    myEditorParameters = new GNEAdditionalFrame::editorParameters(myContentFrame);
 
     // Create create list for additional Set
-    myAdditionalSet = new GNEAdditionalFrame::additionalSet(myContentFrame, this, myViewNet);
+    myAdditionalSet = new GNEAdditionalFrame::additionalSetsSelector(myContentFrame, myViewNet);
 
     /// Create list for edgesSelector
     myEdgesSelector = new GNEAdditionalFrame::edgesSelector(myContentFrame, myViewNet);
@@ -1043,9 +1044,10 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
 // GNEAdditionalFrame::editorParameters- methods
 // ---------------------------------------------------------------------------
 
-GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXObject* tgt) :
+GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent) :
     FXGroupBox(parent, "editor parameters", GNEDesignGroupBoxFrame),
-    myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT) {
+    myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT),
+    myCurrentEditorParametersValid(true) {
     // Create FXListBox for the reference points
     myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEDesignComboBox);
 
@@ -1056,7 +1058,7 @@ GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent, FXOb
     myLengthLabel = new FXLabel(lengthFrame, "Length:", 0, GNEDesignLabelAttribute);
 
     // Create length text field
-    myLengthTextField = new FXTextField(lengthFrame, GNEDesignTextFieldNCol, tgt, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextField);
+    myLengthTextField = new FXTextField(lengthFrame, GNEDesignTextFieldNCol, this, MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT, GNEDesignTextField);
 
     // Set default value of length
     myLengthTextField->setText("10");
@@ -1136,6 +1138,24 @@ GNEAdditionalFrame::editorParameters::isForcePositionEnabled() {
 
 
 long
+GNEAdditionalFrame::editorParameters::onCmdSetLength(FXObject*, FXSelector, void*) {
+    // change color of text field depending of the input lenght
+    if (TplCheck::_str2SUMOReal(myLengthTextField->getText().text()) && 
+        TplConvert::_str2SUMOReal(myLengthTextField->getText().text()) > 0) {
+        myLengthTextField->setTextColor(FXRGB(0, 0, 0));
+        myLengthTextField->killFocus();
+        myCurrentEditorParametersValid = true;
+    } else {
+        myLengthTextField->setTextColor(FXRGB(255, 0, 0));
+        myCurrentEditorParametersValid = false;
+    }
+    // Update aditional frame
+    update();
+    return 1;
+}
+
+
+long
 GNEAdditionalFrame::editorParameters::onCmdSelectReferencePoint(FXObject*, FXSelector, void*) {
     // Cast actual reference point type
     myActualAdditionalReferencePoint = static_cast<additionalReferencePoint>(myReferencePointMatchBox->getCurrentItem());
@@ -1188,19 +1208,19 @@ GNEAdditionalFrame::getIdsSelected(const FXList* list) {
 
 
 // ---------------------------------------------------------------------------
-// GNEAdditionalFrame::additionalSet - methods
+// GNEAdditionalFrame::additionalSetsSelector - methods
 // ---------------------------------------------------------------------------
 
-GNEAdditionalFrame::additionalSet::additionalSet(FXComposite* parent, FXObject* tgt, GNEViewNet* viewNet) :
-    FXGroupBox(parent, "Additional Set", GNEDesignGroupBoxFrame),
+GNEAdditionalFrame::additionalSetsSelector::additionalSetsSelector(FXComposite* parent, GNEViewNet* viewNet) :
+    FXGroupBox(parent, "Additional Set selector", GNEDesignGroupBoxFrame),
     myType(SUMO_TAG_NOTHING),
     myViewNet(viewNet) {
 
-    // Create label with the type of additionalSet
+    // Create label with the type of additionalSetsSelector
     mySetLabel = new FXLabel(this, "Set Type:", 0, GNEDesignLabelThick);
 
     // Create list
-    myList = new FXList(this, tgt, MID_GNE_SELECTADDITIONALSET, GNEDesignList, 0, 0, 0, 100);
+    myList = new FXList(this, this, MID_GNE_SELECTADDITIONALSET, GNEDesignList, 0, 0, 0, 100);
 
     // Create help button
     helpAdditionalSet = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
@@ -1210,11 +1230,11 @@ GNEAdditionalFrame::additionalSet::additionalSet(FXComposite* parent, FXObject* 
 }
 
 
-GNEAdditionalFrame::additionalSet::~additionalSet() {}
+GNEAdditionalFrame::additionalSetsSelector::~additionalSetsSelector() {}
 
 
 std::string
-GNEAdditionalFrame::additionalSet::getIdSelected() const {
+GNEAdditionalFrame::additionalSetsSelector::getIdSelected() const {
     for (int i = 0; i < myList->getNumItems(); i++) {
         if (myList->isItemSelected(i)) {
             return myList->getItem(i)->getText().text();
@@ -1225,13 +1245,13 @@ GNEAdditionalFrame::additionalSet::getIdSelected() const {
 
 
 SumoXMLTag
-GNEAdditionalFrame::additionalSet::getCurrentAdditionalTag() const {
+GNEAdditionalFrame::additionalSetsSelector::getCurrentAdditionalTag() const {
     return myType;
 }
 
 
 void
-GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
+GNEAdditionalFrame::additionalSetsSelector::showList(SumoXMLTag type) {
     myType = type;
     mySetLabel->setText(("Type of set: " + toString(myType)).c_str());
     myList->clearItems();
@@ -1244,20 +1264,20 @@ GNEAdditionalFrame::additionalSet::showList(SumoXMLTag type) {
 
 
 void
-GNEAdditionalFrame::additionalSet::hideList() {
+GNEAdditionalFrame::additionalSetsSelector::hideList() {
     myType = SUMO_TAG_NOTHING;
     hide();
 }
 
 
 long
-GNEAdditionalFrame::additionalSet::onCmdSelectAdditionalSet(FXObject*, FXSelector, void*) {
+GNEAdditionalFrame::additionalSetsSelector::onCmdSelectAdditionalSet(FXObject*, FXSelector, void*) {
     return 1;
 }
 
 
 long
-GNEAdditionalFrame::additionalSet::onCmdHelp(FXObject*, FXSelector, void*) {
+GNEAdditionalFrame::additionalSetsSelector::onCmdHelp(FXObject*, FXSelector, void*) {
     return 1;
 }
 

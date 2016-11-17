@@ -289,7 +289,7 @@ public:
         };
 
         /// @brief constructor
-        editorParameters(FXComposite* parent, FXObject* tgt);
+        editorParameters(FXComposite* parent);
 
         /// @brief destructor
         ~editorParameters();
@@ -320,10 +320,11 @@ public:
 
         /// @name FOX-callbacks
         /// @{
+        /// @brief Called when the user enters a new lenght
+        long onCmdSetLength(FXObject*, FXSelector, void*);
+
         /// @brief Called when the user enters another reference point
         long onCmdSelectReferencePoint(FXObject*, FXSelector, void*);
-
-        /*** @todo write callback for LENGTH **/
 
         /// @brief Called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
@@ -354,22 +355,25 @@ public:
 
         /// @brief checkBox for blocking movement
         FXMenuCheck* myCheckBlock;
+
+        /// @brief Flag to check if current parameters are valid
+        bool myCurrentEditorParametersValid;
     };
 
     // ===========================================================================
-    // class additionalSet
+    // class additionalSetsSelector
     // ===========================================================================
 
-    class additionalSet : public FXGroupBox {
+    class additionalSetsSelector : public FXGroupBox {
         /// @brief FOX-declaration
-        FXDECLARE(GNEAdditionalFrame::additionalSet)
+        FXDECLARE(GNEAdditionalFrame::additionalSetsSelector)
 
     public:
         /// @brief constructor
-        additionalSet(FXComposite* parent, FXObject* tgt, GNEViewNet* viewNet);
+        additionalSetsSelector(FXComposite* parent, GNEViewNet* viewNet);
 
         /// @brief destructor
-        ~additionalSet();
+        ~additionalSetsSelector();
 
         /// @brief get if currently additional Set
         std::string getIdSelected() const;
@@ -377,15 +381,15 @@ public:
         /// @brief get current tag
         SumoXMLTag getCurrentAdditionalTag() const;
 
-        /// @brief Show list of additionalSet
+        /// @brief Show list of additionalSetsSelector
         void showList(SumoXMLTag type);
 
-        /// @brief hide additionalSet
+        /// @brief hide additionalSetsSelector
         void hideList();
 
         /// @name FOX-callbacks
         /// @{
-        /// @brief called when user select an additionalSet of the list
+        /// @brief called when user select an additionalSetsSelector of the list
         long onCmdSelectAdditionalSet(FXObject*, FXSelector, void*);
 
         /// @brief Called when help button is pressed
@@ -394,7 +398,7 @@ public:
 
     protected:
         /// @brief FOX needs this
-        additionalSet() {}
+        additionalSetsSelector() {}
 
     private:
         /// @brief current type
@@ -632,7 +636,7 @@ private:
     GNEAdditionalFrame::editorParameters* myEditorParameters;
 
     /// @brief list of additional Set
-    GNEAdditionalFrame::additionalSet* myAdditionalSet;
+    GNEAdditionalFrame::additionalSetsSelector* myAdditionalSet;
 
     /// @brief list of edgesSelector
     GNEAdditionalFrame::edgesSelector* myEdgesSelector;
