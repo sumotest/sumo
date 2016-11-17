@@ -178,7 +178,14 @@ GNEAdditionalFrame::~GNEAdditionalFrame() {
 bool
 GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView* parent) {
     // Declare map to keep values
-    std::map<SumoXMLAttr, std::string> valuesOfElement = myadditionalParameters->getAttributes();
+    std::map<SumoXMLAttr, std::string> valuesOfElement;
+
+    if(myadditionalParameters->isValuesValid()) {
+        valuesOfElement = myadditionalParameters->getAttributesAndValues();
+    } else {
+        WRITE_WARNING("Some attributes of additional '" + toString(myActualAdditionalType) + "' aren't valid.");
+        return false;
+    }
 
     // Declare pointer to netElements
     GNEJunction* pointed_junction = NULL;
@@ -247,20 +254,25 @@ GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView
         SUMOReal positionOfTheMouseOverEdge = pointed_edge->getLanes().at(0)->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         // If element has a StartPosition and EndPosition over edge, extract attributes
         if (GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
-            SUMOReal startPos = setStartPosition(positionOfTheMouseOverEdge, myEditorParameters->getLenght());
-            SUMOReal endPos = setEndPosition(pointed_edge->getLanes().at(0)->getLaneShapeLenght(), positionOfTheMouseOverEdge, myEditorParameters->getLenght());
-            // Only set start position if are valid (!= -1)
-            if (startPos != -1) {
-                valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);
+            // First check that current length is valid
+            if(myEditorParameters->isCurrentLenghtValid()) {
+                SUMOReal startPos = setStartPosition(positionOfTheMouseOverEdge, myEditorParameters->getLenght());
+                SUMOReal endPos = setEndPosition(pointed_edge->getLanes().at(0)->getLaneShapeLenght(), positionOfTheMouseOverEdge, myEditorParameters->getLenght());
+                // Only set start position if are valid (!= -1)
+                if (startPos != -1) {
+                    valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);
+                } else {
+                    WRITE_WARNING("Additional '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid");
+                    return false;
+                }
+                // Only set end position if are valid (!= -1)
+                if (endPos != -1) {
+                    valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);
+                } else {
+                    WRITE_WARNING("Additional '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");
+                    return false;
+                }
             } else {
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid");
-                return false;
-            }
-            // Only set end position if are valid (!= -1)
-            if (endPos != -1) {
-                valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);
-            } else {
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over edge. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");
                 return false;
             }
         }
@@ -271,20 +283,25 @@ GNEAdditionalFrame::addAdditional(GNENetElement* netElement, GUISUMOAbstractView
         SUMOReal positionOfTheMouseOverLane = pointed_lane->getShape().nearest_offset_to_point2D(parent->getPositionInformation());
         // If element has a StartPosition and EndPosition over lane, extract attributes
         if (GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_STARTPOS) && GNEAttributeCarrier::hasAttribute(myActualAdditionalType, SUMO_ATTR_ENDPOS)) {
-            SUMOReal startPos = setStartPosition(positionOfTheMouseOverLane, myEditorParameters->getLenght());
-            SUMOReal endPos = setEndPosition(pointed_lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameters->getLenght());
-            // Only set start position if are valid (!= -1)
-            if (startPos != -1) {
-                valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);
+            // First check that current length is valid
+            if(myEditorParameters->isCurrentLenghtValid()) {
+                SUMOReal startPos = setStartPosition(positionOfTheMouseOverLane, myEditorParameters->getLenght());
+                SUMOReal endPos = setEndPosition(pointed_lane->getLaneShapeLenght(), positionOfTheMouseOverLane, myEditorParameters->getLenght());
+                // Only set start position if are valid (!= -1)
+                if (startPos != -1) {
+                    valuesOfElement[SUMO_ATTR_STARTPOS] = toString(startPos);
+                } else {
+                    WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid");
+                    return false;
+                }
+                // Only set end position if are valid (!= -1)
+                if (endPos != -1) {
+                    valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);
+                } else {
+                    WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");
+                    return false;
+                }
             } else {
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_STARTPOS) + "' isn't valid");
-                return false;
-            }
-            // Only set end position if are valid (!= -1)
-            if (endPos != -1) {
-                valuesOfElement[SUMO_ATTR_ENDPOS] = toString(endPos);
-            } else {
-                WRITE_WARNING("Additonal '" + toString(myActualAdditionalType) + "' cannot be placed over lane. Attribute '" + toString(SUMO_ATTR_ENDPOS) + "' isn't valid");
                 return false;
             }
         }
@@ -422,9 +439,9 @@ GNEAdditionalFrame::setParametersOfAdditional(SumoXMLTag actualAdditionalType) {
     }
     // if there are parmeters, show and Recalc groupBox
     if (myadditionalParameters->getNumberOfAddedAttributes() > 0) {
-        myadditionalParameters->showadditionalParameters();
+        myadditionalParameters->showAdditionalParameters();
     } else {
-        myadditionalParameters->hideadditionalParameters();
+        myadditionalParameters->hideAdditionalParameters();
     }
     // Show set parameter if we're adding an additional with parent
     if (GNEAttributeCarrier::hasParent(myActualAdditionalType)) {
@@ -635,6 +652,12 @@ GNEAdditionalFrame::singleAdditionalParameter::getValue() const {
 }
 
 
+bool 
+GNEAdditionalFrame::singleAdditionalParameter::isCurrentValueValid() const {
+    return myCurrentValueValid;
+}
+
+
 long 
 GNEAdditionalFrame::singleAdditionalParameter::onCmdSetAttribute(FXObject*, FXSelector, void*) {
     // Check if format of current value of myTextField is correct
@@ -803,6 +826,13 @@ GNEAdditionalFrame::singleAdditionalParameterList::getListValues() {
 }
 
 
+bool 
+GNEAdditionalFrame::singleAdditionalParameterList::isCurrentListValid() const {
+    /// @todo finish check validity of values in lists
+    return true;
+}
+
+
 long
 GNEAdditionalFrame::singleAdditionalParameterList::onCmdAddRow(FXObject*, FXSelector, void*) {
     if (numberOfVisibleTextfields < (myMaxNumberOfValuesInParameterList - 1)) {
@@ -839,12 +869,12 @@ GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite* pare
     maxNumberOfParameters(GNEAttributeCarrier::getHigherNumberOfAttributes()),
     maxNumberOfListParameters(2) {
 
-    // Create widgets for parameters
+    // Create single parameters
     for (int i = 0; i < maxNumberOfParameters; i++) {
         myVectorOfsingleAdditionalParameter.push_back(new singleAdditionalParameter(this));
     }
 
-    // Create widgets for parameters
+    // Create single list parameters
     for (int i = 0; i < maxNumberOfListParameters; i++) {
         myVectorOfsingleAdditionalParameterList.push_back(new singleAdditionalParameterList(this));
     }
@@ -923,20 +953,20 @@ GNEAdditionalFrame::additionalParameters::addAttribute(SumoXMLTag additionalTag,
 
 
 void
-GNEAdditionalFrame::additionalParameters::showadditionalParameters() {
+GNEAdditionalFrame::additionalParameters::showAdditionalParameters() {
     recalc();
     show();
 }
 
 
 void
-GNEAdditionalFrame::additionalParameters::hideadditionalParameters() {
+GNEAdditionalFrame::additionalParameters::hideAdditionalParameters() {
     hide();
 }
 
 
 std::map<SumoXMLAttr, std::string>
-GNEAdditionalFrame::additionalParameters::getAttributes() const {
+GNEAdditionalFrame::additionalParameters::getAttributesAndValues() const {
     std::map<SumoXMLAttr, std::string> values;
     // get standar Parameters
     for (int i = 0; i < myIndexParameter; i++) {
@@ -947,6 +977,26 @@ GNEAdditionalFrame::additionalParameters::getAttributes() const {
         values[myVectorOfsingleAdditionalParameterList.at(i)->getAttr()] = myVectorOfsingleAdditionalParameterList.at(i)->getListValues();
     }
     return values;
+}
+
+
+bool
+GNEAdditionalFrame::additionalParameters::isValuesValid() const {
+    // iterate over standar parameters
+    for (int i = 0; i < myIndexParameter; i++) {
+        // Return false if at least one of the parameter isn't valid
+        if (myVectorOfsingleAdditionalParameter.at(i)->isCurrentValueValid() == false) {
+            return false;
+        }
+    }
+    // iterate over list parameters
+    for (int i = 0; i < myIndexParameterList; i++) {
+        // Return false if at least one of the list parameter isn't valid
+        if(myVectorOfsingleAdditionalParameterList.at(i)->isCurrentListValid() == false) {
+            return false;
+        }
+    }
+    return true;
 }
 
 
@@ -1047,7 +1097,7 @@ GNEAdditionalFrame::additionalParameters::onCmdHelp(FXObject*, FXSelector, void*
 GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent) :
     FXGroupBox(parent, "editor parameters", GNEDesignGroupBoxFrame),
     myActualAdditionalReferencePoint(GNE_ADDITIONALREFERENCEPOINT_LEFT),
-    myCurrentEditorParametersValid(true) {
+    myCurrentLengthValid(true) {
     // Create FXListBox for the reference points
     myReferencePointMatchBox = new FXComboBox(this, 12, this, MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT, GNEDesignComboBox);
 
@@ -1136,6 +1186,11 @@ GNEAdditionalFrame::editorParameters::isForcePositionEnabled() {
     return myCheckForcePosition->getCheck() == 1 ? true : false;
 }
 
+bool 
+GNEAdditionalFrame::editorParameters::isCurrentLenghtValid() const {
+    return myCurrentLengthValid;
+}
+
 
 long
 GNEAdditionalFrame::editorParameters::onCmdSetLength(FXObject*, FXSelector, void*) {
@@ -1144,10 +1199,10 @@ GNEAdditionalFrame::editorParameters::onCmdSetLength(FXObject*, FXSelector, void
         TplConvert::_str2SUMOReal(myLengthTextField->getText().text()) > 0) {
         myLengthTextField->setTextColor(FXRGB(0, 0, 0));
         myLengthTextField->killFocus();
-        myCurrentEditorParametersValid = true;
+        myCurrentLengthValid = true;
     } else {
         myLengthTextField->setTextColor(FXRGB(255, 0, 0));
-        myCurrentEditorParametersValid = false;
+        myCurrentLengthValid = false;
     }
     // Update aditional frame
     update();

@@ -90,7 +90,10 @@ public:
         SumoXMLAttr getAttr() const;
 
         /// @brief return value
-        std::string getValue() const ;
+        std::string getValue() const;
+
+        /// @brief check if the current value is valid
+        bool isCurrentValueValid() const;
 
         /// @name FOX-callbacks
         /// @{
@@ -163,6 +166,9 @@ public:
 
         /// @brief return the value of list
         std::string getListValues();
+        
+        /// @brief check that current list is valid
+        bool isCurrentListValid() const;
 
         /// @name FOX-callbacks
         /// @{
@@ -225,13 +231,16 @@ public:
         void addAttribute(SumoXMLTag additionalTag, SumoXMLAttr additionalAttribute);
 
         /// @brief show group box
-        void showadditionalParameters();
+        void showAdditionalParameters();
 
         /// @brief hide group box
-        void hideadditionalParameters();
+        void hideAdditionalParameters();
 
-        /// @brief get attributes
-        std::map<SumoXMLAttr, std::string> getAttributes() const;
+        /// @brief get attributes and their values
+        std::map<SumoXMLAttr, std::string> getAttributesAndValues() const;
+
+        /// @brief check if all values defined by user are valid
+        bool isValuesValid() const;
 
         /// @brief get number of added attributes
         int getNumberOfAddedAttributes() const;
@@ -318,6 +327,9 @@ public:
         /// @brief check if force position is enabled
         bool isForcePositionEnabled();
 
+        /// @brief check if current lenght is valid
+        bool isCurrentLenghtValid() const;
+
         /// @name FOX-callbacks
         /// @{
         /// @brief Called when the user enters a new lenght
@@ -356,8 +368,8 @@ public:
         /// @brief checkBox for blocking movement
         FXMenuCheck* myCheckBlock;
 
-        /// @brief Flag to check if current parameters are valid
-        bool myCurrentEditorParametersValid;
+        /// @brief Flag to check if current lenght is valid
+        bool myCurrentLengthValid;
     };
 
     // ===========================================================================
