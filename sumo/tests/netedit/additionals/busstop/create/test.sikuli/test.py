@@ -37,8 +37,11 @@ except:
     neteditProcess.kill()
     sys.exit("Killed netedit process. 'reference.png' not found")
 
-# Focus netedid window
-click(match.getTarget().offset(0, -105))
+# obtain match for additionalsComboBox
+additionalsComboBox = match.getTarget().offset(-75, 50)
+	
+# Focus netedit window
+click(match)
 	
 # Change to create mode
 type("e")
@@ -50,28 +53,123 @@ click(match.getTarget().offset(500, 300))
 # Change to create additional
 type("a")
 
+# go to additionalsComboBox
+click(additionalsComboBox)
+
 # by default, additional is busstop, then isn't needed to select "busstop"
 
 # Add three extra lines
-click(match.getTarget().offset(-145, 130))
-click(match.getTarget().offset(-145, 155))
-click(match.getTarget().offset(-145, 180))
+for x in range(0, 3):
+	type(Key.TAB)
+	
+for x in range(0, 3):
+	type(Key.SPACE)
+	
+#add extra lines
+click(additionalsComboBox)
 
-# Set name of lines
-doubleClick(match.getTarget().offset(-135, 100))
+for x in range(0, 2):
+	type(Key.TAB)
+	
 paste("Line1")
-doubleClick(match.getTarget().offset(-135, 125))
+type(Key.TAB)
 paste("Line2")
-doubleClick(match.getTarget().offset(-135, 150))
+type(Key.TAB)
 paste("Line3")
-doubleClick(match.getTarget().offset(-135, 175))
+type(Key.TAB)
 paste("Line4")
 
-# Remove last line
-click(match.getTarget().offset(-110, 195))
+# remove last line (line 4)
+click(additionalsComboBox)
+
+for x in range(0, 7):
+	type(Key.TAB)
+	
+type(Key.SPACE)
 
 # create busstop in mode "reference left"
-click(match.getTarget().offset(400, 300))
+click(match.getTarget().offset(450, 300))
+
+# change reference to right
+click(additionalsComboBox)
+for x in range(0, 8):
+	type(Key.TAB)
+	
+type(Key.DOWN)
+
+# create busstop in mode "reference right"
+click(match.getTarget().offset(300, 300))
+
+# change reference to center
+click(additionalsComboBox)
+for x in range(0, 8):
+	type(Key.TAB)
+	
+type(Key.DOWN)
+
+# create busstop in mode "reference center"
+click(match.getTarget().offset(350, 300))
+
+# return to mode "reference left"
+click(additionalsComboBox)
+
+for x in range(0, 8):
+	type(Key.TAB)
+	
+for x in range(0, 2):
+	type(Key.UP)
+
+# Change length
+click(additionalsComboBox)
+
+for x in range(0, 10):
+	type(Key.TAB)
+	
+paste("30")
+
+# try to create a busstop (Warning)
+click(match.getTarget().offset(500, 300))
+
+# change reference to right
+click(additionalsComboBox)
+
+for x in range(0, 8):
+	type(Key.TAB)
+	
+type(Key.DOWN)
+
+# try busstop in mode "reference right" (Warning)
+click(match.getTarget().offset(250, 300))
+
+# return to mode "reference left"
+click(additionalsComboBox)
+
+for x in range(0, 8):
+	type(Key.TAB)
+	
+type(Key.UP)
+
+# enable force position
+click(additionalsComboBox)
+
+for x in range(0, 11):
+	type(Key.TAB)
+	
+type(Key.SPACE)
+
+# create a busstop forcing position
+click(match.getTarget().offset(500, 300))
+
+# change reference to right
+click(additionalsComboBox)
+
+for x in range(0, 8):
+	type(Key.TAB)
+	
+type(Key.DOWN)
+
+# create a busstop forcing position
+click(match.getTarget().offset(250, 300))
 
 # save additionals
 # XXX add a keyboard hotkey

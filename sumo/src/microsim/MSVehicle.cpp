@@ -1988,7 +1988,6 @@ MSVehicle::executeMove() {
             MSLane* approachedLane = myLane;
             // move the vehicle forward
             for (i = myLFLinkLanes.begin(); i != myLFLinkLanes.end() && approachedLane != 0 && myState.myPos > approachedLane->getLength(); ++i) {
-                leaveLane(MSMoveReminder::NOTIFICATION_JUNCTION);
                 MSLink* link = (*i).myLink;
                 // check whether the vehicle was allowed to enter lane
                 //  otherwise it is decelerated and we do not need to test for it's
@@ -2006,12 +2005,16 @@ MSVehicle::executeMove() {
 #ifndef NO_TRACI
                     }
 #endif
+                } else if (myState.myPos < myLane->getLength() + NUMERICAL_EPS) {
+                    approachedLane = myLane;
+                    myState.myPos = myLane->getLength();
                 } else {
                     emergencyReason = " because there is no connection to the next edge";
                     approachedLane = 0;
                     break;
                 }
                 if (approachedLane != myLane && approachedLane != 0) {
+                    leaveLane(MSMoveReminder::NOTIFICATION_JUNCTION);
                     myState.myPos -= myLane->getLength();
                     assert(myState.myPos > 0);
                     enterLaneAtMove(approachedLane);
@@ -2761,7 +2764,16 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
     }
     assert(startLane != 0);
     if (getLaneChangeModel().isOpposite()) {
-        return;
+        // depending on the calling context, startLane might be the forward lane
+        // or the reverse-direction lane. In the latter case we need to
+        // transform it to the forward lane.
+        bool startLaneIsOpposite = (startLane->isInternal()
+                ? &(startLane->getLinkCont()[0]->getLane()->getEdge()) != *(myCurrEdge + 1)
+                : &startLane->getEdge() != *myCurrEdge);
+        if (startLaneIsOpposite) {
+            startLane = startLane->getOpposite();
+            assert(startLane != 0);
+        }
     }
     if (myBestLanes.size() > 0 && !forceRebuild && myLastBestLanesEdge == &startLane->getEdge()) {
         updateOccupancyAndCurrentBestLane(startLane);

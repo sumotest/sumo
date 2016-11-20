@@ -396,19 +396,9 @@ NBNode::removeSelfLoops(NBDistrictCont& dc, NBEdgeCont& ec, NBTrafficLightLogicC
         NBEdge* dummy = *j;
         WRITE_WARNING(" Removing self-looping edge '" + dummy->getID() + "'");
         // get the list of incoming edges connected to the self-loop
-        EdgeVector incomingConnected;
-        for (EdgeVector::const_iterator i = myIncomingEdges.begin(); i != myIncomingEdges.end(); i++) {
-            if ((*i)->isConnectedTo(dummy) && *i != dummy) {
-                incomingConnected.push_back(*i);
-            }
-        }
+        EdgeVector incomingConnected = dummy->getIncomingEdges();;
         // get the list of outgoing edges connected to the self-loop
-        EdgeVector outgoingConnected;
-        for (EdgeVector::const_iterator i = myOutgoingEdges.begin(); i != myOutgoingEdges.end(); i++) {
-            if (dummy->isConnectedTo(*i) && *i != dummy) {
-                outgoingConnected.push_back(*i);
-            }
-        }
+        EdgeVector outgoingConnected = dummy->getConnectedEdges();
         // let the self-loop remap its connections
         dummy->remapConnections(incomingConnected);
         remapRemoved(tc, dummy, incomingConnected, outgoingConnected);
