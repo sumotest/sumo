@@ -151,6 +151,10 @@ GNENet::GNENet(NBNetBuilder* netBuilder) :
         myZBoundary.add(0, 0);
     }
 
+    // Update all Junction's shapes
+    for(GNEJunctions::iterator i = myJunctions.begin(); i != myJunctions.end(); i++) {
+        i->second->updateShapesAndGeometries();
+    }
 }
 
 

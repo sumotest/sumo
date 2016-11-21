@@ -123,7 +123,8 @@ GNEJunction::rebuildCrossings(bool deleteOnly) {
             myCrossings.back()->incRef();
         }
     }
-
+    // Update geometry
+    updateGeometry();
 }
 
 
@@ -432,7 +433,9 @@ GNEJunction::updateShapesAndGeometries() {
     // Finally update geometry of this edge
     updateGeometry();
     // Update view to show the new shapes
-    myNet->getViewNet()->update();
+    if(myNet->getViewNet()) {
+        myNet->getViewNet()->update();
+    }
 }
 
 
