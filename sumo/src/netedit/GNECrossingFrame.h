@@ -179,6 +179,12 @@ public:
         /// @brief disable crossing parameters and clear parameters
         void disableCrossingParameters();
 
+        /// @brief update edges
+        void updateEdges();
+
+        /// @brief check if currently the crossingParameters is enabled
+        bool isCrossingParametersEnabled() const;
+
         /// @brief get crossing NBedges
         std::vector<NBEdge*> getCrossingEdges() const;
 
@@ -187,6 +193,9 @@ public:
 
         /// @brief get crossing width
         SUMOReal getCrossingWidth() const;
+
+        /// @brief check if current parameters are valid
+        bool isCurrentParametersValid() const;
 
         /// @name FOX-callbacks
         /// @{
@@ -206,28 +215,31 @@ public:
         GNECrossingFrame::edgesSelector *myEdgeSelector;
 
         /// @brief FXMatrix for place attributes
-        FXMatrix *attributesMatrix;
+        FXMatrix *myAttributesMatrix;
 
         /// @brief Label for edges
-        FXLabel *crossingEdgesLabel;
+        FXLabel *myCrossingEdgesLabel;
 
         /// @brief TextField for edges
-        FXTextField *crossingEdges;
+        FXTextField *myCrossingEdges;
 
         /// @brief Label for Priority
-        FXLabel *crossingPriorityLabel;
+        FXLabel *myCrossingPriorityLabel;
 
         /// @brief CheckBox for Priority
-        FXMenuCheck *crossingPriority;
+        FXMenuCheck *myCrossingPriority;
 
         /// @brief Label for width
-        FXLabel *crossingWidthLabel;
+        FXLabel *myCrossingWidthLabel;
 
         /// @brief TextField for width
-        FXTextField *crossingWidth;
+        FXTextField *myCrossingWidth;
 
         /// @brief button for help
-        FXButton* helpAdditional;
+        FXButton* myHelpAdditional;
+
+        /// @brief flag to check if current parameters are valid
+        bool myCurrentParametersValid;
     };
 
 

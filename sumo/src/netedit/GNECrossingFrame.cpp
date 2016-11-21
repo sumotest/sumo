@@ -35,6 +35,7 @@
 #include <utils/foxtools/fxexdefs.h>
 #include <utils/foxtools/MFXUtils.h>
 #include <utils/common/MsgHandler.h>
+#include <utils/common/TplCheck.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/div/GUIIOGlobals.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
@@ -211,8 +212,11 @@ GNECrossingFrame::edgesSelector::markEdge(const std::string &edgeID) {
         // if item of list is the same as the edge ID, mark it
         if(myList->getItem(i)->getText().text() == edgeID) {
             myList->selectItem(i);
-            // Enable crossing parameters
-            myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+            if(myCrossingFrameParent->getCrossingParameters()->isCrossingParametersEnabled() == false) {
+                myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+            }
+            // update crossing parameters
+            myCrossingFrameParent->getCrossingParameters()->updateEdges();
             myCrossingFrameParent->setCreateCrossingButton(true);
             return true;
         }
@@ -333,7 +337,11 @@ GNECrossingFrame::edgesSelector::onCmdSelectEdge(FXObject*, FXSelector, void*) {
     for (int i = 0; i < myList->getNumItems(); i++) {
         if (myList->getItem(i)->isSelected()) {
             // Enable crossing parameters
-            myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+            if(myCrossingFrameParent->getCrossingParameters()->isCrossingParametersEnabled() == false) {
+                myCrossingFrameParent->getCrossingParameters()->enableCrossingParameters();
+            }
+            // update edges
+            myCrossingFrameParent->getCrossingParameters()->updateEdges();
             myCrossingFrameParent->setCreateCrossingButton(true);
             return 1;
         }
@@ -420,23 +428,24 @@ GNECrossingFrame::edgesSelector::onCmdHelp(FXObject*, FXSelector, void*) {
 
 GNECrossingFrame::crossingParameters::crossingParameters(FXComposite* parent, GNECrossingFrame::edgesSelector *es) :
     FXGroupBox(parent, "Crossing parameters", GNEDesignGroupBoxFrame),
-    myEdgeSelector(es) {
+    myEdgeSelector(es),
+    myCurrentParametersValid(true) {
     // Create a Matrix for parameters
-    attributesMatrix = new FXMatrix(this, 2, GNEDesignMatrix);
+    myAttributesMatrix = new FXMatrix(this, 2, GNEDesignMatrix);
     // create label for edges
-    crossingEdgesLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_EDGES).c_str(), 0, GNEDesignLabelAttribute);
+    myCrossingEdgesLabel = new FXLabel(myAttributesMatrix, toString(SUMO_ATTR_EDGES).c_str(), 0, GNEDesignLabelAttribute);
     // create string textField for edges
-    crossingEdges = new FXTextField(attributesMatrix, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
+    myCrossingEdges = new FXTextField(myAttributesMatrix, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeStr);
     // create label for Priority
-    crossingPriorityLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_PRIORITY).c_str(), 0, GNEDesignLabelAttribute);
+    myCrossingPriorityLabel = new FXLabel(myAttributesMatrix, toString(SUMO_ATTR_PRIORITY).c_str(), 0, GNEDesignLabelAttribute);
     // create CheckBox for Priority
-    crossingPriority = new FXMenuCheck(attributesMatrix, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButtonAttribute);
+    myCrossingPriority = new FXMenuCheck(myAttributesMatrix, "", this, MID_GNE_SET_ATTRIBUTE, GNEDesignCheckButtonAttribute);
     // create label for width
-    crossingWidthLabel = new FXLabel(attributesMatrix, toString(SUMO_ATTR_WIDTH).c_str(), 0, GNEDesignLabelAttribute);
+    myCrossingWidthLabel = new FXLabel(myAttributesMatrix, toString(SUMO_ATTR_WIDTH).c_str(), 0, GNEDesignLabelAttribute);
     // create extField for width
-    crossingWidth = new FXTextField(attributesMatrix, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
+    myCrossingWidth = new FXTextField(myAttributesMatrix, GNEDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GNEDesignTextFieldAttributeReal);
     // Create help button
-    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    myHelpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
     // At start crossing parameters is disabled
     disableCrossingParameters();
 }
@@ -449,34 +458,47 @@ GNECrossingFrame::crossingParameters::~crossingParameters() {
 void
 GNECrossingFrame::crossingParameters::enableCrossingParameters() {
     // Enable all elements of the crossing frames
-    crossingEdgesLabel->enable();
-    crossingEdges->enable();
-    crossingPriorityLabel->enable();
-    crossingPriority->enable();
-    crossingWidthLabel->enable();
-    crossingWidth->enable();
-    helpAdditional->enable();
+    myCrossingEdgesLabel->enable();
+    myCrossingEdges->enable();
+    myCrossingPriorityLabel->enable();
+    myCrossingPriority->enable();
+    myCrossingWidthLabel->enable();
+    myCrossingWidth->enable();
+    myHelpAdditional->enable();
     // set values of parameters
-    crossingEdges->setText(joinToString(myEdgeSelector->getEdgeIDSSelected(), " ").c_str());
-    crossingPriority->setCheck(GNEAttributeCarrier::getDefaultValue<bool>(SUMO_TAG_CROSSING, SUMO_ATTR_PRIORITY));
-    crossingWidth->setText(GNEAttributeCarrier::getDefaultValue<std::string>(SUMO_TAG_CROSSING, SUMO_ATTR_WIDTH).c_str());    
+    updateEdges();
+    myCrossingPriority->setCheck(GNEAttributeCarrier::getDefaultValue<bool>(SUMO_TAG_CROSSING, SUMO_ATTR_PRIORITY));
+    myCrossingWidth->setText(GNEAttributeCarrier::getDefaultValue<std::string>(SUMO_TAG_CROSSING, SUMO_ATTR_WIDTH).c_str()); 
+    myCrossingWidth->setTextColor(FXRGB(0, 0, 0));
 }
 
+
+void 
+GNECrossingFrame::crossingParameters::updateEdges() {
+    myCrossingEdges->setText(joinToString(myEdgeSelector->getEdgeIDSSelected(), " ").c_str());
+    onCmdSetAttribute(0,0,0);
+}
 
 void
 GNECrossingFrame::crossingParameters::disableCrossingParameters() {
     // clear all values of parameters
-    crossingEdges->setText("");
-    crossingPriority->setCheck(false);
-    crossingWidth->setText("");    
+    myCrossingEdges->setText("");
+    myCrossingPriority->setCheck(false);
+    myCrossingWidth->setText("");    
     // Disable all elements of the crossing frames
-    crossingEdgesLabel->disable();
-    crossingEdges->disable();
-    crossingPriorityLabel->disable();
-    crossingPriority->disable();
-    crossingWidthLabel->disable();
-    crossingWidth->disable();
-    helpAdditional->disable();
+    myCrossingEdgesLabel->disable();
+    myCrossingEdges->disable();
+    myCrossingPriorityLabel->disable();
+    myCrossingPriority->disable();
+    myCrossingWidthLabel->disable();
+    myCrossingWidth->disable();
+    myHelpAdditional->disable();
+}
+
+
+bool 
+GNECrossingFrame::crossingParameters::isCrossingParametersEnabled() const {
+    return myCrossingEdgesLabel->isEnabled();
 }
 
 
@@ -494,22 +516,49 @@ GNECrossingFrame::crossingParameters::getCrossingEdges() const {
 
 bool 
 GNECrossingFrame::crossingParameters::getCrossingPriority() const {
-    if (crossingPriority->getCheck()) {
+    if (myCrossingPriority->getCheck()) {
         return true;
     } else {
         return false;
     }
 }
 
+
+bool
+GNECrossingFrame::crossingParameters::isCurrentParametersValid() const {
+    return myCurrentParametersValid;
+}
+
+
 SUMOReal 
 GNECrossingFrame::crossingParameters::getCrossingWidth() const {
-    return GNEAttributeCarrier::parse<SUMOReal>(crossingWidth->getText().text());
+    return GNEAttributeCarrier::parse<SUMOReal>(myCrossingWidth->getText().text());
 }
 
 
 long
 GNECrossingFrame::crossingParameters::onCmdSetAttribute(FXObject*, FXSelector, void*) {
-    /***************************/
+    myCurrentParametersValid = true;
+    // obtain crossing edges and check if at least there are two
+    std::vector<std::string> crossingEdges;
+    SUMOSAXAttributes::parseStringVector(myCrossingEdges->getText().text(), crossingEdges);
+    if(crossingEdges.size() > 1) {
+        myCrossingEdges->setTextColor(FXRGB(0, 0, 0));
+        myCrossingEdges->killFocus();
+    } else {
+        myCrossingEdges->setTextColor(FXRGB(255, 0, 0));
+        myCurrentParametersValid = false;
+    }
+    // Check width
+    if (TplCheck::_str2SUMOReal(myCrossingWidth->getText().text()) && 
+        TplConvert::_str2SUMOReal(myCrossingWidth->getText().text()) > 0) {
+        myCrossingWidth->setTextColor(FXRGB(0, 0, 0));
+        myCrossingWidth->killFocus();
+    } else {
+        myCrossingWidth->setTextColor(FXRGB(255, 0, 0));
+        myCurrentParametersValid = false;
+    }
+
     return 0;
 }
 
@@ -633,14 +682,17 @@ GNECrossingFrame::addCrossing(GNENetElement* netElement) {
 
 long
 GNECrossingFrame::onCmdCreateCrossing(FXObject*, FXSelector, void*) {
-    // Add crossing to NBEdge
-    myEdgeSelector->getCurrentJunction()->getNBNode()->addCrossing(myCrossingParameters->getCrossingEdges(), myCrossingParameters->getCrossingWidth(), myCrossingParameters->getCrossingPriority());
-    // rebuild crossings of junction
-    myEdgeSelector->getCurrentJunction()->rebuildCrossings(false);
-    // Update view
-    myViewNet->update();
-    // clear selected edges
-    myEdgeSelector->onCmdClearSelection(0, 0, 0);
+    // First check that current parameters are valid
+    if(myCrossingParameters->isCurrentParametersValid()) {
+        // Add crossing to NBEdge
+        myEdgeSelector->getCurrentJunction()->getNBNode()->addCrossing(myCrossingParameters->getCrossingEdges(), myCrossingParameters->getCrossingWidth(), myCrossingParameters->getCrossingPriority());
+        // rebuild crossings of junction
+        myEdgeSelector->getCurrentJunction()->rebuildCrossings(false);
+        // Update view
+        myViewNet->update();
+        // clear selected edges
+        myEdgeSelector->onCmdClearSelection(0, 0, 0);
+    }
     return 1;
 }
 
