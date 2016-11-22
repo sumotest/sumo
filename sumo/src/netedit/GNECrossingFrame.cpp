@@ -684,12 +684,13 @@ long
 GNECrossingFrame::onCmdCreateCrossing(FXObject*, FXSelector, void*) {
     // First check that current parameters are valid
     if(myCrossingParameters->isCurrentParametersValid()) {
-        // Add crossing to NBEdge
-        myEdgeSelector->getCurrentJunction()->getNBNode()->addCrossing(myCrossingParameters->getCrossingEdges(), myCrossingParameters->getCrossingWidth(), myCrossingParameters->getCrossingPriority());
-        // rebuild crossings of junction
-        myEdgeSelector->getCurrentJunction()->rebuildCrossings(false);
-        // Update view
-        myViewNet->update();
+        // create new crossing
+        myViewNet->getUndoList()->add(new GNEChange_Crossing(myViewNet->getNet(), 
+                                                             myEdgeSelector->getCurrentJunction(), 
+                                                             myCrossingParameters->getCrossingEdges(), 
+                                                             myCrossingParameters->getCrossingWidth(), 
+                                                             myCrossingParameters->getCrossingPriority(), 
+                                                             true), true);
         // clear selected edges
         myEdgeSelector->onCmdClearSelection(0, 0, 0);
     }

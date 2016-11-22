@@ -102,7 +102,6 @@ GNEJunction::updateGeometry() {
     getNBNode()->buildCrossings();
     for (std::vector<GNECrossing*>::const_iterator it = myCrossings.begin(); it != myCrossings.end(); it++) {
         (*it)->updateGeometry();
-  
     }
 }
 
