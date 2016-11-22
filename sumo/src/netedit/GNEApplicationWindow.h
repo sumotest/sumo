@@ -67,8 +67,7 @@ class GUIParameterTableWindow;
  * may also have some further views (children) assigned which are stored
  * within a separate list.
  */
-class GNEApplicationWindow :
-    public GUIMainWindow, public MFXInterThreadEventClient {
+class GNEApplicationWindow : public GUIMainWindow, public MFXInterThreadEventClient {
     /// @brief FOX-declaration
     FXDECLARE(GNEApplicationWindow)
 
@@ -254,10 +253,10 @@ public:
     void updateControls();
 
 protected:
-    /// FOX needs this for static members
-    GNEApplicationWindow() { }
+    /// @brief FOX needs this for static members
+    GNEApplicationWindow() {}
 
-    /// Builds the menu bar
+    /// @brief Builds the menu bar
     virtual void fillMenuBar();
 
     /// @brief the name of the simulation
