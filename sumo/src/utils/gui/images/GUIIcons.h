@@ -203,7 +203,7 @@ enum GUIIcon {
     ICON_GNEMODEINSPECT,
     ICON_GNEMODEMOVE,
     ICON_GNEMODESELECT,
-    ICON_GNEMODETRAFFICLIGHT,
+    ICON_GNEMODETLS,
     /// @}
 
     /// @brief max number of icons

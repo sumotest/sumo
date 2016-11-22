@@ -271,7 +271,7 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
     myIcons[ICON_GNEMODEINSPECT] = new FXXPMIcon(a, gnemodeinspect_xpm);
     myIcons[ICON_GNEMODEMOVE] = new FXXPMIcon(a, gnemodemove_xpm);
     myIcons[ICON_GNEMODESELECT] = new FXXPMIcon(a, gnemodeselect_xpm);
-    myIcons[ICON_GNEMODETRAFFICLIGHT] = new FXXPMIcon(a, gnemodetrafficlight_xpm);
+    myIcons[ICON_GNEMODETLS] = new FXXPMIcon(a, gnemodetrafficlight_xpm);
 
     // ... and create them
     for (int i = 0; i < ICON_MAX; i++) {
