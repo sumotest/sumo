@@ -49,8 +49,8 @@ FXIMPLEMENT_ABSTRACT(GNEChange_Crossing, GNEChange, NULL, 0)
 
 
 // Constructor for creating an crossing
-GNEChange_Crossing::GNEChange_Crossing(GNENet* net, GNEJunction* junctionParent, const std::vector<NBEdge*> &edges, SUMOReal width, bool priority, bool forward):
-    GNEChange(net, forward),
+GNEChange_Crossing::GNEChange_Crossing(GNEJunction* junctionParent, const std::vector<NBEdge*> &edges, SUMOReal width, bool priority, bool forward):
+    GNEChange(junctionParent->getNet(), forward),
     myJunctionParent(junctionParent),
     myEdges(edges),
     myWidth(width),
@@ -68,13 +68,13 @@ void GNEChange_Crossing::undo() {
         myJunctionParent->getNBNode()->removeCrossing(myEdges);
         myJunctionParent->rebuildCrossings(false);
         // Update view
-        myJunctionParent->getNet()->getViewNet()->update();
+        myNet->getViewNet()->update();
     } else {
         // add crossing of NBNode an rebuild crossing of GNEJunction
         myJunctionParent->getNBNode()->addCrossing(myEdges, myWidth, myPriority);
         myJunctionParent->rebuildCrossings(false);
         // Update view
-        myJunctionParent->getNet()->getViewNet()->update();
+        myNet->getViewNet()->update();
     }
 }
 
@@ -85,18 +85,19 @@ void GNEChange_Crossing::redo() {
         myJunctionParent->getNBNode()->addCrossing(myEdges, myWidth, myPriority);
         myJunctionParent->rebuildCrossings(false);
         // Update view
-        myJunctionParent->getNet()->getViewNet()->update();
+        myNet->getViewNet()->update();
     } else {
         // remove crossing of NBNode an rebuild crossing of GNEJunction
         myJunctionParent->getNBNode()->removeCrossing(myEdges);
         myJunctionParent->rebuildCrossings(false);
         // Update view
-        myJunctionParent->getNet()->getViewNet()->update();
+        myNet->getViewNet()->update();
     }
 }
 
 
-FXString GNEChange_Crossing::undoName() const {
+FXString 
+GNEChange_Crossing::undoName() const {
     if (myForward) {
         return ("Undo create crossing");
     } else {
@@ -105,7 +106,8 @@ FXString GNEChange_Crossing::undoName() const {
 }
 
 
-FXString GNEChange_Crossing::redoName() const {
+FXString 
+GNEChange_Crossing::redoName() const {
     if (myForward) {
         return ("Redo create crossing");
     } else {

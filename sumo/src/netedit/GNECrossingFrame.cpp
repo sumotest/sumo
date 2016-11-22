@@ -685,8 +685,7 @@ GNECrossingFrame::onCmdCreateCrossing(FXObject*, FXSelector, void*) {
     // First check that current parameters are valid
     if(myCrossingParameters->isCurrentParametersValid()) {
         // create new crossing
-        myViewNet->getUndoList()->add(new GNEChange_Crossing(myViewNet->getNet(), 
-                                                             myEdgeSelector->getCurrentJunction(), 
+        myViewNet->getUndoList()->add(new GNEChange_Crossing(myEdgeSelector->getCurrentJunction(), 
                                                              myCrossingParameters->getCrossingEdges(), 
                                                              myCrossingParameters->getCrossingWidth(), 
                                                              myCrossingParameters->getCrossingPriority(), 

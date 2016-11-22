@@ -56,14 +56,13 @@ class GNEChange_Crossing : public GNEChange {
 
 public:
     /**@brief Constructor for creating/deleting an crossing
-     * @param[in] net The net on which to apply changes
-     * @param[in] Junction Junction in which the crossing will be created/deleted
+     * @param[in] JunctionParent GNEJunction in which the crossing will be created/deleted
      * @param[in] edges vector of edges of crossing
      * @param[in] width value with the width of crossing
      * @param[in] priority boolean with the priority of crossing
      * @param[in] forward Whether to create/delete (true/false)
      */
-    GNEChange_Crossing(GNENet* net, GNEJunction* junctionParent, const std::vector<NBEdge*> &edges, SUMOReal width, bool priority, bool forward);
+    GNEChange_Crossing(GNEJunction* junctionParent, const std::vector<NBEdge*> &edges, SUMOReal width, bool priority, bool forward);
 
     /// @brief Destructor
     ~GNEChange_Crossing();

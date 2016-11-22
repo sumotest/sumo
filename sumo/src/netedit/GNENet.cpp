@@ -246,7 +246,7 @@ GNENet::createJunction(const Position& pos, GNEUndoList* undoList) {
     std::string id = myJunctionIDSupplier.getNext();
     NBNode* nbn = new NBNode(id, pos);
     GNEJunction* junction = new GNEJunction(*nbn, this);
-    undoList->add(new GNEChange_Junction(this, junction, true), true);
+    undoList->add(new GNEChange_Junction(junction, true), true);
     assert(myJunctions[id]);
     return junction;
 }
@@ -297,7 +297,7 @@ GNENet::createEdge(
         edge = new GNEEdge(*nbe, this, wasSplit);
     }
     undoList->p_begin("create edge");
-    undoList->add(new GNEChange_Edge(this, edge, true), true);
+    undoList->add(new GNEChange_Edge(edge, true), true);
     src->setLogicValid(false, undoList);
     dest->setLogicValid(false, undoList);
     requireRecompute();
@@ -322,7 +322,7 @@ GNENet::deleteJunction(GNEJunction* junction, GNEUndoList* undoList) {
 
     // remove any traffic lights from the traffic light container (avoids lots of warnings)
     junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_PRIORITY), undoList);
-    undoList->add(new GNEChange_Junction(this, junction, false), true);
+    undoList->add(new GNEChange_Junction(junction, false), true);
     if (gSelected.isSelected(GLO_JUNCTION, junction->getGlID())) {
         std::set<GUIGlID> deselected;
         deselected.insert(junction->getGlID());
@@ -343,7 +343,7 @@ GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     edge->getGNEJunctionDestiny()->setLogicValid(false, undoList);
 
     // Delete edge
-    undoList->add(new GNEChange_Edge(this, edge, false), true);
+    undoList->add(new GNEChange_Edge(edge, false), true);
 
     // If previously was selected
     if (gSelected.isSelected(GLO_EDGE, edge->getGlID())) {
