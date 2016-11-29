@@ -99,7 +99,7 @@ GNEJunction::updateGeometry() {
     }
     myMaxSize = MAX2(myBoundary.getWidth(), myBoundary.getHeight());
     // Update geometries of crossings
-    getNBNode()->buildCrossings();
+    getNBNode()->buildCrossingsAndWalkingAreas();
     for (std::vector<GNECrossing*>::const_iterator it = myCrossings.begin(); it != myCrossings.end(); it++) {
         (*it)->updateGeometry();
     }
