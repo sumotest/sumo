@@ -71,6 +71,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
     const NBNodeCont& nc = nb.getNodeCont();
     const NBEdgeCont& ec = nb.getEdgeCont();
     const bool origNames = oc.getBool("output.original-names");
+    const SUMOReal straightThresh = DEG2RAD(oc.getFloat("opendrive-output.straight-threshold"));
     // some internal mapping containers
     int nodeID = 1;
     int edgeID = nc.size() * 10; // distinct from node ids
@@ -144,7 +145,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
             // foot paths may contain sharp angles
             writeGeomLines(ls, device, elevationOSS);
         } else {
-            bool ok = writeGeomSmooth(ls, e->getSpeed(), device, elevationOSS);
+            bool ok = writeGeomSmooth(ls, e->getSpeed(), device, elevationOSS, straightThresh);
             if (!ok) {
                 WRITE_WARNING("Could not compute smooth shape for edge '" + e->getID() + "'.");
             }
@@ -231,7 +232,7 @@ NWWriter_OpenDrive::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
                 fallBackShape.push_back(endShape.front());
                 const bool turnaround = inEdge->isTurningDirectionAt(outEdge);
                 bool ok = true;
-                PositionVector init = NBNode::bezierControlPoints(begShape, endShape, turnaround, 25, 25, ok);
+                PositionVector init = NBNode::bezierControlPoints(begShape, endShape, turnaround, 25, 25, ok, 0, straightThresh);
                 if (init.size() == 0) {
                     length = fallBackShape.length2D();
                     // problem with turnarounds is known, method currently returns 'ok' (#2539)
@@ -544,14 +545,13 @@ NWWriter_OpenDrive::writeGeomPP3(
 
 
 bool
-NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed, OutputDevice& device, OutputDevice& elevationDevice) {
+NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed, OutputDevice& device, OutputDevice& elevationDevice, SUMOReal straightThresh) {
 #ifdef DEBUG_SMOOTH_GEOM
     if (DEBUGCOND) {
         std::cout << "writeGeomSmooth\n  n=" << shape.size() << " shape=" << toString(shape) << "\n";
     }
 #endif
     bool ok = true;
-    const SUMOReal angleThresh = DEG2RAD(5); // changes below thresh are considered to be straight (make configurable)
     const SUMOReal longThresh = speed; //  16.0; // make user-configurable (should match the sampling rate of the source data)
     const SUMOReal curveCutout = longThresh / 2; // 8.0; // make user-configurable (related to the maximum turning rate)
     // the length of the segment that is added for cutting a corner can be bounded by 2*curveCutout (prevent the segment to be classified as 'long')
@@ -576,7 +576,7 @@ NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed,
             std::cout << "   j=" << j << " dAngle=" << RAD2DEG(dAngle) << " length1=" << length1 << " length2=" << length2 << "\n";
         }
 #endif
-        if (dAngle > angleThresh
+        if (dAngle > straightThresh
                 && (length1 > longThresh || j == 1)
                 && (length2 > longThresh || j == (int)shape.size() - 2)) {
             shape2.insertAtClosest(shape.positionAtOffset2D(offset + length1 - MIN2(length1 - POSITION_EPS, curveCutout)));
@@ -592,7 +592,7 @@ NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed,
     }
 #endif
 
-    if (maxAngleDiff < angleThresh) {
+    if (maxAngleDiff < straightThresh) {
         writeGeomLines(shape2, device, elevationDevice, 0);
 #ifdef DEBUG_SMOOTH_GEOM
         if (DEBUGCOND) {
@@ -622,8 +622,8 @@ NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed,
             // find control points
             PositionVector begShape;
             PositionVector endShape;
-            if (j == 0) {
-                // keep the angle of the first segment but end at the front of the shape
+            if (j == 0 || j == numPoints - 2) {
+                // keep the angle of the first/last segment but end at the front of the shape
                 begShape = line;
                 begShape.add(p0 - begShape.back());
             } else if (j == 1 || p0.distanceTo2D(shape2[j - 1]) > longThresh) {
@@ -636,8 +636,9 @@ NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed,
                 begShape.push_back(p1);
                 begShape.add(p0 - begShape.back());
             }
-            if (j == numPoints - 2) {
-                // keep the angle of the last segment but start at the end of the shape
+
+            if (j == 0 || j == numPoints - 2) {
+                // keep the angle of the first/last segment but start at the end of the shape
                 endShape = line;
                 endShape.add(p1 - endShape.front());
             } else if (j == numPoints - 3 || p1.distanceTo2D(shape2[j + 2]) > longThresh) {
@@ -650,13 +651,14 @@ NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed,
                 endShape.push_back(shape2[j + 2]);
                 endShape.add(p1 - endShape.front());
             }
-            PositionVector init = NBNode::bezierControlPoints(begShape, endShape, false, 25, 25, ok);
+            const SUMOReal extrapolateLength = MIN2((SUMOReal)25, lineLength / 4);
+            PositionVector init = NBNode::bezierControlPoints(begShape, endShape, false, extrapolateLength, extrapolateLength, ok, 0, straightThresh);
             if (init.size() == 0) {
                 // could not compute control points, write line
                 offset = writeGeomLines(line, device, elevationDevice, offset);
 #ifdef DEBUG_SMOOTH_GEOM
                 if (DEBUGCOND) {
-                    std::cout << "      writeLine lineLength=" << lineLength << " begShape=" << toString(begShape) << " endShape=" << toString(endShape) << " init=" << toString(init) << "\n";
+                    std::cout << "      writeLine lineLength=" << lineLength << " begShape" << j << "=" << toString(begShape) << " endShape" << j << "=" << toString(endShape) << " init" << j << "=" << toString(init) << "\n";
                 }
 #endif
             } else {
@@ -665,7 +667,7 @@ NWWriter_OpenDrive::writeGeomSmooth(const PositionVector& shape, SUMOReal speed,
                 offset = writeGeomPP3(device, elevationDevice, init, curveLength, offset);
 #ifdef DEBUG_SMOOTH_GEOM
                 if (DEBUGCOND) {
-                    std::cout << "      writeCurve lineLength=" << lineLength << " curveLength=" << curveLength << " begShape=" << toString(begShape) << " endShape=" << toString(endShape) << " init=" << toString(init) << "\n";
+                    std::cout << "      writeCurve lineLength=" << lineLength << " curveLength=" << curveLength << " begShape" << j << "=" << toString(begShape) << " endShape" << j << "=" << toString(endShape) << " init" << j << "=" << toString(init) << "\n";
                 }
 #endif
             }
