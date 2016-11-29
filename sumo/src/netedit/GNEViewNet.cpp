@@ -651,6 +651,9 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 } else if (pointed_connection) {
                     myNet->deleteConnection(pointed_connection, myUndoList);
                     update();
+                } else if (pointed_crossing) {
+                    myNet->deleteCrossing(pointed_crossing, myUndoList);
+                    update();
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }

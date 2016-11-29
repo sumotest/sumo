@@ -65,6 +65,7 @@
 #include "GNEEdge.h"
 #include "GNELane.h"
 #include "GNEConnection.h"
+#include "GNECrossing.h"
 #include "GNEUndoList.h"
 #include "GNEChange_Attribute.h"
 #include "GNEChange_Junction.h"
@@ -73,6 +74,7 @@
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
 #include "GNEChange_Additional.h"
+#include "GNEChange_Crossing.h"
 #include "GNEAdditional.h"
 #include "GNEAdditionalSet.h"
 #include "GNEStoppingPlace.h"
@@ -402,6 +404,20 @@ GNENet::deleteConnection(GNEConnection* connection, GNEUndoList* undoList) {
     undoList->p_end();
 }
 
+
+void 
+GNENet::deleteCrossing(GNECrossing* crossing, GNEUndoList* undoList) {
+    undoList->p_begin("delete crossing");
+    undoList->add(new GNEChange_Crossing(crossing->getParentJunction(), crossing->getNBCrossing().edges, 
+                                         crossing->getNBCrossing().width, crossing->getNBCrossing().priority, false), true);
+    if (gSelected.isSelected(GLO_CROSSING, crossing->getGlID())) {
+        std::set<GUIGlID> deselected;
+        deselected.insert(crossing->getGlID());
+        undoList->add(new GNEChange_Selection(this, std::set<GUIGlID>(), deselected, true), true);
+    }
+    requireRecompute();
+    undoList->p_end();
+}
 
 void
 GNENet::duplicateLane(GNELane* lane, GNEUndoList* undoList) {

@@ -118,7 +118,7 @@ GNEJunction::rebuildCrossings(bool deleteOnly) {
     if (!deleteOnly) {
         const std::vector<NBNode::Crossing>& crossings = myNBNode.getCrossings();
         for (std::vector<NBNode::Crossing>::const_iterator it = crossings.begin(); it != crossings.end(); it++) {
-            myCrossings.push_back(new GNECrossing(*this, (*it).id));
+            myCrossings.push_back(new GNECrossing(this, (*it).id));
             myCrossings.back()->incRef();
         }
     }
