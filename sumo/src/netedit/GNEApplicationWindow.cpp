@@ -305,6 +305,7 @@ GNEApplicationWindow::~GNEApplicationWindow() {
     // (http://www.fox-toolkit.net/faq#TOC-What-happens-when-the-application-s)
     delete myFileMenu;
     delete myEditMenu;
+    delete myModesMenu;
     delete myProcessingMenu;
     delete myWindowsMenu;
     delete myHelpMenu;
@@ -427,7 +428,6 @@ GNEApplicationWindow::fillMenuBar() {
                       "&Redo\tCtrl+Y\tRedo the last change.",
                       GUIIconSubSys::getIcon(ICON_REDO), myUndoList, FXUndoList::ID_REDO);
 
-
     /*
     new FXMenuSeparator(myEditMenu);
     new FXMenuCommand(myEditMenu,
@@ -450,6 +450,36 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCommand(myProcessingMenu,
                       "&Options\t\tConfigure Processing Options.",
                       0, this, MID_GNE_OPTIONS);
+    // Build modes menu
+    myModesMenu = new FXMenuPane(this);
+    new FXMenuTitle(myMenuBar, "&Modes", 0, myModesMenu);
+    new FXMenuCommand(myModesMenu, 
+                      "&Edge mode\tE\tCreate junction and edges.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODECREATEEDGE), this, MID_GNE_MODE_CREATE_EDGE);
+    new FXMenuCommand(myModesMenu, 
+                      "&Move mode\tM\tMove elements.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODEMOVE), this, MID_GNE_MODE_MOVE);
+    new FXMenuCommand(myModesMenu, 
+                      "&Delete mode\tD\tDelete elements.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODEDELETE), this, MID_GNE_MODE_DELETE);
+    new FXMenuCommand(myModesMenu, 
+                      "&Inspect mode\tI\tInspect elements and change their attributes.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODEINSPECT), this, MID_GNE_MODE_INSPECT);
+    new FXMenuCommand(myModesMenu, 
+                      "&Select mode\tS\tSelect elements.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODESELECT), this, MID_GNE_MODE_SELECT);
+    new FXMenuCommand(myModesMenu,
+                      "&Connection mode\tC\tEdit connections between lanes.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODECONNECTION), this, MID_GNE_MODE_CONNECT);
+    new FXMenuCommand(myModesMenu,
+                      "&Traffic light mode\tT\tEdit traffic lights over junctions.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODETLS), this, MID_GNE_MODE_TLS);
+    new FXMenuCommand(myModesMenu,
+                      "&Additional mode\tA\tCreate additional elements.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODEADDITIONAL), this, MID_GNE_MODE_ADDITIONAL);
+    new FXMenuCommand(myModesMenu,
+                      "C&rossing mode\tR\tCreate crossings between edges.", 
+                      GUIIconSubSys::getIcon(ICON_GNEMODECROSSING), this, MID_GNE_MODE_CROSSING);
 
     // build settings menu
     /*
@@ -458,7 +488,7 @@ GNEApplicationWindow::fillMenuBar() {
     new FXMenuCheck(mySettingsMenu,
                     "Gaming Mode\t\tToggle gaming mode on/off.",
                     this,MID_GAMING);
-                    */
+    */
     // build Locate menu
     myLocatorMenu = new FXMenuPane(this);
     new FXMenuTitle(myMenuBar, "&Locate", NULL, myLocatorMenu);
