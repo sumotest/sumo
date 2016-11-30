@@ -154,7 +154,7 @@ GNEAdditionalFrame::GNEAdditionalFrame(FXHorizontalFrame *horizontalFrameParent,
     myLanesSelector = new GNEAdditionalFrame::lanesSelector(myContentFrame, myViewNet);
 
     // Add options to myAdditionalMatchBox
-    const std::vector<SumoXMLTag>& additionalTags = GNEAttributeCarrier::allowedAdditionalTags();
+    const std::vector<SumoXMLTag>& additionalTags = GNEAttributeCarrier::allowedTags(false);
     for (std::vector<SumoXMLTag>::const_iterator i = additionalTags.begin(); i != additionalTags.end(); i++) {
         myAdditionalMatchBox->appendItem(toString(*i).c_str());
     }
@@ -396,7 +396,7 @@ GNEAdditionalFrame::removeAdditional(GNEAdditional* additional) {
 long
 GNEAdditionalFrame::onCmdSelectAdditional(FXObject*, FXSelector, void*) {
     // set myActualAdditionalType
-    const std::vector<SumoXMLTag>& additionalTags = GNEAttributeCarrier::allowedAdditionalTags();
+    const std::vector<SumoXMLTag>& additionalTags = GNEAttributeCarrier::allowedTags(false);
     for (std::vector<SumoXMLTag>::const_iterator i = additionalTags.begin(); i != additionalTags.end(); i++) {
         if (toString(*i) == myAdditionalMatchBox->getText().text()) {
             setParametersOfAdditional(*i);
