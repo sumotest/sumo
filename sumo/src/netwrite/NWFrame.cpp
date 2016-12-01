@@ -104,6 +104,10 @@ NWFrame::fillOptions(bool forNetgen) {
 
     oc.doRegister("street-sign-output", new Option_FileName());
     oc.addDescription("street-sign-output", "Output", "Writes street signs as POIs to FILE");
+
+    // register opendrive options
+    oc.doRegister("opendrive-output.straight-threshold", new Option_Float(0.00000001)); // matching the angular output precision in NWWriter_OpenDrive
+    oc.addDescription("opendrive-output.straight-threshold", "Output", "Builds parameterized curves whenever the angular change  between straight segments exceeds FLOAT degrees");
 }
 
 

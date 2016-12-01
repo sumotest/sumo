@@ -70,6 +70,12 @@ public:
     /// @brief get the navteq road class
     static int getRoadClass(NBEdge* edge);
 
+    /// @brief get the navteq brunnel type
+    static int getBrunnelType(NBEdge* edge);
+
+    /// @brief get the form of way
+    static int getFormOfWay(NBEdge* edge);
+
 private:
     /** @brief Writes the nodes_unsplitted file
      * @param[in] oc The options to use

@@ -108,6 +108,9 @@
         <!-- Writes street signs as POIs to FILE -->
         <street-sign-output value="" type="FILE"/>
 
+        <!-- Builds parameterized curves whenever the angular change  between straight segments exceeds FLOAT degrees -->
+        <opendrive-output.straight-threshold value="1e-08" type="FLOAT"/>
+
     </output>
 
     <projection>
@@ -300,6 +303,9 @@
         <!-- vmax is parsed as given in km/h (some) -->
         <speed-in-kmh value="false" type="BOOL"/>
 
+        <!-- Use YYYY-MM-DD date to determine the readiness of features under construction -->
+        <construction-date value="" type="STR"/>
+
         <!-- If edge shapes do not end at the node positions, extend them -->
         <plain.extend-edge-shape value="false" synonymes="xml.keep-shape" type="BOOL"/>
 
@@ -374,6 +380,9 @@
 
         <!-- Reconstruct (relative) elevation based on layer data. Each layer is raised by FLOAT m -->
         <osm.layer-elevation value="0" type="FLOAT"/>
+
+        <!-- Whether one-way roads should be spread to the side instead of centered -->
+        <osm.oneway-spread-right value="false" type="BOOL"/>
 
         <!-- Imports all lane types -->
         <opendrive.import-all-lanes value="false" type="BOOL"/>

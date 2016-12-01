@@ -158,6 +158,8 @@ NIFrame::fillOptions() {
     oc.doRegister("speed-in-kmh", new Option_Bool(false));
     oc.addDescription("speed-in-kmh", "Processing", "vmax is parsed as given in km/h (some)");
 
+    oc.doRegister("construction-date", new Option_String());
+    oc.addDescription("construction-date", "Processing", "Use YYYY-MM-DD date to determine the readiness of features under construction");
 
 
     // register xml options
@@ -257,6 +259,9 @@ NIFrame::fillOptions() {
 
     oc.doRegister("osm.layer-elevation", new Option_Float(0));
     oc.addDescription("osm.layer-elevation", "Processing", "Reconstruct (relative) elevation based on layer data. Each layer is raised by FLOAT m");
+
+    oc.doRegister("osm.oneway-spread-right", new Option_Bool(false));
+    oc.addDescription("osm.oneway-spread-right", "Processing", "Whether one-way roads should be spread to the side instead of centered");
 
     // register opendrive options
     oc.doRegister("opendrive.import-all-lanes", new Option_Bool(false));
