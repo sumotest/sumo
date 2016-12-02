@@ -68,20 +68,17 @@ public:
         /// @brief destructor
         ~edgesSelector();
 
+        /// @brief mark or dismark edge
+        void markEdge(GNEEdge *edge);
+
         /// @brief get IDs of selected edges
         std::vector<std::string> getEdgeIDSSelected() const;
 
         /// @brief get vector of GNEEdges selected
-        std::vector<GNEEdge*> getGNEEdgesSelected() const;
+        const std::vector<GNEEdge*> &getGNEEdgesSelected() const;
 
         /// @brief get current junction
         GNEJunction* getCurrentJunction() const;
-
-        /// @brief clear list of edges
-        void clearList();
-
-        /// @brief mark as selected a edge of the list
-        bool markEdge(const std::string &edgeID);
 
         /// @brief enable edgeSelector 
         void enableEdgeSelector(GNEJunction *currentJunction);
@@ -89,34 +86,16 @@ public:
         /// @brief disable edgeSelector 
         void disableEdgeSelector();
 
-        /// @brief Update use selectedEdges
-        void updateUseSelectedEdges();
-
-        /// @brief get status of checkBox UseSelectedEdges
-        bool isUseSelectedEdgesEnable() const;
-
         /// @name FOX-callbacks
         /// @{
-        /// @brief called when user trigger checkBox of useSelectedEdges
-        long onCmdShowOnlySelectedEdges(FXObject*, FXSelector, void*);
-
-        /// @brief called when user type in search box
-        long onCmdTypeInSearchBox(FXObject*, FXSelector, void*);
-
-        /// @brief called when user select a edge of the list
-        long onCmdSelectEdge(FXObject*, FXSelector, void*);
+        /// @brief called when useSelectedEdges button edge is pressed
+        long onCmdUseSelectedEdges(FXObject*, FXSelector, void*);
 
         /// @brief called when clear selection button is pressed
         long onCmdClearSelection(FXObject*, FXSelector, void*);
 
         /// @brief called when invert selection button is pressed
         long onCmdInvertSelection(FXObject*, FXSelector, void*);
-
-        /// @brief called when user click over TextField for edge search
-        long onCmdClickEdgeSearchFocusIn(FXObject*, FXSelector, void*);
-
-        /// @brief called when user leave the TexField for edge search
-        long onCmdClickEdgeSearchFocusOut(FXObject*, FXSelector, void*);
 
         /// @brief called when help button is pressed
         long onCmdHelp(FXObject*, FXSelector, void*);
@@ -125,22 +104,13 @@ public:
     protected:
         /// @brief FOX needs this
         edgesSelector() {}
-        
-        /// @brief filter list of edges with the search criterium
-        void filterListOfEdges(std::string search = "");
 
     private:
         /// @brief pointer to GNECrossingFrame parent
         GNECrossingFrame *myCrossingFrameParent;
 
         /// @brief CheckBox for selected edges
-        FXMenuCheck* myShowOnlySelectedEdges;
-
-        /// @brief List of edgesSelector
-        FXList* myList;
-
-        /// @brief text field for search edge IDs
-        FXTextField* myEdgesSearch;
+        FXButton* myUseSelectedEdges;
 
         /// @brief button for help
         FXButton* helpEdges;
@@ -168,7 +138,7 @@ public:
 
     public:
         /// @brief constructor
-        crossingParameters(FXComposite* parent, GNECrossingFrame::edgesSelector *es);
+        crossingParameters(GNECrossingFrame *crossingFrameParent, GNECrossingFrame::edgesSelector *es);
 
         /// @brief destructor
         ~crossingParameters();
@@ -214,6 +184,9 @@ public:
         /// @brief pointer to edge selector
         GNECrossingFrame::edgesSelector *myEdgeSelector;
 
+        /// @brief pointer to GNECrossingFrame parent
+        GNECrossingFrame *myCrossingFrameParent;
+
         /// @brief FXMatrix for place attributes
         FXMatrix *myAttributesMatrix;
 
@@ -236,7 +209,7 @@ public:
         FXTextField *myCrossingWidth;
 
         /// @brief button for help
-        FXButton* myHelpAdditional;
+        FXButton* myHelpCrossingAttribute;
 
         /// @brief flag to check if current parameters are valid
         bool myCurrentParametersValid;
@@ -251,7 +224,6 @@ public:
 
     /// @brief Destructor
     ~GNECrossingFrame();
-
 
     /**@brief add Crossing element
      * @param[in] netElement clicked netElement. if user dind't clicked over a GNENetElement in view, netElement will be NULL
@@ -276,12 +248,12 @@ public:
     /// @brief get list of selecte id's in string format
     static std::string getIdsSelected(const FXList* list);
 
+    /// @brief get Crossing parameters
+    GNECrossingFrame::crossingParameters *getCrossingParameters() const;
+
 protected:
     /// @brief FOX needs this
     GNECrossingFrame() {}
-
-    // get Crossing parameters
-    GNECrossingFrame::crossingParameters *getCrossingParameters() const;
 
 private:
     /// @brief edge selector

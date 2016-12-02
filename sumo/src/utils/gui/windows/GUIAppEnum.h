@@ -516,45 +516,47 @@ enum {
     MID_GNE_SHOW_BUBBLES,
     /// @brief attribute edited 
     MID_GNE_SET_ATTRIBUTE,
-    /// @brief netEdit attribute blocking 
+    /// @brief attribute blocking 
     MID_GNE_SET_BLOCKING,
-    /// @brief netEdit show connection 
+    /// @brief show connection 
     MID_GNE_SHOW_CONNECTION,
-    /// @brief netEdit inspect connection 
+    /// @brief inspect connection 
     MID_GNE_INSPECT_CONNECTION,
-    /// @brief netEdit go back to the previous element 
+    /// @brief go back to the previous element 
     MID_GNE_INSPECT_GOBACK,
-    /// @brief netEdit add row 
+    /// @brief add row 
     MID_GNE_ADDROW,
-    /// @brief netEdit remove row 
+    /// @brief remove row 
     MID_GNE_REMOVEROW,
-    /// @brief netEdit add set 
+    /// @brief add set 
     MID_GNE_ADDSET,
-    /// @brief netEdit remove set 
+    /// @brief remove set 
     MID_GNE_REMOVESET,
-    /// @brief netEdit search additionalSet 
+    /// @brief search additionalSet 
     MID_GNE_SEARCHADDITIONALSET,
-    /// @brief netEdit select additionalSet 
+    /// @brief select additionalSet 
     MID_GNE_SELECTADDITIONALSET,
-    /// @brief netEdit search edge 
+    /// @brief search edge 
     MID_GNE_SEARCHEDGE,
-    /// @brief netEdit use selected edge 
+    /// @brief show only selected edge in a list
     MID_GNE_SHOWONLYSELECTEDEDGES,
-    /// @brief netEdit select edge 
+    /// @brief use selected edges only
+    MID_GNE_USEONLYSELECTEDEDGES,
+    /// @brief select edge 
     MID_GNE_SELECTEDGE,
-    /// @brief netEdit clear selection of edges 
+    /// @brief clear selection of edges 
     MID_GNE_CLEAREDGESELECTION,
-    /// @brief netEdit invert selection of edges 
+    /// @brief invert selection of edges 
     MID_GNE_INVERTEDGESELECTION,
-    /// @brief netEdit search lane 
+    /// @brief search lane 
     MID_GNE_SEARCHLANE,
-    /// @brief netEdit use selected lanes 
+    /// @brief use selected lanes 
     MID_GNE_USESELECTEDLANES,
-    /// @brief netEdit select lane 
+    /// @brief select lane 
     MID_GNE_SELECTLANE,
-    /// @brief netEdit clear selection of lanes 
+    /// @brief clear selection of lanes 
     MID_GNE_CLEARLANESELECTION,
-    /// @brief netEdit invert selection of lanes 
+    /// @brief invert selection of lanes 
     MID_GNE_INVERTLANESELECTION,
     /// @brief open edit dialog 
     MID_GNE_OPEN_ATTRIBUTE_EDITOR,
