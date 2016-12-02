@@ -545,7 +545,7 @@ GNEAdditionalFrame::setEndPosition(SUMOReal laneLenght, SUMOReal positionOfTheMo
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::singleAdditionalParameter::singleAdditionalParameter(FXComposite* parent) :
-    FXMatrix(parent, 3, GNEDesignMatrix),
+    FXMatrix(parent, 3, GNEDesignMatrixAttributes),
     myAdditionalTag(SUMO_TAG_NOTHING),
     myAdditionalAttr(SUMO_ATTR_NOTHING),
     myCurrentValueValid(true) {
@@ -718,7 +718,7 @@ GNEAdditionalFrame::singleAdditionalParameter::onCmdSetBooleanAttribute(FXObject
 // ---------------------------------------------------------------------------
 
 GNEAdditionalFrame::singleAdditionalParameterList::singleAdditionalParameterList(FXComposite* parent) :
-    FXMatrix(parent, 2, GNEDesignMatrix),
+    FXMatrix(parent, 2, GNEDesignMatrixAttributes),
     myAdditionalTag(SUMO_TAG_NOTHING),
     myAdditionalAttr(SUMO_ATTR_NOTHING),
     numberOfVisibleTextfields(1),
@@ -732,9 +732,9 @@ GNEAdditionalFrame::singleAdditionalParameterList::singleAdditionalParameterList
     myLabels.push_back(new FXLabel(this, "Rows", 0, GNEDesignLabelAttribute, 0, 0, 60, 0));
     FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
     // Create add button
-    add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW, GNEDesignButton, 0, 0, 20, 20);
+    add = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_ADD), this, MID_GNE_ADDROW, GNEDesignButtonAttribute, 0, 0, 20, 20);
     // Create delete buttons
-    remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW, GNEDesignButton, 0, 0, 20, 20);
+    remove = new FXButton(buttonsFrame, "", GUIIconSubSys::getIcon(ICON_REMOVE), this, MID_GNE_REMOVEROW, GNEDesignButtonAttribute, 0, 0, 20, 20);
     // Hide all para meters
     hideParameter();
 }
@@ -880,7 +880,7 @@ GNEAdditionalFrame::additionalParameters::additionalParameters(FXComposite* pare
     }
 
     // Create help button
-    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    helpAdditional = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonHelp);
 }
 
 
@@ -1120,7 +1120,7 @@ GNEAdditionalFrame::editorParameters::editorParameters(FXComposite* parent) :
     myCheckBlock = new FXMenuCheck(this, "Block movement", this, MID_GNE_SET_BLOCKING, GNEDesignCheckButton);
 
     // Create help button
-    helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    helpReferencePoint = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonHelp);
 
     // Add options to myReferencePointMatchBox
     myReferencePointMatchBox->appendItem("reference left");
@@ -1278,7 +1278,7 @@ GNEAdditionalFrame::additionalSetsSelector::additionalSetsSelector(FXComposite* 
     myList = new FXList(this, this, MID_GNE_SELECTADDITIONALSET, GNEDesignList, 0, 0, 0, 100);
 
     // Create help button
-    helpAdditionalSet = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    helpAdditionalSet = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonHelp);
 
     // Hide List
     hideList();
@@ -1357,13 +1357,13 @@ GNEAdditionalFrame::edgesSelector::edgesSelector(FXComposite* parent, GNEViewNet
     FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
-    myClearEdgesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonLittle);
+    myClearEdgesSelection = new FXButton(buttonsFrame, "Clear", 0, this, MID_GNE_CLEAREDGESELECTION, GNEDesignButtonHelp);
 
     // Create button for invert selection
-    myInvertEdgesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButtonLittle);
+    myInvertEdgesSelection = new FXButton(buttonsFrame, "Invert", 0, this, MID_GNE_INVERTEDGESELECTION, GNEDesignButtonHelp);
 
     // Create help button
-    helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    helpEdges = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonHelp);
 
     // Hide List
     hideList();
@@ -1518,13 +1518,13 @@ GNEAdditionalFrame::lanesSelector::lanesSelector(FXComposite* parent, GNEViewNet
     FXHorizontalFrame* buttonsFrame = new FXHorizontalFrame(this, GNEDesignHorizontalFrame);
 
     // Create button for clear selection
-    clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION, GNEDesignButtonLittle);
+    clearLanesSelection = new FXButton(buttonsFrame, "clear", 0, this, MID_GNE_CLEARLANESELECTION, GNEDesignButtonHelp);
 
     // Create button for invert selection
-    invertLanesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTLANESELECTION, GNEDesignButtonLittle);
+    invertLanesSelection = new FXButton(buttonsFrame, "invert", 0, this, MID_GNE_INVERTLANESELECTION, GNEDesignButtonHelp);
 
     // Create help button
-    helpLanes = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonLittle);
+    helpLanes = new FXButton(this, "Help", 0, this, MID_HELP, GNEDesignButtonHelp);
 
     // Hide List
     hideList();
