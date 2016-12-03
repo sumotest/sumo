@@ -140,6 +140,11 @@
 #include "GNEModeSelect.xpm"
 #include "GNEModeTrafficLight.xpm"
 
+#include "computejunctions.xpm"
+#include "cleanjunctions.xpm"
+#include "joinjunctions.xpm"
+#include "options.xpm"
+
 
 static const char* empty_xpm[] = {
     "    1    1        1            1",
@@ -272,6 +277,11 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
     myIcons[ICON_GNEMODEMOVE] = new FXXPMIcon(a, gnemodemove_xpm);
     myIcons[ICON_GNEMODESELECT] = new FXXPMIcon(a, gnemodeselect_xpm);
     myIcons[ICON_GNEMODETLS] = new FXXPMIcon(a, gnemodetrafficlight_xpm);
+
+    myIcons[ICON_CLEANJUNCTIONS] = new FXXPMIcon(a, cleanjunctions_xpm);
+    myIcons[ICON_COMPUTEJUNCTIONS] = new FXXPMIcon(a, computejunctions_xpm);
+    myIcons[ICON_JOINJUNCTIONS] = new FXXPMIcon(a, joinjunctions_xpm);
+    myIcons[ICON_OPTIONS] = new FXXPMIcon(a, options_xpm);
 
     // ... and create them
     for (int i = 0; i < ICON_MAX; i++) {

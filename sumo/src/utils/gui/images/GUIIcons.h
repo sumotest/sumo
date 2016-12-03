@@ -206,6 +206,14 @@ enum GUIIcon {
     ICON_GNEMODETLS,
     /// @}
 
+    /// @name netedit processing icons
+    /// @{
+    ICON_CLEANJUNCTIONS,
+    ICON_COMPUTEJUNCTIONS,
+    ICON_JOINJUNCTIONS,
+    ICON_OPTIONS,
+    /// @}
+
     /// @brief max number of icons
     ICON_MAX
 };

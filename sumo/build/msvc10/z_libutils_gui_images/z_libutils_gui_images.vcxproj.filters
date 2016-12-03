@@ -420,5 +420,17 @@
     <None Include="..\..\..\src\utils\gui\images\yes.xpm">
       <Filter>Icons</Filter>
     </None>
+    <None Include="..\..\..\src\utils\gui\images\cleanjunctions.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="..\..\..\src\utils\gui\images\options.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="..\..\..\src\utils\gui\images\computejunctions.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="..\..\..\src\utils\gui\images\joinjunctions.xpm">
+      <Filter>Icons</Filter>
+    </None>
   </ItemGroup>
 </Project>
