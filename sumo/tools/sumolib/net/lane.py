@@ -97,6 +97,19 @@ class Lane:
         self._shape = shape
 
     def getShape(self, includeJunctions=False):
+        """Retruns the shape of the lane
+
+        This function return the shape of line, as defined in the net.xml 
+        file. The returned shape is a list containing numerical 
+        3-tuple representing the x,y,z corrds of the shape points 
+        - z defaults to zero. 
+
+        For includeJunction=True the returned list will contain 
+        additionally the coords (x,y,z) of the fromNode of the 
+        corresponding edge as first element and the coords (x,y,z) 
+        of the toNode as last element. 
+        """
+        
         if includeJunctions:
             if self._cachedShapeWithJunctions == None:
                 if self._edge.getFromNode()._coord != self._shape[0]:
