@@ -46,6 +46,11 @@ class Edge:
         self._tls = None
         self._name = name
 
+        self._isInternal = True if self._id[0] == ':' else False
+
+    def isInternal(self):
+        return self._isInternal
+        
     def getName(self):
         return self._name
 

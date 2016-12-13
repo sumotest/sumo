@@ -307,7 +307,44 @@ class Test_Shapes(unittest.TestCase):
         self.assertEqual(       result_to_point_wi,
                                 (1000, 100, 10)                  )
 
-                                
+
+
+    @unittest.skipIf(False, '')
+    def test_h004_lane_shape(self):
+        """Get an internal lane and its shape. 
+         
+        Shape should not be influenced by the incluldeJunc parameter
+
+        Use left cross of the H for this test.
+        """
+
+        edge_id  = ':left_center_3'
+        the_edge = self.sumo_net.getEdge(edge_id)
+        the_lane = the_edge.getLane(0) # ':left_center_3_0'
+
+        result_lane_shape_with_junc    = \
+            the_lane.getShape(includeJunctions=True)
+
+        result_lane_shape_without_junc    = \
+            the_lane.getShape(includeJunctions=False)
+
+        # there should be no difference between the two results
+        self.assertEqual(result_lane_shape_with_junc,
+                         result_lane_shape_without_junc)
+        
+        # there must be at least two shape points
+        self.assertTrue(len(result_lane_shape_without_junc) >= 2)
+
+        # each shape point should be somewhat close the the junction
+        # and on the same z-level
+        
+        for shape_point in result_lane_shape_without_junc:
+            self.assertTrue (995 < shape_point[0] < 1005)
+            self.assertTrue ( 90 < shape_point[1] <  110)
+            self.assertTrue (      shape_point[2] ==  10)
+
+        
+        
     @unittest.skipIf(True, '')
     def test_edge_001_edge_shape(self):
         """ 

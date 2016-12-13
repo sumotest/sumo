@@ -85,8 +85,13 @@ class Lane:
         self._outgoing = []
         self._params = {}
         self._allowed = get_allowed(allow, disallow)
+
+        self._isInternal = True if self._edge.isInternal() else False
         edge.addLane(self)
 
+    def isInternal(self):
+        return self._isInternal
+        
     def getSpeed(self):
         return self._speed
 
@@ -108,9 +113,15 @@ class Lane:
         additionally the coords (x,y,z) of the fromNode of the 
         corresponding edge as first element and the coords (x,y,z) 
         of the toNode as last element. 
+
+        For internal lanes, includeJunctions is ignored and the unaltered 
+        shape of the lane is returned.
         """
         
         if includeJunctions:
+            if self.isInternal():
+                return self._shape
+
             if self._cachedShapeWithJunctions == None:
                 if self._edge.getFromNode()._coord != self._shape[0]:
                     self._cachedShapeWithJunctions = [
@@ -121,6 +132,7 @@ class Lane:
                     self._cachedShapeWithJunctions += [
                         self._edge.getToNode()._coord]
             return self._cachedShapeWithJunctions
+        
         return self._shape
 
     def getBoundingBox(self, includeJunctions=True):
