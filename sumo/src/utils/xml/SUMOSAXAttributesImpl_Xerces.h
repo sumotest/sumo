@@ -286,6 +286,8 @@ public:
      */
     void serialize(std::ostream& os) const;
 
+    /// @brief return a new deep-copy attributes object
+    SUMOSAXAttributes* clone() const;
 
 private:
     /** @brief Returns Xerces-value of the named attribute

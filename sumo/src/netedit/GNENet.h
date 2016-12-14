@@ -76,6 +76,7 @@ class GNEDetectorE2;
 class GNEDetectorE3;
 class GNEDetectorE3EntryExit;
 class GNEConnection;
+class GNECrossing;
 
 // ===========================================================================
 // class definitions
@@ -197,11 +198,17 @@ public:
      */
     void deleteLane(GNELane* lane, GNEUndoList* undoList);
 
-    /**@brief remove connectino
+    /**@brief remove connection
      * @param[in] connection The connection to be removed
      * @param[in] undoList The undolist in which to mark changes
      */
     void deleteConnection(GNEConnection* connection, GNEUndoList* undoList);
+
+    /**@brief remove crossing
+     * @param[in] crossing The crossing to be removed
+     * @param[in] undoList The undolist in which to mark changes
+     */
+    void deleteCrossing(GNECrossing* crossing, GNEUndoList* undoList);
 
     /**@brief duplicates lane
      * @param[in] lane The lane to be duplicated
@@ -406,6 +413,12 @@ public:
     /// @brief inform the net about the need for recomputation
     void requireRecompute();
 
+    /// @brief check if net has crossings
+    bool netHasCrossings() const;
+
+    /// @brief change crossing flag
+    void setNetHasCrossings(bool value);
+
     /// @brief get pointer to the main App
     FXApp* getApp();
 
@@ -555,6 +568,9 @@ private:
 
     /// @brief marker for whether the z-boundary is initialized
     static const SUMOReal Z_INITIALIZED;
+
+    /// @brief flag to check if net has crossings
+    bool myNetHasCrossings;
 };
 
 #endif

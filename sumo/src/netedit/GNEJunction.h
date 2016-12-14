@@ -55,7 +55,7 @@ class GNEJunction : public GNENetElement {
 
     /// @brief Declare friend class
     friend class GNEChange_TLS;
-    friend class GNECrossingFrame;
+    friend class GNEChange_Crossing;
 
 public:
     /**@brief Constructor
@@ -120,14 +120,17 @@ public:
     /// @brief remove outgoing GNEEdge
     void removeOutgoingGNEEdge(GNEEdge *edge);
 
-    /// @brief Return all GNEEdges vinculated with this Junction
+    /// @brief Returns all GNEEdges vinculated with this Junction
     const std::vector<GNEEdge*> &getGNEEdges() const;
 
-    /// @brief Return incoming GNEEdges
+    /// @brief Returns incoming GNEEdges
     const std::vector<GNEEdge*> &getGNEIncomingEdges() const;
 
-    /// @brief Return incoming GNEEdges
+    /// @brief Returns incoming GNEEdges
     const std::vector<GNEEdge*> &getGNEOutgoingEdges() const;
+
+    /// @brief Returns GNECrossings
+    const std::vector<GNECrossing*> &getGNECrossings() const;
 
     /// @brief marks as first junction in createEdge-mode
     void markAsCreateEdgeSource();
@@ -252,7 +255,7 @@ private:
     bool myAmTLSSelected;
 
     /// @brief the built crossing objects
-    std::vector<GNECrossing*> myCrossings;
+    std::vector<GNECrossing*> myGNECrossings;
 
 private:
     /// @brief Invalidated copy constructor.

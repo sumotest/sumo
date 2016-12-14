@@ -65,6 +65,7 @@
 #include "GNEEdge.h"
 #include "GNELane.h"
 #include "GNEConnection.h"
+#include "GNECrossing.h"
 #include "GNEUndoList.h"
 #include "GNEChange_Attribute.h"
 #include "GNEChange_Junction.h"
@@ -73,6 +74,7 @@
 #include "GNEChange_Connection.h"
 #include "GNEChange_Selection.h"
 #include "GNEChange_Additional.h"
+#include "GNEChange_Crossing.h"
 #include "GNEAdditional.h"
 #include "GNEAdditionalSet.h"
 #include "GNEStoppingPlace.h"
@@ -105,7 +107,8 @@ GNENet::GNENet(NBNetBuilder* netBuilder) :
     myEdgeIDSupplier("gneE", netBuilder->getEdgeCont().getAllNames()),
     myJunctionIDSupplier("gneJ", netBuilder->getNodeCont().getAllNames()),
     myShapeContainer(myGrid),
-    myNeedRecompute(true) {
+    myNeedRecompute(true),
+    myNetHasCrossings(true) {
     GUIGlObjectStorage::gIDStorage.setNetObject(this);
 
     // init junctions
@@ -150,7 +153,6 @@ GNENet::GNENet(NBNetBuilder* netBuilder) :
     if (myZBoundary.ymin() != Z_INITIALIZED) {
         myZBoundary.add(0, 0);
     }
-
 }
 
 
@@ -192,8 +194,7 @@ GNENet::getBoundary() const {
 
 
 GUIGLObjectPopupMenu*
-GNENet::getPopUpMenu(GUIMainWindow& app,
-                     GUISUMOAbstractView& parent) {
+GNENet::getPopUpMenu(GUIMainWindow& app, GUISUMOAbstractView& parent) {
     GUIGLObjectPopupMenu* ret = new GUIGLObjectPopupMenu(app, parent, *this);
     buildPopupHeader(ret, app);
     buildCenterPopupEntry(ret);
@@ -242,7 +243,7 @@ GNENet::createJunction(const Position& pos, GNEUndoList* undoList) {
     std::string id = myJunctionIDSupplier.getNext();
     NBNode* nbn = new NBNode(id, pos);
     GNEJunction* junction = new GNEJunction(*nbn, this);
-    undoList->add(new GNEChange_Junction(this, junction, true), true);
+    undoList->add(new GNEChange_Junction(junction, true), true);
     assert(myJunctions[id]);
     return junction;
 }
@@ -293,7 +294,7 @@ GNENet::createEdge(
         edge = new GNEEdge(*nbe, this, wasSplit);
     }
     undoList->p_begin("create edge");
-    undoList->add(new GNEChange_Edge(this, edge, true), true);
+    undoList->add(new GNEChange_Edge(edge, true), true);
     src->setLogicValid(false, undoList);
     dest->setLogicValid(false, undoList);
     requireRecompute();
@@ -318,7 +319,7 @@ GNENet::deleteJunction(GNEJunction* junction, GNEUndoList* undoList) {
 
     // remove any traffic lights from the traffic light container (avoids lots of warnings)
     junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_PRIORITY), undoList);
-    undoList->add(new GNEChange_Junction(this, junction, false), true);
+    undoList->add(new GNEChange_Junction(junction, false), true);
     if (gSelected.isSelected(GLO_JUNCTION, junction->getGlID())) {
         std::set<GUIGlID> deselected;
         deselected.insert(junction->getGlID());
@@ -339,7 +340,7 @@ GNENet::deleteEdge(GNEEdge* edge, GNEUndoList* undoList) {
     edge->getGNEJunctionDestiny()->setLogicValid(false, undoList);
 
     // Delete edge
-    undoList->add(new GNEChange_Edge(this, edge, false), true);
+    undoList->add(new GNEChange_Edge(edge, false), true);
 
     // If previously was selected
     if (gSelected.isSelected(GLO_EDGE, edge->getGlID())) {
@@ -398,6 +399,20 @@ GNENet::deleteConnection(GNEConnection* connection, GNEUndoList* undoList) {
     undoList->p_end();
 }
 
+
+void 
+GNENet::deleteCrossing(GNECrossing* crossing, GNEUndoList* undoList) {
+    undoList->p_begin("delete crossing");
+    undoList->add(new GNEChange_Crossing(crossing->getParentJunction(), crossing->getNBCrossing().edges, 
+                                         crossing->getNBCrossing().width, crossing->getNBCrossing().priority, false), true);
+    if (gSelected.isSelected(GLO_CROSSING, crossing->getGlID())) {
+        std::set<GUIGlID> deselected;
+        deselected.insert(crossing->getGlID());
+        undoList->add(new GNEChange_Selection(this, std::set<GUIGlID>(), deselected, true), true);
+    }
+    requireRecompute();
+    undoList->p_end();
+}
 
 void
 GNENet::duplicateLane(GNELane* lane, GNEUndoList* undoList) {
@@ -642,7 +657,9 @@ GNENet::remapEdge(GNEEdge* oldEdge, GNEJunction* from, GNEJunction* to, GNEUndoL
 
 void
 GNENet::save(OptionsCont& oc) {
+    // compute and update network
     computeAndUpdate(oc);
+    // write network
     NWFrame::writeNetwork(oc, *myNetBuilder);
 }
 
@@ -952,6 +969,18 @@ GNENet::computeJunction(GNEJunction* junction) {
 void
 GNENet::requireRecompute() {
     myNeedRecompute = true;
+}
+
+
+bool 
+GNENet::netHasCrossings() const {
+    return myNetHasCrossings;
+}
+
+
+void 
+GNENet::setNetHasCrossings(bool value) {
+    myNetHasCrossings = value;
 }
 
 
@@ -1413,6 +1442,14 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
         it->second->updateGeometry();
         refreshElement(it->second);
     }
+    // Check if net own crossings
+    myNetHasCrossings = false;
+    for (std::map<std::string, NBNode*>::const_iterator i = myNetBuilder->getNodeCont().begin(); i != myNetBuilder->getNodeCont().end(); i++) {
+        if(i->second->getCrossings().size() > 0) {
+            myNetHasCrossings = true;
+        }
+    }
+
     myNeedRecompute = false;
 }
 

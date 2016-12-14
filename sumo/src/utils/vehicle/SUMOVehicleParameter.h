@@ -289,6 +289,8 @@ public:
      */
     SUMOVehicleParameter();
 
+    /// @brief Destructor
+    ~SUMOVehicleParameter();
 
     /** @brief Returns whether the given parameter was set
      * @param[in] what The parameter which one asks for
@@ -304,9 +306,10 @@ public:
      * @param[in, out] dev The device to write into
      * @param[in] oc The options to get defaults from
      * @param[in] tag The "root" tag to write (defaults to vehicle)
+     * @param[in] tag The typeID to write (defaults to member vtypeid)
      * @exception IOError not yet implemented
      */
-    void write(OutputDevice& dev, const OptionsCont& oc, const SumoXMLTag tag = SUMO_TAG_VEHICLE) const;
+    void write(OutputDevice& dev, const OptionsCont& oc, const SumoXMLTag tag = SUMO_TAG_VEHICLE, const std::string& typeID="") const;
 
 
     /** @brief Returns whether the defaults shall be used
@@ -524,7 +527,7 @@ public:
 
 
     /// @brief The vehicle's line (mainly for public transport)
-    std::string line;
+    mutable std::string line;
 
     /// @brief The vehicle's origin zone (district)
     std::string fromTaz;
@@ -581,7 +584,7 @@ public:
     mutable std::vector<Stop> stops;
 
     /// @brief List of the via-edges the vehicle must visit
-    std::vector<std::string> via;
+    mutable std::vector<std::string> via;
 
     /// @brief The static number of persons in the vehicle when it departs (not including boarding persons)
     int personNumber;

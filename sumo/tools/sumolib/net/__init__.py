@@ -383,12 +383,12 @@ class Net:
             y -= y_off
         return self.getGeoProj()(x, y, inverse=True)
 
-    def move(self, dx, dy):
+    def move(self, dx, dy, dz=0):
         for n in self._nodes:
-            n._coord = (n._coord[0] + dx, n._coord[1] + dy)
+            n._coord = (n._coord[0] + dx, n._coord[1] + dy, n._coord[2] + dz)
         for e in self._edges:
             for l in e._lanes:
-                l._shape = [(p[0] + dx, p[1] + dy) for p in l._shape]
+                l._shape = [(p[0] + dx, p[1] + dy, p[2] + dz) for p in l.getShape3D()]
             e.rebuildShape()
 
 
@@ -420,10 +420,10 @@ class NetReader(handler.ContentHandler):
                 nameStr = attrs['name'] if 'name' in attrs else ''
                 self._currentEdge = self._net.addEdge(attrs['id'],
                                                       attrs.get('from', None), attrs.get('to', None), prio, function, nameStr)
-                
-                shapeStr = attrs['shape'] if 'shape' in attrs else ''
-                self._currentEdge.setShape(convertShape(shapeStr))
-                    
+                if 'shape' in attrs:
+                    self._currentEdge.setRawShape(convertShape(attrs['shape']))
+                else:
+                    self._currentEdge.setRawShape([])
             else:
                 if function in ['crossing', 'walkingarea']:
                     self._net._crossings_and_walkingAreas.add(attrs['id'])
@@ -446,10 +446,9 @@ class NetReader(handler.ContentHandler):
                 intLanes = None
                 if self._withInternal:
                     intLanes = attrs["intLanes"].split(" ")
-                self._currentNode = self._net.addNode(attrs['id'], attrs['type'],
-                    (float(attrs['x']), float(attrs['y']), float(attrs['z'])) if 'z' in attrs else
-                    (float(attrs['x']), float(attrs['y']), 0.0),
-                    attrs['incLanes'].split(" "), intLanes)
+                self._currentNode = self._net.addNode(attrs['id'], attrs['type'], 
+                        tuple(map(float, [attrs['x'], attrs['y'], attrs['z'] if 'z' in attrs else '0'])), 
+                        attrs['incLanes'].split(" "), intLanes)
         if name == 'succ' and self._withConnections:  # deprecated
             if attrs['edge'][0] != ':':
                 self._currentEdge = self._net.getEdge(attrs['edge'])
@@ -540,8 +539,6 @@ class NetReader(handler.ContentHandler):
             self._currentShape = ""
             self._currentLane = None
         if name == 'edge':
-            if self._currentEdge and self._currentEdge._shape is None:
-                self._currentEdge.rebuildShape()
             self._currentEdge = None
         # 'row-logic' is deprecated!!!
         if name == 'ROWLogic' or name == 'row-logic':
@@ -550,40 +547,34 @@ class NetReader(handler.ContentHandler):
         if self._withPhases and (name == 'tlLogic' or name == 'tl-logic'):
             self._currentProgram = None
 
-
-            
-    def processShape(self, object, shapeString):
-        cshape = convertShape(shapeString)
-        object.setShape(cshape)
-    
     def getNet(self):
         return self._net
 
 
-def convertShape(shapeString):
-    """ Convert xml shape string into floats. 
-    
-    This method converts the 2d or 3d shape string from SUMO's xml file 
-    into list containing 3d float-tuples. Non existant z coords default 
-    to zero. If shapeString is empty, an empty list will be set as the 
-    objects shape.
-    """
-        
-    cshape = []
-    es = shapeString.rstrip().split(" ")
-    for e in es:
-        p = e.split(",")
-        if len(p) == 1 and p[0] == '':
-            continue
-        elif len(p) == 2:
-            cshape.append((float(p[0]), float(p[1]), 0.))
-        elif len(p) == 3:
-            cshape.append((float(p[0]), float(p[1]), float(p[2])))
-        else:
-            raise ValueError, 'shape must be eigther empty 2d or 3d %s' %es
-    return cshape
+def convertShape(shapeString): 
+    """ Convert xml shape string into floats.  
+     
+    This method converts the 2d or 3d shape string from SUMO's xml file  
+    into list containing 3d float-tuples. Non existant z coords default  
+    to zero. If shapeString is empty, an empty list will be set as the  
+    objects shape. 
+    """ 
+         
+    cshape = [] 
+    es = shapeString.rstrip().split(" ") 
+    for e in es: 
+        p = e.split(",") 
+        if len(p) == 1 and p[0] == '': 
+            continue 
+        elif len(p) == 2: 
+            cshape.append((float(p[0]), float(p[1]), 0.)) 
+        elif len(p) == 3: 
+            cshape.append((float(p[0]), float(p[1]), float(p[2]))) 
+        else: 
+            raise ValueError, 'shape must be eigther empty 2d or 3d %s' %es 
+    return cshape 
 
-    
+
 def readNet(filename, **others):
     netreader = NetReader(**others)
     try:

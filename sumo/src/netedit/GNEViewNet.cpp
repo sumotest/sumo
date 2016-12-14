@@ -50,6 +50,7 @@
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <utils/gui/div/GLHelper.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
+#include <utils/gui/div/GUIDesigns.h>
 #include <utils/xml/XMLSubSys.h>
 
 #include "GNEViewNet.h"
@@ -67,6 +68,7 @@
 #include "GNETLSEditorFrame.h"
 #include "GNEAdditionalFrame.h"
 #include "GNECrossingFrame.h"
+#include "GNEDeleteFrame.h"
 #include "GNEAdditionalHandler.h"
 #include "GNEPoly.h"
 #include "GNECrossing.h"
@@ -85,7 +87,15 @@
 // FOX callback mapping
 // ===========================================================================
 FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CHANGE,             GNEViewNet::onCmdChangeMode),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CREATE_EDGE,        GNEViewNet::onCmdSetModeCreateEdge),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_MOVE,               GNEViewNet::onCmdSetModeMove),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_DELETE,             GNEViewNet::onCmdSetModeDelete),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_INSPECT,            GNEViewNet::onCmdSetModeInspect),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_SELECT,             GNEViewNet::onCmdSetModeSelect),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CONNECT,            GNEViewNet::onCmdSetModeConnect),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_TLS,                GNEViewNet::onCmdSetModeTLS),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_ADDITIONAL,         GNEViewNet::onCmdSetModeAdditional),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_CROSSING,           GNEViewNet::onCmdSetModeCrossing),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE,              GNEViewNet::onCmdSplitEdge),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_SPLIT_EDGE_BIDI,         GNEViewNet::onCmdSplitEdgeBidi),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_REVERSE_EDGE,            GNEViewNet::onCmdReverseEdge),
@@ -135,7 +145,15 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
     myMoveSelection(false),
     myAmInRectSelect(false),
     myToolbar(toolBar),
-    myEditModesCombo(0),
+    myEditModeCreateEdge(0),
+    myEditModeMove(0),
+    myEditModeDelete(0),
+    myEditModeInspect(0),
+    myEditModeSelect(0),
+    myEditModeConnection(0),
+    myEditModeTrafficLight(0),
+    myEditModeAdditional(0),
+    myEditModeCrossing(0),
     myEditModeNames(),
     myUndoList(undoList),
     myCurrentPoly(0),
@@ -501,7 +519,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
 
         // decide what to do based on mode
         switch (myEditMode) {
-            case GNE_MODE_CREATE_EDGE:
+            case GNE_MODE_CREATE_EDGE: {
                 if ((e->state & CONTROLMASK) == 0) {
                     // allow moving when control is held down
                     if (!myUndoList->hasCommandGroup()) {
@@ -548,8 +566,8 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
-
-            case GNE_MODE_MOVE:
+            }
+            case GNE_MODE_MOVE: {
                 if (pointed_poly) {
                     myPolyToMove = pointed_poly;
                     myMoveSrc = getPositionInformation();
@@ -607,39 +625,25 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 }
                 update();
                 break;
-
-            case GNE_MODE_DELETE:
-                if (pointed_junction) {
-                    /*
-                    if (gSelected.isSelected(GLO_JUNCTION, pointed_junction->getGlID())) {
-                        deleteSelectedJunctions();
-                    }
-                    */
-                    myNet->deleteJunction(pointed_junction, myUndoList);
-                } else if (pointed_lane && !mySelectEdges->getCheck()) {
-                    myNet->deleteLane(pointed_lane, myUndoList);
-                } else if (pointed_edge) {
-                    /*
-                    if (gSelected.isSelected(GLO_EDGE, pointed_edge->getGlID())) {
-                        deleteSelectedEdges();
-                    }
-                    */
-                    myNet->deleteGeometryOrEdge(pointed_edge, getPositionInformation(), myUndoList);
-                } else if (pointed_poi) {
-                    // XXX this is a dirty dirty hack! implemente GNEChange_POI
-                    myNet->getShapeContainer().removePOI(pointed_poi->getMicrosimID());
-                    update();
-                } else if (pointed_additional) {
-                    myViewParent->getAdditionalFrame()->removeAdditional(pointed_additional);
-                    update();
-                } else if (pointed_connection) {
-                    myNet->deleteConnection(pointed_connection, myUndoList);
-                    update();
+            }
+            case GNE_MODE_DELETE: {
+                // Check if Control key is pressed
+                bool markElementMode = (((FXEvent*)data)->state & CONTROLMASK) != 0;
+                GNEAttributeCarrier *ac = dynamic_cast<GNEAttributeCarrier*>(pointed);
+                if (ac) {
+                    // if pointed element is an attribute carrier, remove it or mark it
+                    if(markElementMode) {
+                        myViewParent->getDeleteFrame()->markAttributeCarrier(ac);
+                    } else if(myViewParent->getDeleteFrame()->getMarkedAttributeCarrier() != NULL) {
+                        myViewParent->getDeleteFrame()->markAttributeCarrier(NULL);
+                    } else {
+                        myViewParent->getDeleteFrame()->removeAttributeCarrier(ac);
+                    }   
                 } else {
                     GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 }
                 break;
-
+            }
             case GNE_MODE_INSPECT: {
                 GNEAttributeCarrier* pointedAC = 0;
                 GUIGlObject* pointedO = 0;
@@ -680,7 +684,6 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 update();
                 break;
             }
-
             case GNE_MODE_SELECT:
                 if (pointed_lane && selectEdges()) {
                     gSelected.toggleSelection(pointed_edge->getGlID());
@@ -698,7 +701,7 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 update();
                 break;
 
-            case GNE_MODE_CONNECT:
+            case GNE_MODE_CONNECT: {
                 if (pointed_lane) {
                     const bool mayPass = (((FXEvent*)data)->state & SHIFTMASK) != 0;
                     const bool allowConflict = (((FXEvent*)data)->state & CONTROLMASK) != 0;
@@ -707,16 +710,16 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
-
-            case GNE_MODE_TLS:
+            }
+            case GNE_MODE_TLS: {
                 if (pointed_junction) {
                     myViewParent->getTLSEditorFrame()->editJunction(pointed_junction);
                     update();
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
-
-            case GNE_MODE_ADDITIONAL:
+            }
+            case GNE_MODE_ADDITIONAL: {
                 if (pointed_additional == NULL) {
                     GNENetElement* netElement = dynamic_cast<GNENetElement*>(pointed);
                     if (myViewParent->getAdditionalFrame()->addAdditional(netElement, this)) {
@@ -725,7 +728,8 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
-            case GNE_MODE_CROSSING:
+            }
+            case GNE_MODE_CROSSING: {
                 if (pointed_crossing == NULL) {
                     GNENetElement* netElement = dynamic_cast<GNENetElement*>(pointed);
                     if (myViewParent->getCrossingFrame()->addCrossing(netElement)) {
@@ -734,8 +738,10 @@ GNEViewNet::onLeftBtnPress(FXObject* obj, FXSelector sel, void* data) {
                 }
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
                 break;
-            default:
+            }
+            default: {
                 GUISUMOAbstractView::onLeftBtnPress(obj, sel, data);
+            }
         }
         makeNonCurrent();
     }
@@ -815,31 +821,45 @@ GNEViewNet::onDoubleClicked(FXObject*, FXSelector, void*) {
 long
 GNEViewNet::onMouseMove(FXObject* obj, FXSelector sel, void* data) {
     GUISUMOAbstractView::onMouseMove(obj, sel, data);
-    if (myPolyToMove) {
-        myMoveSrc = myPolyToMove->moveGeometry(myMoveSrc, getPositionInformation());
-    } else if (myJunctionToMove) {
-        myJunctionToMove->move(getPositionInformation());
-    } else if (myEdgeToMove) {
-        myMoveSrc = myEdgeToMove->moveGeometry(myMoveSrc, getPositionInformation());
-    } else if (myAdditionalToMove) {
-        // If additional is placed over lane, move it across it
-        if (myAdditionalToMove->getLane()) {
-            SUMOReal posOfMouseOverLane = myAdditionalToMove->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false);
-            myAdditionalToMove->moveAdditionalGeometry(posOfMouseOverLane - myAdditionalMovingReference.x(), 0);
-            myAdditionalMovingReference.set(posOfMouseOverLane, 0, 0);
-        } else {
-            // Calculate offset movement
-            Position offsetPosition = getPositionInformation() - myOldAdditionalPosition;
-            myAdditionalToMove->moveAdditionalGeometry(myOldAdditionalPosition + offsetPosition + myAdditionalMovingReference);
+    // in delete mode object under cursor must be checked in every mouse movement
+    if( myEditMode == GNE_MODE_DELETE) {
+        setFocus();
+        // show object information in delete frame
+        if (makeCurrent()) {
+            // obtain ac of globjectID
+            int glid = getObjectUnderCursor();
+            GNEAttributeCarrier* ac = dynamic_cast<GNEAttributeCarrier*>(GUIGlObjectStorage::gIDStorage.getObjectBlocking(glid));
+            GUIGlObjectStorage::gIDStorage.unblockObject(glid);
+            // show childs of object in GNEDeleteFrame
+            myViewParent->getDeleteFrame()->showAttributeCarrierChilds(ac);
         }
-        update();
-    } else if (myMoveSelection) {
-        Position moveTarget = getPositionInformation();
-        myNet->moveSelection(myMoveSrc, moveTarget);
-        myMoveSrc = moveTarget;
-    } else if (myAmInRectSelect) {
-        mySelCorner2 = getPositionInformation();
-        update();
+    } else {
+        if (myPolyToMove) {
+            myMoveSrc = myPolyToMove->moveGeometry(myMoveSrc, getPositionInformation());
+        } else if (myJunctionToMove) {
+            myJunctionToMove->move(getPositionInformation());
+        } else if (myEdgeToMove) {
+            myMoveSrc = myEdgeToMove->moveGeometry(myMoveSrc, getPositionInformation());
+        } else if (myAdditionalToMove) {
+            // If additional is placed over lane, move it across it
+            if (myAdditionalToMove->getLane()) {
+                SUMOReal posOfMouseOverLane = myAdditionalToMove->getLane()->getShape().nearest_offset_to_point2D(getPositionInformation(), false);
+                myAdditionalToMove->moveAdditionalGeometry(posOfMouseOverLane - myAdditionalMovingReference.x(), 0);
+                myAdditionalMovingReference.set(posOfMouseOverLane, 0, 0);
+            } else {
+                // Calculate offset movement
+                Position offsetPosition = getPositionInformation() - myOldAdditionalPosition;
+                myAdditionalToMove->moveAdditionalGeometry(myOldAdditionalPosition + offsetPosition + myAdditionalMovingReference);
+            }
+            update();
+        } else if (myMoveSelection) {
+            Position moveTarget = getPositionInformation();
+            myNet->moveSelection(myMoveSrc, moveTarget);
+            myMoveSrc = moveTarget;
+        } else if (myAmInRectSelect) {
+            mySelCorner2 = getPositionInformation();
+            update();
+        }
     }
     return 1;
 }
@@ -896,13 +916,6 @@ GNEViewNet::hotkeyEnter() {
 }
 
 
-long
-GNEViewNet::onCmdChangeMode(FXObject*, FXSelector, void* data) {
-    setEditMode(myEditModeNames.get((char*) data));
-    return 1;
-}
-
-
 void
 GNEViewNet::setEditModeFromHotkey(FXushort selid) {
     switch (selid) {
@@ -937,7 +950,6 @@ GNEViewNet::setEditModeFromHotkey(FXushort selid) {
             FXMessageBox::error(this, MBOX_OK, "invalid edit mode", "%s", "...");
             break;
     }
-    myEditModesCombo->setCurrentItem(myEditModesCombo->findItem(myEditModeNames.getString(myEditMode).c_str()));
 }
 
 
@@ -1064,6 +1076,69 @@ GNEViewNet::getEdgesAtCursorPosition(Position& /* pos */) {
         }
     }
     return result;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeCreateEdge(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_CREATE_EDGE);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeMove(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_MOVE);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeDelete(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_DELETE);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeInspect(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_INSPECT);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeSelect(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_SELECT);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeConnect(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_CONNECT);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeTLS(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_TLS);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeAdditional(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_ADDITIONAL);
+    return 1;
+}
+
+
+long 
+GNEViewNet::onCmdSetModeCrossing(FXObject*, FXSelector, void*) {
+    setEditMode(GNE_MODE_CROSSING);
+    return 1;
 }
 
 
@@ -1625,21 +1700,31 @@ GNEViewNet::buildEditModeControls() {
     myEditModeNames.insert("(a) Additionals", GNE_MODE_ADDITIONAL);
     myEditModeNames.insert("(r) Crossings", GNE_MODE_CROSSING);
 
-    // initialize combo for modes
-    myEditModesCombo =
-        new FXComboBox(myToolbar, 12, this, MID_GNE_MODE_CHANGE,
-                       FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+    // initialize buttons for modes
+    myEditModeCreateEdge = new MFXCheckableButton(false, myToolbar, "\tset create edge mode\tMode for creating junction and edges.", 
+                                                  GUIIconSubSys::getIcon(ICON_GNEMODECREATEEDGE), this, MID_GNE_MODE_CREATE_EDGE, GUIDesignButtonToolbarCheckable);
+    myEditModeMove = new MFXCheckableButton(false, myToolbar, "\tset move mode\tMode for move elements.", 
+                                            GUIIconSubSys::getIcon(ICON_GNEMODEMOVE), this, MID_GNE_MODE_MOVE, GUIDesignButtonToolbarCheckable);
+    myEditModeDelete = new MFXCheckableButton(false, myToolbar, "\tset delete mode\tMode for delete elements.", 
+                                              GUIIconSubSys::getIcon(ICON_GNEMODEDELETE), this, MID_GNE_MODE_DELETE, GUIDesignButtonToolbarCheckable);
+    myEditModeInspect = new MFXCheckableButton(false, myToolbar, "\tset inspect mode\tMode for inspect elements and change their attributes.", 
+                                               GUIIconSubSys::getIcon(ICON_GNEMODEINSPECT), this, MID_GNE_MODE_INSPECT, GUIDesignButtonToolbarCheckable);
+    myEditModeSelect = new MFXCheckableButton(false, myToolbar, "\tset select mode\tMode for select elements.", 
+                                              GUIIconSubSys::getIcon(ICON_GNEMODESELECT), this, MID_GNE_MODE_SELECT, GUIDesignButtonToolbarCheckable);
+    myEditModeConnection = new MFXCheckableButton(false, myToolbar, "\tset connection mode\tMode for edit connections between lanes.", 
+                                                  GUIIconSubSys::getIcon(ICON_GNEMODECONNECTION), this, MID_GNE_MODE_CONNECT, GUIDesignButtonToolbarCheckable);
+    myEditModeTrafficLight = new MFXCheckableButton(false, myToolbar, "\tset traffic light mode\tMode for edit traffic lights over junctions.", 
+                                                    GUIIconSubSys::getIcon(ICON_GNEMODETLS), this, MID_GNE_MODE_TLS, GUIDesignButtonToolbarCheckable);
+    myEditModeAdditional = new MFXCheckableButton(false, myToolbar, "\tset additional mode\tMode for adding additional elements.", 
+                                                  GUIIconSubSys::getIcon(ICON_GNEMODEADDITIONAL), this, MID_GNE_MODE_ADDITIONAL, GUIDesignButtonToolbarCheckable);
+    myEditModeCrossing = new MFXCheckableButton(false, myToolbar, "\tset crossing mode\tMode for creating crossings between edges.", 
+                                                GUIIconSubSys::getIcon(ICON_GNEMODECROSSING), this, MID_GNE_MODE_CROSSING, GUIDesignButtonToolbarCheckable);
 
-    std::vector<std::string> names = myEditModeNames.getStrings();
-    for (std::vector<std::string>::const_iterator it = names.begin(); it != names.end(); it++) {
-        myEditModesCombo->appendItem(it->c_str());
-    }
-    myEditModesCombo->setNumVisible((int)myEditModeNames.size());
+    // @ToDo add here new FXToolBarGrip(myNavigationToolBar, NULL, 0, GUIDesignToolbarGrip);
 
     // initialize mode specific controls
     myChainCreateEdge = new FXMenuCheck(myToolbar, "chain\t\tCreate consecutive edges with a single click (hit ESC to cancel chain).", this, 0);
-    myAutoCreateOppositeEdge = new FXMenuCheck(myToolbar,
-            "two-way\t\tAutomatically create an edge in the opposite direction", this, 0);
+    myAutoCreateOppositeEdge = new FXMenuCheck(myToolbar,"two-way\t\tAutomatically create an edge in the opposite direction", this, 0);
     mySelectEdges = new FXMenuCheck(myToolbar, "select edges\t\tToggle whether clicking should select edges or lanes", this, 0);
     mySelectEdges->setCheck();
 
@@ -1661,10 +1746,7 @@ GNEViewNet::buildEditModeControls() {
 
 void
 GNEViewNet::updateModeSpecificControls() {
-    // MAGIC modifier to avoid flicker. at least it is consistent for move AND
-    // zoom. Probably has to do with spacing
-    const int addChange = 4;
-    // hide all controls
+    // hide all controls (checkboxs)
     myChainCreateEdge->hide();
     myAutoCreateOppositeEdge->hide();
     mySelectEdges->hide();
@@ -1673,83 +1755,104 @@ GNEViewNet::updateModeSpecificControls() {
     myChangeAllPhases->hide();
     myWarnAboutMerge->hide();
     myShowBubbleOverJunction->hide();
-    int widthChange = 0;
-    // Close all Frames
-    if (myViewParent->getInspectorFrame()->shown()) {
-        widthChange += myViewParent->getInspectorFrame()->getWidth() + addChange;
-        myViewParent->getInspectorFrame()->hide();
-    }
-    if (myViewParent->getSelectorFrame()->shown()) {
-        widthChange += myViewParent->getSelectorFrame()->getWidth() + addChange;
-        myViewParent->getSelectorFrame()->hide();
-    }
-    if (myViewParent->getConnectorFrame()->shown()) {
-        widthChange += myViewParent->getConnectorFrame()->getWidth() + addChange;
-        myViewParent->getConnectorFrame()->hide();
-    }
-    if (myViewParent->getTLSEditorFrame()->shown()) {
-        widthChange += myViewParent->getTLSEditorFrame()->getWidth() + addChange;
-        myViewParent->getTLSEditorFrame()->hide();
-    }
-    if (myViewParent->getAdditionalFrame()->shown()) {
-        widthChange += myViewParent->getAdditionalFrame()->getWidth() + addChange;
-        myViewParent->getAdditionalFrame()->hide();
-    }
-    if (myViewParent->getCrossingFrame()->shown()) {
-        widthChange += myViewParent->getCrossingFrame()->getWidth() + addChange;
-        myViewParent->getCrossingFrame()->hide();
-    }
+    // unckeck all edit modes
+    myEditModeCreateEdge->setChecked(false);
+    myEditModeMove->setChecked(false);
+    myEditModeDelete->setChecked(false);
+    myEditModeInspect->setChecked(false);
+    myEditModeSelect->setChecked(false);
+    myEditModeConnection->setChecked(false);
+    myEditModeTrafficLight->setChecked(false);
+    myEditModeAdditional->setChecked(false);
+    myEditModeCrossing->setChecked(false);
+    // hide all Frames
+    myViewParent->hideAllFrames();
     // enable selected controls
     switch (myEditMode) {
         case GNE_MODE_CREATE_EDGE:
+            // show additionals checkboxs
             myChainCreateEdge->show();
             myAutoCreateOppositeEdge->show();
+            // check create edge mode button
+            myEditModeCreateEdge->setChecked(true);
+            break;
+        case GNE_MODE_MOVE:
+            // show additionals checkboxs
+            myWarnAboutMerge->show();
+            myShowBubbleOverJunction->show();
+            // check move mode button
+	        myEditModeMove->setChecked(true);
             break;
         case GNE_MODE_DELETE:
+            // Show delete frame
+            myViewParent->getDeleteFrame()->show();
+            // show additionals checkboxs
             mySelectEdges->show();
             myShowConnections->show();
+            // check delete mode button
+	        myEditModeDelete->setChecked(true);
             break;
         case GNE_MODE_INSPECT:
-            widthChange -= myViewParent->getInspectorFrame()->getWidth() + addChange;
+            // show inspector frame
             myViewParent->getInspectorFrame()->show();
+            // show additionals checkboxs
             mySelectEdges->show();
             myShowConnections->show();
+            // check inspect mode button
+	        myEditModeInspect->setChecked(true);
             break;
         case GNE_MODE_SELECT:
-            widthChange -= myViewParent->getSelectorFrame()->getWidth() + addChange;
+            // show selector frame
             myViewParent->getSelectorFrame()->show();
+            // show additionals checkboxs
             mySelectEdges->show();
             myShowConnections->show();
             myExtendToEdgeNodes->show();
-            break;
-        case GNE_MODE_MOVE:
-            myWarnAboutMerge->show();
-            myShowBubbleOverJunction->show();
+            // check select mode button
+	        myEditModeSelect->setChecked(true);
             break;
         case GNE_MODE_CONNECT:
-            widthChange -= myViewParent->getConnectorFrame()->getWidth() + addChange;
+            // show connector frame
             myViewParent->getConnectorFrame()->show();
+            // check connection mode button
+	        myEditModeConnection->setChecked(true);
             break;
         case GNE_MODE_TLS:
-            widthChange -= myViewParent->getTLSEditorFrame()->getWidth() + addChange;
+            // show TLS Frame
             myViewParent->getTLSEditorFrame()->show();
+            // show additionals checkboxs
             myChangeAllPhases->show();
+            // check TLS mode button
+	        myEditModeTrafficLight->setChecked(true);
             break;
         case GNE_MODE_ADDITIONAL:
-            widthChange -= myViewParent->getAdditionalFrame()->getWidth() + addChange;
+            // show additional frame
             myViewParent->getAdditionalFrame()->show();
+            // check additional mode button
+	        myEditModeAdditional->setChecked(true);
             break;
         case GNE_MODE_CROSSING:
-            widthChange -= myViewParent->getCrossingFrame()->getWidth() + addChange;
+            // show crossing frame
             myViewParent->getCrossingFrame()->show();
+            // check crossing mode button
+	        myEditModeCrossing->setChecked(true);
             break;
         default:
             break;
     }
-    myChanger->changeCanvassLeft(widthChange);
+    // Update buttons
+    myEditModeCreateEdge->update();
+    myEditModeMove->update();
+    myEditModeDelete->update();
+    myEditModeInspect->update();
+    myEditModeSelect->update();
+    myEditModeConnection->update();
+    myEditModeTrafficLight->update();
+    myEditModeAdditional->update();
+    myEditModeCrossing->update();
+    // force repaint because different modes draw different things
     myToolbar->recalc();
-    recalc();
-    onPaint(0, 0, 0); // force repaint because different modes draw different things
+    onPaint(0, 0, 0);
     update();
 }
 

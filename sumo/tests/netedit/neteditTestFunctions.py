@@ -1,75 +1,87 @@
 # Import libraries
+import os
 import sys
 import subprocess
+import platform
+import atexit
+from sikuli import *
 
-#** Common parameters **#
 Settings.MoveMouseDelay = 0.1
 Settings.DelayBeforeDrop = 0.1
 Settings.DelayAfterDrag = 0.1
 
-# Get SUMO Folder
-SUMOFolder = os.environ.get('SUMO_HOME', '.')
-# Open current environment file to obtain path to the netedit app, textTestSandBox
-currentEnvironmentFile = open(SUMOFolder + "/tests/netedit/currentEnvironment.tmp", "r")
-# Get path to netEdit app
-neteditApp = currentEnvironmentFile.readline().replace("\n", "")
-# Get SandBox folder
-textTestSandBox = currentEnvironmentFile.readline().replace("\n", "")
-# get Current OS
-currentOS = currentEnvironmentFile.readline().replace("\n", "")
-# Close current environment file
-currentEnvironmentFile.close()
+neteditApp = os.environ.get("NETEDIT_BINARY", "netedit")
+textTestSandBox = os.environ.get("TEXTTEST_SANDBOX", ".")
+referenceImage = os.path.join("imageResources", "reference.png")
 
-# get reference for match
-neteditReference = SUMOFolder + "/tests/netedit/imageResources/reference.png"
-# Get resources depending of the current Operating system
-neteditResourceEditUndo = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/edit-undo.png"
-neteditResourceEditRedo = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/edit-redo.png"
-neteditResourceQuestion = SUMOFolder + "/tests/netedit/imageResources/" + currentOS + "/question.png"
+def setup(neteditTests):
+    # Open current environment file to obtain path to the netedit app, textTestSandBox
+    envFile = os.path.join(neteditTests, "currentEnvironment.tmp")
+    if os.path.exists(envFile):
+        global neteditApp, textTestSandBox, currentOS
+        with open(envFile) as env:
+            neteditApp, sandBox = [l.strip() for l in env.readlines()]
+        if os.path.exists(sandBox):
+            textTestSandBox = sandBox
+        os.remove(envFile)
+    # get reference for match
+    global referenceImage
+    referenceImage = os.path.join(neteditTests, "imageResources", "reference.png")
 
-def openNetedit(newNet) :
+
+def Popen(newNet):
     # set the default parameters of netedit
-    neteditParameters = [neteditApp, '--gui-testing', '--window-size', '700,500']
+    neteditCall = [neteditApp, '--gui-testing', '--window-size', '700,500',
+                   '--no-warnings', '--error-log', os.path.join(textTestSandBox, 'log.txt')]
     
     # check if a new net must be created, or a existent net must be loaded
-    if (os.path.exists(textTestSandBox + "/input_net.net.xml") == True) :
-        neteditParameters.append('--sumo-net-file')
-        neteditParameters.append(textTestSandBox + "/input_net.net.xml")
-    elif(newNet == True) :
-        neteditParameters.append('--new')
+    if os.path.exists(os.path.join(textTestSandBox, "input_net.net.xml")):
+        neteditCall += ['--sumo-net-file', os.path.join(textTestSandBox, "input_net.net.xml")]
+    elif newNet:
+        neteditCall += ['--new', '--output-file', os.path.join(textTestSandBox, 'net.net.xml')]
     
     # Check if additionals must be loaded
-    if(os.path.exists(textTestSandBox + "/input_additionals.add.xml") == True) :
-        neteditParameters.append('--sumo-additionals-file')
-        neteditParameters.append(textTestSandBox + "/input_additionals.add.xml")
-    else :
-        neteditParameters.append('--additionals-output')
-        neteditParameters.append(textTestSandBox + "/additionals.xml")
+    if os.path.exists(os.path.join(textTestSandBox, "input_additionals.add.xml")):
+        neteditCall += ['--sumo-additionals-file', os.path.join(textTestSandBox, "input_additionals.add.xml")]
+    else:
+        neteditCall += ['--additionals-output', os.path.join(textTestSandBox, "additionals.xml")]
     
-    return subprocess.Popen(neteditParameters, env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
+    return subprocess.Popen(neteditCall, env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
 
 # obtain match 
-def getNeteditMatch(NEProcess) :
+def getReferenceMatch(neProcess):
     try:
-        return wait(neteditReference, 20)
+        return wait(referenceImage, 20)
     except:
-        NEProcess.kill()
+        neProcess.kill()
         sys.exit("Killed netedit process. 'reference.png' not found")
 
+
+def setupAndStart(testRoot, newNet):
+    setup(testRoot)
+    # Open netedit
+    neteditProcess = Popen(newNet)
+    atexit.register(quit, neteditProcess, False, False)
+    # Wait for netedit reference
+    return neteditProcess, getReferenceMatch(neteditProcess)
+
+
 # netedit undo
-def neteditUndo(NEProcess, match, number) :
+def undo(match, number) :
+    click(match)
     for x in range(0, number) :
         type("z", Key.CTRL)
     
 # netedit redo
-def neteditRedo(NEProcess, match, number) :
+def redo(match, number) :
+    click(match)
     for x in range(0, number) :
         type("y", Key.CTRL)
 
         
 # netedit modify attribute
-def modifyAttribute(parametersReference, attributeNumber, value) :
+def modifyAttribute(parametersReference, attributeNumber, value):
     click(parametersReference)
     for x in range(0, attributeNumber) :
         type(Key.TAB)
@@ -81,63 +93,57 @@ def modifyAttribute(parametersReference, attributeNumber, value) :
     type(Key.ENTER)
     
 # netedit modify attribute
-def modifyStoppingPlaceReference(parametersReference, numTabs, numDowns) :
+def modifyStoppingPlaceReference(parametersReference, numTabs, numDowns):
     click(parametersReference)
     # place cursor in comboBox Reference
-    for x in range(0, numTabs) :
+    for x in range(numTabs):
         type(Key.TAB)
     # Set comboBox in the first element
-    for x in range(0, 3) :
+    for x in range(3):
         type(Key.UP)
     # select new reference
-    for x in range(0, numDowns) :
+    for x in range(numDowns):
         type(Key.DOWN)
     
 # block additional
-def changeBlockAdditional(numTabs) :
+def changeBlockAdditional(parametersReference, numTabs):
     click(parametersReference)
     # place cursor in block movement checkbox
-    for x in range(0, numTabs) :
+    for x in range(numTabs):
         type(Key.TAB)
     # Change current value
     type(Key.SPACE)
 
 # netedit wait question
-def waitQuestion(NEProcess, answer) :
-    try:
-        wait(neteditResourceQuestion, 5)
-    except:
-        NEProcess.kill()
-        sys.exit("Killed netedit process. 'question.png' not found")
+def waitQuestion(answer):
+    # wait 0.5 second to question dialog
+    wait(0.5)
     #Answer can be "y" or "n"
     type(answer, Key.ALT)
     
 # netedit quit
-def neteditQuit(mustBeSaved, save) :
-    # quit
+def quit(neteditProcess, mustBeSaved, save) :
+    # quit using hotkey
     type("q", Key.CTRL)
 
     # Check if net must be saved
-    if(mustBeSaved == True) :
-        if(save == True) :
-            waitQuestion(neteditProcess, "y")
-        else :
-            waitQuestion(neteditProcess, "n")
-    
+    if mustBeSaved:
+        if save:
+            waitQuestion("y")
+        else:
+            waitQuestion("n")
+            
+    # wait some seconds
+    for t in xrange(3):
+        wait(t)
+        if neteditProcess.poll() is not None:
+            print("[log] netedit closed successfully")
+            return
+    neteditProcess.kill()
+    print("error closing netedit")
+
 
 # netedit save additionals
-def neteditSaveAdditionals(match, neteditLoadedAtStart = False) :
-    # first move cursor to ensure no menu item is highlighted
-    hover(match.getTarget().offset(0, -120))
-    
-    # open file menu
-    type("f", Key.ALT)
-    
-    # select option "save additionals" depending of neteditLoadedAtStart
-    if(neteditLoadedAtStart == True) :
-        for x in range(0, 13) :
-            type(Key.DOWN)
-    else :
-        for x in range(0, 12) :
-            type(Key.DOWN)
-    type(Key.ENTER)
+def saveAdditionals(match) :
+    # save additionals using hotkey
+    type("d", Key.CTRL + Key.SHIFT)

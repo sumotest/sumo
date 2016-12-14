@@ -30,6 +30,7 @@ windows_cascade.xpm windows_tile_horizontally.xpm windows_tile_vertically.xpm \
 yellow_edge.xpm yellow_person.xpm yellow_vehicle.xpm \
 yes.xpm lock.xpm add.xpm remove.xpm \
 lanebike.xpm lanebus.xpm lanepedestrian.xpm \
+cleanjunctions.xpm computejunctions.xpm joinjunctions.xpm options.xpm \
 GNETexture_Rerouter.cpp GNETexture_RerouterSelected.cpp \
 GNETexture_RouteProbe.cpp GNETexture_RouteProbeSelected.cpp \
 GNETexture_VariableSpeedSignal.cpp GNETexture_VariableSpeedSignalSelected.cpp \
@@ -41,7 +42,9 @@ GNETexture_Lock.cpp GNETexture_LockSelected.cpp \
 GNETexture_Empty.cpp GNETexture_EmptySelected.cpp \
 GNETexture_NotMoving.cpp GNETexture_NotMovingSelected.cpp \
 GNETexture_LaneBus.cpp GNETexture_LaneBike.cpp \
-GNETexture_LanePedestrian.cpp GNETexture_TLS.cpp
+GNETexture_LanePedestrian.cpp GNETexture_TLS.cpp \
+GNEModeAdditional.xpm GNEModeConnection.xpm GNEModeCreateEdge.xpm GNEModeCrossing.xpm \
+GNEModeDelete.xpm GNEModeInspect.xpm GNEModeMove.xpm GNEModeSelect.xpm GNEModeTrafficLight.xpm
 
 libguiutilsimages_a_SOURCES = GUIIconSubSys.cpp GUIIconSubSys.h \
 GUITextureSubSys.cpp GUITextureSubSys.h \

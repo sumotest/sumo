@@ -76,7 +76,6 @@ GNEJunction::GNEJunction(NBNode& nbn, GNENet* net, bool loaded) :
     myHasValidLogic(loaded),
     myAmTLSSelected(false) {
     updateGeometry();
-    rebuildCrossings(false);
 }
 
 
@@ -99,31 +98,30 @@ GNEJunction::updateGeometry() {
     }
     myMaxSize = MAX2(myBoundary.getWidth(), myBoundary.getHeight());
     // Update geometries of crossings
-    getNBNode()->buildCrossings();
-    for (std::vector<GNECrossing*>::const_iterator it = myCrossings.begin(); it != myCrossings.end(); it++) {
+    getNBNode()->buildCrossingsAndWalkingAreas();
+    rebuildCrossings(false);
+    for (std::vector<GNECrossing*>::const_iterator it = myGNECrossings.begin(); it != myGNECrossings.end(); it++) {
         (*it)->updateGeometry();
-  
     }
 }
 
 
 void
 GNEJunction::rebuildCrossings(bool deleteOnly) {
-    for (std::vector<GNECrossing*>::const_iterator it = myCrossings.begin(); it != myCrossings.end(); it++) {
+    for (std::vector<GNECrossing*>::const_iterator it = myGNECrossings.begin(); it != myGNECrossings.end(); it++) {
         (*it)->decRef();
         if ((*it)->unreferenced()) {
             delete *it;
         }
     }
-    myCrossings.clear();
+    myGNECrossings.clear();
     if (!deleteOnly) {
         const std::vector<NBNode::Crossing>& crossings = myNBNode.getCrossings();
         for (std::vector<NBNode::Crossing>::const_iterator it = crossings.begin(); it != crossings.end(); it++) {
-            myCrossings.push_back(new GNECrossing(*this, (*it).id));
-            myCrossings.back()->incRef();
+            myGNECrossings.push_back(new GNECrossing(this, (*it).id));
+            myGNECrossings.back()->incRef();
         }
     }
-
 }
 
 
@@ -247,7 +245,7 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
         }
         // draw crossings
         if (s.editMode != GNE_MODE_TLS) {
-            for (std::vector<GNECrossing*>::const_iterator it = myCrossings.begin(); it != myCrossings.end(); it++) {
+            for (std::vector<GNECrossing*>::const_iterator it = myGNECrossings.begin(); it != myGNECrossings.end(); it++) {
                 (*it)->drawGL(s);
             }
         }
@@ -343,6 +341,10 @@ GNEJunction::getGNEOutgoingEdges() const {
     return myGNEOutgoingEdges;
 }
 
+const std::vector<GNECrossing*>&
+GNEJunction::getGNECrossings() const {
+    return myGNECrossings;
+}
 
 void
 GNEJunction::markAsCreateEdgeSource() {
@@ -431,7 +433,9 @@ GNEJunction::updateShapesAndGeometries() {
     // Finally update geometry of this edge
     updateGeometry();
     // Update view to show the new shapes
-    myNet->getViewNet()->update();
+    if(myNet->getViewNet()) {
+        myNet->getViewNet()->update();
+    }
 }
 
 

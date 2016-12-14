@@ -54,6 +54,7 @@ class GNEConnectorFrame;
 class GNETLSEditorFrame;
 class GNEAdditionalFrame;
 class GNECrossingFrame;
+class GNEDeleteFrame;
 
 // ===========================================================================
 // class declarations
@@ -97,6 +98,9 @@ public:
     /// @brief Destructor
     ~GNEViewParent();
 
+    /// @brief hide all frames
+    void hideAllFrames();
+
     /// @brief get frame for GNE_MODE_INSPECT
     GNEInspectorFrame* getInspectorFrame() const;
 
@@ -114,7 +118,10 @@ public:
 
     /// @brief get frame for GNE_MODE_CROSSING
     GNECrossingFrame* getCrossingFrame() const;
-
+    
+    /// @brief get frame for GNE_MODE_DELETE
+    GNEDeleteFrame* getDeleteFrame() const;
+    
     /// @brief show frames area if at least a GNEFrame is showed
     /// @note this function is called in GNEFrame::Show();
     void showFramesArea();

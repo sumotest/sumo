@@ -71,6 +71,16 @@ def get_allowed(allow, disallow):
         disallow = disallow.split()
         return tuple([c for c in SUMO_VEHICLE_CLASSES if not c in disallow])
 
+def addJunctionPos(shape, fromPos, toPos):
+    """Extends shape with the given positions in case they differ from the
+    existing endpoints. assumes that shape and positions have the same dimensionality"""
+    result = list(shape)
+    if fromPos != shape[0]:
+        result = [fromPos] + result
+    if toPos != shape[-1]:
+        result.append(toPos)
+    return result
+
 
 class Lane:
 
@@ -80,7 +90,10 @@ class Lane:
         self._edge = edge
         self._speed = speed
         self._length = length
-        self._shape = []
+        self._shape = None
+        self._shape3D = None
+        self._shapeWithJunctions = None
+        self._shapeWithJunctions3D = None
         self._cachedShapeWithJunctions = None
         self._outgoing = []
         self._params = {}
@@ -91,7 +104,7 @@ class Lane:
 
     def isInternal(self):
         return self._isInternal
-        
+
     def getSpeed(self):
         return self._speed
 
@@ -99,10 +112,48 @@ class Lane:
         return self._length
 
     def setShape(self, shape):
-        self._shape = shape
+        """Setting the shape of the lane
+
+        shape must be a list containing x,y,z coords as numbers
+        to represent the shape of the lane
+        """
+        for pp in shape:
+            if len(pp) != 3:
+                raise ValueError, 'shape point must consits of x,y,z'
+        
+        self._shape3D = shape
+        self._shape = [(x,y) for x,y,z in shape]
 
     def getShape(self, includeJunctions=False):
-        """Retruns the shape of the lane
+        """Retruns the shape of the lane in 2d.
+
+        This function return the shape of line, as defined in the net.xml 
+        file. The returned shape is a list containing numerical 
+        2-tuple representing the x,y corrds of the shape points.
+
+        For includeJunction=True the returned list will contain 
+        additionally the coords (x,y,z) of the fromNode of the 
+        corresponding edge as first element and the coords (x,y,z) 
+        of the toNode as last element. 
+
+        For internal lanes, includeJunctions is ignored and the unaltered 
+        shape of the lane is returned.
+        """
+
+        if includeJunctions:
+            if self.isInternal():
+                return self._shape
+
+            if self._shapeWithJunctions is None:
+                self._shapeWithJunctions = addJunctionPos(self._shape,
+                        self._edge.getFromNode().getCoord(),
+                        self._edge.getToNode().getCoord())
+            return self._shapeWithJunctions
+        return self._shape
+
+
+    def getShape3D(self, includeJunctions=False):
+        """Retruns the shape of the lane in 3d.
 
         This function return the shape of line, as defined in the net.xml 
         file. The returned shape is a list containing numerical 
@@ -120,20 +171,16 @@ class Lane:
         
         if includeJunctions:
             if self.isInternal():
-                return self._shape
+                return self._shape3D
 
-            if self._cachedShapeWithJunctions == None:
-                if self._edge.getFromNode()._coord != self._shape[0]:
-                    self._cachedShapeWithJunctions = [
-                        self._edge.getFromNode()._coord] + self._shape
-                else:
-                    self._cachedShapeWithJunctions = list(self._shape)
-                if self._edge.getToNode()._coord != self._shape[-1]:
-                    self._cachedShapeWithJunctions += [
-                        self._edge.getToNode()._coord]
-            return self._cachedShapeWithJunctions
-        
-        return self._shape
+            if self._shapeWithJunctions3D is None:
+                self._shapeWithJunctions3D = addJunctionPos(self._shape3D,
+                        self._edge.getFromNode().getCoord3D(),
+                        self._edge.getToNode().getCoord3D())
+            return self._shapeWithJunctions3D
+        return self._shape3D
+
+     
 
     def getBoundingBox(self, includeJunctions=True):
         s = self.getShape(includeJunctions)

@@ -50,6 +50,8 @@
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
+#define OUTPUT_VERSION "6.5"
+
 
 // ---------------------------------------------------------------------------
 // static members
@@ -65,8 +67,9 @@ NWWriter_DlrNavteq::writeNetwork(const OptionsCont& oc, NBNetBuilder& nb) {
     if (!oc.isSet("dlr-navteq-output")) {
         return;
     }
-    writeNodesUnsplitted(oc, nb.getNodeCont(), nb.getEdgeCont());
-    writeLinksUnsplitted(oc, nb.getEdgeCont());
+    std::map<NBEdge*, std::string> internalNodes;
+    writeNodesUnsplitted(oc, nb.getNodeCont(), nb.getEdgeCont(), internalNodes);
+    writeLinksUnsplitted(oc, nb.getEdgeCont(), internalNodes);
     writeTrafficSignals(oc, nb.getNodeCont());
 }
 
@@ -77,7 +80,7 @@ void NWWriter_DlrNavteq::writeHeader(OutputDevice& device, const OptionsCont& oc
     char buffer [80];
     strftime(buffer, 80, "on %c", localtime(&rawtime));
     device << "# Generated " << buffer << " by " << oc.getFullName() << "\n";
-    device << "# Format matches Extraction version: V6.0 \n";
+    device << "# Format matches Extraction version: V" << OUTPUT_VERSION << " \n";
     std::stringstream tmp;
     oc.writeConfiguration(tmp, true, false, false);
     tmp.seekg(std::ios_base::beg);
@@ -90,12 +93,11 @@ void NWWriter_DlrNavteq::writeHeader(OutputDevice& device, const OptionsCont& oc
 }
 
 void
-NWWriter_DlrNavteq::writeNodesUnsplitted(const OptionsCont& oc, NBNodeCont& nc, NBEdgeCont& ec) {
+NWWriter_DlrNavteq::writeNodesUnsplitted(const OptionsCont& oc, NBNodeCont& nc, NBEdgeCont& ec, std::map<NBEdge*, std::string>& internalNodes) {
     // For "real" nodes we simply use the node id.
     // For internal nodes (geometry vectors describing edge geometry in the parlance of this format)
     // we use the id of the edge and do not bother with
     // compression (each direction gets its own internal node).
-    // XXX add option for generating numerical ids in case the input network has string ids and the target process needs integers
     OutputDevice& device = OutputDevice::getDevice(oc.getString("dlr-navteq-output") + "_nodes_unsplitted.txt");
     writeHeader(device, oc);
     const GeoConvHelper& gch = GeoConvHelper::getFinal();
@@ -162,6 +164,7 @@ NWWriter_DlrNavteq::writeNodesUnsplitted(const OptionsCont& oc, NBNodeCont& nc, 
                     internalNodeID += "_geometry";
                 }
             }
+            internalNodes[e] = internalNodeID;
             device << internalNodeID << "\t1\t" << geom.size() - 2;
             for (int ii = 1; ii < (int)geom.size() - 1; ++ii) {
                 Position pos = geom[(int)ii];
@@ -177,7 +180,7 @@ NWWriter_DlrNavteq::writeNodesUnsplitted(const OptionsCont& oc, NBNodeCont& nc, 
 
 
 void
-NWWriter_DlrNavteq::writeLinksUnsplitted(const OptionsCont& oc, NBEdgeCont& ec) {
+NWWriter_DlrNavteq::writeLinksUnsplitted(const OptionsCont& oc, NBEdgeCont& ec, std::map<NBEdge*, std::string>& internalNodes) {
     std::map<const std::string, std::string> nameIDs;
     OutputDevice& device = OutputDevice::getDevice(oc.getString("dlr-navteq-output") + "_links_unsplitted.txt");
     writeHeader(device, oc);
@@ -187,7 +190,7 @@ NWWriter_DlrNavteq::writeLinksUnsplitted(const OptionsCont& oc, NBEdgeCont& ec) 
     for (std::map<std::string, NBEdge*>::const_iterator i = ec.begin(); i != ec.end(); ++i) {
         NBEdge* e = (*i).second;
         const int kph = speedInKph(e->getSpeed());
-        const std::string& betweenNodeID = (e->getGeometry().size() > 2) ? e->getID() : UNDEFINED;
+        const std::string& betweenNodeID = (e->getGeometry().size() > 2) ? internalNodes[e] : UNDEFINED;
         std::string nameID = UNDEFINED;
         if (oc.getBool("output.street-names")) {
             const std::string& name = i->second->getStreetName();
@@ -227,9 +230,13 @@ NWWriter_DlrNavteq::writeLinksUnsplitted(const OptionsCont& oc, NBEdgeCont& ec) 
         OutputDevice& namesDevice = OutputDevice::getDevice(oc.getString("dlr-navteq-output") + "_names.txt");
         writeHeader(namesDevice, oc);
         // write format specifier
-        namesDevice << "# NAME_ID\tName\n" << nameIDs.size() << "\n";
+        namesDevice << "# NAME_ID\tPERMANENT_ID_INFO\tName\n";
+        namesDevice << "# [elements] " << nameIDs.size() << "\n";
         for (std::map<const std::string, std::string>::const_iterator i = nameIDs.begin(); i != nameIDs.end(); ++i) {
-            namesDevice << i->second << "\t" << i->first << "\n";
+            namesDevice 
+                << i->second << "\t" 
+                << 0 << "\t" 
+                << i->first << "\n";
         }
     }
 }

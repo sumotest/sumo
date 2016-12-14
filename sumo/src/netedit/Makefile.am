@@ -55,6 +55,7 @@ GNEConnectorFrame.h GNEConnectorFrame.cpp \
 GNETLSEditorFrame.h GNETLSEditorFrame.cpp \
 GNEAdditionalFrame.h GNEAdditionalFrame.cpp \
 GNECrossingFrame.h GNECrossingFrame.cpp \
+GNEDeleteFrame.h GNEDeleteFrame.cpp \
 GNEAdditionalHandler.h GNEAdditionalHandler.cpp \
 GNEAdditional.h GNEAdditional.cpp \
 GNEAdditionalSet.h GNEAdditionalSet.cpp \
@@ -76,8 +77,8 @@ GNECalibrator.h GNECalibrator.cpp \
 GNECalibratorDialog.h GNECalibratorDialog.cpp \
 GNEVariableSpeedSignal.h GNEVariableSpeedSignal.cpp \
 GNEVariableSpeedSignalDialog.h GNEVariableSpeedSignalDialog.cpp \
-GNEReferenceCounter.h GNEFrameDesigns.h \
-GNEEvent_NetworkLoaded.h
+GNEReferenceCounter.h GNEEvent_NetworkLoaded.h
+
 
 
 netedit_LDADD = ../netimport/libnetimport.a \

@@ -1,12 +1,14 @@
 # import common functions for netedit tests
 import os
-execfile(os.environ.get('SUMO_HOME', '.') + "/tests/netedit/neteditTestFunctions.py")
+import sys
+
+testRoot = os.path.join(os.environ.get('SUMO_HOME', '.'), 'tests')
+neteditTestRoot = os.path.join(os.environ.get('TEXTTEST_HOME', testRoot), 'netedit')
+sys.path.append(neteditTestRoot)
+import neteditTestFunctions as netedit
 
 # Open netedit
-neteditProcess = openNetedit(True)
-
-# Wait to netedit reference
-match = getNeteditMatch(neteditProcess)
+neteditProcess, match = netedit.setupAndStart(neteditTestRoot, True)
 
 # Change to create mode
 type("e")
@@ -32,17 +34,17 @@ click(additionalsComboBox)
 
 # Add three extra lines
 for x in range(0, 3):
-	type(Key.TAB)
-	
+    type(Key.TAB)
+    
 for x in range(0, 3):
-	type(Key.SPACE)
-	
+    type(Key.SPACE)
+    
 #add extra lines
 click(additionalsComboBox)
 
 for x in range(0, 2):
-	type(Key.TAB)
-	
+    type(Key.TAB)
+    
 paste("Line1")
 type(Key.TAB)
 paste("Line2")
@@ -55,71 +57,71 @@ paste("Line4")
 click(additionalsComboBox)
 
 for x in range(0, 7):
-	type(Key.TAB)
-	
+    type(Key.TAB)
+    
 type(Key.SPACE)
 
 # create busstop in mode "reference left"
 click(match.getTarget().offset(450, 300))
 
 # change reference to right
-modifyStoppingPlaceReference(parametersReference, 8, 1)
+netedit.modifyStoppingPlaceReference(parametersReference, 8, 1)
 
 # create busstop in mode "reference right"
 click(match.getTarget().offset(300, 300))
 
 # change reference to center
-modifyStoppingPlaceReference(parametersReference, 8, 2)
+netedit.modifyStoppingPlaceReference(parametersReference, 8, 2)
 
 # create busstop in mode "reference center"
 click(match.getTarget().offset(350, 300))
 
 # return to mode "reference left"
-modifyStoppingPlaceReference(parametersReference, 8, 0)
+netedit.modifyStoppingPlaceReference(parametersReference, 8, 0)
 
 # Change length
 click(additionalsComboBox)
 
 for x in range(0, 10):
-	type(Key.TAB)
-	
+    type(Key.TAB)
+    
 paste("30")
 
 # try to create a busstop (Warning)
 click(match.getTarget().offset(500, 300))
 
 # change reference to right
-modifyStoppingPlaceReference(parametersReference, 8, 1)
+netedit.modifyStoppingPlaceReference(parametersReference, 8, 1)
 
 # try busstop in mode "reference right" (Warning)
 click(match.getTarget().offset(250, 300))
 
 # return to mode "reference left"
-modifyStoppingPlaceReference(parametersReference, 8, 0)
+netedit.modifyStoppingPlaceReference(parametersReference, 8, 0)
 
 # enable force position
 click(additionalsComboBox)
 
 for x in range(0, 11):
-	type(Key.TAB)
-	
+    type(Key.TAB)
+    
 type(Key.SPACE)
 
 # create a busstop forcing position
 click(match.getTarget().offset(500, 300))
 
 # change reference to right
-modifyStoppingPlaceReference(parametersReference, 8, 1)
+netedit.modifyStoppingPlaceReference(parametersReference, 8, 1)
 
 # create a busstop forcing position
 click(match.getTarget().offset(250, 300))
 
 # Check undo redo
-neteditUndo(neteditProcess, match, 6)
-neteditRedo(neteditProcess, match, 6)
+netedit.undo(match, 6)
+netedit.redo(match, 6)
 
 # save additionals
-neteditSaveAdditionals(match)
+netedit.saveAdditionals(match)
 
 # quit netedit without saving
-neteditQuit(True, True)
+netedit.quit(neteditProcess, True, True)

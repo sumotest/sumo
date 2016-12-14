@@ -39,10 +39,11 @@
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/div/GUIIOGlobals.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
+#include <utils/gui/div/GUIDesigns.h>
 #include <utils/gui/globjects/GUIGlObjectStorage.h>
 #include <netbuild/NBTrafficLightDefinition.h>
 #include <netbuild/NBLoadedSUMOTLDef.h>
-#include "GNEFrameDesigns.h"
+
 #include "GNETLSEditorFrame.h"
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"
@@ -78,7 +79,6 @@ FXDEFMAP(GNETLSEditorFrame) GNETLSEditorFrameMap[] = {
     FXMAPFUNC(SEL_DESELECTED, MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseSwitch),
     FXMAPFUNC(SEL_CHANGED,    MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseSwitch),
     FXMAPFUNC(SEL_REPLACED,   MID_GNE_PHASE_TABLE,        GNETLSEditorFrame::onCmdPhaseEdit),
-
     FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_CREATE,         GNETLSEditorFrame::onUpdDefCreate),
     FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_DELETE,         GNETLSEditorFrame::onUpdDefSwitch),
     FXMAPFUNC(SEL_UPDATE,     MID_GNE_DEF_SWITCH,         GNETLSEditorFrame::onUpdDefSwitch),
@@ -102,29 +102,48 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, G
     myCurrentJunction(0),
     myHaveModifications(false),
     myEditedDef(0) {
-    // heading
-    myDescription = new FXLabel(myContentFrame, "", 0, GNEDesignLabel);
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
+    // create groupbox for description
+    myGroupBoxJunction = new FXGroupBox(myContentFrame, "Junction", GUIDesignGroupBoxFrame);
 
-    // create tlDef button
-    new FXButton(myContentFrame, "Create TLS\t\tCreate a new traffic light program", 0, this, MID_GNE_DEF_CREATE, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+    // create description label 
+    myDescription = new FXLabel(myGroupBoxJunction, "No Junction Selected\n", 0, GUIDesignLabelLeft);
 
-    // delete tlDef button
-    new FXButton(myContentFrame, "Delete TLS\t\tDelete a traffic light program. If all programs are deleted the junction turns into a priority junction.", 0, this, MID_GNE_DEF_DELETE, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+    // create groupbox for tl df
+    myGroupBoxTLSDef = new FXGroupBox(myContentFrame, "Traffic lights definition", GUIDesignGroupBoxFrame);
 
-    // definitions list
-    new FXLabel(myContentFrame, "Name, Program", 0, GNEDesignLabel);
-    myDefBox = new FXComboBox(myContentFrame, 10, this, MID_GNE_DEF_SWITCH, GNEDesignComboBox);
+    // create create tlDef button
+    myNewTLProgram = new FXButton(myGroupBoxTLSDef, "Create TLS\t\tCreate a new traffic light program", 0, this, MID_GNE_DEF_CREATE, GUIDesignButton);
 
-    // offset control
-    new FXLabel(myContentFrame, "Offset", 0, GNEDesignLabel);
-    myOffset = new FXTextField(myContentFrame, GNEDesignTextFieldNCol, this, MID_GNE_DEF_OFFSET, GNEDesignTextFieldAttributeReal, 0, 0, 0, 0, 4, 2, 0, 2);
+    // create delete tlDef button
+    myDeleteTLProgram = new FXButton(myGroupBoxTLSDef, "Delete TLS\t\tDelete a traffic light program. If all programs are deleted the junction turns into a priority junction.", 0, this, MID_GNE_DEF_DELETE, GUIDesignButton);
 
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
+    // create groupbox for phases
+    myGroupBoxAttributes = new FXGroupBox(myContentFrame, "Attributes", GUIDesignGroupBoxFrame);
 
-    // phase table
-    new FXLabel(myContentFrame, "Phases", 0, GNEDesignLabel);
-    myPhaseTable = new FXTable(myContentFrame, this, MID_GNE_PHASE_TABLE, LAYOUT_FIX_HEIGHT | LAYOUT_FIX_WIDTH);
+    // Create matrix
+    myAttributeMatrix = new FXMatrix(myGroupBoxAttributes, 2, GUIDesignMatrixAttributes);
+
+    // create label for name
+    myNameLabel = new FXLabel(myAttributeMatrix, "Name", 0, GUIDesignLabelAttribute);
+
+    // create text field for name
+    myNameTextField = new FXTextField(myAttributeMatrix, GUIDesignTextFieldNCol, this, MID_GNE_DEF_SWITCH, GUIDesignTextFieldAttributeStr);
+
+    // create label for program
+    myProgramLabel = new FXLabel(myAttributeMatrix, "Program", 0, GUIDesignLabelAttribute);
+
+    // create combo box for program
+    myProgramComboBox = new FXComboBox(myAttributeMatrix, GUIDesignComboBoxNCol, this, MID_GNE_DEF_SWITCH, GUIDesignComboBoxAttribute);
+
+    // create offset control
+    myOffsetLabel = new FXLabel(myAttributeMatrix, "Offset", 0, GUIDesignLabelAttribute);
+    myOffset = new FXTextField(myAttributeMatrix, GUIDesignTextFieldNCol, this, MID_GNE_DEF_OFFSET, GUIDesignTextFieldAttributeReal);
+
+    // create groupbox for phases
+    myGroupBoxPhases = new FXGroupBox(myContentFrame, "Phases", GUIDesignGroupBoxFrame);
+    
+    // create and configure phase table
+    myPhaseTable = new FXTable(myGroupBoxPhases, this, MID_GNE_PHASE_TABLE, GUIDesignTable);
     myPhaseTable->setColumnHeaderMode(LAYOUT_FIX_HEIGHT);
     myPhaseTable->setColumnHeaderHeight(0);
     myPhaseTable->setRowHeaderMode(LAYOUT_FIX_WIDTH);
@@ -133,26 +152,29 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, G
     myPhaseTable->setFont(myTableFont);
     myPhaseTable->setHelpText("phase duration in seconds | phase state");
 
-    // total duration info
-    myCycleDuration = new FXLabel(myContentFrame, "", 0, GNEDesignLabel);
+    // create total duration info label
+    myCycleDuration = new FXLabel(myGroupBoxPhases, "", 0, GUIDesignLabelLeft);
 
-    // insert new phase button
-    new FXButton(myContentFrame, "Copy Phase\t\tInsert duplicate phase after selected phase", 0, this, MID_GNE_PHASE_CREATE, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+    // create new phase button
+    myInsertDuplicateButton = new FXButton(myGroupBoxPhases, "Copy Phase\t\tInsert duplicate phase after selected phase", 0, this, MID_GNE_PHASE_CREATE, GUIDesignButton);
 
-    // delete phase button
-    new FXButton(myContentFrame, "Delete Phase\t\tDelete selected phase", 0, this, MID_GNE_PHASE_DELETE, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+    // create delete phase button
+    myDeleteSelectedPhaseButton = new FXButton(myGroupBoxPhases, "Delete Phase\t\tDelete selected phase", 0, this, MID_GNE_PHASE_DELETE, GUIDesignButton);
 
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
-    // buttons
-    // "Cancel"
-    new FXButton(myContentFrame, "Cancel\t\tDiscard program modifications (Esc)", 0, this, MID_CANCEL, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
-    // "OK"
-    new FXButton(myContentFrame, "Save\t\tSave program modifications (Enter)", 0, this, MID_OK, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
-    new FXHorizontalSeparator(myContentFrame, GNEDesignHorizontalSeparator);
+    // create groupbox for modifications
+    myGroupBoxModifications = new FXGroupBox(myContentFrame, "Modifications", GUIDesignGroupBoxFrame);
+    
+    // create discard modifications buttons
+    myDiscardModificationsButtons = new FXButton(myGroupBoxModifications, "Cancel\t\tDiscard program modifications (Esc)", 0, this, MID_CANCEL, GUIDesignButton);
+    
+    // create save modifications button
+    mySaveModificationsButtons = new FXButton(myGroupBoxModifications, "Save\t\tSave program modifications (Enter)", 0, this, MID_OK, GUIDesignButton);
+
+
     // "Add 'off' program"
     /*
     new FXButton(myContentFrame, "Add \"Off\"-Program\t\tAdds a program for switching off this traffic light",
-            0, this, MID_GNE_DEF_ADDOFF, GNEDesignButton, 0, 0, 0, 0, 4, 4, 3, 3);
+            0, this, MID_GNE_DEF_ADDOFF, GUIDesignButton);
     */
 }
 
@@ -192,7 +214,7 @@ long
 GNETLSEditorFrame::onCmdOK(FXObject*, FXSelector, void*) {
     if (myCurrentJunction != 0) {
         if (myHaveModifications) {
-            NBTrafficLightDefinition* old = myDefinitions[myDefBox->getCurrentItem()];
+            NBTrafficLightDefinition* old = myDefinitions[myProgramComboBox->getCurrentItem()];
             std::vector<NBNode*> nodes = old->getNodes();
             for (std::vector<NBNode*>::iterator it = nodes.begin(); it != nodes.end(); it++) {
                 GNEJunction* junction = myViewNet->getNet()->retrieveJunction((*it)->getID());
@@ -233,7 +255,7 @@ GNETLSEditorFrame::onCmdDefDelete(FXObject*, FXSelector, void*) {
     if (changeType) {
         junction->setAttribute(SUMO_ATTR_TYPE, toString(NODETYPE_PRIORITY), myViewNet->getUndoList());
     } else {
-        NBTrafficLightDefinition* tlDef = myDefinitions[myDefBox->getCurrentItem()];
+        NBTrafficLightDefinition* tlDef = myDefinitions[myProgramComboBox->getCurrentItem()];
         myViewNet->getUndoList()->add(new GNEChange_TLS(junction, tlDef, false), true);
     }
     return 1;
@@ -243,8 +265,8 @@ GNETLSEditorFrame::onCmdDefDelete(FXObject*, FXSelector, void*) {
 long
 GNETLSEditorFrame::onCmdDefSwitch(FXObject*, FXSelector, void*) {
     assert(myCurrentJunction != 0);
-    assert((int)myDefinitions.size() == myDefBox->getNumItems());
-    NBTrafficLightDefinition* tlDef = myDefinitions[myDefBox->getCurrentItem()];
+    assert((int)myDefinitions.size() == myProgramComboBox->getNumItems());
+    NBTrafficLightDefinition* tlDef = myDefinitions[myProgramComboBox->getCurrentItem()];
     // logic may not have been recomputed yet. recompute to be sure
     NBTrafficLightLogicCont& tllCont = myViewNet->getNet()->getTLLogicCont();
     myViewNet->getNet()->computeJunction(myCurrentJunction);
@@ -434,7 +456,7 @@ GNETLSEditorFrame::updateDescription() const {
         description = "No Junction Selected\n";
     } else {
         NBNode* nbn = myCurrentJunction->getNBNode();
-        description = "Junction '" + nbn->getID() + "'\n(";
+        description = "Current junction: " + nbn->getID() + "\n(";
         if (!nbn->isTLControlled()) {
             description += "uncontrolled, ";
         }
@@ -456,9 +478,10 @@ GNETLSEditorFrame::cleanup() {
     myEditedDef = 0;
     buildIinternalLanes(0); // only clears
     // clean up controls
+    myNameTextField->setText("");
     myOffset->setText("");
     myDefinitions.clear();
-    myDefBox->hide();
+    myProgramComboBox->hide();
     initPhaseTable(); // only clears when there are no definitions
     myCycleDuration->hide();
     updateDescription();
@@ -506,19 +529,20 @@ GNETLSEditorFrame::buildIinternalLanes(NBTrafficLightDefinition* tlDef) {
 void
 GNETLSEditorFrame::initDefinitions() {
     myDefinitions.clear();
-    myDefBox->clearItems();
+    myNameTextField->setText("");
+    myProgramComboBox->clearItems();
     assert(myCurrentJunction);
     NBNode* nbn = myCurrentJunction->getNBNode();
     std::set<NBTrafficLightDefinition*> tldefs = nbn->getControllingTLS();
     for (std::set<NBTrafficLightDefinition*>::iterator it = tldefs.begin(); it != tldefs.end(); it++) {
         myDefinitions.push_back(*it);
-        std::string item = (*it)->getID() + ", " + (*it)->getProgramID();
-        myDefBox->appendItem(item.c_str());
+        myNameTextField->setText((*it)->getID().c_str());
+        myProgramComboBox->appendItem((*it)->getProgramID().c_str());
     }
     if (myDefinitions.size() > 0) {
-        myDefBox->setCurrentItem(0);
-        myDefBox->setNumVisible(myDefBox->getNumItems());
-        myDefBox->show();
+        myProgramComboBox->setCurrentItem(0);
+        myProgramComboBox->setNumVisible(myProgramComboBox->getNumItems());
+        myProgramComboBox->show();
         onCmdDefSwitch(0, 0, 0);
     }
     updateDescription();
@@ -541,12 +565,7 @@ GNETLSEditorFrame::initPhaseTable(int index) {
             myPhaseTable->getItem(row, 1)->setJustify(FXTableItem::LEFT);
         }
         myPhaseTable->fitColumnsToContents(0, 2);
-        const int maxWidth = 140 - 4;
-        int desiredWidth = myPhaseTable->getColumnWidth(0) +
-                           myPhaseTable->getColumnWidth(1) + 3;
-        int spaceForScrollBar = desiredWidth > maxWidth ? 15 : 0;
-        myPhaseTable->setHeight((int)phases.size() * 21 + spaceForScrollBar); // experimental
-        myPhaseTable->setWidth(MIN2(desiredWidth, maxWidth));
+        myPhaseTable->setHeight((int)phases.size() * 21); // experimental
         myPhaseTable->setCurrentItem(index, 0);
         myPhaseTable->selectRow(index, true);
         myPhaseTable->show();
