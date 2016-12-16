@@ -1,7 +1,9 @@
 <configuration>
-    <input>
-        <net-file value="roads.net.xml"/>
-        <route-files value="vehicles.rou.xml"/>
-		<additional-files value="parking_areas.add.xml"/>
-    </input>
+    <net-file value="roads.net.xml"/>
+    <route-files value="vehicles.rou.xml"/>
+    <additional-files value="parking_areas.add.xml"/>
+
+    <vehroute-output value="vehroutes.xml"/>
+
+
 </configuration>
