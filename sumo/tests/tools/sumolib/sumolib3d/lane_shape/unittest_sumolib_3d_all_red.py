@@ -83,7 +83,7 @@ class Test_Shapes(unittest.TestCase):
 
 
 
-    @unittest.skipIf(True, '')
+    @unittest.skipIf(False, '')
     def test_h001_edge_shape(self):
         """ 
 
@@ -102,17 +102,18 @@ class Test_Shapes(unittest.TestCase):
         #### check edge shape ################################
         expected_result_edge_shape = \
             [(1000, 100, 10), (1200, 100, 10)]
-        
-        result_edge_shape_with_junc    = \
-            the_edge.getShape(includeJunctions=True)
 
-        result_edge_shape_without_junc = \
-            the_edge.getShape(includeJunctions=False)
+        import pdb; pdb.set_trace()
+        result_raw_edge_shape    = the_edge.getRawShape3D()
 
-        self.assertEqual(result_edge_shape_with_junc,
-                         expected_result_edge_shape)
         
-        self.assertEqual(result_edge_shape_without_junc,
+#        result_edge_shape_without_junc = \
+#            the_edge.getRawShape3D(includeJunctions=False)
+
+#        self.assertEqual(result_edge_shape_with_junc,
+#                         expected_result_edge_shape)
+        
+        self.assertEqual(result_raw_edge_shape,
                          expected_result_edge_shape)        
 
         
