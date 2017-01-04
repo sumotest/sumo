@@ -449,6 +449,8 @@ class NetReader(handler.ContentHandler):
                 self._currentNode = self._net.addNode(attrs['id'], attrs['type'], 
                         tuple(map(float, [attrs['x'], attrs['y'], attrs['z'] if 'z' in attrs else '0'])), 
                         attrs['incLanes'].split(" "), intLanes)
+                shapeStr = attrs['shape'] if 'shape' in attrs else ''
+                self._currentNode.setShape(convertShape(shapeStr))
         if name == 'succ' and self._withConnections:  # deprecated
             if attrs['edge'][0] != ':':
                 self._currentEdge = self._net.getEdge(attrs['edge'])

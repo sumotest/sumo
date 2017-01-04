@@ -81,8 +81,101 @@ class Test_Shapes(unittest.TestCase):
         if os.path.exists(NETFILE_3D):
             os.remove(NETFILE_3D)
 
+            
+    #### check node's coords ############################################
+    @unittest.skipIf(False, '')
+    def test_check_node_coords_2d_for_3d_input_node_no_z(self):
+        """ test to retrive the coords from a node with no z value
+
+            - should be a 2d coords tuple"""
+
+        self.assertEqual(
+            self.sumo_net.getNode('a0').getCoord(),
+            (100.0, 0.0))
 
 
+    @unittest.skipIf(False, '')
+    def test_check_node_coords_3d_for_3d_input_node_z_no_z(self):
+        """ test to retrive the coords from a node with no z value
+
+            - should be a 3d coords tuple"""
+
+        self.assertEqual(
+            self.sumo_net.getNode('a0').getCoord3D(),
+            (100.0, 0.0, 0.0))
+
+
+        
+    @unittest.skipIf(False, '')
+    def test_check_node_coords_2d_for_3d_input_node_z_not_zero(self):
+        """ test to retrive the coords from a node with z!=0
+
+            - should be a 3d coords tuple"""
+
+        self.assertEqual(
+            self.sumo_net.getNode('a1').getCoord(),
+            (200.0, 0.0))
+
+
+    @unittest.skipIf(False, '')
+    def test_check_node_coords_3d_for_3d_input_node_z_not_zero(self):
+        """ test to retrive the coords from a node with z!=0
+
+            - should be a 3d coords tuple"""
+
+        self.assertEqual(
+            self.sumo_net.getNode('a1').getCoord3D(),
+            (200.0, 0.0, 10.0))
+
+    #### check node's shape #############################################
+            
+    @unittest.skipIf(False, '')
+    def test_check_node_shape_2d_on_a_node_with_no_z(self):
+        """ test to retrive the shape from a node with no z value
+
+            - should be a 2d coords tuple"""
+
+        result = self.sumo_net.getNode('a0').getShape()
+        self.assertTrue(len(result)>0)
+        for shape_point in result:
+            self.assertTrue(len(shape_point)==2)
+
+    @unittest.skipIf(False, '')
+    def test_check_node_shape_3d_on_a_node_with_no_z(self):
+        """ test to retrive the shape from a node with no z value
+
+            - should be a 3d coords tuple"""
+        result = self.sumo_net.getNode('a0').getShape3D()
+        self.assertTrue(len(result)>0)
+        for shape_point in result:
+            self.assertTrue(len(shape_point)==3)
+
+            
+    @unittest.skipIf(False, '')
+    def test_check_node_shape_2d_on_a_node_with_z(self):
+        """ test to retrive the shape from a node with z value
+
+            - should be a 2d coords tuple"""
+
+        result = self.sumo_net.getNode('a1').getShape3D()
+        self.assertTrue(len(result)>0)
+        for shape_point in result:
+            self.assertTrue(len(shape_point)==3)
+
+            
+    @unittest.skipIf(False, '')
+    def test_check_node_shape_3d_on_a_node_with_z(self):
+        """ test to retrive the shape from a node with z value
+
+            - should be a 3d coords tuple"""
+
+        result = self.sumo_net.getNode('a1').getShape3D()
+        self.assertTrue(len(result)>0)
+        for shape_point in result:
+            self.assertTrue(len(shape_point)==3)
+            
+    
+    #### check edge's shape #############################################
     @unittest.skipIf(False, '')
     def test_h001_edge_shape_not_stored(self):
         """ 
@@ -118,6 +211,7 @@ class Test_Shapes(unittest.TestCase):
         self.assertEqual(result_raw_edge_shape_3D,
                          expected_result_raw_edge_shape_3D)        
 
+        
 
     @unittest.skipIf(False, '')
     def test_h001_edge_shape_not_stored(self):
@@ -155,6 +249,7 @@ class Test_Shapes(unittest.TestCase):
                          expected_result_raw_edge_shape_3D)        
 
         
+    #### check lane's shape #############################################
     @unittest.skipIf(False, '')
     def test_h001_lane_shape_2d(self):
         """ 
@@ -623,7 +718,7 @@ class Test_Shapes(unittest.TestCase):
         # check first shape point coords 
         self.assertTrue( 100 <= result_start_point_wo[0] <= 200 )   # x
         self.assertTrue( -10 <= result_start_point_wo[1] <    0 )   # y
-        self.assertTrue(        result_start_point_wo[2] ==  10 )   # z
+        self.assertTrue(        result_start_point_wo[2] ==   0 )   # z
 
         # check second shape point coords
         self.assertTrue( 100 <= result_end_point_wo[0]   <= 200 )   # x
@@ -645,12 +740,12 @@ class Test_Shapes(unittest.TestCase):
 
         # check fromNode coords
         self.assertEqual(       result_from_point_wi,
-                                (100, 0, 10)                    )
+                                (100, 0,  0)                    )
 
         # check first shape point coords 
         self.assertTrue( 100 <= result_start_point_wi[0] <= 200 )   # x
         self.assertTrue( -10 <= result_start_point_wi[1] <    0 )   # y
-        self.assertTrue(        result_start_point_wi[2] ==  10 )   # z
+        self.assertTrue(        result_start_point_wi[2] ==   0 )   # z
 
         # check second shape point coords
         self.assertTrue( 100 <= result_end_point_wi[0]   <= 200 )   # x

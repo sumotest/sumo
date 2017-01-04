@@ -127,13 +127,13 @@ class Lane:
     def getShape(self, includeJunctions=False):
         """Retruns the shape of the lane in 2d.
 
-        This function return the shape of line, as defined in the net.xml 
+        This function returns the shape of the lane, as defined in the net.xml 
         file. The returned shape is a list containing numerical 
         2-tuple representing the x,y corrds of the shape points.
 
         For includeJunction=True the returned list will contain 
-        additionally the coords (x,y,z) of the fromNode of the 
-        corresponding edge as first element and the coords (x,y,z) 
+        additionally the coords (x,y) of the fromNode of the 
+        corresponding edge as first element and the coords (x,y) 
         of the toNode as last element. 
 
         For internal lanes, includeJunctions is ignored and the unaltered 
@@ -155,7 +155,7 @@ class Lane:
     def getShape3D(self, includeJunctions=False):
         """Retruns the shape of the lane in 3d.
 
-        This function return the shape of line, as defined in the net.xml 
+        This function return the shape of the lane, as defined in the net.xml 
         file. The returned shape is a list containing numerical 
         3-tuple representing the x,y,z corrds of the shape points 
         - z defaults to zero. 
