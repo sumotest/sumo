@@ -67,7 +67,7 @@
 // method definitions
 // ===========================================================================
 GNEJunction::GNEJunction(NBNode& nbn, GNENet* net, bool loaded) :
-    GNENetElement(net, nbn.getID(), GLO_JUNCTION, SUMO_TAG_JUNCTION),
+    GNENetElement(net, nbn.getID(), GLO_JUNCTION, SUMO_TAG_JUNCTION, ICON_LOCATEJUNCTION),
     myNBNode(nbn),
     myOrigPos(nbn.getPosition()),
     myAmCreateEdgeSource(false),
@@ -97,8 +97,7 @@ GNEJunction::updateGeometry() {
         myBoundary.add(myNBNode.getShape().getBoxBoundary());
     }
     myMaxSize = MAX2(myBoundary.getWidth(), myBoundary.getHeight());
-    // Update geometries of crossings
-    getNBNode()->buildCrossingsAndWalkingAreas();
+    // rebuild GNECrossings
     rebuildCrossings(false);
     for (std::vector<GNECrossing*>::const_iterator it = myGNECrossings.begin(); it != myGNECrossings.end(); it++) {
         (*it)->updateGeometry();

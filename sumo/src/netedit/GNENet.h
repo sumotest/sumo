@@ -396,13 +396,10 @@ public:
      */
     void joinSelectedJunctions(GNEUndoList* undoList);
 
-    /* @brief removes junctions that have no edges
-     */
+    /// @brief removes junctions that have no edges
     void removeSolitaryJunctions(GNEUndoList* undoList);
 
-    /* @brief replace the selected junction by geometry node(s)
-     * and merge the edges
-     */
+    /// @brief replace the selected junction by geometry node(s) and merge the edges
     void replaceJunctionByGeometry(GNEJunction* junction, GNEUndoList* undoList);
 
     /* @brief trigger recomputation of junction shape and logic
@@ -415,9 +412,6 @@ public:
 
     /// @brief check if net has crossings
     bool netHasCrossings() const;
-
-    /// @brief change crossing flag
-    void setNetHasCrossings(bool value);
 
     /// @brief get pointer to the main App
     FXApp* getApp();
@@ -455,6 +449,12 @@ public:
     /// @brief update additional ID in container
     /// @note this function is automatically called when user changes the ID of an additional
     void updateAdditionalID(const std::string& oldID, GNEAdditional* additional);
+
+    /**@brief Returns the named additional
+     * @param[in] id The id of the additional to return.
+     * @param[in] hardFail enable or disable exception if additional to insert is duplicated
+     */
+    GNEAdditional* retrieveAdditional(const std::string& idl, bool hardFail = true) const;
 
     /**@brief Returns the named additional
      * @param[in] type tag with the type of additional
@@ -568,9 +568,6 @@ private:
 
     /// @brief marker for whether the z-boundary is initialized
     static const SUMOReal Z_INITIALIZED;
-
-    /// @brief flag to check if net has crossings
-    bool myNetHasCrossings;
 };
 
 #endif

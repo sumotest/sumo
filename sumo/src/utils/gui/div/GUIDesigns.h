@@ -6,14 +6,14 @@
 ///
 /// File with the definitions of standard style of FXObjects in SUMO
 /****************************************************************************/
-// SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
-// Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
+// SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
+// Copyright (C) 2001-2016 DLR (http://www.dlr.de/) and contributors
 /****************************************************************************/
 //
 //   This file is part of SUMO.
-//   SUMO is free software; you can redistribute it and/or modify
+//   SUMO is free software: you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 3 of the License, or
+//   the Free Software Foundation, either version 3 of the License, or
 //   (at your option) any later version.
 //
 /****************************************************************************/
@@ -50,7 +50,7 @@
     #define GUIDesignTextFieldAttributeStr  (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
 
     /// @brief Num of column of text field
-    #define GUIDesignTextFieldNCol          5
+    #define GUIDesignTextFieldNCol          1
 /// @}
 
 /// @name FXButtons
@@ -128,11 +128,11 @@
     /// @brief Combo box static (not editable)
     #define GUIDesignComboBoxStatic         (COMBOBOX_STATIC | FRAME_SUNKEN | LAYOUT_LEFT | LAYOUT_TOP | LAYOUT_CENTER_Y)
 
-    /// @brief Combo box static (cannot be dited) extended over the matrix column
-    #define GUIDesignComboBoxAttribute      (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
+    /// @brief Combo box static (cannot be edited) extended over the matrix column
+    #define GUIDesignComboBoxAttribute      (COMBOBOX_NORMAL | FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X)
 
     /// @brief number of column of every combo box
-    #define GUIDesignComboBoxNCol           12
+    #define GUIDesignComboBoxNCol           1
 /// @}
 
 /// @name FXPackers
@@ -160,10 +160,13 @@
     #define GUIDesignViewnArea              (FRAME_SUNKEN | LAYOUT_SIDE_TOP | LAYOUT_FILL_X | LAYOUT_FILL_Y), 0, 0, 0, 0, 0, 0, 0, 0
     
     /// @brief design for the content frame of every frame
-    #define GNEDesigContentFrame            (LAYOUT_FILL_X | LAYOUT_FILL_Y)
+    #define GUIDesignContentsScrollWindow   (LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y)
+
+    /// @brief design for the content frame of every frame
+    #define GUIDesignContentsFrame          (LAYOUT_FILL_X | LAYOUT_FILL_Y)
     
     /// @brief design for all frames
-    #define GNEDesigFrame                   (LAYOUT_FILL_X | LAYOUT_FILL_Y)
+    #define GUIDesignFrame                  (LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 /// @}
 
 
@@ -187,6 +190,7 @@
     #define GUIDesignToolBarShell3          (FRAME_NORMAL)
 /// @}
 
+
 /// @name designs for separators
 /// @{
     /// @brief horizontal separator
@@ -207,8 +211,14 @@
 /// @}
 
 
+/// @name designs for Spin dials
+/// @{
     /// @brief desing for standard spin dial
-    #define GUIDesignSpinDial               (LAYOUT_CENTER_Y | LAYOUT_TOP | FRAME_SUNKEN | FRAME_THICK)
+    #define GUIDesignSpinDial               (FRAME_THICK | FRAME_SUNKEN | LAYOUT_TOP | LAYOUT_CENTER_Y)
+
+    /// @brief  spin dial extended over the matrix column with thick frame
+    #define GUIDesignSpinDialAttribute      (FRAME_THICK | LAYOUT_FILL_COLUMN | LAYOUT_FILL_X | SPIN_NOMAX)
+/// @}
 
 
     #define GUIDesignRadioButton            (RADIOBUTTON_NORMAL)

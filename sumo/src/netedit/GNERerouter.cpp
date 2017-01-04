@@ -226,8 +226,8 @@ GNERerouter::routeProbReroute::setProbability(SUMOReal probability) {
 // GNERerouter::rerouterInterval - methods
 // ---------------------------------------------------------------------------
 
-GNERerouter::rerouterInterval::rerouterInterval(SUMOTime begin, SUMOTime end) :
-    std::pair<SUMOTime, SUMOTime>(begin, end) {
+GNERerouter::rerouterInterval::rerouterInterval(SUMOReal begin, SUMOReal end) :
+    std::pair<SUMOReal, SUMOReal>(begin, end) {
 }
 
 
@@ -316,13 +316,13 @@ GNERerouter::rerouterInterval::removeRouteProbReroute(GNERerouter::routeProbRero
 }
 
 
-SUMOTime
+SUMOReal
 GNERerouter::rerouterInterval::getBegin() const {
     return first;
 }
 
 
-SUMOTime
+SUMOReal
 GNERerouter::rerouterInterval::getEnd() const {
     return second;
 }
@@ -351,7 +351,7 @@ GNERerouter::rerouterInterval::getRouteProbReroutes() const {
 // ---------------------------------------------------------------------------
 
 GNERerouter::GNERerouter(const std::string& id, GNEViewNet* viewNet, Position pos, std::vector<GNEEdge*> edges, const std::string& filename, SUMOReal probability, bool off, const std::set<rerouterInterval>& rerouterIntervals, bool blocked) :
-    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, blocked, std::vector<GNEAdditional * >(), edges),
+    GNEAdditionalSet(id, viewNet, pos, SUMO_TAG_REROUTER, ICON_REROUTER, blocked, std::vector<GNEAdditional * >(), edges),
     myFilename(filename),
     myProbability(probability),
     myOff(off),

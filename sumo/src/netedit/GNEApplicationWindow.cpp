@@ -436,31 +436,31 @@ GNEApplicationWindow::fillMenuBar() {
     // build modes command
     new FXMenuCommand(myEditMenu, 
                       "&Edge mode\tE\tCreate junction and edges.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODECREATEEDGE), this, MID_GNE_MODE_CREATE_EDGE);
+                      GUIIconSubSys::getIcon(ICON_MODECREATEEDGE), this, MID_GNE_MODE_CREATE_EDGE);
     new FXMenuCommand(myEditMenu, 
                       "&Move mode\tM\tMove elements.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODEMOVE), this, MID_GNE_MODE_MOVE);
+                      GUIIconSubSys::getIcon(ICON_MODEMOVE), this, MID_GNE_MODE_MOVE);
     new FXMenuCommand(myEditMenu, 
                       "&Delete mode\tD\tDelete elements.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODEDELETE), this, MID_GNE_MODE_DELETE);
+                      GUIIconSubSys::getIcon(ICON_MODEDELETE), this, MID_GNE_MODE_DELETE);
     new FXMenuCommand(myEditMenu, 
                       "&Inspect mode\tI\tInspect elements and change their attributes.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODEINSPECT), this, MID_GNE_MODE_INSPECT);
+                      GUIIconSubSys::getIcon(ICON_MODEINSPECT), this, MID_GNE_MODE_INSPECT);
     new FXMenuCommand(myEditMenu, 
                       "&Select mode\tS\tSelect elements.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODESELECT), this, MID_GNE_MODE_SELECT);
+                      GUIIconSubSys::getIcon(ICON_MODESELECT), this, MID_GNE_MODE_SELECT);
     new FXMenuCommand(myEditMenu,
                       "&Connection mode\tC\tEdit connections between lanes.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODECONNECTION), this, MID_GNE_MODE_CONNECT);
+                      GUIIconSubSys::getIcon(ICON_MODECONNECTION), this, MID_GNE_MODE_CONNECT);
     new FXMenuCommand(myEditMenu,
                       "&Traffic light mode\tT\tEdit traffic lights over junctions.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODETLS), this, MID_GNE_MODE_TLS);
+                      GUIIconSubSys::getIcon(ICON_MODETLS), this, MID_GNE_MODE_TLS);
     new FXMenuCommand(myEditMenu,
                       "&Additional mode\tA\tCreate additional elements.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODEADDITIONAL), this, MID_GNE_MODE_ADDITIONAL);
+                      GUIIconSubSys::getIcon(ICON_MODEADDITIONAL), this, MID_GNE_MODE_ADDITIONAL);
     new FXMenuCommand(myEditMenu,
                       "C&rossing mode\tR\tCreate crossings between edges.", 
-                      GUIIconSubSys::getIcon(ICON_GNEMODECROSSING), this, MID_GNE_MODE_CROSSING);
+                      GUIIconSubSys::getIcon(ICON_MODECROSSING), this, MID_GNE_MODE_CROSSING);
 
     /*
     new FXMenuSeparator(myEditMenu);
@@ -881,6 +881,11 @@ GNEApplicationWindow::handleEvent_NetworkLoaded(GUIEvent* e) {
             WRITE_ERROR("Loading of " + myAdditionalsFile + " failed.");
         }
     }
+    // check if additionals output must be changed
+    if (OptionsCont::getOptions().isSet("additionals-output")) {
+        myAdditionalsFile = OptionsCont::getOptions().getString("additionals-output");
+    }
+
     update();
 }
 
@@ -1122,7 +1127,7 @@ GNEApplicationWindow::onCmdSaveAsNetwork(FXObject*, FXSelector, void*) {
 long
 GNEApplicationWindow::onCmdSaveAsPlainXML(FXObject*, FXSelector, void*) {
     FXString file = MFXUtils::getFilename2Write(this,
-                    "Select name of the plain-xml edge-file (other names will be deduced from this)", ".edg.xml",
+                    "Select name of the plain-xml edge-file (other names will be deduced from this)", "",
                     GUIIconSubSys::getIcon(ICON_EMPTY),
                     gCurrentFolder);
     if (file == "") {
@@ -1133,7 +1138,10 @@ GNEApplicationWindow::onCmdSaveAsPlainXML(FXObject*, FXSelector, void*) {
     std::string oldPrefix = oc.getString("plain-output-prefix");
     oc.resetWritable();
     std::string prefix = file.text();
-    prefix = prefix.substr(0, prefix.size() - 8);
+    // if last character is a dot, remove it
+    if(prefix.at(prefix.size()-1) == '.') {
+        prefix = prefix.substr(0, prefix.size()-1);
+    }
     oc.set("plain-output-prefix", prefix);
     getApp()->beginWaitCursor();
     try {
@@ -1242,7 +1250,7 @@ GNEApplicationWindow::onCmdSaveNetwork(FXObject*, FXSelector, void*) {
         } catch (IOError& e) {
             FXMessageBox::error(this, MBOX_OK, "Saving Network failed!", "%s", e.what());
         }
-        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Network saved.\n");
+        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Network saved in " + oc.getString("output-file") + ".\n");
         myMessageWindow->addSeparator();
         getApp()->endWaitCursor();
         return 1;
@@ -1254,26 +1262,22 @@ long
 GNEApplicationWindow::onCmdSaveAdditionals(FXObject*, FXSelector, void*) {
     // Check if additionals file was already set at start of netedit or with a previous save
     if (myAdditionalsFile == "") {
-        if(OptionsCont::getOptions().isSet("additionals-output") == false) {
-            FXString file = MFXUtils::getFilename2Write(this,
-                            "Select name of the additional file", ".xml",
-                            GUIIconSubSys::getIcon(ICON_EMPTY),
-                            gCurrentFolder);
-            if (file == "") {
-                // None additionals file was selected, then stop function
-                return 1;
-            } else {
-                myAdditionalsFile = file.text();
-            }
+        FXString file = MFXUtils::getFilename2Write(this,
+                        "Select name of the additional file", ".xml",
+                        GUIIconSubSys::getIcon(ICON_EMPTY),
+                        gCurrentFolder);
+        if (file == "") {
+            // None additionals file was selected, then stop function
+            return 1;
         } else {
-            myAdditionalsFile = OptionsCont::getOptions().getString("additionals-output");
+            myAdditionalsFile = file.text();
         }
     }
     // Start saving additionals
     getApp()->beginWaitCursor();
     try {
         myNet->saveAdditionals(myAdditionalsFile);
-        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");
+        myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved in " + myAdditionalsFile + ".\n");
     } catch (IOError& e) {
         FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());
     }
@@ -1293,18 +1297,11 @@ GNEApplicationWindow::onCmdSaveAdditionalsAs(FXObject*, FXSelector, void*) {
     if (file != "") {
         // Set new additional file
         myAdditionalsFile = file.text();
-        // Start saving additionals
-        getApp()->beginWaitCursor();
-        try {
-            myNet->saveAdditionals(myAdditionalsFile);
-            myMessageWindow->appendMsg(EVENT_MESSAGE_OCCURED, "Additionals saved.\n");
-        } catch (IOError& e) {
-            FXMessageBox::error(this, MBOX_OK, "Saving additionals failed!", "%s", e.what());
-        }
-        myMessageWindow->addSeparator();
-        getApp()->endWaitCursor();
+        // save additionals
+        return onCmdSaveAdditionals(0,0,0);
+    } else {
+        return 1;
     }
-    return 1;
 }
 
 

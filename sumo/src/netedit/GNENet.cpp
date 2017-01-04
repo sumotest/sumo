@@ -107,8 +107,7 @@ GNENet::GNENet(NBNetBuilder* netBuilder) :
     myEdgeIDSupplier("gneE", netBuilder->getEdgeCont().getAllNames()),
     myJunctionIDSupplier("gneJ", netBuilder->getNodeCont().getAllNames()),
     myShapeContainer(myGrid),
-    myNeedRecompute(true),
-    myNetHasCrossings(true) {
+    myNeedRecompute(true) {
     GUIGlObjectStorage::gIDStorage.setNetObject(this);
 
     // init junctions
@@ -974,13 +973,12 @@ GNENet::requireRecompute() {
 
 bool 
 GNENet::netHasCrossings() const {
-    return myNetHasCrossings;
-}
-
-
-void 
-GNENet::setNetHasCrossings(bool value) {
-    myNetHasCrossings = value;
+    for (std::map<std::string, NBNode*>::const_iterator i = myNetBuilder->getNodeCont().begin(); i != myNetBuilder->getNodeCont().end() ; i++) {
+        if(i->second->getCrossings().size() > 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -1259,6 +1257,21 @@ GNENet::updateAdditionalID(const std::string& oldID, GNEAdditional* additional) 
 }
 
 
+GNEAdditional* 
+GNENet::retrieveAdditional(const std::string& id, bool hardFail) const {
+    for(GNEAdditionals::const_iterator i = myAdditionals.begin(); i != myAdditionals.end(); i++) {
+        if(i->second->getID() == id) {
+            return i->second;
+        }
+    }
+    if (hardFail) {
+        throw ProcessError("Attempted to retrieve non-existant additional");
+    } else {
+        return NULL;
+    }
+}
+
+
 GNEAdditional*
 GNENet::getAdditional(SumoXMLTag type, const std::string& id) const {
     if (myAdditionals.empty()) {
@@ -1436,18 +1449,12 @@ GNENet::computeAndUpdate(OptionsCont& oc) {
     myNetBuilder->compute(oc, liveExplicitTurnarounds, false);
     // update precomputed geometries
     initGNEConnections();
+
     for (GNEJunctions::const_iterator it = myJunctions.begin(); it != myJunctions.end(); it++) {
         it->second->setLogicValid(true);
         // updated shape
         it->second->updateGeometry();
         refreshElement(it->second);
-    }
-    // Check if net own crossings
-    myNetHasCrossings = false;
-    for (std::map<std::string, NBNode*>::const_iterator i = myNetBuilder->getNodeCont().begin(); i != myNetBuilder->getNodeCont().end(); i++) {
-        if(i->second->getCrossings().size() > 0) {
-            myNetHasCrossings = true;
-        }
     }
 
     myNeedRecompute = false;

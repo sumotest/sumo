@@ -34,17 +34,23 @@ def Popen(newNet):
     neteditCall = [neteditApp, '--gui-testing', '--window-size', '700,500',
                    '--no-warnings', '--error-log', os.path.join(textTestSandBox, 'log.txt')]
     
-    # check if a new net must be created, or a existent net must be loaded
+    # check if a new net must be created
+    if newNet:
+        neteditCall += ['--new']
+    
+    # check if an existent net must be loaded
     if os.path.exists(os.path.join(textTestSandBox, "input_net.net.xml")):
         neteditCall += ['--sumo-net-file', os.path.join(textTestSandBox, "input_net.net.xml")]
-    elif newNet:
-        neteditCall += ['--new', '--output-file', os.path.join(textTestSandBox, 'net.net.xml')]
     
-    # Check if additionals must be loaded
+    # set output for net
+    neteditCall += ['--output-file', os.path.join(textTestSandBox, 'net.net.xml')]
+    
+    # Check if additionals must be loaded (additionals output will be automatically set)
     if os.path.exists(os.path.join(textTestSandBox, "input_additionals.add.xml")):
         neteditCall += ['--sumo-additionals-file', os.path.join(textTestSandBox, "input_additionals.add.xml")]
-    else:
-        neteditCall += ['--additionals-output', os.path.join(textTestSandBox, "additionals.xml")]
+
+    # set output for additionals
+    neteditCall += ['--additionals-output', os.path.join(textTestSandBox, "additionals.xml")]
     
     return subprocess.Popen(neteditCall, env=os.environ, stdout=sys.stdout, stderr=sys.stderr)
 
@@ -57,7 +63,7 @@ def getReferenceMatch(neProcess):
         neProcess.kill()
         sys.exit("Killed netedit process. 'reference.png' not found")
 
-
+# setup and start netedit
 def setupAndStart(testRoot, newNet):
     setup(testRoot)
     # Open netedit
@@ -66,63 +72,59 @@ def setupAndStart(testRoot, newNet):
     # Wait for netedit reference
     return neteditProcess, getReferenceMatch(neteditProcess)
 
-
-# netedit undo
-def undo(match, number) :
-    click(match)
-    for x in range(0, number) :
-        type("z", Key.CTRL)
     
-# netedit redo
-def redo(match, number) :
+# rebuild network
+def rebuildNetwork():
+    type(Key.F5)
+
+    
+# netedit undo
+def undo(match, number):
     click(match)
-    for x in range(0, number) :
+    for x in range(0, number):
+        type("z", Key.CTRL)
+
+
+# netedit redo
+def redo(match, number):
+    click(match)
+    for x in range(0, number):
         type("y", Key.CTRL)
 
-        
-# netedit modify attribute
-def modifyAttribute(parametersReference, attributeNumber, value):
-    click(parametersReference)
-    for x in range(0, attributeNumber) :
-        type(Key.TAB)
-    # select all values
-    type("a", Key.CTRL)
-    # paste the new value
-    paste(value)
-    # type enter to save change
-    type(Key.ENTER)
-    
-# netedit modify attribute
-def modifyStoppingPlaceReference(parametersReference, numTabs, numDowns):
-    click(parametersReference)
-    # place cursor in comboBox Reference
-    for x in range(numTabs):
-        type(Key.TAB)
-    # Set comboBox in the first element
-    for x in range(3):
-        type(Key.UP)
-    # select new reference
-    for x in range(numDowns):
-        type(Key.DOWN)
-    
-# block additional
-def changeBlockAdditional(parametersReference, numTabs):
-    click(parametersReference)
-    # place cursor in block movement checkbox
-    for x in range(numTabs):
-        type(Key.TAB)
-    # Change current value
-    type(Key.SPACE)
 
+#def left click over element
+def leftClick(match, positionx, positiony):
+    click(match.getTarget().offset(positionx, positiony))
+    
+
+# zoom in
+def zoomIn(position, level):
+    # set mouse over position
+    hover(position)
+    # apply zoom it using key +
+    for x in range(level):
+        type(Key.ADD)
+    
+    
+# zoom out
+def zoomOut(position, level):
+    # set mouse over position
+    hover(position)
+    # apply zoom it using key -
+    for x in range(level):
+        type(Key.MINUS)
+
+        
 # netedit wait question
 def waitQuestion(answer):
     # wait 0.5 second to question dialog
     wait(0.5)
     #Answer can be "y" or "n"
     type(answer, Key.ALT)
-    
+
+
 # netedit quit
-def quit(neteditProcess, mustBeSaved, save) :
+def quit(neteditProcess, mustBeSaved, save):
     # quit using hotkey
     type("q", Key.CTRL)
 
@@ -143,7 +145,228 @@ def quit(neteditProcess, mustBeSaved, save) :
     print("error closing netedit")
 
 
-# netedit save additionals
-def saveAdditionals(match) :
+# save network
+def saveNetwork():
+    # save newtork using hotkey
+    type("s", Key.CTRL)
+    
+    
+# save additionals
+def saveAdditionals():
     # save additionals using hotkey
     type("d", Key.CTRL + Key.SHIFT)
+    
+################################################# 
+### Inspect mode
+################################################# 
+
+# set inspect mode
+def inspectMode():
+    type("i")
+
+# netedit parameters reference
+def getParametersReference(match):
+    return match.getTarget().offset(-75, 50)
+        
+# netedit modify int/float/string
+def modifyAttribute(parametersReference, attributeNumber, value):
+    click(parametersReference)
+    # jump to attribute
+    for x in range(0, attributeNumber):
+        type(Key.TAB)
+    # select all values
+    type("a", Key.CTRL)
+    # paste the new value
+    paste(value)
+    # type enter to save change
+    type(Key.ENTER)
+
+# netedit modify bool
+def modifyBoolAttribute(parametersReference, attributeNumber):
+    click(parametersReference)
+    # jump to bool attribute
+    for x in range(0, attributeNumber):
+        type(Key.TAB)
+    # change value
+    type(Key.SPACE)
+
+################################################# 
+### Move mode
+################################################# 
+
+# set move mode
+def moveMode():
+    type("m")
+    
+# move element
+def moveElement(match, startX, startY, endX, endY):
+    # change mouse move delay
+    Settings.MoveMouseDelay = 0.5
+    # move element
+    dragDrop(match.getTarget().offset(startX, startY), match.getTarget().offset(endX, endY))
+    # set back mouse move delay
+    Settings.MoveMouseDelay = 0.1
+
+################################################# 
+### crossings
+################################################# 
+
+# Change to crossing mode
+def crossingMode():
+    type("r")
+
+# create crossing
+def createCrossing(match):
+    # select edges attribute
+    click(match.getTarget().offset(-100, 250))
+    # jump to create edge
+    for x in range(0, 4):    
+        type(Key.TAB)
+    # type enter to create crossing
+    type(Key.SPACE)
+    
+    
+def modifyCrossingEdges(match, value):
+    # select edges attribute
+    click(match.getTarget().offset(-100, 250))
+    # select all values
+    type("a", Key.CTRL)
+    # paste the new value
+    paste(value)
+    # type enter to save change
+    type(Key.ENTER)
+    
+    
+def modifyCrossingPriority(match):
+    # select edges attribute
+    click(match.getTarget().offset(-100, 250))
+    # jump to priority
+    type(Key.TAB)
+    # type enter to save change
+    type(Key.SPACE)
+    
+    
+def modifyCrossingWidth(match, value):
+    # select edges attribute
+    click(match.getTarget().offset(-100, 250))
+    # jump to create edge
+    for x in range(0, 2):
+        type(Key.TAB)
+    # select all values
+    type("a", Key.CTRL)
+    # paste the new value
+    paste(value)
+    # type enter to save change
+    type(Key.ENTER)
+    
+    
+def clearCrossings(match):
+    # select edges attribute
+    click(match.getTarget().offset(-100, 250))
+    # jump to clear button
+    for x in range(0, 3):
+        type(Key.TAB, Key.SHIFT)
+    # type space to activate button
+    type(Key.SPACE)
+
+    
+def invertCrossings(match):
+    # select edges attribute
+    click(match.getTarget().offset(-100, 250))
+    # jump to invert button
+    for x in range(0, 2):
+        type(Key.TAB, Key.SHIFT)
+    # type space to activate button
+    type(Key.SPACE)
+
+################################################# 
+### additionals
+################################################# 
+    
+# Change to create additional mode
+def additionalMode():
+    type("a")
+    
+    
+def getComboBoxAdditional(match):
+    return match.getTarget().offset(-75, 50)
+    
+    
+def changeAdditional(comboboxAdditional, numDowns):
+    click(comboboxAdditional)
+    # select type of additionals depending of numDowns
+    for x in range(numDowns):
+        type(Key.DOWN)
+
+
+# block additional
+def changeBlockAdditional(comboboxAdditional, numTabs):
+    click(comboboxAdditional)
+    # place cursor in block movement checkbox
+    for x in range(numTabs):
+        type(Key.TAB)
+    # Change current value
+    type(Key.SPACE)
+
+
+def modifyStoppingPlaceLength(comboboxAdditional, numTabs, length):
+    click(comboboxAdditional)
+    # go to length textfield
+    for x in range(0, numTabs):
+        type(Key.TAB)
+    # paste new lenght
+    paste(length)
+
+
+# force position
+def modifyStoppingPlaceForcePosition(comboboxAdditional, numTabs):
+    click(comboboxAdditional)
+    # place cursor in force position checkbox
+    for x in range(numTabs):
+        type(Key.TAB)
+    # Change current value
+    type(Key.SPACE)
+    
+
+# modify stopping place reference
+def modifyStoppingPlaceReference(comboboxAdditional, numTabs, numDowns):
+    click(comboboxAdditional)
+    # place cursor in comboBox Reference
+    for x in range(numTabs):
+        type(Key.TAB)
+    # Set comboBox in the first element
+    for x in range(3):
+        type(Key.UP)
+    # select new reference
+    for x in range(numDowns):
+        type(Key.DOWN)
+
+        
+# modify stopping place lines
+def modifyNumberOfStoppingPlaceLines(comboboxAdditional, numTabs, numLines):
+    click(comboboxAdditional)
+    # go to add line
+    for x in range(0, numTabs):
+        type(Key.TAB)
+    # add lines
+    for x in range(0, numLines):
+        type(Key.SPACE)
+        
+        
+def addStoppingPlaceLines(comboboxAdditional, numTabs, numLines):
+    click(comboboxAdditional)
+    # place cursor in the first line
+    for x in range(0, 2):
+        type(Key.TAB)
+    # fill lines
+    for x in range(0, numLines):
+        paste("Line" + str(x))
+        type(Key.TAB)
+    
+################################################# 
+### delete
+################################################# 
+
+# Change to delete  mode
+def deleteMode():
+    type("d")

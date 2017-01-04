@@ -78,6 +78,16 @@ TraCIAPI::connect(const std::string& host, int port) {
 
 void
 TraCIAPI::close() {
+    send_commandClose();
+    tcpip::Storage inMsg;
+    std::string acknowledgement;
+    check_resultState(inMsg, CMD_CLOSE, false, &acknowledgement);
+    closeSocket();
+}
+
+
+void
+TraCIAPI::closeSocket() {
     if (mySocket == 0) {
         return;
     }
@@ -464,6 +474,11 @@ TraCIAPI::readVariables(tcpip::Storage& inMsg, const std::string& objectID, int 
                     break;
                 case TYPE_STRING:
                     v.string = inMsg.readString();
+                    break;
+                case POSITION_2D:
+                    v.position.x = inMsg.readDouble();
+                    v.position.y = inMsg.readDouble();
+                    v.position.z = 0;
                     break;
                 case POSITION_3D:
                     v.position.x = inMsg.readDouble();

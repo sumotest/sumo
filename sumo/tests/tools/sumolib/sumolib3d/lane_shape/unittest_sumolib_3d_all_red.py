@@ -103,7 +103,6 @@ class Test_Shapes(unittest.TestCase):
         expected_result_edge_shape = \
             [(1000, 100, 10), (1200, 100, 10)]
 
-        import pdb; pdb.set_trace()
         result_raw_edge_shape    = the_edge.getRawShape3D()
 
         

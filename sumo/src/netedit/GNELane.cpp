@@ -77,7 +77,7 @@ FXIMPLEMENT(GNELane, FXDelegator, 0, 0)
 // ===========================================================================
 
 GNELane::GNELane(GNEEdge& edge, const int index) :
-    GNENetElement(edge.getNet(), edge.getNBEdge()->getLaneID(index), GLO_LANE, SUMO_TAG_LANE),
+    GNENetElement(edge.getNet(), edge.getNBEdge()->getLaneID(index), GLO_LANE, SUMO_TAG_LANE, ICON_LOCATEEDGE),
     myParentEdge(edge),
     myIndex(index),
     mySpecialColor(0),
@@ -86,7 +86,7 @@ GNELane::GNELane(GNEEdge& edge, const int index) :
 }
 
 GNELane::GNELane() :
-    GNENetElement(NULL, "dummyConstructorGNELane", GLO_LANE, SUMO_TAG_LANE),
+    GNENetElement(NULL, "dummyConstructorGNELane", GLO_LANE, SUMO_TAG_LANE, ICON_LOCATEEDGE),
     myParentEdge(*static_cast<GNEEdge*>(0)),
     myIndex(-1),
     mySpecialColor(0),
@@ -799,7 +799,11 @@ GNELane::getAttribute(SumoXMLAttr key) const {
             // return all disallowed classes (may differ from the written attributes)
             return getVehicleClassNames(~(edge->getPermissions(myIndex)));
         case SUMO_ATTR_WIDTH:
-            return toString(edge->getLaneStruct(myIndex).width);
+            if (edge->getLaneStruct(myIndex).width == -1) {
+                return "default";
+            } else {
+                return toString(edge->getLaneStruct(myIndex).width);
+            }
         case SUMO_ATTR_ENDOFFSET:
             return toString(edge->getLaneStruct(myIndex).endOffset);
         case SUMO_ATTR_INDEX:
@@ -841,7 +845,11 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_DISALLOW:
             return canParseVehicleClasses(value);
         case SUMO_ATTR_WIDTH:
-            return canParse<SUMOReal>(value) && (isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH);
+            if(value == "default") {
+                return true;
+            } else {
+                return canParse<SUMOReal>(value) && (isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH);
+            }
         case SUMO_ATTR_ENDOFFSET:
             return canParse<SUMOReal>(value);
         case SUMO_ATTR_INDEX:
@@ -881,7 +889,11 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value) {
             myNet->getViewNet()->update();
             break;
         case SUMO_ATTR_WIDTH:
-            edge->setLaneWidth(myIndex, parse<SUMOReal>(value));
+            if(value == "default") {
+                edge->setLaneWidth(myIndex, -1);
+            } else {
+                edge->setLaneWidth(myIndex, parse<SUMOReal>(value));
+            }
             break;
         case SUMO_ATTR_ENDOFFSET:
             edge->setEndOffset(myIndex, parse<SUMOReal>(value));

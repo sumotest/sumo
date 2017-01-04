@@ -62,6 +62,7 @@ class MSVehicleTransfer;
 class MSAbstractLaneChangeModel;
 class MSStoppingPlace;
 class MSChargingStation;
+class MSParkingArea;
 class MSPerson;
 class MSDevice;
 class MSEdgeWeightsStorage;
@@ -536,6 +537,19 @@ public:
         return myWaitingTime;
     }
 
+    /** @brief Returns the SUMOTime lost (speed was lesser maximum speed)
+     *
+     * @note Intentional stopping does not count towards this time.
+    // @note speedFactor is included so time loss can never be negative. 
+    // The value is that of a driver who compares his travel time when
+    // the road is clear (which includes speed factor) with the actual travel time.
+    // @note includes time lost due to low departSpeed and decelerating/accelerating for planned stops
+     * @return The time the vehicle lost due to various effects
+     */
+    SUMOTime getTimeLoss() const {
+        return myTimeLoss;
+    }
+
 
     /** @brief Returns the SUMOTime waited (speed was lesser than 0.1m/s) within the last t millisecs
      *
@@ -565,6 +579,12 @@ public:
 
     SUMOReal getAccumulatedWaitingSeconds() const {
         return STEPS2TIME(getAccumulatedWaitingTime());
+    }
+
+    /** @brief Returns the time loss in seconds
+     */
+    SUMOReal getTimeLossSeconds() const {
+        return STEPS2TIME(myTimeLoss);
     }
 
 
@@ -789,6 +809,8 @@ public:
         MSStoppingPlace* busstop;
         /// @brief (Optional) container stop if one is assigned to the stop
         MSStoppingPlace* containerstop;
+        /// @brief (Optional) parkingArea if one is assigned to the stop
+        MSParkingArea* parkingarea;
         /// @brief (Optional) charging station if one is assigned to the stop
         MSChargingStation* chargingStation;
         /// @brief The stopping position start
@@ -817,6 +839,9 @@ public:
         SUMOTime timeToLoadNextContainer;
 
         void write(OutputDevice& dev) const;
+
+        /// @brief return halting position for upcoming stop;
+        SUMOReal getEndPos(const SUMOVehicle& veh) const;
     };
 
 
@@ -828,6 +853,18 @@ public:
      */
     bool addStop(const SUMOVehicleParameter::Stop& stopPar, std::string& errorMsg, SUMOTime untilOffset = 0);
 
+    /// @brief list of stops before stop replacing operation
+    std::list<Stop> myReplacedStops;
+
+
+    /** @brief replace the current parking area stop with a new stop with merge duration
+     */
+    bool replaceParkingArea(MSParkingArea* parkingArea = 0);
+    
+
+    /** @brief get the current parking area stop
+     */
+    MSParkingArea* getNextParkingArea();
 
     /** @brief Returns whether the vehicle has to stop somewhere
      * @return Whether the vehicle has to stop somewhere
@@ -1412,6 +1449,9 @@ protected:
     /// @brief The time the vehicle waits (is not faster than 0.1m/s) in seconds
     SUMOTime myWaitingTime;
     WaitingTimeCollector myWaitingTimeCollector;
+
+    /// @brief the time loss due to writing with less than maximum speed
+    SUMOTime myTimeLoss;
 
     /// @brief This Vehicles driving state (pos and speed)
     State myState;

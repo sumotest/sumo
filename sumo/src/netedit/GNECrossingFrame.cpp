@@ -84,7 +84,7 @@ FXDEFMAP(GNECrossingFrame::crossingParameters) GNECrossingParametersMap[] = {
 };
 
 // Object implementation
-FXIMPLEMENT(GNECrossingFrame,                     FXScrollWindow, GNECrossingMap,           ARRAYNUMBER(GNECrossingMap))
+FXIMPLEMENT(GNECrossingFrame,                     FXVerticalFrame, GNECrossingMap,           ARRAYNUMBER(GNECrossingMap))
 FXIMPLEMENT(GNECrossingFrame::edgesSelector,      FXGroupBox,     GNEEdgesMap,              ARRAYNUMBER(GNEEdgesMap))
 FXIMPLEMENT(GNECrossingFrame::crossingParameters, FXGroupBox,     GNECrossingParametersMap, ARRAYNUMBER(GNECrossingParametersMap))
 
@@ -499,6 +499,8 @@ GNECrossingFrame::crossingParameters::onCmdHelp(FXObject*, FXSelector, void*) {
             type->setText("int");
         } else if (GNEAttributeCarrier::isFloat(SUMO_TAG_CROSSING, attr)) {
             type->setText("float");
+        } else if (GNEAttributeCarrier::isTime(SUMO_TAG_CROSSING, attr)) {
+            type->setText("time");
         } else if (GNEAttributeCarrier::isBool(SUMO_TAG_CROSSING, attr)) {
             type->setText("bool");
         } else if (GNEAttributeCarrier::isString(SUMO_TAG_CROSSING, attr)) {

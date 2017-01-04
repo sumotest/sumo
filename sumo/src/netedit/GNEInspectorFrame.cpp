@@ -91,7 +91,7 @@ FXDEFMAP(GNEInspectorFrame::AttrConnection) AttrConnectionMap[] = {
 };
 
 // Object implementation
-FXIMPLEMENT(GNEInspectorFrame, FXScrollWindow, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
+FXIMPLEMENT(GNEInspectorFrame, FXVerticalFrame, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
 FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXMatrix, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 FXIMPLEMENT(GNEInspectorFrame::AttrEditor, FXDialogBox, AttrEditorMap, ARRAYNUMBER(AttrEditorMap))
 FXIMPLEMENT(GNEInspectorFrame::AttrConnection, FXHorizontalFrame, AttrConnectionMap, ARRAYNUMBER(AttrConnectionMap))
@@ -219,7 +219,7 @@ GNEInspectorFrame::inspect(const std::vector<GNEAttributeCarrier*>& ACs, GNEAttr
             myAttrConnections.at(i)->hideAttrConnection();
         }
 
-        // Gets tag and tattributes of element
+        // Gets tag and attributes of element
         SumoXMLTag tag = myACs.front()->getTag();
         const std::vector<SumoXMLAttr>& attrs = myACs.front()->getAttrs();
 
@@ -404,7 +404,7 @@ GNEInspectorFrame::getACs() const {
 // ===========================================================================
 
 GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
-    FXMatrix(parent, 7, GUIDesignMatrixAttributes),
+    FXMatrix(parent, 8, GUIDesignMatrixAttributes),
     myInspectorFrameParent(inspectorFrameParent),
     myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
@@ -414,13 +414,16 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     // Create and hide label
     myLabel = new FXLabel(this, "attributeLabel", 0, GUIDesignLabelAttribute);
     myLabel->hide();
-    // Create and hide textField int
+    // Create and hide textField for int attributes
     myTextFieldInt = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldAttributeInt);
     myTextFieldInt->hide();
-    // Create and hide textField real
+    // Create and hide textField for real attributes
     myTextFieldReal = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldAttributeReal);
     myTextFieldReal->hide();
-    // Create and hide textField string
+    // create and hide spindial for time attributes
+    myTimeSpinDial = new FXSpinner(this, 7, this, MID_GNE_SET_ATTRIBUTE, GUIDesignSpinDialAttribute);
+    myTimeSpinDial->hide();
+    // Create and hide textField for string attributes
     myTextFieldStrings = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldAttributeStr);
     myTextFieldStrings->hide();
     // Create and hide ComboBox
@@ -479,6 +482,11 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
         myTextFieldInt->setText(value.c_str());
         myTextFieldInt->setTextColor(FXRGB(0, 0, 0));
         myTextFieldInt->show();
+    } else if (GNEAttributeCarrier::isTime(myTag, myAttr)) {
+        // Show myTimeSpinDial for Time attributes
+        myTimeSpinDial->setValue((int)GNEAttributeCarrier::parse<SUMOReal>(value));
+        myTimeSpinDial->setTextColor(FXRGB(0, 0, 0));
+        myTimeSpinDial->show();
     } else {
         // In any other case (String, list, etc.), show value as String
         myTextFieldStrings->setText(value.c_str());
@@ -549,26 +557,48 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
             newVal = myChoicesCombo->getText().text();
         }
     } else if (GNEAttributeCarrier::isFloat(myTag, myAttr)) {
-        // obtain value of myTextFieldReal
-        newVal = myTextFieldReal->getText().text();
+        // Check if default value of attribute must be set
+        if(myTextFieldReal->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
+            newVal = GNEAttributeCarrier::getDefaultValue<std::string>(myTag, myAttr);
+            myTextFieldReal->setText(newVal.c_str());
+        } else {
+            // obtain value of myTextFieldReal
+            newVal = myTextFieldReal->getText().text();
+        }
     } else if (GNEAttributeCarrier::isInt(myTag, myAttr)) {
-        // obtain value of myTextFieldInt
-        newVal = myTextFieldInt->getText().text();
+        // Check if default value of attribute must be set
+        if(myTextFieldInt->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
+            newVal = GNEAttributeCarrier::getDefaultValue<std::string>(myTag, myAttr);
+            myTextFieldInt->setText(newVal.c_str());
+        } else {
+            // obtain value of myTextFieldInt
+            newVal = myTextFieldInt->getText().text();
+        }
+    } else if (GNEAttributeCarrier::isTime(myTag, myAttr)) {
+        // obtain value of myTimeSpinDial
+        newVal = toString(myTimeSpinDial->getValue());
     } else if (GNEAttributeCarrier::isString(myTag, myAttr)) {
-        // obtain value of myTextFieldStrings
-        newVal = myTextFieldStrings->getText().text();
+        // Check if default value of attribute must be set
+        if(myTextFieldStrings->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
+            newVal = GNEAttributeCarrier::getDefaultValue<std::string>(myTag, myAttr);
+            myTextFieldStrings->setText(newVal.c_str());
+        } else {
+            // obtain value of myTextFieldStrings
+            newVal = myTextFieldStrings->getText().text();
+        }
     }
 
-    // Check if newvalue is valid
-    if (myInspectorFrameParent->getACs().front()->isValid(myAttr, newVal)) {
+    // Check if attribute must be changed
+    if(myInspectorFrameParent->getACs().front()->isValid(myAttr, newVal)) {
         // if its valid for the first AC than its valid for all (of the same type)
         if (myInspectorFrameParent->getACs().size() > 1) {
             myInspectorFrameParent->getViewNet()->getUndoList()->p_begin("Change multiple attributes");
         }
-        // Set all attributes
+        // Set new value of attribute in all selected ACs
         for (std::vector<GNEAttributeCarrier*>::const_iterator it_ac = myInspectorFrameParent->getACs().begin(); it_ac != myInspectorFrameParent->getACs().end(); it_ac++) {
             (*it_ac)->setAttribute(myAttr, newVal, myInspectorFrameParent->getViewNet()->getUndoList());
         }
+        // finish change multiple attributes
         if (myInspectorFrameParent->getACs().size() > 1) {
             myInspectorFrameParent->getViewNet()->getUndoList()->p_end();
         }
@@ -579,6 +609,9 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
         } else if (GNEAttributeCarrier::isInt(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldInt->setTextColor(FXRGB(0, 0, 0));
             myTextFieldInt->killFocus();
+        } else if (GNEAttributeCarrier::isTime(myTag, myAttr) && myTextFieldStrings != 0) {
+            myTimeSpinDial->setTextColor(FXRGB(0, 0, 0));
+            myTimeSpinDial->killFocus();
         } else if (GNEAttributeCarrier::isString(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldStrings->setTextColor(FXRGB(0, 0, 0));
             myTextFieldStrings->killFocus();
@@ -589,6 +622,8 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
             myTextFieldReal->setTextColor(FXRGB(255, 0, 0));
         } else if (GNEAttributeCarrier::isInt(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldInt->setTextColor(FXRGB(255, 0, 0));
+        } else if (GNEAttributeCarrier::isTime(myTag, myAttr) && myTextFieldStrings != 0) {
+            myTimeSpinDial->setTextColor(FXRGB(255, 0, 0));
         } else if (GNEAttributeCarrier::isString(myTag, myAttr) && myTextFieldStrings != 0) {
             myTextFieldStrings->setTextColor(FXRGB(255, 0, 0));
         }

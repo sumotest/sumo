@@ -53,6 +53,7 @@
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include <microsim/devices/MSDevice.h>
 #include <microsim/devices/MSDevice_Vehroutes.h>
+#include <microsim/output/MSStopOut.h>
 #include <utils/common/RandHelper.h>
 #include "MSFrame.h"
 #include <utils/common/SystemFrame.h>
@@ -203,6 +204,9 @@ MSFrame::fillOptions() {
 
     oc.doRegister("lanechange-output", new Option_FileName());
     oc.addDescription("lanechange-output", "Output", "Record lane changes and their motivations for all vehicles into FILE");
+
+    oc.doRegister("stop-output", new Option_FileName());
+    oc.addDescription("stop-output", "Output", "Record stops and loading/unloading of passenger and containers for all vehicles into FILE");
 
 #ifdef _DEBUG
     oc.doRegister("movereminder-output", new Option_FileName());
@@ -378,7 +382,7 @@ MSFrame::fillOptions() {
                       "Apply scaled time penalties when driving across tls controlled junctions based on green split instead of checking actual phases");
     oc.doRegister("meso-minor-penalty", new Option_String("0", "TIME"));
     oc.addDescription("meso-minor-penalty", "Mesoscopic",
-                      "Apply fixed time penalty when driving across a minor link. When using --meso-junction-control.limited, the penalty is not applied when limited control is active.");
+                      "Apply fixed time penalty when driving across a minor link. When using --meso-junction-control.limited, the penalty is not applied whenever limited control is active.");
     oc.doRegister("meso-overtaking", new Option_Bool(false));
     oc.addDescription("meso-overtaking", "Mesoscopic", "Enable mesoscopic overtaking");
     oc.doRegister("meso-recheck", new Option_String("0", "TIME"));
@@ -441,12 +445,14 @@ MSFrame::buildStreams() {
     OutputDevice::createDeviceByOption("link-output", "link-output");
     OutputDevice::createDeviceByOption("bt-output", "bt-output");
     OutputDevice::createDeviceByOption("lanechange-output", "lanechanges");
+    OutputDevice::createDeviceByOption("stop-output", "stops");
 
 #ifdef _DEBUG
     OutputDevice::createDeviceByOption("movereminder-output", "movereminder-output");
 #endif
 
     MSDevice_Vehroutes::init();
+    MSStopOut::init();
 }
 
 

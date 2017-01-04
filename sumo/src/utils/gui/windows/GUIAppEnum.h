@@ -145,6 +145,8 @@ enum {
     MID_FULLSCREEN,
     /// @brief Locator configuration - menu entry
     MID_LISTINTERNAL,
+    MID_LISTPARKING,
+    MID_LISTTELEPORTING,
     /// @brief The Simulation delay control
     MID_SIMDELAY,
     /// @}
@@ -353,6 +355,14 @@ enum {
     MID_CHOOSEN_INVERT,
     /// @}
 
+        /// @name GNEDeleteFrame - childs
+    /// @{
+
+    /// @brief tree list with the childs
+    MID_GNEDELETE_CHILDS,
+
+    /// @}
+
 
     /// @name IDs for visualization settings - Dialog
     /// @{
@@ -435,6 +445,7 @@ enum {
     MID_GNE_MODE_ADDITIONAL_REFERENCEPOINT,
     MID_GNE_MODE_ADDITIONAL_FORCEPOSITION,
     MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_TEXT,
+    MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_DIAL,
     MID_GNE_MODE_ADDITIONAL_CHANGEPARAMETER_BOOL,
 
     /// @brief Inspector attribute dialog
