@@ -341,8 +341,6 @@ public:
 
     /// @}
 
-
-
     /// @name Access to vehicles
     /// @{
 
@@ -548,6 +546,9 @@ public:
 
     /// returns the container with all links !!!
     const MSLinkCont& getLinkCont() const;
+
+    /// returns the link to the given lane or 0, if it is not connected
+    const MSLink* getLinkTo(const MSLane*) const;
 
     /// Returns true if there is not a single vehicle on the lane.
     bool empty() const {
@@ -1100,9 +1101,11 @@ protected:
     /// The vClass speed restrictions for this lane
     const std::map<SUMOVehicleClass, SUMOReal>* myRestrictions;
 
+    /// All direct predecessor lanes
     std::vector<IncomingLaneInfo> myIncomingLanes;
-    mutable MSLane* myLogicalPredecessorLane;
 
+    /// 
+    mutable MSLane* myLogicalPredecessorLane;
 
     /// @brief The current length of all vehicles on this lane, including their minGaps
     SUMOReal myBruttoVehicleLengthSum;
@@ -1114,6 +1117,7 @@ protected:
         right-of-way rule, i.e. blocked or not blocked. */
     MSLinkCont myLinks;
 
+    /// All direct internal and direct (disregarding internal predecessors) non-internal predecessor lanes of this lane
     std::map<MSEdge*, std::vector<MSLane*> > myApproachingLanes;
 
     /// @brief leaders on all sublanes as seen by approaching vehicles (cached)

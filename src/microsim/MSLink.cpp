@@ -560,7 +560,7 @@ MSLink::getInternalLengthsAfter() const {
 #ifdef HAVE_INTERNAL_LANES
     MSLane* lane = myInternalLane;
 
-    while (lane != 0 && lane->getEdge().getPurpose() == MSEdge::EDGEFUNCTION_INTERNAL) {
+    while (lane != 0 && lane->isInternal()) {
         len += lane->getLength();
         lane = lane->getLinkCont()[0]->getViaLane();
     }

@@ -554,7 +554,7 @@ MSLane::isInsertionSuccess(MSVehicle* aVehicle,
         if (nextStop.lane == this) {
             std::stringstream msg;
             msg << "scheduled stop on lane '" << myID << "' too close";
-            const SUMOReal distToStop = nextStop.endPos - pos; // XXX: Please approve whether endPos is appropriate, here. (Leo)
+            const SUMOReal distToStop = nextStop.endPos - pos;
             if (checkFailure(aVehicle, speed, dist, cfModel.stopSpeed(aVehicle, speed, distToStop),
                              patchSpeed, msg.str())) {
                 // we may not drive with the given velocity - we cannot stop at the stop
@@ -1539,11 +1539,23 @@ MSLane::succLinkSec(const SUMOVehicle& veh, int nRouteSuccs,
     return succLinkSource.myLinks.end();
 }
 
-
-
 const MSLinkCont&
 MSLane::getLinkCont() const {
     return myLinks;
+}
+
+
+/// returns the link to the given lane or 0, if it is not connected
+const MSLink*
+MSLane::getLinkTo(const MSLane* target) const {
+    MSLinkCont::const_iterator l = myLinks.begin();
+    while(l != myLinks.end()){
+        if ((*l)->getLane()->getID() == target->getID()){
+            return *l;
+        }
+        ++l;
+    }
+    return 0;
 }
 
 
