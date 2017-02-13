@@ -12,6 +12,7 @@ MSInstantInductLoop.cpp MSInstantInductLoop.h \
 MSMeanData.cpp MSMeanData.h \
 MSMeanData_Emissions.cpp MSMeanData_Emissions.h \
 MSMeanData_Harmonoise.cpp MSMeanData_Harmonoise.h \
+MSLaneSequenceDetector.cpp MSLaneSequenceDetector.h\
 MSMeanData_Net.cpp MSMeanData_Net.h \
 MSMeanData_Amitran.cpp MSMeanData_Amitran.h \
 MSRouteProbe.cpp MSRouteProbe.h \
