@@ -741,6 +741,8 @@ MSVehicle::adaptLaneEntering2MoveReminder(const MSLane& enteredLane) {
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end(); ++rem) {
         rem->second += oldLaneLength;
 #ifdef _DEBUG
+//        if (rem->first==0) std::cout << "Null reminder (?!)" << std::endl;
+//        std::cout << "Adapted MoveReminder on lane " << ((rem->first->getLane()==0) ? "NULL" : rem->first->getLane()->getID()) <<" position to " << rem->second << std::endl;
         if (myTraceMoveReminders) {
             traceMoveReminder("adaptedPos", rem->first, rem->second, true);
         }
@@ -1277,7 +1279,7 @@ MSVehicle::processNextStop(SUMOReal currentVelocity) {
                         addReminder(*rem);
                     }
                     MSParkingArea* oldParkingArea = stop.parkingarea;
-                    activateReminders(MSMoveReminder::NOTIFICATION_PARKING_REROUTE);
+                    activateReminders(MSMoveReminder::NOTIFICATION_PARKING_REROUTE, myLane);
                     if (myStops.empty() || myStops.front().parkingarea != oldParkingArea) {
                         // rerouted, keep driving
                         return currentVelocity;
@@ -2653,7 +2655,7 @@ MSVehicle::checkRewindLinkLanes(const SUMOReal lengthsInFront, DriveItemVector& 
 
 
 void
-MSVehicle::activateReminders(const MSMoveReminder::Notification reason) {
+MSVehicle::activateReminders(const MSMoveReminder::Notification reason, const MSLane* enteredLane) {
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end();) {
         // skip the reminder if it is a lane reminder but not for my lane
         if (rem->first->getLane() != 0 && rem->second > 0.) {
@@ -2664,7 +2666,7 @@ MSVehicle::activateReminders(const MSMoveReminder::Notification reason) {
 #endif
             ++rem;
         } else {
-            if (rem->first->notifyEnter(*this, reason)) {
+            if (rem->first->notifyEnter(*this, reason, enteredLane)) {
 #ifdef _DEBUG
                 if (myTraceMoveReminders) {
                     traceMoveReminder("notifyEnter", rem->first, rem->second, true);
@@ -2676,6 +2678,7 @@ MSVehicle::activateReminders(const MSMoveReminder::Notification reason) {
                 if (myTraceMoveReminders) {
                     traceMoveReminder("notifyEnter", rem->first, rem->second, false);
                 }
+//                std::cout << SIMTIME << " Vehicle '" << getID() << "' erases MoveReminder (with offset " << rem->second << ")" << std::endl;
 #endif
                 rem = myMoveReminders.erase(rem);
             }
@@ -2695,7 +2698,7 @@ MSVehicle::enterLaneAtMove(MSLane* enteredLane, bool onTeleporting) {
         return true;
     }
     */
-    // move mover reminder one lane further
+    // Adjust MoveReminder offset to the next lane
     adaptLaneEntering2MoveReminder(*enteredLane);
     // set the entered lane as the current lane
     myLane = enteredLane;
@@ -2706,16 +2709,13 @@ MSVehicle::enterLaneAtMove(MSLane* enteredLane, bool onTeleporting) {
         ++myCurrEdge;
     }
     if (!onTeleporting) {
-        activateReminders(MSMoveReminder::NOTIFICATION_JUNCTION);
+        activateReminders(MSMoveReminder::NOTIFICATION_JUNCTION, enteredLane);
     } else {
         // normal move() isn't called so reset position here. must be done
         // before calling reminders
-        // XXX: This seems strange to me since in activateReminders, which (e.g. for induction loops)
-        //      may call notifyEnter making use of the stored position to decide whether or not to add the vehicle...
-        //      Please recheck (Leo), refs. #2579
         myState.myPos = 0;
         myCachedPosition = Position::INVALID;
-        activateReminders(MSMoveReminder::NOTIFICATION_TELEPORT);
+        activateReminders(MSMoveReminder::NOTIFICATION_TELEPORT, enteredLane);
     }
     return hasArrived();
 }
@@ -2733,7 +2733,7 @@ MSVehicle::enterLaneAtLaneChange(MSLane* enteredLane) {
     for (std::vector< MSMoveReminder* >::const_iterator rem = enteredLane->getMoveReminders().begin(); rem != enteredLane->getMoveReminders().end(); ++rem) {
         addReminder(*rem);
     }
-    activateReminders(MSMoveReminder::NOTIFICATION_LANE_CHANGE);
+    activateReminders(MSMoveReminder::NOTIFICATION_LANE_CHANGE, enteredLane);
     MSLane* lane = myLane;
     SUMOReal leftLength = getVehicleType().getLength() - myState.myPos;
     for (int i = 0; i < (int)myFurtherLanes.size(); i++) {
@@ -2788,7 +2788,7 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
         for (std::vector< MSMoveReminder* >::const_iterator rem = enteredLane->getMoveReminders().begin(); rem != enteredLane->getMoveReminders().end(); ++rem) {
             addReminder(*rem);
         }
-        activateReminders(notification);
+        activateReminders(notification, enteredLane);
     }
     // build the list of lanes the vehicle is lapping into
     if (!myLaneChangeModel->isOpposite()) {

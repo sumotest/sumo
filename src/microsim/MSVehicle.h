@@ -624,11 +624,12 @@ public:
      *  "MSMoveReminder::notifyEnter" is called.
      *
      * @param[in] reason The reason for changing the reminders' states
+     * @param[in] enteredLane The lane, which is entered (if applicable)
      * @see MSMoveReminder
      * @see MSMoveReminder::notifyEnter
      * @see MSMoveReminder::Notification
      */
-    void activateReminders(const MSMoveReminder::Notification reason);
+    void activateReminders(const MSMoveReminder::Notification reason, const MSLane* enteredLane = 0);
 
     /** @brief Update when the vehicle enters a new lane in the move step.
      *

@@ -98,7 +98,7 @@ public:
             lengthWithGap(_lengthWithGap), 
             accel(_accel), 
             timeLoss(vmax > 0 ? timeOnDet * (vmax - speed) / vmax : 0),
-            accumulatedTimeLoss(timeLoss),
+//            accumulatedTimeLoss(timeLoss),
             stillOnDet(_stillOnDet) {}
         std::string id;
         std::string type;
@@ -109,7 +109,7 @@ public:
         SUMOReal lengthWithGap;
         SUMOReal accel;
         SUMOReal timeLoss;
-        SUMOReal accumulatedTimeLoss;
+//        SUMOReal accumulatedTimeLoss;
         bool stillOnDet;
     };
 
@@ -214,7 +214,7 @@ public:
      * @see MSMoveReminder::notifyEnter
      * @see MSMoveReminder::Notification
      */
-    bool notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason);
+    bool notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason, const MSLane* enteredLane = 0);
     /// @}
 
 

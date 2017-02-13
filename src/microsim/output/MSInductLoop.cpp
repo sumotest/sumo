@@ -84,7 +84,7 @@ MSInductLoop::reset() {
 
 
 bool
-MSInductLoop::notifyEnter(SUMOVehicle& veh, Notification reason) {
+MSInductLoop::notifyEnter(SUMOVehicle& veh, Notification reason, const MSLane* /* enteredLane */) {
     if (!vehicleApplies(veh)) {
         return false;
     }

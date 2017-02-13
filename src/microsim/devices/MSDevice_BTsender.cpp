@@ -93,7 +93,7 @@ MSDevice_BTsender::~MSDevice_BTsender() {
 
 
 bool
-MSDevice_BTsender::notifyEnter(SUMOVehicle& veh, Notification reason) {
+MSDevice_BTsender::notifyEnter(SUMOVehicle& veh, Notification reason, const MSLane* /* enteredLane */) {
     if (reason == MSMoveReminder::NOTIFICATION_DEPARTED && sVehicles.find(veh.getID()) == sVehicles.end()) {
         sVehicles[veh.getID()] = new VehicleInformation(veh.getID());
         sVehicles[veh.getID()]->route.push_back(veh.getEdge());

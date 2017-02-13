@@ -130,7 +130,7 @@ MSDevice_Example::notifyMove(SUMOVehicle& veh, SUMOReal /* oldPos */,
 
 
 bool
-MSDevice_Example::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {
+MSDevice_Example::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason, const MSLane* /* enteredLane */) {
     std::cout << "device '" << getID() << "' notifyEnter: reason=" << reason << " currentEdge=" << veh.getEdge()->getID() << "\n";
     return true; // keep the device
 }

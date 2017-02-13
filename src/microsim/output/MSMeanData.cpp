@@ -74,7 +74,7 @@ MSMeanData::MeanDataValues::~MeanDataValues() {
 
 
 bool
-MSMeanData::MeanDataValues::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {
+MSMeanData::MeanDataValues::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason, const MSLane* /* enteredLane */) {
     UNUSED_PARAMETER(reason);
     return myParent == 0 || myParent->vehicleApplies(veh);
 }
@@ -249,7 +249,7 @@ MSMeanData::MeanDataValueTracker::notifyLeave(SUMOVehicle& veh, SUMOReal lastPos
 
 
 bool
-MSMeanData::MeanDataValueTracker::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason) {
+MSMeanData::MeanDataValueTracker::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification reason, const MSLane* /* enteredLane */) {
     if (reason == MSMoveReminder::NOTIFICATION_SEGMENT) {
         return true;
     }
