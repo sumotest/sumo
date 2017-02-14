@@ -37,6 +37,7 @@
 #include <microsim/output/MSCrossSection.h>
 #include <microsim/traffic_lights/MSTLLogicControl.h>
 #include <microsim/output/MSE2Collector.h>
+#include <microsim/output/MSMultiLaneE2Collector.h>
 
 // ===========================================================================
 // class declarations
@@ -395,7 +396,7 @@ public:
      * @param[in] jamDistThreshold Detector parameter: the distance between two vehicles in order to not count them to one jam
      */
     virtual MSDetectorFileOutput* createMultiLaneE2Detector(
-        const std::string& id, DetectorUsage usage, MSLane* lane, SUMOReal pos,
+        const std::string& id, DetectorUsage usage, MSLane* lane, SUMOReal length, SUMOReal pos,
         SUMOTime haltingTimeThreshold, SUMOReal haltingSpeedThreshold,
         SUMOReal jamDistThreshold,
         const std::string& vTypes);
@@ -480,8 +481,6 @@ public:
             SUMOTime haltingTimeThreshold, SUMOReal haltingSpeedThreshold,
             SUMOReal jamDistThreshold,
             const std::string& vTypes);
-
-
 
 
 protected:

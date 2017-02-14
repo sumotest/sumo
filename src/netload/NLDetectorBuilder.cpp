@@ -40,6 +40,7 @@
 #include <microsim/MSEdge.h>
 #include <microsim/output/MSInductLoop.h>
 #include <microsim/output/MSE2Collector.h>
+#include <microsim/output/MSMultiLaneE2Collector.h>
 #include <microsim/output/MS_E2_ZS_CollectorOverLanes.h>
 #include <microsim/output/MSVTypeProbe.h>
 #include <microsim/output/MSRouteProbe.h>
@@ -377,11 +378,11 @@ NLDetectorBuilder::buildMultiLaneE2Det(const std::string& id, DetectorUsage usag
                                        SUMOReal haltingSpeedThreshold,
                                        SUMOReal jamDistThreshold,
                                        const std::string& vTypes) {
-    MSDetectorFileOutput* ret = createMultiLaneE2Detector(id, usage,
-                                lane, pos, haltingTimeThreshold, haltingSpeedThreshold,
-                                jamDistThreshold, vTypes);
-    static_cast<MS_E2_ZS_CollectorOverLanes*>(ret)->init(lane, length);
-    return ret;
+//    MSDetectorFileOutput* ret = createMultiLaneE2Detector(id, usage,
+//                                lane, pos, haltingTimeThreshold, haltingSpeedThreshold,
+//                                jamDistThreshold, vTypes);
+//    static_cast<MS_E2_ZS_CollectorOverLanes*>(ret)->init(lane, length);
+    return createMultiLaneE2Detector(id, usage, lane, length, pos, haltingTimeThreshold, haltingSpeedThreshold, jamDistThreshold, vTypes);
 }
 
 
@@ -415,10 +416,12 @@ NLDetectorBuilder::createSingleLaneE2Detector(const std::string& id,
 
 MSDetectorFileOutput*
 NLDetectorBuilder::createMultiLaneE2Detector(const std::string& id,
-        DetectorUsage usage, MSLane* lane, SUMOReal pos,
+        DetectorUsage usage, MSLane* lane, SUMOReal length, SUMOReal pos,
         SUMOTime haltingTimeThreshold, SUMOReal haltingSpeedThreshold, SUMOReal jamDistThreshold,
         const std::string& vTypes) {
-    return new MS_E2_ZS_CollectorOverLanes(id, usage, lane, pos, haltingTimeThreshold, haltingSpeedThreshold, jamDistThreshold, vTypes);
+//    return new MS_E2_ZS_CollectorOverLanes(id, usage, lane, pos, haltingTimeThreshold, haltingSpeedThreshold, jamDistThreshold, vTypes);
+
+    return new MSMultiLaneE2Collector(id, usage, lane, pos, length, haltingTimeThreshold, haltingSpeedThreshold, jamDistThreshold, vTypes, false);
 }
 
 
