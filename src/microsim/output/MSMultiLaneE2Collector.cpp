@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    MSLaneSequenceDetector.cpp
+/// @file    MSMultiLaneE2Collector.cpp
 /// @author  Leonhard Luecken
 /// @date    Mon Feb 03 2014 10:13 CET
-/// @version $Id: MSLaneSequenceDetector.cpp 22841 2017-02-03 22:10:57Z luecken $
+/// @version $Id: MSMultiLaneE2Collector.cpp 22841 2017-02-03 22:10:57Z luecken $
 ///
 // An areal detector corresponding to a sequence of consecutive lanes
 /****************************************************************************/
@@ -29,6 +29,7 @@
  *  - many vehicles
  *  - detector starting on internal lane
  *  - subsecond variant, ballistic variant
+ *  - Should pass the original E2-tests
  *
  *
  * Meso-compatibility? (esp. enteredLane-argument for MSBaseVehicle::notifyEnter() is not treated)
@@ -48,7 +49,7 @@
 
 #include <cassert>
 #include <algorithm>
-#include "MSLaneSequenceDetector.h"
+#include "MSMultiLaneE2Collector.h"
 #include <microsim/MSLane.h>
 #include <microsim/MSNet.h>
 #include <microsim/MSVehicle.h>
@@ -68,74 +69,79 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
-MSLaneSequenceDetector::MSLaneSequenceDetector(const std::string& id, DetectorUsage usage,
-        std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-        const std::string& vTypes, bool /*showDetector*/) :
-    MSMoveReminder(id, lanes[lanes.size()-1], false), // TODO: assure lanes.size()>0 at caller
-    MSDetectorFileOutput(id, vTypes),
-    myStartPos(startPos), myEndPos(endPos),
-    myUsage(usage) {
+//MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
+//        std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
+//        const std::string& vTypes, bool /*showDetector*/) :
+//    MSMoveReminder(id, lanes[lanes.size()-1], false), // TODO: assure lanes.size()>0 at caller
+//    MSDetectorFileOutput(id, vTypes),
+//    myStartPos(startPos), myEndPos(endPos),
+//    myUsage(usage) {
+//
+//#ifdef DEBUG_LSD_CONSTRUCTOR
+//    std::cout << "\n" << "Creating MSMultiLaneE2Collector " << id
+//                    << "over lanes ";
+//    for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
+//        std::cout << "\n" << (*i)->getID();
+//    }
+//    std::cout << "\nendPos = " << endPos << " startPos = " << startPos << std::endl;
+//#endif
+//
+//    assert(lanes.size() != 0);
+//
+//    initAuxiliaries(lanes);
+//
+//    assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
+//    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
+//    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
+//
+//    addDetectorToLanes(lanes);
+//}
+//
+//
+//MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
+//        std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
+//        const std::set<std::string>& vTypes, bool /*showDetector*/) :
+//    MSMoveReminder(id, lanes[lanes.size()-1], false), // TODO: assure lanes.size()>0 at caller
+//    MSDetectorFileOutput(id, vTypes),
+//    myStartPos(startPos), myEndPos(endPos),
+//    myUsage(usage) {
+//
+//#ifdef DEBUG_LSD_CONSTRUCTOR
+//    std::cout << "\n" << "Creating MSMultiLaneE2Collector " << id
+//                    << "over lanes ";
+//    for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
+//        std::cout << "\n" << (*i)->getID();
+//    }
+//    std::cout << "\nendPos = " << endPos << " startPos = " << startPos << std::endl;
+//#endif
+//
+//    assert(lanes.size() != 0);
+//
+//    initAuxiliaries(lanes);
+//
+//    assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
+//    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
+//    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
+//
+//    addDetectorToLanes(lanes);
+//}
+//
 
-#ifdef DEBUG_LSD_CONSTRUCTOR
-    std::cout << "\n" << "Creating MSLaneSequenceDetector " << id
-                    << "over lanes ";
-    for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
-        std::cout << "\n" << (*i)->getID();
-    }
-    std::cout << "\nendPos = " << endPos << " startPos = " << startPos << std::endl;
-#endif
-
-    assert(lanes.size() != 0);
-
-    initAuxiliaries(lanes);
-
-    assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
-    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
-    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
-
-    addDetectorToLanes(lanes);
-}
-
-
-MSLaneSequenceDetector::MSLaneSequenceDetector(const std::string& id, DetectorUsage usage,
-        std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-        const std::set<std::string>& vTypes, bool /*showDetector*/) :
-    MSMoveReminder(id, lanes[lanes.size()-1], false), // TODO: assure lanes.size()>0 at caller
-    MSDetectorFileOutput(id, vTypes),
-    myStartPos(startPos), myEndPos(endPos),
-    myUsage(usage) {
-
-#ifdef DEBUG_LSD_CONSTRUCTOR
-    std::cout << "\n" << "Creating MSLaneSequenceDetector " << id
-                    << "over lanes ";
-    for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
-        std::cout << "\n" << (*i)->getID();
-    }
-    std::cout << "\nendPos = " << endPos << " startPos = " << startPos << std::endl;
-#endif
-
-    assert(lanes.size() != 0);
-
-    initAuxiliaries(lanes);
-
-    assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
-    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
-    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
-
-    addDetectorToLanes(lanes);
-}
-
-
-MSLaneSequenceDetector::MSLaneSequenceDetector(const std::string& id,
+MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id,
         DetectorUsage usage, MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange,
+        SUMOReal haltingTimeThreshold, SUMOReal haltingSpeedThreshold, SUMOReal jamDistThreshold,
         const std::string& vTypes, bool /*showDetector*/) :
     MSMoveReminder(id, endLane, false),
     MSDetectorFileOutput(id, vTypes),
     myEndPos(endPos),
-    myUsage(usage) {
+    myUsage(usage),
+    myJamHaltingSpeedThreshold(haltingSpeedThreshold),
+    myJamHaltingTimeThreshold(haltingTimeThreshold),
+    myJamDistanceThreshold(jamDistThreshold)
+    {
 
 #ifdef DEBUG_LSD_CONSTRUCTOR
-    std::cout << "\n" << "Creating MSLaneSequenceDetector " << id
+    std::cout << "\n" << "Creating MSMultiLaneE2Collector " << id
                     << " with endLane = " << endLane->getID()
                     << " endPos = " << endPos
                     << " upstreamRange = " << upstreamRange << std::endl;
@@ -157,7 +163,7 @@ MSLaneSequenceDetector::MSLaneSequenceDetector(const std::string& id,
 
 
 std::vector<MSLane*>
-MSLaneSequenceDetector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange){
+MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange){
 #ifdef DEBUG_LSD_CONSTRUCTOR
     std::cout << "\n" << "selectLanes()" << std::endl;
 #endif
@@ -191,7 +197,7 @@ MSLaneSequenceDetector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal u
 }
 
 void
-MSLaneSequenceDetector::addDetectorToLanes(std::vector<MSLane*>& lanes) {
+MSMultiLaneE2Collector::addDetectorToLanes(std::vector<MSLane*>& lanes) {
 #ifdef DEBUG_LSD_CONSTRUCTOR
     std::cout << "\n" << "Adding detector " << myID << "to lanes:" << std::endl;
 #endif
@@ -204,7 +210,7 @@ MSLaneSequenceDetector::addDetectorToLanes(std::vector<MSLane*>& lanes) {
 }
 
 void
-MSLaneSequenceDetector::initAuxiliaries(std::vector<MSLane*>& lanes){
+MSMultiLaneE2Collector::initAuxiliaries(std::vector<MSLane*>& lanes){
     // Checks integrity of myLanes, adds internal-lane information, inits myLength, myFirstLane, myLastLane, myOffsets
     myFirstLane = lanes[0];
     myLastLane = lanes[lanes.size()-1];
@@ -319,12 +325,9 @@ MSLaneSequenceDetector::initAuxiliaries(std::vector<MSLane*>& lanes){
 #endif
 }
 
-MSLaneSequenceDetector::~MSLaneSequenceDetector() {}
-
-
 
 bool
-MSLaneSequenceDetector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
+MSMultiLaneE2Collector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
                           SUMOReal newPos, SUMOReal newSpeed) {
     VehicleInfoMap::const_iterator vi = myVehicleInfos.find(veh.getID());
     assert(vi != myVehicleInfos.end()); // all vehicles calling notifyMove() should have called notifyEnter() before
@@ -337,7 +340,7 @@ MSLaneSequenceDetector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
 
 #ifdef DEBUG_LSD_NOTIFY_MOVE
         std::cout << "\n" << SIMTIME
-        << " MSLaneSequenceDetector::notifyMove()"
+        << " MSMultiLaneE2Collector::notifyMove()"
         << " called by vehicle '" << vehID << "'"
         << " at relative position " << relPos << std::endl;
 #endif
@@ -367,7 +370,7 @@ MSLaneSequenceDetector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
 }
 
 bool
-MSLaneSequenceDetector::notifyLeave(SUMOVehicle& veh, SUMOReal /* lastPos */, MSMoveReminder::Notification reason) {
+MSMultiLaneE2Collector::notifyLeave(SUMOVehicle& veh, SUMOReal /* lastPos */, MSMoveReminder::Notification reason) {
 #ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
         std::cout << "\n" << SIMTIME << " notifyLeave() called by vehicle '" << veh.getID() << "'" << std::endl;
 #endif
@@ -390,7 +393,7 @@ MSLaneSequenceDetector::notifyLeave(SUMOVehicle& veh, SUMOReal /* lastPos */, MS
 
 
 bool
-MSLaneSequenceDetector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification /* reason */, const MSLane* enteredLane) {
+MSMultiLaneE2Collector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification /* reason */, const MSLane* enteredLane) {
 #ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
         std::cout << "\n" << SIMTIME << " notifyEnter() called by vehicle '" << veh.getID()
                 << "' entering lane '" << enteredLane->getID() << "'" << std::endl;
@@ -441,8 +444,8 @@ MSLaneSequenceDetector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notificati
     return true;
 }
 
-MSLaneSequenceDetector::VehicleInfo
-MSLaneSequenceDetector::makeVehicleInfo(const SUMOVehicle& veh, const MSLane* enteredLane) const {
+MSMultiLaneE2Collector::VehicleInfo
+MSMultiLaneE2Collector::makeVehicleInfo(const SUMOVehicle& veh, const MSLane* enteredLane) const {
     // The vehicle's distance to the detector end
     std::size_t j = std::find(myLanes.begin(), myLanes.end(), enteredLane->getID()) - myLanes.begin();
     assert(j >= 0 && j < myLanes.size());
@@ -460,7 +463,7 @@ MSLaneSequenceDetector::makeVehicleInfo(const SUMOVehicle& veh, const MSLane* en
 }
 
 void
-MSLaneSequenceDetector::detectorUpdate(const SUMOTime /* step */) {
+MSMultiLaneE2Collector::detectorUpdate(const SUMOTime /* step */) {
 
 #ifdef DEBUG_LSD_DETECTOR_UPDATE
     std::cout << "\n" << SIMTIME << " detectorUpdate() for detector '" << myID << "'" << std::endl;
@@ -468,12 +471,9 @@ MSLaneSequenceDetector::detectorUpdate(const SUMOTime /* step */) {
 
     // go through the list of vehicles positioned on the detector
     for (std::vector<MoveNotificationInfo>::iterator i = myMoveNotifications.begin(); i != myMoveNotifications.end(); ++i) {
-        /* Update the quantities accumulated over all vehicles which the detector should track */
-        // ...
-
         // The ID of the vehicle that has sent this notification in the last step
         const std::string& vehID = i->id;
-        updateVehicleInfo(vehID, *i);
+        integrateMoveNotification(vehID, *i);
     }
 
     // reset move notifications
@@ -485,6 +485,7 @@ MSLaneSequenceDetector::detectorUpdate(const SUMOTime /* step */) {
     // Remove the vehicles that have left the detector
     std::set<std::string>::const_iterator i;
     for(i = myLeftVehicles.begin(); i != myLeftVehicles.end(); ++i) {
+        VehicleInfoMap::iterator j = myVehicleInfos.find(*i);
         myVehicleInfos.erase(*i);
         myNumberOfLeftVehicles++;
 #ifdef DEBUG_LSD_DETECTOR_UPDATE
@@ -521,10 +522,10 @@ MSLaneSequenceDetector::detectorUpdate(const SUMOTime /* step */) {
 }
 
 void
-MSLaneSequenceDetector::updateVehicleInfo(const std::string& vehID, const MoveNotificationInfo& mni){
+MSMultiLaneE2Collector::integrateMoveNotification(const std::string& vehID, const MoveNotificationInfo& mni){
 
 #ifdef DEBUG_LSD_DETECTOR_UPDATE
-    std::cout << SIMTIME << " updateVehicleInfo() for vehicle '" << vehID << "'" << std::endl;
+    std::cout << SIMTIME << " integrateMoveNotification() for vehicle '" << vehID << "'" << std::endl;
 #endif
 
     // Accumulate detector values
@@ -541,8 +542,8 @@ MSLaneSequenceDetector::updateVehicleInfo(const std::string& vehID, const MoveNo
 }
 
 
-MSLaneSequenceDetector::MoveNotificationInfo
-MSLaneSequenceDetector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpeed, const VehicleInfo& vehInfo) const {
+MSMultiLaneE2Collector::MoveNotificationInfo
+MSMultiLaneE2Collector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, SUMOReal newSpeed, const VehicleInfo& vehInfo) const {
 #ifdef DEBUG_LSD_NOTIFY_MOVE
     std::cout << SIMTIME << " makeMoveNotification() for vehicle '" << veh.getID() << "'"
             << " oldPos = " << oldPos << " newPos = " << newPos << " newSpeed = " << newSpeed
@@ -553,7 +554,7 @@ MSLaneSequenceDetector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal ol
 
     // Note that at this point, vehInfo.currentLane points to the lane at the beginning of the last timestep,
     // and vehInfo.enteredLanes is a list of lanes entered in the last timestep
-    SUMOReal timeLoss = calculateStepTimeLoss(veh, oldPos, newPos, vehInfo);
+    SUMOReal timeLoss = calculateTimeLoss(veh, oldPos, newPos, vehInfo);
 
     /* Store new infos */
     return MoveNotificationInfo(veh.getID(), oldPos, newPos, newSpeed, myDetectorLength - (vehInfo.entryOffset + newPos), timeOnDetector, timeLoss);
@@ -561,7 +562,7 @@ MSLaneSequenceDetector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal ol
 
 
 SUMOReal
-MSLaneSequenceDetector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
+MSMultiLaneE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
     assert(veh.getID() == vi.id);
     assert(newPos + vi.entryOffset >= 0);
 
@@ -605,7 +606,7 @@ MSLaneSequenceDetector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal
 
 
 SUMOReal
-MSLaneSequenceDetector::calculateStepTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
+MSMultiLaneE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
 
     SUMOReal passingTime, lastPassingTime=0;
     SUMOReal passingSpeed, accel, offset;
@@ -672,19 +673,19 @@ MSLaneSequenceDetector::calculateStepTimeLoss(const SUMOVehicle& veh, SUMOReal o
 }
 
 SUMOReal
-MSLaneSequenceDetector::calculateSegmentTimeLoss(SUMOReal timespan, SUMOReal initialSpeed, SUMOReal accel, SUMOReal vmax) {
+MSMultiLaneE2Collector::calculateSegmentTimeLoss(SUMOReal timespan, SUMOReal initialSpeed, SUMOReal accel, SUMOReal vmax) {
     return MAX2(0., timespan*(vmax - initialSpeed - 0.5*accel)/vmax);
 }
 
 
 
 void
-MSLaneSequenceDetector::writeXMLDetectorProlog(OutputDevice& dev) const{
-    dev.writeXMLHeader("detector", "det_lanesequence_file.xsd");
+MSMultiLaneE2Collector::writeXMLDetectorProlog(OutputDevice& dev) const{
+    dev.writeXMLHeader("detector", "det_e2_file.xsd");
 }
 
 void
-MSLaneSequenceDetector::writeXMLOutput(OutputDevice& dev, SUMOTime startTime, SUMOTime stopTime){
+MSMultiLaneE2Collector::writeXMLOutput(OutputDevice& dev, SUMOTime startTime, SUMOTime stopTime){
     dev << "   <interval begin=\"" << time2string(startTime) << "\" end=\"" << time2string(stopTime) << "\" " << "id=\"" << getID() << "\" ";
 
     dev << "sampledSeconds=\"" << myVehicleSamples << "\" "
@@ -696,7 +697,7 @@ MSLaneSequenceDetector::writeXMLOutput(OutputDevice& dev, SUMOTime startTime, SU
 }
 
 void
-MSLaneSequenceDetector::reset() {
+MSMultiLaneE2Collector::reset() {
     myVehicleSamples = 0;
     myTotalTimeLoss = 0.;
     myNumberOfEnteredVehicles = 0;

@@ -1,8 +1,8 @@
 /****************************************************************************/
-/// @file    MSLaneSequenceDetector.h
+/// @file    MSMultiLaneE2Collector.h
 /// @author  Leonhard Luecken
 /// @date    Mon Feb 03 2014 14:13 CET
-/// @version $Id: MSLaneSequenceDetector.h 22841 2017-02-03 22:10:57Z luecken $
+/// @version $Id: MSMultiLaneE2Collector.h 22841 2017-02-03 22:10:57Z luecken $
 ///
 // An areal detector corresponding to a sequence of consecutive lanes
 /****************************************************************************/
@@ -17,8 +17,8 @@
 //   (at your option) any later version.
 //
 /****************************************************************************/
-#ifndef MSLaneSequenceDetector_h
-#define MSLaneSequenceDetector_h
+#ifndef MSMultiLaneE2Collector_h
+#define MSMultiLaneE2Collector_h
 
 
 // ===========================================================================
@@ -50,7 +50,7 @@ class OutputDevice;
 // class definitions
 // ===========================================================================
 /**
- * @class MSLaneSequenceDetector
+ * @class MSMultiLaneE2Collector
  * @brief An areal detector corresponding to a sequence of consecutive lanes
  *
  * This detector traces vehicles which are on a sequence of consecutive lanes. A
@@ -78,7 +78,7 @@ class OutputDevice;
  */
 
 
-class MSLaneSequenceDetector : public MSMoveReminder, public MSDetectorFileOutput {
+class MSMultiLaneE2Collector : public MSMoveReminder, public MSDetectorFileOutput {
 public:
     /** @brief A VehicleInfo stores values that are tracked for the individual vehicles on the detector,
      *         e.g., accumulated timeloss. These infos are stored in myVehicles. If a vehicle leaves the detector
@@ -102,6 +102,7 @@ public:
             accumulatedTimeLoss(0.),
             distToDetectorEnd(distToDetectorEnd)
         {}
+        virtual ~VehicleInfo(){};
         /// vehicle's ID
         std::string id;
         /// vehicle's type
@@ -144,6 +145,9 @@ public:
         distToDetectorEnd(_distToDetectorEnd),
         timeOnDetector(_timeOnDetector),
         timeLoss(_timeLoss){}
+
+        virtual ~MoveNotificationInfo() {};
+
         /// Vehicle's id
         std::string id;
         /// Position before the last integration step (relative to the vehicle's entry lane on the detector)
@@ -163,34 +167,34 @@ public:
 
 
 
-
-    /** @brief Constructor
-    *
-    * @param[in] id The detector's unique id.
-    * @param[in] usage Information how the detector is used
-    * @param[in] lanes The sequence of lanes to place the detector at
-    * @param[in] startPos Begin position of the detector on first lane
-    * @param[in] endPos End position of the detector on first lane (must be > startPos if lanes.size()==1)
-    * @param[in] vTypes see MSDetectorFileOutput()
-    * @todo The lane should not be given as a pointer
-    */
-    MSLaneSequenceDetector(const std::string& id, DetectorUsage usage,
-                  std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-                  const std::string& vTypes, bool /*showDetector*/);
-
-    /** @brief Constructor
-    *
-    * @param[in] id The detector's unique id.
-    * @param[in] usage Information how the detector is used
-    * @param[in] lanes The sequence of lanes to place the detector at
-    * @param[in] startPos Begin position of the detector on first lane
-    * @param[in] endPos End position of the detector on first lane (must be > startPos if lanes.size()==1)
-    * @param[in] vTypes see MSDetectorFileOutput()
-    * @todo The lane should not be given as a pointer
-    */
-    MSLaneSequenceDetector(const std::string& id, DetectorUsage usage,
-                  std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-                  const std::set<std::string>& vTypes, bool /*showDetector*/);
+//
+//    /** @brief Constructor
+//    *
+//    * @param[in] id The detector's unique id.
+//    * @param[in] usage Information how the detector is used
+//    * @param[in] lanes The sequence of lanes to place the detector at
+//    * @param[in] startPos Begin position of the detector on first lane
+//    * @param[in] endPos End position of the detector on first lane (must be > startPos if lanes.size()==1)
+//    * @param[in] vTypes see MSDetectorFileOutput()
+//    * @todo The lane should not be given as a pointer
+//    */
+//    MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
+//                  std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
+//                  const std::string& vTypes, bool /*showDetector*/);
+//
+//    /** @brief Constructor
+//    *
+//    * @param[in] id The detector's unique id.
+//    * @param[in] usage Information how the detector is used
+//    * @param[in] lanes The sequence of lanes to place the detector at
+//    * @param[in] startPos Begin position of the detector on first lane
+//    * @param[in] endPos End position of the detector on first lane (must be > startPos if lanes.size()==1)
+//    * @param[in] vTypes see MSDetectorFileOutput()
+//    * @todo The lane should not be given as a pointer
+//    */
+//    MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
+//                  std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
+//                  const std::set<std::string>& vTypes, bool /*showDetector*/);
 
 
     /** @brief Constructor
@@ -202,14 +206,15 @@ public:
     * @param[in] upstreamRange The length the detector has (heuristic placement is done if the upstream continuation is not unique)
     * @param[in] vTypes Vehicle types, that the detector takes into account
     */
-    MSLaneSequenceDetector(const std::string& id,
+    MSMultiLaneE2Collector(const std::string& id,
             DetectorUsage usage, MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange,
+            SUMOReal haltingTimeThreshold, SUMOReal haltingSpeedThreshold, SUMOReal jamDistThreshold,
             const std::string& vTypes, bool /*showDetector*/);
 
 
 
     /// @brief Destructor
-    virtual ~MSLaneSequenceDetector();
+    virtual ~MSMultiLaneE2Collector() {};
 
     /** @brief Returns the detector's usage type
      *
@@ -344,6 +349,25 @@ public:
 
     /// @}
 
+
+protected:
+
+    /** @brief calculates the time spent on the detector in the last step for the given vehicle
+     *
+     * @param entryOffset distance of the beginning of the lane, where the vehicle entered the detector to the detector begin
+     * @param mni actual MoveNotification
+     * @return Total time spent on the detector during the last step
+     */
+    SUMOReal calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
+
+    /** @brief calculates the timeloss suffered in the last step for the given vehicle
+     *
+     * @param entryOffset distance of the beginning of the lane, where the vehicle entered the detector to the detector begin
+     * @param mni actual MoveNotification
+     * @return Total time loss suffered during the last step
+     */
+    SUMOReal calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
+
 private:
     /** @brief Checks integrity of myLanes, adds internal-lane information, inits myLength, myFirstLane, myLastLane, myOffsets
      *         Called once at construction.
@@ -365,12 +389,13 @@ private:
      */
     void addDetectorToLanes(std::vector<MSLane*>& lanes);
 
-    /** @brief This updates the persistent VehicleInfo of a vehicle with the given MoveNotificationInfo generated by the vehicle during the last time step.
+    /** @brief This updates the detector values and the VehicleInfo of a vehicle on the detector
+     *          with the given MoveNotificationInfo generated by the vehicle during the last time step.
      *
      * @param vehID ID of the notifying vehicle
      * @param mni MoveNotification for the vehicle
      */
-    void updateVehicleInfo(const std::string& vehID, const MoveNotificationInfo& mni);
+    void integrateMoveNotification(const std::string& vehID, const MoveNotificationInfo& mni);
 
     /** @brief Creates and returns a MoveNotificationInfo containing detector specific information on the vehicle's last movement
      *
@@ -391,25 +416,6 @@ private:
      */
     VehicleInfo makeVehicleInfo(const SUMOVehicle& veh, const MSLane* enteredLane) const;
 
-
-    /** @brief calculates the time spent on the detector in the last step for the given vehicle
-     *
-     * @param entryOffset distance of the beginning of the lane, where the vehicle entered the detector to the detector begin
-     * @param mni actual MoveNotification
-     * @return Total time spent on the detector during the last step
-     */
-    SUMOReal
-    calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
-
-
-    /** @brief calculates the timeloss suffered in the last step for the given vehicle
-     *
-     * @param entryOffset distance of the beginning of the lane, where the vehicle entered the detector to the detector begin
-     * @param mni actual MoveNotification
-     * @return Total time loss suffered during the last step
-     */
-    SUMOReal calculateStepTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
-
     /** @brief Calculates the time loss for a segment with constant vmax
      *
      * @param timespan time needed to cover the segment
@@ -426,7 +432,25 @@ private:
     virtual void reset();
 
 
-private:
+protected:
+    /// @name Accumulated detector values to be dumped every interval
+    /// @{
+    /// @brief The number of collected samples [time x vehicle] since the last reset
+    SUMOReal myVehicleSamples;
+
+    /// @brief The total amount of all time losses [time x vehicle] since the last reset
+    SUMOReal myTotalTimeLoss;
+
+    /// @brief The number of vehicles, which have entered the detector since the last reset
+    std::size_t myNumberOfEnteredVehicles;
+
+    /// @brief The number of vehicles, which have left the detector since the last reset
+    std::size_t myNumberOfLeftVehicles;
+
+    /// @brief The maximal number of vehicles located on the detector simultaneously since the last reset
+    std::size_t myMaxVehicleNumber;
+
+    /// @}
 
     /// @brief Information about how this detector is used
     DetectorUsage myUsage;
@@ -447,24 +471,13 @@ private:
     SUMOReal myEndPos;
     /// @brief The total detector length
     SUMOReal myDetectorLength;
-    /// @}
 
-    /// @name Accumulated detector values to be dumped every interval
-    /// @{
-    /// @brief The number of collected samples [time x vehicle] since the last reset
-    SUMOReal myVehicleSamples;
-
-    /// @brief The total amount of all time losses [time x vehicle] since the last reset
-    SUMOReal myTotalTimeLoss;
-
-    /// @brief The number of vehicles, which have entered the detector since the last reset
-    std::size_t myNumberOfEnteredVehicles;
-
-    /// @brief The number of vehicles, which have left the detector since the last reset
-    std::size_t myNumberOfLeftVehicles;
-
-    /// @brief The maximal number of vehicles located on the detector simultaneously since the last reset
-    std::size_t myMaxVehicleNumber;
+    /// @brief A vehicle must driver slower than this to be counted as a part of a jam
+    SUMOReal myJamHaltingSpeedThreshold;
+    /// @brief A vehicle must be that long beyond myJamHaltingSpeedThreshold to be counted as a part of a jam
+    SUMOTime myJamHaltingTimeThreshold;
+    /// @brief Two standing vehicles must be closer than this to be counted into the same jam
+    SUMOReal myJamDistanceThreshold;
     /// @}
 
     /// @name Container
@@ -483,10 +496,10 @@ private:
 
 private:
     /// @brief Invalidated copy constructor.
-    MSLaneSequenceDetector(const MSLaneSequenceDetector&);
+    MSMultiLaneE2Collector(const MSMultiLaneE2Collector&);
 
     /// @brief Invalidated assignment operator.
-    MSLaneSequenceDetector& operator=(const MSLaneSequenceDetector&);
+    MSMultiLaneE2Collector& operator=(const MSMultiLaneE2Collector&);
 };
 
 
