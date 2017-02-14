@@ -132,18 +132,21 @@ public:
 
     typedef std::map<std::string, VehicleInfo> VehicleInfoMap;
 
+
+private:
     /** @brief Values collected in notifyMove and needed in detectorUpdate() to
      *          calculate the accumulated quantities for the detector. These are
      *          temporarily stored in myMoveNotifications for each step.
     */
     struct MoveNotificationInfo {
-        MoveNotificationInfo(std::string _vehID, SUMOReal _oldPos, SUMOReal _newPos, SUMOReal _speed, SUMOReal _distToDetectorEnd, SUMOReal _timeOnDetector, SUMOReal _timeLoss) :
+        MoveNotificationInfo(std::string _vehID, SUMOReal _oldPos, SUMOReal _newPos, SUMOReal _speed, SUMOReal _distToDetectorEnd, SUMOReal _timeOnDetector, SUMOReal _lengthOnDetector, SUMOReal _timeLoss) :
         id(_vehID),
         oldPos(_oldPos),
         newPos(_newPos),
         speed(_speed),
         distToDetectorEnd(_distToDetectorEnd),
         timeOnDetector(_timeOnDetector),
+        lengthOnDetector(_lengthOnDetector),
         timeLoss(_timeLoss){}
 
         virtual ~MoveNotificationInfo() {};
@@ -158,6 +161,8 @@ public:
         SUMOReal speed;
         /// Time spent on the detector during the last integration step
         SUMOReal timeOnDetector;
+        /// The length of the part of the vehicle on the detector at the end of the last time step
+        SUMOReal lengthOnDetector;
         /// timeloss during the last integration step
         SUMOReal timeLoss;
         /// Distance left till the detector end after the last integration step (may become negative if the vehicle passes beyond the detector end)
@@ -166,36 +171,21 @@ public:
 
 
 
+    /** @brief Internal representation of a jam
+     *
+     * Used in execute, instances of this structure are used to track
+     *  begin and end positions (as vehicles) of a jam.
+     */
+    struct JamInfo {
+        /// @brief The first standing vehicle
+        std::vector<MoveNotificationInfo>::const_iterator firstStandingVehicle;
 
-//
-//    /** @brief Constructor
-//    *
-//    * @param[in] id The detector's unique id.
-//    * @param[in] usage Information how the detector is used
-//    * @param[in] lanes The sequence of lanes to place the detector at
-//    * @param[in] startPos Begin position of the detector on first lane
-//    * @param[in] endPos End position of the detector on first lane (must be > startPos if lanes.size()==1)
-//    * @param[in] vTypes see MSDetectorFileOutput()
-//    * @todo The lane should not be given as a pointer
-//    */
-//    MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
-//                  std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-//                  const std::string& vTypes, bool /*showDetector*/);
-//
-//    /** @brief Constructor
-//    *
-//    * @param[in] id The detector's unique id.
-//    * @param[in] usage Information how the detector is used
-//    * @param[in] lanes The sequence of lanes to place the detector at
-//    * @param[in] startPos Begin position of the detector on first lane
-//    * @param[in] endPos End position of the detector on first lane (must be > startPos if lanes.size()==1)
-//    * @param[in] vTypes see MSDetectorFileOutput()
-//    * @todo The lane should not be given as a pointer
-//    */
-//    MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
-//                  std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-//                  const std::set<std::string>& vTypes, bool /*showDetector*/);
+        /// @brief The last standing vehicle
+        std::vector<MoveNotificationInfo>::const_iterator lastStandingVehicle;
+    };
 
+
+public:
 
     /** @brief Constructor
     *
@@ -350,7 +340,36 @@ public:
     /// @}
 
 
-protected:
+
+private:
+
+    /** @brief checks whether the vehicle stands in a jam
+     *  TODO: check whether the order of vehicles was important here (discarded by replacing myKnownVehicles with myVehicleInfos)
+     *
+     * @param[in] mni
+     * @param[in/out] haltingVehicles
+     * @param[in/out] intervalHaltingVehicles
+     * @return Whether vehicle is in a jam.
+     */
+    bool checkJam(std::vector<MoveNotificationInfo>::const_iterator mni, std::map<std::string, SUMOTime>& haltingVehicles, std::map<std::string, SUMOTime>& intervalHaltingVehicles);
+
+
+    /** @brief Either adds the vehicle to the end of an existing jam, or closes the last jam, and/or creates a new jam
+     *
+     * @param isInJam
+     * @param mni
+     * @param[in/out] currentJam
+     * @param[in/out] jams
+     */
+    void buildJam(bool isInJam, std::vector<MoveNotificationInfo>::const_iterator mni, JamInfo*& currentJam, std::vector<JamInfo*>& jams);
+
+
+    /** @brief Calculates aggregated values from the given jam structure, deletes all jam-pointers
+     *
+     * @param jams
+     */
+    void processJams(std::vector<JamInfo*>& jams);
+
 
     /** @brief calculates the time spent on the detector in the last step for the given vehicle
      *
@@ -368,7 +387,6 @@ protected:
      */
     SUMOReal calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
 
-private:
     /** @brief Checks integrity of myLanes, adds internal-lane information, inits myLength, myFirstLane, myLastLane, myOffsets
      *         Called once at construction.
      *  @requires myLanes should form a continuous sequence.
@@ -389,13 +407,19 @@ private:
      */
     void addDetectorToLanes(std::vector<MSLane*>& lanes);
 
+
+    /** @brief Aggregates and normalize some values for the detector output during detectorUpdate()
+     */
+    void aggregateOutputValues();
+
+
     /** @brief This updates the detector values and the VehicleInfo of a vehicle on the detector
      *          with the given MoveNotificationInfo generated by the vehicle during the last time step.
      *
-     * @param vehID ID of the notifying vehicle
-     * @param mni MoveNotification for the vehicle
+     * @param[in/out] vi VehicleInfo corresponding to the notifying vehicle
+     * @param[in] mni MoveNotification for the vehicle
      */
-    void integrateMoveNotification(const std::string& vehID, const MoveNotificationInfo& mni);
+    void integrateMoveNotification(VehicleInfo& vi, const MoveNotificationInfo& mni);
 
     /** @brief Creates and returns a MoveNotificationInfo containing detector specific information on the vehicle's last movement
      *
@@ -431,26 +455,14 @@ private:
      */
     virtual void reset();
 
+    /** brief returns true if the vehicle corresponding to mni1 is closer to the detector end than the vehicle corresponding to mni2
+     */
+    static bool compareMoveNotification(MoveNotificationInfo& mni1, MoveNotificationInfo& mni2){
+        return mni1.distToDetectorEnd < mni2.distToDetectorEnd;
+    }
 
-protected:
-    /// @name Accumulated detector values to be dumped every interval
-    /// @{
-    /// @brief The number of collected samples [time x vehicle] since the last reset
-    SUMOReal myVehicleSamples;
 
-    /// @brief The total amount of all time losses [time x vehicle] since the last reset
-    SUMOReal myTotalTimeLoss;
-
-    /// @brief The number of vehicles, which have entered the detector since the last reset
-    std::size_t myNumberOfEnteredVehicles;
-
-    /// @brief The number of vehicles, which have left the detector since the last reset
-    std::size_t myNumberOfLeftVehicles;
-
-    /// @brief The maximal number of vehicles located on the detector simultaneously since the last reset
-    std::size_t myMaxVehicleNumber;
-
-    /// @}
+private:
 
     /// @brief Information about how this detector is used
     DetectorUsage myUsage;
@@ -480,6 +492,7 @@ protected:
     SUMOReal myJamDistanceThreshold;
     /// @}
 
+
     /// @name Container
     /// @{
     /// @brief List of informations about the vehicles currently on the detector
@@ -491,6 +504,84 @@ protected:
 
     /// @brief Keep track of vehicles that left the detector and should be removed from myVehicleInfos
     std::set<std::string> myLeftVehicles;
+
+    /// @brief Storage for halting durations of known vehicles (for halting vehicles)
+    std::map<std::string, SUMOTime> myHaltingVehicleDurations;
+
+    /// @brief Storage for halting durations of known vehicles (current interval)
+    std::map<std::string, SUMOTime> myIntervalHaltingVehicleDurations;
+
+    /// @brief Halting durations of ended halts [s]
+    std::vector<SUMOTime> myPastStandingDurations;
+
+    /// @brief Halting durations of ended halts for the current interval [s]
+    std::vector<SUMOTime> myPastIntervalStandingDurations;
+    /// @}
+
+
+
+    /// @name Values generated for aggregated file output
+    /// @{
+    /// @brief The number of collected samples [time x vehicle] since the last reset
+    SUMOReal myVehicleSamples;
+    /// @brief The total amount of all time losses [time x vehicle] since the last reset
+    SUMOReal myTotalTimeLoss;
+    /// @brief The number of vehicles, which have entered the detector since the last reset
+    std::size_t myNumberOfEnteredVehicles;
+    /// @brief The sum of collected vehicle speeds [m/s]
+    SUMOReal mySpeedSum;
+    /// @brief The number of started halts [#]
+    SUMOReal myStartedHalts;
+    /// @brief The sum of jam lengths [m]
+    SUMOReal myJamLengthInMetersSum;
+    /// @brief The sum of jam lengths [#veh]
+    int myJamLengthInVehiclesSum;
+    /// @brief The current aggregation duration [#steps]
+    int myTimeSamples;
+    /// @brief The sum of occupancies [%]
+    SUMOReal myOccupancySum;
+    /// @brief The maximum occupancy [%]
+    SUMOReal myMaxOccupancy;
+    /// @brief The mean jam length [#veh]
+    int myMeanMaxJamInVehicles;
+    /// @brief The mean jam length [m]
+    SUMOReal myMeanMaxJamInMeters;
+    /// @brief The max jam length [#veh]
+    int myMaxJamInVehicles;
+    /// @brief The max jam length [m]
+    SUMOReal myMaxJamInMeters;
+    /// @brief The mean number of vehicles [#veh]
+    int myMeanVehicleNumber;
+    /// @}
+
+
+    /// @name Values generated describing the current state
+    /// @{
+    /// @brief The number of vehicles, which have left the detector since the last reset
+    std::size_t myNumberOfLeftVehicles;
+    /// @brief The maximal number of vehicles located on the detector simultaneously since the last reset
+    std::size_t myMaxVehicleNumber;
+
+    /// @brief The current occupancy
+    SUMOReal myCurrentOccupancy;
+    /// @brief The current mean speed
+    SUMOReal myCurrentMeanSpeed;
+    /// @brief The current mean length
+    SUMOReal myCurrentMeanLength;
+    /// @brief The current jam number
+    int myCurrentJamNo;
+    /// @brief the current maximum jam length in meters
+    SUMOReal myCurrentMaxJamLengthInMeters;
+    /// @brief The current maximum jam length in vehicles
+    int myCurrentMaxJamLengthInVehicles;
+    /// @brief The overall jam length in meters
+    SUMOReal myCurrentJamLengthInMeters;
+    /// @brief The overall jam length in vehicles
+    int myCurrentJamLengthInVehicles;
+    /// @brief The number of started halts in the last step
+    int myCurrentStartedHalts;
+    /// @brief The number of halted vehicles [#]
+    int myCurrentHaltingsNumber;
     /// @}
 
 

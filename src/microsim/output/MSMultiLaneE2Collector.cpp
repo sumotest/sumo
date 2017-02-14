@@ -66,66 +66,6 @@
 #define DEBUG_LSD_DETECTOR_UPDATE
 #define DEBUG_LSD_TIME_ON_DETECTOR
 
-// ===========================================================================
-// method definitions
-// ===========================================================================
-//MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
-//        std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-//        const std::string& vTypes, bool /*showDetector*/) :
-//    MSMoveReminder(id, lanes[lanes.size()-1], false), // TODO: assure lanes.size()>0 at caller
-//    MSDetectorFileOutput(id, vTypes),
-//    myStartPos(startPos), myEndPos(endPos),
-//    myUsage(usage) {
-//
-//#ifdef DEBUG_LSD_CONSTRUCTOR
-//    std::cout << "\n" << "Creating MSMultiLaneE2Collector " << id
-//                    << "over lanes ";
-//    for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
-//        std::cout << "\n" << (*i)->getID();
-//    }
-//    std::cout << "\nendPos = " << endPos << " startPos = " << startPos << std::endl;
-//#endif
-//
-//    assert(lanes.size() != 0);
-//
-//    initAuxiliaries(lanes);
-//
-//    assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
-//    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
-//    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
-//
-//    addDetectorToLanes(lanes);
-//}
-//
-//
-//MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id, DetectorUsage usage,
-//        std::vector<MSLane*> lanes, SUMOReal startPos, SUMOReal endPos,
-//        const std::set<std::string>& vTypes, bool /*showDetector*/) :
-//    MSMoveReminder(id, lanes[lanes.size()-1], false), // TODO: assure lanes.size()>0 at caller
-//    MSDetectorFileOutput(id, vTypes),
-//    myStartPos(startPos), myEndPos(endPos),
-//    myUsage(usage) {
-//
-//#ifdef DEBUG_LSD_CONSTRUCTOR
-//    std::cout << "\n" << "Creating MSMultiLaneE2Collector " << id
-//                    << "over lanes ";
-//    for (std::vector<MSLane*>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
-//        std::cout << "\n" << (*i)->getID();
-//    }
-//    std::cout << "\nendPos = " << endPos << " startPos = " << startPos << std::endl;
-//#endif
-//
-//    assert(lanes.size() != 0);
-//
-//    initAuxiliaries(lanes);
-//
-//    assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
-//    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
-//    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
-//
-//    addDetectorToLanes(lanes);
-//}
-//
 
 MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id,
         DetectorUsage usage, MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange,
@@ -137,7 +77,16 @@ MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id,
     myUsage(usage),
     myJamHaltingSpeedThreshold(haltingSpeedThreshold),
     myJamHaltingTimeThreshold(haltingTimeThreshold),
-    myJamDistanceThreshold(jamDistThreshold)
+    myJamDistanceThreshold(jamDistThreshold),
+    myCurrentOccupancy(0),
+    myCurrentMeanSpeed(-1),
+    myCurrentJamNo(0),
+    myCurrentMaxJamLengthInMeters(0),
+    myCurrentMaxJamLengthInVehicles(0),
+    myCurrentJamLengthInMeters(0),
+    myCurrentJamLengthInVehicles(0),
+    myCurrentStartedHalts(0),
+    myCurrentHaltingsNumber(0)
     {
 
 #ifdef DEBUG_LSD_CONSTRUCTOR
@@ -155,8 +104,8 @@ MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id,
     initAuxiliaries(lanes);
 
     assert(myStartPos >= 0 && myStartPos < myFirstLane->getLength());
-    assert(myEndPos >= 0 && myEndPos < myLastLane->getLength());
-    assert(myFirstLane != myLastLane || (myEndPos - myStartPos > 0 && myEndPos <= myFirstLane->getLength()));
+    assert(myEndPos > 0 && myEndPos <= myLastLane->getLength());
+    assert(myFirstLane != myLastLane || myEndPos - myStartPos > 0);
 
     addDetectorToLanes(lanes);
 }
@@ -164,6 +113,8 @@ MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id,
 
 std::vector<MSLane*>
 MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange){
+    SUMOReal desiredLength = upstreamRange;
+
 #ifdef DEBUG_LSD_CONSTRUCTOR
     std::cout << "\n" << "selectLanes()" << std::endl;
 #endif
@@ -192,6 +143,16 @@ MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal u
 #endif
     }
     myStartPos = -upstreamRange;
+
+    if(myStartPos < 0){
+        std::stringstream ss;
+        ss << "Cannot build detector of length " << desiredLength
+                << " because no predecessor lane was found for lane '" << lanes[lanes.size()-1]->getID()
+                << "'! Truncating detector at length " << desiredLength + myStartPos;
+        WRITE_WARNING(ss.str());
+        myStartPos = 0.;
+    }
+
     std::reverse(lanes.begin(), lanes.end());
     return lanes;
 }
@@ -199,7 +160,7 @@ MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal u
 void
 MSMultiLaneE2Collector::addDetectorToLanes(std::vector<MSLane*>& lanes) {
 #ifdef DEBUG_LSD_CONSTRUCTOR
-    std::cout << "\n" << "Adding detector " << myID << "to lanes:" << std::endl;
+    std::cout << "\n" << "Adding detector " << myID << " to lanes:" << std::endl;
 #endif
     for (std::vector<MSLane*>::iterator l = lanes.begin(); l != lanes.end(); ++l){
         (*l)->addMoveReminder(this);
@@ -469,12 +430,39 @@ MSMultiLaneE2Collector::detectorUpdate(const SUMOTime /* step */) {
     std::cout << "\n" << SIMTIME << " detectorUpdate() for detector '" << myID << "'" << std::endl;
 #endif
 
+    // sort myMoveNotifications (required for jam processing) ascendingly according to vehicle's distance to the detector end
+    // (min = myMoveNotifications[0].distToDetectorEnd)
+    std::sort(myMoveNotifications.begin(), myMoveNotifications.end(), compareMoveNotification);
+
+    // reset values concerning current time step (these are updated in integrateMoveNotification() and aggregateOutputValues())
+    myCurrentMeanSpeed = 0;
+    myCurrentMeanLength = 0;
+    myCurrentStartedHalts = 0;
+    myCurrentHaltingsNumber = 0;
+
+    JamInfo* currentJam = 0;
+    std::vector<JamInfo*> jams;
+    std::map<std::string, SUMOTime> haltingVehicles;
+    std::map<std::string, SUMOTime> intervalHaltingVehicles;
+
     // go through the list of vehicles positioned on the detector
     for (std::vector<MoveNotificationInfo>::iterator i = myMoveNotifications.begin(); i != myMoveNotifications.end(); ++i) {
         // The ID of the vehicle that has sent this notification in the last step
         const std::string& vehID = i->id;
-        integrateMoveNotification(vehID, *i);
+        VehicleInfoMap::iterator vi = myVehicleInfos.find(vehID);
+        // Vehicle ID must already be a valid key in myVehicleInfos (is added in notify enter)
+        assert(vi != myVehicleInfos.end());
+
+        // Add move notification infos to detector values and VehicleInfo
+        integrateMoveNotification(vi->second, *i);
+
+        // construct jam structure
+        bool isInJam = checkJam(i, haltingVehicles, intervalHaltingVehicles);
+        buildJam(isInJam, i, currentJam, jams);
     }
+
+    // extract some aggregated values from the jam structure
+    processJams(jams);
 
     // reset move notifications
     myMoveNotifications.clear();
@@ -493,8 +481,6 @@ MSMultiLaneE2Collector::detectorUpdate(const SUMOTime /* step */) {
 #endif
     }
     myLeftVehicles.clear();
-
-    myMaxVehicleNumber = MAX2(myMaxVehicleNumber, myVehicleInfos.size());
 
 #ifdef DEBUG_LSD_DETECTOR_UPDATE
     std::cout << SIMTIME << " Updating current lanes for vehicles still on the detector:" << std::endl;
@@ -519,27 +505,59 @@ MSMultiLaneE2Collector::detectorUpdate(const SUMOTime /* step */) {
             << std::endl;
 #endif
     }
+
+    // Aggregate and normalize values for the detector output
+    aggregateOutputValues();
+
+    // save information about halting vehicles
+    myHaltingVehicleDurations = haltingVehicles;
+    myIntervalHaltingVehicleDurations = intervalHaltingVehicles;
 }
 
+
 void
-MSMultiLaneE2Collector::integrateMoveNotification(const std::string& vehID, const MoveNotificationInfo& mni){
+MSMultiLaneE2Collector::aggregateOutputValues(){
+    myTimeSamples += 1;
+    // compute occupancy values (note myCurrentMeanLength is still not normalized here, but holds the sum of all vehicle lengths)
+    SUMOReal currentOccupancy = myCurrentMeanLength / myDetectorLength * (SUMOReal) 100.;
+    myCurrentOccupancy = currentOccupancy;
+    myOccupancySum += currentOccupancy;
+    myMaxOccupancy = MAX2(myMaxOccupancy, currentOccupancy);
+    // compute jam values
+    myMeanMaxJamInVehicles += myCurrentMaxJamLengthInVehicles;
+    myMeanMaxJamInMeters += myCurrentMaxJamLengthInMeters;
+    myMaxJamInVehicles = MAX2(myMaxJamInVehicles, myCurrentMaxJamLengthInVehicles);
+    myMaxJamInMeters = MAX2(myMaxJamInMeters, myCurrentMaxJamLengthInMeters);
+    // compute information about vehicle numbers
+    const size_t numVehicles = myVehicleInfos.size();
+    myMeanVehicleNumber += numVehicles;
+    myMaxVehicleNumber = MAX2(numVehicles, myMaxVehicleNumber);
+    // norm current values
+    myCurrentMeanSpeed = numVehicles != 0 ? myCurrentMeanSpeed / (SUMOReal) numVehicles : -1;
+    myCurrentMeanLength = numVehicles != 0 ? myCurrentMeanLength / (SUMOReal) numVehicles : -1;
+}
+
+
+
+void
+MSMultiLaneE2Collector::integrateMoveNotification(VehicleInfo& vi, const MoveNotificationInfo& mni){
 
 #ifdef DEBUG_LSD_DETECTOR_UPDATE
-    std::cout << SIMTIME << " integrateMoveNotification() for vehicle '" << vehID << "'" << std::endl;
+    std::cout << SIMTIME << " integrateMoveNotification() for vehicle '" << vi.id << "'" << std::endl;
 #endif
 
     // Accumulate detector values
     myVehicleSamples += mni.timeOnDetector;
     myTotalTimeLoss += mni.timeLoss;
+    mySpeedSum += mni.speed * mni.timeOnDetector;
+    myCurrentMeanSpeed += mni.speed * mni.timeOnDetector;
+    myCurrentMeanLength += mni.lengthOnDetector;
 
-
-    /* Accumulate individual values for the vehicle */
-    VehicleInfoMap::iterator vi = myVehicleInfos.find(vehID);
-    // Vehicle ID must already be a valid key in myVehicleInfos (is added in notify enter)
-    assert(vi != myVehicleInfos.end());
-    vi->second.totalTimeOnDetector += mni.timeOnDetector;
-    vi->second.accumulatedTimeLoss += mni.timeLoss;
+    // Accumulate individual values for the vehicle
+    vi.totalTimeOnDetector += mni.timeOnDetector;
+    vi.accumulatedTimeLoss += mni.timeLoss;
 }
+
 
 
 MSMultiLaneE2Collector::MoveNotificationInfo
@@ -550,16 +568,122 @@ MSMultiLaneE2Collector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal ol
             << std::endl;
 #endif
 
+    // Timefraction in [0,TS] the vehicle has spend on the detector in the last step
     SUMOReal timeOnDetector = calculateTimeOnDetector(veh, oldPos, newPos, vehInfo);
 
     // Note that at this point, vehInfo.currentLane points to the lane at the beginning of the last timestep,
     // and vehInfo.enteredLanes is a list of lanes entered in the last timestep
     SUMOReal timeLoss = calculateTimeLoss(veh, oldPos, newPos, vehInfo);
 
+    // The length of the part of the vehicle on the detector at the end of the last time step
+    SUMOReal lengthOnDetector = MAX2(MIN2(vehInfo.length, newPos + vehInfo.entryOffset), 0.);
+
     /* Store new infos */
-    return MoveNotificationInfo(veh.getID(), oldPos, newPos, newSpeed, myDetectorLength - (vehInfo.entryOffset + newPos), timeOnDetector, timeLoss);
+    return MoveNotificationInfo(veh.getID(), oldPos, newPos, newSpeed, myDetectorLength - (vehInfo.entryOffset + newPos), timeOnDetector, lengthOnDetector, timeLoss);
 }
 
+void
+MSMultiLaneE2Collector::buildJam(bool isInJam, std::vector<MoveNotificationInfo>::const_iterator mni, JamInfo*& currentJam, std::vector<JamInfo*>& jams){
+    if (isInJam) {
+    // The vehicle is in a jam;
+    //  it may be a new one or already an existing one
+    if (currentJam == 0) {
+        // the vehicle is the first vehicle in a jam
+        currentJam = new JamInfo();
+        currentJam->firstStandingVehicle = mni;
+    } else {
+        // ok, we have a jam already. But - maybe it is too far away
+        //  ... honestly, I can hardly find a reason for doing this,
+        //  but jams were defined this way in an earlier version...
+        if (currentJam->lastStandingVehicle->distToDetectorEnd - mni->distToDetectorEnd > myJamDistanceThreshold) {
+            // yep, yep, yep - it's a new one...
+            //  close the frist, build a new
+            jams.push_back(currentJam);
+            currentJam = new JamInfo();
+            currentJam->firstStandingVehicle = mni;
+        }
+    }
+    currentJam->lastStandingVehicle = mni;
+    } else {
+        // the vehicle is not part of a jam...
+        //  maybe we have to close an already computed jam
+        if (currentJam != 0) {
+            jams.push_back(currentJam);
+            currentJam = 0;
+        }
+    }
+}
+
+
+bool
+MSMultiLaneE2Collector::checkJam(std::vector<MoveNotificationInfo>::const_iterator mni, std::map<std::string, SUMOTime>& haltingVehicles, std::map<std::string, SUMOTime>& intervalHaltingVehicles){
+    // jam-checking begins
+    bool isInJam = false;
+    // first, check whether the vehicle is slow enough to be counted as halting
+    if (mni->speed < myJamHaltingSpeedThreshold) {
+        myCurrentHaltingsNumber++;
+        // we have to track the time it was halting;
+        // so let's look up whether it was halting before and compute the overall halting time
+        bool wasHalting = myHaltingVehicleDurations.count(mni->id) > 0;
+        if (wasHalting) {
+            haltingVehicles[mni->id] = myHaltingVehicleDurations[mni->id] + DELTA_T;
+            intervalHaltingVehicles[mni->id] = myIntervalHaltingVehicleDurations[mni->id] + DELTA_T;
+        } else {
+            haltingVehicles[mni->id] = DELTA_T;
+            intervalHaltingVehicles[mni->id] = DELTA_T;
+            myCurrentStartedHalts++;
+            myStartedHalts++;
+        }
+        // we now check whether the halting time is large enough
+        if (haltingVehicles[mni->id] > myJamHaltingTimeThreshold) {
+            // yep --> the vehicle is a part of a jam
+            isInJam = true;
+        }
+    } else {
+        // is not standing anymore; keep duration information
+        std::map<std::string, SUMOTime>::iterator v = myHaltingVehicleDurations.find(mni->id);
+        if (v != myHaltingVehicleDurations.end()) {
+            myPastStandingDurations.push_back(v->second);
+            myHaltingVehicleDurations.erase(v);
+        }
+        v = myIntervalHaltingVehicleDurations.find(mni->id);
+        if (v != myIntervalHaltingVehicleDurations.end()) {
+            myPastIntervalStandingDurations.push_back((*v).second);
+            myIntervalHaltingVehicleDurations.erase(v);
+        }
+    }
+    return isInJam;
+}
+
+
+void
+MSMultiLaneE2Collector::processJams(std::vector<JamInfo*>& jams){
+    // process jam information
+    myCurrentMaxJamLengthInMeters = 0;
+    myCurrentMaxJamLengthInVehicles = 0;
+    myCurrentJamLengthInMeters = 0;
+    myCurrentJamLengthInVehicles = 0;
+    for (std::vector<JamInfo*>::const_iterator i = jams.begin(); i != jams.end(); ++i) {
+        // compute current jam's values
+        const SUMOReal jamLengthInMeters = - (*i)->firstStandingVehicle->distToDetectorEnd
+                                           + (*i)->lastStandingVehicle->distToDetectorEnd
+                                           + (*i)->lastStandingVehicle->lengthOnDetector;
+        const int jamLengthInVehicles = (int) distance((*i)->firstStandingVehicle, (*i)->lastStandingVehicle) + 1;
+        // apply them to the statistics
+        myCurrentMaxJamLengthInMeters = MAX2(myCurrentMaxJamLengthInMeters, jamLengthInMeters);
+        myCurrentMaxJamLengthInVehicles = MAX2(myCurrentMaxJamLengthInVehicles, jamLengthInVehicles);
+        myJamLengthInMetersSum += jamLengthInMeters;
+        myJamLengthInVehiclesSum += jamLengthInVehicles;
+        myCurrentJamLengthInMeters += jamLengthInMeters;
+        myCurrentJamLengthInVehicles += jamLengthInVehicles;
+    }
+    myCurrentJamNo = (int) jams.size();
+
+    // clean up jam structure
+    for (std::vector<JamInfo*>::iterator i = jams.begin(); i != jams.end(); ++i) {
+        delete *i;
+    }
+}
 
 SUMOReal
 MSMultiLaneE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
@@ -588,16 +712,16 @@ MSMultiLaneE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal
     }
 
     // Calculate time spent on detector until reaching newPos or a detector exit
-    SUMOReal exitOffset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+    SUMOReal offset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
     // calculate vehicle's time spent on the detector
-    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitOffset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+    SUMOReal exitTime = MSCFModel::passingTime(oldPos, offset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
     // Time spent on the detector
     SUMOReal timeOnDetector = exitTime - entryTime;
 
 #ifdef DEBUG_LSD_TIME_ON_DETECTOR
     std::cout << SIMTIME << " calculateTimeOnDetector() for vehicle '" << veh.getID() << "'"
             << " oldPos = " << oldPos << " newPos = " << newPos
-            << " exitOffset = " << exitOffset << " timeOnDetector = " << timeOnDetector
+            << " offset = " << offset << " timeOnDetector = " << timeOnDetector
             << std::endl;
 #endif
 
@@ -605,77 +729,132 @@ MSMultiLaneE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal
 }
 
 
+
+
 SUMOReal
 MSMultiLaneE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
+    assert(veh.getID() == vi.id);
+    assert(newPos + vi.entryOffset >= 0);
 
-    SUMOReal passingTime, lastPassingTime=0;
-    SUMOReal passingSpeed, accel, offset;
-    SUMOReal totalTimeLoss = 0.;
+    SUMOReal entryTime = 0;
+    SUMOReal entrySpeed, accel;
 
+    // Select the last step's speed and acceleration according to the update scheme
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         // euler update
-        passingSpeed = veh.getSpeed();
+        entrySpeed = veh.getSpeed();
         accel = 0.;
     } else {
         // ballistic update
-        passingSpeed = veh.getPreviousSpeed();
+        entrySpeed = veh.getPreviousSpeed();
         accel = (veh.getSpeed()-veh.getPreviousSpeed())/TS;
     }
-    if (oldPos < 0){
-        // vehicle entered the detector in the last step
-        // calculate entry time, but disregard timeloss for that segment
-        passingTime = MSCFModel::passingTime(oldPos, 0., newPos, veh.getPreviousSpeed(), veh.getSpeed());
-        passingSpeed = passingSpeed + passingTime*accel;
-        lastPassingTime = passingTime;
+
+    // Take into account the time before entering the detector, if there is.
+    if (oldPos < 0) {
+        // Vehicle entered the detector in the last step, either traversing the detector start or somewhere in the middle.
+        entryTime = MSCFModel::passingTime(oldPos, 0., newPos, veh.getPreviousSpeed(), veh.getSpeed());
+        entrySpeed = entrySpeed + entryTime*accel;
     }
 
+    // Calculate time spent on detector until reaching newPos or a detector exit
+    SUMOReal exitOffset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+    // calculate vehicle's time spent on the detector
+    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitOffset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+    // Vehicle's Speed when leaving the detector
+    SUMOReal exitSpeed = entrySpeed + (exitTime - entryTime)*accel;
 
-    // set offset to lane subsequent to the current
-    std::size_t oi = vi.currentOffsetIndex;
-    // offset to current lane's end, resp. the vehicle's newPos, resp. the detector length measured from vi's entry lane's begin.
-    if (oi < myLanes.size()) {
-        offset = MIN3(myOffsets[oi] + vi.currentLane->getLength() - vi.entryOffset, newPos, vi.exitOffset + vi.length - vi.entryOffset);
-    } else {
-        // vehicle has left the detector's lanes, but may still have its back on the detector
-        offset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
-    }
-    // calculate vehicle's timeloss on the detector segment of the current lane
-    passingTime = MSCFModel::passingTime(oldPos, offset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
-    SUMOReal vmax = vi.currentLane->getVehicleMaxSpeed(&veh); // maximal speed on the lane (this is the reason why we need to seperately consider all the lanes)
-    SUMOReal timeLoss = calculateSegmentTimeLoss(passingTime, passingSpeed, accel, vmax);
-    // add to total time loss
-    totalTimeLoss += timeLoss;
+    // Maximal speed on vehicle's current lane (== lane before last time step)
+    // Note: this disregards the possibility of different maximal speeds on different traversed lanes.
+    //       (we accept this as discretization error)
+    SUMOReal vmax = MAX2(veh.getLane()->getVehicleMaxSpeed(&veh), NUMERICAL_EPS);
 
-    // Treat subsequent lanes to vi->currentLane on the detector if the vehicle entered some
-    std::vector<const MSLane*>::const_iterator li = vi.enteredLanes.begin();
-    while(li != vi.enteredLanes.end()) {
-        oi++;
-        // offset to lane's end, resp. the vehicle's newPos, resp. the detector length measured from vi's entry lane's begin.
-        if (oi < myOffsets.size() && myLanes[oi] == (*li)->getID()) {
-            // Vehicle is on one of the detector's lanes
-            offset = MIN3(myOffsets[oi] + (*li)->getLength() - vi.entryOffset, newPos, vi.exitOffset + vi.length - vi.entryOffset);
-            // Maximal speed on the lane
-            vmax = (*li)->getVehicleMaxSpeed(&veh);
-        } else {
-            // Vehicle has left the detector's lanes, but may still have its back on the detector
-            offset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
-            // Use maximal speed on the lane with the vehicle's front as reference
-            vmax = (*li)->getVehicleMaxSpeed(&veh);
-        }
-        // calculate vehicle's timeloss on the detector segment of the lane
-        passingTime = MSCFModel::passingTime(oldPos, offset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
-        timeLoss = calculateSegmentTimeLoss(passingTime, passingSpeed, accel, vmax);
-        // add to total time loss
-        totalTimeLoss += timeLoss;
-        ++li;
-    }
+    // Time loss suffered on the detector
+    SUMOReal timeLoss = MAX2(0., (exitTime - entryTime)*(vmax - (entrySpeed + exitSpeed)/2)/vmax);
+
+#ifdef DEBUG_LSD_TIME_ON_DETECTOR
+    std::cout << SIMTIME << " calculateTimeLoss() for vehicle '" << veh.getID() << "'"
+            << " oldPos = " << oldPos << " newPos = " << newPos
+            << " exitOffset = " << exitOffset << " timeLoss = " << timeLoss
+            << std::endl;
+#endif
+
     return timeLoss;
 }
 
-SUMOReal
-MSMultiLaneE2Collector::calculateSegmentTimeLoss(SUMOReal timespan, SUMOReal initialSpeed, SUMOReal accel, SUMOReal vmax) {
-    return MAX2(0., timespan*(vmax - initialSpeed - 0.5*accel)/vmax);
-}
+
+//SUMOReal
+//MSMultiLaneE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
+//    // TODO: simplify as in calculateTimeOnDetector
+//
+//    SUMOReal passingTime, lastPassingTime=0;
+//    SUMOReal passingSpeed, accel, offset;
+//    SUMOReal totalTimeLoss = 0.;
+//
+//    if (MSGlobals::gSemiImplicitEulerUpdate) {
+//        // euler update
+//        passingSpeed = veh.getSpeed();
+//        accel = 0.;
+//    } else {
+//        // ballistic update
+//        passingSpeed = veh.getPreviousSpeed();
+//        accel = (veh.getSpeed()-veh.getPreviousSpeed())/TS;
+//    }
+//    if (oldPos < 0){
+//        // vehicle entered the detector in the last step
+//        // calculate entry time, but disregard timeloss for that segment
+//        passingTime = MSCFModel::passingTime(oldPos, 0., newPos, veh.getPreviousSpeed(), veh.getSpeed());
+//        passingSpeed = passingSpeed + passingTime*accel;
+//        lastPassingTime = passingTime;
+//    }
+//
+//
+//    // set offset to lane subsequent to the current
+//    std::size_t oi = vi.currentOffsetIndex;
+//    // offset to current lane's end, resp. the vehicle's newPos, resp. the detector length measured from vi's entry lane's begin.
+//    if (oi < myLanes.size()) {
+//        offset = MIN3(myOffsets[oi] + vi.currentLane->getLength() - vi.entryOffset, newPos, vi.exitOffset + vi.length - vi.entryOffset);
+//    } else {
+//        // vehicle has left the detector's lanes, but may still have its back on the detector
+//        offset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+//    }
+//    // calculate vehicle's timeloss on the detector segment of the current lane
+//    passingTime = MSCFModel::passingTime(oldPos, offset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+//    SUMOReal vmax = vi.currentLane->getVehicleMaxSpeed(&veh); // maximal speed on the lane (this is the reason why we need to seperately consider all the lanes)
+//    SUMOReal timeLoss = calculateSegmentTimeLoss(passingTime, passingSpeed, accel, vmax);
+//    // add to total time loss
+//    totalTimeLoss += timeLoss;
+//
+//    // Treat subsequent lanes to vi->currentLane on the detector if the vehicle entered some
+//    std::vector<const MSLane*>::const_iterator li = vi.enteredLanes.begin();
+//    while(li != vi.enteredLanes.end()) {
+//        oi++;
+//        // offset to lane's end, resp. the vehicle's newPos, resp. the detector length measured from vi's entry lane's begin.
+//        if (oi < myOffsets.size() && myLanes[oi] == (*li)->getID()) {
+//            // Vehicle is on one of the detector's lanes
+//            offset = MIN3(myOffsets[oi] + (*li)->getLength() - vi.entryOffset, newPos, vi.exitOffset + vi.length - vi.entryOffset);
+//            // Maximal speed on the lane
+//            vmax = (*li)->getVehicleMaxSpeed(&veh);
+//        } else {
+//            // Vehicle has left the detector's lanes, but may still have its back on the detector
+//            offset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+//            // Use maximal speed on the lane with the vehicle's front as reference
+//            vmax = (*li)->getVehicleMaxSpeed(&veh);
+//        }
+//        // calculate vehicle's timeloss on the detector segment of the lane
+//        passingTime = MSCFModel::passingTime(oldPos, offset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+//        timeLoss = calculateSegmentTimeLoss(passingTime, passingSpeed, accel, vmax);
+//        // add to total time loss
+//        totalTimeLoss += timeLoss;
+//        ++li;
+//    }
+//    return timeLoss;
+//}
+//
+//SUMOReal
+//MSMultiLaneE2Collector::calculateSegmentTimeLoss(SUMOReal timespan, SUMOReal initialSpeed, SUMOReal accel, SUMOReal vmax) {
+//    return MAX2(0., timespan*(vmax - initialSpeed - 0.5*accel)/vmax);
+//}
 
 
 
@@ -688,12 +867,68 @@ void
 MSMultiLaneE2Collector::writeXMLOutput(OutputDevice& dev, SUMOTime startTime, SUMOTime stopTime){
     dev << "   <interval begin=\"" << time2string(startTime) << "\" end=\"" << time2string(stopTime) << "\" " << "id=\"" << getID() << "\" ";
 
+    const SUMOReal meanSpeed = myVehicleSamples != 0 ? mySpeedSum / myVehicleSamples : -1;
+    const SUMOReal meanOccupancy = myTimeSamples != 0 ? myOccupancySum / (SUMOReal) myTimeSamples : 0;
+    const SUMOReal meanJamLengthInMeters = myTimeSamples != 0 ? myMeanMaxJamInMeters / (SUMOReal) myTimeSamples : 0;
+    const SUMOReal meanJamLengthInVehicles = myTimeSamples != 0 ? myMeanMaxJamInVehicles / (SUMOReal) myTimeSamples : 0;
+    const SUMOReal meanVehicleNumber = myTimeSamples != 0 ? (SUMOReal) myMeanVehicleNumber / (SUMOReal) myTimeSamples : 0;
+    const SUMOReal meanTimeLoss = meanVehicleNumber != 0 ? myTotalTimeLoss / meanVehicleNumber : -1;
+
+    SUMOTime haltingDurationSum = 0;
+    SUMOTime maxHaltingDuration = 0;
+    int haltingNo = 0;
+    for (std::vector<SUMOTime>::iterator i = myPastStandingDurations.begin(); i != myPastStandingDurations.end(); ++i) {
+        haltingDurationSum += (*i);
+        maxHaltingDuration = MAX2(maxHaltingDuration, (*i));
+        haltingNo++;
+    }
+    for (std::map<std::string, SUMOTime> ::iterator i = myHaltingVehicleDurations.begin(); i != myHaltingVehicleDurations.end(); ++i) {
+        haltingDurationSum += (*i).second;
+        maxHaltingDuration = MAX2(maxHaltingDuration, (*i).second);
+        haltingNo++;
+    }
+    const SUMOTime meanHaltingDuration = haltingNo != 0 ? haltingDurationSum / haltingNo : 0;
+
+    SUMOTime intervalHaltingDurationSum = 0;
+    SUMOTime intervalMaxHaltingDuration = 0;
+    int intervalHaltingNo = 0;
+    for (std::vector<SUMOTime>::iterator i = myPastIntervalStandingDurations.begin(); i != myPastIntervalStandingDurations.end(); ++i) {
+        intervalHaltingDurationSum += (*i);
+        intervalMaxHaltingDuration = MAX2(intervalMaxHaltingDuration, (*i));
+        intervalHaltingNo++;
+    }
+    for (std::map<std::string, SUMOTime> ::iterator i = myIntervalHaltingVehicleDurations.begin(); i != myIntervalHaltingVehicleDurations.end(); ++i) {
+        intervalHaltingDurationSum += (*i).second;
+        intervalMaxHaltingDuration = MAX2(intervalMaxHaltingDuration, (*i).second);
+        intervalHaltingNo++;
+    }
+    const SUMOTime intervalMeanHaltingDuration = intervalHaltingNo != 0 ? intervalHaltingDurationSum / intervalHaltingNo : 0;
+
     dev << "sampledSeconds=\"" << myVehicleSamples << "\" "
-            << "nVehEntered=\"" << myNumberOfEnteredVehicles<< "\" "
-            << "nVehLeft=\"" << myNumberOfLeftVehicles<< "\" "
-            << "maxVehicleNumber=\"" << myMaxVehicleNumber << "\" "
-            << "/>\n";
+        << "nVehEntered=\"" << myNumberOfEnteredVehicles << "\" "
+        << "nVehLeft=\"" << myNumberOfLeftVehicles << "\" "
+        << "meanSpeed=\"" << meanSpeed << "\" "
+        << "meanTimeLoss=\"" << meanTimeLoss << "\" "
+        << "meanOccupancy=\"" << meanOccupancy << "\" "
+        << "maxOccupancy=\"" << myMaxOccupancy << "\" "
+        << "meanMaxJamLengthInVehicles=\"" << meanJamLengthInVehicles << "\" "
+        << "meanMaxJamLengthInMeters=\"" << meanJamLengthInMeters << "\" "
+        << "maxJamLengthInVehicles=\"" << myMaxJamInVehicles << "\" "
+        << "maxJamLengthInMeters=\"" << myMaxJamInMeters << "\" "
+        << "jamLengthInVehiclesSum=\"" << myJamLengthInVehiclesSum << "\" "
+        << "jamLengthInMetersSum=\"" << myJamLengthInMetersSum << "\" "
+        << "meanHaltingDuration=\"" << STEPS2TIME(meanHaltingDuration) << "\" "
+        << "maxHaltingDuration=\"" << STEPS2TIME(maxHaltingDuration) << "\" "
+        << "haltingDurationSum=\"" << STEPS2TIME(haltingDurationSum) << "\" "
+        << "meanIntervalHaltingDuration=\"" << STEPS2TIME(intervalMeanHaltingDuration) << "\" "
+        << "maxIntervalHaltingDuration=\"" << STEPS2TIME(intervalMaxHaltingDuration) << "\" "
+        << "intervalHaltingDurationSum=\"" << STEPS2TIME(intervalHaltingDurationSum) << "\" "
+        << "startedHalts=\"" << myStartedHalts << "\" "
+        << "meanVehicleNumber=\"" << meanVehicleNumber << "\" "
+        << "maxVehicleNumber=\"" << myMaxVehicleNumber << "\" "
+        << "/>\n";
     reset();
+
 }
 
 void
@@ -703,6 +938,24 @@ MSMultiLaneE2Collector::reset() {
     myNumberOfEnteredVehicles = 0;
     myNumberOfLeftVehicles = 0;
     myMaxVehicleNumber = 0;
+
+    mySpeedSum = 0;
+    myStartedHalts = 0;
+    myJamLengthInMetersSum = 0;
+    myJamLengthInVehiclesSum = 0;
+    myOccupancySum = 0;
+    myMaxOccupancy = 0;
+    myMeanMaxJamInVehicles = 0;
+    myMeanMaxJamInMeters = 0;
+    myMaxJamInVehicles = 0;
+    myMaxJamInMeters = 0;
+    myTimeSamples = 0;
+    myMeanVehicleNumber = 0;
+    for (std::map<std::string, SUMOTime>::iterator i = myIntervalHaltingVehicleDurations.begin(); i != myIntervalHaltingVehicleDurations.end(); ++i) {
+        (*i).second = 0;
+    }
+    myPastStandingDurations.clear();
+    myPastIntervalStandingDurations.clear();
 }
 
 
