@@ -30,11 +30,12 @@
  *  - detector starting on internal lane
  *  - subsecond variant, ballistic variant
  *  - Should pass the original E2-tests
+ *  - Test warnings
  *
  *
  * Meso-compatibility? (esp. enteredLane-argument for MSBaseVehicle::notifyEnter() is not treated)
  * Compatibility without internal lanes?
- *
+ * Assure positive detector length
  * Clean-up on destruction (perhaps multiple calls are attempted from the different lanes?)
 */
 
@@ -113,6 +114,11 @@ MSMultiLaneE2Collector::MSMultiLaneE2Collector(const std::string& id,
 
 std::vector<MSLane*>
 MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal upstreamRange){
+    if (upstreamRange < POSITION_EPS) {
+        std::stringstream ss;
+        ss << "Minimal length for E2 Detector (" << POSITION_EPS << "m.) is violated. Overriding user specification.";
+        WRITE_WARNING(ss.str());
+    }
     SUMOReal desiredLength = upstreamRange;
 
 #ifdef DEBUG_LSD_CONSTRUCTOR
@@ -328,6 +334,9 @@ MSMultiLaneE2Collector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
     bool vehPassedDetectorEnd = relPos - veh.getVehicleType().getLength() > vehInfo.exitOffset;
 
     if (vehPassedDetectorEnd) {
+#ifdef DEBUG_LSD_NOTIFY_MOVE
+        std::cout << "Vehicle has left the detector along a junction." << std::endl;
+#endif
         // Vehicle is beyond the detector, unsubscribe and register removal from myVehicleInfos
         myLeftVehicles.insert(vehID);
         return false;
@@ -338,7 +347,7 @@ MSMultiLaneE2Collector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
 }
 
 bool
-MSMultiLaneE2Collector::notifyLeave(SUMOVehicle& veh, SUMOReal /* lastPos */, MSMoveReminder::Notification reason) {
+MSMultiLaneE2Collector::notifyLeave(SUMOVehicle& veh, SUMOReal /* lastPos */, MSMoveReminder::Notification reason, const MSLane* /* leftLane */, const MSLane* /* enteredLane */) {
 #ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
         std::cout << "\n" << SIMTIME << " notifyLeave() called by vehicle '" << veh.getID() << "'" << std::endl;
 #endif
@@ -349,6 +358,20 @@ MSMultiLaneE2Collector::notifyLeave(SUMOVehicle& veh, SUMOReal /* lastPos */, MS
 #ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
         std::cout << SIMTIME << " Left longitudinally (along junction) -> keep subscription" << std::endl;
 #endif
+
+//        if (std::find(myLanes.begin(), myLanes.end(), enteredLane->getID()) == myLanes.end()){
+//            // Entered lane is not part of the detector
+//            // Determine exit offset, where vehicle left the detector
+//            SUMOReal exitOffset = myOffsets[vi->second.currentOffsetIndex];
+//            for (std::vector<const MSLane*>::const_iterator i = vi->second.enteredLanes.begin(); i != vi->second.enteredLanes.begin(); i++){
+//                exitOffset += (*i)->getLength();
+//            }
+//            vi->second.exitOffset = MIN2(vi->second.exitOffset, exitOffset);
+//#ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
+//        std::cout << SIMTIME << " Vehicle '" << veh.getID() << "' leaves myLanes. Exit offset = " << exitOffset << std::endl;
+//#endif
+//        }
+
         return true;
     } else {
         myLeftVehicles.insert(veh.getID());
@@ -366,6 +389,10 @@ MSMultiLaneE2Collector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notificati
         std::cout << "\n" << SIMTIME << " notifyEnter() called by vehicle '" << veh.getID()
                 << "' entering lane '" << enteredLane->getID() << "'" << std::endl;
 #endif
+
+    // notifyEnter() should only be called for lanes of the detector
+    assert(std::find(myLanes.begin(), myLanes.end(), enteredLane->getID()) != myLanes.end());
+
     if (!veh.isOnRoad()) {
         // Vehicle is teleporting over the edge
         return false;
@@ -380,19 +407,6 @@ MSMultiLaneE2Collector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notificati
 #ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
         std::cout << SIMTIME << " Vehicle '" << veh.getID() << "' already known. No new VehicleInfo is created." << std::endl;
 #endif
-
-        if (std::find(myLanes.begin(), myLanes.end(), enteredLane->getID()) == myLanes.end()){
-            // Entered lane is not part of the detector
-            // Determine exit offset, where vehicle left the detector
-            SUMOReal exitOffset = myOffsets[vi->second.currentOffsetIndex];
-            for (std::vector<const MSLane*>::const_iterator i = vi->second.enteredLanes.begin(); i != vi->second.enteredLanes.begin(); i++){
-                exitOffset += (*i)->getLength();
-            }
-            vi->second.exitOffset = MIN2(vi->second.exitOffset, exitOffset);
-#ifdef DEBUG_LSD_NOTIFY_ENTER_AND_LEAVE
-        std::cout << SIMTIME << " Vehicle '" << veh.getID() << "' leaves myLanes. Exit offset = " << exitOffset << std::endl;
-#endif
-        }
 
         // Register the entered lane
         vi->second.enteredLanes.push_back(enteredLane);
@@ -585,6 +599,11 @@ MSMultiLaneE2Collector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal ol
     // The length of the part of the vehicle on the detector at the end of the last time step
     SUMOReal lengthOnDetector = MAX2(MIN2(vehInfo.length, newPos + vehInfo.entryOffset), 0.);
 
+#ifdef DEBUG_LSD_NOTIFY_MOVE
+    std::cout << SIMTIME << " lengthOnDetector = " << lengthOnDetector << std::endl;
+#endif
+
+
     /* Store new infos */
     return MoveNotificationInfo(veh.getID(), oldPos, newPos, newSpeed, myDetectorLength - (vehInfo.entryOffset + newPos), timeOnDetector, lengthOnDetector, timeLoss);
 }
@@ -701,6 +720,7 @@ MSMultiLaneE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal
     SUMOReal entrySpeed, accel;
 
     // Select the last step's speed and acceleration according to the update scheme
+    // (only used to update entrySpeed below, passingTime() accounts for update scheme internally)
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         // euler update
         entrySpeed = veh.getSpeed();
@@ -711,24 +731,29 @@ MSMultiLaneE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal
         accel = (veh.getSpeed()-veh.getPreviousSpeed())/TS;
     }
 
+    // Eventual positional offset of the detector start from the lane's start
+    SUMOReal entryPos = MAX2(-vi.entryOffset,0.);
+
     // Take into account the time before entering the detector, if there is.
-    if (oldPos < 0) {
+    if (oldPos < entryPos) {
         // Vehicle entered the detector in the last step, either traversing the detector start or somewhere in the middle.
-        entryTime = MSCFModel::passingTime(oldPos, 0., newPos, veh.getPreviousSpeed(), veh.getSpeed());
+        entryTime = MSCFModel::passingTime(oldPos, entryPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
         entrySpeed = entrySpeed + entryTime*accel;
     }
 
     // Calculate time spent on detector until reaching newPos or a detector exit
-    SUMOReal offset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+    SUMOReal exitPos = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+    assert(entryPos < exitPos);
     // calculate vehicle's time spent on the detector
-    SUMOReal exitTime = MSCFModel::passingTime(oldPos, offset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
     // Time spent on the detector
     SUMOReal timeOnDetector = exitTime - entryTime;
 
 #ifdef DEBUG_LSD_TIME_ON_DETECTOR
     std::cout << SIMTIME << " calculateTimeOnDetector() for vehicle '" << veh.getID() << "'"
             << " oldPos = " << oldPos << " newPos = " << newPos
-            << " offset = " << offset << " timeOnDetector = " << timeOnDetector
+            << " entryPos = " << entryPos << " exitPos = " << exitPos
+            << " timeOnDetector = " << timeOnDetector
             << std::endl;
 #endif
 
@@ -757,17 +782,21 @@ MSMultiLaneE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPo
         accel = (veh.getSpeed()-veh.getPreviousSpeed())/TS;
     }
 
+    // Eventual positional offset of the detector start from the lane's start
+    SUMOReal entryPos = MAX2(-vi.entryOffset,0.);
+
     // Take into account the time before entering the detector, if there is.
-    if (oldPos < 0) {
+    if (oldPos < entryPos) {
         // Vehicle entered the detector in the last step, either traversing the detector start or somewhere in the middle.
-        entryTime = MSCFModel::passingTime(oldPos, 0., newPos, veh.getPreviousSpeed(), veh.getSpeed());
+        entryTime = MSCFModel::passingTime(oldPos, entryPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
         entrySpeed = entrySpeed + entryTime*accel;
     }
 
     // Calculate time spent on detector until reaching newPos or a detector exit
-    SUMOReal exitOffset = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+    SUMOReal exitPos = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
+    assert(entryPos < exitPos);
     // calculate vehicle's time spent on the detector
-    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitOffset, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
     // Vehicle's Speed when leaving the detector
     SUMOReal exitSpeed = entrySpeed + (exitTime - entryTime)*accel;
 
@@ -782,7 +811,8 @@ MSMultiLaneE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPo
 #ifdef DEBUG_LSD_TIME_ON_DETECTOR
     std::cout << SIMTIME << " calculateTimeLoss() for vehicle '" << veh.getID() << "'"
             << " oldPos = " << oldPos << " newPos = " << newPos
-            << " exitOffset = " << exitOffset << " timeLoss = " << timeLoss
+            << " entryPos = " << entryPos << " exitPos = " << exitPos
+            << " timeLoss = " << timeLoss
             << std::endl;
 #endif
 

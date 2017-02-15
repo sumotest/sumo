@@ -666,7 +666,7 @@ public:
 
 
     /** @brief Update of members if vehicle leaves a new lane in the lane change step or at arrival. */
-    void leaveLane(const MSMoveReminder::Notification reason);
+    void leaveLane(const MSMoveReminder::Notification reason, const MSLane* approachedLane = 0);
 
 
     MSAbstractLaneChangeModel& getLaneChangeModel();

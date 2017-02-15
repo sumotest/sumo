@@ -176,7 +176,7 @@ MSE2Collector::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
 
 
 bool
-MSE2Collector::notifyLeave(SUMOVehicle& /* veh */, SUMOReal /* lastPos */, MSMoveReminder::Notification reason) {
+MSE2Collector::notifyLeave(SUMOVehicle& /* veh */, SUMOReal /* lastPos */, MSMoveReminder::Notification reason, const MSLane* /* leftLane */, const MSLane* /* enteredLane */) {
     if (reason != MSMoveReminder::NOTIFICATION_JUNCTION) {
         return false;
     }
@@ -240,7 +240,7 @@ MSE2Collector::detectorUpdate(const SUMOTime /* step */) {
 
     // go through the (sorted) list of vehicles positioned on the detector
     //  sum up values and prepare the list of jams
-    std::vector<VehicleInfo>::const_iterator iv;
+    std::vector<VehicleInfo>::const_iterator iv; // XXX: unused??
     const int numVehicles = (int)myKnownVehicles.size();
     for (std::vector<VehicleInfo>::const_iterator i = myKnownVehicles.begin(); i != myKnownVehicles.end(); ++i) {
         myVehicleSamples += i->timeOnDet;

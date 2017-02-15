@@ -117,7 +117,9 @@ public:
         const MSLane* currentLane;
         /// Index of currentLane in the detector's myLanes vector.
         std::size_t currentOffsetIndex;
-        /// Distance of that lane's beginning to the detector start (can be negative for the first lane)
+        /// Distance of the vehicle's entry lane's beginning to the detector start (can be negative for the first lane)
+        /// In notifyMove(), the positional input arguments are relative to that position (since the vehicle picks up the MoveReminder
+        /// on the entry lane)
         SUMOReal entryOffset;
         /// Offset from the detector start, where the vehicle has leaves the detector (defaults to detector length and is updated
         /// if the vehicle leaves the detector via a junction before reaching its end, i.e. enters a lane not part of the detector)
@@ -252,7 +254,7 @@ public:
      * @param[in] isLaneChange whether the vehicle changed from the lane
      * @see MSMoveReminder::notifyLeave
      */
-    bool notifyLeave(SUMOVehicle& veh, SUMOReal lastPos, MSMoveReminder::Notification reason);
+    bool notifyLeave(SUMOVehicle& veh, SUMOReal lastPos, MSMoveReminder::Notification reason, const MSLane* leftLane = 0, const MSLane* enteredLane = 0);
 
 
     /** @brief Adds the vehicle to known vehicles if not beyond the dector

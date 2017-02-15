@@ -2153,7 +2153,7 @@ MSVehicle::executeMove() {
                     break;
                 }
                 if (approachedLane != myLane && approachedLane != 0) {
-                    leaveLane(MSMoveReminder::NOTIFICATION_JUNCTION);
+                    leaveLane(MSMoveReminder::NOTIFICATION_JUNCTION, approachedLane);
                     myState.myPos -= myLane->getLength();
                     assert(myState.myPos > 0);
                     enterLaneAtMove(approachedLane);
@@ -2828,9 +2828,9 @@ MSVehicle::enterLaneAtInsertion(MSLane* enteredLane, SUMOReal pos, SUMOReal spee
 
 
 void
-MSVehicle::leaveLane(const MSMoveReminder::Notification reason) {
+MSVehicle::leaveLane(const MSMoveReminder::Notification reason, const MSLane* approachedLane) {
     for (MoveReminderCont::iterator rem = myMoveReminders.begin(); rem != myMoveReminders.end();) {
-        if (rem->first->notifyLeave(*this, myState.myPos + rem->second, reason)) {
+        if (rem->first->notifyLeave(*this, myState.myPos + rem->second, reason, myLane, approachedLane)) {
 #ifdef _DEBUG
             if (myTraceMoveReminders) {
                 traceMoveReminder("notifyLeave", rem->first, rem->second, true);

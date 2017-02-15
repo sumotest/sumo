@@ -178,7 +178,7 @@ public:
      * @return True if the reminder wants to receive further info.
      */
     virtual bool notifyLeave(SUMOVehicle& veh, SUMOReal lastPos,
-                             Notification reason) {
+                             Notification reason, const MSLane* leftLane = 0, const MSLane* enteredLane = 0) {
         UNUSED_PARAMETER(reason);
         UNUSED_PARAMETER(lastPos);
         UNUSED_PARAMETER(&veh);
