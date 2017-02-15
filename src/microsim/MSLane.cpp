@@ -1546,7 +1546,7 @@ MSLane::getLinkCont() const {
 
 
 /// returns the link to the given lane or 0, if it is not connected
-const MSLink*
+MSLink*
 MSLane::getLinkTo(const MSLane* target) const {
     MSLinkCont::const_iterator l = myLinks.begin();
     while(l != myLinks.end()){
@@ -2023,7 +2023,7 @@ MSLane::getLogicalPredecessorLane() const {
             std::sort(pred.begin(), pred.end(), by_connections_to_sorter(&getEdge()));
             MSEdge* best = *pred.begin();
             std::vector<IncomingLaneInfo>::const_iterator j = find_if(myIncomingLanes.begin(), myIncomingLanes.end(), edge_finder(best));
-            myLogicalPredecessorLane = (*j).lane;
+            myLogicalPredecessorLane = j->lane;
         }
     }
     return myLogicalPredecessorLane;
@@ -2039,6 +2039,24 @@ MSLane::getLogicalPredecessorLane(const MSEdge& fromEdge) const {
         }
     }
     return 0;
+}
+
+MSLane*
+MSLane::getCanonicalPredecessorLane() const {
+    if (myCanonicalPredecessorLane != 0) {
+        return myCanonicalPredecessorLane;
+    }
+    if (myIncomingLanes.size()==0){
+        return 0;
+    }
+    // myCanonicalPredecessorLane has not yet been determined and there exist incoming lanes
+    std::vector<IncomingLaneInfo> candidateLanes = myIncomingLanes;
+    // get the lane with the priorized (or if this does not apply the "straightest") connection
+    std::sort(candidateLanes.begin(), candidateLanes.end(), lane_priority_sorter(this));
+    IncomingLaneInfo best = *(candidateLanes.begin());
+    std::cout << "\nBest predecessor lane for lane '" << myID << "': '" << best.lane->getID() << "'" << std::endl;
+    myCanonicalPredecessorLane = best.lane;
+    return myCanonicalPredecessorLane;
 }
 
 
@@ -2279,18 +2297,105 @@ MSLane::by_connections_to_sorter::by_connections_to_sorter(const MSEdge* const e
 
 int
 MSLane::by_connections_to_sorter::operator()(const MSEdge* const e1, const MSEdge* const e2) const {
+//    std::cout << "\nby_connections_to_sorter()";
+
     const std::vector<MSLane*>* ae1 = e1->allowedLanes(*myEdge);
     const std::vector<MSLane*>* ae2 = e2->allowedLanes(*myEdge);
     SUMOReal s1 = 0;
     if (ae1 != 0 && ae1->size() != 0) {
+//        std::cout << "\nsize 1 = " << ae1->size()
+//        << " anglediff 1 = " << fabs(GeomHelper::angleDiff((*ae1)[0]->getShape().angleAt2D(0), myLaneDir)) / M_PI / 2.
+//        << "\nallowed lanes: ";
+//        for (std::vector<MSLane*>::const_iterator j = ae1->begin(); j != ae1->end(); ++j){
+//            std::cout << "\n" << (*j)->getID();
+//        }
         s1 = (SUMOReal) ae1->size() + fabs(GeomHelper::angleDiff((*ae1)[0]->getShape().angleAt2D(0), myLaneDir)) / M_PI / 2.;
     }
     SUMOReal s2 = 0;
     if (ae2 != 0 && ae2->size() != 0) {
+//        std::cout << "\nsize 2 = " << ae2->size()
+//        << " anglediff 2 = " << fabs(GeomHelper::angleDiff((*ae2)[0]->getShape().angleAt2D(0), myLaneDir)) / M_PI / 2.
+//        << "\nallowed lanes: ";
+//        for (std::vector<MSLane*>::const_iterator j = ae2->begin(); j != ae2->end(); ++j){
+//            std::cout << "\n" << (*j)->getID();
+//        }
         s2 = (SUMOReal) ae2->size() + fabs(GeomHelper::angleDiff((*ae2)[0]->getShape().angleAt2D(0), myLaneDir)) / M_PI / 2.;
     }
+
+//    std::cout << "\ne1 = " << e1->getID() << " e2 = " << e2->getID()
+//            << "\ns1 = " << s1 << " s2 = " << s2
+//            << std::endl;
+
     return s1 < s2;
 }
+
+
+MSLane::lane_priority_sorter::lane_priority_sorter(const MSLane* const targetLane) :
+    myLane(targetLane),
+    myLaneDir(targetLane->getShape().angleAt2D(0)) {}
+
+int
+MSLane::lane_priority_sorter::operator ()(const IncomingLaneInfo& laneInfo1, const IncomingLaneInfo& laneInfo2) const {
+    const MSLane * noninternal1 = laneInfo1.lane;
+    while (noninternal1->isInternal()){
+        assert(noninternal1->getIncomingLanes().size() == 1);
+        noninternal1 = noninternal1->getIncomingLanes()[0].lane;
+    }
+    MSLane* noninternal2 = laneInfo2.lane;
+    while (noninternal2->isInternal()){
+        assert(noninternal2->getIncomingLanes().size() == 1);
+        noninternal2 = noninternal2->getIncomingLanes()[0].lane;
+    }
+
+    MSLink* link1 = noninternal1->getLinkTo(myLane);
+    MSLink* link2 = noninternal2->getLinkTo(myLane);
+
+    std::cout << "\nlane_priority sorter()"
+            << "noninternal predecessor for lane '" << laneInfo1.lane->getID()
+            << "': '" << noninternal1->getID() << "'\n"
+            << "noninternal predecessor for lane '" << laneInfo2.lane->getID()
+            << "': '" << noninternal2->getID() << "'\n";
+
+    assert(laneInfo1.lane->isInternal() || link1 == laneInfo1.viaLink);
+    assert(link1 != 0);
+    assert(link2 != 0);
+
+    // check priority between links
+    bool priorized1 = true;
+    bool priorized2 = true;
+
+    std::vector<MSLink*>::const_iterator j;
+    std::cout << "FoeLinks of '" << noninternal1->getID() << "'" << std::endl;
+    for (j = link1->getFoeLinks().begin(); j != link1->getFoeLinks().end(); ++j){
+        std::cout << (*j)->getLaneBefore()->getID() << std::endl;
+        if (*j == link2){
+            priorized1 = false;
+            break;
+        }
+    }
+
+    std::cout << "FoeLinks of '" << noninternal2->getID() << "'" << std::endl;
+    for (j = link2->getFoeLinks().begin(); j != link2->getFoeLinks().end(); ++j){
+        std::cout << (*j)->getLaneBefore()->getID() << std::endl;
+        // either link1 is priorized, or it should not appear in link2's foes
+        if (*j == link2){
+            priorized2 = false;
+            break;
+        }
+    }
+    // if one link is subordinate, the other must be priorized
+    assert(priorized1 || priorized2);
+    if (priorized1 != priorized2){
+        return priorized1;
+    }
+
+    // both are priorized, compare angle difference
+    SUMOReal d1 = fabs(GeomHelper::angleDiff(noninternal1->getShape().angleAt2D(0), myLaneDir));
+    SUMOReal d2 = fabs(GeomHelper::angleDiff(noninternal2->getShape().angleAt2D(0), myLaneDir));
+
+    return d2 > d1;
+}
+
 
 
 void

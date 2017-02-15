@@ -697,7 +697,6 @@ MSLink::getViaLaneOrLane() const {
 const MSLane*
 MSLink::getLaneBefore() const {
 #ifdef HAVE_INTERNAL_LANES
-    // XXX this branch is superfluous
     if (myInternalLaneBefore != 0) {
         if (myLaneBefore != myInternalLaneBefore) {
             throw ProcessError("lane before mismatch!");
