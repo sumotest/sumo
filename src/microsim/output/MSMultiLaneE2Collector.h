@@ -92,7 +92,6 @@ public:
             id(id),
             type(type),
             length(length),
-            enteredLanes(),
             currentLane(entryLane),
             currentOffsetIndex(currentOffsetIndex),
             entryLaneID(entryLane->getID()),
@@ -111,8 +110,6 @@ public:
         SUMOReal length;
         /// ID of the lane, on which the vehicle entered the detector
         std::string entryLaneID;
-        /// Lanes, which the vehicle entered in the last step (only used if the vehicle already was on the detector in the last step)
-        std::vector<const MSLane*> enteredLanes;
         /// Lane, on which the vehicle currently resides (always the one for which the last notifyEnter was received)
         const MSLane* currentLane;
         /// Index of currentLane in the detector's myLanes vector.
