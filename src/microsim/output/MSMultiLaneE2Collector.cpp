@@ -124,7 +124,9 @@ MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal u
 
     // adjust upstreamRange (in the first iteration, the whole length of the endLane is substracted)
     upstreamRange += lane->getLength() - myEndPos;
-    while(upstreamRange > 0 && lane != 0){
+    while(upstreamRange > NUMERICAL_EPS && lane != 0){
+        // Break loop for upstreamRange <= NUMERICAL_EPS to avoid placement of very small
+        // detector piece on the end of one lane due to numerical rounding errors.
         lanes.push_back(lane);
 #ifdef DEBUG_LSD_CONSTRUCTOR
         std::cout << "Added lane " << lane->getID()
@@ -133,7 +135,7 @@ MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal u
         upstreamRange -= lane->getLength();
 
         // proceed to upstream predecessor
-        lane = lane->getLogicalPredecessorLane();
+        lane = lane->getCanonicalPredecessorLane();
 
 #ifdef DEBUG_LSD_CONSTRUCTOR
         if (lane!=0) {
@@ -142,7 +144,12 @@ MSMultiLaneE2Collector::selectLanes(MSLane* endLane, SUMOReal endPos, SUMOReal u
         std::cout << std::endl;
 #endif
     }
-    myStartPos = -upstreamRange;
+
+    if (fabs(upstreamRange) <= NUMERICAL_EPS) {
+        myStartPos = 0.;
+    } else {
+        myStartPos = -upstreamRange;
+    }
 
     if(myStartPos < 0){
         std::stringstream ss;
