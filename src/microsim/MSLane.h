@@ -810,6 +810,14 @@ public:
      */
     MSLane* getCanonicalPredecessorLane() const;
 
+
+    /** Return the main successor lane for the current.
+     * If there are several outgoing lanes, the first attempt is to return the priorized.
+     * If this does not yield an unambiguous lane, the one with the least angle difference
+     * to the current is selected.
+     */
+    MSLane* getCanonicalSuccessorLane() const;
+
     /// @brief get the state of the link from the logical predecessor to this lane
     LinkState getIncomingLinkState() const;
 
@@ -1118,6 +1126,9 @@ protected:
     /// Similar to LogicalPredecessorLane, @see getCanonicalPredecessorLane()
     mutable MSLane* myCanonicalPredecessorLane;
 
+    /// Main successor lane, @see getCanonicalSuccessorLane()
+    mutable MSLane* myCanonicalSuccessorLane;
+
     /// @brief The current length of all vehicles on this lane, including their minGaps
     SUMOReal myBruttoVehicleLengthSum;
 
@@ -1238,20 +1249,40 @@ private:
 
 
 
-    /** @class lane_priority_sorter
+    /** @class incoming_lane_priority_sorter
      * @brief Sorts lanes (IncomingLaneInfos) by their priority or, if this doesn't apply,
      *         wrt. the angle difference magnitude relative to the target lane's angle (straight comes first)
      */
-    class lane_priority_sorter {
+    class incoming_lane_priority_sorter {
     public:
         /// @brief constructor
-        explicit lane_priority_sorter(const MSLane* targetLane);
+        explicit incoming_lane_priority_sorter(const MSLane* targetLane);
 
         /// @brief comparing operator
         int operator()(const IncomingLaneInfo& lane1, const IncomingLaneInfo& lane2) const;
 
     private:
-        lane_priority_sorter& operator=(const by_connections_to_sorter&); // just to avoid a compiler warning
+        incoming_lane_priority_sorter& operator=(const by_connections_to_sorter&); // just to avoid a compiler warning
+    private:
+        const MSLane* const myLane;
+        SUMOReal myLaneDir;
+    };
+
+
+    /** @class outgoing_lane_priority_sorter
+     * @brief Sorts lanes (their origin link) by the priority of their noninternal target edges or, if this doesn't yield an unambiguous result,
+     *         wrt. the angle difference magnitude relative to the target lane's angle (straight comes first)
+     */
+    class outgoing_lane_priority_sorter {
+    public:
+        /// @brief constructor
+        explicit outgoing_lane_priority_sorter(const MSLane* sourceLane);
+
+        /// @brief comparing operator
+        int operator()(const MSLink* link1, const MSLink* link2) const;
+
+    private:
+        outgoing_lane_priority_sorter& operator=(const by_connections_to_sorter&); // just to avoid a compiler warning
     private:
         const MSLane* const myLane;
         SUMOReal myLaneDir;

@@ -544,12 +544,13 @@ int MSSOTLE2Sensors::count(MSE2Collector* sensor) {
         return totCars;
     }
     int number = 0;
-    const std::vector<MSE2Collector::VehicleInfo> vehicles = sensor->getCurrentVehicles();
+//    const std::vector<MSE2Collector::VehicleInfo> vehicles = sensor->getCurrentVehicles();
+    const MSE2Collector::VehicleInfoMap vehicles = sensor->getCurrentVehicles();
     std::ostringstream logstr;
     logstr << "[MSSOTLE2Sensors::count]";
-    for (std::vector<MSE2Collector::VehicleInfo>::const_iterator vit = vehicles.begin(); vit != vehicles.end(); ++vit) {
-        if (vit->stillOnDet) {
-            const std::string vtype = vit->type;
+    for (MSE2Collector::VehicleInfoMap::const_iterator vit = vehicles.begin(); vit != vehicles.end(); ++vit) {
+        if (vit->second.onDetector) {
+            const std::string vtype = vit->second.type;
             if (m_typeWeightMap.find(vtype) != m_typeWeightMap.end()) {
                 number += m_typeWeightMap[vtype];
                 DBG(logstr << " Added " << m_typeWeightMap[vtype] << " for vtype " << vtype;)

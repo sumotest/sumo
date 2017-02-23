@@ -84,10 +84,9 @@ MSDelayBasedTrafficLightLogic::init(NLDetectorBuilder& nb) {
         for (i = lanes.begin(); i != lanes.end(); i++) {
             MSLane* lane = (*i);
             // Build the induct loop and set it into the container
-            std::string id = "TLS" + myID + "_" + myProgramID + "_MultiLaneE2CollectorOn_" + lane->getID();
+            std::string id = "TLS" + myID + "_" + myProgramID + "_E2CollectorOn_" + lane->getID();
             if (myLaneDetectors.find(lane) == myLaneDetectors.end()) {
-//                myLaneDetectors[lane] = nb.createMultiLaneE2Detector(id, DU_TL_CONTROL, lane, lane->getLength(), myDetectionRange, 0, 0, 0, myVehicleTypes, myShowDetectors);
-                myLaneDetectors[lane] = nb.createMultiLaneE2Detector(id, DU_TL_CONTROL, lane, lane->getLength(), myDetectionRange, 0, 0, 0, myVehicleTypes);
+                myLaneDetectors[lane] = new MSE2Collector(id, DU_TL_CONTROL, lane, std::numeric_limits<SUMOReal>::max(), lane->getLength(), myDetectionRange, 0, 0, 0, myVehicleTypes);
                 MSNet::getInstance()->getDetectorControl().add(SUMO_TAG_E2DETECTOR, myLaneDetectors[lane], myFile, myFreq);
             }
         }
@@ -123,14 +122,14 @@ MSDelayBasedTrafficLightLogic::proposeProlongation(){
                 }
 #endif
 
-                MSMultiLaneE2Collector* detector = static_cast<MSMultiLaneE2Collector* >(i->second);
-                const std::map<std::string, MSMultiLaneE2Collector::VehicleInfo>& vehInfos = detector->getVehicleInfos();
+                MSE2Collector* detector = static_cast<MSE2Collector* >(i->second);
+                const std::map<std::string, MSE2Collector::VehicleInfo>& vehInfos = detector->getVehicleInfos();
 
 #ifdef DEBUG_TIMELOSS_CONTROL
                 std::cout << "Number of current vehicles on detector: " << vehInfos.size() << std::endl;
 #endif
 
-                for (std::map<std::string, MSMultiLaneE2Collector::VehicleInfo>::const_iterator iv = vehInfos.begin(); iv != vehInfos.end(); ++iv){
+                for (std::map<std::string, MSE2Collector::VehicleInfo>::const_iterator iv = vehInfos.begin(); iv != vehInfos.end(); ++iv){
                     if (iv->second.accumulatedTimeLoss > myTimeLossThreshold && iv->second.distToDetectorEnd > 0){
                         SUMOReal estimatedTimeToJunction = (iv->second.distToDetectorEnd)/(*j)->getSpeedLimit();
                         prolongationTime = MAX2(prolongationTime, estimatedTimeToJunction);
