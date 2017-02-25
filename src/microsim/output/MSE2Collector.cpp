@@ -27,11 +27,9 @@
 
 /* TODO:
  * tests:
- *  - many vehicles
  *  - subsecond variant, ballistic variant
- *  - Should pass the original E2-tests
- *  - negativ positional specs
  *  - allow omitting jam processing
+ *  - default positioning if endpos / pos / length are not given completely ....
  *
  * Meso-compatibility? (esp. enteredLane-argument for MSBaseVehicle::notifyEnter() is not treated)
  * Compatibility without internal lanes?
@@ -654,17 +652,17 @@ MSE2Collector::notifyEnter(SUMOVehicle& veh, MSMoveReminder::Notification /* rea
     // notifyEnter() should only be called for lanes of the detector
     assert(std::find(myLanes.begin(), myLanes.end(), enteredLane->getID()) != myLanes.end());
 
-    if (!veh.isOnRoad()) {
-        // Vehicle is teleporting over the edge
-#ifdef DEBUG_E2_NOTIFY_ENTER_AND_LEAVE
-        std::cout << "Vehicle is off road (teleporting over edge)..." << std::endl;
-#endif
-//        return false;
-    }
     if (!vehicleApplies(veh)) {
         // That's not my type...
         return false;
     }
+#ifdef DEBUG_E2_NOTIFY_ENTER_AND_LEAVE
+    if (!veh.isOnRoad()) {
+        // Vehicle is teleporting over the edge
+        std::cout << "Vehicle is off road (teleporting over edge)..." << std::endl;
+    }
+#endif
+
     const std::string& vehID = veh.getID();
     VehicleInfoMap::iterator vi = myVehicleInfos.find(vehID);
     if (vi != myVehicleInfos.end()) {
@@ -701,7 +699,7 @@ MSE2Collector::makeVehicleInfo(const SUMOVehicle& veh, const MSLane* enteredLane
     assert(j >= 0 && j < myLanes.size());
     SUMOReal entryOffset = myOffsets[j];
     SUMOReal distToDetectorEnd = myDetectorLength - (entryOffset + veh.getPositionOnLane());
-    bool onDetector = entryOffset < veh.getPositionOnLane() && distToDetectorEnd > -veh.getVehicleType().getLength();
+    bool onDetector = -entryOffset < veh.getPositionOnLane() && distToDetectorEnd > -veh.getVehicleType().getLength();
 
 #ifdef DEBUG_E2_MAKE_VEHINFO
     std::cout << SIMTIME << " Making VehicleInfo for vehicle '" << veh.getID() << "'."
@@ -1235,16 +1233,25 @@ std::vector<std::string>
 MSE2Collector::getCurrentVehicleIDs() const {
     std::vector<std::string> ret;
     for (VehicleInfoMap::const_iterator i = myVehicleInfos.begin(); i != myVehicleInfos.end(); ++i) {
-        ret.push_back(i->second->id);
+        if (i->second->onDetector){
+            ret.push_back(i->second->id);
+        }
     }
     std::sort(ret.begin(), ret.end());
     return ret;
 }
 
 
-const MSE2Collector::VehicleInfoMap&
+std::vector<MSE2Collector::VehicleInfo*>
 MSE2Collector::getCurrentVehicles() const {
-    return myVehicleInfos;
+    std::vector<VehicleInfo*> res;
+    VehicleInfoMap::const_iterator i;
+    for (i = myVehicleInfos.begin(); i != myVehicleInfos.end(); ++i){
+        if (i->second->onDetector) {
+            res.push_back(i->second);
+        }
+    }
+    return res;
 }
 
 

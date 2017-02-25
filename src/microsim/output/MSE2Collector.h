@@ -474,14 +474,15 @@ public:
      */
     std::vector<std::string> getCurrentVehicleIDs() const;
 
-    /** @brief Returns the vehicles within the area
-     *
-     * @return The vehicles that have passed the entry, but not yet an exit point
-     */
-    const VehicleInfoMap& getCurrentVehicles() const;
-
-
     /** @brief Returns the VehicleInfos for the vehicles currently on the detector
+     */
+    std::vector<VehicleInfo*> getCurrentVehicles() const;
+
+
+    /** @brief Returns the vehicles registered at the detector (may still or yet not be on the detector)
+     * @note Whether the corresponding vehicle is on the detector can be tested from VehicleInfo->onDetector,
+     * @see getCurrentVehicleNumber() and getCurrentVehicleIDs() for methods restricted to vehicles on the detector
+     * @return The vehicles that have passed the entry, but not yet an exit point.
      */
     const VehicleInfoMap& getVehicleInfos() const{
         return myVehicleInfos;
