@@ -126,7 +126,7 @@ MSE3Collector::MSE3LeaveReminder::notifyMove(SUMOVehicle& veh, SUMOReal oldPos,
 
 
 bool
-MSE3Collector::MSE3LeaveReminder::notifyLeave(SUMOVehicle& /* veh */, SUMOReal /* lastPos */, MSMoveReminder::Notification reason, const MSLane* /* leftLane */, const MSLane* /* enteredLane */) {
+MSE3Collector::MSE3LeaveReminder::notifyLeave(SUMOVehicle&  veh , SUMOReal /* lastPos */, MSMoveReminder::Notification reason, const MSLane* /* leftLane */, const MSLane* /* enteredLane */) {
     if (reason == MSMoveReminder::NOTIFICATION_LANE_CHANGE) {
         return false;
     }
