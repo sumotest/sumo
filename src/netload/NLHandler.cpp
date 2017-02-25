@@ -884,7 +884,7 @@ NLHandler::addE2Detector(const SUMOSAXAttributes& attrs) {
     const SUMOTime haltingTimeThreshold = attrs.getOptSUMOTimeReporting(SUMO_ATTR_HALTING_TIME_THRESHOLD, id.c_str(), ok, TIME2STEPS(1));
     const SUMOReal haltingSpeedThreshold = attrs.getOpt<SUMOReal>(SUMO_ATTR_HALTING_SPEED_THRESHOLD, id.c_str(), ok, 5.0f / 3.6f);
     const SUMOReal jamDistThreshold = attrs.getOpt<SUMOReal>(SUMO_ATTR_JAM_DIST_THRESHOLD, id.c_str(), ok, 10.0f);
-    const SUMOReal position = attrs.getOpt<SUMOReal>(SUMO_ATTR_POSITION, id.c_str(), ok, std::numeric_limits<SUMOReal>::max());
+    SUMOReal position = attrs.getOpt<SUMOReal>(SUMO_ATTR_POSITION, id.c_str(), ok, std::numeric_limits<SUMOReal>::max());
     const SUMOReal length = attrs.getOpt<SUMOReal>(SUMO_ATTR_LENGTH, id.c_str(), ok, std::numeric_limits<SUMOReal>::max());
     const bool friendlyPos = attrs.getOpt<bool>(SUMO_ATTR_FRIENDLY_POS, id.c_str(), ok, false);
     const std::string contStr = attrs.getOpt<std::string>(SUMO_ATTR_CONT, id.c_str(), ok, "");
@@ -937,71 +937,73 @@ NLHandler::addE2Detector(const SUMOSAXAttributes& attrs) {
         if (laneGiven) {
             std::stringstream ss;
             ss << "Ignoring argument 'lane' for E2Detector '" << id << "' since argument 'lanes' was given."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [endLane/lane, endPos, length], or [lanes, pos, endPos]";
+                    << "\nUsage combinations for positional specification: [lane, pos, length], [endLane/lane, endPos, length], or [lanes, pos, endPos]";
             WRITE_WARNING(ss.str());
         }
         if (lengthGiven) {
             std::stringstream ss;
             ss << "Ignoring argument 'length' for E2Detector '" << id << "' since argument 'lanes' was given."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
+                    << "\nUsage combinations for positional specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
             WRITE_WARNING(ss.str());
         }
         if (!posGiven) {
+            // assuming start pos == lane start
+            position = 0;
             std::stringstream ss;
-            ss << "Missing argument 'pos' for E2Detector '" << id << "'."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-            throw InvalidArgument(ss.str());
+            ss << "Missing argument 'pos' for E2Detector '" << id << "'. Assuming detector start == lane start of lane '" << clanes[0]->getID() << "'.";
+            WRITE_WARNING(ss.str());
         }
         if (!endPosGiven) {
+            // assuming end pos == lane end
+            endPosition = clanes[clanes.size()-1]->getLength();
             std::stringstream ss;
-            ss << "Missing argument 'endPos' for E2Detector '" << id << "'."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [endLane/lane, endPos, length], or [lanes, pos, endPos]";
-            throw InvalidArgument(ss.str());
+            ss << "Missing argument 'endPos' for E2Detector '" << id << "'. Assuming detector end == lane end of lane '" << clanes[clanes.size()-1]->getID() << "'.";
+            WRITE_WARNING(ss.str());
         }
 
-    } else if (posGiven) {
-        // If pos is given, lane and length are required. endPos is ignored
-        if (endPosGiven && lengthGiven) {
-            std::stringstream ss;
-            ss << "Ignoring argument 'endPos' for E2Detector '" << id << "' since argument 'pos' was given."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-            WRITE_WARNING(ss.str());
-            endPosition = std::numeric_limits<SUMOReal>::max();
-            endPosGiven = false;
-        }
-        if (!lengthGiven && !endPosGiven) {
-            std::stringstream ss;
-            ss << "Missing argument 'length' for E2Detector '" << id << "'."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-            throw InvalidArgument(ss.str());
-        }
-        if (!laneGiven) {
-            std::stringstream ss;
-            ss << "Missing argument 'lane' for E2Detector '" << id << "'."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-            throw InvalidArgument(ss.str());
-        }
-        clane = myDetectorBuilder.getLaneChecking(lane, SUMO_TAG_E2DETECTOR, id);
-    } else if (endPosGiven) {
-        // If endPos is given, length and lane are required.
-        if (!lengthGiven) {
-            std::stringstream ss;
-            ss << "Missing argument 'length' for E2Detector '" << id << "'."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-            throw InvalidArgument(ss.str());
-        }
-        if (!laneGiven) {
-            std::stringstream ss;
-            ss << "Missing argument 'lane' for E2Detector '" << id << "'."
-                    << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-            throw InvalidArgument(ss.str());
-        }
-        clane = myDetectorBuilder.getLaneChecking(lane, SUMO_TAG_E2DETECTOR, id);
     } else {
-        std::stringstream ss;
-        ss << "Error in specification for E2Detector '" << id << "'. Positional argument is incomplete."
-                << "\nUsage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
-        throw InvalidArgument(ss.str());
+        if (!laneGiven) {
+            std::stringstream ss;
+            ss << "Missing argument 'lane' for E2Detector '" << id << "'."
+                    << "\nUsage combinations for positional specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
+            throw InvalidArgument(ss.str());
+        }
+        clane = myDetectorBuilder.getLaneChecking(lane, SUMO_TAG_E2DETECTOR, id);
+
+        if (posGiven) {
+            // start pos is given
+            if (endPosGiven && lengthGiven) {
+                std::stringstream ss;
+                ss << "Ignoring argument 'endPos' for E2Detector '" << id << "' since argument 'pos' was given."
+                        << "\nUsage combinations for positional specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
+                WRITE_WARNING(ss.str());
+                endPosition = std::numeric_limits<SUMOReal>::max();
+            }
+            if (!lengthGiven && !endPosGiven) {
+                std::stringstream ss;
+                ss << "Missing arguments 'length'/'endPos' for E2Detector '" << id << "'. Assuming detector end == lane end of lane '" << lane << "'.";
+                WRITE_WARNING(ss.str());
+                endPosition = clane->getLength();
+            }
+        } else if (endPosGiven) {
+            // endPos is given, pos is not given
+            if (!lengthGiven) {
+                std::stringstream ss;
+                ss << "Missing arguments 'length'/'pos' for E2Detector '" << id << "'. Assuming detector start == lane start of lane '" << lane << "'.";
+                WRITE_WARNING(ss.str());
+            }
+        } else {
+            std::stringstream ss;
+            if (lengthGiven and fabs(length - clane->getLength()) > NUMERICAL_EPS) {
+                ss << "Incomplete positional specification for E2Detector '" << id << "'."
+                        << "\nUsage combinations for positional specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]";
+                throw InvalidArgument(ss.str());
+            }
+            endPosition = clane->getLength();
+            position = 0;
+            ss << "Missing arguments 'pos'/'endPos' for E2Detector '" << id << "'. Assuming that the detector covers the whole lane '" << lane << "'.";
+            WRITE_WARNING(ss.str());
+        }
     }
 
     // Frequency
