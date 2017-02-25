@@ -1,3 +1,1 @@
-Error: Missing argument 'length' for E2Detector '4/1to3/1'.
-Usage combinations for location specification: [lane, pos, length], [lane, endPos, length], or [lanes, pos, endPos]
-Quitting (on error).
+Warning: Missing arguments 'length'/'endPos' for E2Detector '4/1to3/1'. Assuming detector end == lane end of lane '4/1to3/1_0'.
