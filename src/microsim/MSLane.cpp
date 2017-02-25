@@ -178,7 +178,10 @@ MSLane::MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge
     myFollowerInfoTime(SUMOTime_MIN),
     myLengthGeometryFactor(MAX2(POSITION_EPS, myShape.length()) / myLength), // factor should not be 0
     myRightSideOnEdge(0), // initialized in MSEdge::initialize
-    myRightmostSublane(0) { // initialized in MSEdge::initialize
+    myRightmostSublane(0),
+    myCanonicalPredecessorLane(0),
+    myCanonicalSuccessorLane(0)
+{ // initialized in MSEdge::initialize
     myRestrictions = MSNet::getInstance()->getRestrictions(edge->getEdgeType());
 }
 
@@ -2375,7 +2378,7 @@ MSLane::incoming_lane_priority_sorter::operator ()(const IncomingLaneInfo& laneI
     MSLink* link2 = noninternal2->getLinkTo(myLane);
 
 #ifdef DEBUG_LANE_SORTER
-    std::cout << "\nincoming_lane_priority sorter()"
+    std::cout << "\nincoming_lane_priority sorter()\n"
             << "noninternal predecessor for lane '" << laneInfo1.lane->getID()
             << "': '" << noninternal1->getID() << "'\n"
             << "noninternal predecessor for lane '" << laneInfo2.lane->getID()
@@ -2448,7 +2451,7 @@ MSLane::outgoing_lane_priority_sorter::operator ()(const MSLink* link1, const MS
     }
 
 #ifdef DEBUG_LANE_SORTER
-    std::cout << "\noutgoing_lane_priority sorter()"
+    std::cout << "\noutgoing_lane_priority sorter()\n"
             << "noninternal successors for lane '" << myLane->getID()
             << "': '" << target1->getID() << "' and "
             << "'" << target2->getID() << "'\n";

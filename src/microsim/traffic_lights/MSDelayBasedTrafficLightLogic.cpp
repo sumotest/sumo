@@ -123,15 +123,15 @@ MSDelayBasedTrafficLightLogic::proposeProlongation(){
 #endif
 
                 MSE2Collector* detector = static_cast<MSE2Collector* >(i->second);
-                const std::map<std::string, MSE2Collector::VehicleInfo>& vehInfos = detector->getVehicleInfos();
+                const MSE2Collector::VehicleInfoMap& vehInfos = detector->getVehicleInfos();
 
 #ifdef DEBUG_TIMELOSS_CONTROL
                 std::cout << "Number of current vehicles on detector: " << vehInfos.size() << std::endl;
 #endif
 
-                for (std::map<std::string, MSE2Collector::VehicleInfo>::const_iterator iv = vehInfos.begin(); iv != vehInfos.end(); ++iv){
-                    if (iv->second.accumulatedTimeLoss > myTimeLossThreshold && iv->second.distToDetectorEnd > 0){
-                        SUMOReal estimatedTimeToJunction = (iv->second.distToDetectorEnd)/(*j)->getSpeedLimit();
+                for (MSE2Collector::VehicleInfoMap::const_iterator iv = vehInfos.begin(); iv != vehInfos.end(); ++iv){
+                    if (iv->second->accumulatedTimeLoss > myTimeLossThreshold && iv->second->distToDetectorEnd > 0){
+                        SUMOReal estimatedTimeToJunction = (iv->second->distToDetectorEnd)/(*j)->getSpeedLimit();
                         prolongationTime = MAX2(prolongationTime, estimatedTimeToJunction);
 
 #ifdef DEBUG_TIMELOSS_CONTROL

@@ -137,15 +137,15 @@ void MSSOTLE2Sensors::buildCountSensorForLane(MSLane* lane, NLDetectorBuilder& n
         lensorLength = sensorLength <= (lane->getLength() - sensorPos) ? sensorLength : (lane->getLength() - sensorPos);
 
         //TODO check this lengths
-        DBG(
-            std::ostringstream phero_str;
-            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
-            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
-            << lane->getLength() << " ,lensorLength= " << lensorLength
-            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
-            WRITE_MESSAGE(
-                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
-        )
+//        DBG(
+//            std::ostringstream phero_str;
+//            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
+//            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
+//            << lane->getLength() << " ,lensorLength= " << lensorLength
+//            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
+//            WRITE_MESSAGE(
+//                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
+//        )
 
         //Create sensor for lane and insert it into the map<MSLane*, MSE2Collector*>
         newSensor = nb.buildSingleLaneE2Det(
@@ -182,15 +182,15 @@ void MSSOTLE2Sensors::buildCountSensorForOutLane(MSLane* lane, NLDetectorBuilder
             sensorLength : (lane->getLength() - sensorPos);
 
         //TODO check this lengths
-        DBG(
-            std::ostringstream phero_str;
-            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
-            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
-            << lane->getLength() << " ,lensorLength= " << lensorLength
-            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
-            WRITE_MESSAGE(
-                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
-        )
+//        DBG(
+//            std::ostringstream phero_str;
+//            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
+//            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
+//            << lane->getLength() << " ,lensorLength= " << lensorLength
+//            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
+//            WRITE_MESSAGE(
+//                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
+//        )
 
         //Create sensor for lane and insert it into the map<MSLane*, MSE2Collector*>
         newSensor = nb.buildSingleLaneE2Det(
@@ -282,15 +282,15 @@ void MSSOTLE2Sensors::buildSensorForLane(MSLane* lane, NLDetectorBuilder& nb, SU
         //Check and trim if the lane is not long enough for the specified sensor lenght
         lensorLength = sensorLength <= (lane->getLength() - sensorPos) ? sensorLength : (lane->getLength() - sensorPos);
         //TODO check this lengths
-        DBG(
-            std::ostringstream phero_str;
-            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
-            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
-            << lane->getLength() << " ,lensorLength= " << lensorLength
-            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
-            WRITE_MESSAGE(
-                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
-        )
+//        DBG(
+//            std::ostringstream phero_str;
+//            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
+//            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
+//            << lane->getLength() << " ,lensorLength= " << lensorLength
+//            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
+//            WRITE_MESSAGE(
+//                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
+//        )
 
         //Create sensor for lane and insert it into the map<MSLane*, MSE2Collector*>
         newSensor = nb.buildSingleLaneE2Det(
@@ -371,15 +371,15 @@ void MSSOTLE2Sensors::buildSensorForOutLane(MSLane* lane,
             sensorLength : (lane->getLength() - sensorPos);
 
         //TODO check this lengths
-        DBG(
-            std::ostringstream phero_str;
-            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
-            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
-            << lane->getLength() << " ,lensorLength= " << lensorLength
-            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
-            WRITE_MESSAGE(
-                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
-        )
+//        DBG(
+//            std::ostringstream phero_str;
+//            phero_str << " lane " << lane->getID() << " sensorPos= " << sensorPos
+//            << " ,SENSOR_START  " << SENSOR_START << "; lane->getLength = "
+//            << lane->getLength() << " ,lensorLength= " << lensorLength
+//            << " ,SENSOR_LENGTH= " << INPUT_SENSOR_LENGTH;
+//            WRITE_MESSAGE(
+//                "MSSOTLE2Sensors::buildSensorForLane::" + phero_str.str());
+//        )
 
         //Create sensor for lane and insert it into the map<MSLane*, MSE2Collector*>
         newSensor = nb.buildSingleLaneE2Det(
@@ -415,12 +415,12 @@ SUMOReal MSSOTLE2Sensors::getEstimateQueueLength(std::string laneId) {
         if (estQL == -1) {
             return 0;
         } else
-            DBG(
-                std::ostringstream str;
-                str << "MSSOTLE2Sensors::getEstimateQueueLength lane " << sensorsIterator->second->getLane()->getID()
-                << " laneLength " << sensorsIterator->second->getLane()->getLength() << " estimateQueueLength " <<  estQL;
-                WRITE_MESSAGE(str.str());
-            )
+//            DBG(
+//                std::ostringstream str;
+//                str << "MSSOTLE2Sensors::getEstimateQueueLength lane " << sensorsIterator->second->getLane()->getID()
+//                << " laneLength " << sensorsIterator->second->getLane()->getLength() << " estimateQueueLength " <<  estQL;
+//                WRITE_MESSAGE(str.str());
+//            )
             return estQL;
     }
 }
@@ -549,19 +549,19 @@ int MSSOTLE2Sensors::count(MSE2Collector* sensor) {
     std::ostringstream logstr;
     logstr << "[MSSOTLE2Sensors::count]";
     for (MSE2Collector::VehicleInfoMap::const_iterator vit = vehicles.begin(); vit != vehicles.end(); ++vit) {
-        if (vit->second.onDetector) {
-            const std::string vtype = vit->second.type;
+        if (vit->second->onDetector) {
+            const std::string vtype = vit->second->type;
             if (m_typeWeightMap.find(vtype) != m_typeWeightMap.end()) {
                 number += m_typeWeightMap[vtype];
-                DBG(logstr << " Added " << m_typeWeightMap[vtype] << " for vtype " << vtype;)
+//                DBG(logstr << " Added " << m_typeWeightMap[vtype] << " for vtype " << vtype;)
             } else {
                 ++number;
             }
         }
     }
-    DBG(if (totCars != number) {
-    logstr << ". Real number " << totCars << "; weighted " << number;
-    WRITE_MESSAGE(logstr.str());
-    })
+//    DBG(if (totCars != number) {
+//    logstr << ". Real number " << totCars << "; weighted " << number;
+//    WRITE_MESSAGE(logstr.str());
+//    })
     return number;
 }
