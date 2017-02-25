@@ -550,22 +550,16 @@ private:
      */
     void processJams(std::vector<JamInfo*>& jams, JamInfo* currentJam);
 
-
-    /** @brief calculates the time spent on the detector in the last step for the given vehicle
+    /** @brief Calculates the time spent on the detector in the last step and the timeloss suffered in the last step for the given vehicle
      *
-     * @param entryOffset distance of the beginning of the lane, where the vehicle entered the detector to the detector begin
-     * @param mni actual MoveNotification
-     * @return Total time spent on the detector during the last step
+     * @param[in] veh Vehicle for which the values are to be calculated
+     * @param[in] oldPos Last position (before the last timestep) of the vehicle relative to the beginning of its entry lane
+     * @param[in] newPos Current position of the vehicle
+     * @param[in] vi VehicleInfo corresponding to the vehicle
+     * @param[in/out] timeOnDetector Total time spent on the detector during the last step
+     * @param[in/out] timeLoss Total time loss suffered during the last integration step
      */
-    SUMOReal calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
-
-    /** @brief calculates the timeloss suffered in the last step for the given vehicle
-     *
-     * @param entryOffset distance of the beginning of the lane, where the vehicle entered the detector to the detector begin
-     * @param mni actual MoveNotification
-     * @return Total time loss suffered during the last step
-     */
-    SUMOReal calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const;
+    void calculateTimeLossAndTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi, SUMOReal& timeOnDetector, SUMOReal& timeLoss) const;
 
     /** @brief Checks integrity of myLanes, adds internal-lane information, inits myLength, myFirstLane, myLastLane, myOffsets
      *         Called once at construction.

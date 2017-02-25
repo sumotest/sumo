@@ -2078,7 +2078,7 @@ MSLane::getCanonicalSuccessorLane() const {
     std::vector<MSLink*> candidateLinks = myLinks;
     // get the lane with the priorized (or if this does not apply the "straightest") connection
     std::sort(candidateLinks.begin(), candidateLinks.end(), outgoing_lane_priority_sorter(this));
-    MSLane* best = (*candidateLinks.begin())->getLane();
+    MSLane* best = (*candidateLinks.begin())->getViaLaneOrLane();
 #ifdef DEBUG_LANE_SORTER
     std::cout << "\nBest successor lane for lane '" << myID << "': '" << best->getID() << "'" << std::endl;
 #endif

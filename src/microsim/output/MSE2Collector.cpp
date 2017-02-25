@@ -31,6 +31,7 @@
  *  - subsecond variant, ballistic variant
  *  - Should pass the original E2-tests
  *  - negativ positional specs
+ *  - allow omitting jam processing
  *
  * Meso-compatibility? (esp. enteredLane-argument for MSBaseVehicle::notifyEnter() is not treated)
  * Compatibility without internal lanes?
@@ -58,9 +59,9 @@
 #include <foreign/nvwa/debug_new.h>
 #endif // CHECK_MEMORY_LEAKS
 
-//#define DEBUG_E2_NOTIFY_MOVE
 //#define DEBUG_E2_CONSTRUCTOR
 //#define DEBUG_E2_NOTIFY_ENTER_AND_LEAVE
+//#define DEBUG_E2_NOTIFY_MOVE
 //#define DEBUG_E2_MAKE_VEHINFO
 //#define DEBUG_E2_DETECTOR_UPDATE
 //#define DEBUG_E2_TIME_ON_DETECTOR
@@ -116,11 +117,11 @@ MSE2Collector::MSE2Collector(const std::string& id,
         length = endPos - startPos;
     } else if (posInvalid) {
         // endPosInvalid == false
-        endPos = endPos < 0 ? lane->getLength() - endPos : endPos;
+        endPos = endPos < 0 ? lane->getLength() + endPos : endPos;
         endPos = snap(endPos, lane->getLength(), POSITION_EPS);
     } else {
         // posInvalid == false
-        startPos = startPos < 0 ? lane->getLength() - startPos : startPos;
+        startPos = startPos < 0 ? lane->getLength() + startPos : startPos;
         startPos = snap(startPos, 0., POSITION_EPS);
     }
 
@@ -175,8 +176,8 @@ MSE2Collector::MSE2Collector(const std::string& id,
                     << std::endl;
 #endif
 
-    myStartPos = myStartPos < 0 ? lanes[0]->getLength() - myStartPos : myStartPos;
-    myEndPos = myEndPos < 0 ? lanes[lanes.size()-1]->getLength() - myEndPos : myEndPos;
+    myStartPos = myStartPos < 0 ? lanes[0]->getLength() + myStartPos : myStartPos;
+    myEndPos = myEndPos < 0 ? lanes[lanes.size()-1]->getLength() + myEndPos : myEndPos;
 
     if(myStartPos < POSITION_EPS) {
         myStartPos = 0;
@@ -228,6 +229,7 @@ MSE2Collector::checkPositioning(bool posGiven, SUMOReal desiredLength){
     std::stringstream ss;
 //    ss << std::setprecision(32) << myEndPos << " : " << POSITION_EPS;
 //    std::cout << ss.str() << std::endl;
+    std::cout << "myStartPos = " << myStartPos << std::endl;
     std::cout << "myEndPos = " << myEndPos << std::endl;
     std::cout << "myLastLane->getLength() = " << myLastLane->getLength() << std::endl;
 #endif
@@ -869,11 +871,11 @@ MSE2Collector::makeMoveNotification(const SUMOVehicle& veh, SUMOReal oldPos, SUM
 #endif
 
     // Timefraction in [0,TS] the vehicle has spend on the detector in the last step
-    SUMOReal timeOnDetector = calculateTimeOnDetector(veh, oldPos, newPos, vehInfo);
-
+    SUMOReal timeOnDetector;
     // Note that at this point, vehInfo.currentLane points to the lane at the beginning of the last timestep,
     // and vehInfo.enteredLanes is a list of lanes entered in the last timestep
-    SUMOReal timeLoss = calculateTimeLoss(veh, oldPos, newPos, vehInfo);
+    SUMOReal timeLoss;
+    calculateTimeLossAndTimeOnDetector(veh, oldPos, newPos, vehInfo, timeOnDetector, timeLoss);
 
     // The length of the part of the vehicle on the detector at the end of the last time step
     // may be shorter than vehicle's length if its back reaches out
@@ -1045,58 +1047,16 @@ MSE2Collector::processJams(std::vector<JamInfo*>& jams, JamInfo* currentJam){
     }
 }
 
-SUMOReal
-MSE2Collector::calculateTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
+void
+MSE2Collector::calculateTimeLossAndTimeOnDetector(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi, SUMOReal& timeOnDetector, SUMOReal& timeLoss) const {
     assert(veh.getID() == vi.id);
     assert(newPos + vi.entryOffset >= 0);
 
     if (oldPos == newPos) {
         // vehicle is stopped
-        return TS;
-    }
-
-    // Eventual positional offset of the detector start from the lane's start
-    SUMOReal entryPos = MAX2(-vi.entryOffset,0.);
-
-    // Time of this vehicle entering the detector in the last time step
-    SUMOReal entryTime = 0;
-
-    // Take into account the time before entering the detector, if there is.
-    if (oldPos < entryPos) {
-        // Vehicle entered the detector in the last step, either traversing the detector start or somewhere in the middle.
-        entryTime = MSCFModel::passingTime(oldPos, entryPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
-    }
-
-    // Calculate time spent on detector until reaching newPos or a detector exit
-    SUMOReal exitPos = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
-    assert(entryPos < exitPos);
-    // calculate vehicle's time spent on the detector
-    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
-    // Time spent on the detector
-    SUMOReal timeOnDetector = exitTime - entryTime;
-
-#ifdef DEBUG_E2_TIME_ON_DETECTOR
-    std::cout << SIMTIME << " calculateTimeOnDetector() for vehicle '" << veh.getID() << "'"
-            << " oldPos = " << oldPos << " newPos = " << newPos
-            << " entryPos = " << entryPos << " exitPos = " << exitPos
-            << " timeOnDetector = " << timeOnDetector
-            << std::endl;
-#endif
-
-    return timeOnDetector;
-}
-
-
-
-
-SUMOReal
-MSE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMOReal newPos, const VehicleInfo& vi) const {
-    assert(veh.getID() == vi.id);
-    assert(newPos + vi.entryOffset >= 0);
-
-    if (oldPos == newPos) {
-        // vehicle is stopped
-        return TS;
+        timeLoss = TS;
+        timeOnDetector = TS;
+        return;
     }
 
     // Eventual positional offset of the detector start from the lane's start
@@ -1113,8 +1073,15 @@ MSE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     // Calculate time spent on detector until reaching newPos or a detector exit
     SUMOReal exitPos = MIN2(newPos, vi.exitOffset + vi.length - vi.entryOffset);
     assert(entryPos < exitPos);
+
     // calculate vehicle's time spent on the detector
-    SUMOReal exitTime = MSCFModel::passingTime(oldPos, exitPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+    SUMOReal exitTime;
+    if (exitPos == newPos) {
+        exitTime  = TS;
+    } else {
+        exitTime = MSCFModel::passingTime(oldPos, exitPos, newPos, veh.getPreviousSpeed(), veh.getSpeed());
+    }
+
     // Vehicle's Speed when leaving the detector
     SUMOReal exitSpeed = MSCFModel::speedAfterTime(exitTime, veh.getPreviousSpeed(), newPos-oldPos);
 
@@ -1124,17 +1091,17 @@ MSE2Collector::calculateTimeLoss(const SUMOVehicle& veh, SUMOReal oldPos, SUMORe
     SUMOReal vmax = MAX2(veh.getLane()->getVehicleMaxSpeed(&veh), NUMERICAL_EPS);
 
     // Time loss suffered on the detector
-    SUMOReal timeLoss = MAX2(0., (exitTime - entryTime)*(vmax - (entrySpeed + exitSpeed)/2)/vmax);
+    timeOnDetector = exitTime - entryTime;
+    timeLoss = MAX2(0., timeOnDetector*(vmax - (entrySpeed + exitSpeed)/2)/vmax);
 
 #ifdef DEBUG_E2_TIME_ON_DETECTOR
     std::cout << SIMTIME << " calculateTimeLoss() for vehicle '" << veh.getID() << "'"
             << " oldPos = " << oldPos << " newPos = " << newPos
             << " entryPos = " << entryPos << " exitPos = " << exitPos
+            << " timeOnDetector = " << timeOnDetector
             << " timeLoss = " << timeLoss
             << std::endl;
 #endif
-
-    return timeLoss;
 }
 
 
