@@ -495,7 +495,7 @@ NBNode::bezierControlPoints(
     SUMOReal extrapolateBeg,
     SUMOReal extrapolateEnd,
     bool& ok,
-    NBNode* recordError, 
+    NBNode* recordError,
     SUMOReal straightThresh) {
 
     const Position beg = begShape.back();
@@ -724,7 +724,7 @@ NBNode::computeLogic(const NBEdgeCont& ec, OptionsCont& oc) {
     myRequest = 0;
     if (myIncomingEdges.size() == 0 || myOutgoingEdges.size() == 0) {
         // no logic if nothing happens here
-        myType = NODETYPE_NOJUNCTION;
+        myType = NODETYPE_DEAD_END;
         std::set<NBTrafficLightDefinition*> trafficLights = myTrafficLights; // make a copy because we will modify the original
         for (std::set<NBTrafficLightDefinition*>::const_iterator i = trafficLights.begin(); i != trafficLights.end(); ++i) {
             // if this is the only controlled node we keep the tlDef as it is to generate a warning later
@@ -989,7 +989,7 @@ NBNode::computeLanes2Lanes() {
                         if ((incoming->getPermissions(fromLane) & unsatisfied) != 0) {
                             for (int toLane = 0; toLane < currentOutgoing->getNumLanes(); ++toLane) {
                                 const SVCPermissions satisfied = incoming->getPermissions(fromLane) & currentOutgoing->getPermissions(toLane) & unsatisfied;
-                                if (satisfied != 0) {
+                                if (satisfied != 0 && !incoming->getLaneStruct(fromLane).connectionsDone) {
                                     incoming->setConnection((int)fromLane, currentOutgoing, toLane, NBEdge::L2L_COMPUTED);
                                     //std::cout << "  new connection from=" << fromLane << " to=" << currentOutgoing->getID() << "_" << toLane << " satisfies=" << getVehicleClassNames(satisfied) << "\n";
                                     unsatisfied &= ~satisfied;
@@ -1980,7 +1980,7 @@ NBNode::checkCrossing(EdgeVector candidates) {
 }
 
 
-bool 
+bool
 NBNode::checkCrossingDuplicated(EdgeVector edges) {
     // sort edge vector
     std::sort(edges.begin(), edges.end());
@@ -1989,7 +1989,7 @@ NBNode::checkCrossingDuplicated(EdgeVector edges) {
         // sort edges of crossing before compare
         EdgeVector edgesOfCrossing = it->edges;
         std::sort(edgesOfCrossing.begin(), edgesOfCrossing.end());
-        if(edgesOfCrossing == edges) {
+        if (edgesOfCrossing == edges) {
             return true;
         }
     }
@@ -2699,7 +2699,7 @@ NBNode::rightOnRedConflict(int index, int foeIndex) const {
 }
 
 
-void 
+void
 NBNode::sortEdges(bool useNodeShape) {
     if (myAllEdges.size() == 0) {
         return;

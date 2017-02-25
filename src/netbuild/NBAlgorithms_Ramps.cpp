@@ -179,6 +179,10 @@ NBRampsComputer::buildOnRamp(NBNode* cur, NBNodeCont& nc, NBEdgeCont& ec, NBDist
                 moveRampRight(curr, toAdd);
                 currLength += curr->getGeometry().length(); // !!! loaded length?
                 last = curr;
+                // mark acceleration lanes
+                for (int i = 0; i < curr->getNumLanes() - potHighway->getNumLanes(); ++i) {
+                    curr->setAcceleration(i, true);
+                }
             }
             NBNode* nextN = curr->getToNode();
             if (nextN->getOutgoingEdges().size() == 1) {
@@ -220,10 +224,19 @@ NBRampsComputer::buildOnRamp(NBNode* cur, NBNodeCont& nc, NBEdgeCont& ec, NBDist
             if (wasFirst) {
                 first = curr;
             }
+            // mark acceleration lanes
+            for (int i = 0; i < curr->getNumLanes() - potHighway->getNumLanes(); ++i) {
+                curr->setAcceleration(i, true);
+            }
         }
         if (curr == cont && dontSplit) {
             WRITE_WARNING("Could not build on-ramp for edge '"  + curr->getID() + "' due to option '--ramps.no-split'");
             return;
+        }
+    } else {
+        // mark acceleration lanes
+        for (int i = 0; i < firstLaneNumber - potHighway->getNumLanes(); ++i) {
+            cont->setAcceleration(i, true);
         }
     }
     // set connections from ramp/highway to added ramp
@@ -242,6 +255,7 @@ NBRampsComputer::buildOnRamp(NBNode* cur, NBNodeCont& nc, NBEdgeCont& ec, NBDist
     p.pop_back();
     p.push_back(first->getLaneShape(0)[0]);
     potRamp->setGeometry(p);
+
 }
 
 
@@ -394,10 +408,7 @@ NBRampsComputer::getOnRampEdges(NBNode* n, NBEdge** potHighway, NBEdge** potRamp
     }
     */
     // heuristic: ramp comes from right
-    const std::vector<NBEdge*>& edges2 = n->getEdges();
-    std::vector<NBEdge*>::const_iterator i = std::find(edges2.begin(), edges2.end(), *other);
-    NBContHelper::nextCW(edges2, i);
-    if ((*i) == *potHighway) {
+    if (NBContHelper::relative_incoming_edge_sorter(*other)(*potRamp, *potHighway)) {
         std::swap(*potHighway, *potRamp);
     }
 }
@@ -427,6 +438,12 @@ NBRampsComputer::getOffRampEdges(NBNode* n, NBEdge** potHighway, NBEdge** potRam
     if ((*i) == *potRamp) {
         std::swap(*potHighway, *potRamp);
     }
+    // the following would be better but runs afoul of misleading angles when both edges
+    // have the same geometry start point but different references lanes are
+    // chosen for NBEdge::computeAngle()
+    //if (NBContHelper::relative_outgoing_edge_sorter(*other)(*potHighway, *potRamp)) {
+    //    std::swap(*potHighway, *potRamp);
+    //}
 }
 
 
@@ -443,7 +460,7 @@ NBRampsComputer::fulfillsRampConstraints(
         return false;
     }
     // check whether a lane is missing
-    if (potHighway->getNumLanes() + potRamp->getNumLanes() <= other->getNumLanes()) {
+    if (potHighway->getNumLanes() + potRamp->getNumLanes() < other->getNumLanes()) {
         return false;
     }
     // is it really a highway?
@@ -464,6 +481,16 @@ NBRampsComputer::fulfillsRampConstraints(
                 other->isTurningDirectionAt(potRamp)) {
             return false;
         }
+    }
+    // are the angles between highway and other / ramp and other more or less straight?
+    const NBNode* node = potHighway->getToNode() == potRamp->getToNode() ? potHighway->getToNode() : potHighway->getFromNode();
+    SUMOReal angle = fabs(NBHelpers::relAngle(potHighway->getAngleAtNode(node), other->getAngleAtNode(node)));
+    if (angle >= 60) {
+        return false;
+    }
+    angle = fabs(NBHelpers::relAngle(potRamp->getAngleAtNode(node), other->getAngleAtNode(node)));
+    if (angle >= 60) {
+        return false;
     }
     /*
     if (potHighway->getSpeed() < minHighwaySpeed || other->getSpeed() < minHighwaySpeed) {

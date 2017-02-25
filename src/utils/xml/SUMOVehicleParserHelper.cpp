@@ -172,7 +172,8 @@ SUMOVehicleParserHelper::parseFlowAttributes(const SUMOSAXAttributes& attrs, con
             if (ret->repetitionEnd == SUMOTime_MAX) {
                 ret->repetitionNumber = std::numeric_limits<int>::max();
             } else {
-                ret->repetitionNumber = MAX2(1, (int)(((SUMOReal)(ret->repetitionEnd - ret->depart)) / ret->repetitionOffset + 0.5));
+                const SUMOReal repLength = (SUMOReal)(ret->repetitionEnd - ret->depart);
+                ret->repetitionNumber = (int)ceil(repLength / ret->repetitionOffset);
             }
         }
     }
@@ -507,8 +508,8 @@ SUMOVehicleParserHelper::parseVTypeEmbedded(SUMOVTypeParameter& into,
     bool ok = true;
     for (std::set<SumoXMLAttr>::const_iterator it = cf_it->second.begin(); it != cf_it->second.end(); it++) {
         if (attrs.hasAttribute(*it)) {
-            into.cfParameter[*it] = attrs.get<SUMOReal>(*it, into.id.c_str(), ok);
-            if (*it == SUMO_ATTR_TAU && TIME2STEPS(into.cfParameter[*it]) < DELTA_T) {
+            into.cfParameter[*it] = attrs.get<std::string>(*it, into.id.c_str(), ok);
+            if (*it == SUMO_ATTR_TAU && string2time(into.cfParameter[*it]) < DELTA_T) {
                 WRITE_WARNING("Value of tau=" + toString(into.cfParameter[*it])
                               + " in car following model '" + toString(into.cfModel) + "' lower than simulation step size may cause collisions");
             }
@@ -532,6 +533,7 @@ SUMOVehicleParserHelper::getAllowedCFModelAttrs() {
         allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS] = krausParams;
         allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS_ORIG1] = krausParams;
         allowedCFModelAttrs[SUMO_TAG_CF_KRAUSS_PLUS_SLOPE] = krausParams;
+
 
         std::set<SumoXMLAttr> smartSKParams;
         smartSKParams.insert(SUMO_ATTR_ACCEL);
@@ -597,6 +599,10 @@ SUMOVehicleParserHelper::getAllowedCFModelAttrs() {
         wiedemannParams.insert(SUMO_ATTR_CF_WIEDEMANN_SECURITY);
         wiedemannParams.insert(SUMO_ATTR_CF_WIEDEMANN_ESTIMATION);
         allowedCFModelAttrs[SUMO_TAG_CF_WIEDEMANN] = wiedemannParams;
+
+        std::set<SumoXMLAttr> railParamms;
+        railParamms.insert(SUMO_ATTR_TRAIN_TYPE);
+        allowedCFModelAttrs[SUMO_TAG_CF_RAIL] = railParamms;
     }
     return allowedCFModelAttrs;
 }
@@ -611,6 +617,7 @@ SUMOVehicleParserHelper::parseLCParams(SUMOVTypeParameter& into, LaneChangeModel
         lc2013Params.insert(SUMO_ATTR_LCA_COOPERATIVE_PARAM);
         lc2013Params.insert(SUMO_ATTR_LCA_SPEEDGAIN_PARAM);
         lc2013Params.insert(SUMO_ATTR_LCA_KEEPRIGHT_PARAM);
+        lc2013Params.insert(SUMO_ATTR_LCA_EXPERIMANTAL1);
         allowedLCModelAttrs[LCM_LC2013] = lc2013Params;
 
         std::set<SumoXMLAttr> sl2015Params = lc2013Params;
@@ -630,7 +637,7 @@ SUMOVehicleParserHelper::parseLCParams(SUMOVTypeParameter& into, LaneChangeModel
     std::set<SumoXMLAttr> allowed = allowedLCModelAttrs[model];
     for (std::set<SumoXMLAttr>::const_iterator it = allowed.begin(); it != allowed.end(); it++) {
         if (attrs.hasAttribute(*it)) {
-            into.lcParameter[*it] = attrs.get<SUMOReal>(*it, into.id.c_str(), ok);
+            into.lcParameter[*it] = attrs.get<std::string>(*it, into.id.c_str(), ok);
         }
     }
     if (!ok) {

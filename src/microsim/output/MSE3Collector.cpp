@@ -130,6 +130,11 @@ MSE3Collector::MSE3LeaveReminder::notifyLeave(SUMOVehicle& /* veh */, SUMOReal /
     if (reason == MSMoveReminder::NOTIFICATION_LANE_CHANGE) {
         return false;
     }
+    if (reason == MSMoveReminder::NOTIFICATION_TELEPORT) {
+        WRITE_WARNING("Vehicle '" + veh.getID() + "' teleported from " + toString(SUMO_TAG_E3DETECTOR) + " '" + myCollector.getID() + "'.");
+        myCollector.myEnteredContainer.erase(&veh);
+        return false;
+    }
     return true;
 }
 

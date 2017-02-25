@@ -262,7 +262,7 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
         }
     }
 
-    // start drawing lane checikg whether it is not too small
+    // start drawing lane checking whether it is not too small
     const SUMOReal selectionScale = selected || selectedEdge ? s.selectionScale : 1;
     SUMOReal exaggeration = selectionScale * s.laneWidthExaggeration; // * s.laneScaler.getScheme().getColor(getScaleValue(s.laneScaler.getActive()));
     // XXX apply usefull scale values
@@ -307,7 +307,7 @@ GNELane::drawGL(const GUIVisualizationSettings& s) const {
             drawCrossties(0.3 * exaggeration, 1 * exaggeration, 1 * exaggeration);
         } else {
             // Draw as a normal lane, and reduce width to make sure that a selected edge can still be seen
-            const SUMOReal halfWidth = selectionScale * (myParentEdge.getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
+            const SUMOReal halfWidth = exaggeration * (myParentEdge.getNBEdge()->getLaneWidth(myIndex) / 2 - (selectedEdge ? .3 : 0));
             if (myShapeColors.size() > 0) {
                 GLHelper::drawBoxLines(getShape(), myShapeRotations, myShapeLengths, myShapeColors, halfWidth);
             } else {
@@ -760,6 +760,8 @@ GNELane::getAttribute(SumoXMLAttr key) const {
             }
         case SUMO_ATTR_ENDOFFSET:
             return toString(edge->getLaneStruct(myIndex).endOffset);
+        case SUMO_ATTR_ACCELERATION:
+            return toString(edge->getLaneStruct(myIndex).accelRamp);
         case SUMO_ATTR_INDEX:
             return toString(myIndex);
         default:
@@ -778,6 +780,7 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* un
         case SUMO_ATTR_DISALLOW:
         case SUMO_ATTR_WIDTH:
         case SUMO_ATTR_ENDOFFSET:
+        case SUMO_ATTR_ACCELERATION:
         case SUMO_ATTR_INDEX:
             // no special handling
             undoList->p_add(new GNEChange_Attribute(this, key, value));
@@ -799,13 +802,15 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_DISALLOW:
             return canParseVehicleClasses(value);
         case SUMO_ATTR_WIDTH:
-            if(value == "default") {
+            if (value == "default") {
                 return true;
             } else {
                 return canParse<SUMOReal>(value) && (isPositive<SUMOReal>(value) || parse<SUMOReal>(value) == NBEdge::UNSPECIFIED_WIDTH);
             }
         case SUMO_ATTR_ENDOFFSET:
             return canParse<SUMOReal>(value);
+        case SUMO_ATTR_ACCELERATION:
+            return canParse<bool>(value);
         case SUMO_ATTR_INDEX:
             return value == toString(myIndex);
         default:
@@ -843,14 +848,19 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value) {
             myNet->getViewNet()->update();
             break;
         case SUMO_ATTR_WIDTH:
-            if(value == "default") {
+            if (value == "default") {
                 edge->setLaneWidth(myIndex, NBEdge::UNSPECIFIED_WIDTH);
             } else {
                 edge->setLaneWidth(myIndex, parse<SUMOReal>(value));
             }
+            updateGeometry();
+            myNet->getViewNet()->update();
             break;
         case SUMO_ATTR_ENDOFFSET:
             edge->setEndOffset(myIndex, parse<SUMOReal>(value));
+            break;
+        case SUMO_ATTR_ACCELERATION:
+            edge->setAcceleration(myIndex, parse<bool>(value));
             break;
         default:
             throw InvalidArgument(toString(getTag()) + " doesn't have an attribute of type '" + toString(key) + "'");

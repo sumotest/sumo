@@ -111,7 +111,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "closingReroute",             SUMO_TAG_CLOSING_REROUTE },
     { "closingLaneReroute",         SUMO_TAG_CLOSING_LANE_REROUTE },
     { "routeProbReroute",           SUMO_TAG_ROUTE_PROB_REROUTE },
-    { "parkingZoneReroute",         SUMO_TAG_PARKING_ZONE_REROUTE },
+    { "parkingAreaReroute",         SUMO_TAG_PARKING_ZONE_REROUTE },
     { "polygonType",                SUMO_TAG_POLYTYPE },
     { "connection",                 SUMO_TAG_CONNECTION },
     { "prohibition",                SUMO_TAG_PROHIBITION },
@@ -172,6 +172,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::tags[] = {
     { "carFollowing-PWagner2009",   SUMO_TAG_CF_PWAGNER2009 },
     { "carFollowing-BKerner",       SUMO_TAG_CF_BKERNER },
     { "carFollowing-Wiedemann",     SUMO_TAG_CF_WIEDEMANN },
+    { "carFollowing-Rail",          SUMO_TAG_CF_RAIL },
     // Person
     { "person",                     SUMO_TAG_PERSON },
     { "personTrip",                 SUMO_TAG_PERSONTRIP },
@@ -292,6 +293,8 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "tmp4",                   SUMO_ATTR_TMP4 },
     { "tmp5",                   SUMO_ATTR_TMP5 },
 
+    { "trainType",               SUMO_ATTR_TRAIN_TYPE },
+
     { "lcStrategic",            SUMO_ATTR_LCA_STRATEGIC_PARAM },
     { "lcCooperative",          SUMO_ATTR_LCA_COOPERATIVE_PARAM },
     { "lcSpeedGain",            SUMO_ATTR_LCA_SPEEDGAIN_PARAM },
@@ -299,6 +302,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "lcSublane",              SUMO_ATTR_LCA_SUBLANE_PARAM },
     { "lcPushy",                SUMO_ATTR_LCA_PUSHY },
     { "lcAssertive",            SUMO_ATTR_LCA_ASSERTIVE },
+    { "lcExperimental1",        SUMO_ATTR_LCA_EXPERIMANTAL1 },
 
     { "last",                   SUMO_ATTR_LAST },
     { "cost",                   SUMO_ATTR_COST },
@@ -455,6 +459,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "version",                SUMO_ATTR_VERSION },
     { "junctionCornerDetail",   SUMO_ATTR_CORNERDETAIL },
     { "junctionLinkDetail",     SUMO_ATTR_LINKDETAIL },
+    { "rectangularLaneCut",     SUMO_ATTR_RECTANGULAR_LANE_CUT },
     { "lefthand",               SUMO_ATTR_LEFTHAND },
 
     { "actorConfig",            SUMO_ATTR_ACTORCONFIG },
@@ -519,6 +524,9 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     // Other
     { "",                       SUMO_ATTR_NOTHING } //< must be the last one
 };
+
+
+const std::string SUMO_PARAM_ORIGID("origId");
 
 
 StringBijection<SumoXMLNodeType>::Entry SUMOXMLDefinitions::sumoNodeTypeValues[] = {
@@ -623,6 +631,7 @@ StringBijection<SumoXMLTag>::Entry SUMOXMLDefinitions::carFollowModelValues[] = 
     { "Daniel1",     SUMO_TAG_CF_DANIEL1 },
     { "PWagner2009", SUMO_TAG_CF_PWAGNER2009 },
     { "BKerner",     SUMO_TAG_CF_BKERNER },
+    { "Rail",        SUMO_TAG_CF_RAIL },
     { "Wiedemann",   SUMO_TAG_CF_WIEDEMANN } //< must be the last one
 };
 

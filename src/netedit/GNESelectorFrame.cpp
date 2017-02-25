@@ -81,7 +81,7 @@ FXIMPLEMENT(GNESelectorFrame, FXVerticalFrame, GNESelectorFrameMap, ARRAYNUMBER(
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNESelectorFrame::GNESelectorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+GNESelectorFrame::GNESelectorFrame(FXHorizontalFrame* horizontalFrameParent, GNEViewNet* viewNet):
     GNEFrame(horizontalFrameParent, viewNet, getStats().c_str()),
     mySetOperation(SET_ADD),
     mySetOperationTarget(mySetOperation),
@@ -121,7 +121,7 @@ GNESelectorFrame::GNESelectorFrame(FXHorizontalFrame *horizontalFrameParent, GNE
     // Set default value for Match string
     myMatchString->setText(">10.0");
     // Create help button
-    new FXButton(matchBox, "Help", 0, this, MID_HELP, GUIDesignButtonHelp);
+    new FXButton(matchBox, "Help", 0, this, MID_HELP, GUIDesignButtonRectangular);
     // Create Groupbox for visual scalings
     FXGroupBox* selSizeBox = new FXGroupBox(myContentFrame, "Visual Scaling", GUIDesignGroupBoxFrame);
     // Create spin button and configure it
@@ -288,7 +288,7 @@ GNESelectorFrame::onCmdSelMBString(FXObject*, FXSelector, void*) {
             compOp = '=';
         }
         try {
-            handleIDs(getMatches(tag, attr, compOp, TplConvert::_2SUMOReal(expr.c_str()), expr), false);
+            handleIDs(getMatches(tag, attr, compOp, GNEAttributeCarrier::parse<SUMOReal>(expr.c_str()), expr), false);
         } catch (EmptyData&) {
             valid = false;
         } catch (NumberFormatException&) {
@@ -347,7 +347,7 @@ GNESelectorFrame::onCmdHelp(FXObject*, FXSelector, void*) {
             << "edge; speed; '>10' -> match all edges with a speed above 10\n";
     new FXLabel(helpDialog, help.str().c_str(), 0, GUIDesignLabelLeft);
     // "OK"
-    new FXButton(helpDialog, "OK\t\tSave modifications", GUIIconSubSys::getIcon(ICON_ACCEPT), helpDialog, FXDialogBox::ID_ACCEPT, GUIDesignButtonDialog, 0, 0, 0, 0, 4, 4, 3, 3);
+    new FXButton(helpDialog, "OK\t\tSave modifications", GUIIconSubSys::getIcon(ICON_ACCEPT), helpDialog, FXDialogBox::ID_ACCEPT, GUIDesignButtonOK);
     helpDialog->create();
     helpDialog->show();
     return 1;
@@ -366,7 +366,7 @@ void
 GNESelectorFrame::show() {
     // selection may have changed due to deletions
     gSelected.add2Update(this);
-    selectionUpdated(); 
+    selectionUpdated();
     // Show frame
     GNEFrame::show();
 }

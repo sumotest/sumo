@@ -177,11 +177,12 @@ public:
      * @param[in] width The width of the lane
      * @param[in] permissions Encoding of the Vehicle classes that may drive on this lane
      * @param[in] index The index of this lane within its parent edge
+     * @param[in] isRampAccel Whether this lane is an acceleratin lane
      * @see SUMOVehicleClass
      */
     MSLane(const std::string& id, SUMOReal maxSpeed, SUMOReal length, MSEdge* const edge,
            int numericalID, const PositionVector& shape, SUMOReal width,
-           SVCPermissions permissions, int index);
+           SVCPermissions permissions, int index, bool isRampAccel);
 
 
     /// @brief Destructor
@@ -429,6 +430,11 @@ public:
     /// @brief return shape.length() / myLength
     inline SUMOReal getLengthGeometryFactor() const {
         return myLengthGeometryFactor;
+    }
+
+    /// @brief return whether this lane is an acceleration lane
+    inline bool isAccelLane() const {
+        return myIsRampAccel;
     }
 
     /* @brief fit the given lane position to a visibly suitable geometry position
@@ -719,7 +725,7 @@ public:
 
     /// @brief return the follower with the largest missing rear gap among all predecessor lanes (within dist)
     std::pair<MSVehicle* const, SUMOReal> getFollowerOnConsecutive(
-        SUMOReal backOffset, SUMOReal leaderSpeed, SUMOReal leaderMaxDecel, SUMOReal dist = -1, bool ignoreMinorLinks=false) const;
+        SUMOReal backOffset, SUMOReal leaderSpeed, SUMOReal leaderMaxDecel, SUMOReal dist = -1, bool ignoreMinorLinks = false) const;
 
     /// @brief return the sublane followers with the largest missing rear gap among all predecessor lanes (within dist)
     MSLeaderDistanceInfo getFollowersOnConsecutive(const MSVehicle* ego, bool allSublanes) const;
@@ -910,6 +916,9 @@ public:
         myRightSideOnEdge = value;
         myRightmostSublane = rightmostSublane;
     }
+
+    /// @brief initialized vClass-specific speed limits
+    void initRestrictions();
 
     SUMOReal getRightSideOnEdge() const {
         return myRightSideOnEdge;
@@ -1156,6 +1165,9 @@ protected:
 
     /// @brief precomputed myShape.length / myLength
     const SUMOReal myLengthGeometryFactor;
+
+    /// @brief whether this lane is an acceleration lane
+    const bool myIsRampAccel;
 
     /// @brief the combined width of all lanes with lower index on myEdge
     SUMOReal myRightSideOnEdge;

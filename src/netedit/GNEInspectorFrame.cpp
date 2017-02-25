@@ -65,6 +65,7 @@
 #include "GNEUndoList.h"
 #include "GNEViewNet.h"
 #include "GNEViewParent.h"
+#include "GNEDialog_AllowDisallow.h"
 
 #ifdef CHECK_MEMORY_LEAKS
 #include <foreign/nvwa/debug_new.h>
@@ -94,25 +95,20 @@ FXDEFMAP(GNEInspectorFrame) GNEInspectorFrameMap[] = {
 };
 
 
-FXDEFMAP(GNEInspectorFrame::AttrInput) AttrInputMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_ATTRIBUTE,         GNEInspectorFrame::AttrInput::onCmdSetAttribute),
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor)
-};
-
-FXDEFMAP(GNEInspectorFrame::AttrEditor) AttrEditorMap[] = {
-    FXMAPFUNC(SEL_COMMAND, MID_GNE_MODE_INSPECT_RESET, GNEInspectorFrame::AttrEditor::onCmdReset),
+FXDEFMAP(GNEInspectorFrame::AttributeInput) AttrInputMap[] = {
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_SET_ATTRIBUTE,         GNEInspectorFrame::AttributeInput::onCmdSetAttribute),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_OPEN_ATTRIBUTE_EDITOR, GNEInspectorFrame::AttributeInput::onCmdOpenAllowDisallowEditor)
 };
 
 // Object implementation
 FXIMPLEMENT(GNEInspectorFrame, FXVerticalFrame, GNEInspectorFrameMap, ARRAYNUMBER(GNEInspectorFrameMap))
-FXIMPLEMENT(GNEInspectorFrame::AttrInput, FXMatrix, AttrInputMap, ARRAYNUMBER(AttrInputMap))
-FXIMPLEMENT(GNEInspectorFrame::AttrEditor, FXDialogBox, AttrEditorMap, ARRAYNUMBER(AttrEditorMap))
+FXIMPLEMENT(GNEInspectorFrame::AttributeInput, FXHorizontalFrame, AttrInputMap, ARRAYNUMBER(AttrInputMap))
 
 // ===========================================================================
 // method definitions
 // ===========================================================================
 
-GNEInspectorFrame::GNEInspectorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+GNEInspectorFrame::GNEInspectorFrame(FXHorizontalFrame* horizontalFrameParent, GNEViewNet* viewNet):
     GNEFrame(horizontalFrameParent, viewNet, "Inspector"),
     myEdgeTemplate(NULL),
     myAdditional(NULL),
@@ -120,25 +116,27 @@ GNEInspectorFrame::GNEInspectorFrame(FXHorizontalFrame *horizontalFrameParent, G
     myPreviousElementDelete(NULL) {
 
     // Create back button
-    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, GUIDesignButtonHelp);
+    myBackButton = new FXButton(myHeaderLeftFrame, "", GUIIconSubSys::getIcon(ICON_NETEDITARROW), this, MID_GNE_INSPECT_GOBACK, GUIDesignButtonIconRectangular);
     myHeaderLeftFrame->hide();
     myBackButton->hide();
 
     // Create groupBox for attributes
-    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "attributes", GUIDesignGroupBoxFrame);
+    myGroupBoxForAttributes = new FXGroupBox(myContentFrame, "Internal attributes", GUIDesignGroupBoxFrame);
     myGroupBoxForAttributes->hide();
 
-    // Create AttrInput
+    // Create AttributeInput
     for (int i = 0; i < (int)GNEAttributeCarrier::getHigherNumberOfAttributes(); i++) {
-        vectorOfAttrInput.push_back(new AttrInput(myGroupBoxForAttributes, this));
+        myVectorOfAttributeInputs.push_back(new AttributeInput(myGroupBoxForAttributes, this));
     }
 
-    // Create groupBox for editor parameters
-    myGroupBoxForEditor = new FXGroupBox(myContentFrame, "editor", GUIDesignGroupBoxFrame);
+    // Create groupBox for Netedit parameters
+    myGroupBoxForEditor = new FXGroupBox(myContentFrame, "Netedit attributes", GUIDesignGroupBoxFrame);
     myGroupBoxForEditor->hide();
 
-    // Create check blocked button
-    myCheckBlocked = new FXMenuCheck(myGroupBoxForEditor, "Block movement", this, MID_GNE_SET_BLOCKING, GUIDesignMenuCheck);
+    // Create check blocked label and button
+    FXHorizontalFrame *blockMovementHorizontalFrame = new FXHorizontalFrame(myGroupBoxForEditor, GUIDesignAuxiliarHorizontalFrame);
+    myCheckBlockedLabel = new FXLabel(blockMovementHorizontalFrame, "block movement", 0, GUIDesignLabelAttribute);
+    myCheckBlocked = new FXMenuCheck(blockMovementHorizontalFrame, "", this, MID_GNE_SET_BLOCKING, GUIDesignMenuCheck);
     myCheckBlocked->hide();
 
     // Create groupbox and tree list
@@ -169,7 +167,7 @@ GNEInspectorFrame::~GNEInspectorFrame() {
 }
 
 
-void 
+void
 GNEInspectorFrame::show() {
     inspectElement(NULL);
     GNEFrame::show();
@@ -180,7 +178,7 @@ void
 GNEInspectorFrame::inspectElement(GNEAttributeCarrier* AC) {
     // Use the implementation of inspect for multiple AttributeCarriers to avoid repetition of code
     std::vector<GNEAttributeCarrier*> itemToInspect;
-    if(AC != NULL) {
+    if (AC != NULL) {
         itemToInspect.push_back(AC);
     }
     inspectMultisection(itemToInspect);
@@ -222,8 +220,8 @@ GNEInspectorFrame::inspectMultisection(const std::vector<GNEAttributeCarrier*>& 
         //Show myGroupBoxForAttributes
         myGroupBoxForAttributes->show();
 
-        // Hide all AttrInput
-        for (std::vector<GNEInspectorFrame::AttrInput*>::iterator i = vectorOfAttrInput.begin(); i != vectorOfAttrInput.end(); i++) {
+        // Hide all AttributeInput
+        for (std::vector<GNEInspectorFrame::AttributeInput*>::iterator i = myVectorOfAttributeInputs.begin(); i != myVectorOfAttributeInputs.end(); i++) {
             (*i)->hideAttribute();
         }
 
@@ -231,8 +229,11 @@ GNEInspectorFrame::inspectMultisection(const std::vector<GNEAttributeCarrier*>& 
         SumoXMLTag tag = myACs.front()->getTag();
         const std::vector<SumoXMLAttr>& attrs = myACs.front()->getAttrs();
 
-        // Declare iterator over AttrImput
-        std::vector<GNEInspectorFrame::AttrInput*>::iterator itAttrs = vectorOfAttrInput.begin();
+        // Declare iterator over AttrInput
+        std::vector<GNEInspectorFrame::AttributeInput*>::iterator itAttrs = myVectorOfAttributeInputs.begin();
+
+        //  check if current AC is a Junction without TLSs (needed to hidde TLS options)
+        bool disableTLSinJunctions = (dynamic_cast<GNEJunction*>(myACs.front()) && (dynamic_cast<GNEJunction*>(myACs.front())->getNBNode()->getControllingTLS().empty()));
 
         // Iterate over attributes
         for (std::vector<SumoXMLAttr>::const_iterator it = attrs.begin(); it != attrs.end(); it++) {
@@ -253,32 +254,55 @@ GNEInspectorFrame::inspectMultisection(const std::vector<GNEAttributeCarrier*>& 
                     oss << " ";
                 }
                 oss << *it_val;
+            
+                // edges has a special handle
+                if((myACs.front()->getTag() == SUMO_TAG_EDGE) && ((*it == SUMO_ATTR_WIDTH) || (*it == SUMO_ATTR_ENDOFFSET) || (*it == SUMO_ATTR_SPEED) || (*it == SUMO_ATTR_ALLOW)|| (*it == SUMO_ATTR_DISALLOW))) {
+                    std::vector<std::string> laneAttributes;
+                    bool sameAttribute = true;
+                    SUMOSAXAttributes::parseStringVector(oss.str(), laneAttributes);
+                    if(laneAttributes.size() > 0) {
+                        // check if all attributes of the list are the same
+                        for(int i = 1; i < laneAttributes.size(); i++) {
+                            if(laneAttributes.at(i-1) != laneAttributes.at(i)) {
+                                sameAttribute = false;
+                            }
+                        }
+                        // show attribute depending of all attributes are the same
+                        if(sameAttribute == true) {
+                            (*itAttrs)->showAttribute(myACs.front(), myACs.front()->getTag(), *it, laneAttributes.front());
+                        } else {
+                            (*itAttrs)->showAttribute(myACs.front(), myACs.front()->getTag(), *it, "custom");
+                        }
+                    } else {
+                        (*itAttrs)->showAttribute(myACs.front(), myACs.front()->getTag(), *it, "");
+                    }
+                } else if(((disableTLSinJunctions == true) && (tag == SUMO_TAG_JUNCTION) && ((*it == SUMO_ATTR_TLTYPE) || (*it == SUMO_ATTR_TLID))) == false) {
+                    (*itAttrs)->showAttribute(myACs.front(), myACs.front()->getTag(), *it, oss.str());
+                }
+                // update attribute iterator
+                itAttrs++;
             }
-            // Show attribute
-            (*itAttrs)->showAttribute(myACs.front()->getTag(), *it, oss.str());
-            itAttrs++;
         }
 
         // If attributes correspond to an Additional
         if (dynamic_cast<GNEAdditional*>(myACs.front())) {
             // Get pointer to additional
             myAdditional = dynamic_cast<GNEAdditional*>(myACs.front());
-            bool showGroupBoxForEditor = false;
-
             // Show check blocked if additional is movable
             if (myAdditional->isAdditionalMovable()) {
                 myCheckBlocked->setCheck(myAdditional->isAdditionalBlocked());
+                if(myAdditional->isAdditionalBlocked()) {
+                    myCheckBlocked->setText("true");
+                } else {
+                    myCheckBlocked->setText("false");
+                }
                 myCheckBlocked->show();
-                showGroupBoxForEditor = true;
-            }
-            // Show groupBox for editor Attributes if some of additional attributes are editable
-            if (showGroupBoxForEditor == true) {
                 myGroupBoxForEditor->show();
             }
         }
 
         // if we inspect a single Attribute carrier vector, show their childs
-        if(myACs.size() == 1) {
+        if (myACs.size() == 1) {
             showAttributeCarrierChilds();
         }
 
@@ -300,7 +324,7 @@ GNEInspectorFrame::inspectMultisection(const std::vector<GNEAttributeCarrier*>& 
 }
 
 
-void 
+void
 GNEInspectorFrame::inspectChild(GNEAttributeCarrier* AC, GNEAttributeCarrier* previousElement) {
     // Show back button if myPreviousElementInspect was defined
     myPreviousElementInspect = previousElement;
@@ -389,8 +413,10 @@ GNEInspectorFrame::onCmdSetBlocking(FXObject*, FXSelector, void*) {
     if (myAdditional) {
         if (myCheckBlocked->getCheck() == 1) {
             myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "true", getViewNet()->getUndoList());
+            myCheckBlocked->setText("true");
         } else {
             myAdditional->setAttribute(GNE_ATTR_BLOCK_MOVEMENT, "false", getViewNet()->getUndoList());
+            myCheckBlocked->setText("false");
         }
     }
     return 1;
@@ -405,7 +431,7 @@ GNEInspectorFrame::onCmdGoBack(FXObject*, FXSelector, void*) {
         myPreviousElementInspect = NULL;
     } else if (myPreviousElementDelete != NULL) {
         myViewNet->getViewParent()->getDeleteFrame()->showAttributeCarrierChilds(myPreviousElementDelete);
-        if(myPreviousElementDeleteWasMarked) {
+        if (myPreviousElementDeleteWasMarked) {
             myViewNet->getViewParent()->getDeleteFrame()->markAttributeCarrier(myPreviousElementDelete);
         }
         myPreviousElementDelete = NULL;
@@ -423,36 +449,36 @@ GNEInspectorFrame::getACs() const {
 }
 
 
-long 
+long
 GNEInspectorFrame::onCmdShowChildMenu(FXObject*, FXSelector, void* data) {
     // Obtain event
     FXEvent* e = (FXEvent*) data;
     FXTreeItem* item = myTreelist->getItemAt(e->win_x, e->win_y);
     // Check if there are an item in the position and create pop-up menu
-    if(item && (myTreeItesmWithoutAC.find(item) == myTreeItesmWithoutAC.end())) {
+    if (item && (myTreeItemsWithoutAC.find(item) == myTreeItemsWithoutAC.end())) {
         createPopUpMenu(e->root_x, e->root_y, myTreeItemToACMap[myTreelist->getItemAt(e->win_x, e->win_y)]);
     }
     return 1;
 }
 
 
-long 
+long
 GNEInspectorFrame::onCmdCenterItem(FXObject*, FXSelector, void*) {
-    if(dynamic_cast<GNENetElement*>(myRightClickedAC)) {
-        myViewNet->centerTo(dynamic_cast<GNENetElement*>(myRightClickedAC)->getGlID(), false); 
+    if (dynamic_cast<GNENetElement*>(myRightClickedAC)) {
+        myViewNet->centerTo(dynamic_cast<GNENetElement*>(myRightClickedAC)->getGlID(), false);
     } else if (dynamic_cast<GNEAdditional*>(myRightClickedAC)) {
-        myViewNet->centerTo(dynamic_cast<GNEAdditional*>(myRightClickedAC)->getGlID(), false); 
-    } else if(dynamic_cast<GNEPOI*>(myRightClickedAC)) {
-        myViewNet->centerTo(dynamic_cast<GNEPOI*>(myRightClickedAC)->getGlID(), false); 
-    } else if(dynamic_cast<GNEPoly*>(myRightClickedAC)) {
-        myViewNet->centerTo(dynamic_cast<GNEPoly*>(myRightClickedAC)->getGlID(), false); 
+        myViewNet->centerTo(dynamic_cast<GNEAdditional*>(myRightClickedAC)->getGlID(), false);
+    } else if (dynamic_cast<GNEPOI*>(myRightClickedAC)) {
+        myViewNet->centerTo(dynamic_cast<GNEPOI*>(myRightClickedAC)->getGlID(), false);
+    } else if (dynamic_cast<GNEPoly*>(myRightClickedAC)) {
+        myViewNet->centerTo(dynamic_cast<GNEPoly*>(myRightClickedAC)->getGlID(), false);
     }
     myViewNet->update();
     return 1;
 }
 
 
-long 
+long
 GNEInspectorFrame::onCmdInspectItem(FXObject*, FXSelector, void*) {
     assert(myACs.size() == 1);
     inspectChild(myRightClickedAC, myACs.front());
@@ -460,7 +486,7 @@ GNEInspectorFrame::onCmdInspectItem(FXObject*, FXSelector, void*) {
 }
 
 
-long 
+long
 GNEInspectorFrame::onCmdDeleteItem(FXObject*, FXSelector, void*) {
     // Remove Attribute Carrier
     myViewNet->getViewParent()->getDeleteFrame()->show();
@@ -472,10 +498,10 @@ GNEInspectorFrame::onCmdDeleteItem(FXObject*, FXSelector, void*) {
 }
 
 
-void 
+void
 GNEInspectorFrame::createPopUpMenu(int X, int Y, GNEAttributeCarrier* ac) {
     // create FXMenuPane
-    FXMenuPane *pane = new FXMenuPane(myTreelist);
+    FXMenuPane* pane = new FXMenuPane(myTreelist);
     // set current clicked AC
     myRightClickedAC = ac;
     // set name
@@ -493,80 +519,80 @@ GNEInspectorFrame::createPopUpMenu(int X, int Y, GNEAttributeCarrier* ac) {
 }
 
 
-void 
+void
 GNEInspectorFrame::showAttributeCarrierChilds() {
     // Only show attributes of ONE attribute carrier
     assert(myACs.size() == 1);
     // clear items
     myTreelist->clearItems();
     myTreeItemToACMap.clear();
-    myTreeItesmWithoutAC.clear();
+    myTreeItemsWithoutAC.clear();
     myGroupBoxForTreeList->show();
     // Switch gl type of ac
     switch (dynamic_cast<GUIGlObject*>(myACs.front())->getType()) {
         case GLO_JUNCTION: {
             // insert junction root
-            GNEJunction *junction = dynamic_cast<GNEJunction*>(myACs.front());
-            FXTreeItem *junctionItem = myTreelist->insertItem(0, 0, toString(junction->getTag()).c_str(), junction->getIcon(), junction->getIcon());
+            GNEJunction* junction = dynamic_cast<GNEJunction*>(myACs.front());
+            FXTreeItem* junctionItem = myTreelist->insertItem(0, 0, toString(junction->getTag()).c_str(), junction->getIcon(), junction->getIcon());
             myTreeItemToACMap[junctionItem] = junction;
             junctionItem->setExpanded(true);
             // insert edges
-            for(int i = 0; i < (int)junction->getGNEEdges().size(); i++) {
-                GNEEdge *edge = junction->getGNEEdges().at(i);
-                FXTreeItem *edgeItem = myTreelist->insertItem(0, junctionItem, (toString(edge->getTag()) + " " + toString(i)).c_str(), edge->getIcon(), edge->getIcon());
+            for (int i = 0; i < (int)junction->getGNEEdges().size(); i++) {
+                GNEEdge* edge = junction->getGNEEdges().at(i);
+                FXTreeItem* edgeItem = myTreelist->insertItem(0, junctionItem, (toString(edge->getTag()) + " " + toString(i)).c_str(), edge->getIcon(), edge->getIcon());
                 myTreeItemToACMap[edgeItem] = edge;
                 edgeItem->setExpanded(true);
                 // insert lanes
-                for(int j = 0; j < (int)edge->getLanes().size(); j++) {
-                    GNELane *lane = edge->getLanes().at(j);
-                    FXTreeItem *laneItem = myTreelist->insertItem(0, edgeItem, (toString(lane->getTag()) + " " + toString(j)).c_str(), lane->getIcon(), lane->getIcon());
+                for (int j = 0; j < (int)edge->getLanes().size(); j++) {
+                    GNELane* lane = edge->getLanes().at(j);
+                    FXTreeItem* laneItem = myTreelist->insertItem(0, edgeItem, (toString(lane->getTag()) + " " + toString(j)).c_str(), lane->getIcon(), lane->getIcon());
                     myTreeItemToACMap[laneItem] = lane;
                     laneItem->setExpanded(true);
                     // insert additionals of lanes
-                    for(int k = 0; k < (int)lane->getAdditionalChilds().size(); k++) {
+                    for (int k = 0; k < (int)lane->getAdditionalChilds().size(); k++) {
                         GNEAdditional* additional = lane->getAdditionalChilds().at(k);
-                        FXTreeItem *additionalItem = myTreelist->insertItem(0, laneItem, (toString(additional->getTag()) + " " + toString(k)).c_str(), additional->getIcon(), additional->getIcon());
+                        FXTreeItem* additionalItem = myTreelist->insertItem(0, laneItem, (toString(additional->getTag()) + " " + toString(k)).c_str(), additional->getIcon(), additional->getIcon());
                         myTreeItemToACMap[additionalItem] = additional;
                         additionalItem->setExpanded(true);
                     }
                     // insert incoming connections of lanes (by default isn't expanded)
-                    if(lane->getGNEIncomingConnections().size() > 0) {
-                        FXTreeItem *incomingConnections = myTreelist->insertItem(0, laneItem, "Incomings", lane->getGNEIncomingConnections().front()->getIcon(), lane->getGNEIncomingConnections().front()->getIcon());
-                        myTreeItesmWithoutAC.insert(incomingConnections);
+                    if (lane->getGNEIncomingConnections().size() > 0) {
+                        FXTreeItem* incomingConnections = myTreelist->insertItem(0, laneItem, "Incomings", lane->getGNEIncomingConnections().front()->getIcon(), lane->getGNEIncomingConnections().front()->getIcon());
+                        myTreeItemsWithoutAC.insert(incomingConnections);
                         incomingConnections->setExpanded(false);
-                        for(int k = 0; k < (int)lane->getGNEIncomingConnections().size(); k++) {
+                        for (int k = 0; k < (int)lane->getGNEIncomingConnections().size(); k++) {
                             GNEConnection* connection = lane->getGNEIncomingConnections().at(k);
-                            FXTreeItem *connectionItem = myTreelist->insertItem(0, incomingConnections, (toString(connection->getTag()) + " " + toString(k)).c_str(), connection->getIcon(), connection->getIcon());
+                            FXTreeItem* connectionItem = myTreelist->insertItem(0, incomingConnections, (toString(connection->getTag()) + " " + toString(k)).c_str(), connection->getIcon(), connection->getIcon());
                             myTreeItemToACMap[connectionItem] = connection;
                             connectionItem->setExpanded(true);
                         }
                     }
                     // insert outcoming connections of lanes (by default isn't expanded)
-                    if(lane->getGNEOutcomingConnections().size() > 0) {
-                        FXTreeItem *outgoingConnections = myTreelist->insertItem(0, laneItem, "Outcomings", lane->getGNEOutcomingConnections().front()->getIcon(), lane->getGNEOutcomingConnections().front()->getIcon());
-                        myTreeItesmWithoutAC.insert(outgoingConnections);
+                    if (lane->getGNEOutcomingConnections().size() > 0) {
+                        FXTreeItem* outgoingConnections = myTreelist->insertItem(0, laneItem, "Outcomings", lane->getGNEOutcomingConnections().front()->getIcon(), lane->getGNEOutcomingConnections().front()->getIcon());
+                        myTreeItemsWithoutAC.insert(outgoingConnections);
                         outgoingConnections->setExpanded(false);
-                        for(int k = 0; k < (int)lane->getGNEOutcomingConnections().size(); k++) {
+                        for (int k = 0; k < (int)lane->getGNEOutcomingConnections().size(); k++) {
                             GNEConnection* connection = lane->getGNEOutcomingConnections().at(k);
-                            FXTreeItem *connectionItem = myTreelist->insertItem(0, outgoingConnections, (toString(connection->getTag()) + " " + toString(k)).c_str(), connection->getIcon(), connection->getIcon());
+                            FXTreeItem* connectionItem = myTreelist->insertItem(0, outgoingConnections, (toString(connection->getTag()) + " " + toString(k)).c_str(), connection->getIcon(), connection->getIcon());
                             myTreeItemToACMap[connectionItem] = connection;
                             connectionItem->setExpanded(true);
                         }
                     }
                 }
                 // insert additionals of edge
-                for(int j = 0; j < (int)edge->getAdditionalChilds().size(); j++) {
+                for (int j = 0; j < (int)edge->getAdditionalChilds().size(); j++) {
                     GNEAdditional* additional = edge->getAdditionalChilds().at(j);
-                    FXTreeItem *additionalItem = myTreelist->insertItem(0, edgeItem, (toString(additional->getTag()) + " " + toString(j)).c_str(), additional->getIcon(), additional->getIcon());
+                    FXTreeItem* additionalItem = myTreelist->insertItem(0, edgeItem, (toString(additional->getTag()) + " " + toString(j)).c_str(), additional->getIcon(), additional->getIcon());
                     myTreeItemToACMap[additionalItem] = additional;
                     additionalItem->setExpanded(true);
                 }
 
             }
             // insert crossings
-            for(int i = 0; i < (int)junction->getGNECrossings().size(); i++) {
-                GNECrossing *crossing = junction->getGNECrossings().at(i);
-                FXTreeItem *crossingItem = myTreelist->insertItem(0, junctionItem, (toString(crossing->getTag()) + " " + toString(i)).c_str(), crossing->getIcon(), crossing->getIcon());
+            for (int i = 0; i < (int)junction->getGNECrossings().size(); i++) {
+                GNECrossing* crossing = junction->getGNECrossings().at(i);
+                FXTreeItem* crossingItem = myTreelist->insertItem(0, junctionItem, (toString(crossing->getTag()) + " " + toString(i)).c_str(), crossing->getIcon(), crossing->getIcon());
                 myTreeItemToACMap[crossingItem] = crossing;
                 crossingItem->setExpanded(true);
             }
@@ -574,52 +600,52 @@ GNEInspectorFrame::showAttributeCarrierChilds() {
         }
         case GLO_EDGE: {
             // insert edge root
-            GNEEdge *edge = dynamic_cast<GNEEdge*>(myACs.front());
-            FXTreeItem *edgeItem = myTreelist->insertItem(0, 0, toString(edge->getTag()).c_str(), edge->getIcon(), edge->getIcon());
+            GNEEdge* edge = dynamic_cast<GNEEdge*>(myACs.front());
+            FXTreeItem* edgeItem = myTreelist->insertItem(0, 0, toString(edge->getTag()).c_str(), edge->getIcon(), edge->getIcon());
             myTreeItemToACMap[edgeItem] = edge;
             edgeItem->setExpanded(true);
             // insert lanes
-            for(int i = 0; i < (int)edge->getLanes().size(); i++) {
-                GNELane *lane = edge->getLanes().at(i);
-                FXTreeItem *laneItem = myTreelist->insertItem(0, edgeItem, (toString(lane->getTag()) + " " + toString(i)).c_str(), lane->getIcon(), lane->getIcon());
+            for (int i = 0; i < (int)edge->getLanes().size(); i++) {
+                GNELane* lane = edge->getLanes().at(i);
+                FXTreeItem* laneItem = myTreelist->insertItem(0, edgeItem, (toString(lane->getTag()) + " " + toString(i)).c_str(), lane->getIcon(), lane->getIcon());
                 myTreeItemToACMap[laneItem] = lane;
                 laneItem->setExpanded(true);
                 // insert additionals of lanes
-                for(int j = 0; j < (int)lane->getAdditionalChilds().size(); j++) {
+                for (int j = 0; j < (int)lane->getAdditionalChilds().size(); j++) {
                     GNEAdditional* additional = lane->getAdditionalChilds().at(j);
-                    FXTreeItem *additionalItem = myTreelist->insertItem(0, laneItem, (toString(additional->getTag()) + " " + toString(j)).c_str(), additional->getIcon(), additional->getIcon());
+                    FXTreeItem* additionalItem = myTreelist->insertItem(0, laneItem, (toString(additional->getTag()) + " " + toString(j)).c_str(), additional->getIcon(), additional->getIcon());
                     myTreeItemToACMap[additionalItem] = additional;
                     additionalItem->setExpanded(true);
                 }
                 // insert incoming connections of lanes (by default isn't expanded)
-                if(lane->getGNEIncomingConnections().size() > 0) {
-                    FXTreeItem *incomingConnections = myTreelist->insertItem(0, laneItem, "Incomings", lane->getGNEIncomingConnections().front()->getIcon(), lane->getGNEIncomingConnections().front()->getIcon());
-                    myTreeItesmWithoutAC.insert(incomingConnections);
+                if (lane->getGNEIncomingConnections().size() > 0) {
+                    FXTreeItem* incomingConnections = myTreelist->insertItem(0, laneItem, "Incomings", lane->getGNEIncomingConnections().front()->getIcon(), lane->getGNEIncomingConnections().front()->getIcon());
+                    myTreeItemsWithoutAC.insert(incomingConnections);
                     incomingConnections->setExpanded(false);
-                    for(int j = 0; j < (int)lane->getGNEIncomingConnections().size(); j++) {
+                    for (int j = 0; j < (int)lane->getGNEIncomingConnections().size(); j++) {
                         GNEConnection* connection = lane->getGNEIncomingConnections().at(j);
-                        FXTreeItem *connectionItem = myTreelist->insertItem(0, incomingConnections, (toString(connection->getTag()) + " " + toString(j)).c_str(), connection->getIcon(), connection->getIcon());
+                        FXTreeItem* connectionItem = myTreelist->insertItem(0, incomingConnections, (toString(connection->getTag()) + " " + toString(j)).c_str(), connection->getIcon(), connection->getIcon());
                         myTreeItemToACMap[connectionItem] = connection;
                         connectionItem->setExpanded(true);
                     }
                 }
                 // insert outcoming connections of lanes (by default isn't expanded)
-                if(lane->getGNEOutcomingConnections().size() > 0) {
-                    FXTreeItem *outgoingConnections = myTreelist->insertItem(0, laneItem, "Outcomings", lane->getGNEOutcomingConnections().front()->getIcon(), lane->getGNEOutcomingConnections().front()->getIcon());
-                    myTreeItesmWithoutAC.insert(outgoingConnections);
+                if (lane->getGNEOutcomingConnections().size() > 0) {
+                    FXTreeItem* outgoingConnections = myTreelist->insertItem(0, laneItem, "Outcomings", lane->getGNEOutcomingConnections().front()->getIcon(), lane->getGNEOutcomingConnections().front()->getIcon());
+                    myTreeItemsWithoutAC.insert(outgoingConnections);
                     outgoingConnections->setExpanded(false);
-                    for(int j = 0; j < (int)lane->getGNEOutcomingConnections().size(); j++) {
+                    for (int j = 0; j < (int)lane->getGNEOutcomingConnections().size(); j++) {
                         GNEConnection* connection = lane->getGNEOutcomingConnections().at(j);
-                        FXTreeItem *connectionItem = myTreelist->insertItem(0, outgoingConnections, (toString(connection->getTag()) + " " + toString(j)).c_str(), connection->getIcon(), connection->getIcon());
+                        FXTreeItem* connectionItem = myTreelist->insertItem(0, outgoingConnections, (toString(connection->getTag()) + " " + toString(j)).c_str(), connection->getIcon(), connection->getIcon());
                         myTreeItemToACMap[connectionItem] = connection;
                         connectionItem->setExpanded(true);
                     }
                 }
             }
             // insert additionals of edge
-            for(int i = 0; i < (int)edge->getAdditionalChilds().size(); i++) {
+            for (int i = 0; i < (int)edge->getAdditionalChilds().size(); i++) {
                 GNEAdditional* additional = edge->getAdditionalChilds().at(i);
-                FXTreeItem *additionalItem = myTreelist->insertItem(0, edgeItem, (toString(additional->getTag()) + " " + toString(i)).c_str(), additional->getIcon(), additional->getIcon());
+                FXTreeItem* additionalItem = myTreelist->insertItem(0, edgeItem, (toString(additional->getTag()) + " " + toString(i)).c_str(), additional->getIcon(), additional->getIcon());
                 myTreeItemToACMap[additionalItem] = additional;
                 additionalItem->setExpanded(true);
             }
@@ -627,37 +653,37 @@ GNEInspectorFrame::showAttributeCarrierChilds() {
         }
         case GLO_LANE: {
             // insert lane root
-            GNELane *lane = dynamic_cast<GNELane*>(myACs.front());
-            FXTreeItem *laneItem = myTreelist->insertItem(0, 0, toString(lane->getTag()).c_str(), lane->getIcon(), lane->getIcon());
+            GNELane* lane = dynamic_cast<GNELane*>(myACs.front());
+            FXTreeItem* laneItem = myTreelist->insertItem(0, 0, toString(lane->getTag()).c_str(), lane->getIcon(), lane->getIcon());
             myTreeItemToACMap[laneItem] = lane;
             laneItem->setExpanded(true);
             // insert additionals of lanes
-            for(int i = 0; i < (int)lane->getAdditionalChilds().size(); i++) {
+            for (int i = 0; i < (int)lane->getAdditionalChilds().size(); i++) {
                 GNEAdditional* additional = lane->getAdditionalChilds().at(i);
-                FXTreeItem *additionalItem = myTreelist->insertItem(0, laneItem, (toString(additional->getTag()) + " " + toString(i)).c_str(), additional->getIcon(), additional->getIcon());
+                FXTreeItem* additionalItem = myTreelist->insertItem(0, laneItem, (toString(additional->getTag()) + " " + toString(i)).c_str(), additional->getIcon(), additional->getIcon());
                 myTreeItemToACMap[additionalItem] = additional;
                 additionalItem->setExpanded(true);
             }
             // insert incoming connections of lanes (by default isn't expanded)
-            if(lane->getGNEIncomingConnections().size() > 0) {
-                FXTreeItem *incomingConnections = myTreelist->insertItem(0, laneItem, "Incomings", lane->getGNEIncomingConnections().front()->getIcon(), lane->getGNEIncomingConnections().front()->getIcon());
-                myTreeItesmWithoutAC.insert(incomingConnections);
+            if (lane->getGNEIncomingConnections().size() > 0) {
+                FXTreeItem* incomingConnections = myTreelist->insertItem(0, laneItem, "Incomings", lane->getGNEIncomingConnections().front()->getIcon(), lane->getGNEIncomingConnections().front()->getIcon());
+                myTreeItemsWithoutAC.insert(incomingConnections);
                 incomingConnections->setExpanded(false);
-                for(int i = 0; i < (int)lane->getGNEIncomingConnections().size(); i++) {
+                for (int i = 0; i < (int)lane->getGNEIncomingConnections().size(); i++) {
                     GNEConnection* connection = lane->getGNEIncomingConnections().at(i);
-                    FXTreeItem *connectionItem = myTreelist->insertItem(0, incomingConnections, (toString(connection->getTag()) + " " + toString(i)).c_str(), connection->getIcon(), connection->getIcon());
+                    FXTreeItem* connectionItem = myTreelist->insertItem(0, incomingConnections, (toString(connection->getTag()) + " " + toString(i)).c_str(), connection->getIcon(), connection->getIcon());
                     myTreeItemToACMap[connectionItem] = connection;
                     connectionItem->setExpanded(true);
                 }
             }
             // insert outcoming connections of lanes (by default isn't expanded)
-            if(lane->getGNEOutcomingConnections().size() > 0) {
-                FXTreeItem *outgoingConnections = myTreelist->insertItem(0, laneItem, "Outcomings", lane->getGNEOutcomingConnections().front()->getIcon(), lane->getGNEOutcomingConnections().front()->getIcon());
-                myTreeItesmWithoutAC.insert(outgoingConnections);
+            if (lane->getGNEOutcomingConnections().size() > 0) {
+                FXTreeItem* outgoingConnections = myTreelist->insertItem(0, laneItem, "Outcomings", lane->getGNEOutcomingConnections().front()->getIcon(), lane->getGNEOutcomingConnections().front()->getIcon());
+                myTreeItemsWithoutAC.insert(outgoingConnections);
                 outgoingConnections->setExpanded(false);
-                for(int i = 0; i < (int)lane->getGNEOutcomingConnections().size(); i++) {
+                for (int i = 0; i < (int)lane->getGNEOutcomingConnections().size(); i++) {
                     GNEConnection* connection = lane->getGNEOutcomingConnections().at(i);
-                    FXTreeItem *connectionItem = myTreelist->insertItem(0, outgoingConnections, (toString(connection->getTag()) + " " + toString(i)).c_str(), connection->getIcon(), connection->getIcon());
+                    FXTreeItem* connectionItem = myTreelist->insertItem(0, outgoingConnections, (toString(connection->getTag()) + " " + toString(i)).c_str(), connection->getIcon(), connection->getIcon());
                     myTreeItemToACMap[connectionItem] = connection;
                     connectionItem->setExpanded(true);
                 }
@@ -666,40 +692,40 @@ GNEInspectorFrame::showAttributeCarrierChilds() {
         }
         case GLO_POI: {
             // insert POI root
-            GNEPOI *POI = dynamic_cast<GNEPOI*>(myACs.front());
-            FXTreeItem *POIItem = myTreelist->insertItem(0, 0, toString(POI->getTag()).c_str(), POI->getIcon(), POI->getIcon());
+            GNEPOI* POI = dynamic_cast<GNEPOI*>(myACs.front());
+            FXTreeItem* POIItem = myTreelist->insertItem(0, 0, toString(POI->getTag()).c_str(), POI->getIcon(), POI->getIcon());
             myTreeItemToACMap[POIItem] = POI;
             POIItem->setExpanded(true);
             break;
         }
         case GLO_POLYGON: {
             // insert polygon root
-            GNEPoly *polygon = dynamic_cast<GNEPoly*>(myACs.front());
-            FXTreeItem *polygonItem = myTreelist->insertItem(0, 0, toString(polygon->getTag()).c_str(), polygon->getIcon(), polygon->getIcon());
+            GNEPoly* polygon = dynamic_cast<GNEPoly*>(myACs.front());
+            FXTreeItem* polygonItem = myTreelist->insertItem(0, 0, toString(polygon->getTag()).c_str(), polygon->getIcon(), polygon->getIcon());
             myTreeItemToACMap[polygonItem] = polygon;
             polygonItem->setExpanded(true);
             break;
         }
         case GLO_CROSSING: {
             // insert crossing root
-            GNECrossing *crossing = dynamic_cast<GNECrossing*>(myACs.front());
-            FXTreeItem *crossingItem = myTreelist->insertItem(0, 0, toString(crossing->getTag()).c_str(), crossing->getIcon(), crossing->getIcon());
+            GNECrossing* crossing = dynamic_cast<GNECrossing*>(myACs.front());
+            FXTreeItem* crossingItem = myTreelist->insertItem(0, 0, toString(crossing->getTag()).c_str(), crossing->getIcon(), crossing->getIcon());
             myTreeItemToACMap[crossingItem] = crossing;
             crossingItem->setExpanded(true);
             break;
         }
         case GLO_ADDITIONAL: {
             // insert additional root
-            GNEAdditional *additional = dynamic_cast<GNEAdditional*>(myACs.front());
-            FXTreeItem *additionalItem = myTreelist->insertItem(0, 0, toString(additional->getTag()).c_str(), additional->getIcon(), additional->getIcon());
+            GNEAdditional* additional = dynamic_cast<GNEAdditional*>(myACs.front());
+            FXTreeItem* additionalItem = myTreelist->insertItem(0, 0, toString(additional->getTag()).c_str(), additional->getIcon(), additional->getIcon());
             myTreeItemToACMap[additionalItem] = additional;
             additionalItem->setExpanded(true);
             break;
         }
         case GLO_CONNECTION: {
             // insert connection root
-            GNEConnection *connection = dynamic_cast<GNEConnection*>(myACs.front());
-            FXTreeItem *connectionItem = myTreelist->insertItem(0, 0, toString(connection->getTag()).c_str(), connection->getIcon(), connection->getIcon());
+            GNEConnection* connection = dynamic_cast<GNEConnection*>(myACs.front());
+            FXTreeItem* connectionItem = myTreelist->insertItem(0, 0, toString(connection->getTag()).c_str(), connection->getIcon(), connection->getIcon());
             myTreeItemToACMap[connectionItem] = connection;
             connectionItem->setExpanded(true);
             break;
@@ -712,11 +738,11 @@ GNEInspectorFrame::showAttributeCarrierChilds() {
 }
 
 // ===========================================================================
-// AttrInput method definitions
+// AttributeInput method definitions
 // ===========================================================================
 
-GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
-    FXMatrix(parent, 8, GUIDesignMatrixAttributes),
+GNEInspectorFrame::AttributeInput::AttributeInput(FXComposite* parent, GNEInspectorFrame* inspectorFrameParent) :
+    FXHorizontalFrame(parent, GUIDesignAuxiliarHorizontalFrame),
     myInspectorFrameParent(inspectorFrameParent),
     myTag(SUMO_TAG_NOTHING),
     myAttr(SUMO_ATTR_NOTHING) {
@@ -727,33 +753,35 @@ GNEInspectorFrame::AttrInput::AttrInput(FXComposite* parent, GNEInspectorFrame* 
     myLabel = new FXLabel(this, "attributeLabel", 0, GUIDesignLabelAttribute);
     myLabel->hide();
     // Create and hide textField for int attributes
-    myTextFieldInt = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldAttributeInt);
+    myTextFieldInt = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldInt);
     myTextFieldInt->hide();
     // Create and hide textField for real attributes
-    myTextFieldReal = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldAttributeReal);
+    myTextFieldReal = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldReal);
     myTextFieldReal->hide();
     // create and hide spindial for time attributes
     myTimeSpinDial = new FXSpinner(this, 7, this, MID_GNE_SET_ATTRIBUTE, GUIDesignSpinDialAttribute);
     myTimeSpinDial->hide();
     // Create and hide textField for string attributes
-    myTextFieldStrings = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextFieldAttributeStr);
+    myTextFieldStrings = new FXTextField(this, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextField);
     myTextFieldStrings->hide();
     // Create and hide ComboBox
     myChoicesCombo = new FXComboBox(this, GUIDesignComboBoxNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignComboBoxAttribute);
     myChoicesCombo->hide();
     // Create and hide checkButton
-    myCheckBox = new FXMenuCheck(this, "", this, MID_GNE_SET_ATTRIBUTE, GUIDesignMenuCheckAttribute);
+    myCheckBox = new FXMenuCheck(this, "", this, MID_GNE_SET_ATTRIBUTE, GUIDesignMenuCheck);
     myCheckBox->setWidth(20);
     myCheckBox->hide();
 }
 
 
 void
-GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, const std::string& value) {
+GNEInspectorFrame::AttributeInput::showAttribute(GNEAttributeCarrier *ac, SumoXMLTag tag, SumoXMLAttr attr, const std::string& value) {
     // Set actual Tag and attribute
     myTag = tag;
     myAttr = attr;
-    // ShowLabel
+    // If we have an junction without traffic light, we musn't show the traffic light values
+    GNEJunction *gne = dynamic_cast<GNEJunction*>(ac);
+    // Show attribute Label
     myLabel->setText(toString(myAttr).c_str());
     myLabel->show();
     // Set field depending of the type of value
@@ -761,14 +789,14 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
         // set value of checkbox
         myCheckBox->setCheck(GNEAttributeCarrier::parse<bool>(value));
         if (myCheckBox->getCheck()) {
-            myCheckBox->setText("True");
+            myCheckBox->setText("true");
         } else {
-            myCheckBox->setText("False");
+            myCheckBox->setText("false");
         }
         myCheckBox->show();
     } else if (GNEAttributeCarrier::isDiscrete(myTag, myAttr)) {
         // Obtain choices
-        const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
+        std::vector<std::string> choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
         // Check if are combinable coices
         if (choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr)) {
             // hide label
@@ -781,6 +809,22 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
             myTextFieldStrings->setTextColor(FXRGB(0, 0, 0));
             myTextFieldStrings->show();
         } else {
+            // If we have an junction without traffic light, remove TLS Choices
+            if((tag == SUMO_TAG_JUNCTION) && (gne != NULL) && (gne->getNBNode()->getControllingTLS().empty())) {
+                std::vector<std::string>::iterator it;
+                it = std::find(choices.begin(), choices.end(), toString(NODETYPE_TRAFFIC_LIGHT));
+                if(it != choices.end()) {
+                    choices.erase(it);
+                }
+                it = std::find(choices.begin(), choices.end(), toString(NODETYPE_TRAFFIC_LIGHT_NOJUNCTION));
+                if(it != choices.end()) {
+                    choices.erase(it);
+                }
+                it = std::find(choices.begin(), choices.end(), toString(NODETYPE_TRAFFIC_LIGHT_RIGHT_ON_RED));
+                if(it != choices.end()) {
+                    choices.erase(it);
+                }
+            }
             // fill comboBox
             myChoicesCombo->clearItems();
             for (std::vector<std::string>::const_iterator it = choices.begin(); it != choices.end(); ++it) {
@@ -811,13 +855,13 @@ GNEInspectorFrame::AttrInput::showAttribute(SumoXMLTag tag, SumoXMLAttr attr, co
         myTextFieldStrings->setTextColor(FXRGB(0, 0, 0));
         myTextFieldStrings->show();
     }
-    // Show AttrInput
+    // Show AttributeInput
     show();
 }
 
 
 void
-GNEInspectorFrame::AttrInput::hideAttribute() {
+GNEInspectorFrame::AttributeInput::hideAttribute() {
     // Hide all elements
     myLabel->hide();
     myTextFieldInt->hide();
@@ -827,43 +871,61 @@ GNEInspectorFrame::AttrInput::hideAttribute() {
     myChoicesCombo->hide();
     myCheckBox->hide();
     myButtonCombinableChoices->hide();
-    // hide AttrInput
+    // hide AttributeInput
     hide();
 }
 
 
 SumoXMLTag
-GNEInspectorFrame::AttrInput::getTag() const {
+GNEInspectorFrame::AttributeInput::getTag() const {
     return myTag;
 }
 
 
 SumoXMLAttr
-GNEInspectorFrame::AttrInput::getAttr() const {
+GNEInspectorFrame::AttributeInput::getAttr() const {
     return myAttr;
 }
 
 
 long
-GNEInspectorFrame::AttrInput::onCmdOpenAttributeEditor(FXObject*, FXSelector, void*) {
-    // Open AttrEditor
-    AttrEditor(this, myTextFieldStrings);
+GNEInspectorFrame::AttributeInput::onCmdOpenAllowDisallowEditor(FXObject*, FXSelector, void*) {
+    // in XML either allow or disallow can be defined for convenience
+    // In the input dialog, only the positive-list (allow) is defined even when
+    // clicking on 'disallow'
+    std::string allowed = myTextFieldStrings->getText().text();
+    std::string disallowed = "";
+    if (myAttr == SUMO_ATTR_DISALLOW) {
+        std::swap(allowed, disallowed);
+    }
+    SVCPermissions permissions = parseVehicleClasses(allowed, disallowed);
+    // use expanded form
+    allowed = getVehicleClassNames(permissions, true);
+    GNEDialog_AllowDisallow(getApp(), &allowed).execute();
+    if (myAttr == SUMO_ATTR_DISALLOW) {
+        // invert again
+        std::string disallowed = getVehicleClassNames(SVCAll & ~parseVehicleClasses(allowed));
+        myTextFieldStrings->setText((disallowed).c_str());
+    } else {
+        myTextFieldStrings->setText((allowed).c_str());
+    }
+    onCmdSetAttribute(0, 0, 0);
     return 1;
 }
 
 
 long
-GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
+GNEInspectorFrame::AttributeInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
     // Declare changed value
     std::string newVal;
     // First, obtain the string value of the new attribute depending of their type
     if (GNEAttributeCarrier::isBool(myTag, myAttr)) {
         // Set true o false depending of the checBox
         if (myCheckBox->getCheck()) {
-            myCheckBox->setText("True");
+            myCheckBox->setText("true");
             newVal = "true";
         } else {
-            myCheckBox->setText("False");
+            myCheckBox->setText("false");
             newVal = "false";
         }
     } else if (GNEAttributeCarrier::isDiscrete(myTag, myAttr)) {
@@ -871,7 +933,7 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
         const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myTag, myAttr);
         // Check if are combinable coices
         if (choices.size() > 0 && GNEAttributeCarrier::discreteCombinableChoices(myTag, myAttr)) {
-            // Get value obtained using AttrEditor
+            // Get value obtained using AttributeEditor
             newVal = myTextFieldStrings->getText().text();
         } else {
             // Get value of ComboBox
@@ -879,7 +941,7 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
         }
     } else if (GNEAttributeCarrier::isFloat(myTag, myAttr)) {
         // Check if default value of attribute must be set
-        if(myTextFieldReal->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
+        if (myTextFieldReal->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
             newVal = GNEAttributeCarrier::getDefaultValue<std::string>(myTag, myAttr);
             myTextFieldReal->setText(newVal.c_str());
         } else {
@@ -888,7 +950,7 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
         }
     } else if (GNEAttributeCarrier::isInt(myTag, myAttr)) {
         // Check if default value of attribute must be set
-        if(myTextFieldInt->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
+        if (myTextFieldInt->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
             newVal = GNEAttributeCarrier::getDefaultValue<std::string>(myTag, myAttr);
             myTextFieldInt->setText(newVal.c_str());
         } else {
@@ -900,7 +962,7 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
         newVal = toString(myTimeSpinDial->getValue());
     } else if (GNEAttributeCarrier::isString(myTag, myAttr)) {
         // Check if default value of attribute must be set
-        if(myTextFieldStrings->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
+        if (myTextFieldStrings->getText().empty() && GNEAttributeCarrier::hasDefaultValue(myTag, myAttr)) {
             newVal = GNEAttributeCarrier::getDefaultValue<std::string>(myTag, myAttr);
             myTextFieldStrings->setText(newVal.c_str());
         } else {
@@ -910,7 +972,7 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
     }
 
     // Check if attribute must be changed
-    if(myInspectorFrameParent->getACs().front()->isValid(myAttr, newVal)) {
+    if (myInspectorFrameParent->getACs().front()->isValid(myAttr, newVal)) {
         // if its valid for the first AC than its valid for all (of the same type)
         if (myInspectorFrameParent->getACs().size() > 1) {
             myInspectorFrameParent->getViewNet()->getUndoList()->p_begin("Change multiple attributes");
@@ -956,97 +1018,14 @@ GNEInspectorFrame::AttrInput::onCmdSetAttribute(FXObject*, FXSelector, void*) {
 
 
 void
-GNEInspectorFrame::AttrInput::show() {
-    FXMatrix::show();
+GNEInspectorFrame::AttributeInput::show() {
+    FXHorizontalFrame::show();
 }
 
 
 void
-GNEInspectorFrame::AttrInput::hide() {
-    FXMatrix::hide();
-}
-
-// ===========================================================================
-// AttrEditor method definitions
-// ===========================================================================
-
-GNEInspectorFrame::AttrEditor::AttrEditor(AttrInput* attrInputParent, FXTextField* textFieldAttr) :
-    FXDialogBox(attrInputParent->getApp(), ("Editing attribute '" + toString(attrInputParent->getAttr()) + "'").c_str(), GUIDesignDialogBox),
-    myAttrInputParent(attrInputParent),
-    myTextFieldAttr(textFieldAttr) {
-    // Create matrix
-    myCheckBoxMatrix = new FXMatrix(this, 2, GUIDesignMatrixAttributes);
-
-    // Obtain vector with the choices
-    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myAttrInputParent->getTag(), myAttrInputParent->getAttr());
-
-    // Get old value
-    const std::string oldValue = myTextFieldAttr->getText().text();
-
-    // Resize myVectorOfCheckBox
-    myVectorOfCheckBox.resize(choices.size(), NULL);
-
-    // Iterate over choices
-    for (int i = 0; i < (int)choices.size(); i++) {
-        // Create checkBox
-        myVectorOfCheckBox.at(i) = new FXMenuCheck(myCheckBoxMatrix, choices.at(i).c_str(),NULL, 0, GUIDesignMenuCheckAttribute);
-        // Set initial value
-        if (oldValue.find(choices.at(i)) != std::string::npos) {
-            myVectorOfCheckBox.at(i)->setCheck(true);
-        }
-    }
-
-    // Add separator
-    new FXHorizontalSeparator(this, GUIDesignHorizontalSeparator);
-
-    // Create frame for buttons
-    frameButtons = new FXHorizontalFrame(this, GUIDesignHorizontalFrame);
-
-    // Create accept button
-    myAcceptButton = new FXButton(frameButtons, "Accept", 0, this, FXDialogBox::ID_ACCEPT, GUIDesignButtonDialog);
-
-    // Create cancel button
-    myCancelButton = new FXButton(frameButtons, "Cancel", 0, this, FXDialogBox::ID_CANCEL, GUIDesignButtonDialog);
-
-    // Create reset button
-    myResetButton = new FXButton(frameButtons, "Reset", 0, this, MID_GNE_MODE_INSPECT_RESET, GUIDesignButtonDialog);
-
-    // Execute dialog to make it modal, and if user press button "accept", save attribute
-    if (execute()) {
-        std::vector<std::string> attrSolution;
-        // Iterate  over myVectorOfCheckBox
-        for (int i = 0; i < (int)myVectorOfCheckBox.size(); i++) {
-            // If checkBox is cheked, save attribute
-            if (myVectorOfCheckBox.at(i)->getCheck()) {
-                attrSolution.push_back(std::string(myVectorOfCheckBox.at(i)->getText().text()));
-            }
-        }
-        // join to string
-        myTextFieldAttr->setText(joinToString(attrSolution, " ").c_str());
-        // Set attribute
-        myAttrInputParent->onCmdSetAttribute(0, 0, 0);
-    }
-}
-
-
-GNEInspectorFrame::AttrEditor::~AttrEditor() {}
-
-
-long
-GNEInspectorFrame::AttrEditor::onCmdReset(FXObject*, FXSelector, void*) {
-    // Obtain vector with the choices
-    const std::vector<std::string>& choices = GNEAttributeCarrier::discreteChoices(myAttrInputParent->getTag(), myAttrInputParent->getAttr());
-    // Get old value
-    const std::string oldValue = myTextFieldAttr->getText().text();
-    // Reset values
-    for (int i = 0; i < (int)choices.size(); i++) {
-        if (oldValue.find(choices.at(i)) != std::string::npos) {
-            myVectorOfCheckBox.at(i)->setCheck(true);
-        } else {
-            myVectorOfCheckBox.at(i)->setCheck(false);
-        }
-    }
-    return 1;
+GNEInspectorFrame::AttributeInput::hide() {
+    FXHorizontalFrame::hide();
 }
 
 /****************************************************************************/

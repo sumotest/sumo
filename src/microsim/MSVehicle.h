@@ -540,7 +540,7 @@ public:
     /** @brief Returns the SUMOTime lost (speed was lesser maximum speed)
      *
      * @note Intentional stopping does not count towards this time.
-    // @note speedFactor is included so time loss can never be negative. 
+    // @note speedFactor is included so time loss can never be negative.
     // The value is that of a driver who compares his travel time when
     // the road is clear (which includes speed factor) with the actual travel time.
     // @note includes time lost due to low departSpeed and decelerating/accelerating for planned stops
@@ -683,7 +683,7 @@ public:
     /// @name strategical/tactical lane choosing methods
     /// @{
 
-    // 
+    //
     /** @struct LaneQ
      * @brief A structure representing the best lanes for continuing the current route starting at 'lane'
      */
@@ -702,12 +702,12 @@ public:
         int bestLaneOffset;
         /// @brief Whether this lane allows to continue the drive
         bool allowsContinuation;
-        /* @brief Longest sequence of (normal-edge) lanes that can be followed without a lane change 
+        /* @brief Longest sequence of (normal-edge) lanes that can be followed without a lane change
          * The 'length' attribute is the sum of these lane lengths
          * (There may be alternative sequences that have equal length)
          * It is the 'best' in the strategic sense of reducing required lane-changes
          */
-        std::vector<MSLane*> bestContinuations;  
+        std::vector<MSLane*> bestContinuations;
     };
 
     /** @brief Returns the description of best lanes to use in order to continue the route
@@ -748,7 +748,7 @@ public:
 
     /* @brief returns the current signed offset from the lane that is most
      * suited for continuing the current route (in the strategic sense of reducing lane-changes)
-     * - 0 if the vehicle is one it's best lane 
+     * - 0 if the vehicle is one it's best lane
      * - negative if the vehicle should change to the right
      * - positive if the vehicle should change to the left
      */
@@ -794,6 +794,10 @@ public:
         return myCFVariables;
     }
 
+    /// @brief whether this vehicle is selected in the GUI
+    virtual bool isSelected() const {
+        return false;
+    }
 
     /// @name vehicle stops definitions and i/o
     //@{
@@ -857,7 +861,7 @@ public:
     /** @brief replace the current parking area stop with a new stop with merge duration
      */
     bool replaceParkingArea(MSParkingArea* parkingArea, std::string& errorMsg);
-    
+
 
     /** @brief get the current parking area stop
      */
@@ -1480,7 +1484,7 @@ protected:
      * The first element corresponds to the current edge and is returned in getBestLanes()
      * The other elements are only used as a temporary structure in updateBestLanes();
      */
-    std::vector<std::vector<LaneQ> > myBestLanes; 
+    std::vector<std::vector<LaneQ> > myBestLanes;
 
     /* @brief iterator to speed up retrival of the current lane's LaneQ in getBestLaneOffset() and getBestLanesContinuation()
      * This is updated in updateOccupancyAndCurrentBestLane()

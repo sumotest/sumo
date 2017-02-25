@@ -64,7 +64,7 @@
 
 /* Version number of package */
 #ifndef HAVE_VERSION_H
-#define VERSION_STRING "0.28.0"
+#define VERSION_STRING "0.29.0"
 #endif
 
 /* Define if junction internal lanes should be used. */
@@ -76,8 +76,5 @@
 
 /* define to use nvwa for memory leak checking */
 //#define CHECK_MEMORY_LEAKS 1
-
-/* work around missing snprintf function (WARNING: return value semantics differ) */
-#define snprintf _snprintf
 
 #endif

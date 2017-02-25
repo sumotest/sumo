@@ -59,6 +59,7 @@
 #endif // CHECK_MEMORY_LEAKS
 
 //#define DEBUG_CONNECTION_GUESSING
+//#define DEBUG_ANGLES
 #define DEBUGCOND true
 
 // ===========================================================================
@@ -123,7 +124,10 @@ NBEdge::Lane::Lane(NBEdge* e, const std::string& origID_) :
     permissions(SVCAll),
     preferred(0),
     endOffset(e->getEndOffset()), width(e->getLaneWidth()),
-    origID(origID_) {
+    origID(origID_),
+    accelRamp(false),
+    connectionsDone(false)
+{
 }
 
 
@@ -509,21 +513,27 @@ NBEdge::setGeometry(const PositionVector& s, bool inner) {
 }
 
 void
-NBEdge::setNodeBorder(const NBNode* node, const Position& p) {
+NBEdge::setNodeBorder(const NBNode* node, const Position& p, const Position& p2, bool rectangularCut) {
     const SUMOReal extend = 200;
-    const SUMOReal distanceOfClosestThreshold = 1.0; // very rough heuristic, actually depends on angle
-    SUMOReal distanceOfClosest = distanceOfClosestThreshold;
-    PositionVector border = myGeom.getOrthogonal(p, extend, distanceOfClosest);
-    if (distanceOfClosest < distanceOfClosestThreshold) {
-        // shift border forward / backward
-        const SUMOReal shiftDirection = (node == myFrom ? 1.0 : -1.0);
-        SUMOReal base = myGeom.nearest_offset_to_point2D(p);
-        if (base != GeomHelper::INVALID_OFFSET) {
-            base += shiftDirection * (distanceOfClosestThreshold - distanceOfClosest);
-            PositionVector tmp = myGeom;
-            tmp.move2side(1.0);
-            border = myGeom.getOrthogonal(tmp.positionAtOffset2D(base), extend, distanceOfClosest);
+    PositionVector border;
+    if (rectangularCut) {
+        const SUMOReal distanceOfClosestThreshold = 1.0; // very rough heuristic, actually depends on angle
+        SUMOReal distanceOfClosest = distanceOfClosestThreshold;
+        border = myGeom.getOrthogonal(p, extend, distanceOfClosest);
+        if (distanceOfClosest < distanceOfClosestThreshold) {
+            // shift border forward / backward
+            const SUMOReal shiftDirection = (node == myFrom ? 1.0 : -1.0);
+            SUMOReal base = myGeom.nearest_offset_to_point2D(p);
+            if (base != GeomHelper::INVALID_OFFSET) {
+                base += shiftDirection * (distanceOfClosestThreshold - distanceOfClosest);
+                PositionVector tmp = myGeom;
+                tmp.move2side(1.0);
+                border = myGeom.getOrthogonal(tmp.positionAtOffset2D(base), extend, distanceOfClosest);
+            }
         }
+    } else {
+        border.push_back(p);
+        border.push_back(p2);
     }
     if (border.size() == 2) {
         SUMOReal edgeWidth = 0;
@@ -916,7 +926,7 @@ NBEdge::setConnection(int lane, NBEdge* destEdge,
             // yes, the connection was set using an algorithm which requires a recheck
             myStep = LANES2LANES_RECHECK;
         } else {
-            // ok, let's only not recheck it if we did no add something that has to be recheked
+            // ok, let's only not recheck it if we did no add something that has to be rechecked
             if (myStep != LANES2LANES_RECHECK) {
                 myStep = LANES2LANES_DONE;
             }
@@ -1609,6 +1619,15 @@ NBEdge::computeAngle() {
     const Position referencePosEnd = shape.positionAtOffset2D(shape.length() - angleLookahead);
     myEndAngle = GeomHelper::legacyDegree(referencePosEnd.angleTo2D(toCenter), true);
     myTotalAngle = GeomHelper::legacyDegree(myFrom->getPosition().angleTo2D(myTo->getPosition()), true);
+#ifdef DEBUG_ANGLES
+    if (DEBUGCOND) std::cout << "computeAngle edge=" << getID() << " fromCenter=" << fromCenter << " toCenter=" << toCenter 
+        << " refStart=" << referencePosStart << " refEnd=" << referencePosEnd << " shape=" << shape
+        << " hasFromShape=" << hasFromShape
+        << " hasToShape=" << hasToShape
+        << " numLanes=" << getNumLanes()
+        << " shapeLane=" << getNumLanes() / 2
+        << " startA=" << myStartAngle << " endA=" << myEndAngle << " totA=" << myTotalAngle << "\n";
+#endif
 }
 
 
@@ -1687,8 +1706,23 @@ NBEdge::hasLaneSpecificEndOffset() const {
 
 
 bool
+NBEdge::hasAccelLane() const {
+    for (std::vector<Lane>::const_iterator i = myLanes.begin(); i != myLanes.end(); ++i) {
+        if (i->accelRamp) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool
 NBEdge::needsLaneSpecificOutput() const {
-    return hasLaneSpecificPermissions() || hasLaneSpecificSpeed() || hasLaneSpecificWidth() || hasLaneSpecificEndOffset() || (!myLanes.empty() && myLanes.back().oppositeID != "");
+    return (hasLaneSpecificPermissions() 
+            || hasLaneSpecificSpeed() 
+            || hasLaneSpecificWidth() 
+            || hasLaneSpecificEndOffset() 
+            || hasAccelLane() 
+            || (!myLanes.empty() && myLanes.back().oppositeID != ""));
 }
 
 
@@ -1700,14 +1734,12 @@ NBEdge::computeEdge2Edges(bool noLeftMovers) {
     if (myStep >= EDGE2EDGES) {
         return true;
     }
-    if (myConnections.size() == 0) {
-        const EdgeVector& o = myTo->getOutgoingEdges();
-        for (EdgeVector::const_iterator i = o.begin(); i != o.end(); ++i) {
-            if (noLeftMovers && myTo->isLeftMover(this, *i)) {
-                continue;
-            }
-            myConnections.push_back(Connection(-1, *i, -1));
+    const EdgeVector& o = myTo->getOutgoingEdges();
+    for (EdgeVector::const_iterator i = o.begin(); i != o.end(); ++i) {
+        if (noLeftMovers && myTo->isLeftMover(this, *i)) {
+            continue;
         }
+        myConnections.push_back(Connection(-1, *i, -1));
     }
     myStep = EDGE2EDGES;
     return true;
@@ -2000,7 +2032,11 @@ NBEdge::divideSelectedLanesOnEdges(const EdgeVector* outgoing, const std::vector
                 }
                 continue;
             }
-
+            if (myLanes[fromIndex].connectionsDone) {
+                // we already have complete information about connections from
+                // this lane. do not add anything else
+                continue;
+            }
             myConnections.push_back(Connection(fromIndex, target, -1));
 #ifdef DEBUG_CONNECTION_GUESSING
             if (DEBUGCOND) {
@@ -2057,6 +2093,8 @@ NBEdge::addStraightConnections(const EdgeVector* outgoing, const std::vector<int
             && ((getPermissions(fromIndex) & target->getPermissions()) != 0)
             // more than pedestrians
             && ((getPermissions(fromIndex) & target->getPermissions()) != SVC_PEDESTRIAN)
+            // lane not yet fully defined
+            && !myLanes[fromIndex].connectionsDone
         ) {
 #ifdef DEBUG_CONNECTION_GUESSING
             if (DEBUGCOND) {
@@ -2503,6 +2541,7 @@ NBEdge::append(NBEdge* e) {
     myPossibleTurnDestination = e->myPossibleTurnDestination;
     // set the node
     myTo = e->myTo;
+    myToBorder = e->myToBorder;
     if (e->getSignalOffset() != UNSPECIFIED_SIGNAL_OFFSET) {
         mySignalOffset = e->getSignalOffset();
     } else {
@@ -2728,6 +2767,13 @@ NBEdge::setSpeed(int lane, SUMOReal speed) {
     }
     assert(lane < (int)myLanes.size());
     myLanes[lane].speed = speed;
+}
+
+void
+NBEdge::setAcceleration(int lane, bool accelRamp) {
+    assert(lane >= 0);
+    assert(lane < (int)myLanes.size());
+    myLanes[lane].accelRamp = accelRamp;
 }
 
 

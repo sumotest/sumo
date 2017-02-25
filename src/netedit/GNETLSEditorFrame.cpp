@@ -35,7 +35,6 @@
 #include <iostream>
 #include <utils/foxtools/fxexdefs.h>
 #include <utils/foxtools/MFXUtils.h>
-#include <utils/common/TplConvert.h>
 #include <utils/gui/windows/GUIAppEnum.h>
 #include <utils/gui/div/GUIIOGlobals.h>
 #include <utils/gui/div/GUIGlobalSelection.h>
@@ -96,7 +95,7 @@ FXIMPLEMENT(GNETLSEditorFrame, FXVerticalFrame, GNETLSEditorFrameMap, ARRAYNUMBE
 // ===========================================================================
 // method definitions
 // ===========================================================================
-GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet):
+GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame* horizontalFrameParent, GNEViewNet* viewNet):
     GNEFrame(horizontalFrameParent, viewNet, "Edit Traffic Light"),
     myTableFont(new FXFont(getApp(), "Courier New", 9)),
     myCurrentJunction(0),
@@ -105,7 +104,7 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, G
     // create groupbox for description
     myGroupBoxJunction = new FXGroupBox(myContentFrame, "Junction", GUIDesignGroupBoxFrame);
 
-    // create description label 
+    // create description label
     myDescription = new FXLabel(myGroupBoxJunction, "No Junction Selected\n", 0, GUIDesignLabelLeft);
 
     // create groupbox for tl df
@@ -127,7 +126,7 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, G
     myNameLabel = new FXLabel(myAttributeMatrix, "Name", 0, GUIDesignLabelAttribute);
 
     // create text field for name
-    myNameTextField = new FXTextField(myAttributeMatrix, GUIDesignTextFieldNCol, this, MID_GNE_DEF_SWITCH, GUIDesignTextFieldAttributeStr);
+    myNameTextField = new FXTextField(myAttributeMatrix, GUIDesignTextFieldNCol, this, MID_GNE_DEF_SWITCH, GUIDesignTextField);
 
     // create label for program
     myProgramLabel = new FXLabel(myAttributeMatrix, "Program", 0, GUIDesignLabelAttribute);
@@ -137,11 +136,11 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, G
 
     // create offset control
     myOffsetLabel = new FXLabel(myAttributeMatrix, "Offset", 0, GUIDesignLabelAttribute);
-    myOffset = new FXTextField(myAttributeMatrix, GUIDesignTextFieldNCol, this, MID_GNE_DEF_OFFSET, GUIDesignTextFieldAttributeReal);
+    myOffset = new FXTextField(myAttributeMatrix, GUIDesignTextFieldNCol, this, MID_GNE_DEF_OFFSET, GUIDesignTextFieldReal);
 
     // create groupbox for phases
     myGroupBoxPhases = new FXGroupBox(myContentFrame, "Phases", GUIDesignGroupBoxFrame);
-    
+
     // create and configure phase table
     myPhaseTable = new FXTable(myGroupBoxPhases, this, MID_GNE_PHASE_TABLE, GUIDesignTableLimitedHeight);
     myPhaseTable->setColumnHeaderMode(LAYOUT_FIX_HEIGHT);
@@ -163,10 +162,10 @@ GNETLSEditorFrame::GNETLSEditorFrame(FXHorizontalFrame *horizontalFrameParent, G
 
     // create groupbox for modifications
     myGroupBoxModifications = new FXGroupBox(myContentFrame, "Modifications", GUIDesignGroupBoxFrame);
-    
+
     // create discard modifications buttons
     myDiscardModificationsButtons = new FXButton(myGroupBoxModifications, "Cancel\t\tDiscard program modifications (Esc)", 0, this, MID_CANCEL, GUIDesignButton);
-    
+
     // create save modifications button
     mySaveModificationsButtons = new FXButton(myGroupBoxModifications, "Save\t\tSave program modifications (Enter)", 0, this, MID_OK, GUIDesignButton);
 

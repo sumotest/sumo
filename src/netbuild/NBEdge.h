@@ -148,6 +148,13 @@ public:
 
         /// @brief An opposite lane ID, if given
         std::string oppositeID;
+
+        /// @brief Whether this lane is an acceleration lane
+        bool accelRamp;
+
+        /// @brief Whether connection information for this lane is already completed
+        // @note (see NIImporter_DlrNavteq::ConnectedLanesHandler)
+        bool connectionsDone;
     };
 
 
@@ -163,11 +170,11 @@ public:
         Connection(int fromLane_, NBEdge* toEdge_, int toLane_);
 
         /// @brief constructor with more parameters
-        Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, 
-                bool keepClear_=true, 
-                SUMOReal contPos_=UNSPECIFIED_CONTPOS, 
-                SUMOReal visibility_=UNSPECIFIED_VISIBILITY_DISTANCE, 
-                bool haveVia_ = false);
+        Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_,
+                   bool keepClear_ = true,
+                   SUMOReal contPos_ = UNSPECIFIED_CONTPOS,
+                   SUMOReal visibility_ = UNSPECIFIED_VISIBILITY_DISTANCE,
+                   bool haveVia_ = false);
 
         /// @brief destructor
         ~Connection() { }
@@ -965,6 +972,9 @@ public:
     /// @brief whether lanes differ in offset
     bool hasLaneSpecificEndOffset() const;
 
+    /// @brief whether one of the lanes is an acceleration lane
+    bool hasAccelLane() const;
+
     /// @brief computes the edge (step1: computation of approached edges)
     bool computeEdge2Edges(bool noLeftMovers);
 
@@ -1113,6 +1123,9 @@ public:
     /// @brief set lane specific speed (negative lane implies set for all lanes)
     void setSpeed(int lane, SUMOReal speed);
 
+    /// @brief marks one lane as acceleration lane
+    void setAcceleration(int lane, bool accelRamp);
+
     /// @brief get the union of allowed classes over all lanes or for a specific lane
     SVCPermissions getPermissions(int lane = -1) const;
 
@@ -1134,8 +1147,8 @@ public:
     }
 
     /// @brief declares connections as fully loaded. This is needed to avoid recomputing connections if an edge has no connections intentionally.
-    void declareConnectionsAsLoaded() {
-        myStep = LANES2LANES_USER;
+    void declareConnectionsAsLoaded(EdgeBuildingStep step = LANES2LANES_USER) {
+        myStep = step;
     }
 
     /* @brief fill connection attributes shape, viaShape, ...
@@ -1160,7 +1173,7 @@ public:
     PositionVector cutAtIntersection(const PositionVector& old) const;
 
     /// @brief Set Node border
-    void setNodeBorder(const NBNode* node, const Position& p);
+    void setNodeBorder(const NBNode* node, const Position& p, const Position& p2, bool rectangularCut);
 
 private:
     /** @class ToEdgeConnectionsAdder

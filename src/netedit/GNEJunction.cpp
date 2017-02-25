@@ -97,7 +97,6 @@ GNEJunction::updateGeometry() {
         myBoundary.add(myNBNode.getShape().getBoxBoundary());
     }
     myMaxSize = MAX2(myBoundary.getWidth(), myBoundary.getHeight());
-    // rebuild GNECrossings
     rebuildGNECrossings();
 }
 
@@ -106,12 +105,15 @@ void
 GNEJunction::rebuildGNECrossings() {
     // drop existent GNECrossings
     dropGNECrossings();
-    // build new NBNode::Crossings and walking areas and create GNECrossings
-    myNBNode.buildCrossingsAndWalkingAreas(false);
-    const std::vector<NBNode::Crossing>& crossings = myNBNode.getCrossings();
-    for (std::vector<NBNode::Crossing>::const_iterator it = crossings.begin(); it != crossings.end(); it++) {
-        myGNECrossings.push_back(new GNECrossing(this, (*it).id));
-        myGNECrossings.back()->incRef();
+    // rebuild GNECrossings only if create crossings and walkingAreas in net is enabled
+    if (myNet->getNetBuilder()->haveNetworkCrossings() == true) {
+        // build new NBNode::Crossings and walking areas and create GNECrossings
+        myNBNode.buildCrossingsAndWalkingAreas();
+        const std::vector<NBNode::Crossing>& crossings = myNBNode.getCrossings();
+        for (std::vector<NBNode::Crossing>::const_iterator it = crossings.begin(); it != crossings.end(); it++) {
+            myGNECrossings.push_back(new GNECrossing(this, (*it).id));
+            myGNECrossings.back()->incRef();
+        }
     }
 }
 
@@ -196,7 +198,7 @@ GNEJunction::drawGL(const GUIVisualizationSettings& s) const {
                 glPopMatrix();
             }
             // Check if a  buuble must be drawed over junction
-            if(myNet->getViewNet()->showJunctionAsBubbles()) {
+            if (myNet->getViewNet()->showJunctionAsBubbles()) {
                 setColor(s, true);
                 // recognize full transparency and simply don't draw
                 GLfloat color[4];
@@ -259,11 +261,11 @@ GNEJunction::getNBNode() const {
 
 
 
-void 
-GNEJunction::addIncomingGNEEdge(GNEEdge *edge) {
+void
+GNEJunction::addIncomingGNEEdge(GNEEdge* edge) {
     // Check if incoming edge was already inserted
     std::vector<GNEEdge*>::iterator i = std::find(myGNEIncomingEdges.begin(), myGNEIncomingEdges.end(), edge);
-    if(i != myGNEIncomingEdges.end()) {
+    if (i != myGNEIncomingEdges.end()) {
         throw InvalidArgument("Incoming " + toString(SUMO_TAG_EDGE) + " with ID '" + edge->getID() + "' was already inserted into " + toString(getTag()) + " with ID " + getID() + "'");
     } else {
         // Add edge into containers
@@ -273,11 +275,11 @@ GNEJunction::addIncomingGNEEdge(GNEEdge *edge) {
 }
 
 
-void 
-GNEJunction::addOutgoingGNEEdge(GNEEdge *edge) {
+void
+GNEJunction::addOutgoingGNEEdge(GNEEdge* edge) {
     // Check if outgoing edge was already inserted
     std::vector<GNEEdge*>::iterator i = std::find(myGNEOutgoingEdges.begin(), myGNEOutgoingEdges.end(), edge);
-    if(i != myGNEOutgoingEdges.end()) {
+    if (i != myGNEOutgoingEdges.end()) {
         throw InvalidArgument("Outgoing " + toString(SUMO_TAG_EDGE) + " with ID '" + edge->getID() + "' was already inserted into " + toString(getTag()) + " with ID " + getID() + "'");
     } else {
         // Add edge into containers
@@ -287,11 +289,11 @@ GNEJunction::addOutgoingGNEEdge(GNEEdge *edge) {
 }
 
 
-void 
-GNEJunction::removeIncomingGNEEdge(GNEEdge *edge) {
+void
+GNEJunction::removeIncomingGNEEdge(GNEEdge* edge) {
     // Check if incoming edge was already inserted
     std::vector<GNEEdge*>::iterator i = std::find(myGNEIncomingEdges.begin(), myGNEIncomingEdges.end(), edge);
-    if(i == myGNEIncomingEdges.end()) {
+    if (i == myGNEIncomingEdges.end()) {
         throw InvalidArgument("Incoming " + toString(SUMO_TAG_EDGE) + " with ID '" + edge->getID() + "' doesn't found into " + toString(getTag()) + " with ID " + getID() + "'");
     } else {
         // remove edge from containers
@@ -301,11 +303,11 @@ GNEJunction::removeIncomingGNEEdge(GNEEdge *edge) {
 }
 
 
-void 
-GNEJunction::removeOutgoingGNEEdge(GNEEdge *edge) {
+void
+GNEJunction::removeOutgoingGNEEdge(GNEEdge* edge) {
     // Check if outgoing edge was already inserted
     std::vector<GNEEdge*>::iterator i = std::find(myGNEOutgoingEdges.begin(), myGNEOutgoingEdges.end(), edge);
-    if(i == myGNEOutgoingEdges.end()) {
+    if (i == myGNEOutgoingEdges.end()) {
         throw InvalidArgument("Outgoing " + toString(SUMO_TAG_EDGE) + " with ID '" + edge->getID() + "' doesn't found into " + toString(getTag()) + " with ID " + getID() + "'");
     } else {
         // remove edge from containers
@@ -424,7 +426,7 @@ GNEJunction::updateShapesAndGeometries() {
     // Finally update geometry of this edge
     updateGeometry();
     // Update view to show the new shapes
-    if(myNet->getViewNet()) {
+    if (myNet->getViewNet()) {
         myNet->getViewNet()->update();
     }
 }

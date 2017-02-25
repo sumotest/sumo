@@ -118,6 +118,7 @@ public:
 
     // @brief fraction of the leftmost lanes to reserve for oncoming traffic
     static const SUMOReal RESERVE_FOR_ONCOMING_FACTOR;
+    static const SUMOReal RESERVE_FOR_ONCOMING_FACTOR_JUNCTIONS;
 
     // @brief the time pedestrians take to reach maximum impatience
     static const SUMOReal MAX_WAIT_TOLERANCE;
@@ -152,6 +153,7 @@ protected:
     typedef std::vector<Obstacle> Obstacles;
     typedef std::map<const MSLane*, Obstacles, lane_by_numid_sorter> NextLanesObstacles;
     typedef std::map<std::pair<const MSLane*, const MSLane*>, WalkingAreaPath> WalkingAreaPaths;
+    typedef std::map<const MSLane*, SUMOReal> MinNextLengths;
 
     struct NextLaneInfo {
         NextLaneInfo(const MSLane* _lane, const MSLink* _link, int _dir) :
@@ -177,11 +179,11 @@ protected:
     /// @brief information regarding surround Pedestrians (and potentially other things)
     struct Obstacle {
         /// @brief create No-Obstacle
-        Obstacle(int dir, SUMOReal dist=DIST_FAR_AWAY);
+        Obstacle(int dir, SUMOReal dist = DIST_FAR_AWAY);
         /// @brief create an obstacle from ped for ego moving in dir
         Obstacle(const PState& ped);
         /// @brief create an obstacle from explict values
-        Obstacle(SUMOReal _x, SUMOReal _speed, const std::string& _description, const SUMOReal width = 0., bool _border=false)
+        Obstacle(SUMOReal _x, SUMOReal _speed, const std::string& _description, const SUMOReal width = 0., bool _border = false)
             : xFwd(_x + width / 2.), xBack(_x - width / 2.), speed(_speed), description(_description), border(_border) {};
 
         /// @brief maximal position on the current lane in forward direction
@@ -391,7 +393,7 @@ private:
     static Obstacles getNeighboringObstacles(const Pedestrians& pedestrians, int egoIndex, int stripes);
 
     const Obstacles& getNextLaneObstacles(NextLanesObstacles& nextLanesObs, const MSLane* lane, const MSLane* nextLane, int stripes,
-                                          SUMOReal nextLength, int nextDir, SUMOReal currentLength, int currentDir);
+                                          int nextDir, SUMOReal currentLength, int currentDir);
 
     static void transformToCurrentLanePositions(Obstacles& o, int currentDir, int nextDir, SUMOReal currentLength, SUMOReal nextLength);
 
@@ -401,7 +403,7 @@ private:
     Pedestrians& getPedestrians(const MSLane* lane);
 
     /* @brief compute stripe-offset to transform relY values from a lane with origStripes into a lane wit destStrips
-     * @note this is called once for transforming nextLane peds to into the current system as obstacles and another time 
+     * @note this is called once for transforming nextLane peds to into the current system as obstacles and another time
      * (in reverse) to transform the pedestrian coordinates into the nextLane-coordinates when changing lanes
      */
     static int getStripeOffset(int origStripes, int destStripes, bool addRemainder);
@@ -419,6 +421,7 @@ private:
 
     /// @brief store for walkinArea elements
     static WalkingAreaPaths myWalkingAreaPaths;
+    static MinNextLengths myMinNextLengths;
 
     /// @brief empty pedestrian vector
     static Pedestrians noPedestrians;

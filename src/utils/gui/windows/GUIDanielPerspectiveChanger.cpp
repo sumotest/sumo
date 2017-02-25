@@ -204,7 +204,7 @@ GUIDanielPerspectiveChanger::onMouseWheel(void* data) {
     }
     // zoom scale relative delta and its inverse; is optimized (all literals)
     const SUMOReal zScale_rDelta_norm = 0.1;
-    const SUMOReal zScale_rDelta_inv = -zScale_rDelta_norm/(1. + zScale_rDelta_norm);
+    const SUMOReal zScale_rDelta_inv = -zScale_rDelta_norm / (1. + zScale_rDelta_norm);
     SUMOReal zScale_rDelta = zScale_rDelta_norm ;
     if (e->code < 0) {
         // for inverse zooming direction
@@ -289,6 +289,10 @@ GUIDanielPerspectiveChanger::changeCanvasSizeLeft(int change) {
 
 long
 GUIDanielPerspectiveChanger::onKeyPress(void* data) {
+    // ignore key events in gaming mode
+    if (gSchemeStorage.getDefault().gaming) {
+        return 0;
+    }
     FXEvent* e = (FXEvent*) data;
     SUMOReal zoomDiff = 0.1;
     SUMOReal moveX = 0;

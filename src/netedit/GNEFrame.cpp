@@ -54,26 +54,26 @@
 // method definitions
 // ===========================================================================
 
-GNEFrame::GNEFrame(FXHorizontalFrame *horizontalFrameParent, GNEViewNet* viewNet, const std::string& frameLabel) :
-    FXVerticalFrame(horizontalFrameParent, GUIDesignFrame),
+GNEFrame::GNEFrame(FXHorizontalFrame* horizontalFrameParent, GNEViewNet* viewNet, const std::string& frameLabel) :
+    FXVerticalFrame(horizontalFrameParent, GUIDesignAuxiliarFrame),
     myViewNet(viewNet) {
     // Create font
     myFrameHeaderFont = new FXFont(getApp(), "Arial", 14, FXFont::Bold),
 
     // Create frame for header
-    myHeaderFrame = new FXHorizontalFrame(this, GUIDesignHorizontalFrame);
+    myHeaderFrame = new FXHorizontalFrame(this, GUIDesignAuxiliarHorizontalFrame);
 
     // Create frame for left elements of header (By default unused)
-    myHeaderLeftFrame = new FXHorizontalFrame(myHeaderFrame, GUIDesignHorizontalFrame);
+    myHeaderLeftFrame = new FXHorizontalFrame(myHeaderFrame, GUIDesignAuxiliarHorizontalFrame);
     myHeaderLeftFrame->hide();
 
     // Create titel frame
     myFrameHeaderLabel = new FXLabel(myHeaderFrame, frameLabel.c_str(), 0, GUIDesignLabelLeft);
 
     // Create frame for right elements of header (By default unused)
-    myHeaderRightFrame = new FXHorizontalFrame(myHeaderFrame, GUIDesignHorizontalFrame);
+    myHeaderRightFrame = new FXHorizontalFrame(myHeaderFrame, GUIDesignAuxiliarHorizontalFrame);
     myHeaderRightFrame->hide();
-    
+
     // Add separator
     new FXHorizontalSeparator(this, GUIDesignHorizontalSeparator);
 
@@ -96,7 +96,7 @@ GNEFrame::~GNEFrame() {
 }
 
 
-void 
+void
 GNEFrame::show() {
     // show scroll window
     FXVerticalFrame::show();
@@ -105,7 +105,7 @@ GNEFrame::show() {
 }
 
 
-void 
+void
 GNEFrame::hide() {
     // hide scroll window
     FXVerticalFrame::hide();
@@ -114,7 +114,7 @@ GNEFrame::hide() {
 }
 
 
-void 
+void
 GNEFrame::setFrameWidth(int width) {
     setWidth(width);
     myScrollWindowsContents->setWidth(width);

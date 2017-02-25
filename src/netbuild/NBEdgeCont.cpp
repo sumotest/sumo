@@ -189,7 +189,7 @@ NBEdgeCont::ignoreFilterMatch(NBEdge* edge) {
     if (!myRemoveEdgesAfterJoining && myEdges2Keep.size() != 0) {
         if (find(myEdges2Keep.begin(), myEdges2Keep.end(), edge->getID()) == myEdges2Keep.end()) {
             // explicit whitelisting may be combined additively with other filters
-            if (myVehicleClasses2Keep == 0 && myVehicleClasses2Remove == 0 
+            if (myVehicleClasses2Keep == 0 && myVehicleClasses2Remove == 0
                     && myTypes2Keep.size() == 0 && myTypes2Remove.size() == 0
                     && myPrunningBoundary.size() == 0) {
                 return true;
@@ -524,18 +524,20 @@ NBEdgeCont::splitAt(NBDistrictCont& dc,
 }
 
 
-void 
+void
 NBEdgeCont::patchRoundabouts(NBEdge* orig, NBEdge* part1, NBEdge* part2, std::set<EdgeSet>& roundabouts) {
+    std::set<EdgeSet> addLater;
     for (std::set<EdgeSet>::iterator it = roundabouts.begin(); it != roundabouts.end(); ++it) {
         EdgeSet roundaboutSet = *it;
         if (roundaboutSet.count(orig) > 0) {
-            roundabouts.erase(roundaboutSet);
             roundaboutSet.erase(orig);
             roundaboutSet.insert(part1);
             roundaboutSet.insert(part2);
-            roundabouts.insert(roundaboutSet);
         }
+        addLater.insert(roundaboutSet);
     }
+    roundabouts.clear();
+    roundabouts.insert(addLater.begin(), addLater.end());
 }
 
 
@@ -647,7 +649,7 @@ NBEdgeCont::recheckLanes() {
                 }
                 if (fabs(oppEdge->getLoadedLength() - edge->getLoadedLength()) > POSITION_EPS) {
                     throw ProcessError("Opposite lane '" + oppositeID + "' (length " + toString(oppEdge->getLoadedLength()) + ") differs in length from edge '" + edge->getID() + "' (length "
-                            + toString(edge->getLoadedLength()) + ")!");
+                                       + toString(edge->getLoadedLength()) + ")!");
                 }
                 if (oppEdge->getFromNode() != edge->getToNode() || oppEdge->getToNode() != edge->getFromNode()) {
                     throw ProcessError("Opposite lane '" + oppositeID + "' does not connect the same nodes as edge '" + edge->getID() + "'!");
@@ -821,7 +823,7 @@ NBEdgeCont::recheckLaneSpread() {
 }
 
 
-NBEdge* 
+NBEdge*
 NBEdgeCont::getOppositeByID(const std::string& edgeID) const {
     const std::string oppositeID = edgeID[0] == '-' ? edgeID.substr(1) :  "-" + edgeID;
     EdgeCont::const_iterator it = myEdges.find(oppositeID);
