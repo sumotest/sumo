@@ -195,11 +195,27 @@ public:
     }
 
 
-    /** @brief Get the vehicle type's maximum deceleration [m/s^2]
-     * @return The maximum deceleration (in m/s^2) of vehicles of this class
+    /** @brief Get the vehicle type's maximal comfortable deceleration [m/s^2]
+     * @return The maximal comfortable deceleration (in m/s^2) of vehicles of this class
      */
     inline double getMaxDecel() const {
         return myDecel;
+    }
+
+
+    /** @brief Get the vehicle type's maximal phisically possible deceleration [m/s^2]
+     * @return The maximal physically possible deceleration (in m/s^2) of vehicles of this class
+     */
+    inline double getEmergencyDecel() const {
+        return myEmergencyDecel;
+    }
+
+
+    /** @brief Get the vehicle type's apparent deceleration [m/s^2] (the one regarded by its followers
+     * @return The apparent deceleration (in m/s^2) of vehicles of this class
+     */
+    inline double getApparentDecel() const {
+        return myApparentDecel;
     }
 
 
@@ -404,11 +420,27 @@ public:
     }
 
 
-    /** @brief Sets a new value for maximum deceleration [m/s^2]
+    /** @brief Sets a new value for maximal comfortable deceleration [m/s^2]
      * @param[in] accel The new deceleration in m/s^2
      */
     virtual void setMaxDecel(double decel) {
         myDecel = decel;
+    }
+
+
+    /** @brief Sets a new value for maximal physically possible deceleration [m/s^2]
+     * @param[in] accel The new deceleration in m/s^2
+     */
+    virtual void setEmergencyDecel(double decel) {
+        myEmergencyDecel = decel;
+    }
+
+
+    /** @brief Sets a new value for the apparent deceleration [m/s^2]
+     * @param[in] accel The new deceleration in m/s^2
+     */
+    virtual void setApparentDecel(double decel) {
+        myEmergencyDecel = decel;
     }
 
 

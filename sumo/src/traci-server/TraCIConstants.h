@@ -561,7 +561,7 @@
 // max. acceleration (get: vehicle types)
 #define VAR_ACCEL 0x46
 
-// max. deceleration (get: vehicle types)
+// max. comfortable deceleration (get: vehicle types)
 #define VAR_DECEL 0x47
 
 // driver reaction time (get: vehicle types)
@@ -602,6 +602,12 @@
 
 // edges (get: routes)
 #define VAR_EDGES 0x54
+
+// max. (physically possible) deceleration (get: vehicle types)
+#define VAR_EMERGENCY_DECEL 0x54
+
+// apparent deceleration (get: vehicle types)
+#define VAR_APPARENT_DECEL 0x55
 
 // filled? (get: polygons)
 #define VAR_FILL 0x55

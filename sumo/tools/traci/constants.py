@@ -590,6 +590,12 @@ VAR_ROUTE_ID = 0x53
 # edges (get: routes)
 VAR_EDGES = 0x54
 
+# max. (physically possible) deceleration (get: vehicle types)
+VAR_EMERGENCY_DECEL = 0x54
+
+# apparent deceleration (get: vehicle types)
+VAR_APPARENT_DECEL = 0x55
+
 # filled? (get: polygons)
 VAR_FILL = 0x55
 
