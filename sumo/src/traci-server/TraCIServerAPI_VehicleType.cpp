@@ -148,6 +148,7 @@ TraCIServerAPI_VehicleType::getVariable(const int variable, const std::string& i
         tempMsg.writeUnsignedByte(TYPE_DOUBLE);
         tempMsg.writeDouble(TraCI_VehicleType::getEmergencyDecel(id));
     }
+        break;
     case VAR_APPARENT_DECEL: {
         tempMsg.writeUnsignedByte(TYPE_DOUBLE);
         tempMsg.writeDouble(TraCI_VehicleType::getApparentDecel(id));
