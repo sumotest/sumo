@@ -192,7 +192,7 @@ GUIRunThread::makeStep() {
             OptionsIO::setArgs(TraCI::getLoadArgs());
             TraCI::getLoadArgs().clear();
         } else if (state != MSNet::SIMSTATE_RUNNING) {
-            if (OptionsCont::getOptions().getInt("remote-port") != 0 && !TraCIServer::wasClosed()) {
+            if (TraCIServer::getInstance() != 0 && !TraCIServer::wasClosed()) {
                 state = MSNet::SIMSTATE_RUNNING;
             }
         }
@@ -208,7 +208,7 @@ GUIRunThread::makeStep() {
                     WRITE_MESSAGE("Reason: " + MSNet::getStateMessage(state));
                     e = new GUIEvent_SimulationEnded(state, myNet->getCurrentTimeStep() - DELTA_T);
                     myHaveSignaledEnd = true;
-                } 
+                }
                 break;
             default:
                 break;

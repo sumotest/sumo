@@ -85,7 +85,7 @@ protected:
                     SumoXMLNodeType type,
                     const Position& position,
                     const PositionVector& shape,
-                    std::vector<MSLane*> incoming, 
+                    std::vector<MSLane*> incoming,
                     std::vector<MSLane*> internal
                    );
 

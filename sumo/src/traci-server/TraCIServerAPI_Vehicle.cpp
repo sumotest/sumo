@@ -109,7 +109,7 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
             && variable != VAR_LINE
             && variable != VAR_VIA
             && variable != CMD_CHANGELANE
-            ) {
+       ) {
         return server.writeErrorStatusCmd(CMD_GET_VEHICLE_VARIABLE, "Get Vehicle Variable: unsupported variable " + toHex(variable, 2) + " specified", outputStorage);
     }
     // begin response building
@@ -304,10 +304,10 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
                 tempMsg.writeUnsignedByte(TraCI_Vehicle::isRouteValid(id));
             }
             break;
-            case VAR_EDGES: 
+            case VAR_EDGES:
                 tempMsg.writeUnsignedByte(TYPE_STRINGLIST);
                 tempMsg.writeStringList(TraCI_Vehicle::getEdges(id));
-            break;
+                break;
             case VAR_SIGNALS:
                 tempMsg.writeUnsignedByte(TYPE_INTEGER);
                 tempMsg.writeInt(TraCI_Vehicle::getSignalStates(id));
@@ -367,11 +367,11 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
             case VAR_STOPSTATE:
                 tempMsg.writeUnsignedByte(TYPE_UBYTE);
                 tempMsg.writeUnsignedByte(TraCI_Vehicle::getStopState(id));
-            break;
+                break;
             case VAR_DISTANCE:
                 tempMsg.writeUnsignedByte(TYPE_DOUBLE);
                 tempMsg.writeDouble(TraCI_Vehicle::getDistance(id));
-            break;
+                break;
             case DISTANCE_REQUEST: {
                 if (inputStorage.readUnsignedByte() != TYPE_COMPOUND) {
                     return server.writeErrorStatusCmd(CMD_GET_VEHICLE_VARIABLE, "Retrieval of distance requires a compound object.", outputStorage);
@@ -406,8 +406,8 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
                         }
                         tempMsg.writeUnsignedByte(TYPE_DOUBLE);
                         tempMsg.writeDouble(TraCI_Vehicle::getDrivingDistance2D(id, p1x, p1y));
-                       }
-                        break;
+                    }
+                    break;
                     default:
                         return server.writeErrorStatusCmd(CMD_GET_VEHICLE_VARIABLE, "Unknown position format used for distance request", outputStorage);
                 }
@@ -463,7 +463,7 @@ TraCIServerAPI_Vehicle::processGet(TraCIServer& server, tcpip::Storage& inputSto
             break;
             default:
                 /// XXX replace by a TraCI_VehicleType function
-                TraCIServerAPI_VehicleType::getVariable(variable,TraCI_Vehicle::getVehicleType(id).getID(), tempMsg);
+                TraCIServerAPI_VehicleType::getVariable(variable, TraCI_Vehicle::getVehicleType(id).getID(), tempMsg);
                 break;
         }
     } catch (TraCIException& e) {
@@ -695,7 +695,7 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
                 ConstMSEdgeVector newRoute;
                 const MSEdge* currentEdge = v->getRerouteOrigin();
                 MSNet::getInstance()->getRouterTT().compute(
-                        currentEdge, destEdge, (const MSVehicle * const) v, MSNet::getInstance()->getCurrentTimeStep(), newRoute);
+                    currentEdge, destEdge, (const MSVehicle * const) v, MSNet::getInstance()->getCurrentTimeStep(), newRoute);
                 // replace the vehicle's route by the new one
                 if (!v->replaceRouteEdges(newRoute, onInit)) {
                     return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, "Route replacement failed for " + v->getID(), outputStorage);
@@ -1446,17 +1446,17 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
             }
             break;
             default:
-            try {
-                const MSVehicleType& type = getSingularType(v);
-                if (!TraCIServerAPI_VehicleType::setVariable(CMD_SET_VEHICLE_VARIABLE, variable, type.getID(), server, inputStorage, outputStorage)) {
-                    return false;
+                try {
+                    const MSVehicleType& type = getSingularType(v);
+                    if (!TraCIServerAPI_VehicleType::setVariable(CMD_SET_VEHICLE_VARIABLE, variable, type.getID(), server, inputStorage, outputStorage)) {
+                        return false;
+                    }
+                } catch (ProcessError& e) {
+                    return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, e.what(), outputStorage);
+                } catch (TraCIException& e) {
+                    return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, e.what(), outputStorage);
                 }
-            } catch (ProcessError& e) {
-                return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, e.what(), outputStorage);
-            } catch (TraCIException& e) {
-                return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, e.what(), outputStorage);
-            }
-            break;
+                break;
         }
     } catch (TraCIException& e) {
         return server.writeErrorStatusCmd(CMD_SET_VEHICLE_VARIABLE, e.what(), outputStorage);
@@ -1565,9 +1565,9 @@ TraCIServerAPI_Vehicle::vtdMap(const Position& pos, double maxRouteDistance, con
             */
             const double angleDiff = (angle == INVALID_DOUBLE_VALUE ? 0 : GeomHelper::getMinAngleDiff(angle, langle));
 #ifdef DEBUG_MOVEXY_ANGLE
-            std::cout << lane->getID() << " lAngle:" << langle << " lLength=" << lane->getLength() 
-                << " angleDiff:" << angleDiff
-                << " off:" << off << " dist=" << dist << "\n";
+            std::cout << lane->getID() << " lAngle:" << langle << " lLength=" << lane->getLength()
+                      << " angleDiff:" << angleDiff
+                      << " off:" << off << " dist=" << dist << "\n";
             std::cout << lane->getID() << " param=" << lane->getParameter(SUMO_PARAM_ORIGID, lane->getID()) << " origID='" << origID << "\n";
 #endif
             lane2utility[lane] = LaneUtility(
@@ -1592,10 +1592,10 @@ TraCIServerAPI_Vehicle::vtdMap(const Position& pos, double maxRouteDistance, con
         double onRouteN = u.onRoute ? 1 : 0;
         double sameEdgeN = u.sameEdge ? MIN2(v.getEdge()->getLength() / speed, (double)1.) : 0;
         double value = (distN * .5 // distance is more important than angle because the vehicle might be driving in the opposite direction
-                          + angleDiffN * 0.35 /*.5 */
-                          + idN * 1
-                          + onRouteN * 0.1
-                          + sameEdgeN * 0.1);
+                        + angleDiffN * 0.35 /*.5 */
+                        + idN * 1
+                        + onRouteN * 0.1
+                        + sameEdgeN * 0.1);
 #ifdef DEBUG_MOVEXY
         std::cout << " x; l:" << l->getID() << " d:" << u.dist << " dN:" << distN << " aD:" << angleDiffN <<
                   " ID:" << idN << " oRN:" << onRouteN << " sEN:" << sameEdgeN << " value:" << value << std::endl;
@@ -1725,8 +1725,8 @@ TraCIServerAPI_Vehicle::vtdMap_matchingRoutePosition(const Position& pos, const 
     }
     // check position, stuff, we should have the best lane along the route
     lanePos = MAX2(0., MIN2(double((*lane)->getLength() - POSITION_EPS),
-                                     (*lane)->interpolateGeometryPosToLanePos(
-                                         (*lane)->getShape().nearest_offset_to_point2D(pos, false))));
+                            (*lane)->interpolateGeometryPosToLanePos(
+                                (*lane)->getShape().nearest_offset_to_point2D(pos, false))));
     //std::cout << SIMTIME << " vtdMap_matchingRoutePosition vehicle=" << v.getID() << " currLane=" << v.getLane()->getID() << " routeOffset=" << routeOffset << " edges=" << toString(edges) << " lane=" << (*lane)->getID() << "\n";
 #ifdef DEBUG_MOVEXY
     std::cout << "  b ok lane " << (*lane)->getID() << " lanePos:" << lanePos << std::endl;

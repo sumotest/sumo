@@ -210,8 +210,18 @@ public:
     /** @brief Returns the speed allowed on this edge
      * @return The speed allowed on this edge
      */
-    double getSpeed() const {
+    double getSpeedLimit() const {
         return mySpeed;
+    }
+
+    /// @brief return a lower bound on shape.length() / myLength that is
+    // sufficient for the astar air-distance heuristic
+    double getLengthGeometryFactor() const {
+        if (myFromJunction != 0 && myToJunction != 0) {
+            return MAX2(1.0, myFromJunction->getPosition().distanceTo(myToJunction->getPosition()) / myLength);
+        } else {
+            return 1.0;
+        }
     }
 
     /** @brief Returns the lane's maximum speed, given a vehicle's speed limit adaptation

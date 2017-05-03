@@ -100,7 +100,7 @@ initNet(RONet& net, ROLoader& loader, OptionsCont& oc) {
     /* const SUMOTime begin = string2time(oc.getString("begin"));
     const SUMOTime end = string2time(oc.getString("end"));
     for (std::map<std::string, ROEdge*>::const_iterator i = net.getEdgeMap().begin(); i != net.getEdgeMap().end(); ++i) {
-        (*i).second->addTravelTime(STEPS2TIME(begin), STEPS2TIME(end), (*i).second->getLength() / (*i).second->getSpeed());
+        (*i).second->addTravelTime(STEPS2TIME(begin), STEPS2TIME(end), (*i).second->getLength() / (*i).second->getSpeedLimit());
     }*/
     // load the weights when wished/available
     if (oc.isSet("weight-files")) {
@@ -113,7 +113,7 @@ initNet(RONet& net, ROLoader& loader, OptionsCont& oc) {
 
 double
 getTravelTime(const ROEdge* const edge, const ROVehicle* const /* veh */, double /* time */) {
-    return edge->getLength() / edge->getSpeed();
+    return edge->getLength() / edge->getSpeedLimit();
 }
 
 
@@ -133,8 +133,19 @@ computeAllPairs(RONet& net, OptionsCont& oc) {
         const Dijkstra::EdgeInfo& ei = router.getEdgeInfo(i);
         if (ei.edge->getFunc() != ROEdge::ET_INTERNAL) {
             router.compute(ei.edge, 0, 0, 0, into);
+            double fromEffort = router.getEffort(ei.edge, 0, 0);
             for (int j = numInternalEdges; j < numTotalEdges; j++) {
-                FileHelpers::writeFloat(outFile, router.getEdgeInfo(j).traveltime);
+                double heuTT = router.getEdgeInfo(j).traveltime - fromEffort;
+                FileHelpers::writeFloat(outFile, heuTT);
+                /*
+                if (heuTT > 
+                        ei.edge->getDistanceTo(router.getEdgeInfo(j).edge) 
+                        && router.getEdgeInfo(j).traveltime != std::numeric_limits<double>::max() 
+                        ) {
+                    std::cout << " heuristic failure: from=" << ei.edge->getID() << " to=" << router.getEdgeInfo(j).edge->getID() 
+                    << " fromEffort=" << fromEffort << " heuTT=" << heuTT << " airDist=" << ei.edge->getDistanceTo(router.getEdgeInfo(j).edge) << "\n";
+                }
+                */
             }
         }
     }

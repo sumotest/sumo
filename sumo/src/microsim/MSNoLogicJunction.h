@@ -67,7 +67,7 @@ public:
      */
     MSNoLogicJunction(const std::string& id, SumoXMLNodeType type, const Position& position,
                       const PositionVector& shape,
-                      std::vector<MSLane*> incoming, 
+                      std::vector<MSLane*> incoming,
                       std::vector<MSLane*> internal);
 
     /** Initialises the junction after the net was completely loaded */
@@ -75,7 +75,7 @@ public:
 
     /** @brief Returns all internal lanes on the junction
      */
-    const std::vector<MSLane*> getInternalLanes() const;
+    virtual const std::vector<MSLane*> getInternalLanes() const;
 
 private:
     /** Lanes incoming to the junction */

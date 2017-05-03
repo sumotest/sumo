@@ -100,7 +100,7 @@ public:
      * @return EGO's safe speed
      */
     virtual double freeSpeed(const MSVehicle* const veh, double speed, double seen,
-                               double maxSpeed, const bool onInsertion = false) const;
+                             double maxSpeed, const bool onInsertion = false) const;
 
 
     /** @brief Computes the vehicle's follow speed (no dawdling)
@@ -421,7 +421,7 @@ public:
 
 
     /** @brief Sets a new value for maximal comfortable deceleration [m/s^2]
-     * @param[in] accel The new deceleration in m/s^2
+     * @param[in] decel The new deceleration in m/s^2
      */
     virtual void setMaxDecel(double decel) {
         myDecel = decel;
@@ -429,7 +429,7 @@ public:
 
 
     /** @brief Sets a new value for maximal physically possible deceleration [m/s^2]
-     * @param[in] accel The new deceleration in m/s^2
+     * @param[in] decel The new deceleration in m/s^2
      */
     virtual void setEmergencyDecel(double decel) {
         myEmergencyDecel = decel;
@@ -437,10 +437,10 @@ public:
 
 
     /** @brief Sets a new value for the apparent deceleration [m/s^2]
-     * @param[in] accel The new deceleration in m/s^2
+     * @param[in] decel The new deceleration in m/s^2
      */
     virtual void setApparentDecel(double decel) {
-        myEmergencyDecel = decel;
+        myApparentDecel = decel;
     }
 
 

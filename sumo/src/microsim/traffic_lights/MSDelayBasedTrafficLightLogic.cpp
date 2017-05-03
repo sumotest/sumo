@@ -68,12 +68,12 @@ MSDelayBasedTrafficLightLogic::MSDelayBasedTrafficLightLogic(MSTLLogicControl& t
     myVehicleTypes = getParameter("vTypes", "");
 #ifdef DEBUG_TIMELOSS_CONTROL
     std::cout << "show-detectors: " << myShowDetectors
-            << " detectorRange: " << myDetectionRange
-            << " minTimeLoss: " << myTimeLossThreshold
-            << " file: " << myFile
-            << " freq: " << myFreq
-            << " vTypes: " << myVehicleTypes
-            << std::endl;
+              << " detectorRange: " << myDetectionRange
+              << " minTimeLoss: " << myTimeLossThreshold
+              << " file: " << myFile
+              << " freq: " << myFreq
+              << " vTypes: " << myVehicleTypes
+              << std::endl;
 #endif
 }
 
@@ -191,9 +191,9 @@ MSDelayBasedTrafficLightLogic::trySwitch() {
 
 #ifdef DEBUG_TIMELOSS_CONTROL
     std::cout << "last switch = " << currentPhase.myLastSwitch
-            << "\nactDuration = " << actDuration
-            << "\nmaxDuration = " << currentPhase.maxDuration
-            << std::endl;
+              << "\nactDuration = " << actDuration
+              << "\nmaxDuration = " << currentPhase.maxDuration
+              << std::endl;
 #endif
 
     // flag whether to prolong or not
@@ -202,8 +202,8 @@ MSDelayBasedTrafficLightLogic::trySwitch() {
         SUMOTime proposedProlongation = proposeProlongation(actDuration, currentPhase.maxDuration, othersEmpty);
 
 #ifdef DEBUG_TIMELOSS_CONTROL
-    std::cout << "othersEmpty = " << othersEmpty
-            << std::endl;
+        std::cout << "othersEmpty = " << othersEmpty
+                  << std::endl;
 #endif
 
         // keep this phase a little longer?

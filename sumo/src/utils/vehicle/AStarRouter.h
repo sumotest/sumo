@@ -42,12 +42,19 @@
 #include <algorithm>
 #include <iterator>
 #include <map>
+#include <iostream>
 #include <utils/common/MsgHandler.h>
+#include <utils/common/StringTokenizer.h>
+#include <utils/common/TplConvert.h>
 #include <utils/common/StdDefs.h>
 #include <utils/common/ToString.h>
 #include <utils/iodevices/BinaryInputDevice.h>
+#include <utils/iodevices/OutputDevice.h>
 #include "SUMOAbstractRouter.h"
 
+//#define ASTAR_DEBUG_QUERY
+//#define ASTAR_DEBUG_QUERY_PERF
+//#define ASTAR_DEBUG_VISITED
 
 // ===========================================================================
 // class definitions
@@ -72,7 +79,82 @@ class AStarRouter : public SUMOAbstractRouter<E, V>, public PF {
 
 public:
     typedef double(* Operation)(const E* const, const V* const, double);
-    typedef std::vector<std::vector<double> > LookupTable;
+
+    class LookupTable {
+    public:
+        virtual double lowerBound(const E* from, const E* to, double speed) const = 0;
+    };
+
+    class FullLookupTable : public LookupTable {
+    public:
+        FullLookupTable(const std::string& filename, const int size) :
+            myTable(size)
+        {
+            BinaryInputDevice dev(filename);
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    double val;
+                    dev >> val;
+                    myTable[i].push_back(val);
+                }
+            }
+        }
+
+        double lowerBound(const E* from, const E* to, double /*speed*/) const { 
+            return myTable[from->getNumericalID()][to->getNumericalID()];
+        }
+    private:
+        std::vector<std::vector<double> > myTable;
+    };
+
+
+    class LandmarkLookupTable : public LookupTable {
+    public:
+        LandmarkLookupTable(const std::string& filename, const int size) {
+            std::ifstream strm(filename.c_str());
+            if (!strm.good()) {
+                throw ProcessError("Could not load landmark-lookup-table from '" + filename + "'.");
+            }
+            std::string line;
+            int numLandMarks = 0;
+            while (std::getline(strm, line)) {
+                if (line == "") {
+                    break;
+                }
+                //std::cout << "'" << line << "'" << "\n";
+                StringTokenizer st(line);
+                if (st.size() == 1) {
+                    myLandmarks[line] = numLandMarks++;
+                    myFromLandmarkDists.push_back(std::vector<double>(0));
+                    myToLandmarkDists.push_back(std::vector<double>(0));
+                } else {
+                    assert(st.size() == 4); 
+                    const std::string lm = st.get(0);
+                    const std::string edge = st.get(1);
+                    double distFrom = TplConvert::_2double(st.get(2).c_str());
+                    double distTo = TplConvert::_2double(st.get(3).c_str());
+                    myFromLandmarkDists[myLandmarks[lm]].push_back(distFrom);
+                    myToLandmarkDists[myLandmarks[lm]].push_back(distTo);
+                }
+            }
+        }
+
+        double lowerBound(const E* from, const E* to, double speed) const { 
+            double result = from->getDistanceTo(to) / speed;
+            for (int i = 0; i < (int)myLandmarks.size(); ++i) {
+                result = MAX2(result, myToLandmarkDists[i][from->getNumericalID()] - MAX2(0.0, myToLandmarkDists[i][to->getNumericalID()]));
+                result = MAX2(result, myFromLandmarkDists[i][to->getNumericalID()] - MAX2(0.0, myFromLandmarkDists[i][from->getNumericalID()]));
+            }
+            // @todo: prove unreachability
+            return result;
+        }
+
+    private:
+        std::map<std::string, int> myLandmarks;
+        std::vector<std::vector<double> > myFromLandmarkDists;
+        std::vector<std::vector<double> > myToLandmarkDists;
+    };
+
 
     /**
      * @struct EdgeInfo
@@ -132,18 +214,22 @@ public:
     AStarRouter(const std::vector<E*>& edges, bool unbuildIsWarning, Operation operation, const LookupTable* const lookup = 0):
         SUMOAbstractRouter<E, V>(operation, "AStarRouter"),
         myErrorMsgHandler(unbuildIsWarning ? MsgHandler::getWarningInstance() : MsgHandler::getErrorInstance()),
-        myLookupTable(lookup) {
+        myLookupTable(lookup),
+        myMaxSpeed(NUMERICAL_EPS) {
         for (typename std::vector<E*>::const_iterator i = edges.begin(); i != edges.end(); ++i) {
             myEdgeInfos.push_back(EdgeInfo(*i));
+            myMaxSpeed = MAX2(myMaxSpeed, (*i)->getSpeedLimit() * MAX2(1.0, (*i)->getLengthGeometryFactor()));
         }
     }
 
     AStarRouter(const std::vector<EdgeInfo>& edgeInfos, bool unbuildIsWarning, Operation operation, const LookupTable* const lookup = 0):
         SUMOAbstractRouter<E, V>(operation, "AStarRouter"),
         myErrorMsgHandler(unbuildIsWarning ? MsgHandler::getWarningInstance() : MsgHandler::getErrorInstance()),
-        myLookupTable(lookup) {
+        myLookupTable(lookup),
+        myMaxSpeed(NUMERICAL_EPS) {
         for (typename std::vector<EdgeInfo>::const_iterator i = edgeInfos.begin(); i != edgeInfos.end(); ++i) {
             myEdgeInfos.push_back(EdgeInfo(i->edge));
+            myMaxSpeed = MAX2(myMaxSpeed, i->edge->getSpeedLimit() * i->edge->getLengthGeometryFactor());
         }
     }
 
@@ -152,19 +238,6 @@ public:
 
     virtual SUMOAbstractRouter<E, V>* clone() {
         return new AStarRouter<E, V, PF>(myEdgeInfos, myErrorMsgHandler == MsgHandler::getWarningInstance(), this->myOperation, myLookupTable);
-    }
-
-    static LookupTable* createLookupTable(const std::string& filename, const int size) {
-        LookupTable* const result = new LookupTable();
-        BinaryInputDevice dev(filename);
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                double val;
-                dev >> val;
-                (*result)[i].push_back(val);
-            }
-        }
-        return result;
     }
 
     void init() {
@@ -194,6 +267,9 @@ public:
             return false;
         }
         this->startQuery();
+#ifdef ASTAR_DEBUG_QUERY
+        std::cout << "DEBUG: starting search for '" << vehicle->getID() << "' speed: " << MIN2(vehicle->getMaxSpeed(), myMaxSpeed * vehicle->getChosenSpeedFactor()) << " time: " << STEPS2TIME(msTime) << "\n";
+#endif
         const SUMOVehicleClass vClass = vehicle == 0 ? SVC_IGNORING : vehicle->getVClass();
         const double time = STEPS2TIME(msTime);
         if (this->myBulkMode) {
@@ -213,6 +289,7 @@ public:
         }
         // loop
         int num_visited = 0;
+        const double speed = MIN2(vehicle->getMaxSpeed(), myMaxSpeed * vehicle->getChosenSpeedFactor());
         while (!myFrontierList.empty()) {
             num_visited += 1;
             // use the node with the minimal length
@@ -222,15 +299,36 @@ public:
             if (minEdge == to) {
                 buildPathFrom(minimumInfo, into);
                 this->endQuery(num_visited);
+#ifdef ASTAR_DEBUG_QUERY_PERF
+                std::cout << "visited " + toString(num_visited) + " edges (final path length=" + toString(into.size()) 
+                    + " time=" + toString(recomputeCosts(into, vehicle, msTime))
+                    + " edges=" + toString(into) + ")\n";
+#endif
+#ifdef ASTAR_DEBUG_VISITED
+                OutputDevice& dev = OutputDevice::getDevice(vehicle->getID() + "_" + time2string(msTime) + "_" + from->getID() + "_" + to->getID());
+                for (typename std::vector<EdgeInfo>::const_iterator i = myEdgeInfos.begin(); i != myEdgeInfos.end(); ++i) {
+                    if (i->visited) {
+                        dev << "edge:" << i->edge->getID() << "\n";
+                    }
+                }
+                dev.close();
+#endif
                 return true;
             }
             pop_heap(myFrontierList.begin(), myFrontierList.end(), myComparator);
             myFrontierList.pop_back();
             myFound.push_back(minimumInfo);
             minimumInfo->visited = true;
+#ifdef ASTAR_DEBUG_QUERY
+            std::cout << "DEBUG: hit '" << minEdge->getID() << "' TT: " << minimumInfo->traveltime << " E: " << this->getEffort(minEdge, vehicle, time + minimumInfo->traveltime) << " Q: ";
+            for (typename std::vector<EdgeInfo*>::iterator it = myFrontierList.begin(); it != myFrontierList.end(); it++) {
+                std::cout << (*it)->traveltime << "," << (*it)->edge->getID() << " ";
+            }
+            std::cout << "\n";
+#endif
             const double traveltime = minimumInfo->traveltime + this->getEffort(minEdge, vehicle, time + minimumInfo->traveltime);
             // admissible A* heuristic: straight line distance at maximum speed
-            const double heuristic_remaining = myLookupTable == 0 ? minEdge->getDistanceTo(to) / vehicle->getMaxSpeed() : (*myLookupTable)[minEdge->getNumericalID()][to->getNumericalID()] / vehicle->getChosenSpeedFactor();
+            const double heuristic_remaining = myLookupTable == 0 ? minEdge->getDistanceTo(to) / speed : myLookupTable->lowerBound(minEdge, to, speed) / vehicle->getChosenSpeedFactor();
             // check all ways from the node with the minimal length
             const std::vector<E*>& successors = minEdge->getSuccessors(vClass);
             for (typename std::vector<E*>::const_iterator it = successors.begin(); it != successors.end(); ++it) {
@@ -250,11 +348,14 @@ public:
                     if (follower != to) {
                         if (myLookupTable == 0) {
                             // admissible A* heuristic: straight line distance at maximum speed
-                            followerInfo->heuristicTime += this->getEffort(follower, vehicle, time + traveltime) + follower->getDistanceTo(to) / vehicle->getMaxSpeed();
+                            followerInfo->heuristicTime += this->getEffort(follower, vehicle, time + traveltime) + follower->getDistanceTo(to) / speed;
                         } else {
                             followerInfo->heuristicTime += this->getEffort(follower, vehicle, time + traveltime) + (*myLookupTable)[follower->getNumericalID()][to->getNumericalID()] / vehicle->getChosenSpeedFactor();
                         }
                     }*/
+#ifdef ASTAR_DEBUG_QUERY
+                    //std::cout << "   follower=" << followerInfo->edge->getID() << " oldEffort=" << oldEffort << " rem=" << heuristic_remaining << " tt=" << traveltime << " ht=" << followerInfo->heuristicTime << "\n";
+#endif
                     followerInfo->prev = minimumInfo;
                     if (oldEffort == std::numeric_limits<double>::max()) {
                         myFrontierList.push_back(followerInfo);
@@ -268,6 +369,9 @@ public:
             }
         }
         this->endQuery(num_visited);
+#ifdef ASTAR_DEBUG_QUERY_PERF
+        std::cout << "visited " + toString(num_visited) + " edges (unsuccesful path length: " + toString(into.size()) + ")\n";
+#endif
         myErrorMsgHandler->inform("No connection between edge '" + from->getID() + "' and edge '" + to->getID() + "' found.");
         return false;
     }
@@ -312,6 +416,9 @@ protected:
 
     /// @brief the lookup table for travel time heuristics
     const LookupTable* const myLookupTable;
+
+    /// @brief maximum speed in the network
+    double myMaxSpeed;
 };
 
 
